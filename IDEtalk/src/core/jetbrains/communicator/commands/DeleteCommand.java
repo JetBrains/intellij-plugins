@@ -1,0 +1,202 @@
+/*
+ * Copyright 2000-2006 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package jetbrains.communicator.commands;
+
+import jetbrains.communicator.core.users.User;
+import jetbrains.communicator.core.users.UserModel;
+import jetbrains.communicator.ide.IDEFacade;
+import jetbrains.communicator.ide.UserListComponent;
+import jetbrains.communicator.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * @author Kir
+ */
+public class DeleteCommand extends EnabledWhenFocusedCommand {
+  static final String QUESTION_PREFIX = "Delete ";
+
+  private UserModel myUserModel;
+  private IDEFacade myIDEFacade;
+
+  public DeleteCommand(UserModel userModel, UserListComponent usetListComponent, IDEFacade facade) {
+    super(usetListComponent);
+    myUserModel = userModel;
+    myIDEFacade = facade;
+  }
+
+  public boolean enabled() {
+    return myUserListComponent.getSelectedNodes().length > 0;
+  }
+
+  public void execute() {
+    Object[] selectedNodes = myUserListComponent.getSelectedNodes();
+
+    if (!myIDEFacade.askQuestion("Delete Confirmation", buildQuestion(selectedNodes))) {
+      return;
+    }
+
+    deleteSelectedUsers(selectedNodes);
+    deleteSelectedGroups(selectedNodes);
+  }
+
+  private void deleteSelectedGroups(Object[] selectedNodes) {
+    for (int i = 0; i < selectedNodes.length; i++) {
+      Object selectedNode = selectedNodes[i];
+      if (selectedNode instanceof String) {
+        myUserModel.removeGroup((String) selectedNode);
+      }
+    }
+  }
+
+  private void deleteSelectedUsers(Object[] selectedNodes) {
+    for (int i = 0; i < selectedNodes.length; i++) {
+      Object selectedNode = selectedNodes[i];
+      if (selectedNode instanceof User) {
+        myUserModel.removeUser((User) selectedNode);
+      }
+    }
+  }
+
+  String buildQuestion(Object[] selectedNodes) {
+    List usersToDelete = new ArrayList();
+    final List groupsToDelete = new ArrayList();
+    buildListOfDeletedUsersAndGroups(selectedNodes, usersToDelete, groupsToDelete);
+
+    StringBuffer question = new StringBuffer(QUESTION_PREFIX);
+
+    final boolean hasBothUsersAndGroups = usersToDelete.size() > 0 && groupsToDelete.size() > 0;
+
+    appendItems(question, groupsToDelete, "group", hasBothUsersAndGroups,
+        new GroupTextExtractor(groupsToDelete, hasBothUsersAndGroups));
+
+    if (hasBothUsersAndGroups) {
+      appendAndBetweenGroupsAndUsers(question, groupsToDelete, usersToDelete);
+    }
+
+    appendItems(question, usersToDelete, "user", hasBothUsersAndGroups, new ItemTextExtractor() {
+      public String getText(Object item) {
+        return ((User) item).getDisplayName();
+      }
+    });
+
+    if (hasBothUsersAndGroups && usersToDelete.size() > 1) {
+      question.append(" \nfrom other groups");
+    }
+
+    question.append('?');
+    return question.toString();
+  }
+
+  private void appendAndBetweenGroupsAndUsers(StringBuffer question, List groupsToDelete, List usersToDelete) {
+    if (groupsToDelete.size() > 1) {
+      question.append(" \n");
+    }
+    else {
+      question.append(' ');
+    }
+    question.append("and ");
+    if (usersToDelete.size() > 1) {
+      question.append('\n');
+    }
+  }
+
+  private void buildListOfDeletedUsersAndGroups(Object[] selectedNodes, List usersToDelete, List groupsToDelete) {
+    for (int i = 0; i < selectedNodes.length; i++) {
+      Object selectedNode = selectedNodes[i];
+      if (selectedNode instanceof User) {
+        usersToDelete.add(selectedNode);
+      }
+      else if (selectedNode instanceof String) {
+        groupsToDelete.add(selectedNode);
+      }
+    }
+
+    for (Iterator it = usersToDelete.iterator(); it.hasNext();) {
+      User user = (User) it.next();
+      if (groupsToDelete.contains(user.getGroup())) {
+        it.remove();
+      }
+    }
+  }
+
+  private void appendItems(StringBuffer question, List items, String itemName, boolean useCommasOnly, ItemTextExtractor extractor) {
+    if (items.size() > 0) {
+      StringUtil.appendItemName(question, itemName, items.size());
+      question.append(' ');
+      appendCommaSeparated(question, items, extractor);
+      appendTail(question, items, extractor, useCommasOnly);
+    }
+  }
+
+  private void appendTail(StringBuffer question, List items, ItemTextExtractor extractor, boolean useCommasOnly) {
+    if (items.size() >= 2) {
+      question.append(extractor.getText(items.get(items.size() - 2)));
+      if (items.size() >= 3 || useCommasOnly) {
+        question.append(", ");
+      }
+      else {
+        question.append(' ');
+      }
+      if (!useCommasOnly) {
+        question.append("and ");
+      }
+    }
+    question.append(extractor.getText(items.get(items.size() - 1)));
+  }
+
+  private void appendCommaSeparated(StringBuffer question, List items, ItemTextExtractor extractor) {
+    for (int i = 0; i < items.size() - 2; i++) {
+      String itemText = extractor.getText(items.get(i));
+      question.append(itemText).append(", ");
+    }
+  }
+
+  private interface ItemTextExtractor {
+    String getText(Object item);
+  }
+
+  private class GroupTextExtractor implements ItemTextExtractor {
+    private final List myGroupsToDelete;
+    private final boolean myHasBothUsersAndGroups;
+
+    GroupTextExtractor(List groupsToDelete, boolean hasBothUsersAndGroups) {
+      myGroupsToDelete = groupsToDelete;
+      myHasBothUsersAndGroups = hasBothUsersAndGroups;
+    }
+
+    public String getText(Object item) {
+      int numberOfUsers = myUserModel.getUsers((String) item).length;
+      StringBuffer sb = new StringBuffer("\"" + item + '"');
+      if (numberOfUsers == 0) {
+        return sb.toString();
+      }
+      if (myGroupsToDelete.size() == 1 && !myHasBothUsersAndGroups) {
+        sb.append(" with its ");
+        StringUtil.appendItems(sb, "user", numberOfUsers);
+      }
+      else {
+        sb.append('(');
+        StringUtil.appendItems(sb, "user", numberOfUsers);
+        sb.append(')');
+      }
+      return sb.toString();
+    }
+  }
+}

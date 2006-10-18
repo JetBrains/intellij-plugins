@@ -1,0 +1,5 @@
+<container>
+  <component class="jetbrains.communicator.jabber.impl.JabberTransport"/>
+  <component class="jetbrains.communicator.jabber.impl.JabberFacadeImpl"/>
+  <component class="jetbrains.communicator.jabber.impl.JabberUserFinderImpl"/>
+</container>

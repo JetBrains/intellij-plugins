@@ -1,0 +1,648 @@
+/*
+ * Copyright 2000-2006 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package jetbrains.communicator.jabber.impl;
+
+import jetbrains.communicator.core.*;
+import jetbrains.communicator.core.commands.NamedUserCommand;
+import jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher;
+import jetbrains.communicator.core.transport.*;
+import jetbrains.communicator.core.users.*;
+import static jetbrains.communicator.core.users.UserEvent.Updated.*;
+import jetbrains.communicator.ide.IDEFacade;
+import jetbrains.communicator.ide.ProgressIndicator;
+import jetbrains.communicator.jabber.ConnectionListener;
+import jetbrains.communicator.jabber.JabberFacade;
+import jetbrains.communicator.jabber.JabberUI;
+import jetbrains.communicator.jabber.JabberUserFinder;
+import jetbrains.communicator.util.IgnoreList;
+import static jetbrains.communicator.util.StringUtil.getMsg;
+import jetbrains.communicator.util.UIUtil;
+import org.apache.log4j.Logger;
+import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
+import org.jivesoftware.smack.*;
+import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.ThreadFilter;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.util.StringUtils;
+import org.picocontainer.Disposable;
+import org.picocontainer.MutablePicoContainer;
+
+import java.util.*;
+
+/**
+ * @author Kir
+ */
+public class JabberTransport implements Transport, ConnectionListener, Disposable {
+  @NonNls
+  private static final Logger LOG = Logger.getLogger(JabberTransport.class);
+
+  private static final int RESPONSE_TIMEOUT = 120*1000;
+  public static final String CODE = "Jabber";
+
+  private final JabberUI myUI;
+  private final JabberFacade myFacade;
+  private final UserModel myUserModel;
+  private final RosterListener myRosterListener = new MyRosterListener();
+  private final IDEtalkListener myUserModelListener = new MyUserModelListener();
+  private final AsyncMessageDispatcher myDispatcher;
+
+  private final PacketListener mySubscribeListener = new MySubscribeListener();
+  private final PacketListener myMessageListener = new MyMessageListener();
+  private final JabberUserFinder myUserFinder;
+  private final IDEFacade myIdeFacade;
+
+  private String myThreadIdPrefix = StringUtils.randomString(5);
+  private int myCurrentThreadId;
+  private boolean myIgnoreUserEvents;
+  private PresenceMode myPresenceMode;
+
+  private final Map<User, UserPresence> myUser2Presence = new HashMap<User, UserPresence>();
+  private Set<String> myIDEtalkUsers = new HashSet<String>();
+  private Map<String, String> myUser2Thread = Collections.synchronizedMap(new HashMap<String, String>());
+
+  @NonNls
+  private static final String RESPONSE = "response";
+  private final IgnoreList myIgnoreList;
+
+  public JabberTransport(JabberUI UI, JabberFacade facade, UserModel userModel, AsyncMessageDispatcher messageDispatcher, JabberUserFinder userFinder) {
+    Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.manual);
+
+    //XMPPConnection.DEBUG_ENABLED = true;
+    JDOMExtension.init();
+
+
+    myUI = UI;
+    myFacade = facade;
+    myUserModel = userModel;
+    myDispatcher = messageDispatcher;
+    myUserFinder = userFinder;
+    myIdeFacade = messageDispatcher.getIdeFacade();
+    myIgnoreList = new IgnoreList(myIdeFacade);
+
+    myFacade.addConnectionListener(this);
+    getBroadcaster().addListener(myUserModelListener);
+  }
+
+  private EventBroadcaster getBroadcaster() {
+    return myUserModel.getBroadcaster();
+  }
+
+  public String getName() {
+    return CODE;
+  }
+
+  public void initializeProject(String projectName, MutablePicoContainer projectLevelContainer) {
+    myUI.initPerProject(projectLevelContainer);
+    //noinspection HardCodedStringLiteral
+    new Thread(new Runnable() {
+      public void run() {
+        myFacade.connect();
+      }
+    }, "IDEtalk JabberTransport initializer").start();
+  }
+
+  public User[] findUsers(ProgressIndicator progressIndicator) {
+    return myUserFinder.findUsers(progressIndicator);
+  }
+
+  public Class<? extends NamedUserCommand> getSpecificFinderClass() {
+    return FindByJabberIdCommand.class;
+  }
+
+  public boolean isOnline() {
+    return myFacade.isConnectedAndAuthenticated();
+  }
+
+  public UserPresence getUserPresence(User user) {
+    UserPresence presence = myUser2Presence.get(user);
+    if (presence == null) {
+      presence = new UserPresence(false);
+      myUser2Presence.put(user, presence);
+    }
+    return presence;
+  }
+
+  private UserPresence _getUserPresence(User user) {
+    Presence presence = _getPresence(user);
+    if (presence != null && presence.getType() == Presence.Type.available) {
+      Presence.Mode mode = presence.getMode();
+      final PresenceMode presenceMode;
+      //noinspection IfStatementWithTooManyBranches
+      if (mode == Presence.Mode.away) {
+        presenceMode = PresenceMode.AWAY;
+      }
+      else if (mode == Presence.Mode.dnd) {
+        presenceMode = PresenceMode.DND;
+      }
+      else if (mode == Presence.Mode.xa) {
+        presenceMode = PresenceMode.EXTENDED_AWAY;
+      }
+      else {
+        presenceMode = PresenceMode.AVAILABLE;
+      }
+
+      return new UserPresence(presenceMode);
+    }
+    return new UserPresence(false);
+  }
+
+  @NonNls
+  public String getIconPath(UserPresence userPresence) {
+    return UIUtil.getIcon(userPresence, "/ideTalk/jabber.png", "/ideTalk/jabber_dnd.png");
+  }
+
+  public boolean isSelf(User user) {
+    return myFacade.isConnectedAndAuthenticated() && getSimpleId(myFacade.getConnection().getUser()).equals(user.getName());
+  }
+
+  public String[] getProjects(User user) {
+    return new String[0];
+  }
+
+  public String getAddressString(User user) {
+    return null;
+  }
+
+  public synchronized void sendXmlMessage(User user, final XmlMessage xmlMessage) {
+    if (!myUI.connectAndLogin(null)) {
+      return;
+    }
+
+    final String threadId = getThreadId(user);
+    final PacketCollector packetCollector = myFacade.getConnection().createPacketCollector(new ThreadFilter(threadId));
+    doSendMessage(xmlMessage, user, threadId);
+
+    if (xmlMessage.needsResponse()) {
+      //noinspection HardCodedStringLiteral
+      Thread thread = new Thread(new Runnable() {
+        public void run() {
+          try {
+            processResponse(xmlMessage, packetCollector);
+          } finally {
+            packetCollector.cancel();
+          }
+        }
+      }, "Jabber message response waiter");
+      thread.start();
+    }
+    else {
+      packetCollector.cancel();
+    }
+  }
+
+  String getThreadId(User user) {
+    String id = myUser2Thread.get(user.getName());
+    if (id == null) {
+      id = myThreadIdPrefix + myCurrentThreadId ++;
+      myUser2Thread.put(user.getName(), id);
+    }
+    return id;
+  }
+
+  public void setOwnPresence(UserPresence userPresence) {
+    if (isOnline() && !userPresence.isOnline()) {
+      myFacade.disconnect();
+    }
+    else if (!isOnline() && userPresence.isOnline()) {
+      myUI.connectAndLogin(null);
+    }
+
+    if (isOnline() && presenceModeChanged(userPresence.getPresenceMode())) {
+      myFacade.setOnlinePresence(userPresence);
+      myPresenceMode = userPresence.getPresenceMode();
+    }
+  }
+
+
+  public boolean hasIDEtalkClient(User user) {
+    return myIDEtalkUsers.contains(user.getName());
+  }
+
+  private boolean presenceModeChanged(PresenceMode presenceMode) {
+    return myPresenceMode == null || myPresenceMode != presenceMode;
+  }
+
+  private void processResponse(XmlMessage xmlMessage, PacketCollector collector) {
+    boolean gotResponse = false;
+
+    while (!gotResponse) {
+
+      Message response = (Message) collector.nextResult(RESPONSE_TIMEOUT);
+      if (response == null) break;
+
+      final Collection<PacketExtension> extensions = response.getExtensions();
+      for (PacketExtension o : extensions) {
+        if (o instanceof JDOMExtension) {
+          JDOMExtension extension = (JDOMExtension) o;
+          if (RESPONSE.equals(extension.getElement().getName())) {
+            xmlMessage.processResponse(extension.getElement());
+            gotResponse = true;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  private Message doSendMessage(XmlMessage xmlMessage, User user, String threadId) {
+    Element element = new Element(xmlMessage.getTagName(), xmlMessage.getTagNamespace());
+    xmlMessage.fillRequest(element);
+
+    Message message = createBaseMessage(user, element.getText());
+    message.setThread(threadId);
+    message.addExtension(new JDOMExtension(element));
+    myFacade.getConnection().sendPacket(message);
+
+    return message;
+  }
+
+  Message createBaseMessage(User user, String message) {
+    Message msg = new Message(user.getName(), Message.Type.CHAT);
+    msg.setBody(message);
+    return msg;
+  }
+
+  public void connected(XMPPConnection connection) {
+    LOG.info("Jabber connected");
+    connection.addPacketListener(mySubscribeListener, new PacketTypeFilter(Presence.class));
+    connection.addPacketListener(myMessageListener, new PacketTypeFilter(Message.class));
+  }
+
+  public void authenticated() {
+    LOG.info("Jabber authenticated: " + myFacade.getConnection().getUser());
+    myFacade.getConnection().getRoster().addRosterListener(myRosterListener);
+    myUserFinder.registerForProject(myFacade.getMyAccount().getJabberId());
+
+    if (!hasJabberContacts()) {
+      synchronizeRoster(false);
+    }
+  }
+
+  private boolean hasJabberContacts() {
+    User[] users = myUserModel.getAllUsers();
+    for (User user : users) {
+      if (user.getTransportCode().equals(getName())) return true;
+    }
+    return false;
+  }
+
+  public void disconnected(boolean onError) {
+    LOG.info("Jabber disconnected: " + myFacade.getConnection().getUser());
+    myFacade.getConnection().getRoster().removeRosterListener(myRosterListener);
+    myFacade.getConnection().removePacketListener(mySubscribeListener);
+    myFacade.getConnection().removePacketListener(myMessageListener);
+
+    myIDEtalkUsers.clear();
+    myUser2Presence.clear();
+    myUser2Thread.clear();
+
+    if (onError) {
+      UIUtil.invokeLater(new Runnable() {
+        public void run() {
+          myUI.connectAndLogin("Jabber server was disconnected");
+        }
+      });
+    }
+  }
+
+  public void dispose() {
+    getBroadcaster().removeListener(myUserModelListener);
+    myFacade.removeConnectionListener(this);
+  }
+
+  private void updateUserPresence(String jabberId) {
+    LOG.debug("Presence changed for " + jabberId);
+    final User user = myUserModel.findUser(getSimpleId(jabberId), getName());
+    if (user != null) {
+      updateIsIDEtalkClient(jabberId, user);
+
+      final UserPresence presence = _getUserPresence(user);
+      IDEtalkEvent event = createPresenceChangeEvent(user, presence);
+      if (event != null) {
+        getBroadcaster().doChange(event, new Runnable() {
+          public void run() {
+            myUser2Presence.put(user, presence);
+          }
+        });
+      }
+    }
+  }
+
+  private void updateIsIDEtalkClient(String jabberId, User user) {
+    if (getResource(jabberId).toLowerCase().startsWith(JabberFacade.IDETALK_RESOURCE.toLowerCase())) {
+      myIDEtalkUsers.add(user.getName());
+    } else {
+      myIDEtalkUsers.remove(user.getName());
+    }
+  }
+
+  private IDEtalkEvent createPresenceChangeEvent(User user, UserPresence newPresence) {
+    UserPresence oldPresence = getUserPresence(user);
+    if (!newPresence.equals(oldPresence)) {
+      if (newPresence.isOnline() ^ oldPresence.isOnline()) {
+        return newPresence.isOnline() ? (IDEtalkEvent) new UserEvent.Online(user) : new UserEvent.Offline(user);
+      }
+      else {
+        return new UserEvent.Updated(user, PRESENCE, oldPresence.getPresenceMode(), newPresence.getPresenceMode());
+      }
+    }
+    return null;
+  }
+
+  private void updateJabberUsers(boolean removeUsersNotInRoster) {
+    LOG.debug("Roster changed - update user model");
+    Set<User> currentUsers = new HashSet<User>(Arrays.asList(myUserModel.getAllUsers()));
+    for (RosterEntry rosterEntry : getRoster().getEntries()) {
+      User user = addJabberUserToUserModelOrUpdateInfo(rosterEntry);
+      currentUsers.remove(user);
+    }
+
+    if (removeUsersNotInRoster) {
+      removeUsers(currentUsers);
+    }
+
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Roster synchronized: " +Arrays.asList(myUserModel.getAllUsers()));
+    }
+  }
+
+  private void removeUsers(Set<User> currentUsers) {
+    for (User user : currentUsers) {
+      myUserModel.removeUser(user);
+    }
+  }
+
+  private User addJabberUserToUserModelOrUpdateInfo(RosterEntry rosterEntry) {
+//    System.out.println("rosterEntry.getName() = " + rosterEntry.getName());
+//    System.out.println("rosterEntry.getUser() = " + rosterEntry.getUser());
+    User user = myUserModel.createUser(getSimpleId(rosterEntry.getUser()), getName());
+    String newGroup = getUserGroup(rosterEntry);
+    if (newGroup != null) {
+      user.setGroup(newGroup, myUserModel);
+    }
+    user.setDisplayName(rosterEntry.getName(), myUserModel);
+    myUserModel.addUser(user);
+    String jabberId = getCurrentJabberID(user, rosterEntry);
+    updateIsIDEtalkClient(jabberId, user);
+    return user;
+  }
+
+  private String getCurrentJabberID(User user, RosterEntry rosterEntry) {
+    Presence presence = _getPresence(user);
+    String jabberId = null;
+    if (presence != null) {
+      jabberId = presence.getFrom();
+    }
+    if (jabberId == null) jabberId = rosterEntry.getUser();
+    if (jabberId == null) jabberId = rosterEntry.getName();
+    return jabberId;
+  }
+
+  static String getResource(String userName) {
+    int lastSlash = userName.indexOf('/');
+    if (lastSlash != -1) {
+      return userName.substring(lastSlash + 1);
+    }
+    return "";
+  }
+
+  static String getSimpleId(String userName) {
+    String id = userName;
+    int lastSlash = id.indexOf('/');
+    if (lastSlash != -1) {
+      id = id.substring(0, lastSlash);
+    }
+    return id;
+  }
+
+  private String getUserGroup(RosterEntry rosterEntry) {
+    String group = null;
+    for (RosterGroup rosterGroup : rosterEntry.getGroups()) {
+      group = rosterGroup.getName();
+    }
+    return group;
+  }
+
+  private Roster getRoster() {
+    assert myFacade.isConnectedAndAuthenticated() : "Not connected to Jabber";
+    return myFacade.getConnection().getRoster();
+  }
+
+  public JabberFacade getFacade() {
+    return myFacade;
+  }
+
+  boolean isUserInMyContactListAndActive(String userName) {
+    User user = myUserModel.findUser(getSimpleId(userName), getName());
+    return user != null && user.isOnline();
+  }
+
+  private Presence _getPresence(User user) {
+    if (!isOnline()) return null;
+    return getRoster().getPresence(user.getName());
+  }
+
+  private User self() {
+    return myUserModel.createUser(myFacade.getMyAccount().getJabberId(), getName());
+  }
+
+  public static JabberTransport getInstance() {
+    return (JabberTransport) Pico.getInstance().getComponentInstanceOfType(JabberTransport.class);
+  }
+
+  public void synchronizeRoster(boolean removeUsersNotInRoster) {
+    updateJabberUsers(removeUsersNotInRoster);
+  }
+
+  public void runIngnoringUserEvents(Runnable runnable) {
+    try {
+      myIgnoreUserEvents = true;
+      runnable.run();
+    } finally {
+      myIgnoreUserEvents = false;
+    }
+  }
+
+  private class MyRosterListener implements RosterListener {
+    public void entriesAdded(Collection addresses) {
+      updateJabberUsers(false);
+    }
+
+    public void entriesUpdated(Collection addresses) {
+      updateJabberUsers(false);
+    }
+
+    public void entriesDeleted(Collection addresses) {
+      updateJabberUsers(false);
+    }
+
+    public void presenceChanged(final String string) {
+      updateUserPresence(string);
+    }
+  }
+
+  @SuppressWarnings({"RefusedBequest"})
+  private class MyUserModelListener extends TransportUserListener {
+
+    MyUserModelListener() {
+      super(JabberTransport.this);
+    }
+
+    protected void processBeforeChange(UserEvent event) {
+      super.processBeforeChange(event);
+      event.accept(new EventVisitor() {
+        public void visitUserAdded(UserEvent.Added event) {
+          event.getUser().setCanAccessMyFiles(false, myUserModel);
+        }
+      });
+    }
+
+    protected void processAfterChange(UserEvent event) {
+      if (myIgnoreUserEvents) return;
+
+      event.accept(new EventVisitor() {
+        public void visitUserRemoved(UserEvent.Removed event) {
+          synchronizeWithJabberIfPossible(event);
+        }
+
+        public void visitUserUpdated(UserEvent.Updated event) {
+          if (GROUP.equals(event.getPropertyName()) ||
+              DISPLAY_NAME.equals(event.getPropertyName())) {
+            synchronizeWithJabberIfPossible(event);
+          }
+        }
+      });
+    }
+
+    private void synchronizeWithJabberIfPossible(UserEvent event) {
+      if (event.getUser().getTransportCode().equals(getName()) &&
+          myFacade.isConnectedAndAuthenticated()) {
+        myDispatcher.sendNow(self(), new JabberSyncUserMessage(event));
+      }
+    }
+  }
+
+  private class MySubscribeListener implements PacketListener {
+    public void processPacket(Packet packet) {
+      final Presence presence = ((Presence) packet);
+      if (presence.getType() != Presence.Type.subscribe) return;
+      LOG.info("Subscribe request from " + presence.getFrom());
+
+      if (myIgnoreList.isIgnored(presence.getFrom())) {
+        LOG.info(presence.getFrom() + " in ignore list");
+        return;
+      }
+
+      if (isUserInMyContactListAndActive(presence.getFrom()) || Pico.isUnitTest()) {
+        acceptSubscription(presence, true);
+        return;
+      }
+
+      UIUtil.invokeLater(new Runnable() {
+        public void run() {
+          acceptSubscription(presence, myUI.shouldAcceptSubscriptionRequest(presence));
+        }
+      });
+    }
+
+    private void acceptSubscription(final Presence presence, boolean subscribe) {
+
+      myFacade.changeSubscription(presence.getFrom(), subscribe);
+
+      if (subscribe) {
+        String from = getSimpleId(presence.getFrom());
+        LOG.info("Add " + from + " to the roster");
+
+        try {
+          getRoster().createEntry(from, from, new String[]{UserModel.DEFAULT_GROUP});
+        } catch (XMPPException e) {
+          LOG.warn(e);
+        }
+      }
+
+    }
+  }
+
+  private class MyMessageListener implements PacketListener {
+
+    public void processPacket(Packet packet) {
+      try {
+        doProcessPacket(packet);
+      }
+      catch(Throwable e) {
+        LOG.error(e.getMessage(), e);
+      }
+    }
+
+    private void doProcessPacket(Packet packet) {
+      final Message message = ((Message) packet);
+      if (message.getType() == Message.Type.ERROR) {
+        UIUtil.invokeLater(new Runnable() {
+          public void run() {
+            String from = (message.getFrom() != null) ? getMsg("from.0.lf", message.getFrom()) : "";
+            myIdeFacade.showMessage(getMsg("jabber.error"),
+                getMsg("jabber.error.text", from, (message.getError() == null ? "N/A" : message.getError().toString()))
+                );
+          }
+        });
+        return;
+      }
+
+      if (myIgnoreList.isIgnored(packet.getFrom())) {
+        return;
+      }
+
+      Element element = null;
+      for (PacketExtension o : message.getExtensions()) {
+        if (o instanceof JDOMExtension) {
+          element = ((JDOMExtension) o).getElement();
+        }
+      }
+
+      if (element != null && !RESPONSE.equals(element.getName())) {
+        processAndSendResponse(element, message);
+      }
+      else if (element == null && message.getBody() != null) {
+        // Some simple Jabber Message
+        MessageEvent event = EventFactory.createMessageEvent(JabberTransport.this, getFrom(message), message.getBody());
+        if (message.getThread() != null) {
+          myUser2Thread.put(getFrom(message), message.getThread());
+        }
+
+        getBroadcaster().fireEvent(event);
+      }
+    }
+
+    private void processAndSendResponse(Element element, Message message) {
+      Element response = new Element(RESPONSE, Transport.NAMESPACE);
+      XmlResponseProvider provider = XmlResponseProvider.getProvider(element, getBroadcaster());
+      if (provider.processAndFillResponse(response, element, JabberTransport.this, getFrom(message))) {
+        Message responseMessage = new Message(getFrom(message));
+        responseMessage.addExtension(new JDOMExtension(response));
+        responseMessage.setThread(message.getThread());
+        myFacade.getConnection().sendPacket(responseMessage);
+      }
+    }
+
+    private String getFrom(Message message) {
+      return getSimpleId(message.getFrom());
+    }
+  }
+}

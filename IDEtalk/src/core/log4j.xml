@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration>
+  <appender name="CONSOLE-WARN" class="org.apache.log4j.ConsoleAppender">
+    <param name="target" value="System.err"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="[%7r] %6p - %30.30c - %m \n"/>
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMin" value="WARN"/>
+    </filter>
+  </appender>
+
+  <appender name="CONSOLE-DEBUG" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="[%7r] %6p - %30.30c - %m \n"/>
+    </layout>
+    <filter class="org.apache.log4j.varia.LevelRangeFilter">
+      <param name="LevelMin" value="DEBUG"/>
+      <param name="LevelMax" value="DEBUG"/>
+    </filter>
+  </appender>
+
+  <appender name="CONSOLE-ALL" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="[%7r] %6p - %30.30c - %m \n"/>
+    </layout>
+  </appender>
+
+  <category name="jetbrains.communicator">
+    <priority value="DEBUG"/>
+  </category>
+
+
+  <root>
+    <priority value="INFO"/>
+    <appender-ref ref="CONSOLE-ALL"/>
+  </root>
+</log4j:configuration>

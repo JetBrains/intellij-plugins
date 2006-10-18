@@ -1,0 +1,4 @@
+<container>
+  <component class="jetbrains.communicator.p2p.P2PTransport"/>
+  <component class="jetbrains.communicator.p2p.BecomeAvailableXmlMessage"/>
+</container>

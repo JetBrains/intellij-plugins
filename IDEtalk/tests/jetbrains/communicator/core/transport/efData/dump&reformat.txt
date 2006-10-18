@@ -1,0 +1,24 @@
+Some Error:
+
+at java.net.PlainDatagramSocketImpl.receive0(Native Method)
+       - locked <0x033b0400> (a java.net.PlainDatagramSocketImpl)
+       at java.net.PlainDatagramSocketImpl.receive(PlainDatagramSocketImpl.java
+ :136)
+       - locked <0x033b0400> (a java.net.PlainDatagramSocketImpl)
+       at java.net.DatagramSocket.receive(DatagramSocket.java:712)
+       - locked <0x03084b48> (a java.net.DatagramPacket)
+       - locked <0x033b0460> (a java.net.MulticastSocket)
+       at jetbrains.communicator.p2p.MulticastPingThread.run(MulticastPingThread.j
+ava:85)
+== Message: ==
+Some Error:
+
+== Stacktrace: ==
+at java.net.PlainDatagramSocketImpl.receive0(Native Method)
+  - locked <0x033b0400> (a java.net.PlainDatagramSocketImpl)
+  at java.net.PlainDatagramSocketImpl.receive(PlainDatagramSocketImpl.java:136)
+  - locked <0x033b0400> (a java.net.PlainDatagramSocketImpl)
+  at java.net.DatagramSocket.receive(DatagramSocket.java:712)
+  - locked <0x03084b48> (a java.net.DatagramPacket)
+  - locked <0x033b0460> (a java.net.MulticastSocket)
+  at jetbrains.communicator.p2p.MulticastPingThread.run(MulticastPingThread.java:85)

@@ -1,0 +1,29 @@
+<container>
+  <component
+    key="jetbrains.communicator.core.commands.CommandManager"
+    class="jetbrains.communicator.core.impl.CommandManagerImpl"/>
+
+  <component
+      key="jetbrains.communicator.core.IDEtalkOptions"
+      class="jetbrains.communicator.core.impl.IDEtalkOptionsImpl"/>
+
+  <component
+      key="jetbrains.communicator.core.EventBroadcaster"
+      class="jetbrains.communicator.core.impl.EventBroadcasterImpl"/>
+  <component
+    key="jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher"
+    class="jetbrains.communicator.core.impl.dispatcher.AsyncMessageDispatcherImpl"/>
+  <component
+    key="jetbrains.communicator.core.dispatcher.LocalMessageDispatcher"
+    class="jetbrains.communicator.core.impl.dispatcher.LocalMessageDispatcherImpl"/>
+
+  <component
+    key="jetbrains.communicator.core.users.UserModel"
+    class="jetbrains.communicator.core.impl.users.PersistentUserModelImpl"/>
+
+  <component class="jetbrains.communicator.core.transport.TextMessageEventProvider"/>
+  <component class="jetbrains.communicator.core.impl.transport.CodePointerEventProvider"/>
+  <component class="jetbrains.communicator.core.impl.transport.GetVFileContentsProvider"/>
+  <component class="jetbrains.communicator.core.impl.transport.GetProjectsDataProvider"/>
+
+</container>

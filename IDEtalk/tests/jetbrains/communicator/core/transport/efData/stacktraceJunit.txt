@@ -1,0 +1,12 @@
+  [junit] java.lang.ArithmeticException: / by zero
+  [junit] 	at test.main(test.java:15)
+  [junit] 	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+  [junit] 	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+  [junit] 	at sun.reflect.DelegatingMethodAccessorImpl.inv
+== Message: ==
+== Stacktrace: ==
+  [junit] java.lang.ArithmeticException: / by zero
+  [junit]   at test.main(test.java:15)
+  [junit]   at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+  [junit]   at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+  [junit]   at sun.reflect.DelegatingMethodAccessorImpl.inv

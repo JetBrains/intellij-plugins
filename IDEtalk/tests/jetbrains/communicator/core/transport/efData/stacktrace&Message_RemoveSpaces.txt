@@ -1,0 +1,36 @@
+No message
+
+java.lang.NullPointerException
+
+            at jetbrains.communicator.util.UIUtil.removeListener
+            sToPreventMemoryLeakFromFocusWatcher(UIUtil.java:172)
+
+            at jetbrains.communicator.idea.toolWindow.UserTree.removeNotify(Use
+            rTree.java:46)
+
+            at java.awt.Container.removeNotify(Container.java:252
+            7)
+
+            at javax.swing.JComponent.removeNotify
+            (JComponent.java:4452)
+
+            at java.awt.Container.removeNotify(Container.java:2527)
+
+            at javax.swing.JComponent.removeNotify(JComponent.java:4452)
+
+            at java.awt.Container.removeNotify(Container.java:2527)
+
+            at javax.swing.JComponent.removeNotify(JComponent.java:4452)
+== Message: ==
+No message
+
+== Stacktrace: ==
+java.lang.NullPointerException
+  at jetbrains.communicator.util.UIUtil.removeListenersToPreventMemoryLeakFromFocusWatcher(UIUtil.java:172)
+  at jetbrains.communicator.idea.toolWindow.UserTree.removeNotify(UserTree.java:46)
+  at java.awt.Container.removeNotify(Container.java:2527)
+  at javax.swing.JComponent.removeNotify(JComponent.java:4452)
+  at java.awt.Container.removeNotify(Container.java:2527)
+  at javax.swing.JComponent.removeNotify(JComponent.java:4452)
+  at java.awt.Container.removeNotify(Container.java:2527)
+  at javax.swing.JComponent.removeNotify(JComponent.java:4452)
