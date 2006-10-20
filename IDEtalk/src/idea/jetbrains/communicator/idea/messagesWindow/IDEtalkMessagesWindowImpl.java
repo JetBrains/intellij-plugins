@@ -104,11 +104,6 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
   protected void createToolWindowComponent() {
     myContentManager.addContentManagerListener(new ContentManagerAdapter(){
 
-      public void contentRemoved(ContentManagerEvent event) {
-        super.contentRemoved(event);
-        event.getContent().getDisposer().dispose();
-      }
-
       public void selectionChanged(ContentManagerEvent event) {
         super.selectionChanged(event);
         // Process tab switching:
