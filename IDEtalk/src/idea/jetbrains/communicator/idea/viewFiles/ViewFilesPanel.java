@@ -46,7 +46,7 @@ import java.util.List;
 /**
  * @author Kir
  */
-class ViewFilesPanel extends JPanel implements DataContext {
+class ViewFilesPanel extends JPanel implements DataProvider {
   static final String NON_PROJECT_NODE = StringUtil.getMsg("non.project.files");
   private static final Icon UNKNOWN_ICON = IconLoader.getIcon("/nodes/unknown.png");
   private static final Icon PROJECT_ICON = IconLoader.getIcon("/nodes/ideaProject.png");
