@@ -22,6 +22,7 @@ import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.idea.actions.BaseAction;
 import jetbrains.communicator.util.TreeUtils;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
@@ -97,15 +98,14 @@ public class UserTreeTransferHandler extends TransferHandler {
   private void processUsersImport(JComponent comp, Transferable t) throws UnsupportedFlavorException, IOException {
     final String targetGroup = getTargetGroup(comp);
     final User[] movedUsers = (User[]) t.getTransferData(UsersTransferable.getMyDataFlavor());
-    for (int i = 0; i < movedUsers.length; i++) {
-      User movedUser = movedUsers[i];
+    for (User movedUser : movedUsers) {
       movedUser.setGroup(targetGroup, myUserModel);
     }
   }
 
-  private String getTargetGroup(JComponent comp) {
+  private static String getTargetGroup(JComponent comp) {
     final Object userObject = getUserObject(comp);
-    String group = userObject.toString();
+    String group = userObject != null ? userObject.toString() : UserModel.DEFAULT_GROUP;
     if (userObject instanceof User) {
       User user = (User) userObject;
       group = user.getGroup();
@@ -113,9 +113,10 @@ public class UserTreeTransferHandler extends TransferHandler {
     return group;
   }
 
+  @Nullable
   private static Object getUserObject(JComponent comp) {
     final TreePath path = getTree(comp).getSelectionPath();
-    return TreeUtils.getUserObject(path);
+    return path != null ? TreeUtils.getUserObject(path) : null;
   }
 
   private static JTree getTree(JComponent c) {
@@ -123,17 +124,16 @@ public class UserTreeTransferHandler extends TransferHandler {
   }
 
   public static class UsersTransferable implements Transferable {
-    private List myUsers = new ArrayList();
+    private List<User> myUsers = new ArrayList<User>();
     private static DataFlavor ourDataFlavor;
 
     public UsersTransferable(JTree tree) {
       final TreePath[] selectionPaths = tree.getSelectionPaths();
       if (selectionPaths != null) {
-        for (int i = 0; i < selectionPaths.length; i++) {
-          TreePath path = selectionPaths[i];
+        for (TreePath path : selectionPaths) {
           final Object userObject = TreeUtils.getUserObject(path.getLastPathComponent());
           if (userObject instanceof User) {
-            myUsers.add(userObject);
+            myUsers.add((User)userObject);
           }
         }
       }
@@ -158,10 +158,10 @@ public class UserTreeTransferHandler extends TransferHandler {
       else if (flavor == DataFlavor.stringFlavor) {
         StringBuffer sb = new StringBuffer(10 * myUsers.size());
         if (myUsers.size() > 0) {
-          sb.append(((User) myUsers.get(0)).getDisplayName());
+          sb.append((myUsers.get(0)).getDisplayName());
           for (int i = 1; i < myUsers.size(); i++) {
             sb.append('\n');
-            sb.append(((User) myUsers.get(i)).getDisplayName());
+            sb.append((myUsers.get(i)).getDisplayName());
           }
         }
         return sb.toString();

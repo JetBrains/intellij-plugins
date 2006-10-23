@@ -15,7 +15,6 @@
  */
 package jetbrains.communicator.p2p;
 
-import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.p2p.commands.AddOnlineUserP2PCommand;
 import org.apache.log4j.Logger;
@@ -178,7 +177,7 @@ class MulticastPingThread extends Thread {
     if (ownAddress) {
       return shouldSendToSelf(datagramPacket, targetPort); // For tests
     }
-    return !Pico.isLocalTesting() && !mySelfAddress.isLoopbackAddress();
+    return !mySelfAddress.isLoopbackAddress();
   }
 
   private boolean shouldSendToSelf(DatagramPacket datagramPacket, int targetPort) {

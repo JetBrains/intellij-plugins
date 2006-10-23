@@ -28,11 +28,13 @@ import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.jabber.JabberUI;
 import jetbrains.communicator.jabber.JabberUserFinder;
 import jetbrains.communicator.util.IgnoreList;
+import jetbrains.communicator.util.StringUtil;
 import static jetbrains.communicator.util.StringUtil.getMsg;
 import jetbrains.communicator.util.UIUtil;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.filter.ThreadFilter;
@@ -54,17 +56,17 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   private static final Logger LOG = Logger.getLogger(JabberTransport.class);
 
   private static final int RESPONSE_TIMEOUT = 120*1000;
-  public static final String CODE = "Jabber";
+  @NonNls public static final String CODE = "Jabber";
 
   private final JabberUI myUI;
   private final JabberFacade myFacade;
   private final UserModel myUserModel;
-  private final RosterListener myRosterListener = new MyRosterListener();
   private final IDEtalkListener myUserModelListener = new MyUserModelListener();
   private final AsyncMessageDispatcher myDispatcher;
 
-  private final PacketListener mySubscribeListener = new MySubscribeListener();
-  private final PacketListener myMessageListener = new MyMessageListener();
+  private RosterListener myRosterListener;
+  private PacketListener mySubscribeListener;
+  private PacketListener myMessageListener;
   private final JabberUserFinder myUserFinder;
   private final IDEFacade myIdeFacade;
 
@@ -176,6 +178,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return new String[0];
   }
 
+  @Nullable
   public String getAddressString(User user) {
     return null;
   }
@@ -239,7 +242,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return myPresenceMode == null || myPresenceMode != presenceMode;
   }
 
-  private void processResponse(XmlMessage xmlMessage, PacketCollector collector) {
+  private static void processResponse(XmlMessage xmlMessage, PacketCollector collector) {
     boolean gotResponse = false;
 
     while (!gotResponse) {
@@ -273,7 +276,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return message;
   }
 
-  Message createBaseMessage(User user, String message) {
+  static Message createBaseMessage(User user, String message) {
     Message msg = new Message(user.getName(), Message.Type.CHAT);
     msg.setBody(message);
     return msg;
@@ -281,13 +284,22 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
 
   public void connected(XMPPConnection connection) {
     LOG.info("Jabber connected");
-    connection.addPacketListener(mySubscribeListener, new PacketTypeFilter(Presence.class));
-    connection.addPacketListener(myMessageListener, new PacketTypeFilter(Message.class));
+    if (mySubscribeListener == null) {
+      mySubscribeListener = new MySubscribeListener();
+      connection.addPacketListener(mySubscribeListener, new PacketTypeFilter(Presence.class));
+    }
+    if (myMessageListener == null) {
+      myMessageListener = new MyMessageListener();
+      connection.addPacketListener(myMessageListener, new PacketTypeFilter(Message.class));
+    }
   }
 
   public void authenticated() {
     LOG.info("Jabber authenticated: " + myFacade.getConnection().getUser());
-    myFacade.getConnection().getRoster().addRosterListener(myRosterListener);
+    if (myRosterListener == null) {
+      myRosterListener = new MyRosterListener();
+      getRoster().addRosterListener(myRosterListener);
+    }
     myUserFinder.registerForProject(myFacade.getMyAccount().getJabberId());
 
     if (!hasJabberContacts()) {
@@ -304,10 +316,19 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
   public void disconnected(boolean onError) {
-    LOG.info("Jabber disconnected: " + myFacade.getConnection().getUser());
-    myFacade.getConnection().getRoster().removeRosterListener(myRosterListener);
-    myFacade.getConnection().removePacketListener(mySubscribeListener);
-    myFacade.getConnection().removePacketListener(myMessageListener);
+    final XMPPConnection connection = myFacade.getConnection();
+
+    LOG.info("Jabber disconnected: " + connection.getUser());
+    connection.removePacketListener(mySubscribeListener);
+    mySubscribeListener = null;
+    connection.removePacketListener(myMessageListener);
+    myMessageListener = null;
+
+    final Roster roster = connection.getRoster();
+    if (roster != null) {
+      roster.removeRosterListener(myRosterListener);
+    }
+    myRosterListener = null;
 
     myIDEtalkUsers.clear();
     myUser2Presence.clear();
@@ -316,7 +337,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     if (onError) {
       UIUtil.invokeLater(new Runnable() {
         public void run() {
-          myUI.connectAndLogin("Jabber server was disconnected");
+          myUI.connectAndLogin(StringUtil.getMsg("jabber.server.was.disconnected"));
         }
       });
     }
@@ -353,11 +374,12 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     }
   }
 
+  @Nullable
   private IDEtalkEvent createPresenceChangeEvent(User user, UserPresence newPresence) {
     UserPresence oldPresence = getUserPresence(user);
     if (!newPresence.equals(oldPresence)) {
       if (newPresence.isOnline() ^ oldPresence.isOnline()) {
-        return newPresence.isOnline() ? (IDEtalkEvent) new UserEvent.Online(user) : new UserEvent.Offline(user);
+        return newPresence.isOnline() ? new UserEvent.Online(user) : new UserEvent.Offline(user);
       }
       else {
         return new UserEvent.Updated(user, PRESENCE, oldPresence.getPresenceMode(), newPresence.getPresenceMode());
@@ -432,7 +454,8 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return id;
   }
 
-  private String getUserGroup(RosterEntry rosterEntry) {
+  @Nullable
+  private static String getUserGroup(RosterEntry rosterEntry) {
     String group = null;
     for (RosterGroup rosterGroup : rosterEntry.getGroups()) {
       group = rosterGroup.getName();
@@ -441,8 +464,9 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
   private Roster getRoster() {
-    assert myFacade.isConnectedAndAuthenticated() : "Not connected to Jabber";
-    return myFacade.getConnection().getRoster();
+    final Roster roster = myFacade.getConnection().getRoster();
+    assert roster != null;
+    return roster;
   }
 
   public JabberFacade getFacade() {
@@ -454,6 +478,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return user != null && user.isOnline();
   }
 
+  @Nullable
   private Presence _getPresence(User user) {
     if (!isOnline()) return null;
     return getRoster().getPresence(user.getName());

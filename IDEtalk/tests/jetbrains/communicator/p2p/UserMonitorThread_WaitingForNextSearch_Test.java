@@ -98,7 +98,6 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
   public void testForceFind() throws Exception {
 
     myUserMonitorThread.triggerFindNow();
-    Thread.sleep(50);
     expectSetOneOnlineUser();
     myUserMonitorThread.findNow(createProgressIndicator());
     assertFalse("Should trigger user finding and then stop", myUserMonitorThread.isFinding());

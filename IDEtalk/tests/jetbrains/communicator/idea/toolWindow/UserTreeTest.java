@@ -53,7 +53,6 @@ public class UserTreeTest extends BaseTestCase {
 
       protected void invokeSendMessageAction() {
         mySendMessageInvoked = true;
-        Thread.dumpStack();
       }
     };
 

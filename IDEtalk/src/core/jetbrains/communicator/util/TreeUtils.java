@@ -17,6 +17,7 @@
 package jetbrains.communicator.util;
 
 import jetbrains.communicator.core.users.User;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -46,6 +47,7 @@ public class TreeUtils {
     return value;
   }
 
+  @Nullable
   public static DefaultMutableTreeNode findNodeWithObject(DefaultMutableTreeNode node, Object userData) {
     if (userData == null) return null;
     if (userData.equals(node.getUserObject())) return node;
@@ -63,6 +65,7 @@ public class TreeUtils {
     return null;
   }
 
+  @Nullable
   @SuppressWarnings({"CollectionDeclaredAsConcreteClass"})
   public static TreePath getPathFromRoot(TreeNode node) {
     if (node == null) return null;

@@ -46,7 +46,7 @@ public class NetworkUtil {
         while (inetAddresses.hasMoreElements()) {
           InetAddress inetAddress = inetAddresses.nextElement();
           if (inetAddress instanceof Inet4Address) {       // Inet6Address is not supported - unable to reference via URL
-            if (!inetAddress.isLoopbackAddress() || Pico.isLocalTesting() || Pico.isUnitTest()) {
+            if (!inetAddress.isLoopbackAddress() || Pico.isUnitTest()) {
               ourCachedInterfaces.add(inetAddress);
             }
           }

@@ -16,7 +16,6 @@
 package jetbrains.communicator.jabber.impl;
 
 import com.thoughtworks.xstream.XStream;
-import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.UserPresence;
 import jetbrains.communicator.ide.IDEFacade;
@@ -272,7 +271,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
 
     String self = getConnection().getUser();
     for (String id : list) {
-      if (!self.startsWith(id) || Pico.isLocalTesting()) {
+      if (!self.startsWith(id)) {
         try {
           getConnection().getRoster().createEntry(id, JabberTransport.getSimpleId(id), new String[]{group});
         } catch (XMPPException e) {

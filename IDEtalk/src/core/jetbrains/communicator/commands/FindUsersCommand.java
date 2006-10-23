@@ -16,7 +16,6 @@
 
 package jetbrains.communicator.commands;
 
-import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.users.User;
@@ -82,7 +81,7 @@ public class FindUsersCommand implements NamedUserCommand {
 
     for (Iterator<User> it = users.iterator(); it.hasNext();) {
       User user = it.next();
-      if ( (user.isSelf() && !Pico.isLocalTesting()) || myUserModel.hasUser(user)) {
+      if ( user.isSelf() || myUserModel.hasUser(user)) {
         it.remove();
       }
     }

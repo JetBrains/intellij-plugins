@@ -19,9 +19,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
-import jetbrains.communicator.util.UIUtil;
 import jetbrains.communicator.util.icons.CompositeIcon;
-import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
@@ -34,12 +32,14 @@ import java.awt.event.ActionListener;
  * @author Kir
  */
 public class DropDownButton extends JButton {
-  private static final Logger LOG = Logger.getLogger(DropDownButton.class);
-
   private boolean myForcePressed;
   private ActionGroup myActionGroup;
 
   public DropDownButton(ActionGroup actionGroup, Icon  buttonIcon) {
+    if (actionGroup == null) {
+      actionGroup = new DefaultActionGroup();
+    }
+
     myActionGroup = actionGroup;
 
     CompositeIcon icon = new CompositeIcon();
@@ -140,20 +140,5 @@ public class DropDownButton extends JButton {
     public boolean isArmed() {
       return myForcePressed || super.isArmed();
     }
-  }
-
-  public static void main(String[] args) {
-    DefaultActionGroup actionGroup = new DefaultActionGroup();
-    actionGroup.getTemplatePresentation().setIcon(IconLoader.getIcon("/ideTalk/settings.png"));
-    actionGroup.add(new AnAction("dddd") {
-      public void actionPerformed(AnActionEvent e) {
-        System.out.println("DropDownButton.actionPerformed");
-      }
-    });
-
-    JPanel jPanel = new JPanel();
-    jPanel.setLayout(new FlowLayout());
-    jPanel.add(wrap(new DropDownButton(actionGroup, actionGroup.getTemplatePresentation().getIcon())));
-    UIUtil.run(jPanel);
   }
 }

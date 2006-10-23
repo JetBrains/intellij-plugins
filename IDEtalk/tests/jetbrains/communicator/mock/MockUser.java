@@ -17,7 +17,6 @@ package jetbrains.communicator.mock;
 
 import jetbrains.communicator.commands.Helper;
 import jetbrains.communicator.core.EventBroadcaster;
-import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.impl.users.BaseUserImpl;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.transport.XmlMessage;
@@ -87,7 +86,7 @@ public class MockUser extends BaseUserImpl {
   }
 
   public Transport getTransport() {
-    if (myTransport == null && Pico.isLocalTesting()) {
+    if (myTransport == null) {
       return new MockTransport();
     }
     return myTransport;

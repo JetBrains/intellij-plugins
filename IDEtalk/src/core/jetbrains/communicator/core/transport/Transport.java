@@ -21,6 +21,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserPresence;
 import jetbrains.communicator.ide.ProgressIndicator;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 import org.picocontainer.MutablePicoContainer;
 
 /**
@@ -61,6 +62,7 @@ public interface Transport {
    * User:getProjectsData call */
   String[] getProjects(User user);
   /** Should return user's address in human-readable form or null if not available */
+  @Nullable
   String getAddressString(User user);
 
   void sendXmlMessage(User user, XmlMessage message);

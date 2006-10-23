@@ -57,7 +57,7 @@ public class UserModelImpl implements UserModel, Disposable {
 
   public void addUser(final User user) {
     if (_getUsers().contains(user)) return;
-    if (user.isSelf() && !Pico.isLocalTesting() && !Pico.isUnitTest()) return;
+    if (user.isSelf() && !Pico.isUnitTest()) return;
 
     myBroadcaster.doChange(new UserEvent.Added(user), new Runnable() {
       public void run() {

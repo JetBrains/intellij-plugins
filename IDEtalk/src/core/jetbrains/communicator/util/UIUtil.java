@@ -36,6 +36,7 @@ import java.util.List;
 /**
  * @author Kir
  */
+@NonNls
 public class UIUtil {
   public static final int BLINK_DELAY = 800;
   private static final Map<String,Icon> ourIcons = new HashMap<String, Icon>();

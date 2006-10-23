@@ -156,6 +156,9 @@ public class UserMonitorThread extends Thread {
         LOG.error(e.getMessage(), e);
       } catch (InterruptedException e) {
         myThread = null;
+      } catch (Throwable e) {
+        LOG.error(e.getMessage(), e);
+        myThread = null;
       }
     }
     LOG.info("Shut down");
