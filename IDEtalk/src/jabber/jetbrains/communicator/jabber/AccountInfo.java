@@ -29,6 +29,7 @@ public class AccountInfo {
   private String myPassword;
   private boolean myForceSSL;
   private boolean myRememberPassword;
+  private boolean myShouldLogin = true;
 
   public AccountInfo() {
     this(StringUtil.getMyUsername(), null, "intellijoin.org", DEFAULT_PORT);
@@ -87,6 +88,14 @@ public class AccountInfo {
 
   public void setRememberPassword(boolean rememberPassword) {
     myRememberPassword = rememberPassword;
+  }
+
+  public void setLoginAllowed(final boolean shouldLogin) {
+    myShouldLogin = shouldLogin;
+  }
+
+  public boolean isLoginAllowed() {
+    return myShouldLogin;
   }
 
   public String toString() {

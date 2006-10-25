@@ -117,6 +117,18 @@ public class RegistrationFormTest extends BaseTestCase {
     assertNull("No error expected", myErrorText);
   }
 
+  public void testCommit() throws Exception {
+    myFacade.getMyAccount().setLoginAllowed(false);
+    myForm.commit();
+    assertTrue(myFacade.getMyAccount().isLoginAllowed());
+  }
+
+  public void testCancel() throws Exception {
+    myFacade.getMyAccount().setLoginAllowed(true);
+    myForm.cancel();
+    assertFalse(myFacade.getMyAccount().isLoginAllowed());
+  }
+
   private void _test(boolean useExistingAccount, boolean isSuccessful) {
     myFacade.clearLog();
     myErrorText = null;

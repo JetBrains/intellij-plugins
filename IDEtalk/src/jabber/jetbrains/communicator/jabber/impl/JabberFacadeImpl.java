@@ -110,6 +110,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
   public String connect() {
     if (isConnectedAndAuthenticated()) return null;
     AccountInfo info = getMyAccount();
+    if (!info.isLoginAllowed()) return null;
     return connect(info.getUsername(), info.getPassword(), info.getServer(), info.getPort(), info.isForceSSL());
   }
 

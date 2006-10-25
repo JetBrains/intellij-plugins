@@ -101,4 +101,10 @@ public class JabberFacadeTest extends BaseTestCase {
       assertNotNull("Nulls not allowed:" + i +" " + list, s);
     }
   }
+
+  public void testSkipConnect_WhenDisabled() throws Exception {
+    myFacade.getMyAccount().setLoginAllowed(false);
+    myFacade.connect();
+    assertNull("Should not try to connect", myFacade.getConnection());
+  }
 }

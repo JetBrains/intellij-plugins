@@ -172,6 +172,7 @@ public class RegistrationForm {
   }
 
   public void cancel() {
+    myFacade.getMyAccount().setLoginAllowed(false);
   }
 
   public void commit() {
@@ -179,6 +180,7 @@ public class RegistrationForm {
     setUseExisingAccount(myUseExisting.isSelected());
 
     myFacade.getMyAccount().setRememberPassword(shouldRememberPassword());
+    myFacade.getMyAccount().setLoginAllowed(true);
 
     try {
       UIUtil.run(myIdeFacade, StringUtil.getMsg("jabber.connecting"), new Runnable() {
