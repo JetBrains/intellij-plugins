@@ -33,6 +33,8 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import jetbrains.communicator.core.vfs.VFile;
 
+import java.util.HashSet;
+
 /**
  * @author Kir
  *
@@ -161,13 +163,38 @@ public class VFSUtil {
     VirtualFile result = findFileByFQName(file, project);
 
     if (result == null) {
+      final HashSet<VirtualFile> candidates = new HashSet<VirtualFile>();
+
       Module[] modules = ModuleManager.getInstance(project).getModules();
-      for (int i = 0; i < modules.length && result == null; i++) {
-        result = findFileInModule(modules[i], file);
+      for (Module module : modules) {
+        findFileInModule(candidates, module, file);
+      }
+
+      int currWeight = 0;
+      for (VirtualFile candidate : candidates) {
+        final int newWeight = weight(candidate, file);
+        if (result == null || newWeight > currWeight) {
+          currWeight = newWeight;
+          result = candidate;
+        }
       }
     }
 
     return result;
+  }
+
+  private static int weight(final VirtualFile candidate, final VFile file) {
+    final String pattern = file.getFullPath().replace('\\', '/');
+    final String candidatePath = candidate.getPath();
+
+    int weight = 0;
+    while(
+      weight < pattern.length() &&
+      weight < candidatePath.length() &&
+      pattern.charAt(pattern.length() - weight - 1) == candidatePath.charAt(candidatePath.length() - weight - 1)
+      ) weight ++;
+
+    return weight;
   }
 
   private static VirtualFile findFileByFQName(VFile file, Project project) {
@@ -182,19 +209,15 @@ public class VFSUtil {
   }
 
 
-  private static VirtualFile findFileInModule(Module module, VFile file) {
+  private static void findFileInModule(final HashSet<VirtualFile> found, Module module, VFile file) {
     ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
     VirtualFile[] files = rootManager.getFiles(OrderRootType.SOURCES);
-    VirtualFile result = findInRoots(files, file.getSourcePath());
-
-    if (result == null) {
-      result = findInRoots(rootManager.getContentRoots(), file.getContentPath());
-    }
-    return result;
+    findInRoots(found, files, file.getSourcePath());
+    findInRoots(found, rootManager.getContentRoots(), file.getContentPath());
   }
 
-  private static VirtualFile findInRoots(VirtualFile[] roots, String relativePath) {
-    if (relativePath == null) return null;
+  private static void findInRoots(final HashSet<VirtualFile> found, VirtualFile[] roots, String relativePath) {
+    if (relativePath == null) return;
 
     for (VirtualFile root : roots) {
       String probeName;
@@ -205,10 +228,9 @@ public class VFSUtil {
       }
       VirtualFile virtualFile = root.getFileSystem().findFileByPath(probeName);
       if (virtualFile != null) {
-        return virtualFile;
+        found.add(virtualFile);
       }
     }
-    return null;
   }
 
   public static boolean isArchive(VirtualFile sourceRoot) {
