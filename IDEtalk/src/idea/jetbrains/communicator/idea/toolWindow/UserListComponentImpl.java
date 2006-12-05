@@ -17,6 +17,7 @@ package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.messager.Callout;
+import com.intellij.openapi.application.ApplicationManager;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.IDEtalkAdapter;
@@ -356,7 +357,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
         }
 
     private boolean problem(final String resourceCode) {
-      new Thread(new Runnable(){
+      ApplicationManager.getApplication().executeOnPooledThread(new Runnable(){
         public void run() {
           try {
             Thread.sleep(100);
@@ -369,7 +370,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
             }
           });
         }
-      }).start();
+      });
       return false;
     }
 
