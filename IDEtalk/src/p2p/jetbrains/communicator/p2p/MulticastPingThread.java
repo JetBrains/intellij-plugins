@@ -17,6 +17,7 @@ package jetbrains.communicator.p2p;
 
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.p2p.commands.AddOnlineUserP2PCommand;
+import jetbrains.communicator.util.UIUtil;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -120,13 +121,12 @@ class MulticastPingThread extends Thread {
             final int targetPort = extractPort(message);
 
             if (shouldAddSelf(datagramPacket, targetPort)) {
-              Thread thread = new Thread(new Runnable() {
+              final Runnable registrationTask = new Runnable() {
                 public void run() {
                   addSelfInfoTo(remoteAddress, targetPort);
                 }
-              }, "Registration thread on " + remoteAddress);
-              thread.setDaemon(true);
-              thread.start();
+              };
+              UIUtil.invokeOnPooledThread(registrationTask);
             }
           }
         }
