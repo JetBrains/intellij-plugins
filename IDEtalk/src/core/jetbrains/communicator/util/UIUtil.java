@@ -32,6 +32,9 @@ import java.awt.event.*;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.*;
+
+import com.intellij.openapi.application.ApplicationManager;
 
 /**
  * @author Kir
@@ -116,7 +119,7 @@ public class UIUtil {
         final Object monitor = new Object();
         final long[] started = new long[1];
 
-        Thread workerThread = new Thread(new Runnable() {
+        final Runnable task = new Runnable() {
           public void run() {
             synchronized (monitor) {
               monitor.notifyAll();
@@ -124,14 +127,15 @@ public class UIUtil {
             }
             runnable.run();
           }
-        });
-        workerThread.start();
+        };
+
+        Future<?> workerThreadFuture = invokeOnPooledThread(task);
 
         indicator.checkCanceled();
 
         waitForWorkerThreadStart(monitor, started);
 
-        while (workerThread.isAlive()) {
+        while (!workerThreadFuture.isDone()) {
           indicator.checkCanceled();
           indicator.setFraction(.5f); // Update indicator
           try {
@@ -141,13 +145,27 @@ public class UIUtil {
           }
         }
 
-        if (workerThread.isAlive()) {
-          workerThread.interrupt();
+        if (!workerThreadFuture.isDone()) {
+          workerThreadFuture.cancel(true);
         }
       }
     };
 
     ideFacade.runLongProcess(title, process);
+  }
+
+  private static ExecutorService ourTestExecutors;
+
+  public static Future<?> invokeOnPooledThread(final Runnable task) {
+    Future<?> workerThreadFuture;
+
+    if (ApplicationManager.getApplication() != null) {
+      workerThreadFuture = ApplicationManager.getApplication().executeOnPooledThread(task);
+    } else {
+      if (ourTestExecutors == null) ourTestExecutors = Executors.newCachedThreadPool();
+      workerThreadFuture = ourTestExecutors.submit(task);
+    }
+    return workerThreadFuture;
   }
 
   private static void waitForWorkerThreadStart(Object monitor, long[] started) {

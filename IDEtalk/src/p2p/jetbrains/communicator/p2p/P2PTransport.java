@@ -132,7 +132,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   }
 
   public void initializeProject(final String projectName, MutablePicoContainer projectLevelContainer) {
-    new Thread(new Runnable() {
+    UIUtil.invokeOnPooledThread(new Runnable() {
       public void run() {
         User[] users = findUsers(new NullProgressIndicator());
         Set<User> ourUsers = new HashSet<User>();
@@ -151,7 +151,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
           }
         }
       }
-    }, "P2PTransport initializer").start();
+    });
   }
 
   boolean canAddUsers(String projectName, Collection<User> users) {

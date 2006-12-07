@@ -113,11 +113,12 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   public void initializeProject(String projectName, MutablePicoContainer projectLevelContainer) {
     myUI.initPerProject(projectLevelContainer);
     //noinspection HardCodedStringLiteral
-    new Thread(new Runnable() {
+    final Runnable connectRunnable = new Runnable() {
       public void run() {
         myFacade.connect();
       }
-    }, "IDEtalk JabberTransport initializer").start();
+    };
+    UIUtil.invokeOnPooledThread(connectRunnable);
   }
 
   public User[] findUsers(ProgressIndicator progressIndicator) {
@@ -194,16 +195,17 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
 
     if (xmlMessage.needsResponse()) {
       //noinspection HardCodedStringLiteral
-      Thread thread = new Thread(new Runnable() {
+      final Runnable responseWaiterRunnable = new Runnable() {
         public void run() {
           try {
             processResponse(xmlMessage, packetCollector);
-          } finally {
+          }
+          finally {
             packetCollector.cancel();
           }
         }
-      }, "Jabber message response waiter");
-      thread.start();
+      };
+      UIUtil.invokeOnPooledThread(responseWaiterRunnable);
     }
     else {
       packetCollector.cancel();

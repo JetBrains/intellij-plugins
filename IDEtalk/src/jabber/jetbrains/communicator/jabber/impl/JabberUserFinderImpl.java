@@ -25,6 +25,7 @@ import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.jabber.JabberUserFinder;
 import jetbrains.communicator.util.StringUtil;
 import jetbrains.communicator.util.XMLUtil;
+import jetbrains.communicator.util.UIUtil;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -111,7 +112,7 @@ public class JabberUserFinderImpl implements JabberUserFinder {
   }
 
   protected void doRegister(final String jabberUserId, final String currentProjectId) {
-    new Thread("Register User/Project in IDEtalk registry") {
+    UIUtil.invokeOnPooledThread(new Runnable() {
       public void run() {
         try {
           URL url = new URL(myRegistryUrl + "?user=" + jabberUserId + "&id=" + currentProjectId);
@@ -120,6 +121,6 @@ public class JabberUserFinderImpl implements JabberUserFinder {
           LOG.debug(e.getMessage(), e);
         }
       }
-    }.start();
+    });
   }
 }
