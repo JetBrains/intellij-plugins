@@ -17,6 +17,9 @@ package jetbrains.communicator.p2p;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlrpc.WebServer;
+import org.apache.xmlrpc.IdeaAwareWebServer;
+import org.apache.xmlrpc.XmlRpcServer;
+import org.apache.xmlrpc.IdeaAwareXmlRpcServer;
 
 import java.io.IOException;
 
@@ -32,7 +35,7 @@ public class P2PServer {
     myXmlRpcPort = portToListen;
 
     //XmlRpc.setDebug(true);
-    myWebServer = new WebServer(myXmlRpcPort);
+    myWebServer = new IdeaAwareWebServer(myXmlRpcPort, null, new IdeaAwareXmlRpcServer());
 
     for (P2PCommand p2PCommand : p2PServerCommands) {
       myWebServer.addHandler(p2PCommand.getXmlRpcId(), p2PCommand);
