@@ -32,7 +32,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
-import com.intellij.openapi.wm.impl.IdeFrame;
+import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.ui.PopupHandler;
 import com.intellij.util.diff.Diff;
 import jetbrains.communicator.commands.FindUsersCommand;
@@ -343,8 +343,8 @@ public class IDEAFacade implements IDEFacade {
       res = (Project) getData(component, DataConstants.PROJECT);
     }
     else {
-      IdeFrame[] frames = WindowManagerEx.getInstanceEx().getAllFrames();
-      for (IdeFrame frame : frames) {
+      IdeFrameImpl[] frames = WindowManagerEx.getInstanceEx().getAllFrames();
+      for (IdeFrameImpl frame : frames) {
         if (frame.isActive()) {
           res = frame.getProject();
           if (res != null) break;
