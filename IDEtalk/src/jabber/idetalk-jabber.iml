@@ -2,7 +2,7 @@
 <module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="ModuleRootManager" />
   <component inherit-compiler-output="true" name="NewModuleRootManager">
-    <output url="file:///Users/mike/Depot/IDEA/plugins/IDEtalk/target/classes_jabber" />
+    <output url="file://$MODULE_DIR$/../../target/classes_jabber" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder isTestSource="false" url="file://$MODULE_DIR$" />
@@ -13,7 +13,7 @@
     <orderEntry exported="" type="module-library">
       <library>
         <CLASSES>
-          <root url="jar:///Users/mike/Depot/IDEA/plugins/IDEtalk/lib/smack.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/smack.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -22,7 +22,7 @@
     <orderEntry exported="" type="module-library">
       <library>
         <CLASSES>
-          <root url="jar:///Users/mike/Depot/IDEA/plugins/IDEtalk/lib/smackx.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/smackx.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
