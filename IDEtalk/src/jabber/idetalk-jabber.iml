@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module version="4" relativePaths="true" type="JAVA_MODULE">
+<module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="ModuleRootManager" />
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <output url="file://$MODULE_DIR$/../../target/classes_jabber" />
+  <component inherit-compiler-output="true" name="NewModuleRootManager">
+    <output url="file:///Users/mike/Depot/IDEA/plugins/IDEtalk/target/classes_jabber" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
+      <sourceFolder isTestSource="false" url="file://$MODULE_DIR$" />
     </content>
-    <orderEntry type="module" module-name="idetalk-core" />
+    <orderEntry module-name="idetalk-core" type="module" />
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry forTests="false" type="sourceFolder" />
+    <orderEntry exported="" type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/smack.jar!/" />
+          <root url="jar:///Users/mike/Depot/IDEA/plugins/IDEtalk/lib/smack.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry exported="" type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/smackx.jar!/" />
+          <root url="jar:///Users/mike/Depot/IDEA/plugins/IDEtalk/lib/smackx.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="util" />
+    <orderEntry module-name="util" type="module" />
     <orderEntryProperties />
   </component>
   <component name="VcsManagerConfiguration">
