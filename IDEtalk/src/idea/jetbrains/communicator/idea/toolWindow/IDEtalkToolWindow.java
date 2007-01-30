@@ -17,6 +17,7 @@ package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.IconLoader;
@@ -129,7 +130,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     toolbarActions = buildToolbarActions(toolbarPanel, toolbarActions);
 
     if (toolbarActions != null) {
-      JComponent toolbar = myActionManager.createActionToolbar(PLACE_TOOLBAR, toolbarActions, true).getComponent();
+      JComponent toolbar = createToolbar(toolbarActions).getComponent();
       toolbarPanel.add(toolbar);
     }
 
@@ -146,7 +147,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     });
 
     if (treeActions != null) {
-      toolbarPanel.add(myActionManager.createActionToolbar(PLACE_TOOLBAR, treeActions, true).getComponent());
+      toolbarPanel.add(createToolbar(treeActions).getComponent());
     }
 
     toolbarPanel.setAlignmentX(0);
@@ -159,6 +160,12 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     if (group != null) {
       IDEAFacade.installPopupMenu(group, myUserListComponent.getTree(), myActionManager);
     }
+  }
+
+  private ActionToolbar createToolbar(final ActionGroup toolbarActions) {
+    final ActionToolbar toolbar = myActionManager.createActionToolbar(PLACE_TOOLBAR, toolbarActions, true);
+    toolbar.setLayoutPolicy(ActionToolbar.NOWRAP_LAYOUT_POLICY);
+    return toolbar;
   }
 
   private ActionGroup buildToolbarActions(JPanel toolbarPanel, ActionGroup toolbarActions) {
