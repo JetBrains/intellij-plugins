@@ -16,8 +16,8 @@
 package jetbrains.communicator.idea.history;
 
 import com.intellij.CommonBundle;
-import com.intellij.execution.filters.TextConsoleBuidlerFactory;
 import com.intellij.execution.filters.TextConsoleBuilder;
+import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.actionSystem.DataConstants;
@@ -58,7 +58,7 @@ public class ShowHistoryDialog extends IdeaDialog {
     setHorizontalStretch(3);
     setVerticalStretch(2);
 
-    TextConsoleBuilder builder = TextConsoleBuidlerFactory.getInstance().createBuilder(project);
+    TextConsoleBuilder builder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
     myConsole = builder.getConsole();
 
     myUser = user;

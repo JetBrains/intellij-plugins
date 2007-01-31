@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.idea.messagesWindow;
 
-import com.intellij.execution.filters.TextConsoleBuidlerFactory;
 import com.intellij.execution.filters.TextConsoleBuilder;
+import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -186,7 +186,7 @@ public class MessagesTab implements Disposable {
   }
 
   protected ConsoleView createConsoleView(Project project) {
-    TextConsoleBuilder builder = TextConsoleBuidlerFactory.getInstance().createBuilder(project);
+    TextConsoleBuilder builder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
     return builder.getConsole();
   }
 
