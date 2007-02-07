@@ -16,6 +16,8 @@
 
 package jetbrains.communicator.util;
 
+import com.intellij.concurrency.JobScheduler;
+import com.intellij.openapi.application.ApplicationManager;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.User;
@@ -33,8 +35,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
-
-import com.intellij.openapi.application.ApplicationManager;
 
 /**
  * @author Kir
@@ -116,42 +116,31 @@ public class UIUtil {
       public void run(ProgressIndicator indicator) {
         indicator.setIndefinite(true);
         indicator.setText(title);
-        final Object monitor = new Object();
-        final long[] started = new long[1];
 
-        final Runnable task = new Runnable() {
-          public void run() {
-            synchronized (monitor) {
-              monitor.notifyAll();
-              started[0] = System.currentTimeMillis();
-            }
-            runnable.run();
-          }
-        };
-
-        Future<?> workerThreadFuture = invokeOnPooledThread(task);
-
-        indicator.checkCanceled();
-
-        waitForWorkerThreadStart(monitor, started);
+        Future<?> workerThreadFuture = invokeOnPooledThread(runnable);
 
         while (!workerThreadFuture.isDone()) {
-          indicator.checkCanceled();
-          indicator.setFraction(.5f); // Update indicator
           try {
-            Thread.sleep(100);
-          } catch (InterruptedException e) {
+            indicator.checkCanceled();
+            indicator.setFraction(.5f); // Update indicator
+            workerThreadFuture.get(100, TimeUnit.MILLISECONDS);
+          }
+          catch (TimeoutException e) {
+            // Ok, spin a while
+          }
+          catch (Exception e) {
+            workerThreadFuture.cancel(true);
             break;
           }
-        }
-
-        if (!workerThreadFuture.isDone()) {
-          workerThreadFuture.cancel(true);
         }
       }
     };
 
     ideFacade.runLongProcess(title, process);
+  }
+
+  public static ScheduledFuture<?> scheduleDelayed(Runnable r, long delay, TimeUnit unit) {
+    return JobScheduler.getInstance().schedule(r, delay, unit);
   }
 
   private static ExecutorService ourTestExecutors;
@@ -166,18 +155,6 @@ public class UIUtil {
       workerThreadFuture = ourTestExecutors.submit(task);
     }
     return workerThreadFuture;
-  }
-
-  private static void waitForWorkerThreadStart(Object monitor, long[] started) {
-    synchronized(monitor) {
-      try {
-        while(started[0] == 0L) {
-          monitor.wait(1000);
-        }
-      } catch (InterruptedException e) {
-      // can ignore here
-      }
-    }
   }
 
   public static int compareUsers(User u1, User u2) {

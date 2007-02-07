@@ -15,9 +15,9 @@
  */
 package jetbrains.communicator.idea.toolWindow;
 
+import com.intellij.concurrency.JobScheduler;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.messager.Callout;
-import com.intellij.openapi.application.ApplicationManager;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.IDEtalkAdapter;
@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EventObject;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Kir Maximov
@@ -357,12 +358,8 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
         }
 
     private boolean problem(final String resourceCode) {
-      ApplicationManager.getApplication().executeOnPooledThread(new Runnable(){
+      JobScheduler.getInstance().schedule(new Runnable(){
         public void run() {
-          try {
-            Thread.sleep(100);
-          } catch (InterruptedException e) {
-          }
           UIUtil.invokeLater(new Runnable() {
             public void run() {
               Callout.showText(myTree, myTree.getEditingPath(), Callout.SOUTH_WEST,
@@ -370,7 +367,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
             }
           });
         }
-      });
+      }, 100, TimeUnit.MILLISECONDS);
       return false;
     }
 
