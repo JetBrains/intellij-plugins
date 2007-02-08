@@ -140,7 +140,7 @@ public class UIUtil {
   }
 
   public static ScheduledFuture<?> scheduleDelayed(Runnable r, long delay, TimeUnit unit) {
-    return JobScheduler.getInstance().schedule(r, delay, unit);
+    return JobScheduler.getScheduler().schedule(r, delay, unit);
   }
 
   private static ExecutorService ourTestExecutors;

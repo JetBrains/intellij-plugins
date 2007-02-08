@@ -358,7 +358,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
         }
 
     private boolean problem(final String resourceCode) {
-      JobScheduler.getInstance().schedule(new Runnable(){
+      JobScheduler.getScheduler().schedule(new Runnable(){
         public void run() {
           UIUtil.invokeLater(new Runnable() {
             public void run() {
@@ -367,7 +367,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
             }
           });
         }
-      }, 100, TimeUnit.MILLISECONDS);
+      }, (long)100, TimeUnit.MILLISECONDS);
       return false;
     }
 
