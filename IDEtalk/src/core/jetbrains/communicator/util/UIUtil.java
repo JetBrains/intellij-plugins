@@ -151,7 +151,14 @@ public class UIUtil {
     if (ApplicationManager.getApplication() != null) {
       workerThreadFuture = ApplicationManager.getApplication().executeOnPooledThread(task);
     } else {
-      if (ourTestExecutors == null) ourTestExecutors = Executors.newCachedThreadPool();
+      if (ourTestExecutors == null) {
+        ourTestExecutors =
+          new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadFactory() {
+            public Thread newThread(final Runnable r) {
+              return new Thread(r, "IDETalk pooled thread");
+            }
+          });
+      }
       workerThreadFuture = ourTestExecutors.submit(task);
     }
     return workerThreadFuture;
