@@ -52,7 +52,7 @@ public abstract class BaseEditorPopup extends ActionGroup {
 
   public AnAction[] getChildren(AnActionEvent e) {
 
-    if (e == null) return new AnAction[0];
+    if (e == null) return EMPTY_ARRAY;
 
     final Editor editor = getEditor(e);
     final VirtualFile file = getFile(e);
