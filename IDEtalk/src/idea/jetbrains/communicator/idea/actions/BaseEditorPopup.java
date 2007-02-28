@@ -85,12 +85,14 @@ public abstract class BaseEditorPopup extends ActionGroup {
   }
 
   private ActionGroup createGroupWithUsersActionGroup(final String group, final UserModel userModel, final VirtualFile file, final Editor editor) {
+    List<AnAction> users = new ArrayList<AnAction>();
+    User[] groupUsers = userModel.getUsers(group);
+    fillWithUserActions(groupUsers, users, file, editor);
+    final AnAction[] actions = users.toArray(new AnAction[users.size()]);
+
     return new ActionGroup(group, true) {
       public AnAction[] getChildren(AnActionEvent e) {
-        List<AnAction> users = new ArrayList<AnAction>();
-        User[] groupUsers = userModel.getUsers(group);
-        fillWithUserActions(groupUsers, users, file, editor);
-        return users.toArray(new AnAction[users.size()]);
+        return actions;
       }
     };
   }
