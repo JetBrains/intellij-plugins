@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module relativePaths="true" type="JAVA_MODULE" version="4">
   <component name="ModuleRootManager" />
-  <component inherit-compiler-output="true" name="NewModuleRootManager">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
     <output url="file://$MODULE_DIR$/target/classes_core" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder isTestSource="false" url="file://$MODULE_DIR$" />
+      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry exported="" type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/xpp3_min-1.1.3.4.O.jar!/" />
@@ -17,7 +17,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry exported="" type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/xstream.jar!/" />
@@ -27,13 +27,13 @@
       </library>
     </orderEntry>
     <orderEntry type="inheritedJdk" />
-    <orderEntry forTests="false" type="sourceFolder" />
-    <orderEntry exported="" level="project" name="picocontainer" type="library" />
-    <orderEntry exported="" module-name="Annotations" type="module" />
-    <orderEntry exported="" level="project" name="Log4J" type="library" />
-    <orderEntry exported="" level="project" name="JDOM" type="library" />
-    <orderEntry exported="" level="project" name="JUnit3" type="library" />
-    <orderEntry exported="" type="module-library">
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="picocontainer" level="project" />
+    <orderEntry type="module" module-name="Annotations" exported="" />
+    <orderEntry type="library" exported="" name="Log4J" level="project" />
+    <orderEntry type="library" exported="" name="JDOM" level="project" />
+    <orderEntry type="library" exported="" name="JUnit3" level="project" />
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/nanocontainer-1.0-SNAPSHOT.jar!/" />
@@ -42,9 +42,9 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry exported="" module-name="ui-openapi" type="module" />
-    <orderEntry module-name="ui-impl" type="module" />
-    <orderEntry module-name="openapi" type="module" />
+    <orderEntry type="module" module-name="ui-openapi" exported="" />
+    <orderEntry type="module" module-name="ui-impl" />
+    <orderEntry type="module" module-name="openapi" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
