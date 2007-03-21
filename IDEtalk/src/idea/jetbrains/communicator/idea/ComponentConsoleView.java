@@ -143,4 +143,8 @@ class ComponentConsoleView implements ConsoleView {
   public JComponent getComponent() {
     return myPanel;
   }
+
+  public JComponent getPreferredFocusableComponent() {
+    return myPanel;
+  }
 }
