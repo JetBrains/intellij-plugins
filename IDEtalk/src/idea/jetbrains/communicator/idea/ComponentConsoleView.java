@@ -21,6 +21,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.components.labels.LinkListener;
 import jetbrains.communicator.core.users.User;
@@ -146,5 +147,17 @@ class ComponentConsoleView implements ConsoleView {
 
   public JComponent getPreferredFocusableComponent() {
     return myPanel;
+  }
+
+  public ActionGroup getActions() {
+    return null;
+  }
+
+  public String getPlace() {
+    return null;
+  }
+
+  public JComponent getSearchComponent() {
+    return null;
   }
 }
