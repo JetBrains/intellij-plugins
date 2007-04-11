@@ -32,7 +32,7 @@ public class MulticastPingThreadTest extends BaseTestCase {
   }
 
   public void testExtractPort() throws Exception {
-    final String pingMessage = new String(MulticastPingThread.PING_MESSAGE);
+    final String pingMessage = MulticastPingThread.PING_MESSAGE;
 
     assertEquals(P2PTransport.XML_RPC_PORT, myMulticastPingThread.extractPort(pingMessage));
     assertEquals(125, myMulticastPingThread.extractPort(pingMessage + 125));
