@@ -16,6 +16,7 @@
 
 package jetbrains.communicator.util;
 
+import com.intellij.util.SystemProperties;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.users.UserModel;
 import org.apache.log4j.Logger;
@@ -48,7 +49,8 @@ public class StringUtil {
   public static final String FAILED_TITLE = getMsg("operation_failed.title");
   private static String ourUsername;
 
-  private StringUtil(){}
+  private StringUtil() {
+  }
 
   public static String getShortName(Class<? extends Object> aClass) {
     String name = aClass.getName();
@@ -56,7 +58,7 @@ public class StringUtil {
   }
 
   public static String getMyUsername() {
-    return ourUsername == null ? System.getProperty("user.name") : ourUsername;
+    return ourUsername == null ? SystemProperties.getUserName() : ourUsername;
   }
 
   public static void setMyUsername(String username) {
@@ -96,6 +98,7 @@ public class StringUtil {
   public static String toString(Class<? extends Object> aClass, Object[] objects) {
     return getShortName(aClass) + Arrays.asList(objects);
   }
+
   public static String toString(Class<? extends Object> aClass, Object object) {
     return toString(aClass, new Object[]{object});
   }
@@ -109,8 +112,9 @@ public class StringUtil {
     StringBuffer result = new StringBuffer(str.length() * 3);
     for (char aChar : str.toCharArray()) {
       if (aChar < 0x20 || aChar > 0xff) {
-        result.append("&#").append((int) aChar).append(';');
-      } else {
+        result.append("&#").append((int)aChar).append(';');
+      }
+      else {
         result.append(aChar);
       }
     }
@@ -127,8 +131,9 @@ public class StringUtil {
     while (matcher.find()) {
       char c = '?';
       try {
-        c = (char) Integer.valueOf(matcher.group(1)).intValue();
-      } catch (NumberFormatException e) {
+        c = (char)Integer.valueOf(matcher.group(1)).intValue();
+      }
+      catch (NumberFormatException e) {
         LOG.info(e, e);
       }
       matcher.appendReplacement(result, new String(new char[]{c}));
@@ -137,7 +142,7 @@ public class StringUtil {
     return result.toString();
   }
 
-  public static String getMsg(String resourceCode, Object ... str) {
+  public static String getMsg(String resourceCode, Object... str) {
     return MessageFormat.format(ourBundle.getString(resourceCode), str);
   }
 
@@ -147,7 +152,9 @@ public class StringUtil {
     return s.substring(0, idx);
   }
 
-  /** @noinspection "Magic number"*/
+  /**
+   * @noinspection "Magic number"
+   */
   public static String join(List<String> lines, char delimeter) {
     StringBuffer sb = new StringBuffer(lines.size() * 70);
     for (Iterator<String> it = lines.iterator(); it.hasNext();) {
