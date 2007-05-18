@@ -20,11 +20,13 @@ import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.ui.components.labels.LinkListener;
 import jetbrains.communicator.core.users.User;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -160,4 +162,8 @@ class ComponentConsoleView implements ConsoleView {
   public JComponent getSearchComponent() {
     return null;
   }
+  @NotNull
+public AnAction[] createUpDownStacktraceActions() {
+  return AnAction.EMPTY_ARRAY;
+}
 }
