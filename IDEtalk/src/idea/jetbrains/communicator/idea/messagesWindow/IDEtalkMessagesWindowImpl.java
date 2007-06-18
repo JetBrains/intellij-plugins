@@ -63,7 +63,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
 
   private Timer myIconBlinker;
 
-  private TabbedPaneWrapper myTabsWrapper = new TabbedPaneWrapper();
+  private TabbedPaneWrapper myTabsWrapper;
   private EventsProcessor myEventsProcessor;
   private static final Color NEW_MESSAGE_AVAILABLE_COLOR = new Color(0, 200, 0);
 
@@ -72,15 +72,6 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
 
   public IDEtalkMessagesWindowImpl(ToolWindowManager toolWindowManager, ActionManager actionManager, Project project) {
     super(toolWindowManager, actionManager, project);
-
-    myContentFactory = PeerFactory.getInstance().getContentFactory();
-    TabbedPaneContentUI contentUI = new TabbedPaneContentUI(JTabbedPane.TOP);
-    myContentManager = myContentFactory.createContentManager(contentUI, true, myProject);
-    try {
-      myTabsWrapper = getWrapper(contentUI);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   private TabbedPaneWrapper getWrapper(TabbedPaneContentUI contentUI) throws IllegalAccessException {
@@ -102,6 +93,15 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
   }
 
   protected void createToolWindowComponent() {
+    myContentFactory = PeerFactory.getInstance().getContentFactory();
+    TabbedPaneContentUI contentUI = new TabbedPaneContentUI(JTabbedPane.TOP);
+    myContentManager = myContentFactory.createContentManager(contentUI, true, myProject);
+    try {
+      myTabsWrapper = getWrapper(contentUI);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+
     myContentManager.addContentManagerListener(new ContentManagerAdapter(){
 
       public void selectionChanged(ContentManagerEvent event) {

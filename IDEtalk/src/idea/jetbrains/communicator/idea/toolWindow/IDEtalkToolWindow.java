@@ -54,7 +54,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
   @NonNls public static final String PLACE_POPUP = "POPUP";
   @NonNls private static final String TOOL_WINDOW_ID = "IDEtalk";
 
-  private UserListComponentImpl myUserListComponent;
+  private final UserListComponentImpl myUserListComponent;
   private final MutablePicoContainer myContainer;
 
   private JPanel myTopPanel;
@@ -67,6 +67,8 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
 
     myContainer.registerComponentImplementation(UserListComponentImpl.class);
     myContainer.registerComponentImplementation(StatusToolbarImpl.class);
+
+    myUserListComponent = (UserListComponentImpl) myContainer.getComponentInstanceOfType(UserListComponent.class);
   }
 
   public void initComponent() {
@@ -118,7 +120,6 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
       }
     });
 
-    myUserListComponent = (UserListComponentImpl) myContainer.getComponentInstanceOfType(UserListComponent.class);
     StatusToolbar statusToolbar = ((StatusToolbar) myContainer.getComponentInstanceOfType(StatusToolbar.class));
 
     ActionGroup toolbarActions = (ActionGroup) myActionManager.getAction("IDEtalk");
