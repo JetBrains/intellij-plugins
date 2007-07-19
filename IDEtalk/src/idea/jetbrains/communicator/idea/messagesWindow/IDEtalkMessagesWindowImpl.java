@@ -282,7 +282,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
   }
 
   public void removeToolWindow() {
-    myContentManager.removeAllContents();
+    myContentManager.removeAllContents(true);
   }
 
   private void processNewMessage(User from) {
