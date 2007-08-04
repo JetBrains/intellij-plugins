@@ -337,11 +337,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     myUser2Thread.clear();
 
     if (onError) {
-      UIUtil.invokeLater(new Runnable() {
-        public void run() {
-          myUI.connectAndLogin(StringUtil.getMsg("jabber.server.was.disconnected"));
-        }
-      });
+      myUI.connectAndLoginAsync(StringUtil.getMsg("jabber.server.was.disconnected"), null);
     }
   }
 

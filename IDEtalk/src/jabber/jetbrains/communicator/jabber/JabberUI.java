@@ -20,6 +20,7 @@ import org.picocontainer.MutablePicoContainer;
 
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Kir
@@ -27,6 +28,7 @@ import java.util.List;
 public interface JabberUI {
 
   boolean connectAndLogin(String message);
+  void connectAndLoginAsync(String message, AtomicBoolean connected);
 
   void initPerProject(MutablePicoContainer projectLevelContainer);
   void login(Component parentComponent);

@@ -28,11 +28,14 @@ import jetbrains.communicator.jabber.impl.FindByJabberIdDialog;
 import jetbrains.communicator.jabber.register.RegistrationDialog;
 import jetbrains.communicator.jabber.register.RegistrationForm;
 import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.UIUtil;
 import org.jivesoftware.smack.packet.Presence;
 import org.picocontainer.MutablePicoContainer;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Kir
@@ -69,6 +72,33 @@ public class JabberIdeaUI implements JabberUI {
       login(null);
     }
     return myFacade.isConnectedAndAuthenticated();
+  }
+
+  public void connectAndLoginAsync(final String message, final AtomicBoolean connected) {
+    if (SwingUtilities.isEventDispatchThread()) {
+      UIUtil.invokeOnPooledThread(new Runnable() {
+        public void run() {
+          connectAndLoginAsync(message, connected);
+        }
+      });
+      return;
+    }
+
+    myFacade.connect();
+
+    if (!myFacade.isConnectedAndAuthenticated()) {
+      Runnable runnable = new Runnable() {
+        public void run() {
+          RegistrationForm.INITIAL_MESSAGE = message;
+          login(null);
+
+          if (connected != null) {
+            connected.set(myFacade.isConnectedAndAuthenticated());
+          }
+        }
+      };
+      UIUtil.invokeLater(runnable);
+    }
   }
 
   public void login(Component parentComponent) {
