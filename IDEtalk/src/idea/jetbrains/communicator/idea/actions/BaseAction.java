@@ -18,7 +18,7 @@ package jetbrains.communicator.idea.actions;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.project.Project;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.commands.NamedUserCommand;
@@ -67,12 +67,12 @@ public class BaseAction<T extends UserCommand> extends AnAction {
 
   @Nullable
   public static Project getProject(AnActionEvent e) {
-    return ((Project) e.getDataContext().getData(DataConstants.PROJECT));
+    return (DataKeys.PROJECT.getData(e.getDataContext()));
   }
 
   @Nullable
   public static MutablePicoContainer getContainer(Component c) {
-    Project project = (Project) DataManager.getInstance().getDataContext(c).getData(DataConstants.PROJECT);
+    Project project = DataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(c));
     return getContainer(project);
   }
 

@@ -16,7 +16,7 @@
 package jetbrains.communicator.idea.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,11 +32,11 @@ public class ActionUtil {
   }
 
   static VirtualFile getFile(AnActionEvent e) {
-    return ((VirtualFile) e.getDataContext().getData(DataConstants.VIRTUAL_FILE));
+    return (DataKeys.VIRTUAL_FILE.getData(e.getDataContext()));
   }
 
   static Editor getEditor(AnActionEvent e) {
-    return ((Editor) e.getDataContext().getData(DataConstants.EDITOR));
+    return (DataKeys.EDITOR.getData(e.getDataContext()));
   }
 
   static UserModel getUserModel() {

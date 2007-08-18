@@ -17,7 +17,7 @@ package jetbrains.communicator.idea.config;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.project.Project;
 import jetbrains.communicator.util.StringUtil;
 
@@ -32,7 +32,7 @@ public class EditIDEtalkOptions extends AnAction {
   }
 
   public void actionPerformed(AnActionEvent e) {
-    Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
+    Project project = DataKeys.PROJECT.getData(e.getDataContext());
     if (project != null) {
       new IDEtalkConfiguration(project).edit();
     }
