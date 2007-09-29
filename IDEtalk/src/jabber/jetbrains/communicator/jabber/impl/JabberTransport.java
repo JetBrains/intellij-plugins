@@ -122,7 +122,10 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
   public User[] findUsers(ProgressIndicator progressIndicator) {
-    return myUserFinder.findUsers(progressIndicator);
+    if (isOnline()) {
+      return myUserFinder.findUsers(progressIndicator);
+    }
+    return new User[0];
   }
 
   public Class<? extends NamedUserCommand> getSpecificFinderClass() {
@@ -620,9 +623,8 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
         UIUtil.invokeLater(new Runnable() {
           public void run() {
             String from = (message.getFrom() != null) ? getMsg("from.0.lf", message.getFrom()) : "";
-            myIdeFacade.showMessage(getMsg("jabber.error"),
-                getMsg("jabber.error.text", from, (message.getError() == null ? "N/A" : message.getError().toString()))
-                );
+            LOG.warn(getMsg("jabber.error.text", from,
+                (message.getError() == null ? "N/A" : message.getError().toString())));
           }
         });
         return;
