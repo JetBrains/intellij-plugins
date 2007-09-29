@@ -17,6 +17,7 @@ package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.ActionToolbar;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.ide.StatusToolbar;
 import jetbrains.communicator.idea.actions.BaseAction;
@@ -62,7 +63,9 @@ public class StatusToolbarImpl implements StatusToolbar {
     for (Class<? extends NamedUserCommand> toolbarAction : getToolbarActions()) {
       actions.add(new BaseAction(toolbarAction));
     }
-    return ActionManager.getInstance().createActionToolbar("BottomToolbar", actions, true).getComponent();
+    final ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar("BottomToolbar", actions, true);
+    actionToolbar.setLayoutPolicy(ActionToolbar.NOWRAP_LAYOUT_POLICY);
+    return actionToolbar.getComponent();
   }
 
   Class<? extends NamedUserCommand>[] getToolbarActions() {
