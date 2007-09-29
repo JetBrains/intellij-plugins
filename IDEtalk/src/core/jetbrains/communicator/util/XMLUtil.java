@@ -86,7 +86,7 @@ public class XMLUtil {
       BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(fullFileName));
       writer = new OutputStreamWriter(stream, "UTF-8");
       xStream.toXML(object, writer);
-    } catch (IOException e) {
+    } catch (Exception e) {
       processError(e);
     }
     finally{
@@ -121,7 +121,8 @@ public class XMLUtil {
   }
 
   private static void processError(Exception e) {
-    LOG.error(e.getMessage(), e);
+    LOG.error(e.getMessage());
+    LOG.info(e.getMessage(), e);
     if (Pico.isUnitTest()) {
       assert false: "LOG.error()";
     }

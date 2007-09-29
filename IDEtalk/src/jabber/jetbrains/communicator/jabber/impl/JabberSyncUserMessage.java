@@ -81,7 +81,9 @@ class JabberSyncUserMessage implements Message {
 
   private void processXMPPException(XMPPException e, UserEvent event) {
     if (e.getXMPPError() == null || e.getXMPPError().getCode() != 406) { // Not acceptable
-      LOG.warn(e.getMessage() + ' ' + event, e);
+      final String s = e.getMessage() + "\nLocal event: " + event;
+      LOG.error(s);
+      LOG.info(s, e);
     }
   }
 
