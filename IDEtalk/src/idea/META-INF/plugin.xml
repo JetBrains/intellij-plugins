@@ -137,7 +137,7 @@
     <group id="IDEtalk.MessageWindowToolbar">
       <action class="jetbrains.communicator.idea.messagesWindow.CloseAction"
               text="_Hide Messages Window" id="IDEtalk.HideMessages"
-              description="Hide toolwindow with IDEtalk messages"
+              description="Hide tool window with IDEtalk messages"
               icon="/actions/cancel.png"
       />
       <reference id="IDEtalk.SearchUserHistory"/>
