@@ -152,7 +152,7 @@ public class IDEtalkConfiguration implements Configurable {
   @Nullable
   @NonNls
   public String getHelpTopic() {
-    return null;
+    return "reference.dialogs.idetalk";
   }
 
   public void edit() {
