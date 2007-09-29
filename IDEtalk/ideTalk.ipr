@@ -526,10 +526,6 @@
   <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/core.iml" filepath="$PROJECT_DIR$/core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/coreImpl/coreImpl.iml" filepath="$PROJECT_DIR$/src/coreImpl/coreImpl.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/idea/idea.iml" filepath="$PROJECT_DIR$/src/idea/idea.iml" />
-      <module fileurl="file://$PROJECT_DIR$/idea_plugin/idea_plugin.iml" filepath="$PROJECT_DIR$/idea_plugin/idea_plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea_plugin/idea_plugin.iml" filepath="$PROJECT_DIR$/idea_plugin/idea_plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/src/core/idetalk-core.iml" filepath="$PROJECT_DIR$/src/core/idetalk-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/src/coreImpl/idetalk-core-impl.iml" filepath="$PROJECT_DIR$/src/coreImpl/idetalk-core-impl.iml" />
@@ -538,10 +534,6 @@
       <module fileurl="file://$PROJECT_DIR$/src/jabber_idea/idetalk-jabber-idea.iml" filepath="$PROJECT_DIR$/src/jabber_idea/idetalk-jabber-idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/src/p2p/idetalk-p2p.iml" filepath="$PROJECT_DIR$/src/p2p/idetalk-p2p.iml" />
       <module fileurl="file://$PROJECT_DIR$/tests/idetalk-tests.iml" filepath="$PROJECT_DIR$/tests/idetalk-tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/jabber/jabber.iml" filepath="$PROJECT_DIR$/src/jabber/jabber.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/jabber_idea/jabber_idea.iml" filepath="$PROJECT_DIR$/src/jabber_idea/jabber_idea.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/p2p/p2p.iml" filepath="$PROJECT_DIR$/src/p2p/p2p.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tests/tests.iml" filepath="$PROJECT_DIR$/tests/tests.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA" project-jdk-type="IDEA JDK">
@@ -563,6 +555,7 @@
       </RunnerSettings>
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
+      <ConfigurationWrapper RunnerId="Profile " />
       <ConfigurationWrapper RunnerId="Run" />
       <method>
         <option name="Make" value="true" />
