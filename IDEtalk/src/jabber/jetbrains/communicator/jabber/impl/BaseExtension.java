@@ -17,9 +17,10 @@ package jetbrains.communicator.jabber.impl;
 
 import jetbrains.communicator.core.transport.Transport;
 import org.apache.log4j.Logger;
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.jdom.Document;
+import org.jdom.Verifier;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.jivesoftware.smack.packet.PacketExtension;
@@ -56,13 +57,25 @@ public abstract class BaseExtension implements PacketExtension, PacketExtensionP
 
   public Object createFrom(String xml) {
     try {
-      Document document = new SAXBuilder().build(new StringReader(xml));
+      Document document = new SAXBuilder().build(new StringReader(removeNonXmlCharacters(xml)));
       return createFrom(document.getRootElement());
 
     } catch (Exception e) {
       LOG.error(e.getMessage() + "\n\n" + xml, e);
     }
     return null;
+  }
+
+  private static String removeNonXmlCharacters(String xml) {
+    StringBuilder sb = null;
+    for(int i = 0; i < xml.length(); i ++) {
+      char c = xml.charAt(i);
+      if (!Verifier.isXMLCharacter(c)) {
+        if (sb == null) sb = new StringBuilder(xml);
+        sb.setCharAt(i, '?');
+      }
+    }
+    return sb != null ? sb.toString() : xml;
   }
 
   protected static String getContent(XmlPullParser parser, String tagName) {

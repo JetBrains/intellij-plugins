@@ -126,12 +126,12 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
     myUserModel.addUser(mySelf);
     mySelf.setCanAccessMyFiles(true, myUserModel);
 
-    myIdeFacade.setReturnedFileText(vFile, "some tex&&&<<>t");
+    myIdeFacade.setReturnedFileText(vFile, "some tex&&&<<>t" + '\u0000');
 
     String text = mySelf.getVFile(vFile, myIdeFacade);
 
-    assertEquals("Should successfully return file text", "some tex&&&<<>t", text );
-    assertEquals("Should put result to vFile", "some tex&&&<<>t", vFile.getContents());
+    assertEquals("Should successfully return file text", "some tex&&&<<>t" + '\u0000', text );
+    assertEquals("Should put result to vFile", "some tex&&&<<>t" + '\u0000', vFile.getContents());
   }
 
   public void testGetFileContent_BigFile() throws Exception {

@@ -192,7 +192,9 @@ public class VFile implements Comparable, Cloneable {
     setAttr(root, SOURCE_PATH_ATTR, getSourcePath());
 
     root.setAttribute(HAS_CONTENTS_ATTR, myContents == null ? "false" : "true");
-    root.setText(getContents());
+    if (myContents != null) {
+      root.setText(StringUtil.toXMLSafeString(getContents()));
+    }
   }
 
   /** @Nullable */
@@ -206,7 +208,7 @@ public class VFile implements Comparable, Cloneable {
     file.setProjectName(root.getAttributeValue(PROJECT_NAME_ATTR));
     file.setSourcePath(root.getAttributeValue(SOURCE_PATH_ATTR));
     if ("true".equals(root.getAttributeValue(HAS_CONTENTS_ATTR))) {
-      file.setContents(root.getText());
+      file.setContents(StringUtil.fromXMLSafeString(root.getText()));
     }
     return file;
   }
