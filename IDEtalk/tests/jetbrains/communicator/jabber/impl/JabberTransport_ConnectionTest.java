@@ -623,20 +623,6 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertTrue("Time should be set for simple Jabber messages: " + diff, Math.abs(diff) < 150);
   }
 
-  public void testErrorMessage() throws Throwable {
-    Message baseMessage = myTransport.createBaseMessage(mySelf, null);
-    baseMessage.setType(Message.Type.ERROR);
-    baseMessage.setError(new XMPPError(44, "some error message"));
-
-    myIdeFacade.getAndClearLog();
-    myTransport.getFacade().getConnection().sendPacket(baseMessage);
-    Thread.sleep(200);
-    String log = myIdeFacade.getAndClearLog();
-    assertTrue("Should show Message: " + log, log.indexOf("showMessage") == 0);
-    assertTrue("Should show error text: " + log, log.indexOf("some error message") > 0);
-  }
-
-
   public void testSyncronizeRosterOnConnect() throws Throwable {
     myTransport.authenticated();
     assertTrue("No Jabber users in UserModel - should sync with roster", myUsersSynchronized);

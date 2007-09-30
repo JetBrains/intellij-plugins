@@ -24,6 +24,7 @@ import jetbrains.communicator.jabber.ConnectionListener;
 import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.jabber.VCardInfo;
 import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.WaitFor;
 import jetbrains.communicator.util.XMLUtil;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -161,6 +162,12 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
 
       saveAccountData(server, port, username, password, forceOldSSL);
 
+      if (rosterIsNotAvailable()) {
+        myConnection.close();
+        myConnection = null;
+        return StringUtil.getMsg("no.roster.try.again");
+      }
+
       fireAuthenticated();
       myConnection.addConnectionListener(new SmackConnectionListener());
     } catch (XMPPException e) {
@@ -172,6 +179,15 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     }
 
     return null;
+  }
+
+  private boolean rosterIsNotAvailable() {
+    new WaitFor(3000) {
+      protected boolean condition() {
+        return myConnection.getRoster() != null;
+      }
+    };
+    return myConnection.getRoster() == null;
   }
 
   private String getMessage(XMPPException e) {
