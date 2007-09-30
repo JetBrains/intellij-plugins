@@ -16,7 +16,6 @@
 
 package jetbrains.communicator.util;
 
-import com.intellij.util.SystemProperties;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.users.UserModel;
 import org.apache.log4j.Logger;
@@ -58,7 +57,8 @@ public class StringUtil {
   }
 
   public static String getMyUsername() {
-    return ourUsername == null ? SystemProperties.getUserName() : ourUsername;
+    //noinspection HardCodedStringLiteral
+    return ourUsername == null ? System.getProperty("user.name") : ourUsername;
   }
 
   public static void setMyUsername(String username) {

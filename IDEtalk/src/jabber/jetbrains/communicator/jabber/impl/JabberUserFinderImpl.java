@@ -15,7 +15,6 @@
  */
 package jetbrains.communicator.jabber.impl;
 
-import com.intellij.util.containers.HashSet;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
@@ -25,7 +24,6 @@ import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.jabber.JabberUserFinder;
 import jetbrains.communicator.util.StringUtil;
 import jetbrains.communicator.util.XMLUtil;
-import jetbrains.communicator.util.UIUtil;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -35,6 +33,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -112,7 +111,7 @@ public class JabberUserFinderImpl implements JabberUserFinder {
   }
 
   protected void doRegister(final String jabberUserId, final String currentProjectId) {
-    UIUtil.invokeOnPooledThread(new Runnable() {
+    myIdeFacade.runOnPooledThread(new Runnable() {
       public void run() {
         try {
           URL url = new URL(myRegistryUrl + "?user=" + jabberUserId + "&id=" + currentProjectId);

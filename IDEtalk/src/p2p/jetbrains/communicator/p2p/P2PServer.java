@@ -15,7 +15,6 @@
  */
 package jetbrains.communicator.p2p;
 
-import com.intellij.peer.PeerFactory;
 import org.apache.log4j.Logger;
 import org.apache.xmlrpc.WebServer;
 
@@ -26,14 +25,24 @@ import java.io.IOException;
  */
 public class P2PServer {
   private static final Logger LOG = Logger.getLogger(P2PServer.class);
-  private final WebServer myWebServer;
+  private WebServer myWebServer;
   private int myXmlRpcPort;
 
   public P2PServer(int portToListen, P2PCommand[] p2PServerCommands) throws IOException {
     myXmlRpcPort = portToListen;
 
     //XmlRpc.setDebug(true);
-    myWebServer = PeerFactory.getInstance().createWebServer(myXmlRpcPort, null, PeerFactory.getInstance().createRpcServer());
+    try{
+      // Trying to avoid dependency on IDEA code here:
+      //noinspection UnnecessaryFullyQualifiedName
+      final com.intellij.peer.PeerFactory peerFactory = com.intellij.peer.PeerFactory.getInstance();
+      myWebServer = peerFactory.createWebServer(myXmlRpcPort, null,
+          peerFactory.createRpcServer());
+    }
+    catch (Exception e) {
+      LOG.debug(e.getMessage(), e);
+      myWebServer = new WebServer(myXmlRpcPort);
+    }
 
     for (P2PCommand p2PCommand : p2PServerCommands) {
       myWebServer.addHandler(p2PCommand.getXmlRpcId(), p2PCommand);

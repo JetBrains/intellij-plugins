@@ -16,8 +16,6 @@
 
 package jetbrains.communicator.util;
 
-import com.intellij.concurrency.JobScheduler;
-import com.intellij.openapi.application.ApplicationManager;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.User;
@@ -109,7 +107,7 @@ public class UIUtil {
     return icon;
   }
 
-  public static void run(IDEFacade ideFacade, final String title, final Runnable runnable)
+  public static void run(final IDEFacade ideFacade, final String title, final Runnable runnable)
       throws CanceledException {
 
     IDEFacade.Process process = new IDEFacade.Process() {
@@ -117,18 +115,21 @@ public class UIUtil {
         indicator.setIndefinite(true);
         indicator.setText(title);
 
-        Future<?> workerThreadFuture = invokeOnPooledThread(runnable);
+        Future<?> workerThreadFuture = ideFacade.runOnPooledThread(runnable);
 
         while (!workerThreadFuture.isDone()) {
           try {
             indicator.checkCanceled();
-            indicator.setFraction(.5f); // Update indicator
+            indicator.setFraction(0.5f); // Update indicator
             workerThreadFuture.get(100, TimeUnit.MILLISECONDS);
           }
           catch (TimeoutException e) {
             // Ok, spin a while
           }
-          catch (Exception e) {
+          catch (ExecutionException e) {
+            workerThreadFuture.cancel(true);
+            throw new RuntimeException(e);
+          } catch (InterruptedException e) {
             workerThreadFuture.cancel(true);
             break;
           }
@@ -137,31 +138,6 @@ public class UIUtil {
     };
 
     ideFacade.runLongProcess(title, process);
-  }
-
-  public static ScheduledFuture<?> scheduleDelayed(Runnable r, long delay, TimeUnit unit) {
-    return JobScheduler.getScheduler().schedule(r, delay, unit);
-  }
-
-  private static ExecutorService ourTestExecutors;
-
-  public static Future<?> invokeOnPooledThread(final Runnable task) {
-    Future<?> workerThreadFuture;
-
-    if (ApplicationManager.getApplication() != null) {
-      workerThreadFuture = ApplicationManager.getApplication().executeOnPooledThread(task);
-    } else {
-      if (ourTestExecutors == null) {
-        ourTestExecutors =
-          new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadFactory() {
-            public Thread newThread(final Runnable r) {
-              return new Thread(r, "IDETalk pooled thread");
-            }
-          });
-      }
-      workerThreadFuture = ourTestExecutors.submit(task);
-    }
-    return workerThreadFuture;
   }
 
   public static int compareUsers(User u1, User u2) {

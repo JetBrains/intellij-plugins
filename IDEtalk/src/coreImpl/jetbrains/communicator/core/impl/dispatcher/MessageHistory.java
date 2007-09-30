@@ -145,11 +145,8 @@ class MessageHistory {
   public synchronized void dispose() {
 
     if (myPendingSave != null) {
-
-      myPendingSave.cancel(false);
-
+      myPendingSave.cancel(true);
       myPendingSave = null;
-
     }
 
     myHistory.clear();
@@ -357,47 +354,36 @@ class MessageHistory {
   private void triggerSave() {
 
     if (myPendingSave == null) {
-
-      myPendingSave = UIUtil.scheduleDelayed(new Runnable() {
-
+      myPendingSave = myFacade.runOnPooledThread(new Runnable(){
         public void run() {
-
-          saveHistory();
-
+          try {
+            Thread.sleep(SAVE_TIMEOUT);
+          } catch (InterruptedException e) {
+            // Ignore here.
+          }
+          finally {
+            saveHistory();
+            myPendingSave = null;
+          }
         }
-
-      }, SAVE_TIMEOUT, TimeUnit.MILLISECONDS);
-
+      });
     }
-
   }
-
-
 
   private synchronized void saveHistory() {
 
     LOG.debug("Start history save");
-
     Map<Date, DayHistory> map = getHistory();
-
     for (Date date : map.keySet()) {
-
       DayHistory dayHistory = map.get(date);
-
       try {
-
         XMLUtil.toXml(myXStream, myFacade.getCacheDir(), getFileNameForDate(date), dayHistory);
-
       } catch (RuntimeException e) {
-
         LOG.error("Unable to save dayHistory for " + date + ": " + dayHistory, e);
-
       }
-
     }
 
     LOG.debug("Done history save");
-
   }
 
 

@@ -15,12 +15,13 @@
  */
 package jetbrains.communicator.util;
 
-import com.intellij.openapi.util.io.FileUtil;
 import jetbrains.communicator.ide.IDEFacade;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class IgnoreList {
 
   private boolean isInIgnoreList(String from) {
     File ignoreList = new File(myIdeFacade.getConfigDir(), JABBER_IGNORE_TXT);
-    if (ignoreList.exists()) {
+    if (ignoreList.isFile()) {
       long changed = ignoreList.lastModified();
       if (changed != myWhenIgnoredListUpdated) {
         myWhenIgnoredListUpdated = changed;
@@ -65,16 +66,22 @@ public class IgnoreList {
 
   private void fillIgnoreList(File ignoreList) {
     try {
-      char[] chars = FileUtil.loadFileText(ignoreList);
-      String[] lines = new String(chars).split("[\r\n]");
-      myIgnored.clear();
-      for (String line : lines) {
-        if (StringUtil.isNotEmpty(line)) {
-          myIgnored.add(line.toLowerCase());
+      BufferedReader bufferedReader = new BufferedReader(new FileReader(ignoreList));
+      try {
+        myIgnored.clear();
+        String line = bufferedReader.readLine();
+        while(line != null) {
+          if (StringUtil.isNotEmpty(line)) {
+            myIgnored.add(line.toLowerCase());
+          }
+          line = bufferedReader.readLine();
         }
+      } finally {
+        bufferedReader.close();
       }
     } catch (IOException e) {
-      LOG.error(e, e);
+      LOG.warn(e.getMessage());
+      LOG.info(e.getMessage(), e);
     }
   }
 

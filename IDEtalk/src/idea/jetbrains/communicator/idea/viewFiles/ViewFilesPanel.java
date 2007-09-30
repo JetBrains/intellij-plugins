@@ -79,6 +79,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
         }
       }
     };
+    IDEAFacade.installIdeaTreeActions(myTree);
     add(new JScrollPane(myTree));
     add(createActionsToolbar(actionManager), BorderLayout.NORTH);
 

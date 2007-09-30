@@ -112,13 +112,11 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
 
   public void initializeProject(String projectName, MutablePicoContainer projectLevelContainer) {
     myUI.initPerProject(projectLevelContainer);
-    //noinspection HardCodedStringLiteral
-    final Runnable connectRunnable = new Runnable() {
+    myIdeFacade.runOnPooledThread(new Runnable() {
       public void run() {
         myFacade.connect();
       }
-    };
-    UIUtil.invokeOnPooledThread(connectRunnable);
+    });
   }
 
   public User[] findUsers(ProgressIndicator progressIndicator) {
@@ -208,7 +206,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
           }
         }
       };
-      UIUtil.invokeOnPooledThread(responseWaiterRunnable);
+      myIdeFacade.runOnPooledThread(responseWaiterRunnable);
     }
     else {
       packetCollector.cancel();

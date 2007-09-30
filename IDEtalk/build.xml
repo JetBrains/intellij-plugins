@@ -84,7 +84,7 @@
       <javac2 srcdir="@{src}" destdir="@{dest}"
         classpathref="classpath"
         verbose="false"
-        debug="true" 
+        debug="true" target="1.5"
         />
       <copy toDir="@{dest}">
         <fileset dir="@{src}">

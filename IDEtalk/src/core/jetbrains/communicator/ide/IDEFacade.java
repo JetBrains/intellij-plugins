@@ -27,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
 /**
  * @author Kir Maximov
@@ -70,6 +72,7 @@ public interface IDEFacade {
   File getCacheDir();
   File getConfigDir();
 
+  Future<?> runOnPooledThread(Runnable toRun);
   void runLongProcess(String processTitle, Process process) throws CanceledException;
 
   /** Create message for local delivery, based on incoming event.

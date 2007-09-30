@@ -35,7 +35,10 @@ import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.ui.PopupHandler;
+import com.intellij.ui.TreeToolTipHandler;
+import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.util.diff.Diff;
+import com.intellij.util.ui.tree.TreeUtil;
 import jetbrains.communicator.commands.FindUsersCommand;
 import jetbrains.communicator.commands.SendMessageInvoker;
 import jetbrains.communicator.core.EventVisitor;
@@ -64,6 +67,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 /**
  * @author Kir Maximov
@@ -122,6 +126,10 @@ public class IDEAFacade implements IDEFacade {
     GetMessageDialog dialog = new GetMessageDialog(titleText, labelText, optionalOKButtonText);
     dialog.show();
     return dialog.getEnteredText();
+  }
+
+  public Future<?> runOnPooledThread(Runnable toRun) {
+    return ApplicationManager.getApplication().executeOnPooledThread(toRun);
   }
 
   public void runLongProcess(String processTitle, final Process process) throws CanceledException {
@@ -365,6 +373,12 @@ public class IDEAFacade implements IDEFacade {
   public static void installPopupMenu(ActionGroup group, Component component, ActionManager actionManager) {
     if (actionManager == null) return;
     PopupHandler.installPopupHandler((JComponent) component, group, "POPUP", actionManager);
+  }
+
+  public static void installIdeaTreeActions(JTree t) {
+    TreeToolTipHandler.install(t);
+    TreeUtil.installActions(t);
+    new TreeSpeedSearch(t);
   }
 
   private static class MyChangeAdapter implements Change {

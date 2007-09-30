@@ -34,6 +34,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import jetbrains.communicator.core.vfs.VFile;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Kir
@@ -81,8 +82,12 @@ public class VFSUtil {
         PsiFile psiFile = PsiDocumentManager.getInstance(openProject).getPsiFile(document);
         if (isJavaFile(psiFile)) {
           PsiJavaFile psiJavaFile = (PsiJavaFile) psiFile;
-          result = createResultIfNeeded(result, file);
-          result.setFQName(psiJavaFile.getClasses()[0].getQualifiedName());
+          assert psiJavaFile != null;
+          final PsiClass[] classes = psiJavaFile.getClasses();
+          if (classes.length > 0) {
+            result = createResultIfNeeded(result, file);
+            result.setFQName(classes[0].getQualifiedName());
+          }
         }
       }
 
@@ -163,7 +168,7 @@ public class VFSUtil {
     VirtualFile result = findFileByFQName(file, project);
 
     if (result == null) {
-      final HashSet<VirtualFile> candidates = new HashSet<VirtualFile>();
+      final Set<VirtualFile> candidates = new HashSet<VirtualFile>();
 
       Module[] modules = ModuleManager.getInstance(project).getModules();
       for (Module module : modules) {
@@ -209,14 +214,13 @@ public class VFSUtil {
   }
 
 
-  private static void findFileInModule(final HashSet<VirtualFile> found, Module module, VFile file) {
+  private static void findFileInModule(final Set<VirtualFile> found, Module module, VFile file) {
     ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-    VirtualFile[] files = rootManager.getFiles(OrderRootType.SOURCES);
-    findInRoots(found, files, file.getSourcePath());
+    findInRoots(found, rootManager.getSourceRoots(), file.getSourcePath());
     findInRoots(found, rootManager.getContentRoots(), file.getContentPath());
   }
 
-  private static void findInRoots(final HashSet<VirtualFile> found, VirtualFile[] roots, String relativePath) {
+  private static void findInRoots(final Set<VirtualFile> found, VirtualFile[] roots, String relativePath) {
     if (relativePath == null) return;
 
     for (VirtualFile root : roots) {

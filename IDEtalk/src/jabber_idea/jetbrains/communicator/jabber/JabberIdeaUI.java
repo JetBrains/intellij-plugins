@@ -76,7 +76,7 @@ public class JabberIdeaUI implements JabberUI {
 
   public void connectAndLoginAsync(final String message, final AtomicBoolean connected) {
     if (SwingUtilities.isEventDispatchThread()) {
-      UIUtil.invokeOnPooledThread(new Runnable() {
+      myIdeFacade.runOnPooledThread(new Runnable() {
         public void run() {
           connectAndLoginAsync(message, connected);
         }
@@ -142,9 +142,9 @@ public class JabberIdeaUI implements JabberUI {
 
   private String buildUserInfo(VCardInfo fromInfo) {
     StringBuffer sb = new StringBuffer();
-    sb.append("Nickname: ").append(fromInfo.getNickName()).append('\n');
-    sb.append("Firstname: ").append(fromInfo.getFirstname()).append('\n');
-    sb.append("Lastname: ").append(fromInfo.getLastname());
+    sb.append(StringUtil.getMsg("nickname.info")).append(fromInfo.getNickName()).append('\n');
+    sb.append(StringUtil.getMsg("first.name.info")).append(fromInfo.getFirstname()).append('\n');
+    sb.append(StringUtil.getMsg("last.name.info")).append(fromInfo.getLastname());
     return sb.toString();
   }
 

@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * @author Kir Maximov
@@ -52,6 +53,11 @@ public class MockIDEFacade implements IDEFacade {
   private String myProjectId;
   private String myProjectName;
   private boolean myAnswer;
+  private static final ExecutorService ourExecutorService = Executors.newCachedThreadPool(new ThreadFactory() {
+    public Thread newThread(final Runnable r) {
+      return new Thread(r, "IDETalk pooled thread");
+    }
+  });
 
   public MockIDEFacade() {
     myDataDir = null;
@@ -155,6 +161,10 @@ public class MockIDEFacade implements IDEFacade {
   public File getConfigDir() {
     if (myDataDir == null) throw new NullPointerException();
     return myDataDir;
+  }
+
+  public Future<?> runOnPooledThread(Runnable toRun) {
+    return ourExecutorService.submit(toRun);
   }
 
   public void setDataDir(File dataDir) {

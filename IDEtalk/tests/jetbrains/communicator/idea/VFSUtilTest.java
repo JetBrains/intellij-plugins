@@ -138,15 +138,16 @@ public class VFSUtilTest extends IdeaTestCase {
     assertEquals("Wrong src path", "/some.file", vFile.getSourcePath());
 
     // Change our source path:
+    final VirtualFile newSrc = myContentRoot.createChildDirectory(this, "new_src");
     updateRoots(new Updater() {
       public void update(ModifiableRootModel modifiableModel) {
         myContentEntry = modifiableModel.getContentEntries()[0];
         myContentEntry.removeSourceFolder(myContentEntry.getSourceFolders()[0]);
-        myContentEntry.addSourceFolder(myContentRoot, false);
+        myContentEntry.addSourceFolder(newSrc, false);
       }
     });
-
-    VirtualFile childData = myContentRoot.createChildData(this, "some.file");
+    file.delete(this);
+    VirtualFile childData = newSrc.createChildData(this, "some.file");
     VirtualFile virtualFile = VFSUtil.getVirtualFile(vFile);
 
     assertSame("Should find source file basing on src path", childData, virtualFile);

@@ -24,6 +24,8 @@ import org.jmock.Mock;
 import org.jmock.core.Invocation;
 import org.jmock.core.stub.CustomStub;
 
+import java.util.concurrent.FutureTask;
+
 /**
  * @author Kir
  */
@@ -63,6 +65,13 @@ public class ClearHistoryCommandTest extends LightTestCase {
       }
     });
 
+    myIdeMock.expects(once()).method("runOnPooledThread").will(new CustomStub("foo"){
+      public Object invoke(Invocation invocation) throws Throwable {
+        final FutureTask task = new FutureTask((Runnable) invocation.parameterValues.get(0), null);
+        task.run();
+        return task;  //To change body of implemented methods use File | Settings | File Templates.
+      }
+    });
     myDispatcherMock.expects(once()).method("clearHistory");
 
     myCommand.execute();

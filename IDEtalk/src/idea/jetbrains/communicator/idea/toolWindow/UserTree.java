@@ -22,6 +22,7 @@ import jetbrains.communicator.core.dispatcher.LocalMessageDispatcher;
 import jetbrains.communicator.core.dispatcher.Message;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.idea.IdeaLocalMessage;
+import jetbrains.communicator.idea.IDEAFacade;
 import jetbrains.communicator.idea.actions.BaseAction;
 import jetbrains.communicator.util.KirTree;
 import jetbrains.communicator.util.StringUtil;
@@ -50,6 +51,9 @@ public class UserTree extends KirTree {
   private TreeDragListener myDragListener;
 
   public UserTree(LocalMessageDispatcher localMessageDispatcher) {
+
+    IDEAFacade.installIdeaTreeActions(this);
+
     myLocalMessageDispatcher = localMessageDispatcher;
 
     setEditable(true);

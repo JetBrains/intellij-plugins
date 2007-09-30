@@ -16,9 +16,6 @@
 
 package jetbrains.communicator.util;
 
-import com.intellij.ui.TreeSpeedSearch;
-import com.intellij.ui.TreeToolTipHandler;
-import com.intellij.util.ui.tree.TreeUtil;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -44,9 +41,6 @@ public class KirTree extends JTree {
     setShowsRootHandles(true);
 
     ToolTipManager.sharedInstance().registerComponent(this);
-    TreeToolTipHandler.install(this);
-    TreeUtil.installActions(this);
-    new TreeSpeedSearch(this);
 
     setCellRenderer(new DefaultTreeCellRenderer(){
       public Component getTreeCellRendererComponent(JTree tree1, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus1) {
