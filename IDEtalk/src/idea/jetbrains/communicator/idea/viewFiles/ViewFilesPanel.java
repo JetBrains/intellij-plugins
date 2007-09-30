@@ -107,7 +107,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
 
   private DefaultActionGroup createActionGroup() {
     DefaultActionGroup actionGroup = new DefaultActionGroup();
-    if (ApplicationManager.getApplication() == null) return actionGroup;
+    if (ApplicationManager.getApplication() == null || Pico.isUnitTest()) return actionGroup;
 
     addRefreshAction(actionGroup);
     myOpenFileAction = new OpenFileAction(myTree, myIdeFacade);

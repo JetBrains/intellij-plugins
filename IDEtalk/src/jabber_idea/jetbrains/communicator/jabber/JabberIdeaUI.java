@@ -21,6 +21,7 @@ import com.intellij.openapi.actionSystem.Constraints;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.ProjectManager;
+import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.StatusToolbar;
@@ -56,7 +57,7 @@ public class JabberIdeaUI implements JabberUI {
     if (statusToolbar != null) {
       statusToolbar.addToolbarCommand(JabberConnectionCommand.class);
     }
-    if (!ourInitialized && ApplicationManager.getApplication() != null) {
+    if (!ourInitialized && ApplicationManager.getApplication() != null && !Pico.isUnitTest()) {
       DefaultActionGroup group = ((DefaultActionGroup) ActionManager.getInstance().getAction("IDEtalk.OptionsGroup"));
       if (group != null) {
         group.add(new EditJabberSettingsAction(), new Constraints(Anchor.FIRST, ""));

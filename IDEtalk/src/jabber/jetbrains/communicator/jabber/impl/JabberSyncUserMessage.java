@@ -70,8 +70,8 @@ class JabberSyncUserMessage implements Message {
 
       public void visitUserRemoved(UserEvent.Removed event) {
         try {
-          jabberFacade.getConnection().getRoster().removeEntry(userEntry);
           jabberFacade.changeSubscription(userEntry.getUser(), false);
+          jabberFacade.getConnection().getRoster().removeEntry(userEntry);
         } catch (XMPPException e) {
           processXMPPException(e, event);
         }
