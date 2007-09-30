@@ -177,7 +177,7 @@ public class IDEAFacade implements IDEFacade {
     Project project = getProject(null);
     assert project != null: "Null project when sending message";
     IDEtalkMessagesWindow messagesWindow = project.getComponent(IDEtalkMessagesWindow.class);
-    if (messagesWindow != null) {
+    if (messagesWindow != null && project.isInitialized()) {
       messagesWindow.expandToolWindow();
       for (User user : defaultTargetUsers) {
         messagesWindow.showUserTabAndRequestFocus(user);
