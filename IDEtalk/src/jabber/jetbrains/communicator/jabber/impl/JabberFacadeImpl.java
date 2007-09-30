@@ -146,27 +146,29 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
         user = username.substring(0, at);
       }
 
+      XMPPConnection connection;
       if (forceOldSSL) {
-        myConnection = new SSLXMPPConnection(server, port, serviceName);
+        connection = new SSLXMPPConnection(server, port, serviceName);
       }
       else {
-        myConnection = new XMPPConnection(server, port, serviceName);
+        connection = new XMPPConnection(server, port, serviceName);
       }
 
-      if (createAccount && myConnection.getAccountManager().supportsAccountCreation()) {
-        myConnection.getAccountManager().createAccount(user, password.replaceAll("&", "&amp;"));
+      if (createAccount && connection.getAccountManager().supportsAccountCreation()) {
+        connection.getAccountManager().createAccount(user, password.replaceAll("&", "&amp;"));
       }
 
-      if (!myConnection.isConnected()) return StringUtil.getMsg("unable.to.connect.to", server, port);
-      myConnection.login(user, password, IDETALK_RESOURCE);
+      if (!connection.isConnected()) return StringUtil.getMsg("unable.to.connect.to", server, port);
+      connection.login(user, password, IDETALK_RESOURCE);
 
       saveAccountData(server, port, username, password, forceOldSSL);
 
-      if (rosterIsNotAvailable()) {
-        myConnection.close();
-        myConnection = null;
+      if (rosterIsNotAvailable(connection)) {
+        connection.close();
         return StringUtil.getMsg("no.roster.try.again");
       }
+
+      myConnection = connection;
 
       fireAuthenticated();
       myConnection.addConnectionListener(new SmackConnectionListener());
@@ -181,13 +183,13 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     return null;
   }
 
-  private boolean rosterIsNotAvailable() {
+  private boolean rosterIsNotAvailable(final XMPPConnection connection) {
     new WaitFor(3000) {
       protected boolean condition() {
-        return myConnection.getRoster() != null;
+        return connection.getRoster() != null;
       }
     };
-    return myConnection.getRoster() == null;
+    return connection.getRoster() == null;
   }
 
   private String getMessage(XMPPException e) {
@@ -290,7 +292,12 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     for (String id : list) {
       if (!self.startsWith(id)) {
         try {
-          getConnection().getRoster().createEntry(id, JabberTransport.getSimpleId(id), new String[]{group});
+          Roster roster = getConnection().getRoster();
+          RosterEntry oldEntry = roster.getEntry(id);
+          if (oldEntry != null) {
+            roster.removeEntry(oldEntry);
+          }
+          roster.createEntry(id, JabberTransport.getSimpleId(id), new String[]{group});
         } catch (XMPPException e) {
           myIdeFacade.showMessage(StringUtil.getMsg("jabber.error.while.adding.user.title", id)
               ,StringUtil.getMsg("jabber.error.while.adding.user.text", id, getMessage(e))

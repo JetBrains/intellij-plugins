@@ -698,6 +698,25 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertSame("Should take bob's presence", PresenceMode.EXTENDED_AWAY, bobUser.getPresence().getPresenceMode());
   }
 
+  public void testShouldNotReconnectOnSimpleDisconnect() throws Throwable {
+
+    myTransport.setReconnectTimeout(200);
+    myTransport.disconnected(false);
+    myFacade.disconnect();
+
+    Thread.sleep(300);
+    assertFalse("No reconnect expected", myFacade.isConnectedAndAuthenticated());
+  }
+
+  public void testShouldReconnectOnErrorDisconnect() throws Throwable {
+    myTransport.setReconnectTimeout(200);
+    myTransport.disconnected(true);  // emulate connection failure
+    myFacade.disconnect();
+
+    Thread.sleep(300);
+    assertTrue("Reconnect expected", myFacade.isConnectedAndAuthenticated());
+  }
+
 
   protected User createSelf() {
     if (myFacade.getConnection() != null) {

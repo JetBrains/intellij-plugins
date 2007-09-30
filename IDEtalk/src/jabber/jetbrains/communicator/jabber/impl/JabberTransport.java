@@ -47,6 +47,7 @@ import org.picocontainer.Disposable;
 import org.picocontainer.MutablePicoContainer;
 
 import java.util.*;
+import java.util.concurrent.Future;
 
 /**
  * @author Kir
@@ -82,6 +83,10 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   @NonNls
   private static final String RESPONSE = "response";
   private final IgnoreList myIgnoreList;
+
+  // negative value disables reconnect
+  private int myReconnectTimeout = Integer.parseInt(System.getProperty("ideTalk.reconnect", "30")) * 1000;
+  private Future<?> myReconnectProcess;
 
   public JabberTransport(JabberUI UI, JabberFacade facade, UserModel userModel, AsyncMessageDispatcher messageDispatcher, JabberUserFinder userFinder) {
     Roster.setDefaultSubscriptionMode(Roster.SubscriptionMode.manual);
@@ -337,9 +342,14 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     myUser2Presence.clear();
     myUser2Thread.clear();
 
-    if (onError) {
-      myUI.connectAndLoginAsync(StringUtil.getMsg("jabber.server.was.disconnected"), null);
+    if (onError && reconnectEnabledAndNotStarted()) {
+      LOG.warn(StringUtil.getMsg("jabber.server.was.disconnected", myReconnectTimeout / 1000));
+      myReconnectProcess = myIdeFacade.runOnPooledThread(new MyReconnectRunnable());
     }
+  }
+
+  private boolean reconnectEnabledAndNotStarted() {
+    return (myReconnectProcess == null || myReconnectProcess.isDone()) && myReconnectTimeout >= 0;
   }
 
   public void dispose() {
@@ -504,6 +514,11 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     }
   }
 
+  /** -1 disables reconnect */
+  public void setReconnectTimeout(int milliseconds) {
+    myReconnectTimeout = milliseconds;
+  }
+
   private class MyRosterListener implements RosterListener {
     public void entriesAdded(Collection addresses) {
       updateJabberUsers(false);
@@ -666,6 +681,20 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
 
     private String getFrom(Message message) {
       return getSimpleId(message.getFrom());
+    }
+  }
+
+  private class MyReconnectRunnable implements Runnable {
+    public void run() {
+      try {
+        Thread.sleep(myReconnectTimeout);
+
+        if (myFacade.connect() != null && myFacade.getMyAccount().isLoginAllowed()) {
+          myReconnectProcess = myIdeFacade.runOnPooledThread(this);
+        }
+      } catch (InterruptedException e) {
+        // return
+      }
     }
   }
 }
