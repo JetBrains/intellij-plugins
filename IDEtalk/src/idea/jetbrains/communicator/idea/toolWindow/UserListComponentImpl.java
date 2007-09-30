@@ -112,6 +112,10 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
           public void visitUserAdded(UserEvent.Added event) {
             expandAndRepaintUserNode(event.getUser());
           }
+
+          public void visitUserUpdated(UserEvent.Updated event) {
+            repaintUserNode(event.getUser());    // Redraw user if presence property changed
+          }
         });
       }
     };
