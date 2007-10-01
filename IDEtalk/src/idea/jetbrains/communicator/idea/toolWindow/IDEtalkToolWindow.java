@@ -148,7 +148,9 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     });
 
     if (treeActions != null) {
-      toolbarPanel.add(createToolbar(treeActions).getComponent());
+      JComponent component = createToolbar(treeActions).getComponent();
+      component.setMinimumSize(component.getPreferredSize());
+      toolbarPanel.add(component);
     }
 
     toolbarPanel.setAlignmentX(0);
