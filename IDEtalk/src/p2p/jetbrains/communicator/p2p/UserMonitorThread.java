@@ -255,6 +255,8 @@ public class UserMonitorThread extends Thread {
   }
 
   public void findNow(ProgressIndicator progressIndicator) {
+    if (!isRunning()) return;
+
     triggerFindNow();
 
     while (isFinding()) {

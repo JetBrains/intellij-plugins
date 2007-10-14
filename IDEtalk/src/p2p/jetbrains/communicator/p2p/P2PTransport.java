@@ -38,6 +38,7 @@ import org.picocontainer.MutablePicoContainer;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.util.*;
 
 /**
@@ -99,7 +100,23 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   private void initializeXmlRpcPort() {
     int port = XML_RPC_PORT;
-    while (NetworkUtil.isPortBusy(port)) port ++;
+
+    if (NetworkUtil.isPortBusy(port)) {
+      ServerSocket socket = null;
+      try {
+        socket = new ServerSocket(0);
+        port = socket.getLocalPort();
+      } catch (IOException e) {
+        final String msg = "Unable to get free port for IDEtalk: " + e.getMessage();
+        LOG.warn(msg);
+        LOG.debug(msg, e);
+        port = -1;
+      }
+      finally {
+        try { if (socket != null) socket.close(); } catch (IOException e) {  }
+      }
+    }
+
     myPort = port;
   }
 
@@ -107,17 +124,19 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     myUserMonitorThread = new UserMonitorThread(this, waitUserResponsesTimeout);
 
     initializeXmlRpcPort();
-    myP2PServer = new P2PServer(myPort, new P2PCommand[] {
-      new SendXmlMessageP2PCommand(myEventBroadcaster, this),
-      new AddOnlineUserP2PCommand(myUserMonitorThread),
-    });
-    LOG.info("Internal Web server is bound to port " + myPort);
+    if (myPort >= 0) {
+      myP2PServer = new P2PServer(myPort, new P2PCommand[] {
+        new SendXmlMessageP2PCommand(myEventBroadcaster, this),
+        new AddOnlineUserP2PCommand(myUserMonitorThread),
+      });
+      LOG.info("Internal Web server is bound to port " + myPort);
 
-    myUserMonitorThread.start();
-    myUserMonitorThread.triggerFindNow();
-    new WaitFor() { protected boolean condition() { return myUserMonitorThread.isRunning(); } };
+      myUserMonitorThread.start();
+      myUserMonitorThread.triggerFindNow();
+      new WaitFor() { protected boolean condition() { return myUserMonitorThread.isRunning(); } };
 
-    myEventBroadcaster.addListener(myUserAddedCallbackListener);
+      myEventBroadcaster.addListener(myUserAddedCallbackListener);
+    }
   }
 
   IDEFacade getIdeFacade() {
@@ -127,7 +146,10 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   public void dispose() {
     myEventBroadcaster.removeListener(myUserAddedCallbackListener);
     myUserMonitorThread.shutdown();
-    myP2PServer.shutdown();
+    if (myP2PServer != null) {
+      myP2PServer.shutdown();
+    }
+
     myOnlineUsers.clear();
   }
 
