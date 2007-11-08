@@ -12,6 +12,7 @@
     <orderEntry type="module" module-name="action-system-openapi" />
     <orderEntry type="module" module-name="openapi" />
     <orderEntry type="module" module-name="ui-impl" />
+    <orderEntry type="module" module-name="platform-impl" />
     <orderEntryProperties />
   </component>
   <component name="VcsManagerConfiguration">

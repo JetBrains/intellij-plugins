@@ -20,6 +20,7 @@
     <orderEntry type="module" module-name="ExtendedApi" />
     <orderEntry type="module" module-name="ui-impl" />
     <orderEntry type="library" name="Mocks" level="project" />
+    <orderEntry type="module" module-name="platform-impl" />
     <orderEntryProperties />
   </component>
   <component name="VcsManagerConfiguration">
