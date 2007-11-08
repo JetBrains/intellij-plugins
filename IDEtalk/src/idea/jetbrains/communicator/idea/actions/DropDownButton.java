@@ -75,7 +75,7 @@ public class DropDownButton extends JButton {
   }
 
   private boolean canExecute(AnAction action1) {
-    Project project = DataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(this));
+    Project project = PlatformDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext(this));
     return
         !(action1 instanceof BaseAction) ||
         ((BaseAction) action1).getCommand(BaseAction.getContainer(project)).isEnabled();

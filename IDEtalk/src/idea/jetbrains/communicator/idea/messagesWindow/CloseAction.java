@@ -17,7 +17,7 @@ package jetbrains.communicator.idea.messagesWindow;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import jetbrains.communicator.idea.IDEtalkMessagesWindow;
 
@@ -26,7 +26,7 @@ import jetbrains.communicator.idea.IDEtalkMessagesWindow;
  */
 public class CloseAction extends AnAction {
   public void actionPerformed(AnActionEvent e) {
-    Project project = (DataKeys.PROJECT.getData(e.getDataContext()));
+    Project project = (PlatformDataKeys.PROJECT.getData(e.getDataContext()));
     doHideToolwindow(project);
   }
 
