@@ -132,12 +132,12 @@ public class LocalMessageDispatcherImpl extends AbstractMessageDispatcher implem
       //noinspection RefusedBequest
       event.accept(new EventVisitor(){
 
-        public void visitTransportEvent(TransportEvent event) {
+        @Override public void visitTransportEvent(TransportEvent event) {
           User user = event.createUser(myUserModel);
           addPendingMessage(user, myFacade.createLocalMessageForIncomingEvent(event));
         }
 
-        public void visitOwnMessageEvent(OwnMessageEvent event) {
+        @Override public void visitOwnMessageEvent(OwnMessageEvent event) {
           sendNow(event.getTargetUser(), myFacade.createLocalMessageForOutgoingEvent(event));
         }
       });

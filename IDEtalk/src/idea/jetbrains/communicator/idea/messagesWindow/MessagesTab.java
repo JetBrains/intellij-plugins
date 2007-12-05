@@ -122,7 +122,7 @@ public class MessagesTab implements Disposable {
     myListener = new IDEtalkAdapter() {
       public void afterChange(IDEtalkEvent event) {
         event.accept(new EventVisitor(){
-          public void visitSettingsChanged(SettingsChanged settingsChanged) {
+          @Override public void visitSettingsChanged(SettingsChanged settingsChanged) {
             updateKeyBindings();
           }
         });

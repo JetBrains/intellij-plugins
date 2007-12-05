@@ -56,7 +56,7 @@ class JabberSyncUserMessage implements Message {
 
   private void processEvent(final JabberFacade jabberFacade, final RosterEntry userEntry) {
     myEvent.accept(new EventVisitor(){
-      public void visitUserUpdated(UserEvent.Updated event) {
+      @Override public void visitUserUpdated(UserEvent.Updated event) {
         try {
           if (GROUP.equals(event.getPropertyName())) {
             changeUsersGroup(event, jabberFacade.getConnection().getRoster(), userEntry);
@@ -68,7 +68,7 @@ class JabberSyncUserMessage implements Message {
         }
       }
 
-      public void visitUserRemoved(UserEvent.Removed event) {
+      @Override public void visitUserRemoved(UserEvent.Removed event) {
         try {
           jabberFacade.changeSubscription(userEntry.getUser(), false);
           jabberFacade.getConnection().getRoster().removeEntry(userEntry);

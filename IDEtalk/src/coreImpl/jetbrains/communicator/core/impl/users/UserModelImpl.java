@@ -256,11 +256,11 @@ public class UserModelImpl implements UserModel, Disposable {
     public void afterChange(IDEtalkEvent event) {
       event.accept(new EventVisitor(){
         @SuppressWarnings({"RefusedBequest"})
-        public void visitTransportEvent(TransportEvent event) {
+        @Override public void visitTransportEvent(TransportEvent event) {
           addUser(event.createUser(UserModelImpl.this));
         }
 
-        public void visitUserEvent(UserEvent event) {
+        @Override public void visitUserEvent(UserEvent event) {
           super.visitUserEvent(event);
           synchronized(myCachedUsersLock) {
             myCachedUsers = null;

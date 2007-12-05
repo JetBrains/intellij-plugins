@@ -103,17 +103,17 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
         event.accept(new EventVisitor(){
 
           @SuppressWarnings({"RefusedBequest"})
-          public void visitTransportEvent(TransportEvent event) {
+          @Override public void visitTransportEvent(TransportEvent event) {
             User user = event.createUser(myUserModel);
             expandAndRepaintUserNode(user);
           }
 
           @SuppressWarnings({"RefusedBequest"})
-          public void visitUserAdded(UserEvent.Added event) {
+          @Override public void visitUserAdded(UserEvent.Added event) {
             expandAndRepaintUserNode(event.getUser());
           }
 
-          public void visitUserUpdated(UserEvent.Updated event) {
+          @Override public void visitUserUpdated(UserEvent.Updated event) {
             repaintUserNode(event.getUser());    // Redraw user if presence property changed
           }
         });

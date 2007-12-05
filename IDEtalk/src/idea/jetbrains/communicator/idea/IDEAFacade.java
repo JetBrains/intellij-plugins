@@ -31,12 +31,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
-import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.ui.PopupHandler;
-import com.intellij.ui.TreeToolTipHandler;
 import com.intellij.ui.TreeSpeedSearch;
+import com.intellij.ui.TreeToolTipHandler;
 import com.intellij.util.diff.Diff;
 import com.intellij.util.ui.tree.TreeUtil;
 import jetbrains.communicator.commands.FindUsersCommand;
@@ -286,17 +286,17 @@ public class IDEAFacade implements IDEFacade {
     event.accept(new EventVisitor(){
 
       @SuppressWarnings({"RefusedBequest"})
-      public void visitStacktraceEvent(StacktraceEvent event) {
+      @Override public void visitStacktraceEvent(StacktraceEvent event) {
         result[0] = new IncomingStacktraceMessage(event);
       }
 
       @SuppressWarnings({"RefusedBequest"})
-      public void visitCodePointerEvent(CodePointerEvent event) {
+      @Override public void visitCodePointerEvent(CodePointerEvent event) {
         result[0] = new IncomingCodePointerMessage(event, IDEAFacade.this);
       }
 
       @SuppressWarnings({"RefusedBequest"})
-      public void visitMessageEvent(MessageEvent event) {
+      @Override public void visitMessageEvent(MessageEvent event) {
         result[0] = new IncomingLocalMessage(event);
       }
     });
@@ -308,11 +308,11 @@ public class IDEAFacade implements IDEFacade {
     final LocalMessage[] result = new LocalMessage[1];
     event.accept(new EventVisitor() {
 
-      public void visitSendMessageEvent(SendMessageEvent event) {
+      @Override public void visitSendMessageEvent(SendMessageEvent event) {
         result[0] = new OutgoingLocalMessage(event.getMessage());
       }
 
-      public void visitSendCodePointerEvent(SendCodePointerEvent event) {
+      @Override public void visitSendCodePointerEvent(SendCodePointerEvent event) {
         result[0] = new OutgoingCodePointerLocalMessage(event);
       }
     });

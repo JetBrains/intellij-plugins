@@ -79,7 +79,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     myUserAddedCallbackListener = new TransportUserListener(this) {
       protected void processAfterChange(UserEvent event) {
         event.accept(new EventVisitor() {
-          public void visitUserAdded(UserEvent.Added event) {
+          @Override public void visitUserAdded(UserEvent.Added event) {
             super.visitUserAdded(event);
             sendUserAddedCallback(event.getUser());
           }

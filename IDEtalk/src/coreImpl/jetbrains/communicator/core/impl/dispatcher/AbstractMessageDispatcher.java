@@ -242,7 +242,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
     public void afterChange(IDEtalkEvent event) {
       event.accept(new EventVisitor(){
         @SuppressWarnings({"RefusedBequest"})
-        public void visitUserRemoved(UserEvent.Removed event) {
+        @Override public void visitUserRemoved(UserEvent.Removed event) {
           removeUser(event.getUser());
         }
       });

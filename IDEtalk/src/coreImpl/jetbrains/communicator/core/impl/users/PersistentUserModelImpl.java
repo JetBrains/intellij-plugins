@@ -51,17 +51,17 @@ public class PersistentUserModelImpl extends UserModelImpl {
     mySaver = new IDEtalkAdapter() {
       public void afterChange(IDEtalkEvent event) {
         event.accept(new EventVisitor(){
-          public void visitUserAdded(UserEvent.Added event) {
+          @Override public void visitUserAdded(UserEvent.Added event) {
             super.visitUserAdded(event);
             saveAll();
           }
 
-          public void visitUserRemoved(UserEvent.Removed event) {
+          @Override public void visitUserRemoved(UserEvent.Removed event) {
             super.visitUserRemoved(event);
             saveAll();
           }
 
-          public void visitUserUpdated(UserEvent.Updated event) {
+          @Override public void visitUserUpdated(UserEvent.Updated event) {
             super.visitUserUpdated(event);
             if (
                 BaseUserImpl.CAN_ACCESS_MY_FILES.equals(event.getPropertyName()) ||
@@ -72,7 +72,7 @@ public class PersistentUserModelImpl extends UserModelImpl {
             }
           }
 
-          public void visitGroupEvent(GroupEvent event) {
+          @Override public void visitGroupEvent(GroupEvent event) {
             super.visitGroupEvent(event);
             saveAll();
           }

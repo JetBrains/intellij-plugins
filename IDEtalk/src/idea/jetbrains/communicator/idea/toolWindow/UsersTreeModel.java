@@ -55,7 +55,7 @@ public class UsersTreeModel extends DefaultTreeModel implements Disposable {
       public void afterChange(IDEtalkEvent event) {
         event.accept(new EventVisitor(){
 
-          public void visitUserRemoved(UserEvent.Removed event) {
+          @Override public void visitUserRemoved(UserEvent.Removed event) {
             updateTree(null);
             UIUtil.invokeLater(new Runnable() {
               public void run() {
@@ -66,19 +66,19 @@ public class UsersTreeModel extends DefaultTreeModel implements Disposable {
             });
           }
 
-          public void visitUserEvent(UserEvent event) {
+          @Override public void visitUserEvent(UserEvent event) {
             updateTree(null);
           }
 
-          public void visitGroupEvent(GroupEvent event) {
+          @Override public void visitGroupEvent(GroupEvent event) {
             updateTree(event);
           }
 
-          public void visitSettingsChanged(SettingsChanged settingsChanged) {
+          @Override public void visitSettingsChanged(SettingsChanged settingsChanged) {
             updateTree(null);
           }
 
-          public void visitTransportEvent(TransportEvent event) {
+          @Override public void visitTransportEvent(TransportEvent event) {
             updateTree(null);
           }
         });

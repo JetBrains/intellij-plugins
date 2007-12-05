@@ -161,7 +161,7 @@ public class AsyncMessageDispatcherImpl extends AbstractMessageDispatcher implem
 
     public void afterChange(IDEtalkEvent event) {
       event.accept(new EventVisitor(){
-        public void visitUserOnline(UserEvent.Online online) {
+        @Override public void visitUserOnline(UserEvent.Online online) {
           triggerDelivery();
         }
       });

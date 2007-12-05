@@ -44,7 +44,7 @@ public class TestUtil extends Assert{
     testCase.getBroadcaster().addListener(new IDEtalkAdapter(){
       public void afterChange(IDEtalkEvent event) {
         event.accept(new EventVisitor(){
-          public void visitCodePointerEvent(CodePointerEvent event) {
+          @Override public void visitCodePointerEvent(CodePointerEvent event) {
             log[0] += event.getRemoteUser()+ ' ';
             log[0] += event.getComment();
             log[0] += event.getCodePointer().toString();
@@ -60,7 +60,7 @@ public class TestUtil extends Assert{
     CodePointer pointer = new CodePointer(0, 1);
     VFile file = VFile.create("path");
 
-    self.sendCodeIntervalPointer(file, pointer, "commentÄÄÄ< && 53", testCase.getBroadcaster());
+    self.sendCodeIntervalPointer(file, pointer, "commentï¿½ï¿½ï¿½< && 53", testCase.getBroadcaster());
 
     new WaitFor(2000) {
       protected boolean condition() {
@@ -68,7 +68,7 @@ public class TestUtil extends Assert{
       }
     };
 
-    Assert.assertEquals("Code Pointer expected", self.getName() + " commentÄÄÄ< && 53" + pointer + file, log[0]);
+    Assert.assertEquals("Code Pointer expected", self.getName() + " commentï¿½ï¿½ï¿½< && 53" + pointer + file, log[0]);
   }
 
   public static void testSendMessage_Functional(BaseTestCase testCase, User self) {
@@ -77,7 +77,7 @@ public class TestUtil extends Assert{
     testCase.getBroadcaster().addListener(new IDEtalkAdapter() {
       public void afterChange(IDEtalkEvent event) {
         event.accept(new EventVisitor() {
-          public void visitMessageEvent(MessageEvent event) {
+          @Override public void visitMessageEvent(MessageEvent event) {
             super.visitMessageEvent(event);
             log[0] += event.getRemoteUser() + ' ' + event.getMessage();
             if (event.getWhen().getTime() - whenSent[0] < 150) {
@@ -94,7 +94,7 @@ public class TestUtil extends Assert{
 
     log[0] = "";
 
-    String comment = "SSÄÄÄ messa&&ge";
+    String comment = "SSï¿½ï¿½ï¿½ messa&&ge";
     whenSent[0] = System.currentTimeMillis();
     self.sendMessage(comment, testCase.getBroadcaster());
 
@@ -112,7 +112,7 @@ public class TestUtil extends Assert{
     log[0] = "";
 
 
-    final String comment = "ÄÄÄ mes&&<>sage";
+    final String comment = "ï¿½ï¿½ï¿½ mes&&<>sage";
     MockXmlMessage message = new MockXmlMessage("tagName", "myNamespace") {
       public boolean needsResponse() {
         return checkResponse;

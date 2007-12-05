@@ -70,7 +70,7 @@ class EventsProcessor extends EventVisitor implements IDEtalkListener, Disposabl
   public void beforeChange(IDEtalkEvent event) {
   }
 
-  public void visitTransportEvent(TransportEvent event) {
+  @Override public void visitTransportEvent(TransportEvent event) {
     if (IdeaFlags.SOUND_ON_MESSAGE.isSet()) {
       Applet.newAudioClip(getClass().getResource(INCOMING_MESSAGE_WAV)).play();
     }
