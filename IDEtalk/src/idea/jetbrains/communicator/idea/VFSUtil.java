@@ -205,7 +205,7 @@ public class VFSUtil {
   private static VirtualFile findFileByFQName(VFile file, Project project) {
     VirtualFile result = null;
     if (file.getFQName() != null) {
-      PsiClass aClass = PsiManager.getInstance(project).findClass(file.getFQName(), GlobalSearchScope.allScope(project));
+      PsiClass aClass = JavaPsiFacade.getInstance(project).findClass(file.getFQName(), GlobalSearchScope.allScope(project));
       if (aClass != null && isJavaFile(aClass.getNavigationElement().getContainingFile())) {
         result = aClass.getNavigationElement().getContainingFile().getVirtualFile();
       }

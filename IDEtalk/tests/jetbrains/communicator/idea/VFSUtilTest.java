@@ -105,7 +105,7 @@ public class VFSUtilTest extends IdeaTestCase {
 
     ModuleRootManager.getInstance(getModule()).getUrls(OrderRootType.CLASSES);
 
-    PsiClass aClass = getPsiManager().findClass("org.jdom.Element", GlobalSearchScope.allScope(getProject()));
+    PsiClass aClass = getJavaFacade().findClass("org.jdom.Element", GlobalSearchScope.allScope(getProject()));
     VirtualFile virtualFile = aClass.getContainingFile().getVirtualFile();
     assertNotNull(virtualFile);
     System.out.println("virtualFile = " + virtualFile);
