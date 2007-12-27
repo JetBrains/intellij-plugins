@@ -105,20 +105,24 @@ class EventsProcessor extends EventVisitor implements IDEtalkListener, Disposabl
     });
   }
 
-  private void showPopupNotification(User from, TransportEvent event) {
+  private void showPopupNotification(final User from, TransportEvent event) {
     if (myMessageDispatcher.countPendingMessages() > 5) return;
 
     IDEFacade ideFacade = ((IDEFacade) Pico.getInstance().getComponentInstanceOfType(IDEFacade.class));
-    IdeaLocalMessage localMessage = (IdeaLocalMessage) ideFacade.createLocalMessageForIncomingEvent(event);
+    final IdeaLocalMessage localMessage = (IdeaLocalMessage) ideFacade.createLocalMessageForIncomingEvent(event);
     if (localMessage == null) return;
 
-    JComponent content = localMessage.getPopupComponent(from, myProject);
-    Color backgroundColor = new Color(255, 255, 217);
-    content.setOpaque(true);
-    content.setBackground(backgroundColor);
+    UIUtil.invokeLater(new Runnable() {
+      public void run() {
+        JComponent content = localMessage.getPopupComponent(from, myProject);
+        Color backgroundColor = new Color(255, 255, 217);
+        content.setOpaque(true);
+        content.setBackground(backgroundColor);
 
-    WindowManager.getInstance().getStatusBar(myProject).fireNotificationPopup(
-        content , backgroundColor);
+        WindowManager.getInstance().getStatusBar(myProject).fireNotificationPopup(
+            content , backgroundColor);
+      }
+    });
   }
 
 }
