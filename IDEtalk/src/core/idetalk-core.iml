@@ -41,7 +41,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="ui-openapi" exported="" />
     <orderEntry type="module" module-name="ui-impl" />
     <orderEntry type="module" module-name="openapi" />
     <orderEntry type="module-library">
