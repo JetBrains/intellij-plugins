@@ -16,7 +16,6 @@
 package jetbrains.communicator.idea.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -37,7 +36,7 @@ public class ActionUtil {
   }
 
   static Editor getEditor(AnActionEvent e) {
-    return (DataKeys.EDITOR.getData(e.getDataContext()));
+    return (PlatformDataKeys.EDITOR.getData(e.getDataContext()));
   }
 
   static UserModel getUserModel() {
