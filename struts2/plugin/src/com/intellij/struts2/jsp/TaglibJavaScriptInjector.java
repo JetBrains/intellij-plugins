@@ -84,9 +84,7 @@ public class TaglibJavaScriptInjector extends AbstractProjectComponent implement
     if (!StdFileTypes.UNKNOWN.equals(fileType) && fileType instanceof LanguageFileType) {
       myJavascriptLanguage = ((LanguageFileType) fileType).getLanguage();
       InjectedLanguageManager.getInstance(myProject).registerMultiHostInjector(this);
-    } else {
-      assert false : "could not install JavaScript support";
-    }
+    } 
   }
 
 }
