@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+
+<struts>
+
+  <package name="resultCompletionTest" namespace="/resultCompletionTest">
+
+    <action name="actionPath1">
+      <result name="completionTest"><caret></result>
+    </action>
+
+  </package>
+
+
+  <package name="anotherActionPathTest" namespace="/anotherActionPathTest">
+
+    <action name="anotherActionPath1"/>
+
+  </package>
+
+</struts>

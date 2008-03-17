@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+  "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+  "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- Basic DOM tests -->
+
+<struts>
+
+  <!-- BEAN =================================================================================================== -->
+
+  <bean class="MyClass"/>
+  <bean class="<error>INVALID_VALUE</error>"/>
+
+  <!-- TODO IDEA-bug, should trigger error -->
+  <bean class="MyInterface"/>
+
+  <bean class="MyInterfaceImpl" type="MyInterface"/>
+
+
+  <bean class="MyClass" scope="default"/>
+  <bean class="MyClass" scope="singleton"/>
+  <bean class="MyClass" scope="request"/>
+  <bean class="MyClass" scope="session"/>
+  <bean class="MyClass" scope="thread"/>
+  <bean class="MyClass" scope="<error>INVALID_VALUE</error>"/>
+
+  <bean class="MyClass" static="false"/>
+  <bean class="MyClass" static="true"/>
+  <bean class="MyClass" static="<error>INVALID_VALUE</error>"/>
+
+  <bean class="MyClass" optional="false"/>
+  <bean class="MyClass" optional="true"/>
+  <bean class="MyClass" optional="<error>INVALID_VALUE</error>"/>
+
+  <bean class="MyClass" name="myBean"/>
+  <bean class="MyClass" name=<error>""</error>/>
+  <bean class="MyClass" name="<error> </error>"/>
+
+  <!-- TODO must be unique within same "type"-elements -->
+  <bean class="MyClass" name="DUPLICATED_NAME"/>
+  <bean class="MyClass" name="DUPLICATED_NAME"/>
+
+
+  <!-- INCLUDE =================================================================================================== -->
+
+  <include file="struts-simple-include.xml"/>
+  <!-- non-existing file -->
+  <include file="<error descr="Cannot resolve file 'INVALID_VALUE' (not included in file sets?)">INVALID_VALUE</error>"/>
+  <!-- valid struts.xml not in fileset -->
+  <include file="<error descr="Cannot resolve file 'struts-notinfileset.xml' (not included in file sets?)">struts-notinfileset.xml</error>"/>
+  <!-- self-inclusion is prohibited -->
+  <include file="<error descr="Recursive inclusion of current file">struts-simple.xml</error>"/>
+
+
+  <!-- PACKAGE =================================================================================================== -->
+
+  <!-- "name" -->
+  <package name="validName"/>
+  <package name=<error>""</error>/>
+  <package name="<error> </error>"/>
+  <package name="<error>DUPLICATED_NAME</error>"/>
+  <package name="<error>DUPLICATED_NAME</error>"/>
+
+  <!-- "namespace" -->
+  <package name="emptyName" namespace=<error>""</error>/>
+  <package name="emptyName2" namespace="<error> </error>"/>
+
+  <!-- "abstract" -->
+  <package name="validName3" abstract="true"/>
+  <package name="validName3_1" abstract="false"/>
+  <package name="validName3_2" abstract="<error>INVALID_VALUE</error>"/>
+
+  <!-- "extends" -->
+  <package name="extendingPackage" extends="extendablePackage"/>
+  <package name="extendingPackageExtendsInvalid" extends="<error>INVALID_VALUE</error>"/>
+  <package name="extendingNotInFilesetPackage" extends="<error>notInFilesetPackage</error>"/>
+
+
+  <!-- default-action-ref -->
+  <package name="defaultActionRef">
+    <default-action-ref name="myDefaultAction"/>
+    <action name="myDefaultAction"/>
+  </package>
+
+  <package name="defaultActionRefInvalid">
+    <default-action-ref name="<error>INVALID_VALUE</error>"/>
+  </package>
+
+
+  <!-- default-interceptor-ref -->
+  <package name="defaultInterceptorRef">
+    <interceptors>
+      <interceptor-stack name="myLocalInterceptorStack">
+      </interceptor-stack>
+    </interceptors>
+
+    <default-interceptor-ref name="myLocalInterceptorStack"/>
+  </package>
+
+  <package name="defaultInterceptorRefError">
+    <default-interceptor-ref name="<error>INVALID_VALUE</error>"/>
+  </package>
+  
+
+  <!-- ACTION =================================================================================================== -->
+
+  <!-- "name" -->
+  <package name="action1">
+    <action name="validName"/>
+    <action name=<error>""</error>/>
+    <action name="<error> </error>"/>
+    <action name="<error>DUPLICATED_NAME</error>"/>
+    <action name="<error>DUPLICATED_NAME</error>"/>
+  </package>
+
+  <!-- "class" -->
+  <package name="action4">
+    <action name="validName" class="MyClass"/>
+    <!-- TODO IDEA-bug, should trigger error -->
+    <action name="validName2" class="MyInterface"/>
+    <action name="validName3" class="<error>INVALID_VALUE</error>"/>
+  </package>
+
+  <!-- "method" -->
+  <package name="action6">
+    <action name="actionMethod" class="MyClass" method="validActionMethod"/>
+    <action name="actionMethodWithException" class="MyClass" method="validActionMethodWithException"/>
+    <action name="actionMethodGetterButNoField" class="MyClass" method="getValidActionMethodNoUnderlyingField"/>
+    <action name="actionMethodReturnResult" class="MyClass" method="validActionMethodResult"/>
+
+    <action name="nonExistingActionMethod" class="MyClass" method="<error>INVALID_VALUE</error>"/>
+    <action name="invalidActionMethodDueToWrongExceptionType" class="MyClass"
+            method="<error>invalidActionMethodDueToWrongExceptionType</error>"/>
+    <action name="invalidActionMethodDueToWrongReturnType" class="MyClass"
+            method="<error>invalidActionMethodDueToWrongReturnType</error>"/>
+    <action name="invalidActionMethodIsSimplePropertyGetter" class="MyClass"
+            method="<error>getMyField</error>"/>
+  </package>
+
+
+  <!-- RESULT, locations are tested in "path" =================================================================== -->
+
+  <package name="testResult">
+    
+    <result-types>
+      <result-type name="dispatcher" class="org.apache.struts2.dispatcher.ServletDispatcherResult" default="true"/>
+    </result-types>
+
+    <!-- "name" -->
+    <action name="testResultNames">
+      <!-- default name = success, cannot have two -->
+      <<error>result</error>>testResultAction.action</result>
+      <<error>result</error>>testResultAction.action</result>
+
+      <result name="<error>DUPLICATED_NAME</error>">testResultAction.action</result>
+      <result name="<error>DUPLICATED_NAME</error>">testResultAction.action</result>
+    </action>
+
+    <!-- "type" -->
+    <action name="testResultTypeAttribute">
+      <result name="validEmptyResultType">testResultTypes.action</result>
+      <result name="validResultType" type="dispatcher">testResultTypes.action</result>
+      <result name="invalidResultType" type="<error>INVALID_VALUE</error>">testResultTypes.action</result>
+    </action>
+
+  </package>
+
+
+  <!-- RESULT-TYPE ============================================================================================== -->
+
+  <package name="testResultType">
+    <result-types>
+
+      <!-- "class" -->
+      <result-type name="validSubClass" class="org.apache.struts2.dispatcher.ServletDispatcherResult"/>
+      <result-type name="invalidSubClass" class="<error>MyClass</error>"/>
+
+      <!-- "name" -->
+      <!-- must be non-empty -->
+      <result-type name=<error>""</error> class="org.apache.struts2.dispatcher.ServletDispatcherResult"/>
+
+      <result-type name="<error>DUPLICATED_NAME</error>" class="org.apache.struts2.dispatcher.ServletDispatcherResult"/>
+      <result-type name="<error>DUPLICATED_NAME</error>" class="org.apache.struts2.dispatcher.ServletDispatcherResult"/>
+
+      <!-- default TODO only one "true" per package allowed -->
+      <result-type name="validDefaultValue_true" class="org.apache.struts2.dispatcher.ServletDispatcherResult" default="true"/>
+      <result-type name="validDefaultValue_false" class="org.apache.struts2.dispatcher.ServletDispatcherResult" default="false"/>
+    </result-types>
+
+  </package>
+
+</struts>

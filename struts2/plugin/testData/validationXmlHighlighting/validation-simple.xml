@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE validators PUBLIC
+    "-//OpenSymphony Group//XWork Validator 1.0.2//EN"
+    "http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">
+
+<!-- Basic DOM tests using "default.xml" validator-config -->
+
+<!-- TODO implement/check all "ANYTHING_FIX_ME" values -->
+<validators>
+
+  <!-- VALIDATOR ================================================ -->
+
+  <!-- "type" -->
+  <validator type="required">
+    <message>anything</message>
+  </validator>
+
+  <validator type="<error>INVALID_VALUE</error>">
+    <message>anything</message>
+  </validator>
+
+  <!-- nested <param> -->
+  <validator type="fieldexpression">
+    <param name="expression">ANYTHING_FIX_ME</param>
+    <param name="<error>INVALID_VALUE</error>">anything</param>
+  </validator>
+
+
+  <!-- FIELD ==================================================== -->
+
+  <!-- "type" -->
+  <field name="ANYTHING_FIX_ME">
+    <field-validator type="required">
+      <message>anything</message>
+    </field-validator>
+
+    <field-validator type="<error>INVALID_VALUE</error>">
+      <message>anything</message>
+    </field-validator>
+  </field>
+
+  <!-- nested <param> -->
+
+  <field name="ANYTHING_FIX_ME">
+    <field-validator type="fieldexpression">
+      <param name="expression">ANYTHING_FIX_ME</param>
+      <param name="<error>INVALID_VALUE</error>">anything</param>
+      <message>anything</message>
+    </field-validator>
+  </field>
+
+</validators>

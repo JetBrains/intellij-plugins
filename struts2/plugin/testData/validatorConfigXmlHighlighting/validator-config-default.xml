@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE validators PUBLIC
+        "-//OpenSymphony Group//XWork Validator Config 1.0//EN"
+        "http://www.opensymphony.com/xwork/xwork-validator-config-1.0.dtd">
+<!-- START SNIPPET: validators-default -->
+<validators>
+    <validator name="required" class="com.opensymphony.xwork2.validator.validators.RequiredFieldValidator"/>
+    <validator name="requiredstring" class="com.opensymphony.xwork2.validator.validators.RequiredStringValidator"/>
+    <validator name="int" class="com.opensymphony.xwork2.validator.validators.IntRangeFieldValidator"/>
+    <validator name="double" class="com.opensymphony.xwork2.validator.validators.DoubleRangeFieldValidator"/>
+    <validator name="date" class="com.opensymphony.xwork2.validator.validators.DateRangeFieldValidator"/>
+    <validator name="expression" class="com.opensymphony.xwork2.validator.validators.ExpressionValidator"/>
+    <validator name="fieldexpression" class="com.opensymphony.xwork2.validator.validators.FieldExpressionValidator"/>
+    <validator name="email" class="com.opensymphony.xwork2.validator.validators.EmailValidator"/>
+    <validator name="url" class="com.opensymphony.xwork2.validator.validators.URLValidator"/>
+    <validator name="visitor" class="com.opensymphony.xwork2.validator.validators.VisitorFieldValidator"/>
+    <validator name="conversion" class="com.opensymphony.xwork2.validator.validators.ConversionErrorFieldValidator"/>
+    <validator name="stringlength" class="com.opensymphony.xwork2.validator.validators.StringLengthFieldValidator"/>
+    <validator name="regex" class="com.opensymphony.xwork2.validator.validators.RegexFieldValidator"/>
+</validators>
+<!--  END SNIPPET: validators-default -->

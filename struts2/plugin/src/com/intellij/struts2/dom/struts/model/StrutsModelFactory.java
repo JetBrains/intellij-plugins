@@ -1,0 +1,96 @@
+/*
+ * Copyright 2007 The authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.intellij.struts2.dom.struts.model;
+
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.dom.struts.StrutsRoot;
+import com.intellij.struts2.facet.configuration.StrutsFileSet;
+import com.intellij.util.xml.DomFileElement;
+import com.intellij.util.xml.DomManager;
+import com.intellij.util.xml.model.DomModelFactory;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * @author Yann CŽbron
+ */
+class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiElement> {
+
+  protected StrutsModelFactory(final DomManager domManager) {
+    super(StrutsRoot.class, domManager.createModelMerger(), domManager.getProject(), "struts2");
+  }
+
+  public StrutsModel getModel(@NotNull final PsiElement context) {
+    final PsiFile psiFile = context.getContainingFile();
+    if (psiFile instanceof XmlFile) {
+      return getModelByConfigFile((XmlFile) psiFile);
+    }
+    return null;
+  }
+
+  protected List<StrutsModel> computeAllModels(@NotNull final Module module) {
+    final PsiManager psiManager = PsiManager.getInstance(module.getProject());
+    final StrutsManager strutsManager = StrutsManager.getInstance(module.getProject());
+    final Set<StrutsFileSet> fileSets = strutsManager.getAllConfigFileSets(module);
+
+    final List<StrutsModel> models = new ArrayList<StrutsModel>(fileSets.size());
+    for (final StrutsFileSet set : fileSets) {
+      if (set.isRemoved()) {
+        continue;
+      }
+//      System.out.println("adding " + set);
+      final Set<XmlFile> files = new LinkedHashSet<XmlFile>(set.getFiles().size());
+      for (final VirtualFilePointer filePointer : set.getFiles()) {
+        final VirtualFile file = filePointer.getFile();
+        if (file == null) {
+          continue;
+        }
+        final PsiFile psiFile = psiManager.findFile(file);
+        if (psiFile instanceof XmlFile) {
+          final StrutsRoot strutsRootDom = getDom((XmlFile) psiFile);
+          if (strutsRootDom != null) {
+            files.add((XmlFile) psiFile);
+// TODO           addIncludes(files, strutsRootDom);
+          }
+        }
+      }
+      if (!files.isEmpty()) {
+        final StrutsModel model = new StrutsModelImpl(createMergedModelRoot(files), files);
+        models.add(model);
+      }
+    }
+
+    return models;
+  }
+
+  protected StrutsModel createCombinedModel(final Set<XmlFile> xmlFiles,
+                                            final DomFileElement<StrutsRoot> strutsRootDomFileElement,
+                                            final StrutsModel strutsModel,
+                                            final Module module) {
+    return new StrutsModelImpl(strutsRootDomFileElement, xmlFiles);
+  }
+
+}

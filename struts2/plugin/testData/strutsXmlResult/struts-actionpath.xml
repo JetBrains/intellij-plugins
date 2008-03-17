@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+  <package name="actionPathTest" namespace="/actionPathTest">
+
+    <action name="actionPath1">
+      <!-- namespace can be omitted if action is in curent package -->
+      <result name="localActionPathWithoutNamespacePrefix">actionPath1.action</result>
+      <!-- test FQ path including namespace -->
+      <result name="localActionPathIncludingNamespacePrefix">/actionPathTest/actionPath1.action</result>
+      <!-- action from path different package -->
+      <result name="differentPackageFQPath">/anotherActionPathTest/anotherActionPath1.action</result>
+
+
+      <result name="invalidNonExistingAction"><error>INVALID_VALUE.action</error></result>
+      <result name="invalidActionExtension"><error>actionPath1.INVALID_VALUE</error></result>
+      <result name="invalidMustHaveExtension"><error>actionPath1</error></result>
+    </action>
+
+  </package>
+
+
+  <package name="anotherActionPathTest" namespace="/anotherActionPathTest">
+
+    <action name="anotherActionPath1"/>
+
+  </package>
+
+
+  <package name="wildcardTest" namespace="/wildcards">
+
+    <action name="wildcard*">
+      <result name="validWildcard">wildcard.action</result>
+      <result name="validWithWildcardValue">wildcardAnythingGoesHere.action</result>
+      <result name="validWithHyphenValue">wildcard-Any-thing-Goes-Here.action</result>
+
+      <result name="invalidCase"><error>wILdcardSomething.action</error></result>
+      <result name="invalidDoesNotMatch"><error>wildcarXXX.action</error></result>
+      <result name="invalidActionExtension"><error>wildcardAnythingGoesHere.INVALID_VALUE</error></result>
+    </action>
+
+    <action name="wild*InBetween">
+      <result name="validInBetween">wildInBetween.action</result>
+      <result name="validInBetweenWithWildcardValue">wildJustInBetween.action</result>
+    </action>
+
+  </package>
+
+</struts>

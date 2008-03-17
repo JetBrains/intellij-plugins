@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- <interceptor-ref> -->
+<struts>
+
+  <package name="testInterceptorRef">
+
+    <interceptors>
+      <interceptor name="alias" class="com.opensymphony.xwork2.interceptor.AliasInterceptor"/>
+      <interceptor name="autowiring" class="com.opensymphony.xwork2.spring.interceptor.ActionAutowiringInterceptor"/>
+      <interceptor name="chain" class="com.opensymphony.xwork2.interceptor.ChainingInterceptor"/>
+
+      <interceptor-stack name="testInterceptorRefStack">
+        <interceptor-ref name="<caret>"/>
+      </interceptor-stack>
+    </interceptors>
+
+  </package>
+
+</struts>

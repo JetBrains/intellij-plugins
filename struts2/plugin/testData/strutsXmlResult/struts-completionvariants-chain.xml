@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+
+<struts>
+
+  <package name="chainResultCompletionTest" namespace="/chainResultCompletionTest">
+    <result-types>
+      <result-type name="chain" class="com.opensymphony.xwork2.ActionChainResult"/>
+    </result-types>
+    
+    <action name="actionPath1">
+      <result name="chainCompletionTest" type="chain"><caret></result>
+    </action>
+
+  </package>
+
+
+  <package name="anotherActionPathTest" namespace="/anotherActionPathTest">
+
+    <action name="anotherActionPath1"/>
+
+  </package>
+
+</struts>

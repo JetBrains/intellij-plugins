@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- <exception-mapping> -->
+
+<struts>
+
+  <!-- global -->
+  <package name="globalExceptionMappingTest">
+    <global-results>
+      <result name="global1">global1</result>
+    </global-results>
+
+    <global-exception-mappings>
+      <!-- "exception" -->
+      <exception-mapping exception="MyException" result="global1"/>
+      <exception-mapping exception="<error>MyInterface</error>" result="global1"/>
+      <exception-mapping exception="<error>INVALID_VALUE</error>" result="global1"/>
+
+      <!-- "result" -->
+      <exception-mapping exception="MyException" result="<error>INVALID_VALUE</error>"/>
+    </global-exception-mappings>
+  </package>
+
+
+  <!-- action-local -->
+  <package name="actionLocalExceptionMappingTest">
+    <action name="TestExceptionMapping" class="MyClass">
+      <exception-mapping exception="MyException" result="exceptionResult"/>
+      <exception-mapping exception="<error>MyInterface</error>" result="exceptionResult"/>
+      <exception-mapping exception="<error>INVALID_VALUE</error>" result="exceptionResult"/>
+
+      <exception-mapping exception="MyException" result="<error>INVALID_VALUE</error>"/>
+      <result name="exceptionResult">exception</result>
+    </action>
+  </package>
+
+
+  <!-- global/local mixed, check non-interference -->
+  <package name="globalAndLocalExceptionMappingTest">
+    <global-results>
+      <result name="global1">global1</result>
+    </global-results>
+
+    <global-exception-mappings>
+      <exception-mapping exception="MyException" result="<error>exceptionResult</error>"/>
+    </global-exception-mappings>
+
+    <action name="TestExceptionMapping" class="MyClass">
+      <exception-mapping exception="MyException" result="<error>global1</error>"/>
+      <result name="exceptionResult">exception</result>
+    </action>
+  </package>
+
+</struts>

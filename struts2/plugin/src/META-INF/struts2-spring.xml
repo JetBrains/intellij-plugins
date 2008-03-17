@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
+
+<idea-plugin version="2">
+
+  <!-- resolve <action> "class" to Spring bean definition -->
+  <extensions defaultExtensionNs="com.intellij">
+    <struts2.actionClassContributor implementation="com.intellij.struts2.dom.struts.impl.ActionClassConverterSpringContributor"/>
+  </extensions>
+
+</idea-plugin>

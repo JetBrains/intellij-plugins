@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+  <!-- Test 1st web-root, "/jsp/" ==> "/" -->
+  <package name="dispatchTest">
+
+    <action name="testValidPaths">
+      <result name="valid1">index.jsp</result>
+      <result name="valid2">/index.jsp</result>
+      <result name="valid3">
+        /index.jsp
+      </result>
+    </action>
+
+    <action name="testInvalidPaths">
+      <result name="invalid1"><error></error></result>
+      <result name="invalid2"><error>INVALID_VALUE</error></result>
+      <result name="invalid3"><error>/jsp/index.jsp</error></result>
+    </action>
+
+  </package>
+
+  <!-- Test 2nd web-root, "/jsp2/" ==> "/2ndWebRoot/" -->
+  <package name="test2ndWebRoot">
+
+    <action name="testValid2nd">
+      <result name="valid1">/2ndWebRoot/</result>
+      <result name="valid2">/2ndWebRoot/jsp2-index.jsp</result>
+    </action>
+
+    <action name="testInvalid2nd">
+      <result name="invalidWrongPathMapping"><error>/jsp2/jsp2-index.jsp</error></result>
+      <result name="invalidWrongFile">/2ndWebRoot/<error>invalid.jsp</error></result>
+    </action>
+
+  </package>
+
+</struts>

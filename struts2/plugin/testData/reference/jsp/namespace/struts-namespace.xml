@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- JSP "namespace" tests -->
+<struts>
+
+  <package name="namespace1" namespace="/namespace1">
+    <action name="namespace1Action"/>
+  </package>
+
+  <package name="namespace2" namespace="/namespace2">
+    <action name="namespace2Action"/>
+  </package>
+
+</struts>

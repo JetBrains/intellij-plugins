@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- multiple gutter targets for "MyAction" -->
+<struts>
+
+  <package name="testActionClassGutterMultiple">
+
+    <action name="myActionPath1" class="MyAction" method="validActionMethod"/>
+    <action name="myActionPath2" class="MyAction" method="validActionMethod"/>
+
+  </package>
+
+  <package name="testActionClassGutterMultiple2">
+
+    <action name="myActionPath3" class="MyAction" method="validActionMethod"/>
+
+  </package>
+
+</struts>

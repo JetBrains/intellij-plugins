@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">-->
+
+<idea-plugin url="http://www.jetbrains.net/confluence/display/CONTEST/Struts2Plugin" version="2">
+  <id>com.intellij.struts2</id>
+  <name>Struts 2</name>
+  <description>
+    <![CDATA[
+  Provides full integration of <a href="http://struts.apache.org/2.x/index.html">Struts 2</a>.
+  ]]>
+  </description>
+
+  <change-notes>
+    <![CDATA[
+  Please see <a href="http://www.jetbrains.net/confluence/display/CONTEST/Struts2PluginChangeNotes">Struts2PluginChangeNotes</a>.
+  ]]>
+  </change-notes>
+
+  <version>0.38</version>
+
+  <!-- required dependencies -->
+  <depends>com.intellij.javaee</depends>
+
+  <!-- optional dependencies -->
+  <depends optional="true" config-file="struts2-javascript.xml">JavaScript</depends>
+  <depends optional="true" config-file="struts2-spring.xml">com.intellij.spring</depends>
+
+  <vendor email="yann.cebron@googlemail.com"
+          url="http://www.lineas.de/lineas-informationstechnik/"
+          logo="/resources/icons/lineas.png">LINEAS Informationstechnik GmbH
+  </vendor>
+
+  <idea-version since-build="7590" until-build="7999"/>
+
+  <!-- published extension points -->
+  <extensionPoints>
+    <extensionPoint name="resultContributor"
+                    interface="com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor"/>
+    <extensionPoint name="actionClassContributor"
+                    interface="com.intellij.struts2.dom.struts.action.ActionClassConverter$ActionClassConverterContributor"/>
+  </extensionPoints>
+
+  <extensions xmlns="com.intellij">
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+
+    <!-- struts.xml -->
+    <dom.fileDescription implementation="com.intellij.struts2.dom.struts.StrutsDomFileDescription"/>
+    <annotator language="XML" implementationClass="com.intellij.struts2.annotators.StrutsFileSetCheckingAnnotator"/>
+    <compiler.inspectionValidator implementation="com.intellij.struts2.dom.inspection.Struts2ModelValidator"/>
+
+    <projectService serviceInterface="com.intellij.struts2.dom.struts.model.StrutsManager"
+                    serviceImplementation="com.intellij.struts2.dom.struts.model.StrutsManagerImpl"/>
+
+    <gotoSymbolContributor implementation="com.intellij.struts2.gotosymbol.GoToActionSymbolProvider"/>
+    <gotoSymbolContributor implementation="com.intellij.struts2.gotosymbol.GoToPackageSymbolProvider"/>
+
+    <xmlStructureViewBuilderProvider
+        implementation="com.intellij.struts2.structure.StrutsStructureViewBuilderProvider"/>
+
+
+    <!-- validation.xml/validator-config.xml -->
+    <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorDomFileDescription"/>
+    <compiler.inspectionValidator implementation="com.intellij.struts2.dom.inspection.ValidatorModelValidator"/>
+
+    <projectService serviceInterface="com.intellij.struts2.dom.validator.ValidatorManager"
+                    serviceImplementation="com.intellij.struts2.dom.validator.ValidatorManagerImpl"/>
+
+    <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorConfigDomFileDescription"/>
+
+    <xmlStructureViewBuilderProvider
+        implementation="com.intellij.struts2.structure.ValidationStructureViewBuilderProvider"/>
+
+
+    <!-- JAVA -->
+    <annotator language="JAVA" implementationClass="com.intellij.struts2.annotators.ActionAnnotator"/>
+
+
+    <!-- JSP -->
+    <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibCssInlineStyleInjector"/>
+    <annotator language="JSP" implementationClass="com.intellij.struts2.annotators.JspActionAnnotator"/>
+
+  </extensions>
+
+  <application-components>
+    <component>
+      <implementation-class>com.intellij.struts2.StrutsApplicationComponent</implementation-class>
+    </component>
+  </application-components>
+
+  <project-components>
+    <component>
+      <implementation-class>com.intellij.struts2.StrutsProjectComponent</implementation-class>
+    </component>
+    <component>
+      <implementation-class>com.intellij.struts2.reference.StrutsReferenceProviderComponent</implementation-class>
+    </component>
+  </project-components>
+
+</idea-plugin>
