@@ -31,8 +31,6 @@
           logo="/resources/icons/lineas.png">LINEAS Informationstechnik GmbH
   </vendor>
 
-  <idea-version since-build="7590" until-build="7999"/>
-
   <!-- published extension points -->
   <extensionPoints>
     <extensionPoint name="resultContributor"
