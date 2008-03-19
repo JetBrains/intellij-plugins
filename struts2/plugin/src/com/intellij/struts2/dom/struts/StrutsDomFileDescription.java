@@ -66,8 +66,5 @@ public class StrutsDomFileDescription extends DomFileDescription<StrutsRoot> {
     registerImplementation(StrutsPackage.class, StrutsPackageImpl.class);
   }
 
- public boolean acceptsOtherRootTagNames() {
-    return true;
-  }
 
 }
