@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts;
 
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.dom.Param;
 import com.intellij.struts2.dom.StrutsDomConstants;
@@ -28,36 +27,21 @@ import com.intellij.struts2.dom.struts.impl.ResultImpl;
 import com.intellij.struts2.dom.struts.impl.StrutsPackageImpl;
 import com.intellij.struts2.dom.struts.strutspackage.GlobalResult;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.util.NotNullFunction;
 import com.intellij.util.xml.DomFileDescription;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * <code>struts.xml</code> DOM-Model files.
  *
  * @author Yann CŽbron
  */
-public class StrutsDomFileDescription extends DomFileDescription<StrutsRoot> {
+public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
 
-  private static final List<String> STRUTS_NAMESPACES = Arrays.asList(StrutsConstants.STRUTS_2_0_DTD_URI,
-                                                                      StrutsConstants.STRUTS_2_0_DTD_ID,
-                                                                      StrutsConstants.XWORK_DTD_URI,
-                                                                      StrutsConstants.XWORK_DTD_ID);
-
-  public StrutsDomFileDescription() {
+  public Struts2DomFileDescription() {
     super(StrutsRoot.class, StrutsRoot.TAG_NAME);
   }
 
   protected void initializeFileDescription() {
-    registerNamespacePolicy(StrutsDomConstants.STRUTS_NAMESPACE_KEY, new NotNullFunction<XmlTag, List<String>>() {
-      @NotNull
-      public List<String> fun(final XmlTag tag) {
-        return STRUTS_NAMESPACES;
-      }
-    });
+    registerNamespacePolicy(StrutsDomConstants.STRUTS_NAMESPACE_KEY, StrutsConstants.STRUTS_2_0_DTD_URI, StrutsConstants.STRUTS_2_0_DTD_ID);
 
     registerImplementation(Action.class, ActionImpl.class);
     registerImplementation(GlobalResult.class, GlobalResultImpl.class);

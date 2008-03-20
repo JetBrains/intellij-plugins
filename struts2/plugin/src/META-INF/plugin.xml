@@ -43,7 +43,8 @@
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
     <!-- struts.xml -->
-    <dom.fileDescription implementation="com.intellij.struts2.dom.struts.StrutsDomFileDescription"/>
+    <dom.fileDescription implementation="com.intellij.struts2.dom.struts.Struts2DomFileDescription"/>
+    <dom.fileDescription implementation="com.intellij.struts2.dom.struts.XWorkDomFileDescription"/>
     <annotator language="XML" implementationClass="com.intellij.struts2.annotators.StrutsFileSetCheckingAnnotator"/>
     <compiler.inspectionValidator implementation="com.intellij.struts2.dom.inspection.Struts2ModelValidator"/>
 
