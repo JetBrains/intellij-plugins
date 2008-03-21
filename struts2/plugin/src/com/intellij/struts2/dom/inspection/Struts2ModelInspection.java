@@ -20,11 +20,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.ActionClassConverter;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.GenericDomValue;
+import com.intellij.util.xml.*;
 import com.intellij.util.xml.highlighting.BasicDomElementsInspection;
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import com.intellij.util.xml.highlighting.DomHighlightingHelper;
@@ -61,8 +60,10 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     if (element instanceof GenericAttributeValue) {
       final GenericAttributeValue genericDomValue = (GenericAttributeValue) element;
       if (genericDomValue.getConverter() instanceof ActionClassConverter) {
-        final PsiReference[] psiReferences = genericDomValue.getUserData(ActionClassConverter.REFERENCES_KEY);
-        assert psiReferences != null : "REFERENCES_KEY not stored for " + genericDomValue;
+        final XmlElement xmlElement = DomUtil.getValueElement(genericDomValue);
+        if (xmlElement == null) return;
+
+        final PsiReference[] psiReferences = xmlElement.getReferences();
 
         for (final PsiReference psiReference : psiReferences) {
           final PsiElement resolveElement = psiReference.resolve();
