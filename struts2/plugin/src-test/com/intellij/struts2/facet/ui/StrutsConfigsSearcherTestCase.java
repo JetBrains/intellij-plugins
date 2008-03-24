@@ -55,11 +55,6 @@ public class StrutsConfigsSearcherTestCase extends BasicHighlightingTestCase<Jav
     return "configsSearcher";
   }
 
-  protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
-    addStrutsJars(moduleBuilder);
-  }
-
 
   private final FacetEditorContext myFacetEditorContext = new FacetEditorContext() {
 

@@ -42,7 +42,6 @@ public class NamespaceReferenceProviderTestCase extends BasicHighlightingTestCas
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
-    addStrutsJars(moduleBuilder);
   }
 
   public void testNamespaceHighlighting() throws Throwable {

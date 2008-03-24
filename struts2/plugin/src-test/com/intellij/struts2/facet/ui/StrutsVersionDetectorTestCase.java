@@ -35,11 +35,6 @@ public class StrutsVersionDetectorTestCase extends BasicHighlightingTestCase<Jav
     return "strutsXmlResult"; // fake
   }
 
-  protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
-    addStrutsJars(moduleBuilder);
-  }
-
   public void testDetectStrutsVersion() throws Exception {
     final String version = StrutsVersionDetector.detectStrutsVersion(myModule);
     assertEquals(version, "2.1.0");

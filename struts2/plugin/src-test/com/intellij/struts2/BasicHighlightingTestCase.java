@@ -62,8 +62,8 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected void setUp() throws Exception {
     super.setUp();
 
-    final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder = IdeaTestFixtureFactory.getFixtureFactory()
-        .createFixtureBuilder();
+    final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder =
+            IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder();
     final T moduleBuilder = projectBuilder.addModule(getModuleFixtureBuilderClass());
     myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
 
@@ -84,6 +84,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     moduleBuilder.addContentRoot(myFixture.getTempDirPath());
     moduleBuilder.addContentRoot(getTestDataPath());
     moduleBuilder.addSourceRoot("src");
+    addStrutsJars(moduleBuilder);
   }
 
   /**
@@ -106,9 +107,10 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     final RunResult<StrutsFacet> runResult = new WriteCommandAction<StrutsFacet>(myProject) {
       protected void run(final Result<StrutsFacet> result) throws Throwable {
         final ModifiableFacetModel model = FacetManager.getInstance(myModule).createModifiableModel();
-        final StrutsFacet facet = StrutsFacetType.INSTANCE
-            .createFacet(myModule, StrutsFacetType.INSTANCE.getPresentableName(),
-                         StrutsFacetType.INSTANCE.createDefaultConfiguration(), null);
+        final StrutsFacet facet = StrutsFacetType.INSTANCE.createFacet(myModule,
+                                                                       StrutsFacetType.INSTANCE.getPresentableName(),
+                                                                       StrutsFacetType.INSTANCE.createDefaultConfiguration(),
+                                                                       null);
         result.setResult(facet);
         model.addFacet(facet);
         model.commit();
@@ -132,7 +134,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     super.tearDown();
   }
 
-  protected VirtualFile addFileToSet(final StrutsFileSet fileSet, final String path) {
+  private VirtualFile addToFileSet(final StrutsFileSet fileSet, final String path) {
     try {
       myFixture.copyFileToProject(path);
     }
@@ -148,7 +150,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected void createStrutsFileSet(final String... fileNames) {
     final StrutsFileSet fileSet = new StrutsFileSet("test", "test");
     for (final String fileName : fileNames) {
-      addFileToSet(fileSet, fileName);
+      addToFileSet(fileSet, fileName);
     }
     final Set<StrutsFileSet> strutsFileSetSet = myFacet.getConfiguration().getFileSets();
     strutsFileSetSet.clear();

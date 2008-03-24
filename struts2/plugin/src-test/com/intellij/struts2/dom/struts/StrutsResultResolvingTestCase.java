@@ -36,7 +36,6 @@ public class StrutsResultResolvingTestCase extends BasicStrutsHighlightingTestCa
     super.configureModule(moduleBuilder);
     moduleBuilder.addWebRoot(getTestDataPath() + "/jsp/", "/");
     moduleBuilder.addWebRoot(getTestDataPath() + "/jsp2/", "/2ndWebRoot/");
-    addStrutsJars(moduleBuilder);
   }
 
   /**

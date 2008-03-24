@@ -43,7 +43,6 @@ public class JspActionAnnotatorTestCase extends BasicStrutsHighlightingTestCase<
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp/", "/");
-    addStrutsJars(moduleBuilder);
   }
 
   /**

@@ -43,6 +43,7 @@ public class ActionAnnotatorTestCase extends BasicStrutsHighlightingTestCase {
     return "/gutterJava/actionClass/";
   }
 
+  // TODO why necessary?
   protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
     final String path = myFixture.getTempDirPath();
     moduleBuilder.addContentRoot(path);

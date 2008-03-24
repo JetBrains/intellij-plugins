@@ -28,11 +28,6 @@ public class ValidatorConfigHighlightingTestCase extends BasicValidationHighligh
     return "validatorConfigXmlHighlighting";
   }
 
-  protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
-    addStrutsJars(moduleBuilder);
-  }
-
   public void testSimple() throws Throwable {
     performHighlightingTest("validator-config-simple.xml");
   }

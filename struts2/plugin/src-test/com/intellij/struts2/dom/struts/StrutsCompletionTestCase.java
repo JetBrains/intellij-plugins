@@ -26,12 +26,6 @@ public class StrutsCompletionTestCase extends BasicStrutsHighlightingTestCase<Ja
     return "strutsXmlCompletion";
   }
 
-  protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
-    addStrutsJars(moduleBuilder);
-  }
-
-
   public void testCompletionVariantsResultName() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-result_name.xml",
                                  "error", "input", "login", "success");

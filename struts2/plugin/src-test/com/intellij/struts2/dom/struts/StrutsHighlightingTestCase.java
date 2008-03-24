@@ -24,19 +24,12 @@ import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
  */
 public class StrutsHighlightingTestCase extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
-  protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
-    addStrutsJars(moduleBuilder);
-  }
-
   protected String getTestDataLocation() {
     return "strutsXmlHighlighting";
   }
 
   public void testSimpleStruts() throws Throwable {
-    createStrutsFileSet("struts-simple.xml", "struts-simple-include.xml");
-    final long duration = myFixture.testHighlighting(true, false, true, "struts-simple.xml");
-    System.out.println("struts-simple.xml = " + duration);
+    performHighlightingTest("struts-simple.xml", "struts-simple-include.xml");
   }
 
   public void testParam() throws Throwable {

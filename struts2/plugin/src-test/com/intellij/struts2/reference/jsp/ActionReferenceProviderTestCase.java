@@ -42,7 +42,6 @@ public class ActionReferenceProviderTestCase extends BasicHighlightingTestCase<W
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
-    addStrutsJars(moduleBuilder);
   }
 
   public void testActionHighlighting() throws Throwable {
