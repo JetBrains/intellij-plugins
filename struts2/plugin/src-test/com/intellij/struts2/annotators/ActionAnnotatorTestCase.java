@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Tests for {@link ActionAnnotator}
+ *
  * @author Yann CŽbron
  */
 public class ActionAnnotatorTestCase extends BasicStrutsHighlightingTestCase {
