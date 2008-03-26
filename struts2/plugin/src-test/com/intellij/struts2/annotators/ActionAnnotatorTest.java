@@ -33,7 +33,7 @@ import java.util.Set;
  *
  * @author Yann CŽbron
  */
-public class ActionAnnotatorTestCase extends BasicStrutsHighlightingTestCase {
+public class ActionAnnotatorTest extends BasicStrutsHighlightingTestCase {
 
   protected LocalInspectionTool[] getHighlightingInspections() {
     return new LocalInspectionTool[0];
