@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- with Spring support enabled -->
+<struts>
+
+  <!-- Actions via Spring beans -->
+  <package name="springBeansPackage">
+
+    <action name="testSpringBean1" class="bean1" method="validActionMethod"/>
+    <action name="testSpringBean1Alias" class="bean1Alias" method="validActionMethod"/>
+
+    <action name="testSpringBean2" class="bean2"/>
+
+    <action name="notExistingSpringBean" class="<error descr="Cannot resolve class|Spring bean 'bean999'">bean999</error>"/>
+
+  </package>
+
+
+  <!-- Actions via normal JAVA classes -->
+  <package name="noSpring">
+
+    <action name="noSpring" class="MyClass" method="validActionMethod"/>
+
+  </package>
+
+</struts>

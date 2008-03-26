@@ -94,13 +94,18 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
    * @throws Exception On internal errors.
    */
   protected final void addStrutsJars(final T moduleBuilder) throws Exception {
+    addLibrary(moduleBuilder, "struts2",
+               "struts2-core-2.1.0.jar",
+               "freemarker-2.3.10.jar",
+               "ognl-2.6.11.jar",
+               "xwork-2.1.0.jar");
+  }
+
+  protected void addLibrary(final T moduleBuilder, final String libraryName, String... jarPaths) {
     final File testDataBasePathFile = new File(getTestDataBasePath()); // little hack to get absolute path..
-    moduleBuilder.addLibraryJars("struts-2",
+    moduleBuilder.addLibraryJars(libraryName,
                                  testDataBasePathFile.getAbsolutePath(),
-                                 "struts2-core-2.1.0.jar",
-                                 "freemarker-2.3.10.jar",
-                                 "ognl-2.6.11.jar",
-                                 "xwork-2.1.0.jar");
+                                 jarPaths);
   }
 
   protected final StrutsFacet createFacet() {
