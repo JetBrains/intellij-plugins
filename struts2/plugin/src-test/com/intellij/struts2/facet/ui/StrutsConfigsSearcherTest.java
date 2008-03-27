@@ -45,7 +45,7 @@ import java.util.Map;
  *
  * @author Yann CŽbron
  */
-public class StrutsConfigsSearcherTestCase extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
 
   protected LocalInspectionTool[] getHighlightingInspections() {
     return new LocalInspectionTool[0];

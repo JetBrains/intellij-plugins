@@ -22,7 +22,7 @@ import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
  *
  * @author Yann CŽbron
  */
-public class StrutsResultResolvingTestCase extends BasicStrutsHighlightingTestCase<WebModuleFixtureBuilder> {
+public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<WebModuleFixtureBuilder> {
 
   protected String getTestDataLocation() {
     return "strutsXmlResult";

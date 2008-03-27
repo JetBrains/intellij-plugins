@@ -25,7 +25,7 @@ import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
  *
  * @author Yann CŽbron
  */
-public class StrutsVersionDetectorTestCase extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsVersionDetectorTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
 
   protected LocalInspectionTool[] getHighlightingInspections() {
     return new LocalInspectionTool[0];
