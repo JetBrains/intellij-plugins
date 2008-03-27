@@ -51,7 +51,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     addFile(springFileSet, "spring.xml");
 
 
-//    performHighlightingTest("struts-spring.xml");
+    performHighlightingTest("struts-spring.xml");
   }
 
   public void testStrutsSpringCompletionVariants() throws Throwable {
@@ -62,7 +62,6 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     addFile(springFileSet, "spring.xml");
 
     // TODO <alias> does not appear here, see com.intellij.spring.impl.SpringModelImpl#myOwnBeans
-/*
     myFixture.testCompletionVariants("struts-completionvariants-spring.xml",
                                      "META-INF",
                                      "MyClass",
@@ -73,7 +72,6 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
                                      "ognl",
                                      "org",
                                      "template");
-*/
   }
 
   // stuff below is Spring related ===============================================
