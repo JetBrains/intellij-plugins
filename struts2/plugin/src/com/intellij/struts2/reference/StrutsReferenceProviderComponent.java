@@ -39,6 +39,7 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
 
   private final ReferenceProvidersRegistry registry;
 
+  @NonNls
   private static final String[] TAGLIB_UI_FORM_TAGS = new String[]{
       "autocompleter",
       "checkbox",
@@ -171,6 +172,25 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
                  "validate", NAMESPACE_TAGLIB_STRUTS_UI,
                  "form");
     // TODO windowState
+
+    // <property>
+    registerTags(BOOLEAN_VALUE_REFERENCE_PROVIDER,
+                 "escape", NAMESPACE_TAGLIB_STRUTS_UI,
+                 "property");
+
+    // <select>
+    registerTags(BOOLEAN_VALUE_REFERENCE_PROVIDER,
+                 "emptyOption", NAMESPACE_TAGLIB_STRUTS_UI,
+                 "select");
+
+    registerTags(BOOLEAN_VALUE_REFERENCE_PROVIDER,
+                 "multiple", NAMESPACE_TAGLIB_STRUTS_UI,
+                 "select");
+
+    // <set>
+    registerTags(new StaticStringValuesReferenceProvider(false, "application", "session", "request", "page", "action"),
+                 "scope", NAMESPACE_TAGLIB_STRUTS_UI,
+                 "set");
 
     // <submit>
     registerTags(new StaticStringValuesReferenceProvider(false, "input", "button", "image"),

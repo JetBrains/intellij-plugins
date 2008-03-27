@@ -54,6 +54,7 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProviderBas
    */
   public StaticStringValuesReferenceProvider(final boolean allowOtherValues, @NotNull @NonNls final String... values) {
     this.soft = allowOtherValues;
+    Arrays.sort(values); // make sure Arrays.binarySearch() works later on..
     this.values = values;
   }
 
