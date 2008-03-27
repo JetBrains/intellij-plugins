@@ -26,7 +26,7 @@ import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.facet.configuration.StrutsFileSet;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
-import com.intellij.util.xml.model.DomModelFactory;
+import com.intellij.util.xml.model.impl.DomModelFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -41,14 +41,6 @@ class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiEle
 
   protected StrutsModelFactory(final DomManager domManager) {
     super(StrutsRoot.class, domManager.createModelMerger(), domManager.getProject(), "struts2");
-  }
-
-  public StrutsModel getModel(@NotNull final PsiElement context) {
-    final PsiFile psiFile = context.getContainingFile();
-    if (psiFile instanceof XmlFile) {
-      return getModelByConfigFile((XmlFile) psiFile);
-    }
-    return null;
   }
 
   protected List<StrutsModel> computeAllModels(@NotNull final Module module) {

@@ -54,7 +54,7 @@ public abstract class StrutsManager {
    *
    * @return <code>null</code> if no model available.
    *
-   * @see com.intellij.util.xml.model.DomModelFactory#getModelByConfigFile(com.intellij.psi.xml.XmlFile)
+   * @see com.intellij.util.xml.model.impl.DomModelFactory#getModelByConfigFile(com.intellij.psi.xml.XmlFile)
    */
   @Nullable
   public abstract StrutsModel getModelByFile(@NotNull final XmlFile file);
@@ -66,7 +66,7 @@ public abstract class StrutsManager {
    *
    * @return List of all models.
    *
-   * @see com.intellij.util.xml.model.DomModelFactory#getAllModels(com.intellij.openapi.module.Module)
+   * @see com.intellij.util.xml.model.impl.DomModelFactory#getAllModels(com.intellij.openapi.module.Module)
    */
   @NotNull
   public abstract List<StrutsModel> getAllModels(@NotNull Module module);
@@ -78,7 +78,7 @@ public abstract class StrutsManager {
    *
    * @return Combined model.
    *
-   * @see com.intellij.util.xml.model.DomModelFactory#getCombinedModel(com.intellij.openapi.module.Module)
+   * @see com.intellij.util.xml.model.impl.DomModelFactory#getCombinedModel(com.intellij.openapi.module.Module)
    */
   @Nullable
   public abstract StrutsModel getCombinedModel(@Nullable final Module module);

@@ -21,7 +21,7 @@ import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.xml.DomFileElement;
-import com.intellij.util.xml.model.DomModelImpl;
+import com.intellij.util.xml.model.impl.DomModelImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
