@@ -101,7 +101,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
                "xwork-2.1.0.jar");
   }
 
-  protected void addLibrary(final T moduleBuilder, final String libraryName, String... jarPaths) {
+  protected void addLibrary(final T moduleBuilder, final String libraryName, final String... jarPaths) {
     final File testDataBasePathFile = new File(getTestDataBasePath()); // little hack to get absolute path..
     moduleBuilder.addLibraryJars(libraryName,
                                  testDataBasePathFile.getAbsolutePath(),
