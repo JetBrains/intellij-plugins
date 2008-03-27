@@ -25,7 +25,7 @@ import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
  *
  * @author Yann CŽbron
  */
-public class ActionReferenceProviderTestCase extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
+public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
 
   protected LocalInspectionTool[] getHighlightingInspections() {
     return new LocalInspectionTool[0];
