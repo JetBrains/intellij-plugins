@@ -21,6 +21,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PropertyUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NonNls;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ final class ActionUtil {
    * @param checkPath  Path to check.
    * @return true if matched.
    */
-  public static boolean matchesPath(@NotNull final String actionPath,
+  static boolean matchesPath(@NotNull final String actionPath,
                                     @NotNull final String checkPath) {
 
     // do we have any wildcard-markers in our path? no --> exact compare
@@ -63,7 +64,7 @@ final class ActionUtil {
    * @param actionClass Action class to search for action methods.
    * @return Methods suitable for action execution.
    */
-  public static List<PsiMethod> findActionMethods(@NotNull final PsiClass actionClass) {
+  static List<PsiMethod> findActionMethods(@NotNull final PsiClass actionClass) {
     final Project project = actionClass.getProject();
     final PsiElementFactory psiElementFactory = JavaPsiFacade.getInstance(project).getElementFactory();
     final GlobalSearchScope projectScope = GlobalSearchScope.allScope(project);

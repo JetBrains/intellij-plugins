@@ -34,13 +34,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class ActionClassConverter extends Converter<PsiClass> implements CustomReferenceConverter<PsiClass> {
 
   /**
-   * {@link #createReferences(com.intellij.util.xml.GenericDomValue, com.intellij.psi.PsiElement, com.intellij.util.xml.ConvertContext)} stores
-   * its results under this key for error highlighting in Struts2ModelInspection.
-   */
-  public static final Key<PsiReference[]> REFERENCES_KEY = Key.create("STRUTS2_ACTIONCLASS_REFERENCES");
-
-  /**
-   * Stores the reference type display names.
+   * Stores the reference type display name(s).
    */
   public static final Key<String[]> REFERENCES_TYPES = Key.create("STRUTS2_REFERENCE_TYPES");
 

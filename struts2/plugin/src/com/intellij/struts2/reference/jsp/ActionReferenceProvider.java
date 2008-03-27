@@ -27,6 +27,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.StrutsIcons;
+import com.intellij.struts2.jsp.TaglibUtil;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -69,6 +70,10 @@ public class ActionReferenceProvider extends PsiReferenceProviderBase {
     public PsiElement resolve() {
       final String actionName = myElement.getValue();
       final String namespace = getNamespace();
+
+      if (TaglibUtil.isDynamicExpression(actionName)) {
+        return myElement;
+      }
 
       final List<Action> actions = strutsModel.findActionsByName(actionName, namespace);
       if (actions.isEmpty()) {
