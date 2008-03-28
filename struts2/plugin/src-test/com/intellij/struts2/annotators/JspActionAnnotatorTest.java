@@ -30,7 +30,7 @@ import java.util.Set;
  *
  * @author Yann CŽbron
  */
-public class JspActionAnnotatorTestCase extends BasicStrutsHighlightingTestCase<WebModuleFixtureBuilder> {
+public class JspActionAnnotatorTest extends BasicStrutsHighlightingTestCase<WebModuleFixtureBuilder> {
 
   protected String getTestDataLocation() {
     return "/gutterJsp/actionClass";

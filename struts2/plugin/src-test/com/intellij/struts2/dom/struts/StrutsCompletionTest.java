@@ -20,7 +20,7 @@ import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 /**
  * @author Yann CŽbron
  */
-public class StrutsCompletionTestCase extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
   protected String getTestDataLocation() {
     return "strutsXmlCompletion";

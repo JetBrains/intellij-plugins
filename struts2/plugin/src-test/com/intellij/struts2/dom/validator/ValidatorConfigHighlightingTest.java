@@ -18,18 +18,22 @@ package com.intellij.struts2.dom.validator;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 
 /**
- * Various basic and complex validation.xml highlighting tests.
+ * Various basic and complex validator-config.xml highlighting tests.
  *
  * @author Yann CŽbron
  */
-public class ValidationHighlightingTestCase extends BasicValidationHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class ValidatorConfigHighlightingTest extends BasicValidationHighlightingTestCase<JavaModuleFixtureBuilder> {
 
   protected String getTestDataLocation() {
-    return "validationXmlHighlighting";
+    return "validatorConfigXmlHighlighting";
   }
 
-  public void testValidationSimple() throws Throwable {
-    performHighlightingTest("validation-simple.xml");
+  public void testSimple() throws Throwable {
+    performHighlightingTest("validator-config-simple.xml");
+  }
+
+  public void testDefault() throws Throwable {
+    performHighlightingTest("validator-config-default.xml");
   }
 
 }
