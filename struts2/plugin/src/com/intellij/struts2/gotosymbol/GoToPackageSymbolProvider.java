@@ -57,8 +57,4 @@ public class GoToPackageSymbolProvider extends GoToSymbolProvider {
     }
   }
 
-  public NavigationItem[] getItemsByName(final String name, final String pattern, final Project project,
-                                         final boolean includeNonProjectItems) {
-    return new NavigationItem[0];
-  }
 }
