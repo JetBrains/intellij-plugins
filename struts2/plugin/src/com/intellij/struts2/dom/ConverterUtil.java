@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom;
 
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.xml.ConvertContext;
@@ -34,12 +35,12 @@ public final class ConverterUtil {
    * Gets the StrutsModel for the current context (=file).
    *
    * @param context Invoking context.
-   *
    * @return <code>null</code> if no StrutsModel found by current file (e.g. not in any fileset).
    */
   @Nullable
   public static StrutsModel getStrutsModel(final ConvertContext context) {
-    return StrutsManager.getInstance(context.getFile().getProject()).getModelByFile(context.getFile());
+    final XmlFile xmlFile = context.getFile();
+    return StrutsManager.getInstance(xmlFile.getProject()).getModelByFile(xmlFile);
   }
 
 }
