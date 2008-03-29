@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.struts2.jsp;
+package com.intellij.struts2.reference.jsp;
 
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;

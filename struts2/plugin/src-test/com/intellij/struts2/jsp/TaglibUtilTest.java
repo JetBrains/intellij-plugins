@@ -16,6 +16,7 @@ package com.intellij.struts2.jsp;
 
 import org.junit.Test;
 import junit.framework.Assert;
+import com.intellij.struts2.reference.jsp.TaglibUtil;
 
 /**
  * @author Yann CŽbron
