@@ -125,7 +125,6 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
       try {
         final PsiElementFactory elementFactory = JavaPsiFacade.getInstance(project).getElementFactory();
 
-        // TODO use file template
         PsiMethod actionMethod = elementFactory.createMethodFromText(
           "public java.lang.String " + methodName + "() throws java.lang.Exception { return \"success\"; }", actionClass);
 

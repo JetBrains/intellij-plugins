@@ -47,7 +47,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
       return false;
     }
 
-    // TODO hack for suppresing wildcard-resolving
+    // hack for suppresing wildcard-resolving
     final String stringValue = value.getStringValue();
     return stringValue == null || stringValue.indexOf('{') < 0;
   }

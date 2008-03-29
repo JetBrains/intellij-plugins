@@ -34,6 +34,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Iterator;
 
 /**
  * Annotator for Action-classes.
@@ -94,7 +95,7 @@ public class ActionAnnotator implements Annotator {
     if (!actions.isEmpty()) {
       NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR).
           setPopupTitle("Go To Action declaration").
-          setTargets(actions).
+          setTargets(actions).setTooltipTitle("<b>Action path(s):</b>").
           setCellRenderer(ACTION_RENDERER).
           install(holder, clazz.getNameIdentifier());
     }

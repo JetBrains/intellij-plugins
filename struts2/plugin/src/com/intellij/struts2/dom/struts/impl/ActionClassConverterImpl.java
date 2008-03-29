@@ -63,6 +63,9 @@ public class ActionClassConverterImpl extends ActionClassConverter {
 
     // first match in additional providers
     final XmlElement element = context.getReferenceXmlElement();
+    if (element == null) {
+      return null;
+    }
 
     for (final ActionClassConverterContributor actionClassConverterContributor : ADDITIONAL_CONTRIBUTORS) {
       if (actionClassConverterContributor.isSuitable(context)) {

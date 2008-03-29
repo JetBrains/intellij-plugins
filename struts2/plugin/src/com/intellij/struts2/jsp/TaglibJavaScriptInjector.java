@@ -39,9 +39,6 @@ import java.util.List;
 
 /**
  * Adds JavaScript support for Struts UI tags.
- * <p/>
- * TODO add specific tag-attributes:
- * http://struts.apache.org/2.0.11/docs/optiontransferselect.html + more
  *
  * @author Yann CŽbron
  */

@@ -39,8 +39,6 @@ final class ActionUtil {
 
   /**
    * Does the given path match the Action's path (including support for wildcards).
-   * <p/>
-   * TODO handle '**' wildcards, handle backslash escape
    *
    * @param actionPath Path of Action.
    * @param checkPath  Path to check.

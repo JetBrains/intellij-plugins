@@ -75,7 +75,7 @@ class ActionPathResultContributor implements StrutsResultContributor {
 
     final String currentPackage = strutsPackage.searchNamespace();
 
-    final String actionExtension = ".action";   // TODO determine extension, property struts.action.extension
+    final String actionExtension = ".action";
 
     final PsiReference actionReference = new PsiReferenceBase<PsiElement>(psiElement) {
 

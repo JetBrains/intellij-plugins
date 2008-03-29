@@ -64,11 +64,6 @@ public class FileSetConfigurationTab extends FacetEditorTab {
   private final SimpleTreeBuilder myBuilder;
   private final SimpleNode myRootNode = new SimpleNode() {
     public SimpleNode[] getChildren() {
-      // TODO shorten paths for display
-//      final VirtualFile baseDir = facetEditorContext.getProject().getBaseDir();
-//      final String s = baseDir.getPresentableUrl();
-//      System.out.println("baseDir.getPath() = " + s);
-
       final List<SimpleNode> nodes = new ArrayList<SimpleNode>(myBuffer.size());
       for (final StrutsFileSet entry : myBuffer) {
         if (!entry.isRemoved()) {

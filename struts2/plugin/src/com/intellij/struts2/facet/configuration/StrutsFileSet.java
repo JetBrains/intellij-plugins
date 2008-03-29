@@ -99,7 +99,7 @@ public class StrutsFileSet implements ElementsChooser.ElementProperties {
     return null;
   }
 
-  public boolean isNew() {  // TODO ??
+  public boolean isNew() {
     return false;
   }
 
