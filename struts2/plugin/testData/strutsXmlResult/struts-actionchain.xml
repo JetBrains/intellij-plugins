@@ -16,6 +16,7 @@
       <result name="includingPackagePrefix" type="chain">/actionChainTest/actionPath2</result>
       <result name="differentPackageAction" type="chain">/actionChainTest2/anotherAction</result>
 
+      <result name="withParameters" type="chain">actionPath2?myParam=myValue</result>
 
       <result name="nonExistingAction" type="chain"><error>INVALID_VALUE</error></result>
       <result name="mustNotHaveExtension" type="chain"><error>actionPath2.action</error></result>

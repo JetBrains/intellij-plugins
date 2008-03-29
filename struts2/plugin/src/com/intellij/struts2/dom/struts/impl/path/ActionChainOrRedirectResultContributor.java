@@ -97,7 +97,7 @@ class ActionChainOrRedirectResultContributor implements StrutsResultContributor 
 
       public PsiElement resolve() {
         final XmlTagValue tagValue = ((XmlTag) psiElement).getValue();
-        final String path = tagValue.getText();
+        final String path = PathReference.trimPath(tagValue.getText());
 
         // use given namespace or current if none given
         final int namespacePrefixIndex = path.lastIndexOf("/");

@@ -22,6 +22,7 @@
       <result name="differentPackageAction" type="redirectAction">/actionChainTest2/anotherAction</result>
       <result name="differentPackageAction2" type="redirect-action">/actionChainTest2/anotherAction</result>
 
+      <result name="actionWithParameters" type="redirectAction">actionPath2?myParam=myValue</result>
 
       <result name="nonExistingAction" type="redirectAction"><error>INVALID_VALUE</error></result>
       <result name="mustNotHaveExtension" type="redirectAction"><error>actionPath2.action</error></result>
