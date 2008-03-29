@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.facet.configuration;
+package com.intellij.struts2.facet.ui;
 
 import com.intellij.ide.util.ElementsChooser;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Groups one or more struts.xml files in a named set.
+ *
  * @author Yann CŽbron
  */
 public class StrutsFileSet implements ElementsChooser.ElementProperties {

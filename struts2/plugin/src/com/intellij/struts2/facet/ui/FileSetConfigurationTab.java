@@ -27,7 +27,6 @@ import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
-import com.intellij.struts2.facet.configuration.StrutsFileSet;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.treeStructure.*;
 import com.intellij.util.Icons;

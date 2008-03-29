@@ -27,11 +27,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
-import com.intellij.struts2.facet.configuration.StrutsFileSet;
-import com.intellij.struts2.facet.configuration.StrutsValidationConfiguration;
-import com.intellij.struts2.facet.ui.FeaturesConfigurationTab;
-import com.intellij.struts2.facet.ui.FileSetConfigurationTab;
-import com.intellij.struts2.facet.ui.ValidationConfigurationTab;
+import com.intellij.struts2.facet.ui.*;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 
@@ -76,7 +72,7 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
 
 
   // FeaturesConfigurationTab
-  private final StrutsValidationConfiguration validationConfiguration = new StrutsValidationConfiguration();
+  private final ValidationConfigurationSettings validationConfigurationSettings = new ValidationConfigurationSettings();
 
   private long myModificationCount;
 
@@ -89,8 +85,8 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
     return myFileSets;
   }
 
-  public StrutsValidationConfiguration getFeaturesConfiguration() {
-    return validationConfiguration;
+  public ValidationConfigurationSettings getFeaturesConfiguration() {
+    return validationConfigurationSettings;
   }
 
   public FacetEditorTab[] createEditorTabs(final FacetEditorContext editorContext,
@@ -104,7 +100,7 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
 
     return new FacetEditorTab[]{new FileSetConfigurationTab(this, editorContext),
                                 new FeaturesConfigurationTab(editorContext, validator),
-                                new ValidationConfigurationTab(validator, validationConfiguration)};
+                                new ValidationConfigurationTab(validator, validationConfigurationSettings)};
   }
 
   public void readExternal(final Element element) throws InvalidDataException {
@@ -125,9 +121,9 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
     }
 
     final Element features = element.getChild(FEATURES);
-    validationConfiguration.setReportErrorsAsWarning(Boolean.valueOf(features.getChild(ERRORS_AS_WARNING).getText()));
-    validationConfiguration.setValidateStruts(Boolean.valueOf(features.getChild(VALIDATE_STRUTS).getText()));
-    validationConfiguration.setValidateValidation(Boolean.valueOf(features.getChild(VALIDATE_VALIDATION).getText()));
+    validationConfigurationSettings.setReportErrorsAsWarning(Boolean.valueOf(features.getChild(ERRORS_AS_WARNING).getText()));
+    validationConfigurationSettings.setValidateStruts(Boolean.valueOf(features.getChild(VALIDATE_STRUTS).getText()));
+    validationConfigurationSettings.setValidateValidation(Boolean.valueOf(features.getChild(VALIDATE_VALIDATION).getText()));
   }
 
   public void writeExternal(final Element element) throws WriteExternalException {
@@ -148,15 +144,15 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
     final Element features = new Element(FEATURES);
 
     final Element errorsAsWarnings = new Element(ERRORS_AS_WARNING);
-    errorsAsWarnings.setText(Boolean.toString(validationConfiguration.isReportErrorsAsWarning()));
+    errorsAsWarnings.setText(Boolean.toString(validationConfigurationSettings.isReportErrorsAsWarning()));
     features.addContent(errorsAsWarnings);
 
     final Element validateStruts = new Element(VALIDATE_STRUTS);
-    validateStruts.setText(Boolean.toString(validationConfiguration.isValidateStruts()));
+    validateStruts.setText(Boolean.toString(validationConfigurationSettings.isValidateStruts()));
     features.addContent(validateStruts);
 
     final Element validateValidation = new Element(VALIDATE_VALIDATION);
-    validateValidation.setText(Boolean.toString(validationConfiguration.isValidateValidation()));
+    validateValidation.setText(Boolean.toString(validationConfigurationSettings.isValidateValidation()));
     features.addContent(validateValidation);
 
     element.addContent(features);

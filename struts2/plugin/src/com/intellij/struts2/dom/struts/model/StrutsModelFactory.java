@@ -23,7 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
-import com.intellij.struts2.facet.configuration.StrutsFileSet;
+import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.model.impl.DomModelFactory;

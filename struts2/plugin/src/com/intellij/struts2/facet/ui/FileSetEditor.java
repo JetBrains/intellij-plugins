@@ -33,7 +33,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
-import com.intellij.struts2.facet.configuration.StrutsFileSet;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.EditorTextField;
 import com.intellij.util.ui.tree.TreeModelAdapter;

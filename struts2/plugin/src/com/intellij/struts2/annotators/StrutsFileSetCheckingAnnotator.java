@@ -37,7 +37,7 @@ import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.struts2.facet.configuration.StrutsFileSet;
+import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.Icons;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;

@@ -23,8 +23,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.struts2.facet.configuration.StrutsFileSet;
-import com.intellij.struts2.facet.configuration.StrutsValidationConfiguration;
+import com.intellij.struts2.facet.ui.StrutsFileSet;
+import com.intellij.struts2.facet.ui.ValidationConfigurationSettings;
 import com.intellij.util.containers.ContainerUtil;
 
 import java.util.Collection;
@@ -42,8 +42,8 @@ public class Struts2ModelValidator extends ValidatorBase {
     super("Struts 2 Model Validator", "Validating Struts 2 model...", Struts2ModelInspection.class);
   }
 
-  protected boolean isValidationEnabledForModel(final StrutsValidationConfiguration validationConfiguration) {
-    return validationConfiguration.isValidateStruts();
+  protected boolean isValidationEnabledForModel(final ValidationConfigurationSettings validationConfigurationSettings) {
+    return validationConfigurationSettings.isValidateStruts();
   }
 
   public Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context) {

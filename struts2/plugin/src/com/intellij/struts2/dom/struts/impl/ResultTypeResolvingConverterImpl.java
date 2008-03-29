@@ -19,6 +19,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.action.ResultTypeResolvingConverter;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
+import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.xml.ConvertContext;

@@ -22,7 +22,6 @@ import com.intellij.facet.ui.libraries.FacetLibrariesValidator;
 import com.intellij.facet.ui.libraries.LibraryInfo;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.struts2.facet.StrutsVersion;
 import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.util.Icons;
 import org.jetbrains.annotations.Nls;

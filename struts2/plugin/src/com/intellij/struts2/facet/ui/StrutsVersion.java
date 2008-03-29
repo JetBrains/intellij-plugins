@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.facet;
+package com.intellij.struts2.facet.ui;
 
 import com.intellij.facet.ui.libraries.LibraryInfo;
 import static com.intellij.facet.ui.libraries.MavenLibraryUtil.createMavenJarInfo;

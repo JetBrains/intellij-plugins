@@ -26,7 +26,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.StrutsFacetType;
-import com.intellij.struts2.facet.configuration.StrutsFileSet;
+import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
 

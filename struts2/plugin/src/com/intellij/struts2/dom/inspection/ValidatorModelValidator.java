@@ -26,7 +26,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.validator.ValidatorManager;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.struts2.facet.configuration.StrutsValidationConfiguration;
+import com.intellij.struts2.facet.ui.ValidationConfigurationSettings;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -44,8 +44,8 @@ public class ValidatorModelValidator extends ValidatorBase {
         ValidatorModelInspection.class, ValidatorConfigModelInspection.class);
   }
 
-  protected boolean isValidationEnabledForModel(final StrutsValidationConfiguration validationConfiguration) {
-    return validationConfiguration.isValidateValidation();
+  protected boolean isValidationEnabledForModel(final ValidationConfigurationSettings validationConfigurationSettings) {
+    return validationConfigurationSettings.isValidateValidation();
   }
 
   public Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context) {

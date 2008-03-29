@@ -25,7 +25,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.struts2.facet.configuration.StrutsValidationConfiguration;
+import com.intellij.struts2.facet.ui.ValidationConfigurationSettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -46,11 +46,11 @@ public abstract class ValidatorBase extends InspectionValidator {
   /**
    * Determine whether to run validation for our model using the current facet configuration settings.
    *
-   * @param validationConfiguration Current facet settings.
+   * @param validationConfigurationSettings Current facet settings.
    *
    * @return true if validation is enabled.
    */
-  protected abstract boolean isValidationEnabledForModel(final StrutsValidationConfiguration validationConfiguration);
+  protected abstract boolean isValidationEnabledForModel(final ValidationConfigurationSettings validationConfigurationSettings);
 
   public final boolean isAvailableOnScope(@NotNull final CompileScope scope) {
     for (final Module module : scope.getAffectedModules()) {
@@ -65,7 +65,7 @@ public abstract class ValidatorBase extends InspectionValidator {
   }
 
   /**
-   * Handles {@link com.intellij.struts2.facet.configuration.StrutsValidationConfiguration#isReportErrorsAsWarning()}.
+   * Handles {@link com.intellij.struts2.facet.ui.ValidationConfigurationSettings#isReportErrorsAsWarning()}.
    *
    * @param severity    Display severity.
    * @param virtualFile Current file.

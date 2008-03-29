@@ -19,7 +19,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.struts2.facet.configuration.StrutsFileSet;
+import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.xml.DomManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
