@@ -48,4 +48,9 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     performHighlightingTest("xwork-default.xml");
   }
 
+  public void testStrutsWithErrorsNotInFilesetNoHighlighting() throws Throwable {
+    createStrutsFileSet("struts-default.xml");
+    myFixture.testHighlighting(false, false, true, "struts-errors.xml");
+  }
+
 }

@@ -16,19 +16,26 @@
 package com.intellij.struts2.dom.inspection;
 
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.ActionClassConverter;
+import com.intellij.struts2.dom.struts.model.StrutsManager;
+import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.xml.*;
 import com.intellij.util.xml.highlighting.BasicDomElementsInspection;
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import com.intellij.util.xml.highlighting.DomHighlightingHelper;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * Default DOM-Model inspection for struts.xml files.
@@ -39,6 +46,31 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
 
   public Struts2ModelInspection() {
     super(StrutsRoot.class);
+  }
+
+  /**
+   * Only inspect struts.xml files configured in fileset.
+   *
+   * @param strutsRootDomFileElement Root element of file to inspect.
+   * @param holder                   Holder.
+   */
+  public void checkFileElement(final DomFileElement<StrutsRoot> strutsRootDomFileElement,
+                               final DomElementAnnotationHolder holder) {
+    final Module module = strutsRootDomFileElement.getModule();
+    if (module == null) {
+      return;
+    }
+
+    final XmlFile xmlFile = strutsRootDomFileElement.getFile();
+    final VirtualFile virtualFile = xmlFile.getVirtualFile();
+
+    final Set<StrutsFileSet> fileSets = StrutsManager.getInstance(xmlFile.getProject()).getAllConfigFileSets(module);
+    for (StrutsFileSet strutsFileSet : fileSets) {
+      if (strutsFileSet.hasFile(virtualFile)) {
+        super.checkFileElement(strutsRootDomFileElement, holder);
+        break;
+      }
+    }
   }
 
   protected boolean shouldCheckResolveProblems(final GenericDomValue value) {
@@ -61,14 +93,16 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
       final GenericAttributeValue genericDomValue = (GenericAttributeValue) element;
       if (genericDomValue.getConverter() instanceof ActionClassConverter) {
         final XmlElement xmlElement = DomUtil.getValueElement(genericDomValue);
-        if (xmlElement == null) return;
+        if (xmlElement == null) {
+          return;
+        }
 
         final PsiReference[] psiReferences = xmlElement.getReferences();
 
         for (final PsiReference psiReference : psiReferences) {
           final PsiElement resolveElement = psiReference.resolve();
           if (resolveElement != null &&
-              resolveElement instanceof PsiClass) {
+                  resolveElement instanceof PsiClass) {
             return;
           }
         }
