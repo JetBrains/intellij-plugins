@@ -130,8 +130,8 @@ public class StrutsFileSet implements ElementsChooser.ElementProperties {
     return removed;
   }
 
-  public void setRemoved(final boolean myRemoved) {
-    this.removed = myRemoved;
+  public void setRemoved(final boolean removed) {
+    this.removed = removed;
   }
 
   @NotNull

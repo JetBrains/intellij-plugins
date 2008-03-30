@@ -84,8 +84,9 @@ abstract class DomElementListCellRenderer<T extends DomElement> extends PsiEleme
     return super.getIcon(element);
   }
 
+  @SuppressWarnings({"unchecked"})
   @Nullable
-  protected T getDomElement(@NotNull final XmlTag tag) {
+  private T getDomElement(@NotNull final XmlTag tag) {
     return (T) DomManager.getDomManager(tag.getProject()).getDomElement(tag);
   }
 

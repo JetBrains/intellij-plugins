@@ -72,7 +72,7 @@ class ActionLookupItem implements LookupValueWithUIHint,
    * @return 1 or -1.
    */
   public int getPriority() {
-    return bold ? LookupValueWithPriority.HIGHER : -1;
+    return bold ? HIGHER : -1;
   }
 
   public Icon getIcon(final int flags) {

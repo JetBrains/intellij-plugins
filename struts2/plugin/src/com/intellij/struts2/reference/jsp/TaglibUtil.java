@@ -24,6 +24,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class TaglibUtil {
 
+  private TaglibUtil() {
+  }
+
   /**
    * Checks whether the given attribute value is a dynamic expression.
    * Currently only checks for OGNL ("%{EXPRESSION}").

@@ -93,7 +93,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
                                  @NotNull final FacetEditorContext facetEditorContext) {
     originalConfiguration = strutsFacetConfiguration;
     this.facetEditorContext = facetEditorContext;
-    this.myConfigsSearcher = new StrutsConfigsSearcher(facetEditorContext);
+    myConfigsSearcher = new StrutsConfigsSearcher(facetEditorContext);
 
     // init tree
     final SimpleTreeStructure structure = new SimpleTreeStructure() {
@@ -211,7 +211,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
     }, false);
   }
 
-  void remove() {
+  private void remove() {
     final SimpleNode[] nodes = myTree.getSelectedNodesIfUniform();
     for (final SimpleNode node : nodes) {
 
@@ -291,7 +291,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
   }
 
 
-  private class FileSetNode extends SimpleNode {
+  private static class FileSetNode extends SimpleNode {
 
     protected final StrutsFileSet mySet;
 

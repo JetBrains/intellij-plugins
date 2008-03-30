@@ -52,7 +52,7 @@ public final class StrutsIcons {
    * @param iconName Relative file name of the icon to load.
    * @return Icon.
    */
-  public static Icon getIcon(@NonNls final String iconName) {
+  private static Icon getIcon(@NonNls final String iconName) {
     return IconLoader.getIcon(ICON_BASE_PATH + iconName);
   }
 

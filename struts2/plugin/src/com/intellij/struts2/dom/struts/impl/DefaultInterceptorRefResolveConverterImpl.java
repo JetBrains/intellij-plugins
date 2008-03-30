@@ -63,7 +63,7 @@ public class DefaultInterceptorRefResolveConverterImpl extends DefaultIntercepto
     return null;
   }
 
-  private Set<InterceptorStack> getAllInterceptorStacks(@NotNull final StrutsModel strutsModel) {
+  private static Set<InterceptorStack> getAllInterceptorStacks(@NotNull final StrutsModel strutsModel) {
     final Set<InterceptorStack> variants = new HashSet<InterceptorStack>();
     for (final StrutsPackage strutsPackage : strutsModel.getStrutsPackages()) {
       final List<InterceptorStack> interceptorStackList = strutsPackage.getInterceptorStacks();

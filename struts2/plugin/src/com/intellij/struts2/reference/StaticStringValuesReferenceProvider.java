@@ -33,7 +33,7 @@ import java.util.Arrays;
  */
 public class StaticStringValuesReferenceProvider extends PsiReferenceProviderBase {
 
-  private final boolean soft;
+  private final boolean allowOtherValues;
   private final String[] values;
 
   /**
@@ -53,7 +53,7 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProviderBas
    * @param values           Autocompletion values.
    */
   public StaticStringValuesReferenceProvider(final boolean allowOtherValues, @NotNull @NonNls final String... values) {
-    this.soft = allowOtherValues;
+    this.allowOtherValues = allowOtherValues;
     Arrays.sort(values); // make sure Arrays.binarySearch() works later on..
     this.values = values;
   }
@@ -63,7 +63,7 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProviderBas
     return new PsiReference[]{new PsiReferenceBase<XmlAttributeValue>((XmlAttributeValue) element) {
       public PsiElement resolve() {
         final String myValue = myElement.getValue();
-        if (soft || myValue.startsWith("%{")) {
+        if (allowOtherValues || myValue.startsWith("%{")) {
           return myElement;
         }
 

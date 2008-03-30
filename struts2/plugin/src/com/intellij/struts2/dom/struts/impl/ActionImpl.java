@@ -47,8 +47,8 @@ public abstract class ActionImpl implements Action {
   @NotNull
   public StrutsPackage getStrutsPackage() {
     final StrutsPackage strutsPackage = DomUtil.getParentOfType(this, StrutsPackage.class, true);
-    assert strutsPackage != null : "could not resolve enclosing <package> for " + this + " (" + this.getName()
-        .getStringValue() + ")";
+    assert strutsPackage != null : "could not resolve enclosing <package> for " + this + " (" +
+            getName().getStringValue() + ")";
     return strutsPackage;
   }
 
