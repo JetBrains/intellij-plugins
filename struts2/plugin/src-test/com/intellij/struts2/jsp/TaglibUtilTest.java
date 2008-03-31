@@ -14,9 +14,10 @@
  */
 package com.intellij.struts2.jsp;
 
-import org.junit.Test;
-import junit.framework.Assert;
 import com.intellij.struts2.reference.jsp.TaglibUtil;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import org.junit.Test;
 
 /**
  * @author Yann CŽbron
@@ -25,10 +26,10 @@ public class TaglibUtilTest {
 
   @Test
   public void isDynamicExpression() {
-    Assert.assertFalse(TaglibUtil.isDynamicExpression(""));
-    Assert.assertFalse(TaglibUtil.isDynamicExpression("any%{"));
+    assertFalse(TaglibUtil.isDynamicExpression(""));
+    assertFalse(TaglibUtil.isDynamicExpression("any%{"));
 
-    Assert.assertTrue(TaglibUtil.isDynamicExpression("%{any"));
+    assertTrue(TaglibUtil.isDynamicExpression("%{any"));
   }
 
 }

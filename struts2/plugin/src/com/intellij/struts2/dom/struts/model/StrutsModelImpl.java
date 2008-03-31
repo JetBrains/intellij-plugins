@@ -15,11 +15,13 @@
 
 package com.intellij.struts2.dom.struts.model;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.model.impl.DomModelImpl;
 import org.jetbrains.annotations.NonNls;
@@ -66,15 +68,11 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
   @NotNull
   public List<Action> findActionsByName(@NotNull @NonNls final String name,
                                         @Nullable @NonNls final String namespace) {
-    final List<Action> actionResultList = new ArrayList<Action>();
-
-    for (final Action action : getActionsForNamespace(namespace)) {
-      if (action.matchesPath(name)) {
-        actionResultList.add(action);
+    return ContainerUtil.findAll(getActionsForNamespace(namespace), new Condition<Action>() {
+      public boolean value(final Action action) {
+        return action.matchesPath(name);
       }
-    }
-
-    return actionResultList;
+    });
   }
 
   // TODO performance, use caching?!

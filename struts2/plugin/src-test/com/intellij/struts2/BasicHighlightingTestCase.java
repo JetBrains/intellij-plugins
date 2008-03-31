@@ -139,7 +139,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     super.tearDown();
   }
 
-  private VirtualFile addToFileSet(final StrutsFileSet fileSet, final String path) {
+  private void addToFileSet(final StrutsFileSet fileSet, final String path) {
     try {
       myFixture.copyFileToProject(path);
     }
@@ -149,7 +149,6 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     final VirtualFile file = myFixture.getTempDirFixture().getFile(path);
     assertTrue("cannot find file: " + path, file != null);
     fileSet.addFile(file);
-    return file;
   }
 
   protected void createStrutsFileSet(final String... fileNames) {

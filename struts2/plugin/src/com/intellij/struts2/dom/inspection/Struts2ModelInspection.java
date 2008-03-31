@@ -65,7 +65,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     final VirtualFile virtualFile = xmlFile.getVirtualFile();
 
     final Set<StrutsFileSet> fileSets = StrutsManager.getInstance(xmlFile.getProject()).getAllConfigFileSets(module);
-    for (StrutsFileSet strutsFileSet : fileSets) {
+    for (final StrutsFileSet strutsFileSet : fileSets) {
       if (strutsFileSet.hasFile(virtualFile)) {
         super.checkFileElement(strutsRootDomFileElement, holder);
         break;
@@ -90,9 +90,9 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     super.checkDomElement(element, holder, helper);
 
     if (element instanceof GenericAttributeValue) {
-      final GenericAttributeValue genericDomValue = (GenericAttributeValue) element;
-      if (genericDomValue.getConverter() instanceof ActionClassConverter) {
-        final XmlElement xmlElement = DomUtil.getValueElement(genericDomValue);
+      final GenericAttributeValue attributeValue = (GenericAttributeValue) element;
+      if (attributeValue.getConverter() instanceof ActionClassConverter) {
+        final XmlElement xmlElement = DomUtil.getValueElement(attributeValue);
         if (xmlElement == null) {
           return;
         }
@@ -102,16 +102,16 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
         for (final PsiReference psiReference : psiReferences) {
           final PsiElement resolveElement = psiReference.resolve();
           if (resolveElement != null &&
-                  resolveElement instanceof PsiClass) {
+              resolveElement instanceof PsiClass) {
             return;
           }
         }
 
-        final String referenceTypes = StringUtil.join(genericDomValue.getUserData(ActionClassConverter.REFERENCES_TYPES),
+        final String referenceTypes = StringUtil.join(attributeValue.getUserData(ActionClassConverter.REFERENCES_TYPES),
                                                       "|");
-        holder.createProblem(genericDomValue,
+        holder.createProblem(attributeValue,
                              HighlightSeverity.ERROR,
-                             "Cannot resolve " + referenceTypes + " '" + genericDomValue.getStringValue() + "'");
+                             "Cannot resolve " + referenceTypes + " '" + attributeValue.getStringValue() + "'");
       }
     }
   }
