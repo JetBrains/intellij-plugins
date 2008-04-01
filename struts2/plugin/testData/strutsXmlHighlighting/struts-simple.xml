@@ -117,9 +117,9 @@
   <!-- "class" -->
   <package name="action4">
     <action name="validName" class="MyClass"/>
-    <!-- TODO IDEA-bug, should trigger error -->
-    <action name="validName2" class="MyInterface"/>
-    <action name="validName3" class="<error>INVALID_VALUE</error>"/>
+    <action name="unknownClass" class="<error>INVALID_VALUE</error>"/>
+    <action name="interfaceNotAllowed" class="<error>MyInterface</error>"/>
+    <action name="abstractClassNotAllowed" class="<error>MyAbstractClass</error>"/>
   </package>
 
   <!-- "method" -->
