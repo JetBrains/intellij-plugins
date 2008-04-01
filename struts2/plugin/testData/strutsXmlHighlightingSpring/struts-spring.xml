@@ -15,7 +15,7 @@
 
     <action name="testSpringBean2" class="bean2"/>
 
-    <action name="notExistingSpringBean" class="<error descr="Cannot resolve class|Spring bean 'bean999'">bean999</error>"/>
+    <action name="notExistingSpringBean" class="<error>bean999</error>"/>
 
   </package>
 
@@ -24,6 +24,10 @@
   <package name="noSpring">
 
     <action name="noSpring" class="MyClass" method="validActionMethod"/>
+
+    <action name="unknownClass" class="<error>INVALID_VALUE</error>"/>
+    <action name="interfaceNotAllowed" class="<error>MyInterface</error>"/>
+    <action name="abstractClassNotAllowed" class="<error>MyAbstractClass</error>"/>
 
   </package>
 
