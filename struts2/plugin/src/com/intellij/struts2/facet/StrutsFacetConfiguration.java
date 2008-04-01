@@ -38,7 +38,7 @@ import java.util.Set;
 /**
  * Provides the configuration tabs and reads/stores settings.
  *
- * @author Yann CŽbron
+ * @author Yann Cï¿½bron
  */
 public class StrutsFacetConfiguration implements FacetConfiguration, ModificationTracker {
 
@@ -100,7 +100,7 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
 
     return new FacetEditorTab[]{new FileSetConfigurationTab(this, editorContext),
                                 new FeaturesConfigurationTab(editorContext, validator),
-                                new ValidationConfigurationTab(validator, validationConfigurationSettings)};
+                                new ValidationConfigurationTab(validationConfigurationSettings)};
   }
 
   public void readExternal(final Element element) throws InvalidDataException {
