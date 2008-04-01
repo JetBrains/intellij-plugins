@@ -13,8 +13,7 @@
   <bean class="MyClass"/>
   <bean class="<error>INVALID_VALUE</error>"/>
 
-  <!-- TODO IDEA-bug, should trigger error -->
-  <bean class="MyInterface"/>
+  <bean class="<error>MyInterface</error>"/>
 
   <bean class="MyInterfaceImpl" type="MyInterface"/>
 
