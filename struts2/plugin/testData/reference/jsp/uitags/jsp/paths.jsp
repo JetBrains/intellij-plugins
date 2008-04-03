@@ -4,7 +4,7 @@
 
 <s:include value="paths.jsp"/>
 <%-- TODO IDEA-bug ? reference provider does not even get called here --%>
-<s:url value="<error>INVALID_VALUE</error>"/>
+<s:include value="INVALID_VALUE"/>
 
 <s:url value="paths.jsp"/>
 <s:url value="<error>INVALID_VALUE</error>"/>
