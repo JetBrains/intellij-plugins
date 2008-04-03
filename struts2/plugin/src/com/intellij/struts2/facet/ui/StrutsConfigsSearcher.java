@@ -39,7 +39,6 @@ import com.intellij.util.xml.NanoXmlUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -89,16 +88,9 @@ public class StrutsConfigsSearcher {
                   }
                 } else {
                   if (fileOrDir.getName().endsWith(XML_EXTENSION)) {
-                    final NanoXmlUtil.RootTagNameBuilder rootTagNameBuilder = new NanoXmlUtil.RootTagNameBuilder();
-                    try {
-                      NanoXmlUtil.parse(fileOrDir.getInputStream(), rootTagNameBuilder);
-                      final String result = rootTagNameBuilder.getResult();
-                      if (result != null && result.equals(StrutsRoot.TAG_NAME)) {
-                        myVirtualFiles.add(fileOrDir);
-                      }
-                    }
-                    catch (IOException e) {
-                      return false;
+                    final String result = NanoXmlUtil.parseHeader(fileOrDir).getRootTagLocalName();
+                    if (result != null && result.equals(StrutsRoot.TAG_NAME)) {
+                      myVirtualFiles.add(fileOrDir);
                     }
                   }
                 }
