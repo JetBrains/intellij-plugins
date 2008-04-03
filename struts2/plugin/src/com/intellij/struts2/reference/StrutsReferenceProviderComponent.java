@@ -16,10 +16,16 @@
 package com.intellij.struts2.reference;
 
 import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.paths.PathReferenceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
 import com.intellij.psi.filters.position.NamespaceFilter;
+import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.struts2.dom.struts.impl.path.StrutsPathReferenceConverterImpl;
 import static com.intellij.struts2.reference.ReferenceFilters.NAMESPACE_STRUTS_XML;
@@ -27,8 +33,10 @@ import static com.intellij.struts2.reference.ReferenceFilters.NAMESPACE_TAGLIB_S
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
 import com.intellij.struts2.reference.jsp.NamespaceReferenceProvider;
 import com.intellij.struts2.reference.jsp.ThemeReferenceProvider;
+import com.intellij.util.ProcessingContext;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Registers all {@link com.intellij.psi.PsiReferenceProvider}s.
@@ -41,33 +49,41 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
 
   @NonNls
   private static final String[] TAGLIB_UI_FORM_TAGS = new String[]{
-      "autocompleter",
-      "checkbox",
-      "checkboxlist",
-      "combobox",
-      "doubleselect",
-      "head",
-      "file",
-      "form",
-      "hidden",
-      "label",
-      "optiontransferselect",
-      "optgroup",
-      "password",
-      "radio",
-      "reset",
-      "select",
-      "submit",
-      "textarea",
-      "textfield",
-      "token",
-      "updownselect"
+          "autocompleter",
+          "checkbox",
+          "checkboxlist",
+          "combobox",
+          "doubleselect",
+          "head",
+          "file",
+          "form",
+          "hidden",
+          "label",
+          "optiontransferselect",
+          "optgroup",
+          "password",
+          "radio",
+          "reset",
+          "select",
+          "submit",
+          "textarea",
+          "textfield",
+          "token",
+          "updownselect"
   };
 
   private static final StaticStringValuesReferenceProvider BOOLEAN_VALUE_REFERENCE_PROVIDER =
-      new StaticStringValuesReferenceProvider(false, "false", "true");
+          new StaticStringValuesReferenceProvider(false, "false", "true");
 
   private static final ActionReferenceProvider ACTION_REFERENCE_PROVIDER = new ActionReferenceProvider();
+
+  private static final PsiReferenceProvider RELATIVE_PATH_PROVIDER = new PsiReferenceProviderBase() {
+    @NotNull
+    public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
+                                                 @NotNull final ProcessingContext context) {
+      return PathReferenceManager.getInstance().createReferences(element, false, false, true);
+    }
+  };
 
   protected StrutsReferenceProviderComponent(final Project project) {
     super(project);
@@ -83,10 +99,10 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
 
   private void registerStrutsXmlTags() {
     // <result> body content (location)
-    XmlUtil.registerXmlTagReferenceProvider(registry, 
-        new String[]{"result"},
-        NAMESPACE_STRUTS_XML, true,
-        new PathReferenceProviderWrapper(new StrutsPathReferenceConverterImpl()));
+    XmlUtil.registerXmlTagReferenceProvider(registry,
+                                            new String[]{"result"},
+                                            NAMESPACE_STRUTS_XML, true,
+                                            new PathReferenceProviderWrapper(new StrutsPathReferenceConverterImpl()));
 
     // <result> "name" common values
     registerTags(new StaticStringValuesReferenceProvider("error", "input", "login", "success"),
@@ -131,6 +147,11 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
     registerTags(ACTION_REFERENCE_PROVIDER,
                  "name", NAMESPACE_TAGLIB_STRUTS_UI,
                  "action");
+
+    // elements with "value" (relative path)
+    registerTags(RELATIVE_PATH_PROVIDER,
+                 "value", NAMESPACE_TAGLIB_STRUTS_UI,
+                 "include", "url");
 
     // elements with "namespace"
     registerTags(new NamespaceReferenceProvider(),
@@ -197,6 +218,10 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
                  "type", NAMESPACE_TAGLIB_STRUTS_UI,
                  "submit");
 
+    registerTags(RELATIVE_PATH_PROVIDER,
+                 "src", NAMESPACE_TAGLIB_STRUTS_UI,
+                 "submit");
+
     // <table>
     registerTags(new StaticStringValuesReferenceProvider(false, "ASC", "DESC", "NONE"),
                  "sortOrder", NAMESPACE_TAGLIB_STRUTS_UI,
@@ -227,7 +252,7 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
                             final NamespaceFilter namespaceFilter,
                             final @NonNls String... tagNames) {
     XmlUtil.registerXmlAttributeValueReferenceProvider(registry, new String[]{attributeName},
-                                                        ReferenceFilters.andTagNames(namespaceFilter, tagNames),
-                                                        provider);
+                                                       ReferenceFilters.andTagNames(namespaceFilter, tagNames),
+                                                       provider);
   }
 }
