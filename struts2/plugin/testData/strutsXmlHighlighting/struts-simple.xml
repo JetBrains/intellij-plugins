@@ -118,8 +118,8 @@
   <package name="action4">
     <action name="validName" class="MyClass"/>
     <action name="unknownClass" class="<error>INVALID_VALUE</error>"/>
-    <action name="interfaceNotAllowed" class="<error>MyInterface</error>"/>
-    <action name="abstractClassNotAllowed" class="<error>MyAbstractClass</error>"/>
+    <action name="interfaceNotAllowed" class='<error descr="Interface not allowed">MyInterface</error>'/>
+    <action name="abstractClassNotAllowed" class='<error descr="Abstract class is not allowed">MyAbstractClass</error>'/>
   </package>
 
   <!-- "method" -->

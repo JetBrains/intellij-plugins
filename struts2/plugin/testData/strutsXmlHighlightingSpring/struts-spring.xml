@@ -11,11 +11,12 @@
   <package name="springBeansPackage">
 
     <action name="testSpringBean1" class="bean1" method="validActionMethod"/>
+    <action name="testSpringBeanInvalidMethod" class="bean1" method="<error>INVALID_VALUE</error>"/>
     <action name="testSpringBean1Alias" class="bean1Alias" method="validActionMethod"/>
 
     <action name="testSpringBean2" class="bean2"/>
 
-    <action name="notExistingSpringBean" class="<error>bean999</error>"/>
+    <action name="notExistingSpringBeanOrClass" class="<error>bean999</error>"/>
 
   </package>
 
@@ -24,10 +25,10 @@
   <package name="noSpring">
 
     <action name="noSpring" class="MyClass" method="validActionMethod"/>
+    <action name="noSpringInvalidActionMethod" class="MyClass" method="<error>INVALID_VALUE</error>"/>
 
-    <action name="unknownClass" class="<error>INVALID_VALUE</error>"/>
-    <action name="interfaceNotAllowed" class="<error>MyInterface</error>"/>
-    <action name="abstractClassNotAllowed" class="<error>MyAbstractClass</error>"/>
+    <action name="interfaceNotAllowed" class='<error descr="Interface not allowed">MyInterface</error>'/>
+    <action name="abstractClassNotAllowed" class='<error descr="Abstract class is not allowed">MyAbstractClass</error>'/>
 
   </package>
 
