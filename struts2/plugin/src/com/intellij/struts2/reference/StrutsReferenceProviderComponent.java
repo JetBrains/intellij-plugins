@@ -21,8 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
 import com.intellij.psi.filters.position.NamespaceFilter;
 import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
@@ -30,6 +28,7 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.struts2.dom.struts.impl.path.StrutsPathReferenceConverterImpl;
 import static com.intellij.struts2.reference.ReferenceFilters.NAMESPACE_STRUTS_XML;
 import static com.intellij.struts2.reference.ReferenceFilters.NAMESPACE_TAGLIB_STRUTS_UI;
+import com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider;
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
 import com.intellij.struts2.reference.jsp.NamespaceReferenceProvider;
 import com.intellij.struts2.reference.jsp.ThemeReferenceProvider;
@@ -95,6 +94,8 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
     registerUITags();
 
     registerStrutsXmlTags();
+
+    registerHtmlTags();
   }
 
   private void registerStrutsXmlTags() {
@@ -108,6 +109,15 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
     registerTags(new StaticStringValuesReferenceProvider("error", "input", "login", "success"),
                  "name", NAMESPACE_STRUTS_XML,
                  "result");
+  }
+
+  private void registerHtmlTags() {
+
+    // URLs to action
+    registerTags(new ActionLinkReferenceProvider(),
+                 "href", new NamespaceFilter(XmlUtil.HTML_URI),
+                 "a");
+
   }
 
   private void registerUITags() {
