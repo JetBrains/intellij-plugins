@@ -55,7 +55,7 @@
     <gotoSymbolContributor implementation="com.intellij.struts2.gotosymbol.GoToPackageSymbolProvider"/>
 
     <xmlStructureViewBuilderProvider
-        implementation="com.intellij.struts2.structure.StrutsStructureViewBuilderProvider"/>
+            implementation="com.intellij.struts2.structure.StrutsStructureViewBuilderProvider"/>
 
 
     <!-- validation.xml/validator-config.xml -->
@@ -68,7 +68,7 @@
     <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorConfigDomFileDescription"/>
 
     <xmlStructureViewBuilderProvider
-        implementation="com.intellij.struts2.structure.ValidationStructureViewBuilderProvider"/>
+            implementation="com.intellij.struts2.structure.ValidationStructureViewBuilderProvider"/>
 
 
     <!-- JAVA -->
@@ -79,6 +79,8 @@
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibCssInlineStyleInjector"/>
     <annotator language="JSP" implementationClass="com.intellij.struts2.annotators.JspActionAnnotator"/>
 
+<!--    <javaee.web.customServletReferenceProvider
+            implementation="com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider"/>-->
   </extensions>
 
   <application-components>

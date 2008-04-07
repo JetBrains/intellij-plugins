@@ -94,8 +94,6 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
     registerUITags();
 
     registerStrutsXmlTags();
-
-    registerHtmlTags();
   }
 
   private void registerStrutsXmlTags() {
@@ -109,15 +107,6 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
     registerTags(new StaticStringValuesReferenceProvider("error", "input", "login", "success"),
                  "name", NAMESPACE_STRUTS_XML,
                  "result");
-  }
-
-  private void registerHtmlTags() {
-
-    // URLs to action
-    registerTags(new ActionLinkReferenceProvider(),
-                 "href", new NamespaceFilter(XmlUtil.HTML_URI),
-                 "a");
-
   }
 
   private void registerUITags() {

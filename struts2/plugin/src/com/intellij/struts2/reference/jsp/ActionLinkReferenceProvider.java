@@ -16,66 +16,60 @@ package com.intellij.struts2.reference.jsp;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupValueFactory;
+import com.intellij.javaee.web.CustomServletReferenceProvider;
+import com.intellij.javaee.web.ServletMappingInfo;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
-import com.intellij.openapi.paths.PathReferenceManager;
-import com.intellij.openapi.paths.PathReferenceProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
-import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
-import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Provides links to Action-URLs for &lt;a&gt; "href".
+ * Provides links to Action-URLs in all places where Servlet-URLs are processed.
  *
  * @author Yann CŽbron
  */
-public class ActionLinkReferenceProvider extends PsiReferenceProviderBase {
+public class ActionLinkReferenceProvider implements CustomServletReferenceProvider {
 
   @NotNull
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
-                                               @NotNull final ProcessingContext context) {
-    final StrutsManager strutsManager = StrutsManager.getInstance(element.getProject());
-    final StrutsModel strutsModel = strutsManager.getCombinedModel(ModuleUtil.findModuleForPsiElement(element));
+  public PsiReference[] createReferences(@NotNull final PsiElement psiElement,
+                                         @Nullable final ServletMappingInfo servletMappingInfo,
+                                         final boolean soft) {
+    final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject()).
+            getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
 
     if (strutsModel == null) {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    return PathReferenceManager.getInstance().createCustomReferences(element,
-                                                                     false,
-                                                                     new ActionLinkPathReferenceProvider(strutsModel));
+    return new PsiReference[]{new ActionLinkReference((XmlAttributeValue) psiElement, strutsModel)};
   }
 
-
-  private class ActionLinkPathReferenceProvider implements PathReferenceProvider {
-
-    private final StrutsModel strutsModel;
-
-    ActionLinkPathReferenceProvider(final StrutsModel strutsModel) {
-      this.strutsModel = strutsModel;
+  @Nullable
+  public PathReference createWebPath(final String path,
+                                     @NotNull final PsiElement psiElement,
+                                     final ServletMappingInfo servletMappingInfo) {
+    final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
+    if (strutsManager.getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement)) == null) {
+      return null;
     }
 
-    public boolean createReferences(@NotNull final PsiElement psiElement,
-                                    @NotNull final List<PsiReference> references,
-                                    final boolean soft) {
-      references.add(new ActionLinkReference((XmlAttributeValue) psiElement, strutsModel));
-      return false;
-    }
-
-    public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
-      return new PathReference(path, new PathReference.ConstFunction(StrutsIcons.ACTION));
-    }
+    return new PathReference(path, new PathReference.ConstFunction(StrutsIcons.ACTION)); /*{
+TODO not needed so far ?!
+   public PsiElement resolve() {
+        return action.getXmlTag();
+      }
+    };*/
   }
 
 
@@ -83,13 +77,14 @@ public class ActionLinkReferenceProvider extends PsiReferenceProviderBase {
 
     private final StrutsModel strutsModel;
 
-    private ActionLinkReference(final XmlAttributeValue psiElement, final StrutsModel strutsModel) {
+    private ActionLinkReference(final XmlAttributeValue psiElement,
+                                final StrutsModel strutsModel) {
       super(psiElement);
       this.strutsModel = strutsModel;
     }
 
     public PsiElement resolve() {
-      final String fullActionPath = PathReference.trimPath(myElement.getValue());
+      final String fullActionPath = PathReference.trimPath(getValue());
       // TODO hardcoded extension
       if (!fullActionPath.endsWith(".action")) {
         return null;
@@ -137,8 +132,10 @@ public class ActionLinkReferenceProvider extends PsiReferenceProviderBase {
     @NotNull
     private static String getNamespace(final String fullActionPath) {
       final int slashIndex = fullActionPath.lastIndexOf("/");
+
+      // no slash, use fake "root" for resolving "myAction.action"
       if (slashIndex == -1) {
-        return "";
+        return "/";
       }
 
       // root-package
@@ -153,10 +150,6 @@ public class ActionLinkReferenceProvider extends PsiReferenceProviderBase {
     @NotNull
     private static String getActionName(final String fullActionPath) {
       final int slashIndex = fullActionPath.lastIndexOf("/");
-      if (slashIndex == -1) {
-        return "";
-      }
-
       final int extensionIndex = fullActionPath.lastIndexOf(".");
       return fullActionPath.substring(slashIndex + 1, extensionIndex);
     }
