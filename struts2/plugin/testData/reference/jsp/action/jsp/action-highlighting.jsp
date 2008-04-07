@@ -19,3 +19,4 @@
 <%-- invalid --%>
 <s:url action="<error></error>"/>
 <s:url action="<error>INVALID_VALUE</error>"/>
+<s:url action="<error>namespace2Action</error>" namespace="/namespace1"/>
