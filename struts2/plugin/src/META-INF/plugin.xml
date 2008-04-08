@@ -79,8 +79,8 @@
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibCssInlineStyleInjector"/>
     <annotator language="JSP" implementationClass="com.intellij.struts2.annotators.JspActionAnnotator"/>
 
-<!--    <javaee.web.customServletReferenceProvider
-            implementation="com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider"/>-->
+    <javaee.web.customServletReferenceProvider
+            implementation="com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider"/>
   </extensions>
 
   <application-components>
