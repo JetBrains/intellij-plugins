@@ -39,8 +39,10 @@
                     interface="com.intellij.struts2.dom.struts.action.ActionClassConverter$ActionClassConverterContributor"/>
   </extensionPoints>
 
-  <extensions xmlns="com.intellij">
+  <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+
+    <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsReferenceContributor"/>
 
     <!-- struts.xml -->
     <dom.fileDescription implementation="com.intellij.struts2.dom.struts.Struts2DomFileDescription"/>
@@ -92,9 +94,6 @@
   <project-components>
     <component>
       <implementation-class>com.intellij.struts2.StrutsProjectComponent</implementation-class>
-    </component>
-    <component>
-      <implementation-class>com.intellij.struts2.reference.StrutsReferenceProviderComponent</implementation-class>
     </component>
   </project-components>
 

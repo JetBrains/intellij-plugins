@@ -15,20 +15,14 @@
 
 package com.intellij.struts2.reference;
 
-import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.paths.PathReferenceManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceProvider;
+import com.intellij.psi.*;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
 import com.intellij.psi.filters.position.NamespaceFilter;
 import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.struts2.dom.struts.impl.path.StrutsPathReferenceConverterImpl;
 import static com.intellij.struts2.reference.ReferenceFilters.NAMESPACE_STRUTS_XML;
 import static com.intellij.struts2.reference.ReferenceFilters.NAMESPACE_TAGLIB_STRUTS_UI;
-import com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider;
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
 import com.intellij.struts2.reference.jsp.NamespaceReferenceProvider;
 import com.intellij.struts2.reference.jsp.ThemeReferenceProvider;
@@ -42,9 +36,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann CŽbron
  */
-public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
-
-  private final ReferenceProvidersRegistry registry;
+public class StrutsReferenceContributor extends PsiReferenceContributor {
 
   @NonNls
   private static final String[] TAGLIB_UI_FORM_TAGS = new String[]{
@@ -84,13 +76,11 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
     }
   };
 
-  protected StrutsReferenceProviderComponent(final Project project) {
-    super(project);
-    registry = ReferenceProvidersRegistry.getInstance(project);
+  private PsiReferenceRegistrar registrar;
 
-  }
+  public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
+    this.registrar = registrar;
 
-  public void initComponent() {
     registerUITags();
 
     registerStrutsXmlTags();
@@ -98,7 +88,7 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
 
   private void registerStrutsXmlTags() {
     // <result> body content (location)
-    XmlUtil.registerXmlTagReferenceProvider(registry,
+    XmlUtil.registerXmlTagReferenceProvider(registrar,
                                             new String[]{"result"},
                                             NAMESPACE_STRUTS_XML, true,
                                             new PathReferenceProviderWrapper(new StrutsPathReferenceConverterImpl()));
@@ -250,8 +240,9 @@ public class StrutsReferenceProviderComponent extends AbstractProjectComponent {
                             final @NonNls String attributeName,
                             final NamespaceFilter namespaceFilter,
                             final @NonNls String... tagNames) {
-    XmlUtil.registerXmlAttributeValueReferenceProvider(registry, new String[]{attributeName},
+    XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, new String[]{attributeName},
                                                        ReferenceFilters.andTagNames(namespaceFilter, tagNames),
                                                        provider);
   }
+
 }
