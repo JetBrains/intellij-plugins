@@ -53,14 +53,6 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     performHighlightingTest("struts-spring.xml");
   }
 
-  protected void runTest() throws Throwable {
-    new WriteCommandAction.Simple(myFixture.getProject()) {
-      protected void run() throws Throwable {
-        StrutsHighlightingSpringTest.super.runTest();
-      }
-    }.execute();
-  }
-
   public void testStrutsSpringCompletionVariants() throws Throwable {
 /*    createStrutsFileSet("struts-completionvariants-spring.xml");
 
