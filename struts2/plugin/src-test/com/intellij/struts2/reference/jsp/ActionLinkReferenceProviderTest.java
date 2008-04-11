@@ -44,28 +44,27 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
   }
 
-  // TODO how to test/disable IDEA internal warnings for unresolved web-paths?!
-  /*  public void testActionHtmlLinkHighlighting() throws Throwable {
+  public void testActionHtmlLinkHighlighting() throws Throwable {
       createStrutsFileSet("struts-actionLink.xml");
-      myFixture.testHighlighting(true, false, false, "/jsp/actionLink-highlighting.jsp");
-    }
-  */
+      myFixture.testHighlighting(true, false, false, "/jsp/actionLink-highlighting.jsp", "/WEB-INF/web.xml");
+  }
+
 
   public void testActionLinkCompletionVariants() throws Throwable {
-/* TODO completely broken; disabled temp
     createStrutsFileSet("struts-actionLink.xml");
+    myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants.jsp",
                                      "/actionLink/actionLink1.action",
                                      "/actionLink/actionLink2.action");
-*/
+
   }
 
   public void testActionLinkReferences() throws Throwable {
-/* TODO completely broken; disabled temp
     createStrutsFileSet("struts-actionLink.xml");
+    myFixture.copyFileToProject("/WEB-INF/web.xml");
     checkActionReference("/jsp/actionLink-reference_1.jsp", "actionLink1");
     checkActionReference("/jsp/actionLink-reference_2.jsp", "rootActionLink");
-*/
+
   }
 
   /**
