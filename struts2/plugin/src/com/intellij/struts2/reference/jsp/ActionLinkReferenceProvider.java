@@ -16,10 +16,11 @@ package com.intellij.struts2.reference.jsp;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupValueFactory;
-import com.intellij.javaee.web.CustomServletReferenceProvider;
+import com.intellij.javaee.web.CustomServletReferenceAdapter;
 import com.intellij.javaee.web.ServletMappingInfo;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -39,12 +40,11 @@ import java.util.List;
  *
  * @author Yann CŽbron
  */
-public class ActionLinkReferenceProvider implements CustomServletReferenceProvider {
+public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
 
-  @NotNull
-  public PsiReference[] createReferences(@NotNull final PsiElement psiElement,
-                                         @Nullable final ServletMappingInfo servletMappingInfo,
-                                         final boolean soft) {
+
+  protected PsiReference[] createReferences(final @NotNull PsiElement psiElement, final int offset, final String text, final @Nullable ServletMappingInfo info,
+                                            final boolean soft) {
     final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject()).
             getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
 
@@ -52,7 +52,7 @@ public class ActionLinkReferenceProvider implements CustomServletReferenceProvid
       return PsiReference.EMPTY_ARRAY;
     }
 
-    return new PsiReference[]{new ActionLinkReference((XmlAttributeValue) psiElement, strutsModel)};
+    return new PsiReference[]{new ActionLinkReference((XmlAttributeValue) psiElement, offset, text, soft, strutsModel)};
   }
 
   @Nullable
@@ -77,9 +77,12 @@ TODO not needed so far ?!
 
     private final StrutsModel strutsModel;
 
-    private ActionLinkReference(final XmlAttributeValue psiElement,
+    private ActionLinkReference(final XmlAttributeValue element,
+                                int offset,
+                                String text,
+                                boolean soft,
                                 final StrutsModel strutsModel) {
-      super(psiElement);
+      super(element, new TextRange(offset, offset + text.length()), soft);
       this.strutsModel = strutsModel;
     }
 
