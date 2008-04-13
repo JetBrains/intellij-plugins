@@ -54,7 +54,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   }
 
   public void testStrutsSpringCompletionVariants() throws Throwable {
-/*    createStrutsFileSet("struts-completionvariants-spring.xml");
+    createStrutsFileSet("struts-completionvariants-spring.xml");
 
 
     final SpringFileSet springFileSet = configureSpringFileSet();
@@ -71,7 +71,6 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
                                      "ognl",
                                      "org",
                                      "template");
-*/
   }
 
   // stuff below is Spring related ===============================================
