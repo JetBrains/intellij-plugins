@@ -40,15 +40,15 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
 
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
+    addLibrary(moduleBuilder, "servlet-api", "servlet-api.jar");
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
     moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
   }
 
   public void testActionHtmlLinkHighlighting() throws Throwable {
-      createStrutsFileSet("struts-actionLink.xml");
-      myFixture.testHighlighting(true, false, false, "/jsp/actionLink-highlighting.jsp", "/WEB-INF/web.xml");
+    createStrutsFileSet("struts-actionLink.xml");
+    myFixture.testHighlighting(true, false, false, "/jsp/actionLink-highlighting.jsp", "/WEB-INF/web.xml");
   }
-
 
   public void testActionLinkCompletionVariants() throws Throwable {
     createStrutsFileSet("struts-actionLink.xml");
@@ -56,7 +56,6 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants.jsp",
                                      "/actionLink/actionLink1.action",
                                      "/actionLink/actionLink2.action");
-
   }
 
   public void testActionLinkReferences() throws Throwable {
@@ -64,7 +63,6 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     myFixture.copyFileToProject("/WEB-INF/web.xml");
     checkActionReference("/jsp/actionLink-reference_1.jsp", "actionLink1");
     checkActionReference("/jsp/actionLink-reference_2.jsp", "rootActionLink");
-
   }
 
   /**
