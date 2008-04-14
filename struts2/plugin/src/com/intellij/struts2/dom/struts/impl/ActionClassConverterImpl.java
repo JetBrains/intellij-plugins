@@ -28,6 +28,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.GenericDomValue;
+import com.intellij.util.xml.DomJavaUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +57,7 @@ public class ActionClassConverterImpl extends ActionClassConverter {
     }
 
     // resolve JAVA-class directly
-    final PsiClass psiClass = context.findClass(s, null);
+    final PsiClass psiClass = DomJavaUtil.findClass(s, context.getFile(), context.getModule(), null);
     if (psiClass != null) {
       return psiClass;
     }

@@ -20,10 +20,7 @@ import com.intellij.codeInsight.lookup.LookupValueFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceBase;
+import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.spring.SpringManager;
 import com.intellij.spring.SpringModel;
@@ -32,6 +29,7 @@ import com.intellij.spring.model.xml.beans.SpringBeanPointer;
 import com.intellij.struts2.dom.struts.action.ActionClassConverter;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.DomJavaUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +51,8 @@ public class ActionClassConverterSpringContributor extends ActionClassConverter.
    * @return true if yes.
    */
   public boolean isSuitable(@NotNull final ConvertContext convertContext) {
-    return convertContext.findClass("org.apache.struts2.spring.StrutsSpringObjectFactory", null) != null;
+    return DomJavaUtil
+        .findClass("org.apache.struts2.spring.StrutsSpringObjectFactory", convertContext.getFile(), convertContext.getModule(), null) != null;
   }
 
   public String getContributorType() {
