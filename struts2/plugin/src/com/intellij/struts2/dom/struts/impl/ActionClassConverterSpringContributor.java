@@ -101,28 +101,28 @@ public class ActionClassConverterSpringContributor extends ActionClassConverter.
     public Object[] getVariants() {
       final SpringModel model = getSpringModel();
       if (model == null) {
-        System.out.println("#####S2 no Spring model");
+//        System.out.println("#####S2 no Spring model");
         return new Object[0];
       }
 
       final List lookups = new ArrayList();
       final Collection<? extends SpringBeanPointer> list = model.getAllCommonBeans(true);
 
-      System.out.println("#####S2 Spring model total = " + list.size());
+//      System.out.println("#####S2 Spring model total = " + list.size());
 
       for (final SpringBeanPointer bean : list) {
         final String beanName = bean.getName();
         final PsiFile psiFile = bean.getContainingFile();
 
-        System.out.println("#####S2 checking spring bean = " + bean);
+//        System.out.println("#####S2 checking spring bean = " + bean);
         if (psiFile != null && StringUtil.isNotEmpty(beanName)) {
           //noinspection ConstantConditions
           lookups.add(LookupValueFactory.createLookupValueWithHint(beanName, bean.getBeanIcon(), psiFile.getName()));
-          System.out.println("#####S2 adding " + beanName +" in " + bean.getContainingFile());
+//          System.out.println("#####S2 adding " + beanName +" in " + bean.getContainingFile());
         }
       }
 
-      System.out.println("#####S2 total variants: " + lookups.size());
+//      System.out.println("#####S2 total variants: " + lookups.size());
       return lookups.toArray(new Object[lookups.size()]);
     }
   }
