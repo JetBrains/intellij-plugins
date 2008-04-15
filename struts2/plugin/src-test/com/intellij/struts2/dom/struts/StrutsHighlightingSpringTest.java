@@ -26,6 +26,7 @@ import com.intellij.spring.facet.SpringFacetConfiguration;
 import com.intellij.spring.facet.SpringFacetType;
 import com.intellij.spring.facet.SpringFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.struts2.dom.struts.impl.ActionClassConverterSpringContributor;
 
 import java.io.IOException;
 import java.util.Set;
@@ -54,14 +55,15 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   }
 
   public void testStrutsSpringCompletionVariants() throws Throwable {
-/*
-    createStrutsFileSet("struts-completionvariants-spring.xml");
+    ActionClassConverterSpringContributor.DEBUG = true;
+    try {
+      createStrutsFileSet("struts-completionvariants-spring.xml");
 
-    final SpringFileSet springFileSet = configureSpringFileSet();
-    addFile(springFileSet, "spring.xml");
+      final SpringFileSet springFileSet = configureSpringFileSet();
+      addFile(springFileSet, "spring.xml");
 
-    // TODO <alias> does not appear here, see com.intellij.spring.impl.SpringModelImpl#myOwnBeans
-    myFixture.testCompletionVariants("struts-completionvariants-spring.xml",
+      // TODO <alias> does not appear here, see com.intellij.spring.impl.SpringModelImpl#myOwnBeans
+      myFixture.testCompletionVariants("struts-completionvariants-spring.xml",
                                      "META-INF",
                                      "MyClass",
                                      "bean1",
@@ -71,7 +73,10 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
                                      "ognl",
                                      "org",
                                      "template");
-  */
+    }
+    finally {
+      ActionClassConverterSpringContributor.DEBUG = false;
+    }
   }
 
   // stuff below is Spring related ===============================================

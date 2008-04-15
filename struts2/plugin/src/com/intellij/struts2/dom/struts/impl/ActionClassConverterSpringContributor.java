@@ -43,6 +43,7 @@ import java.util.List;
  * @author Yann CŽbron
  */
 public class ActionClassConverterSpringContributor extends ActionClassConverter.ActionClassConverterContributor {
+  public static boolean DEBUG = false;
 
   /**
    * Checks if struts2-spring-plugin is present in current module.
@@ -107,6 +108,10 @@ public class ActionClassConverterSpringContributor extends ActionClassConverter.
 
       final List lookups = new ArrayList();
       final Collection<? extends SpringBeanPointer> list = model.getAllCommonBeans(true);
+
+      if (DEBUG) {
+        new Throwable().printStackTrace(System.out);
+      }
 
 //      System.out.println("#####S2 Spring model total = " + list.size());
 
