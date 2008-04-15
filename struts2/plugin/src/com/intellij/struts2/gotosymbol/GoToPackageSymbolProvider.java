@@ -17,11 +17,12 @@ package com.intellij.struts2.gotosymbol;
 
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.xml.model.gotosymbol.GoToSymbolProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -34,23 +35,25 @@ import java.util.Set;
  */
 public class GoToPackageSymbolProvider extends GoToSymbolProvider {
 
-  protected void getNames(@NotNull final Module module, final Set<String> result) {
+  protected boolean acceptModule(final Module module) {
+    return StrutsFacet.getInstance(module) != null;
+  }
+
+  protected void addNames(@NotNull final Module module, final Set<String> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
     if (strutsModel != null) {
       final List<StrutsPackage> strutsPackageList = strutsModel.getStrutsPackages();
-      for (final StrutsPackage strutsPackage : strutsPackageList) {
-        result.add(strutsPackage.getName().getStringValue());
-      }
+      addNewNames(strutsPackageList, result);
     }
   }
 
-  protected void getItems(@NotNull final Module module, final String name, final List<NavigationItem> result) {
+  protected void addItems(@NotNull final Module module, final String name, final List<NavigationItem> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
     if (strutsModel != null) {
       final List<StrutsPackage> strutsPackageList = strutsModel.getStrutsPackages();
       for (final StrutsPackage strutsPackage : strutsPackageList) {
         if (name.equals(strutsPackage.getName().getStringValue())) {
-          final NavigationItem item = createNavigationItem(strutsPackage, "");
+          final NavigationItem item = createNavigationItem(strutsPackage);
           ContainerUtil.addIfNotNull(item, result);
         }
       }

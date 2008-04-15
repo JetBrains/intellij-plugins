@@ -17,12 +17,13 @@ package com.intellij.struts2.gotosymbol;
 
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.struts2.facet.StrutsFacet;
+import com.intellij.util.xml.ElementPresentationManager;
+import com.intellij.util.xml.model.gotosymbol.GoToSymbolProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -35,25 +36,29 @@ import java.util.Set;
  */
 public class GoToActionSymbolProvider extends GoToSymbolProvider {
 
-  protected void getNames(@NotNull final Module module, final Set<String> result) {
+  protected boolean acceptModule(final Module module) {
+    return StrutsFacet.getInstance(module) != null;
+  }
+
+  protected void addNames(@NotNull final Module module, final Set<String> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
     if (strutsModel != null) {
       final List<StrutsPackage> strutsPackageList = strutsModel.getStrutsPackages();
       for (final StrutsPackage strutsPackage : strutsPackageList) {
-        for (final Action action : strutsPackage.getActions()) {
-          result.add(action.getName().getStringValue());
-        }
+        addNewNames(strutsPackage.getActions(), result);
       }
     }
   }
 
-  protected void getItems(@NotNull final Module module, final String name, final List<NavigationItem> result) {
+  protected void addItems(@NotNull final Module module, final String name, final List<NavigationItem> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
     if (strutsModel != null) {
       final List<Action> actions = strutsModel.findActionsByName(name, null);
       for (final Action action : actions) {
-        final NavigationItem item = createNavigationItem(action, "[" + action.getNamespace() + "]");
-        ContainerUtil.addIfNotNull(item, result);
+        final NavigationItem item = createNavigationItem(action.getXmlTag(),
+                                                         action.getName().getStringValue() + " [" + action.getNamespace() + "]",
+                                                         ElementPresentationManager.getIcon(action));
+        result.add(item);
       }
     }
   }
