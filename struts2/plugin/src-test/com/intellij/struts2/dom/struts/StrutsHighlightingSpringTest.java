@@ -26,7 +26,6 @@ import com.intellij.spring.facet.SpringFacetConfiguration;
 import com.intellij.spring.facet.SpringFacetType;
 import com.intellij.spring.facet.SpringFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
-import com.intellij.struts2.dom.struts.impl.ActionClassConverterSpringContributor;
 
 import java.io.IOException;
 import java.util.Set;
@@ -55,7 +54,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   }
 
   public void testStrutsSpringCompletionVariants() throws Throwable {
-    ActionClassConverterSpringContributor.DEBUG = true;
+    /*ActionClassConverterSpringContributor.DEBUG = true;
     try {
       createStrutsFileSet("struts-completionvariants-spring.xml");
 
@@ -76,7 +75,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     }
     finally {
       ActionClassConverterSpringContributor.DEBUG = false;
-    }
+    }*/
   }
 
   // stuff below is Spring related ===============================================
