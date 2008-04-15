@@ -4,4 +4,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" >
 
+  <welcome-file-list>
+    <welcome-file>/rootActionLink.action</welcome-file>
+    <!-- TODO not highlighted in tests environment.. -->
+    <!--<welcome-file>/INVALID_VALUE.action</welcome-file>-->
+  </welcome-file-list>
+
 </web-app>

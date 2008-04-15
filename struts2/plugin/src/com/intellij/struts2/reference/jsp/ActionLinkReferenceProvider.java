@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -42,8 +43,10 @@ import java.util.List;
  */
 public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
 
-
-  protected PsiReference[] createReferences(final @NotNull PsiElement psiElement, final int offset, final String text, final @Nullable ServletMappingInfo info,
+  protected PsiReference[] createReferences(final @NotNull PsiElement psiElement,
+                                            final int offset,
+                                            final String text,
+                                            final @Nullable ServletMappingInfo info,
                                             final boolean soft) {
     final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject()).
             getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
@@ -52,7 +55,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    return new PsiReference[]{new ActionLinkReference((XmlAttributeValue) psiElement, offset, text, soft, strutsModel)};
+    return new PsiReference[]{new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel)};
   }
 
   @Nullable
@@ -73,14 +76,14 @@ TODO not needed so far ?!
   }
 
 
-  private static class ActionLinkReference extends PsiReferenceBase<XmlAttributeValue> implements EmptyResolveMessageProvider {
+  private static class ActionLinkReference extends PsiReferenceBase<XmlElement> implements EmptyResolveMessageProvider {
 
     private final StrutsModel strutsModel;
 
-    private ActionLinkReference(final XmlAttributeValue element,
-                                int offset,
-                                String text,
-                                boolean soft,
+    private ActionLinkReference(final XmlElement element,
+                                final int offset,
+                                final String text,
+                                final boolean soft,
                                 final StrutsModel strutsModel) {
       super(element, new TextRange(offset, offset + text.length()), soft);
       this.strutsModel = strutsModel;
@@ -106,7 +109,7 @@ TODO not needed so far ?!
     }
 
     public Object[] getVariants() {
-      final String fullActionPath = PathReference.trimPath(myElement.getValue());
+      final String fullActionPath = PathReference.trimPath(getValue());
       final String namespace = getNamespace(fullActionPath);
       final List<Action> actionList = strutsModel.getActionsForNamespace(namespace);
 

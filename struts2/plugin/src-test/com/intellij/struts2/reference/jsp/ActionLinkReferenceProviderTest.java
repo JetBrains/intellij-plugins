@@ -15,6 +15,8 @@
 package com.intellij.struts2.reference.jsp;
 
 import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.j2ee.web.highlighting.WebWarningInspection;
+import com.intellij.j2ee.web.highlighting.WebXmlInspection;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlTag;
@@ -45,9 +47,20 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
   }
 
-  public void testActionHtmlLinkHighlighting() throws Throwable {
+  public void testActionLinkHighlightingJsp() throws Throwable {
     createStrutsFileSet("struts-actionLink.xml");
+    myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testHighlighting(true, false, false, "/jsp/actionLink-highlighting.jsp", "/WEB-INF/web.xml");
+  }
+
+  // TODO not working..
+  public void testActionLinkHighlightingWebXml() throws Throwable {
+    createStrutsFileSet("struts-actionLink.xml");
+    myFixture.copyFileToProject("/WEB-INF/web.xml");
+
+    // TODO web.xml highlighting
+    myFixture.enableInspections(WebXmlInspection.class, WebWarningInspection.class);
+    myFixture.testHighlighting(true, false, false, "/WEB-INF/web.xml");
   }
 
   public void testActionLinkCompletionVariants() throws Throwable {
