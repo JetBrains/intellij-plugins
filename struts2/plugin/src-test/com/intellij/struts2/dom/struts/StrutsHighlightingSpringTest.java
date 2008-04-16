@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.struts;
 
+import com.intellij.codeInsight.completion.LegacyCompletionContributor;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.application.Result;
@@ -54,7 +55,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   }
 
   public void testStrutsSpringCompletionVariants() throws Throwable {
-    /*ActionClassConverterSpringContributor.DEBUG = true;
+    LegacyCompletionContributor.DEBUG = true;
     try {
       createStrutsFileSet("struts-completionvariants-spring.xml");
 
@@ -74,8 +75,8 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
                                      "template");
     }
     finally {
-      ActionClassConverterSpringContributor.DEBUG = false;
-    }*/
+      LegacyCompletionContributor.DEBUG = false;
+    }
   }
 
   // stuff below is Spring related ===============================================
