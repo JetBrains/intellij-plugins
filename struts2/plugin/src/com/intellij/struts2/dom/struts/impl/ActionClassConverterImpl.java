@@ -17,6 +17,7 @@
 package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -38,19 +39,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ActionClassConverterImpl extends ActionClassConverter {
 
-  private static ActionClassConverterContributor[] ADDITIONAL_CONTRIBUTORS = new ActionClassConverterContributor[0];
-
-  /**
-   * Adds the given providers.
-   *
-   * @param additionalProviders Additional providers to query.
-   */
-  public static void addAdditionalContributors(final ActionClassConverterContributor[] additionalProviders) {
-    ADDITIONAL_CONTRIBUTORS = ArrayUtil.mergeArrays(ADDITIONAL_CONTRIBUTORS,
-                                                    additionalProviders,
-                                                    ActionClassConverterContributor.class);
-  }
-
   public PsiClass fromString(@Nullable @NonNls final String s, final ConvertContext context) {
     if (s == null) {
       return null;
@@ -68,7 +56,7 @@ public class ActionClassConverterImpl extends ActionClassConverter {
       return null;
     }
 
-    for (final ActionClassConverterContributor actionClassConverterContributor : ADDITIONAL_CONTRIBUTORS) {
+    for (final ActionClassConverterContributor actionClassConverterContributor : Extensions.getExtensions(EP_NAME)) {
       if (actionClassConverterContributor.isSuitable(context)) {
         final PsiReference[] add = actionClassConverterContributor.getReferencesByElement(element, new ProcessingContext());
         if (add.length == 1 && add[0].resolve() != null) {
@@ -103,7 +91,7 @@ public class ActionClassConverterImpl extends ActionClassConverter {
     @NonNls String[] referenceTypes = new String[]{"class"};
     
     // 2. additional resolvers (currently Spring only)
-    for (final ActionClassConverterContributor actionClassConverterContributor : ADDITIONAL_CONTRIBUTORS) {
+    for (final ActionClassConverterContributor actionClassConverterContributor : Extensions.getExtensions(EP_NAME)) {
       if (actionClassConverterContributor.isSuitable(context)) {
         final PsiReference[] additionalReferences = actionClassConverterContributor.getReferencesByElement(element, new ProcessingContext());
         javaClassReferences = ArrayUtil.mergeArrays(javaClassReferences, additionalReferences, PsiReference.class);

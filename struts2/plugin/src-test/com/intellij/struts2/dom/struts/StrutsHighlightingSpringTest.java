@@ -68,6 +68,8 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
                                      "MyClass",
                                      "bean1",
                                      "bean2",
+                                     "java",
+                                     "javax",
                                      "com",
                                      "freemarker",
                                      "ognl",
