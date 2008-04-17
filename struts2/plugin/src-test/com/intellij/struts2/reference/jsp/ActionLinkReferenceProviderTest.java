@@ -63,12 +63,23 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     myFixture.testHighlighting(true, false, false, "/WEB-INF/web.xml");
   }
 
-  public void testActionLinkCompletionVariants() throws Throwable {
+  public void testActionLinkCompletionVariantsNamespaceGiven() throws Throwable {
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.copyFileToProject("/WEB-INF/web.xml");
-    myFixture.testCompletionVariants("/jsp/actionLink-completionvariants.jsp",
+    myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-namespace_given.jsp",
                                      "/actionLink/actionLink1.action",
                                      "/actionLink/actionLink2.action");
+  }
+
+  public void testActionLinkCompletionVariantsNoNamespace() throws Throwable {
+    createStrutsFileSet("struts-actionLink.xml");
+    myFixture.copyFileToProject("/WEB-INF/web.xml");
+    myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-no-namespace.jsp",
+                                     "/WEB-INF",
+                                     "/actionLink-completionvariants-no-namespace.jsp",
+                                     "/actionLink/actionLink1.action",
+                                     "/actionLink/actionLink2.action",
+                                     "/rootActionLink.action");
   }
 
   public void testActionLinkReferences() throws Throwable {

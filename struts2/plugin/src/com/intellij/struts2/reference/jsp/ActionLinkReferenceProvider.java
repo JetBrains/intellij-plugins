@@ -21,15 +21,16 @@ import com.intellij.javaee.web.ServletMappingInfo;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
-import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,7 +98,7 @@ TODO not needed so far ?!
       }
 
       final String actionName = getActionName(fullActionPath);
-      final String namespace = getNamespace(fullActionPath);
+      final String namespace = getNamespace(fullActionPath, 0, true);
 
       final List<Action> actions = strutsModel.findActionsByName(actionName, namespace);
       if (actions.isEmpty()) {
@@ -110,8 +111,19 @@ TODO not needed so far ?!
 
     public Object[] getVariants() {
       final String fullActionPath = PathReference.trimPath(getValue());
-      final String namespace = getNamespace(fullActionPath);
-      final List<Action> actionList = strutsModel.getActionsForNamespace(namespace);
+      final String namespace = getNamespace(fullActionPath, getRangeInElement().getStartOffset(), false);
+
+      // namespace given?
+      final List<Action> actionList;
+      if (StringUtil.isNotEmpty(namespace)) {
+        actionList = strutsModel.getActionsForNamespace(namespace);
+      } else {
+        actionList = new ArrayList<Action>();
+        final List<StrutsPackage> strutsPackages = strutsModel.getStrutsPackages();
+        for (final StrutsPackage strutsPackage : strutsPackages) {
+          actionList.addAll(strutsPackage.getActions());
+        }
+      }
 
       final List<Object> variants = new ArrayList<Object>(actionList.size());
       for (final Action action : actionList) {
@@ -135,9 +147,17 @@ TODO not needed so far ?!
       return "Cannot resolve action ''" + getCanonicalText() + "''";
     }
 
+    /**
+     * Extracts the namespace from the given action path.
+     *
+     * @param fullActionPath Full path.
+     * @param searchStart    Start position in path String (only if fakeRoot=false).
+     * @param fakeRoot       Return fake root-namespace instead of empty String if none found.
+     * @return Namespace
+     */
     @NotNull
-    private static String getNamespace(final String fullActionPath) {
-      final int slashIndex = fullActionPath.lastIndexOf("/");
+    private static String getNamespace(final String fullActionPath, final int searchStart, final boolean fakeRoot) {
+      final int slashIndex = fullActionPath.lastIndexOf("/", fakeRoot ? fullActionPath.length() : searchStart);
 
       // no slash, use fake "root" for resolving "myAction.action"
       if (slashIndex == -1) {
@@ -146,7 +166,7 @@ TODO not needed so far ?!
 
       // root-package
       if (slashIndex == 0) {
-        return "/";
+        return fakeRoot ? "/" : "";
       }
 
       return fullActionPath.substring(0, slashIndex);
