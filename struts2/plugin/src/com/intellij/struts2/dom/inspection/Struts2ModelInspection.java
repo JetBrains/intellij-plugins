@@ -107,8 +107,9 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
           }
         }
 
-        final String referenceTypes = StringUtil.join(attributeValue.getUserData(ActionClassConverter.REFERENCES_TYPES),
-                                                      "|");
+        final String[] referenceTypesUserData = attributeValue.getUserData(ActionClassConverter.REFERENCES_TYPES);
+        final String referenceTypes = referenceTypesUserData != null ?
+                                      StringUtil.join(referenceTypesUserData, "|") : "class";
         holder.createProblem(attributeValue,
                              HighlightSeverity.ERROR,
                              "Cannot resolve " + referenceTypes + " '" + attributeValue.getStringValue() + "'");
