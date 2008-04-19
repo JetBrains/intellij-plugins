@@ -2,10 +2,15 @@
 <a href="actionLink-highlighting.jsp"/>
 <a href="/"/>
 
-<%-- Action Links --%>
+<%-- VALID Action Links --%>
+<a href="rootActionLink.action"/>
+<a href="/rootActionLink.action"/> 
 <a href="/actionLink/actionLink1.action"/>
 <a href="/actionLink/actionLink2.action"/>
-<a href="<warning>/actionLink/INVALID_VALUE.action</warning>"/>
+
+<%-- INVALID Action Links --%>
+<a href="<warning descr="Cannot resolve Struts 2 package '/INVALID_VALUE'">/INVALID_VALUE/</warning><warning></warning>"/>
+<a href="/actionLink/<warning>INVALID_VALUE.action</warning>"/>
 
 
 <%-- Action Links with dynamic context --%>

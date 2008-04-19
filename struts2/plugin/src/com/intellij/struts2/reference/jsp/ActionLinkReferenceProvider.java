@@ -35,7 +35,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Provides links to Action-URLs in all places where Servlet-URLs are processed.
@@ -56,7 +58,8 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    return new PsiReference[]{new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel)};
+    return new PsiReference[]{new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel),
+                              new ActionLinkPackageReference((XmlElement) psiElement, offset, text, soft, strutsModel)};
   }
 
   @Nullable
@@ -80,6 +83,7 @@ TODO not needed so far ?!
   private static class ActionLinkReference extends PsiReferenceBase<XmlElement> implements EmptyResolveMessageProvider {
 
     private final StrutsModel strutsModel;
+    private final String fullActionPath;
 
     private ActionLinkReference(final XmlElement element,
                                 final int offset,
@@ -88,18 +92,24 @@ TODO not needed so far ?!
                                 final StrutsModel strutsModel) {
       super(element, new TextRange(offset, offset + text.length()), soft);
       this.strutsModel = strutsModel;
+
+      fullActionPath = PathReference.trimPath(getValue());
+      final int lastSlash = fullActionPath.lastIndexOf("/");
+
+      // adapt TextRange to everyting behind /packageName/
+      if (lastSlash != -1) {
+        setRangeInElement(TextRange.from(lastSlash + 2, fullActionPath.length() - lastSlash - 1));
+      }
     }
 
     public PsiElement resolve() {
-      final String fullActionPath = PathReference.trimPath(getValue());
       // TODO hardcoded extension
       if (!fullActionPath.endsWith(".action")) {
         return null;
       }
 
       final String actionName = getActionName(fullActionPath);
-      final String namespace = getNamespace(fullActionPath, 0, true);
-
+      final String namespace = getNamespace(fullActionPath, -1, true);
       final List<Action> actions = strutsModel.findActionsByName(actionName, namespace);
       if (actions.isEmpty()) {
         return null;
@@ -110,8 +120,7 @@ TODO not needed so far ?!
     }
 
     public Object[] getVariants() {
-      final String fullActionPath = PathReference.trimPath(getValue());
-      final String namespace = getNamespace(fullActionPath, getRangeInElement().getStartOffset(), false);
+      final String namespace = getNamespace(fullActionPath, getRangeInElement().getStartOffset(), true);
 
       // namespace given?
       final List<Action> actionList;
@@ -129,14 +138,11 @@ TODO not needed so far ?!
       for (final Action action : actionList) {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
-          final String actionNamespace = action.getNamespace();
-          final Object variant =
-                  LookupValueFactory.createLookupValueWithHint(
-                          (actionNamespace.length() != 1 ? actionNamespace + "/" : "/") +
-                          actionPath + ".action",
-                          // TODO hardcoded extension
-                          StrutsIcons.ACTION,
-                          actionNamespace);
+          // TODO hardcoded extension
+          final Object variant = LookupValueFactory.createLookupValueWithHint(
+                  actionPath + ".action",
+                  StrutsIcons.ACTION,
+                  action.getNamespace());
           variants.add(variant);
         }
       }
@@ -144,34 +150,8 @@ TODO not needed so far ?!
     }
 
     public String getUnresolvedMessagePattern() {
-      return "Cannot resolve action ''" + getCanonicalText() + "''";
+      return "Cannot resolve action ''" + getValue() + "''";
     }
-
-    /**
-     * Extracts the namespace from the given action path.
-     *
-     * @param fullActionPath Full path.
-     * @param searchStart    Start position in path String (only if fakeRoot=false).
-     * @param fakeRoot       Return fake root-namespace instead of empty String if none found.
-     * @return Namespace
-     */
-    @NotNull
-    private static String getNamespace(final String fullActionPath, final int searchStart, final boolean fakeRoot) {
-      final int slashIndex = fullActionPath.lastIndexOf("/", fakeRoot ? fullActionPath.length() : searchStart);
-
-      // no slash, use fake "root" for resolving "myAction.action"
-      if (slashIndex == -1) {
-        return "/";
-      }
-
-      // root-package
-      if (slashIndex == 0) {
-        return fakeRoot ? "/" : "";
-      }
-
-      return fullActionPath.substring(0, slashIndex);
-    }
-
 
     @NotNull
     private static String getActionName(final String fullActionPath) {
@@ -180,6 +160,92 @@ TODO not needed so far ?!
       return fullActionPath.substring(slashIndex + 1, extensionIndex);
     }
 
+  }
+
+  /**
+   * Extracts the namespace from the given action path.
+   *
+   * @param fullActionPath Full path.
+   * @param searchStart    Start position in path String (only if fakeRoot=false).
+   * @param fakeRoot       Return fake root-namespace instead of empty String if none found.
+   * @return Namespace
+   */
+  @NotNull
+  private static String getNamespace(final String fullActionPath, final int searchStart, final boolean fakeRoot) {
+    final int slashIndex = fullActionPath.lastIndexOf("/", fakeRoot ? fullActionPath.length() : searchStart);
+
+    // no slash, use fake "root" for resolving "myAction.action"
+    if (slashIndex == -1) {
+      return "/";
+    }
+
+    // root-package
+    if (slashIndex == 0) {
+      return fakeRoot ? "/" : "";
+    }
+
+    return fullActionPath.substring(0, slashIndex);
+  }
+
+
+  /**
+   * Provides reference to S2-package within action-path.
+   */
+  private static class ActionLinkPackageReference extends PsiReferenceBase<XmlElement> implements EmptyResolveMessageProvider {
+
+    private final String namespace;
+    private final List<StrutsPackage> allStrutsPackages;
+
+    private ActionLinkPackageReference(final XmlElement element,
+                                       final int offset,
+                                       final String text,
+                                       final boolean soft,
+                                       final StrutsModel strutsModel) {
+      super(element, new TextRange(offset, offset + text.length()), soft);
+
+      final String fullActionPath = PathReference.trimPath(getValue());
+      namespace = getNamespace(fullActionPath, getRangeInElement().getStartOffset(), true);
+
+      final int firstSlash = fullActionPath.indexOf("/");
+      if (firstSlash != -1) {
+        setRangeInElement(TextRange.from(firstSlash + 1, namespace.length()));
+      } else {
+        setRangeInElement(TextRange.from(1, 0));   // TODO necessary??
+      }
+
+      allStrutsPackages = strutsModel.getStrutsPackages();
+    }
+
+    public PsiElement resolve() {
+      if (StringUtil.isEmpty(namespace)) {
+        return null;
+      }
+
+      for (final StrutsPackage strutsPackage : allStrutsPackages) {
+        if (namespace.equals(strutsPackage.searchNamespace())) {
+          return strutsPackage.getXmlTag();
+        }
+      }
+
+      return null;
+    }
+
+    public Object[] getVariants() {
+      final Set<Object> variants = new HashSet<Object>(allStrutsPackages.size());
+
+      for (final StrutsPackage allPackage : allStrutsPackages) {
+        final String namespace = allPackage.searchNamespace();
+        variants.add(LookupValueFactory.createLookupValueWithHint(
+                namespace.length() != 1 ? namespace + "/" : namespace,
+                StrutsIcons.PACKAGE, allPackage.getName().getStringValue()));
+      }
+
+      return variants.toArray(new Object[variants.size()]);
+    }
+
+    public String getUnresolvedMessagePattern() {
+      return "Cannot resolve Struts 2 package ''" + getCanonicalText() + "''";
+    }
   }
 
 }

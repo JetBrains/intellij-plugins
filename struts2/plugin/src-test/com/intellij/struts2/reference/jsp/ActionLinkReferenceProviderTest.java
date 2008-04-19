@@ -67,19 +67,15 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-namespace_given.jsp",
-                                     "/actionLink/actionLink1.action",
-                                     "/actionLink/actionLink2.action");
+                                     "actionLink1.action",
+                                     "actionLink2.action");
   }
 
   public void testActionLinkCompletionVariantsNoNamespace() throws Throwable {
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-no-namespace.jsp",
-                                     "/WEB-INF",
-                                     "/actionLink-completionvariants-no-namespace.jsp",
-                                     "/actionLink/actionLink1.action",
-                                     "/actionLink/actionLink2.action",
-                                     "/rootActionLink.action");
+                                     "/", "/actionLink/");
   }
 
   public void testActionLinkReferences() throws Throwable {
@@ -104,7 +100,7 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
 
     final DomElement actionElement = DomManager.getDomManager(myProject).getDomElement((XmlTag) psiElement);
     assertNotNull(actionElement);
-    assertTrue(actionElement instanceof Action);
+    assertInstanceOf(actionElement, Action.class);
     assertEquals("Action name differs for " + actionName,
                  ((Action) actionElement).getName().getStringValue(), actionName);
   }
