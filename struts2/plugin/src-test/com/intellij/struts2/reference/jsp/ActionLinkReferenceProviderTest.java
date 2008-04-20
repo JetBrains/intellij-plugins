@@ -67,15 +67,21 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-namespace_given.jsp",
-                                     "actionLink1.action",
-                                     "actionLink2.action");
+                                     "/actionLink/",
+                                     "/actionLink/actionLink1.action",
+                                     "/actionLink/actionLink2.action");
   }
 
   public void testActionLinkCompletionVariantsNoNamespace() throws Throwable {
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-no-namespace.jsp",
-                                     "/", "/actionLink/");
+                                     "/",
+                                     "/WEB-INF",
+                                     "/actionLink-completionvariants-no-namespace.jsp",
+                                     "/actionLink/",
+                                     "/rootActionLink.action"
+    );
   }
 
   public void testActionLinkReferences() throws Throwable {
