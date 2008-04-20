@@ -58,8 +58,17 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    return new PsiReference[]{new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel),
-                              new ActionLinkPackageReference((XmlElement) psiElement, offset, text, soft, strutsModel)};
+    if (text.indexOf("/") != -1) {
+      return new PsiReference[]{
+              new ActionLinkPackageReference((XmlElement) psiElement, offset, text, soft, strutsModel),
+              new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel)
+      };
+    } else {
+      return new PsiReference[]{
+              new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel)
+      };
+
+    }
   }
 
   @Nullable
@@ -96,9 +105,17 @@ TODO not needed so far ?!
       fullActionPath = PathReference.trimPath(getValue());
       final int lastSlash = fullActionPath.lastIndexOf("/");
 
-      // adapt TextRange to everyting behind /packageName/
+      // adapt TextRange to everything behind /packageName/
       if (lastSlash != -1) {
         setRangeInElement(TextRange.from(lastSlash + 2, fullActionPath.length() - lastSlash - 1));
+      }
+
+      // reduce to action-name if full path given
+      // TODO hardcoded extension
+      final int extensionIndex = fullActionPath.indexOf(".action");
+      if (extensionIndex != -1) {
+        setRangeInElement(TextRange.from(getRangeInElement().getStartOffset(),
+                                         getRangeInElement().getLength() - ".action".length()));
       }
     }
 
@@ -156,7 +173,8 @@ TODO not needed so far ?!
     @NotNull
     private static String getActionName(final String fullActionPath) {
       final int slashIndex = fullActionPath.lastIndexOf("/");
-      final int extensionIndex = fullActionPath.lastIndexOf(".");
+      // TODO hardcoded extension
+      final int extensionIndex = fullActionPath.lastIndexOf(".action");
       return fullActionPath.substring(slashIndex + 1, extensionIndex);
     }
 
@@ -195,6 +213,7 @@ TODO not needed so far ?!
 
     private final String namespace;
     private final List<StrutsPackage> allStrutsPackages;
+    private final String fullActionPath;
 
     private ActionLinkPackageReference(final XmlElement element,
                                        final int offset,
@@ -203,21 +222,19 @@ TODO not needed so far ?!
                                        final StrutsModel strutsModel) {
       super(element, new TextRange(offset, offset + text.length()), soft);
 
-      final String fullActionPath = PathReference.trimPath(getValue());
+      fullActionPath = PathReference.trimPath(getValue());
       namespace = getNamespace(fullActionPath, getRangeInElement().getStartOffset(), true);
 
       final int firstSlash = fullActionPath.indexOf("/");
       if (firstSlash != -1) {
         setRangeInElement(TextRange.from(firstSlash + 1, namespace.length()));
-      } else {
-        setRangeInElement(TextRange.from(1, 0));   // TODO necessary??
       }
 
       allStrutsPackages = strutsModel.getStrutsPackages();
     }
 
     public PsiElement resolve() {
-      if (StringUtil.isEmpty(namespace)) {
+      if (!fullActionPath.endsWith(".action")) {
         return null;
       }
 
