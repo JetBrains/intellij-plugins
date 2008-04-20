@@ -47,7 +47,7 @@ import java.util.List;
  *
  * @author Yann CŽbron
  */
-class DispatchPathResultContributor implements StrutsResultContributor {
+public class DispatchPathResultContributor implements StrutsResultContributor {
 
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,

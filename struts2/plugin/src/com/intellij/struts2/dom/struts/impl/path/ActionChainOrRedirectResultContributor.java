@@ -43,7 +43,7 @@ import java.util.List;
  *
  * @author Yann CŽbron
  */
-class ActionChainOrRedirectResultContributor implements StrutsResultContributor {
+public class ActionChainOrRedirectResultContributor implements StrutsResultContributor {
 
   @NonNls
   private static final String[] RESULT_TYPES_CHAIN_REDIRECT = new String[]{"chain", "redirect-action", "redirectAction"};

@@ -59,6 +59,12 @@
     <xmlStructureViewBuilderProvider
             implementation="com.intellij.struts2.structure.StrutsStructureViewBuilderProvider"/>
 
+    <struts2.resultContributor
+            implementation="com.intellij.struts2.dom.struts.impl.path.DispatchPathResultContributor"/>
+    <struts2.resultContributor
+            implementation="com.intellij.struts2.dom.struts.impl.path.ActionPathResultContributor"/>
+    <struts2.resultContributor
+            implementation="com.intellij.struts2.dom.struts.impl.path.ActionChainOrRedirectResultContributor"/>
 
     <!-- validation.xml/validator-config.xml -->
     <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorDomFileDescription"/>

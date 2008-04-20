@@ -15,13 +15,13 @@
 
 package com.intellij.struts2.dom.struts.impl.path;
 
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.paths.PathReferenceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.xml.ConvertContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,23 +30,9 @@ import org.jetbrains.annotations.Nullable;
  * Converter for <code>result</code> location (tag body value).
  *
  * @author Yann CŽbron
+ * @see StrutsResultContributor
  */
 public class StrutsPathReferenceConverterImpl extends StrutsPathReferenceConverter {
-
-  private static StrutsResultContributor[] MY_RESULT_CONTRIBUTORS = new StrutsResultContributor[]{
-      new DispatchPathResultContributor(),
-      new ActionPathResultContributor(),
-      new ActionChainOrRedirectResultContributor()};
-
-  /**
-   * Adds all StrutsResultContributors from extension points.
-   *
-   * @param contributors Contributors to add.
-   * @see com.intellij.struts2.StrutsProjectComponent#initComponent()
-   */
-  public static void addResultContributors(final StrutsResultContributor[] contributors) {
-    MY_RESULT_CONTRIBUTORS = ArrayUtil.mergeArrays(MY_RESULT_CONTRIBUTORS, contributors, StrutsResultContributor.class);
-  }
 
   public PathReference fromString(@Nullable final String value, final ConvertContext context) {
     if (value == null) {
@@ -59,12 +45,18 @@ public class StrutsPathReferenceConverterImpl extends StrutsPathReferenceConvert
     }
 
     return PathReferenceManager.getInstance().getCustomPathReference(value, context.getModule(), element,
-                                                                     MY_RESULT_CONTRIBUTORS);
+                                                                     getResultContributors());
   }
 
   @NotNull
   public PsiReference[] createReferences(@NotNull final PsiElement psiElement, final boolean soft) {
-    return PathReferenceManager.getInstance().createCustomReferences(psiElement, soft, MY_RESULT_CONTRIBUTORS);
+    return PathReferenceManager.getInstance().createCustomReferences(psiElement,
+                                                                     soft,
+                                                                     getResultContributors());
+  }
+
+  private static StrutsResultContributor[] getResultContributors() {
+    return Extensions.getExtensions(StrutsResultContributor.EP_NAME);
   }
 
 }

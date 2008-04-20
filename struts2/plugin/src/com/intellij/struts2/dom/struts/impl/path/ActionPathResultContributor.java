@@ -41,13 +41,13 @@ import java.util.List;
  *
  * @author Yann CŽbron
  */
-class ActionPathResultContributor implements StrutsResultContributor {
+public class ActionPathResultContributor implements StrutsResultContributor {
 
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
     final StrutsModel model = StrutsManager.getInstance(psiElement.getProject())
-        .getModelByFile((XmlFile) psiElement.getContainingFile());
+            .getModelByFile((XmlFile) psiElement.getContainingFile());
     if (model == null) {
       return false;
     }
