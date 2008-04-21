@@ -16,7 +16,5 @@
 
 
 <%-- Action Links with dynamic context --%>
-<%-- TODO slash after scriptlet breaks test --%>
-<a href="<%=request.getContextPath()%>actionLink/actionLink1.action"/>
-<%-- TODO slash after EL breaks test --%>
-<a href="${pageContext.request.contextPath}actionLink/actionLink2.action"/>
+<a href="<%=request.getContextPath()%>/actionLink/actionLink1.action"/>
+<a href="${pageContext.request.contextPath}/actionLink/actionLink2.action"/>
