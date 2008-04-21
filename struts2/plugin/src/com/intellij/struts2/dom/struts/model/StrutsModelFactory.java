@@ -70,16 +70,20 @@ class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiEle
         }
       }
       if (!files.isEmpty()) {
-        final StrutsModel model = new StrutsModelImpl(createMergedModelRoot(files), files);
-        models.add(model);
+        final DomFileElement<StrutsRoot> element = createMergedModelRoot(files);
+        final StrutsModel model;
+        if (element != null) {
+          model = new StrutsModelImpl(element, files);
+          models.add(model);
+        }
       }
     }
 
     return models;
   }
 
-  protected StrutsModel createCombinedModel(final Set<XmlFile> xmlFiles,
-                                            final DomFileElement<StrutsRoot> strutsRootDomFileElement,
+  protected StrutsModel createCombinedModel(@NotNull final Set<XmlFile> xmlFiles,
+                                            @NotNull final DomFileElement<StrutsRoot> strutsRootDomFileElement,
                                             final StrutsModel strutsModel,
                                             final Module module) {
     return new StrutsModelImpl(strutsRootDomFileElement, xmlFiles);
