@@ -20,13 +20,17 @@ import com.intellij.codeInsight.lookup.LookupValueFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.spring.SpringManager;
 import com.intellij.spring.SpringModel;
 import com.intellij.spring.model.SpringUtils;
 import com.intellij.spring.model.xml.beans.SpringBeanPointer;
 import com.intellij.struts2.dom.struts.action.ActionClassConverter;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomJavaUtil;
@@ -43,6 +47,7 @@ import java.util.List;
  * @author Yann CŽbron
  */
 public class ActionClassConverterSpringContributor extends ActionClassConverter.ActionClassConverterContributor {
+
   /**
    * Checks if struts2-spring-plugin is present in current module.
    *
@@ -50,8 +55,10 @@ public class ActionClassConverterSpringContributor extends ActionClassConverter.
    * @return true if yes.
    */
   public boolean isSuitable(@NotNull final ConvertContext convertContext) {
-    return DomJavaUtil
-        .findClass("org.apache.struts2.spring.StrutsSpringObjectFactory", convertContext.getFile(), convertContext.getModule(), null) != null;
+    return DomJavaUtil.findClass("org.apache.struts2.spring.StrutsSpringObjectFactory",
+                                 convertContext.getFile(),
+                                 convertContext.getModule(),
+                                 null) != null;
   }
 
   public String getContributorType() {
@@ -59,7 +66,8 @@ public class ActionClassConverterSpringContributor extends ActionClassConverter.
   }
 
   @NotNull
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+  public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
+                                               @NotNull final ProcessingContext context) {
     return new PsiReference[]{new SpringBeanReference((XmlAttributeValue) element)};
   }
 
@@ -100,28 +108,22 @@ public class ActionClassConverterSpringContributor extends ActionClassConverter.
     public Object[] getVariants() {
       final SpringModel model = getSpringModel();
       if (model == null) {
-//        System.out.println("#####S2 no Spring model");
-        return new Object[0];
+        return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
 
       final List lookups = new ArrayList();
       final Collection<? extends SpringBeanPointer> list = model.getAllCommonBeans(true);
 
-//      System.out.println("#####S2 Spring model total = " + list.size());
-
       for (final SpringBeanPointer bean : list) {
         final String beanName = bean.getName();
         final PsiFile psiFile = bean.getContainingFile();
 
-//        System.out.println("#####S2 checking spring bean = " + bean);
         if (psiFile != null && StringUtil.isNotEmpty(beanName)) {
           //noinspection ConstantConditions
           lookups.add(LookupValueFactory.createLookupValueWithHint(beanName, bean.getBeanIcon(), psiFile.getName()));
-//          System.out.println("#####S2 adding " + beanName +" in " + bean.getContainingFile());
         }
       }
 
-//      System.out.println("#####S2 total variants: " + lookups.size());
       return lookups.toArray(new Object[lookups.size()]);
     }
   }
