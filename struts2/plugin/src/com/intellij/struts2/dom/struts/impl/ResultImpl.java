@@ -34,7 +34,7 @@ public abstract class ResultImpl implements Result, LocationPresentation {
   @Nullable
   @NonNls
   public String getLocation() {
-    final PathReference pathReference = getPath();
+    final PathReference pathReference = getValue();
     return pathReference != null ? pathReference.getPath() : null;
   }
 

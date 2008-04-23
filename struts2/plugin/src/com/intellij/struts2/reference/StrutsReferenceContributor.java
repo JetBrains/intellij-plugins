@@ -20,7 +20,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
 import com.intellij.psi.filters.position.NamespaceFilter;
 import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
-import com.intellij.struts2.dom.struts.impl.path.StrutsPathReferenceConverterImpl;
 import static com.intellij.struts2.reference.ReferenceFilters.NAMESPACE_STRUTS_XML;
 import static com.intellij.struts2.reference.ReferenceFilters.NAMESPACE_TAGLIB_STRUTS_UI;
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
@@ -87,11 +86,6 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
   }
 
   private void registerStrutsXmlTags() {
-    // <result> body content (location)
-    XmlUtil.registerXmlTagReferenceProvider(registrar,
-                                            new String[]{"result"},
-                                            NAMESPACE_STRUTS_XML, true,
-                                            new PathReferenceProviderWrapper(new StrutsPathReferenceConverterImpl()));
 
     // <result> "name" common values
     registerTags(new StaticStringValuesReferenceProvider("error", "input", "login", "success"),

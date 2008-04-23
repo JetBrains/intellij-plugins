@@ -19,14 +19,14 @@ import com.intellij.openapi.paths.PathReference;
 import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.util.xml.*;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * <code>result</code>.
  *
  * @author Yann CŽbron
  */
-public interface Result extends ParamsElement {
+@Convert(StrutsPathReferenceConverter.class)
+public interface Result extends ParamsElement, GenericDomValue<PathReference> {
 
   @NameValue
   @Scope(ParentScopeProvider.class)
@@ -34,10 +34,4 @@ public interface Result extends ParamsElement {
 
   @Convert(ResultTypeResolvingConverter.class)
   GenericAttributeValue<ResultType> getType();
-
-  @Convert(StrutsPathReferenceConverter.class)
-  @TagValue
-  @Nullable
-  PathReference getPath();
-
 }

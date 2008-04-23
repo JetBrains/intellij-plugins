@@ -18,7 +18,7 @@
     </action>
 
     <action name="testInvalidPaths">
-      <result name="invalid1"><error></error></result>
+      <result name="invalid1"><error><</error>/result>
       <result name="invalid2"><error>INVALID_VALUE</error></result>
       <result name="invalid3"><error>/jsp/index.jsp</error></result>
     </action>
