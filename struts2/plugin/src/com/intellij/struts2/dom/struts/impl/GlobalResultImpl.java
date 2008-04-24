@@ -15,10 +15,11 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
+import com.intellij.openapi.paths.PathReference;
 import com.intellij.struts2.dom.struts.strutspackage.GlobalResult;
 import com.intellij.struts2.structure.LocationPresentation;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Yann CŽbron
@@ -28,6 +29,8 @@ public abstract class GlobalResultImpl implements GlobalResult, LocationPresenta
   @Nullable
   @NonNls
   public String getLocation() {
-    return getPath();
+    final PathReference pathReference = getValue();
+    return pathReference != null ? pathReference.getPath() : null;
   }
+
 }

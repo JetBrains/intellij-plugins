@@ -17,14 +17,17 @@ package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.struts2.dom.struts.action.ResultTypeResolvingConverter;
+import com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter;
 import com.intellij.util.xml.*;
+import com.intellij.openapi.paths.PathReference;
 
 /**
  * Global <code>result</code>.
  *
  * @author Yann CŽbron
  */
-public interface GlobalResult extends ParamsElement {
+@Convert(StrutsPathReferenceConverter.class)
+public interface GlobalResult extends ParamsElement, GenericDomValue<PathReference> {
 
   @NameValue
   @Scope(ParentScopeProvider.class)
@@ -32,8 +35,5 @@ public interface GlobalResult extends ParamsElement {
 
   @Convert(ResultTypeResolvingConverter.class)
   GenericAttributeValue<ResultType> getType();
-
-  @TagValue
-  String getPath();
 
 }
