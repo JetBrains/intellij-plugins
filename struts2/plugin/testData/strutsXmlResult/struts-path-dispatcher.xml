@@ -9,6 +9,10 @@
   <!-- Test 1st web-root, "/jsp/" ==> "/" -->
   <package name="dispatchTest">
 
+    <global-results>
+      <result name="globalInvalid1"><error>INVALID_VALUE</error>/result>
+    </global-results>
+
     <action name="testValidPaths">
       <result name="valid1">index.jsp</result>
       <result name="valid2">/index.jsp</result>

@@ -11,6 +11,10 @@
       <result-type name="chain" class="com.opensymphony.xwork2.ActionChainResult"/>
     </result-types>
 
+    <global-results>
+      <result name="globalNonExistingAction" type="chain"><error>INVALID_VALUE</error></result>
+    </global-results>
+
     <action name="actionPath1">
       <result name="packageLocalActionName" type="chain">actionPath2</result>
       <result name="includingPackagePrefix" type="chain">/actionChainTest/actionPath2</result>

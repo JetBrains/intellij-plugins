@@ -8,6 +8,10 @@
 
   <package name="actionPathTest" namespace="/actionPathTest">
 
+    <global-results>
+      <result name="globalInvalidNonExistingAction"><error>INVALID_VALUE.action</error></result>
+    </global-results>
+
     <action name="actionPath1">
       <!-- namespace can be omitted if action is in curent package -->
       <result name="localActionPathWithoutNamespacePrefix">actionPath1.action</result>

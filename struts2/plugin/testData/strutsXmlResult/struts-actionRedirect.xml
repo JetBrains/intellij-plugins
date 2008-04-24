@@ -14,6 +14,10 @@
       <result-type name="redirect-action" class="com.opensymphony.xwork2.ActionChainResult"/>
     </result-types>
 
+    <global-results>
+      <result name="globalNonExistingAction" type="redirectAction"><error>INVALID_VALUE</error></result>
+    </global-results>
+
     <action name="actionPath1">
       <result name="packageLocalActionName" type="redirectAction">actionPath2</result>
       <result name="packageLocalActionName2" type="redirect-action">actionPath2</result>
