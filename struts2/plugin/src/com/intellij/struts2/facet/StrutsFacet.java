@@ -19,6 +19,7 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
+import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
@@ -46,7 +47,6 @@ public class StrutsFacet extends Facet<StrutsFacetConfiguration> {
    * Gets the StrutsFacet for the given module.
    *
    * @param module Module to check.
-   *
    * @return Instance or <code>null</code> if none configured.
    */
   @Nullable
@@ -58,13 +58,22 @@ public class StrutsFacet extends Facet<StrutsFacetConfiguration> {
    * Gets the StrutsFacet for the module containing the given PsiElement.
    *
    * @param element Element to check.
-   *
    * @return Instance or <code>null</code> if none configured.
    */
   @Nullable
   public static StrutsFacet getInstance(@NotNull final PsiElement element) {
     final Module module = ModuleUtil.findModuleForPsiElement(element);
     return module != null ? getInstance(module) : null;
+  }
+
+  /**
+   * Returns the underlying WebFacet.
+   *
+   * @return WebFacet.
+   */
+  @NotNull
+  public WebFacet getWebFacet() {
+    return (WebFacet) getUnderlyingFacet();
   }
 
 }

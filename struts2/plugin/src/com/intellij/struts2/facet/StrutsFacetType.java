@@ -20,8 +20,10 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.autodetecting.FacetDetector;
 import com.intellij.facet.autodetecting.FacetDetectorRegistry;
 import com.intellij.facet.impl.autodetecting.FacetDetectorRegistryEx;
+import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsIcons;
@@ -44,7 +46,7 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
   public static final FacetType<StrutsFacet, StrutsFacetConfiguration> INSTANCE = new StrutsFacetType();
 
   private StrutsFacetType() {
-    super(StrutsFacet.FACET_TYPE_ID, "Struts2", "Struts 2");
+    super(StrutsFacet.FACET_TYPE_ID, "Struts2", "Struts 2", WebFacet.ID);
   }
 
   public StrutsFacetConfiguration createDefaultConfiguration() {
@@ -59,7 +61,7 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
   }
 
   public boolean isSuitableModuleType(final ModuleType moduleType) {
-    return true;
+    return moduleType == StdModuleTypes.JAVA;
   }
 
   public Icon getIcon() {
@@ -68,9 +70,9 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
 
   public void registerDetectors(final FacetDetectorRegistry<StrutsFacetConfiguration> facetDetectorRegistry) {
     final FacetDetectorRegistryEx<StrutsFacetConfiguration> registry =
-        (FacetDetectorRegistryEx<StrutsFacetConfiguration>) facetDetectorRegistry;
+            (FacetDetectorRegistryEx<StrutsFacetConfiguration>) facetDetectorRegistry;
     registry.registerUniversalDetectorByFileNameAndRootTag(StrutsConstants.STRUTS_DEFAULT_FILENAME, StrutsRoot.TAG_NAME,
-        new StrutsFacetDetector(), null);
+                                                           new StrutsFacetDetector(), null);
   }
 
   private static class StrutsFacetDetector extends FacetDetector<VirtualFile, StrutsFacetConfiguration> {
@@ -81,6 +83,7 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
       if (iterator.hasNext()) {
         return iterator.next();
       }
+      
       return new StrutsFacetConfiguration();
     }
   }

@@ -44,6 +44,8 @@
 
     <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsReferenceContributor"/>
 
+    <frameworkSupport implementation="com.intellij.struts2.facet.StrutsFrameworkSupportProvider"/>
+    
     <!-- struts.xml -->
     <dom.fileDescription implementation="com.intellij.struts2.dom.struts.Struts2DomFileDescription"/>
     <dom.fileDescription implementation="com.intellij.struts2.dom.struts.XWorkDomFileDescription"/>
