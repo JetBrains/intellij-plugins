@@ -17,7 +17,6 @@ package com.intellij.struts2;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.facet.FacetManager;
-import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.RunResult;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -37,7 +36,7 @@ import java.util.Set;
 /**
  * Base class for highlighting tests.
  *
- * @author Yann CŽbron
+ * @author Yann Cï¿½bron
  */
 public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuilder> extends BasicStrutsTestCase {
 
@@ -111,14 +110,9 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected final StrutsFacet createFacet() {
     final RunResult<StrutsFacet> runResult = new WriteCommandAction<StrutsFacet>(myProject) {
       protected void run(final Result<StrutsFacet> result) throws Throwable {
-        final ModifiableFacetModel model = FacetManager.getInstance(myModule).createModifiableModel();
-        final StrutsFacet facet = StrutsFacetType.INSTANCE.createFacet(myModule,
-                                                                       StrutsFacetType.INSTANCE.getPresentableName(),
-                                                                       StrutsFacetType.INSTANCE.createDefaultConfiguration(),
-                                                                       null);
+        String name = StrutsFacetType.INSTANCE.getPresentableName();
+        final StrutsFacet facet = FacetManager.getInstance(myModule).addFacet(StrutsFacetType.INSTANCE, name, null);
         result.setResult(facet);
-        model.addFacet(facet);
-        model.commit();
       }
     }.execute();
     final Throwable throwable = runResult.getThrowable();

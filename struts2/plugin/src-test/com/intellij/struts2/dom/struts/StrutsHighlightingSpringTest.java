@@ -17,7 +17,6 @@ package com.intellij.struts2.dom.struts;
 
 import com.intellij.codeInsight.completion.LegacyCompletionContributor;
 import com.intellij.facet.FacetManager;
-import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.RunResult;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -115,14 +114,9 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   protected SpringFacet createSpringFacet() {
     final RunResult<SpringFacet> runResult = new WriteCommandAction<SpringFacet>(myFixture.getProject()) {
       protected void run(final Result<SpringFacet> result) throws Throwable {
-        final ModifiableFacetModel model = FacetManager.getInstance(myModule).createModifiableModel();
-        final SpringFacet facet = SpringFacetType.INSTANCE.createFacet(myModule,
-                                                                       SpringFacetType.INSTANCE.getPresentableName(),
-                                                                       SpringFacetType.INSTANCE.createDefaultConfiguration(),
-                                                                       null);
+        String name = SpringFacetType.INSTANCE.getPresentableName();
+        final SpringFacet facet = FacetManager.getInstance(myModule).addFacet(SpringFacetType.INSTANCE, name, null);
         result.setResult(facet);
-        model.addFacet(facet);
-        model.commit();
       }
     }.execute();
     final Throwable throwable = runResult.getThrowable();
