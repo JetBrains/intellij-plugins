@@ -10,7 +10,7 @@
   <package name="dispatchTest">
 
     <global-results>
-      <result name="globalInvalid1"><error>INVALID_VALUE</error>/result>
+      <result name="globalInvalid1"><error>INVALID_VALUE</error></result>
     </global-results>
 
     <action name="testValidPaths">
