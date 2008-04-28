@@ -18,6 +18,9 @@ package com.intellij.struts2;
 import com.intellij.codeInspection.InspectionToolProvider;
 import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.ide.IconProvider;
+import com.intellij.ide.fileTemplates.FileTemplateDescriptor;
+import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptor;
+import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory;
 import com.intellij.javaee.ExternalResourceManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.module.Module;
@@ -77,7 +80,10 @@ import javax.swing.*;
  *
  * @author Yann CŽbron
  */
-public class StrutsApplicationComponent implements ApplicationComponent, InspectionToolProvider, IconProvider {
+public class StrutsApplicationComponent implements ApplicationComponent,
+                                                   FileTemplateGroupDescriptorFactory,
+                                                   InspectionToolProvider,
+                                                   IconProvider {
 
   @NonNls
   @NotNull
@@ -95,6 +101,14 @@ public class StrutsApplicationComponent implements ApplicationComponent, Inspect
   }
 
   public void disposeComponent() {
+  }
+
+  public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
+    final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor("Struts 2", StrutsIcons.ACTION);
+    group.addTemplate(new FileTemplateDescriptor(StrutsConstants.STRUTS_DEFAULT_FILENAME,
+                                                 StrutsIcons.STRUTS_CONFIG_FILE_ICON));
+    group.addTemplate(new FileTemplateDescriptor("validator.xml", StrutsIcons.VALIDATION_CONFIG_FILE_ICON));
+    return group;
   }
 
   public Class[] getInspectionClasses() {

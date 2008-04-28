@@ -16,14 +16,30 @@ package com.intellij.struts2.facet;
 
 import com.intellij.facet.impl.ui.FacetTypeFrameworkSupportProvider;
 import com.intellij.facet.ui.libraries.LibraryInfo;
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.ide.fileTemplates.FileTemplateUtil;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.StrutsConstants;
+import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.struts2.facet.ui.StrutsVersion;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * "Add Framework" support.
@@ -31,6 +47,8 @@ import java.util.List;
  * @author Yann CŽbron
  */
 public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportProvider<StrutsFacet> {
+
+  private static final Logger LOG = Logger.getInstance("#com.intellij.struts2.facet.StrutsFrameworkSupportProvider");
 
   protected StrutsFrameworkSupportProvider() {
     super(StrutsFacetType.INSTANCE);
@@ -42,7 +60,7 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
   }
 
   public String getTitle() {
-    return UIUtil.replaceMnemonicAmpersand("&Struts 2");
+    return UIUtil.replaceMnemonicAmpersand("Struts &2");
   }
 
   @NotNull
@@ -71,12 +89,40 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
     return version.getLibraryInfos();
   }
 
-  protected void onLibraryAdded(final StrutsFacet facet, final @NotNull Library library) {
+  protected void onLibraryAdded(final StrutsFacet facet, @NotNull final Library library) {
     facet.getWebFacet().getPackagingConfiguration().addLibraryLink(library);
   }
 
   protected void setupConfiguration(final StrutsFacet strutsFacet,
                                     final ModifiableRootModel modifiableRootModel, final String version) {
+    final Module module = strutsFacet.getModule();
+    StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(new Runnable() {
+      public void run() {
+        final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();
+        if (sourceRoots.length > 0) {
+          final PsiDirectory directory = PsiManager.getInstance(module.getProject()).findDirectory(sourceRoots[0]);
+          if (directory != null &&
+              directory.findFile(StrutsConstants.STRUTS_DEFAULT_FILENAME) == null) {
+            final FileTemplate strutsXmlTemplate = FileTemplateManager.getInstance().getJ2eeTemplate("struts.xml");
+            try {
+              final PsiElement psiElement = FileTemplateUtil.createFromTemplate(strutsXmlTemplate,
+                                                                                StrutsConstants.STRUTS_DEFAULT_FILENAME,
+                                                                                null,
+                                                                                directory);
+              if (psiElement instanceof XmlFile) {
+                final Set<StrutsFileSet> empty = Collections.emptySet();
+                final StrutsFileSet fileSet = new StrutsFileSet(StrutsFileSet.getUniqueId(empty),
+                                                                StrutsFileSet.getUniqueName("Default File Set", empty));
+                fileSet.addFile(((XmlFile) psiElement).getVirtualFile());
+                strutsFacet.getConfiguration().getFileSets().add(fileSet);
+              }
+            } catch (Exception e) {
+              LOG.error("error creating struts.xml from template", e);
+            }
+          }
+        }
+      }
+    });
   }
 
 }
