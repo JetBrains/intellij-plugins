@@ -124,6 +124,11 @@ public class StrutsApplicationComponent implements ApplicationComponent,
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, final int flags) {
 
+    // for getting the original icon from IDEA
+    if (active) {
+      return null;
+    }
+
     if (element instanceof JspFile) {
       return null;
     }
@@ -140,11 +145,6 @@ public class StrutsApplicationComponent implements ApplicationComponent,
     // no icons when no facet present
     final StrutsFacet strutsFacet = StrutsFacet.getInstance(element);
     if (strutsFacet == null) {
-      return null;
-    }
-
-    // for getting the original icon from IDEA
-    if (active) {
       return null;
     }
 
