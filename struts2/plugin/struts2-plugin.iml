@@ -10,6 +10,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="struts2-dom-api" />
+    <orderEntry type="module" module-name="J2EE" />
     <orderEntry type="module" module-name="xml-openapi" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="dom-openapi" />
