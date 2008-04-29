@@ -19,6 +19,11 @@ import com.intellij.facet.ui.libraries.LibraryInfo;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
+import com.intellij.javaee.model.xml.web.Filter;
+import com.intellij.javaee.model.xml.web.FilterMapping;
+import com.intellij.javaee.model.xml.web.WebApp;
+import com.intellij.javaee.web.facet.WebFacet;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -103,19 +108,35 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
           final PsiDirectory directory = PsiManager.getInstance(module.getProject()).findDirectory(sourceRoots[0]);
           if (directory != null &&
               directory.findFile(StrutsConstants.STRUTS_DEFAULT_FILENAME) == null) {
-            final FileTemplate strutsXmlTemplate = FileTemplateManager.getInstance().getJ2eeTemplate("struts.xml");
+            final FileTemplate strutsXmlTemplate = FileTemplateManager.getInstance().getJ2eeTemplate(StrutsConstants.STRUTS_DEFAULT_FILENAME);
             try {
+              // create empty struts.xml & fileset
               final PsiElement psiElement = FileTemplateUtil.createFromTemplate(strutsXmlTemplate,
                                                                                 StrutsConstants.STRUTS_DEFAULT_FILENAME,
                                                                                 null,
                                                                                 directory);
-              if (psiElement instanceof XmlFile) {
-                final Set<StrutsFileSet> empty = Collections.emptySet();
-                final StrutsFileSet fileSet = new StrutsFileSet(StrutsFileSet.getUniqueId(empty),
-                                                                StrutsFileSet.getUniqueName("Default File Set", empty));
-                fileSet.addFile(((XmlFile) psiElement).getVirtualFile());
-                strutsFacet.getConfiguration().getFileSets().add(fileSet);
-              }
+              final Set<StrutsFileSet> empty = Collections.emptySet();
+              final StrutsFileSet fileSet = new StrutsFileSet(StrutsFileSet.getUniqueId(empty),
+                                                              StrutsFileSet.getUniqueName("Default File Set", empty));
+              fileSet.addFile(((XmlFile) psiElement).getVirtualFile());
+              strutsFacet.getConfiguration().getFileSets().add(fileSet);
+
+              // create filter & mapping in web.xml
+              new WriteCommandAction.Simple(modifiableRootModel.getProject()) {
+                protected void run() throws Throwable {
+                  final WebFacet webFacet = strutsFacet.getWebFacet();
+                  final WebApp webApp = webFacet.getRoot();
+                  assert webApp != null;
+
+                  final Filter strutsFilter = webApp.addFilter();
+                  strutsFilter.getFilterName().setStringValue("struts2");
+                  strutsFilter.getFilterClass().setStringValue("org.apache.struts2.dispatcher.FilterDispatcher");
+
+                  final FilterMapping filterMapping = webApp.addFilterMapping();
+                  filterMapping.getFilterName().setValue(strutsFilter);
+                  filterMapping.addUrlPattern().setStringValue("/*");
+                }
+              }.execute();
             } catch (Exception e) {
               LOG.error("error creating struts.xml from template", e);
             }
