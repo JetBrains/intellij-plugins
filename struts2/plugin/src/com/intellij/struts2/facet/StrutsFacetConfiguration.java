@@ -21,7 +21,6 @@ import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetEditorsFactory;
 import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.facet.ui.libraries.FacetLibrariesValidator;
-import com.intellij.facet.ui.libraries.FacetLibrariesValidatorDescription;
 import com.intellij.facet.ui.libraries.LibraryInfo;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.ModificationTracker;
@@ -92,12 +91,12 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
   public FacetEditorTab[] createEditorTabs(final FacetEditorContext editorContext,
                                            final FacetValidatorsManager validatorsManager) {
     final FacetLibrariesValidator validator =
-      FacetEditorsFactory.getInstance().createLibrariesValidator(LibraryInfo.EMPTY_ARRAY,
-                                                                 new FacetLibrariesValidatorDescription("struts2"),
-                                                                 editorContext,
-                                                                 validatorsManager);
+            FacetEditorsFactory.getInstance().createLibrariesValidator(LibraryInfo.EMPTY_ARRAY,
+                                                                       new StrutsFacetLibrariesValidatorDescription(),
+                                                                       editorContext,
+                                                                       validatorsManager);
     validatorsManager.registerValidator(validator);
-
+   
     return new FacetEditorTab[]{new FileSetConfigurationTab(this, editorContext),
                                 new FeaturesConfigurationTab(editorContext, validator),
                                 new ValidationConfigurationTab(validationConfigurationSettings)};

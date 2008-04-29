@@ -20,9 +20,9 @@ import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.libraries.FacetLibrariesValidator;
 import com.intellij.facet.ui.libraries.LibraryInfo;
-import com.intellij.facet.ui.libraries.FacetLibrariesValidatorDescription;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.struts2.facet.StrutsFacetLibrariesValidatorDescription;
 import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.util.Icons;
 import org.jetbrains.annotations.Nls;
@@ -36,7 +36,7 @@ import java.awt.event.ActionListener;
 /**
  * Struts2 facet tab "Features".
  *
- * @author Yann C�bron
+ * @author Yann Cébron
  */
 public class FeaturesConfigurationTab extends FacetEditorTab {
 
@@ -54,7 +54,7 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
         final StrutsVersion version = getSelectedVersion();
         if (version != null) {
           validator.setRequiredLibraries(getRequiredLibraries());
-          validator.setDescription(new FacetLibrariesValidatorDescription("struts2-" + version.getVersion()));
+          validator.setDescription(new StrutsFacetLibrariesValidatorDescription(version.getVersion()));
         }
       }
     });
@@ -73,7 +73,7 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
 
     // TODO remove hard-coded version
     validator.setRequiredLibraries(getRequiredLibraries());
-    validator.setDescription(new FacetLibrariesValidatorDescription("struts2-" + StrutsVersion.STRUTS_2_0_11.getVersion()));
+    validator.setDescription(new StrutsFacetLibrariesValidatorDescription(StrutsVersion.STRUTS_2_0_11.getVersion()));
   }
 
 

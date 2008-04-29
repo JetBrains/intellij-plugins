@@ -19,11 +19,13 @@ import com.intellij.facet.ui.libraries.LibraryInfo;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
+import com.intellij.javaee.facet.JavaeeFacetType;
 import com.intellij.javaee.model.xml.web.Filter;
 import com.intellij.javaee.model.xml.web.FilterMapping;
 import com.intellij.javaee.model.xml.web.WebApp;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.deployment.PackagingMethod;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -95,7 +97,10 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
   }
 
   protected void onLibraryAdded(final StrutsFacet facet, @NotNull final Library library) {
-    facet.getWebFacet().getPackagingConfiguration().addLibraryLink(library);
+    final WebFacet webFacet = facet.getWebFacet();
+    webFacet.getPackagingConfiguration().addLibraryLink(library,
+                                                        PackagingMethod.COPY_FILES,
+                                                        ((JavaeeFacetType) webFacet.getType()).getDefaultUriForJar());
   }
 
   protected void setupConfiguration(final StrutsFacet strutsFacet,
