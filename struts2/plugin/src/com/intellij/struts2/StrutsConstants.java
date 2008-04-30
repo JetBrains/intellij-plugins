@@ -18,11 +18,17 @@ package com.intellij.struts2;
 import org.jetbrains.annotations.NonNls;
 
 /**
+ * Plugin-wide constants.
+ *
  * @author Yann CŽbron
  */
 public final class StrutsConstants {
+
   private StrutsConstants() {
   }
+
+  @NonNls
+  public static final String STRUTS_DEFAULT_FILENAME = "struts.xml";
 
   /**
    * struts.xml URI.
@@ -36,13 +42,12 @@ public final class StrutsConstants {
   @NonNls
   public static final String STRUTS_2_0_DTD_ID = "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN";
 
-  public static final String XWORK_DTD_URI = "http://www.opensymphony.com/xwork/xwork-2.0.dtd";
-
-  public static final String XWORK_DTD_ID = "-//OpenSymphony Group//XWork 2.0//EN";
-
 
   @NonNls
-  public static final String STRUTS_DEFAULT_FILENAME = "struts.xml";
+  public static final String XWORK_DTD_URI = "http://www.opensymphony.com/xwork/xwork-2.0.dtd";
+  @NonNls
+  public static final String XWORK_DTD_ID = "-//OpenSymphony Group//XWork 2.0//EN";
+
 
   @NonNls
   public static final String VALIDATOR_1_00_DTD_URI = "http://www.opensymphony.com/xwork/xwork-validator-1.0.dtd";
@@ -59,6 +64,15 @@ public final class StrutsConstants {
   @NonNls
   public static final String VALIDATOR_CONFIG_DTD_ID = "-//OpenSymphony Group//XWork Validator Config 1.0//EN";
 
-  @NonNls public static final String TILES_DTD_URI = "http://struts.apache.org/dtds/tiles-config_2_0.dtd";
-  @NonNls public static final String TILES_DTD_ID = "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN";
+
+  /**
+   * Old URI.
+   */
+  @NonNls
+  public static final String TILES_2_DTD_URI_STRUTS = "http://struts.apache.org/dtds/tiles-config_2_0.dtd";
+  @NonNls
+  public static final String TILES_2_DTD_URI = "http://tiles.apache.org/dtds/tiles-config_2_0.dtd";
+  @NonNls
+  public static final String TILES_2_DTD_ID = "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN";
+
 }

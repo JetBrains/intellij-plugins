@@ -1,6 +1,6 @@
 <!--
 %
-   $Id$
+   $Id: tiles-config_2_0.dtd 478155 2006-11-22 13:08:57Z apetrelli $
 
    Licensed to the Apache Software Foundation (ASF) under one
    or more contributor license agreements.  See the NOTICE file
@@ -21,10 +21,10 @@
 
 %
 
-@hidden $Id$
+@hidden $Id: tiles-config_2_0.dtd 478155 2006-11-22 13:08:57Z apetrelli $
 @title DTD for the Tiles Definition File, Version 2.0
-@doctype tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN" "http://tiles.apache.org/dtds/tiles-config_2_0.dtd"
-@root tiles-definitions
+@doctype declaredRoot PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN" "http://struts.apache.org/dtds/tiles-config_2_0.dtd"
+@root declaredRoot
 -->
 
 
@@ -37,9 +37,10 @@
 <!ENTITY % Boolean "(true|false)">
 
 
-<!-- A "ContentType" is the content type of an attribute passed to a template.
+<!-- A "ContentType" is the content type of an attribute passed to a tile
+     component.
 -->
-<!ENTITY % ContentType "(string|template|definition|object)">
+<!ENTITY % ContentType "(string|template|definition)">
 
 <!-- A "ClassName" is the fully qualified name of a Java class that is
      instantiated to provide the functionality of the enclosing element.
@@ -91,7 +92,7 @@
      page. This definition is identified by its logical name. A definition allows
      to define all the attributes that can be set in <insert> tag from a jsp page.
 -->
-<!ELEMENT definition (icon?, display-name?, description?, put-attribute*, put-list-attribute*)>
+<!ELEMENT definition (icon?, display-name?, description?, put*, putList*)>
 <!ATTLIST definition       id               ID               #IMPLIED>
 <!--
 @attr preparer       The fully qualified Java class name of the preparer
@@ -125,95 +126,61 @@
 <!ATTLIST definition       template         %RequestPath;    #IMPLIED>
 
 
-<!-- The "put-attribute" element describes an attribute of a definition. It allows to
+<!-- The "put" element describes an attribute of a definition. It allows to
      specify the tiles attribute name and its value. The tiles value can be
-     specified as an xml attribute, or in the body of the <put-attribute> tag.
+     specified as an xml attribute, or in the body of the <put> tag.
 -->
-<!ELEMENT put-attribute (#PCDATA)>
-<!ATTLIST put-attribute     id               ID              #IMPLIED>
+<!ELEMENT put (#PCDATA)>
+<!ATTLIST put              id               ID              #IMPLIED>
 <!--
-@attr name           The unique identifier for this put-attribute.
+@attr name           The unique identifier for this put.
 -->
-<!ATTLIST put-attribute     name             CDATA           #REQUIRED>
+<!ATTLIST put              name             CDATA           #REQUIRED>
 <!--
 @attr type           The type of the value. Can be: string, template or definition.
                      By default, no type is associated to a value. If a type is
                      associated, it will be used as a hint to process the value
                      when the attribute will be used in the inserted tiles.
 -->
-<!ATTLIST put-attribute     type             %ContentType;   #IMPLIED>
+<!ATTLIST put              type             %ContentType;   #IMPLIED>
 <!--
 @attr value          The value associated to this tiles attribute. The value should
                      be specified with this tag attribute, or in the body of the tag.
 -->
-<!ATTLIST put-attribute     value            CDATA           #IMPLIED>
-<!--
-@attr role           Security role name that is allowed access to this attribute
-                     object. The attribute is inserted only if the role name is
-                     allowed.
--->
-<!ATTLIST put-attribute     role             CDATA            #IMPLIED>
+<!ATTLIST put              value            CDATA           #IMPLIED>
 
 
-<!-- The "put-list-attribute" element describes a list attribute of a definition. It allows to
+<!-- The "putList" element describes a list attribute of a definition. It allows to
      specify an attribute that is a java List containing any kind of values. In
-     the config file, the list elements are specified by nested <add-attribute>, <item> or
-     <add-list-attribute>.
+     the config file, the list elements are specified by nested <add>, <item> or
+     <putList>.
 -->
-<!ELEMENT put-list-attribute ( (add-attribute* | item* | bean* | add-list-attribute*)+) >
-<!ATTLIST put-list-attribute id               ID              #IMPLIED>
+<!ELEMENT putList ( (add* | item* | bean* | putList*)+) >
+<!ATTLIST putList          id               ID              #IMPLIED>
 <!--
-@attr name           The unique identifier for this put attribute list.
+@attr name           The unique identifier for this put list.
 -->
-<!ATTLIST put-list-attribute name             CDATA           #REQUIRED>
-<!--
-@attr role           Security role name that is allowed access to this attribute
-                     object. The attribute is inserted only if the role name is
-                     allowed.
--->
-<!ATTLIST put-list-attribute role             CDATA            #IMPLIED>
+<!ATTLIST putList          name             CDATA           #REQUIRED>
 
 <!-- ========== Subordinate Elements ====================================== -->
 
-
-<!-- The "add-attribute" element describes an element of a list. It is similar to the
+<!-- The "add" element describes an element of a list. It is similar to the
      <put> element.
 -->
-<!ELEMENT add-attribute (#PCDATA)>
-<!ATTLIST add-attribute              id               ID              #IMPLIED>
+<!ELEMENT add (#PCDATA)>
+<!ATTLIST add              id               ID              #IMPLIED>
 <!--
 @attr type           The type of the value. Can be: string, template or definition.
                      By default, no type is associated to a value. If a type is
                      associated, it will be used as a hint to process the value
                      when the attribute will be used in the inserted tiles.
 -->
-<!ATTLIST add-attribute              type             %ContentType;   #IMPLIED>
+<!ATTLIST add              type             %ContentType;   #IMPLIED>
 <!--
 @attr value          The value associated to this tiles attribute. The value should
                      be specified with this tag attribute, or in the body of the tag.
 -->
-<!ATTLIST add-attribute              value            CDATA           #IMPLIED>
-<!--
-@attr role           Security role name that is allowed access to this attribute
-                     object. The attribute is inserted only if the role name is
-                     allowed.
--->
-<!ATTLIST add-attribute              role             CDATA            #IMPLIED>
-
-<!-- The "add-list-attribute" element describes a list attribute subordinate to another
-     list attribute. It allows to specify an attribute value that is a java List
-     containing any kind of values. In the config file, the list elements are specified
-     by nested <add-attribute>, <item> or
-     <add-list-attribute>.
--->
-<!ELEMENT add-list-attribute ( (add-attribute* | item* | bean* | add-list-attribute*)+) >
-<!ATTLIST add-list-attribute id               ID              #IMPLIED>
-<!--
-@attr role           Security role name that is allowed access to this attribute
-                     object. The attribute is inserted only if the role name is
-                     allowed.
--->
-<!ATTLIST add-list-attribute role             CDATA            #IMPLIED>
+<!ATTLIST add              value            CDATA           #IMPLIED>
 
 
 <!-- The "bean" element describes an element of a list. It create a bean of the

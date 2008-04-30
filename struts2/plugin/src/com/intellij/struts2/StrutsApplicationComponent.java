@@ -410,8 +410,12 @@ public class StrutsApplicationComponent implements ApplicationComponent,
                    StrutsConstants.VALIDATOR_CONFIG_DTD_ID,
                    "/resources/dtds/xwork-validator-config-1.0.dtd");
 
-    addDTDResource(StrutsConstants.TILES_DTD_URI,
-                   StrutsConstants.TILES_DTD_ID,
+    addDTDResource(StrutsConstants.TILES_2_DTD_URI_STRUTS,
+                   StrutsConstants.TILES_2_DTD_ID,
+                   "/resources/dtds/struts-tiles-config_2_0.dtd");
+
+    addDTDResource(StrutsConstants.TILES_2_DTD_URI,
+                   StrutsConstants.TILES_2_DTD_ID,
                    "/resources/dtds/tiles-config_2_0.dtd");
   }
 
