@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NonNls;
  * @author Yann CŽbron
  */
 public final class StrutsConstants {
-
   private StrutsConstants() {
   }
 
@@ -60,4 +59,6 @@ public final class StrutsConstants {
   @NonNls
   public static final String VALIDATOR_CONFIG_DTD_ID = "-//OpenSymphony Group//XWork Validator Config 1.0//EN";
 
+  @NonNls public static final String TILES_DTD_URI = "http://struts.apache.org/dtds/tiles-config_2_0.dtd";
+  @NonNls public static final String TILES_DTD_ID = "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN";
 }

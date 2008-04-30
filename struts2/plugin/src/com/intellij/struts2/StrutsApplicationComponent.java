@@ -409,6 +409,10 @@ public class StrutsApplicationComponent implements ApplicationComponent,
     addDTDResource(StrutsConstants.VALIDATOR_CONFIG_DTD_URI,
                    StrutsConstants.VALIDATOR_CONFIG_DTD_ID,
                    "/resources/dtds/xwork-validator-config-1.0.dtd");
+
+    addDTDResource(StrutsConstants.TILES_DTD_URI,
+                   StrutsConstants.TILES_DTD_ID,
+                   "/resources/dtds/tiles-config_2_0.dtd");
   }
 
   /**
@@ -418,7 +422,7 @@ public class StrutsApplicationComponent implements ApplicationComponent,
    * @param id        Resource ID.
    * @param localFile Local path to resource.
    */
-  private static void addDTDResource(final String uri, final String id, final String localFile) {
+  private static void addDTDResource(final String uri, final String id, final @NonNls String localFile) {
     ExternalResourceManager.getInstance().addStdResource(uri, localFile, StrutsApplicationComponent.class);
     ExternalResourceManager.getInstance().addStdResource(id, localFile, StrutsApplicationComponent.class);
   }
