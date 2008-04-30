@@ -28,6 +28,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.StrutsRoot;
+import com.intellij.j2ee.web.WebUtilImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +40,7 @@ import java.util.Iterator;
  * Description-type for {@link StrutsFacet}.
  * Adds autodetection feature for struts.xml files found in project.
  *
- * @author Yann CŽbron
+ * @author Yann Cï¿½bron
  */
 public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfiguration> {
 
@@ -72,7 +73,7 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
     final FacetDetectorRegistryEx<StrutsFacetConfiguration> registry =
             (FacetDetectorRegistryEx<StrutsFacetConfiguration>) facetDetectorRegistry;
     registry.registerUniversalDetectorByFileNameAndRootTag(StrutsConstants.STRUTS_DEFAULT_FILENAME, StrutsRoot.TAG_NAME,
-                                                           new StrutsFacetDetector(), null);
+                                                           new StrutsFacetDetector(), WebUtilImpl.BY_PARENT_WEB_ROOT_SELECTOR);
   }
 
   private static class StrutsFacetDetector extends FacetDetector<VirtualFile, StrutsFacetConfiguration> {
