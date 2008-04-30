@@ -240,9 +240,9 @@ TODO not needed so far ?!
       final Set<Object> variants = new HashSet<Object>(allStrutsPackages.size());
 
       for (final StrutsPackage allPackage : allStrutsPackages) {
-        final String namespace = allPackage.searchNamespace();
+        final String packageNamespace = allPackage.searchNamespace();
         variants.add(LookupValueFactory.createLookupValueWithHint(
-                namespace.length() != 1 ? namespace + "/" : namespace,
+                packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace,
                 StrutsIcons.PACKAGE, allPackage.getName().getStringValue()));
       }
 
