@@ -56,7 +56,7 @@ public abstract class ValidatorBase extends InspectionValidator {
     for (final Module module : scope.getAffectedModules()) {
       final StrutsFacet strutsFacet = StrutsFacet.getInstance(module);
       if (strutsFacet != null) {
-        if (isValidationEnabledForModel(strutsFacet.getConfiguration().getFeaturesConfiguration())) {
+        if (isValidationEnabledForModel(strutsFacet.getConfiguration().getValidationConfigurationSettings())) {
           return true;
         }
       }
@@ -82,14 +82,14 @@ public abstract class ValidatorBase extends InspectionValidator {
       if (module != null) {
         final StrutsFacet facet = StrutsFacet.getInstance(module);
         if (facet != null) {
-          return facet.getConfiguration().getFeaturesConfiguration().isReportErrorsAsWarning() ?
+          return facet.getConfiguration().getValidationConfigurationSettings().isReportErrorsAsWarning() ?
                  CompilerMessageCategory.WARNING : level;
         }
         final List<Module> dependentModules = ModuleUtil.getAllDependentModules(module);
         for (final Module dependentModule : dependentModules) {
           final StrutsFacet strutsFacet = StrutsFacet.getInstance(dependentModule);
           if (strutsFacet != null) {
-            return strutsFacet.getConfiguration().getFeaturesConfiguration().isReportErrorsAsWarning() ?
+            return strutsFacet.getConfiguration().getValidationConfigurationSettings().isReportErrorsAsWarning() ?
                    CompilerMessageCategory.WARNING : level;
           }
         }

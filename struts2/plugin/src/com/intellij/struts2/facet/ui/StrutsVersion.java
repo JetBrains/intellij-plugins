@@ -27,18 +27,18 @@ import static com.intellij.facet.ui.libraries.MavenLibraryUtil.createSubMavenJar
  */
 public enum StrutsVersion {
 
-  STRUTS_2_0_11("2.0.11", new LibraryInfo[]{
-    createSubMavenJarInfo("/org/apache/struts", "struts2-core", "2.0.11", "org.apache.struts2.StrutsConstants"),
-    createMavenJarInfo("commons-logging", "1.0.4", "org.apache.commons.logging.Log"),
-    createMavenJarInfo("freemarker", "2.3.8", "freemarker.core.TemplateElement"),
-    createSubMavenJarInfo("/com/opensymphony/", "xwork", "2.0.4", "com.opensymphony.xwork2.XWorkException"),
-    createSubMavenJarInfo("/opensymphony/", "ognl", "2.6.11", "ognl.Ognl")
+  STRUTS_2_0_11_1("2.0.11.1", new LibraryInfo[]{
+          createSubMavenJarInfo("/org/apache/struts", "struts2-core", "2.0.11.1", "org.apache.struts2.StrutsConstants"),
+          createMavenJarInfo("commons-logging", "1.0.4", "org.apache.commons.logging.Log"),
+          createMavenJarInfo("freemarker", "2.3.8", "freemarker.core.TemplateElement"),
+          createSubMavenJarInfo("/com/opensymphony/", "xwork", "2.0.4", "com.opensymphony.xwork2.XWorkException"),
+          createSubMavenJarInfo("/opensymphony/", "ognl", "2.6.11", "ognl.Ognl")
   });
 
   private final String version;
   private final LibraryInfo[] libraryInfos;
 
-  StrutsVersion(final String version, final LibraryInfo[] libraryInfos) {
+  StrutsVersion(final String version, final LibraryInfo... libraryInfos) {
     this.version = version;
     this.libraryInfos = libraryInfos;
   }
