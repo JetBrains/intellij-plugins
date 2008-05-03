@@ -16,6 +16,7 @@
     <orderEntry type="module" module-name="jpa-impl" />
     <orderEntry type="module" module-name="jam-support-openapi" />
     <orderEntry type="module" module-name="jam-support-impl" />
+    <orderEntry type="module" module-name="ExtendedApi" />
     <orderEntryProperties />
   </component>
   <component name="copyright">
