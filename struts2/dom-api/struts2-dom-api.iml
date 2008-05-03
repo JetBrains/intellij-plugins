@@ -11,6 +11,9 @@
     <orderEntry type="module" module-name="dom-openapi" />
     <orderEntry type="module" module-name="codeInsight-impl" />
     <orderEntry type="module" module-name="openapi" />
+    <orderEntry type="module" module-name="spring-core" />
+    <orderEntry type="module" module-name="jpa-openapi" />
+    <orderEntry type="module" module-name="jpa-impl" />
     <orderEntryProperties />
   </component>
   <component name="copyright">
