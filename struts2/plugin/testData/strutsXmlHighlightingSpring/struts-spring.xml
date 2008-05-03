@@ -7,6 +7,10 @@
 <!-- with Spring support enabled -->
 <struts>
 
+  <!-- constants via Spring beans -->
+  <constant name="struts.objectFactory" value="bean1"/>
+  <constant name="struts.objectTypeDeterminer" value="<error>bean999</error>"/>
+
   <!-- Actions via Spring beans -->
   <package name="springBeansPackage">
 

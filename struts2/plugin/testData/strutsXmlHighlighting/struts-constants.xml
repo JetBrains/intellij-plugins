@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- basic <constant> "value" tests -->
+
+<struts>
+
+  <!-- invalid values ====================== -->
+
+  <constant name="struts.configuration.xml.reload" value="<error>INVALID_VALUE</error>"/>
+
+  <constant name="struts.objectFactory.spring.autoWire" value="<error>INVALID_VALUE</error>"/>
+
+  <constant name="struts.freemarker.manager.classname" value="<error>INVALID_VALUE</error>"/>
+
+
+  <!-- valid values ====================== -->
+
+  <constant name="struts.objectTypeDeterminer" value="tiger"/>
+
+  <constant name="struts.ui.theme" value="xhtml"/>
+
+  <constant name="struts.objectFactory" value="spring"/>
+  
+  <constant name="struts.objectFactory.spring.useClassCache" value="true"/>
+  <constant name="struts.devMode" value="false"/>
+
+</struts>
