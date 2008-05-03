@@ -86,35 +86,6 @@ public class StructureViewTreeElement extends DomStructureTreeElement {
       return ((LocationPresentation) element).getLocation();
     }
 
-
-/*
-    if (element instanceof StrutsPackage) {
-      return ((StrutsPackage) element).getNamespace().getStringValue();
-    }
-
-    if (element instanceof Param) {
-      return ((Param) element).getValue();
-    }
-
-    if (element instanceof Result) {
-      return ((Result) element).getPath();
-    }
-
-    if (element instanceof GlobalResult) {
-      return ((GlobalResult) element).getPath();
-    }
-
-    if (element instanceof ExceptionMapping) {
-      final Result result = ((ExceptionMapping) element).getResult().getValue();
-      return result != null ? result.getName().getStringValue() : null;
-    }
-
-    if (element instanceof GlobalExceptionMapping) {
-      final GlobalResult result = ((GlobalExceptionMapping) element).getResult().getValue();
-      return result != null ? result.getName().getStringValue() : null;
-    }
-*/
-
     return super.getLocationString();
   }
 
