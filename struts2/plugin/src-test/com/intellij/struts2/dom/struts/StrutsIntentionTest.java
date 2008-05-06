@@ -17,6 +17,7 @@ package com.intellij.struts2.dom.struts;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
  */
 public class StrutsIntentionTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlIntentions";
   }

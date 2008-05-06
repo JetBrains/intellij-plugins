@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Tests for {@link com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter}.
@@ -24,6 +25,7 @@ import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
  */
 public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<WebModuleFixtureBuilder> {
 
+  @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlResult";
   }

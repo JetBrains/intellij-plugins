@@ -16,12 +16,14 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Yann CŽbron
  */
 public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlCompletion";
   }

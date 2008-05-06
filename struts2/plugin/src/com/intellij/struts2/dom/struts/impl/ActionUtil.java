@@ -20,8 +20,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PropertyUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +44,8 @@ final class ActionUtil {
    * @param checkPath  Path to check.
    * @return true if matched.
    */
-  static boolean matchesPath(@NotNull final String actionPath,
-                                    @NotNull final String checkPath) {
+  static boolean matchesPath(@NotNull @NonNls final String actionPath,
+                             @NotNull @NonNls final String checkPath) {
 
     // do we have any wildcard-markers in our path? no --> exact compare
     if (actionPath.indexOf("*") == -1) {

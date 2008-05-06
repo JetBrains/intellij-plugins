@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.validator;
 
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Various basic and complex validation.xml highlighting tests.
@@ -24,6 +25,7 @@ import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
  */
 public class ValidationHighlightingTest extends BasicValidationHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @NotNull
   protected String getTestDataLocation() {
     return "validationXmlHighlighting";
   }

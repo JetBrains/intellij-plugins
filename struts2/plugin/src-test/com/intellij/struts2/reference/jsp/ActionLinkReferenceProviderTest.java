@@ -25,6 +25,8 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
 
@@ -32,6 +34,7 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     return new LocalInspectionTool[0];
   }
 
+  @NotNull
   protected String getTestDataLocation() {
     return "/reference/jsp/actionLink";
   }
@@ -98,7 +101,7 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
    * @param actionName Name of the Action to resolve to.
    * @throws Throwable On errors.
    */
-  private void checkActionReference(final String filename, final String actionName) throws Throwable {
+  private void checkActionReference(@NonNls final String filename, @NonNls final String actionName) throws Throwable {
     final PsiReference psiReference = myFixture.getReferenceAtCaretPositionWithAssertion(filename);
     final PsiElement psiElement = psiReference.resolve();
     assertNotNull("no resolve element " + actionName, psiElement);

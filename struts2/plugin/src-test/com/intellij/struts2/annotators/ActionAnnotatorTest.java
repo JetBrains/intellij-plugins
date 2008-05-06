@@ -23,6 +23,8 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.BasicStrutsHighlightingTestCase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashSet;
@@ -39,6 +41,7 @@ public class ActionAnnotatorTest extends BasicStrutsHighlightingTestCase {
     return new LocalInspectionTool[0];
   }
 
+  @NotNull
   protected String getTestDataLocation() {
     return "/gutterJava/actionClass/";
   }
@@ -58,7 +61,7 @@ public class ActionAnnotatorTest extends BasicStrutsHighlightingTestCase {
    * @param expectedActionNames Names of the actions.
    */
   private static void checkGutterActionTargetElements(final GutterIconRenderer gutterIconRenderer,
-                                                      final String... expectedActionNames) {
+                                                      @NonNls final String... expectedActionNames) {
     assertNotNull(gutterIconRenderer);
     assertEquals(gutterIconRenderer.getIcon(), StrutsIcons.ACTION);
 

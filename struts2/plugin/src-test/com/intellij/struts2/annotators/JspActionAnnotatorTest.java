@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.dom.struts.BasicStrutsHighlightingTestCase;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +33,7 @@ import java.util.Set;
  */
 public class JspActionAnnotatorTest extends BasicStrutsHighlightingTestCase<WebModuleFixtureBuilder> {
 
+  @NotNull
   protected String getTestDataLocation() {
     return "/gutterJsp/actionClass";
   }

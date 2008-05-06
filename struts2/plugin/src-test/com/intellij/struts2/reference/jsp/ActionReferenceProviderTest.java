@@ -19,6 +19,7 @@ package com.intellij.struts2.reference.jsp;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Tests for {@link com.intellij.struts2.reference.jsp.ActionReferenceProvider}.
@@ -31,6 +32,7 @@ public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebMo
     return new LocalInspectionTool[0];
   }
 
+  @NotNull
   protected String getTestDataLocation() {
     return "reference/jsp/action";
   }

@@ -51,6 +51,7 @@ public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaMod
     return new LocalInspectionTool[0];
   }
 
+  @NotNull
   protected String getTestDataLocation() {
     return "configsSearcher";
   }

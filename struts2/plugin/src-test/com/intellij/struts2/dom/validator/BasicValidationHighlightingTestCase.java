@@ -20,6 +20,7 @@ import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.struts2.dom.inspection.ValidatorConfigModelInspection;
 import com.intellij.struts2.dom.inspection.ValidatorModelInspection;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * Base class for validation.xml highlighting tests.
@@ -38,7 +39,7 @@ public abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFi
    * @param validationXmlFileName Filename of validation.xml to check.
    * @throws Throwable On any errors.
    */
-  protected void performHighlightingTest(final String validationXmlFileName) throws Throwable {
+  protected void performHighlightingTest(@NonNls final String validationXmlFileName) throws Throwable {
     final long duration = myFixture.testHighlighting(true, false, true, validationXmlFileName);
     System.out.println(validationXmlFileName + " = " + duration);
   }
@@ -50,7 +51,7 @@ public abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFi
    * @param expectedItems         Expected completion variants.
    * @throws Throwable On any errors.
    */
-  protected void performCompletionVariantTest(final String validationXmlFileName, final String... expectedItems)
+  protected void performCompletionVariantTest(@NonNls final String validationXmlFileName, @NonNls final String... expectedItems)
       throws Throwable {
     myFixture.testCompletionVariants(validationXmlFileName, expectedItems);
   }

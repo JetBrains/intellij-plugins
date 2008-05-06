@@ -25,6 +25,7 @@ import com.intellij.spring.facet.SpringFacetConfiguration;
 import com.intellij.spring.facet.SpringFacetType;
 import com.intellij.spring.facet.SpringFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Set;
@@ -34,6 +35,7 @@ import java.util.Set;
  */
 public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlHighlightingSpring";
   }

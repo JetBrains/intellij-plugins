@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Various basic and complex struts.xml highlighting tests.
@@ -24,6 +25,7 @@ import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
  */
 public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlHighlighting";
   }

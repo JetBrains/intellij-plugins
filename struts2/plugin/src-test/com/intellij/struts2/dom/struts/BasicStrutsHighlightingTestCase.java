@@ -19,6 +19,7 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.struts2.dom.inspection.Struts2ModelInspection;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * Base class for struts.xml highlighting tests.
@@ -37,7 +38,7 @@ public abstract class BasicStrutsHighlightingTestCase<T extends JavaModuleFixtur
    * @param strutsXmlFileNames Filename(s) of struts.xml to check.
    * @throws Throwable On any errors.
    */
-  protected void performHighlightingTest(final String... strutsXmlFileNames) throws Throwable {
+  protected void performHighlightingTest(@NonNls final String... strutsXmlFileNames) throws Throwable {
     createStrutsFileSet(strutsXmlFileNames);
     final long duration = myFixture.testHighlighting(true, false, true, strutsXmlFileNames);
     System.out.println(strutsXmlFileNames[0] + " = " + duration);
@@ -50,8 +51,8 @@ public abstract class BasicStrutsHighlightingTestCase<T extends JavaModuleFixtur
    * @param expectedItems     Expected completion variants.
    * @throws Throwable On any errors.
    */
-  protected void performCompletionVariantTest(final String strutsXmlFileName, final String... expectedItems)
-          throws Throwable {
+  protected void performCompletionVariantTest(@NonNls final String strutsXmlFileName,
+                                              @NonNls final String... expectedItems) throws Throwable {
     createStrutsFileSet(strutsXmlFileName);
     myFixture.testCompletionVariants(strutsXmlFileName, expectedItems);
   }

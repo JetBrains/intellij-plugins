@@ -28,6 +28,7 @@ import com.intellij.struts2.facet.StrutsFacetType;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
+import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
 import java.io.IOException;
@@ -100,7 +101,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
                "xwork-2.1.0.jar");
   }
 
-  protected void addLibrary(final T moduleBuilder, final String libraryName, final String... jarPaths) {
+  protected void addLibrary(final T moduleBuilder, @NonNls final String libraryName, @NonNls final String... jarPaths) {
     final File testDataBasePathFile = new File(getTestDataBasePath()); // little hack to get absolute path..
     moduleBuilder.addLibraryJars(libraryName,
                                  testDataBasePathFile.getAbsolutePath(),
@@ -133,7 +134,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     super.tearDown();
   }
 
-  private void addToFileSet(final StrutsFileSet fileSet, final String path) {
+  private void addToFileSet(final StrutsFileSet fileSet, @NonNls final String path) {
     try {
       myFixture.copyFileToProject(path);
     }
@@ -145,7 +146,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     fileSet.addFile(file);
   }
 
-  protected void createStrutsFileSet(final String... fileNames) {
+  protected void createStrutsFileSet(@NonNls final String... fileNames) {
     final StrutsFileSet fileSet = new StrutsFileSet("test", "test");
     for (final String fileName : fileNames) {
       addToFileSet(fileSet, fileName);
