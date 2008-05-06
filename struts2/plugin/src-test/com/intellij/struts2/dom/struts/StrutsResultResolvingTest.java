@@ -39,21 +39,27 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
   }
 
   /**
-   * {@link com.intellij.struts2.dom.struts.impl.path.DispatchPathReferenceProvider}
-   *
    * @throws Throwable On errors.
+   * @see com.intellij.struts2.dom.struts.impl.path.DispatchPathResultContributor
    */
   public void testPathDispatcher() throws Throwable {
     performHighlightingTest("struts-path-dispatcher.xml");
   }
 
   /**
-   * {@link com.intellij.struts2.dom.struts.impl.path.ActionPathReferenceProvider}
-   *
    * @throws Throwable On errors.
+   * @see com.intellij.struts2.dom.struts.impl.path.ActionPathResultContributor
    */
   public void testActionPath() throws Throwable {
     performHighlightingTest("struts-actionpath.xml");
+  }
+
+  /**
+   * @throws Throwable On errors.
+   * @see com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider
+   */
+  public void testActionPathFQ() throws Throwable {
+    performHighlightingTest("struts-actionpath-fq.xml");
   }
 
   /**
@@ -66,9 +72,8 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
   }
 
   /**
-   * {@link com.intellij.struts2.dom.struts.impl.path.ActionChainOrRedirectResultContributor}
-   *
    * @throws Throwable On errors.
+   * @see com.intellij.struts2.dom.struts.impl.path.ActionChainOrRedirectResultContributor
    */
   public void testActionRedirect() throws Throwable {
     performHighlightingTest("struts-actionRedirect.xml");
