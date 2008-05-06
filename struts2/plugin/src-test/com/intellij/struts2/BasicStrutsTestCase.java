@@ -15,9 +15,10 @@
 
 package com.intellij.struts2;
 
-import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -32,6 +33,7 @@ public abstract class BasicStrutsTestCase extends UsefulTestCase {
    * @return absolute path to the test data.
    */
   @NonNls
+  @NotNull
   protected final String getTestDataPath() {
     return getTestDataBasePath() + getTestDataLocation();
   }
@@ -41,6 +43,8 @@ public abstract class BasicStrutsTestCase extends UsefulTestCase {
    *
    * @return "./plugin/testData/"
    */
+  @NonNls
+  @NotNull
   protected final String getTestDataBasePath() {
     return PathManager.getHomePath().replace(File.separatorChar, '/') + "/svnPlugins/struts2/plugin/testData/";
   }
@@ -50,6 +54,8 @@ public abstract class BasicStrutsTestCase extends UsefulTestCase {
    *
    * @return relative directory location.
    */
+  @NonNls
+  @NotNull
   protected abstract String getTestDataLocation();
 
 }
