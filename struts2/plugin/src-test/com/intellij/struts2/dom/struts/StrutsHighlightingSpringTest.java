@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts;
 
-import com.intellij.codeInsight.completion.LegacyCompletionContributor;
 import com.intellij.facet.FacetManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.RunResult;
@@ -54,15 +53,13 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   }
 
   public void testStrutsSpringCompletionVariants() throws Throwable {
-    LegacyCompletionContributor.DEBUG = true;
-    try {
-      createStrutsFileSet("struts-completionvariants-spring.xml");
+    createStrutsFileSet("struts-completionvariants-spring.xml");
 
-      final SpringFileSet springFileSet = configureSpringFileSet();
-      addFile(springFileSet, "spring.xml");
+    final SpringFileSet springFileSet = configureSpringFileSet();
+    addFile(springFileSet, "spring.xml");
 
-      // TODO <alias> does not appear here, see com.intellij.spring.impl.SpringModelImpl#myOwnBeans
-      myFixture.testCompletionVariants("struts-completionvariants-spring.xml",
+    // TODO <alias> does not appear here, see com.intellij.spring.impl.SpringModelImpl#myOwnBeans
+    myFixture.testCompletionVariants("struts-completionvariants-spring.xml",
                                      "META-INF",
                                      "MyClass",
                                      "bean1",
@@ -74,10 +71,6 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
                                      "ognl",
                                      "org",
                                      "template");
-    }
-    finally {
-      LegacyCompletionContributor.DEBUG = false;
-    }
   }
 
   // stuff below is Spring related ===============================================

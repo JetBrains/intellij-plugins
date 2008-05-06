@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 public class ThemeReferenceProvider extends PsiReferenceProviderBase {
 
   @NotNull
-  public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull final ProcessingContext context) {
+  public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
     return new PsiReference[]{new PsiReferenceBase<XmlAttributeValue>((XmlAttributeValue) element) {
       public PsiElement resolve() {
         return myElement;

@@ -41,7 +41,9 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
   }
 
   protected void initializeFileDescription() {
-    registerNamespacePolicy(StrutsDomConstants.STRUTS_NAMESPACE_KEY, StrutsConstants.STRUTS_2_0_DTD_URI, StrutsConstants.STRUTS_2_0_DTD_ID);
+    registerNamespacePolicy(StrutsDomConstants.STRUTS_NAMESPACE_KEY,
+                            StrutsConstants.STRUTS_2_0_DTD_URI,
+                            StrutsConstants.STRUTS_2_0_DTD_ID);
 
     registerImplementation(Action.class, ActionImpl.class);
     registerImplementation(GlobalResult.class, GlobalResultImpl.class);

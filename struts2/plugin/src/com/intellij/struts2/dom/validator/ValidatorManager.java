@@ -44,7 +44,7 @@ public abstract class ValidatorManager {
    *
    * @return <code>true</code> if yes, <code>false</code> otherwise.
    */
-  public abstract boolean isValidationConfigFile(@NotNull XmlFile xmlFile);
+  public abstract boolean isValidatorsFile(@NotNull XmlFile xmlFile);
 
   /**
    * Gets the available validators from validators.xml.
@@ -78,6 +78,6 @@ public abstract class ValidatorManager {
    *
    * @return true if not default.
    */
-  public abstract boolean isCustomValidatorsConfigFile(@NotNull PsiFile psiFile);
+  public abstract boolean isCustomValidatorConfigFile(@NotNull PsiFile psiFile);
 
 }

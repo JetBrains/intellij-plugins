@@ -49,7 +49,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
   @NonNls
   private static final String VALIDATORS_DEFAULT_XML = "default.xml";
 
-  public boolean isValidationConfigFile(@NotNull final XmlFile xmlFile) {
+  public boolean isValidatorsFile(@NotNull final XmlFile xmlFile) {
     return DomManager.getDomManager(xmlFile.getProject()).getFileElement(xmlFile, Validators.class) != null;
   }
 
@@ -58,7 +58,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
     return DomManager.getDomManager(xmlFile.getProject()).getFileElement(xmlFile, ValidatorsConfig.class);
   }
 
-  public boolean isCustomValidatorsConfigFile(@NotNull final PsiFile psiFile) {
+  public boolean isCustomValidatorConfigFile(@NotNull final PsiFile psiFile) {
     return !psiFile.getName().equals(VALIDATORS_DEFAULT_XML);
   }
 
@@ -82,10 +82,9 @@ public class ValidatorManagerImpl extends ValidatorManager {
     final Project project = module.getProject();
     final PsiManager psiManager = PsiManager.getInstance(project);
 
-    final VirtualFile validatorsVirtualFile = ResourceFileUtil.findResourceFileInScope(VALIDATORS_XML, project,
-                                                                                 GlobalSearchScope.moduleRuntimeScope(
-                                                                                     module,
-                                                                                     false));
+    final VirtualFile validatorsVirtualFile =
+            ResourceFileUtil.findResourceFileInScope(VALIDATORS_XML, project,
+                                                     GlobalSearchScope.moduleRuntimeScope(module, false));
 
     if (validatorsVirtualFile != null) {
       final PsiFile file = psiManager.findFile(validatorsVirtualFile);
@@ -97,8 +96,8 @@ public class ValidatorManagerImpl extends ValidatorManager {
 
     // find com/opensymphony/xwork2/validator/validators/default.xml from xwork.jar
     final PsiClass emailValidatorClass = JavaPsiFacade.getInstance(project).findClass(
-        "com.opensymphony.xwork2.validator.validators.EmailValidator",
-        GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
+            "com.opensymphony.xwork2.validator.validators.EmailValidator",
+            GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
     if (emailValidatorClass == null) {
       return null;
     }

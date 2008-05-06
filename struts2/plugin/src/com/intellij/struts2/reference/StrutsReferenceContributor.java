@@ -225,13 +225,14 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
    * @param provider        Provider to install.
    * @param attributeName   Attribute name.
    * @param namespaceFilter Namespace for tag(s).
-   * @param registrar
+   * @param registrar       Registrar instance.
    * @param tagNames        Tag name(s).
    */
   private static void registerTags(final PsiReferenceProvider provider,
-                            final @NonNls String attributeName,
-                            final NamespaceFilter namespaceFilter, final PsiReferenceRegistrar registrar,
-                            final @NonNls String... tagNames) {
+                                   final @NonNls String attributeName,
+                                   final NamespaceFilter namespaceFilter,
+                                   final PsiReferenceRegistrar registrar,
+                                   final @NonNls String... tagNames) {
     XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, new String[]{attributeName},
                                                        ReferenceFilters.andTagNames(namespaceFilter, tagNames),
                                                        provider);

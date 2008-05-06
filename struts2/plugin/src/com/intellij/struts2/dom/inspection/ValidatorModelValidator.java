@@ -59,7 +59,7 @@ public class ValidatorModelValidator extends ValidatorBase {
       if (file.getName().endsWith("-validation.xml")) {
         final PsiFile psiFile = psiManager.findFile(file);
         if (psiFile instanceof XmlFile &&
-            validatorManager.isValidationConfigFile((XmlFile) psiFile)) {
+            validatorManager.isValidatorsFile((XmlFile) psiFile)) {
           final Module module = ModuleUtil.findModuleForFile(file, project);
           if (module != null &&
               StrutsFacet.getInstance(module) != null) {
@@ -75,7 +75,7 @@ public class ValidatorModelValidator extends ValidatorBase {
       if (StrutsFacet.getInstance(module) != null) {
         final PsiFile psiFile = validatorManager.getValidatorConfigFile(module);
         if (psiFile != null &&
-            validatorManager.isCustomValidatorsConfigFile(psiFile)) {
+            validatorManager.isCustomValidatorConfigFile(psiFile)) {
           files.add(psiFile.getVirtualFile());
         }
       }
