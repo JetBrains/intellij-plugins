@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.util.xml.NamedEnum;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * <code>bean</code> "scope" possible values.
@@ -32,7 +33,7 @@ public enum BeanScope implements NamedEnum {
 
   private final String name;
 
-  BeanScope(final String name) {
+  BeanScope(@NonNls final String name) {
     this.name = name;
   }
 

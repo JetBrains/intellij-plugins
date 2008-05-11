@@ -19,6 +19,7 @@ import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.Namespace;
 import com.intellij.util.xml.SubTagList;
+import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ import java.util.List;
 @Namespace(StrutsDomConstants.VALIDATOR_CONFIG_NAMESPACE_KEY)
 public interface ValidatorsConfig extends DomElement {
 
+  @NonNls
   String TAG_NAME = "validators";
 
   @SubTagList("validator")

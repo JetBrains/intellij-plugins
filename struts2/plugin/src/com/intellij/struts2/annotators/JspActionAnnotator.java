@@ -37,6 +37,7 @@ import com.intellij.ui.LayeredIcon;
 import com.intellij.util.Icons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlNSDescriptor;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -53,6 +54,10 @@ public class JspActionAnnotator implements Annotator {
 
   public static final LayeredIcon ACTION_CLASS_ICON = new LayeredIcon(2);
 
+  @NonNls
+  private static final String ACTION_ATTRIBUTE_NAME = "action";
+
+  @NonNls
   private static final String[] TAGS_WITH_ACTION_ATTRIBUTE = new String[]{"action", "form", "url"};
 
   static {
@@ -82,8 +87,8 @@ public class JspActionAnnotator implements Annotator {
         Arrays.binarySearch(TAGS_WITH_ACTION_ATTRIBUTE, xmlTag.getLocalName()) > -1) {
 
       // special case for <action> 
-      final String actionPath = xmlTag.getLocalName().equals("action") ? xmlTag.getAttributeValue("name") :
-                                xmlTag.getAttributeValue("action");
+      final String actionPath = xmlTag.getLocalName().equals(ACTION_ATTRIBUTE_NAME) ? xmlTag.getAttributeValue("name") :
+                                xmlTag.getAttributeValue(ACTION_ATTRIBUTE_NAME);
       if (actionPath == null) {
         return;
       }
