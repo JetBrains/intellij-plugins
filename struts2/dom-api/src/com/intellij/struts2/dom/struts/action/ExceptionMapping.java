@@ -16,15 +16,14 @@
 package com.intellij.struts2.dom.struts.action;
 
 import com.intellij.psi.PsiClass;
-import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.util.xml.*;
 
 /**
  * @author Yann CŽbron
  */
-public interface ExceptionMapping extends ParamsElement {
+public interface ExceptionMapping extends DomElement /* ParamsElement TODO ??! */ {
 
- // @NameValue  TODO ??
+  // @NameValue  TODO ??
   GenericAttributeValue<String> getName();
 
   @Attribute("exception")

@@ -16,7 +16,9 @@
 package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.struts.strutspackage.GlobalResult;
+import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.structure.LocationPresentation;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +33,12 @@ public abstract class GlobalResultImpl implements GlobalResult, LocationPresenta
   public String getLocation() {
     final PathReference pathReference = getValue();
     return pathReference != null ? pathReference.getPath() : null;
+  }
+
+  @Nullable
+  public PsiClass getParamsClass() {
+    final ResultType resultType = getType().getValue();
+    return resultType != null ? resultType.getResultTypeClass().getValue() : null;
   }
 
 }

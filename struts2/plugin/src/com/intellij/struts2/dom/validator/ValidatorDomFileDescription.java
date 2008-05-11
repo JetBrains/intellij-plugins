@@ -17,6 +17,8 @@ package com.intellij.struts2.dom.validator;
 
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.dom.StrutsDomConstants;
+import com.intellij.struts2.dom.validator.impl.FieldValidatorImpl;
+import com.intellij.struts2.dom.validator.impl.ValidatorImpl;
 import com.intellij.util.xml.DomFileDescription;
 
 /**
@@ -37,6 +39,9 @@ public class ValidatorDomFileDescription extends DomFileDescription<Validators> 
 
   protected void initializeFileDescription() {
     registerNamespacePolicy(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY, VALIDATOR_NAMESPACES);
+
+    registerImplementation(FieldValidator.class, FieldValidatorImpl.class);
+    registerImplementation(Validator.class, ValidatorImpl.class);
   }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2008 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,34 +12,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.intellij.struts2.dom;
+package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.psi.PsiClass;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.SubTagList;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.struts2.dom.struts.strutspackage.Interceptor;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorRef;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 /**
- * Base-interface for all tags containing <code>param</code> child-tags.
- *
  * @author Yann CŽbron
  */
-public interface ParamsElement extends DomElement {
+public abstract class InterceptorRefImpl implements InterceptorRef {
 
-  @NotNull
-  @SubTagList(value = "param")
-  List<Param> getParams();
-
-  /**
-   * Returns the underlying class of the parent element.
-   *
-   * @return Underlying class or null if not applicable.
-   */
   @Nullable
-  PsiClass getParamsClass();
+  public PsiClass getParamsClass() {
+    final InterceptorOrStackBase interceptorOrStack = getName().getValue();
+    if (interceptorOrStack instanceof Interceptor) {
+      return ((Interceptor) interceptorOrStack).getInterceptorClass().getValue();
+    }
+    return null;
+  }
 
 }

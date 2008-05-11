@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2008 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,25 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.intellij.struts2.dom.validator.impl;
 
-package com.intellij.struts2.dom.struts.strutspackage;
-
-import com.intellij.struts2.dom.ParamsElement;
-import com.intellij.struts2.dom.struts.action.Action;
-import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.Required;
-import com.intellij.util.xml.Scope;
+import com.intellij.psi.PsiClass;
+import com.intellij.struts2.dom.validator.FieldValidator;
+import com.intellij.struts2.dom.validator.config.ValidatorConfig;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * <code>default-action-ref</code>
- *
  * @author Yann CŽbron
  */
-public interface DefaultActionRef extends ParamsElement {
+public abstract class FieldValidatorImpl implements FieldValidator {
 
-  // only within current package
-  @Required
-  @Scope(StrutsPackageWithinPackageScopeProvider.class)
-  GenericAttributeValue<Action> getName();
+  @Nullable
+  public PsiClass getParamsClass() {
+    final ValidatorConfig validatorConfig = getType().getValue();
+    return validatorConfig != null ? validatorConfig.getValidatorClass().getValue() : null;
+  }
 
 }

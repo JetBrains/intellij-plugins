@@ -15,8 +15,9 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
-import com.intellij.struts2.dom.ParamsElement;
+import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.SubTagList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -25,9 +26,10 @@ import java.util.List;
  *
  * @author Yann CŽbron
  */
-public interface GlobalResults extends ParamsElement {
+public interface GlobalResults extends DomElement {
 
   @SubTagList("result")
+  @NotNull
   List<GlobalResult> getResults();
-  
+
 }

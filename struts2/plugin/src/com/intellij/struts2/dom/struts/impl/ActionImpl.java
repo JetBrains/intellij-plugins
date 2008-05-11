@@ -101,4 +101,9 @@ public abstract class ActionImpl implements Action {
     return ActionUtil.findActionMethods(actionClass);
   }
 
+  @Nullable
+  public PsiClass getParamsClass() {
+    return searchActionClass();
+  }
+
 }

@@ -16,7 +16,10 @@
 package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.struts.action.Result;
+import com.intellij.struts2.dom.struts.strutspackage.ResultType;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.structure.LocationPresentation;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +39,23 @@ public abstract class ResultImpl implements Result, LocationPresentation {
   public String getLocation() {
     final PathReference pathReference = getValue();
     return pathReference != null ? pathReference.getPath() : null;
+  }
+
+  @Nullable
+  public PsiClass getParamsClass() {
+    final ResultType resultType = getType().getValue();
+    if (resultType != null) {
+      return resultType.getResultTypeClass().getValue();
+    }
+
+    // find default result-type in enclosing package or its parents
+    final StrutsPackage strutsPackage = getParentOfType(StrutsPackage.class, true);
+    if (strutsPackage == null) {
+      return null;
+    }
+
+    final ResultType defaultResultType = strutsPackage.searchDefaultResultType();
+    return defaultResultType != null ? defaultResultType.getResultTypeClass().getValue() : null;
   }
 
 }

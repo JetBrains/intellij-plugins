@@ -16,7 +16,6 @@
 package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.psi.PsiClass;
-import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.util.xml.*;
 
 /**
@@ -24,7 +23,7 @@ import com.intellij.util.xml.*;
  *
  * @author Yann CŽbron
  */
-public interface GlobalExceptionMapping extends ParamsElement {
+public interface GlobalExceptionMapping extends DomElement /* ParamsElement TODO ??! */ {
 
  // @NameValue() TODO ??
   GenericAttributeValue<String> getName();

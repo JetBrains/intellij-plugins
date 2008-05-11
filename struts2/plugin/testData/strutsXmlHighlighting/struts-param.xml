@@ -38,10 +38,48 @@
     <action name="defaultAction" class="MyClass"/>
 
   </package>
-  
-  
+
+
+  <!-- DEFAULT-CLASS-REF ================================================ -->
+
+  <package name="testDefaultClassRefParams">
+
+    <default-class-ref class="MyClass">
+      <param name="param1">someValue</param>
+      <param name="<error>INVALID_VALUE</error>"/>
+    </default-class-ref>
+
+  </package>
+
+
+  <!-- DEFAULT-INTERCEPTOR-REF =========================================== -->
+
+  <package name="testDefaultInterceptorRef">
+                                      
+    <interceptors>
+      <interceptor name="validation" class="org.apache.struts2.interceptor.validation.AnnotationValidationInterceptor"/>
+
+      <interceptor-stack name="testStack">
+        <interceptor-ref name="validation">
+          <param name="excludeMethods">someMethodName</param>
+          <param name="<error>INVALID_VALUE</error>"/>
+        </interceptor-ref>
+      </interceptor-stack>
+    </interceptors>
+
+    <default-interceptor-ref name="testStack">
+<!--
+ TODO not working yet
+      <param name="validation.excludeMethods">someMethodName</param>
+      <param name="INVALID_VALUE"/>
+-->
+    </default-interceptor-ref>
+
+  </package>
+
+
   <!-- RESULT ============================================================ -->
-  
+
   <package name="testResultParams">
 
     <result-types>
