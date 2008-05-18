@@ -42,17 +42,6 @@
   <bean class="MyClass" name="DUPLICATED_NAME"/>
 
 
-  <!-- INCLUDE =================================================================================================== -->
-
-  <include file="struts-simple-include.xml"/>
-  <!-- non-existing file -->
-  <include file="<error descr="Cannot resolve file 'INVALID_VALUE' (not included in file sets?)">INVALID_VALUE</error>"/>
-  <!-- valid struts.xml not in fileset -->
-  <include file="<error descr="Cannot resolve file 'struts-notinfileset.xml' (not included in file sets?)">struts-notinfileset.xml</error>"/>
-  <!-- self-inclusion is prohibited -->
-  <include file="<error descr="Recursive inclusion of current file">struts-simple.xml</error>"/>
-
-
   <!-- PACKAGE =================================================================================================== -->
 
   <!-- "name" -->
@@ -72,12 +61,12 @@
   <package name="validName3_2" abstract="<error>INVALID_VALUE</error>"/>
 
   <!-- "extends" -->
-  <package name="extendingPackage" extends="extendablePackage"/>
+  <package name="extendingPackage" extends="validName3"/>
   <package name="extendingPackageExtendsInvalid" extends="<error>INVALID_VALUE</error>"/>
-  <package name="extendingNotInFilesetPackage" extends="<error>notInFilesetPackage</error>"/>
 
 
-  <!-- default-action-ref -->
+  <!-- DEFAULT-ACTION-REF  ====================================================================================== -->
+
   <package name="defaultActionRef">
     <default-action-ref name="myDefaultAction"/>
     <action name="myDefaultAction"/>
@@ -88,7 +77,8 @@
   </package>
 
 
-  <!-- default-interceptor-ref -->
+  <!-- DEFAULT-INTERCEPTOR-REF ================================================================================== -->
+
   <package name="defaultInterceptorRef">
     <interceptors>
       <interceptor-stack name="myLocalInterceptorStack">

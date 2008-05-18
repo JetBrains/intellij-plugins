@@ -31,7 +31,7 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
   }
 
   public void testSimpleStruts() throws Throwable {
-    performHighlightingTest("struts-simple.xml", "struts-simple-include.xml");
+    performHighlightingTest("struts-simple.xml");
   }
 
   public void testParam() throws Throwable {

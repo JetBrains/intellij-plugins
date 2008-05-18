@@ -15,21 +15,48 @@
 
 package com.intellij.struts2.dom.struts;
 
-import com.intellij.psi.xml.XmlFile;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.CustomReferenceConverter;
 import com.intellij.util.xml.ResolvingConverter;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Converter for &lt;include&gt; "file"-attribute (struts.xml files).
  *
+ * @author Gregory.Shrago
  * @author Yann CŽbron
  * @see com.intellij.struts2.dom.struts.Include#getFile()
  */
-public abstract class IncludeFileResolvingConverter extends ResolvingConverter<XmlFile> {
+public abstract class IncludeFileResolvingConverter extends ResolvingConverter<PsiFile> implements CustomReferenceConverter {
 
-  public String toString(@Nullable final XmlFile xmlFile, final ConvertContext context) {
-    return xmlFile != null ? xmlFile.getName() : null;
+  public String toString(@Nullable PsiFile psiFile, final ConvertContext context) {
+    if (psiFile == null) {
+      return null;
+    }
+    final VirtualFile file = psiFile.getVirtualFile();
+    if (file == null) {
+      return null;
+    }
+    VirtualFile root = getRootForFile(file, context);
+    if (root == null) {
+      return null;
+    }
+    return VfsUtil.getRelativePath(file, root, '/');
+  }
+
+  @Nullable
+  private static VirtualFile getRootForFile(final VirtualFile file, final ConvertContext context) {
+    final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(context.getPsiManager().getProject()).getFileIndex();
+    VirtualFile root = projectFileIndex.getSourceRootForFile(file);
+    if (root == null) {
+      root = projectFileIndex.getContentRootForFile(file);
+    }
+    return root;
   }
 
 }

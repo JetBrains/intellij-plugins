@@ -15,12 +15,18 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.ElementManipulators;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FilePathReferenceProvider;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.IncludeFileResolvingConverter;
+import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.GenericDomValue;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,44 +36,77 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
+ * @author Gregory.Shrago
  * @author Yann CŽbron
  */
 public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConverter {
 
-  @NotNull
-  public Collection<? extends XmlFile> getVariants(final ConvertContext context) {
-    final StrutsModel strutsModel = ConverterUtil.getStrutsModel(context);
-    if (strutsModel == null) {
-      return Collections.emptyList();
+  public PsiFile fromString(@Nullable @NonNls String value, final ConvertContext context) {
+    if (value == null) {
+      return null;
     }
 
-    final Set<XmlFile> configFiles = strutsModel.getConfigFiles();
+    final XmlElement xmlElement = context.getReferenceXmlElement();
+    if (xmlElement == null) {
+      return null;
+    }
 
-    //noinspection SuspiciousMethodCalls
-    configFiles.remove(context.getFile().getOriginalFile()); // do not propose current file
-    return configFiles;
+    final PsiReference[] references = createReferences((GenericDomValue) context.getInvocationElement(),
+                                                       xmlElement,
+                                                       context);
+    if (references.length == 0) {
+      return null;
+    }
+
+    final PsiElement element = references[references.length - 1].resolve();
+    return element instanceof PsiFile ? (PsiFile) element : null;
   }
 
-  public XmlFile fromString(@Nullable @NonNls final String value, final ConvertContext context) {
-    if (StringUtil.isEmpty(value)) {
+  @NotNull
+  public Collection<? extends PsiFile> getVariants(final ConvertContext context) {
+    return Collections.emptyList();
+  }
+
+  public PsiElement resolve(final PsiFile psiFile, final ConvertContext context) {
+    // recursive self-inclusion
+    if (context.getFile().equals(psiFile)) {
       return null;
     }
 
-    final StrutsModel strutsModel = ConverterUtil.getStrutsModel(context);
-    if (strutsModel == null) {
-      return null;
+    return isFileAccepted(psiFile) ? super.resolve(psiFile, context) : null;
+  }
+
+  @NotNull
+  public PsiReference[] createReferences(@NotNull final GenericDomValue genericDomValue,
+                                         @NotNull final PsiElement element,
+                                         @NotNull final ConvertContext context) {
+    final String s = genericDomValue.getStringValue();
+    if (s == null) {
+      return PsiReference.EMPTY_ARRAY;
     }
 
-    final Set<XmlFile> configFiles = strutsModel.getConfigFiles();
-    final String currentFileName = context.getFile().getName();
-    for (final XmlFile configFile : configFiles) {
-      if (configFile.getName().equals(value) &&
-          !currentFileName.equals(value)) { // to trigger error condition on self-inclusion
-        return configFile;
+    final int offset = ElementManipulators.getOffsetInElement(element);
+    return new FilePathReferenceProvider() {
+      protected boolean isPsiElementAccepted(final PsiElement element) {
+        return super.isPsiElementAccepted(element) &&
+               (!(element instanceof PsiFile) || isFileAccepted((PsiFile) element));
       }
+    }.getReferencesByElement(element, s, offset, true);
+  }
+
+  protected boolean isFileAccepted(@NotNull final PsiFile file) {
+    if (file instanceof XmlFile) {
+      final XmlFile xmlFile = (XmlFile) file;
+      final StrutsModel model = StrutsManager.getInstance(file.getProject()).getModelByFile(xmlFile);
+      if (model == null) {
+        return false;
+      }
+
+      final Set<XmlFile> files = model.getConfigFiles();
+      return files.contains(xmlFile);
     }
 
-    return null;
+    return false;
   }
 
   public String getErrorMessage(@Nullable final String value, final ConvertContext context) {

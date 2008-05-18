@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- <include> tests -->
+
+<struts>
+
+  <include file="/com/test/struts-sub.xml"/>
+
+  <!-- not in fileset: -->
+  <include file="<error>struts-include.xml</error>"/>
+  
+</struts>

@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.dom.struts;
 
-import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
@@ -30,6 +30,6 @@ public interface Include extends DomElement {
 
   @Convert(IncludeFileResolvingConverter.class)
   @Required
-  GenericAttributeValue<XmlFile> getFile();
+  GenericAttributeValue<PsiFile> getFile();
 
 }
