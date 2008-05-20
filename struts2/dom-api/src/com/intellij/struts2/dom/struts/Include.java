@@ -24,7 +24,7 @@ import com.intellij.util.xml.Required;
 /**
  * <code>include</code>
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface Include extends DomElement {
 

@@ -22,7 +22,7 @@ import java.io.File;
 /**
  * Tests for &lt;include&gt;.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 

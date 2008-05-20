@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * Converter for &lt;include&gt; "file"-attribute (struts.xml files).
  *
  * @author Gregory.Shrago
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  * @see com.intellij.struts2.dom.struts.Include#getFile()
  */
 public abstract class IncludeFileResolvingConverter extends ResolvingConverter<PsiFile> implements CustomReferenceConverter {

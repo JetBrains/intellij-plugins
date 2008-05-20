@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Various basic and complex struts.xml highlighting tests.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 

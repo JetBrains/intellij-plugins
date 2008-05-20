@@ -78,7 +78,7 @@ import javax.swing.*;
  * <li>Icons for classes/config files</li>
  * </ul>
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsApplicationComponent implements ApplicationComponent,
                                                    FileTemplateGroupDescriptorFactory,
