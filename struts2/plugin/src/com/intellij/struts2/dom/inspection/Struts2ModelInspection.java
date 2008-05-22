@@ -40,7 +40,7 @@ import java.util.Set;
 /**
  * Default DOM-Model inspection for struts.xml files.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoot> {
 
@@ -79,7 +79,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
       return false;
     }
 
-    // hack for suppresing wildcard-resolving
+    // hack for suppressing wildcard-resolving
     final String stringValue = value.getStringValue();
     return stringValue == null || stringValue.indexOf('{') < 0;
   }
