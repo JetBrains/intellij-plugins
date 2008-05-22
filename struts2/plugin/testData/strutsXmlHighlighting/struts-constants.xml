@@ -16,6 +16,8 @@
 
   <constant name="struts.freemarker.manager.classname" value="<error>INVALID_VALUE</error>"/>
 
+  <constant name="struts.url.http.port" value="<error>INVALID_VALUE</error>"/>
+
 
   <!-- valid values ====================== -->
 
@@ -27,5 +29,6 @@
   
   <constant name="struts.objectFactory.spring.useClassCache" value="true"/>
   <constant name="struts.devMode" value="false"/>
+  <constant name="struts.url.https.port" value="80"/>
 
 </struts>
