@@ -7,7 +7,10 @@
   <name>Struts 2</name>
   <description>
     <![CDATA[
-  Provides full integration of <a href="http://struts.apache.org/2.x/index.html">Struts 2</a>.
+  Provides full integration of <a href="http://struts.apache.org/2.x/index.html">Apache Struts 2</a>.
+  <br><br>
+  See <a href="http://www.jetbrains.net/confluence/display/CONTEST/Struts2PluginFeaturesUserGuide">here</a>
+  for feature description and usage guides.
   ]]>
   </description>
 
@@ -17,7 +20,7 @@
   ]]>
   </change-notes>
 
-  <version>0.38</version>
+  <version>1.0</version>
 
   <!-- required dependencies -->
   <depends>com.intellij.javaee</depends>
