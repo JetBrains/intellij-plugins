@@ -57,6 +57,8 @@ import com.intellij.struts2.facet.StrutsFacetType;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.Icons;
 import com.intellij.util.NullableFunction;
+import com.intellij.util.ReflectionCache;
+import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.ElementPresentationManager;
 import com.intellij.util.xml.TypeNameManager;
@@ -209,42 +211,65 @@ public class StrutsApplicationComponent implements ApplicationComponent,
 
   }
 
+
+  /**
+   * Provides display name for subclass(es) of given DomElement-type.
+   *
+   * @param <T> DomElement-type to provide names for.
+   */
+  private abstract static class TypedNameProvider<T extends DomElement> implements NullableFunction<Object, String> {
+
+    private final Class clazz;
+
+    private TypedNameProvider(final Class<T> clazz) {
+      this.clazz = clazz;
+    }
+
+    @Nullable
+    public String fun(final Object o) {
+      if (ReflectionCache.isInstance(o, clazz)) {
+        //noinspection unchecked
+        return getDisplayName((T) o);
+      }
+
+      return null;
+    }
+
+    protected abstract String getDisplayName(T t);
+
+  }
+
+
   private static void registerStrutsDomPresentation() {
     // <struts>
     ElementPresentationManager.registerIcon(StrutsRoot.class, StrutsIcons.STRUTS_CONFIG_FILE_ICON);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        return o instanceof StrutsRoot ? ((StrutsRoot) o).getRoot().getFile().getName() : null;
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<StrutsRoot>(StrutsRoot.class) {
+      protected String getDisplayName(final StrutsRoot strutsRoot) {
+        return strutsRoot.getRoot().getFile().getName();
       }
     });
 
     // <exception-mapping>
     ElementPresentationManager.registerIcon(ExceptionMapping.class, StrutsIcons.EXCEPTION_MAPPING);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        if (o instanceof ExceptionMapping) {
-          final PsiClass exceptionClass = ((ExceptionMapping) o).getExceptionClass().getValue();
-          if (exceptionClass != null) {
-            return exceptionClass.getName();
-          }
-          return ((ExceptionMapping) o).getName().getStringValue();
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<ExceptionMapping>(ExceptionMapping.class) {
+      protected String getDisplayName(final ExceptionMapping exceptionMapping) {
+        final PsiClass exceptionClass = exceptionMapping.getExceptionClass().getValue();
+        if (exceptionClass != null) {
+          return exceptionClass.getName();
         }
-        return null;
+        return exceptionMapping.getName().getStringValue();
       }
     });
 
     // global <exception-mapping>
     ElementPresentationManager.registerIcon(GlobalExceptionMapping.class, StrutsIcons.GLOBAL_EXCEPTION_MAPPING);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        if (o instanceof GlobalExceptionMapping) {
-          final PsiClass exceptionClass = ((GlobalExceptionMapping) o).getExceptionClass().getValue();
-          if (exceptionClass != null) {
-            return exceptionClass.getName();
-          }
-          return ((GlobalExceptionMapping) o).getName().getStringValue();
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<GlobalExceptionMapping>(GlobalExceptionMapping.class) {
+      protected String getDisplayName(final GlobalExceptionMapping globalExceptionMapping) {
+        final PsiClass exceptionClass = globalExceptionMapping.getExceptionClass().getValue();
+        if (exceptionClass != null) {
+          return exceptionClass.getName();
         }
-        return null;
+        return globalExceptionMapping.getName().getStringValue();
       }
     });
 
@@ -263,71 +288,59 @@ public class StrutsApplicationComponent implements ApplicationComponent,
       }
     });
 
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        return o instanceof InterceptorRef ? ((InterceptorRef) o).getName().getStringValue() : null;
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<InterceptorRef>(InterceptorRef.class) {
+      protected String getDisplayName(final InterceptorRef interceptorRef) {
+        return interceptorRef.getName().getStringValue();
       }
     });
 
     ElementPresentationManager.registerIcon(DefaultInterceptorRef.class, StrutsIcons.DEFAULT_INTERCEPTOR_REF);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        return o instanceof DefaultInterceptorRef ? ((DefaultInterceptorRef) o).getName().getStringValue() : null;
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<DefaultInterceptorRef>(DefaultInterceptorRef.class) {
+      protected String getDisplayName(final DefaultInterceptorRef defaultInterceptorRef) {
+        return defaultInterceptorRef.getName().getStringValue();
       }
     });
 
     // <include>
     ElementPresentationManager.registerIcon(Include.class, StrutsIcons.INCLUDE);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        return o instanceof Include ? ((Include) o).getFile().getStringValue() : null;
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<Include>(Include.class) {
+      protected String getDisplayName(final Include include) {
+        return include.getFile().getStringValue();
       }
     });
 
     // <result>
     ElementPresentationManager.registerIcon(Result.class, StrutsIcons.RESULT);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        if (o instanceof Result) {
-          final String resultName = ((Result) o).getName().getStringValue();
-          return resultName != null ? resultName : "success";
-        }
-        return null;
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<Result>(Result.class) {
+      protected String getDisplayName(final Result result) {
+        final String resultName = result.getName().getStringValue();
+        return resultName != null ? resultName : "success";
       }
     });
 
     // <global-result>
     ElementPresentationManager.registerIcon(GlobalResult.class, StrutsIcons.GLOBAL_RESULT);
     TypeNameManager.registerTypeName(GlobalResult.class, "global result");
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        if (o instanceof GlobalResult) {
-          final String globalResultName = ((GlobalResult) o).getName().getStringValue();
-          return globalResultName != null ? globalResultName : "success";
-        }
-        return null;
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<GlobalResult>(GlobalResult.class) {
+      protected String getDisplayName(final GlobalResult globalResult) {
+        final String globalResultName = globalResult.getName().getStringValue();
+        return globalResultName != null ? globalResultName : "success";
       }
     });
 
     // <default-action-ref>
     ElementPresentationManager.registerIcon(DefaultActionRef.class, StrutsIcons.DEFAULT_ACTION_REF);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        if (o instanceof DefaultActionRef) {
-          return ((DefaultActionRef) o).getName().getStringValue();
-        }
-        return null;
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<DefaultActionRef>(DefaultActionRef.class) {
+      protected String getDisplayName(final DefaultActionRef defaultActionRef) {
+        return defaultActionRef.getName().getStringValue();
       }
     });
 
     // <default-class-ref>
     ElementPresentationManager.registerIcon(DefaultClassRef.class, StrutsIcons.DEFAULT_CLASS_REF);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        if (o instanceof DefaultClassRef) {
-          return ((DefaultClassRef) o).getDefaultClass().getStringValue();
-        }
-        return null;
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<DefaultClassRef>(DefaultClassRef.class) {
+      protected String getDisplayName(final DefaultClassRef defaultClassRef) {
+        return defaultClassRef.getDefaultClass().getStringValue();
       }
     });
 
@@ -345,43 +358,35 @@ public class StrutsApplicationComponent implements ApplicationComponent,
     ElementPresentationManager.registerIcon(ValidatorConfig.class, StrutsIcons.VALIDATOR);
 
     ElementPresentationManager.registerIcon(Validators.class, StrutsIcons.VALIDATION_CONFIG_FILE_ICON);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        return o instanceof Validators ? ((Validators) o).getRoot().getFile().getName() : null;
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<Validators>(Validators.class) {
+      protected String getDisplayName(final Validators validators) {
+        return validators.getRoot().getFile().getName();
       }
     });
 
     // <field>
     ElementPresentationManager.registerIcon(Field.class, Icons.FIELD_ICON);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        return o instanceof Field ? ((Field) o).getName().getStringValue() : null;
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<Field>(Field.class) {
+      protected String getDisplayName(final Field field) {
+        return field.getName().getStringValue();
       }
     });
 
     // <field-validator>
     ElementPresentationManager.registerIcon(FieldValidator.class, StrutsIcons.VALIDATOR);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        if (!(o instanceof FieldValidator)) {
-          return null;
-        }
-        final ValidatorConfig validatorConfig = ((FieldValidator) o).getType().getValue();
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<FieldValidator>(FieldValidator.class) {
+      protected String getDisplayName(final FieldValidator fieldValidator) {
+        final ValidatorConfig validatorConfig = fieldValidator.getType().getValue();
         return validatorConfig != null ? validatorConfig.getName().getStringValue() : null;
       }
     });
 
     // <message>
     ElementPresentationManager.registerIcon(Message.class, StrutsIcons.MESSAGE);
-    ElementPresentationManager.registerNameProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        if (!(o instanceof Message)) {
-          return null;
-        }
-
-        final Message message = (Message) o;
+    ElementPresentationManager.registerNameProvider(new TypedNameProvider<Message>(Message.class) {
+      protected String getDisplayName(final Message message) {
         final String key = message.getKey().getStringValue();
-        return !StringUtil.isEmpty(key) ? key : message.getValue();
+        return StringUtil.isNotEmpty(key) ? key : message.getValue();
       }
     });
   }
