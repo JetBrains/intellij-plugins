@@ -25,9 +25,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.validator.ValidatorManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.ui.ValidationConfigurationSettings;
+import org.jetbrains.annotations.NonNls;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -40,8 +42,12 @@ import java.util.Set;
  */
 public class ValidatorModelValidator extends ValidatorBase {
 
+  @NonNls
+  private static final String FILENAME_EXTENSION_VALIDATION_XML = "-validation.xml";
+
   public ValidatorModelValidator() {
-    super("Validator Model Validator", "Validating validator model...",
+    super(StrutsBundle.message("inspections.validator.model.validator"),
+          StrutsBundle.message("inspections.validator.model.validator.progress"),
           ValidatorModelInspection.class, ValidatorConfigModelInspection.class);
   }
 
@@ -56,7 +62,7 @@ public class ValidatorModelValidator extends ValidatorBase {
     // collect all validation.xml files located in sources of S2-modules
     final Set<VirtualFile> files = new HashSet<VirtualFile>();
     for (final VirtualFile file : context.getCompileScope().getFiles(StdFileTypes.XML, true)) {
-      if (file.getName().endsWith("-validation.xml")) {
+      if (file.getName().endsWith(FILENAME_EXTENSION_VALIDATION_XML)) {
         final PsiFile psiFile = psiManager.findFile(file);
         if (psiFile instanceof XmlFile &&
             validatorManager.isValidatorsFile((XmlFile) psiFile)) {

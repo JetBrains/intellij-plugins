@@ -15,11 +15,12 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
+import com.intellij.openapi.paths.PathReference;
 import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.struts2.dom.struts.action.ResultTypeResolvingConverter;
 import com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter;
 import com.intellij.util.xml.*;
-import com.intellij.openapi.paths.PathReference;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * Global <code>result</code>.
@@ -28,6 +29,12 @@ import com.intellij.openapi.paths.PathReference;
  */
 @Convert(StrutsPathReferenceConverter.class)
 public interface GlobalResult extends ParamsElement, GenericDomValue<PathReference> {
+
+  /**
+   * Default result name.
+   */
+  @NonNls
+  String DEFAULT_NAME = "success";
 
   @NameValue
   @Scope(ParentScopeProvider.class)

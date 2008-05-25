@@ -25,6 +25,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiModifier;
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -34,18 +35,17 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Iterator;
 
 /**
  * Annotator for Action-classes.
  * Provides gutter icon navigation to &lt;action&gt; declaration(s).
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ActionAnnotator implements Annotator {
 
   private static final DomElementListCellRenderer ACTION_RENDERER =
-      new DomElementListCellRenderer<Action>("No name") {
+      new DomElementListCellRenderer<Action>(StrutsBundle.message("annotators.action.noname")) {
         @NotNull
         @NonNls
         public String getAdditionalLocation(final Action action) {
@@ -94,8 +94,8 @@ public class ActionAnnotator implements Annotator {
     final List<Action> actions = strutsModel.findActionsByClass(clazz);
     if (!actions.isEmpty()) {
       NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR).
-          setPopupTitle("Go To Action declaration").
-          setTargets(actions).setTooltipTitle("<b>Action path(s):</b>").
+          setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration")).
+          setTargets(actions).setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip")).
           setCellRenderer(ACTION_RENDERER).
           install(holder, clazz.getNameIdentifier());
     }

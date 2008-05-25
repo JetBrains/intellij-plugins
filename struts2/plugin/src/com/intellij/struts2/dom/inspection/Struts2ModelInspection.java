@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.ActionClassConverter;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -109,22 +110,25 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
 
         final String[] referenceTypesUserData = attributeValue.getUserData(ActionClassConverter.REFERENCES_TYPES);
         final String referenceTypes = referenceTypesUserData != null ?
-                                      StringUtil.join(referenceTypesUserData, "|") : "class";
+                                      StringUtil.join(referenceTypesUserData, "|") :
+                                      StrutsBundle.message("dom.actionclass.converter.type.class");
         holder.createProblem(attributeValue,
                              HighlightSeverity.ERROR,
-                             "Cannot resolve " + referenceTypes + " '" + attributeValue.getStringValue() + "'");
+                             StrutsBundle.message("dom.actionclass.converter.cannot.resolve",
+                                                  referenceTypes,
+                                                  attributeValue.getStringValue()));
       }
     }
   }
 
   @NotNull
   public String getGroupDisplayName() {
-    return "Struts 2";
+    return StrutsBundle.message("inspections.groupdisplayname");
   }
 
   @NotNull
   public String getDisplayName() {
-    return "Struts 2 Model Inspection";
+    return StrutsBundle.message("inspections.struts2.model.displayname");
   }
 
   @NotNull

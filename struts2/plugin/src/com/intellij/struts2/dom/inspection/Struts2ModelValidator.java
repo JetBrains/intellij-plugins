@@ -21,6 +21,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
@@ -39,7 +40,8 @@ import java.util.Set;
 public class Struts2ModelValidator extends ValidatorBase {
 
   public Struts2ModelValidator() {
-    super("Struts 2 Model Validator", "Validating Struts 2 model...", Struts2ModelInspection.class);
+    super(StrutsBundle.message("inspections.struts2.model.validator"),
+          StrutsBundle.message("inspections.struts2.model.validator.progress"), Struts2ModelInspection.class);
   }
 
   protected boolean isValidationEnabledForModel(final ValidationConfigurationSettings validationConfigurationSettings) {

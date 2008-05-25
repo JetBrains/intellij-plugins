@@ -106,7 +106,8 @@ public class StrutsApplicationComponent implements ApplicationComponent,
   }
 
   public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
-    final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor("Struts 2", StrutsIcons.ACTION);
+    final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor(StrutsBundle.message("struts2"),
+                                                                              StrutsIcons.ACTION);
     group.addTemplate(new FileTemplateDescriptor(StrutsConstants.STRUTS_DEFAULT_FILENAME,
                                                  StrutsIcons.STRUTS_CONFIG_FILE_ICON));
     group.addTemplate(new FileTemplateDescriptor("validator.xml", StrutsIcons.VALIDATION_CONFIG_FILE_ICON));
@@ -314,7 +315,7 @@ public class StrutsApplicationComponent implements ApplicationComponent,
     ElementPresentationManager.registerNameProvider(new TypedNameProvider<Result>(Result.class) {
       protected String getDisplayName(final Result result) {
         final String resultName = result.getName().getStringValue();
-        return resultName != null ? resultName : "success";
+        return resultName != null ? resultName : Result.DEFAULT_NAME;
       }
     });
 
@@ -324,7 +325,7 @@ public class StrutsApplicationComponent implements ApplicationComponent,
     ElementPresentationManager.registerNameProvider(new TypedNameProvider<GlobalResult>(GlobalResult.class) {
       protected String getDisplayName(final GlobalResult globalResult) {
         final String globalResultName = globalResult.getName().getStringValue();
-        return globalResultName != null ? globalResultName : "success";
+        return globalResultName != null ? globalResultName : Result.DEFAULT_NAME;
       }
     });
 

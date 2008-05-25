@@ -27,6 +27,7 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -48,7 +49,7 @@ import java.util.Set;
 /**
  * Annotates custom tags with "action" attribute.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class JspActionAnnotator implements Annotator {
 
@@ -109,7 +110,7 @@ public class JspActionAnnotator implements Annotator {
 
         if (!navigationTargets.isEmpty()) {
           NavigationGutterIconBuilder.create(ACTION_CLASS_ICON).
-            setTooltipText("Go To Action method").
+            setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
             setTargets(navigationTargets).
             install(annotationHolder, xmlTag);
         }

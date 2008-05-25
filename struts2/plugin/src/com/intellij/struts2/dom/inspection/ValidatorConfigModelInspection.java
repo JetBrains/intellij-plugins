@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.inspection;
 
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.validator.config.ValidatorsConfig;
 import com.intellij.util.xml.highlighting.BasicDomElementsInspection;
 import org.jetbrains.annotations.NonNls;
@@ -31,12 +32,12 @@ public class ValidatorConfigModelInspection extends BasicDomElementsInspection<V
 
   @NotNull
   public String getGroupDisplayName() {
-    return "Struts 2";
+    return StrutsBundle.message("inspections.groupdisplayname");
   }
 
   @NotNull
   public String getDisplayName() {
-    return "Validator-Config Model Inspection";
+    return StrutsBundle.message("inspections.validatorconfig.model.displayname");
   }
 
   @NotNull

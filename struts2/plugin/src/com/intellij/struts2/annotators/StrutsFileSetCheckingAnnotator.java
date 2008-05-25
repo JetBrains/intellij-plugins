@@ -35,6 +35,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
@@ -49,7 +50,7 @@ import java.util.Set;
 /**
  * Checks if <code>struts.xml</code> is registered in any of the file sets in the current module.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsFileSetCheckingAnnotator implements Annotator {
 
@@ -91,10 +92,10 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
     }
 
     final boolean fileSetAvailable = allConfigFileSets.size() != 0;
-    final Annotation annotation = holder.createWarningAnnotation(xmlFile,
-                                                                 fileSetAvailable ?
-                                                                 "File not registered in file set" :
-                                                                 "No file sets configured for Struts 2 facet");
+    final Annotation annotation = holder.createWarningAnnotation(
+            xmlFile,
+            fileSetAvailable ? StrutsBundle.message("annotators.fileset.file.not.registered") :
+            StrutsBundle.message("annotators.fileset.no.file.sets"));
     annotation.setFileLevelAnnotation(true);
 
     if (fileSetAvailable) {
@@ -104,7 +105,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
       annotation.registerFix(new ShowModulePropertiesFix(xmlFile) {
         @NotNull
         public String getText() {
-          return "Edit Struts 2 facet settings";
+          return StrutsBundle.message("annotators.fileset.edit.facet.settings");
         }
       });
     }
@@ -117,12 +118,12 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
   private static class AddToFileSetFix extends BaseIntentionAction {
 
     private AddToFileSetFix(final String filename) {
-      setText("Add " + filename + " to file set");
+      setText(StrutsBundle.message("annotators.fileset.fix.add.to.fileset", filename));
     }
 
     @NotNull
     public String getFamilyName() {
-      return "Struts 2 Intentions";
+      return StrutsBundle.message("intentions.familyname");
     }
 
     public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
@@ -137,23 +138,24 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
 
       final Set<StrutsFileSet> strutsFileSets = strutsFacet.getConfiguration().getFileSets();
       final BaseListPopupStep<StrutsFileSet> step =
-        new BaseListPopupStep<StrutsFileSet>("Choose file set", new ArrayList<StrutsFileSet>(strutsFileSets)) {
+              new BaseListPopupStep<StrutsFileSet>(StrutsBundle.message("annotators.fileset.fix.choose.fileset"),
+                                                   new ArrayList<StrutsFileSet>(strutsFileSets)) {
 
-          public Icon getIconFor(final StrutsFileSet aValue) {
-            return Icons.PACKAGE_ICON;
-          }
+                public Icon getIconFor(final StrutsFileSet aValue) {
+                  return Icons.PACKAGE_ICON;
+                }
 
-          public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {
-            selectedValue.addFile(file.getVirtualFile());
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-              public void run() {
-                ProjectRootManagerEx.getInstanceEx(project).beforeRootsChange(false);
-                ProjectRootManagerEx.getInstanceEx(project).rootsChanged(false);
-              }
-            });
-            return super.onChosen(selectedValue, finalChoice);
-          }
-        };
+                public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {
+                  selectedValue.addFile(file.getVirtualFile());
+                  ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    public void run() {
+                      ProjectRootManagerEx.getInstanceEx(project).beforeRootsChange(false);
+                      ProjectRootManagerEx.getInstanceEx(project).rootsChanged(false);
+                    }
+                  });
+                  return super.onChosen(selectedValue, finalChoice);
+                }
+              };
       JBPopupFactory.getInstance().createListPopup(step).showInBestPositionFor(DataManager.getInstance().getDataContext());
     }
   }
