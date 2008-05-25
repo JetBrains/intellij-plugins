@@ -32,7 +32,7 @@ public class StrutsBundle {
   private static Reference<ResourceBundle> ourBundle;
 
   @NonNls
-  private static final String PATH_TO_BUNDLE = "resources.StrutsBundle";
+  private static final String PATH_TO_BUNDLE = "resources.Struts2Bundle";
 
   private StrutsBundle() {
   }
