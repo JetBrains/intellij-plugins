@@ -28,7 +28,7 @@ import com.intellij.util.xml.DomFileDescription;
 /**
  * <code>struts.xml</code> DOM-Model files.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
 
@@ -42,6 +42,7 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
                             StrutsConstants.STRUTS_2_0_DTD_ID);
 
     registerImplementation(Action.class, ActionImpl.class);
+    registerImplementation(Constant.class, ConstantImpl.class);
     registerImplementation(DefaultActionRef.class, DefaultActionRefImpl.class);
     registerImplementation(DefaultClassRef.class, DefaultClassRefImpl.class);
     registerImplementation(DefaultInterceptorRef.class, DefaultInterceptorRefImpl.class);
