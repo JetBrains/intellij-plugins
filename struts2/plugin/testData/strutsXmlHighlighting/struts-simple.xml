@@ -54,6 +54,7 @@
   <!-- "namespace" -->
   <package name="emptyName" namespace=<error>""</error>/>
   <package name="emptyName2" namespace="<error> </error>"/>
+  <package name="doesNotStartWithSlash" namespace="<error descr="Namespace must start with '/'">INVALID_VALUE</error>"/>
 
   <!-- "abstract" -->
   <package name="validName3" abstract="true"/>
