@@ -62,7 +62,6 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
 
     // TODO <alias> does not appear here, see com.intellij.spring.impl.SpringModelImpl#myOwnBeans
     myFixture.testCompletionVariants("struts-completionvariants-spring.xml",
-                                     "META-INF",
                                      "MyClass",
                                      "bean1",
                                      "bean2",
