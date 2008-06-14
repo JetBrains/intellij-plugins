@@ -25,6 +25,7 @@ import com.intellij.spring.facet.SpringFacetConfiguration;
 import com.intellij.spring.facet.SpringFacetType;
 import com.intellij.spring.facet.SpringFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -81,12 +82,12 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
 
     final SpringFacetConfiguration configuration = mySpringFacet.getConfiguration();
     final Set<SpringFileSet> list = configuration.getFileSets();
-    final SpringFileSet fileSet = new SpringFileSet("", "default");
+    @NonNls final SpringFileSet fileSet = new SpringFileSet("", "default");
     list.add(fileSet);
     return fileSet;
   }
 
-  protected VirtualFile addFile(final SpringFileSet fileSet, final String path) {
+  protected VirtualFile addFile(final SpringFileSet fileSet, @NonNls final String path) {
     try {
       myFixture.copyFileToProject(path);
     }
