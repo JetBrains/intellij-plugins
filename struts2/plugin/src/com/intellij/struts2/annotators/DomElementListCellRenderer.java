@@ -63,8 +63,8 @@ abstract class DomElementListCellRenderer<T extends DomElement> extends PsiEleme
     return elementName == null ? unknownElementText : elementName;
   }
 
-  protected String getContainerText(final PsiElement element, final String name) {
-    return getAdditionalLocation(getDomElement((XmlTag) element)) +
+  protected String getContainerText(final XmlTag element, final String name) {
+    return getAdditionalLocation(getDomElement(element)) +
            " (" + element.getContainingFile().getName() + ')';
   }
 
