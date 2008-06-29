@@ -15,16 +15,8 @@
 
 package com.intellij.struts2.dom.struts;
 
-import com.intellij.javaee.web.facet.WebFacet;
-import com.intellij.javaee.web.facet.WebFacetConfigurationImpl;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
-import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Set;
 
 /**
  * Tests for {@link com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter}.
@@ -42,24 +34,9 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
     return WebModuleFixtureBuilder.class;
   }
 
-  //todo[nik] it is hack. Remove it. 
-  @Override
-  protected void createStrutsFileSet(@NonNls final String... fileNames) {
-    super.createStrutsFileSet(fileNames);
-    Set<StrutsFileSet> fileSets = myFacet.getConfiguration().getFileSets();
-    for (StrutsFileSet fileSet : fileSets) {
-      for (VirtualFilePointer pointer : fileSet.getFiles()) {
-        VirtualFile file = pointer.getFile();
-        if (file != null) {
-          WebFacet webFacet = WebFacet.getInstances(myFacet.getModule()).iterator().next();
-          ((WebFacetConfigurationImpl)webFacet.getConfiguration()).getSourceRoots().add(file.getUrl());
-        }
-      }
-    }
-  }
-
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
+    moduleBuilder.addSourceRoot(myFixture.getTempDirPath());
     moduleBuilder.addWebRoot(getTestDataPath() + "/jsp/", "/");
     moduleBuilder.addWebRoot(getTestDataPath() + "/jsp2/", "/2ndWebRoot/");
   }
