@@ -31,6 +31,7 @@ import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.j2ee.web.WebUtilImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -73,10 +74,13 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
     final FacetDetectorRegistryEx<StrutsFacetConfiguration> registry =
             (FacetDetectorRegistryEx<StrutsFacetConfiguration>) facetDetectorRegistry;
     registry.registerUniversalDetectorByFileNameAndRootTag(StrutsConstants.STRUTS_DEFAULT_FILENAME, StrutsRoot.TAG_NAME,
-                                                           new StrutsFacetDetector(), WebUtilImpl.BY_PARENT_WEB_ROOT_SELECTOR);
+                                                           new StrutsFacetDetector("struts2-detector"), WebUtilImpl.BY_PARENT_WEB_ROOT_SELECTOR);
   }
 
   private static class StrutsFacetDetector extends FacetDetector<VirtualFile, StrutsFacetConfiguration> {
+    private StrutsFacetDetector(final @NotNull @NonNls String id) {
+      super(id);
+    }
 
     public StrutsFacetConfiguration detectFacet(final VirtualFile source,
                                                 final Collection<StrutsFacetConfiguration> existentFacetConfigurations) {
