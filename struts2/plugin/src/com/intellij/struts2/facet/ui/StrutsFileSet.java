@@ -33,7 +33,7 @@ import java.util.Set;
 /**
  * Groups one or more struts.xml files in a named set.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsFileSet implements ElementsChooser.ElementProperties {
 

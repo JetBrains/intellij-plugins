@@ -45,7 +45,7 @@ import java.util.List;
 /**
  * Provides paths to static webresources.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class DispatchPathResultContributor implements StrutsResultContributor {
 

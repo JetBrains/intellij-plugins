@@ -27,7 +27,7 @@ import com.intellij.util.xml.Required;
  * <p/>
  * TODO https://issues.apache.org/struts/browse/WW-1420
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface DefaultClassRef extends ParamsElement {
 

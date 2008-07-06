@@ -22,7 +22,7 @@ import com.intellij.openapi.paths.PathReferenceProvider;
 /**
  * Provides references for &lt;result&gt;.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface StrutsResultContributor extends PathReferenceProvider {
 

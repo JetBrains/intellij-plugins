@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NonNls;
 /**
  * <code>result</code>.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 @Convert(StrutsPathReferenceConverter.class)
 public interface Result extends ParamsElement, GenericDomValue<PathReference> {

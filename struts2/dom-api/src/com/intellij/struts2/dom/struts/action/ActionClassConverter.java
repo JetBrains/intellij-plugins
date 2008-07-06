@@ -19,7 +19,6 @@ package com.intellij.struts2.dom.struts.action;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.Converter;
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Converter for &lt;action&gt; "class" attribute.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class ActionClassConverter extends Converter<PsiClass> implements CustomReferenceConverter<PsiClass> {
 
@@ -48,7 +47,7 @@ public abstract class ActionClassConverter extends Converter<PsiClass> implement
   /**
    * Contributes results to {@link ActionClassConverter}.
    *
-   * @author Yann CŽbron
+   * @author Yann C&eacute;bron
    */
   public static abstract class ActionClassConverterContributor extends PsiReferenceProvider {
 

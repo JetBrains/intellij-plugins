@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Provide additional location information (e.g. path to resource) for display use.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface LocationPresentation {
 

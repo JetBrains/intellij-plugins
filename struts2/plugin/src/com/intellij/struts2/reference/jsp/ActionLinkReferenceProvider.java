@@ -42,7 +42,7 @@ import java.util.Set;
 /**
  * Provides links to Action-URLs in all places where Servlet-URLs are processed.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
 

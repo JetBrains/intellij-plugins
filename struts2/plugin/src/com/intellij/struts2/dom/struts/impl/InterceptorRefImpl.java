@@ -21,7 +21,7 @@ import com.intellij.struts2.dom.struts.strutspackage.InterceptorRef;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class InterceptorRefImpl implements InterceptorRef {
 

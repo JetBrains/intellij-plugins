@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Base-interface for all tags containing <code>param</code> child-tags.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface ParamsElement extends DomElement {
 

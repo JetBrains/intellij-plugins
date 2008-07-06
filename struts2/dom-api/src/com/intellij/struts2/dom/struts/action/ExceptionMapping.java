@@ -19,7 +19,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.*;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface ExceptionMapping extends DomElement /* ParamsElement TODO ??! */ {
 

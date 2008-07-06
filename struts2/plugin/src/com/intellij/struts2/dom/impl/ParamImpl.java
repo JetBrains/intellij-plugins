@@ -15,13 +15,13 @@
 
 package com.intellij.struts2.dom.impl;
 
-import com.intellij.struts2.structure.LocationPresentation;
 import com.intellij.struts2.dom.Param;
+import com.intellij.struts2.structure.LocationPresentation;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class ParamImpl implements Param, LocationPresentation {
 

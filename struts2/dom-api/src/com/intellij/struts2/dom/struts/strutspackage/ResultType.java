@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * <code>result-type</code>
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface ResultType extends DomElement {
 

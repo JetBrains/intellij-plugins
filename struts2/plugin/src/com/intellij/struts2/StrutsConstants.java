@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NonNls;
 /**
  * Plugin-wide constants.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public final class StrutsConstants {
 

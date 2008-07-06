@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Provides structure view for validation.xml files.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ValidationStructureViewBuilderProvider extends BaseStructureViewBuilderProvider {
 

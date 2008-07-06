@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiElement> {
 

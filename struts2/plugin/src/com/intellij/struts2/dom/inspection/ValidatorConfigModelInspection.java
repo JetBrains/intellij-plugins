@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ValidatorConfigModelInspection extends BasicDomElementsInspection<ValidatorsConfig> {
 

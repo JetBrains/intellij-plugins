@@ -20,7 +20,7 @@ import com.intellij.struts2.dom.validator.config.ValidatorConfig;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class ValidatorImpl implements Validator {
 

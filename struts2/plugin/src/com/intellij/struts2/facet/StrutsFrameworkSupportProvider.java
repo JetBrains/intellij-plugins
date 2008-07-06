@@ -51,7 +51,7 @@ import java.util.Set;
 /**
  * "Add Framework" support.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportProvider<StrutsFacet> {
 

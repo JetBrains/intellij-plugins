@@ -15,8 +15,8 @@
 
 package com.intellij.struts2.dom.validator;
 
-import com.intellij.util.xml.*;
 import com.intellij.struts2.dom.StrutsDomConstants;
+import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * <code>field</code>.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
 public interface Field extends DomElement {

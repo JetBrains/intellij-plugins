@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * Project-service for accessing {@link StrutsModel} and various utility methods.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class StrutsManager {
 

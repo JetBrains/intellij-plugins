@@ -26,7 +26,7 @@ import javax.swing.*;
 /**
  * All icons.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public final class StrutsIcons {
 

@@ -24,7 +24,7 @@ import com.intellij.util.xml.TagValue;
 /**
  * <code>message</code>.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
 public interface Message extends DomElement {

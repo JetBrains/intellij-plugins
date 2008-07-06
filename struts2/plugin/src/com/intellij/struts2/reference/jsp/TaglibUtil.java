@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Various utilities for taglibs.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public final class TaglibUtil {
 

@@ -22,7 +22,7 @@ import com.intellij.util.xml.*;
 /**
  * <code>validator</code> in validator-config.xml.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.VALIDATOR_CONFIG_NAMESPACE_KEY)
 public interface ValidatorConfig extends DomElement {

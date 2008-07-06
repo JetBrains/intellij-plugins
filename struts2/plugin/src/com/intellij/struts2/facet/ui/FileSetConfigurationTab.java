@@ -48,7 +48,7 @@ import java.util.Set;
 /**
  * Struts2 facet tab "File Sets".
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class FileSetConfigurationTab extends FacetEditorTab {
 

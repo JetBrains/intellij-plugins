@@ -21,7 +21,7 @@ import com.intellij.util.xml.*;
 /**
  * <code>param</code>
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface Param extends DomElement {
 

@@ -23,7 +23,7 @@ import com.intellij.peer.PeerFactory;
 /**
  * Adds SpeedSearch (Alt+F3) to the structure view.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StructureViewComponent extends com.intellij.ide.structureView.newStructureView.StructureViewComponent {
 

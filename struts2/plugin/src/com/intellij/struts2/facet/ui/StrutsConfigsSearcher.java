@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsConfigsSearcher {
 

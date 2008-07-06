@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * <code>interceptor-stack</code>
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface InterceptorStack extends InterceptorOrStackBase {
 

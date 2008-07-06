@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * <code>package</code>
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
 public interface StrutsPackage extends DomElement {

@@ -16,10 +16,12 @@
 package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.psi.PsiClass;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.Attribute;
+import com.intellij.util.xml.ExtendClass;
+import com.intellij.util.xml.GenericAttributeValue;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface Interceptor extends InterceptorOrStackBase {
 

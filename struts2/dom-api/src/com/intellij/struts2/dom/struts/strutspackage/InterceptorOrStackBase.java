@@ -23,7 +23,7 @@ import com.intellij.util.xml.NameValue;
  * Common base interface for {@link com.intellij.struts2.dom.struts.strutspackage.Interceptor} and
  * {@link InterceptorStack} for use in {@link com.intellij.struts2.dom.struts.strutspackage.InterceptorRefResolveConverter}.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface InterceptorOrStackBase extends DomElement {
 

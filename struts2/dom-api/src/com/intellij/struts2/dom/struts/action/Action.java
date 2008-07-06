@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * <code>action</code>
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface Action extends ParamsElement {
 

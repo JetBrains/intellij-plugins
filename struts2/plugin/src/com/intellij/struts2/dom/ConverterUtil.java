@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Utility methods for DOM-Converters.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public final class ConverterUtil {
 

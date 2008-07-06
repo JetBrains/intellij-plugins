@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Service for accessing <code>struts.xml</code> files.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface StrutsModel extends DomModel<StrutsRoot> {
 

@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Converter for <code>result</code> location (tag body value).
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  * @see StrutsResultContributor
  */
 public class StrutsPathReferenceConverterImpl extends StrutsPathReferenceConverter {

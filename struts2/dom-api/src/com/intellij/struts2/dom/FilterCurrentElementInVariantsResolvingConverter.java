@@ -22,7 +22,7 @@ import java.util.Collection;
 /**
  * Exclude the current element from completion/resolving variants. The element must have a {@link NameValue} annotation.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class FilterCurrentElementInVariantsResolvingConverter<T extends DomElement> extends ResolvingConverter<T> {
 

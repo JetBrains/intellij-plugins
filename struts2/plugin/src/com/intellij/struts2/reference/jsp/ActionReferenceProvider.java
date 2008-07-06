@@ -27,7 +27,6 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.StrutsIcons;
-import com.intellij.struts2.reference.jsp.TaglibUtil;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -41,7 +40,7 @@ import java.util.List;
 /**
  * Custom tags attribute "action".
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ActionReferenceProvider extends PsiReferenceProviderBase {
 

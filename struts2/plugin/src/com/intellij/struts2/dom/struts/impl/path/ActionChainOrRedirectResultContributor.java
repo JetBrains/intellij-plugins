@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Provides paths to "actionName" for results with type="chain" and "redirectAction".
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ActionChainOrRedirectResultContributor implements StrutsResultContributor {
 

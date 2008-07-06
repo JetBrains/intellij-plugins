@@ -28,7 +28,7 @@ import java.util.Collections;
 /**
  * Global <code>exception-mapping</code> "result".
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class GlobalExceptionMappingResultResolveConverter extends ResolvingConverter<GlobalResult> {
 

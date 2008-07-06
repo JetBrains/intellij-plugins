@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ExceptionMappingResultResolveConverter extends ResolvingConverter<Result> {
 

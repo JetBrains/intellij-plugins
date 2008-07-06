@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Struts2 facet.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsFacet extends Facet<StrutsFacetConfiguration> {
 

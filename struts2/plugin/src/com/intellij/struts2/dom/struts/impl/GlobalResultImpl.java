@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class GlobalResultImpl implements GlobalResult, LocationPresentation {
 

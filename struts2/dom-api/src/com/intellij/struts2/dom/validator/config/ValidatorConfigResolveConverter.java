@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * <code>field-validator/validator</code> "type".
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class ValidatorConfigResolveConverter extends ResolvingConverter<ValidatorConfig> {
 

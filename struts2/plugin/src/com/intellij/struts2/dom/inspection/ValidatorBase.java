@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Base-class for validators.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class ValidatorBase extends InspectionValidator {
 

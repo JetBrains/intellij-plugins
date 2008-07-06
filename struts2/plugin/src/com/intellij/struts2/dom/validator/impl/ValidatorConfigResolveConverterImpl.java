@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ValidatorConfigResolveConverterImpl extends ValidatorConfigResolveConverter {
 

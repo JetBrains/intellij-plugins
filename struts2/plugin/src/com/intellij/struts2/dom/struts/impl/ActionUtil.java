@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 /**
  * Helper methods for {@link ActionImpl}.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 final class ActionUtil {
 

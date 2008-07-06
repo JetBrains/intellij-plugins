@@ -18,7 +18,7 @@ package com.intellij.struts2.dom.struts.action;
 import com.intellij.util.xml.converters.PathReferenceConverter;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class StrutsPathReferenceConverter extends PathReferenceConverter {
 }

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * <code>package</code> "extends" attribute.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  * @see com.intellij.struts2.dom.struts.strutspackage.StrutsPackage#getExtends()
  */
 public abstract class StrutsPackageExtendsResolveConverter extends FilterCurrentElementInVariantsResolvingConverter<StrutsPackage> {

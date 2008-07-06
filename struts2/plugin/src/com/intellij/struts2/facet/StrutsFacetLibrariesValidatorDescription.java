@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Validates required libraries and adjusts WebFacet deployment settings.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsFacetLibrariesValidatorDescription extends FacetLibrariesValidatorDescription {
 

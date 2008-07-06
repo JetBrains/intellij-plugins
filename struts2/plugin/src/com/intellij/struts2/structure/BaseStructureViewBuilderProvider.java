@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Base-class for DOM-model based structure views.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class BaseStructureViewBuilderProvider implements XmlStructureViewBuilderProvider {
 

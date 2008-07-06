@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Registers all {@link PsiReferenceProvider}s.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsReferenceContributor extends PsiReferenceContributor {
 

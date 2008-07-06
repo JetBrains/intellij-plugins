@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * <code>global-exception-mappings</code>
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface GlobalExceptionMappings extends DomElement {
 

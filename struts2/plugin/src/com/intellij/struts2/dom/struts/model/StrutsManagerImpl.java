@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsManagerImpl extends StrutsManager {
 

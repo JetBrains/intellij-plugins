@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * <code>global-results</code>
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface GlobalResults extends DomElement {
 

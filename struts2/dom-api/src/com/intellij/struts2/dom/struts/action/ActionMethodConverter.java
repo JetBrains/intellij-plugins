@@ -41,7 +41,7 @@ import java.util.Collection;
 /**
  * <code>action</code> "method"
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
 

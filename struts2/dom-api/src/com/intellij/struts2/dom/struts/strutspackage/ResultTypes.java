@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * <code>result-types</code>
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface ResultTypes extends DomElement {
 

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface Interceptors extends DomElement {
 

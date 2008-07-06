@@ -15,11 +15,11 @@
 
 package com.intellij.struts2.dom.struts;
 
+import com.intellij.struts2.dom.StrutsDomConstants;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.Namespace;
 import com.intellij.util.xml.SubTagList;
-import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.struts2.dom.StrutsDomConstants;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * <code>struts</code> root-element for struts.xml-files.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
 public interface StrutsRoot extends DomElement {

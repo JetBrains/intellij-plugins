@@ -16,8 +16,8 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -28,14 +28,14 @@ import com.intellij.struts2.dom.struts.action.ActionClassConverter;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.ConvertContext;
-import com.intellij.util.xml.GenericDomValue;
 import com.intellij.util.xml.DomJavaUtil;
+import com.intellij.util.xml.GenericDomValue;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ActionClassConverterImpl extends ActionClassConverter {
 

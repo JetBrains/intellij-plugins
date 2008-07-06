@@ -38,7 +38,7 @@ import java.util.Set;
 /**
  * Validator for validation.xml/validators.xml files when running "Make Project".
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ValidatorModelValidator extends ValidatorBase {
 

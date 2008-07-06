@@ -24,7 +24,7 @@ import com.intellij.util.xml.*;
 /**
  * <code>field-validator</code>.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
 public interface FieldValidator extends ParamsElement {

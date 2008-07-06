@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Adds utility methods.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class ActionImpl implements Action {
 

@@ -21,7 +21,7 @@ import com.intellij.util.xml.*;
 /**
  * <code>bean</code>
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface Bean extends DomElement {
 

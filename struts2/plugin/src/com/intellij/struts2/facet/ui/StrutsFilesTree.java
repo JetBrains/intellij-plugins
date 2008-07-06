@@ -33,7 +33,7 @@ import javax.swing.tree.TreeNode;
 import java.util.*;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsFilesTree extends CheckboxTreeBase {
 

@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Resolve within parent {@link StrutsPackage}-element.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsPackageWithinPackageScopeProvider extends ScopeProvider {
 

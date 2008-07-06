@@ -21,7 +21,7 @@ import com.intellij.util.xml.ResolvingConverter;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class DefaultInterceptorRefResolveConverter extends ResolvingConverter<InterceptorStack> {
 

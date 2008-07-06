@@ -22,7 +22,7 @@ import static com.intellij.facet.ui.libraries.MavenLibraryUtil.createSubMavenJar
 /**
  * Available Struts2-library versions and their required dependencies.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  * @see com.intellij.struts2.facet.ui.FeaturesConfigurationTab
  */
 public enum StrutsVersion {

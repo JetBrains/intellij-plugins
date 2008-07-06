@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * <code>result</code> "type"-attribute.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  * @see com.intellij.struts2.dom.struts.action.Result#getType()
  */
 public abstract class ResultTypeResolvingConverter extends ResolvingConverter<ResultType> {

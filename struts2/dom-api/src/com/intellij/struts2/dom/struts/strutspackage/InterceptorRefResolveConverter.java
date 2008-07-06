@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * <code>interceptor-ref</code> "name"
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class InterceptorRefResolveConverter extends ResolvingConverter<InterceptorOrStackBase> {
 

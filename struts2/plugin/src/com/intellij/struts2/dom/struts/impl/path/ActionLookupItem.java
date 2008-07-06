@@ -29,7 +29,7 @@ import java.awt.*;
 /**
  * Represents a lookup value for an Action.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 class ActionLookupItem implements LookupValueWithUIHint,
                                   LookupValueWithPriority,

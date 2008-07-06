@@ -39,7 +39,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ValidatorManagerImpl extends ValidatorManager {
 

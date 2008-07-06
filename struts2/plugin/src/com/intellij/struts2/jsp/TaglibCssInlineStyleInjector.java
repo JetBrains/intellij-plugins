@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Adds CSS inline support for UI tags attribute "cssStyle".
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class TaglibCssInlineStyleInjector implements MultiHostInjector {
 

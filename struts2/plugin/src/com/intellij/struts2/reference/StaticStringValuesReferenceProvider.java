@@ -29,7 +29,7 @@ import java.util.Arrays;
 /**
  * Provides reference functionality for static String values.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StaticStringValuesReferenceProvider extends PsiReferenceProviderBase {
 

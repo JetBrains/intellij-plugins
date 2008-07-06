@@ -21,7 +21,7 @@ import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.Required;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public interface DefaultInterceptorRef extends ParamsElement {
 

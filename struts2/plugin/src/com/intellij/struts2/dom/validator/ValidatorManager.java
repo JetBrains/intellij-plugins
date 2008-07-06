@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * Project-service for accessing validation.xml files and various utility methods.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class ValidatorManager {
 

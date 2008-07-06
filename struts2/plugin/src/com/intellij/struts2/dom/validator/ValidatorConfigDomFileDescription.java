@@ -23,7 +23,7 @@ import com.intellij.util.xml.DomFileDescription;
 /**
  * <code>validators.xml</code> DOM-Model files.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ValidatorConfigDomFileDescription extends DomFileDescription<ValidatorsConfig> {
 

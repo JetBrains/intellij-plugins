@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * Adds JavaScript support for Struts UI tags.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 @SuppressWarnings({"ComponentNotRegistered"})
 public class TaglibJavaScriptInjector extends AbstractProjectComponent implements MultiHostInjector {

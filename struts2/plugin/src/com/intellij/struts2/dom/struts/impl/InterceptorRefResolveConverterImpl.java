@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveConverter {
 
