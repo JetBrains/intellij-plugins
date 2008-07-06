@@ -1,0 +1,212 @@
+/*
+ * Copyright 2008 The authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.intellij.struts2.graph;
+
+import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.graph.builder.GraphDataModel;
+import com.intellij.openapi.graph.builder.NodesGroup;
+import com.intellij.openapi.graph.builder.components.BasicNodesGroup;
+import com.intellij.openapi.graph.view.NodeLabel;
+import com.intellij.openapi.graph.view.hierarchy.GroupNodeRealizer;
+import com.intellij.openapi.paths.PathReference;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.dom.struts.action.Action;
+import com.intellij.struts2.dom.struts.action.Result;
+import com.intellij.struts2.dom.struts.model.StrutsManager;
+import com.intellij.struts2.dom.struts.model.StrutsModel;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.struts2.graph.beans.ActionNode;
+import com.intellij.struts2.graph.beans.BasicStrutsEdge;
+import com.intellij.struts2.graph.beans.BasicStrutsNode;
+import com.intellij.struts2.graph.beans.ResultNode;
+import com.intellij.ui.Colors;
+import com.intellij.util.containers.HashSet;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author Yann C&eacute;bron
+ * @author Sergey Vasiliev
+ */
+public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStrutsEdge> {
+
+  private Collection<BasicStrutsNode> myNodes = new HashSet<BasicStrutsNode>();
+  private Collection<BasicStrutsEdge> myEdges = new HashSet<BasicStrutsEdge>();
+
+  private final Map<PsiFile, NodesGroup> myGroups = new HashMap<PsiFile, NodesGroup>();
+
+  private final Project myProject;
+  private final XmlFile myFile;
+
+
+  public StrutsDataModel(final XmlFile file) {
+    myFile = file;
+    myProject = file.getProject();
+  }
+
+  @NotNull
+  public Collection<BasicStrutsNode> getNodes() {
+    return getNodes(true);
+  }
+
+  @NotNull
+  private Collection<BasicStrutsNode> getNodes(boolean refresh) {
+    if (refresh) {
+      refreshDataModel();
+    }
+
+    return myNodes;
+  }
+
+  @NotNull
+  public Collection<BasicStrutsEdge> getEdges() {
+    return myEdges;
+  }
+
+  @NotNull
+  public BasicStrutsNode getSourceNode(final BasicStrutsEdge edge) {
+    return edge.getSource();
+  }
+
+  @NotNull
+  public BasicStrutsNode getTargetNode(final BasicStrutsEdge edge) {
+    return edge.getTarget();
+  }
+
+  @NotNull
+  public String getNodeName(final BasicStrutsNode node) {
+    return "";
+  }
+
+  @NotNull
+  public String getEdgeName(final BasicStrutsEdge edge) {
+    return edge.getName();
+  }
+
+  public BasicStrutsEdge createEdge(@NotNull final BasicStrutsNode from, @NotNull final BasicStrutsNode to) {
+    if (StringUtil.isEmptyOrSpaces(to.getName())) {
+      return null;
+    }
+
+    final WriteCommandAction<BasicStrutsEdge> action = new WriteCommandAction<BasicStrutsEdge>(myProject) {
+      protected void run(final com.intellij.openapi.application.Result<BasicStrutsEdge> basicStrutsEdgeResult) throws
+                                                                                                               Throwable {
+        basicStrutsEdgeResult.setResult(new BasicStrutsEdge(from, to, "test"));
+      }
+    };
+    return action.execute().getResultObject();
+  }
+
+  public void dispose() {
+  }
+
+  private void refreshDataModel() {
+    myNodes.clear();
+    myEdges.clear();
+    updateDataModel();
+  }
+
+  @Override
+  public NodesGroup getGroup(final BasicStrutsNode basicStrutsNode) {
+    if (isGroupElements()) {
+      final XmlElement xmlElement = basicStrutsNode.getIdentifyingElement().getXmlElement();
+      assert xmlElement != null;
+      return myGroups.get(xmlElement.getContainingFile());
+    }
+    return super.getGroup(basicStrutsNode);
+
+  }
+
+  private void addNode(final BasicStrutsNode node) {
+    myNodes.add(node);
+
+    if (isGroupElements()) {
+      final XmlElement element = node.getIdentifyingElement().getXmlElement();
+      assert element != null;
+      final PsiFile file = element.getContainingFile();
+      if (file != null && !myGroups.containsKey(file)) {
+        final String name = file.getName();
+
+        final BasicNodesGroup group = new BasicNodesGroup(name) {
+
+          @Nullable
+          public GroupNodeRealizer getGroupNodeRealizer() {
+            final GroupNodeRealizer groupNodeRealizer = super.getGroupNodeRealizer();
+            groupNodeRealizer.setFillColor(new Color(239, 239, 239));
+
+            final NodeLabel nodeLabel = groupNodeRealizer.getLabel();
+            nodeLabel.setText("      " + getGroupName());
+            nodeLabel.setBackgroundColor(Colors.DISABLED_COLOR);
+            nodeLabel.setModel(NodeLabel.INTERNAL);
+            nodeLabel.setPosition(NodeLabel.TOP_RIGHT);
+
+            return groupNodeRealizer;
+          }
+        };
+//        group.setClosed(true);
+
+        myGroups.put(file, group);
+      }
+    }
+  }
+
+  // TODO configurable?
+  private boolean isGroupElements() {
+    return true;
+  }
+
+  private void addEdge(final BasicStrutsEdge edge) {
+    myEdges.add(edge);
+  }
+
+  public void updateDataModel() {
+    PsiDocumentManager.getInstance(myProject).commitAllDocuments();
+
+    StrutsModel model = StrutsManager.getInstance(myProject).getModelByFile(myFile);
+
+    if (model == null) {
+      return;
+    }
+
+    for (StrutsPackage strutsPackage : model.getStrutsPackages()) {
+      for (Action action : strutsPackage.getActions()) {
+        final ActionNode actionNode = new ActionNode(action, action.getName().getStringValue());
+        addNode(actionNode);
+
+        for (Result result : action.getResults()) {
+          final PathReference pathReference = result.getValue();
+          final ResultNode resultNode = new ResultNode(result, pathReference != null ? pathReference.getPath() : "???");
+          addNode(resultNode);
+
+          final String resultName = result.getName().getStringValue();
+          addEdge(new BasicStrutsEdge(actionNode, resultNode, resultName != null ? resultName : Result.DEFAULT_NAME));
+        }
+
+      }
+    }
+
+  }
+
+}

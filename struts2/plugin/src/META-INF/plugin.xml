@@ -45,7 +45,7 @@
     <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsReferenceContributor"/>
 
     <frameworkSupport implementation="com.intellij.struts2.facet.StrutsFrameworkSupportProvider"/>
-    
+
     <!-- struts.xml -->
     <dom.fileDescription implementation="com.intellij.struts2.dom.struts.Struts2DomFileDescription"/>
     <dom.fileDescription implementation="com.intellij.struts2.dom.struts.XWorkDomFileDescription"/>
@@ -61,6 +61,9 @@
     <xmlStructureViewBuilderProvider
             implementation="com.intellij.struts2.structure.StrutsStructureViewBuilderProvider"/>
 
+    <!-- TODO pageflow graph
+    <fileEditorProvider implementation="com.intellij.struts2.graph.fileEditor.Struts2GraphFileEditorProvider"/>
+    -->
     <struts2.resultContributor
             implementation="com.intellij.struts2.dom.struts.impl.path.DispatchPathResultContributor"/>
     <struts2.resultContributor
