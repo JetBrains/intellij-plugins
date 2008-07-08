@@ -87,7 +87,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     return fileSet;
   }
 
-  protected VirtualFile addFile(final SpringFileSet fileSet, @NonNls final String path) {
+  protected void addFile(final SpringFileSet fileSet, @NonNls final String path) {
     try {
       myFixture.copyFileToProject(path);
     }
@@ -102,8 +102,6 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     final SpringFacet springFacet = SpringFacet.getInstance(myModule);
     assert springFacet != null;
     springFacet.getConfiguration().setModified();
-
-    return file;
   }
 
   protected SpringFacet createSpringFacet() {

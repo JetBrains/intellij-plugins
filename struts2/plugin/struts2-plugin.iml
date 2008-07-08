@@ -19,8 +19,6 @@
     <orderEntry type="module" module-name="CSS" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="dom-impl" />
-    <orderEntry type="module" module-name="jpa-openapi" />
-    <orderEntry type="module" module-name="jpa-impl" />
     <orderEntry type="module" module-name="jam-support-impl" />
     <orderEntry type="module" module-name="web-openapi" />
     <orderEntry type="module" module-name="web-impl" />

@@ -20,6 +20,7 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.autodetecting.FacetDetector;
 import com.intellij.facet.autodetecting.FacetDetectorRegistry;
 import com.intellij.facet.impl.autodetecting.FacetDetectorRegistryEx;
+import com.intellij.j2ee.web.WebUtilImpl;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -28,10 +29,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.StrutsRoot;
-import com.intellij.j2ee.web.WebUtilImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -74,12 +73,12 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
     final FacetDetectorRegistryEx<StrutsFacetConfiguration> registry =
             (FacetDetectorRegistryEx<StrutsFacetConfiguration>) facetDetectorRegistry;
     registry.registerUniversalDetectorByFileNameAndRootTag(StrutsConstants.STRUTS_DEFAULT_FILENAME, StrutsRoot.TAG_NAME,
-                                                           new StrutsFacetDetector("struts2-detector"), WebUtilImpl.BY_PARENT_WEB_ROOT_SELECTOR);
+                                                           new StrutsFacetDetector(), WebUtilImpl.BY_PARENT_WEB_ROOT_SELECTOR);
   }
 
   private static class StrutsFacetDetector extends FacetDetector<VirtualFile, StrutsFacetConfiguration> {
-    private StrutsFacetDetector(final @NotNull @NonNls String id) {
-      super(id);
+    private StrutsFacetDetector() {
+      super("struts2-detector");
     }
 
     public StrutsFacetConfiguration detectFacet(final VirtualFile source,

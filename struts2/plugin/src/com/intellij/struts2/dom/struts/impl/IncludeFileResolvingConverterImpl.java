@@ -94,7 +94,7 @@ public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConve
     }.getReferencesByElement(element, s, offset, true);
   }
 
-  protected boolean isFileAccepted(@NotNull final PsiFile file) {
+  private static boolean isFileAccepted(@NotNull final PsiFile file) {
     if (file instanceof XmlFile) {
       final XmlFile xmlFile = (XmlFile) file;
       final StrutsModel model = StrutsManager.getInstance(file.getProject()).getModelByFile(xmlFile);
