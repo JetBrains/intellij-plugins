@@ -7,11 +7,15 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="Annotations" />
     <orderEntry type="module" module-name="dom-openapi" />
     <orderEntry type="module" module-name="codeInsight-impl" />
     <orderEntry type="module" module-name="openapi" />
     <orderEntry type="module" module-name="spring-core" />
+    <orderEntry type="module" module-name="jpa-openapi" />
     <orderEntry type="module" module-name="jpa-impl" />
+    <orderEntry type="module" module-name="jam-support-openapi" />
+    <orderEntry type="module" module-name="jam-support-impl" />
     <orderEntry type="module" module-name="ExtendedApi" />
     <orderEntryProperties />
   </component>
