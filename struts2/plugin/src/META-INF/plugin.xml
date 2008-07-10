@@ -80,6 +80,8 @@
 
     <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorConfigDomFileDescription"/>
 
+    <iconProvider implementation="com.intellij.struts2.Struts2IconProvider"/>
+
     <xmlStructureViewBuilderProvider
             implementation="com.intellij.struts2.structure.ValidationStructureViewBuilderProvider"/>
 
