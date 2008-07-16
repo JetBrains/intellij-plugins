@@ -18,6 +18,7 @@ package jetbrains.communicator.idea.toolWindow;
 import com.intellij.concurrency.JobScheduler;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.messager.Callout;
+import com.intellij.util.ArrayUtil;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.IDEtalkAdapter;
@@ -180,10 +181,10 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
   }
 
   public Object[] getSelectedNodes() {
-    if (myTree.isEditing()) return new Object[0];
+    if (myTree.isEditing()) return ArrayUtil.EMPTY_OBJECT_ARRAY;
 
     final TreePath[] selectionPaths = myTree.getSelectionPaths();
-    if (selectionPaths == null) return new Object[0];
+    if (selectionPaths == null) return ArrayUtil.EMPTY_OBJECT_ARRAY;
 
     List<Object> result = new ArrayList<Object>();
     for (TreePath selectionPath : selectionPaths) {

@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.mock;
 
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.ide.UserListComponent;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,7 @@ import java.awt.*;
  * @author Kir
  */
 public class MockUserListComponent implements UserListComponent {
-  private Object[] mySelectedNodes = new Object[0];
+  private Object[] mySelectedNodes = ArrayUtil.EMPTY_OBJECT_ARRAY;
 
   public void setSelectedNodes(Object[] selectedNodes) {
     mySelectedNodes = selectedNodes;

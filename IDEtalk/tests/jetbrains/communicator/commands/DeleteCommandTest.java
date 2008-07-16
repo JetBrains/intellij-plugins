@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.commands;
 
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
 import jetbrains.communicator.ide.IDEFacade;
@@ -54,7 +55,7 @@ public class DeleteCommandTest extends BaseTestCase {
   }
 
   public void testIsEnabled_NoSelection() throws Exception {
-    myUserListComponentMock.stubs().method("getSelectedNodes").will(returnValue(new Object[0]));
+    myUserListComponentMock.stubs().method("getSelectedNodes").will(returnValue(ArrayUtil.EMPTY_OBJECT_ARRAY));
     assertFalse("No selection - action should be disabled", myCommand.isEnabled());
   }
 

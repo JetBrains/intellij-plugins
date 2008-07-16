@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.commands;
 
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.BaseTestCase;
 import jetbrains.communicator.OptionFlag;
 import jetbrains.communicator.core.Pico;
@@ -50,7 +51,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
 
   public void testEnabled() throws Exception {
     myUserListComponent.expects(once()).method("getSelectedNodes")
-        .will(returnValue(new Object[0]));
+        .will(returnValue(ArrayUtil.EMPTY_OBJECT_ARRAY));
     assertFalse(myCommand.isEnabled());
 
     myUserListComponent.expects(atLeastOnce()).method("getSelectedNodes")
@@ -60,7 +61,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
 
   public void testGetText() throws Exception {
     myUserListComponent.expects(once()).method("getSelectedNodes")
-        .will(returnValue(new Object[0]));
+        .will(returnValue(ArrayUtil.EMPTY_OBJECT_ARRAY));
     assertNotNull(myCommand.getText());
 
     myUserListComponent.expects(atLeastOnce()).method("getSelectedNodes")
