@@ -229,7 +229,8 @@ public class FileSetConfigurationTab extends FacetEditorTab {
             myBuffer.remove(fileSet);
           }
         }
-      } else if (node instanceof ConfigFileNode) {
+      }
+      else if (node instanceof ConfigFileNode) {
         final VirtualFilePointer filePointer = ((ConfigFileNode) node).myFilePointer;
         final StrutsFileSet fileSet = ((FileSetNode) node.getParent()).mySet;
         fileSet.removeFile(filePointer);
