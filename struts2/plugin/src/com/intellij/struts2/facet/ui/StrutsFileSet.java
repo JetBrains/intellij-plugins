@@ -45,7 +45,7 @@ public class StrutsFileSet implements ElementsChooser.ElementProperties {
 
   private final List<VirtualFilePointer> files = new ArrayList<VirtualFilePointer>();
 
-  private static final String ID_PREFIX = "s2fileset";
+  @NonNls private static final String ID_PREFIX = "s2fileset";
 
   public StrutsFileSet(@NotNull final String id, @NotNull final String name) {
     this.id = id;
@@ -53,8 +53,7 @@ public class StrutsFileSet implements ElementsChooser.ElementProperties {
   }
 
   public StrutsFileSet(@NotNull final StrutsFileSet original) {
-    id = original.getId();
-    name = original.getName();
+    this(original.getId(), original.getName());
     autodetected = original.isAutodetected();
     removed = original.isRemoved();
     files.addAll(original.getFiles());
@@ -140,8 +139,7 @@ public class StrutsFileSet implements ElementsChooser.ElementProperties {
   }
 
   public void addFile(final VirtualFile file) {
-    final VirtualFilePointer filePointer = VirtualFilePointerManager.getInstance().create(file, null);
-    files.add(filePointer);
+    addFile(file.getUrl());
   }
 
   public void addFile(@NonNls final String url) {
