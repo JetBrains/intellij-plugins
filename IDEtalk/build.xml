@@ -161,7 +161,7 @@
       <classpath refid="classpath"/>
       <jvmarg value="-Didea.plugins.load=false"/>
       <jvmarg value="-ea"/>
-      <jvmarg value="-Xbootclasspath/p:${idea}/lib/boot.jar"/>
+      <jvmarg value="-Xbootclasspath/a:${idea}/lib/boot.jar"/>
       <jvmarg line="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=${suspend},address=5009"/>
 
       <formatter type="xml"/>
