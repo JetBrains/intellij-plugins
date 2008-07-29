@@ -16,8 +16,9 @@
 package com.intellij.struts2.dom.inspection;
 
 import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompileScope;
+import com.intellij.openapi.compiler.util.InspectionValidatorUtil;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
@@ -52,8 +53,7 @@ public class Struts2ModelValidator extends ValidatorBase {
     final StrutsManager strutsManager = StrutsManager.getInstance(project);
 
     final Set<VirtualFile> files = new HashSet<VirtualFile>();
-    final CompileScope scope = context.getCompileScope();
-    for (final Module module : scope.getAffectedModules()) {
+    for (final Module module : ModuleManager.getInstance(project).getModules()) {
       final StrutsFacet strutsFacet = StrutsFacet.getInstance(module);
       if (strutsFacet != null) {
         for (final StrutsFileSet fileSet : strutsManager.getAllConfigFileSets(module)) {
@@ -64,7 +64,7 @@ public class Struts2ModelValidator extends ValidatorBase {
         }
       }
     }
-
+    InspectionValidatorUtil.expandCompileScopeIfNeeded(files, context);
     return files;
   }
 
