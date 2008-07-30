@@ -88,8 +88,8 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
   }
 
   public void testActionLinkReferences() throws Throwable {
-    createStrutsFileSet("struts-actionLink.xml");
     myFixture.copyFileToProject("/WEB-INF/web.xml");
+    createStrutsFileSet("struts-actionLink.xml");
     checkActionReference("/jsp/actionLink-reference_1.jsp", "actionLink1");
     checkActionReference("/jsp/actionLink-reference_2.jsp", "rootActionLink");
   }
