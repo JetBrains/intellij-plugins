@@ -9,7 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="openapi" />
-    <orderEntry type="module" module-name="ui-impl" />
     <orderEntry type="module" module-name="platform-impl" />
   </component>
   <component name="VcsManagerConfiguration">
