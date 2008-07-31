@@ -5,14 +5,7 @@
 <idea-plugin url="http://www.jetbrains.net/confluence/display/CONTEST/Struts2Plugin" version="2">
   <id>com.intellij.struts2</id>
   <name>Struts 2</name>
-  <description>
-    <![CDATA[
-  Provides full integration of <a href="http://struts.apache.org/2.x/index.html">Apache Struts 2</a>.
-  <br><br>
-  See <a href="http://www.jetbrains.net/confluence/display/CONTEST/Struts2PluginFeaturesUserGuide">here</a>
-  for feature description and usage guides.
-  ]]>
-  </description>
+  <description>Provides full integration of Apache Struts 2.</description>
 
   <change-notes>
     <![CDATA[
