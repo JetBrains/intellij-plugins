@@ -52,10 +52,10 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
   @NonNls
   private static final String ACTION_EXTENSION = ".action";
 
-  protected PsiReference[] createReferences(final @NotNull PsiElement psiElement,
+  protected PsiReference[] createReferences(@NotNull final PsiElement psiElement,
                                             final int offset,
                                             final String text,
-                                            final @Nullable ServletMappingInfo info,
+                                            @Nullable final ServletMappingInfo info,
                                             final boolean soft) {
     final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject()).
             getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));

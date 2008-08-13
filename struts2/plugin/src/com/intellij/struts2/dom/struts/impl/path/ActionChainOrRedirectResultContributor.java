@@ -63,7 +63,7 @@ public class ActionChainOrRedirectResultContributor implements StrutsResultContr
   }
 
   public boolean createReferences(@NotNull final PsiElement psiElement,
-                                  final @NotNull List<PsiReference> references,
+                                  @NotNull final List<PsiReference> references,
                                   final boolean soft) {
     final StrutsModel model = StrutsManager.getInstance(psiElement.getProject())
         .getModelByFile((XmlFile) psiElement.getContainingFile());

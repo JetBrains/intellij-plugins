@@ -1,9 +1,20 @@
 /*
- * Copyright (c) 2000-2005 by JetBrains s.r.o. All Rights Reserved.
- * Use is subject to license terms.
+ * Copyright 2008 The authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.intellij.struts2;
 
+import com.intellij.ide.IconProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Iconable;
@@ -20,7 +31,6 @@ import com.intellij.struts2.dom.validator.config.ValidatorsConfig;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.xml.DomManager;
-import com.intellij.ide.IconProvider;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,11 +38,11 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 /**
- * @author peter
+ * Provides icons for Struts-related files. <br/>Original code posted by Sascha Weinreuter.
+ *
+ * @author Yann C&eacute;bron
  */
 public class Struts2IconProvider extends IconProvider {
-  // IconProvider -------------------------------------------------------------
-  // original code posted by Sascha Weinreuter
 
   private boolean active;
   private static final Key<TIntObjectHashMap<Icon>> ICON_KEY = Key.create("STRUTS2_OVERLAY_ICON");
@@ -76,7 +86,6 @@ public class Struts2IconProvider extends IconProvider {
       }
 
       Icon strutsIcon = null;
-      LayeredIcon icon = null;
 
       // handle XML files
       if (element instanceof XmlFile) {
@@ -102,26 +111,26 @@ public class Struts2IconProvider extends IconProvider {
         }
       }
 
-      // match? build new layered icon
-      if (strutsIcon != null) {
-        icon = new LayeredIcon(2);
-        final Icon original = element.getIcon(flags & ~Iconable.ICON_FLAG_VISIBILITY);
-        icon.setIcon(original, 0);
-        icon.setIcon(strutsIcon, 1, 0, StrutsIcons.SMALL_ICON_Y_OFFSET);
+      if (strutsIcon == null) {
+        return null;
       }
 
-      // cache built icon
-      if (icon != null) {
-        if (icons == null) {
-          element.putUserData(ICON_KEY, icons = new TIntObjectHashMap<Icon>(3));
-        }
-        icons.put(flags, icon);
-      }
+      // build & cache new layered icon
+      final LayeredIcon layeredIcon = new LayeredIcon(2);
+      final Icon original = element.getIcon(flags & ~Iconable.ICON_FLAG_VISIBILITY);
+      layeredIcon.setIcon(original, 0);
+      layeredIcon.setIcon(strutsIcon, 1, 0, StrutsIcons.SMALL_ICON_Y_OFFSET);
 
-      return icon;
+      if (icons == null) {
+        element.putUserData(ICON_KEY, icons = new TIntObjectHashMap<Icon>(3));
+      }
+      icons.put(flags, layeredIcon);
+
+      return layeredIcon;
     } finally {
       active = false;
     }
 
   }
+
 }

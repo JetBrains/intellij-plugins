@@ -62,7 +62,6 @@ import javax.swing.*;
  * <li>External resources (DTDs)</li>
  * <li>DOM Icons/presentation</li>
  * <li>Inspections</li>
- * <li>Icons for classes/config files</li>
  * </ul>
  *
  * @author Yann C&eacute;bron
@@ -321,7 +320,9 @@ public class StrutsApplicationComponent implements ApplicationComponent,
    * @param id        Resource ID.
    * @param localFile Local path to resource.
    */
-  private static void addDTDResource(final String uri, final String id, final @NonNls String localFile) {
+  private static void addDTDResource(@NonNls final String uri,
+                                     @NonNls final String id,
+                                     @NonNls final String localFile) {
     ExternalResourceManager.getInstance().addStdResource(uri, localFile, StrutsApplicationComponent.class);
     ExternalResourceManager.getInstance().addStdResource(id, localFile, StrutsApplicationComponent.class);
   }

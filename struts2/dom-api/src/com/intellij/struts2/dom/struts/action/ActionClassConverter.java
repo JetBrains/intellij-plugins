@@ -49,7 +49,7 @@ public abstract class ActionClassConverter extends Converter<PsiClass> implement
    *
    * @author Yann C&eacute;bron
    */
-  public static abstract class ActionClassConverterContributor extends PsiReferenceProvider {
+  public abstract static class ActionClassConverterContributor extends PsiReferenceProvider {
 
     /**
      * Is this contributor suitable in the current resolving context.
