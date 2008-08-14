@@ -92,14 +92,6 @@ public class StrutsFilesTree extends CheckboxTreeBase {
     }, null);
   }
 
-  protected void checkNode(final CheckedTreeNode node, final boolean checked) {
-    super.checkNode(node, checked);
-    for (int i = 0; i < node.getChildCount(); i++) {
-      checkNode((CheckedTreeNode) node.getChildAt(i), checked);
-    }
-    ((DefaultTreeModel) getModel()).nodeChanged(node);
-  }
-
   public Set<PsiFile> buildModuleNodes(final Map<Module, List<PsiFile>> files,
                                        final Map<VirtualFile, List<PsiFile>> jars,
                                        final StrutsFileSet fileSet) {
