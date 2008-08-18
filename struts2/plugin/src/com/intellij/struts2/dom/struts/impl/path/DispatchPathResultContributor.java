@@ -27,12 +27,9 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.jsp.WebDirectoryUtil;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.psi.jsp.WebDirectoryElement;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.DomManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +44,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-public class DispatchPathResultContributor implements StrutsResultContributor {
+public class DispatchPathResultContributor extends StrutsResultContributor {
 
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,
@@ -56,55 +53,46 @@ public class DispatchPathResultContributor implements StrutsResultContributor {
     if (set == null) {
       return true;
     }
-
-    // get parent <package> element
-    final DomElement domElement = DomManager.getDomManager(psiElement.getProject())
-        .getDomElement((XmlTag) psiElement);
-    if (domElement == null) {
-      return true; // XML syntax error
-    }
-
-    final StrutsPackage strutsPackage = domElement.getParentOfType(StrutsPackage.class, true);
-    if (strutsPackage == null) {
-      return true; // XML syntax error
-    }
-
     final WebFacet webFacet = WebUtil.getWebFacet(psiElement);
     if (webFacet == null) {
-      return true; // setup error, web-facet must be present in current or dependent module
+      return false; // setup error, web-facet must be present in current or dependent module
     }
 
-    final String packageNamespace = strutsPackage.searchNamespace();
+    final String packageNamespace = getNamespace(psiElement);
+    if (packageNamespace == null) {
+      return false; // XML error
+    }
+
     final WebDirectoryUtil directoryUtil = WebDirectoryUtil.getWebDirectoryUtil(psiElement.getProject());
 
     set.addCustomization(
-        FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION,
-        new Function<PsiFile, Collection<PsiFileSystemItem>>() {
-          public Collection<PsiFileSystemItem> fun(final PsiFile file) {
-            final List<PsiFileSystemItem> basePathRoots = new ArrayList<PsiFileSystemItem>();
+            FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION,
+            new Function<PsiFile, Collection<PsiFileSystemItem>>() {
+              public Collection<PsiFileSystemItem> fun(final PsiFile file) {
+                final List<PsiFileSystemItem> basePathRoots = new ArrayList<PsiFileSystemItem>();
 
-            // 1. add all configured web root mappings
-            final List<WebRoot> webRoots = webFacet.getWebRoots(true);
-            for (final WebRoot webRoot : webRoots) {
-              final String webRootPath = webRoot.getRelativePath();
-              final WebDirectoryElement webRootBase = directoryUtil.findWebDirectoryElementByPath(
-                  webRootPath,
-                  webFacet);
-              ContainerUtil.addIfNotNull(webRootBase, basePathRoots);
-            }
+                // 1. add all configured web root mappings
+                final List<WebRoot> webRoots = webFacet.getWebRoots(true);
+                for (final WebRoot webRoot : webRoots) {
+                  final String webRootPath = webRoot.getRelativePath();
+                  final WebDirectoryElement webRootBase = directoryUtil.findWebDirectoryElementByPath(
+                          webRootPath,
+                          webFacet);
+                  ContainerUtil.addIfNotNull(webRootBase, basePathRoots);
+                }
 
-            // 2. add parent <package> "namespace" as result prefix directory path if not ROOT
-            if (!packageNamespace.equals(StrutsPackage.DEFAULT_NAMESPACE)) {
-              final WebDirectoryElement packageBase = directoryUtil.findWebDirectoryElementByPath(
-                  packageNamespace,
-                  webFacet);
-              ContainerUtil.addIfNotNull(packageBase, basePathRoots);
-            }
+                // 2. add parent <package> "namespace" as result prefix directory path if not ROOT
+                if (!packageNamespace.equals(StrutsPackage.DEFAULT_NAMESPACE)) {
+                  final WebDirectoryElement packageBase = directoryUtil.findWebDirectoryElementByPath(
+                          packageNamespace,
+                          webFacet);
+                  ContainerUtil.addIfNotNull(packageBase, basePathRoots);
+                }
 
-            return basePathRoots;
-          }
-        });
-    
+                return basePathRoots;
+              }
+            });
+
     Collections.addAll(references, set.getAllReferences());
     return false;
   }
@@ -117,18 +105,22 @@ public class DispatchPathResultContributor implements StrutsResultContributor {
     }
 
     final WebDirectoryUtil webDirectoryUtil = WebDirectoryUtil.getWebDirectoryUtil(element.getProject());
-    final PsiElement psiElement = webDirectoryUtil.findFileByPath(path, webFacet);
+    final PsiElement psiElement = webDirectoryUtil.findFileByPath(PathReference.trimPath(path), webFacet);
+    if (psiElement == null) {
+      return null;
+    }
+
     final Function<PathReference, Icon> iconFunction = new Function<PathReference, Icon>() {
       public Icon fun(final PathReference webPath) {
         return psiElement.getIcon(Iconable.ICON_FLAG_READ_STATUS);
       }
     };
 
-    return psiElement != null ? new PathReference(path, iconFunction) {
+    return new PathReference(path, iconFunction) {
       public PsiElement resolve() {
-        return webDirectoryUtil.findFileByPath(path, webFacet);
+        return psiElement;
       }
-    } : null;
+    };
   }
 
 }

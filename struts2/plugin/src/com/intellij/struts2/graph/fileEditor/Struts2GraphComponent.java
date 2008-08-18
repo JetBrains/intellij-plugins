@@ -102,9 +102,9 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
   public List<DomElement> getSelectedDomElements() {
     List<DomElement> selected = new ArrayList<DomElement>();
     final Graph2D graph = myBuilder.getGraph();
-    for (Node n : graph.getNodeArray()) {
-      if (graph.isSelected(n)) {
-        final BasicStrutsNode nodeObject = myBuilder.getNodeObject(n);
+    for (final Node node : graph.getNodeArray()) {
+      if (graph.isSelected(node)) {
+        final BasicStrutsNode nodeObject = myBuilder.getNodeObject(node);
         if (nodeObject != null) {
           ContainerUtil.addIfNotNull(nodeObject.getIdentifyingElement(), selected);
         }

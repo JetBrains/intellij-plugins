@@ -18,18 +18,67 @@ package com.intellij.struts2.dom.struts.impl.path;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.paths.PathReferenceProvider;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.DomUtil;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Provides references for &lt;result&gt;.
  *
  * @author Yann C&eacute;bron
  */
-public interface StrutsResultContributor extends PathReferenceProvider {
+public abstract class StrutsResultContributor implements PathReferenceProvider {
 
   /**
    * Register extension points with this name to include additional result types.
    */
-  ExtensionPointName<StrutsResultContributor> EP_NAME = new ExtensionPointName<StrutsResultContributor>(
-      "com.intellij.struts2.resultContributor");
+  public static final ExtensionPointName<StrutsResultContributor> EP_NAME =
+          new ExtensionPointName<StrutsResultContributor>("com.intellij.struts2.resultContributor");
+
+  /**
+   * Override to limit to certain known result-type names.
+   *
+   * @param resultType Result type.
+   * @return true.
+   */
+  public boolean matchesResultType(@NonNls @Nullable final String resultType) {
+    return true;
+  }
+
+  /**
+   * Gets the current namespace for the given element.
+   *
+   * @param psiElement Current element.
+   * @return null on XML errors or if {@link #matchesResultType(String)} returns <code>false</code>.
+   */
+  @Nullable
+  protected final String getNamespace(@NotNull final PsiElement psiElement) {
+    final DomElement resultElement = DomUtil.getDomElement(psiElement);
+    if (resultElement == null) {
+      return null; // XML syntax error
+    }
+
+    final StrutsPackage strutsPackage = resultElement.getParentOfType(StrutsPackage.class, true);
+    if (strutsPackage == null) {
+      return null; // XML syntax error
+    }
+
+    final XmlTag resultTag = resultElement.getXmlTag();
+    if (resultTag == null) {
+      return null; // XML syntax error
+    }
+
+    final String resultType = resultTag.getAttributeValue("type");
+    if (!matchesResultType(resultType)) {
+      return null;
+    }
+
+    return strutsPackage.searchNamespace();
+  }
 
 }

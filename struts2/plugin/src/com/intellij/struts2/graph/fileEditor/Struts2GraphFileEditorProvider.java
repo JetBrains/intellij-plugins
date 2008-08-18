@@ -29,14 +29,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvider {
 
-  public boolean accept(@NotNull Project project, @NotNull VirtualFile file) {
+  public boolean accept(@NotNull final Project project, @NotNull final VirtualFile file) {
     final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
     return psiFile instanceof XmlFile &&
            StrutsManager.getInstance(project).isStruts2ConfigFile((XmlFile) psiFile);
   }
 
   @NotNull
-  public PerspectiveFileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
+  public PerspectiveFileEditor createEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
     return new Struts2GraphFileEditor(project, file);
   }
 
