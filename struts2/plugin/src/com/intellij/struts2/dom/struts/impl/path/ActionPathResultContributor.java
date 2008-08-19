@@ -28,7 +28,8 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.DomUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,16 +41,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-public class ActionPathResultContributor extends StrutsResultContributor {
-
-  // TODO determine dynamically
-  @NonNls
-  private static final String ACTION_EXTENSION = ".action";
-
-  @Override
-  public boolean matchesResultType(@NonNls @Nullable final String resultType) {
-    return !ActionChainOrRedirectResultContributor.isActionChainOrRedirectResult(resultType);
-  }
+public class ActionPathResultContributor implements StrutsResultContributor {
 
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,
@@ -60,15 +52,64 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       return false;
     }
 
-    final String currentPackage = getNamespace(psiElement);
-    if (currentPackage == null) {
+
+    final DomElement resultElement = DomUtil.getDomElement(psiElement);
+    if (resultElement == null) {
+      return false; // XML syntax error
+    }
+    final StrutsPackage strutsPackage = resultElement.getParentOfType(StrutsPackage.class, true);
+    if (strutsPackage == null) {
+      return false; // XML syntax error
+    }
+
+    final XmlTag resultTag = resultElement.getXmlTag();
+    if (resultTag == null) {
+      return false; // XML syntax error
+    }
+
+    // skip "chain" results
+    final String dispatcherType = resultTag.getAttributeValue("type");
+    if (ActionChainOrRedirectResultContributor.isActionChainOrRedirectResult(dispatcherType)) {
       return false;
     }
+
+    final String currentPackage = strutsPackage.searchNamespace();
+
+    final String actionExtension = ".action";
 
     final PsiReference actionReference = new PsiReferenceBase<PsiElement>(psiElement, soft) {
 
       public PsiElement resolve() {
-        return resolveActionPath(psiElement, currentPackage, model);
+        final XmlTagValue tagValue = ((XmlTag) psiElement).getValue();
+        final String path = tagValue.getText();
+        final int extensionIndex = path.lastIndexOf(actionExtension);
+        if (extensionIndex == -1) {
+          return null;
+        }
+
+        // use given namespace or current if none given
+        final int namespacePrefixIndex = path.lastIndexOf("/");
+        final String namespace;
+        if (namespacePrefixIndex != -1) {
+          namespace = path.substring(0, namespacePrefixIndex);
+        } else {
+          namespace = currentPackage;
+        }
+
+        // "/XX/" behind ".action" --> not parseable
+        if (namespacePrefixIndex > extensionIndex) {
+          return null;
+        }
+
+        final String strippedPath = path.substring(namespacePrefixIndex != -1 ? namespacePrefixIndex + 1 : 0,
+                                                   extensionIndex);
+        final List<Action> actions = model.findActionsByName(strippedPath, namespace);
+        if (actions.size() == 1) {
+          final Action action = actions.get(0);
+          return action.getXmlTag();
+        }
+
+        return null;
       }
 
       public Object[] getVariants() {
@@ -85,13 +126,13 @@ public class ActionPathResultContributor extends StrutsResultContributor {
             final String actionNamespace = action.getNamespace();
             final String fullPath;
             if (!actionNamespace.equals(StrutsPackage.DEFAULT_NAMESPACE) && !isInCurrentPackage) {
-              fullPath = actionNamespace + "/" + actionPath + ACTION_EXTENSION;
+              fullPath = actionNamespace + "/" + actionPath + actionExtension;
             } else {
-              fullPath = actionPath + ACTION_EXTENSION;
+              fullPath = actionPath + actionExtension;
             }
 
             final LookupItem<ActionLookupItem> item = new LookupItem<ActionLookupItem>(actionItem, fullPath);
-            item.setAttribute(LookupItem.OVERWRITE_ON_AUTOCOMPLETE_ATTR, Boolean.TRUE);
+            item.setAttribute(LookupItem.OVERWRITE_ON_AUTOCOMPLETE_ATTR, Boolean.TRUE); // TODO does not work
             variants.add(item);
           }
         }
@@ -106,63 +147,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
 
   @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
-    final StrutsModel model = StrutsManager.getInstance(element.getProject())
-            .getModelByFile((XmlFile) element.getContainingFile());
-    if (model == null) {
-      return null;
-    }
-
-    final String currentPackage = getNamespace(element);
-    if (currentPackage == null) {
-      return null;
-    }
-
-    final PsiElement actionTag = resolveActionPath(element, currentPackage, model);
-    if (actionTag == null) {
-      return null;
-    }
-
-    return new PathReference(path, new PathReference.ConstFunction(StrutsIcons.ACTION)) {
-      @Override
-      public PsiElement resolve() {
-        return actionTag;
-      }
-    };
-  }
-
-  private static PsiElement resolveActionPath(@NotNull final PsiElement psiElement,
-                                              @NotNull @NonNls final String currentPackage,
-                                              @NotNull final StrutsModel model) {
-    final XmlTagValue tagValue = ((XmlTag) psiElement).getValue();
-    final String path = tagValue.getText();
-    final int extensionIndex = path.lastIndexOf(ACTION_EXTENSION);
-    if (extensionIndex == -1) {
-      return null;
-    }
-
-    // use given namespace or current if none given
-    final int namespacePrefixIndex = path.lastIndexOf("/");
-    final String namespace;
-    if (namespacePrefixIndex != -1) {
-      namespace = path.substring(0, namespacePrefixIndex);
-    } else {
-      namespace = currentPackage;
-    }
-
-    // "/XX/" behind ".action" --> not parseable
-    if (namespacePrefixIndex > extensionIndex) {
-      return null;
-    }
-
-    final String strippedPath = path.substring(namespacePrefixIndex != -1 ? namespacePrefixIndex + 1 : 0,
-                                               extensionIndex);
-    final List<Action> actions = model.findActionsByName(strippedPath, namespace);
-    if (actions.size() == 1) {
-      final Action action = actions.get(0);
-      return action.getXmlTag();
-    }
-
-    return null;
+    return new PathReference(path, new PathReference.ConstFunction(StrutsIcons.ACTION));
   }
 
 }

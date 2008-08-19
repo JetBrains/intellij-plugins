@@ -37,16 +37,14 @@ public class ResultNode extends BasicStrutsNode<Result> {
 
   @NotNull
   public Icon getIcon() {
+    // TODO buggy
     final PathReference pathReference = getIdentifyingElement().getValue();
     if (pathReference == null) {
       return UNKNOWN_RESULT_ICON;
     }
 
-    if (pathReference.resolve() == null) {
-      return UNKNOWN_RESULT_ICON;
-    }
-
     final Icon pathReferenceIcon = pathReference.getIcon();
+
     return pathReferenceIcon != null ? pathReferenceIcon : UNKNOWN_RESULT_ICON;
   }
 
