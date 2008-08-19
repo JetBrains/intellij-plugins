@@ -18,6 +18,7 @@
 
   <!-- required dependencies -->
   <depends>com.intellij.javaee</depends>
+  <depends>com.intellij.css</depends>
 
   <!-- optional dependencies -->
   <depends optional="true" config-file="struts2-javascript.xml">JavaScript</depends>
