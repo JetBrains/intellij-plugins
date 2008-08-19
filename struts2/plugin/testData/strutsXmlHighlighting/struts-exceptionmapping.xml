@@ -9,9 +9,9 @@
 <struts>
 
   <!-- global -->
-  <package name="globalExceptionMappingTest">
+  <package name="globalExceptionMappingTest" namespace="/globalExceptionMappingTest">
     <global-results>
-      <result name="global1">global1</result>
+      <result name="global1">myExceptionAction.action</result>
     </global-results>
 
     <global-exception-mappings>
@@ -23,35 +23,38 @@
       <!-- "result" -->
       <exception-mapping exception="MyException" result="<error>INVALID_VALUE</error>"/>
     </global-exception-mappings>
+
+    <action name="myExceptionAction"/>
   </package>
 
 
   <!-- action-local -->
-  <package name="actionLocalExceptionMappingTest">
-    <action name="TestExceptionMapping" class="MyClass">
+  <package name="actionLocalExceptionMappingTest" namespace="/actionLocalExceptionMappingTest">
+    <action name="TestExceptionMapping">
       <exception-mapping exception="MyException" result="exceptionResult"/>
       <exception-mapping exception="<error>MyInterface</error>" result="exceptionResult"/>
       <exception-mapping exception="<error>INVALID_VALUE</error>" result="exceptionResult"/>
 
       <exception-mapping exception="MyException" result="<error>INVALID_VALUE</error>"/>
-      <result name="exceptionResult">exception</result>
+
+      <result name="exceptionResult">TestExceptionMapping.action</result>
     </action>
   </package>
 
 
   <!-- global/local mixed, check non-interference -->
-  <package name="globalAndLocalExceptionMappingTest">
+  <package name="globalAndLocalExceptionMappingTest" namespace="/globalAndLocalExceptionMappingTest">
     <global-results>
-      <result name="global1">global1</result>
+      <result name="global1">TestExceptionMapping.action</result>
     </global-results>
 
     <global-exception-mappings>
       <exception-mapping exception="MyException" result="<error>exceptionResult</error>"/>
     </global-exception-mappings>
 
-    <action name="TestExceptionMapping" class="MyClass">
+    <action name="TestExceptionMapping">
       <exception-mapping exception="MyException" result="<error>global1</error>"/>
-      <result name="exceptionResult">exception</result>
+      <result name="exceptionResult">TestExceptionMapping.action</result>
     </action>
   </package>
 

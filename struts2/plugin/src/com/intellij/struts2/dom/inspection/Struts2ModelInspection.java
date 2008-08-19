@@ -25,10 +25,13 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
+import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.ActionClassConverter;
+import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
+import com.intellij.struts2.dom.struts.strutspackage.GlobalResult;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.xml.*;
@@ -80,6 +83,14 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     // we roll our own checking for <action> class in S2DomModelVisitor#visitAction()
     if (value.getConverter() instanceof ActionClassConverter) {
       return false;
+    }
+
+    // suppress <result> path when nested <param>-tags are present (STRPL-73)
+    if (value instanceof Result ||
+        value instanceof GlobalResult) {
+      if (!((ParamsElement) value).getParams().isEmpty()) {
+        return false;
+      }
     }
 
     // hack for suppressing wildcard-resolving

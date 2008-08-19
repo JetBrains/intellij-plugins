@@ -141,18 +141,18 @@
     <!-- "name" -->
     <action name="testResultNames">
       <!-- default name = success, cannot have two -->
-      <<error>result</error>>testResultAction.action</result>
-      <<error>result</error>>testResultAction.action</result>
+      <<error>result</error>>testResultNames.action</result>
+      <<error>result</error>>testResultNames.action</result>
 
-      <result name="<error>DUPLICATED_NAME</error>">testResultAction.action</result>
-      <result name="<error>DUPLICATED_NAME</error>">testResultAction.action</result>
+      <result name="<error>DUPLICATED_NAME</error>">testResultNames.action</result>
+      <result name="<error>DUPLICATED_NAME</error>">testResultNames.action</result>
     </action>
 
     <!-- "type" -->
     <action name="testResultTypeAttribute">
-      <result name="validEmptyResultType">testResultTypes.action</result>
-      <result name="validResultType" type="dispatcher">testResultTypes.action</result>
-      <result name="invalidResultType" type="<error>INVALID_VALUE</error>">testResultTypes.action</result>
+      <result name="validEmptyResultType">testResultNames.action</result>
+      <result name="validResultType" type="dispatcher">testResultNames.action</result>
+      <result name="invalidResultType" type="<error>INVALID_VALUE</error>">testResultNames.action</result>
     </action>
 
   </package>

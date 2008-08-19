@@ -55,9 +55,8 @@
     <xmlStructureViewBuilderProvider
             implementation="com.intellij.struts2.structure.StrutsStructureViewBuilderProvider"/>
 
-    <!-- TODO pageflow graph
     <fileEditorProvider implementation="com.intellij.struts2.graph.fileEditor.Struts2GraphFileEditorProvider"/>
-    -->
+
     <struts2.resultContributor
             implementation="com.intellij.struts2.dom.struts.impl.path.DispatchPathResultContributor"/>
     <struts2.resultContributor
