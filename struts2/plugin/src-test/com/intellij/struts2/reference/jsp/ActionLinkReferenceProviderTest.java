@@ -111,7 +111,7 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     assertNotNull(actionElement);
     assertInstanceOf(actionElement, Action.class);
     assertEquals("Action name differs for " + actionName,
-                 ((Action) actionElement).getName().getStringValue(), actionName);
+                 actionName, ((Action) actionElement).getName().getStringValue());
   }
 
 }

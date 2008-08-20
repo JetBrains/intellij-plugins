@@ -56,7 +56,7 @@ public class JspActionAnnotatorTest extends BasicStrutsHighlightingTestCase<WebM
   private static void checkGutterActionMethodTargetElements(final GutterIconRenderer gutterIconRenderer,
                                                             final String... expectedActionNames) {
     assertNotNull(gutterIconRenderer);
-    assertEquals(gutterIconRenderer.getIcon(), com.intellij.struts2.annotators.JspActionAnnotator.ACTION_CLASS_ICON);
+    assertEquals(JspActionAnnotator.ACTION_CLASS_ICON, gutterIconRenderer.getIcon());
 
     assertTrue(gutterIconRenderer instanceof NavigationGutterIconRenderer);
     final NavigationGutterIconRenderer gutter = (NavigationGutterIconRenderer) gutterIconRenderer;

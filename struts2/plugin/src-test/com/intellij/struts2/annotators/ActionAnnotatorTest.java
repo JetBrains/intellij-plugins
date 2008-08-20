@@ -63,7 +63,7 @@ public class ActionAnnotatorTest extends BasicStrutsHighlightingTestCase {
   private static void checkGutterActionTargetElements(final GutterIconRenderer gutterIconRenderer,
                                                       @NonNls final String... expectedActionNames) {
     assertNotNull(gutterIconRenderer);
-    assertEquals(gutterIconRenderer.getIcon(), StrutsIcons.ACTION);
+    assertEquals(StrutsIcons.ACTION, gutterIconRenderer.getIcon());
 
     assertTrue(gutterIconRenderer instanceof NavigationGutterIconRenderer);
     final NavigationGutterIconRenderer gutter = (NavigationGutterIconRenderer) gutterIconRenderer;
