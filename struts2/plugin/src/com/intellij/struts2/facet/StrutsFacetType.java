@@ -22,9 +22,9 @@ import com.intellij.facet.autodetecting.FacetDetectorRegistry;
 import com.intellij.facet.impl.autodetecting.FacetDetectorRegistryEx;
 import com.intellij.j2ee.web.WebUtilImpl;
 import com.intellij.javaee.web.facet.WebFacet;
+import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsIcons;
@@ -62,7 +62,7 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
   }
 
   public boolean isSuitableModuleType(final ModuleType moduleType) {
-    return moduleType == StdModuleTypes.JAVA;
+    return moduleType instanceof JavaModuleType;
   }
 
   public Icon getIcon() {
