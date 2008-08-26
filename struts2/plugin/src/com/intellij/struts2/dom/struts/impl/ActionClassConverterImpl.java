@@ -79,7 +79,7 @@ public class ActionClassConverterImpl extends ActionClassConverter {
 
     // 1. "normal" JAVA classes
     final GlobalSearchScope scope = getResolveScope(psiClassGenericDomValue);
-    final JavaClassReferenceProvider javaClassReferenceProvider = new JavaClassReferenceProvider(scope);
+    final JavaClassReferenceProvider javaClassReferenceProvider = new JavaClassReferenceProvider(scope, context.getPsiManager().getProject());
 
     javaClassReferenceProvider.setOption(JavaClassReferenceProvider.INSTANTIATABLE, Boolean.TRUE);
     javaClassReferenceProvider.setOption(JavaClassReferenceProvider.CONCRETE, Boolean.TRUE);
