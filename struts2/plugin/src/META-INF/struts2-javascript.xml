@@ -4,11 +4,10 @@
 
 <idea-plugin version="2">
 
-  <!-- inject JavaScript support into Struts UI tags -->
-  <project-components>
-    <component>
-      <implementation-class>com.intellij.struts2.jsp.TaglibJavaScriptInjector</implementation-class>
-    </component>
-  </project-components>
+  <extensions xmlns="com.intellij">
+
+    <!-- inject JavaScript support into Struts UI tags -->
+    <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibJavaScriptInjector"/>
+  </extensions>
 
 </idea-plugin>
