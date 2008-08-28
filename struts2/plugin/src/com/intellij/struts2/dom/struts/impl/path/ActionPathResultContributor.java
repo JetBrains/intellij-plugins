@@ -130,6 +130,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
     };
   }
 
+  @Nullable
   private static PsiElement resolveActionPath(@NotNull final PsiElement psiElement,
                                               @NotNull @NonNls final String currentPackage,
                                               @NotNull final StrutsModel model) {

@@ -146,6 +146,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
     };
   }
 
+  @Nullable
   private static PsiElement resolveActionPath(@NotNull final PsiElement psiElement,
                                               @NotNull @NonNls final String currentPackage,
                                               @NotNull final StrutsModel model) {
