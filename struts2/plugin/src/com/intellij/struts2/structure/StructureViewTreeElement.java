@@ -48,6 +48,8 @@ public class StructureViewTreeElement extends DomStructureTreeElement {
   @Nullable
   public TextAttributesKey getTextAttributesKey() {
     final DomElement element = getElement();
+    if (!element.isValid()) return null;
+
     final XmlTag tag = element.getXmlTag();
     if (tag == null) {
       return null;
