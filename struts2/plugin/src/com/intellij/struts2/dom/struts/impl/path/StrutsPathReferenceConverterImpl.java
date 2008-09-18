@@ -18,6 +18,7 @@ package com.intellij.struts2.dom.struts.impl.path;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.paths.PathReferenceManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
@@ -44,7 +45,11 @@ public class StrutsPathReferenceConverterImpl extends StrutsPathReferenceConvert
       return null;
     }
 
-    return PathReferenceManager.getInstance().getCustomPathReference(value, context.getModule(), element,
+    final Module module = context.getModule();
+    if (module == null) {
+      return null;
+    }
+    return PathReferenceManager.getInstance().getCustomPathReference(value, module, element,
                                                                      getResultContributors());
   }
 
