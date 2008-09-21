@@ -140,6 +140,10 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
   }
 
   private void addNode(final BasicStrutsNode node) {
+    if (!node.getIdentifyingElement().isValid()) {
+      return;
+    }
+
     myNodes.add(node);
 
     if (isGroupElements()) {
@@ -178,6 +182,11 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
   }
 
   private void addEdge(final BasicStrutsEdge edge) {
+    if (!edge.getSource().getIdentifyingElement().isValid() ||
+        !edge.getTarget().getIdentifyingElement().isValid()) {
+      return;
+    }
+
     myEdges.add(edge);
   }
 
