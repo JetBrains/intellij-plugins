@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.core;
 
+import com.intellij.openapi.util.io.FileUtil;
 import jetbrains.communicator.BaseTestCase;
 import jetbrains.communicator.core.commands.CommandManager;
 import jetbrains.communicator.core.impl.CommandManagerImpl;
@@ -22,13 +23,11 @@ import jetbrains.communicator.core.impl.EventBroadcasterImpl;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.mock.MockUser;
-import junit.framework.Assert;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -80,28 +79,8 @@ public class TestFactory {
   }
 
   public static void deleteFiles() throws InterruptedException {
-    for (Iterator<File> it = ourFiles.iterator(); it.hasNext();) {
-      File file = it.next();
-      delete(file);
+    for (final File fileToDelete : ourFiles) {
+      assert FileUtil.delete(fileToDelete) : "Can't delete "+fileToDelete;
     }
   }
-
-  private static void delete(File file) throws InterruptedException {
-    if (file.isDirectory()) {
-      File[] files = file.listFiles();
-      for (int i = 0; i < files.length; i++) {
-        delete(files[i]);
-      }
-    }
-    int i = 0;
-    file.delete();
-    while(file.exists() && i < 5) {
-      Thread.sleep(30);
-      file.delete();
-      i ++;
-    }
-    Assert.assertFalse("Should be cleanuped:" + file, file.exists());
-  }
-
-
 }
