@@ -26,7 +26,6 @@ import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
-import com.intellij.struts2.facet.ui.ValidationConfigurationSettings;
 import com.intellij.util.containers.ContainerUtil;
 
 import java.util.Collection;
@@ -45,21 +44,19 @@ public class Struts2ModelValidator extends ValidatorBase {
           StrutsBundle.message("inspections.struts2.model.validator.progress"), Struts2ModelInspection.class);
   }
 
-  protected boolean isValidationEnabledForModel(final ValidationConfigurationSettings validationConfigurationSettings) {
-    return validationConfigurationSettings.isValidateStruts();
-  }
-
   public Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context) {
     final StrutsManager strutsManager = StrutsManager.getInstance(project);
 
     final Set<VirtualFile> files = new HashSet<VirtualFile>();
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
-      final StrutsFacet strutsFacet = StrutsFacet.getInstance(module);
-      if (strutsFacet != null) {
-        for (final StrutsFileSet fileSet : strutsManager.getAllConfigFileSets(module)) {
-          for (final VirtualFilePointer pointer : fileSet.getFiles()) {
-            final VirtualFile file = pointer.getFile();
-            ContainerUtil.addIfNotNull(file, files);
+      if (isEnabledForModule(module)) {
+        final StrutsFacet strutsFacet = StrutsFacet.getInstance(module);
+        if (strutsFacet != null) {
+          for (final StrutsFileSet fileSet : strutsManager.getAllConfigFileSets(module)) {
+            for (final VirtualFilePointer pointer : fileSet.getFiles()) {
+              final VirtualFile file = pointer.getFile();
+              ContainerUtil.addIfNotNull(file, files);
+            }
           }
         }
       }

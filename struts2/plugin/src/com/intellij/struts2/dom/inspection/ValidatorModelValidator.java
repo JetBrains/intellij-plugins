@@ -29,7 +29,6 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.validator.ValidatorManager;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.struts2.facet.ui.ValidationConfigurationSettings;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 
@@ -53,10 +52,6 @@ public class ValidatorModelValidator extends ValidatorBase {
           ValidatorModelInspection.class, ValidatorConfigModelInspection.class);
   }
 
-  protected boolean isValidationEnabledForModel(final ValidationConfigurationSettings validationConfigurationSettings) {
-    return validationConfigurationSettings.isValidateValidation();
-  }
-
   public Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context) {
     final PsiManager psiManager = PsiManager.getInstance(project);
     final ValidatorManager validatorManager = ValidatorManager.getInstance(project);
@@ -70,7 +65,8 @@ public class ValidatorModelValidator extends ValidatorBase {
             validatorManager.isValidatorsFile((XmlFile) psiFile)) {
           final Module module = ModuleUtil.findModuleForFile(file, project);
           if (module != null &&
-              StrutsFacet.getInstance(module) != null) {
+              StrutsFacet.getInstance(module) != null &&
+              isEnabledForModule(module)) {
             files.add(file);
           }
         }
@@ -80,7 +76,8 @@ public class ValidatorModelValidator extends ValidatorBase {
     // add validator-config.xml if not default one from xwork.jar
     final THashSet<VirtualFile> descriptorFiles = new THashSet<VirtualFile>();
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
-      if (StrutsFacet.getInstance(module) != null) {
+      if (StrutsFacet.getInstance(module) != null &&
+          isEnabledForModule(module)) {
         final PsiFile psiFile = validatorManager.getValidatorConfigFile(module);
         if (psiFile != null &&
             validatorManager.isCustomValidatorConfigFile(psiFile)) {
