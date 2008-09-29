@@ -26,6 +26,7 @@ import com.intellij.struts2.graph.beans.BasicStrutsEdge;
 import com.intellij.struts2.graph.beans.BasicStrutsNode;
 import com.intellij.util.OpenSourceUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Yann C&eacute;bron
@@ -84,18 +85,29 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
     return myProject;
   }
 
-  public String getNodeTooltip(final BasicStrutsNode node) {
+  public String getNodeTooltip(@Nullable final BasicStrutsNode node) {
+    if (node == null) {
+      return null;
+    }
+
     return node.getName();
   }
 
-  public String getEdgeTooltip(final BasicStrutsEdge edge) {
+  public String getEdgeTooltip(@Nullable final BasicStrutsEdge edge) {
+    if (edge == null) {
+      return null;
+    }
+
     return edge.getName();
   }
 
   public void customizeSettings(final Graph2DView view, final EditMode editMode) {
     editMode.allowBendCreation(false);
     editMode.allowEdgeCreation(false);
+
     view.setFitContentOnResize(false);
+    view.setAntialiasedPainting(false);
+    view.setGridVisible(false);
     view.fitContent();
   }
 

@@ -16,7 +16,7 @@ package com.intellij.struts2.graph;
 
 import com.intellij.openapi.graph.builder.GraphBuilder;
 import com.intellij.openapi.graph.builder.renderer.BasicGraphNodeRenderer;
-import com.intellij.openapi.util.ModificationTracker;
+import com.intellij.psi.PsiManager;
 import com.intellij.struts2.graph.beans.BasicStrutsEdge;
 import com.intellij.struts2.graph.beans.BasicStrutsNode;
 
@@ -29,7 +29,7 @@ import javax.swing.*;
 public class StrutsNodeRenderer extends BasicGraphNodeRenderer<BasicStrutsNode, BasicStrutsEdge> {
 
   public StrutsNodeRenderer(final GraphBuilder<BasicStrutsNode, BasicStrutsEdge> graphBuilder) {
-    super(graphBuilder, ModificationTracker.EVER_CHANGED);
+    super(graphBuilder, PsiManager.getInstance(graphBuilder.getProject()).getModificationTracker());
   }
 
   protected JComponent getPresenationComponent(final String text) {
