@@ -113,7 +113,6 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
   private void refreshDataModel() {
     myNodes.clear();
     myEdges.clear();
-    myGroupss.clear(); // TODO ??!?
     updateDataModel();
   }
 
