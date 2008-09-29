@@ -39,7 +39,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
   public StrutsPresentationModel(final Graph2D graph, final Project project) {
     super(graph);
     myProject = project;
-    setShowEdgeLabels(false);
+    setShowEdgeLabels(true);
   }
 
   @NotNull
@@ -59,8 +59,6 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
       return false;
     }
 
-//    System.out.println("StrutsPresentationModel.editNode " + node);
-//    System.out.println("StrutsPresentationModel.editNode " + node.getIdentifyingElement());
     final XmlElement xmlElement = node.getIdentifyingElement().getXmlElement();
     if (xmlElement != null && xmlElement instanceof Navigatable) {
       OpenSourceUtil.navigate(new Navigatable[]{(Navigatable) xmlElement}, true);
@@ -70,7 +68,10 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
   }
 
   public boolean editEdge(final BasicStrutsEdge edge) {
-//    final XmlElement xmlElement = pagesEdge.getViewId().getXmlElement();                     //TODO
+    if (edge == null) {
+      return false; // TODO should not happen
+    }
+
     final XmlElement xmlElement = edge.getSource().getIdentifyingElement().getXmlElement();
     if (xmlElement instanceof Navigatable) {
       OpenSourceUtil.navigate(new Navigatable[]{(Navigatable) xmlElement}, true);
@@ -93,6 +94,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
 
   public void customizeSettings(final Graph2DView view, final EditMode editMode) {
     editMode.allowBendCreation(false);
+    editMode.allowEdgeCreation(false);
     view.setFitContentOnResize(false);
     view.fitContent();
   }
