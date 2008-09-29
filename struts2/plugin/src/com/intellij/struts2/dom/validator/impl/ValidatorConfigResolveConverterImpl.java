@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author Yann C&eacute;bron
@@ -34,6 +35,10 @@ public class ValidatorConfigResolveConverterImpl extends ValidatorConfigResolveC
   @NotNull
   public Collection<? extends ValidatorConfig> getVariants(final ConvertContext context) {
     final Module module = context.getModule();
+    if (module == null) {
+      return Collections.emptyList();
+    }
+
     final ValidatorManager validatorManager = ValidatorManager.getInstance(module.getProject());
     return validatorManager.getValidators(module);
   }
