@@ -14,7 +14,6 @@
  */
 package com.intellij.struts2.graph;
 
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.graph.builder.GraphDataModel;
 import com.intellij.openapi.graph.builder.NodesGroup;
 import com.intellij.openapi.graph.builder.components.BasicNodesGroup;
@@ -22,7 +21,6 @@ import com.intellij.openapi.graph.view.NodeLabel;
 import com.intellij.openapi.graph.view.hierarchy.GroupNodeRealizer;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlElement;
@@ -106,17 +104,7 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
   }
 
   public BasicStrutsEdge createEdge(@NotNull final BasicStrutsNode from, @NotNull final BasicStrutsNode to) {
-    if (StringUtil.isEmptyOrSpaces(to.getName())) {
-      return null;
-    }
-
-    final WriteCommandAction<BasicStrutsEdge> action = new WriteCommandAction<BasicStrutsEdge>(myProject) {
-      protected void run(final com.intellij.openapi.application.Result<BasicStrutsEdge> basicStrutsEdgeResult) throws
-                                                                                                               Throwable {
-        basicStrutsEdgeResult.setResult(new BasicStrutsEdge(from, to, "test"));
-      }
-    };
-    return action.execute().getResultObject();
+    return null;
   }
 
   public void dispose() {
@@ -125,6 +113,7 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
   private void refreshDataModel() {
     myNodes.clear();
     myEdges.clear();
+    myGroupss.clear(); // TODO ??!?
     updateDataModel();
   }
 
@@ -158,6 +147,7 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
           @Nullable
           public GroupNodeRealizer getGroupNodeRealizer() {
             final GroupNodeRealizer groupNodeRealizer = super.getGroupNodeRealizer();
+            assert groupNodeRealizer != null;
             groupNodeRealizer.setFillColor(new Color(239, 239, 239));
 
             final NodeLabel nodeLabel = groupNodeRealizer.getLabel();
@@ -169,9 +159,10 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
             return groupNodeRealizer;
           }
         };
-//        group.setClosed(true);
 
+        group.setClosed(false);
         myGroups.put(file, group);
+
       }
     }
   }
@@ -193,8 +184,7 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
   public void updateDataModel() {
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
 
-    StrutsModel model = StrutsManager.getInstance(myProject).getModelByFile(myFile);
-
+    final StrutsModel model = StrutsManager.getInstance(myProject).getModelByFile(myFile);
     if (model == null) {
       return;
     }

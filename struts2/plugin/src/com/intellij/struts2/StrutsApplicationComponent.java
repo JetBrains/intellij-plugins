@@ -124,6 +124,7 @@ public class StrutsApplicationComponent implements ApplicationComponent,
       return null;
     }
 
+    @Nullable
     protected abstract String getDisplayName(T t);
 
   }
