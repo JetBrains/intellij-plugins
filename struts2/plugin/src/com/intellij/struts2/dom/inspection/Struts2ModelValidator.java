@@ -35,7 +35,7 @@ import java.util.Set;
 /**
  * Validator for struts.xml files when running "Make Project".
  *
- * @author Yann Cebron
+ * @author Yann C&eacute;bron
  */
 public class Struts2ModelValidator extends ValidatorBase {
 

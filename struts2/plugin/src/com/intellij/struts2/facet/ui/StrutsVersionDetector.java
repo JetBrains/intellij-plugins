@@ -34,7 +34,7 @@ import java.util.zip.ZipFile;
 /**
  * Detects the Struts2 version from attached struts-2core.jar.
  *
- * @author Yann Cebron
+ * @author Yann C&eacute;bron
  */
 public class StrutsVersionDetector {
 

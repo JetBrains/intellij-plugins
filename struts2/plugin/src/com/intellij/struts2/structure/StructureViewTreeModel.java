@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Defines the sorters, filters etc. available for structure view.
  *
- * @author Yann Cebron
+ * @author Yann C&eacute;bron
  */
 public class StructureViewTreeModel extends XmlStructureViewTreeModel {
 

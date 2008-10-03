@@ -31,7 +31,7 @@ import javax.swing.*;
  * Renderer for "GoTo"-gutter-popups.
  *
  * @author Dmitry Avdeev
- * @author Yann Cebron
+ * @author Yann C&eacute;bron
  * @param <T> Navigation target DOM element type.
  */
 abstract class DomElementListCellRenderer<T extends DomElement> extends PsiElementListCellRenderer<XmlTag> {

@@ -40,7 +40,7 @@ import java.util.Iterator;
  * Description-type for {@link StrutsFacet}.
  * Adds autodetection feature for struts.xml files found in project.
  *
- * @author Yann C�bron
+ * @author Yann C&eacute;bron
  */
 public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfiguration> {
 

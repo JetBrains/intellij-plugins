@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Provides structure view for struts.xml files.
  *
- * @author Yann Cebron
+ * @author Yann C&eacute;bron
  */
 public class StrutsStructureViewBuilderProvider extends BaseStructureViewBuilderProvider {
 

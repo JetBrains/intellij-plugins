@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Represents one node for the structure view.
  *
- * @author Yann Cebron
+ * @author Yann C&eacute;bron
  */
 public class StructureViewTreeElement extends DomStructureTreeElement {
 
