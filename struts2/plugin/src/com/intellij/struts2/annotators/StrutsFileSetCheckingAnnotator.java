@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.annotators;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.impl.quickfix.ShowModulePropertiesFix;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.ide.DataManager;
@@ -157,6 +158,9 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
                 }
               };
       JBPopupFactory.getInstance().createListPopup(step).showInBestPositionFor(DataManager.getInstance().getDataContext());
+
+      // re-check file after fix
+      DaemonCodeAnalyzer.getInstance(project).restart();
     }
   }
 
