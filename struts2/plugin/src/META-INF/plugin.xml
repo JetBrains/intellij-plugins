@@ -97,10 +97,4 @@
     </component>
   </application-components>
 
-  <project-components>
-    <component>
-      <implementation-class>com.intellij.struts2.StrutsProjectComponent</implementation-class>
-    </component>
-  </project-components>
-
 </idea-plugin>
