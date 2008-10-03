@@ -24,6 +24,9 @@ public class BasicStrutsEdge {
 
   private final BasicStrutsNode mySource;
   private final BasicStrutsNode myTarget;
+
+  @NonNls
+  @NotNull
   private final String name;
 
   public BasicStrutsEdge(@NotNull final BasicStrutsNode source,
@@ -34,6 +37,8 @@ public class BasicStrutsEdge {
     this.name = name;
   }
 
+  @NonNls
+  @NotNull
   public String getName() {
     return name;
   }

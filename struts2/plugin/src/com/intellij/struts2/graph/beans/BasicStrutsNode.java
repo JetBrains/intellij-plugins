@@ -15,6 +15,7 @@
 package com.intellij.struts2.graph.beans;
 
 import com.intellij.util.xml.DomElement;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,19 +30,22 @@ import javax.swing.*;
 public abstract class BasicStrutsNode<T extends DomElement> {
 
   private final T myIdentifyingElement;
+
+  @NonNls
   private final String myName;
 
   /**
-   * CTOR.s
+   * CTOR.
    *
    * @param identifyingElement Underlying DOM-element.
    * @param name               Display name.
    */
-  protected BasicStrutsNode(@NotNull final T identifyingElement, @Nullable final String name) {
+  protected BasicStrutsNode(@NotNull final T identifyingElement, @Nullable @NonNls final String name) {
     myIdentifyingElement = identifyingElement;
     myName = name;
   }
 
+  @NonNls
   @Nullable
   public String getName() {
     return myName;
@@ -78,6 +82,5 @@ public abstract class BasicStrutsNode<T extends DomElement> {
     result = 31 * result + (myName != null ? myName.hashCode() : 0);
     return result;
   }
-
 
 }

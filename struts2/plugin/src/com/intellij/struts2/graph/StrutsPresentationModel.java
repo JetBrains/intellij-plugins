@@ -14,12 +14,13 @@
  */
 package com.intellij.struts2.graph;
 
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.graph.builder.components.BasicGraphPresentationModel;
 import com.intellij.openapi.graph.builder.renderer.BasicGraphNodeRenderer;
 import com.intellij.openapi.graph.builder.util.GraphViewUtil;
-import com.intellij.openapi.graph.view.*;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.graph.view.EditMode;
+import com.intellij.openapi.graph.view.Graph2D;
+import com.intellij.openapi.graph.view.Graph2DView;
+import com.intellij.openapi.graph.view.NodeRealizer;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.struts2.graph.beans.BasicStrutsEdge;
@@ -34,12 +35,10 @@ import org.jetbrains.annotations.Nullable;
  */
 public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicStrutsNode, BasicStrutsEdge> {
 
-  private final Project myProject;
   private BasicGraphNodeRenderer myRenderer;
 
-  public StrutsPresentationModel(final Graph2D graph, final Project project) {
+  public StrutsPresentationModel(final Graph2D graph) {
     super(graph);
-    myProject = project;
     setShowEdgeLabels(true);
   }
 
@@ -81,10 +80,6 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
     return super.editEdge(edge);
   }
 
-  public Project getProject() {
-    return myProject;
-  }
-
   public String getNodeTooltip(@Nullable final BasicStrutsNode node) {
     if (node == null) {
       return null;
@@ -109,14 +104,6 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
     view.setAntialiasedPainting(false);
     view.setGridVisible(false);
     view.fitContent();
-  }
-
-  public NodeCellEditor getCustomNodeCellEditor(final BasicStrutsNode node) {
-    return null;
-  }
-
-  public DefaultActionGroup getNodeActionGroup(final BasicStrutsNode node) {
-    return super.getNodeActionGroup(node);
   }
 
 }

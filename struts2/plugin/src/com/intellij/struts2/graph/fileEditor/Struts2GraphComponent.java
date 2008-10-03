@@ -50,22 +50,20 @@ import java.util.List;
  */
 public class Struts2GraphComponent extends JPanel implements DataProvider, Disposable {
   @NonNls
-  public static final String STRUTS2_DESIGNER_COMPONENT = "STRUTS2_DESIGNER_COMPONENT";
+  private static final String STRUTS2_DESIGNER_COMPONENT = "STRUTS2_DESIGNER_COMPONENT";
 
   @NonNls
   private final Struts2GraphNavigationProvider myNavigationProvider = new Struts2GraphNavigationProvider();
 
   private final GraphBuilder<BasicStrutsNode, BasicStrutsEdge> myBuilder;
 
-  private final StrutsDataModel myDataModel;
-
   public Struts2GraphComponent(final XmlFile xmlFile) {
     final Project project = xmlFile.getProject();
 
     final Graph2D graph = GraphManager.getGraphManager().createGraph2D();
     final Graph2DView view = GraphManager.getGraphManager().createGraph2DView();
-    myDataModel = new StrutsDataModel(xmlFile);
-    final StrutsPresentationModel presentationModel = new StrutsPresentationModel(graph, project);
+    final StrutsDataModel myDataModel = new StrutsDataModel(xmlFile);
+    final StrutsPresentationModel presentationModel = new StrutsPresentationModel(graph);
 
     myBuilder = GraphBuilderFactory.getInstance(project).createGraphBuilder(graph,
                                                                             view,

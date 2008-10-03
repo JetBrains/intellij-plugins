@@ -43,6 +43,7 @@ import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Yann C&eacute;bron
@@ -50,14 +51,13 @@ import java.util.Map;
  */
 public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStrutsEdge> {
 
-  private Collection<BasicStrutsNode> myNodes = new HashSet<BasicStrutsNode>();
-  private Collection<BasicStrutsEdge> myEdges = new HashSet<BasicStrutsEdge>();
+  private final Set<BasicStrutsNode> myNodes = new HashSet<BasicStrutsNode>();
+  private final Set<BasicStrutsEdge> myEdges = new HashSet<BasicStrutsEdge>();
 
   private final Map<PsiFile, NodesGroup> myGroups = new HashMap<PsiFile, NodesGroup>();
 
   private final Project myProject;
   private final XmlFile myFile;
-
 
   public StrutsDataModel(final XmlFile file) {
     myFile = file;
@@ -66,15 +66,7 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
 
   @NotNull
   public Collection<BasicStrutsNode> getNodes() {
-    return getNodes(true);
-  }
-
-  @NotNull
-  private Collection<BasicStrutsNode> getNodes(boolean refresh) {
-    if (refresh) {
-      refreshDataModel();
-    }
-
+    refreshDataModel();
     return myNodes;
   }
 
@@ -180,7 +172,7 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
     myEdges.add(edge);
   }
 
-  public void updateDataModel() {
+  private void updateDataModel() {
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
 
     final StrutsModel model = StrutsManager.getInstance(myProject).getModelByFile(myFile);
