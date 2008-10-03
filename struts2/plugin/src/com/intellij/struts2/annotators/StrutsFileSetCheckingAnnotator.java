@@ -154,13 +154,14 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
                       ProjectRootManagerEx.getInstanceEx(project).rootsChanged(false);
                     }
                   });
+
+                  // re-highlight (remove annotation)
+                  DaemonCodeAnalyzer.getInstance(project).restart();
+
                   return super.onChosen(selectedValue, finalChoice);
                 }
               };
       JBPopupFactory.getInstance().createListPopup(step).showInBestPositionFor(DataManager.getInstance().getDataContext());
-
-      // re-check file after fix
-      DaemonCodeAnalyzer.getInstance(project).restart();
     }
   }
 
