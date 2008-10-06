@@ -14,6 +14,6 @@
  */
 
 /**
- * DOM-Model for <code>struts.xml</code> files.
+ * Provides graph of struts.xml elements.
  */
-package com.intellij.struts2.dom.struts.model;
+package com.intellij.struts2.graph;

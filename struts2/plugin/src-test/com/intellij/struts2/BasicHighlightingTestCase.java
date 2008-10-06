@@ -37,7 +37,7 @@ import java.util.Set;
 /**
  * Base class for highlighting tests.
  *
- * @author Yann C�bron
+ * @author Yann C&eacute;bron
  */
 public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuilder> extends BasicStrutsTestCase {
 
@@ -142,7 +142,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
       throw new RuntimeException(e);
     }
     final VirtualFile file = myFixture.getTempDirFixture().getFile(path);
-    assertTrue("cannot find file: " + path, file != null);
+    assertNotNull("cannot find file: " + path, file);
     fileSet.addFile(file);
   }
 

@@ -14,6 +14,6 @@
  */
 
 /**
- * DOM-Model for <code>struts.xml</code> files.
+ * Completion and reference resolving.
  */
-package com.intellij.struts2.dom.struts.model;
+package com.intellij.struts2.reference;

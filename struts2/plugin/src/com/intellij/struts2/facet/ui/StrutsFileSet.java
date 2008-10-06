@@ -47,7 +47,7 @@ public class StrutsFileSet implements ElementsChooser.ElementProperties {
 
   @NonNls private static final String ID_PREFIX = "s2fileset";
 
-  public StrutsFileSet(@NotNull final String id, @NotNull final String name) {
+  public StrutsFileSet(@NotNull @NonNls final String id, @NotNull @NonNls final String name) {
     this.id = id;
     this.name = name;
   }

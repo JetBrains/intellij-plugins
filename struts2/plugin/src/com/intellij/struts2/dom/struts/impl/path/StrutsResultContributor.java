@@ -29,13 +29,22 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Provides references for &lt;result&gt;.
+ * <p/>
+ * Third party plugins can provide additional result types by providing a suitable subclass registered via extension
+ * in their <code>plugin.xml</code>:
+ * <p/>
+ * <pre>
+ *   &lt;extensions defaultExtensionNs="com.intellij">
+ *     &lt;struts2.resultContributor implementation="[Name of your class]"/>
+ *   &lt;/extensions>
+ * </pre>
  *
  * @author Yann C&eacute;bron
  */
 public abstract class StrutsResultContributor implements PathReferenceProvider {
 
   /**
-   * Register extension points with this name to provide additional result types.
+   * Extension point name.
    */
   public static final ExtensionPointName<StrutsResultContributor> EP_NAME =
           new ExtensionPointName<StrutsResultContributor>("com.intellij.struts2.resultContributor");

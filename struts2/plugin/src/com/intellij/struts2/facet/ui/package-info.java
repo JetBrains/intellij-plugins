@@ -1,4 +1,4 @@
 /**
- * Dedicated facet for setting up the configuration and options.
+ * Facet tabs.
  */
 package com.intellij.struts2.facet.ui;

@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.dom.struts.BasicStrutsHighlightingTestCase;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -54,7 +55,7 @@ public class JspActionAnnotatorTest extends BasicStrutsHighlightingTestCase<WebM
    * @param expectedActionNames Names of the actions.
    */
   private static void checkGutterActionMethodTargetElements(final GutterIconRenderer gutterIconRenderer,
-                                                            final String... expectedActionNames) {
+                                                            @NonNls final String... expectedActionNames) {
     assertNotNull(gutterIconRenderer);
     assertEquals(JspActionAnnotator.ACTION_CLASS_ICON, gutterIconRenderer.getIcon());
 
