@@ -82,7 +82,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
 
     final SpringFacetConfiguration configuration = mySpringFacet.getConfiguration();
     final Set<SpringFileSet> list = configuration.getFileSets();
-    @NonNls final SpringFileSet fileSet = new SpringFileSet("", "default");
+    @NonNls final SpringFileSet fileSet = new SpringFileSet("", "default", configuration);
     list.add(fileSet);
     return fileSet;
   }
