@@ -19,6 +19,8 @@
       <result name="valid3">
         /index.jsp
       </result>
+      <result name="valid4">http://www.jetbrains.com</result>
+      <result name="valid5">ftp://ftp.jetbrains.net</result>
     </action>
 
     <action name="testInvalidPaths">

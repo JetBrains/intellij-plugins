@@ -29,9 +29,8 @@ import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.ActionClassConverter;
-import com.intellij.struts2.dom.struts.action.Result;
+import com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
-import com.intellij.struts2.dom.struts.strutspackage.GlobalResult;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.xml.*;
@@ -85,16 +84,24 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
       return false;
     }
 
-    // suppress <result> path when nested <param>-tags are present (STRPL-73)
-    if (value instanceof Result ||
-        value instanceof GlobalResult) {
+    final String stringValue = value.getStringValue();
+    
+    // suppress <result> path
+    if (value.getConverter() instanceof StrutsPathReferenceConverter) {
+
+      // global URLs
+      if (stringValue != null &&
+          stringValue.contains("://")) {
+        return false;
+      }
+
+      // nested <param>-tags are present
       if (!((ParamsElement) value).getParams().isEmpty()) {
         return false;
       }
     }
 
     // hack for suppressing wildcard-resolving
-    final String stringValue = value.getStringValue();
     return stringValue == null || stringValue.indexOf('{') < 0;
   }
 
