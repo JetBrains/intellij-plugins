@@ -15,19 +15,12 @@
 
 package com.intellij.struts2;
 
-import com.intellij.codeInspection.InspectionToolProvider;
 import com.intellij.facet.FacetTypeRegistry;
-import com.intellij.ide.fileTemplates.FileTemplateDescriptor;
-import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptor;
-import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory;
 import com.intellij.javaee.ExternalResourceManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.Param;
-import com.intellij.struts2.dom.inspection.Struts2ModelInspection;
-import com.intellij.struts2.dom.inspection.ValidatorConfigModelInspection;
-import com.intellij.struts2.dom.inspection.ValidatorModelInspection;
 import com.intellij.struts2.dom.struts.Bean;
 import com.intellij.struts2.dom.struts.Constant;
 import com.intellij.struts2.dom.struts.Include;
@@ -61,14 +54,11 @@ import javax.swing.*;
  * <li>StrutsFacet</li>
  * <li>External resources (DTDs)</li>
  * <li>DOM Icons/presentation</li>
- * <li>Inspections</li>
  * </ul>
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsApplicationComponent implements ApplicationComponent,
-                                                   FileTemplateGroupDescriptorFactory,
-                                                   InspectionToolProvider {
+public class StrutsApplicationComponent implements ApplicationComponent {
 
   @NonNls
   @NotNull
@@ -86,19 +76,6 @@ public class StrutsApplicationComponent implements ApplicationComponent,
   }
 
   public void disposeComponent() {
-  }
-
-  public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
-    final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor(StrutsBundle.message("struts2"),
-                                                                              StrutsIcons.ACTION);
-    group.addTemplate(new FileTemplateDescriptor(StrutsConstants.STRUTS_DEFAULT_FILENAME,
-                                                 StrutsIcons.STRUTS_CONFIG_FILE_ICON));
-    group.addTemplate(new FileTemplateDescriptor("validator.xml", StrutsIcons.VALIDATION_CONFIG_FILE_ICON));
-    return group;
-  }
-
-  public Class[] getInspectionClasses() {
-    return new Class[]{Struts2ModelInspection.class, ValidatorModelInspection.class, ValidatorConfigModelInspection.class};
   }
 
   /**

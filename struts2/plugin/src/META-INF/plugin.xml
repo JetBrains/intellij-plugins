@@ -39,6 +39,10 @@
 
     <iconProvider implementation="com.intellij.struts2.Struts2IconProvider"/>
 
+    <inspectionToolProvider implementation="com.intellij.struts2.StrutsInspectionToolProvider"/>
+
+    <fileTemplateGroup implementation="com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory"/>
+
     <frameworkSupport implementation="com.intellij.struts2.facet.StrutsFrameworkSupportProvider"/>
 
 
