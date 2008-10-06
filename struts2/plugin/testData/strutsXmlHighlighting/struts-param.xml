@@ -83,6 +83,7 @@
   <package name="testResultParams">
 
     <result-types>
+      <result-type name="not_default" class="com.opensymphony.xwork2.ActionChainResult" default="false"/>
       <result-type name="dispatcher" class="org.apache.struts2.dispatcher.ServletDispatcherResult" default="true"/>
     </result-types>
 

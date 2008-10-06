@@ -57,7 +57,7 @@ public abstract class StrutsPackageImpl implements StrutsPackage, LocationPresen
     while (currentPackage != null) {
       final List<ResultType> resultTypes = currentPackage.getResultTypes();
       for (final ResultType resultType : resultTypes) {
-        if (resultType.getDefault().getXmlElement() != null) {
+        if (resultType.getDefault().getValue() == Boolean.TRUE) {
           return resultType;
         }
       }
