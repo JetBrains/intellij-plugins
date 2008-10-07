@@ -45,7 +45,6 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +61,6 @@ public class FileSetEditor extends DialogWrapper {
 
   protected FileSetEditor(final Component parent,
                           final StrutsFileSet fileSet,
-                          final Collection<StrutsFileSet> allSets,
                           final FacetEditorContext context,
                           final StrutsConfigsSearcher searcher) {
 

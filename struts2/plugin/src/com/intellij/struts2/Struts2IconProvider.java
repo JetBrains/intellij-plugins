@@ -18,7 +18,6 @@ import com.intellij.ide.IconProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Iconable;
-import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.jsp.JspFile;
@@ -31,7 +30,6 @@ import com.intellij.struts2.dom.validator.config.ValidatorsConfig;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.xml.DomManager;
-import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +43,6 @@ import javax.swing.*;
 public class Struts2IconProvider extends IconProvider {
 
   private boolean active;
-  private static final Key<TIntObjectHashMap<Icon>> ICON_KEY = Key.create("STRUTS2_OVERLAY_ICON");
 
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, final int flags) {

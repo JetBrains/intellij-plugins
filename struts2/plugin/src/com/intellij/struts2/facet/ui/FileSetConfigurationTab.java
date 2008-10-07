@@ -124,7 +124,6 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
         final FileSetEditor editor = new FileSetEditor(myPanel,
                                                        fileSet,
-                                                       myBuffer,
                                                        facetEditorContext,
                                                        myConfigsSearcher);
         editor.show();
@@ -144,7 +143,6 @@ public class FileSetConfigurationTab extends FacetEditorTab {
         if (fileSet != null) {
           final FileSetEditor editor = new FileSetEditor(myPanel,
                                                          fileSet,
-                                                         myBuffer,
                                                          facetEditorContext,
                                                          myConfigsSearcher);
           editor.show();
