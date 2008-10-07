@@ -77,14 +77,6 @@ public class Struts2IconProvider extends IconProvider {
     active = true;
 
     try {
-      TIntObjectHashMap<Icon> icons = element.getUserData(ICON_KEY);
-      if (icons != null) {
-        final Icon icon = icons.get(flags);
-        if (icon != null) {
-          return icon;
-        }
-      }
-
       Icon strutsIcon = null;
 
       // handle XML files
@@ -120,11 +112,6 @@ public class Struts2IconProvider extends IconProvider {
       final Icon original = element.getIcon(flags & ~Iconable.ICON_FLAG_VISIBILITY);
       layeredIcon.setIcon(original, 0);
       layeredIcon.setIcon(strutsIcon, 1, 0, StrutsIcons.SMALL_ICON_Y_OFFSET);
-
-      if (icons == null) {
-        element.putUserData(ICON_KEY, icons = new TIntObjectHashMap<Icon>(3));
-      }
-      icons.put(flags, layeredIcon);
 
       return layeredIcon;
     } finally {
