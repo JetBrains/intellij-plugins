@@ -15,18 +15,21 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.action.ResultTypeResolvingConverter;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -56,25 +59,23 @@ public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConvert
       return null;
     }
 
-    final List<ResultType> allTypes = getMergedResultTypes(strutsModel);
-
-    for (final ResultType allType : allTypes) {
-      final String resultTypeName = allType.getName().getStringValue();
-      if (resultTypeName != null && resultTypeName.equals(name)) {
-        return allType;
+    return ContainerUtil.find(getMergedResultTypes(strutsModel), new Condition<ResultType>() {
+      public boolean value(final ResultType resultType) {
+        return Comparing.equal(resultType.getName().getStringValue(), name);
       }
-    }
-
-    return null;
+    });
   }
 
-  private static List<ResultType> getMergedResultTypes(@NotNull final StrutsModel strutsModel) {
-    final List<ResultType> allTypes = new ArrayList<ResultType>();
-    for (final StrutsPackage strutsPackage : strutsModel.getStrutsPackages()) {
-      allTypes.addAll(strutsPackage.getResultTypes());
-    }
+  private static final Function<StrutsPackage, Collection<? extends ResultType>> RESULT_TYPE_COLLECTOR =
+          new Function<StrutsPackage, Collection<? extends ResultType>>() {
+            public Collection<? extends ResultType> fun(final StrutsPackage strutsPackage) {
+              return strutsPackage.getResultTypes();
+            }
+          };
 
-    return allTypes;
+  private static List<ResultType> getMergedResultTypes(@NotNull final StrutsModel strutsModel) {
+    return ContainerUtil.concat(strutsModel.getStrutsPackages(), RESULT_TYPE_COLLECTOR);
+
   }
 
 }

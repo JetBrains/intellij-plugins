@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class ResultImpl implements Result, LocationPresentation {
 
   /**

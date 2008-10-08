@@ -21,6 +21,7 @@ import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorRef;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.xml.*;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,6 +34,11 @@ import java.util.List;
  */
 public interface Action extends ParamsElement {
 
+  /**
+   * Default action name ("execute").
+   */
+  @NonNls
+  String DEFAULT_ACTION_METHOD_NAME = "execute";
 
   @Attribute(value = "name")
   @NameValue
@@ -42,7 +48,7 @@ public interface Action extends ParamsElement {
 
   @Attribute(value = "class")
   @Convert(ActionClassConverter.class)
-  @ExtendClass(allowAbstract = false, allowInterface = false, instantiatable = false)          
+  @ExtendClass(allowAbstract = false, allowInterface = false, instantiatable = false)
   GenericAttributeValue<PsiClass> getActionClass();
 
   @Attribute(value = "method")
@@ -92,7 +98,7 @@ public interface Action extends ParamsElement {
   PsiClass searchActionClass();
 
   /**
-   * Gets the defined method or the default method ("execute").
+   * Gets the defined method or the default method named {@link #DEFAULT_ACTION_METHOD_NAME}.
    *
    * @return null if nothing could be found.
    */

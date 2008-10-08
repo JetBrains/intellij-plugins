@@ -15,10 +15,13 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
 import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackageExtendsResolveConverter;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -55,14 +58,11 @@ public class StrutsPackageExtendsResolveConverterImpl extends StrutsPackageExten
       return null;
     }
 
-    final Collection<? extends StrutsPackage> packages = getVariants(context);
-    for (final StrutsPackage strutsPackage : packages) {
-      if (name.equals(strutsPackage.getName().getStringValue())) {
-        return strutsPackage;
+    return ContainerUtil.find(getVariants(context), new Condition<StrutsPackage>() {
+      public boolean value(final StrutsPackage strutsPackage) {
+        return Comparing.equal(name, strutsPackage.getName().getStringValue());
       }
-    }
-
-    return null;
+    });
   }
 
 }

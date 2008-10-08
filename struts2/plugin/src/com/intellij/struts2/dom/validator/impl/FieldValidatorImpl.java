@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class FieldValidatorImpl implements FieldValidator {
 
   @Nullable

@@ -15,11 +15,13 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.strutspackage.DefaultClassRef;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomUtil;
 import com.intellij.util.xml.GenericAttributeValue;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +35,14 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class ActionImpl implements Action {
+
+  private static final Condition<PsiMethod> DEFAULT_ACTION_METHOD_CONDITION = new Condition<PsiMethod>() {
+    public boolean value(final PsiMethod psiMethod) {
+      return psiMethod.getName().equals(DEFAULT_ACTION_METHOD_NAME);
+    }
+  };
 
   public boolean matchesPath(@NotNull final String path) {
     final String myPath = getName().getStringValue();
@@ -48,7 +57,7 @@ public abstract class ActionImpl implements Action {
   public StrutsPackage getStrutsPackage() {
     final StrutsPackage strutsPackage = DomUtil.getParentOfType(this, StrutsPackage.class, true);
     assert strutsPackage != null : "could not resolve enclosing <package> for " + this + " (" +
-            getName().getStringValue() + ")";
+                                   getName().getStringValue() + ")";
     return strutsPackage;
   }
 
@@ -58,7 +67,7 @@ public abstract class ActionImpl implements Action {
     if (actionClassAttribute.getXmlElement() != null) {
       return actionClassAttribute.getValue();
     }
-    
+
     // resolve parent package <default-class-ref> (walk upwards)
     final DefaultClassRef ref = getStrutsPackage().searchDefaultClassRef();
     if (ref != null) {
@@ -76,14 +85,7 @@ public abstract class ActionImpl implements Action {
       return methodValue.getValue();
     }
 
-    final List<PsiMethod> methods = getActionMethods();
-    for (final PsiMethod method : methods) {
-      if (method.getName().equals("execute")) {
-        return method;
-      }
-    }
-
-    return null;
+    return ContainerUtil.find(getActionMethods(), DEFAULT_ACTION_METHOD_CONDITION);
   }
 
   @NotNull

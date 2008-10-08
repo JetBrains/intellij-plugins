@@ -27,6 +27,7 @@ import java.util.List;
 /**
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class StrutsPackageImpl implements StrutsPackage, LocationPresentation {
 
   public String getLocation() {

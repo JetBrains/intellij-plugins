@@ -16,23 +16,28 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
 import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.DefaultInterceptorRefResolveConverter;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorStack;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Yann C&eacute;bron
  */
 public class DefaultInterceptorRefResolveConverterImpl extends DefaultInterceptorRefResolveConverter {
-
   @NotNull
   public Collection<? extends InterceptorStack> getVariants(final ConvertContext context) {
     final StrutsModel strutsModel = ConverterUtil.getStrutsModel(context);
@@ -53,24 +58,22 @@ public class DefaultInterceptorRefResolveConverterImpl extends DefaultIntercepto
       return null;
     }
 
-    final Set<InterceptorStack> interceptorStacks = getAllInterceptorStacks(strutsModel);
-    for (final InterceptorStack interceptorStack : interceptorStacks) {
-      if (name.equals(interceptorStack.getName().getStringValue())) {
-        return interceptorStack;
+    return ContainerUtil.find(getAllInterceptorStacks(strutsModel), new Condition<InterceptorStack>() {
+      public boolean value(final InterceptorStack interceptorStack) {
+        return Comparing.equal(name, interceptorStack.getName().getStringValue());
       }
-    }
-
-    return null;
+    });
   }
 
-  private static Set<InterceptorStack> getAllInterceptorStacks(@NotNull final StrutsModel strutsModel) {
-    final Set<InterceptorStack> variants = new HashSet<InterceptorStack>();
-    for (final StrutsPackage strutsPackage : strutsModel.getStrutsPackages()) {
-      final List<InterceptorStack> interceptorStackList = strutsPackage.getInterceptorStacks();
-      variants.addAll(interceptorStackList);
-    }
+  private static final Function<StrutsPackage, Collection<? extends InterceptorStack>> INTERCEPTOR_STACK_COLLECTOR =
+          new Function<StrutsPackage, Collection<? extends InterceptorStack>>() {
+            public Collection<? extends InterceptorStack> fun(final StrutsPackage strutsPackage) {
+              return strutsPackage.getInterceptorStacks();
+            }
+          };
 
-    return variants;
+  private static List<InterceptorStack> getAllInterceptorStacks(@NotNull final StrutsModel strutsModel) {
+    return ContainerUtil.concat(strutsModel.getStrutsPackages(), INTERCEPTOR_STACK_COLLECTOR);
   }
 
 }

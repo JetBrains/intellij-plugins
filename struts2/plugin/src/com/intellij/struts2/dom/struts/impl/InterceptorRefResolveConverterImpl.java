@@ -15,9 +15,12 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
 import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.*;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -52,14 +55,11 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
       return null;
     }
 
-    final Set<InterceptorOrStackBase> interceptorOrStackBases = getAllInterceptorsAndStacks(strutsModel);
-    for (final InterceptorOrStackBase interceptorOrStackBase : interceptorOrStackBases) {
-      if (name.equals(interceptorOrStackBase.getName().getStringValue())) {
-        return interceptorOrStackBase;
+    return ContainerUtil.find(getAllInterceptorsAndStacks(strutsModel), new Condition<InterceptorOrStackBase>() {
+      public boolean value(final InterceptorOrStackBase interceptorOrStackBase) {
+        return Comparing.equal(interceptorOrStackBase.getName().getStringValue(), name);
       }
-    }
-
-    return null;
+    });
   }
 
   @NotNull

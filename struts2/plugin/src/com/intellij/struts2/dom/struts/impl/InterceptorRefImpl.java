@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class InterceptorRefImpl implements InterceptorRef {
 
   @Nullable
