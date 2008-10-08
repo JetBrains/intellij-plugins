@@ -25,11 +25,11 @@ import com.intellij.peer.PeerFactory;
  *
  * @author Yann C&eacute;bron
  */
-public class StructureViewComponent extends com.intellij.ide.structureView.newStructureView.StructureViewComponent {
+class StructureViewComponent extends com.intellij.ide.structureView.newStructureView.StructureViewComponent {
 
-  public StructureViewComponent(final FileEditor fileEditor,
-                                final StructureViewModel structureViewModel,
-                                final Project project) {
+  StructureViewComponent(final FileEditor fileEditor,
+                         final StructureViewModel structureViewModel,
+                         final Project project) {
     super(fileEditor, structureViewModel, project);
     PeerFactory.getInstance().getUIHelper().installTreeSpeedSearch(getTree());
   }

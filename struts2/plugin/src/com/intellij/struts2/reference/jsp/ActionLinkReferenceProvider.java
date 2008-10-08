@@ -30,14 +30,14 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Provides links to Action-URLs in all places where Servlet-URLs are processed.
@@ -237,16 +237,14 @@ TODO not needed so far ?!
     }
 
     public Object[] getVariants() {
-      final Set<Object> variants = new HashSet<Object>(allStrutsPackages.size());
-
-      for (final StrutsPackage allPackage : allStrutsPackages) {
-        final String packageNamespace = allPackage.searchNamespace();
-        variants.add(LookupValueFactory.createLookupValueWithHint(
-                packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace,
-                StrutsIcons.PACKAGE, allPackage.getName().getStringValue()));
-      }
-
-      return variants.toArray(new Object[variants.size()]);
+      return ContainerUtil.map2Array(allStrutsPackages, Object.class, new Function<StrutsPackage, Object>() {
+        public Object fun(final StrutsPackage strutsPackage) {
+          final String packageNamespace = strutsPackage.searchNamespace();
+          return LookupValueFactory.createLookupValueWithHint(
+                  packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace,
+                  StrutsIcons.PACKAGE, strutsPackage.getName().getStringValue());
+        }
+      });
     }
 
     public String getUnresolvedMessagePattern() {

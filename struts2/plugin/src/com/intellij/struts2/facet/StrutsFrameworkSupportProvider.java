@@ -32,6 +32,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -40,12 +41,12 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.struts2.facet.ui.StrutsVersion;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -72,22 +73,24 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
 
   @NotNull
   public String[] getVersions() {
-    final List<String> versions = new ArrayList<String>();
-    for (final StrutsVersion version : StrutsVersion.values()) {
-      versions.add(version.toString());
-    }
-    return versions.toArray(new String[versions.size()]);
+    return ContainerUtil.map2Array(StrutsVersion.values(), String.class,
+                                   new Function<StrutsVersion, String>() {
+                                     public String fun(final StrutsVersion strutsVersion) {
+                                       return strutsVersion.toString();
+                                     }
+                                   });
   }
 
   @NotNull
   private static StrutsVersion getVersion(final String versionName) {
-    for (final StrutsVersion version : StrutsVersion.values()) {
-      if (versionName.equals(version.toString())) {
-        return version;
+    final StrutsVersion strutsVersion = ContainerUtil.find(StrutsVersion.values(), new Condition<StrutsVersion>() {
+      public boolean value(final StrutsVersion strutsVersion) {
+        return versionName.equals(strutsVersion.toString());
       }
-    }
+    });
 
-    throw new IllegalArgumentException("Invalid S2 version '" + versionName + "'");
+    LOG.assertTrue(strutsVersion != null, "Invalid S2 version '" + versionName + "'");
+    return strutsVersion;
   }
 
   @NotNull

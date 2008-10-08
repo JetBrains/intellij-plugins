@@ -21,6 +21,8 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.Function;
+import com.intellij.util.NotNullFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.model.impl.DomModelImpl;
@@ -29,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +40,21 @@ import java.util.Set;
  */
 class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
+  private static final NotNullFunction<DomFileElement<StrutsRoot>, StrutsRoot> ROOT_ELEMENT_MAPPER =
+          new NotNullFunction<DomFileElement<StrutsRoot>, StrutsRoot>() {
+            @NotNull
+            public StrutsRoot fun(final DomFileElement<StrutsRoot> strutsRootDomFileElement) {
+              return strutsRootDomFileElement.getRootElement();
+            }
+          };
+
+  private static final Function<StrutsRoot, Collection<? extends StrutsPackage>> STRUTS_PACKAGE_COLLECTOR =
+          new Function<StrutsRoot, Collection<? extends StrutsPackage>>() {
+            public Collection<? extends StrutsPackage> fun(final StrutsRoot strutsRoot) {
+              return strutsRoot.getPackages();
+            }
+          };
+
   StrutsModelImpl(@NotNull final DomFileElement<StrutsRoot> strutsRootDomFileElement,
                   @NotNull final Set<XmlFile> xmlFiles) {
     super(strutsRootDomFileElement, xmlFiles);
@@ -44,25 +62,12 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
   @NotNull
   public List<StrutsRoot> getMergedStrutsRoots() {
-    final List<DomFileElement<StrutsRoot>> elementList = getRoots();
-
-    final List<StrutsRoot> allRoots = new ArrayList<StrutsRoot>(elementList.size());
-    for (final DomFileElement<StrutsRoot> strutsRootDomFileElement : elementList) {
-      allRoots.add(strutsRootDomFileElement.getRootElement());
-    }
-
-    return allRoots;
+    return ContainerUtil.map(getRoots(), ROOT_ELEMENT_MAPPER);
   }
 
   @NotNull
   public List<StrutsPackage> getStrutsPackages() {
-    final List<StrutsPackage> strutsPackageList = new ArrayList<StrutsPackage>();
-
-    for (final StrutsRoot strutsRoot : getMergedStrutsRoots()) {
-      strutsPackageList.addAll(strutsRoot.getPackages());
-    }
-
-    return strutsPackageList;
+    return ContainerUtil.concat(getMergedStrutsRoots(), STRUTS_PACKAGE_COLLECTOR);
   }
 
   @NotNull

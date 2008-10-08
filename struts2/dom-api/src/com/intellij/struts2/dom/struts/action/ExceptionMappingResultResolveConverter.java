@@ -15,6 +15,9 @@
 
 package com.intellij.struts2.dom.struts.action;
 
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.ResolvingConverter;
@@ -46,13 +49,11 @@ public class ExceptionMappingResultResolveConverter extends ResolvingConverter<R
       return null;
     }
 
-    for (final Result result : getVariants(context)) {
-      if (value.equals(result.getName().getStringValue())) {
-        return result;
+    return ContainerUtil.find(getVariants(context), new Condition<Result>() {
+      public boolean value(final Result result) {
+        return Comparing.equal(result.getName().getStringValue(), value);
       }
-    }
-
-    return null;
+    });
   }
 
   public String toString(@Nullable final Result result, final ConvertContext context) {

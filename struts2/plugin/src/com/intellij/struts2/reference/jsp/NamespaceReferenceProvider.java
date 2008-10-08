@@ -24,7 +24,9 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -74,12 +76,11 @@ public class NamespaceReferenceProvider extends PsiReferenceProviderBase {
     }
 
     public Object[] getVariants() {
-      final List<String> variants = new ArrayList<String>();
-      for (final StrutsPackage strutsPackage : strutsModel.getStrutsPackages()) {
-        final String namespace = strutsPackage.searchNamespace();
-        variants.add(namespace);
-      }
-      return variants.toArray(new Object[variants.size()]);
+      return ContainerUtil.map2Array(strutsModel.getStrutsPackages(), new Function<StrutsPackage, Object>() {
+        public Object fun(final StrutsPackage strutsPackage) {
+          return strutsPackage.searchNamespace();
+        }
+      });
     }
 
     public String getUnresolvedMessagePattern() {

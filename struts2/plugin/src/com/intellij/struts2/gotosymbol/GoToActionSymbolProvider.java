@@ -42,24 +42,28 @@ public class GoToActionSymbolProvider extends GoToSymbolProvider {
 
   protected void addNames(@NotNull final Module module, final Set<String> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
-    if (strutsModel != null) {
-      final List<StrutsPackage> strutsPackageList = strutsModel.getStrutsPackages();
-      for (final StrutsPackage strutsPackage : strutsPackageList) {
-        addNewNames(strutsPackage.getActions(), result);
-      }
+    if (strutsModel == null) {
+      return;
+    }
+
+    final List<StrutsPackage> strutsPackageList = strutsModel.getStrutsPackages();
+    for (final StrutsPackage strutsPackage : strutsPackageList) {
+      addNewNames(strutsPackage.getActions(), result);
     }
   }
 
   protected void addItems(@NotNull final Module module, final String name, final List<NavigationItem> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
-    if (strutsModel != null) {
-      final List<Action> actions = strutsModel.findActionsByName(name, null);
-      for (final Action action : actions) {
-        final NavigationItem item = createNavigationItem(action.getXmlTag(),
-                                                         action.getName().getStringValue() + " [" + action.getNamespace() + "]",
-                                                         ElementPresentationManager.getIcon(action));
-        result.add(item);
-      }
+    if (strutsModel == null) {
+      return;
+    }
+
+    final List<Action> actions = strutsModel.findActionsByName(name, null);
+    for (final Action action : actions) {
+      final NavigationItem item = createNavigationItem(action.getXmlTag(),
+                                                       action.getName().getStringValue() + " [" + action.getNamespace() + "]",
+                                                       ElementPresentationManager.getIcon(action));
+      result.add(item);
     }
   }
 

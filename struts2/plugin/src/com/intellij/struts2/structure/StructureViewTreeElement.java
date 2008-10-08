@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomElementsNavigationManager;
 import com.intellij.util.xml.DomService;
@@ -16,7 +17,6 @@ import com.intellij.util.xml.structure.DomStructureTreeElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,20 +24,20 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-public class StructureViewTreeElement extends DomStructureTreeElement {
+class StructureViewTreeElement extends DomStructureTreeElement {
 
   private static final Function<DomElement, DomService.StructureViewMode> MY_STRUCTURE_VIEW_MODE_FUNCTION =
-      new Function<DomElement, DomService.StructureViewMode>() {
-        public DomService.StructureViewMode fun(final DomElement domElement) {
-          return DomService.StructureViewMode.SHOW;
-        }
-      };
+          new Function<DomElement, DomService.StructureViewMode>() {
+            public DomService.StructureViewMode fun(final DomElement domElement) {
+              return DomService.StructureViewMode.SHOW;
+            }
+          };
 
-  public StructureViewTreeElement(@NotNull final DomElement domElement) {
+  StructureViewTreeElement(@NotNull final DomElement domElement) {
     super(domElement,
-        MY_STRUCTURE_VIEW_MODE_FUNCTION,
-        DomElementsNavigationManager.getManager(domElement.getRoot().getFile().getProject()).
-            getDomElementsNavigateProvider(DomElementsNavigationManager.DEFAULT_PROVIDER_NAME));
+          MY_STRUCTURE_VIEW_MODE_FUNCTION,
+          DomElementsNavigationManager.getManager(domElement.getRoot().getFile().getProject()).
+                  getDomElementsNavigateProvider(DomElementsNavigationManager.DEFAULT_PROVIDER_NAME));
   }
 
   /**
@@ -48,7 +48,9 @@ public class StructureViewTreeElement extends DomStructureTreeElement {
   @Nullable
   public TextAttributesKey getTextAttributesKey() {
     final DomElement element = getElement();
-    if (!element.isValid()) return null;
+    if (!element.isValid()) {
+      return null;
+    }
 
     final XmlTag tag = element.getXmlTag();
     if (tag == null) {
@@ -56,7 +58,7 @@ public class StructureViewTreeElement extends DomStructureTreeElement {
     }
 
     final DomElementsProblemsHolder holder = DomElementAnnotationsManager.getInstance(tag.getProject())
-        .getCachedProblemHolder(element);
+            .getCachedProblemHolder(element);
 
     final List<DomElementProblemDescriptor> problems = holder.getProblems(element, true, HighlightSeverity.ERROR);
     if (!problems.isEmpty()) {
@@ -67,12 +69,11 @@ public class StructureViewTreeElement extends DomStructureTreeElement {
   }
 
   public TreeElement[] getChildren() {
-    final TreeElement[] elements = super.getChildren();
-    final List<StructureViewTreeElement> myList = new ArrayList<StructureViewTreeElement>(elements.length);
-    for (final TreeElement treeElement : elements) {
-      myList.add(new StructureViewTreeElement(((DomStructureTreeElement) treeElement).getElement()));
-    }
-    return myList.toArray(new StructureViewTreeElement[myList.size()]);
+    return ContainerUtil.map2Array(super.getChildren(), TreeElement.class, new Function<TreeElement, TreeElement>() {
+      public TreeElement fun(final TreeElement treeElement) {
+        return new StructureViewTreeElement(((DomStructureTreeElement) treeElement).getElement());
+      }
+    });
   }
 
   /**

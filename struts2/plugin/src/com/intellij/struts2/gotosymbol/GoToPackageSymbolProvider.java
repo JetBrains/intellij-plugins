@@ -41,21 +41,26 @@ public class GoToPackageSymbolProvider extends GoToSymbolProvider {
 
   protected void addNames(@NotNull final Module module, final Set<String> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
-    if (strutsModel != null) {
-      final List<StrutsPackage> strutsPackageList = strutsModel.getStrutsPackages();
-      addNewNames(strutsPackageList, result);
+    if (strutsModel == null) {
+      return;
     }
+
+    final List<StrutsPackage> strutsPackageList = strutsModel.getStrutsPackages();
+    addNewNames(strutsPackageList, result);
   }
 
   protected void addItems(@NotNull final Module module, final String name, final List<NavigationItem> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
-    if (strutsModel != null) {
-      final List<StrutsPackage> strutsPackageList = strutsModel.getStrutsPackages();
-      for (final StrutsPackage strutsPackage : strutsPackageList) {
-        if (name.equals(strutsPackage.getName().getStringValue())) {
-          final NavigationItem item = createNavigationItem(strutsPackage);
-          ContainerUtil.addIfNotNull(item, result);
-        }
+    if (strutsModel == null) {
+      return;
+    }
+
+    final List<StrutsPackage> strutsPackageList = strutsModel.getStrutsPackages();
+
+    for (final StrutsPackage strutsPackage : strutsPackageList) {
+      if (name.equals(strutsPackage.getName().getStringValue())) {
+        final NavigationItem item = createNavigationItem(strutsPackage);
+        ContainerUtil.addIfNotNull(item, result);
       }
     }
   }

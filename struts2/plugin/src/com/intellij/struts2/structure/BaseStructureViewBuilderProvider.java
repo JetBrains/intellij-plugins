@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class BaseStructureViewBuilderProvider implements XmlStructureViewBuilderProvider {
+abstract class BaseStructureViewBuilderProvider implements XmlStructureViewBuilderProvider {
 
   /**
    * Returns the DomFileElement depending on the root tag of the implementing class.

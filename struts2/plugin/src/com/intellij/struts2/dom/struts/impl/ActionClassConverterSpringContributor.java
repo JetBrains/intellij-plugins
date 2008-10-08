@@ -89,8 +89,11 @@ public class ActionClassConverterSpringContributor extends ActionClassConverter.
 
       final String beanName = myElement.getValue();
       final SpringBeanPointer springBean = model.findBean(beanName);
+      if (springBean == null) {
+        return null;
+      }
 
-      return springBean == null ? null : springBean.getBeanClass();
+      return springBean.getBeanClass();
     }
 
     @Nullable

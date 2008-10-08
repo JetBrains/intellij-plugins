@@ -13,12 +13,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StructureViewTreeModel extends XmlStructureViewTreeModel {
+class StructureViewTreeModel extends XmlStructureViewTreeModel {
 
   private final DomElement rootElement;
 
-  public StructureViewTreeModel(@NotNull final XmlFile xmlFile,
-                                @NotNull final DomElement rootElement) {
+  StructureViewTreeModel(@NotNull final XmlFile xmlFile,
+                         @NotNull final DomElement rootElement) {
     super(xmlFile);
     this.rootElement = rootElement;
   }

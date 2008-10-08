@@ -38,14 +38,17 @@ public abstract class IncludeFileResolvingConverter extends ResolvingConverter<P
     if (psiFile == null) {
       return null;
     }
+
     final VirtualFile file = psiFile.getVirtualFile();
     if (file == null) {
       return null;
     }
-    VirtualFile root = getRootForFile(file, context);
+
+    final VirtualFile root = getRootForFile(file, context);
     if (root == null) {
       return null;
     }
+
     return VfsUtil.getRelativePath(file, root, '/');
   }
 
@@ -53,9 +56,11 @@ public abstract class IncludeFileResolvingConverter extends ResolvingConverter<P
   private static VirtualFile getRootForFile(final VirtualFile file, final ConvertContext context) {
     final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(context.getPsiManager().getProject()).getFileIndex();
     VirtualFile root = projectFileIndex.getSourceRootForFile(file);
+
     if (root == null) {
       root = projectFileIndex.getContentRootForFile(file);
     }
+
     return root;
   }
 

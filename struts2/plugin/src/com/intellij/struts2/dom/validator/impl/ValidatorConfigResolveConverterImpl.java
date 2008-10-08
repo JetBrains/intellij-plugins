@@ -16,9 +16,12 @@
 package com.intellij.struts2.dom.validator.impl;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
 import com.intellij.struts2.dom.validator.ValidatorManager;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
 import com.intellij.struts2.dom.validator.config.ValidatorConfigResolveConverter;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -48,14 +51,11 @@ public class ValidatorConfigResolveConverterImpl extends ValidatorConfigResolveC
       return null;
     }
 
-    final Collection<? extends ValidatorConfig> validatorConfigs = getVariants(context);
-    for (final ValidatorConfig validatorConfig : validatorConfigs) {
-      if (name.equals(validatorConfig.getName().getStringValue())) {
-        return validatorConfig;
+    return ContainerUtil.find(getVariants(context), new Condition<ValidatorConfig>() {
+      public boolean value(final ValidatorConfig validatorConfig) {
+        return Comparing.equal(name, validatorConfig.getName().getStringValue());
       }
-    }
-
-    return null;
+    });
   }
 
 }

@@ -19,6 +19,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.JavaPsiFacade;
@@ -29,6 +30,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.OpenSourceUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.ResolvingConverter;
@@ -53,19 +55,17 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
     return action.getActionMethods();
   }
 
-  public PsiMethod fromString(@Nullable @NonNls final String s, final ConvertContext context) {
-    if (s == null) {
+  public PsiMethod fromString(@Nullable @NonNls final String value, final ConvertContext context) {
+    if (value == null) {
       return null;
     }
 
     final Action action = getActionElement(context);
-    for (final PsiMethod method : action.getActionMethods()) {
-      if (method.getName().equals(s)) {
-        return method;
+    return ContainerUtil.find(action.getActionMethods(), new Condition<PsiMethod>() {
+      public boolean value(final PsiMethod psiMethod) {
+        return psiMethod.getName().equals(value);
       }
-    }
-
-    return null;
+    });
   }
 
 
