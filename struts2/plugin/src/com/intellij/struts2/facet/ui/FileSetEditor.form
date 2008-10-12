@@ -31,7 +31,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value="File Set name:"/>
+          <text resource-bundle="resources/Struts2Bundle" key="facet.fileseteditor.label.filesetname"/>
         </properties>
       </component>
       <component id="aa71d" class="com.intellij.ui.EditorTextField" binding="mySetName">

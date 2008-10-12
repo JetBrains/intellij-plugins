@@ -28,6 +28,7 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.spring.SpringManager;
 import com.intellij.spring.SpringModel;
 import com.intellij.spring.model.xml.beans.SpringBeanPointer;
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.struts.action.ActionClassConverter;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
@@ -61,7 +62,7 @@ public class ActionClassConverterSpringContributor extends ActionClassConverter.
   }
 
   public String getContributorType() {
-    return "Spring bean";
+    return StrutsBundle.message("dom.actionclass.converter.type.spring");
   }
 
   @NotNull

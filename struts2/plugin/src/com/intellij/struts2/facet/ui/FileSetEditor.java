@@ -32,6 +32,7 @@ import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.EditorTextField;
@@ -67,7 +68,7 @@ public class FileSetEditor extends DialogWrapper {
     super(parent, true);
     mySetName.setUseTextFieldPreferredSize(true);
 
-    setTitle("Edit File Set");
+    setTitle(StrutsBundle.message("facet.fileseteditor.title"));
     myOriginalSet = fileSet;
     myFileSet = new StrutsFileSet(fileSet);
 
@@ -162,7 +163,7 @@ public class FileSetEditor extends DialogWrapper {
   }
 
   protected Action[] createLeftSideActions() {
-    final AbstractAction locateAction = new AbstractAction("Locate...") {
+    final AbstractAction locateAction = new AbstractAction(StrutsBundle.message("facet.fileseteditor.button.locate.browse")) {
       public void actionPerformed(final ActionEvent e) {
         final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, false, false, false, true, true) {
 
@@ -206,8 +207,8 @@ public class FileSetEditor extends DialogWrapper {
             }
           }
         };
-        descriptor.setTitle("Locate");
-        descriptor.setDescription("Choose struts.xml file(s) to add");
+        descriptor.setTitle(StrutsBundle.message("facet.fileseteditor.locate"));
+        descriptor.setDescription(StrutsBundle.message("facet.fileseteditor.choose.files"));
 
         final VirtualFile[] files = FileChooser.chooseFiles(myMainPanel, descriptor);
         if (files.length > 0) {

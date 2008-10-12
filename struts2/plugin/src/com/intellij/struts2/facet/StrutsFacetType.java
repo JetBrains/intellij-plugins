@@ -26,6 +26,7 @@ import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.StrutsRoot;
@@ -47,7 +48,7 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
   public static final FacetType<StrutsFacet, StrutsFacetConfiguration> INSTANCE = new StrutsFacetType();
 
   private StrutsFacetType() {
-    super(StrutsFacet.FACET_TYPE_ID, "Struts2", "Struts 2", WebFacet.ID);
+    super(StrutsFacet.FACET_TYPE_ID, "Struts2", StrutsBundle.message("struts2"), WebFacet.ID);
   }
 
   public StrutsFacetConfiguration createDefaultConfiguration() {

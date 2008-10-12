@@ -3,6 +3,7 @@ package com.intellij.struts2.structure;
 import com.intellij.ide.structureView.impl.xml.XmlStructureViewTreeModel;
 import com.intellij.ide.util.treeView.smartTree.*;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.Param;
 import com.intellij.util.xml.DomElement;
@@ -50,12 +51,13 @@ class StructureViewTreeModel extends XmlStructureViewTreeModel {
 
       @NotNull
       public ActionPresentation getPresentation() {
-        return new ActionPresentationData("Hide params", "Hide params", StrutsIcons.PARAM);
+        return new ActionPresentationData(StrutsBundle.message("structureview.filter.params"),
+                                          StrutsBundle.message("structureview.filter.params"), StrutsIcons.PARAM);
       }
 
       @NotNull
       public String getName() {
-        return "Hide params";
+        return StrutsBundle.message("structureview.filter.params");
       }
     }};
   }

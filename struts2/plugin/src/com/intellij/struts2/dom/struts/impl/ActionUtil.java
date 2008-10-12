@@ -93,7 +93,7 @@ final class ActionUtil {
       }
 
       // skip "toString()"
-      if (psiMethod.getName().equals("toString")) {
+      if ("toString".equals(psiMethod.getName())) {
         continue;
       }
 

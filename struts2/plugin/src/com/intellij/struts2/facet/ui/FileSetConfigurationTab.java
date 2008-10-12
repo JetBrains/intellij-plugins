@@ -24,6 +24,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
+import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
@@ -116,7 +117,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
     myAddSetButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         final StrutsFileSet fileSet = new StrutsFileSet(StrutsFileSet.getUniqueId(myBuffer),
-                                                        StrutsFileSet.getUniqueName("My Fileset", myBuffer)) {
+                                                        StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.myfileset"), myBuffer)) {
           public boolean isNew() {
             return true;
           }
@@ -216,8 +217,9 @@ public class FileSetConfigurationTab extends FacetEditorTab {
       if (node instanceof FileSetNode) {
         final StrutsFileSet fileSet = ((FileSetNode) node).mySet;
         final int result = Messages.showYesNoDialog(myPanel,
-                                                    "Remove File Set '" + fileSet.getName() + "' ?",
-                                                    "Confirm removal",
+                                                    StrutsBundle.message("facet.fileset.removefileset.question",
+                                                                         fileSet.getName()),
+                                                    StrutsBundle.message("facet.fileset.removefileset.title"),
                                                     Messages.getQuestionIcon());
         if (result == DialogWrapper.OK_EXIT_CODE) {
           if (fileSet.isAutodetected()) {
@@ -244,7 +246,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
   @Nls
   public String getDisplayName() {
-    return "File Sets";
+    return StrutsBundle.message("facet.fileset.title");
   }
 
   public JComponent createComponent() {
@@ -298,13 +300,13 @@ public class FileSetConfigurationTab extends FacetEditorTab {
       mySet = fileSet;
       final String name = mySet.getName();
       if (fileSet.getFiles().isEmpty()) {
-        addErrorText(name, "No files attached");
+        addErrorText(name, StrutsBundle.message("facet.fileset.nofiles.attached"));
       } else {
         addPlainText(name);
       }
 
       if (fileSet.isAutodetected()) {
-        addColoredFragment(" [autodetected]", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
+        addColoredFragment(StrutsBundle.message("facet.fileset.autodetected"), SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
       }
       setIcons(fileSet.getIcon(), Icons.PACKAGE_OPEN_ICON);
     }
@@ -346,7 +348,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
       } else {
         renderFile(SimpleTextAttributes.ERROR_ATTRIBUTES,
                    SimpleTextAttributes.ERROR_ATTRIBUTES,
-                   "File not found!");
+                   StrutsBundle.message("facet.fileset.filenotfound"));
       }
     }
 
