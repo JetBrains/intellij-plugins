@@ -80,7 +80,8 @@ public class TestFactory {
 
   public static void deleteFiles() throws InterruptedException {
     for (final File fileToDelete : ourFiles) {
-      assert FileUtil.delete(fileToDelete) : "Can't delete "+fileToDelete;
+      boolean deleted = FileUtil.delete(fileToDelete);
+      assert deleted : "Can't delete "+fileToDelete;
     }
   }
 }
