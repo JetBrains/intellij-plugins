@@ -69,10 +69,15 @@ public final class StrutsConstants {
    * Old URI.
    */
   @NonNls
-  public static final String TILES_2_DTD_URI_STRUTS = "http://struts.apache.org/dtds/tiles-config_2_0.dtd";
+  public static final String TILES_2_0_DTD_URI_STRUTS = "http://struts.apache.org/dtds/tiles-config_2_0.dtd";
   @NonNls
-  public static final String TILES_2_DTD_URI = "http://tiles.apache.org/dtds/tiles-config_2_0.dtd";
+  public static final String TILES_2_0_DTD_URI = "http://tiles.apache.org/dtds/tiles-config_2_0.dtd";
   @NonNls
-  public static final String TILES_2_DTD_ID = "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN";
+  public static final String TILES_2_0_DTD_ID = "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN";
+
+  @NonNls
+  public static final String TILES_2_1_DTD_URI = "http://tiles.apache.org/dtds/tiles-config_2_1.dtd";
+  @NonNls
+  public static final String TILES_2_1_DTD_ID = "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN";
 
 }
