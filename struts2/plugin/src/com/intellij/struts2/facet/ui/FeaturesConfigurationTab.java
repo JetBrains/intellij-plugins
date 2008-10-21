@@ -121,4 +121,8 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
   public void disposeUIResources() {
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.settings.project.structure.facets.struts2.facet";
+  }
 }

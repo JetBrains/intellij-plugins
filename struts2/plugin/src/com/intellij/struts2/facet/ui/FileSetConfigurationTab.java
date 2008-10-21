@@ -369,4 +369,8 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.settings.project.structure.facets.struts2.facet";
+  }
 }
