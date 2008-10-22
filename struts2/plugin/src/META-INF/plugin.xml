@@ -93,6 +93,8 @@
 
     <javaee.web.customServletReferenceProvider
             implementation="com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider"/>
+    <javaee.web.deployedFileUrlConverter implementation="com.intellij.struts2.preview.Struts2UrlConverter"/>
+
   </extensions>
 
   <application-components>

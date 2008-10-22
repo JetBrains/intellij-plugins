@@ -19,6 +19,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.Processor;
 import com.intellij.util.xml.model.DomModel;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -80,4 +81,6 @@ public interface StrutsModel extends DomModel<StrutsRoot> {
    * @return List of all Actions.
    */
   List<Action> getActionsForNamespace(@Nullable @NonNls final String namespace);
+
+  boolean processActions(Processor<Action> processor);
 }

@@ -23,6 +23,7 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.Function;
 import com.intellij.util.NotNullFunction;
+import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.model.impl.DomModelImpl;
@@ -109,6 +110,17 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
     }
 
     return actionResultList;
+  }
+
+  public boolean processActions(final Processor<Action> processor) {
+    for (final StrutsPackage strutsPackage : getStrutsPackages()) {
+      for (final Action action : strutsPackage.getActions()) {
+        if (!processor.process(action)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
 }
