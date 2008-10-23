@@ -248,7 +248,7 @@ TODO not needed so far ?!
     }
 
     public String getUnresolvedMessagePattern() {
-      return "Cannot resolve Struts 2 package ''" + getCanonicalText() + "''";
+      return "Cannot resolve Struts 2 package ''" + namespace + "''";
     }
   }
 
