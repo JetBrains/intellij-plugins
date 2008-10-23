@@ -70,6 +70,11 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
     return StrutsIcons.ACTION;
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.settings.project.structure.facets.struts2.facet";
+  }
+
   public void registerDetectors(final FacetDetectorRegistry<StrutsFacetConfiguration> facetDetectorRegistry) {
     final FacetDetectorRegistryEx<StrutsFacetConfiguration> registry =
             (FacetDetectorRegistryEx<StrutsFacetConfiguration>) facetDetectorRegistry;
