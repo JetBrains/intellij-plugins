@@ -18,7 +18,10 @@ package com.intellij.struts2.reference.jsp;
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupValueFactory;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
@@ -31,6 +34,8 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.ProcessingContext;
+import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,47 +50,115 @@ import java.util.List;
 public class ActionReferenceProvider extends PsiReferenceProviderBase {
 
   @NotNull
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement, @NotNull final ProcessingContext context) {
+  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                               @NotNull final ProcessingContext context) {
     final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
     final StrutsModel strutsModel = strutsManager.getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
-
     if (strutsModel == null) {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    return new PsiReference[]{new ActionReference((XmlAttributeValue) psiElement, strutsModel)
-    };
+    final XmlAttributeValue xmlAttributeValue = (XmlAttributeValue) psiElement;
+    final String path = xmlAttributeValue.getValue();
+
+    // resolve to <action>
+    final String actionName = TaglibUtil.trimActionPath(path);
+    final String namespace = getNamespace(xmlAttributeValue);
+    final List<Action> actions = strutsModel.findActionsByName(actionName, namespace);
+    final Action action = actions.isEmpty() ? null : actions.get(0);
+
+    final int bangIndex = path.indexOf(TaglibUtil.BANG_SYMBOL);
+    if (bangIndex == -1) {
+      return new PsiReference[]{new ActionReference(xmlAttributeValue, action, namespace, strutsModel)};
+    }
+
+    return new PsiReference[]{new ActionReference(xmlAttributeValue, action, namespace, strutsModel),
+                              new ActionMethodReference(xmlAttributeValue, action, bangIndex)};
   }
+
+  @Nullable
+  private static String getNamespace(@NotNull final XmlAttributeValue xmlAttributeValue) {
+    final XmlTag tag = PsiTreeUtil.getParentOfType(xmlAttributeValue, XmlTag.class);
+    if (tag == null) {
+      return null;
+    }
+
+    final XmlAttribute namespaceAttribute = tag.getAttribute("namespace");
+    return namespaceAttribute != null ? namespaceAttribute.getValue() : null;
+  }
+
+
+  private static class ActionMethodReference extends PsiReferenceBase<XmlAttributeValue> implements EmptyResolveMessageProvider {
+
+    private final Action action;
+
+
+    private ActionMethodReference(final XmlAttributeValue xmlAttributeValue,
+                                  @Nullable final Action action,
+                                  final int bangIndex) {
+      super(xmlAttributeValue);
+      this.action = action;
+      setRangeInElement(TextRange.from(getRangeInElement().getStartOffset() + bangIndex + 1,
+                                       getRangeInElement().getLength() - 1 - bangIndex));
+    }
+
+    public PsiElement resolve() {
+      if (action == null) {
+        return null;
+      }
+
+      final String methodName = getValue();
+      return ContainerUtil.find(action.getActionMethods(), new Condition<PsiMethod>() {
+        public boolean value(final PsiMethod psiMethod) {
+          return psiMethod.getName().equals(methodName);
+        }
+      });
+    }
+
+    public Object[] getVariants() {
+      if (action == null) {
+        return new Object[0];
+      }
+
+      return action.getActionMethods().toArray(new PsiMethod[action.getActionMethods().size()]);
+    }
+
+    public String getUnresolvedMessagePattern() {
+      return "Cannot resolve action method ''" + getValue() + "''";
+    }
+  }
+
 
   private static class ActionReference extends PsiReferenceBase<XmlAttributeValue> implements EmptyResolveMessageProvider {
 
+    private final Action action;
+    private final String namespace;
     private final StrutsModel strutsModel;
 
-    private ActionReference(final XmlAttributeValue psiElement, final StrutsModel strutsModel) {
-      super(psiElement);
+    private ActionReference(final XmlAttributeValue xmlAttributeValue,
+                            @Nullable final Action action,
+                            @Nullable @NonNls final String namespace,
+                            final StrutsModel strutsModel) {
+      super(xmlAttributeValue);
+      this.action = action;
+      this.namespace = namespace;
       this.strutsModel = strutsModel;
     }
 
     public PsiElement resolve() {
-      final String actionName = myElement.getValue();
-      final String namespace = getNamespace();
-
-      if (TaglibUtil.isDynamicExpression(actionName)) {
+      if (TaglibUtil.isDynamicExpression(myElement.getValue())) {
         return myElement;
       }
 
-      final List<Action> actions = strutsModel.findActionsByName(actionName, namespace);
-      if (actions.isEmpty()) {
+      if (action == null) {
         return null;
       }
 
-      // TODO return polys
-      final Action myAction = actions.get(0);
-      return myAction.getXmlTag();
+      return action.getXmlTag();
     }
 
     public Object[] getVariants() {
-      final List<Action> actionList = strutsModel.getActionsForNamespace(getNamespace());
+      final List<Action> actionList = strutsModel.getActionsForNamespace(namespace);
 
       final List<Object> variants = new ArrayList<Object>(actionList.size());
       for (final Action action : actionList) {
@@ -101,18 +174,7 @@ public class ActionReferenceProvider extends PsiReferenceProviderBase {
     }
 
     public String getUnresolvedMessagePattern() {
-      return "Cannot resolve action ''" + getCanonicalText() + "''";
-    }
-
-    @Nullable
-    private String getNamespace() {
-      final XmlTag tag = PsiTreeUtil.getParentOfType(myElement, XmlTag.class);
-      if (tag == null) {
-        return null;
-      }
-
-      final XmlAttribute namespaceAttribute = tag.getAttribute("namespace");
-      return namespaceAttribute != null ? namespaceAttribute.getValue() : null;
+      return "Cannot resolve action ''" + getValue() + "''";
     }
 
   }

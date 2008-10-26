@@ -24,6 +24,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class TaglibUtil {
 
+  /**
+   * Splits action-name from action-method.
+   */
+  public static final String BANG_SYMBOL = "!";
+
   private TaglibUtil() {
   }
 
@@ -36,6 +41,23 @@ public final class TaglibUtil {
    */
   public static boolean isDynamicExpression(@NotNull @NonNls final String attributeValue) {
     return attributeValue.startsWith("%{");
+  }
+
+  /**
+   * Trims the given value to the real action path.
+   *
+   * @param attributeValue Custom tag attribute value.
+   * @return Action path.
+   */
+  @NotNull
+  @NonNls
+  public static String trimActionPath(@NotNull @NonNls final String attributeValue) {
+    final int bangIndex = attributeValue.indexOf(BANG_SYMBOL);
+    if (bangIndex == -1) {
+      return attributeValue;
+    }
+
+    return attributeValue.substring(0, bangIndex);
   }
 
 }

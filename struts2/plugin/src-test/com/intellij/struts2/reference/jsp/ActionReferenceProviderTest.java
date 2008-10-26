@@ -21,6 +21,8 @@ import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+
 /**
  * Tests for {@link com.intellij.struts2.reference.jsp.ActionReferenceProvider}.
  *
@@ -44,6 +46,11 @@ public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebMo
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
+
+    final String path = myFixture.getTempDirPath();
+    moduleBuilder.addContentRoot(path);
+    new File(path + "/src").mkdir();
+    moduleBuilder.addSourceRoot("src");
   }
 
   public void testActionHighlighting() throws Throwable {
@@ -54,7 +61,13 @@ public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebMo
   public void testActionCompletionVariants() throws Throwable {
     createStrutsFileSet("struts-action.xml");
     myFixture.testCompletionVariants("/jsp/action-completionvariants.jsp",
-                                     "namespace1Action", "namespace2Action", "myWildCard*");
+                                     "bangAction", "namespace1Action", "namespace2Action", "myWildCard*");
+  }
+
+  public void testActionCompletionVariantsBang() throws Throwable {
+    createStrutsFileSet("struts-action.xml");
+    myFixture.testCompletionVariants("/jsp/action-completionvariants-bang.jsp",
+                                     "methodA", "methodB");
   }
 
   public void testActionCompletionVariantsNamespace() throws Throwable {

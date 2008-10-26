@@ -9,6 +9,10 @@
 <s:url action="myWildCard" namespace="/wildcard"/>
 <s:url action="myWildCardAnythingGoesHere" namespace="/wildcard"/>
 
+<%-- bang-notation --%>
+<s:url action="bangAction!methodA" namespace="/bang"/>
+<s:url action="bangAction!methodB" namespace="/bang"/>
+
 <s:url action="%{anythingDynamic}"/>
 
 <s:form action="namespace1Action"/>
@@ -20,3 +24,6 @@
 <s:url action="<error></error>"/>
 <s:url action="<error>INVALID_VALUE</error>"/>
 <s:url action="<error>namespace2Action</error>" namespace="/namespace1"/>
+
+<s:url action="bangAction!<error>INVALID_VALUE</error>" namespace="/bang"/>
+<s:url action="namespace2Action!<error>INVALID_VALUE</error>" namespace="/namespace2"/>

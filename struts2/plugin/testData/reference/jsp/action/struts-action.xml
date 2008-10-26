@@ -19,4 +19,8 @@
     <action name="myWildCard*"/>
   </package>
 
+  <package name="bang" namespace="/bang">
+    <action name="bangAction" class="ActionMethods"/>
+  </package>
+
 </struts>
