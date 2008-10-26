@@ -12,15 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.struts2.jsp;
+package com.intellij.struts2.reference.jsp;
 
-import com.intellij.struts2.reference.jsp.TaglibUtil;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import org.hamcrest.core.Is;
+import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class TaglibUtilTest {
 
@@ -30,6 +31,13 @@ public class TaglibUtilTest {
     assertFalse(TaglibUtil.isDynamicExpression("any%{"));
 
     assertTrue(TaglibUtil.isDynamicExpression("%{any"));
+  }
+
+  @Test
+  public void trimActionPath() {
+    assertThat(TaglibUtil.trimActionPath("noBang"), Is.is("noBang"));
+    assertThat(TaglibUtil.trimActionPath("noBang!bang"), Is.is("noBang"));
+    assertThat(TaglibUtil.trimActionPath("noBang!!bang"), Is.is("noBang"));
   }
 
 }

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public final class TaglibUtil {
+final class TaglibUtil {
 
   /**
    * Splits action-name from action-method.
@@ -39,7 +39,7 @@ public final class TaglibUtil {
    * @param attributeValue The attribute value to check.
    * @return true if yes, false otherwise.
    */
-  public static boolean isDynamicExpression(@NotNull @NonNls final String attributeValue) {
+  static boolean isDynamicExpression(@NotNull @NonNls final String attributeValue) {
     return attributeValue.startsWith("%{");
   }
 
@@ -51,7 +51,7 @@ public final class TaglibUtil {
    */
   @NotNull
   @NonNls
-  public static String trimActionPath(@NotNull @NonNls final String attributeValue) {
+  static String trimActionPath(@NotNull @NonNls final String attributeValue) {
     final int bangIndex = attributeValue.indexOf(BANG_SYMBOL);
     if (bangIndex == -1) {
       return attributeValue;
