@@ -23,7 +23,7 @@ import org.junit.Test;
 /**
  * Tests for {@link ActionUtil}.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ActionUtilTest {
 

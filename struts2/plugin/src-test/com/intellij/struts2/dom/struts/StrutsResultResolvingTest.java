@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Tests for {@link com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter}.
  *
- * @author Yann C�bron
+ * @author Yann C&eacute;bron
  */
 public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<WebModuleFixtureBuilder> {
 

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Tests for {@link NamespaceReferenceProvider}.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class NamespaceReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
 

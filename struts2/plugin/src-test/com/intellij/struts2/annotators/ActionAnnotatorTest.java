@@ -33,7 +33,7 @@ import java.util.Set;
 /**
  * Tests for {@link ActionAnnotator}
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ActionAnnotatorTest extends BasicStrutsHighlightingTestCase {
 

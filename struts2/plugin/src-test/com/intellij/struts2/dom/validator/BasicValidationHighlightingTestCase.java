@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NonNls;
 /**
  * Base class for validation.xml highlighting tests.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFixtureBuilder> extends BasicHighlightingTestCase<T> {
 

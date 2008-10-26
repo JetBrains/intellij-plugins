@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Test intentions in struts.xml.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsIntentionTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 

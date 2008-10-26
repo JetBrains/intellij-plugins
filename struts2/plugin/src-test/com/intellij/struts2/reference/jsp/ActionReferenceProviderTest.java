@@ -26,7 +26,7 @@ import java.io.File;
 /**
  * Tests for {@link com.intellij.struts2.reference.jsp.ActionReferenceProvider}.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
 

@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Tests {@link StrutsFileSetCheckingAnnotator}.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsFileSetCheckingAnnotatorTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Tests for various attributes in S2 UI tags.
  *
- * @author Yann Cébron
+ * @author Yann C&eacute;bron
  */
 public class UITagsAttributesReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
 

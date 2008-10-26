@@ -19,7 +19,7 @@ import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Tests for {@link StrutsVersionDetector}.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class StrutsVersionDetectorTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
 

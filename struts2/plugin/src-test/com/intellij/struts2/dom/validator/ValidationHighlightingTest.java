@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Various basic and complex validation.xml highlighting tests.
  *
- * @author Yann CŽbron
+ * @author Yann C&eacute;bron
  */
 public class ValidationHighlightingTest extends BasicValidationHighlightingTestCase<JavaModuleFixtureBuilder> {
 
