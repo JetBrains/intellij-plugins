@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 /*
- * $Id: Action.java 502296 2007-02-01 17:33:39Z niallp $
+ * $Id$
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,14 +21,13 @@
  * under the License.
  */
 -->
-
 <!-- START SNIPPET: strutsDtd -->
 
 <!--
    Struts configuration DTD.
    Use the following DOCTYPE
-
-   <!DOCTYPE struts PUBLIC
+   
+   <!DOCTYPE struts PUBLIC 
 	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
 	"http://struts.apache.org/dtds/struts-2.0.dtd">
 -->
@@ -71,17 +70,17 @@
     name CDATA #REQUIRED
 >
 
-<!ELEMENT default-interceptor-ref (param*)>
+<!ELEMENT default-interceptor-ref (#PCDATA)>
 <!ATTLIST default-interceptor-ref
     name CDATA #REQUIRED
 >
 
-<!ELEMENT default-action-ref (param*)>
+<!ELEMENT default-action-ref (#PCDATA)>
 <!ATTLIST default-action-ref
     name CDATA #REQUIRED
 >
 
-<!ELEMENT default-class-ref (param*)>
+<!ELEMENT default-class-ref (#PCDATA)>
 <!ATTLIST default-class-ref
     class CDATA #REQUIRED
 >
@@ -134,7 +133,8 @@
 <!ELEMENT constant (#PCDATA)>
 <!ATTLIST constant
     name CDATA #REQUIRED
-    value CDATA #REQUIRED
+    value CDATA #REQUIRED    
 >
 
 <!-- END SNIPPET: strutsDtd -->
+

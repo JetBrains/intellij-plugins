@@ -15,8 +15,8 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
-import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.struts2.dom.struts.action.Action;
+import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.Required;
 import com.intellij.util.xml.Scope;
@@ -26,7 +26,7 @@ import com.intellij.util.xml.Scope;
  *
  * @author Yann C&eacute;bron
  */
-public interface DefaultActionRef extends ParamsElement {
+public interface DefaultActionRef extends DomElement {
 
   // only within current package
   @Required

@@ -22,7 +22,9 @@ import com.intellij.struts2.dom.impl.ParamImpl;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.impl.*;
-import com.intellij.struts2.dom.struts.strutspackage.*;
+import com.intellij.struts2.dom.struts.strutspackage.GlobalResult;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorRef;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.xml.DomFileDescription;
 
 /**
@@ -43,9 +45,6 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
 
     registerImplementation(Action.class, ActionImpl.class);
     registerImplementation(Constant.class, ConstantImpl.class);
-    registerImplementation(DefaultActionRef.class, DefaultActionRefImpl.class);
-    registerImplementation(DefaultClassRef.class, DefaultClassRefImpl.class);
-    registerImplementation(DefaultInterceptorRef.class, DefaultInterceptorRefImpl.class);
     registerImplementation(GlobalResult.class, GlobalResultImpl.class);
     registerImplementation(InterceptorRef.class, InterceptorRefImpl.class);
     registerImplementation(Param.class, ParamImpl.class);

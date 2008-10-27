@@ -16,20 +16,14 @@
 package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.psi.PsiClass;
-import com.intellij.struts2.dom.ParamsElement;
-import com.intellij.util.xml.Attribute;
-import com.intellij.util.xml.ExtendClass;
-import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.Required;
+import com.intellij.util.xml.*;
 
 /**
  * <code>default-class-ref</code>
- * <p/>
- * TODO https://issues.apache.org/struts/browse/WW-1420
  *
  * @author Yann C&eacute;bron
  */
-public interface DefaultClassRef extends ParamsElement {
+public interface DefaultClassRef extends DomElement {
 
   @ExtendClass(allowAbstract = false, allowInterface = false)
   @Required

@@ -15,15 +15,15 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
-import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.util.xml.Convert;
+import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.Required;
 
 /**
  * @author Yann C&eacute;bron
  */
-public interface DefaultInterceptorRef extends ParamsElement {
+public interface DefaultInterceptorRef extends DomElement {
 
   @Required
   @Convert(DefaultInterceptorRefResolveConverter.class)
