@@ -8,7 +8,7 @@
 
   <package name="actionMethodIntentionTest">
 
-    <action name="unknownMethod" class="MyClass" method="unknownMethod"/>
+    <action name="unknownMethod" class="MyClass" method="unknownMethod<caret>"/>
 
   </package>
 
