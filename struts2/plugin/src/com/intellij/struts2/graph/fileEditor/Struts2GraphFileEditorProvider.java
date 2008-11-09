@@ -14,25 +14,52 @@
  */
 package com.intellij.struts2.graph.fileEditor;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
+import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.xml.ui.PerspectiveFileEditor;
 import com.intellij.util.xml.ui.PerspectiveFileEditorProvider;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
+
 /**
+ * Provides "Graph"-tab for struts.xml files registered in S2 fileset.
+ *
  * @author Yann C&eacute;bron
  */
 public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvider {
 
   public boolean accept(@NotNull final Project project, @NotNull final VirtualFile file) {
     final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-    return psiFile instanceof XmlFile &&
-           StrutsManager.getInstance(project).isStruts2ConfigFile((XmlFile) psiFile);
+
+    if (!(psiFile instanceof XmlFile)) {
+      return false;
+    }
+
+    if (!StrutsManager.getInstance(project).isStruts2ConfigFile((XmlFile) psiFile)) {
+      return false;
+    }
+
+    final Module module = ModuleUtil.findModuleForFile(file, project);
+    if (module == null) {
+      return false;
+    }
+
+    final Set<StrutsFileSet> fileSets = StrutsManager.getInstance(project).getAllConfigFileSets(module);
+    for (StrutsFileSet fileSet : fileSets) {
+      if (fileSet.hasFile(file)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   @NotNull
