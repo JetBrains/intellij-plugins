@@ -70,6 +70,22 @@
   </package>
 
 
+  <!-- result-types pointing to action: allow any <param> "name" (STRPL-85) -->
+  <package name="testResultParamsWithActionResultType">
+    <result-types>
+      <result-type name="redirectAction" class="org.apache.struts2.dispatcher.ServletActionRedirectResult"/>
+    </result-types>
+
+    <action name="testResultParamsWithActionResultType">
+      <result name="actionResult" type="redirectAction">
+        <param name="actionName">value</param>
+        <param name="anything">value</param>
+        <param name="nothing">value</param>
+      </result>
+    </action>
+  </package>
+
+  
   <!-- GLOBAL-RESULT ===================================================== -->
 
   <package name="testGlobalResultParams">

@@ -48,7 +48,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
 
   @Override
   public boolean matchesResultType(@NonNls @Nullable final String resultType) {
-    return !ActionChainOrRedirectResultContributor.isActionChainOrRedirectResult(resultType);
+    return !ResultTypeResolver.isChainOrRedirectType(resultType);
   }
 
   public boolean createReferences(@NotNull final PsiElement psiElement,

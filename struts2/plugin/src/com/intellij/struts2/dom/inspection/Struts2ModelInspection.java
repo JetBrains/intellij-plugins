@@ -26,10 +26,13 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.ParamsElement;
+import com.intellij.struts2.dom.ParamsNameConverter;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.ActionClassConverter;
+import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter;
+import com.intellij.struts2.dom.struts.impl.path.ResultTypeResolver;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
@@ -84,8 +87,18 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
       return false;
     }
 
+    // hack for STRPL-85: suppress <param>-highlighting within <result> when pointing to Actions
+    if (value.getConverter() instanceof ParamsNameConverter) {
+      final Result result = DomUtil.getParentOfType(value, Result.class, false);
+      if (result != null) {
+        if (ResultTypeResolver.isChainOrRedirectType(result.getType().getStringValue())) {
+          return false;
+        }
+      }
+    }
+
     final String stringValue = value.getStringValue();
-    
+
     // suppress <result> path
     if (value.getConverter() instanceof StrutsPathReferenceConverter) {
 

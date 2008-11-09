@@ -55,7 +55,7 @@ public abstract class StrutsResultContributor implements PathReferenceProvider {
    * @param resultType Result type.
    * @return true.
    */
-  public boolean matchesResultType(@NonNls @Nullable final String resultType) {
+  protected boolean matchesResultType(@NonNls @Nullable final String resultType) {
     return true;
   }
 

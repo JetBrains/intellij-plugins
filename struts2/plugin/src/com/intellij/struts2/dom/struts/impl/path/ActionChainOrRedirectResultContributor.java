@@ -33,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,26 +42,9 @@ import java.util.List;
  */
 public class ActionChainOrRedirectResultContributor extends StrutsResultContributor {
 
-  @NonNls
-  private static final String[] RESULT_TYPES_CHAIN_REDIRECT = new String[]{"chain", "redirect-action", "redirectAction"};
-
-  /**
-   * Is the given result "type" handled by this ReferenceProvider.
-   *
-   * @param dispatcherType Result tag's "type" attribute value.
-   * @return true/false.
-   */
-  static boolean isActionChainOrRedirectResult(@Nullable final String dispatcherType) {
-    if (dispatcherType == null) {
-      return false;
-    }
-
-    return Arrays.binarySearch(RESULT_TYPES_CHAIN_REDIRECT, dispatcherType) >= 0;
-  }
-
   @Override
   public boolean matchesResultType(@NonNls @Nullable final String resultType) {
-    return isActionChainOrRedirectResult(resultType);
+    return ResultTypeResolver.isChainOrRedirectType(resultType);
   }
 
   public boolean createReferences(@NotNull final PsiElement psiElement,
