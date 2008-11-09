@@ -63,7 +63,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     super.setUp();
 
     final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder =
-            IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder();
+        IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder();
     final T moduleBuilder = projectBuilder.addModule(getModuleFixtureBuilderClass());
     myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
 
@@ -95,10 +95,10 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
    */
   protected final void addStrutsJars(final T moduleBuilder) throws Exception {
     addLibrary(moduleBuilder, "struts2",
-               "struts2-core-2.1.0.jar",
+               "struts2-core-2.0.12.jar",
                "freemarker-2.3.10.jar",
                "ognl-2.6.11.jar",
-               "xwork-2.1.0.jar");
+               "xwork-2.0.6.jar");
   }
 
   protected void addLibrary(final T moduleBuilder, @NonNls final String libraryName, @NonNls final String... jarPaths) {
@@ -135,14 +135,14 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   }
 
   private void addToFileSet(final StrutsFileSet fileSet, @NonNls final String path) {
+    final VirtualFile file;
     try {
-      myFixture.copyFileToProject(path);
+      file = myFixture.copyFileToProject(path);
     }
     catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("error copying struts.xml from '" + path + "'", e);
     }
-    final VirtualFile file = myFixture.getTempDirFixture().getFile(path);
-    assertNotNull("cannot find file: " + path, file);
+    assertNotNull("could not find file: '" + path + "'", file);
     fileSet.addFile(file);
   }
 

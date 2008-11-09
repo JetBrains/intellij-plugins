@@ -13,6 +13,7 @@
 <s:url action="bangAction!methodA" namespace="/bang"/>
 <s:url action="bangAction!methodB" namespace="/bang"/>
 
+<s:url action="myWildCard%{anythingDynamic}"/>
 <s:url action="%{anythingDynamic}"/>
 
 <s:form action="namespace1Action"/>

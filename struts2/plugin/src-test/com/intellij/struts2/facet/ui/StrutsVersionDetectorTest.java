@@ -39,7 +39,7 @@ public class StrutsVersionDetectorTest extends BasicHighlightingTestCase<JavaMod
 
   public void testDetectStrutsVersion() throws Exception {
     final String version = StrutsVersionDetector.detectStrutsVersion(myModule);
-    assertEquals("2.1.0", version);
+    assertEquals("2.0.12", version);
   }
 
 }
