@@ -2,8 +2,13 @@
 
 <idea-plugin version="2">
 
-  <!-- resolve <action> "class" to Spring bean definition -->
   <extensions defaultExtensionNs="com.intellij">
+
+    <!-- resolve <constant> "value" to Spring bean definition -->
+    <struts2.constantValueContributor
+            implementation="com.intellij.struts2.dom.struts.impl.ConstantValueConverterSpringContributor"/>
+
+    <!-- resolve <action> "class" to Spring bean definition -->
     <struts2.actionClassContributor
             implementation="com.intellij.struts2.dom.struts.impl.ActionClassConverterSpringContributor"/>
   </extensions>

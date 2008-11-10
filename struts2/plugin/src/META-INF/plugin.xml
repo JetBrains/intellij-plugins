@@ -26,6 +26,8 @@
 
   <!-- published extension points -->
   <extensionPoints>
+    <extensionPoint name="constantValueContributor"
+                    interface="com.intellij.struts2.dom.struts.ConstantValueConverterContributor"/>
     <extensionPoint name="resultContributor"
                     interface="com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor"/>
     <extensionPoint name="actionClassContributor"
