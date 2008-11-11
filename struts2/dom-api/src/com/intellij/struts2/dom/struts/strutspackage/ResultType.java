@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.psi.PsiClass;
+import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +34,7 @@ public interface ResultType extends DomElement {
 
   @Attribute(value = "class")
   @ExtendClass(value = "com.opensymphony.xwork2.Result", allowAbstract = false, allowInterface = false)
+  @Convert(ExtendableClassConverter.class)
   @Required
   GenericAttributeValue<PsiClass> getResultTypeClass();
 

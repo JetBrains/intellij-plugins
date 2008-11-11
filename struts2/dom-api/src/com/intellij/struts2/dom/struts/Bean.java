@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.psi.PsiClass;
+import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.xml.*;
 
 /**
@@ -37,6 +38,7 @@ public interface Bean extends DomElement {
 
   @Attribute(value = "class")
   @ExtendClass(instantiatable = false, allowAbstract = false, allowInterface = false)
+  @Convert(ExtendableClassConverter.class)
   GenericAttributeValue<PsiClass> getBeanClass();
 
   @Attribute(value = "scope")

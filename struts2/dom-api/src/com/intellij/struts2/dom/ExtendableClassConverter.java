@@ -14,7 +14,7 @@
  *
  */
 
-package com.intellij.struts2.dom.struts.action;
+package com.intellij.struts2.dom;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.util.Key;
@@ -26,11 +26,11 @@ import com.intellij.util.xml.CustomReferenceConverter;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Converter for &lt;action&gt; "class" attribute.
+ * Converter for "class" attribute.
  *
  * @author Yann C&eacute;bron
  */
-public abstract class ActionClassConverter extends Converter<PsiClass> implements CustomReferenceConverter<PsiClass> {
+public abstract class ExtendableClassConverter extends Converter<PsiClass> implements CustomReferenceConverter<PsiClass> {
 
   /**
    * Stores the reference type display name(s).
@@ -40,16 +40,16 @@ public abstract class ActionClassConverter extends Converter<PsiClass> implement
   /**
    * References from this EP will be added automatically.
    */
-  public static final ExtensionPointName<ActionClassConverterContributor> EP_NAME =
-      new ExtensionPointName<ActionClassConverterContributor>("com.intellij.struts2.actionClassContributor");
+  public static final ExtensionPointName<ExtendableClassConverterContributor> EP_NAME =
+      new ExtensionPointName<ExtendableClassConverterContributor>("com.intellij.struts2.classContributor");
 
 
   /**
-   * Contributes results to {@link ActionClassConverter}.
+   * Contributes results to {@link ExtendableClassConverter}.
    *
    * @author Yann C&eacute;bron
    */
-  public abstract static class ActionClassConverterContributor extends PsiReferenceProvider {
+  public abstract static class ExtendableClassConverterContributor extends PsiReferenceProvider {
 
     /**
      * Is this contributor suitable in the current resolving context.

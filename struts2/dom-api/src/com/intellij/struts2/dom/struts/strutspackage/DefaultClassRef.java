@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.psi.PsiClass;
+import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.xml.*;
 
 /**
@@ -25,9 +26,10 @@ import com.intellij.util.xml.*;
  */
 public interface DefaultClassRef extends DomElement {
 
-  @ExtendClass(allowAbstract = false, allowInterface = false)
   @Required
   @Attribute("class")
+  @ExtendClass(allowAbstract = false, allowInterface = false)
+  @Convert(ExtendableClassConverter.class)
   GenericAttributeValue<PsiClass> getDefaultClass();
 
 }

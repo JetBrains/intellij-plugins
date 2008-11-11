@@ -8,9 +8,9 @@
     <struts2.constantValueContributor
             implementation="com.intellij.struts2.dom.struts.impl.ConstantValueConverterSpringContributor"/>
 
-    <!-- resolve <action> "class" to Spring bean definition -->
-    <struts2.actionClassContributor
-            implementation="com.intellij.struts2.dom.struts.impl.ActionClassConverterSpringContributor"/>
+    <!-- resolve "class" to Spring bean definition -->
+    <struts2.classContributor
+            implementation="com.intellij.struts2.dom.struts.impl.ExtendableClassConverterSpringContributor"/>
   </extensions>
 
 </idea-plugin>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!DOCTYPE struts PUBLIC
-        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
-        "http://struts.apache.org/dtds/struts-2.0.dtd">
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <!-- with Spring support enabled -->
 <struts>
@@ -32,8 +32,38 @@
     <action name="noSpringInvalidActionMethod" class="MyClass" method="<error>INVALID_VALUE</error>"/>
 
     <action name="interfaceNotAllowed" class='<error descr="Interface not allowed">MyInterface</error>'/>
-    <action name="abstractClassNotAllowed" class='<error descr="Abstract class is not allowed">MyAbstractClass</error>'/>
+    <action name="abstractClassNotAllowed"
+            class='<error descr="Abstract class is not allowed">MyAbstractClass</error>'/>
 
+  </package>
+
+  <!-- bean via Spring bean -->
+  <bean name="mySpringBean" class="springResultType"/>
+  <bean name="invalidBean" class="<error>INVALID_VALUE</error>"/>
+
+  <!-- Interceptor via Spring bean -->
+  <package name="springInterceptor">
+    <interceptors>
+      <interceptor name="mySpringInterceptor" class="springInterceptor"/>
+      <interceptor name="invalidSpringInterceptor" class="<error>INVALID_VALUE</error>"/>
+    </interceptors>
+  </package>
+
+  <!-- result-type via Spring bean -->
+  <package name="springResultType">
+    <result-types>
+      <result-type name="springResult" class="springResultType"/>
+      <result-type name="invalidSpringResult" class="<error>INVALID_VALUE</error>"/>
+    </result-types>
+  </package>
+
+  <!-- default-class-ref via Spring bean -->
+  <package name="springDefaultClassRef">
+    <default-class-ref class="springResultType"/>
+  </package>
+
+  <package name="invalidSpringDefaultClassRef">
+    <default-class-ref class="<error>INVALID_VALUE</error>"/>
   </package>
 
 </struts>

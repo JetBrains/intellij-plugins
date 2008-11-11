@@ -29,7 +29,7 @@ import com.intellij.spring.SpringManager;
 import com.intellij.spring.SpringModel;
 import com.intellij.spring.model.xml.beans.SpringBeanPointer;
 import com.intellij.struts2.StrutsBundle;
-import com.intellij.struts2.dom.struts.action.ActionClassConverter;
+import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.ConvertContext;
@@ -42,11 +42,11 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Extends &lt;action&gt; "class" resolving to Spring beans.
+ * Extends "class" resolving to Spring beans.
  *
  * @author Yann C&eacute;bron
  */
-public class ActionClassConverterSpringContributor extends ActionClassConverter.ActionClassConverterContributor {
+public class ExtendableClassConverterSpringContributor extends ExtendableClassConverter.ExtendableClassConverterContributor {
 
   /**
    * Checks if struts2-spring-plugin is present in current module.
@@ -62,7 +62,7 @@ public class ActionClassConverterSpringContributor extends ActionClassConverter.
   }
 
   public String getContributorType() {
-    return StrutsBundle.message("dom.actionclass.converter.type.spring");
+    return StrutsBundle.message("dom.extendable.class.converter.type.spring");
   }
 
   @NotNull

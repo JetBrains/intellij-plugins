@@ -66,6 +66,8 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
                                      "MyClass",
                                      "bean1",
                                      "bean2",
+                                     "springInterceptor",
+                                     "springResultType",
                                      "java",
                                      "javax",
                                      "com",

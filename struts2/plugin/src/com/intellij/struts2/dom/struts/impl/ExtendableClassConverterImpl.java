@@ -24,7 +24,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlElement;
-import com.intellij.struts2.dom.struts.action.ActionClassConverter;
+import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.ConvertContext;
@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Yann C&eacute;bron
  */
-public class ActionClassConverterImpl extends ActionClassConverter {
+public class ExtendableClassConverterImpl extends ExtendableClassConverter {
 
   public PsiClass fromString(@Nullable @NonNls final String s, final ConvertContext context) {
     if (s == null) {
@@ -56,9 +56,9 @@ public class ActionClassConverterImpl extends ActionClassConverter {
       return null;
     }
 
-    for (final ActionClassConverterContributor actionClassConverterContributor : Extensions.getExtensions(EP_NAME)) {
-      if (actionClassConverterContributor.isSuitable(context)) {
-        final PsiReference[] add = actionClassConverterContributor.getReferencesByElement(element, new ProcessingContext());
+    for (final ExtendableClassConverterContributor contributor : Extensions.getExtensions(EP_NAME)) {
+      if (contributor.isSuitable(context)) {
+        final PsiReference[] add = contributor.getReferencesByElement(element, new ProcessingContext());
         if (add.length == 1 && add[0].resolve() != null) {
           return (PsiClass) add[0].resolve();
         }
@@ -79,7 +79,8 @@ public class ActionClassConverterImpl extends ActionClassConverter {
 
     // 1. "normal" JAVA classes
     final GlobalSearchScope scope = getResolveScope(psiClassGenericDomValue);
-    final JavaClassReferenceProvider javaClassReferenceProvider = new JavaClassReferenceProvider(scope, context.getPsiManager().getProject());
+    final JavaClassReferenceProvider javaClassReferenceProvider =
+        new JavaClassReferenceProvider(scope, context.getPsiManager().getProject());
 
     javaClassReferenceProvider.setOption(JavaClassReferenceProvider.INSTANTIATABLE, Boolean.TRUE);
     javaClassReferenceProvider.setOption(JavaClassReferenceProvider.CONCRETE, Boolean.TRUE);
@@ -89,13 +90,14 @@ public class ActionClassConverterImpl extends ActionClassConverter {
 
 
     @NonNls String[] referenceTypes = new String[]{"class"};
-    
+
     // 2. additional resolvers (currently Spring only)
-    for (final ActionClassConverterContributor actionClassConverterContributor : Extensions.getExtensions(EP_NAME)) {
-      if (actionClassConverterContributor.isSuitable(context)) {
-        final PsiReference[] additionalReferences = actionClassConverterContributor.getReferencesByElement(element, new ProcessingContext());
+    for (final ExtendableClassConverterContributor contributor : Extensions.getExtensions(EP_NAME)) {
+      if (contributor.isSuitable(context)) {
+        final PsiReference[] additionalReferences = contributor.getReferencesByElement(element,
+                                                                                       new ProcessingContext());
         javaClassReferences = ArrayUtil.mergeArrays(javaClassReferences, additionalReferences, PsiReference.class);
-        referenceTypes = ArrayUtil.append(referenceTypes, actionClassConverterContributor.getContributorType());
+        referenceTypes = ArrayUtil.append(referenceTypes, contributor.getContributorType());
       }
     }
 

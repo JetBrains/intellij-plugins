@@ -16,7 +16,9 @@
 package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.psi.PsiClass;
+import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.xml.Attribute;
+import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.ExtendClass;
 import com.intellij.util.xml.GenericAttributeValue;
 
@@ -27,6 +29,7 @@ public interface Interceptor extends InterceptorOrStackBase {
 
   @Attribute(value = "class")
   @ExtendClass(value = "com.opensymphony.xwork2.interceptor.Interceptor", allowAbstract = false, allowInterface = false)
+  @Convert(ExtendableClassConverter.class)
   GenericAttributeValue<PsiClass> getInterceptorClass();
 
 }

@@ -17,6 +17,7 @@ package com.intellij.struts2.dom.struts.action;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
+import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorRef;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
@@ -47,7 +48,7 @@ public interface Action extends ParamsElement {
   GenericAttributeValue<String> getName();
 
   @Attribute(value = "class")
-  @Convert(ActionClassConverter.class)
+  @Convert(ExtendableClassConverter.class)
   @ExtendClass(allowAbstract = false, allowInterface = false, instantiatable = false)
   GenericAttributeValue<PsiClass> getActionClass();
 

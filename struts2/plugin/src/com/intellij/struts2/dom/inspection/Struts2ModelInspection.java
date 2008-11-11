@@ -25,15 +25,19 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
+import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.struts2.dom.ParamsNameConverter;
+import com.intellij.struts2.dom.struts.Bean;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
-import com.intellij.struts2.dom.struts.action.ActionClassConverter;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter;
 import com.intellij.struts2.dom.struts.impl.path.ResultTypeResolver;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
+import com.intellij.struts2.dom.struts.strutspackage.DefaultClassRef;
+import com.intellij.struts2.dom.struts.strutspackage.Interceptor;
+import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.xml.*;
@@ -82,8 +86,8 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
   }
 
   protected boolean shouldCheckResolveProblems(final GenericDomValue value) {
-    // we roll our own checking for <action> class in S2DomModelVisitor#visitAction()
-    if (value.getConverter() instanceof ActionClassConverter) {
+    // we roll our own checking for "class" in S2DomModelVisitor#visitAction()
+    if (value.getConverter() instanceof ExtendableClassConverter) {
       return false;
     }
 
@@ -158,11 +162,38 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     }
 
     public void visitAction(final Action action) {
-      final GenericAttributeValue actionClass = action.getActionClass();
+      checkExtendableClassConverter(action.getActionClass());
+    }
 
-      assert actionClass.getConverter() instanceof ActionClassConverter;
+    public void visitBean(final Bean bean) {
+      checkExtendableClassConverter(bean.getBeanClass());
+    }
 
-      final XmlElement xmlElement = DomUtil.getValueElement(actionClass);
+    public void visitDefaultClassRef(final DefaultClassRef defaultClassRef) {
+      checkExtendableClassConverter(defaultClassRef.getDefaultClass());
+    }
+
+    public void visitInterceptor(final Interceptor interceptor) {
+      checkExtendableClassConverter(interceptor.getInterceptorClass());
+    }
+
+    public void visitResultType(final ResultType resultType) {
+      checkExtendableClassConverter(resultType.getResultTypeClass());
+    }
+
+    public void visitStrutsPackage(final StrutsPackage strutsPackage) {
+      final String namespace = strutsPackage.getNamespace().getStringValue();
+      if (namespace != null && !namespace.startsWith("/")) {
+        holder.createProblem(strutsPackage.getNamespace(),
+                             StrutsBundle.message("dom.strutspackage.must.start.with.slash"));
+      }
+    }
+
+    private void checkExtendableClassConverter(final GenericAttributeValue clazzAttributeValue) {
+      assert clazzAttributeValue.getConverter() instanceof ExtendableClassConverter :
+          "wrong converter " + clazzAttributeValue.getParent();
+
+      final XmlElement xmlElement = DomUtil.getValueElement(clazzAttributeValue);
       if (xmlElement == null) {
         return;
       }
@@ -176,22 +207,14 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
         }
       }
 
-      final String[] referenceTypesUserData = actionClass.getUserData(ActionClassConverter.REFERENCES_TYPES);
+      final String[] referenceTypesUserData = clazzAttributeValue.getUserData(ExtendableClassConverter.REFERENCES_TYPES);
       final String referenceTypes = referenceTypesUserData != null ?
                                     StringUtil.join(referenceTypesUserData, "|") :
-                                    StrutsBundle.message("dom.actionclass.converter.type.class");
-      holder.createProblem(actionClass, HighlightSeverity.ERROR,
-                           StrutsBundle.message("dom.actionclass.converter.cannot.resolve",
+                                    StrutsBundle.message("dom.extendable.class.converter.type.class");
+      holder.createProblem(clazzAttributeValue, HighlightSeverity.ERROR,
+                           StrutsBundle.message("dom.extendable.class.converter.cannot.resolve",
                                                 referenceTypes,
-                                                actionClass.getStringValue()));
-    }
-
-    public void visitStrutsPackage(final StrutsPackage strutsPackage) {
-      final String namespace = strutsPackage.getNamespace().getStringValue();
-      if (namespace != null && !namespace.startsWith("/")) {
-        holder.createProblem(strutsPackage.getNamespace(),
-                             StrutsBundle.message("dom.strutspackage.must.start.with.slash"));
-      }
+                                                clazzAttributeValue.getStringValue()));
     }
 
   }
