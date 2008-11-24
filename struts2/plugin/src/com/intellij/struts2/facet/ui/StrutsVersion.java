@@ -27,11 +27,11 @@ import static com.intellij.facet.ui.libraries.MavenLibraryUtil.createSubMavenJar
  */
 public enum StrutsVersion {
 
-  STRUTS_2_0_12("2.0.12", new LibraryInfo[]{
-          createSubMavenJarInfo("/org/apache/struts", "struts2-core", "2.0.12", "org.apache.struts2.StrutsConstants"),
+  STRUTS_2_0_14("2.0.14", new LibraryInfo[]{
+          createSubMavenJarInfo("/org/apache/struts", "struts2-core", "2.0.14", "org.apache.struts2.StrutsConstants"),
           createMavenJarInfo("commons-logging", "1.0.4", "org.apache.commons.logging.Log"),
           createMavenJarInfo("freemarker", "2.3.8", "freemarker.core.TemplateElement"),
-          createSubMavenJarInfo("/com/opensymphony/", "xwork", "2.0.6", "com.opensymphony.xwork2.XWorkException"),
+          createSubMavenJarInfo("/com/opensymphony/", "xwork", "2.0.7", "com.opensymphony.xwork2.XWorkException"),
           createSubMavenJarInfo("/opensymphony/", "ognl", "2.6.11", "ognl.Ognl")
   });
 
