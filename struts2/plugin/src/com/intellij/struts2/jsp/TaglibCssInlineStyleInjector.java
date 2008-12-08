@@ -17,15 +17,18 @@ package com.intellij.struts2.jsp;
 
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.patterns.ElementPattern;
+import static com.intellij.patterns.PlatformPatterns.virtualFile;
+import static com.intellij.patterns.StandardPatterns.or;
+import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
+import static com.intellij.patterns.XmlPatterns.xmlTag;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.css.CssSupportLoader;
-import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.struts2.reference.ReferenceFilters;
+import com.intellij.struts2.StrutsConstants;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,22 +45,19 @@ public class TaglibCssInlineStyleInjector implements MultiHostInjector {
   @NonNls
   private static final String CSS_STYLE_ATTRIBUTE_NAME = "cssStyle";
 
-  public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
-    // operate only in JSP(X) files
-    final FileType fileType = context.getContainingFile().getFileType();
-    if (fileType != StdFileTypes.JSP &&
-        fileType != StdFileTypes.JSPX) {
-      return;
-    }
+  private static final ElementPattern<XmlAttributeValue> CSS_ELEMENT_PATTERN =
+      xmlAttributeValue()
+          .withLocalName(CSS_STYLE_ATTRIBUTE_NAME)
+          .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
+                            virtualFile().ofType(StdFileTypes.JSPX)))
+          .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI));
 
-    if (ReferenceFilters.NAMESPACE_TAGLIB_STRUTS_UI.isAcceptable(context.getParent().getParent(), null)) {
-      @NonNls final String name = ((XmlAttribute) context.getParent()).getName();
-      if (name.equals(CSS_STYLE_ATTRIBUTE_NAME)) {
-        final TextRange range = new TextRange(1, context.getTextLength() - 1);
-        registrar.startInjecting(CssSupportLoader.CSS_FILE_TYPE.getLanguage())
+  public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
+    if (CSS_ELEMENT_PATTERN.accepts(context)) {
+      final TextRange range = new TextRange(1, context.getTextLength() - 1);
+      registrar.startInjecting(CssSupportLoader.CSS_FILE_TYPE.getLanguage())
           .addPlace("inline.style {", "}", (PsiLanguageInjectionHost) context, range)
           .doneInjecting();
-      }
     }
   }
 

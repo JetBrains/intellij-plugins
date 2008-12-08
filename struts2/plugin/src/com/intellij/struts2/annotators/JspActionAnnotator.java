@@ -28,12 +28,12 @@ import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.StrutsBundle;
+import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.struts2.reference.ReferenceFilters;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.Icons;
 import com.intellij.util.containers.ContainerUtil;
@@ -142,7 +142,7 @@ public class JspActionAnnotator implements Annotator {
       final XmlNSDescriptor descriptor = rootTag.getNSDescriptor(namespaceByPrefix, true);
       if (descriptor != null && descriptor instanceof TldDescriptor) {
         final String uri = ((TldDescriptor) descriptor).getUri();
-        if (uri != null && uri.equals(ReferenceFilters.TAGLIB_STRUTS_UI_URI)) {  // URI is optional in TLD!
+        if (uri != null && uri.equals(StrutsConstants.TAGLIB_STRUTS_UI_URI)) {  // URI is optional in TLD!
           return prefix;
         }
       }

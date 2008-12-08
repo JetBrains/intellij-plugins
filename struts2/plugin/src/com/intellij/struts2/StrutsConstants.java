@@ -80,4 +80,10 @@ public final class StrutsConstants {
   @NonNls
   public static final String TILES_2_1_DTD_ID = "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN";
 
+  /**
+   * Struts UI taglib URI.
+   */
+  @NonNls
+  public static final String TAGLIB_STRUTS_UI_URI = "/struts-tags";
+
 }

@@ -18,13 +18,16 @@ package com.intellij.struts2.jsp;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSLanguageInjector;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.patterns.ElementPattern;
+import static com.intellij.patterns.PlatformPatterns.virtualFile;
+import static com.intellij.patterns.StandardPatterns.or;
+import static com.intellij.patterns.StandardPatterns.string;
+import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
+import static com.intellij.patterns.XmlPatterns.xmlTag;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.struts2.reference.ReferenceFilters;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.struts2.StrutsConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -37,19 +40,16 @@ import java.util.List;
  */
 public class TaglibJavaScriptInjector implements MultiHostInjector {
 
-  public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement host) {
-    // operate only in JSP(X) files
-    final FileType fileType = host.getContainingFile().getFileType();
-    if (fileType != StdFileTypes.JSP &&
-        fileType != StdFileTypes.JSPX) {
-      return;
-    }
+  private static final ElementPattern<XmlAttributeValue> JS_ELEMENT_PATTERN =
+      xmlAttributeValue()
+          .withLocalName(string().startsWith("on"))
+          .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
+                            virtualFile().ofType(StdFileTypes.JSPX)))
+          .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI));
 
-    if (ReferenceFilters.NAMESPACE_TAGLIB_STRUTS_UI.isAcceptable(host.getParent().getParent(), null)) {
-      @NonNls final String name = ((XmlAttribute) host.getParent()).getName();
-      if (name.startsWith("on")) {
-        JSLanguageInjector.injectJSIntoAttributeValue(registrar, (XmlAttributeValue) host, false);
-      }
+  public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement host) {
+    if (JS_ELEMENT_PATTERN.accepts(host)) {
+      JSLanguageInjector.injectJSIntoAttributeValue(registrar, (XmlAttributeValue) host, false);
     }
   }
 
@@ -57,6 +57,5 @@ public class TaglibJavaScriptInjector implements MultiHostInjector {
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
     return Arrays.asList(XmlAttributeValue.class);
   }
-
 
 }
