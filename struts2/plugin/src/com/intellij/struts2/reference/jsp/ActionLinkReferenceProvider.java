@@ -31,6 +31,7 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.Function;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -155,7 +156,7 @@ TODO not needed so far ?!
           variants.add(variant);
         }
       }
-      return variants.toArray(new Object[variants.size()]);
+      return ArrayUtil.toObjectArray(variants);
     }
 
     public String getUnresolvedMessagePattern() {

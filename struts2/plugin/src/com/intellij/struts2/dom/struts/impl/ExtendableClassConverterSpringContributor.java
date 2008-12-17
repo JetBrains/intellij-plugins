@@ -127,7 +127,7 @@ public class ExtendableClassConverterSpringContributor extends ExtendableClassCo
         }
       }
 
-      return lookups.toArray(new Object[lookups.size()]);
+      return ArrayUtil.toObjectArray(lookups);
     }
   }
 

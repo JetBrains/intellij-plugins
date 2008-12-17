@@ -34,6 +34,7 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.ProcessingContext;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -170,7 +171,7 @@ public class ActionReferenceProvider extends PsiReferenceProviderBase {
           variants.add(variant);
         }
       }
-      return variants.toArray(new Object[variants.size()]);
+      return ArrayUtil.toObjectArray(variants);
     }
 
     public String getUnresolvedMessagePattern() {

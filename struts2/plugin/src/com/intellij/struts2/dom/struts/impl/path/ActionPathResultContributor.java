@@ -28,6 +28,7 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +97,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
           }
         }
 
-        return variants.toArray(new Object[variants.size()]);
+        return ArrayUtil.toObjectArray(variants);
       }
     };
 
