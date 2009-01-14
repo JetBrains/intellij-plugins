@@ -33,6 +33,16 @@ public enum StrutsVersion {
           createMavenJarInfo("freemarker", "2.3.8", "freemarker.core.TemplateElement"),
           createSubMavenJarInfo("/com/opensymphony/", "xwork", "2.0.7", "com.opensymphony.xwork2.XWorkException"),
           createSubMavenJarInfo("/opensymphony/", "ognl", "2.6.11", "ognl.Ognl")
+  }),
+
+  STRUTS_2_1_6("2.1.6", new LibraryInfo[]{
+          createSubMavenJarInfo("/org/apache/struts", "struts2-core", "2.1.6", "org.apache.struts2.StrutsConstants"),
+          createMavenJarInfo("commons-fileupload", "1.2.1"),
+          createMavenJarInfo("commons-io",  "1.3.2"),
+          createMavenJarInfo("commons-logging", "1.1", "org.apache.commons.logging.Log"),
+          createSubMavenJarInfo("/org/freemarker", "freemarker", "2.3.13", "freemarker.core.TemplateElement"),
+          createSubMavenJarInfo("/com/opensymphony/", "xwork", "2.1.2", "com.opensymphony.xwork2.XWorkException"),
+          createSubMavenJarInfo("/opensymphony/", "ognl", "2.6.11", "ognl.Ognl")
   });
 
   private final String version;

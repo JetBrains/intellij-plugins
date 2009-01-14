@@ -95,10 +95,10 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
    */
   protected final void addStrutsJars(final T moduleBuilder) throws Exception {
     addLibrary(moduleBuilder, "struts2",
-               "struts2-core-2.0.12.jar",
-               "freemarker-2.3.10.jar",
+               "struts2-core-2.1.6.jar",
+               "freemarker-2.3.13.jar",
                "ognl-2.6.11.jar",
-               "xwork-2.0.6.jar");
+               "xwork-2.1.2.jar");
   }
 
   protected void addLibrary(final T moduleBuilder, @NonNls final String libraryName, @NonNls final String... jarPaths) {

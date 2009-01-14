@@ -31,22 +31,39 @@ public final class StrutsConstants {
   public static final String STRUTS_DEFAULT_FILENAME = "struts.xml";
 
   /**
-   * struts.xml URI.
+   * struts.xml 2.0 URI.
    */
   @NonNls
   public static final String STRUTS_2_0_DTD_URI = "http://struts.apache.org/dtds/struts-2.0.dtd";
 
   /**
-   * struts.xml ID.
+   * struts.xml 2.0 ID.
    */
   @NonNls
   public static final String STRUTS_2_0_DTD_ID = "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN";
 
+  /**
+   * struts.xml 2.1 URI.
+   */
+  @NonNls
+  public static final String STRUTS_2_1_DTD_URI = "http://struts.apache.org/dtds/struts-2.1.dtd";
+
+  /**
+   * struts.xml 2.1 ID.
+   */
+  @NonNls
+  public static final String STRUTS_2_1_DTD_ID = "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN";
+
 
   @NonNls
-  public static final String XWORK_DTD_URI = "http://www.opensymphony.com/xwork/xwork-2.0.dtd";
+  public static final String XWORK_2_0_DTD_URI = "http://www.opensymphony.com/xwork/xwork-2.0.dtd";
   @NonNls
-  public static final String XWORK_DTD_ID = "-//OpenSymphony Group//XWork 2.0//EN";
+  public static final String XWORK_2_0_DTD_ID = "-//OpenSymphony Group//XWork 2.0//EN";
+
+  @NonNls
+  public static final String XWORK_2_1_DTD_URI = "http://www.opensymphony.com/xwork/xwork-2.1.dtd";
+  @NonNls
+  public static final String XWORK_2_1_DTD_ID = "-//OpenSymphony Group//XWork 2.1//EN";
 
 
   @NonNls
