@@ -18,6 +18,7 @@ package com.intellij.struts2.dom.struts.model;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -25,7 +26,6 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.xml.DomFileElement;
-import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.model.impl.DomModelFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,8 +39,8 @@ import java.util.Set;
  */
 class StrutsModelFactory extends DomModelFactory<StrutsRoot, StrutsModel, PsiElement> {
 
-  protected StrutsModelFactory(final DomManager domManager) {
-    super(StrutsRoot.class, domManager.createModelMerger(), domManager.getProject(), "struts2");
+  protected StrutsModelFactory(final Project project) {
+    super(StrutsRoot.class, project, "struts2");
   }
 
   protected List<StrutsModel> computeAllModels(@NotNull final Module module) {

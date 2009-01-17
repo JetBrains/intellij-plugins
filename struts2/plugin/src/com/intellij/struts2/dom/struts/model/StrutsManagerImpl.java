@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.struts.model;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.facet.StrutsFacet;
@@ -35,8 +36,8 @@ public class StrutsManagerImpl extends StrutsManager {
 
   private final StrutsModelFactory myStrutsModelFactory;
 
-  public StrutsManagerImpl(final DomManager domManager) {
-    myStrutsModelFactory = new StrutsModelFactory(domManager);
+  public StrutsManagerImpl(final Project project) {
+    myStrutsModelFactory = new StrutsModelFactory(project);
   }
 
   public boolean isStruts2ConfigFile(@NotNull final XmlFile file) {
