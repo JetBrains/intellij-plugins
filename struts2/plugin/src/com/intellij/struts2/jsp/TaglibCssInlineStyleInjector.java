@@ -43,11 +43,23 @@ import java.util.List;
 public class TaglibCssInlineStyleInjector implements MultiHostInjector {
 
   @NonNls
-  private static final String CSS_STYLE_ATTRIBUTE_NAME = "cssStyle";
+  private static final String CSS_STYLE = "cssStyle";
+
+  @NonNls
+  private static final String CSS_ERROR_STYLE = "cssErrorStyle";
+
+  // Tags: inputtransferselect, optiontransferselect ===========
+  @NonNls
+  private static final String BUTTON_CSS_STYLE = "buttonCssStyle";
+  @NonNls
+  private static final String DOUBLE_CSS_STYLE = "doubleCssStyle";
 
   private static final ElementPattern<XmlAttributeValue> CSS_ELEMENT_PATTERN =
       xmlAttributeValue()
-          .withLocalName(CSS_STYLE_ATTRIBUTE_NAME)
+          .withLocalName(CSS_STYLE,
+                         CSS_ERROR_STYLE,
+                         BUTTON_CSS_STYLE,
+                         DOUBLE_CSS_STYLE)
           .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
                             virtualFile().ofType(StdFileTypes.JSPX)))
           .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI));

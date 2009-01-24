@@ -21,6 +21,7 @@ import com.intellij.lang.javascript.JSLanguageInjector;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.patterns.ElementPattern;
 import static com.intellij.patterns.PlatformPatterns.virtualFile;
+import com.intellij.patterns.StandardPatterns;
 import static com.intellij.patterns.StandardPatterns.or;
 import static com.intellij.patterns.StandardPatterns.string;
 import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
@@ -42,7 +43,8 @@ public class TaglibJavaScriptInjector implements MultiHostInjector {
 
   private static final ElementPattern<XmlAttributeValue> JS_ELEMENT_PATTERN =
       xmlAttributeValue()
-          .withLocalName(string().startsWith("on"))
+          .withLocalName(StandardPatterns.or(string().startsWith("on"),
+                                             string().startsWith("doubleOn"))) // **TransferSelect-tags
           .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
                             virtualFile().ofType(StdFileTypes.JSPX)))
           .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI));
