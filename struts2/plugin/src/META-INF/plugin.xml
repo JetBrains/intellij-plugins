@@ -19,7 +19,6 @@
 
   <!-- optional dependencies -->
   <depends optional="true" config-file="struts2-javascript.xml">JavaScript</depends>
-  <depends optional="true" config-file="struts2-css.xml">com.intellij.css</depends>
   <depends optional="true" config-file="struts2-spring.xml">com.intellij.spring</depends>
 
   <vendor email="yann.cebron@googlemail.com">Yann Cébron</vendor>
@@ -61,16 +60,16 @@
     <gotoSymbolContributor implementation="com.intellij.struts2.gotosymbol.GoToPackageSymbolProvider"/>
 
     <xmlStructureViewBuilderProvider
-            implementation="com.intellij.struts2.structure.StrutsStructureViewBuilderProvider"/>
+        implementation="com.intellij.struts2.structure.StrutsStructureViewBuilderProvider"/>
 
     <fileEditorProvider implementation="com.intellij.struts2.graph.fileEditor.Struts2GraphFileEditorProvider"/>
 
     <struts2.resultContributor
-            implementation="com.intellij.struts2.dom.struts.impl.path.DispatchPathResultContributor"/>
+        implementation="com.intellij.struts2.dom.struts.impl.path.DispatchPathResultContributor"/>
     <struts2.resultContributor
-            implementation="com.intellij.struts2.dom.struts.impl.path.ActionPathResultContributor"/>
+        implementation="com.intellij.struts2.dom.struts.impl.path.ActionPathResultContributor"/>
     <struts2.resultContributor
-            implementation="com.intellij.struts2.dom.struts.impl.path.ActionChainOrRedirectResultContributor"/>
+        implementation="com.intellij.struts2.dom.struts.impl.path.ActionChainOrRedirectResultContributor"/>
 
 
     <!-- validation.xml/validator-config.xml -->
@@ -83,7 +82,7 @@
     <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorConfigDomFileDescription"/>
 
     <xmlStructureViewBuilderProvider
-            implementation="com.intellij.struts2.structure.ValidationStructureViewBuilderProvider"/>
+        implementation="com.intellij.struts2.structure.ValidationStructureViewBuilderProvider"/>
 
 
     <!-- JAVA -->
@@ -94,8 +93,11 @@
     <annotator language="JSP" implementationClass="com.intellij.struts2.annotators.JspActionAnnotator"/>
 
     <javaee.web.customServletReferenceProvider
-            implementation="com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider"/>
+        implementation="com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider"/>
     <javaee.web.deployedFileUrlConverter implementation="com.intellij.struts2.preview.Struts2UrlConverter"/>
+
+    <!-- inject CSS into Struts UI tags -->
+    <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibCssInlineStyleInjector"/>
 
   </extensions>
 

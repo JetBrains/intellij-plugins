@@ -15,18 +15,11 @@
 
 package com.intellij.struts2.reference;
 
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.paths.PathReferenceManager;
-import com.intellij.patterns.ElementPattern;
-import static com.intellij.patterns.PlatformPatterns.virtualFile;
-import static com.intellij.patterns.StandardPatterns.*;
-import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
-import static com.intellij.patterns.XmlPatterns.xmlTag;
 import com.intellij.psi.*;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
 import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
-import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.struts2.StrutsConstants;
+import static com.intellij.struts2.reference.ReferenceUtils.*;
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
 import com.intellij.struts2.reference.jsp.NamespaceReferenceProvider;
 import com.intellij.struts2.reference.jsp.ThemeReferenceProvider;
@@ -35,41 +28,13 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Registers all {@link PsiReferenceProvider}s.
+ * Registers all {@link PsiReferenceProvider}s for JSP/XML.
  *
  * @author Yann C&eacute;bron
  */
 public class StrutsReferenceContributor extends PsiReferenceContributor {
 
-  @NonNls
-  private static final String[] TAGLIB_UI_FORM_TAGS = new String[]{
-      "a",
-      "checkbox",
-      "checkboxlist",
-      "combobox",
-      "component",
-      "debug",
-      "div",
-      "doubleselect",
-      "head",
-      "fielderror",
-      "file",
-      "form",
-      "hidden",
-      "inputtransferselect",
-      "label",
-      "optiontransferselect",
-      "optgroup",
-      "password",
-      "radio",
-      "reset",
-      "select",
-      "submit",
-      "textarea",
-      "textfield",
-      "token",
-      "updownselect"
-  };
+  private static final CssInHtmlClassOrIdReferenceProvider CSS_CLASS_PROVIDER = new CssInHtmlClassOrIdReferenceProvider();
 
   private static final StaticStringValuesReferenceProvider BOOLEAN_VALUE_REFERENCE_PROVIDER =
       new StaticStringValuesReferenceProvider(false, "false", "true");
@@ -83,26 +48,6 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
       return PathReferenceManager.getInstance().createReferences(element, false, false, true);
     }
   };
-
-  private static final CssInHtmlClassOrIdReferenceProvider CSS_CLASS_PROVIDER = new CssInHtmlClassOrIdReferenceProvider();
-
-  /**
-   * Struts UI taglib pattern (JSP(X)).
-   */
-  private static final ElementPattern<XmlAttributeValue> TAGLIB_STRUTS_UI =
-      xmlAttributeValue()
-          .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
-                            virtualFile().ofType(StdFileTypes.JSPX)))
-          .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI));
-
-  /**
-   * struts.xml pattern.
-   */
-  private static final ElementPattern<XmlAttributeValue> STRUTS_XML =
-      xmlAttributeValue()
-          .inVirtualFile(virtualFile().ofType(StdFileTypes.XML))
-          .withSuperParent(2, xmlTag().withNamespace(string().oneOf(
-              StrutsConstants.STRUTS_2_0_DTD_ID, StrutsConstants.STRUTS_2_0_DTD_URI)));
 
   public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
 
@@ -162,7 +107,6 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
                  "action", "form", "url");
 
     // CSS classes
-    // FIX TODO move to separate!! CSS plugin is optional ==========================
     registerTags(CSS_CLASS_PROVIDER,
                  "cssClass", TAGLIB_STRUTS_UI, registrar,
                  TAGLIB_UI_FORM_TAGS);
@@ -258,30 +202,6 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
                  TAGLIB_STRUTS_UI,
                  registrar,
                  tagNames);
-  }
-
-  /**
-   * Register the given provider on the given XmlAttribute/Namespace/XmlTag(s) combination.
-   *
-   * @param provider         Provider to install.
-   * @param attributeName    Attribute name.
-   * @param namespacePattern Namespace for tag(s).
-   * @param registrar        Registrar instance.
-   * @param tagNames         Tag name(s).
-   */
-  private static void registerTags(final PsiReferenceProvider provider,
-                                   @NonNls final String attributeName,
-                                   final ElementPattern<XmlAttributeValue> namespacePattern,
-                                   final PsiReferenceRegistrar registrar,
-                                   @NonNls final String... tagNames) {
-    registrar.registerReferenceProvider(
-        and(
-            xmlAttributeValue()
-                .withLocalName(attributeName)
-                .withSuperParent(2, xmlTag().withLocalName(string().oneOf(tagNames))),
-            namespacePattern
-        ),
-        provider);
   }
 
 }
