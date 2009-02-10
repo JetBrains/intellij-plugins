@@ -9,9 +9,9 @@
    to you under the Apache License, Version 2.0 (the
    "License"); you may not use this file except in compliance
    with the License.  You may obtain a copy of the License at
-  
+
    http://www.apache.org/licenses/LICENSE-2.0
-  
+
    Unless required by applicable law or agreed to in writing,
    software distributed under the License is distributed on an
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -110,7 +110,7 @@
 <!--
 @attr name           The unique identifier for this definition. Required when
                      it is a root definition, while it is implied in nested
-                     definitions. 
+                     definitions.
 -->
 <!ATTLIST definition       name             %DefinitionName; #IMPLIED>
 <!--
@@ -125,7 +125,19 @@
                      containing appropriate attributes will be available.
 -->
 <!ATTLIST definition       template         %RequestPath;    #IMPLIED>
+<!--
+@attr templateExpression The expression that will evaluate to a template for this definition.
+					     This attribute will be ignored if template is specified.
 
+-->
+<!ATTLIST definition       templateExpression       CDATA    #IMPLIED>
+<!--
+@attr templateType   The type of the template attribute. Can be: string,
+					 template or definition.
+                     By default, the type is "template". If a type is
+                     associated, the desidered renderer will be invoked.
+-->
+<!ATTLIST definition       templateType             %ContentType;   #IMPLIED>
 
 <!-- The "put-attribute" element describes an attribute of a definition. It allows to
      specify the tiles attribute name and its value. The tiles value can be
@@ -149,6 +161,12 @@
                      be specified with this tag attribute, or in the body of the tag.
 -->
 <!ATTLIST put-attribute     value            CDATA           #IMPLIED>
+<!--
+@attr expression     The expression associated to this tiles attribute. This
+					 attribute will be ignored if value is specified.
+
+-->
+<!ATTLIST put-attribute     expression       CDATA           #IMPLIED>
 <!--
 @attr role           Security role name that is allowed access to this attribute
                      object. The attribute is inserted only if the role name is
@@ -212,6 +230,12 @@
 -->
 <!ATTLIST add-attribute              value            CDATA           #IMPLIED>
 <!--
+@attr expression     The expression associated to this tiles attribute. This
+					 attribute will be ignored if value is specified.
+
+-->
+<!ATTLIST add-attribute              expression       CDATA           #IMPLIED>
+<!--
 @attr role           Security role name that is allowed access to this attribute
                      object. The attribute will be added to the parent list
                      anyway. It is delegated to the user of this attribute to
@@ -239,7 +263,7 @@
 <!-- The "bean" element describes an element of a list. It create a bean of the
      specified java classtype. This bean is initialized with appropriate nested
      <set-property>.
--->     
+-->
 <!ELEMENT bean (set-property*)>
 <!ATTLIST bean             id               ID              #IMPLIED>
 <!--
