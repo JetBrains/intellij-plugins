@@ -37,7 +37,12 @@ public class ResultNode extends BasicStrutsNode<Result> {
 
   @NotNull
   public Icon getIcon() {
-    final PathReference pathReference = getIdentifyingElement().getValue();
+    final Result result = getIdentifyingElement();
+    if (!result.isValid()) {
+      return UNKNOWN_RESULT_ICON;
+    }
+
+    final PathReference pathReference = result.getValue();
     if (pathReference == null) {
       return UNKNOWN_RESULT_ICON;
     }
