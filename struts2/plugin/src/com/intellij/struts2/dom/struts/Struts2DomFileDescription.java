@@ -40,10 +40,7 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
 
   protected void initializeFileDescription() {
     registerNamespacePolicy(StrutsDomConstants.STRUTS_NAMESPACE_KEY,
-                            StrutsConstants.STRUTS_2_0_DTD_URI,
-                            StrutsConstants.STRUTS_2_0_DTD_ID,
-                            StrutsConstants.STRUTS_2_1_DTD_URI,
-                            StrutsConstants.STRUTS_2_1_DTD_ID);
+                            StrutsConstants.STRUTS_DTDS);
 
     registerImplementation(Action.class, ActionImpl.class);
     registerImplementation(Constant.class, ConstantImpl.class);
@@ -53,6 +50,5 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
     registerImplementation(Result.class, ResultImpl.class);
     registerImplementation(StrutsPackage.class, StrutsPackageImpl.class);
   }
-
 
 }
