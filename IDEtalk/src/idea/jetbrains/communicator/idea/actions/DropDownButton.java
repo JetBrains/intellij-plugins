@@ -33,7 +33,7 @@ import java.awt.event.ActionListener;
  */
 public class DropDownButton extends JButton {
   private boolean myForcePressed;
-  private ActionGroup myActionGroup;
+  private final ActionGroup myActionGroup;
 
   public DropDownButton(ActionGroup actionGroup, Icon  buttonIcon) {
     if (actionGroup == null) {

@@ -38,8 +38,8 @@ public class SendMessageDialog extends IdeaDialog {
   private JLabel myRecepientsLabel;
   private JLabel myCommentLabel;
   private JTextArea myComment;
-  private SendMessageInvoker myRunOnOK;
-  private HardWrapUtil myWrapper;
+  private final SendMessageInvoker myRunOnOK;
+  private final HardWrapUtil myWrapper;
 
   public SendMessageDialog(User[] availableUsers, User[] selectedUsers, String message, SendMessageInvoker runOnOK) {
     super(false);

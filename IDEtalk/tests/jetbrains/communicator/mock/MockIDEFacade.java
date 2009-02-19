@@ -48,7 +48,7 @@ public class MockIDEFacade implements IDEFacade {
   private FindUsersCommand.UsersInfo myUsersInfo = new FindUsersCommand.UsersInfo();
   private LocalMessage myMessageToReturn;
   private String[] myProjects = new String[0];
-  private Map<Cloneable,String> myFileText = new HashMap<Cloneable, String>();
+  private final Map<Cloneable,String> myFileText = new HashMap<Cloneable, String>();
   private String myMessage;
   private String myProjectId;
   private String myProjectName;

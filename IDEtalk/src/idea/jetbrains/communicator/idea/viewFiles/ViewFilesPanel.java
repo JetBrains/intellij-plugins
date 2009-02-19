@@ -214,7 +214,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
   }
 
   private class ProjectNode extends KirTreeNode {
-    private String myName;
+    private final String myName;
     private List<FileNode> myChildren;
     private final VFile[] myProjectFiles;
 
@@ -260,7 +260,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
   }
 
   public class FileNode extends KirTreeNode {
-    private VFile myVFile;
+    private final VFile myVFile;
 
     public FileNode(ProjectNode projectNode, VFile projectFile) {
       super(projectNode);

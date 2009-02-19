@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 public class UserTreeTransferHandler extends TransferHandler {
   private static final Logger LOG = Logger.getLogger(UserTreeTransferHandler.class);
   public static final Pattern EXCEPTION_PATTERN = Pattern.compile("\\s+at ");
-  private UserModel myUserModel;
+  private final UserModel myUserModel;
 
   public UserTreeTransferHandler(UserModel userModel) {
     myUserModel = userModel;
@@ -124,7 +124,7 @@ public class UserTreeTransferHandler extends TransferHandler {
   }
 
   public static class UsersTransferable implements Transferable {
-    private List<User> myUsers = new ArrayList<User>();
+    private final List<User> myUsers = new ArrayList<User>();
     private static DataFlavor ourDataFlavor;
 
     public UsersTransferable(JTree tree) {

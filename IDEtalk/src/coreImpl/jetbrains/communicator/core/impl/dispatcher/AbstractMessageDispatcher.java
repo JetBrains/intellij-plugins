@@ -44,7 +44,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
 
   private final Object myUser2MessagesLock = new Object();
   private final Map<User,List<Message>> myUser2Messages = new HashMap<User, List<Message>>();
-  private EventBroadcaster myEventBroadcaster;
+  private final EventBroadcaster myEventBroadcaster;
   private boolean myDispatching;
 
   protected AbstractMessageDispatcher(EventBroadcaster eventBroadcaster, File dataDir) {

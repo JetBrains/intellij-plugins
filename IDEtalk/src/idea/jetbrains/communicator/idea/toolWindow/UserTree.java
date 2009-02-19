@@ -44,11 +44,11 @@ import java.awt.event.MouseEvent;
  * @author Kir
  */
 public class UserTree extends KirTree {
-  private LocalMessageDispatcher myLocalMessageDispatcher;
+  private final LocalMessageDispatcher myLocalMessageDispatcher;
   private boolean myDelivered;
 
   private final MyTreeUI myUi = new MyTreeUI();
-  private TreeDragListener myDragListener;
+  private final TreeDragListener myDragListener;
 
   public UserTree(LocalMessageDispatcher localMessageDispatcher) {
 

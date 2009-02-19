@@ -38,7 +38,7 @@ import java.awt.event.MouseEvent;
  */
 class ComponentConsoleView implements ConsoleView {
   public static final int MAX_LENGTH = 200;
-  private JPanel myPanel = new JPanel();
+  private final JPanel myPanel = new JPanel();
   private int myLength;
   private final Project myProject;
 

@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class GetProjectsDataXmlMessage implements XmlMessage {
   public static final String TAG = "projectsData";
-  private ProjectsData[] myResult;
+  private final ProjectsData[] myResult;
 
   public GetProjectsDataXmlMessage(ProjectsData[] result) {
     myResult = result;

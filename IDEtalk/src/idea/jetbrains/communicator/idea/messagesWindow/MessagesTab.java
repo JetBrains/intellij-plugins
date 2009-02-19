@@ -70,7 +70,7 @@ public class MessagesTab implements Disposable {
   private final ConsoleView myConsoleView;
   private final User myUser;
   private final HardWrapUtil myHardWrapUtil;
-  private DocumentListener myButtonsUpdater;
+  private final DocumentListener myButtonsUpdater;
   private final LocalMessageDispatcher myLocalMessageDispatcher;
   private Content myContent;
   private IDEtalkAdapter myListener;

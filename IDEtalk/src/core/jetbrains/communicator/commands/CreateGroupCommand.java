@@ -28,8 +28,8 @@ import javax.swing.*;
  * @author Kir Maximov
  */
 public class CreateGroupCommand implements NamedUserCommand {
-  private UserModel myUserModel;
-  private IDEFacade myIdeFacade;
+  private final UserModel myUserModel;
+  private final IDEFacade myIdeFacade;
 
   public CreateGroupCommand(UserModel userModel, IDEFacade ideFacade) {
     myUserModel = userModel;

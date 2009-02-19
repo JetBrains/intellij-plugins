@@ -60,14 +60,14 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
   private static final String TREE_STATE_FILE = "treeState.xml";
 
   private final IDEFacade myIDEFacade;
-  private UserModel myUserModel;
-  private LocalMessageDispatcher myLocalMessageDispatcher;
+  private final UserModel myUserModel;
+  private final LocalMessageDispatcher myLocalMessageDispatcher;
 
   private final UserTree myTree;
-  private UserTree.MyTreeUI myTreeUi;
+  private final UserTree.MyTreeUI myTreeUi;
   private int myRefreshCounter;
-  private Timer myTimer4Renderer;
-  private IDEtalkAdapter myExpandTreeNodeListener;
+  private final Timer myTimer4Renderer;
+  private final IDEtalkAdapter myExpandTreeNodeListener;
   private final XStream myXStream = XMLUtil.createXStream();
 
   public UserListComponentImpl(UserModel userModel,

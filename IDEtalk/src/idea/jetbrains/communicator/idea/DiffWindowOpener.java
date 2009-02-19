@@ -27,11 +27,11 @@ import jetbrains.communicator.core.vfs.VFile;
  * @author Kir
  */
 public class DiffWindowOpener {
-  private VFile myVFile;
-  private String myRemoteText;
+  private final VFile myVFile;
+  private final String myRemoteText;
   private final Project myProject;
-  private VirtualFile myVirtualFile;
-  private User myRemoteUser;
+  private final VirtualFile myVirtualFile;
+  private final User myRemoteUser;
 
   public DiffWindowOpener(Project project, VirtualFile virtualFile, User remoteUser, VFile vFile, String remoteText) {
     myProject = project;

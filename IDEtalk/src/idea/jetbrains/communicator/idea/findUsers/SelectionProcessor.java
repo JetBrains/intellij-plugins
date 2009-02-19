@@ -32,8 +32,8 @@ import java.util.*;
  * @author Kir
  */
 class SelectionProcessor {
-  private KirTree myUserTree;
-  private JComboBox myGroups;
+  private final KirTree myUserTree;
+  private final JComboBox myGroups;
 
   SelectionProcessor(KirTree userTree, JComboBox groups, String[] strings) {
     myUserTree = userTree;

@@ -24,8 +24,8 @@ import org.jdom.Element;
  * @author Kir
  */
 public class MockXmlResponseProvider extends XmlResponseProvider {
-  private String myTag;
-  private String myNamespace;
+  private final String myTag;
+  private final String myNamespace;
 
   public MockXmlResponseProvider(String tag, String namespace, EventBroadcaster eventBroadcaster) {
     myTag = tag;

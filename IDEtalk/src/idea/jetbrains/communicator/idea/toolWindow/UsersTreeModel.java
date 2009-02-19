@@ -39,8 +39,8 @@ import javax.swing.tree.TreePath;
 public class UsersTreeModel extends DefaultTreeModel implements Disposable {
 
   private final UserModel myUserModel;
-  private EventBroadcaster myBroadcaster;
-  private JTree myTree;
+  private final EventBroadcaster myBroadcaster;
+  private final JTree myTree;
   private final IDEtalkAdapter myListener;
   private final LocalMessageDispatcher myLocalMessageDispatcher;
 

@@ -135,7 +135,7 @@ public class AsyncMessageDispatcherTest extends BaseTestCase {
   private static class NotifyableMessage extends MockMessage {
     private boolean myDispatchingStarted;
     private boolean myProcessed;
-    private String[] myLog1;
+    private final String[] myLog1;
 
     NotifyableMessage(boolean successfulDelivery, String[] log) {
       super(successfulDelivery);

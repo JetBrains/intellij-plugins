@@ -96,7 +96,7 @@ class MessageHistory {
 
 
 
-  private DayHistory myHistory = new DayHistory();
+  private final DayHistory myHistory = new DayHistory();
 
   @NonNls
 

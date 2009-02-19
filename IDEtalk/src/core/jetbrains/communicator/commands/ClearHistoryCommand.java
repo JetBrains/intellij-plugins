@@ -26,8 +26,8 @@ import jetbrains.communicator.util.UIUtil;
  * @author Kir
  */
 public class ClearHistoryCommand implements UserCommand {
-  private LocalMessageDispatcher myMessageDispatcher;
-  private IDEFacade myIdeFacade;
+  private final LocalMessageDispatcher myMessageDispatcher;
+  private final IDEFacade myIdeFacade;
 
   public ClearHistoryCommand(LocalMessageDispatcher messageDispatcher, IDEFacade ideFacade) {
     myMessageDispatcher = messageDispatcher;

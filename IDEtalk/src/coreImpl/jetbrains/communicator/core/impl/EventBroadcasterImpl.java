@@ -30,7 +30,7 @@ public class EventBroadcasterImpl implements EventBroadcaster {
   private static final Logger LOG = Logger.getLogger(EventBroadcasterImpl.class);
   public static final Runnable NO_ACTION = new Runnable() { public void run() { } };
 
-  private List<IDEtalkListener> myListeners = new ArrayList<IDEtalkListener>();
+  private final List<IDEtalkListener> myListeners = new ArrayList<IDEtalkListener>();
 
   public synchronized void addListener(IDEtalkListener listener) {
     assert !myListeners.contains(listener);

@@ -23,8 +23,8 @@ import java.util.Map;
  * @author Kir
  */
 public class MockOptions implements IDEtalkOptions {
-  private Map<String, Boolean> myOptions = new HashMap<String, Boolean>();
-  private Map<String, Double> myNumbers = new HashMap<String, Double>();
+  private final Map<String, Boolean> myOptions = new HashMap<String, Boolean>();
+  private final Map<String, Double> myNumbers = new HashMap<String, Double>();
 
   public boolean isSet(String option) {
     return isSet(option, false);

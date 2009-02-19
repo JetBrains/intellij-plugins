@@ -21,8 +21,8 @@ package jetbrains.communicator.util;
  */
 public class WatchDog {
   private long myStarted;
-  private String myName;
-  private StringBuffer myBuffer = new StringBuffer(10);
+  private final String myName;
+  private final StringBuffer myBuffer = new StringBuffer(10);
   public static final int SEC = 1000;
 
   public WatchDog(String prefix) {

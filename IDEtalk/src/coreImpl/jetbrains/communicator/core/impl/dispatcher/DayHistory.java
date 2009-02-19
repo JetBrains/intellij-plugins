@@ -25,7 +25,7 @@ import java.util.*;
  * @author Kir
 */
 class DayHistory {
-  private Map<User, List<LocalMessage>> myData = new HashMap<User, List<LocalMessage>>();
+  private final Map<User, List<LocalMessage>> myData = new HashMap<User, List<LocalMessage>>();
   private transient Date myOldestDate;
   private transient boolean myHasFullHistory;
 

@@ -30,7 +30,7 @@ import java.util.List;
  * @author Kir Maximov
  */
 public class FindUsersAction extends ActionGroup {
-  private List<AnAction> myActions;
+  private final List<AnAction> myActions;
 
   public FindUsersAction() {
     myActions = new ArrayList<AnAction>();

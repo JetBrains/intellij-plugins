@@ -40,7 +40,7 @@ public class VFSUtilTest extends IdeaTestCase {
   private VirtualFile myContentRoot;
   private VirtualFile mySourceRoot;
   private ContentEntry myContentEntry;
-  private Set<File> myFilesToDelete = new HashSet<File>();
+  private final Set<File> myFilesToDelete = new HashSet<File>();
 
   protected void setUp() throws Exception {
     super.setUp();

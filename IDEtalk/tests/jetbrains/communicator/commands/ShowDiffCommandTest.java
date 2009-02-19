@@ -27,7 +27,7 @@ import org.jmock.Mock;
 public class ShowDiffCommandTest extends BaseTestCase {
   private ShowDiffCommand myCommand;
 
-  private String myLog = "";
+  private final String myLog = "";
   private Mock myFacadeMock;
 
   protected void setUp() throws Exception {

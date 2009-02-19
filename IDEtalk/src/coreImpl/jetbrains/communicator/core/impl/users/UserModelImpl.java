@@ -33,7 +33,7 @@ public class UserModelImpl implements UserModel, Disposable {
   protected final Collection<String> myGroups = new HashSet<String>();
 
   protected final transient EventBroadcaster myBroadcaster;
-  private transient MyListener myEventListener;
+  private final transient MyListener myEventListener;
 
   private final transient Object myCachedUsersLock = new Object();
   protected final transient Object myUsersGroupsLock = new Object();

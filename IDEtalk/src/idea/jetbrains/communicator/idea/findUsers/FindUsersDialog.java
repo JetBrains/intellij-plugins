@@ -41,7 +41,7 @@ public class FindUsersDialog extends IdeaDialog {
   private JComboBox myGroups;
   private KirTree myUserTree;
   private JPanel myToolbarPanel;
-  private SelectionProcessor mySelectionProcessor;
+  private final SelectionProcessor mySelectionProcessor;
 
   public FindUsersDialog(final List<User> foundUsers, String[] groups) {
     super(true);

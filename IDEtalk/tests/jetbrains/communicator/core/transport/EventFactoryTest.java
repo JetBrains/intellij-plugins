@@ -50,7 +50,7 @@ public class EventFactoryTest extends TestCase {
   }
 
   private static class MessageEventTst extends TestCase {
-    private String[] myData;
+    private final String[] myData;
 
     MessageEventTst(String name, String[] data) {
       super(name);

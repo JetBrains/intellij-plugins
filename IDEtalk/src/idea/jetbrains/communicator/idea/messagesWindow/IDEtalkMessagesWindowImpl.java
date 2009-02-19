@@ -342,7 +342,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
 
   private static class MyExpandListener implements HierarchyListener {
     private final JComponent myComponent;
-    private Runnable myRunOnExpand;
+    private final Runnable myRunOnExpand;
 
     MyExpandListener(JComponent component, Runnable runOnExpand) {
       myComponent = component;

@@ -26,7 +26,7 @@ public class GetMessageDialog extends IdeaDialog {
   private JLabel myLabel;
   private JTextArea myTextArea;
   private JPanel myPanel;
-  private HardWrapUtil myWrapper;
+  private final HardWrapUtil myWrapper;
 
   public GetMessageDialog(String titleText, String labelText, String optionalOKButtonText) {
     super(false);

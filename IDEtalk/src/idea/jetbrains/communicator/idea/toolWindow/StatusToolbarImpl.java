@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public class StatusToolbarImpl implements StatusToolbar {
 
-  private List<Class<? extends NamedUserCommand>> myToolbarCommands = new ArrayList<Class<? extends NamedUserCommand>>();
+  private final List<Class<? extends NamedUserCommand>> myToolbarCommands = new ArrayList<Class<? extends NamedUserCommand>>();
   private final Map<JPanel, Object> myPanels = new WeakHashMap<JPanel, Object>();
 
   public void addToolbarCommand(Class<? extends NamedUserCommand> namedCommandClass) {

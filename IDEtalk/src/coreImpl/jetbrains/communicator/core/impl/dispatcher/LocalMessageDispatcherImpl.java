@@ -116,7 +116,7 @@ public class LocalMessageDispatcherImpl extends AbstractMessageDispatcher implem
   }
 
   private class MyEventsListener implements IDEtalkListener {
-    private EventBroadcaster myEventBroadcaster;
+    private final EventBroadcaster myEventBroadcaster;
 
     MyEventsListener(EventBroadcaster eventBroadcaster) {
       myEventBroadcaster = eventBroadcaster;

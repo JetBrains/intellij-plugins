@@ -52,7 +52,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
 
   public static final String FILE_NAME = "jabberSettings.xml";
   private JabberSettings mySettings;
-  private IDEFacade myIdeFacade;
+  private final IDEFacade myIdeFacade;
   private XStream myXStream;
 
   private final List<ConnectionListener> myConnectionListeners = new ArrayList<ConnectionListener>();

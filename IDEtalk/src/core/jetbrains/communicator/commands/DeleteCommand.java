@@ -32,8 +32,8 @@ import java.util.List;
 public class DeleteCommand extends EnabledWhenFocusedCommand {
   static final String QUESTION_PREFIX = "Delete ";
 
-  private UserModel myUserModel;
-  private IDEFacade myIDEFacade;
+  private final UserModel myUserModel;
+  private final IDEFacade myIDEFacade;
 
   public DeleteCommand(UserModel userModel, UserListComponent usetListComponent, IDEFacade facade) {
     super(usetListComponent);

@@ -55,7 +55,7 @@ public class IDEtalkConfiguration implements Configurable {
   private JCheckBox myPlaySoundCheckBox;
 
   private final Set<Pair<JCheckBox, OptionFlag>> myFlags = new HashSet<Pair<JCheckBox, OptionFlag>>();
-  private Project myProject;
+  private final Project myProject;
   private final IDEtalkOptions myOptions;
 
   public IDEtalkConfiguration(final Project project) {

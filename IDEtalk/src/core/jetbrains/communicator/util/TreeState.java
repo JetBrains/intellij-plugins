@@ -29,8 +29,8 @@ import java.util.Set;
  */
 @SuppressWarnings({"unchecked"})
 public class TreeState {
-  private Set mySelectedNodes = new HashSet();
-  private Set myExpandedNodes = new HashSet();
+  private final Set mySelectedNodes = new HashSet();
+  private final Set myExpandedNodes = new HashSet();
 
   public TreeState(JTree tree) {
     saveTreeSelection(tree);

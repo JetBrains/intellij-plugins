@@ -66,8 +66,8 @@ public abstract class UserEvent implements IDEtalkEvent {
 
   public static class Updated extends UserEvent {
     private final String myPropertyName;
-    private Object myOldValue;
-    private Object myNewValue;
+    private final Object myOldValue;
+    private final Object myNewValue;
     @NonNls
     public static final String GROUP = "group";
     @NonNls

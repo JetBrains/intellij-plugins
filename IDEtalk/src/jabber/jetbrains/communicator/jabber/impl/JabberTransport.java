@@ -71,14 +71,14 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   private final JabberUserFinder myUserFinder;
   private final IDEFacade myIdeFacade;
 
-  private String myThreadIdPrefix = StringUtils.randomString(5);
+  private final String myThreadIdPrefix = StringUtils.randomString(5);
   private int myCurrentThreadId;
   private boolean myIgnoreUserEvents;
   private PresenceMode myPresenceMode;
 
   private final Map<User, UserPresence> myUser2Presence = new HashMap<User, UserPresence>();
-  private Set<String> myIDEtalkUsers = new HashSet<String>();
-  private Map<String, String> myUser2Thread = Collections.synchronizedMap(new HashMap<String, String>());
+  private final Set<String> myIDEtalkUsers = new HashSet<String>();
+  private final Map<String, String> myUser2Thread = Collections.synchronizedMap(new HashMap<String, String>());
 
   @NonNls
   private static final String RESPONSE = "response";

@@ -26,7 +26,7 @@ import java.io.IOException;
 public class P2PServer {
   private static final Logger LOG = Logger.getLogger(P2PServer.class);
   private WebServer myWebServer;
-  private int myXmlRpcPort;
+  private final int myXmlRpcPort;
 
   public P2PServer(int portToListen, P2PCommand[] p2PServerCommands) throws IOException {
     myXmlRpcPort = portToListen;

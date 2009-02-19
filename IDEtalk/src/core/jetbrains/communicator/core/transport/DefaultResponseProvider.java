@@ -23,7 +23,7 @@ import org.jdom.Element;
  * @author Kir
  */
 public class DefaultResponseProvider extends XmlResponseProvider {
-  private EventBroadcaster myBroadcaster;
+  private final EventBroadcaster myBroadcaster;
 
   public DefaultResponseProvider(EventBroadcaster broadcaster) {
     assert broadcaster != null;

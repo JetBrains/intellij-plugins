@@ -26,7 +26,7 @@ import java.util.List;
  * @author Kir
  */
 public class HardWrapUtil {
-  private JTextComponent myTextArea;
+  private final JTextComponent myTextArea;
   private static final Font FONT = new Font("Monospaced", Font.PLAIN, 12);
 
   public HardWrapUtil(JTextComponent textArea) {

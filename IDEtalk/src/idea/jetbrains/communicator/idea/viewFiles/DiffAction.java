@@ -28,7 +28,7 @@ import javax.swing.*;
  * @author Kir
  */
 abstract class DiffAction extends BaseAction<ShowDiffCommand> {
-  private JTree myFileTree;
+  private final JTree myFileTree;
   public static final String USER = "IDETalkUser";
 
   DiffAction(JTree fileTree) {
