@@ -22,6 +22,7 @@ import com.intellij.util.xml.Namespace;
 import com.intellij.util.xml.SubTagList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public interface StrutsRoot extends DomElement {
   @NotNull
   List<StrutsPackage> getPackages();
 
-  @SubTagList(value ="include")
+  @SubTagList(value = "include")
   List<Include> getIncludes();
 
   @SubTagList(value = "bean")
@@ -52,5 +53,8 @@ public interface StrutsRoot extends DomElement {
   @SubTagList(value = "constant")
   @NotNull
   List<Constant> getConstants();
+
+  @Nullable
+  UnknownHandlerStack getUnknownHandlerStack();
 
 }

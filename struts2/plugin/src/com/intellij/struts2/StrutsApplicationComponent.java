@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2009 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,28 +20,28 @@ import com.intellij.javaee.ExternalResourceManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
-import com.intellij.struts2.dom.Param;
 import com.intellij.struts2.dom.ExtendableClassConverter;
+import com.intellij.struts2.dom.Param;
 import com.intellij.struts2.dom.struts.*;
+import com.intellij.struts2.dom.struts.action.Action;
+import com.intellij.struts2.dom.struts.action.*;
 import com.intellij.struts2.dom.struts.impl.*;
 import com.intellij.struts2.dom.struts.impl.path.StrutsPathReferenceConverterImpl;
-import com.intellij.struts2.dom.struts.action.*;
-import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.strutspackage.*;
 import com.intellij.struts2.dom.validator.Field;
 import com.intellij.struts2.dom.validator.FieldValidator;
 import com.intellij.struts2.dom.validator.Message;
 import com.intellij.struts2.dom.validator.Validators;
-import com.intellij.struts2.dom.validator.impl.ValidatorConfigResolveConverterImpl;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
 import com.intellij.struts2.dom.validator.config.ValidatorConfigResolveConverter;
+import com.intellij.struts2.dom.validator.impl.ValidatorConfigResolveConverterImpl;
 import com.intellij.struts2.facet.StrutsFacetType;
 import com.intellij.util.Icons;
 import com.intellij.util.NullableFunction;
+import com.intellij.util.xml.ConverterManager;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.ElementPresentationManager;
 import com.intellij.util.xml.TypeNameManager;
-import com.intellij.util.xml.ConverterManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,6 +84,8 @@ public class StrutsApplicationComponent implements ApplicationComponent {
                                                      new DefaultInterceptorRefResolveConverterImpl());
     converterManager.registerConverterImplementation(StrutsPathReferenceConverter.class,
                                                      new StrutsPathReferenceConverterImpl());
+    converterManager.registerConverterImplementation(UnknownHandlerRefConverter.class,
+                                                     new UnknownHandlerRefConverterImpl());
 
     converterManager.registerConverterImplementation(ValidatorConfigResolveConverter.class,
                                                      new ValidatorConfigResolveConverterImpl());
