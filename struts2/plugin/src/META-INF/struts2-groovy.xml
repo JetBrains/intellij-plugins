@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<idea-plugin version="2">
+
+  <extensions xmlns="com.intellij">
+
+    <!-- Groovy Action-class navigation -->
+    <annotator language="Groovy" implementationClass="com.intellij.struts2.annotators.ActionGroovyAnnotator"/>
+
+  </extensions>
+
+</idea-plugin>

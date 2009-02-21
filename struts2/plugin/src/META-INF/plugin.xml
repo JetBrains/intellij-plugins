@@ -20,6 +20,7 @@
   <!-- optional dependencies -->
   <depends optional="true" config-file="struts2-javascript.xml">JavaScript</depends>
   <depends optional="true" config-file="struts2-spring.xml">com.intellij.spring</depends>
+  <depends optional="true" config-file="struts2-groovy.xml">org.intellij.groovy</depends>
 
   <vendor email="yann.cebron@googlemail.com">Yann Cébron</vendor>
 
@@ -86,7 +87,7 @@
 
 
     <!-- JAVA -->
-    <annotator language="JAVA" implementationClass="com.intellij.struts2.annotators.ActionAnnotator"/>
+    <annotator language="JAVA" implementationClass="com.intellij.struts2.annotators.ActionJavaAnnotator"/>
 
 
     <!-- JSP -->

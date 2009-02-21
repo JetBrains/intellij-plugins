@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2009 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,12 +18,10 @@ package com.intellij.struts2.annotators;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiModifier;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
@@ -33,16 +31,17 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 /**
- * Annotator for Action-classes.
- * Provides gutter icon navigation to &lt;action&gt; declaration(s).
+ * Base class for annotating Action-Classes.
+ * Provides gutter icon navigation to &lt;action&gt; declaration(s) in struts.xml.
  *
  * @author Yann C&eacute;bron
  */
-public class ActionAnnotator implements Annotator {
+abstract class ActionAnnotatorBase implements Annotator {
 
   private static final DomElementListCellRenderer ACTION_RENDERER =
       new DomElementListCellRenderer<Action>(StrutsBundle.message("annotators.action.noname")) {
@@ -53,22 +52,20 @@ public class ActionAnnotator implements Annotator {
         }
       };
 
-  public void annotate(final PsiElement psiElement, final AnnotationHolder holder) {
-    if (!(psiElement instanceof PsiIdentifier)) {
+  /**
+   * Determine the Action-PsiClass.
+   *
+   * @param psiElement Passed from anntator.
+   * @return null if PsiClass cannot be determined or is not suitable.
+   */
+  @Nullable
+  protected abstract PsiClass getActionPsiClass(@NotNull final PsiElement psiElement);
+
+  public final void annotate(final PsiElement psiElement, final AnnotationHolder annotationHolder) {
+    final PsiClass clazz = getActionPsiClass(psiElement);
+    if (clazz == null) {
       return;
     }
-
-    final PsiElement parentPsiElement = psiElement.getParent();
-    if (!(parentPsiElement instanceof PsiClass)) {
-      return;
-    }
-
-    // do not run on classes within JSPs
-    if (psiElement.getContainingFile().getFileType() != StdFileTypes.JAVA) {
-      return;
-    }
-
-    final PsiClass clazz = (PsiClass) parentPsiElement;
 
     // do not run on non-public, abstract classes or interfaces
     if (clazz.isInterface() ||
@@ -81,7 +78,7 @@ public class ActionAnnotator implements Annotator {
     // short exit if Struts Facet not present
     final Module module = ModuleUtil.findModuleForPsiElement(clazz);
     if (module == null ||
-         StrutsFacet.getInstance(module) == null) {
+        StrutsFacet.getInstance(module) == null) {
       return;
     }
 
@@ -93,13 +90,12 @@ public class ActionAnnotator implements Annotator {
 
     final List<Action> actions = strutsModel.findActionsByClass(clazz);
     if (!actions.isEmpty()) {
-      NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR).
-          setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration")).
-          setTargets(actions).setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip")).
-          setCellRenderer(ACTION_RENDERER).
-          install(holder, clazz.getNameIdentifier());
+      NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR)
+          .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
+          .setTargets(actions).setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip"))
+          .setCellRenderer(ACTION_RENDERER)
+          .install(annotationHolder, clazz.getNameIdentifier());
     }
-
   }
 
 }

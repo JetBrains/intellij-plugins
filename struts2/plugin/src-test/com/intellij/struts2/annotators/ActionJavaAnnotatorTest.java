@@ -31,11 +31,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Tests for {@link ActionAnnotator}
+ * Tests for {@link ActionJavaAnnotator}
  *
  * @author Yann C&eacute;bron
  */
-public class ActionAnnotatorTest extends BasicStrutsHighlightingTestCase {
+public class ActionJavaAnnotatorTest extends BasicStrutsHighlightingTestCase {
 
   protected LocalInspectionTool[] getHighlightingInspections() {
     return new LocalInspectionTool[0];
