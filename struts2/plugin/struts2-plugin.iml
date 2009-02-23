@@ -25,7 +25,7 @@
     <orderEntry type="module" module-name="spring-core" />
     <orderEntry type="module" module-name="graph-openapi" />
     <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="jetgroovy"/>
+    <orderEntry type="module" module-name="jetgroovy" />
     <orderEntry type="library" name="JUnit4" level="project" />
   </component>
   <component name="copyright">
