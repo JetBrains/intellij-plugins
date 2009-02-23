@@ -27,7 +27,7 @@ final class TaglibUtil {
   /**
    * Splits action-name from action-method.
    */
-  public static final String BANG_SYMBOL = "!";
+  static final String BANG_SYMBOL = "!";
 
   private TaglibUtil() {
   }

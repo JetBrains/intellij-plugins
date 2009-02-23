@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<idea-plugin version="2">
+
+  <extensions defaultExtensionNs="com.intellij">
+
+    <!-- Provide Tiles-model configured via StrutsTilesListener in web.xml -->
+    <struts.tilesModelProvider implementation="com.intellij.struts2.tiles.Struts2TilesModelProvider"/>
+
+    <!-- <result> for type="tiles" -->
+    <struts2.resultContributor
+        implementation="com.intellij.struts2.tiles.TilesResultContributor"/>
+  </extensions>
+
+</idea-plugin>

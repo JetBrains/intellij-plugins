@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- <result> for Tiles -->
+<struts>
+
+  <package name="tilesTest">
+
+    <result-types>
+      <result-type name="tiles" class="org.apache.struts2.views.tiles.TilesResult"/>
+    </result-types>
+
+    <action name="testTiles">
+      <result name="result1" type="tiles">definition1</result>
+      <result name="result2" type="tiles">definition2</result>
+
+      <result name="INVALID_VALUE"
+              type="tiles">
+        <error>INVALID_VALUE</error>
+      </result>
+    </action>
+  </package>
+
+</struts>
