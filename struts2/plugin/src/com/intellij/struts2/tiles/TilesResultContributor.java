@@ -56,12 +56,23 @@ public class TilesResultContributor extends StrutsResultContributor {
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> psiReferences,
                                   final boolean soft) {
+    final String currentPackage = getNamespace(psiElement);
+    if (currentPackage == null) {
+      return false;
+    }
+    
+
     final List<TilesModel> allTilesModels = getAllTilesModels(psiElement);
     psiReferences.add(new TilesDefinitionReference((XmlTag) psiElement, allTilesModels));
     return false;
   }
 
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement psiElement) {
+    final String currentPackage = getNamespace(psiElement);
+    if (currentPackage == null) {
+      return null;
+    }
+
     return new PathReference(path, new PathReference.ConstFunction(StrutsIcons.TILE_ICON)) {
       @Override
       public PsiElement resolve() {
