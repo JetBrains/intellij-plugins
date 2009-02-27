@@ -44,6 +44,7 @@ import com.intellij.struts2.facet.ui.StrutsVersion;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -138,7 +139,14 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
 
                   final Filter strutsFilter = webApp.addFilter();
                   strutsFilter.getFilterName().setStringValue("struts2");
-                  strutsFilter.getFilterClass().setStringValue("org.apache.struts2.dispatcher.FilterDispatcher");
+
+                  @NonNls final String filterClass;
+                  if (version.startsWith("2.1")) {
+                    filterClass = "org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter";
+                  } else {
+                    filterClass = "org.apache.struts2.dispatcher.FilterDispatcher";
+                  }
+                  strutsFilter.getFilterClass().setStringValue(filterClass);
 
                   final FilterMapping filterMapping = webApp.addFilterMapping();
                   filterMapping.getFilterName().setValue(strutsFilter);
