@@ -40,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
  * </pre>
  *
  * @author Yann C&eacute;bron
+ * @deprecated will be removed for IDEA 9
  */
 public abstract class StrutsResultContributor implements PathReferenceProvider {
 
