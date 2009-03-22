@@ -59,7 +59,7 @@ public class JspActionAnnotator implements Annotator {
   private static final String ACTION_ATTRIBUTE_NAME = "action";
 
   @NonNls
-  private static final String[] TAGS_WITH_ACTION_ATTRIBUTE = new String[]{"action", "form", "url"};
+  private static final String[] TAGS_WITH_ACTION_ATTRIBUTE = new String[]{"action", "form", "reset", "submit", "url"};
 
   static {
     ACTION_CLASS_ICON.setIcon(Icons.CLASS_ICON, 0);
