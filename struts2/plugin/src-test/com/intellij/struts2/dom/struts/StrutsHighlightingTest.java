@@ -30,6 +30,11 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     return "strutsXmlHighlighting";
   }
 
+  @Override
+  protected boolean hasJavaSources() {
+    return true;
+  }
+
   public void testSimpleStruts() throws Throwable {
     performHighlightingTest("struts-simple.xml");
   }

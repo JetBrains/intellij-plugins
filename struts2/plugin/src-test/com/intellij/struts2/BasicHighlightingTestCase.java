@@ -59,6 +59,15 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
    */
   protected abstract LocalInspectionTool[] getHighlightingInspections();
 
+  /**
+   * Return true if the test uses JAVA sources.
+   *
+   * @return false.
+   */
+  protected boolean hasJavaSources() {
+    return false;
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -83,7 +92,14 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected void configureModule(final T moduleBuilder) throws Exception {
     moduleBuilder.addContentRoot(myFixture.getTempDirPath());
     moduleBuilder.addContentRoot(getTestDataPath());
-    moduleBuilder.addSourceRoot("src");
+
+    if (hasJavaSources()) {
+      final String path = myFixture.getTempDirPath();
+      new File(path + "/src").mkdir(); // ?? necessary
+
+      moduleBuilder.addContentRoot(getTestDataPath() + "/src");
+      moduleBuilder.addSourceRoot("src");
+    }
     addStrutsJars(moduleBuilder);
   }
 

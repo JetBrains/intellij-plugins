@@ -25,10 +25,14 @@ import com.intellij.spring.facet.SpringFacetConfiguration;
 import com.intellij.spring.facet.SpringFacetType;
 import com.intellij.spring.facet.SpringFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import junit.framework.Assert;
+import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,6 +43,11 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlHighlightingSpring";
+  }
+
+  @Override
+  protected boolean hasJavaSources() {
+    return true;
   }
 
   protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
@@ -62,19 +71,11 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     addFile(springFileSet, "spring.xml");
 
     // TODO <alias> does not appear here, see com.intellij.spring.impl.SpringModelImpl#myOwnBeans
-    myFixture.testCompletionVariants("struts-completionvariants-spring.xml",
-                                     "MyClass",
-                                     "bean1",
-                                     "bean2",
-                                     "springInterceptor",
-                                     "springResultType",
-                                     "java",
-                                     "javax",
-                                     "com",
-                                     "freemarker",
-                                     "ognl",
-                                     "org",
-                                     "template");
+    final List<String> variants = myFixture.getCompletionVariants("struts-completionvariants-spring.xml");
+
+    Assert.assertTrue(CollectionUtils.isSubCollection(Arrays.asList("MyClass", "bean1", "bean2", "springInterceptor",
+                                                                    "springResultType"),
+                                                      variants));
   }
 
   // stuff below is Spring related ===============================================

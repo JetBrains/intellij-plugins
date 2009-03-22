@@ -22,11 +22,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.BasicStrutsHighlightingTestCase;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,15 +41,12 @@ public class ActionJavaAnnotatorTest extends BasicStrutsHighlightingTestCase {
 
   @NotNull
   protected String getTestDataLocation() {
-    return "/gutterJava/actionClass/";
+    return "/gutterJava/actionClass";
   }
 
-  // TODO why necessary?
-  protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
-    final String path = myFixture.getTempDirPath();
-    moduleBuilder.addContentRoot(path);
-    new File(path + "/src").mkdir();
-    moduleBuilder.addSourceRoot("src");
+  @Override
+  protected boolean hasJavaSources() {
+    return true;
   }
 
   /**

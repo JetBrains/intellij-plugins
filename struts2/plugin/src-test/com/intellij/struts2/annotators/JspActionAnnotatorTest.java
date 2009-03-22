@@ -43,6 +43,11 @@ public class JspActionAnnotatorTest extends BasicStrutsHighlightingTestCase<WebM
     return WebModuleFixtureBuilder.class;
   }
 
+  @Override
+  protected boolean hasJavaSources() {
+    return true;
+  }
+
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp/", "/");
