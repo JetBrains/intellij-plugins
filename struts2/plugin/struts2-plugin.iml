@@ -29,6 +29,7 @@
     <orderEntry type="module" module-name="struts-api" />
     <orderEntry type="module" module-name="StrutsAssistant" />
     <orderEntry type="library" name="JUnit4" level="project" />
+    <orderEntry type="library" name="commons-collections" level="project" />
   </component>
   <component name="copyright">
     <Base>
