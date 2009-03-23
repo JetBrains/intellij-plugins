@@ -18,7 +18,6 @@ import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.struts2.dom.struts.action.Result;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -31,8 +30,13 @@ public class ResultNode extends BasicStrutsNode<Result> {
 
   private static final Icon UNKNOWN_RESULT_ICON = FileTypes.UNKNOWN.getIcon();
 
-  public ResultNode(@NotNull final Result identifyingElement, @Nullable final String name) {
-    super(identifyingElement, name);
+  private final String resultType;
+
+  public ResultNode(@NotNull final Result identifyingElement,
+                    @NotNull final String path,
+                    @NotNull final String resultType) {
+    super(identifyingElement, path);
+    this.resultType = resultType;
   }
 
   @NotNull
@@ -62,7 +66,7 @@ public class ResultNode extends BasicStrutsNode<Result> {
 
     final TooltipBuilder builder = new TooltipBuilder();
     builder.addLine("Path", displayPath)
-        .addLine("Type", getIdentifyingElement().getType().getStringValue());
+        .addLine("Type", resultType);
 
     return builder.getTooltipText();
   }

@@ -91,11 +91,16 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
       return false;
     }
 
-    // hack for STRPL-85: suppress <param>-highlighting within <result> when pointing to Actions
+    // hack for STRPL-85: suppress <param>-highlighting within <result> for certain result-types
     if (value.getConverter() instanceof ParamsNameConverter) {
       final Result result = DomUtil.getParentOfType(value, Result.class, false);
       if (result != null) {
-        if (ResultTypeResolver.isChainOrRedirectType(result.getType().getStringValue())) {
+        final ResultType resultType = result.getEffectiveResultType();
+        if (resultType == null) {
+          return false; // error
+        }
+        
+        if (ResultTypeResolver.isChainOrRedirectType(resultType.getName().getStringValue())) {
           return false;
         }
       }

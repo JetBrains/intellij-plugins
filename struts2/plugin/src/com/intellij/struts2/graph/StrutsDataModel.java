@@ -29,6 +29,7 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
+import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.graph.beans.ActionNode;
 import com.intellij.struts2.graph.beans.BasicStrutsEdge;
@@ -36,6 +37,7 @@ import com.intellij.struts2.graph.beans.BasicStrutsNode;
 import com.intellij.struts2.graph.beans.ResultNode;
 import com.intellij.ui.Colors;
 import com.intellij.util.containers.HashSet;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,6 +60,9 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
 
   private final Project myProject;
   private final XmlFile myFile;
+
+  @NonNls
+  private static final String UNKNOWN = "???";
 
   public StrutsDataModel(final XmlFile file) {
     myFile = file;
@@ -189,7 +194,13 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
 
         for (final Result result : action.getResults()) {
           final PathReference pathReference = result.getValue();
-          final ResultNode resultNode = new ResultNode(result, pathReference != null ? pathReference.getPath() : "???");
+          final String path = pathReference != null ? pathReference.getPath() : UNKNOWN;
+
+          final ResultType resultType = result.getEffectiveResultType();
+          final String resultTypeValue = resultType != null ? resultType.getName().getStringValue() : UNKNOWN;
+          final ResultNode resultNode = new ResultNode(result,
+                                                       path,
+                                                       resultTypeValue != null ? resultTypeValue : UNKNOWN);
           addNode(resultNode);
 
           final String resultName = result.getName().getStringValue();

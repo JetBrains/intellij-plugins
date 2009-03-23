@@ -44,19 +44,19 @@ public abstract class ResultImpl implements Result, LocationPresentation {
 
   @Nullable
   public PsiClass getParamsClass() {
+    final ResultType type = getEffectiveResultType();
+    return type != null ? type.getResultTypeClass().getValue() : null;
+  }
+
+  @Nullable
+  public ResultType getEffectiveResultType() {
     final ResultType resultType = getType().getValue();
     if (resultType != null) {
-      return resultType.getResultTypeClass().getValue();
+      return resultType;
     }
 
-    // find default result-type in enclosing package or its parents
     final StrutsPackage strutsPackage = getParentOfType(StrutsPackage.class, true);
-    if (strutsPackage == null) {
-      return null;
-    }
-
-    final ResultType defaultResultType = strutsPackage.searchDefaultResultType();
-    return defaultResultType != null ? defaultResultType.getResultTypeClass().getValue() : null;
+    return strutsPackage != null ? strutsPackage.searchDefaultResultType() : null;
   }
 
 }

@@ -20,6 +20,7 @@ import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * <code>result</code>.
@@ -39,6 +40,19 @@ public interface Result extends ParamsElement, GenericDomValue<PathReference> {
   @Scope(ParentScopeProvider.class)
   GenericAttributeValue<String> getName();
 
+  /**
+   * Returns the local result type.
+   *
+   * @return null if none defined.
+   */
   @Convert(ResultTypeResolvingConverter.class)
   GenericAttributeValue<ResultType> getType();
+
+  /**
+   * Determines the effective result type.
+   *
+   * @return local or parent's {@link com.intellij.struts2.dom.struts.strutspackage.StrutsPackage#searchDefaultResultType()}, {@code null} on errors.
+   */
+  @Nullable
+  ResultType getEffectiveResultType();
 }

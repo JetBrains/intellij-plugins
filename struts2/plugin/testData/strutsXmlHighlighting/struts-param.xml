@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <!DOCTYPE struts PUBLIC
-  "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
-  "http://struts.apache.org/dtds/struts-2.0.dtd">
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <!-- tests for nested <param> -->
 
@@ -14,7 +14,8 @@
 
     <action name="testParams" class="MyClass">
       <param name="param1">someValue</param>
-      <param name=<error>""</error>/>
+      <param name=
+      <error>""</error>/>
       <param name="<error>INVALID_VALUE</error>"/>
     </action>
 
@@ -70,7 +71,7 @@
   </package>
 
 
-  <!-- result-types pointing to action: allow any <param> "name" (STRPL-85) -->
+  <!-- result-types pointing to action: allow any <param> "name" (STRPL-85) ======== -->
   <package name="testResultParamsWithActionResultType">
     <result-types>
       <result-type name="redirectAction" class="org.apache.struts2.dispatcher.ServletActionRedirectResult"/>
@@ -85,7 +86,17 @@
     </action>
   </package>
 
-  
+  <!-- same as before with inherited default result-type -->
+  <package name="testResultParamsWithInheritedActionResultType" extends="testResultParamsWithActionResultType">
+    <action name="testResultParamsWithActionResultType">
+      <result name="actionResult">
+        <param name="actionName">value</param>
+        <param name="anything">value</param>
+        <param name="nothing">value</param>
+      </result>
+    </action>
+  </package>
+
   <!-- GLOBAL-RESULT ===================================================== -->
 
   <package name="testGlobalResultParams">
