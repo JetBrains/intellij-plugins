@@ -87,7 +87,7 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
 
   @NotNull
   public String getNodeName(final BasicStrutsNode node) {
-    return "";
+    return node.getName();
   }
 
   @NotNull
@@ -115,8 +115,8 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
       assert xmlElement != null;
       return myGroups.get(xmlElement.getContainingFile());
     }
-    return super.getGroup(basicStrutsNode);
 
+    return super.getGroup(basicStrutsNode);
   }
 
   private void addNode(final BasicStrutsNode node) {
@@ -151,7 +151,9 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
           }
         };
 
-        group.setClosed(false);
+        // collapse all other files
+        group.setClosed(file != myFile);
+
         myGroups.put(file, group);
 
       }
@@ -180,12 +182,12 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
       return;
     }
 
-    for (StrutsPackage strutsPackage : model.getStrutsPackages()) {
-      for (Action action : strutsPackage.getActions()) {
+    for (final StrutsPackage strutsPackage : model.getStrutsPackages()) {
+      for (final Action action : strutsPackage.getActions()) {
         final ActionNode actionNode = new ActionNode(action, action.getName().getStringValue());
         addNode(actionNode);
 
-        for (Result result : action.getResults()) {
+        for (final Result result : action.getResults()) {
           final PathReference pathReference = result.getValue();
           final ResultNode resultNode = new ResultNode(result, pathReference != null ? pathReference.getPath() : "???");
           addNode(resultNode);

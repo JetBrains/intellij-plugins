@@ -85,7 +85,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
       return null;
     }
 
-    return node.getName();
+    return node.getTooltip();
   }
 
   public String getEdgeTooltip(@Nullable final BasicStrutsEdge edge) {

@@ -42,11 +42,11 @@ public abstract class BasicStrutsNode<T extends DomElement> {
    */
   protected BasicStrutsNode(@NotNull final T identifyingElement, @Nullable @NonNls final String name) {
     myIdentifyingElement = identifyingElement;
-    myName = name;
+    myName = name != null ? name : "";
   }
 
   @NonNls
-  @Nullable
+  @NotNull
   public String getName() {
     return myName;
   }
@@ -58,6 +58,10 @@ public abstract class BasicStrutsNode<T extends DomElement> {
 
   @NotNull
   public abstract Icon getIcon();
+
+  @NonNls
+  @NotNull
+  public abstract String getTooltip();
 
   public boolean equals(final Object o) {
     if (this == o) {

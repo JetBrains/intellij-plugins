@@ -55,4 +55,16 @@ public class ResultNode extends BasicStrutsNode<Result> {
     return pathReferenceIcon != null ? pathReferenceIcon : UNKNOWN_RESULT_ICON;
   }
 
+  @NotNull
+  public String getTooltip() {
+    final PathReference pathReference = getIdentifyingElement().getValue();
+    final String displayPath = pathReference != null ? pathReference.getPath() : "???";
+
+    final TooltipBuilder builder = new TooltipBuilder();
+    builder.addLine("Path", displayPath)
+        .addLine("Type", getIdentifyingElement().getType().getStringValue());
+
+    return builder.getTooltipText();
+  }
+
 }
