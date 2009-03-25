@@ -30,13 +30,9 @@ public class ResultNode extends BasicStrutsNode<Result> {
 
   private static final Icon UNKNOWN_RESULT_ICON = FileTypes.UNKNOWN.getIcon();
 
-  private final String resultType;
-
   public ResultNode(@NotNull final Result identifyingElement,
-                    @NotNull final String path,
-                    @NotNull final String resultType) {
+                    @NotNull final String path) {
     super(identifyingElement, path);
-    this.resultType = resultType;
   }
 
   @NotNull
@@ -57,18 +53,6 @@ public class ResultNode extends BasicStrutsNode<Result> {
 
     final Icon pathReferenceIcon = pathReference.getIcon();
     return pathReferenceIcon != null ? pathReferenceIcon : UNKNOWN_RESULT_ICON;
-  }
-
-  @NotNull
-  public String getTooltip() {
-    final PathReference pathReference = getIdentifyingElement().getValue();
-    final String displayPath = pathReference != null ? pathReference.getPath() : "???";
-
-    final TooltipBuilder builder = new TooltipBuilder();
-    builder.addLine("Path", displayPath)
-        .addLine("Type", resultType);
-
-    return builder.getTooltipText();
   }
 
 }

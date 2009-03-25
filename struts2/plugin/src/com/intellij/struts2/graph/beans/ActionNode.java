@@ -16,7 +16,6 @@ package com.intellij.struts2.graph.beans;
 
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
-import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,21 +35,6 @@ public class ActionNode extends BasicStrutsNode<Action> {
   @NotNull
   public Icon getIcon() {
     return StrutsIcons.ACTION;
-  }
-
-  @NotNull
-  @Override
-  public String getTooltip() {
-    final StrutsPackage strutsPackage = getIdentifyingElement().getStrutsPackage();
-
-    final TooltipBuilder builder = new TooltipBuilder();
-    builder.addLine("Action", getName())
-        .addLine("Class", getIdentifyingElement().getActionClass().getStringValue())
-        .addLine("Package", strutsPackage.getName().getStringValue())
-        .addLine("Namespace", strutsPackage.getNamespace().getStringValue());
-
-    return builder.getTooltipText();
-
   }
 
 }

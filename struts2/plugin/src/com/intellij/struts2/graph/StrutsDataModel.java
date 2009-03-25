@@ -29,7 +29,6 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
-import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.graph.beans.ActionNode;
 import com.intellij.struts2.graph.beans.BasicStrutsEdge;
@@ -196,11 +195,7 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
           final PathReference pathReference = result.getValue();
           final String path = pathReference != null ? pathReference.getPath() : UNKNOWN;
 
-          final ResultType resultType = result.getEffectiveResultType();
-          final String resultTypeValue = resultType != null ? resultType.getName().getStringValue() : UNKNOWN;
-          final ResultNode resultNode = new ResultNode(result,
-                                                       path,
-                                                       resultTypeValue != null ? resultTypeValue : UNKNOWN);
+          final ResultNode resultNode = new ResultNode(result, path);
           addNode(resultNode);
 
           final String resultName = result.getName().getStringValue();

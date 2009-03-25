@@ -59,10 +59,6 @@ public abstract class BasicStrutsNode<T extends DomElement> {
   @NotNull
   public abstract Icon getIcon();
 
-  @NonNls
-  @NotNull
-  public abstract String getTooltip();
-
   public boolean equals(final Object o) {
     if (this == o) {
       return true;

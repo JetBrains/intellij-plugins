@@ -26,6 +26,7 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.struts2.graph.beans.BasicStrutsEdge;
 import com.intellij.struts2.graph.beans.BasicStrutsNode;
 import com.intellij.util.OpenSourceUtil;
+import com.intellij.util.xml.ElementPresentationManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,15 +86,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
       return null;
     }
 
-    return node.getTooltip();
-  }
-
-  public String getEdgeTooltip(@Nullable final BasicStrutsEdge edge) {
-    if (edge == null) {
-      return null;
-    }
-
-    return edge.getName();
+    return ElementPresentationManager.getDocumentationForElement(node.getIdentifyingElement());
   }
 
   public void customizeSettings(final Graph2DView view, final EditMode editMode) {

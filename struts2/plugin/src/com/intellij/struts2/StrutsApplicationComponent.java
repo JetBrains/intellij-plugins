@@ -18,6 +18,7 @@ package com.intellij.struts2;
 import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.javaee.ExternalResourceManager;
 import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.ExtendableClassConverter;
@@ -69,7 +70,7 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     return "Struts2ApplicationComponent";
   }
 
-  public StrutsApplicationComponent(ConverterManager converterManager) {
+  public StrutsApplicationComponent(final ConverterManager converterManager) {
     converterManager.registerConverterImplementation(ExtendableClassConverter.class,
                                                      new ExtendableClassConverterImpl());
     converterManager.registerConverterImplementation(StrutsPackageExtendsResolveConverter.class,
@@ -98,6 +99,8 @@ public class StrutsApplicationComponent implements ApplicationComponent {
 
     registerStrutsDomPresentation();
     registerValidationDomPresentation();
+
+    registerDocumentationProviders();
   }
 
   public void disposeComponent() {
@@ -125,7 +128,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
 
   }
 
-
   /**
    * Provides registry and mapping for multiple {@link TypedNameProvider}s.
    */
@@ -138,7 +140,7 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     }
 
     public String fun(final Object o) {
-      for (Map.Entry<Class, TypedNameProvider> entry : typedNameProviderSet.entrySet()) {
+      for (final Map.Entry<Class, TypedNameProvider> entry : typedNameProviderSet.entrySet()) {
         if (entry.getKey().isAssignableFrom(o.getClass())) {
           //noinspection unchecked
           return entry.getValue().getDisplayName((DomElement) o);
@@ -147,8 +149,8 @@ public class StrutsApplicationComponent implements ApplicationComponent {
 
       return null;
     }
-  }
 
+  }
 
   private static void registerStrutsDomPresentation() {
     final TypedNameProviderRegistry nameProviderRegistry = new TypedNameProviderRegistry();
@@ -261,28 +263,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     ElementPresentationManager.registerNameProvider(nameProviderRegistry);
 
     ElementPresentationManager.registerIcon(Action.class, StrutsIcons.ACTION);
-
-    ElementPresentationManager.registerDocumentationProvider(new NullableFunction<Object, String>() {
-      public String fun(final Object o) {
-        if (!(o instanceof Action)) {
-          return null;
-        }
-
-        final Action action = (Action) o;
-        final String documentation = StrutsBundle.message("dom.action.quickdoc",
-                                                          action.getName().getStringValue(),
-                                                          action.getStrutsPackage().getName().getStringValue(),
-                                                          action.getStrutsPackage().getNamespace().getStringValue(),
-                                                          action.getActionClass().getStringValue());
-
-        final String actionMethod = action.getMethod().getStringValue();
-        if (StringUtil.isNotEmpty(actionMethod)) {
-          return documentation.concat(StrutsBundle.message("dom.action.quickdoc.method", actionMethod));
-        }
-        return documentation;
-      }
-    });
-
     ElementPresentationManager.registerIcon(Bean.class, StrutsIcons.BEAN);
     ElementPresentationManager.registerIcon(Constant.class, Icons.PARAMETER_ICON);
     ElementPresentationManager.registerIcon(Interceptor.class, StrutsIcons.INTERCEPTOR);
@@ -332,6 +312,41 @@ public class StrutsApplicationComponent implements ApplicationComponent {
 
     // register central name provider
     ElementPresentationManager.registerNameProvider(nameProviderRegistry);
+  }
+
+  private static void registerDocumentationProviders() {
+    ElementPresentationManager.registerDocumentationProvider(new NullableFunction<Object, String>() {
+      public String fun(final Object o) {
+        if (o instanceof Action) {
+          final Action action = (Action) o;
+          final StrutsPackage strutsPackage = action.getStrutsPackage();
+
+          final DocumentationBuilder builder = new DocumentationBuilder();
+          builder.addLine("Action", action.getName().getStringValue())
+              .addLine("Class", action.getActionClass().getStringValue())
+              .addLine("Method", action.getMethod().getStringValue())
+              .addLine("Package", strutsPackage.getName().getStringValue())
+              .addLine("Namespace", strutsPackage.getNamespace().getStringValue());
+
+          return builder.getText();
+        }
+
+        if (o instanceof Result) {
+          final Result result = (Result) o;
+          final PathReference pathReference = result.getValue();
+          final String displayPath = pathReference != null ? pathReference.getPath() : "???";
+          final ResultType resultType = result.getEffectiveResultType();
+          final String resultTypeValue = resultType != null ? resultType.getName().getStringValue() : "???";
+
+          final DocumentationBuilder builder = new DocumentationBuilder();
+          builder.addLine("Path", displayPath)
+              .addLine("Type", resultTypeValue);
+          return builder.getText();
+        }
+
+        return null;
+      }
+    });
   }
 
   /**
@@ -393,4 +408,33 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     ExternalResourceManager.getInstance().addStdResource(id, localFile, StrutsApplicationComponent.class);
   }
 
+  /**
+   * Builds HTML-table based descriptions for use in documentation, tooltips.
+   *
+   * @author Yann C&eacute;bron
+   */
+  private static class DocumentationBuilder {
+
+    @NonNls
+    private final StringBuilder builder = new StringBuilder("<html><table>");
+
+    /**
+     * Adds a labeled content line.
+     *
+     * @param label   Content description.
+     * @param content Content text, {@code null} or empty text will be replaced with '-'.
+     * @return this instance.
+     */
+    private DocumentationBuilder addLine(@NotNull @NonNls final String label, @Nullable @NonNls final String content) {
+      builder.append("<tr><td><strong>").append(label).append(":</strong></td>")
+          .append("<td>").append(StringUtil.isNotEmpty(content) ? content : "-").append("</td></tr>");
+      return this;
+    }
+
+    private String getText() {
+      builder.append("</table></html>");
+      return builder.toString();
+    }
+
+  }
 }
