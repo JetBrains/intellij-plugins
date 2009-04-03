@@ -1,0 +1,22 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        A component for formatting output. If the component is represented in the template using an element, then the element (plus any informal parameters) will be output around the formatted\
+        value.
+    </description>
+
+    <parameters>
+        <parameter name="elementName">
+            The element name, derived from the component template. This can even be overridden manually if desired (for example, to sometimes render a surrounding element and other times\
+            not).
+        </parameter>
+        <parameter name="filter">
+            If true, the default, then output is filtered, escaping any reserved characters. If false, the output is written raw.
+        </parameter>
+        <parameter name="format">
+            The format to be applied to the object.
+        </parameter>
+        <parameter name="value">
+            The value to be output (before formatting). If the formatted value is blank, no output is produced.
+        </parameter>
+    </parameters>
+</element>

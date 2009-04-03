@@ -1,0 +1,6 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Outputs paragraph oriented text, typically collected via a org.apache.tapestry.corelib.components.TextArea component. The TextArea is split into lines, and each line it output inside its\
+        own p element.
+    </description>
+</element>

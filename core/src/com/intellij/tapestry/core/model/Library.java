@@ -1,0 +1,128 @@
+package com.intellij.tapestry.core.model;
+
+import com.intellij.tapestry.core.TapestryConstants;
+import com.intellij.tapestry.core.TapestryProject;
+import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
+import com.intellij.tapestry.core.java.IJavaClassType;
+import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
+import org.apache.commons.collections.map.CaseInsensitiveMap;
+
+import java.util.Map;
+
+/**
+ * Represents a Tapestry library.
+ */
+public class Library implements Comparable {
+
+    private String _id;
+    private final String _basePackage;
+    private final TapestryProject _project;
+
+    public Library(String id, String basePackage, TapestryProject project) {
+        _id = id;
+        _basePackage = basePackage;
+        _project = project;
+    }
+
+    public String getId() {
+        return _id;
+    }
+
+    public String getBasePackage() {
+        return _basePackage;
+    }
+
+    /**
+     * Finds all components of this library.
+     *
+     * @return all components of this library.
+     */
+    public Map<String, PresentationLibraryElement> getComponents() {
+        return findElements(TapestryConstants.COMPONENTS_PACKAGE, _basePackage);
+    }
+
+    /**
+     * Finds all pages of this library.
+     *
+     * @return all pages of this library.
+     */
+    public Map<String, PresentationLibraryElement> getPages() {
+        return findElements(TapestryConstants.PAGES_PACKAGE, _basePackage);
+    }
+
+    /**
+     * Finds all mixins of this library.
+     *
+     * @return all mixins of this library.
+     */
+    public Map<String, PresentationLibraryElement> getMixins() {
+        return findElements(TapestryConstants.MIXINS_PACKAGE, _basePackage);
+    }
+
+    /**
+     * Finds the Tapestry IoC module builder of this library.
+     *
+     * @return the Tapestry IoC module builder of this library.
+     */
+    /*public ModuleBuilder getModuleBuilder() {
+        if (getBasePackage().equals(TapestryConstants.CORE_LIBRARY_PACKAGE)) {
+            return new ModuleBuilder(_project.getJavaTypeFinder().findType("org.apache.tapestry.services.TapestryModule", true), _project);
+        }
+
+        if (getBasePackage().equals(TapestryConstants.IOC_LIBRARY_PACKAGE)) {
+            return new ModuleBuilder(_project.getJavaTypeFinder().findType("org.apache.tapestry.ioc.services.TapestryIOCModule", true), _project);
+        }
+
+        return new ModuleBuilder(
+                _project.getJavaTypeFinder().findType(
+                        _project.getApplicationRootPackage() +
+                                "." +
+                                StringUtils.capitalize(_project.getTapestryFilterName()) +
+                                TapestryConstants.MODULE_BUILDER_SUFIX, false
+                ), _project
+        );
+    }*/
+
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(Object object) {
+        return getBasePackage().compareTo(((Library) object).getBasePackage());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(Object object) {
+        return !(object == null || !(object instanceof Library)) && getBasePackage().equals(((Library) object).getBasePackage());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        return getBasePackage().hashCode();
+    }
+
+    /**
+     * Finds all Tapestry elements implemented under the given base package.
+     *
+     * @param componentsOrPages configures this to look for pages or components.
+     * @param basePackage       the base package.
+     * @return all the Tapestry elements implemented under the given package.
+     */
+    private Map<String, PresentationLibraryElement> findElements(String componentsOrPages, String basePackage) {
+        Map<String, PresentationLibraryElement> components = new CaseInsensitiveMap();
+
+        for (IJavaClassType type : _project.getJavaTypeFinder().findTypesInPackageRecursively(basePackage + "." + componentsOrPages, true)) {
+            try {
+                PresentationLibraryElement element = PresentationLibraryElement.createElementInstance(this, type, _project);
+                components.put(element.getName(), element);
+            } catch (NotTapestryElementException e) {
+                //ignore
+            }
+        }
+
+        return components;
+    }
+}

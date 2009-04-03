@@ -1,0 +1,18 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Outputs a single property value. Overrides for individual properties come from block parameters whose name matches the . This component is rarely used on its own, but is a critical piece\
+        of the org.apache.tapestry.corelib.components.BeanDisplay component.
+    </description>
+
+    <parameters>
+        <parameter name="model">
+            Model for property displayed by the cell.
+        </parameter>
+        <parameter name="object">
+            Identifies the object being rendered. The component will extract a property from the object and render its value (or delegate to a org.apache.tapestry.Block that will do so).
+        </parameter>
+        <parameter name="overrides">
+            Resources used to search for block parameter overrides (this is normally the enclosing Grid component's resources).
+        </parameter>
+    </parameters>
+</element>

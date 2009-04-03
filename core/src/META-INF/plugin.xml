@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
+<idea-plugin>
+    <name>Tapestry support</name>
+    <id>com.intellij.tapestry</id>
+    <version>1.0</version>
+    <vendor>JetBrains</vendor>
+    <description>Provides Tapestry 5 integration.</description>
+
+    <depends>IntentionPowerPack</depends>
+    <depends>com.intellij.javaee</depends>
+
+    <helpset file="help.jar" path="/Help.hs"/>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+        <frameworkSupport implementation="com.intellij.tapestry.intellij.facet.TapestryFrameworkSupportProvider"/>
+
+        <fileTemplateGroup implementation="com.intellij.tapestry.intellij.TapestryFileTemplateGroupFactory"/>
+
+        <colorSettingsPage implementation="com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage"/>
+
+        <annotator language="HTML" implementationClass="com.intellij.tapestry.intellij.lang.annotator.TemplateTagAnnotator"/>
+
+        <!--<errorHandler implementation="com.intellij.tapestry.intellij.errorreporter.ErrorReporter"/>-->
+
+    </extensions>
+
+    <actions>
+        <action class="com.intellij.tapestry.intellij.actions.navigation.ClassTemplateNavigation"
+                id="ClassTemplateNavigation" text="Class &lt;-&gt; Template Navigation"
+                description="Navigate from a class to it's corresponding template and vice-versa.">
+            <keyboard-shortcut first-keystroke="control shift G" keymap="$default"/>
+        </action>
+
+        <action class="com.intellij.tapestry.intellij.actions.navigation.TagDocumentationNavigation"
+                id="TagDocumentationNavigation" text="Tag to Documentation Navigation"
+                description="Navigate from a tag to it's corresponding documentation.">
+            <keyboard-shortcut first-keystroke="control shift D" keymap="$default"/>
+        </action>
+
+        <action class="com.intellij.tapestry.intellij.actions.OpenCloseToolWindowAction" id="TapestryToolWindow"
+                text="Open/Close Tapestry ToolWindow"
+                description="Opens the Tapestry ToolWindow if it's not already open. If the window is open and active this action closes it.">
+            <keyboard-shortcut first-keystroke="control shift W" keymap="$default"/>
+        </action>
+
+        <group id="GoToTapestryTemplate"
+               class="com.intellij.tapestry.intellij.actions.navigation.TemplatesNavigation"
+               text="Tapestry Template" description="Go to template." popup="true">
+            <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
+        </group>
+
+        <group id="GoToTapestryClass" text="GoToClass">
+            <separator/>
+            <action id="GoToClass"
+                    class="com.intellij.tapestry.intellij.actions.navigation.ClassTemplateNavigation"
+                    text="Tapestry Class" description="Go to class.">
+                <keyboard-shortcut first-keystroke="control shift G" keymap="$default"/>
+            </action>
+            <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
+        </group>
+
+        <group id="TapestryGroup" text="Tapestry">
+            <separator/>
+            <action id="AddNewPageAction"
+                    class="com.intellij.tapestry.intellij.actions.createnew.AddNewPageAction"
+                    text="Tapestry Page" description="Add a new page."/>
+            <action id="AddNewComponentAction"
+                    class="com.intellij.tapestry.intellij.actions.createnew.AddNewComponentAction"
+                    text="Tapestry Component" description="Add a new component."/>
+            <action id="AddNewMixinAction"
+                    class="com.intellij.tapestry.intellij.actions.createnew.AddNewMixinAction"
+                    text="Tapestry Mixin" description="Add a new mixin."/>
+            <add-to-group group-id="NewGroup" relative-to-action="NewAction" anchor="after"/>
+        </group>
+    </actions>
+    
+    <application-components>
+        <component>
+            <implementation-class>com.intellij.tapestry.intellij.TapestryApplicationSupportLoader</implementation-class>
+        </component>
+    </application-components>
+
+    <project-components>
+        <component>
+            <implementation-class>com.intellij.tapestry.intellij.TapestryProjectSupportLoader</implementation-class>
+        </component>
+        <component>
+            <implementation-class>com.intellij.tapestry.intellij.view.TapestryProjectViewPane</implementation-class>
+            <interface-class>com.intellij.tapestry.intellij.view.TapestryProjectViewPane</interface-class>
+        </component>
+        <component>
+            <implementation-class>com.intellij.tapestry.intellij.TapestryListenersSupportLoader</implementation-class>
+        </component>
+    </project-components>
+
+    <module-components>
+        <component>
+            <implementation-class>com.intellij.tapestry.intellij.TapestryModuleSupportLoader</implementation-class>
+        </component>
+    </module-components>
+    
+</idea-plugin>

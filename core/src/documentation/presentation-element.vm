@@ -1,0 +1,259 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+    <link rel="stylesheet" href="$style" type="text/css">
+</head>
+
+<body>
+<div id="header"><img src="${logo}"></div>
+<div style="height:20px;background:#cccc00;margin-bottom: 10px;"></div>
+<a name="top"></a>
+
+<div id="menubar">
+    <span><a href="#desc">Description</a></span>
+    <span>|</span>
+    #if ($element.requiredParameters)
+    <span><a href="#required">Required Parameters</a></span>
+    <span>|</span>
+    #end
+    #if ($element.optionalParameters)
+    <span><a href="#optional">Optional Parameters</a></span>
+    <span>|</span>
+    #end
+    <span><a href="#artifacts">Artifacts</a></span>
+    <span>|</span>
+    <span><a href="#examples">Examples</a></span>
+    <span>|</span>
+    <span><a href="#notes">Notes</a></span>
+</div>
+
+<a name="desc"></a>
+
+<div>
+    <div style="float:right;margin-right:10px;"><img src="$icon"></div>
+    <div style="width:75%;">
+        <div class="box">
+            <div class="boxHeader">
+                <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tr>
+                        <td style="width:80%;text-align:left;font-weight:bold;">Description</td>
+                        <td style="width:20%;text-align:right;padding-right:10px;font-size:11px;"><a href="#top">Top</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="padding:12px;">
+                #if ($documentation.description.length() != 0)
+                    $documentation.description
+                #else
+                    #if ($element.description.length() != 0)
+                        $element.description
+                    #else
+                        No description
+                    #end
+                #end
+            </div>
+        </div>
+    </div>
+    <div class="separator"/>
+</div>
+
+#if ($element.requiredParameters)
+<a name="required"></a>
+
+<div>
+    <div style="width:75%;" valign="top">
+        <div class="box">
+            <div class="boxHeader">
+                <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tr>
+                        <td style="width:80%;text-align:left;font-weight:bold;">Required Parameters</td>
+                        <td style="width:20%;text-align:right;padding-right:10px;font-size:11px;"><a href="#top">Top</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                    #if ($element.requiredParameters.size() == 0)
+                    <tr>
+                        <td style="padding:12px;">There are no required parameters</td>
+                    </tr>
+                    #else
+                    <tr>
+                        <td style="border:1px solid #efefef;padding:6px;text-align:left;background-color:#e8e8e8;">Name</td>
+                        <td style="border:1px solid #efefef;padding:6px;text-align:left;background-color:#e8e8e8;">Prefix</td>
+                        <td style="border:1px solid #efefef;padding:6px;text-align:left;background-color:#e8e8e8;">Default value</td>
+                        <td style="border:1px solid #efefef;padding:6px;text-align:left;background-color:#e8e8e8;">Description</td>
+                    </tr>
+                    #foreach ($parameter in $element.requiredParameters.values())
+                    <tr>
+                        <td style="border:1px solid #efefef;padding:6px;font-weight:bold;">$parameter.name</td>
+                        <td style="border:1px solid #efefef;padding:6px;">$parameter.defaultPrefix</td>
+                        <td style="border:1px solid #efefef;padding:6px;">$parameter.defaultValue</td>
+                        <td style="border:1px solid #efefef;padding:6px;">#if ($documentation.getParameterDescription($parameter.name).length() != 0) $documentation.getParameterDescription($parameter.name) #else $parameter.description #end</td>
+                    </tr>
+                    #end
+                    #end
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="separator"/>
+</div>
+#end
+
+#if ($element.optionalParameters)
+<a name="optional"></a>
+
+<div>
+    <div style="width:75%;" valign="top">
+        <div class="box">
+            <div class="boxHeader">
+                <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tr>
+                        <td style="width:80%;text-align:left;font-weight:bold;">Optional Parameters</td>
+                        <td style="width:20%;text-align:right;padding-right:10px;font-size:11px;"><a href="#top">Top</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                    #if ($element.optionalParameters.size() == 0)
+                    <tr>
+                        <td style="padding:12px;">This element doesn't have optional parameters</td>
+                    </tr>
+                    #else
+                    <tr>
+                        <td style="border:1px solid #efefef;padding:6px;text-align:left;background-color:#e8e8e8;">Name</td>
+                        <td style="border:1px solid #efefef;padding:6px;text-align:left;background-color:#e8e8e8;">Prefix</td>
+                        <td style="border:1px solid #efefef;padding:6px;text-align:left;background-color:#e8e8e8;">Default value</td>
+                        <td style="border:1px solid #efefef;padding:6px;text-align:left;background-color:#e8e8e8;">Description</td>
+                    </tr>
+                    #foreach ($parameter in $element.optionalParameters.values())
+                    <tr>
+                        <td style="border:1px solid #efefef;padding:6px;font-weight:bold;">$parameter.name</td>
+                        <td style="border:1px solid #efefef;padding:6px;">$parameter.defaultPrefix</td>
+                        <td style="border:1px solid #efefef;padding:6px;">$parameter.defaultValue</td>
+                        <td style="border:1px solid #efefef;padding:6px;">#if ($documentation.getParameterDescription($parameter.name).length() != 0) $documentation.getParameterDescription($parameter.name) #else $parameter.description #end</td>
+                    </tr>
+                    #end
+                    #end
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="separator"/>
+</div>
+#end
+
+<a name="artifacts"></a>
+
+<div>
+    <div style="width:75%;">
+        <div class="box">
+            <div class="boxHeader">
+                <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tr>
+                        <td style="width:80%;text-align:left;font-weight:bold;">Artifacts</td>
+                        <td style="width:20%;text-align:right;padding-right:10px;font-size:11px;"><a href="#top">Top</a></td>
+                    </tr>
+                </table>
+            </div>
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+
+                <tr>
+                    <td style="border:1px solid #efefef;padding:6px;text-align:left;font-weight:bold;width:40px;">Class</td>
+                    <td style="border:1px solid #efefef;padding:6px;"> $element.elementClass.fullyQualifiedName</td>
+                </tr>
+                <tr>
+                    <td style="border:1px solid #efefef;padding:6px;text-align:left;font-weight:bold;width:40px;">Templates</td>
+                    <td style="border:1px solid #efefef;padding:6px;">
+                        #if ($element.template.length() == 0)
+                            No templates
+                        #end
+
+                        #foreach($template in $element.template)
+                            $template.getName()
+                            #set ($countTemplates = $countTemplates + 1)
+                            #if ($countTemplates != $element.template.length())
+                            |
+                            #end
+                        #end
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border:1px solid #efefef;padding:6px;text-align:left;font-weight:bold;width:40px;">Message Catalogs</td>
+                    <td style="border:1px solid #efefef;padding:6px;">
+                        #if ($element.messageCatalog.length() == 0)
+                            No message catalogs
+                        #end
+
+                        #foreach($catalog in $element.messageCatalog)
+                            $catalog.getName()
+                            #set ($countCatalogs = $countCatalogs + 1)
+                            #if ($countCatalogs != $element.messageCatalog.length())
+                            |
+                            #end
+                        #end
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border:1px solid #efefef;padding:6px;text-align:left;font-weight:bold;width:40px;">Library</td>
+                    <td style="border:1px solid #efefef;padding:6px;"> $element.library.id</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="separator"/>
+</div>
+
+<a name="examples"></a>
+
+<div>
+    <div style="width:75%;">
+        <div class="box">
+            <div class="boxHeader">
+                <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tr>
+                        <td style="width:80%;text-align:left;font-weight:bold;">Examples</td>
+                        <td style="width:20%;text-align:right;padding-right:10px;font-size:11px;"><a href="#top">Top</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="padding:12px;">
+                #if ($documentation.examples.length() != 0)
+                    $documentation.examples
+                #else
+                    No examples available
+                #end
+            </div>
+        </div>
+    </div>
+    <div class="separator"/>
+</div>
+
+<a name="notes"></a>
+
+<div>
+    <div style="width:75%;">
+        <div class="box">
+            <div class="boxHeader">
+                <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tr>
+                        <td style="width:80%;text-align:left;font-weight:bold;">Notes</td>
+                        <td style="width:20%;text-align:right;padding-right:10px;font-size:11px;"><a href="#top">Top</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div style="padding:12px;">
+                #if ($documentation.notes.length() != 0)
+                    $documentation.notes
+                #else
+                    No notes available
+                #end
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

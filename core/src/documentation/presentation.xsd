@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="element" type="elementType"/>
+    <xs:complexType name="parameterType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="name" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="elementType" mixed="true">
+        <xs:sequence>
+            <xs:element type="xs:string" name="description" minOccurs="0"/>
+            <xs:element type="referencesType" name="references" minOccurs="0"/>
+            <xs:element type="parametersType" name="parameters" minOccurs="0"/>
+            <xs:element type="xs:string" name="examples" minOccurs="0"/>
+            <xs:element type="xs:string" name="notes" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="referenceComponentType" mixed="true">
+        <xs:attribute type="xs:string" name="library" use="optional"/>
+        <xs:attribute type="xs:string" name="name" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="parametersType">
+        <xs:sequence>
+            <xs:element type="parameterType" name="parameter" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="referencesType">
+        <xs:sequence>
+            <xs:element type="referenceComponentType" name="component" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="urlType" name="url" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="urlType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="name" use="required"/>
+                <xs:attribute type="xs:string" name="link" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>
