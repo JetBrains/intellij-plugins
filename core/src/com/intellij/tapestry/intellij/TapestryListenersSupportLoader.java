@@ -29,8 +29,9 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
 
     private Project _project;
     private MessageBusConnection _messageBusConnection;
+  private VirtualFileAdapter myListener;
 
-    public TapestryListenersSupportLoader(Project project) {
+  public TapestryListenersSupportLoader(Project project) {
         _project = project;
     }
 
@@ -144,35 +145,34 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
                 }
         );
 
-        VirtualFileManager.getInstance().getFileSystem("file").addVirtualFileListener(
-                new VirtualFileAdapter() {
-                    public void contentsChanged(VirtualFileEvent event) {
-                        Module module = null;
-                        try {
-                            module = ProjectRootManager.getInstance(_project).getFileIndex().getModuleForFile(event.getParent());
-                        } catch (Throwable e) {
-                            //ignore
-                        }
-                        if (module == null) {
-                            return;
-                        }
-
-                        TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
-
-                        if (!TapestryUtils.isTapestryModule(module)) {
-                            return;
-                        }
-
-                        try {
-                            if (event.getFile().getPath().equals(tapestryProject.getWebXmlPath())) {
-                                tapestryProject.getEventsManager().modelChanged();
-                            }
-                        } catch (NullPointerException ex) {
-                            _logger.error("Error finding web.xml file", ex);
-                        }
-                    }
+        myListener = new VirtualFileAdapter() {
+            public void contentsChanged(VirtualFileEvent event) {
+                Module module = null;
+                try {
+                    module = ProjectRootManager.getInstance(_project).getFileIndex().getModuleForFile(event.getParent());
+                } catch (Throwable e) {
+                    //ignore
                 }
-        );
+                if (module == null) {
+                    return;
+                }
+
+                TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
+
+                if (!TapestryUtils.isTapestryModule(module)) {
+                    return;
+                }
+
+                try {
+                    if (event.getFile().getPath().equals(tapestryProject.getWebXmlPath())) {
+                        tapestryProject.getEventsManager().modelChanged();
+                    }
+                } catch (NullPointerException ex) {
+                    _logger.error("Error finding web.xml file", ex);
+                }
+            }
+        };
+        VirtualFileManager.getInstance().getFileSystem("file").addVirtualFileListener(myListener);
 
         _messageBusConnection.subscribe(ProjectTopics.PROJECT_ROOTS,
                 new ModuleRootListener() {
@@ -194,6 +194,7 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
     }
 
     public void projectClosed() {
+        VirtualFileManager.getInstance().getFileSystem("file").removeVirtualFileListener(myListener);
         _messageBusConnection.disconnect();
     }
 
