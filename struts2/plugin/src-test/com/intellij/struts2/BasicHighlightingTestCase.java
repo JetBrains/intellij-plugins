@@ -28,6 +28,9 @@ import com.intellij.struts2.facet.StrutsFacetType;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
+import com.intellij.javaee.JavaeeUtil;
+import com.intellij.javaee.web.facet.WebFacetType;
+import com.intellij.javaee.web.facet.WebFacet;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
@@ -128,7 +131,8 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     final RunResult<StrutsFacet> runResult = new WriteCommandAction<StrutsFacet>(myProject) {
       protected void run(final Result<StrutsFacet> result) throws Throwable {
         String name = StrutsFacetType.INSTANCE.getPresentableName();
-        final StrutsFacet facet = FacetManager.getInstance(myModule).addFacet(StrutsFacetType.INSTANCE, name, null);
+        final WebFacet webFacet = JavaeeUtil.addFacet(myModule, WebFacetType.INSTANCE);
+        final StrutsFacet facet = FacetManager.getInstance(myModule).addFacet(StrutsFacetType.INSTANCE, name, webFacet);
         result.setResult(facet);
       }
     }.execute();
