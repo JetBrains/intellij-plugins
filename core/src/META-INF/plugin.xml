@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
 <idea-plugin>
     <name>Tapestry support</name>
     <id>com.intellij.tapestry</id>
@@ -13,6 +12,7 @@
     <helpset file="help.jar" path="/Help.hs"/>
 
     <extensions defaultExtensionNs="com.intellij">
+        <errorHandler implementation="com.intellij.diagnostic.ITNReporter" />
 
         <frameworkSupport implementation="com.intellij.tapestry.intellij.facet.TapestryFrameworkSupportProvider"/>
 
