@@ -49,7 +49,7 @@ public class TemplateColorSettingsPage extends HTMLColorsPage {
             _logger.error(ex);
         }
 
-        _colorSettingsText = new String(templateBytes != null ? templateBytes : new byte[0]);
+        _colorSettingsText = new String(templateBytes != null ? templateBytes : new byte[0]).replace('\r', ' ');
 
         _attributeDescriptors = (new AttributesDescriptor[]{
                 new AttributesDescriptor("Component tag", _tapestryComponentTagNameAttributesKey), new AttributesDescriptor("Component parameter", _tapestryComponentAttributeAttributesKey)
