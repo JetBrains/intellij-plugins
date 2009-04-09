@@ -1,4 +1,4 @@
-//package com.logical.tapestry.intellij.license;
+package com.intellij.tapestry.intellij.license;
 //
 //import com.intellij.openapi.application.PathManager;
 //import com.intellij.openapi.ui.Messages;
@@ -13,7 +13,7 @@
 //import java.io.FileOutputStream;
 //import java.io.IOException;
 //
-//public class LicenseManager {
+public class LicenseManager {
 //
 //    private static final String LICENSE_FILE_NAME = "tapestry.key";
 //
@@ -114,4 +114,4 @@
 //
 //        fos.close();
 //    }
-//}
+}
