@@ -33,7 +33,7 @@ public class TemplateColorSettingsPage extends HTMLColorsPage {
     private static TextAttributesKey _tapestryComponentTagNameAttributesKey = TextAttributesKey.createTextAttributesKey(TAPESTRY_COMPONENT_TAG_KEY, new TextAttributes());
     private static TextAttributesKey _tapestryComponentAttributeAttributesKey = TextAttributesKey.createTextAttributesKey(TAPESTRY_COMPONENT_PARAMETER_KEY, new TextAttributes());
     private static String _colorSettingsText;
-    private static AttributesDescriptor _attributeDescriptors[];
+    private static AttributesDescriptor[] _attributeDescriptors;
 
     private final static Logger _logger = Logger.getInstance(TemplateColorSettingsPage.class.getName());
 
@@ -60,6 +60,7 @@ public class TemplateColorSettingsPage extends HTMLColorsPage {
         _additionalHighlightingTagToDescriptorMap.put("componenTagAttribute", _tapestryComponentAttributeAttributesKey);
     }
 
+    @NotNull
     public String getDisplayName() {
         return "Tapestry";
     }
