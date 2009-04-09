@@ -28,12 +28,6 @@ public class TapestryModuleSupportLoader extends AbstractModuleComponent impleme
 
         _configuration = new ModuleConfiguration();
 
-        if (!TapestryApplicationSupportLoader.getInstance().hasValidLicense()) {
-            _tapestryProject = null;
-
-            return;
-        }
-
         _tapestryProject = new TapestryProject(new IntellijResourceFinder(module), new IntellijJavaTypeFinder(module), new IntellijJavaTypeCreator(module));
     }
 

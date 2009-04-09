@@ -12,11 +12,11 @@ import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
+import com.intellij.util.messages.MessageBusConnection;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,10 +56,6 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
     }
 
     public void projectOpened() {
-        if (!TapestryApplicationSupportLoader.getInstance().hasValidLicense()) {
-            return;
-        }
-
         _messageBusConnection = _project.getMessageBus().connect();
 
         // Listener for file deletion

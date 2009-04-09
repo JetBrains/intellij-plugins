@@ -12,10 +12,6 @@ public class TapestryFileTemplateGroupFactory implements FileTemplateGroupDescri
     private static final String TEMPLATE_GROUP_NAME = "Tapestry";
 
     public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
-        if (!TapestryApplicationSupportLoader.getInstance().hasValidLicense()) {
-            return null;
-        }
-
         FileTemplateGroupDescriptor root = new FileTemplateGroupDescriptor(TEMPLATE_GROUP_NAME, Icons.TAPESTRY_LOGO_SMALL);
 
         root.addTemplate(new FileTemplateDescriptor(TapestryConstants.MODULE_BUILDER_CLASS_TEMPLATE_NAME, StdFileTypes.JAVA.getIcon()));

@@ -26,7 +26,6 @@ import com.intellij.tapestry.core.model.presentation.valueresolvers.AbstractValu
 import com.intellij.tapestry.core.model.presentation.valueresolvers.ResolvedValue;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.ValueResolverChain;
 import com.intellij.tapestry.core.util.ComponentUtils;
-import com.intellij.tapestry.intellij.TapestryApplicationSupportLoader;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
@@ -54,8 +53,7 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
     public synchronized void annotate(PsiElement psiElement, AnnotationHolder annotationHolder) {
         _annotationHolder = annotationHolder;
 
-        if (TapestryApplicationSupportLoader.getInstance().hasValidLicense())
-            psiElement.accept(this);
+        psiElement.accept(this);
     }//annotate
     
 

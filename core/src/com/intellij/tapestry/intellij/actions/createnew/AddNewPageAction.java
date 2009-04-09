@@ -15,7 +15,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.*;
 import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.util.PathUtils;
-import com.intellij.tapestry.intellij.TapestryApplicationSupportLoader;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
@@ -41,13 +40,6 @@ public class AddNewPageAction extends AnAction {
     public void update(AnActionEvent event) {
         boolean enabled = false;
         Presentation presentation = event.getPresentation();
-
-        if (!TapestryApplicationSupportLoader.getInstance().hasValidLicense()) {
-            presentation.setEnabled(false);
-            presentation.setVisible(false);
-
-            return;
-        }
 
         Module module = null;
         try {

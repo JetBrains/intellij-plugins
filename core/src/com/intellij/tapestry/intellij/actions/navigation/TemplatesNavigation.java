@@ -11,7 +11,6 @@ import com.intellij.psi.PsiJavaFile;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
-import com.intellij.tapestry.intellij.TapestryApplicationSupportLoader;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
@@ -34,13 +33,6 @@ public class TemplatesNavigation extends ActionGroup {
      */
     public void update(AnActionEvent event) {
         Presentation presentation = event.getPresentation();
-
-        if (!TapestryApplicationSupportLoader.getInstance().hasValidLicense()) {
-            presentation.setEnabled(false);
-            presentation.setVisible(false);
-
-            return;
-        }
 
         Module module;
         try {

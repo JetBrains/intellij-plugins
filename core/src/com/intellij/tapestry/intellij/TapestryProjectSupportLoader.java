@@ -40,10 +40,6 @@ public class TapestryProjectSupportLoader implements ProjectComponent {
 
     public TapestryProjectSupportLoader(Project project) {
         _project = project;
-
-        if (!TapestryApplicationSupportLoader.getInstance().hasValidLicense()) {
-            return;
-        }
     }
 
     public void enableToolWindow() {
@@ -65,10 +61,6 @@ public class TapestryProjectSupportLoader implements ProjectComponent {
     }
 
     public void projectOpened() {
-        if (!TapestryApplicationSupportLoader.getInstance().hasValidLicense()) {
-            return;
-        }
-
         // register Tapestry ToolWindow
         registerToolWindow();
 

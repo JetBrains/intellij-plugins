@@ -3,7 +3,6 @@ package com.intellij.tapestry.intellij.actions.navigation;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -16,7 +15,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.util.ComponentUtils;
-import com.intellij.tapestry.intellij.TapestryApplicationSupportLoader;
 import com.intellij.tapestry.intellij.TapestryProjectSupportLoader;
 import com.intellij.tapestry.intellij.core.resource.xml.IntellijXmlTag;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindow;
@@ -28,24 +26,6 @@ import java.util.Arrays;
  * Allows navigation from a tag to it's corresponding documentation.
  */
 public class TagDocumentationNavigation extends AnAction {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void update(AnActionEvent event) {
-        Presentation presentation = event.getPresentation();
-
-        if (!TapestryApplicationSupportLoader.getInstance().hasValidLicense()) {
-            presentation.setEnabled(false);
-            presentation.setVisible(false);
-
-            return;
-        }
-
-        presentation.setEnabled(true);
-        presentation.setVisible(true);
-    }
 
     /**
      * {@inheritDoc}

@@ -22,16 +22,6 @@ import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import com.intellij.ui.PopupHandler;
-import com.intellij.ui.TreeSpeedSearch;
-import com.intellij.ui.treeStructure.SimpleNode;
-import com.intellij.ui.treeStructure.SimpleTreeBuilder;
-import com.intellij.ui.treeStructure.actions.CollapseAllAction;
-import com.intellij.util.EditSourceOnDoubleClickHandler;
-import com.intellij.util.OpenSourceUtil;
-import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.util.ui.UIUtil;
-import com.intellij.util.ui.tree.TreeUtil;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.events.FileSystemListener;
 import com.intellij.tapestry.core.events.TapestryModelChangeListener;
@@ -41,7 +31,6 @@ import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.util.ComponentUtils;
-import com.intellij.tapestry.intellij.TapestryApplicationSupportLoader;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.TapestryProjectSupportLoader;
 import com.intellij.tapestry.intellij.actions.safedelete.SafeDeleteProvider;
@@ -55,6 +44,16 @@ import com.intellij.tapestry.intellij.view.actions.GroupElementFilesToggleAction
 import com.intellij.tapestry.intellij.view.actions.ShowLibrariesTogleAction;
 import com.intellij.tapestry.intellij.view.actions.StartInBasePackageAction;
 import com.intellij.tapestry.intellij.view.nodes.*;
+import com.intellij.ui.PopupHandler;
+import com.intellij.ui.TreeSpeedSearch;
+import com.intellij.ui.treeStructure.SimpleNode;
+import com.intellij.ui.treeStructure.SimpleTreeBuilder;
+import com.intellij.ui.treeStructure.actions.CollapseAllAction;
+import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.OpenSourceUtil;
+import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -93,12 +92,6 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     public TapestryProjectViewPane(final Project project) {
         super(project);
 
-        if (!TapestryApplicationSupportLoader.getInstance().hasValidLicense()) {
-            _moduleListener = null;
-
-            return;
-        }
-
         _ideView = new TapestryIdeView(this);
 
         _moduleListener = new ModuleAdapter() {
@@ -125,10 +118,6 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
      * {@inheritDoc}
      */
     public void addToolbarActions(DefaultActionGroup defaultactiongroup) {
-        if (!TapestryApplicationSupportLoader.getInstance().hasValidLicense()) {
-            return;
-        }
-
         for (AnAction action : defaultactiongroup.getChildren(null)) {
             if (action.getTemplatePresentation().getText().equals("Autoscroll to Source")) {
                 continue;
@@ -266,10 +255,6 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
      * {@inheritDoc}
      */
     public void projectOpened() {
-        if (!TapestryApplicationSupportLoader.getInstance().hasValidLicense()) {
-            return;
-        }
-
         StartupManager.getInstance(myProject).registerPostStartupActivity(
                 new Runnable() {
                     public void run() {
