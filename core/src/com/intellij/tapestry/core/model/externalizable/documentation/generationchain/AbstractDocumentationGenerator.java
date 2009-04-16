@@ -32,8 +32,8 @@ public abstract class AbstractDocumentationGenerator implements Command {
         Map<String, Object> velocityContext = new HashMap<String, Object>();
 
         try {
-            velocityContext.put("style", STYLE.toURI());
-            velocityContext.put("logo", LOGO.toURI());
+            velocityContext.put("style", STYLE);
+            velocityContext.put("logo", LOGO);
         } catch (Exception ex) {
             _logger.error(ex);
         }
