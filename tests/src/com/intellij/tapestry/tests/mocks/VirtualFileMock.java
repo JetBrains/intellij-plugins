@@ -64,10 +64,12 @@ public class VirtualFileMock extends VirtualFile {
         return new VirtualFile[0];
     }
 
+    @NotNull
     public OutputStream getOutputStream(Object requestor, long newModificationStamp, long newTimeStamp) throws IOException {
         return null;
     }
 
+    @NotNull
     public byte[] contentsToByteArray() throws IOException {
         return new byte[0];
     }
