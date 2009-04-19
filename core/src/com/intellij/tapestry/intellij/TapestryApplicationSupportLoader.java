@@ -11,6 +11,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.profile.codeInspection.InspectionProfileManager;
+import com.intellij.psi.search.scope.packageSet.NamedScope;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.intellij.core.log.IntellijLoggerFactory;
@@ -77,8 +78,8 @@ public class TapestryApplicationSupportLoader implements ApplicationComponent {
     public void disableInspections() throws IOException {
 
         ModifiableModel inspectionModel = ((InspectionProfileImpl) InspectionProfileManager.getInstance().getProfile("default")).getModifiableModel();
-        inspectionModel.disableTool("XmlWrongRootElement");
-        inspectionModel.disableTool("HtmlUnknownAttribute");
+        inspectionModel.disableTool("XmlWrongRootElement", (NamedScope)null);
+        inspectionModel.disableTool("HtmlUnknownAttribute", (NamedScope)null);
         inspectionModel.commit();
     }//disableInspections
 
