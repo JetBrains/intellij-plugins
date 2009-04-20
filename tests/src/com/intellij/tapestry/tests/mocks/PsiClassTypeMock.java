@@ -13,8 +13,11 @@ import org.jetbrains.annotations.Nullable;
  * @author <a href="mailto:hugo.palma@logical-software.com">Hugo Palma</a>
  */
 public class PsiClassTypeMock extends PsiClassType {
+  public PsiClassTypeMock() {
+    super(LanguageLevel.JDK_1_5);
+  }
 
-    private PsiClass _resolve;
+  private PsiClass _resolve;
 
     @Nullable
     public PsiClass resolve() {
