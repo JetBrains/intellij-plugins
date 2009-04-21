@@ -1,6 +1,6 @@
 package com.intellij.tapestry.intellij.util;
 
-import com.intellij.facet.FacetFinder;
+import com.intellij.facet.FacetManager;
 import com.intellij.javaee.web.WebRoot;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -11,17 +11,17 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.IncorrectOperationException;
 import com.intellij.tapestry.core.java.IJavaType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaArrayType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaPrimitiveType;
+import com.intellij.util.IncorrectOperationException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -238,13 +238,7 @@ public class IdeaUtils {
      */
     @Nullable
     public static WebFacet getWebFacet(@NonNull Module module) {
-
-        Collection <VirtualFile> contentRoots = IdeaUtils.getModuleContentRoots(module);
-
-        if (contentRoots.isEmpty())
-            return null;
-
-        return FacetFinder.getInstance(module.getProject()).findFacet(contentRoots.iterator().next(), WebFacet.ID);
+        return FacetManager.getInstance(module).getFacetByType(WebFacet.ID);
     }//getWebFacet
 
 
