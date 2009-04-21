@@ -70,8 +70,6 @@ public class TapestryProjectSupportLoader implements ProjectComponent {
             StartupManager.getInstance(_project).runWhenProjectIsInitialized(new Runnable() {
                 public void run() {
                     try {
-                        TapestryApplicationSupportLoader.getInstance().disableInspections();
-
                         addCompilerResources();
                     } catch (Exception ex) {
                         _logger.warn(ex);
@@ -114,7 +112,7 @@ public class TapestryProjectSupportLoader implements ProjectComponent {
         String[] filePatterns = ((CompilerConfigurationImpl) _project.getComponent(CompilerConfiguration.class)).getResourceFilePatterns();
 
         if (Arrays.binarySearch(filePatterns, "?*.tml") < 0)
-            ((CompilerConfigurationImpl) _project.getComponent(CompilerConfiguration.class)).addResourceFilePattern("?*.tml");
+            _project.getComponent(CompilerConfiguration.class).addResourceFilePattern("?*.tml");
     }
 
     private void registerToolWindow() {

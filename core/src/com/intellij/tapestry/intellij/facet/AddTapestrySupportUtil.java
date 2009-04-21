@@ -5,17 +5,15 @@ import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.descriptors.ConfigFile;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.log.Logger;
 import com.intellij.tapestry.core.log.LoggerFactory;
@@ -24,8 +22,9 @@ import com.intellij.tapestry.core.maven.MavenUtils;
 import com.intellij.tapestry.core.maven.RemoteRepositoryDescription;
 import com.intellij.tapestry.core.util.StringUtils;
 import com.intellij.tapestry.intellij.TapestryProjectSupportLoader;
-import com.intellij.tapestry.intellij.TapestryApplicationSupportLoader;
 import com.intellij.tapestry.intellij.util.IntellijWebDescriptorUtils;
+import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.descriptors.ConfigFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -65,9 +64,6 @@ public class AddTapestrySupportUtil {
                 try {
                     // add compiler resources
                     module.getProject().getComponent(TapestryProjectSupportLoader.class).addCompilerResources();
-
-                    // disable inspections
-                    TapestryApplicationSupportLoader.getInstance().disableInspections();
                 } catch (Exception ex) {
                     _logger.warn(ex);
                 }
