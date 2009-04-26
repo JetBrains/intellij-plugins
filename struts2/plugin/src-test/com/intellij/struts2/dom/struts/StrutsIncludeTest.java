@@ -35,7 +35,7 @@ public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase<JavaModul
     final String path = myFixture.getTempDirPath();
     moduleBuilder.addContentRoot(path);
     new File(path + SOURCE_PATH).mkdir();
-    moduleBuilder.addSourceRoot(SOURCE_PATH);
+    moduleBuilder.addSourceRoot(SOURCE_DIR);
   }
 
   public void testInclude() throws Throwable {
