@@ -50,6 +50,12 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected Module myModule;
   protected StrutsFacet myFacet;
 
+  @NonNls
+  protected static final String SOURCE_DIR = "src";
+
+  @NonNls
+  protected static final String SOURCE_PATH = "/" + SOURCE_DIR;
+
   protected Class<T> getModuleFixtureBuilderClass() {
     //noinspection unchecked
     return (Class<T>) JavaModuleFixtureBuilder.class;
@@ -98,10 +104,10 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
 
     if (hasJavaSources()) {
       final String path = myFixture.getTempDirPath();
-      new File(path + "/src").mkdir(); // ?? necessary
+      new File(path + SOURCE_PATH).mkdir(); // ?? necessary
 
-      moduleBuilder.addContentRoot(getTestDataPath() + "/src");
-      moduleBuilder.addSourceRoot("src");
+      moduleBuilder.addContentRoot(getTestDataPath() + SOURCE_PATH);
+      moduleBuilder.addSourceRoot(SOURCE_DIR);
     }
     addStrutsJars(moduleBuilder);
   }
@@ -130,7 +136,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected final StrutsFacet createFacet() {
     final RunResult<StrutsFacet> runResult = new WriteCommandAction<StrutsFacet>(myProject) {
       protected void run(final Result<StrutsFacet> result) throws Throwable {
-        String name = StrutsFacetType.INSTANCE.getPresentableName();
+        final String name = StrutsFacetType.INSTANCE.getPresentableName();
         final WebFacet webFacet = JavaeeUtil.addFacet(myModule, WebFacetType.INSTANCE);
         final StrutsFacet facet = FacetManager.getInstance(myModule).addFacet(StrutsFacetType.INSTANCE, name, webFacet);
         result.setResult(facet);
