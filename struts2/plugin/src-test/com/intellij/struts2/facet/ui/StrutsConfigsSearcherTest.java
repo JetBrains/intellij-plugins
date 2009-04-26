@@ -152,7 +152,7 @@ public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaMod
     assertEquals(1, map.get(myModule).size()); // /src/struts.xml
 
     final Map<VirtualFile, List<PsiFile>> configsInJars = configsSearcher.getJars();
-    assertEquals(2, configsInJars.size()); // default-xxx.xml in struts2-core.jar & xwork.jar
+    assertEquals(1, configsInJars.size()); // default-xxx.xml in struts2-core.jar
   }
 
 }
