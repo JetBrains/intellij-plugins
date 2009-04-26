@@ -14,28 +14,23 @@
  */
 package com.intellij.struts2.dom.struts;
 
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
 
 /**
  * Tests for &lt;include&gt;.
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase {
 
   @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlInclude";
   }
 
-  protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
-    final String path = myFixture.getTempDirPath();
-    moduleBuilder.addContentRoot(path);
-    new File(path + "/src").mkdir();
-    moduleBuilder.addSourceRoot("src");
+  @Override
+  protected boolean hasJavaSources() {
+    return true;
   }
 
   public void testInclude() throws Throwable {

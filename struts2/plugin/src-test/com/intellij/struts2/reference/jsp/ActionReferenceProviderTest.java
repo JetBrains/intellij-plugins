@@ -21,14 +21,12 @@ import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-
 /**
  * Tests for {@link com.intellij.struts2.reference.jsp.ActionReferenceProvider}.
  *
  * @author Yann C&eacute;bron
  */
-public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
+public class ActionReferenceProviderTest extends BasicHighlightingTestCase {
 
   protected LocalInspectionTool[] getHighlightingInspections() {
     return new LocalInspectionTool[0];
@@ -39,18 +37,14 @@ public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebMo
     return "reference/jsp/action";
   }
 
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
-  }
-
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
+  }
 
-    final String path = myFixture.getTempDirPath();
-    moduleBuilder.addContentRoot(path);
-    new File(path + "/src").mkdir();
-    moduleBuilder.addSourceRoot("src");
+  @Override
+  protected boolean hasJavaSources() {
+    return true;
   }
 
   public void testActionHighlighting() throws Throwable {

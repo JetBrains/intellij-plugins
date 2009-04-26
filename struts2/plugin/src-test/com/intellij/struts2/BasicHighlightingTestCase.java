@@ -17,6 +17,9 @@ package com.intellij.struts2;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.facet.FacetManager;
+import com.intellij.javaee.JavaeeUtil;
+import com.intellij.javaee.web.facet.WebFacet;
+import com.intellij.javaee.web.facet.WebFacetType;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.RunResult;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -28,9 +31,6 @@ import com.intellij.struts2.facet.StrutsFacetType;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
-import com.intellij.javaee.JavaeeUtil;
-import com.intellij.javaee.web.facet.WebFacetType;
-import com.intellij.javaee.web.facet.WebFacet;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
@@ -49,6 +49,9 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected Project myProject;
   protected Module myModule;
   protected StrutsFacet myFacet;
+
+  @NonNls
+  private static final String SOURCE_PATH = "/src";
 
   protected Class<T> getModuleFixtureBuilderClass() {
     //noinspection unchecked
@@ -98,10 +101,10 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
 
     if (hasJavaSources()) {
       final String path = myFixture.getTempDirPath();
-      new File(path + "/src").mkdir(); // ?? necessary
+      new File(path + SOURCE_PATH).mkdir(); // ?? necessary
 
-      moduleBuilder.addContentRoot(getTestDataPath() + "/src");
-      moduleBuilder.addSourceRoot("src");
+      moduleBuilder.addContentRoot(getTestDataPath() + SOURCE_PATH);
+      moduleBuilder.addSourceRoot(SOURCE_PATH);
     }
     addStrutsJars(moduleBuilder);
   }
@@ -130,7 +133,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected final StrutsFacet createFacet() {
     final RunResult<StrutsFacet> runResult = new WriteCommandAction<StrutsFacet>(myProject) {
       protected void run(final Result<StrutsFacet> result) throws Throwable {
-        String name = StrutsFacetType.INSTANCE.getPresentableName();
+        final String name = StrutsFacetType.INSTANCE.getPresentableName();
         final WebFacet webFacet = JavaeeUtil.addFacet(myModule, WebFacetType.INSTANCE);
         final StrutsFacet facet = FacetManager.getInstance(myModule).addFacet(StrutsFacetType.INSTANCE, name, webFacet);
         result.setResult(facet);
