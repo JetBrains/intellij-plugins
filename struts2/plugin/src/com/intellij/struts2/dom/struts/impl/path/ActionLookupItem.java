@@ -20,8 +20,8 @@ import com.intellij.codeInsight.lookup.LookupValueWithPsiElement;
 import com.intellij.codeInsight.lookup.LookupValueWithUIHint;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
+import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
-import com.intellij.util.xml.ElementPresentationManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,7 +76,7 @@ class ActionLookupItem implements LookupValueWithUIHint,
   }
 
   public Icon getIcon(final int flags) {
-    return ElementPresentationManager.getIcon(action);
+    return StrutsIcons.ACTION;
   }
 
   public PsiElement getElement() {
