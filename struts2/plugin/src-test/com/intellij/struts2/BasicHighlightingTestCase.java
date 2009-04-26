@@ -51,7 +51,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected StrutsFacet myFacet;
 
   @NonNls
-  private static final String SOURCE_PATH = "/src";
+  protected static final String SOURCE_PATH = "/src";
 
   protected Class<T> getModuleFixtureBuilderClass() {
     //noinspection unchecked
