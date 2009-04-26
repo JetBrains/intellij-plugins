@@ -14,6 +14,7 @@
  */
 package com.intellij.struts2.dom.struts;
 
+import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase {
+public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
   @NotNull
   protected String getTestDataLocation() {

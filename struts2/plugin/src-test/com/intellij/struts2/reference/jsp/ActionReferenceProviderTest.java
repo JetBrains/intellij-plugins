@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class ActionReferenceProviderTest extends BasicHighlightingTestCase {
+public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
 
   protected LocalInspectionTool[] getHighlightingInspections() {
     return new LocalInspectionTool[0];
@@ -35,6 +35,10 @@ public class ActionReferenceProviderTest extends BasicHighlightingTestCase {
   @NotNull
   protected String getTestDataLocation() {
     return "reference/jsp/action";
+  }
+
+  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
+    return WebModuleFixtureBuilder.class;
   }
 
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
