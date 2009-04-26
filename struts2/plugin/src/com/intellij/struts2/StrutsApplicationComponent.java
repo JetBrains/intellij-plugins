@@ -361,14 +361,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
                    StrutsConstants.STRUTS_2_1_DTD_ID,
                    "/resources/dtds/struts-2.1.dtd");
 
-    addDTDResource(StrutsConstants.XWORK_2_0_DTD_URI,
-                   StrutsConstants.XWORK_2_0_DTD_ID,
-                   "/resources/dtds/xwork-2.0.dtd");
-
-    addDTDResource(StrutsConstants.XWORK_2_1_DTD_URI,
-                   StrutsConstants.XWORK_2_1_DTD_ID,
-                   "/resources/dtds/xwork-2.1.dtd");
-
     addDTDResource(StrutsConstants.VALIDATOR_1_00_DTD_URI,
                    StrutsConstants.VALIDATOR_1_00_DTD_ID,
                    "/resources/dtds/xwork-validator-1.0.dtd");

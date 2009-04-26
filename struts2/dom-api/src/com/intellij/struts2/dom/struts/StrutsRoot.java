@@ -36,8 +36,6 @@ public interface StrutsRoot extends DomElement {
 
   @NonNls
   String TAG_NAME = "struts";
-  @NonNls
-  String XWORK_TAG_NAME = "xwork";
 
   @SubTagList(value = "package")
   @NotNull

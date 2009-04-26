@@ -25,7 +25,6 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.struts2.StrutsConstants;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -83,8 +82,7 @@ class ReferenceUtils {
   static final ElementPattern<XmlAttributeValue> STRUTS_XML =
       xmlAttributeValue()
           .inVirtualFile(virtualFile().ofType(StdFileTypes.XML))
-          .withSuperParent(2, xmlTag().withNamespace(string().oneOf(
-              ArrayUtil.mergeArrays(StrutsConstants.STRUTS_DTDS, StrutsConstants.XWORK_DTDS, String.class))));
+          .withSuperParent(2, xmlTag().withNamespace(string().oneOf(StrutsConstants.STRUTS_DTDS)));
 
   /**
    * Register the given provider on the given XmlAttribute/Namespace/XmlTag(s) combination.

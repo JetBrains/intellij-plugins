@@ -65,25 +65,6 @@ public final class StrutsConstants {
   };
 
   @NonNls
-  public static final String XWORK_2_0_DTD_URI = "http://www.opensymphony.com/xwork/xwork-2.0.dtd";
-  @NonNls
-  public static final String XWORK_2_0_DTD_ID = "-//OpenSymphony Group//XWork 2.0//EN";
-
-  @NonNls
-  public static final String XWORK_2_1_DTD_URI = "http://www.opensymphony.com/xwork/xwork-2.1.dtd";
-  @NonNls
-  public static final String XWORK_2_1_DTD_ID = "-//OpenSymphony Group//XWork 2.1//EN";
-
-  /**
-   * All xwork.xml DTD-IDs/URIs.
-   */
-  @NonNls
-  public static final String[] XWORK_DTDS = {
-      XWORK_2_0_DTD_ID, XWORK_2_0_DTD_URI,
-      XWORK_2_1_DTD_ID, XWORK_2_1_DTD_URI
-  };
-
-  @NonNls
   public static final String VALIDATOR_1_00_DTD_URI = "http://www.opensymphony.com/xwork/xwork-validator-1.0.dtd";
   @NonNls
   public static final String VALIDATOR_1_00_DTD_ID = "-//OpenSymphony Group//XWork Validator 1.0//EN";
