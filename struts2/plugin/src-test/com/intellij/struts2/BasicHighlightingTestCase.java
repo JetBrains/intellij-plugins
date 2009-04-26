@@ -51,7 +51,10 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected StrutsFacet myFacet;
 
   @NonNls
-  protected static final String SOURCE_PATH = "/src";
+  protected static final String SOURCE_DIR = "src";
+
+  @NonNls
+  protected static final String SOURCE_PATH = "/" + SOURCE_DIR;
 
   protected Class<T> getModuleFixtureBuilderClass() {
     //noinspection unchecked
@@ -104,7 +107,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
       new File(path + SOURCE_PATH).mkdir(); // ?? necessary
 
       moduleBuilder.addContentRoot(getTestDataPath() + SOURCE_PATH);
-      moduleBuilder.addSourceRoot(SOURCE_PATH);
+      moduleBuilder.addSourceRoot(SOURCE_DIR);
     }
     addStrutsJars(moduleBuilder);
   }
