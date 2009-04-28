@@ -48,7 +48,7 @@ public class TapestryUtils {
      * @return <code>true</code> if the module is a Tapestry module, <code>false</code> otherwise.
      */
     public static boolean isTapestryModule(Module module) {
-        return FacetManager.getInstance(module).getFacetsByType(TapestryFacetType.ID).size() > 0;
+      return module != null && FacetManager.getInstance(module).getFacetsByType(TapestryFacetType.ID).size() > 0;
     }
 
     /**

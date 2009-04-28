@@ -17,6 +17,7 @@ import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Allows navigation to all templates of the class
@@ -32,32 +33,16 @@ public class TemplatesNavigation extends ActionGroup {
      * {@inheritDoc}
      */
     public void update(AnActionEvent event) {
-        Presentation presentation = event.getPresentation();
-
-        Module module;
-        try {
-            module = (Module) event.getDataContext().getData(DataKeys.MODULE.getName());
-        } catch (Throwable ex) {
-            presentation.setEnabled(false);
-            presentation.setVisible(false);
-
-            return;
-        }
-
-        if (!TapestryUtils.isTapestryModule(module)) {
-            presentation.setEnabled(false);
-            presentation.setVisible(false);
-
-            return;
-        }
-
-        presentation.setEnabled(true);
-        presentation.setVisible(true);
+        final boolean isTapestryModule = TapestryUtils.isTapestryModule(event.getData(DataKeys.MODULE));
+        final Presentation presentation = event.getPresentation();
+        presentation.setEnabled(isTapestryModule);
+        presentation.setVisible(isTapestryModule);
     }
 
     /**
      * {@inheritDoc}
      */
+    @NotNull
     public AnAction[] getChildren(@Nullable AnActionEvent event) {
         if (event == null)
             return EMPTY_ACTION_ARRAY;
