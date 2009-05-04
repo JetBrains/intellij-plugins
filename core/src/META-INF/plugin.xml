@@ -22,8 +22,6 @@
 
         <annotator language="HTML" implementationClass="com.intellij.tapestry.intellij.lang.annotator.TemplateTagAnnotator"/>
 
-        <!--<errorHandler implementation="com.intellij.tapestry.intellij.errorreporter.ErrorReporter"/>-->
-
     </extensions>
 
     <actions>
@@ -61,17 +59,17 @@
             <add-to-group group-id="EditorPopupMenu.GoTo" anchor="last"/>
         </group>
 
-        <group id="TapestryGroup" text="Tapestry">
+        <group id="TapestryGroup" popup="true" text="Tapestry">
             <separator/>
             <action id="AddNewPageAction"
                     class="com.intellij.tapestry.intellij.actions.createnew.AddNewPageAction"
-                    text="Tapestry Page" description="Add a new page."/>
+                    text="Page" description="Add a new page."/>
             <action id="AddNewComponentAction"
                     class="com.intellij.tapestry.intellij.actions.createnew.AddNewComponentAction"
-                    text="Tapestry Component" description="Add a new component."/>
+                    text="Component" description="Add a new component."/>
             <action id="AddNewMixinAction"
                     class="com.intellij.tapestry.intellij.actions.createnew.AddNewMixinAction"
-                    text="Tapestry Mixin" description="Add a new mixin."/>
+                    text="Mixin" description="Add a new mixin."/>
             <add-to-group group-id="NewGroup" relative-to-action="NewAction" anchor="after"/>
         </group>
     </actions>
