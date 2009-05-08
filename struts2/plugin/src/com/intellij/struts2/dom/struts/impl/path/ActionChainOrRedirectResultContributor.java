@@ -88,7 +88,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
             }
 
             final LookupItem<ActionLookupItem> item = new LookupItem<ActionLookupItem>(actionItem, fullPath);
-            item.setAttribute(LookupItem.OVERWRITE_ON_AUTOCOMPLETE_ATTR, Boolean.TRUE);
+            item.putUserData(LookupItem.OVERWRITE_ON_AUTOCOMPLETE_ATTR, Boolean.TRUE);
             variants.add(item);
           }
         }
