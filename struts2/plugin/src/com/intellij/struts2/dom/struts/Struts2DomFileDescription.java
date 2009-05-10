@@ -16,9 +16,9 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.struts2.StrutsConstants;
-import com.intellij.struts2.dom.Param;
 import com.intellij.struts2.dom.StrutsDomConstants;
-import com.intellij.struts2.dom.impl.ParamImpl;
+import com.intellij.struts2.dom.params.Param;
+import com.intellij.struts2.dom.params.ParamImpl;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.impl.*;

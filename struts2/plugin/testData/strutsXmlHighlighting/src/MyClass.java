@@ -2,6 +2,8 @@ public class MyClass {
 
   private String myField;
 
+  private MyNestedClass nested;
+
   public String validActionMethod() {
     return null;
   }
@@ -37,5 +39,9 @@ public class MyClass {
 
   public void setParam1(String value) {
   }
+
+  public void setNested(MyNestedClass myField) {}
+
+  public MyNestedClass getNested() {}
 
 }

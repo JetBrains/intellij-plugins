@@ -16,7 +16,7 @@
 package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.openapi.paths.PathReference;
-import com.intellij.struts2.dom.ParamsElement;
+import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.struts2.dom.struts.action.ResultTypeResolvingConverter;
 import com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter;
 import com.intellij.util.xml.*;

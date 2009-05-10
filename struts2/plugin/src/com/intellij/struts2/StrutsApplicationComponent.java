@@ -22,7 +22,7 @@ import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.ExtendableClassConverter;
-import com.intellij.struts2.dom.Param;
+import com.intellij.struts2.dom.params.Param;
 import com.intellij.struts2.dom.struts.*;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.*;

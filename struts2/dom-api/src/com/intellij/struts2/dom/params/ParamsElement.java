@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.dom;
+package com.intellij.struts2.dom.params;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.DomElement;

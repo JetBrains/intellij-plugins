@@ -13,10 +13,11 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.dom;
+package com.intellij.struts2.dom.params;
 
-import com.intellij.psi.PsiField;
 import com.intellij.util.xml.*;
+
+import java.util.List;
 
 /**
  * <code>param</code>
@@ -28,8 +29,8 @@ public interface Param extends DomElement {
   @Attribute(value = "name")
   @Required
   @NameValue
-  @Convert(ParamsNameConverter.class)
-  GenericAttributeValue<PsiField> getName();
+  @Convert(ParamNameNestedConverter.class)
+  GenericAttributeValue<List<ParamNameReference>> getName();
 
   @TagValue
   @Required

@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
-import com.intellij.struts2.dom.ParamsElement;
+import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.Required;

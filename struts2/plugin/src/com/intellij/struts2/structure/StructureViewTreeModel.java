@@ -5,7 +5,7 @@ import com.intellij.ide.util.treeView.smartTree.*;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
-import com.intellij.struts2.dom.Param;
+import com.intellij.struts2.dom.params.Param;
 import com.intellij.util.xml.DomElement;
 import org.jetbrains.annotations.NotNull;
 

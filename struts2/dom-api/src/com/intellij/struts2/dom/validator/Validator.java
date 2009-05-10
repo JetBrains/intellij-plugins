@@ -15,8 +15,8 @@
 
 package com.intellij.struts2.dom.validator;
 
-import com.intellij.struts2.dom.ParamsElement;
 import com.intellij.struts2.dom.StrutsDomConstants;
+import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
 import com.intellij.struts2.dom.validator.config.ValidatorConfigResolveConverter;
 import com.intellij.util.xml.*;

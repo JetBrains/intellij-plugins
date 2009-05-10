@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.dom.impl;
+package com.intellij.struts2.dom.params;
 
-import com.intellij.struts2.dom.Param;
 import com.intellij.struts2.structure.LocationPresentation;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
