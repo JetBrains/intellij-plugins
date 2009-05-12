@@ -28,7 +28,7 @@ import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.ManifestApplicationComponent;
+import org.osmorc.manifest.ManifestFileTypeFactory;
 
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
@@ -37,12 +37,12 @@ public class ManifestFile extends PsiFileBase
 {
   public ManifestFile(FileViewProvider viewProvider)
   {
-    super(viewProvider, ManifestApplicationComponent.MANIFEST.getLanguage());
+    super(viewProvider, ManifestFileTypeFactory.MANIFEST.getLanguage());
   }
 
   @NotNull
   public FileType getFileType()
   {
-    return ManifestApplicationComponent.MANIFEST;
+    return ManifestFileTypeFactory.MANIFEST;
   }
 }

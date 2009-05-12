@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.manifest.ManifestApplicationComponent;
+import org.osmorc.manifest.ManifestFileTypeFactory;
 
 import javax.swing.*;
 import java.util.Map;
@@ -70,7 +70,7 @@ public class ManifestColorsAndFontsPage implements ColorSettingsPage
   @NotNull
   public SyntaxHighlighter getHighlighter()
   {
-    return SyntaxHighlighter.PROVIDER.create(ManifestApplicationComponent.MANIFEST, null, null);
+    return SyntaxHighlighter.PROVIDER.create(ManifestFileTypeFactory.MANIFEST, null, null);
   }
 
   @NonNls

@@ -109,11 +109,6 @@
 
     <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
 
-    <application-components>
-        <component>
-            <implementation-class>org.osmorc.manifest.ManifestApplicationComponent</implementation-class>
-        </component>
-    </application-components>
     <project-components>
         <component>
             <implementation-class>org.osmorc.manifest.ManifestProjectComponent</implementation-class>
@@ -245,6 +240,7 @@
 
         <inspectionToolProvider implementation="org.osmorc.inspection.OsmorcInspectionToolProvider"/>
         <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
+        <fileTypeFactory implementation="org.osmorc.manifest.ManifestFileTypeFactory"/>
     </extensions>
 
 

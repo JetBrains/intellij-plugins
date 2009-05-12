@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.manifest.ManifestApplicationComponent;
+import org.osmorc.manifest.ManifestFileTypeFactory;
 
 import javax.swing.*;
 import java.io.*;
@@ -160,7 +160,7 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                 };
 
 
-        osmorcFacetConfigurationFacetDetectorRegistry.registerUniversalDetector(ManifestApplicationComponent.MANIFEST,
+        osmorcFacetConfigurationFacetDetectorRegistry.registerUniversalDetector(ManifestFileTypeFactory.MANIFEST,
                 virtualFileFilter, detector);
     }
 

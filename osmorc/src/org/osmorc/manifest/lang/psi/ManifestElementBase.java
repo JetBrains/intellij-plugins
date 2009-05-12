@@ -30,7 +30,7 @@ import com.intellij.lang.Language;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.ManifestApplicationComponent;
+import org.osmorc.manifest.ManifestFileTypeFactory;
 
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
@@ -45,7 +45,7 @@ public abstract class ManifestElementBase extends ASTWrapperPsiElement
   @NotNull
   public Language getLanguage()
   {
-    return ManifestApplicationComponent.MANIFEST.getLanguage();
+    return ManifestFileTypeFactory.MANIFEST.getLanguage();
   }
 
 
