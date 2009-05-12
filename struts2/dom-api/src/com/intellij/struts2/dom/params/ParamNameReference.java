@@ -17,9 +17,13 @@ package com.intellij.struts2.dom.params;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupValueFactory;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.beanProperties.CreateBeanPropertyFix;
 import com.intellij.psi.util.PropertyUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +39,7 @@ import java.util.Map;
  * @author Yann C&eacute;bron
  */
 class ParamNameReference extends PsiReferenceBase<PsiElement>
-    implements PsiPolyVariantReference, EmptyResolveMessageProvider {
+    implements PsiPolyVariantReference, EmptyResolveMessageProvider, LocalQuickFixProvider {
 
   public static final ParamNameReference[] EMPTY_REFERENCE = new ParamNameReference[0];
 
@@ -117,6 +121,20 @@ class ParamNameReference extends PsiReferenceBase<PsiElement>
       }
     }
     return getElement();
+  }
+
+  public LocalQuickFix[] getQuickFixes() {
+    final String value = getValue();
+    if (StringUtil.isEmpty(value)) {
+      return LocalQuickFix.EMPTY_ARRAY;
+    }
+
+    final PsiClass psiClass = getPsiClass();
+    if (psiClass == null) {
+      return LocalQuickFix.EMPTY_ARRAY;
+    }
+
+    return CreateBeanPropertyFix.createFixes(value, psiClass, null, true);
   }
 
   @Nullable
