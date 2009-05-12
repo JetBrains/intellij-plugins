@@ -111,9 +111,6 @@
 
     <project-components>
         <component>
-            <implementation-class>org.osmorc.manifest.ManifestProjectComponent</implementation-class>
-        </component>
-        <component>
             <implementation-class>org.osmorc.OsmorcProjectComponent</implementation-class>
         </component>
         <component>
