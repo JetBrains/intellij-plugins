@@ -1,0 +1,133 @@
+<!--
+   Copyright (c) 2007-2008, Osmorc Development Team
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without modification,
+   are permitted provided that the following conditions are met:
+
+       * Redistributions of source code must retain the above copyright notice, this list
+         of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above copyright notice, this
+         list of conditions and the following disclaimer in the documentation and/or other
+         materials provided with the distribution.
+       * Neither the name of 'Osmorc Development Team' nor the names of its contributors may be
+         used to endorse or promote products derived from this software without specific
+         prior written permission.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+   THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+   OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<html>
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <META HTTP-EQUIV="Cache-Control" CONTENT="no-store, no-cache, must-revalidate">
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <meta name="robots" content="none">
+  <meta name="copyright" content="Osmorc Development Team, http://osmorc.org">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link rel="stylesheet" type="text/css" media="all" href="DefaultCSS/s.css">
+  <title>How it works</title>
+</head>
+<body id="IJ_help" class="template">
+<div id="container">
+  <div id="header">
+    <h1>How it works</h1>
+  </div>
+  <div class="topicpath">
+    <table width="100%">
+      <tr>
+        <td width="80%"><strong>You are here:</strong>&nbsp;&nbsp;<a href="osmorc.html">Osmorc</a>&nbsp;/&nbsp;<strong>How it works</strong>
+        </td>
+        <td align="right"><a href="setup.html">Next</a>
+          |
+          <a href="osmorc.html">Previous</a></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="introduction">
+    This part of the documentation describes how Osmorc works and what its limitations are.
+  </div>
+
+  <div id="content">
+    <div class="section">
+      <h1>OSGI and the IDEA module system</h1>
+      <p>
+        OSGI consists of several layers. For an IDE to support development of OSGI applications, handling the
+        module layer is the most important part because it has the biggest impact on how applications are
+        developed.
+      </p>
+      <p>
+        The module layer defines a module system that allows for the specification of dependencies between the modules -
+        called bundles - on a pretty fine grained level. It's possible to define which packages of a bundle are
+        visible to other bundles and which other bundles or packages are needed by a bundle.
+      </p>
+      <p>
+        So if an IDE doesn't support OSGI's module layer the application will not be compilable in that IDE as long
+        as the developer doesn't recreate the bundle dependencies in the module system of the used IDE. While this is
+        always possible to some extent, it is very inflexible and error prone.
+      </p>
+      <p>
+        Only the basic dependencies between bundles can be recreated with IDEA's module system since it only
+        allows to define which module uses which other modules. It is not possible to define which packages a module
+        exports and it's also not possible to define which packages are needed by a module. Only dependencies on whole
+        modules and not parts of modules can be expressed.
+      </p>
+    </div>
+    <div class="section">
+      <h1>The twofold approach</h1>
+      <p>
+        Osmorc uses a twofold approach to the described problem which will work in most cases but will fail
+        in some special cases.
+      </p>
+      <p>
+        Osmorc uses Eclipse Equinox to resolve bundle dependencies. For each bundle dependency a module dependency is
+        created no matter which part of bundle B bundle A depends on, module A will have a module dependency on module B.
+        So this first step doesn't care about which packages are exported or imported. So bundle A can see and use
+        all packages and classes in bundle B. The fine grained rules are taken care of by the  <strong>Invalid Import</strong> inspection.
+        It checks whether the packages and classes from bundle B imported in a class of bundle A are actually exported
+        by bundle B and imported by bundle A. If this check fails, the import or usage is marked as an error.
+      </p>
+    </div>
+    <div class="section">
+      <h1>Limitations</h1>
+      <p>
+        The twofold approach implemented in Osmorc has several limitations:
+      </p>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>
+          Inspection errors don't prevent compilation. So if the Invalid Import inspection marks usages and imports
+          as errors, those errors won't prevent the compilation of the application. So it's possible to change a
+          manifest file in a manner that makes the imports of a class invalid for Osmorc. If the class is not opened
+          and checked by the developer and the Invalid Import inspection is also not via the Analyze | Inspect Code...
+          action, the developer will stay unaware of bugs introduced by his change. Only at runtime will the problem
+          become apparent. So it's always a good idea to run the Invalid Import inspection on all classes of a project
+          frequently.
+        </li>
+        <li>
+          
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+
+</div>
+<div id="footer">
+  <p>Comments, questions, suggestions? See the <a href="feedback.html">Feedback</a> page.
+    <br>
+    <br>
+    <b>Copyright &copy; 2007-2008 Osmorc Development Team.</b>
+  </p>
+</div>
+</body>
+</html>

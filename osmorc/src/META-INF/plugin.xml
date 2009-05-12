@@ -1,0 +1,271 @@
+<!--
+  ~ Copyright (c) 2007-2009, Osmorc Development Team
+  ~ All rights reserved.
+  ~
+  ~ Redistribution and use in source and binary forms, with or without modification,
+  ~ are permitted provided that the following conditions are met:
+  ~     * Redistributions of source code must retain the above copyright notice, this list
+  ~       of conditions and the following disclaimer.
+  ~     * Redistributions in binary form must reproduce the above copyright notice, this
+  ~       list of conditions and the following disclaimer in the documentation and/or other
+  ~       materials provided with the distribution.
+  ~     * Neither the name of 'Osmorc Development Team' nor the names of its contributors may be
+  ~       used to endorse or promote products derived from this software without specific
+  ~       prior written permission.
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+  ~ EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  ~ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+  ~ THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  ~ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+  ~ OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  ~ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+  ~ TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+  ~ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<idea-plugin url="http://osmorc.org" version="2">
+    <id>Osmorc</id>
+    <name>Osmorc</name>
+    <description>
+        <![CDATA[
+      <p>This plugin adds support for the development of OSGI-based applications to IDEA<p/>
+    ]]>
+    </description>
+    <change-notes>
+        <![CDATA[
+    <p>0.13.0</p>
+    <ul>
+        <li>Maven Support: Imports/Updates Osmorc facet from Maven POM</li>
+        <li>Maven Support: Checks Maven dependencies to be OSGi compliant</li>
+        <li>Maven Support: Integration with SpringSource public repository to find replacements for non-osgi libraries.</li>
+        <li>Library Bundling: default bundling rule corrected so it works out of the box for most scenarios</li>
+        <li>Lots of internal refactoring and bugfixes.</li>
+        <li>For the Equinox run configuration separate config and working directories can de defined.</li>
+        <li>Added a new option that will force always force a rebuild of the bundle jar.</li>
+    </ul>
+    <p>0.12.0</p>
+    <ul>
+        <li>Added autocompletion for known manifest header names.</li>
+        <li>Equinox 3.4 source bundles are now used correctly.</li>
+        <li>Reworked additional JAR contents section in facet configuration. Source files and directories are now
+          selected via a file chooser and a destination name that will most times be correct is inferred.</li>
+        <li>Splitted the facet editor into smaller parts.</li>
+        <li>Changes to files belonging to the additional JAR contents of a bundle now trigger a rebuild of the JAR.</li>
+        <li>Added specific Equinox, Bnd and Spring DM headers to the headers known by Osmorc.</li>
+    </ul>
+    <p>0.11.0</p>
+    <ul>
+        <li>Equinox run configuration: Additional JVM parameters can be specified.</li>
+        <li>Equinox run configuration: Additional Equinox parameters can be specified.</li>
+        <li>Equinox run configuration: Runtime directory can be specified.</li>
+        <li>Equinox run configuration: Products and Applications based on Eclipse 3.1 and 3.2 can now be run.</li>
+        <li>A regular expressionn can be specified that filters out files from the additional JAR contents.</li>
+    </ul>
+    <p>0.10.0</p>
+    <ul>
+        <li>OSGi bundles run configuration: bundles which are part of the framework can now be started.</li>
+        <li>OSGi bundles run configuration: libraries which are themselves OSGi bundles can now be started.</li>
+        <li>Multiple rules can now be applied when building a library bundle.</li>
+        <li>Bundle version from facet dialog is now correctly built into the manifest.</li>
+        <li>Library cache can now be deleted with a button in library building dialog.</li>
+        <li>Fragment bundles are now handled correctly when manifest files are edited manually.</li>
+        <li>The classpath used by the run configurations to start the OSGi container now only contains what is needed to
+          start the container.</li>
+        <li>Added spell checking for manifest header names.</li>
+    </ul>
+    <p>0.9.0</p>
+    <ul>
+        <li>Added integration of Concierge OSGi</li>
+        <li>OSGi bundles run configuration: bundle start levels can be set.</li>
+        <li>OSGi bundles run configuration: debug mode can now be switched on for every framework type.</li>
+        <li>OSGi bundles run configuration: boot delegation and system packages can be specified for Felix and
+            Knopflerfish frameworks.</li>
+        <li>Eclipse Equinox run configuration: Checks whether an Equinox framework instance is set for the project
+          and shows helpful error messages if this is not the case..</li>
+        <li>Rules for the creation of bundles for libraries can now be specified.</li>
+        <li>Bug fixes.</li>
+    </ul>
+    <p>0.8.0</p>
+    <ul>
+        <li>Ported to IDEA 8.</li>
+    </ul>
+    <p>0.7.0</p>
+    <ul>
+        <li>Running of Bundles in Eclipse Equinox.</li>
+        <li>Running of Eclipse Equinox applications and products</li>
+        <li>It is now possible to specify additional files and folders that are copied into the generated bundle jars.</li>
+        <li>Osmorc now can handle modules with multiple content roots.</li>
+        <li>Improved bundle dependency resolver that is used when the manifest files are generated by Osmorc.</li>
+        <li>Some bug fixes.</li>
+    </ul>
+    <p>... Read Osmorc's documentation for a full changelog</p>
+    ]]>
+    </change-notes>
+    <version>0.13.0</version>
+    <vendor url="http://osmorc.org" email="info@osmorc.org">Osmorc Development Team</vendor>
+    <idea-version since-build="10000" until-build="10400"/>
+    <category>Framework integration</category>
+
+
+    <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
+
+    <application-components>
+        <component>
+            <implementation-class>org.osmorc.OsmorcApplicationComponent</implementation-class>
+        </component>
+        <component>
+            <implementation-class>org.osmorc.manifest.ManifestApplicationComponent</implementation-class>
+        </component>
+    </application-components>
+    <project-components>
+        <component>
+            <implementation-class>org.osmorc.manifest.ManifestProjectComponent</implementation-class>
+        </component>
+        <component>
+            <implementation-class>org.osmorc.OsmorcProjectComponent</implementation-class>
+        </component>
+        <component>
+            <implementation-class>org.osmorc.make.BundleCompilerComponent</implementation-class>
+        </component>
+        <component>
+            <implementation-class>org.osmorc.settings.SettingsEditor</implementation-class>
+        </component>
+    </project-components>
+    <module-components>
+        <component>
+            <implementation-class>org.osmorc.OsmorcModuleComponent</implementation-class>
+        </component>
+    </module-components>
+
+    <helpset file="OsmorcHelp.jar" path="/OsmorcHelp.hs"/>
+
+    <extensionPoints>
+        <extensionPoint name="frameworkIntegrator" beanClass="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
+        <extensionPoint name="headerParserProviderRepository"
+                        beanClass="org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository"/>
+        <extensionPoint name="obr" beanClass="org.osmorc.obrimport.Obr"/>
+    </extensionPoints>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- ##### Application Services ##### -->
+        <!-- Applications settings and application settings editors -->
+        <applicationService serviceInterface="org.osmorc.settings.ApplicationSettings"
+                            serviceImplementation="org.osmorc.settings.ApplicationSettings"/>
+        <applicationService serviceInterface="org.osmorc.settings.IDESettingsEditor"
+                            serviceImplementation="org.osmorc.settings.IDESettingsEditor"/>
+        <applicationService serviceInterface="org.osmorc.settings.FrameworkDefinitionsEditor"
+                            serviceImplementation="org.osmorc.settings.FrameworkDefinitionsEditor"/>
+        <applicationService serviceInterface="org.osmorc.settings.LibraryBundlingEditor"
+                            serviceImplementation="org.osmorc.settings.LibraryBundlingEditor"/>
+        <applicationService serviceInterface="org.osmorc.settings.ApplicationSettingsUpdateNotifier"
+                            serviceImplementation="org.osmorc.settings.ApplicationSettingsUpdateNotifier"/>
+
+        <!-- Framework integration -->
+        <applicationService serviceInterface="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"
+                            serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
+        <applicationService serviceInterface="org.osmorc.frameworkintegration.LibraryHandler"
+                            serviceImplementation="org.osmorc.frameworkintegration.impl.LibraryHandlerImpl"/>
+        <applicationService serviceInterface="org.osmorc.frameworkintegration.FrameworkInstanceUpdateNotifier"
+                            serviceImplementation="org.osmorc.frameworkintegration.FrameworkInstanceUpdateNotifier"/>
+        <applicationService
+                serviceInterface="org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager"
+                serviceImplementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager"/>
+        <applicationService
+                serviceInterface="org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishFrameworkInstanceManager"
+                serviceImplementation="org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishFrameworkInstanceManager"/>
+        <applicationService
+                serviceInterface="org.osmorc.frameworkintegration.impl.felix.FelixFrameworkInstanceManager"
+                serviceImplementation="org.osmorc.frameworkintegration.impl.felix.FelixFrameworkInstanceManager"/>
+        <applicationService
+                serviceInterface="org.osmorc.frameworkintegration.impl.concierge.ConciergeFrameworkInstanceManager"
+                serviceImplementation="org.osmorc.frameworkintegration.impl.concierge.ConciergeFrameworkInstanceManager"/>
+
+        <!-- Manifest header parsing and annotation -->
+        <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.HeaderParserRepository"
+                            serviceImplementation="org.osmorc.manifest.lang.headerparser.HeaderParserRepository"/>
+        <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.HeaderAnnotator"
+                            serviceImplementation="org.osmorc.manifest.lang.headerparser.HeaderAnnotator"/>
+        <applicationService serviceInterface="org.osmorc.manifest.lang.valueparser.ValueParserRepository"
+                            serviceImplementation="org.osmorc.manifest.lang.valueparser.ValueParserRepository"/>
+        <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.BundleSymbolicNameParser"
+                            serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.BundleSymbolicNameParser"/>
+        <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.BundleVersionParser"
+                            serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.BundleVersionParser"/>
+        <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.ExportPackageParser"
+                            serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.ExportPackageParser"/>
+        <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.ImportPackageParser"
+                            serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.ImportPackageParser"/>
+        <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.RequireBundleParser"
+                            serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.RequireBundleParser"/>
+        <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.SimpleHeaderParser"
+                            serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.SimpleHeaderParser"/>
+        <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.GenericComplexHeaderParser"
+                            serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.GenericComplexHeaderParser"/>
+
+        <!-- Other application services -->
+        <applicationService serviceInterface="org.osmorc.facet.OsmorcFacetUtil"
+                            serviceImplementation="org.osmorc.facet.impl.OsmorcFacetUtilImpl"/>
+        <applicationService serviceInterface="org.osmorc.obrimport.ObrProvider"
+                            serviceImplementation="org.osmorc.obrimport.ObrProvider"/>
+
+        <!-- Module services -->
+        <moduleService serviceInterface="org.osmorc.ModuleDependencySynchronizer"
+                       serviceImplementation="org.osmorc.ModuleDependencySynchronizer"/>
+        <moduleService serviceInterface="org.osmorc.manifest.ManifestHolder"
+                       serviceImplementation="org.osmorc.manifest.impl.ModuleManifestHolderImpl"/>
+        <moduleService serviceInterface="org.osmorc.AdditionalJARContentsWatcherManager"
+                       serviceImplementation="org.osmorc.impl.AdditionalJARContentsWatcherManagerImpl"/>
+
+        <!-- Project services -->
+        <!-- Project settings and editors -->
+        <projectService serviceInterface="org.osmorc.settings.ProjectSettings"
+                        serviceImplementation="org.osmorc.settings.ProjectSettings"/>
+
+        <projectService serviceInterface="org.osmorc.settings.ProjectSettingsEditor"
+                        serviceImplementation="org.osmorc.settings.ProjectSettingsEditor"/>
+        <projectService serviceInterface="org.osmorc.settings.ProjectSettingsUpdateNotifier"
+                        serviceImplementation="org.osmorc.settings.ProjectSettingsUpdateNotifier"/>
+
+        <!-- Other project services -->
+        <projectService serviceInterface="org.osmorc.BundleManager"
+                        serviceImplementation="org.osmorc.impl.BundleManagerImpl"/>
+        <projectService serviceInterface="org.osmorc.manifest.ManifestHolderRegistry"
+                        serviceImplementation="org.osmorc.manifest.ManifestHolderRegistry"/>
+        <projectService serviceInterface="org.osmorc.frameworkintegration.FrameworkInstanceModuleManager"
+                        serviceImplementation="org.osmorc.frameworkintegration.FrameworkInstanceModuleManager"/>
+
+        <!-- IDEA extensions -->
+        <colorSettingsPage implementation="org.osmorc.manifest.lang.ManifestColorsAndFontsPage"/>
+        <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+        <lang.parserDefinition language="Manifest"
+                               implementationClass="org.osmorc.manifest.lang.ManifestParserDefinition"/>
+        <completion.contributor implementation="org.osmorc.manifest.ManifestCompletionContributor"/>
+        <syntaxHighlighter key="Manifest" factoryClass="org.osmorc.manifest.lang.ManifestSyntaxHighlighterProvider"/>
+        <annotator language="Manifest" implementationClass="org.osmorc.manifest.lang.headerparser.HeaderAnnotator"/>
+        <lang.elementManipulator forClass="org.osmorc.manifest.lang.psi.ManifestHeaderValue"
+                                 implementationClass="org.osmorc.manifest.lang.psi.ManifestHeaderValueManipulator"/>
+        <configurationType implementation="org.osmorc.run.OsgiConfigurationType"/>
+        <configurationType implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxConfigurationType"/>
+    </extensions>
+
+
+    <extensions defaultExtensionNs="Osmorc">
+        <frameworkIntegrator implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxIntegrator"/>
+        <frameworkIntegrator
+                implementation="org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishIntegrator"/>
+        <frameworkIntegrator implementation="org.osmorc.frameworkintegration.impl.felix.FelixIntegrator"/>
+        <frameworkIntegrator implementation="org.osmorc.frameworkintegration.impl.concierge.ConciergeIntegrator"/>
+        <headerParserProviderRepository
+                implementation="org.osmorc.manifest.lang.headerparser.impl.StandardManifestHeaderParserProviderRepository"/>
+        <headerParserProviderRepository
+                implementation="org.osmorc.manifest.lang.headerparser.impl.OSGiManifestHeaderProviderRepository"/>
+        <headerParserProviderRepository
+                implementation="org.osmorc.manifest.lang.headerparser.impl.EquinoxHeaderProviderRepository"/>
+        <headerParserProviderRepository
+                implementation="org.osmorc.manifest.lang.headerparser.impl.SpringDMHeaderProviderRepository"/>
+        <headerParserProviderRepository
+                implementation="org.osmorc.manifest.lang.headerparser.impl.BndHeaderProviderRepository"/>
+
+        <!-- Known bundle repositories -->
+        <obr implementation="org.osmorc.obrimport.springsource.SpringSourceObr"/>
+    </extensions>
+</idea-plugin>

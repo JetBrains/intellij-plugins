@@ -1,0 +1,143 @@
+<!--
+   Copyright (c) 2007-2008, Osmorc Development Team
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without modification,
+   are permitted provided that the following conditions are met:
+
+       * Redistributions of source code must retain the above copyright notice, this list
+         of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above copyright notice, this
+         list of conditions and the following disclaimer in the documentation and/or other
+         materials provided with the distribution.
+       * Neither the name of 'Osmorc Development Team' nor the names of its contributors may be
+         used to endorse or promote products derived from this software without specific
+         prior written permission.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+   THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+   OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<html>
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <META HTTP-EQUIV="Cache-Control" CONTENT="no-store, no-cache, must-revalidate">
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <meta name="robots" content="none">
+  <meta name="copyright" content="Osmorc Development Team, http://osmorc.org">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link rel="stylesheet" type="text/css" media="all" href="DefaultCSS/s.css">
+  <title>Import an Eclipse Workspace.</title>
+</head>
+<body id="IJ_help" class="template">
+<div id="container">
+  <div id="header">
+    <h1>Import an Eclipse Workspace.</h1>
+  </div>
+  <div class="topicpath">
+    <table width="100%">
+      <tr>
+        <td width="80%"><strong>You are here:</strong>&nbsp;&nbsp;<a href="osmorc.html">Osmorc</a>&nbsp;/&nbsp;<a href="setup.html">Set Up</a>&nbsp;/&nbsp;<strong>Import an Eclipse Workspace</strong>
+        </td>
+        <td align="right"><a href="setupnew.html">Next</a>
+          |
+          <a href="setup.html">Previous</a></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="introduction">
+    <p>Eclipse RCP and Eclipse Plugin projects are based on OSGI. At the core of an Eclipse application there is an
+      OSGI runtime called <a href="http://www.eclipse.org/equinox-portal/">Equinox</a>. Osmorc's <a
+            href="equinoxintegrator.html">Equinox framework integrator</a> provides support for working on applications
+      using Equinox. At the time of this writing it is not possible to run and debug OSGI applications with Osmorc, but
+      that is a planned feature for the near future. Currently Osmorc also doesn't contain any support for Eclipse
+      specific
+      features like extensions.</p>
+
+    <p>Currently it is possible to import an Eclipse workspace into IDEA and use Osmorc to resolve dependencies between
+      the different
+      OSGI bundles of that workspace. The outcome is that the created IDEA project can be compiled in IDEA without any
+      errors
+      and the classes, manifest files and other artefacts of the bundles can be edited.</p>
+
+    <p>Jetbrains provides a <a href="http://www.jetbrains.com/idea/documentation/usingIDEAforEclipse.html">guide</a>
+      describing how to migrate Eclipse RCP applications to IDEA. This is a work around that enables the developer
+      of an Eclipse RCP application to work on that application with a pure IDEA without Osmorc. Projects changed
+      as described in that guide won't be compatible with Osmorc. Osmorc adds OSGI support to IDEA making a great part
+      of the work around obsolete. Please use the following guide to import an Eclipse workspace into IDEA.</p>
+  </div>
+
+  <div id="content">
+    <div class="section">
+      <div class="ijProcedureSteps">
+        <div class="procHeader">Import an Eclipse workspace into IDEA</div>
+        <ol>
+          <li>
+            IDEA contains support for importing Eclipse workspaces. Please follow the steps described in
+            the help page <strong>Importing Eclipse Project to IntelliJ IDEA</strong> of the IDEA help system.
+          </li>
+          <li>
+            Don't check the <strong>Link created IntelliJ IDEA modules to Eclipse project files</strong> option.
+            Osmorc changes the dependencies between the modules created from the Eclipse projects in order to
+            make them match the bundle dependencies expressed in the manifest files. Linking IDEA modules with
+            Eclipse project files would result in unnecessary dependencies being introduced into the project files.
+          </li>
+          <li>
+            Afterwards remove the dependency to the global library <strong>ECLIPSE</strong> on any of the created
+            modules if one was added.
+          </li>
+        </ol>
+      </div>
+      <div class="ijProcedureSteps">
+        <div class="procHeader">Adding the Osmorc facet to all modules.</div>
+        <ol>
+          <li>
+            After creating a project and modules for an Eclipse project, IDEA should detect the modules as being
+            candidates
+            for an Osmorc facet and display a message for each detection. Confirm adding of the Osmorc facet to each
+            module.
+            Osmorc only works on modules with its facet.
+          </li>
+          <li>
+            Check that each module has an Osmorc facet. To do so open
+            <nobr><span class="ijMenu">File | Settings | Project Settings | Project Settings</span></nobr>
+            . Here select
+            <strong>Modules</strong> and check that each module in the tree to the right has a subnode Osmorc.
+          </li>
+          <li>
+            If you inadvertently deny the addition of the Osmorc facet, remove it or if it just does appear as a subnode
+            of the module node, add it manually.by selecting the module, and then clicking on the + icon above the
+            module
+            tree and choosing Osmorc from the appearing menu.
+          </li>
+        </ol>
+      </div>
+
+      <p>
+        Now you have imported your Eclipse workspace into IDEA, you can start working on it in IDEA. One thing
+        you haven't  done yet, is transfer your target platform into IDEA. In Osmorc the target platform is called
+        a framework instance and you can define it in Osmorc's settings. Please read the
+        <a href="settings.html">Settings</a>-part of this documentation to learn how to define different framework
+        instances and how to choose one for a project.
+      </p>
+    </div>
+  </div>
+
+</div>
+<div id="footer">
+  <p>Comments, questions, suggestions? See the <a href="feedback.html">Feedback</a> page.
+    <br>
+    <br>
+    <b>Copyright &copy; 2007-2008 Osmorc Development Team.</b>
+  </p>
+</div>
+</body>
+</html>

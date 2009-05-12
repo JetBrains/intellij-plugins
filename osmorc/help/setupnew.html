@@ -1,0 +1,126 @@
+<!--
+   Copyright (c) 2007-2008, Osmorc Development Team
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without modification,
+   are permitted provided that the following conditions are met:
+
+       * Redistributions of source code must retain the above copyright notice, this list
+         of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above copyright notice, this
+         list of conditions and the following disclaimer in the documentation and/or other
+         materials provided with the distribution.
+       * Neither the name of 'Osmorc Development Team' nor the names of its contributors may be
+         used to endorse or promote products derived from this software without specific
+         prior written permission.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+   THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+   OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<html>
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <META HTTP-EQUIV="Cache-Control" CONTENT="no-store, no-cache, must-revalidate">
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <meta name="robots" content="none">
+  <meta name="copyright" content="Osmorc Development Team, http://osmorc.org">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link rel="stylesheet" type="text/css" media="all" href="DefaultCSS/s.css">
+  <title>Set up a new project</title>
+</head>
+<body id="IJ_help" class="template">
+<div id="container">
+  <div id="header">
+    <h1>Set up a new project</h1>
+  </div>
+  <div class="topicpath">
+    <table width="100%">
+      <tr>
+        <td width="80%"><strong>You are here:</strong>&nbsp;&nbsp;<a href="osmorc.html">Osmorc</a>&nbsp;/&nbsp;<a href="setup.html">Set Up</a>&nbsp;/&nbsp;<strong>Set up a new project</strong>
+        </td>
+        <td align="right"><a href="changelog.html">Next</a>
+          |
+          <a href="importeclipseproject.html">Previous</a></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="introduction">
+    <p>This guide describes how to set up a new project with Osmorc. Please take a look at
+      <a href="importeclipseproject.html">Importing an Eclipse Workspace.</a> if you want to import an existing
+      Eclipse workspace into IDEA.
+    </p>
+
+    <p>In this section we'll describe how to activate Osmorc for a module. Nothing about the creation of projects
+      and modules which will use Osmorc is Osmorc-specific. So create them just like you would create any other
+      IDEA projects and modules.</p>
+  </div>
+
+  <div id="content">
+    <div class="section">
+      <p>
+        To actually activate Osmorc for a module the Osmorc facet needs to be added to the module. Adding the facet
+        can be achieved via two different ways:
+      </p>
+
+      <div class="ijProcedureSteps">
+        <div class="procHeader">Explicit addition of the Osmorc facet</div>
+        <ol>
+          <li>
+            You can manually and explicitly add the Osmorc facet to a module. To do it open
+            <nobr><span class="ijMenu">File | Settings | Project Settings | Project Settings</span></nobr>
+          </li>
+          <li>Choose modules</li>
+          <li>Click on the module to which you want to add the facet</li>
+          <li>Click on the +-icon above the modules tree and choose Osmorc</li>
+          <li>Now the facet is added and a manifest file is created in the META-INF folder of the module if doesn't
+            exist yet.
+          </li>
+        </ol>
+      </div>
+      <div class="ijProcedureSteps">
+        <div class="procHeader">Automatic detection of the facet.</div>
+        <ol>
+          <li>
+            Create a folder named META-INF in the root folder of your module.
+          </li>
+          <li>
+            Create a manifest file <strong>MANIFEST.MF</strong> inside this folder
+          </li>
+          <li>
+            At at least the two headers <strong>Bundle-ManifestVersion</strong> and <strong>Bundle-SymbolicName</strong>
+            into
+            the manifest file.
+          </li>
+          <li>
+            IDEA will now recognize the Osmorc facet for the module and will propose to add it. Confirm the addition.
+          </li>
+        </ol>
+      </div>
+
+      <p>Now you can start working on your OSGI application. Change your manifest files to export and import
+        packages and Osmorc will create corresponding dependencies between the IDEA modules.</p>
+      <p>You may also want to take a look at the <a href="settings.html" >Settings</a>-part of this documentation
+        to learn how to define and use framework instances.</p>
+
+    </div>
+  </div>
+
+</div>
+<div id="footer">
+  <p>Comments, questions, suggestions? See the <a href="feedback.html">Feedback</a> page.
+    <br>
+    <br>
+    <b>Copyright &copy; 2007-2008 Osmorc Development Team.</b>
+  </p>
+</div>
+</body>
+</html>

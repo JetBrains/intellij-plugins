@@ -1,0 +1,893 @@
+/* Cascading Stylesheet for for IntelliJ Idea Help Please see Notes and Caveats at EOF! */
+html body {
+    background-color: #FFFFFF;
+    color: #000000;
+    font-family: verdana, tahoma, arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+#container {
+    margin: 6px 2em 6px 2em;
+}
+
+/* ---------------------------------------------------------------------HEADER STYLES */
+#header {
+    background-color: #1e3ca0;
+    background-image: url( img/bg_idea_big.jpg );
+    background-position: left;
+    background-repeat: no-repeat;
+    height: 70px;
+    border: solid 1px #ffffff;
+    margin-left: -2em;
+    margin-right: -2em;
+    margin-bottom: 10px;
+}
+
+#header h1 {
+    color: #FFA500;
+    font-size: 18px;
+    padding: 15px 20px 15px 20px;
+}
+
+
+#header h2 {
+    font-size: 16px;
+    font-weight: normal;
+}
+
+#header p {
+    margin: 4px 0 10px 0;
+    padding: 0;
+}
+
+/* ---------------------------------------------------------------------INTRODUCTION STYLES */
+
+.introduction {
+    margin-top: 12px;
+    margin-bottom: 12px;
+    margin-left: 12px;
+    margin-right: 15px;
+    padding-top: 6px;
+    padding-left: 20px;
+    padding-bottom: 10px;
+    border-color: #EEEEEE;
+    border-style: solid;
+    border-width: thin;
+    background-color: #f1faff;
+    color: #000000;
+    font-size: 10px;
+}
+
+/* Headings generally not used in introduction, but are available */
+.introduction h2 {
+    background-color: inherit;
+    color: Navy;
+    font-size: 14px;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+}
+
+.introduction h3 {
+    background-color: inherit;
+    color: Navy;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    font-size: 12px; /*clear: both;*/
+}
+
+.introduction p {
+    margin: 4px 0 10px 0;
+    padding: 0;
+}
+
+/* --------------------------------------------------------------------- SECTION STYLES */
+.section {
+    margin: 0 12px;
+    background-color: #FFFFFF;
+    color: #000000;
+    font-size: 10px;
+    /*	border-color: #CCCCCC;
+  border-style: solid;
+  border-width: thin;
+  width: 800px; */
+}
+
+.section h1 {
+    margin: 16px 0 6px 0;
+    padding: 2px 12px;
+    background-color: #eeeeee;
+    color: #333333;
+    font-size: 16px;
+}
+
+.section h2, .section h3, .section h4 {
+    background-color: inherit;
+    color: #333333;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    padding: 0;
+}
+
+.section h2 {
+    font-size: 14px
+}
+
+.section h3 {
+    margin-top: 6px;
+    margin-left: 0;
+    margin-right: 10px;
+    margin-bottom: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #0000DD;
+    font-size: 10px;
+}
+
+.section h4 {
+    margin: 6px 12px 0 12px;
+    font-size: 10px;
+}
+
+.section p {
+    margin: 0 12px 6px 12px;
+}
+
+.section .emulateList {
+    margin-top: 1px;
+    margin-bottom: 0;
+}
+
+.introduction .emulateList {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+/* LIST & PROCEDURE STYLES */
+.section ul, introduction ul {
+    margin-left: 37px;
+    margin-top: 5px;
+    padding-left: 5px;
+}
+
+.section ol {
+    padding-left: 0;
+    margin-left: 67px;
+}
+
+/* styles procedural steps: */
+.section .ijProcedureSteps {
+    margin: 24px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+    background-color: #effded;
+    color: #333333;
+    border-color: #8FBC8F;
+    border-style: solid;
+    border-width: thin;
+}
+
+.section .ijProcedureSteps ol {
+    padding-left: 0;
+    margin-left: 37px;
+}
+
+.section  ul li, {
+    list-style: disc;
+    padding-left: 10px;
+    margin-bottom: 4px;
+}
+
+ul.topicIndexList {
+
+    margin-left:10px;
+}
+
+.topicIndexList {
+    list-style: disc;
+    padding-left: 10px;
+    margin-top:1px;
+    margin-bottom:0;
+    font-weight:bold;
+    margin-left:15px;
+        
+}
+
+.intelliJIDEA {
+    color:#6666FF;
+    font-weight:bold;
+}
+
+.section .ijProcedureSteps ol {
+    padding-bottom: 8px;
+}
+
+/* Procedure header: */
+.section .ijProcedureSteps .procHeader {
+    font-family: "trebuchet ms", verdana, tahoma, arial, sans-serif;
+    font-weight: bold;
+    margin: 8px 4px;
+    padding: 0;
+    background-color: inherit;
+    font-size: 110%;
+    color: #004401;
+}
+
+/* 2nd Paragraph contained within a list item: */
+.section .ijProcedureSteps ol li p, .section .ijProcedureSteps ul li p {
+    margin: 4px 0 2px 0;
+}
+
+/* Definition list styles: */
+.section dl {
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+.section dt {
+    margin-left: 40px;
+    margin-top: 5px;
+    font-weight: bold;
+    color: #555555;
+}
+
+/* STYLES FOR SCREENSHOTS AND IMAGES */
+
+.section p.screenshot_holder, .section p.screenshot {
+    margin: 10px 0 8px 0;
+    text-align: center;
+    background-color: inherit;
+}
+
+/* Left-aligned screenshot: */
+.section p.screenshot {
+    text-align: left;
+    margin-left: 20px;
+}
+
+/* Screenshot captions (usage is optional) */
+.section p.ssHolderCaption, .section p.screenshotCaption {
+    margin: 0 4px 10px 4px;
+    font-weight: bold;
+    font-size: 9px;
+    background-color: inherit;
+    color: #333333;
+    text-align: center;
+}
+
+.section p.screenshotCaption {
+    text-align: left;
+    margin-left: 20px;
+}
+
+/* STYLES FOR CODE EXAMPLES */
+
+/* <DIV> class for code examples. Put code examples inside such a DIV */
+.codeEx {
+    margin: 12px;
+    padding: 2px;
+    background-color: #eeeeee;
+    color: #000000;
+    border-color: #CCCCCC;
+    border-style: solid;
+    border-width: thin;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 10px;
+    width: 75%;
+}
+
+/* Enclose actual code lines in <pre></pre>, indenting each line as nesc. */
+.codeExpre {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 11px;
+    background-color: #eeeeee;
+    padding-top:10px;
+    padding-left:20px;
+    padding-right:20px;
+    padding-bottom:20px;
+    margin-left:12px;
+    margin-right:12px;
+}
+
+/* <SPAN> classes for syntax highlughting in code examples: */
+.codeExkeyword, .keyword {
+    font-weight: bold;
+    background-color: inherit;
+    color: #000080;
+}
+
+.codeExannotation, .annotation {
+
+    background-color: inherit;
+    color: #808000;
+    font-weight: bold;
+
+}
+
+.codeExvalue, .value {
+    background-color: inherit;
+    color: #0000ff;
+}
+
+.codeExcomments, .comments {
+    background-color: inherit;
+    color: #808080;
+}
+
+.codeExfield, .field {
+    background-color: inherit;
+    color: #660e7a;
+    font-weight: bold;
+}
+
+.codeExstring, .string {
+    background-color: inherit;
+    color: #008000;
+    font-weight: bold;
+}
+
+
+.codeExerror, .error {
+    background-color: inherit;
+    color: Red;
+    padding-bottom: 2px; /* Next line is ignored by JH but works in web browsers to show curly error underline image. Comment it out for JH useage, uncomment for Browser usage  */
+/*background: url(img/error_line.gif) bottom repeat-x fixed;*/
+
+/* Use next line for JH, but comment it out if making help for web browser use */
+    text-decoration: underline;
+}
+
+.codeExhighlighted, .highlighted {
+    background-color: #ffffd7;
+    color: inherit;
+}
+
+/* LINK STYLES */
+a:link {
+    color: blue;
+    text-decoration: none;
+    border-bottom: dashed 1px #0000ff;
+}
+
+a:visited {
+    color: blue;
+    text-decoration: none;
+    border-bottom: dashed 1px #267bee;
+}
+
+a:hover {
+    color: #fb7600;
+    text-decoration: none;
+    border-bottom: dashed 1px #fb7600;
+}
+
+/* ---------------------------------------------------------------------"SEE ALSO" STYLES*/
+
+#seealso {
+    margin: 12px;
+    font-size: 10px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    background-color: White;
+    color: #F0F8FF;
+    border-color: #B0C4DE;
+    border-style: solid;
+    border-width: thin;
+    width: 60%;
+}
+
+#seealso h2 {
+    background-color: inherit;
+    color: #4A4A4A;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-weight: bold;
+    font-size: 110%;
+}
+
+#seealso p {
+    margin-left:10px;
+    color: #4A4A4A;
+    font-weight: bold;
+    margin-bottom: 2px;
+    margin-top:0;
+    font-size: 100%;
+    background-color: inherit;
+
+}
+
+ #seealso b {
+     color:black;
+ }
+
+#seealso ul {
+    list-style-type: none;
+    background-color: inherit;
+    color: #000000;
+    margin-left: 30px;
+    padding-bottom: 2px;
+    margin-top:0;
+
+}
+
+#seealso li {
+    margin-top:0;
+    margin-bottom: 0;
+    padding-left: 0;
+}
+
+#seealso a, #seealso a:link, #seealso a:visited, #seealso a:hover {
+    background-color: inherit;
+    color: #666699;
+    text-decoration: underline;
+    font-weight: normal;
+
+}
+
+/* ---------------------------------------------------------------------DEPRECATED STYLES */
+/* DEPRECATED */
+p.seealso {
+    margin-left: 50px;
+}
+
+/* DEPRECATED */
+p.seealso a {
+    background-image: url( img/seealso_blt.gif );
+    padding-right: 13px;
+}
+
+/* DEPRECATED */
+ul.seealso {
+    padding-left: 10px;
+}
+
+/* DEPRECATED */
+ul.seealso li {
+    background-image: url( img/seealso_blt.gif );
+    margin-left: 0; /* DEPRECATED */
+}
+
+a:hover {
+    font-weight: normal;
+    color: orange;
+}
+
+/* ---------------------------------------------------------------------NOTE STYLES */
+
+/* Type-specific note styles */
+.ijSmallNote, .note {
+    background-color: #e0e0e0;
+    color: Black;
+    border-width: 1px;
+    border-collapse: collapse;
+}
+
+ijNote a {
+    color: #191970;
+}
+
+.ijNote {
+    background-color: #d9eefd;
+    color: #0075C9;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-color: #8CCFFF;
+    border-style: solid;
+    border-width: thin;
+
+}
+
+.ijWarning a {
+    color: #3C006A;
+}
+
+.ijWarning {
+    background-color: #ffecfe;
+    color: #3C006A;
+    border-collapse: collapse;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-color: #E607BF;
+    border-style: solid;
+    border-width: thin;
+
+}
+
+.ijTip a {
+    color: olive;
+}
+
+.ijTip {
+    background-color: #fffae7;
+    color: olive;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-color: #FAE184;
+    border-style: solid;
+    border-width: thin;
+
+}
+
+table.simpletable {
+    margin-left: 20px;
+    margin-top: 10px;
+    border-width: 1px;
+    border-collapse: collapse;
+    border-color: #CCCCCC;
+
+}
+
+table.simpletable th, table.simpletable td, {
+    text-align: left;
+    padding-left: 5px;
+    padding-top: 5px;
+    border-width: 1px;
+    border-color: #CCCCCC;
+
+}
+
+/* Table class for various types of notes which we implement in this primitive way due to limitations of JavaHelp */
+table.note, table.ijSmallNote, table.ijNote, table.ijWarning, table.ijTip, {
+    margin-top: 12px;
+    margin-left: 30px;
+    font-size: 9px;
+    border-style: solid;
+    border-color: #CCCCCC;
+    border-width: thin;
+    padding: 4px;
+}
+
+*
+
+/
+
+/* Styles for note tables. These are here so that they will appear correctly when contained inside another table. */
+table.note,
+    table.note td,
+    table.ijNote,
+    table.ijNote td {
+    background-color: #d9eefd;
+    color: #191970;
+}
+
+table.ijTip,
+    table.ijTip td {
+    background-color: #fffae7;
+    color: Olive;
+}
+
+table.ijWarning, table.ijWarning td {
+    background-color: #ffecfe;
+    color: #3C006A;
+}
+
+table.ijSmallNote, table.ijSmallNote td {
+    background-color: #e0e0e0;
+    color: Black;
+}
+
+/* Class for the icon cell in a Note table */
+td.noteIcon {
+    text-align: center;
+    vertical-align: middle;
+    margin: 0 6px;
+    width: 5%;
+}
+
+/* Styles setting BG for table cells inside various classes of tables */
+table.ijNote td.noteIcon {
+    background-color: #d9eefd;
+}
+
+table.ijTip td.noteIcon {
+    background-color: #fffae7;
+}
+
+table.ijWarning td.noteIcon {
+    background-color: #ffecfe;
+}
+
+table.ijSmallNote td.noteIcon, table.ijSmallNote td.NoteIcon, table.note td.NoteIcon {
+    background-color: #e0e0e0;
+    color: Black;
+}
+
+/* styles to allow multiple paras in a note table cell */
+table.note td p, table.ijSmallNote td p, table.ijNote td p, table.ijWarning td p, table.ijTip td p {
+    margin: 4px 0;
+    padding: 0;
+    font-size: 9px;
+}
+
+/* Paragraph styles to support exsting constructs  */
+
+p.ijSmallNote, p.ijNote, p.ijWarning, p.ijTip {
+    margin: 12px 30px;
+    font-size: 9px;
+    border-style: solid;
+    border-color: #CCCCCC;
+    border-width: thin;
+    padding: 2px 4px 6px 4px;
+    vertical-align: text-top;
+}
+
+/* OLD STYLES PRESERVED FROM 1st ITERATION - please phase out */
+
+/* Not sure what these are for - kept them in revised version of this CSS */
+.unknown {
+    background-color: inherit;
+    color: red;
+}
+
+.warning {
+    background-color: #f6ebbc;
+}
+
+/*Styles for codes in help var1*/
+
+/*ol li span {
+    font-size:12px;
+    color:#000000;
+} */
+
+.left img {
+    float: left;
+    margin-right: 20px;
+}
+
+.right img {
+    float: right;
+    margin-right: 0;
+    margin-left: 20px;
+}
+
+/*Inline code styles*/
+
+code {
+    font-family: "Courier New", Courier, monospace;
+    font-size: inherit;
+}
+
+/* DEPRECATED. You can now kust use normal HTML <code></code> tags for inline code. */
+.ijInlineCode {
+    font-family: "Courier New", Courier, monospace;
+    color: #00008B;
+}
+
+/* Style for keyboard shortcuts named in text */
+.shortcut {
+    font-family: "Courier New", Courier, monospace;
+    font-weight: bold;
+    font-size: 110%;
+    color: #b22c0d;
+}
+
+/* Style for GUI controls named in text */
+.ijControl {
+    font-weight: bold;
+    font-size: inherit;
+    background-color: inherit;
+    color: #00008B;
+}
+
+/* Style for menu items and paths named in text */
+.ijMenu {
+    /*font-family: "Courier New", Courier, monospace;*/
+    font-weight: bold;
+    font-size: inherit;
+    background-color: inherit;
+    color: #5B005B;
+}
+
+/* Style for property names in text and reference material */
+.ijProperty {
+    font-weight: bold;
+    background-color: inherit;
+    color: #6C006C;
+}
+
+/* ---------------------------------------------------------------------TABLE STYLES */
+
+.ijTable {
+    margin: 10px 18px;
+    margin-top: 20px; /*width:780px;*/
+    border-bottom-style: solid;
+    border-left-width: thin;
+    border-bottom-color: #eeeeee;
+
+
+
+}
+
+.ijTable th {
+    background-color: #999999;
+    color: #eeeeee;
+}
+
+.ijTable td {
+    background-color: #f7f7f7;
+    vertical-align: text-top;
+    padding-left:4px;
+padding-top:4px;
+padding-bottom:4px;
+padding-right:4px;
+}
+
+.ijTable .ijRowOdd td {
+    background-color: #dddddd;
+}
+
+.ijTable .ijRowHead td {
+  background-color: #999999;
+  color: #eeeeee;
+    font-weight:bold;
+}
+
+/* ---------------------------------------------------------------------FOOTER STYLES */
+
+#footer {
+    margin-top: 24px; /* Use px here, not em (for dumb JH) */
+    padding-left: 12px;
+    padding-bottom: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #cccccc; /* Ignored by JH */
+    background-color: #f1faff;
+}
+
+#footer p {
+    width: 765px;
+    position: relative;
+    margin: 0 auto 50em auto;
+    font-family: verdana, arial, serif;
+    font-size: 90%;
+    background-color: inherit;
+    color: #999999;
+    text-align: left;
+}
+
+#footer em {
+    display: block;
+    float: right;
+    font-style: normal;
+}
+
+#footer a, #footer a:link, #footer a:visited {
+
+    font-weight: bold;
+    color: #999999;
+    padding-right: 7px;
+    text-decoration: underline;
+
+}
+
+#footer a:hover {
+    padding-right: 7px;
+    text-decoration: none;
+    text-decoration: underline;
+
+}
+
+#footer strong {
+    display: block;
+    font-weight: normal;
+}
+
+#footer hr {
+    clear: both;
+    margin-top: 3em;
+    border: 0;
+    border-top: none;
+
+}
+
+
+
+dl {
+
+    border-width: 1px;
+    background-color: #eeeeee;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+}
+
+dt {
+
+    margin-left: 10px;
+
+}
+
+dd {
+    margin-left: 55px;
+}
+
+.topicpath {
+    background-color:#ffffcc;
+    border-color:#FFCC33;
+    margin-left:2px;
+    border-style: solid;
+    border-width: thin;
+    padding-left:5px;
+    padding-top:5px;
+    padding-bottom:5px;
+    padding-right:5px;
+    color:#FF6600;
+    font-weight:bold;
+    font-size:8px;
+
+}
+
+.topicpath a {
+    color:#FF6600;
+    font-weight:bold;
+    font-size:8px;
+}
+
+/* -----------------------------------------------------------------------------------------------------
+NOTES:
+This CSS deliberately fails to use many of CSS's best features and practices because the WJHV (Wretched 
+JavaHelp Viewer) simply does not support them. All styles have been tested in the WJHV 2.0 (which is 
+integrated with IDEA). Any additions/changes MUST be tested in JavaHelp viewer and a recent web browser, 
+and content should be readable in both!!
+
+This CSS emphasizes apppearance in the WJHV 2.0. Documents styled with this CSS have some appearance 
+quirks when viewed in a good web browser. They should be basically usable in a browser. If Help moves to 
+browser-based viewer, some monor tweaks will be needed for best appearance: font-sizes, for example. 
+
+CAVEATS:
+
+   1. JavaHelp 2.0 doesn't seem to handle CSS borders consistently for all elements. This esp. applies 
+      to table elements. 
+
+      Border does work for some elements, but NOT when written "shorthand" like:
+      "border 1px solid #cccccc;"
+
+       You must spell out each property: style, width, color. Width cannot be in PX, but rather "thin"
+       or "medium".
+
+       Border doesn't seem to work at all for <img> tags - !!
+
+    2. Do not use CSS Width property for table elements etc. if CSS is used with JavaHelp.
+      Use the "width" attribute in the HTML for tables and table cells. ALSO: specify the
+      cellpadding and cellspacing attributes in <table> tags so JH browser doesn't go all quirky.
+
+    3. Do not use shorthand values for colors if CSS is used for JavaHelp. JH only gets the 6-byte
+       format. For example:
+                   Wrong:   #699;      #fff
+                   Right:   #669999;   #ffffff;
+
+    4. JavaHelp doesn't handle background images.
+
+   
+*/
+
+

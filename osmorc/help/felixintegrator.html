@@ -1,0 +1,114 @@
+<!--
+   Copyright (c) 2007-2008, Osmorc Development Team
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without modification,
+   are permitted provided that the following conditions are met:
+
+       * Redistributions of source code must retain the above copyright notice, this list
+         of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above copyright notice, this
+         list of conditions and the following disclaimer in the documentation and/or other
+         materials provided with the distribution.
+       * Neither the name of 'Osmorc Development Team' nor the names of its contributors may be
+         used to endorse or promote products derived from this software without specific
+         prior written permission.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+   THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+   OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<html>
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <META HTTP-EQUIV="Cache-Control" CONTENT="no-store, no-cache, must-revalidate">
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <meta name="robots" content="none">
+  <meta name="copyright" content="Osmorc Development Team, http://osmorc.org">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link rel="stylesheet" type="text/css" media="all" href="DefaultCSS/s.css">
+  <title>Apache Felix Framework Integrator</title>
+</head>
+<body id="IJ_help" class="template">
+<div id="container">
+  <div id="header">
+    <h1>Apache Felix Framework Integrator</h1>
+  </div>
+  <div class="topicpath">
+    <table width="100%">
+      <tr>
+        <td width="80%"><strong>You are here:</strong>&nbsp;&nbsp;<a href="osmorc.html">Osmorc</a>&nbsp;/&nbsp;<a
+            href="settings.html">Settings</a>&nbsp;/&nbsp;<a href="frameworkdefinitions.html">Framework Definitions</a>&nbsp;/&nbsp;<strong>Apache
+          Felix Framework Integrator</strong>
+        </td>
+        <td align="right"><a href="feedback.html">Next</a>
+          |
+          <a href="knopflerfishintegrator.html">Previous</a></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="introduction">
+
+    <p>
+      The <strong>Felix framework integrator</strong> provides integration for Apache Felix.
+    </p>
+  </div>
+
+
+  <div id="content">
+    <div class="section">
+      <h1>The Base Directory</h1>
+
+      <p>
+        As there is no downloadable package containing both sources and binary bundles, here a description of what the
+        integrator expects to find follows.
+      </p>
+
+      <p>
+        At the time of this writing the current version of Apache Felix is 1.0.3. The downloadable binary ZIP or tar
+        contains the folder <strong>felix-1.0.3</strong>. Unpack this folder somewhere and specify it as the base folder
+        for the
+        integrator. The integrator loads the bundle jars from the <strong>bin</strong> and <strong>bundle</strong> folders.
+      </p>
+
+      <p>
+        If you'd like to access the sources of the bundles in IDEA, create a folder named
+        <strong>src</strong> below
+        the base folder and here two folders <strong>bin</strong> and <strong>bundle</strong>.
+      </p>
+
+      <p>
+        Copy all source ZIPs for felix.jar into the <strong>src/bin</strong> folder. main-1.0.3.zip and framework-1.0.3.zip should be put
+        here. Unfortunately they don't contain the sources for all classes in felix.jar and you'll have to
+        download other files like org.osgi.core-1.0.0.zip and put them here to get the sources for all classes.
+      </p>
+
+      <p>
+        Put the source ZIPs for the other bundles into <strong>src/bundle</strong>.
+      </p>
+
+      <p>
+        Don't change the source ZIPs of any of the bundles. The integrator expects to find the Felix
+        specific folder structure inside them. A source ZIP named mybundle-1.00.zip will contain the sources
+        in the folder mybundle-1.00/src/main/java
+      </p>
+
+    </div>
+  </div>
+  <div id="footer">
+    <p>Comments, questions, suggestions? See the <a href="feedback.html">Feedback</a> page.
+      <br>
+      <br>
+      <b>Copyright &copy; 2007-2008 Osmorc Development Team.</b>
+    </p>
+  </div>
+</body>
+</html>

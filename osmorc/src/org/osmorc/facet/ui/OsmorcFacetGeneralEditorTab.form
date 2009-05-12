@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab">
+  <grid id="bbf5b" binding="_root" layout-manager="FormLayout">
+    <rowspec value="center:p:noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <colspec value="fill:d:noGrow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:max(d;4px):grow"/>
+    <constraints>
+      <xy x="20" y="20" width="825" height="912"/>
+    </constraints>
+    <properties/>
+    <border type="empty">
+      <size top="4" left="4" bottom="4" right="4"/>
+      <color color="-16777216"/>
+    </border>
+    <children>
+      <component id="51bd0" class="javax.swing.JRadioButton" binding="_manuallyEditedRadioButton" default-binding="true">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.manuallyedited"/>
+        </properties>
+      </component>
+      <component id="6837c" class="javax.swing.JRadioButton" binding="_controlledByOsmorcRadioButton" default-binding="true">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.controlledbyosmorc"/>
+        </properties>
+      </component>
+      <component id="5eac9" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.manifestfilepolicy"/>
+        </properties>
+      </component>
+      <component id="62a36" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.manifestfilelocation"/>
+        </properties>
+      </component>
+      <component id="70cf9" class="javax.swing.JRadioButton" binding="_useProjectDefaultManifestFileLocation">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.manifestfilelocation.useprojectdefault"/>
+        </properties>
+      </component>
+      <grid id="e8153" layout-manager="FormLayout">
+        <rowspec value="center:d:grow"/>
+        <colspec value="left:20px:noGrow"/>
+        <colspec value="left:d:grow(2.0)"/>
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="ba183" class="javax.swing.JRadioButton" binding="_useModuleSpecificManifestFileLocation">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+            <properties>
+              <horizontalAlignment value="10"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="c3c4b" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_manifestFileChooser">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+            <properties>
+              <enabled value="false"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+  <buttonGroups>
+    <group name="_manifestPolicy">
+      <member id="444b1"/>
+      <member id="444b1"/>
+      <member id="6837c"/>
+      <member id="51bd0"/>
+    </group>
+    <group name="buttonGroup1">
+      <member id="70cf9"/>
+      <member id="ba183"/>
+    </group>
+    <group name="_bndVariantGroup">
+      <member id="c09b8"/>
+      <member id="51a9"/>
+    </group>
+  </buttonGroups>
+</form>

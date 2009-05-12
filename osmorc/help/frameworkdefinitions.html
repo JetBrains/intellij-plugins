@@ -1,0 +1,132 @@
+<!--
+   Copyright (c) 2007-2008, Osmorc Development Team
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without modification,
+   are permitted provided that the following conditions are met:
+
+       * Redistributions of source code must retain the above copyright notice, this list
+         of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above copyright notice, this
+         list of conditions and the following disclaimer in the documentation and/or other
+         materials provided with the distribution.
+       * Neither the name of 'Osmorc Development Team' nor the names of its contributors may be
+         used to endorse or promote products derived from this software without specific
+         prior written permission.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+   THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+   OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<html>
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <META HTTP-EQUIV="Cache-Control" CONTENT="no-store, no-cache, must-revalidate">
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <meta name="robots" content="none">
+  <meta name="copyright" content="Osmorc Development Team, http://osmorc.org">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link rel="stylesheet" type="text/css" media="all" href="DefaultCSS/s.css">
+  <title>Framework Definitions</title>
+</head>
+<body id="IJ_help" class="template">
+<div id="container">
+  <div id="header">
+    <h1>Framework Definitions</h1>
+  </div>
+  <div class="topicpath">
+    <table width="100%">
+      <tr>
+        <td width="80%"><strong>You are here:</strong>&nbsp;&nbsp;<a href="osmorc.html">Osmorc</a>&nbsp;/&nbsp;<a
+            href="settings.html">Settings</a>&nbsp;/&nbsp;<strong>Framework Definitions</strong>
+        </td>
+        <td align="right"><a href="feedback.html">Next</a>
+          |
+          <a href="projectsettings.html">Previous</a></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="introduction">
+
+    <p>
+      The <span class="ijControl">Framework Definitions</span> tab of Osmorc's settings dialog contains the framework definitions
+      known by the currently used <span class="intelliJIDEA">IntelliJ IDEA</span> installation.
+    </p>
+  </div>
+
+
+  <div id="content">
+    <div class="section">
+      <p>
+        Different implementation of the OSGI specification are available. Each of them has a different set of
+        base bundles, different ways to start them and a different folder layout containing the binary bundles and
+        their sources.
+      </p>
+
+      <p>
+        Osmorc uses the notion of <strong>framework integrators</strong> and <strong>framework instances</strong> to
+        cope
+        with this diversity.
+      </p>
+
+      <p>
+        A framework integrator is used to integrate an instance of of a specific framework implementation. Osmorc
+        contains framework integrators for <a href="equinoxintegrator.html">Eclipse Equinox</a>,
+        <a href="knopflerfishintegrator.html">Knopflerfish</a> and <a href="felixintegrator.html">Apache Felix</a>. An
+        extension point for framework integrators is also available. So integrators for framework implementations not
+        directly supported by Osmorc can be developed by third parties.
+      </p>
+
+      <p>
+        A framework instance is a concrete installation of a framework implementation. As framework instances are
+        normally
+        not installed in the folder structure of a project, a framework instance with a specific name can be installed
+        in different locations under different installations of <span class="intelliJIDEA">IntelliJ IDEA</span>. A
+        project
+        only knows the name of the framework instance it uses. Osmorc creates the connection to the framework instance
+        if
+        it exists as soon as the project is opened.
+      </p>
+
+      <div class="ijProcedureSteps">
+        <div class="procHeader">Defining a framework instance</div>
+        <ol>
+          <li>Open the tab <span class="ijControl">Framework Definitions</span> in
+            <nobr><span class="ijMenu">File | Settings | Project Settings | Osmorc.</span></nobr>
+          </li>
+          <li>
+            Click on the <span class="ijControl">Add</span> button
+          </li>
+          <li>
+            Select an integrator
+          </li>
+          <li>
+            Select the base folder of the framework instance (Take a look at the descriptions of the different
+            framework integrators to find out what constraints must be fullfilled by this folder).
+          </li>
+          <li>
+            Choose a unique name for the framework instance.
+          </li>
+        </ol>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div id="footer">
+  <p>Comments, questions, suggestions? See the <a href="feedback.html">Feedback</a> page.
+    <br>
+    <br>
+    <b>Copyright &copy; 2007-2008 Osmorc Development Team.</b>
+  </p>
+</div>
+</body>
+</html>

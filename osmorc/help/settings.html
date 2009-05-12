@@ -1,0 +1,130 @@
+<!--
+   Copyright (c) 2007-2008, Osmorc Development Team
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without modification,
+   are permitted provided that the following conditions are met:
+
+       * Redistributions of source code must retain the above copyright notice, this list
+         of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above copyright notice, this
+         list of conditions and the following disclaimer in the documentation and/or other
+         materials provided with the distribution.
+       * Neither the name of 'Osmorc Development Team' nor the names of its contributors may be
+         used to endorse or promote products derived from this software without specific
+         prior written permission.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+   THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+   OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<html>
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <META HTTP-EQUIV="Cache-Control" CONTENT="no-store, no-cache, must-revalidate">
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <meta name="robots" content="none">
+  <meta name="copyright" content="Osmorc Development Team, http://osmorc.org">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link rel="stylesheet" type="text/css" media="all" href="DefaultCSS/s.css">
+  <title>Settings</title>
+</head>
+<body id="IJ_help" class="template">
+<div id="container">
+  <div id="header">
+    <h1>Settings</h1>
+  </div>
+  <div class="topicpath">
+    <table width="100%">
+      <tr>
+        <td width="80%"><strong>You are here:</strong>&nbsp;&nbsp;<a href="osmorc.html">Osmorc</a>&nbsp;/&nbsp;<strong>Settings</strong>
+        </td>
+        <td align="right"><a href="runconfigurations.html">Next</a>
+          |
+          <a href="setup.html">Previous</a></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="introduction">
+    <p>There are two places where Osmorc's settings can be changed:</p>
+    <ul style="list-style-image:url(images/blue_romb_blt.png)">
+      <li> Osmorc's settings dialog provides access to project specific and application wide settings. It can be found in
+        <nobr><span class="ijMenu">File | Settings | Project Settings | Osmorc</span></nobr>.
+      </li>
+      <li>Module specific settings are stored in the facet settings of the Osmorc facet.
+        Go to <nobr><span class="ijMenu">File | Settings | Project Settings | Project Settings</span></nobr>, click on
+        <nobr><span class="ijMenu">Modules</span></nobr>, open the node of a module and click on <nobr><span class="ijMenu">Osmorc</span></nobr>
+      to access the Osmorc facet setting of the module</li>
+    </ul>
+  </div>
+
+
+  <div id="content">
+    <div class="section">
+      <h1>Project and Application Settings</h1>
+      <p>
+        The settings dialog contains two tabs labeled <span class="ijControl">Project Settings</span> and <span class="ijControl">Framework Definitions</span>
+      </p>
+      <p>
+        <a href="projectsettings.html">Project Settings</a> is used to change settings specific for the current project like
+        defining which framework instance is used by the project.
+      </p>
+      <p>
+        <a href="frameworkdefinitions.html">Framework Definitions</a> is used to define the locations and other parameters for framework
+        instances installed on the computer <span class="intelliJIDEA">IntelliJ IDEA</span> is currently running.
+      </p>
+
+    </div>
+    <div class="section">
+      <h1>Facet Settings</h1>
+      <p>
+        In the facet settings you first have to decide whether you will edit the manifest files yourself or whether you
+        want Osmorc to create it with bnd from the dependencies on other modules and libraries.
+      </p>
+      <p>
+        When you decide to maintain the manifest file manually, Osmorc creates dependencies on modules and the framework instance
+        bundles in the module where the manifest file is changed. Here you take charge of the OSGI dependencies between
+        your bundles and Osmorc tries to match them with corresponding module dependencies.
+      </p>
+      <p>
+        Letting Osmorc generate the manifest files for you is exactly the other way around. You develop your application
+        as you would develop any other application in IDEA. You add dependencies on other modules and libraries and Osmorc
+        tries to translate those dependencies into OSGI dependencies when running your bundles.
+      </p>
+      <p>If you are maintaining the manifest file yourself, you have to tell Osmorc where it is to be found. You can change
+        this location for each module or you can define a project default in the project settings and use it here.</p>
+      <p>Each time a module is compiled, Osmorc creates a bundle JAR for that module. This JAR is used when running
+        an Osmorc run configuration. You can change how the JAR is named and where it is put, but for most cases the
+        created default should be OK.</p>
+      <p>The created JAR contains the compilation output and the manifest file - either the manually maintained or
+        one created by Osmorc. Sometimes you will need to add some other files that need to be copied into the
+        generated JAR. For Eclipse RCP bundles - or plugins as they are called there - you will need to add the plugin.xml.
+        You can do this in the table listing additional JAR content. The first column takes the path to the source
+        file relative to the content root of the module and the second column takes the path to the destination file.
+        So since the plugin.xml of an Eclipse RCP plugin normally resides in the root of a plugin, you will type in
+        <strong>plugin.xml</strong> for both columns of that entry. Future versions will provide a file chooser to
+        choose the source file.</p>
+      <p>Note that currently the table for the additional JAR contents is very simple. It grows automatically as you
+        type in new file definitions. There is always an empty row at the bottom that waits for new content. If you
+        want to remove an entry, simply remove both the source and destination definition for it. It is then
+        automatically deleted.</p>
+    </div>
+  </div>
+</div>
+<div id="footer">
+  <p>Comments, questions, suggestions? See the <a href="feedback.html">Feedback</a> page.
+    <br>
+    <br>
+    <b>Copyright &copy; 2007-2008 Osmorc Development Team.</b>
+  </p>
+</div>
+</body>
+</html>

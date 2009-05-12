@@ -1,0 +1,223 @@
+<!--
+   Copyright (c) 2007-2008, Osmorc Development Team
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without modification,
+   are permitted provided that the following conditions are met:
+
+       * Redistributions of source code must retain the above copyright notice, this list
+         of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above copyright notice, this
+         list of conditions and the following disclaimer in the documentation and/or other
+         materials provided with the distribution.
+       * Neither the name of 'Osmorc Development Team' nor the names of its contributors may be
+         used to endorse or promote products derived from this software without specific
+         prior written permission.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+   THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+   OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<html>
+<head>
+  <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <META HTTP-EQUIV="Cache-Control" CONTENT="no-store, no-cache, must-revalidate">
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <meta name="robots" content="none">
+  <meta name="copyright" content="Osmorc Development Team, http://osmorc.org">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link rel="stylesheet" type="text/css" media="all" href="DefaultCSS/s.css">
+  <title>Change Log</title>
+</head>
+<body id="IJ_help" class="template">
+<div id="container">
+  <div id="header">
+    <h1>Change Log</h1>
+  </div>
+  <div class="topicpath">
+    <table width="100%">
+      <tr>
+        <td width="80%"><strong>You are here:</strong>&nbsp;&nbsp;<a href="osmorc.html">Osmorc</a>&nbsp;/&nbsp;<strong>Change
+          Log</strong></td>
+        <td align="right"><a href="feedback.html">Next</a>
+          |
+          <a href="settings.html">Previous</a></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="introduction">
+
+    <p>The history of Osmorc
+    </p>
+
+  </div>
+
+  <div id="content">
+    <div class="section">
+      <h1>0.13.0 | 02-may-2009</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Maven Support: Imports/Updates Osmorc facet from Maven POM</li>
+        <li>Maven Support: Checks Maven dependencies to be OSGi compliant</li>
+        <li>Maven Support: Integration with SpringSource public repository to find replacements for non-osgi libraries.</li>
+        <li>Library Bundling: default bundling rule corrected so it works out of the box for most scenarios</li>
+        <li>Lots of internal refactoring and bugfixes.</li>
+        <li>For the Equinox run configuration separate config and working directories can de defined.</li>
+        <li>Added a new option that will force always force a rebuild of the bundle jar.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.12.0 | 22-feb-2009</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Added autocompletion for known manifest header names.</li>
+        <li>Equinox 3.4 source bundles are now used correctly.</li>
+        <li>Reworked additional JAR contents section in facet configuration. Source files and directories are now
+          selected via a file chooser and a destination name that will most times be correct is inferred.
+        </li>
+        <li>Splitted the facet editor into smaller parts.</li>
+        <li>Changes to files belonging to the additional JAR contents of a bundle now trigger a rebuild of the JAR.</li>
+        <li>Added specific Equinox, Bnd and Spring DM headers to the headers known by Osmorc.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.11.0 | 31-dec-2008</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Equinox run configuration: Additional JVM parameters can be specified.</li>
+        <li>Equinox run configuration: Additional Equinox parameters can be specified.</li>
+        <li>Equinox run configuration: Runtime directory can be specified.</li>
+        <li>Equinox run configuration: Products and Applications based on Eclipse 3.1 and 3.2 can now be run.</li>
+        <li>A regular expressionn can be specified that filters out files from the additional JAR contents.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.10.0 | 15-dec-2008</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>OSGi bundles run configuration: bundles which are part of the framework can now be started.</li>
+        <li>OSGi bundles run configuration: libraries which are themselves OSGi bundles can now be started.</li>
+        <li>Multiple rules can now be applied when building a library bundle.</li>
+        <li>Bundle version from facet dialog is now correctly built into the manifest.</li>
+        <li>Library cache can now be deleted with a button in library building dialog.</li>
+        <li>Fragment bundles are now handled correctly when manifest files are edited manually.</li>
+        <li>The classpath used by the run configurations to start the OSGi container now only contains what is needed to
+          start the container.
+        </li>
+        <li>Added spell checking for manifest header names.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.9.0 | 16-nov-2008</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Added integration of Concierge OSGi</li>
+        <li>OSGi bundles run configuration: bundle start levels can be set.</li>
+        <li>OSGi bundles run configuration: debug mode can now be switched on for every framework type.</li>
+        <li>OSGi bundles run configuration: boot delegation and system packages can be specified for Felix and
+          Knopflerfish frameworks.
+        </li>
+        <li>Eclipse Equinox run configuration: Checks whether an Equinox framework instance is set for the project
+          and shows helpful error messages if this is not the case..
+        </li>
+        <li>Rules for the creation of bundles for libraries can now be specified.</li>
+        <li>Bug fixes.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.8.0 | 25-oct-2008</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Ported to IDEA 8.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.7.0 | 20-oct-2008</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Running of Bundles in Eclipse Equinox.</li>
+        <li>Running of Eclipse Equinox applications and products</li>
+        <li>It is now possible to specify additional files and folders that are copied into the generated bundle jars.
+        </li>
+        <li>Osmorc now can handle modules with multiple content roots.</li>
+        <li>Improved bundle dependency resolver that is used when the manifest files are generated by Osmorc.</li>
+        <li>Some bug fixes.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.6.0 | 04-aug-2008</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Running of Bundles in Knopflerfish and Apache Felix</li>
+        <li>Bundle JARs are built automatically when the corresponding module is built</li>
+        <li>Manifest files can be generated automatically when they are needed. Bnd is then used to generate them</li>
+        <li>Errors can now be reported into Osmorc's Jira with IDEA's error reporting mechanism.</li>
+        <li>A module with all framework instance libraries is now created and maintained.</li>
+        <li>Diverse bug fixes.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.5.0 | 21-apr-2008</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Fixed creation and removal of framework instances and their libraries</li>
+        <li>Invalid imports from a framework instance library are now recognized</li>
+        <li>An error message is now shown if the chosen base folder is not a valid base folder for the chosen framework
+          integratot
+        </li>
+        <li>Imports of classes and packages in the same bundle are now not marked as invalid anymore.</li>
+        <li>Added more documentation.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.4.1 | 30-mar-2008</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>The uploaded ZIP didn't contain an Osmorc directory. IDEA didn't succeed to install the plugin therefore.
+        </li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.4.0 | 30-mar-2008</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Framework instances can now be defined and used. Currently Eclipse Equinox, Knopflerfish and Apache Felix
+          are
+          supported
+        </li>
+        <li>Autodetection of Osmorc facet.</li>
+        <li>Added a bit of documentation which is available through IDEA's help system.</li>
+        <li>If the Osmorc facet is added to a module that doesn't contain a manifest file, a manifest file is created
+          for it.
+        </li>
+        <li>Osmorc now handles invalid manifest files a bit more gracefully..</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.3.0 | 21-jan-2008</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Integrated Eclipse Equinox for resolving of bundle dependencies.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.2.0 | 21-dec-2007</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Bug fixed: Import-Package and Export-Package only worked with one-level packages.</li>
+        <li>Added parsing of Bundle-Version.</li>
+        <li>Added syntax highlighting for attribute and directive names.</li>
+        <li>Added settings page for colors and fonts of manifest files.</li>
+      </ul>
+    </div>
+    <div class="section">
+      <h1>0.1.0 | 13-dec-2007</h1>
+      <ul style="list-style-image:url(images/blue_romb_blt.png)">
+        <li>Initial release</li>
+        <li>Export-Package, Import-Package and Require-Bundle work, but version information isn't yet parsed.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div id="footer">
+  <p>
+    <b>Copyright &copy; 2007-2008 Osmorc Development Team.</b>
+  </p>
+</div>
+</body>
+</html>

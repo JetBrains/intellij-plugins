@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Built-By: Jan Thomae
+Created-By: Osmorc
+Bundle-Activator: org.osmorc.run.managingbundle.ManagingBundleActivator
+Import-Package: org.osgi.framework;version="1.3",org.osgi.service.packageadmin;version="1.2"
+Bundle-Version: 1.0.0.SNAPSHOT
+Bundle-Name: Osmorc Managing Bundle
+Build-Jdk: 1.5.0_14
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.osmorc.run.managingbundle.ManagingBundle

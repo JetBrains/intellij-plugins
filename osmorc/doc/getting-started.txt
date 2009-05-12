@@ -1,0 +1,33 @@
+=======================================================
+ Quick Instructions for new developers of Osmorc
+=======================================================
+
+1. Get the IntellIJ Open API:
+   - download: http://www.jetbrains.com/idea/download/index.html#kit
+   - unzip to some folder "devel/openapidoc"
+
+2. Get Idea compiled for 1.5
+   - download: http://download.jetbrains.com/idea/idea-7.0.3-jdk15.zip
+   - unzip to some folder "devel/idea-jdk15"
+
+3. Set up IDEA SDK
+   - Open project settings
+   - Select Project SDK
+   - Click "New"
+   - Select "IntelliJ IDEA SDK"
+   - Select the folder "devel/idea-jdk15" from step 2
+   - Select JDKs on the left
+   - In Classpath tab, click on Add..
+   - Select idea.jar from "devel/idea-jdk15/lib" from step 2
+   - Switch to Javadoc tab
+   - Click Add...
+   - Select "devel/openapi/help" folder from step 1
+
+4. Ready to run.
+   - Try building
+   - Add a new run configuration of type "plugin"
+   - add VM options: -Xmx512m -XX:MaxPermSize=256m so you can test bigger projects
+   - Start that configuration (might take some time to fire up)
+
+
+   

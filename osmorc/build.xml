@@ -1,0 +1,169 @@
+<!--
+   Copyright (c) 2007-2008, Osmorc Development Team
+   All rights reserved.
+
+   Redistribution and use in source and binary forms, with or without modification,
+   are permitted provided that the following conditions are met:
+
+       * Redistributions of source code must retain the above copyright notice, this list
+         of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above copyright notice, this
+         list of conditions and the following disclaimer in the documentation and/or other
+         materials provided with the distribution.
+       * Neither the name of 'Osmorc Development Team' nor the names of its contributors may be
+         used to endorse or promote products derived from this software without specific
+         prior written permission.
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+   MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+   THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+   OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+   EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<project name="Osmorc" default="buildSourceZIP" basedir=".">
+
+    <property file="build.properties"/>
+    <patternset id="ignored.files">
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/SCCS/**"/>
+        <exclude name="**/RCS/**"/>
+        <exclude name="**/rcs/**"/>
+        <exclude name="**/.DS_Store/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/.sbas/**"/>
+        <exclude name="**/.IJI.*/**"/>
+        <exclude name="**/vssver.scc/**"/>
+        <exclude name="**/vssver2.scc/**"/>
+    </patternset>
+    <patternset id="compiler.resources">
+        <include name="**/?*.properties"/>
+        <include name="**/?*.xml"/>
+        <include name="**/?*.gif"/>
+        <include name="**/?*.png"/>
+        <include name="**/?*.jpeg"/>
+        <include name="**/?*.jpg"/>
+        <include name="**/?*.html"/>
+        <include name="**/?*.dtd"/>
+        <include name="**/?*.tld"/>
+    </patternset>
+
+    <path id="jdk.classpath.idea_plugin_jdk">
+        <fileset dir="${jdk.home.idea_plugin_jdk}">
+            <include name="lib/*.jar"/>
+            <include name="plugins/maven/lib/*.jar"/>
+        </fileset>
+    </path>
+
+    <property name="module.jdk.classpath.osmorc" value="jdk.classpath.idea_plugin_jdk"/>
+
+
+    <dirname property="module.osmorc.basedir" file="${ant.file}"/>
+    <property name="osmorc.output.dir" value="${module.osmorc.basedir}/classes/production/Osmorc"/>
+    <property name="bin.jar" value="${module.osmorc.basedir}/Osmorc.zip"/>
+    <property name="source.zip" value="${module.osmorc.basedir}/Osmorc_src.zip"/>
+
+
+    <path id="osmorc.module.classpath">
+        <path refid="${module.jdk.classpath.osmorc}"/>
+        <pathelement location="${module.osmorc.basedir}/lib/org.eclipse.osgi.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/bnd-0.0.254.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/binding-2.0.6.jar"/>
+    </path>
+
+    <path id="osmorc.module.sourcepath">
+        <dirset dir="${module.osmorc.basedir}">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+    <path id="osmorc.module.test.sourcepath">
+        <dirset dir="${module.osmorc.basedir}">
+            <include name="src_test"/>
+        </dirset>
+    </path>
+
+    <target name="clean" description="cleanup module">
+        <delete dir="${osmorc.output.dir}"/>
+    </target>
+
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="jdk.classpath.idea_plugin_jdk"/>
+
+    <target name="compile.module.osmorc" description="Compile module Osmorc; production classes">
+        <mkdir dir="${osmorc.output.dir}"/>
+        <javac2 destdir="${osmorc.output.dir}" debug="on" nowarn="off" memorymaximumsize="128m" fork="true"
+                target="1.5">
+            <classpath refid="osmorc.module.classpath"/>
+            <src refid="osmorc.module.sourcepath"/>
+            <patternset refid="ignored.files"/>
+        </javac2>
+
+        <copy todir="${osmorc.output.dir}">
+            <fileset dir="${module.osmorc.basedir}/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="plugin.build.jar.osmorc" depends="compile.module.osmorc"
+            description="Build plugin archive for module 'Osmorc'">
+        <property name="tmp.dir.osmorc" value="${module.osmorc.basedir}/../temp"/>
+        <mkdir dir="${tmp.dir.osmorc}"/>
+        <mkdir dir="${tmp.dir.osmorc}/lib"/>
+        <jar destfile="${tmp.dir.osmorc}/lib/Osmorc.jar" duplicate="preserve">
+            <zipfileset dir="${module.osmorc.basedir}/classes/production/Osmorc" prefix=""/>
+            <zipfileset file="src/META-INF/plugin.xml" prefix="META-INF"/>
+            <zipfileset file="src/META-INF/maven-support.xml" prefix="META-INF"/>
+            <manifest>
+                <attribute name="Created-By" value="IntelliJ IDEA"/>
+                <attribute name="Manifest-Version" value="1.0"/>
+            </manifest>
+        </jar>
+        <mkdir dir="${tmp.dir.osmorc}/help"/>
+        <jar destfile="${tmp.dir.osmorc}/help/OsmorcHelp.jar" duplicate="preserve">
+            <zipfileset dir="${module.osmorc.basedir}/help" prefix=""/>
+            <manifest>
+                <attribute name="Created-By" value="IntelliJ IDEA"/>
+                <attribute name="Manifest-Version" value="1.0"/>
+            </manifest>
+        </jar>
+        <copy file="${module.osmorc.basedir}/lib/org.eclipse.osgi.jar"
+              tofile="${tmp.dir.osmorc}/lib/org.eclipse.osgi.jar"/>
+        <copy file="${module.osmorc.basedir}/lib/bnd-0.0.254.jar" tofile="${tmp.dir.osmorc}/lib/bnd-0.0.254.jar"/>
+        <copy file="${module.osmorc.basedir}/lib/binding-2.0.6.jar" tofile="${tmp.dir.osmorc}/lib/binding-2.0.6.jar"/>
+        <copy file="${module.osmorc.basedir}/lib/commons-lang-2.4.jar"
+              tofile="${tmp.dir.osmorc}/lib/commons-lang-2.4.jar"/>
+        <copy todir="${tmp.dir.osmorc}">
+            <fileset dir="${module.osmorc.basedir}">
+                <include name="license/**/*"/>
+            </fileset>
+        </copy>
+        <zip destfile="${bin.jar}">
+            <zipfileset dir="${tmp.dir.osmorc}" prefix="Osmorc"/>
+        </zip>
+        <delete dir="${tmp.dir.osmorc}"/>
+    </target>
+
+    <target name="init" description="Build initialization">
+        <!-- Perform any build initialization in this target -->
+    </target>
+
+    <target name="buildSourceZIP">
+        <delete file="${source.zip}" quiet="true"/>
+        <zip destfile="${source.zip}">
+            <fileset dir="${basedir}">
+                <exclude name="*Osmorc*.zip"/>
+                <exclude name="*OsmorcIssueSubmitter/**"/>
+                <exclude name="*testdataTemp/**"/>
+                <exclude name="**.iws"/>
+                <exclude name="*classes/**"/>
+            </fileset>
+        </zip>
+    </target>
+
+    <target name="all" depends="init, clean, plugin.build.jar.osmorc, buildSourceZIP" description="build all"/>
+</project>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.osmorc.settings.LibraryBundlingEditor">
+  <grid id="27dc6" binding="_mainPanel" layout-manager="GridLayoutManager" row-count="5" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="664" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="2498a" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="28f19"/>
+          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="settings.libbundle.libregex"/>
+        </properties>
+      </component>
+      <component id="28f19" class="javax.swing.JTextField" binding="_libraryRegex" custom-create="true">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="3680d" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="3e86d"/>
+          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="settings.libbundle.manifest"/>
+        </properties>
+      </component>
+      <grid id="8e6cd" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="0" row-span="4" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none" title-resource-bundle="org/osmorc/i18n/OsmorcBundle" title-key="settings.libbundle.settings"/>
+        <children>
+          <toolbar id="aa3dc">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="-1" height="20"/>
+              </grid>
+            </constraints>
+            <properties>
+              <borderPainted value="false"/>
+              <enabled value="true"/>
+              <floatable value="false"/>
+              <rollover value="false"/>
+            </properties>
+            <clientProperties>
+              <JToolBar.isRollover class="java.lang.Boolean" value="false"/>
+            </clientProperties>
+            <border type="none"/>
+            <children>
+              <component id="2b64" class="javax.swing.JButton" binding="_addRuleButton">
+                <constraints/>
+                <properties>
+                  <icon value="general/add.png"/>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="dda42" class="javax.swing.JButton" binding="_removeRuleButton">
+                <constraints/>
+                <properties>
+                  <icon value="general/remove.png"/>
+                  <text value=""/>
+                </properties>
+                <clientProperties>
+                  <hideActionText class="java.lang.Boolean" value="false"/>
+                  <html.disable class="java.lang.Boolean" value="false"/>
+                </clientProperties>
+              </component>
+              <component id="681d7" class="javax.swing.JButton" binding="_duplicateButton">
+                <constraints/>
+                <properties>
+                  <icon value="actions/copy.png"/>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="90e48" class="javax.swing.JButton" binding="_upButton">
+                <constraints/>
+                <properties>
+                  <icon value="actions/moveUp.png"/>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="cbdca" class="javax.swing.JButton" binding="_downButton">
+                <constraints/>
+                <properties>
+                  <icon value="actions/moveDown.png"/>
+                  <text value=""/>
+                </properties>
+              </component>
+            </children>
+          </toolbar>
+          <scrollpane id="69844">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="380d7" class="javax.swing.JList" binding="_libraries" custom-create="true">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
+        </children>
+      </grid>
+      <component id="418c6" class="javax.swing.JTextField" binding="_additionalBndArguments" custom-create="true" default-binding="true">
+        <constraints>
+          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="fe595" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="418c6"/>
+          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="settings.libbundle.bndoptions"/>
+        </properties>
+      </component>
+      <scrollpane id="1cf6">
+        <constraints>
+          <grid row="1" column="2" row-span="2" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="3e86d" class="javax.swing.JTextArea" binding="_manifestEntries" custom-create="true" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+      <component id="8340e" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="settings.libbundle.dontbundle"/>
+        </properties>
+      </component>
+      <component id="7d500" class="javax.swing.JCheckBox" binding="_neverBundle" custom-create="true">
+        <constraints>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value=""/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+  <inspectionSuppressions>
+    <suppress inspection="NoLabelFor" id="ecbe4"/>
+  </inspectionSuppressions>
+</form>
