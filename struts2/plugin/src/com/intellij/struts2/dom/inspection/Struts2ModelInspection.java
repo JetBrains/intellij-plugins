@@ -142,6 +142,12 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
   }
 
   @NotNull
+  @Override
+  public String[] getGroupPath() {
+    return new String[]{"Struts", getGroupDisplayName()};
+  }
+
+  @NotNull
   public String getDisplayName() {
     return StrutsBundle.message("inspections.struts2.model.displayname");
   }
