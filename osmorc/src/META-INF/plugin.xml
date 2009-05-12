@@ -111,9 +111,6 @@
 
     <application-components>
         <component>
-            <implementation-class>org.osmorc.OsmorcApplicationComponent</implementation-class>
-        </component>
-        <component>
             <implementation-class>org.osmorc.manifest.ManifestApplicationComponent</implementation-class>
         </component>
     </application-components>
@@ -245,6 +242,9 @@
                                  implementationClass="org.osmorc.manifest.lang.psi.ManifestHeaderValueManipulator"/>
         <configurationType implementation="org.osmorc.run.OsgiConfigurationType"/>
         <configurationType implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxConfigurationType"/>
+
+        <inspectionToolProvider implementation="org.osmorc.inspection.OsmorcInspectionToolProvider"/>
+        <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
     </extensions>
 
 
