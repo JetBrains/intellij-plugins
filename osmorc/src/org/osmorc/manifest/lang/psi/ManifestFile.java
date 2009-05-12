@@ -45,4 +45,9 @@ public class ManifestFile extends PsiFileBase
   {
     return ManifestFileTypeFactory.MANIFEST;
   }
+
+  @Override
+  public String toString() {
+    return "ManifestFile:" + getName();
+  }
 }
