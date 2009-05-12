@@ -10,14 +10,6 @@
       <maximumStackSize value="32" />
       <properties />
     </buildFile>
-    <buildFile url="file://$PROJECT_DIR$/OsmorcIssueSubmitter/build.xml">
-      <additionalClassPath />
-      <antReference projectDefault="true" />
-      <customJdkName value="" />
-      <maximumHeapSize value="128" />
-      <maximumStackSize value="32" />
-      <properties />
-    </buildFile>
   </component>
   <component name="BuildJarProjectSettings">
     <option name="BUILD_JARS_ON_MAKE" value="false" />
@@ -137,6 +129,15 @@
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
+        <ADDITIONAL_INDENT_OPTIONS fileType="scala">
+          <option name="INDENT_SIZE" value="2" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          <option name="TAB_SIZE" value="2" />
+          <option name="USE_TAB_CHARACTER" value="false" />
+          <option name="SMART_TABS" value="false" />
+          <option name="LABEL_INDENT_SIZE" value="0" />
+          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+        </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="sql">
           <option name="INDENT_SIZE" value="2" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
@@ -242,7 +243,8 @@
   <component name="IdProvider" IDEtalkID="E4E0B62D7833654941CDE0FF04E7D210" />
   <component name="InspectionProjectProfileManager">
     <option name="PROJECT_PROFILE" value="Project Default" />
-    <version value="1.0" />
+    <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
+    <scopes />
     <profiles>
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
@@ -444,15 +446,14 @@
   </component>
   <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectKey">
-    <option name="state" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/trunk/Osmorc.ipr" />
+    <option name="state" value="http://svn.jetbrains.org/idea/Trunk/bundled/osmorc/Osmorc.ipr" />
   </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Osmorc.iml" filepath="$PROJECT_DIR$/Osmorc.iml" />
-      <module fileurl="file://$PROJECT_DIR$/OsmorcIssueSubmitter/OsmorcIssueSubmitter.iml" filepath="$PROJECT_DIR$/OsmorcIssueSubmitter/OsmorcIssueSubmitter.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 10239" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 10243" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="ProjectRunConfigurationManager">
@@ -646,7 +647,7 @@
       <module name="Osmorc" />
       <option name="VM_PARAMETERS" value=" -Xms512m -Xmx512m -XX:MaxPermSize=120m -ea" />
       <option name="PROGRAM_PARAMETERS" value="" />
-      <log_file path="E:/settings/IntelliJIdea80/system/plugins-sandbox/system/log/idea.log" checked="true" skipped="true" show_all="false" alias="IDEA LOG" />
+      <log_file path="$PROJECT_DIR$/../../../Library/Caches/IntelliJIDEA8x/plugins-sandbox/system/log/idea.log" checked="true" skipped="true" show_all="false" alias="IDEA LOG" />
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="1706" />
         <option name="TRANSPORT" value="0" />
@@ -683,86 +684,6 @@
         <entry key="$PROJECT_DIR$">
           <value>
             <SvnBranchConfiguration>
-              <option name="branchMap">
-                <map>
-                  <entry key="https://osmorc.svn.sourceforge.net/svnroot/osmorc/branches">
-                    <value>
-                      <list />
-                    </value>
-                  </entry>
-                  <entry key="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags">
-                    <value>
-                      <list>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1241281137352" />
-                          <option name="revision" value="218" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_13_0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1235310037300" />
-                          <option name="revision" value="202" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_12_0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1230729451715" />
-                          <option name="revision" value="170" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_11_0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1229718809176" />
-                          <option name="revision" value="163" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_10_0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1226856197498" />
-                          <option name="revision" value="142" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_9_0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1224947179777" />
-                          <option name="revision" value="124" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_8_0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1224530272586" />
-                          <option name="revision" value="120" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_7_0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1217887265927" />
-                          <option name="revision" value="103" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_6_0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1215074223489" />
-                          <option name="revision" value="88" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/2008_07_03_before_package_renaming" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1209504778453" />
-                          <option name="revision" value="59" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_5_0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1206899287107" />
-                          <option name="revision" value="48" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_4_0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1200935765516" />
-                          <option name="revision" value="33" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_3_0" />
-                        </SvnBranchItem>
-                        <SvnBranchItem>
-                          <option name="creationDateMillis" value="1198744854312" />
-                          <option name="revision" value="21" />
-                          <option name="url" value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/tags/V0_2_0" />
-                        </SvnBranchItem>
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
               <option name="branchUrls">
                 <list>
                   <option value="https://osmorc.svn.sourceforge.net/svnroot/osmorc/branches" />
@@ -942,7 +863,7 @@
     </LanguageOptions>
   </component>
   <UsedPathMacros>
-    <macro name="TEMPLATE" description="" />
+    <macro name="TEMPLATE" />
   </UsedPathMacros>
 </project>
 
