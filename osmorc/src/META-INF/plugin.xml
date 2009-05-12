@@ -114,9 +114,6 @@
             <implementation-class>org.osmorc.OsmorcProjectComponent</implementation-class>
         </component>
         <component>
-            <implementation-class>org.osmorc.make.BundleCompilerComponent</implementation-class>
-        </component>
-        <component>
             <implementation-class>org.osmorc.settings.SettingsEditor</implementation-class>
         </component>
     </project-components>
@@ -238,6 +235,7 @@
         <inspectionToolProvider implementation="org.osmorc.inspection.OsmorcInspectionToolProvider"/>
         <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
         <fileTypeFactory implementation="org.osmorc.manifest.ManifestFileTypeFactory"/>
+        <compiler implementation="org.osmorc.make.BundleCompiler"/>
     </extensions>
 
 
