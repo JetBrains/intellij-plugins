@@ -25,6 +25,7 @@
 package org.osmorc;
 
 import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -88,23 +89,26 @@ public class OsmorcProjectComponent implements ProjectComponent, FrameworkInstan
 
   private void processChange(final PsiTreeChangeEvent event)
   {
-    _application.invokeLater(new Runnable()
-    {
-      public void run()
-      {
-        final PsiFile file = event.getFile();
-        if (file instanceof ManifestFile)
-        {
-          Module moduleOfChangedManifest = ModuleUtil.findModuleForPsiElement(file);
-          if (moduleOfChangedManifest != null)
-          {
-            _bundleManager.addOrUpdateBundle(moduleOfChangedManifest);
+    final PsiFile file = event.getFile();
+    if (!(file instanceof ManifestFile)) return;
 
-            syncAllModuleDependencies();
-          }
+    Runnable onChangeRunnable = new Runnable() {
+      public void run() {
+        // TODO: this should be better handled lazily
+
+        Module moduleOfChangedManifest = ModuleUtil.findModuleForPsiElement(file);
+        if (moduleOfChangedManifest != null) {
+          _bundleManager.addOrUpdateBundle(moduleOfChangedManifest);
+
+          syncAllModuleDependencies();
         }
       }
-    });
+    };
+
+    if (ApplicationManager.getApplication().isCommandLine()) onChangeRunnable.run();
+    else {
+      _application.invokeLater(onChangeRunnable);
+    }
   }
 
   private void syncAllModuleDependencies()
