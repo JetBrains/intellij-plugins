@@ -415,6 +415,10 @@ public class BundleManagerImpl implements BundleManager
     {
       LOG.debug(e);
     }
+    catch (NumberFormatException e)
+    {
+      LOG.debug(e);
+    }
     return bundleDescription;
   }
 
