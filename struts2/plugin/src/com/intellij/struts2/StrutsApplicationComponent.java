@@ -39,10 +39,7 @@ import com.intellij.struts2.dom.validator.impl.ValidatorConfigResolveConverterIm
 import com.intellij.struts2.facet.StrutsFacetType;
 import com.intellij.util.Icons;
 import com.intellij.util.NullableFunction;
-import com.intellij.util.xml.ConverterManager;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.ElementPresentationManager;
-import com.intellij.util.xml.TypeNameManager;
+import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -159,7 +156,7 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     ElementPresentationManager.registerIcon(StrutsRoot.class, StrutsIcons.STRUTS_CONFIG_FILE_ICON);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<StrutsRoot>(StrutsRoot.class) {
       protected String getDisplayName(final StrutsRoot strutsRoot) {
-        return strutsRoot.getRoot().getFile().getName();
+        return DomUtil.getFile(strutsRoot).getName();
       }
     });
 
@@ -280,7 +277,7 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     ElementPresentationManager.registerIcon(Validators.class, StrutsIcons.VALIDATION_CONFIG_FILE_ICON);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<Validators>(Validators.class) {
       protected String getDisplayName(final Validators validators) {
-        return validators.getRoot().getFile().getName();
+        return DomUtil.getFile(validators).getName();
       }
     });
 

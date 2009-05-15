@@ -10,6 +10,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomElementsNavigationManager;
 import com.intellij.util.xml.DomService;
+import com.intellij.util.xml.DomUtil;
 import com.intellij.util.xml.highlighting.DomElementAnnotationsManager;
 import com.intellij.util.xml.highlighting.DomElementProblemDescriptor;
 import com.intellij.util.xml.highlighting.DomElementsProblemsHolder;
@@ -36,7 +37,7 @@ class StructureViewTreeElement extends DomStructureTreeElement {
   StructureViewTreeElement(@NotNull final DomElement domElement) {
     super(domElement,
           MY_STRUCTURE_VIEW_MODE_FUNCTION,
-          DomElementsNavigationManager.getManager(domElement.getRoot().getFile().getProject()).
+          DomElementsNavigationManager.getManager(DomUtil.getFile(domElement).getProject()).
                   getDomElementsNavigateProvider(DomElementsNavigationManager.DEFAULT_PROVIDER_NAME));
   }
 
