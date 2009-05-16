@@ -38,80 +38,70 @@ import org.osmorc.settings.ProjectSettings;
 /**
  * The Osmorc facet.
  * <p/>
- * @author: Robert F. Beeger (robert@beeger.net)
+ *
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcFacet extends Facet<OsmorcFacetConfiguration>
-{
-  public OsmorcFacet(@NotNull Module module)
-  {
-    this(FacetTypeRegistry.getInstance().findFacetType(OsmorcFacetType.ID), module, "Osmorc",
-        new OsmorcFacetConfiguration(),
-        null);
-  }
-
-  public OsmorcFacet(
-      @NotNull FacetType facetType,
-      @NotNull Module module, String name,
-      @NotNull OsmorcFacetConfiguration configuration, Facet underlyingFacet)
-  {
-    super(facetType, module, name, configuration, underlyingFacet);
-  }
-
-  /**
-   * Returns the Osmorc facet for the given module.
-   *
-   * @param module the module
-   * @return the Osmorc facet of this module or null if the module doesn't have an Osmorc facet.
-   */
-  public static OsmorcFacet getInstance(Module module)
-  {
-    return FacetManager.getInstance(module).getFacetByType(OsmorcFacetType.ID);
-  }
-
-  /**
-   * Determines the module to which the given element belongs and returns the Osmorc facet for this module.
-   *
-   * @param element the element
-   * @return the Osmorc facet of the module to which the element belongs or null if this module doesn't have an Osmorc
-   *         facet or if the belonging module could not be determined.
-   */
-  public static OsmorcFacet getInstance(PsiElement element)
-  {
-    Module module = ModuleUtil.findModuleForPsiElement(element);
-    return getInstance(module);
-  }
-
-  /**
-   * @param module the module to check
-   * @return true if there is an Osmorc facet for the given module, false otherwise.
-   */
-  public static boolean hasOsmorcFacet(Module module)
-  {
-    return getInstance(module) != null;
-  }
-
-  /**
-   * @param element the element to check
-   * @return true if the module of the element could be determined and this module has an Osmorc facet, false
-   *         otherwise.
-   */
-  public static boolean hasOsmorcFacet(PsiElement element)
-  {
-    Module module = ModuleUtil.findModuleForPsiElement(element);
-    return module != null && hasOsmorcFacet(module);
-  }
-
-  public String getManifestLocation()
-  {
-    if (getConfiguration().isUseProjectDefaultManifestFileLocation())
-    {
-
-      final ProjectSettings projectSettings = ModuleServiceManager.getService(getModule(), ProjectSettings.class);
-      return projectSettings.getDefaultManifestFileLocation();
+public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
+    public OsmorcFacet(@NotNull Module module) {
+        this(FacetTypeRegistry.getInstance().findFacetType(OsmorcFacetType.ID), module,
+                new OsmorcFacetConfiguration(),
+                null);
     }
-    else
-    {
-      return getConfiguration().getManifestLocation();
+
+    public OsmorcFacet(
+            @NotNull FacetType facetType,
+            @NotNull Module module,
+            @NotNull OsmorcFacetConfiguration configuration, Facet underlyingFacet) {
+        super(facetType, module, "OSGi", configuration, underlyingFacet);
     }
-  }
+
+    /**
+     * Returns the Osmorc facet for the given module.
+     *
+     * @param module the module
+     * @return the Osmorc facet of this module or null if the module doesn't have an Osmorc facet.
+     */
+    public static OsmorcFacet getInstance(Module module) {
+        return FacetManager.getInstance(module).getFacetByType(OsmorcFacetType.ID);
+    }
+
+    /**
+     * Determines the module to which the given element belongs and returns the Osmorc facet for this module.
+     *
+     * @param element the element
+     * @return the Osmorc facet of the module to which the element belongs or null if this module doesn't have an Osmorc
+     *         facet or if the belonging module could not be determined.
+     */
+    public static OsmorcFacet getInstance(PsiElement element) {
+        Module module = ModuleUtil.findModuleForPsiElement(element);
+        return getInstance(module);
+    }
+
+    /**
+     * @param module the module to check
+     * @return true if there is an Osmorc facet for the given module, false otherwise.
+     */
+    public static boolean hasOsmorcFacet(Module module) {
+        return getInstance(module) != null;
+    }
+
+    /**
+     * @param element the element to check
+     * @return true if the module of the element could be determined and this module has an Osmorc facet, false
+     *         otherwise.
+     */
+    public static boolean hasOsmorcFacet(PsiElement element) {
+        Module module = ModuleUtil.findModuleForPsiElement(element);
+        return module != null && hasOsmorcFacet(module);
+    }
+
+    public String getManifestLocation() {
+        if (getConfiguration().isUseProjectDefaultManifestFileLocation()) {
+
+            final ProjectSettings projectSettings = ModuleServiceManager.getService(getModule(), ProjectSettings.class);
+            return projectSettings.getDefaultManifestFileLocation();
+        } else {
+            return getConfiguration().getManifestLocation();
+        }
+    }
 }

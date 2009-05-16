@@ -57,7 +57,7 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
     public static final OsmorcFacetType INSTANCE = new OsmorcFacetType();
 
     protected OsmorcFacetType() {
-        super(ID, "Osmorc", "Osmorc");
+        super(ID, "Osmorc", "OSGi");
     }
 
     public OsmorcFacetConfiguration createDefaultConfiguration() {
@@ -68,7 +68,7 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
             @NotNull Module module, String name,
             @NotNull OsmorcFacetConfiguration configuration, @Nullable Facet underlyingFacet) {
         completeDefaultConfiguration(configuration, module);
-        return new OsmorcFacet(this, module, name, configuration, underlyingFacet);
+        return new OsmorcFacet(this, module, configuration, underlyingFacet);
     }
 
     public boolean isSuitableModuleType(ModuleType moduleType) {

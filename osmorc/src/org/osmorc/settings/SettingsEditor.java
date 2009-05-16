@@ -41,97 +41,81 @@ import javax.swing.*;
  * @author Robert F. Beeger (robert@beeger.net)
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class SettingsEditor implements ProjectComponent, Configurable, Configurable.Composite
-{
-  public SettingsEditor(ApplicationSettings applicationSettings, ProjectSettings projectSettings,
-                        ProjectSettingsEditor projectSettingsEditor, IDESettingsEditor ideSettingsEditor)
-  {
-    _projectSettingsEditor = projectSettingsEditor;
-    _ideSettingsEditor = ideSettingsEditor;
+public class SettingsEditor implements ProjectComponent, Configurable, Configurable.Composite {
+    public SettingsEditor(ApplicationSettings applicationSettings, ProjectSettings projectSettings,
+                          ProjectSettingsEditor projectSettingsEditor, IDESettingsEditor ideSettingsEditor) {
+        this.projectSettingsEditor = projectSettingsEditor;
+        this.ideSettingsEditor = ideSettingsEditor;
 
-    ApplicationSettings applicationSettingsWorkingCopy = applicationSettings.createCopy();
-    ProjectSettings projectSettingsWorkingCopy = projectSettings.createCopy();
+        ApplicationSettings applicationSettingsWorkingCopy = applicationSettings.createCopy();
+        ProjectSettings projectSettingsWorkingCopy = projectSettings.createCopy();
 
-    _projectSettingsEditor.setProjectSettings(projectSettings, projectSettingsWorkingCopy);
-    _projectSettingsEditor.setApplicationSettings(applicationSettings, applicationSettingsWorkingCopy);
+        this.projectSettingsEditor.setProjectSettings(projectSettings, projectSettingsWorkingCopy);
+        this.projectSettingsEditor.setApplicationSettings(applicationSettings, applicationSettingsWorkingCopy);
 
-    _ideSettingsEditor.setProjectSettings(projectSettings, projectSettingsWorkingCopy);
-    _ideSettingsEditor.setApplicationSettings(applicationSettings, applicationSettingsWorkingCopy);
-  }
+        this.ideSettingsEditor.setProjectSettings(projectSettings, projectSettingsWorkingCopy);
+        this.ideSettingsEditor.setApplicationSettings(applicationSettings, applicationSettingsWorkingCopy);
+    }
 
-  public Configurable[] getConfigurables()
-  {
-    return new Configurable[]{_projectSettingsEditor, _ideSettingsEditor};
-  }
+    public Configurable[] getConfigurables() {
+        return new Configurable[]{projectSettingsEditor, ideSettingsEditor};
+    }
 
-  public void projectOpened()
-  {
+    public void projectOpened() {
 
-  }
+    }
 
-  public void projectClosed()
-  {
+    public void projectClosed() {
 
-  }
+    }
 
-  @NonNls
-  @NotNull
-  public String getComponentName()
-  {
-    return "SettingsEditor";
-  }
+    @NonNls
+    @NotNull
+    public String getComponentName() {
+        return "SettingsEditor";
+    }
 
-  public void initComponent()
-  {
-  }
+    public void initComponent() {
+    }
 
-  public void disposeComponent()
-  {
+    public void disposeComponent() {
 
-  }
+    }
 
-  @Nls
-  public String getDisplayName()
-  {
-    return "Osmorc";
-  }
+    @Nls
+    public String getDisplayName() {
+        return "OSGi";
+    }
 
-  @Nullable
-  public Icon getIcon()
-  {
-    return OsmorcBundle.getBigIcon();
-  }
+    @Nullable
+    public Icon getIcon() {
+        return OsmorcBundle.getBigIcon();
+    }
 
-  @Nullable
-  @NonNls
-  public String getHelpTopic()
-  {
-    return null;
-  }
+    @Nullable
+    @NonNls
+    public String getHelpTopic() {
+        return null;
+    }
 
-  public JComponent createComponent()
-  {
-    return _mainPanel;
-  }
+    public JComponent createComponent() {
+        return mainPanel;
+    }
 
-  public boolean isModified()
-  {
-    return false;
-  }
+    public boolean isModified() {
+        return false;
+    }
 
-  public void apply() throws ConfigurationException
-  {
-  }
+    public void apply() throws ConfigurationException {
+    }
 
-  public void reset()
-  {
-  }
+    public void reset() {
+    }
 
-  public void disposeUIResources()
-  {
-  }
+    public void disposeUIResources() {
+    }
 
-  private JPanel _mainPanel;
-  private ProjectSettingsEditor _projectSettingsEditor;
-  private IDESettingsEditor _ideSettingsEditor;
+    private JPanel mainPanel;
+    private ProjectSettingsEditor projectSettingsEditor;
+    private IDESettingsEditor ideSettingsEditor;
 }
