@@ -8,6 +8,7 @@ import com.intellij.tapestry.core.java.IJavaMethod;
 import com.intellij.tapestry.core.util.StringUtils;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * A Tapestry parameter.
@@ -31,34 +32,27 @@ public class TapestryParameter implements Comparable {
      * @return the parameter name.
      */
     public String getName() {
-        if (!_parameterField.isValid())
-            return "";
+      if (!_parameterField.isValid()) return "";
 
-        String name;
-        if (_parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION).getParameters().containsKey(PARAMETER_NAME)) {
-            name = _parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION).getParameters().get(PARAMETER_NAME)[0];
-        } else {
-            name = _parameterField.getName();
-        }
+      String name;
+      final Map<String, String[]> params =
+          _parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION).getParameters();
 
-        if (name.startsWith("$") || name.startsWith("_")) {
-            return name.substring(1);
-        }
+      name = params.containsKey(PARAMETER_NAME) ? params.get(PARAMETER_NAME)[0] : _parameterField.getName();
 
-        return name;
+      return name.startsWith("$") || name.startsWith("_") ? name.substring(1) : name;
     }
 
-    /**
+  /**
      * Returns the parameter description.
      *
      * @return the parameter description.
      */
     public String getDescription() {
-        if (!_parameterField.isValid())
-            return "";
+    if (!_parameterField.isValid()) return "";
 
-        return _parameterField.getDocumentation();
-    }
+    return _parameterField.getDocumentation();
+  }
 
     public IJavaField getParameterField() {
         return _parameterField;
@@ -70,17 +64,13 @@ public class TapestryParameter implements Comparable {
      * @return <code>true</true> if the parameter is required, <code>false</true> otherwise.
      */
     public boolean isRequired() {
-        if (!_parameterField.isValid())
-            return false;
+      if (!_parameterField.isValid()) return false;
 
-        String[] parameterValue;
-        parameterValue = _parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION).getParameters().get("required");
+      String[] parameterValue =
+          _parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION).getParameters().get("required");
 
-        boolean required = parameterValue != null && parameterValue[0].equals(Boolean.TRUE.toString());
-        if (!required)
-            return required;
-
-        return !hasMethod(_elementClass, getName());
+      boolean required = parameterValue != null && parameterValue[0].equals(Boolean.TRUE.toString());
+      return required && !hasMethod(_elementClass, getName());
     }
 
     /**
@@ -89,20 +79,16 @@ public class TapestryParameter implements Comparable {
      * @return the default prefix of the parameter value.
      */
     public String getDefaultPrefix() {
-        if (!_parameterField.isValid())
-            return "";
+      if (!_parameterField.isValid()) return "";
 
-        IJavaAnnotation annotation = _parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION);
+      IJavaAnnotation annotation = _parameterField.getAnnotations().get(PresentationLibraryElement.PARAMETER_ANNOTATION);
 
-        if (annotation != null) {
-            String[] parameterValue = annotation.getParameters().get("defaultPrefix");
+      if (annotation != null) {
+        String[] parameterValue = annotation.getParameters().get("defaultPrefix");
+        if (parameterValue != null) return parameterValue[0];
+      }
 
-            if (parameterValue != null) {
-                return parameterValue[0];
-            }
-        }
-
-        return "prop";
+      return "prop";
     }
 
     /**

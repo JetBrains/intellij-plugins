@@ -103,9 +103,9 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
 
                 // annotate the tag parameters
                 if (elementClass != null) {
-                    String tapestryNamespace = TapestryUtils.getTapestryNamespacePrefix((XmlFile) tag.getContainingFile());
+                    String tapestryNamespacePrefix = TapestryUtils.getTapestryNamespacePrefix((XmlFile) tag.getContainingFile());
                     for (TapestryParameter parameter : component.getParameters().values()) {
-                        XmlAttribute attribute = tag.getAttribute(parameter.getName(), tapestryNamespace);
+                        XmlAttribute attribute = tag.getAttribute(tapestryNamespacePrefix+":"+parameter.getName());
 
                         if (attribute == null)
                             attribute = tag.getAttribute(parameter.getName(), "");
