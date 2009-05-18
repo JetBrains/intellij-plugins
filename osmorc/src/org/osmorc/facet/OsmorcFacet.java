@@ -45,14 +45,12 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
     public OsmorcFacet(@NotNull Module module) {
         this(FacetTypeRegistry.getInstance().findFacetType(OsmorcFacetType.ID), module,
                 new OsmorcFacetConfiguration(),
-                null);
+                null, "OSGi");
     }
 
-    public OsmorcFacet(
-            @NotNull FacetType facetType,
-            @NotNull Module module,
-            @NotNull OsmorcFacetConfiguration configuration, Facet underlyingFacet) {
-        super(facetType, module, "OSGi", configuration, underlyingFacet);
+    public OsmorcFacet(@NotNull FacetType facetType, @NotNull Module module, @NotNull OsmorcFacetConfiguration configuration, Facet underlyingFacet,
+                       final String name) {
+        super(facetType, module, name, configuration, underlyingFacet);
     }
 
     /**

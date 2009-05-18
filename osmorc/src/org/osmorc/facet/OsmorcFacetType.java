@@ -68,7 +68,7 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
             @NotNull Module module, String name,
             @NotNull OsmorcFacetConfiguration configuration, @Nullable Facet underlyingFacet) {
         completeDefaultConfiguration(configuration, module);
-        return new OsmorcFacet(this, module, configuration, underlyingFacet);
+        return new OsmorcFacet(this, module, configuration, underlyingFacet, name);
     }
 
     public boolean isSuitableModuleType(ModuleType moduleType) {
