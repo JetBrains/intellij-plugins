@@ -72,6 +72,7 @@ public class ExtendableClassConverterSpringContributor extends ExtendableClassCo
   }
 
 
+  // TODO provide QuickFix to create Spring bean?
   private static class SpringBeanReference extends PsiReferenceBase<XmlAttributeValue> {
 
     private SpringBeanReference(final XmlAttributeValue element) {

@@ -46,6 +46,8 @@ public abstract class ExtendableClassConverter extends Converter<PsiClass> imple
 
   /**
    * Contributes results to {@link ExtendableClassConverter}.
+   * <p/>
+   * If the provided reference implements {@link com.intellij.codeInspection.LocalQuickFixProvider}, its fixes will be added automatically.
    *
    * @author Yann C&eacute;bron
    */
