@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
@@ -103,18 +102,13 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
 
         // annotate the tag parameters
         if (elementClass != null) {
-          String tapestryNamespacePrefix = TapestryUtils.getTapestryNamespacePrefix((XmlFile)tag.getContainingFile());
           for (TapestryParameter parameter : component.getParameters().values()) {
-            final String qname = tapestryNamespacePrefix + ":" + parameter.getName();
-            XmlAttribute attribute = tag.getAttribute(qname);
-
+            XmlAttribute attribute = tag.getAttribute(parameter.getName(), TapestryConstants.TEMPLATE_NAMESPACE);
             if (attribute == null) attribute = tag.getAttribute(parameter.getName(), "");
-
             if (attribute == null) {
-              if (parameter.isRequired() && !parameterDefineInClass(parameter, elementClass, tag)) {
+              if (parameter.isRequired() && !parameterDefinedInClass(parameter, elementClass, tag)) {
                 _annotationHolder.createErrorAnnotation(tag.getChildren()[1], "Missing required parameter \"" + parameter.getName() + "\"");
               }
-
               continue;
             }
 
@@ -156,7 +150,7 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
         XmlElement identifierAttribute = TapestryUtils.getComponentIdentifier(tag);
         if (identifierAttribute != null) {
           if (identifierAttribute instanceof XmlAttribute) {
-            _annotationHolder.createErrorAnnotation(identifierAttribute.getChildren()[0], "Invalid component name");
+            _annotationHolder.createErrorAnnotation(identifierAttribute.getLastChild(), "Invalid component name");
           }
           else {
             _annotationHolder.createErrorAnnotation(identifierAttribute.getNavigationElement(), "Invalid component name");
@@ -174,32 +168,35 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
    * @param parameter    the parameter to check
    * @param elementClass the class to get the fields
    * @param tag          the component to get the parameters
-   * @return <code>true</code> if the parameter is define in the class, <code>false</code> otherwise.
+   * @return <code>true</code> if the parameter is defined in the class, <code>false</code> otherwise.
    */
-  public boolean parameterDefineInClass(TapestryParameter parameter, IntellijJavaClassType elementClass, XmlTag tag) {
+  public boolean parameterDefinedInClass(TapestryParameter parameter, IntellijJavaClassType elementClass, XmlTag tag) {
 
     Map<String, IJavaField> fields = elementClass.getFields(false);
-    boolean parameterDefineInClass = false;
 
     for (IJavaField field : fields.values()) {
-      if (field.getAnnotations().get(TapestryConstants.COMPONENT_ANNOTATION) != null) {
-        if (field.getName().equals(tag.getAttributeValue("t:id"))) {
+      final IJavaAnnotation annotation = field.getAnnotations().get(TapestryConstants.COMPONENT_ANNOTATION);
+      if (annotation == null) continue;
 
-          IJavaAnnotation fieldAnnotation = field.getAnnotations().get(TapestryConstants.COMPONENT_ANNOTATION);
-          String[] fieldParameters = fieldAnnotation.getParameters().get("parameters");
-
-          if (fieldParameters != null) {
-            for (String fieldParameter : fieldParameters) {
-              if (fieldParameter.split("=").length == 2) {
-                String parameterName = fieldParameter.split("=")[0];
-                if (parameterName.equals(parameter.getName())) parameterDefineInClass = true;
-              }
-            }
-          }
+      Map<String, String[]> annotationParams = annotation.getParameters();
+      if (isFieldIdEqualsToTagId(annotationParams, field, tag)) {
+        String[] fieldParameters = annotationParams.get("parameters");
+        if (fieldParameters == null) continue;
+        for (String fieldParameter : fieldParameters) {
+          final String[] paramNameValue = fieldParameter.split("=");
+          if (paramNameValue.length == 2 && paramNameValue[0].equals(parameter.getName())) return true;
         }
       }
     }
-    return parameterDefineInClass;
-  }//parameterDefineInClass
+    return false;
+  }//parameterDefinedInClass
+
+  boolean isFieldIdEqualsToTagId(Map<String, String[]> annotationParams, IJavaField field, XmlTag tag) {
+    String[] fieldId = annotationParams.get("id");
+    final String tagId = tag.getAttributeValue("t:id");
+    return fieldId == null || fieldId.length == 0 || fieldId[0] == null || fieldId[0].length() == 0
+           ? field.getName().equals(tagId)
+           : fieldId[0].equals(tagId);
+  }
 
 }//TemplateTagAnnotator
