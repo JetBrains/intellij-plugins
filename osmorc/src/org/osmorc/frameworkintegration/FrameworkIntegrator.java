@@ -54,7 +54,7 @@ public interface FrameworkIntegrator
    * @return the framework runnner which is used to get runtime specific information about a framework.
    */
   @NotNull
-  FrameworkRunner<PropertiesWrapper> createFrameworkRunner();
+  FrameworkRunner createFrameworkRunner();
 
   /**
    * Creates an editor for framework specific run properties.

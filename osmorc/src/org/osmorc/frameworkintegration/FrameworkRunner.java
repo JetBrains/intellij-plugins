@@ -24,13 +24,18 @@
  */
 package org.osmorc.frameworkintegration;
 
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.configurations.ParametersList;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.util.PropertiesWrapper;
+import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
+import java.io.File;
+import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * This interface encapsulates framework-specific runtime configuration.
@@ -39,76 +44,41 @@ import java.util.regex.Pattern;
  * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id$
  */
-public interface FrameworkRunner<Props extends PropertiesWrapper> extends Disposable
-{
+public interface FrameworkRunner extends Disposable {
+    /**
+     * Initializes the framework runner for the next execution
+     *
+     * @param project          The project for which a run configuration is executed
+     * @param runConfiguration The configuration of the run configuration
+     */
+    void init(Project project, OsgiRunConfiguration runConfiguration);
 
+    /**
+     * Returns the virtual files for all library jars and directories that need to be placed into the
+     * classpath in order to start the framework.
+     *
+     * @return a list containing all needed library virtual files.
+     */
+    List<VirtualFile> getFrameworkStarterLibraries();
 
-  /**
-   * Returns an array of command line parameters that can be used to install and run the specified bundles.
-   *
-   * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be sorted
-   *                             in ascending order by their start level.
-   * @param additionalProperties additional runner properties
-   * @return a list of command line parameters
-   */
-  @NotNull
-  public String[] getCommandlineParameters(@NotNull SelectedBundle[] bundlesToInstall,
-                                           @NotNull Props additionalProperties);
+    void fillCommandLineParameters(ParametersList commandLineParameters, @NotNull SelectedBundle[] bundlesToInstall);
 
+    @NotNull
+    public Map<String, String> getSystemProperties(@NotNull SelectedBundle[] bundlesToInstall);
 
-  /**
-   * Returns a map of system properties to be set in order to install and run the specified bundles.
-   *
-   * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be sorted
-   *                             in ascending order by their start level.
-   * @param additionalProperties additonal runner properties
-   * @return a map of system properties
-   */
-  @NotNull
-  public Map<String, String> getSystemProperties(@NotNull SelectedBundle[] bundlesToInstall,
-                                                 @NotNull Props additionalProperties);
+    public void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall) throws ExecutionException;
 
+    /**
+     * @return the main class of the framework to run.
+     */
+    @NotNull
+    public String getMainClass();
 
-  /**
-   * Instructs the FrameworkRunnner to run any custom installation steps that are required for installing the given
-   * bundles.
-   *
-   * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be sorted
-   *                             in ascending order by their start level.
-   * @param additionalProperties additional runner properties
-   */
-  public void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall,
-                                         @NotNull Props additionalProperties);
-
-
-  /**
-   * Returns true, if the framework supports the notion of exploded (not packaged to a jar file) bundles.
-   *
-   * @return true if the framework supports exploded bundles, false otherwise.
-   */
-  public boolean supportsExplodedBundles();
-
-
-  /**
-   * @return the main class of the framework to run.
-   */
-  @NotNull
-  public String getMainClass();
-
-  /**
-   * A pattern tested against all framework bundle jars to collect all jars that need to be put into the classpath in order
-   * to start a framework.
-   *
-   * @return The pattern matching all needed jars for running of a framework instance.
-   */
-  public Pattern getFrameworkStarterClasspathPattern();
-
-  /**
-   * @return the working directory in which the framework should be run.
-   */
-  @NotNull
-  public String getWorkingDirectory();
-
-  @NotNull
-  public Props convertProperties(Map<String, String> properties);
+    /**
+     * Returns the directory that is used as the working directory for the process started to run the framework.
+     *
+     * @return the working directory
+     */
+    @NotNull
+    File getWorkingDir();
 }

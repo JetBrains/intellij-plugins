@@ -34,47 +34,112 @@ import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 
 import javax.swing.*;
 import java.util.HashMap;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxRunPropertiesEditor implements FrameworkRunPropertiesEditor
-{
+public class EquinoxRunPropertiesEditor implements FrameworkRunPropertiesEditor {
 
-  public JPanel getUI()
-  {
-    return _mainPanel;
-  }
+    public EquinoxRunPropertiesEditor() {
+        justTheBundlesRadioButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateEnablement();
+            }
+        });
+        productRadioButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateEnablement();
+            }
+        });
+        applicationRadioButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                updateEnablement();
+            }
+        });
+    }
 
-  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration)
-  {
-    _presentationModel.getBean().load(osgiRunConfiguration.getAdditionalProperties());
-  }
+    public JPanel getUI() {
+        return _mainPanel;
+    }
 
-  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException
-  {
-    osgiRunConfiguration.putAdditionalProperties(_presentationModel.getBean().getProperties());
-  }
+    public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
+        presentationModel.getBean().load(osgiRunConfiguration.getAdditionalProperties());
+        if (presentationModel.getBean().getEquinoxProduct() != null && presentationModel.getBean().getEquinoxProduct().length() > 0) {
+            productRadioButton.setSelected(true);
+        }
+        else if (presentationModel.getBean().getEquinoxApplication() != null && presentationModel.getBean().getEquinoxApplication().length() > 0) {
+            applicationRadioButton.setSelected(true);
+        }
+        else {
+            justTheBundlesRadioButton.setSelected(true);
+        }
+        updateEnablement();
+    }
 
-  private void createUIComponents()
-  {
-    _presentationModel = new PresentationModel<EquinoxRunProperties>(
-        new EquinoxRunProperties(new HashMap<String, String>()));
-    _debugModeCheckBox = BasicComponentFactory
-        .createCheckBox(_presentationModel.getModel(EquinoxRunProperties.DEBUG_MODE), "");
-    _startEquinoxOSGIConsoleCheckBox = BasicComponentFactory
-        .createCheckBox(_presentationModel.getModel(EquinoxRunProperties.START_EQUINOX_OSGICONSOLE), "");
-    _systemPackages =
-        BasicComponentFactory.createTextField(_presentationModel.getModel(EquinoxRunProperties.SYSTEM_PACKAGES));
-    _bootDelegation =
-        BasicComponentFactory.createTextField(_presentationModel.getModel(EquinoxRunProperties.BOOT_DELEGATION));
-  }
+    public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
+        osgiRunConfiguration.putAdditionalProperties(presentationModel.getBean().getProperties());
+    }
+
+    private void createUIComponents() {
+        presentationModel = new PresentationModel<EquinoxRunProperties>(
+                new EquinoxRunProperties(new HashMap<String, String>()));
+        debugModeCheckBox = BasicComponentFactory
+                .createCheckBox(presentationModel.getModel(EquinoxRunProperties.DEBUG_MODE), "");
+        startEquinoxOSGIConsoleCheckBox = BasicComponentFactory
+                .createCheckBox(presentationModel.getModel(EquinoxRunProperties.START_EQUINOX_OSGICONSOLE), "");
+        cleanEquinoxCache = BasicComponentFactory
+                .createCheckBox(presentationModel.getModel(EquinoxRunProperties.CLEAN_EQUINOX_CACHE), "");
+        recreateConfigIniCheckBox = BasicComponentFactory
+                .createCheckBox(presentationModel.getModel(EquinoxRunProperties.RECREATE_CONFIG_INI), "");
+        systemPackages =
+                BasicComponentFactory.createTextField(presentationModel.getModel(EquinoxRunProperties.SYSTEM_PACKAGES));
+        bootDelegation =
+                BasicComponentFactory.createTextField(presentationModel.getModel(EquinoxRunProperties.BOOT_DELEGATION));
+        productTextField =
+                BasicComponentFactory.createTextField(presentationModel.getModel(EquinoxRunProperties.EQUINOX_PRODUCT));
+        applicationTextField =
+                BasicComponentFactory.createTextField(presentationModel.getModel(EquinoxRunProperties.EQUINOX_APPLICATION));
+    }
+
+    private void updateEnablement() {
+        if (justTheBundlesRadioButton.isSelected()) {
+            productTextField.setText("");
+            productTextField.setEnabled(false);
+            presentationModel.getBean().setEquinoxProduct("");
+            applicationTextField.setText("");
+            applicationTextField.setEnabled(false);
+            presentationModel.getBean().setEquinoxApplication("");
+        }
+        else if (productRadioButton.isSelected()) {
+            applicationTextField.setText("");
+            applicationTextField.setEnabled(false);
+            presentationModel.getBean().setEquinoxApplication("");
+            productTextField.setEnabled(true);
+        }
+        else if (applicationRadioButton.isSelected()) {
+            productTextField.setText("");
+            productTextField.setEnabled(false);
+            presentationModel.getBean().setEquinoxProduct("");
+            applicationTextField.setEnabled(true);
+        }
+    }
 
 
-  private JPanel _mainPanel;
-  private JCheckBox _startEquinoxOSGIConsoleCheckBox;
-  private JCheckBox _debugModeCheckBox;
-  private JTextField _systemPackages;
-  private JTextField _bootDelegation;
-  private PresentationModel<EquinoxRunProperties> _presentationModel;
+
+
+    private JPanel _mainPanel;
+    private JCheckBox startEquinoxOSGIConsoleCheckBox;
+    private JCheckBox debugModeCheckBox;
+    private JTextField systemPackages;
+    private JTextField bootDelegation;
+    private JRadioButton productRadioButton;
+    private JRadioButton applicationRadioButton;
+    private JTextField productTextField;
+    private JTextField applicationTextField;
+    private JRadioButton justTheBundlesRadioButton;
+    private JCheckBox cleanEquinoxCache;
+    private JCheckBox recreateConfigIniCheckBox;
+    private PresentationModel<EquinoxRunProperties> presentationModel;
 }

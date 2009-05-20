@@ -59,284 +59,276 @@ import java.util.*;
  * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id$
  */
-public class OsgiRunConfiguration extends RunConfigurationBase implements ModuleRunConfiguration
-{
+public class OsgiRunConfiguration extends RunConfigurationBase implements ModuleRunConfiguration {
 
-  protected OsgiRunConfiguration(Project project, ConfigurationFactory configurationFactory, String s)
-  {
-    super(project, configurationFactory, s);
-    _bundlesToDeploy = new ArrayList<SelectedBundle>();
-    _vmParameters = "";
-    _additionalProperties = new HashMap<String, String>();
-  }
-
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor()
-  {
-    return new OsgiRunConfigurationEditor(getProject());
-  }
-
-
-  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws
-      ExecutionException
-  {
-    // prepare the state
-
-    return new OsgiRunState(executor, env, this,
-        getProject(), ProjectRootManager.getInstance(getProject()).getProjectJdk());
-  }
-
-  public void checkConfiguration() throws RuntimeConfigurationException
-  {
-    if (_instanceToUse == null)
-    {
-      throw new RuntimeConfigurationError(OsmorcBundle.getTranslation("runconfiguration.no.instance.selected"));
+    protected OsgiRunConfiguration(final Project project, final ConfigurationFactory configurationFactory, final String name) {
+        super(project, configurationFactory, name);
+        bundlesToDeploy = new ArrayList<SelectedBundle>();
+        additionalProperties = new HashMap<String, String>();
     }
-  }
 
-  @NotNull
-  public Module[] getModules()
-  {
-    List<Module> modules = new ArrayList<Module>();
-    for (SelectedBundle selectedBundle : getBundlesToDeploy())
-    {
-      if (selectedBundle.isModule())
-      {
-        modules.add(ModuleManager.getInstance(getProject()).findModuleByName(selectedBundle.getName()));
-      }
+    public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+        return new OsgiRunConfigurationEditor(getProject());
     }
-    return modules.toArray(new Module[modules.size()]);
-  }
-
-  @NotNull
-  public List<SelectedBundle> getBundlesToDeploy()
-  {
-    return _bundlesToDeploy;
-  }
-
-  public void setBundlesToDeploy(List<SelectedBundle> bundlesToDeploy)
-  {
-    this._bundlesToDeploy = bundlesToDeploy;
-  }
-
-  @NotNull
-  public String getVmParameters()
-  {
-    return _vmParameters;
-  }
 
 
-  public void setVmParameters(@NotNull String vmParameters)
-  {
-    this._vmParameters = vmParameters;
-  }
+    public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws
+            ExecutionException {
+        // prepare the state
 
-  @Nullable
-  public FrameworkInstanceDefinition getInstanceToUse()
-  {
-    return _instanceToUse;
-  }
-
-  public void setInstanceToUse(@NotNull FrameworkInstanceDefinition instanceToUse)
-  {
-    this._instanceToUse = instanceToUse;
-  }
-
-  public void putAdditionalProperties(@NotNull Map<String, String> props)
-  {
-    _additionalProperties.putAll(props);
-  }
-
-  public void putAdditionalProperty(@NotNull String name, @Nullable String value)
-  {
-    if (value != null)
-    {
-      _additionalProperties.put(name, value);
+        return new OsgiRunState(executor, env, this,
+                getProject(), ProjectRootManager.getInstance(getProject()).getProjectJdk());
     }
-    else
-    {
-      _additionalProperties.remove(name);
-    }
-  }
 
-  @Nullable
-  public String getAdditionalProperty(@NotNull String name)
-  {
-    return _additionalProperties.get(name);
-  }
-
-  @NotNull
-  public Map<String, String> getAdditionalProperties()
-  {
-    return Collections.unmodifiableMap(_additionalProperties);
-  }
-
-  public boolean isIncludeAllBundlesInClassPath()
-  {
-    return _includeAllBundlesInClassPath;
-  }
-
-  public void setIncludeAllBundlesInClassPath(boolean includeAllBundlesInClassPath)
-  {
-    _includeAllBundlesInClassPath = includeAllBundlesInClassPath;
-  }
-
-  public void readExternal(Element element) throws InvalidDataException
-  {
-    // noinspection unchecked
-    List<Element> children = element.getChildren(BUNDLE_ELEMENT);
-    _bundlesToDeploy.clear();
-    for (Element child : children)
-    {
-      String name = child.getAttributeValue(NAME_ATTRIBUTE);
-      String url = child.getAttributeValue(URL_ATTRIBUTE);
-      String startLevel = child.getAttributeValue(START_LEVEL_ATTRIBUTE);
-      String typeName = child.getAttributeValue(TYPE_ATTRIBUTE);
-      SelectedBundle.BundleType type;
-      try
-      {
-        type = SelectedBundle.BundleType.valueOf(typeName);
-      }
-      catch (Exception e)
-      {
-        // legacy settings should have modules, only so this is a safe guess.
-        type = SelectedBundle.BundleType.Module;
-      }
-      SelectedBundle selectedBundle = new SelectedBundle(name, url, type);
-      if (startLevel != null)
-      { // avoid crashing on legacy settings.
-        try
-        {
-          selectedBundle.setStartLevel(Integer.parseInt(startLevel));
+    public void checkConfiguration() throws RuntimeConfigurationException {
+        if (instanceToUse == null) {
+            throw new RuntimeConfigurationError(OsmorcBundle.getTranslation("runconfiguration.no.instance.selected"));
         }
-        catch (NumberFormatException e)
-        {
-          // ok.
+    }
+
+    @NotNull
+    public Module[] getModules() {
+        List<Module> modules = new ArrayList<Module>();
+        for (SelectedBundle selectedBundle : getBundlesToDeploy()) {
+            if (selectedBundle.isModule()) {
+                modules.add(ModuleManager.getInstance(getProject()).findModuleByName(selectedBundle.getName()));
+            }
         }
-      }
-      _bundlesToDeploy.add(selectedBundle);
-    }
-    // the vm parameters
-    _vmParameters = element.getAttributeValue(VM_PARAMETERS_ATTRIBUTE);
-    if (_vmParameters == null)
-    {
-      _vmParameters = "";
-    }
-    // try to load the framework instance
-    Element framework = element.getChild(FRAMEWORK_ELEMENT);
-    if (framework != null)
-    {
-      String name = framework.getAttributeValue(INSTANCE_ATTRIBUTE);
-      if (name != null)
-      {
-        ApplicationSettings settings = ServiceManager.getService(ApplicationSettings.class);
-        _instanceToUse = settings.getFrameworkInstance(name);
-      }
+        return modules.toArray(new Module[modules.size()]);
     }
 
-    Element additionalProperties = element.getChild(ADDITIONAL_PROPERTIES_ELEMENT);
-    if (additionalProperties != null)
-    {
-//noinspection unchecked
-      List<Attribute> attributes = additionalProperties.getAttributes();
-      for (Attribute attribute : attributes)
-      {
-        _additionalProperties.put(attribute.getName(), attribute.getValue());
-      }
+    @NotNull
+    public List<SelectedBundle> getBundlesToDeploy() {
+        return bundlesToDeploy;
     }
 
-    _includeAllBundlesInClassPath = Boolean.valueOf(element.getAttributeValue(
-        INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, "false"));
-
-    super.readExternal(element);
-  }
-
-  public void writeExternal(Element element) throws WriteExternalException
-  {
-    // store the vm parameters
-    element.setAttribute(VM_PARAMETERS_ATTRIBUTE, _vmParameters == null ? "" : _vmParameters);
-    element.setAttribute(INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, Boolean.toString(_includeAllBundlesInClassPath));
-
-    // all module's names
-    for (SelectedBundle selectedBundle : _bundlesToDeploy)
-    {
-      Element bundle = new Element(BUNDLE_ELEMENT);
-      bundle.setAttribute(NAME_ATTRIBUTE, selectedBundle.getName());
-      if (!selectedBundle.isModule())
-      {
-        bundle.setAttribute(URL_ATTRIBUTE, selectedBundle.getBundleUrl());
-      }
-      bundle.setAttribute(START_LEVEL_ATTRIBUTE, String.valueOf(selectedBundle.getStartLevel()));
-      bundle.setAttribute(TYPE_ATTRIBUTE, selectedBundle.getBundleType().name());
-      element.addContent(bundle);
+    public void setBundlesToDeploy(final List<SelectedBundle> bundlesToDeploy) {
+        this.bundlesToDeploy = bundlesToDeploy;
     }
 
-    // and the instance to use
-    Element framework = new Element(FRAMEWORK_ELEMENT);
-    framework.setAttribute(INSTANCE_ATTRIBUTE, _instanceToUse != null ? _instanceToUse.getName() : "");
-    element.addContent(framework);
-
-    Element additionalProperties = new Element(ADDITIONAL_PROPERTIES_ELEMENT);
-
-    for (String additionalPropertyName : _additionalProperties.keySet())
-    {
-      additionalProperties.setAttribute(additionalPropertyName, _additionalProperties.get(additionalPropertyName));
+    @NotNull
+    public String getVmParameters() {
+        return vmParameters != null ? vmParameters : "";
     }
 
-    element.addContent(additionalProperties);
 
-    super.writeExternal(element);
-  }
-
-  @SuppressWarnings({"deprecation"})
-  public JDOMExternalizable createRunnerSettings(ConfigurationInfoProvider configurationInfoProvider)
-  {
-    return null;
-  }
-
-  @SuppressWarnings({"deprecation"})
-  public SettingsEditor<JDOMExternalizable> getRunnerSettingsEditor(ProgramRunner runner)
-  {
-    return null;
-  }
-
-  @Override
-  public RunConfiguration clone()
-  {
-    OsgiRunConfiguration conf = (OsgiRunConfiguration) super.clone();
-    if (conf == null)
-    {
-      return conf;
+    public void setVmParameters(@NotNull final String vmParameters) {
+        this.vmParameters = vmParameters;
     }
-    conf._bundlesToDeploy = new ArrayList<SelectedBundle>(_bundlesToDeploy);
-    conf._additionalProperties = new HashMap<String, String>(_additionalProperties);
-    return conf;
-  }
 
-  private List<SelectedBundle> _bundlesToDeploy;
+    @Nullable
+    public FrameworkInstanceDefinition getInstanceToUse() {
+        return instanceToUse;
+    }
 
-  private String _vmParameters;
-  private FrameworkInstanceDefinition _instanceToUse;
-  private Map<String, String> _additionalProperties;
-  private boolean _includeAllBundlesInClassPath;
+    public void setInstanceToUse(@NotNull final FrameworkInstanceDefinition instanceToUse) {
+        this.instanceToUse = instanceToUse;
+    }
 
-  @NonNls
-  private static final String BUNDLE_ELEMENT = "bundle";
-  @NonNls
-  private static final String NAME_ATTRIBUTE = "name";
-  @NonNls
-  private static final String VM_PARAMETERS_ATTRIBUTE = "vmParameters";
-  @NonNls
-  private static final String FRAMEWORK_ELEMENT = "framework";
-  @NonNls
-  private static final String INSTANCE_ATTRIBUTE = "instance";
-  @NonNls
-  private static final String URL_ATTRIBUTE = "url";
-  @NonNls
-  private static final String ADDITIONAL_PROPERTIES_ELEMENT = "additinalProperties";
-  @NonNls
-  private static final String TYPE_ATTRIBUTE = "type";
-  @NonNls
-  private static final String START_LEVEL_ATTRIBUTE = "startLevel";
-  @NonNls
-  private static final String INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE = "includeAllBundlesInClassPath";
+    public void putAdditionalProperties(@NotNull final Map<String, String> props) {
+        additionalProperties.putAll(props);
+    }
+
+    @NotNull
+    public Map<String, String> getAdditionalProperties() {
+        return Collections.unmodifiableMap(additionalProperties);
+    }
+
+    public boolean isIncludeAllBundlesInClassPath() {
+        return includeAllBundlesInClassPath;
+    }
+
+    public void setIncludeAllBundlesInClassPath(final boolean includeAllBundlesInClassPath) {
+        this.includeAllBundlesInClassPath = includeAllBundlesInClassPath;
+    }
+
+
+    public void setWorkingDir(final String workingDir) {
+        this.workingDir = workingDir;
+    }
+
+    public String getWorkingDir() {
+        return workingDir != null ? workingDir : "";
+    }
+
+    public void setFrameworkDir(final String frameworkDir) {
+        this.frameworkDir = frameworkDir;
+    }
+
+    public String getFrameworkDir() {
+        return frameworkDir != null ? frameworkDir : "";
+    }
+
+
+    public boolean isRuntimeDirsOsmorcControlled() {
+        return getFrameworkDir().length() == 0 && getWorkingDir().length() == 0;
+    }
+
+    public String getProgramParameters() {
+        return programParameters != null ? programParameters : "";
+    }
+
+    public void setProgramParameters(final String programParameters) {
+        this.programParameters = programParameters;
+    }
+
+
+    public void readExternal(final Element element) throws InvalidDataException {
+        workingDir = element.getAttributeValue(WORKING_DIR_ATTRIBUTE);
+        frameworkDir = element.getAttributeValue(FRAMEWORK_DIR_ATTRIBUTE);
+        vmParameters = element.getAttributeValue(VM_PARAMETERS_ATTRIBUTE);
+        programParameters = element.getAttributeValue(PROGRAM_PARAMETERS_ATTRIBUTE);
+        includeAllBundlesInClassPath = Boolean.valueOf(element.getAttributeValue(
+                INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, "false"));
+
+        // noinspection unchecked
+        List<Element> children = element.getChildren(BUNDLE_ELEMENT);
+        bundlesToDeploy.clear();
+        for (Element child : children) {
+            String name = child.getAttributeValue(NAME_ATTRIBUTE);
+            String url = child.getAttributeValue(URL_ATTRIBUTE);
+            String startLevel = child.getAttributeValue(START_LEVEL_ATTRIBUTE);
+            String typeName = child.getAttributeValue(TYPE_ATTRIBUTE);
+            SelectedBundle.BundleType type;
+            try {
+                type = SelectedBundle.BundleType.valueOf(typeName);
+            }
+            catch (Exception e) {
+                // legacy settings should have modules, only so this is a safe guess.
+                type = SelectedBundle.BundleType.Module;
+            }
+            SelectedBundle selectedBundle = new SelectedBundle(name, url, type);
+            if (startLevel != null) { // avoid crashing on legacy settings.
+                try {
+                    selectedBundle.setStartLevel(Integer.parseInt(startLevel));
+                }
+                catch (NumberFormatException e) {
+                    // ok.
+                }
+            }
+            String startAfterInstallationString = child.getAttributeValue(START_AFTER_INSTALLATION_ATTRIBUTE);
+            if (startAfterInstallationString != null) {
+                selectedBundle.setStartAfterInstallation(Boolean.parseBoolean(startAfterInstallationString));
+            }
+            bundlesToDeploy.add(selectedBundle);
+        }
+
+        // try to load the framework instance
+        Element framework = element.getChild(FRAMEWORK_ELEMENT);
+        if (framework != null) {
+            String name = framework.getAttributeValue(INSTANCE_ATTRIBUTE);
+            if (name != null) {
+                ApplicationSettings settings = ServiceManager.getService(ApplicationSettings.class);
+                instanceToUse = settings.getFrameworkInstance(name);
+            }
+        }
+
+        Element additionalProperties = element.getChild(ADDITIONAL_PROPERTIES_ELEMENT);
+        if (additionalProperties != null) {
+            //noinspection unchecked
+            List<Attribute> attributes = additionalProperties.getAttributes();
+            for (Attribute attribute : attributes) {
+                this.additionalProperties.put(attribute.getName(), attribute.getValue());
+            }
+        }
+
+        super.readExternal(element);
+    }
+
+    public void writeExternal(final Element element) throws WriteExternalException {
+        // store the vm parameters
+        element.setAttribute(VM_PARAMETERS_ATTRIBUTE, vmParameters == null ? "" : vmParameters);
+        element.setAttribute(PROGRAM_PARAMETERS_ATTRIBUTE, programParameters == null ? "" : programParameters);
+        element.setAttribute(INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, Boolean.toString(includeAllBundlesInClassPath));
+        element.setAttribute(WORKING_DIR_ATTRIBUTE, workingDir == null ? "" : workingDir);
+        element.setAttribute(FRAMEWORK_DIR_ATTRIBUTE, frameworkDir == null ? "" : frameworkDir);
+
+        // all module's names
+        for (SelectedBundle selectedBundle : bundlesToDeploy) {
+            Element bundle = new Element(BUNDLE_ELEMENT);
+            bundle.setAttribute(NAME_ATTRIBUTE, selectedBundle.getName());
+            if (!selectedBundle.isModule()) {
+                bundle.setAttribute(URL_ATTRIBUTE, selectedBundle.getBundleUrl());
+            }
+            bundle.setAttribute(START_LEVEL_ATTRIBUTE, String.valueOf(selectedBundle.getStartLevel()));
+            bundle.setAttribute(TYPE_ATTRIBUTE, selectedBundle.getBundleType().name());
+            bundle.setAttribute(START_AFTER_INSTALLATION_ATTRIBUTE, Boolean.toString(selectedBundle.isStartAfterInstallation()));
+            element.addContent(bundle);
+        }
+
+        // and the instance to use
+        Element framework = new Element(FRAMEWORK_ELEMENT);
+        framework.setAttribute(INSTANCE_ATTRIBUTE, instanceToUse != null ? instanceToUse.getName() : "");
+        element.addContent(framework);
+
+        Element additionalProperties = new Element(ADDITIONAL_PROPERTIES_ELEMENT);
+
+        for (String additionalPropertyName : this.additionalProperties.keySet()) {
+            additionalProperties.setAttribute(additionalPropertyName, this.additionalProperties.get(additionalPropertyName));
+        }
+
+        element.addContent(additionalProperties);
+
+        super.writeExternal(element);
+    }
+
+    @SuppressWarnings({"deprecation"})
+    public JDOMExternalizable createRunnerSettings(final ConfigurationInfoProvider configurationInfoProvider) {
+        return null;
+    }
+
+    @SuppressWarnings({"deprecation"})
+    public SettingsEditor<JDOMExternalizable> getRunnerSettingsEditor(final ProgramRunner runner) {
+        return null;
+    }
+
+    @Override
+    public RunConfiguration clone() {
+        OsgiRunConfiguration conf = (OsgiRunConfiguration) super.clone();
+        if (conf == null) {
+            return conf;
+        }
+        conf.bundlesToDeploy = new ArrayList<SelectedBundle>(bundlesToDeploy);
+        conf.additionalProperties = new HashMap<String, String>(additionalProperties);
+        return conf;
+    }
+
+    private List<SelectedBundle> bundlesToDeploy;
+
+    private String programParameters;
+    private String vmParameters;
+    private FrameworkInstanceDefinition instanceToUse;
+    private Map<String, String> additionalProperties;
+    private boolean includeAllBundlesInClassPath;
+    private String workingDir;
+    private String frameworkDir;
+
+    @NonNls
+    private static final String BUNDLE_ELEMENT = "bundle";
+    @NonNls
+    private static final String NAME_ATTRIBUTE = "name";
+    @NonNls
+    private static final String VM_PARAMETERS_ATTRIBUTE = "vmParameters";
+    @NonNls
+    private static final String PROGRAM_PARAMETERS_ATTRIBUTE = "programParameters";
+    @NonNls
+    private static final String WORKING_DIR_ATTRIBUTE = "workingDir";
+    @NonNls
+    private static final String FRAMEWORK_DIR_ATTRIBUTE = "FrameworkDir";
+    @NonNls
+    private static final String FRAMEWORK_ELEMENT = "framework";
+    @NonNls
+    private static final String INSTANCE_ATTRIBUTE = "instance";
+    @NonNls
+    private static final String URL_ATTRIBUTE = "url";
+    @NonNls
+    private static final String ADDITIONAL_PROPERTIES_ELEMENT = "additinalProperties";
+    @NonNls
+    private static final String TYPE_ATTRIBUTE = "type";
+    @NonNls
+    private static final String START_AFTER_INSTALLATION_ATTRIBUTE = "startAfterInstallation";
+    @NonNls
+    private static final String START_LEVEL_ATTRIBUTE = "startLevel";
+    @NonNls
+    private static final String INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE = "includeAllBundlesInClassPath";
 }

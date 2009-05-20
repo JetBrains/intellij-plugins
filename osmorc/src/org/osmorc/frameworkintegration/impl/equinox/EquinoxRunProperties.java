@@ -32,23 +32,56 @@ import java.util.Map;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxRunProperties extends GenericRunProperties
-{
+public class EquinoxRunProperties extends GenericRunProperties {
 
-  public EquinoxRunProperties(Map<String, String> additionalProperties)
-  {
-    super(additionalProperties);
-  }
+    public EquinoxRunProperties(Map<String, String> additionalProperties) {
+        super(additionalProperties);
+    }
 
-  public boolean isStartEquinoxOSGIConsole()
-  {
-    return getBooleanProperty(START_EQUINOX_OSGICONSOLE);
-  }
+    public boolean isStartEquinoxOSGIConsole() {
+        return getBooleanProperty(START_EQUINOX_OSGICONSOLE);
+    }
 
-  public void setStartEquinoxOSGIConsole(boolean startEquinoxConsole)
-  {
-    putBooleanProperty(START_EQUINOX_OSGICONSOLE, startEquinoxConsole);
-  }
+    public void setStartEquinoxOSGIConsole(boolean startEquinoxConsole) {
+        putBooleanProperty(START_EQUINOX_OSGICONSOLE, startEquinoxConsole);
+    }
 
-  public static final String START_EQUINOX_OSGICONSOLE = "startEquinoxOSGIConsole";
+    public String getEquinoxProduct() {
+        return getProperty(EQUINOX_PRODUCT);
+    }
+
+    public void setEquinoxProduct(final String product) {
+        putProperty(EQUINOX_PRODUCT, product);
+    }
+
+    public String getEquinoxApplication() {
+        return getProperty(EQUINOX_APPLICATION);
+    }
+
+    public void setEquinoxApplication(final String application) {
+        putProperty(EQUINOX_APPLICATION, application);
+    }
+
+    public boolean isCleanEquinoxCache() {
+        return getBooleanProperty(CLEAN_EQUINOX_CACHE);
+    }
+
+    public void setCleanEquinoxCache(final boolean cleanEquinoxCache) {
+        putBooleanProperty(CLEAN_EQUINOX_CACHE, cleanEquinoxCache);
+    }
+
+    public boolean isRecreateEquinoxConfigIni() {
+        return getBooleanProperty(RECREATE_CONFIG_INI);
+    }
+
+    public void setRecreateEquinoxConfigIni(final boolean recreateConfigIni) {
+        putBooleanProperty(RECREATE_CONFIG_INI, recreateConfigIni);
+    }
+
+    public static final String START_EQUINOX_OSGICONSOLE = "startEquinoxOSGIConsole";
+    public static final String EQUINOX_PRODUCT = "equinoxProduct";
+    public static final String EQUINOX_APPLICATION = "equinoxApplication";
+    public static final String CLEAN_EQUINOX_CACHE = "cleanEquinoxCache";
+    public static final String RECREATE_CONFIG_INI = "recreateEquinoxConfigIni";
+
 }

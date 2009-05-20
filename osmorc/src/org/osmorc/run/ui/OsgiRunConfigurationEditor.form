@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.osmorc.run.ui.OsgiRunConfigurationEditor">
-  <tabbedpane id="f3c0a" binding="_root">
+  <tabbedpane id="f3c0a" binding="root">
     <constraints>
       <xy x="20" y="20" width="831" height="613"/>
     </constraints>
@@ -20,7 +20,9 @@
         <properties>
           <minimumSize width="500" height="200"/>
         </properties>
-        <border type="none"/>
+        <border type="empty">
+          <size top="4" left="4" bottom="4" right="4"/>
+        </border>
         <children>
           <scrollpane id="2054a">
             <constraints>
@@ -30,7 +32,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="2afb6" class="javax.swing.JTable" binding="_modulesList">
+              <component id="2afb6" class="javax.swing.JTable" binding="modulesList">
                 <constraints/>
                 <properties>
                   <showHorizontalLines value="true"/>
@@ -65,7 +67,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="38fe2" class="javax.swing.JButton" binding="_addButton">
+              <component id="38fe2" class="javax.swing.JButton" binding="addButton">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
@@ -75,7 +77,7 @@
                   <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="add"/>
                 </properties>
               </component>
-              <component id="6b918" class="javax.swing.JButton" binding="_removeButton">
+              <component id="6b918" class="javax.swing.JButton" binding="removeButton">
                 <constraints>
                   <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
@@ -99,6 +101,12 @@
         <rowspec value="center:max(d;4px):noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
         <colspec value="fill:d:grow"/>
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:max(d;4px):noGrow"/>
@@ -108,9 +116,11 @@
           <tabbedpane title="Parameters"/>
         </constraints>
         <properties/>
-        <border type="none"/>
+        <border type="empty">
+          <size top="4" left="4" bottom="4" right="4"/>
+        </border>
         <children>
-          <component id="11885" class="javax.swing.JComboBox" binding="_frameworkInstances">
+          <component id="11885" class="javax.swing.JComboBox" binding="frameworkInstances">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
               <forms/>
@@ -135,32 +145,118 @@
               <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="setup.vm.parameters"/>
             </properties>
           </component>
-          <component id="fc70c" class="com.intellij.ui.RawCommandLineEditor" binding="_vmParams">
+          <component id="fc70c" class="com.intellij.ui.RawCommandLineEditor" binding="vmParams">
             <constraints>
               <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties/>
           </component>
-          <component id="7f86b" class="javax.swing.JCheckBox" binding="_includeAllBundlesinClassPath">
+          <component id="7f86b" class="javax.swing.JCheckBox" binding="includeAllBundlesinClassPath">
             <constraints>
-              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
             <properties>
               <text value="Include all bundles in class path"/>
             </properties>
           </component>
+          <grid id="5052d" layout-manager="GridLayoutManager" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false"/>
+            </constraints>
+            <properties/>
+            <border type="etched" title="Runtime Directories"/>
+            <children>
+              <component id="a6290" class="javax.swing.JRadioButton" binding="osmorcControlledRadioButton" default-binding="true">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Osmorc Controlled"/>
+                </properties>
+              </component>
+              <component id="cb2f0" class="javax.swing.JRadioButton" binding="userDefinedRadioButton" default-binding="true">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="User Defined"/>
+                </properties>
+              </component>
+              <component id="54a7b" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Working Dir"/>
+                </properties>
+              </component>
+              <component id="6076f" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Framework Dir"/>
+                </properties>
+              </component>
+              <component id="f0304" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="workingDirField">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="1600" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="frameworkDirField">
+                <constraints>
+                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <hspacer id="ff183">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="30" height="-1"/>
+                  </grid>
+                </constraints>
+              </hspacer>
+            </children>
+          </grid>
+          <component id="3b870" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Program Parameters"/>
+            </properties>
+          </component>
+          <component id="d9d6d" class="com.intellij.ui.RawCommandLineEditor" binding="programParameters">
+            <constraints>
+              <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties/>
+          </component>
         </children>
       </grid>
-      <grid id="6267" binding="_additionalFrameworkPropertiesPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="6267" binding="additionalFrameworkPropertiesPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
           <tabbedpane title="Additional Framework Properties"/>
         </constraints>
         <properties/>
-        <border type="none"/>
+        <border type="empty">
+          <size top="4" left="4" bottom="4" right="4"/>
+        </border>
         <children/>
       </grid>
     </children>
   </tabbedpane>
+  <buttonGroups>
+    <group name="buttonGroup1">
+      <member id="a6290"/>
+      <member id="cb2f0"/>
+    </group>
+  </buttonGroups>
 </form>

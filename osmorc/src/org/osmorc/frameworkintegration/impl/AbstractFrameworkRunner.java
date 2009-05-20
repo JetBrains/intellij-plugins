@@ -22,54 +22,114 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.osmorc.frameworkintegration.impl;
 
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.util.PropertiesWrapper;
+import org.osmorc.run.OsgiRunConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 /**
- * Abstract base class for framework runners that implements shared default behaviour.
+ * This class provides a default implementation for a part of the FrameworkRunner interface useful to any kind of
+ * FrameworkRunner.
  *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id$
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public abstract class AbstractFrameworkRunner<Props extends PropertiesWrapper> implements FrameworkRunner<Props>
-{
-  protected void createTempFolder()
-  {
-    // create a temp folder for running all the stuff.
-    String tempDir =
-        PathManager.getSystemPath() + File.separator + "osmorc" + File.separator + "runtmp" +
-            System.currentTimeMillis();
-    File f = new File(tempDir);
-    f.mkdirs();
-    try
-    {
-      _workingDirectory = f.getCanonicalPath();
+public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> implements FrameworkRunner {
+    private Project project;
+    private OsgiRunConfiguration runConfiguration;
+    private P additionalProperties;
+    private File workingDir;
+    private File frameworkDir;
+
+    public void init(@NotNull final Project project, @NotNull final OsgiRunConfiguration runConfiguration) {
+        this.project = project;
+        this.runConfiguration = runConfiguration;
+        additionalProperties = convertProperties(this.runConfiguration.getAdditionalProperties());
     }
-    catch (IOException e)
-    {
-      throw new IllegalStateException("Could not create temp folder. " + tempDir, e);
+
+    protected P getAdditionalProperties() {
+        return additionalProperties;
     }
-  }
 
-  @NotNull
-  public String getWorkingDirectory()
-  {
-    return _workingDirectory;
-  }
+    @NotNull
+    public File getWorkingDir()
+    {
+      if (workingDir == null)
+      {
+        String path;
+        if( getRunConfiguration().getWorkingDir().length() == 0 ) {
+          path = PathManager.getSystemPath() + File.separator + "osmorc" + File.separator + "runtmp" + System.currentTimeMillis();
+        }
+        else {
+          path = getRunConfiguration().getWorkingDir();
+        }
 
-  public void dispose()
-  {
-    //  kill the temp folder when this runner is disposed
-    FileUtil.asyncDelete(new File(_workingDirectory));
-  }
+        File dir = new File(path);
+        if (!dir.exists())
+        {
+          //noinspection ResultOfMethodCallIgnored
+          dir.mkdirs();
+        }
+        workingDir = dir;
+      }
+      return workingDir;
+    }
 
-  protected String _workingDirectory;
+    protected File getFrameworkDir()
+    {
+      if (frameworkDir == null)
+      {
+        if (getRunConfiguration().getFrameworkDir().length() > 0) {
+          String path = getRunConfiguration().getFrameworkDir();
+          File dir = new File(path);
+          if (!dir.exists())
+          {
+            //noinspection ResultOfMethodCallIgnored
+            dir.mkdirs();
+          }
+          frameworkDir = dir;
+        }
+        else
+        {
+          frameworkDir = getWorkingDir();
+        }
+      }
+      return frameworkDir;
+    }
+
+    protected String getFrameworkDirCanonicalPath() {
+        try {
+            return getFrameworkDir().getCanonicalPath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void dispose() {
+        if (getRunConfiguration().isRuntimeDirsOsmorcControlled()) {
+            FileUtil.asyncDelete(getWorkingDir());
+        }
+    }
+
+
+    @NotNull
+    protected abstract P convertProperties(final Map<String, String> properties);
+
+    protected Project getProject() {
+        return project;
+    }
+
+    protected OsgiRunConfiguration getRunConfiguration() {
+        return runConfiguration;
+    }
+
 }

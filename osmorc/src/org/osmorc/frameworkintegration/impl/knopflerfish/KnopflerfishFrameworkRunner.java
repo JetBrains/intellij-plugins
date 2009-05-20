@@ -27,10 +27,9 @@ package org.osmorc.frameworkintegration.impl.knopflerfish;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
-import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
+import org.osmorc.frameworkintegration.impl.AbstractSimpleFrameworkRunner;
 import org.osmorc.run.ui.SelectedBundle;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,112 +43,86 @@ import java.util.regex.Pattern;
  * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id$
  */
-public class KnopflerfishFrameworkRunner extends AbstractFrameworkRunner<KnopflerfishRunProperties>
-{
-  /**
-   * Ctor.
-   */
-  public KnopflerfishFrameworkRunner()
-  {
-    createTempFolder();
-  }
+public class KnopflerfishFrameworkRunner extends AbstractSimpleFrameworkRunner<KnopflerfishRunProperties> {
+    @NotNull
+    protected String[] getCommandlineParameters(@NotNull SelectedBundle[] bundlesToInstall,
+                                                @NotNull KnopflerfishRunProperties runProperties) {
+        List<String> params = new ArrayList<String>();
 
-  @NotNull
-  public String[] getCommandlineParameters(@NotNull SelectedBundle[] bundlesToInstall,
-                                           @NotNull KnopflerfishRunProperties runProperties)
-  {
-    List<String> params = new ArrayList<String>();
+        params.add("-init");
+        params.add("-launch");
 
-    params.add("-init");
-    params.add("-launch");
+        int level = 1;
+        for (SelectedBundle bundle : bundlesToInstall) {
+            int startLevel = bundle.getStartLevel();
+            if (startLevel > level) {
+                level = startLevel;
+                params.add("-initlevel");
+                params.add(String.valueOf(level));
+            }
+            params.add("-install");
+            params.add(bundle.getBundleUrl());
+            // one cannot start fragment bundles, so we have to make sure they are only installed
+            if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
 
-    int level = 1;
-    for (SelectedBundle bundle : bundlesToInstall)
-    {
-      int startLevel = bundle.getStartLevel();
-      if (startLevel > level)
-      {
-        level = startLevel;
-        params.add("-initlevel");
+                params.add("-start");
+                params.add(bundle.getBundleUrl());
+            }
+        }
+        params.add("-startlevel");
         params.add(String.valueOf(level));
-      }
-      params.add("-install");
-      params.add(bundle.getBundleUrl());
-      // one cannot start fragment bundles, so we have to make sure they are only installed
-      if (bundle.shouldBeStarted() && !CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl()))
-      {
-
-        params.add("-start");
-        params.add(bundle.getBundleUrl());
-      }
-    }
-    params.add("-startlevel");
-    params.add(String.valueOf(level));
-    return params.toArray(new String[params.size()]);
-  }
-
-  @NotNull
-  public Map<String, String> getSystemProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
-                                                 @NotNull KnopflerfishRunProperties runProperties)
-  {
-    Map<String, String> result = new HashMap<String, String>();
-    // setup the framework storage directory.
-    result.put("org.osgi.framework.dir", _workingDirectory + File.separator + "fwdir");
-
-    result.put("org.knopflerfish.framework.debug.errors", "true");
-
-    // debugging (TODO: more detailed settings in the dialog)
-    if (runProperties.isDebugMode())
-    {
-      // result.put("org.knopflerfish.framework.debug.packages", "true");
-      result.put("org.knopflerfish.framework.debug.startlevel", "true");
-      result.put("org.knopflerfish.verbosity", "10");
-      result.put("org.knopflerfish.framework.debug.classloader", "true");
-    }
-    result.put("org.knopflerfish.framework.system.export.all_15", "true");
-    String systemPackages = runProperties.getSystemPackages();
-    if (systemPackages != null && !(systemPackages.trim().length() == 0))
-    {
-      result.put("org.osgi.framework.system.packages", systemPackages);
+        return params.toArray(new String[params.size()]);
     }
 
-    String bootDelegation = runProperties.getBootDelegation();
-    if (bootDelegation != null && !(bootDelegation.trim().length() == 0))
-    {
-      result.put("org.osgi.framework.bootdelegation", bootDelegation);
+    @NotNull
+    protected Map<String, String> getSystemProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
+                                                      @NotNull KnopflerfishRunProperties runProperties) {
+        Map<String, String> result = new HashMap<String, String>();
+        // setup the framework storage directory.
+        result.put("org.osgi.framework.dir", getFrameworkDirCanonicalPath());
+
+        result.put("org.knopflerfish.framework.debug.errors", "true");
+
+        // debugging (TODO: more detailed settings in the dialog)
+        if (runProperties.isDebugMode()) {
+            // result.put("org.knopflerfish.framework.debug.packages", "true");
+            result.put("org.knopflerfish.framework.debug.startlevel", "true");
+            result.put("org.knopflerfish.verbosity", "10");
+            result.put("org.knopflerfish.framework.debug.classloader", "true");
+        }
+        result.put("org.knopflerfish.framework.system.export.all_15", "true");
+        String systemPackages = runProperties.getSystemPackages();
+        if (systemPackages != null && !(systemPackages.trim().length() == 0)) {
+            result.put("org.osgi.framework.system.packages", systemPackages);
+        }
+
+        String bootDelegation = runProperties.getBootDelegation();
+        if (bootDelegation != null && !(bootDelegation.trim().length() == 0)) {
+            result.put("org.osgi.framework.bootdelegation", bootDelegation);
+        }
+
+        return result;
     }
 
-    return result;
-  }
-
-  public void runCustomInstallationSteps(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
-                                         @NotNull KnopflerfishRunProperties runProperties)
-  {
-  }
-
-  public boolean supportsExplodedBundles()
-  {
-    return false;
-  }
+    protected void runCustomInstallationSteps(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
+                                              @NotNull KnopflerfishRunProperties runProperties) {
+    }
 
 
-  @NotNull
-  @NonNls
-  public String getMainClass()
-  {
-    return "org.knopflerfish.framework.Main";
-  }
+    @NotNull
+    @NonNls
+    public String getMainClass() {
+        return "org.knopflerfish.framework.Main";
+    }
 
-  @NotNull
-  public KnopflerfishRunProperties convertProperties(Map<String, String> properties)
-  {
-    return new KnopflerfishRunProperties(properties);
-  }
+    @NotNull
+    protected KnopflerfishRunProperties convertProperties(Map<String, String> properties) {
+        return new KnopflerfishRunProperties(properties);
+    }
 
-  public Pattern getFrameworkStarterClasspathPattern()
-  {
-    return _frameworkStarterJarNamePattern;
-  }
+    protected Pattern getFrameworkStarterClasspathPattern() {
+        return FRAMEWORK_STARTER_JAR_PATTERN;
+    }
 
-  private static final Pattern _frameworkStarterJarNamePattern = Pattern.compile("^framework.jar");
+    private static final Pattern FRAMEWORK_STARTER_JAR_PATTERN = Pattern.compile("^framework.jar");
 }

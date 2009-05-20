@@ -26,24 +26,28 @@
 package org.osmorc.run.ui;
 
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.RawCommandLineEditor;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
-import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.settings.ApplicationSettings;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -53,269 +57,306 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id$
  */
-public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfiguration>
-{
+public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfiguration> {
 
-  public OsgiRunConfigurationEditor(final Project project)
-  {
-    ApplicationSettings registry = ServiceManager.getService(ApplicationSettings.class);
-    DefaultComboBoxModel cbmodel = new DefaultComboBoxModel(registry.getFrameworkInstanceDefinitions().toArray());
-    _frameworkInstances.setModel(cbmodel);
-    _frameworkInstances.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        onFrameworkChange();
-      }
-    });
+    public OsgiRunConfigurationEditor(final Project project) {
+        ApplicationSettings registry = ServiceManager.getService(ApplicationSettings.class);
+        DefaultComboBoxModel cbmodel = new DefaultComboBoxModel(registry.getFrameworkInstanceDefinitions().toArray());
+        frameworkInstances.setModel(cbmodel);
+        frameworkInstances.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onFrameworkChange();
+            }
+        });
 
-    this._project = project;
-    DefaultTableModel model = new RunConfigurationTableModel();
-    model.addColumn(OsmorcBundle.getTranslation("runconfiguration.bundlename"));
-    model.addColumn(OsmorcBundle.getTranslation("runconfiguration.bundlestartlevel"));
+        this.project = project;
+        RunConfigurationTableModel model = new RunConfigurationTableModel();
 
-    _modulesList.setModel(model);
-    _modulesList.setRowSelectionAllowed(true);
-    _modulesList.setColumnSelectionAllowed(false);
+        modulesList.setModel(model);
+        modulesList.setRowSelectionAllowed(true);
+        modulesList.setColumnSelectionAllowed(false);
 
-    _addButton.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        onAddClick();
-      }
-    });
-    _removeButton.addActionListener(new ActionListener()
-    {
+        addButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onAddClick();
+            }
+        });
+        removeButton.addActionListener(new ActionListener() {
 
-      public void actionPerformed(ActionEvent e)
-      {
-        onRemoveClick();
-      }
-    });
-  }
+            public void actionPerformed(ActionEvent e) {
+                onRemoveClick();
+            }
+        });
+        osmorcControlledRadioButton.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                boolean isUserDefined = !osmorcControlledRadioButton.isSelected();
+                frameworkDirField.setEnabled(isUserDefined);
+                workingDirField.setEnabled(isUserDefined);
+                if (osmorcControlledRadioButton.isSelected()) {
+                    frameworkDirField.setText("");
+                    workingDirField.setText("");
+                }
+            }
+        });
 
-  /**
-   * Called when the framework is changed. This will create a new editor for framework properties and will also remove
-   * any framework bundles from the list, as they are no longer in classpath.
-   */
-  private void onFrameworkChange()
-  {
-    if (_frameworkInstances.getSelectedItem() != null)
-    {
-      FrameworkInstanceDefinition frameworkInstanceDefinition =
-          (FrameworkInstanceDefinition) _frameworkInstances.getSelectedItem();
+        workingDirField.addBrowseFolderListener("Choose a working directory",
+                "The working directory is the directory from which the framework is started", null,
+                FileChooserDescriptorFactory.createSingleFolderDescriptor());
+        workingDirField.getTextField().setColumns(30);
+        frameworkDirField.addBrowseFolderListener("Choose a framework directory",
+                "The framework directory is the directory that is used fro framework specific stuff like caches and" +
+                        " configuration files", null,
+                FileChooserDescriptorFactory.createSingleFolderDescriptor());
+        frameworkDirField.getTextField().setColumns(30);
+    }
 
-      // we got a framework instance, get the integrator
-      FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
-      FrameworkIntegrator integrator = registry.findIntegratorByInstanceDefinition(frameworkInstanceDefinition);
+    /**
+     * Called when the framework is changed. This will create a new editor for framework properties and will also remove
+     * any framework bundles from the list, as they are no longer in classpath.
+     */
+    private void onFrameworkChange() {
+        if (frameworkInstances.getSelectedItem() != null) {
+            FrameworkInstanceDefinition frameworkInstanceDefinition =
+                    (FrameworkInstanceDefinition) frameworkInstances.getSelectedItem();
 
-      // clear the panel
-      _additionalFrameworkPropertiesPanel.removeAll();
+            // we got a framework instance, get the integrator
+            FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
+            FrameworkIntegrator integrator = registry.findIntegratorByInstanceDefinition(frameworkInstanceDefinition);
 
-      // create and instal a new editor (if present)
-      _currentFrameworkRunPropertiesEditor = integrator.createRunPropertiesEditor();
-      if (_currentFrameworkRunPropertiesEditor != null)
-      {
-        _additionalFrameworkPropertiesPanel.removeAll();
-        _additionalFrameworkPropertiesPanel
-            .add(_currentFrameworkRunPropertiesEditor.getUI(), BorderLayout.CENTER);
-        if (_osgiRunConfiguration != null)
-        {
-          _currentFrameworkRunPropertiesEditor.resetEditorFrom(_osgiRunConfiguration);
+            // clear the panel
+            additionalFrameworkPropertiesPanel.removeAll();
+
+            // create and install a new editor (if present)
+            currentFrameworkRunPropertiesEditor = integrator.createRunPropertiesEditor();
+            if (currentFrameworkRunPropertiesEditor != null) {
+                additionalFrameworkPropertiesPanel.removeAll();
+                additionalFrameworkPropertiesPanel
+                        .add(currentFrameworkRunPropertiesEditor.getUI(), BorderLayout.CENTER);
+                if (osgiRunConfiguration != null) {
+                    currentFrameworkRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
+                }
+            }
+
+            // remove all framework bundles from the list
+            RunConfigurationTableModel model = getTableModel();
+            model.removeAllOfType(SelectedBundle.BundleType.FrameworkBundle);
         }
-      }
-
-      // remove all framework bundles from the list
-      RunConfigurationTableModel model = getTableModel();
-      model.removeAllOfType(SelectedBundle.BundleType.FrameworkBundle);
-    }
-  }
-
-  private void onRemoveClick()
-  {
-    int[] indices = _modulesList.getSelectedRows();
-    DefaultTableModel model = getTableModel();
-    for (int i = indices.length - 1; i >= 0; i--)
-    {
-      model.removeRow(indices[i]);
-    }
-  }
-
-  private RunConfigurationTableModel getTableModel()
-  {
-    return (RunConfigurationTableModel) _modulesList.getModel();
-  }
-
-  private void onAddClick()
-  {
-
-    BundleSelector selector = new BundleSelector(_project);
-    selector.setUp((FrameworkInstanceDefinition) _frameworkInstances.getSelectedItem(), getBundlesToRun());
-    selector.show(_root);
-    List<SelectedBundle> selectedModules = selector.getSelectedBundles();
-    if (selectedModules != null)
-    {
-      RunConfigurationTableModel model = getTableModel();
-      for (SelectedBundle aModule : selectedModules)
-      {
-        model.addModule(aModule);
-      }
-    }
-  }
-
-  protected void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration)
-  {
-    _osgiRunConfiguration = osgiRunConfiguration;
-    _vmParams.setText(osgiRunConfiguration.getVmParameters());
-    _frameworkInstances.setSelectedItem(osgiRunConfiguration.getInstanceToUse());
-    _includeAllBundlesinClassPath.setSelected(osgiRunConfiguration.isIncludeAllBundlesInClassPath());
-
-    if (_currentFrameworkRunPropertiesEditor != null)
-    {
-      _currentFrameworkRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
     }
 
-    // I deliberately set the list of modules as the last step here as
-    // the framework specific modules are cleaned out when you change the framework instance
-    // so the framework instance should be changed first
-    List<SelectedBundle> modules = osgiRunConfiguration.getBundlesToDeploy();
-    RunConfigurationTableModel model = getTableModel();
-    while (model.getRowCount() > 0)
-    {
-      model.removeRow(0);
-    }
-    for (SelectedBundle module : modules)
-    {
-      model.addModule(module);
-    }
-    _modulesList.getColumnModel().getColumn(1).setPreferredWidth(100);
-
-  }
-
-  protected void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException
-  {
-    List<SelectedBundle> modules = getBundlesToRun();
-    osgiRunConfiguration.setBundlesToDeploy(modules);
-    osgiRunConfiguration.setVmParameters(_vmParams.getText());
-    osgiRunConfiguration.setIncludeAllBundlesInClassPath(_includeAllBundlesinClassPath.isSelected());
-    FrameworkInstanceDefinition frameworkInstanceDefinition =
-        (FrameworkInstanceDefinition) _frameworkInstances.getSelectedItem();
-    if (frameworkInstanceDefinition != null)
-    {
-      osgiRunConfiguration.setInstanceToUse(frameworkInstanceDefinition);
-    }
-
-    if (_currentFrameworkRunPropertiesEditor != null)
-    {
-      _currentFrameworkRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
-    }
-  }
-
-  private List<SelectedBundle> getBundlesToRun()
-  {
-    return getTableModel().getBundles();
-  }
-
-
-  @NotNull
-  protected JComponent createEditor()
-  {
-    return _root;
-  }
-
-  protected void disposeEditor()
-  {
-  }
-
-  private OsgiRunConfiguration _osgiRunConfiguration;
-  private RawCommandLineEditor _vmParams;
-  private JButton _addButton;
-  private JButton _removeButton;
-  private JComboBox _frameworkInstances;
-  private JPanel _additionalFrameworkPropertiesPanel;
-  private JTable _modulesList;
-  private JTabbedPane _root;
-  private JCheckBox _includeAllBundlesinClassPath;
-  private final Project _project;
-  private FrameworkRunPropertiesEditor _currentFrameworkRunPropertiesEditor;
-
-  private static class RunConfigurationTableModel extends DefaultTableModel
-  {
-
-    public Class<?> getColumnClass(int columnIndex)
-    {
-      if (columnIndex == 1)
-      {
-        return Integer.class;
-      }
-      return super
-          .getColumnClass(
-              columnIndex);    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    public boolean isCellEditable(int row, int column)
-    {
-      return column != 0 && super.isCellEditable(row, column);
-    }
-
-    @Override
-    public void setValueAt(Object o, int i, int i1)
-    {
-      SelectedBundle bundle = getBundleAt(i);
-      if (i1 == 1)
-      {
-        bundle.setStartLevel((Integer) o);
-      }
-    }
-
-    public SelectedBundle getBundleAt(int i)
-    {
-      return (SelectedBundle) super.getValueAt(i, 0);
-    }
-
-    public List<SelectedBundle> getBundles()
-    {
-      List<SelectedBundle> bundles = new ArrayList<SelectedBundle>();
-      for (int i = 0; i < getRowCount(); i++)
-      {
-        bundles.add(getBundleAt(i));
-      }
-      return bundles;
-    }
-
-    @Override
-    public Object getValueAt(int i, int i1)
-    {
-      SelectedBundle bundle = getBundleAt(i);
-      if (i1 == 0)
-      {
-        return bundle.toString();
-      }
-      if (i1 == 1)
-      {
-        return bundle.getStartLevel();
-      }
-      return null;
-    }
-
-    public void addModule(SelectedBundle aModule)
-    {
-      addRow(new Object[]{aModule});
-    }
-
-    public void removeAllOfType(SelectedBundle.BundleType type)
-    {
-      for (int i = 0; i < getRowCount(); i++)
-      {
-        if (getBundleAt(i).getBundleType() == type)
-        {
-          removeRow(i);
-          i--;
+    private void onRemoveClick() {
+        int[] indices = modulesList.getSelectedRows();
+        RunConfigurationTableModel model = getTableModel();
+        for (int i = indices.length - 1; i >= 0; i--) {
+            model.removeBundleAt(indices[i]);
         }
-      }
     }
-  }
+
+    private RunConfigurationTableModel getTableModel() {
+        return (RunConfigurationTableModel) modulesList.getModel();
+    }
+
+    private void onAddClick() {
+
+        BundleSelector selector = new BundleSelector(project);
+        selector.setUp((FrameworkInstanceDefinition) frameworkInstances.getSelectedItem(), getBundlesToRun());
+        selector.show(root);
+        List<SelectedBundle> selectedModules = selector.getSelectedBundles();
+        if (selectedModules != null) {
+            RunConfigurationTableModel model = getTableModel();
+            for (SelectedBundle aModule : selectedModules) {
+                model.addBundle(aModule);
+            }
+        }
+    }
+
+    protected void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
+        this.osgiRunConfiguration = osgiRunConfiguration;
+        vmParams.setText(osgiRunConfiguration.getVmParameters());
+        programParameters.setText(osgiRunConfiguration.getProgramParameters());
+        frameworkInstances.setSelectedItem(osgiRunConfiguration.getInstanceToUse());
+        includeAllBundlesinClassPath.setSelected(osgiRunConfiguration.isIncludeAllBundlesInClassPath());
+
+        if (currentFrameworkRunPropertiesEditor != null) {
+            currentFrameworkRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
+        }
+
+        // I deliberately set the list of modules as the last step here as
+        // the framework specific modules are cleaned out when you change the framework instance
+        // so the framework instance should be changed first
+        List<SelectedBundle> modules = osgiRunConfiguration.getBundlesToDeploy();
+        RunConfigurationTableModel model = getTableModel();
+        while (model.getRowCount() > 0) {
+            model.removeBundleAt(0);
+        }
+        for (SelectedBundle module : modules) {
+            model.addBundle(module);
+        }
+        modulesList.getColumnModel().getColumn(1).setPreferredWidth(100);
+
+
+        boolean useUserDefinedFields = osgiRunConfiguration.getFrameworkDir().length() > 0 || osgiRunConfiguration.getWorkingDir().length() > 0;
+        workingDirField.setText(osgiRunConfiguration.getWorkingDir());
+        workingDirField.setEnabled(useUserDefinedFields);
+        frameworkDirField.setText(osgiRunConfiguration.getFrameworkDir());
+        frameworkDirField.setEnabled(useUserDefinedFields);
+        userDefinedRadioButton.setSelected(useUserDefinedFields);
+        osmorcControlledRadioButton.setSelected(!useUserDefinedFields);
+
+
+    }
+
+    protected void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
+        List<SelectedBundle> modules = getBundlesToRun();
+        osgiRunConfiguration.setBundlesToDeploy(modules);
+        osgiRunConfiguration.setVmParameters(vmParams.getText());
+        osgiRunConfiguration.setProgramParameters(programParameters.getText());
+        osgiRunConfiguration.setIncludeAllBundlesInClassPath(includeAllBundlesinClassPath.isSelected());
+        osgiRunConfiguration.setWorkingDir(workingDirField.getText().replace('\\', '/'));
+        osgiRunConfiguration.setFrameworkDir(frameworkDirField.getText().replace('\\', '/'));
+        FrameworkInstanceDefinition frameworkInstanceDefinition =
+                (FrameworkInstanceDefinition) frameworkInstances.getSelectedItem();
+        if (frameworkInstanceDefinition != null) {
+            osgiRunConfiguration.setInstanceToUse(frameworkInstanceDefinition);
+        }
+
+        if (currentFrameworkRunPropertiesEditor != null) {
+            currentFrameworkRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
+        }
+    }
+
+    private List<SelectedBundle> getBundlesToRun() {
+        return getTableModel().getBundles();
+    }
+
+
+    @NotNull
+    protected JComponent createEditor() {
+        return root;
+    }
+
+    protected void disposeEditor() {
+    }
+
+    private OsgiRunConfiguration osgiRunConfiguration;
+    private RawCommandLineEditor vmParams;
+    private JButton addButton;
+    private JButton removeButton;
+    private JComboBox frameworkInstances;
+    private JPanel additionalFrameworkPropertiesPanel;
+    private JTable modulesList;
+    private JTabbedPane root;
+    private JCheckBox includeAllBundlesinClassPath;
+    private JRadioButton osmorcControlledRadioButton;
+    private JRadioButton userDefinedRadioButton;
+    private TextFieldWithBrowseButton workingDirField;
+    private TextFieldWithBrowseButton frameworkDirField;
+    private RawCommandLineEditor programParameters;
+    private final Project project;
+    private FrameworkRunPropertiesEditor currentFrameworkRunPropertiesEditor;
+
+    private static class RunConfigurationTableModel extends AbstractTableModel {
+        private final List<SelectedBundle> selectedBundles;
+
+        public RunConfigurationTableModel() {
+            selectedBundles = new ArrayList<SelectedBundle>();
+        }
+
+        public SelectedBundle getBundleAt(final int index) {
+            return selectedBundles.get(index);
+        }
+
+        public List<SelectedBundle> getBundles() {
+            return selectedBundles;
+        }
+
+        public void removeBundleAt(final int index) {
+            selectedBundles.remove(index);
+            fireTableRowsDeleted(index, index);
+        }
+
+        public void addBundle(final SelectedBundle bundle) {
+            selectedBundles.add(bundle);
+            fireTableRowsInserted(selectedBundles.size() - 1, selectedBundles.size() - 1);
+        }
+
+        public Class<?> getColumnClass(int columnIndex) {
+            switch (columnIndex) {
+                case 0:
+                    return String.class;
+                case 1:
+                    return Integer.class;
+                case 2:
+                    return Boolean.class;
+                default:
+                    return Object.class;
+            }
+        }
+
+        @Override
+        public String getColumnName(int columnIndex) {
+            switch (columnIndex) {
+                case 0:
+                    return "Bundle Name";
+                case 1:
+                    return "Start Level";
+                case 2:
+                    return "Start After Install";
+                default:
+                    return "";
+            }
+        }
+
+        public int getColumnCount() {
+            return 3;
+        }
+
+        public int getRowCount() {
+            return selectedBundles.size();
+        }
+
+        public boolean isCellEditable(int row, int column) {
+            return column != 0;
+        }
+
+        @Override
+        public void setValueAt(Object o, int row, int column) {
+            SelectedBundle bundle = getBundleAt(row);
+            switch (column) {
+                case 1:
+                    bundle.setStartLevel((Integer) o);
+                    break;
+                case 2:
+                    bundle.setStartAfterInstallation((Boolean) o);
+                    break;
+                default:
+                    throw new RuntimeException("Cannot edit column " + column);
+            }
+        }
+
+        public Object getValueAt(int row, int column) {
+            SelectedBundle bundle = getBundleAt(row);
+            switch (column) {
+                case 0:
+                    return bundle.toString();
+                case 1:
+                    return bundle.getStartLevel();
+                case 2:
+                    return bundle.isStartAfterInstallation();
+                default:
+                    throw new RuntimeException("Don't know column " + column);
+            }
+        }
+
+        public void removeAllOfType(SelectedBundle.BundleType type) {
+            for (Iterator<SelectedBundle> selectedBundleIterator = selectedBundles.iterator(); selectedBundleIterator.hasNext();) {
+                SelectedBundle selectedBundle = selectedBundleIterator.next();
+                if (selectedBundle.getBundleType() == type) {
+                    selectedBundleIterator.remove();
+                }
+            }
+            fireTableDataChanged();
+        }
+    }
 }
 
 
