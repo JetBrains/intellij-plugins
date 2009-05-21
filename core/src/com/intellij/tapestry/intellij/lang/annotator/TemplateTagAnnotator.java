@@ -68,12 +68,12 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
      tag.getParent().putUserData(XmlHighlightVisitor.DO_NOT_VALIDATE_KEY, "true");*/
 
       // annotate the tag start
-      _annotationHolder.createInfoAnnotation(tag.getChildren()[1], null)
+      _annotationHolder.createInfoAnnotation(tag.getFirstChild().getNextSibling(), null)
           .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_TAG_KEY));
 
       // only annotation closing tag if the tag isn't empty like <t:body/>
       if (!tag.isEmpty()) {
-        _annotationHolder.createInfoAnnotation(tag.getChildren()[tag.getChildren().length - 2], null)
+        _annotationHolder.createInfoAnnotation(tag.getLastChild().getPrevSibling(), null)
             .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_TAG_KEY));
       }
 
@@ -107,13 +107,13 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
             if (attribute == null) attribute = tag.getAttribute(parameter.getName(), "");
             if (attribute == null) {
               if (parameter.isRequired() && !parameterDefinedInClass(parameter, elementClass, tag)) {
-                _annotationHolder.createErrorAnnotation(tag.getChildren()[1], "Missing required parameter \"" + parameter.getName() + "\"");
+                _annotationHolder.createErrorAnnotation(tag.getFirstChild().getNextSibling(), "Missing required parameter \"" + parameter.getName() + "\"");
               }
               continue;
             }
 
             // annotate attribute name
-            _annotationHolder.createInfoAnnotation(attribute.getChildren()[0], null)
+            _annotationHolder.createInfoAnnotation(attribute.getFirstChild(), null)
                 .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_PARAMETER_KEY));
 
             ResolvedValue resolvedValue;
@@ -150,10 +150,12 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
         XmlElement identifierAttribute = TapestryUtils.getComponentIdentifier(tag);
         if (identifierAttribute != null) {
           if (identifierAttribute instanceof XmlAttribute) {
-            _annotationHolder.createErrorAnnotation(identifierAttribute.getLastChild(), "Invalid component name");
+            String attrName = ((XmlAttribute)identifierAttribute).getLocalName();
+            final String msg = attrName.equals("id") ? "Unknown child component id" : "Unknown component type";
+            _annotationHolder.createErrorAnnotation(identifierAttribute.getLastChild(), msg);
           }
           else {
-            _annotationHolder.createErrorAnnotation(identifierAttribute.getNavigationElement(), "Invalid component name");
+            _annotationHolder.createErrorAnnotation(identifierAttribute.getNavigationElement(), "Unknown component type");
           }
         }
       }
