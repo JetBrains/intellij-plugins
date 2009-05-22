@@ -80,25 +80,13 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
       Module module = ProjectRootManager.getInstance(tag.getManager().getProject()).getFileIndex()
           .getModuleForFile(tag.getContainingFile().getVirtualFile());
       if (module == null) return;
-      Component component;
-      try {
-        component = TapestryUtils.getComponentFromTag(module, tag);
-      }
-      catch (NotFoundException ex) {
-        component = null;
-      }
+      Component component = TapestryUtils.getComponentFromTag(module, tag);
 
       if (component != null) {
         TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
 
-        IntellijJavaClassType elementClass;
-        try {
-          elementClass =
-              (IntellijJavaClassType)ComponentUtils.findClassFromTemplate(new IntellijResource(tag.getContainingFile()), tapestryProject);
-        }
-        catch (NotFoundException ex) {
-          elementClass = null;
-        }
+        IntellijJavaClassType elementClass =
+            (IntellijJavaClassType)ComponentUtils.findClassFromTemplate(new IntellijResource(tag.getContainingFile()), tapestryProject);
 
         // annotate the tag parameters
         if (elementClass != null) {

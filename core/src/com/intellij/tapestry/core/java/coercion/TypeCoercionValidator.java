@@ -5,8 +5,8 @@ import com.intellij.tapestry.core.java.AssignableToAll;
 import com.intellij.tapestry.core.java.IJavaType;
 import com.intellij.tapestry.core.log.Logger;
 import com.intellij.tapestry.core.log.LoggerFactory;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.apache.commons.chain.Chain;
 import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ChainBase;
@@ -29,8 +29,8 @@ public class TypeCoercionValidator {
         _chain.addCommand(new EnumTypeCoercionValidator());
     }
 
-    public static boolean canCoerce(@NonNull TapestryProject project, 
-    								@NonNull IJavaType sourceType, 
+    public static boolean canCoerce(@NotNull TapestryProject project,
+    								@NotNull IJavaType sourceType,
     								@Nullable String sourceValue, 
     								@Nullable IJavaType targetType) {
         if (targetType == null)

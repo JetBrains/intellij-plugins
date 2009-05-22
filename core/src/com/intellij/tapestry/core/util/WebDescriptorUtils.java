@@ -1,8 +1,8 @@
 package com.intellij.tapestry.core.util;
 
 import com.intellij.tapestry.core.TapestryConstants;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -49,7 +49,7 @@ public final class WebDescriptorUtils {
      * @param paramName the context parameter name.
      * @return the context parameter name value, <code>null</code> if the parameter isn't found.
      */
-    private static String getContextParam(@Nullable Document document, @NonNull String paramName) {
+    private static String getContextParam(@Nullable Document document, @NotNull String paramName) {
         if (document == null)
             return null;
 

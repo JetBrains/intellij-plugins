@@ -1,7 +1,7 @@
 package com.intellij.tapestry.core.resource;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
@@ -43,7 +43,7 @@ public interface IResourceFinder {
      * @param path the path of the resource to search for.
      * @return the resource in the given path, <code>null</null> if none is found.
      */
-    @NonNull
+    @NotNull
     Collection<IResource> findLocalizedContextResource(String path);
 
     /**

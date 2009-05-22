@@ -27,46 +27,39 @@ import java.util.Arrays;
  */
 public class TagDocumentationNavigation extends AnAction {
 
-    /**
-     * {@inheritDoc}
-     */
-    public void actionPerformed(AnActionEvent event) {
-        TapestryToolWindow metatoolWindow;
+  /**
+   * {@inheritDoc}
+   */
+  public void actionPerformed(AnActionEvent event) {
+    TapestryToolWindow metatoolWindow;
 
-        Project project = (Project) event.getDataContext().getData(DataKeys.PROJECT.getName());
-        Module module = (Module) event.getDataContext().getData(DataKeys.MODULE.getName());
+    Project project = (Project)event.getDataContext().getData(DataKeys.PROJECT.getName());
+    if (project == null) return;
+    Module module = (Module)event.getDataContext().getData(DataKeys.MODULE.getName());
 
-        Editor editor = (Editor) event.getDataContext().getData(DataKeys.EDITOR.getName());
-        PsiFile psiFile = ((PsiFile) event.getDataContext().getData(DataKeys.PSI_FILE.getName()));
+    Editor editor = (Editor)event.getDataContext().getData(DataKeys.EDITOR.getName());
+    PsiFile psiFile = ((PsiFile)event.getDataContext().getData(DataKeys.PSI_FILE.getName()));
 
-        if (editor != null && psiFile != null) {
+    if (editor == null || psiFile == null) return;
 
-            int caretOffset = editor.getCaretModel().getOffset();
-            PsiElement element = psiFile.findElementAt(caretOffset);
+    int caretOffset = editor.getCaretModel().getOffset();
+    PsiElement element = psiFile.findElementAt(caretOffset);
 
-            XmlTag tag = PsiTreeUtil.getParentOfType(element, XmlTag.class);
+    XmlTag tag = PsiTreeUtil.getParentOfType(element, XmlTag.class);
 
-            if (tag != null && ComponentUtils.isComponentTag(new IntellijXmlTag(tag))) {
+    if (tag == null || !ComponentUtils.isComponentTag(new IntellijXmlTag(tag))) return;
 
-                if (project != null) {
-                    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TapestryProjectSupportLoader.TAPESTRY_TOOLWINDOW_ID);
-                    metatoolWindow = project.getComponent(TapestryProjectSupportLoader.class).getTapestryToolWindow();
+    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TapestryProjectSupportLoader.TAPESTRY_TOOLWINDOW_ID);
+    metatoolWindow = project.getComponent(TapestryProjectSupportLoader.class).getTapestryToolWindow();
 
-                    try {
-                        Component component = TapestryUtils.getComponentFromTag(module, tag);
+    Component component = TapestryUtils.getComponentFromTag(module, tag);
+    if (component == null) return;
 
-                        if (!metatoolWindow.getMainPanel().isDisplayable() && toolWindow != null) {
-                            toolWindow.show(null);
-                        }
-
-                        metatoolWindow.update(module, component, Arrays.asList(component.getElementClass()));
-                        project.getComponent(TapestryProjectSupportLoader.class).enableToolWindow();
-
-                    } catch (NotFoundException ex) {
-                        //Do Nothing
-                    }
-                }
-            }
-        }
+    if (!metatoolWindow.getMainPanel().isDisplayable() && toolWindow != null) {
+      toolWindow.show(null);
     }
+
+    metatoolWindow.update(module, component, Arrays.asList(component.getElementClass()));
+    project.getComponent(TapestryProjectSupportLoader.class).enableToolWindow();
+  }
 }

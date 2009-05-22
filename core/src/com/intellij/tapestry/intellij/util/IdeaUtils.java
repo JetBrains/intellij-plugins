@@ -22,8 +22,8 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaArrayType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaPrimitiveType;
 import com.intellij.util.IncorrectOperationException;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.*;
@@ -223,8 +223,8 @@ public class IdeaUtils {
      * @param module the module to look for content roots.
      * @return the given module configured content roots.
      */
-    @NonNull
-    public static Collection<VirtualFile> getModuleContentRoots(@NonNull Module module) {
+    @NotNull
+    public static Collection<VirtualFile> getModuleContentRoots(@NotNull Module module) {
 
         Collection<VirtualFile> contentRoots = new ArrayList<VirtualFile>();
         contentRoots.addAll(Arrays.asList(ModuleRootManager.getInstance(module).getContentRoots()));
@@ -237,7 +237,7 @@ public class IdeaUtils {
      * @return the web facet of the given module or <code>null</code> if the module doesn't have one.
      */
     @Nullable
-    public static WebFacet getWebFacet(@NonNull Module module) {
+    public static WebFacet getWebFacet(@NotNull Module module) {
         return FacetManager.getInstance(module).getFacetByType(WebFacet.ID);
     }//getWebFacet
 

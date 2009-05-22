@@ -11,6 +11,7 @@ import com.intellij.xml.impl.schema.XmlElementDescriptorImpl;
 import com.intellij.xml.impl.schema.XmlNSDescriptorImpl;
 import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import org.jetbrains.annotations.NotNull;
@@ -47,22 +48,12 @@ public class TapestryNamespaceDescriptor extends XmlNSDescriptorImpl {
                 tagFile = _tag.getContainingFile().getOriginalFile().getVirtualFile();
             }
 
-            Component component;
-            try {
-                if (!tagFile.isInLocalFileSystem()) {
-                    return EMPTY_PSI_ELEMENT;
-                }
+          if (!tagFile.isInLocalFileSystem()) return EMPTY_PSI_ELEMENT;
+          Component component = TapestryUtils.getComponentFromTag(ProjectRootManager.getInstance(_tag.getProject()).getFileIndex().getModuleForFile(tagFile), _tag);
+          if(component == null) return EMPTY_PSI_ELEMENT;
 
-                component = TapestryUtils.getComponentFromTag(ProjectRootManager.getInstance(_tag.getProject()).getFileIndex().getModuleForFile(tagFile), _tag);
-            } catch (NotFoundException ex) {
-                return EMPTY_PSI_ELEMENT;
-            }
-
-            if (component.getElementClass() != null) {
-                return ((IntellijJavaClassType) component.getElementClass()).getPsiClass();
-            } else {
-                return EMPTY_PSI_ELEMENT;
-            }
+          final IJavaClassType classType = component.getElementClass();
+          return classType == null ? EMPTY_PSI_ELEMENT : ((IntellijJavaClassType)classType).getPsiClass();
         }
 
         public XmlElementDescriptor getElementDescriptor(XmlTag xmlTag) {

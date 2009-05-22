@@ -29,6 +29,7 @@ import com.intellij.tapestry.intellij.core.resource.xml.IntellijXmlTag;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -223,11 +224,10 @@ public class TapestryUtils {
    * @param tag    the component tag.
    * @return the component that the given tag represents.
    */
-  public static Component getComponentFromTag(Module module, XmlTag tag) throws NotFoundException {
+  @Nullable
+  public static Component getComponentFromTag(Module module, XmlTag tag) {
     TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
-    if (tapestryProject == null || !ComponentUtils.isComponentTag(new IntellijXmlTag(tag))) {
-      throw new NotFoundException();
-    }
+    if (tapestryProject == null || !ComponentUtils.isComponentTag(new IntellijXmlTag(tag))) return null;
 
     if (tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
       final String tagLocalName = tag.getLocalName().toLowerCase(Locale.getDefault());
@@ -250,10 +250,8 @@ public class TapestryUtils {
     if (identifierElement instanceof XmlAttribute) {
       final String attrName = ((XmlAttribute)identifierElement).getLocalName();
       final String attrValue = ((XmlAttribute)identifierElement).getValue();
-      if (attrName.equals("type")) {
-        if (attrValue == null) throw new NotFoundException();
-        Component component = tapestryProject.findComponent(attrValue.replace('.', '/'));
-        if (component != null) return component;
+      if (attrName.equals("type") && attrValue != null) {
+        return tapestryProject.findComponent(attrValue.replace('.', '/'));
       }
       if (attrName.equals("id")) {
         IJavaClassType contextClass = ComponentUtils.findClassFromTemplate(new IntellijResource(tag.getContainingFile()), tapestryProject);
@@ -271,10 +269,9 @@ public class TapestryUtils {
     }
 
     if (identifierElement instanceof XmlToken) {
-      Component component = tapestryProject.findComponent(tag.getLocalName().replace('.', '/'));
-      if (component != null) return component;
+      return tapestryProject.findComponent(tag.getLocalName().replace('.', '/'));
     }
-    throw new NotFoundException();
+    return null;
   }
 
   /**

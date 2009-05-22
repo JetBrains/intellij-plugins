@@ -4,7 +4,7 @@ import com.intellij.psi.PsiType;
 import com.intellij.tapestry.core.java.IJavaType;
 import com.intellij.tapestry.core.log.Logger;
 import com.intellij.tapestry.core.log.LoggerFactory;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class IntellijJavaType implements IJavaType {
 

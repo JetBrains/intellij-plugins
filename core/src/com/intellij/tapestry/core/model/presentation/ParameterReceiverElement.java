@@ -4,8 +4,8 @@ import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.Library;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import gnu.trove.THashMap;
 
 import java.util.Map;
@@ -15,7 +15,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
   private Map<String, TapestryParameter> _parametersCache;
   private long _parametersCacheTimestamp;
 
-  ParameterReceiverElement(@Nullable Library library, @NonNull IJavaClassType elementClass, @NonNull TapestryProject project) {
+  ParameterReceiverElement(@Nullable Library library, @NotNull IJavaClassType elementClass, @NotNull TapestryProject project) {
     super(library, elementClass, project);
   }
 

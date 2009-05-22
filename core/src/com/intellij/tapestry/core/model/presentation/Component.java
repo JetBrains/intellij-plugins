@@ -9,7 +9,7 @@ import com.intellij.tapestry.core.model.externalizable.ExternalizableToTemplate;
 import com.intellij.tapestry.core.model.externalizable.totemplatechain.ExternalizeToTemplateChain;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.util.PathUtils;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,11 +22,11 @@ public class Component extends ParameterReceiverElement implements Externalizabl
 
     private IResource[] _templateCache;
 
-    protected Component(@NonNull Library library, @NonNull IJavaClassType componentClass, @NonNull TapestryProject project) throws NotTapestryElementException {
+    protected Component(@NotNull Library library, @NotNull IJavaClassType componentClass, @NotNull TapestryProject project) throws NotTapestryElementException {
         super(library, componentClass, project);
     }
 
-    protected Component(@NonNull IJavaClassType componentClass, @NonNull TapestryProject project) throws NotTapestryElementException {
+    protected Component(@NotNull IJavaClassType componentClass, @NotNull TapestryProject project) throws NotTapestryElementException {
         super(null, componentClass, project);
     }
 

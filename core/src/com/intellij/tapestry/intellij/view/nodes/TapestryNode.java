@@ -4,7 +4,7 @@ import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.module.Module;
 import com.intellij.ui.treeStructure.SimpleNode;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Base class for all Tapestry related nodes.
@@ -16,7 +16,7 @@ public abstract class TapestryNode extends SimpleNode {
     protected Object _element;
     protected ItemPresentation _presentation;
 
-    public TapestryNode(@NonNull final Module module, @NonNull final AbstractTreeBuilder treeBuilder) {
+    public TapestryNode(@NotNull final Module module, @NotNull final AbstractTreeBuilder treeBuilder) {
         super(module.getProject());
 
         _module = module;
@@ -29,7 +29,7 @@ public abstract class TapestryNode extends SimpleNode {
      * @param id           the node id.
      * @param presentation the node presentation configuration.
      */
-    public void init(@NonNull final Object id, @NonNull final ItemPresentation presentation) {
+    public void init(@NotNull final Object id, @NotNull final ItemPresentation presentation) {
         assert id != null;
 
         assert presentation != null;

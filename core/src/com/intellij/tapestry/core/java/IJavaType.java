@@ -1,6 +1,6 @@
 package com.intellij.tapestry.core.java;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a JAVA type.

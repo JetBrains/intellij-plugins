@@ -9,6 +9,7 @@ import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.xml.XmlAttribute;
 import com.intellij.tapestry.core.resource.xml.XmlTag;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
@@ -26,21 +27,28 @@ public class ComponentUtils {
    * @return the component class.
    * @throws NotFoundException when the class can't be found.
    */
-  public static IJavaClassType findClassFromTemplate(IResource template, TapestryProject project) throws NotFoundException {
+  @Nullable
+  public static IJavaClassType findClassFromTemplate(IResource template, TapestryProject project) {
     String resourcePath = template.getFile().getAbsolutePath();
     String templateFilename = LocalizationUtils.unlocalizeFileName(template.getName());
-    Library applicationLibrary = project.getApplicationLibrary();
+
+    Library applicationLibrary = null;
+    try {
+      applicationLibrary = project.getApplicationLibrary();
+    }
+    catch (NotFoundException e) {
+      return null;
+    }
 
     resourcePath = PathUtils.removeLastFilePathElement(resourcePath, false) + File.separator + templateFilename;
 
     IJavaClassType type = checkFirstResourceForEach(resourcePath, applicationLibrary.getComponents().values());
     if(type != null) return type;
-    type = checkFirstResourceForEach(resourcePath, applicationLibrary.getPages().values());
-    if(type != null) return type;
-    throw new NotFoundException();
+    return checkFirstResourceForEach(resourcePath, applicationLibrary.getPages().values());
   }
 
-  public static IJavaClassType checkFirstResourceForEach(String resourcePath, Collection<PresentationLibraryElement> components) throws NotFoundException {
+  @Nullable
+  public static IJavaClassType checkFirstResourceForEach(String resourcePath, Collection<PresentationLibraryElement> components) {
     for (PresentationLibraryElement component : components) {
       final IResource[] resources = component.getTemplate();
       if (resources.length > 0 &&

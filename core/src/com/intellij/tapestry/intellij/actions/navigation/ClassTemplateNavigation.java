@@ -123,14 +123,9 @@ public class ClassTemplateNavigation extends AnAction {
                 || psiFile.getFileType().equals(StdFileTypes.HTML) && event.getPresentation().getText()
                 .equals("Tapestry Class")) {
 
-            IJavaClassType elementClass;
-            try {
-                elementClass = ComponentUtils
-                        .findClassFromTemplate(new IntellijResource(psiFile), TapestryModuleSupportLoader.getTapestryProject(
-                                (Module) event.getDataContext().getData(DataKeys.MODULE.getName())));
-            } catch (NotFoundException e) {
-                elementClass = null;
-            }
+          IJavaClassType elementClass = ComponentUtils
+                  .findClassFromTemplate(new IntellijResource(psiFile), TapestryModuleSupportLoader.getTapestryProject(
+                          (Module) event.getDataContext().getData(DataKeys.MODULE.getName())));
 
             if (elementClass != null) {
                 FileEditorManager.getInstance(project).openFile(

@@ -62,12 +62,8 @@ public class TemplateCompletionData extends HtmlCompletionData {
         // Completion of tag attributes
         if (element instanceof XmlAttribute) {
             XmlTag tag = PsiTreeUtil.getParentOfType(psiElement, XmlTag.class);
-            Component component;
-            try {
-                component = TapestryUtils.getComponentFromTag(module, tag);
-            } catch (NotFoundException ex) {
-                return;
-            }
+          Component component = TapestryUtils.getComponentFromTag(module, tag);
+          if(component == null) return;
 
             for (TapestryParameter parameter : component.getParameters().values()) {
                 LookupItem variant = new LookupItem(parameter.getName(), parameter.getName());

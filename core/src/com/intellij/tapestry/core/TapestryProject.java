@@ -14,8 +14,8 @@ import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.IResourceFinder;
 import static com.intellij.tapestry.core.util.StringUtils.isNotEmpty;
 import com.intellij.tapestry.core.util.WebDescriptorUtils;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -67,7 +67,7 @@ public class TapestryProject {
         }
     }
 
-    public TapestryProject(@NonNull IResourceFinder resourceFinder, @NonNull IJavaTypeFinder javaTypeFinder, @NonNull IJavaTypeCreator javaTypeCreator) {
+    public TapestryProject(@NotNull IResourceFinder resourceFinder, @NotNull IJavaTypeFinder javaTypeFinder, @NotNull IJavaTypeCreator javaTypeCreator) {
         _resourceFinder = resourceFinder;
         _javaTypeFinder = javaTypeFinder;
         _javaTypeCreator = javaTypeCreator;
@@ -82,7 +82,7 @@ public class TapestryProject {
      * @return the configured Tapestry filter name.
      * @throws NotFoundException when for some reason the filter name couldn't be found.
      */
-    @NonNull
+    @NotNull
     public String getTapestryFilterName() throws NotFoundException {
         boolean updated;
 
@@ -108,7 +108,7 @@ public class TapestryProject {
      * @return the application root package.
      * @throws NotFoundException when for some reason the application package couldn't be found.
      */
-    @NonNull
+    @NotNull
     public String getApplicationRootPackage() throws NotFoundException {
         boolean updated;
 
@@ -134,7 +134,7 @@ public class TapestryProject {
      * @return the application pages root package.
      * @throws NotFoundException when the pages root package can't be found.
      */
-    @NonNull
+    @NotNull
     public String getPagesRootPackage() throws NotFoundException {
         return getApplicationRootPackage() + "." + TapestryConstants.PAGES_PACKAGE;
     }
@@ -143,7 +143,7 @@ public class TapestryProject {
      * @return the application components root package.
      * @throws NotFoundException when the components root package can't be found.
      */
-    @NonNull
+    @NotNull
     public String getComponentsRootPackage() throws NotFoundException {
         return getApplicationRootPackage() + "." + TapestryConstants.COMPONENTS_PACKAGE;
     }
@@ -152,7 +152,7 @@ public class TapestryProject {
      * @return the application mixins root package.
      * @throws NotFoundException when the mixins root package can't be found.
      */
-    @NonNull
+    @NotNull
     public String getMixinsRootPackage() throws NotFoundException {
         return getApplicationRootPackage() + "." + TapestryConstants.MIXINS_PACKAGE;
     }
@@ -162,7 +162,7 @@ public class TapestryProject {
      *
      * @return a collection of all the available libraries to this project.
      */
-    @NonNull
+    @NotNull
     public Collection<Library> getLibraries() {
 
         String applicationRootPackage;
@@ -194,7 +194,7 @@ public class TapestryProject {
      * @return the application library.
      * @throws NotFoundException when the application library can't be found.
      */
-    @NonNull
+    @NotNull
     public Library getApplicationLibrary() throws NotFoundException {
         Collection<Library> libraries = getLibraries();
         if (libraries.size() == 0) {
@@ -229,7 +229,7 @@ public class TapestryProject {
      * @return the page of the given class, or <code>null</code> if the page isn't found.
      */
     @Nullable
-    public Page findPage(@NonNull IJavaClassType pageClass) {
+    public Page findPage(@NotNull IJavaClassType pageClass) {
         for (Library library : getLibraries()) {
             Map<String, PresentationLibraryElement> libraryPages = library.getPages();
             for (PresentationLibraryElement page : libraryPages.values())
@@ -248,7 +248,7 @@ public class TapestryProject {
      * @return the component with the given name, or <code>null</code> if the component isn't found.
      */
     @Nullable
-    public Component findComponent(@NonNull String componentName) {
+    public Component findComponent(@NotNull String componentName) {
         for (Library library : getLibraries()) {
             Map<String, PresentationLibraryElement> libraryComponents = library.getComponents();
             if (libraryComponents.containsKey(componentName)) {
@@ -266,7 +266,7 @@ public class TapestryProject {
      * @return either the page or component to which the given class belongs to, or <code>null</code> if the element isn't found.
      */
     @Nullable
-    public PresentationLibraryElement findElement(@NonNull IJavaClassType elementClass) {
+    public PresentationLibraryElement findElement(@NotNull IJavaClassType elementClass) {
         Component component = findComponent(elementClass);
         if (component != null) {
             return component;
@@ -282,7 +282,7 @@ public class TapestryProject {
      * @return the component of the given class, or <code>null</code> if the component isn't found.
      */
     @Nullable
-    public Component findComponent(@NonNull IJavaClassType componentClass) {
+    public Component findComponent(@NotNull IJavaClassType componentClass) {
         for (Library library : getLibraries()) {
             Map<String, PresentationLibraryElement> libraryComponents = library.getComponents();
 
@@ -295,12 +295,12 @@ public class TapestryProject {
         return null;
     }
 
-    @NonNull
+    @NotNull
     public IJavaTypeFinder getJavaTypeFinder() {
         return _javaTypeFinder;
     }
 
-    @NonNull
+    @NotNull
     public IJavaTypeCreator getJavaTypeCreator() {
         return _javaTypeCreator;
     }
@@ -309,7 +309,7 @@ public class TapestryProject {
         return _resourceFinder;
     }
 
-    @NonNull
+    @NotNull
     public TapestryEventsManager getEventsManager() {
         return _eventsManager;
     }

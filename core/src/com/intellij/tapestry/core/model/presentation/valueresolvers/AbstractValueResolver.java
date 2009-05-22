@@ -1,6 +1,6 @@
 package com.intellij.tapestry.core.model.presentation.valueresolvers;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.apache.commons.chain.Command;
 
 /**

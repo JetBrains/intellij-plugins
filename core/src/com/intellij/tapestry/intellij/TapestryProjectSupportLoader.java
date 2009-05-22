@@ -31,102 +31,99 @@ import java.util.Arrays;
 
 public class TapestryProjectSupportLoader implements ProjectComponent {
 
-    public static final String TAPESTRY_TOOLWINDOW_ID = "Tapestry";
+  public static final String TAPESTRY_TOOLWINDOW_ID = "Tapestry";
 
-    private static final Logger _logger = LoggerFactory.getInstance().getLogger(TapestryProjectSupportLoader.class);
+  private static final Logger _logger = LoggerFactory.getInstance().getLogger(TapestryProjectSupportLoader.class);
 
-    private Project _project;
-    private TapestryToolWindow _tapestryToolwindow;
+  private Project _project;
+  private TapestryToolWindow _tapestryToolwindow;
 
-    public TapestryProjectSupportLoader(Project project) {
-        _project = project;
-    }
+  public TapestryProjectSupportLoader(Project project) {
+    _project = project;
+  }
 
-    public void enableToolWindow() {
-        if (ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID) == null)
-            registerToolWindow();
+  public void enableToolWindow() {
+    if (ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID) == null) registerToolWindow();
 
-        ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID).setAvailable(true, null);
-    }
+    ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID).setAvailable(true, null);
+  }
 
-    public void initComponent() {
-    }
+  public void initComponent() {
+  }
 
-    public void disposeComponent() {
-    }
+  public void disposeComponent() {
+  }
 
-    @NotNull
-    public String getComponentName() {
-        return TapestryProjectSupportLoader.class.getName();
-    }
+  @NotNull
+  public String getComponentName() {
+    return TapestryProjectSupportLoader.class.getName();
+  }
 
-    public void projectOpened() {
-        // register Tapestry ToolWindow
-        registerToolWindow();
+  public void projectOpened() {
+    // register Tapestry ToolWindow
+    registerToolWindow();
 
-        if (TapestryUtils.getAllTapestryModules(_project).length > 0) {
-            ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID).setAvailable(true, null);
+    if (TapestryUtils.getAllTapestryModules(_project).length > 0) {
+      ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID).setAvailable(true, null);
 
-            StartupManager.getInstance(_project).runWhenProjectIsInitialized(new Runnable() {
-                public void run() {
-                    try {
-                        addCompilerResources();
-                    } catch (Exception ex) {
-                        _logger.warn(ex);
-                    }
-                }
-            });
+      StartupManager.getInstance(_project).runWhenProjectIsInitialized(new Runnable() {
+        public void run() {
+          try {
+            addCompilerResources();
+          }
+          catch (Exception ex) {
+            _logger.warn(ex);
+          }
         }
-
-        // register attribute values reference provider
-        ReferenceProvidersRegistry.getInstance(_project).registerReferenceProvider(XmlPatterns.xmlAttributeValue(), new XmlTagValueReferenceProvider());
-
-        // register tag reference provider
-        MetaRegistry.addMetadataBinding(
-                new AndFilter(
-                        new ClassFilter(XmlDocument.class),
-                        new TargetNamespaceFilter(TapestryConstants.TEMPLATE_NAMESPACE)
-                ),
-                TapestryNamespaceDescriptor.class
-        );
+      });
     }
 
-    
+    // register attribute values reference provider
+    ReferenceProvidersRegistry.getInstance(_project)
+        .registerReferenceProvider(XmlPatterns.xmlAttributeValue(), new XmlTagValueReferenceProvider());
+
+    // register tag reference provider
+    MetaRegistry.addMetadataBinding(
+        new AndFilter(new ClassFilter(XmlDocument.class), new TargetNamespaceFilter(TapestryConstants.TEMPLATE_NAMESPACE)),
+        TapestryNamespaceDescriptor.class);
+  }
 
 
+  public TapestryToolWindow getTapestryToolWindow() {
+    if (_tapestryToolwindow == null) registerToolWindow();
 
-    public TapestryToolWindow getTapestryToolWindow() {
-        if (_tapestryToolwindow == null)
-            registerToolWindow();
+    return _tapestryToolwindow;
+  }
 
-        return _tapestryToolwindow;
+  public void projectClosed() {
+    if (ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID) != null) {
+      ToolWindowManager.getInstance(_project).unregisterToolWindow(TAPESTRY_TOOLWINDOW_ID);
     }
+  }
 
-    public void projectClosed() {
-        if (ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID) != null) {
-            ToolWindowManager.getInstance(_project).unregisterToolWindow(TAPESTRY_TOOLWINDOW_ID);
-        }
+  public void addCompilerResources() throws MalformedPatternException {
+    String[] filePatterns = ((CompilerConfigurationImpl)_project.getComponent(CompilerConfiguration.class)).getResourceFilePatterns();
+
+    if (Arrays.binarySearch(filePatterns, "?*.tml") < 0) {
+      _project.getComponent(CompilerConfiguration.class).addResourceFilePattern("?*.tml");
     }
+  }
 
-    public void addCompilerResources() throws MalformedPatternException {
-        String[] filePatterns = ((CompilerConfigurationImpl) _project.getComponent(CompilerConfiguration.class)).getResourceFilePatterns();
+  private void registerToolWindow() {
+    if (ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID) == null) {
+      _tapestryToolwindow = new TapestryToolWindow(_project);
 
-        if (Arrays.binarySearch(filePatterns, "?*.tml") < 0)
-            _project.getComponent(CompilerConfiguration.class).addResourceFilePattern("?*.tml");
+      ToolWindow toolwindow =
+          ToolWindowManager.getInstance(_project).registerToolWindow(TAPESTRY_TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM);
+      toolwindow.getContentManager()
+          .addContent(PeerFactory.getInstance().getContentFactory().createContent(_tapestryToolwindow.getMainPanel(), "Tapestry", true));
+
+      toolwindow.setIcon(Icons.TAPESTRY_LOGO_SMALL);
+      toolwindow.setAvailable(false, null);
     }
-
-    private void registerToolWindow() {
-        if (ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID) == null) {
-            _tapestryToolwindow = new TapestryToolWindow(_project);
-
-            ToolWindow toolwindow = ToolWindowManager.getInstance(_project).registerToolWindow(TAPESTRY_TOOLWINDOW_ID, false, ToolWindowAnchor.BOTTOM);
-            toolwindow.getContentManager().addContent(PeerFactory.getInstance().getContentFactory().createContent(_tapestryToolwindow.getMainPanel(), "Tapestry", true));
-
-            toolwindow.setIcon(Icons.TAPESTRY_LOGO_SMALL);
-            toolwindow.setAvailable(false, null);
-        } else {
-            ToolWindow toolwindow = ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID);
-            toolwindow.show(null);
-        }
+    else {
+      ToolWindow toolwindow = ToolWindowManager.getInstance(_project).getToolWindow(TAPESTRY_TOOLWINDOW_ID);
+      toolwindow.show(null);
     }
+  }
 }

@@ -11,8 +11,8 @@ import com.intellij.tapestry.core.resource.IResourceFinder;
 import com.intellij.tapestry.core.util.LocalizationUtils;
 import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -117,7 +117,7 @@ public class IntellijResourceFinder implements IResourceFinder {
     /**
      * {@inheritDoc}
      */
-    @NonNull
+    @NotNull
     public Collection<IResource> findLocalizedContextResource(String path) {
         Collection<IResource> resources = new ArrayList<IResource>();
 

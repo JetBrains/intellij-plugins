@@ -532,11 +532,8 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
                                         if (selectedNode instanceof FileNode) {
                                             IResource template = new IntellijResource((PsiFile) selectedNode.getElement());
 
-                                            try {
-                                                elementClass = ComponentUtils.findClassFromTemplate(template, tapestryProject);
-                                            } catch (NotFoundException ex) {
-                                                ex.getMessage();
-                                            }
+                                          elementClass = ComponentUtils.findClassFromTemplate(template, tapestryProject);
+                                          
                                             if (elementClass != null)
                                                 component = PresentationLibraryElement.createProjectElementInstance(elementClass, tapestryProject);
                                         }

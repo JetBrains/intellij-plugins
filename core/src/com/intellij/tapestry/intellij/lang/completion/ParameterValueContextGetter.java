@@ -64,12 +64,8 @@ public class ParameterValueContextGetter implements ContextGetter {
             }
 
             // Try to match the tag to a component
-            Component component;
-            try {
-                component = TapestryUtils.getComponentFromTag(module, tag);
-            } catch (NotFoundException e) {
-                return new Object[0];
-            }
+          Component component = TapestryUtils.getComponentFromTag(module, tag);
+          if(component == null) return new Object[0];
 
             TapestryProject tapestryProject = TapestryModuleSupportLoader
                     .getTapestryProject(ProjectRootManager.getInstance(completionContext.project).getFileIndex().getModuleForFile(psiElement.getContainingFile().getOriginalFile().getVirtualFile()));
@@ -79,12 +75,8 @@ public class ParameterValueContextGetter implements ContextGetter {
                 return completePageLinkPageParameter(tapestryProject);
             }
 
-            IntellijJavaClassType elementClass;
-            try {
-                elementClass = (IntellijJavaClassType) ComponentUtils.findClassFromTemplate(new IntellijResource(completionContext.file), tapestryProject);
-            } catch (NotFoundException e) {
-                return new Object[0];
-            }
+          IntellijJavaClassType elementClass = (IntellijJavaClassType) ComponentUtils.findClassFromTemplate(new IntellijResource(completionContext.file), tapestryProject);
+          if(elementClass == null) return new Object[0];
 
             for (TapestryParameter parameter : component.getParameters().values()) {
                 String attributeValue = "";
