@@ -37,6 +37,8 @@ import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 import org.osmorc.run.OsgiRunConfiguration;
+import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
+import org.osmorc.run.OsgiRunConfigurationChecker;
 import org.osmorc.settings.ApplicationSettings;
 
 import javax.swing.*;
@@ -134,6 +136,11 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
                         .add(currentFrameworkRunPropertiesEditor.getUI(), BorderLayout.CENTER);
                 if (osgiRunConfiguration != null) {
                     currentFrameworkRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
+                    OsgiRunConfigurationChecker checker = null;
+                    if (integrator instanceof OsgiRunConfigurationCheckerProvider) {
+                        checker = ((OsgiRunConfigurationCheckerProvider) integrator).getOsgiRunConfigurationChecker();
+                    }
+                    osgiRunConfiguration.setAdditionalChecker(checker);
                 }
             }
 

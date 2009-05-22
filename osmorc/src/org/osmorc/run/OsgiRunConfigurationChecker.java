@@ -22,48 +22,16 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.frameworkintegration.impl.equinox;
 
-import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.FrameworkRunner;
-import org.osmorc.frameworkintegration.impl.AbstractFrameworkIntegrator;
-import org.osmorc.frameworkintegration.impl.equinox.ui.EquinoxRunPropertiesEditor;
-import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
-import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
-import org.osmorc.run.OsgiRunConfigurationChecker;
+package org.osmorc.run;
+
+import com.intellij.execution.configurations.RuntimeConfigurationException;
 
 /**
- * Equinox specific implementation of {@link org.osmorc.frameworkintegration.FrameworkIntegrator}.
+ * Classes implementing this interface provide additional checks for the run configuration.
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxIntegrator extends AbstractFrameworkIntegrator implements OsgiRunConfigurationCheckerProvider {
-    private EquinoxOsgiRunConfigurationChecker checker;
-
-    public EquinoxIntegrator(EquinoxFrameworkInstanceManager frameworkInstanceManager) {
-        super(frameworkInstanceManager);
-        checker = new EquinoxOsgiRunConfigurationChecker(frameworkInstanceManager);
-    }
-
-
-    @NotNull
-    public FrameworkRunner createFrameworkRunner() {
-        return new EquinoxFrameworkRunner();
-    }
-
-    @NotNull
-    public String getDisplayName() {
-        return FRAMEWORK_NAME;
-    }
-
-    @Override
-    public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
-        return new EquinoxRunPropertiesEditor();
-    }
-
-    private static final String FRAMEWORK_NAME = "Equinox";
-
-    public OsgiRunConfigurationChecker getOsgiRunConfigurationChecker() {
-        return checker;
-    }
+public interface OsgiRunConfigurationChecker {
+    void checkConfiguration(OsgiRunConfiguration runConfiguration) throws RuntimeConfigurationException;
 }

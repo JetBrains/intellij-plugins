@@ -60,6 +60,8 @@ import java.util.*;
  * @version $Id$
  */
 public class OsgiRunConfiguration extends RunConfigurationBase implements ModuleRunConfiguration {
+    @Nullable
+    private OsgiRunConfigurationChecker checker;
 
     protected OsgiRunConfiguration(final Project project, final ConfigurationFactory configurationFactory, final String name) {
         super(project, configurationFactory, name);
@@ -84,6 +86,13 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
         if (instanceToUse == null) {
             throw new RuntimeConfigurationError(OsmorcBundle.getTranslation("runconfiguration.no.instance.selected"));
         }
+        if (checker != null) {
+            checker.checkConfiguration(this);
+        }
+    }
+
+    public void setAdditionalChecker(@Nullable OsgiRunConfigurationChecker checker) {
+        this.checker = checker;
     }
 
     @NotNull
