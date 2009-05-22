@@ -31,7 +31,6 @@ import com.intellij.ui.SeparatorOrientation;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.ide.StatusToolbar;
-import jetbrains.communicator.ide.UserListComponent;
 import jetbrains.communicator.idea.BaseToolWindow;
 import jetbrains.communicator.idea.IDEAFacade;
 import jetbrains.communicator.idea.IDEtalkContainerRegistry;
@@ -51,7 +50,6 @@ import java.awt.*;
 public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternalizable {
 
   @NonNls public static final String PLACE_TOOLBAR = "TOOLBAR";
-  @NonNls public static final String PLACE_POPUP = "POPUP";
   @NonNls private static final String TOOL_WINDOW_ID = "IDEtalk";
 
   private final UserListComponentImpl myUserListComponent;
@@ -68,7 +66,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     myContainer.registerComponentImplementation(UserListComponentImpl.class);
     myContainer.registerComponentImplementation(StatusToolbarImpl.class);
 
-    myUserListComponent = (UserListComponentImpl) myContainer.getComponentInstanceOfType(UserListComponent.class);
+    myUserListComponent = (UserListComponentImpl) myContainer.getComponentInstanceOfType(UserListComponentImpl.class);
   }
 
   public void initComponent() {
