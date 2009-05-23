@@ -36,7 +36,7 @@ import org.jetbrains.idea.maven.project.MavenPlugin;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsProcessorPostConfigurationTask;
 import org.jetbrains.idea.maven.project.MavenProjectsTree;
-import org.jetbrains.idea.maven.utils.MavenId;
+import org.jetbrains.idea.maven.project.MavenId;
 import org.osgi.framework.Constants;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
