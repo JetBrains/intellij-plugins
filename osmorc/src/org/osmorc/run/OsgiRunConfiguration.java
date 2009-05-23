@@ -62,6 +62,8 @@ import java.util.*;
 public class OsgiRunConfiguration extends RunConfigurationBase implements ModuleRunConfiguration {
     @Nullable
     private OsgiRunConfigurationChecker checker;
+    private LegacyOsgiRunConfigurationLoader legacyOsgiRunConfigurationLoader;
+    private boolean needsFinishRunForLegacyOsgiRunConfigurationLoader = true;
 
     protected OsgiRunConfiguration(final Project project, final ConfigurationFactory configurationFactory, final String name) {
         super(project, configurationFactory, name);
@@ -83,6 +85,12 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     }
 
     public void checkConfiguration() throws RuntimeConfigurationException {
+        if (needsFinishRunForLegacyOsgiRunConfigurationLoader) {
+            needsFinishRunForLegacyOsgiRunConfigurationLoader = false;
+            if (legacyOsgiRunConfigurationLoader != null) {
+                legacyOsgiRunConfigurationLoader.finishAfterModulesAreAvailable(this);
+            }
+        }
         if (instanceToUse == null) {
             throw new RuntimeConfigurationError(OsmorcBundle.getTranslation("runconfiguration.no.instance.selected"));
         }
@@ -93,6 +101,10 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
 
     public void setAdditionalChecker(@Nullable OsgiRunConfigurationChecker checker) {
         this.checker = checker;
+    }
+
+    public void setLegacyOsgiRunConfigurationLoader(LegacyOsgiRunConfigurationLoader legacyOsgiRunConfigurationLoader) {
+        this.legacyOsgiRunConfigurationLoader = legacyOsgiRunConfigurationLoader;
     }
 
     @NotNull
@@ -121,7 +133,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     }
 
 
-    public void setVmParameters(@NotNull final String vmParameters) {
+    public void setVmParameters(final String vmParameters) {
         this.vmParameters = vmParameters;
     }
 
@@ -183,61 +195,63 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
 
 
     public void readExternal(final Element element) throws InvalidDataException {
-        workingDir = element.getAttributeValue(WORKING_DIR_ATTRIBUTE);
-        frameworkDir = element.getAttributeValue(FRAMEWORK_DIR_ATTRIBUTE);
-        vmParameters = element.getAttributeValue(VM_PARAMETERS_ATTRIBUTE);
-        programParameters = element.getAttributeValue(PROGRAM_PARAMETERS_ATTRIBUTE);
-        includeAllBundlesInClassPath = Boolean.valueOf(element.getAttributeValue(
-                INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, "false"));
+        if (legacyOsgiRunConfigurationLoader == null || !legacyOsgiRunConfigurationLoader.readExternal(element, this)) {
+            workingDir = element.getAttributeValue(WORKING_DIR_ATTRIBUTE);
+            frameworkDir = element.getAttributeValue(FRAMEWORK_DIR_ATTRIBUTE);
+            vmParameters = element.getAttributeValue(VM_PARAMETERS_ATTRIBUTE);
+            programParameters = element.getAttributeValue(PROGRAM_PARAMETERS_ATTRIBUTE);
+            includeAllBundlesInClassPath = Boolean.valueOf(element.getAttributeValue(
+                    INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, "false"));
 
-        // noinspection unchecked
-        List<Element> children = element.getChildren(BUNDLE_ELEMENT);
-        bundlesToDeploy.clear();
-        for (Element child : children) {
-            String name = child.getAttributeValue(NAME_ATTRIBUTE);
-            String url = child.getAttributeValue(URL_ATTRIBUTE);
-            String startLevel = child.getAttributeValue(START_LEVEL_ATTRIBUTE);
-            String typeName = child.getAttributeValue(TYPE_ATTRIBUTE);
-            SelectedBundle.BundleType type;
-            try {
-                type = SelectedBundle.BundleType.valueOf(typeName);
-            }
-            catch (Exception e) {
-                // legacy settings should have modules, only so this is a safe guess.
-                type = SelectedBundle.BundleType.Module;
-            }
-            SelectedBundle selectedBundle = new SelectedBundle(name, url, type);
-            if (startLevel != null) { // avoid crashing on legacy settings.
+            // noinspection unchecked
+            List<Element> children = element.getChildren(BUNDLE_ELEMENT);
+            bundlesToDeploy.clear();
+            for (Element child : children) {
+                String name = child.getAttributeValue(NAME_ATTRIBUTE);
+                String url = child.getAttributeValue(URL_ATTRIBUTE);
+                String startLevel = child.getAttributeValue(START_LEVEL_ATTRIBUTE);
+                String typeName = child.getAttributeValue(TYPE_ATTRIBUTE);
+                SelectedBundle.BundleType type;
                 try {
-                    selectedBundle.setStartLevel(Integer.parseInt(startLevel));
+                    type = SelectedBundle.BundleType.valueOf(typeName);
                 }
-                catch (NumberFormatException e) {
-                    // ok.
+                catch (Exception e) {
+                    // legacy settings should have modules, only so this is a safe guess.
+                    type = SelectedBundle.BundleType.Module;
+                }
+                SelectedBundle selectedBundle = new SelectedBundle(name, url, type);
+                if (startLevel != null) { // avoid crashing on legacy settings.
+                    try {
+                        selectedBundle.setStartLevel(Integer.parseInt(startLevel));
+                    }
+                    catch (NumberFormatException e) {
+                        // ok.
+                    }
+                }
+                String startAfterInstallationString = child.getAttributeValue(START_AFTER_INSTALLATION_ATTRIBUTE);
+                if (startAfterInstallationString != null) {
+                    selectedBundle.setStartAfterInstallation(Boolean.parseBoolean(startAfterInstallationString));
+                }
+                bundlesToDeploy.add(selectedBundle);
+            }
+
+            // try to load the framework instance
+            Element framework = element.getChild(FRAMEWORK_ELEMENT);
+            if (framework != null) {
+                String name = framework.getAttributeValue(INSTANCE_ATTRIBUTE);
+                if (name != null) {
+                    ApplicationSettings settings = ServiceManager.getService(ApplicationSettings.class);
+                    instanceToUse = settings.getFrameworkInstance(name);
                 }
             }
-            String startAfterInstallationString = child.getAttributeValue(START_AFTER_INSTALLATION_ATTRIBUTE);
-            if (startAfterInstallationString != null) {
-                selectedBundle.setStartAfterInstallation(Boolean.parseBoolean(startAfterInstallationString));
-            }
-            bundlesToDeploy.add(selectedBundle);
-        }
 
-        // try to load the framework instance
-        Element framework = element.getChild(FRAMEWORK_ELEMENT);
-        if (framework != null) {
-            String name = framework.getAttributeValue(INSTANCE_ATTRIBUTE);
-            if (name != null) {
-                ApplicationSettings settings = ServiceManager.getService(ApplicationSettings.class);
-                instanceToUse = settings.getFrameworkInstance(name);
-            }
-        }
-
-        Element additionalProperties = element.getChild(ADDITIONAL_PROPERTIES_ELEMENT);
-        if (additionalProperties != null) {
-            //noinspection unchecked
-            List<Attribute> attributes = additionalProperties.getAttributes();
-            for (Attribute attribute : attributes) {
-                this.additionalProperties.put(attribute.getName(), attribute.getValue());
+            Element additionalProperties = element.getChild(ADDITIONAL_PROPERTIES_ELEMENT);
+            if (additionalProperties != null) {
+                //noinspection unchecked
+                List<Attribute> attributes = additionalProperties.getAttributes();
+                for (Attribute attribute : attributes) {
+                    this.additionalProperties.put(attribute.getName(), attribute.getValue());
+                }
             }
         }
 

@@ -29,7 +29,6 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.i18n.OsmorcBundle;
 
@@ -41,67 +40,42 @@ import javax.swing.*;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public class OsgiConfigurationType implements ConfigurationType
-{
+public class OsgiConfigurationType implements ConfigurationType {
 
-  private ConfigurationFactory myFactory;
+    private final ConfigurationFactory myFactory;
 
-  OsgiConfigurationType()
-  {
-    myFactory = new ConfigurationFactory(this)
-    {
-      public RunConfiguration createTemplateConfiguration(Project project)
-      {
-        return new OsgiRunConfiguration(project, this, "");
-      }
+    OsgiConfigurationType() {
+        myFactory = new ConfigurationFactory(this) {
+            public RunConfiguration createTemplateConfiguration(Project project) {
+                return new OsgiRunConfiguration(project, this, "");
+            }
 
-      public RunConfiguration createConfiguration(String name, RunConfiguration template)
-      {
-        OsgiRunConfiguration runConfiguration = (OsgiRunConfiguration) template;
-        return super.createConfiguration(name, runConfiguration);
-      }
-    };
-  }
+            public RunConfiguration createConfiguration(String name, RunConfiguration template) {
+                OsgiRunConfiguration runConfiguration = (OsgiRunConfiguration) template;
+                return super.createConfiguration(name, runConfiguration);
+            }
+        };
+    }
 
 
-  public String getDisplayName()
-  {
-    return OsmorcBundle.getTranslation("runconfiguration.displayname");
-  }
+    public String getDisplayName() {
+        return OsmorcBundle.getTranslation("runconfiguration.displayname");
+    }
 
-  public String getConfigurationTypeDescription()
-  {
-    return OsmorcBundle.getTranslation("runconfiguration.description");
-  }
+    public String getConfigurationTypeDescription() {
+        return OsmorcBundle.getTranslation("runconfiguration.description");
+    }
 
-  public Icon getIcon()
-  {
-    return OsmorcBundle.getSmallIcon();
-  }
+    public Icon getIcon() {
+        return OsmorcBundle.getSmallIcon();
+    }
 
-  @NotNull
-  public String getId()
-  {
-    return "#org.osmorc.OsgiConfigurationType";
-  }
+    @NotNull
+    public String getId() {
+        return "#org.osmorc.OsgiConfigurationType";
+    }
 
-  public ConfigurationFactory[] getConfigurationFactories()
-  {
-    return new ConfigurationFactory[]{myFactory};
-  }
-
-  @NonNls
-  @NotNull
-  public String getComponentName()
-  {
-    return "#org.osmorc.OsgiConfigurationType";
-  }
-
-  public void initComponent()
-  {
-  }
-
-  public void disposeComponent()
-  {
-  }
+    public ConfigurationFactory[] getConfigurationFactories() {
+        return new ConfigurationFactory[]{myFactory};
+    }
 }

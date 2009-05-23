@@ -29,6 +29,8 @@ import com.intellij.openapi.vfs.VfsUtil;
 import org.osgi.framework.Constants;
 
 import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.WeakHashMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -43,86 +45,88 @@ import java.util.jar.Manifest;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class CachingBundleInfoProvider
-{
-  private static WeakHashMap<String, Manifest> _cache = new WeakHashMap<String, Manifest>();
+public class CachingBundleInfoProvider {
+    private static final WeakHashMap<String, Manifest> _cache = new WeakHashMap<String, Manifest>();
 
-  /**
-   * Returns true if the file at the given url is a bundle, false otherwise.
-   *
-   * @param bundleUrl the url of the bundle
-   * @return true if the file at the url is a bundle, false otherwise.
-   */
-  public static boolean isBundle(String bundleUrl)
-  {
-    return getBundleSymbolicName(bundleUrl) != null;
-  }
-
-  /**
-   * Returns the symbolic name of the bundle at the given url. If the file at the given url is no bundle, returns null.
-   *
-   * @param bundleUrl the url of the bundle
-   * @return the symbolic name of the bundle or null if the file is no bundle.
-   */
-  public static String getBundleSymbolicName(String bundleUrl)
-  {
-    return getBundleAttribute(bundleUrl, Constants.BUNDLE_SYMBOLICNAME);
-  }
-
-  /**
-   * Returns the version of the bundle at the given url.
-   *
-   * @param bundleUrl the url of the bundle to search
-   * @return the version of the bundle or null if the file is no bundle
-   */
-  public static String getBundleVersions(String bundleUrl)
-  {
-    return getBundleAttribute(bundleUrl, Constants.BUNDLE_VERSION);
-  }
-
-
-  /**
-   * Returns boolean status if the given bundle is a fragment bundle.
-   *
-   * @param bundleUrl the url of the bundle
-   * @return true if the given bundle is a fragment bundle, false if it is not or if the state could not be determined.
-   */
-  public static boolean isFragmentBundle(String bundleUrl)
-  {
-    String fragmentHost = getBundleAttribute(bundleUrl, Constants.FRAGMENT_HOST);
-    return fragmentHost != null;
-  }
-
-  /**
-   * Returns the attribute of the bundle located at the given url. If the bundle cannot be found there or the jar at
-   * that location isn't a bundle, this returns null.
-   *
-   * @param bundleUrl the url of the bundle
-   * @param attribute the attribute to resolve
-   * @return the attribute's value or null if there is no such bundle or no such attribute
-   */
-  private synchronized static String getBundleAttribute(String bundleUrl, String attribute)
-  {
-    bundleUrl = normalize(bundleUrl);
-    if (!_cache.containsKey(bundleUrl))
-    {
-      try
-      {
-        JarFile file = new JarFile(VfsUtil.urlToPath(bundleUrl));
-        _cache.put(bundleUrl, file.getManifest());
-      }
-      catch (IOException e)
-      {
-        return null;
-      }
+    /**
+     * Returns true if the file at the given url is a bundle, false otherwise.
+     *
+     * @param bundleUrl the url of the bundle
+     * @return true if the file at the url is a bundle, false otherwise.
+     */
+    public static boolean isBundle(String bundleUrl) {
+        return getBundleSymbolicName(bundleUrl) != null;
     }
 
-    Manifest manifest = _cache.get(bundleUrl);
-    return manifest != null ? manifest.getMainAttributes().getValue(attribute) : null;
-  }
+    /**
+     * Returns the symbolic name of the bundle at the given url. If the file at the given url is no bundle, returns null.
+     *
+     * @param bundleUrl the url of the bundle
+     * @return the symbolic name of the bundle or null if the file is no bundle.
+     */
+    public static String getBundleSymbolicName(String bundleUrl) {
+        String symbolicName = getBundleAttribute(bundleUrl, Constants.BUNDLE_SYMBOLICNAME);
+        symbolicName = symbolicName.split(";", 2)[0]; // Only take the name and leave the parameters
+        return symbolicName;
+    }
 
-  private static String normalize(String bundleUrl)
-  {
-    return bundleUrl.replaceAll("file:/([^/]+)", "file:///$1");
-  }
+    /**
+     * Returns the version of the bundle at the given url.
+     *
+     * @param bundleUrl the url of the bundle to search
+     * @return the version of the bundle or null if the file is no bundle
+     */
+    public static String getBundleVersions(String bundleUrl) {
+        return getBundleAttribute(bundleUrl, Constants.BUNDLE_VERSION);
+    }
+
+
+    /**
+     * Returns boolean status if the given bundle is a fragment bundle.
+     *
+     * @param bundleUrl the url of the bundle
+     * @return true if the given bundle is a fragment bundle, false if it is not or if the state could not be determined.
+     */
+    public static boolean isFragmentBundle(String bundleUrl) {
+        String fragmentHost = getBundleAttribute(bundleUrl, Constants.FRAGMENT_HOST);
+        return fragmentHost != null;
+    }
+
+    /**
+     * Returns the attribute of the bundle located at the given url. If the bundle cannot be found there or the jar at
+     * that location isn't a bundle, this returns null.
+     *
+     * @param bundleUrl the url of the bundle
+     * @param attribute the attribute to resolve
+     * @return the attribute's value or null if there is no such bundle or no such attribute
+     */
+    private synchronized static String getBundleAttribute(String bundleUrl, String attribute) {
+        bundleUrl = normalize(bundleUrl);
+        if (!_cache.containsKey(bundleUrl)) {
+            try {
+                File bundleFile = new File(VfsUtil.urlToPath(bundleUrl));
+                if (bundleFile.isDirectory()) {
+                    File manifestFile = new File(bundleFile, "META-INF/MANIFEST.MF");
+                    if (manifestFile.exists() && !manifestFile.isDirectory()) {
+                        Manifest manifest = new Manifest(new FileInputStream(manifestFile));
+                        _cache.put(bundleUrl, manifest);
+                    }
+                }
+                else {
+                    JarFile file = new JarFile(bundleFile);
+                    _cache.put(bundleUrl, file.getManifest());
+                }
+            }
+            catch (IOException e) {
+                return null;
+            }
+        }
+
+        Manifest manifest = _cache.get(bundleUrl);
+        return manifest != null ? manifest.getMainAttributes().getValue(attribute) : null;
+    }
+
+    private static String normalize(String bundleUrl) {
+        return bundleUrl.replaceAll("file:/([^/]+)", "file:///$1");
+    }
 }

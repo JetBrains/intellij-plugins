@@ -29,76 +29,55 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.i18n.OsmorcBundle;
+import org.osmorc.run.OsgiConfigurationType;
+import org.osmorc.run.OsgiRunConfiguration;
 
 import javax.swing.*;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxConfigurationType implements ConfigurationType
-{
+public class EquinoxConfigurationType implements ConfigurationType {
+    private ConfigurationFactory myFactory;
+    private OsgiConfigurationType osgiConfigurationType;
+    private LegacyEquinoxOsgiRunConfigurationLoader legacyEquinoxOsgiRunConfigurationLoader;
 
-  private ConfigurationFactory myFactory;
+    public EquinoxConfigurationType(OsgiConfigurationType osgiConfigurationType) {
+        this.osgiConfigurationType = osgiConfigurationType;
+        legacyEquinoxOsgiRunConfigurationLoader = new LegacyEquinoxOsgiRunConfigurationLoader();
+        myFactory = new ConfigurationFactory(this) {
+            public RunConfiguration createTemplateConfiguration(Project project) {
+                return (OsgiRunConfiguration) EquinoxConfigurationType.this.osgiConfigurationType.getConfigurationFactories()[0].createTemplateConfiguration(project);
+            }
 
-  EquinoxConfigurationType()
-  {
-    myFactory = new ConfigurationFactory(this)
-    {
-      public RunConfiguration createTemplateConfiguration(Project project)
-      {
-        return new EquinoxRunConfiguration(project, this, "");
-      }
+            public RunConfiguration createConfiguration(String name, RunConfiguration template) {
+                OsgiRunConfiguration runConfiguration = (OsgiRunConfiguration) EquinoxConfigurationType.this.osgiConfigurationType.getConfigurationFactories()[0].createConfiguration(name, template);
+                runConfiguration.setLegacyOsgiRunConfigurationLoader(legacyEquinoxOsgiRunConfigurationLoader);
+                return runConfiguration;
+            }
+        };
+    }
 
-      public RunConfiguration createConfiguration(String name, RunConfiguration template)
-      {
-        EquinoxRunConfiguration runConfiguration = (EquinoxRunConfiguration) template;
-        return super.createConfiguration(name, runConfiguration);
-      }
-    };
-  }
+    public String getDisplayName() {
+        return "Eclipse Equinox";
+    }
 
+    public String getConfigurationTypeDescription() {
+        return "Run Eclipse Equinox";
+    }
 
-  public String getDisplayName()
-  {
-    return "Eclipse Equinox";
-  }
+    public Icon getIcon() {
+        return OsmorcBundle.getSmallIcon();
+    }
 
-  public String getConfigurationTypeDescription()
-  {
-    return "Run Eclipse Equinox";
-  }
+    @NotNull
+    public String getId() {
+        return "#org.osmorc.EquinoxConfigurationType";
+    }
 
-  public Icon getIcon()
-  {
-    return OsmorcBundle.getSmallIcon();
-  }
-
-  @NotNull
-  public String getId()
-  {
-    return "#org.osmorc.EquinoxConfigurationType";
-  }
-
-  public ConfigurationFactory[] getConfigurationFactories()
-  {
-    return new ConfigurationFactory[]{myFactory};
-  }
-
-  @NonNls
-  @NotNull
-  public String getComponentName()
-  {
-    return "OsmorcEquinoxConfigurationType";
-  }
-
-  public void initComponent()
-  {
-  }
-
-  public void disposeComponent()
-  {
-  }
+    public ConfigurationFactory[] getConfigurationFactories() {
+        return new ConfigurationFactory[]{myFactory};
+    }
 }
