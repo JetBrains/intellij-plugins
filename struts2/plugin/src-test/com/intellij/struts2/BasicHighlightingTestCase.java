@@ -81,7 +81,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     super.setUp();
 
     final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder =
-        IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder();
+        JavaTestFixtureFactory.createFixtureBuilder();
     final T moduleBuilder = projectBuilder.addModule(getModuleFixtureBuilderClass());
     myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
 
