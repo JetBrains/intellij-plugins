@@ -66,8 +66,7 @@ public class CachingBundleInfoProvider {
      */
     public static String getBundleSymbolicName(String bundleUrl) {
         String symbolicName = getBundleAttribute(bundleUrl, Constants.BUNDLE_SYMBOLICNAME);
-        symbolicName = symbolicName.split(";", 2)[0]; // Only take the name and leave the parameters
-        return symbolicName;
+        return symbolicName != null ? symbolicName.split(";", 2)[0] : null; // Only take the name and leave the parameters
     }
 
     /**
@@ -108,13 +107,16 @@ public class CachingBundleInfoProvider {
                 if (bundleFile.isDirectory()) {
                     File manifestFile = new File(bundleFile, "META-INF/MANIFEST.MF");
                     if (manifestFile.exists() && !manifestFile.isDirectory()) {
-                        Manifest manifest = new Manifest(new FileInputStream(manifestFile));
+                        FileInputStream fileInputStream = new FileInputStream(manifestFile);
+                        Manifest manifest = new Manifest(fileInputStream);
+                        fileInputStream.close();
                         _cache.put(bundleUrl, manifest);
                     }
                 }
                 else {
                     JarFile file = new JarFile(bundleFile);
                     _cache.put(bundleUrl, file.getManifest());
+                    file.close();
                 }
             }
             catch (IOException e) {
