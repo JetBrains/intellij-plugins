@@ -63,13 +63,11 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
      tag.getParent().putUserData(XmlHighlightVisitor.DO_NOT_VALIDATE_KEY, "true");*/
 
       // annotate the tag start
-      _annotationHolder.createInfoAnnotation(IdeaUtils.getNameElement(tag), null)
-          .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_TAG_KEY));
+      annotateTag(IdeaUtils.getNameElement(tag));
 
       // only annotation closing tag if the tag isn't empty like <t:body/>
       if (!tag.isEmpty()) {
-        _annotationHolder.createInfoAnnotation(IdeaUtils.getNameElementClosing(tag), null)
-            .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_TAG_KEY));
+        annotateTag(IdeaUtils.getNameElementClosing(tag));
       }
 
       Module module = IdeaUtils.getModule(tag);
@@ -84,6 +82,10 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
 
         // annotate the tag parameters
         if (elementClass != null) {
+          XmlAttribute attr = TapestryUtils.getIdentifyingAttribute(tag);
+          if(attr != null) {
+            annotateAttribute(attr);
+          }
           for (TapestryParameter parameter : component.getParameters().values()) {
             XmlAttribute attribute = tag.getAttribute(parameter.getName(), TapestryConstants.TEMPLATE_NAMESPACE);
             if (attribute == null) attribute = tag.getAttribute(parameter.getName(), "");
@@ -93,10 +95,7 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
               }
               continue;
             }
-
-            // annotate attribute name
-            _annotationHolder.createInfoAnnotation(attribute.getFirstChild(), null)
-                .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_PARAMETER_KEY));
+            annotateAttribute(attribute);
 
             ResolvedValue resolvedValue;
             try {
@@ -145,5 +144,16 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
 
     tag.acceptChildren(this);
   }//visitXmlTag
+
+  private void annotateTag(XmlElement element) {
+    _annotationHolder.createInfoAnnotation(element, null)
+        .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_TAG_KEY));
+  }
+
+  private void annotateAttribute(XmlAttribute attribute) {
+    // annotate attribute name
+    _annotationHolder.createInfoAnnotation(attribute.getFirstChild(), null)
+        .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_PARAMETER_KEY));
+  }
 
 }//TemplateTagAnnotator

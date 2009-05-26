@@ -92,7 +92,11 @@ public class TapestryUtils {
     if (tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) return IdeaUtils.getNameElement(tag);
 
     // using invisible instrumentation
-    XmlElement typeAttribute = getTTypeAttribute(tag);
+    return getIdentifyingAttribute(tag);
+  }
+
+  public static XmlAttribute getIdentifyingAttribute(XmlTag tag) {
+    XmlAttribute typeAttribute = getTTypeAttribute(tag);
     return typeAttribute != null ? typeAttribute : getTIdAttribute(tag);
   }
 
