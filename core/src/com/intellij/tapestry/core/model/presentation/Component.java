@@ -51,7 +51,7 @@ public class Component extends ParameterReceiverElement implements Externalizabl
         Collection<IResource> resources = getProject().getResourceFinder().findLocalizedClasspathResource(
                 PathUtils.packageIntoPath(packageName, true) +
                         PathUtils.getLastPathElement(getName()) +
-                        TapestryConstants.TEMPLATE_FILE_EXTENSION, true
+                        "." + TapestryConstants.TEMPLATE_FILE_EXTENSION, true
         );
 
         if (resources.size() > 0) {

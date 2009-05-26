@@ -47,7 +47,7 @@ public class Page extends PresentationLibraryElement implements ExternalizableTo
         Collection<IResource> resources = getProject().getResourceFinder().findLocalizedClasspathResource(
                 PathUtils.packageIntoPath(packageName, true) +
                         PathUtils.getLastPathElement(getName()) +
-                        TapestryConstants.TEMPLATE_FILE_EXTENSION, true
+                        "." + TapestryConstants.TEMPLATE_FILE_EXTENSION, true
         );
 
         if (resources.size() > 0) {
@@ -56,7 +56,7 @@ public class Page extends PresentationLibraryElement implements ExternalizableTo
         }
 
         // Search in web application context
-        resources = getProject().getResourceFinder().findLocalizedContextResource(getName() + TapestryConstants.TEMPLATE_FILE_EXTENSION);
+        resources = getProject().getResourceFinder().findLocalizedContextResource(getName() + "." + TapestryConstants.TEMPLATE_FILE_EXTENSION);
         if (resources.size() > 0) {
             for (IResource template : resources)
                 templates.add(template);

@@ -16,6 +16,8 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.tapestry.core.java.IJavaType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaArrayType;
@@ -250,4 +252,19 @@ public class IdeaUtils {
         return JavaPsiFacade.getInstance(project).findPackage(packageName);
     }
 
+  @NotNull
+  public static XmlElement getNameElement(@NotNull XmlTag tag) {
+    return (XmlElement)tag.getFirstChild().getNextSibling();
+  }
+
+  @NotNull
+  public static XmlElement getNameElementClosing(@NotNull XmlTag tag) {
+    return (XmlElement)tag.getLastChild().getPrevSibling();
+  }
+
+  @Nullable
+  public static Module getModule(XmlTag tag) {
+    VirtualFile vFile = tag.getContainingFile().getViewProvider().getVirtualFile();
+    return ProjectRootManager.getInstance(tag.getManager().getProject()).getFileIndex().getModuleForFile(vFile);
+  }
 }//IdeaUtils

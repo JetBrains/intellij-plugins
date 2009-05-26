@@ -6,14 +6,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.java.PsiEmptyExpressionImpl;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.tapestry.core.java.IJavaClassType;
+import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
+import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.impl.schema.XmlElementDescriptorImpl;
 import com.intellij.xml.impl.schema.XmlNSDescriptorImpl;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
-import com.intellij.tapestry.core.model.presentation.Component;
-import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
-import com.intellij.tapestry.intellij.util.TapestryUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class TapestryNamespaceDescriptor extends XmlNSDescriptorImpl {

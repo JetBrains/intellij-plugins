@@ -161,7 +161,7 @@ public class AddTapestrySupportUtil {
 
                 String templateText = StringUtils.toString(AddTapestrySupportUtil.class.getResourceAsStream("/fileTemplates/j2ee/" + TapestryConstants.START_PAGE_TEMPLATE_TEMPLATE_NAME + ".ft"));
 
-                VirtualFile startPageTemplate = webFacet.getWebRoots(false).get(0).getFile().createChildData(pagesDirectory, "Start" + TapestryConstants.TEMPLATE_FILE_EXTENSION);
+                VirtualFile startPageTemplate = webFacet.getWebRoots(false).get(0).getFile().createChildData(pagesDirectory, "Start." + TapestryConstants.TEMPLATE_FILE_EXTENSION);
                 VfsUtil.saveText(startPageTemplate, templateText);
             } catch (Exception ex) {
                 _logger.error(ex);

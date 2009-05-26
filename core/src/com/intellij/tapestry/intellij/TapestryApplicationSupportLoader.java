@@ -55,8 +55,8 @@ public class TapestryApplicationSupportLoader implements ApplicationComponent {
         CompletionUtil.registerCompletionData(StdFileTypes.HTML, new TemplateCompletionData());
 
         // Register Tapestry template extension as HTML file type.
-        if (!ApplicationManager.getApplication().isUnitTestMode() && FileTypeManager.getInstance().getFileTypeByExtension(TapestryConstants.TEMPLATE_FILE_EXTENSION.substring(1)) == StdFileTypes.UNKNOWN) {
-            FileTypeManager.getInstance().associateExtension(StdFileTypes.HTML, TapestryConstants.TEMPLATE_FILE_EXTENSION.substring(1));
+        if (!ApplicationManager.getApplication().isUnitTestMode() && FileTypeManager.getInstance().getFileTypeByExtension(TapestryConstants.TEMPLATE_FILE_EXTENSION) == StdFileTypes.UNKNOWN) {
+            FileTypeManager.getInstance().associateExtension(StdFileTypes.HTML, TapestryConstants.TEMPLATE_FILE_EXTENSION);
         }
     }
 

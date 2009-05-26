@@ -13,10 +13,13 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.xml.*;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.exceptions.NotFoundException;
+import com.intellij.tapestry.core.java.IJavaAnnotation;
+import com.intellij.tapestry.core.java.IJavaClassType;
+import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
+import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.model.presentation.TemplateElement;
 import com.intellij.tapestry.core.model.presentation.components.BlockComponent;
 import com.intellij.tapestry.core.model.presentation.components.BodyComponent;
@@ -25,8 +28,9 @@ import com.intellij.tapestry.core.model.presentation.components.ParameterCompone
 import com.intellij.tapestry.core.util.ComponentUtils;
 import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
-import com.intellij.tapestry.intellij.core.resource.xml.IntellijXmlTag;
+import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
+import com.intellij.tapestry.intellij.core.resource.xml.IntellijXmlTag;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.Nullable;
@@ -80,18 +84,83 @@ public class TapestryUtils {
    * @param tag the compontent tag.
    * @return the attribute that identifies the type of component.
    */
+  @Nullable
   public static XmlElement getComponentIdentifier(XmlTag tag) {
     if (!ComponentUtils.isComponentTag(new IntellijXmlTag(tag))) return null;
 
     // embedded components
-    if (tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) return (XmlElement)tag.getChildren()[1];
+    if (tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) return IdeaUtils.getNameElement(tag);
 
     // using invisible instrumentation
-    XmlElement typeAttribute = tag.getAttribute("type", TapestryConstants.TEMPLATE_NAMESPACE);
-    if (typeAttribute != null) return typeAttribute;
+    XmlElement typeAttribute = getTTypeAttribute(tag);
+    return typeAttribute != null ? typeAttribute : getTIdAttribute(tag);
+  }
 
+  @Nullable
+  public static XmlAttribute getTIdAttribute(XmlTag tag) {
     return tag.getAttribute("id", TapestryConstants.TEMPLATE_NAMESPACE);
   }
+
+  @Nullable
+  public static XmlAttribute getTTypeAttribute(XmlTag tag) {
+    return tag.getAttribute("type", TapestryConstants.TEMPLATE_NAMESPACE);
+  }
+
+  /**
+   * Verify the existence of parameter declaration in elementClass
+   *
+   * @param parameter    the parameter to check
+   * @param elementClass the class to get the fields
+   * @param tag          the component to get the parameters
+   * @return <code>true</code> if the parameter is defined in the class, <code>false</code> otherwise.
+   */
+  public static boolean parameterDefinedInClass(TapestryParameter parameter, IntellijJavaClassType elementClass, XmlTag tag) {
+
+    IJavaField field = findIdentifyingField(elementClass, tag);
+    if (field == null) return false;
+
+    final IJavaAnnotation annotation = field.getAnnotations().get(TapestryConstants.COMPONENT_ANNOTATION);
+    String[] fieldParameters = annotation.getParameters().get("parameters");
+    if (fieldParameters == null) return false;
+    for (String fieldParameter : fieldParameters) {
+      final String[] paramNameValue = fieldParameter.split("=");
+      if (paramNameValue.length == 2 && paramNameValue[0].equals(parameter.getName())) return true;
+    }
+    return false;
+  }//parameterDefinedInClass
+
+
+  static boolean isFieldIdEqualsToTagId(String[] fieldIds, IJavaField field, String tagId) {
+    return fieldIds != null && fieldIds.length > 0 && fieldIds[0] != null && fieldIds[0].length() > 0
+           ? fieldIds[0].equals(tagId)
+           : field.getName().equals(tagId);
+  }
+
+  @Nullable
+  public static IJavaField findIdentifyingField(XmlTag tag) {
+    IntellijJavaClassType elementClass =
+        (IntellijJavaClassType)ComponentUtils.findClassFromTemplate(new IntellijResource(tag.getContainingFile()), getTapestryProject(tag));
+    return elementClass != null ? findIdentifyingField(elementClass, tag) : null;
+  }
+
+  @Nullable
+  private static IJavaField findIdentifyingField(IntellijJavaClassType elementClass, XmlTag tag) {
+    final String tagId = tag.getAttributeValue("id", TapestryConstants.TEMPLATE_NAMESPACE);
+    if (tagId == null) return null;
+    for (IJavaField field : elementClass.getFields(false).values()) {
+      final IJavaAnnotation annotation = field.getAnnotations().get(TapestryConstants.COMPONENT_ANNOTATION);
+      if (annotation != null && isFieldIdEqualsToTagId(annotation.getParameters().get("id"), field, tagId)) return field;
+    }
+    return null;
+  }
+
+  @Nullable
+  public static TapestryProject getTapestryProject(XmlTag tag) {
+    Module module = IdeaUtils.getModule(tag);
+    if (module == null) return null;
+    return TapestryModuleSupportLoader.getTapestryProject(module);
+  }
+
 
   /**
    * Creates a new component.
@@ -220,6 +289,19 @@ public class TapestryUtils {
   /**
    * Builds the component object that corresponds to a HTML tag.
    *
+   * @param tag the component tag.
+   * @return the component that the given tag represents.
+   */
+  @Nullable
+  public static Component getComponentFromTag(XmlTag tag) {
+    Module module = IdeaUtils.getModule(tag);
+    if (module == null) return null;
+    return TapestryUtils.getComponentFromTag(module, tag);
+  }
+
+  /**
+   * Builds the component object that corresponds to a HTML tag.
+   *
    * @param module the module to find the component in.
    * @param tag    the component tag.
    * @return the component that the given tag represents.
@@ -281,12 +363,13 @@ public class TapestryUtils {
    * @return the Tapestry namespace prefix declared in the given template or <code>null</code> if none is found.
    */
   public static String getTapestryNamespacePrefix(XmlFile template) {
-    final XmlTag rootTag = template.getDocument().getRootTag();
-    if (rootTag != null) {
-      for (XmlAttribute attribute : rootTag.getAttributes()) {
-        if (attribute.getName().startsWith("xmlns:") && attribute.getValue().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
-          return attribute.getName().substring(6);
-        }
+    XmlDocument doc = template.getDocument();
+    if (doc == null) return null;
+    final XmlTag rootTag = doc.getRootTag();
+    if (rootTag == null) return null;
+    for (XmlAttribute attribute : rootTag.getAttributes()) {
+      if (attribute.getName().startsWith("xmlns:") && attribute.getValue().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
+        return attribute.getName().substring(6);
       }
     }
     return null;
@@ -347,7 +430,7 @@ public class TapestryUtils {
     templateDirectory =
         IdeaUtils.findOrCreateDirectoryForPackage(sourceDirectory, PathUtils.getFullComponentPackage(basePackage, pageName));
 
-    String fileName = PathUtils.getComponentFileName(pageName) + TapestryConstants.TEMPLATE_FILE_EXTENSION;
+    String fileName = PathUtils.getComponentFileName(pageName) + "." + TapestryConstants.TEMPLATE_FILE_EXTENSION;
     if (templateDirectory.findFile(fileName) != null) {
       if (!replaceExistingFiles) {
         throw new FileAlreadyExistsException();

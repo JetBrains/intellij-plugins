@@ -22,6 +22,8 @@
 
         <annotator language="HTML" implementationClass="com.intellij.tapestry.intellij.lang.annotator.TemplateTagAnnotator"/>
 
+      <psi.referenceContributor implementation="com.intellij.tapestry.intellij.lang.reference.TapestryReferenceContributor"/>
+
     </extensions>
 
     <actions>

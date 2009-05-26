@@ -25,14 +25,13 @@ public class ComponentUtils {
    * @param template the component template.
    * @param project  the project to look in.
    * @return the component class.
-   * @throws NotFoundException when the class can't be found.
    */
   @Nullable
   public static IJavaClassType findClassFromTemplate(IResource template, TapestryProject project) {
     String resourcePath = template.getFile().getAbsolutePath();
     String templateFilename = LocalizationUtils.unlocalizeFileName(template.getName());
 
-    Library applicationLibrary = null;
+    Library applicationLibrary;
     try {
       applicationLibrary = project.getApplicationLibrary();
     }

@@ -4,7 +4,6 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
@@ -12,9 +11,6 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
-import com.intellij.tapestry.core.java.IJavaAnnotation;
-import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.java.IJavaType;
 import com.intellij.tapestry.core.java.coercion.TypeCoercionValidator;
 import com.intellij.tapestry.core.log.Logger;
@@ -30,9 +26,8 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.core.resource.xml.IntellijXmlTag;
 import com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage;
+import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
-
-import java.util.Map;
 
 /**
  * Annotates a Tapestry template.
@@ -68,17 +63,16 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
      tag.getParent().putUserData(XmlHighlightVisitor.DO_NOT_VALIDATE_KEY, "true");*/
 
       // annotate the tag start
-      _annotationHolder.createInfoAnnotation(tag.getFirstChild().getNextSibling(), null)
+      _annotationHolder.createInfoAnnotation(IdeaUtils.getNameElement(tag), null)
           .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_TAG_KEY));
 
       // only annotation closing tag if the tag isn't empty like <t:body/>
       if (!tag.isEmpty()) {
-        _annotationHolder.createInfoAnnotation(tag.getLastChild().getPrevSibling(), null)
+        _annotationHolder.createInfoAnnotation(IdeaUtils.getNameElementClosing(tag), null)
             .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_TAG_KEY));
       }
 
-      Module module = ProjectRootManager.getInstance(tag.getManager().getProject()).getFileIndex()
-          .getModuleForFile(tag.getContainingFile().getVirtualFile());
+      Module module = IdeaUtils.getModule(tag);
       if (module == null) return;
       Component component = TapestryUtils.getComponentFromTag(module, tag);
 
@@ -94,8 +88,8 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
             XmlAttribute attribute = tag.getAttribute(parameter.getName(), TapestryConstants.TEMPLATE_NAMESPACE);
             if (attribute == null) attribute = tag.getAttribute(parameter.getName(), "");
             if (attribute == null) {
-              if (parameter.isRequired() && !parameterDefinedInClass(parameter, elementClass, tag)) {
-                _annotationHolder.createErrorAnnotation(tag.getFirstChild().getNextSibling(), "Missing required parameter \"" + parameter.getName() + "\"");
+              if (parameter.isRequired() && !TapestryUtils.parameterDefinedInClass(parameter, elementClass, tag)) {
+                _annotationHolder.createErrorAnnotation(IdeaUtils.getNameElement(tag), "Missing required parameter \"" + parameter.getName() + "\"");
               }
               continue;
             }
@@ -135,15 +129,15 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
         }
       }
       else {
-        XmlElement identifierAttribute = TapestryUtils.getComponentIdentifier(tag);
-        if (identifierAttribute != null) {
-          if (identifierAttribute instanceof XmlAttribute) {
-            String attrName = ((XmlAttribute)identifierAttribute).getLocalName();
+        XmlElement componentIdentifier = TapestryUtils.getComponentIdentifier(tag);
+        if (componentIdentifier != null) {
+          if (componentIdentifier instanceof XmlAttribute) {
+            String attrName = ((XmlAttribute)componentIdentifier).getLocalName();
             final String msg = attrName.equals("id") ? "Unknown child component id" : "Unknown component type";
-            _annotationHolder.createErrorAnnotation(identifierAttribute.getLastChild(), msg);
+            _annotationHolder.createErrorAnnotation(componentIdentifier.getLastChild(), msg);
           }
           else {
-            _annotationHolder.createErrorAnnotation(identifierAttribute.getNavigationElement(), "Unknown component type");
+            _annotationHolder.createErrorAnnotation(componentIdentifier.getNavigationElement(), "Unknown component type");
           }
         }
       }
@@ -151,42 +145,5 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
 
     tag.acceptChildren(this);
   }//visitXmlTag
-
-  /**
-   * Verify the existence of parameter declaration in elementClass
-   *
-   * @param parameter    the parameter to check
-   * @param elementClass the class to get the fields
-   * @param tag          the component to get the parameters
-   * @return <code>true</code> if the parameter is defined in the class, <code>false</code> otherwise.
-   */
-  public boolean parameterDefinedInClass(TapestryParameter parameter, IntellijJavaClassType elementClass, XmlTag tag) {
-
-    Map<String, IJavaField> fields = elementClass.getFields(false);
-
-    for (IJavaField field : fields.values()) {
-      final IJavaAnnotation annotation = field.getAnnotations().get(TapestryConstants.COMPONENT_ANNOTATION);
-      if (annotation == null) continue;
-
-      Map<String, String[]> annotationParams = annotation.getParameters();
-      if (isFieldIdEqualsToTagId(annotationParams, field, tag)) {
-        String[] fieldParameters = annotationParams.get("parameters");
-        if (fieldParameters == null) continue;
-        for (String fieldParameter : fieldParameters) {
-          final String[] paramNameValue = fieldParameter.split("=");
-          if (paramNameValue.length == 2 && paramNameValue[0].equals(parameter.getName())) return true;
-        }
-      }
-    }
-    return false;
-  }//parameterDefinedInClass
-
-  boolean isFieldIdEqualsToTagId(Map<String, String[]> annotationParams, IJavaField field, XmlTag tag) {
-    String[] fieldId = annotationParams.get("id");
-    final String tagId = tag.getAttributeValue("t:id");
-    return fieldId == null || fieldId.length == 0 || fieldId[0] == null || fieldId[0].length() == 0
-           ? field.getName().equals(tagId)
-           : fieldId[0].equals(tagId);
-  }
 
 }//TemplateTagAnnotator

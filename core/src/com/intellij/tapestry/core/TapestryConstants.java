@@ -100,7 +100,7 @@ public interface TapestryConstants {
     /**
      * The extension of template files.
      */
-    public static final String TEMPLATE_FILE_EXTENSION = ".tml";
+    public static final String TEMPLATE_FILE_EXTENSION = "tml";
 
     /**
      * The extension of property files.
