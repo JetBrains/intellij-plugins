@@ -314,17 +314,13 @@ public class TapestryProject {
         return _eventsManager;
     }
 
-    @Nullable
-    public String getWebXmlPath() {
-        IResource resource = _resourceFinder.findContextResource(WEBXML_PATH);
+  @Nullable
+  public String getWebXmlPath() {
+    IResource resource = _resourceFinder.findContextResource(WEBXML_PATH);
+    return resource != null ? resource.getFile().getAbsolutePath() : null;
+  }
 
-        if (resource != null)
-            return resource.getFile().getAbsolutePath();
-        else
-            return null;
-    }
-
-    /**
+  /**
      * Checks if the file as been changed since last access. If so, builds a new document of it into memory.
      *
      * @return <code>true</code> if the file was changed since last access, <code>false</code> otherwise.

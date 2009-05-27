@@ -95,6 +95,7 @@ public class TapestryUtils {
     return getIdentifyingAttribute(tag);
   }
 
+  @Nullable
   public static XmlAttribute getIdentifyingAttribute(XmlTag tag) {
     XmlAttribute typeAttribute = getTTypeAttribute(tag);
     return typeAttribute != null ? typeAttribute : getTIdAttribute(tag);
