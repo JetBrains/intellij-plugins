@@ -143,8 +143,10 @@ public class TapestryUtils {
 
   @Nullable
   public static IJavaField findIdentifyingField(XmlTag tag) {
+    final TapestryProject tapestryProject = getTapestryProject(tag);
+    if(tapestryProject == null) return null;
     IntellijJavaClassType elementClass =
-        (IntellijJavaClassType)ComponentUtils.findClassFromTemplate(new IntellijResource(tag.getContainingFile()), getTapestryProject(tag));
+        (IntellijJavaClassType)ComponentUtils.findClassFromTemplate(new IntellijResource(tag.getContainingFile()), tapestryProject);
     return elementClass != null ? findIdentifyingField(elementClass, tag) : null;
   }
 

@@ -10,6 +10,7 @@ import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.xml.XmlAttribute;
 import com.intellij.tapestry.core.resource.xml.XmlTag;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Collection;
@@ -27,7 +28,7 @@ public class ComponentUtils {
    * @return the component class.
    */
   @Nullable
-  public static IJavaClassType findClassFromTemplate(IResource template, TapestryProject project) {
+  public static IJavaClassType findClassFromTemplate(@NotNull IResource template, @NotNull TapestryProject project) {
     String resourcePath = template.getFile().getAbsolutePath();
     String templateFilename = LocalizationUtils.unlocalizeFileName(template.getName());
 
