@@ -46,154 +46,140 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class FragmentHandlingTest
-{
-  public FragmentHandlingTest()
-  {
-    _fixture = TestUtil.createTestFixture();
-  }
+public class FragmentHandlingTest {
+    public FragmentHandlingTest() {
+        fixture = TestUtil.createTestFixture();
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-    myTempDirFixture.setUp();
-    _fixture.setUp();
-    TestUtil.loadModules("FragmentHandlingTest", _fixture.getProject(), myTempDirFixture.getTempDirPath());
-    TestUtil.createOsmorFacetForAllModules(_fixture.getProject());
+    @Before
+    public void setUp() throws Exception {
+        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+        myTempDirFixture.setUp();
+        fixture.setUp();
+        TestUtil.loadModules("FragmentHandlingTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
+        TestUtil.createOsmorFacetForAllModules(fixture.getProject());
 
-    ModuleManager moduleManager = ModuleManager.getInstance(_fixture.getProject());
+        ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
 
-    _t0 = moduleManager.findModuleByName("t0");
-    _t0Fragment = moduleManager.findModuleByName("t0.fragment");
-    _t1 = moduleManager.findModuleByName("t1");
-    _t2 = moduleManager.findModuleByName("t2");
-    _t3 = moduleManager.findModuleByName("t3");
-    _t3Fragment1 = moduleManager.findModuleByName("t3.fragment.1");
-    _t3Fragment2 = moduleManager.findModuleByName("t3.fragment.2");
+        t0 = moduleManager.findModuleByName("t0");
+        t0Fragment = moduleManager.findModuleByName("t0.fragment");
+        t1 = moduleManager.findModuleByName("t1");
+        t2 = moduleManager.findModuleByName("t2");
+        t3 = moduleManager.findModuleByName("t3");
+        t3Fragment1 = moduleManager.findModuleByName("t3.fragment.1");
+        t3Fragment2 = moduleManager.findModuleByName("t3.fragment.2");
 
-  }
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-    myTempDirFixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+        myTempDirFixture.tearDown();
+    }
 
-  @Test
-  public void testFragmentHasDependencyOnHost()
-  {
-    assertThat(ModuleRootManager.getInstance(_t0Fragment).getDependencies().length, equalTo(1));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t0Fragment).getDependencies()), hasItem(_t0));
-    assertThat(TestUtil.getOrderEntry(_t0, _t0Fragment).isExported(), equalTo(false));
-  }
+    @Test
+    public void testFragmentHasDependencyOnHost() {
+        assertThat(ModuleRootManager.getInstance(t0Fragment).getDependencies().length, equalTo(1));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t0Fragment).getDependencies()), hasItem(t0));
+        assertThat(TestUtil.getOrderEntry(t0, t0Fragment).isExported(), equalTo(false));
+    }
 
-  @Test
-  public void testHostImporterHasDependencyOnFragment()
-  {
-    assertThat(ModuleRootManager.getInstance(_t1).getDependencies().length, equalTo(2));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t1).getDependencies()), hasItem(_t0));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t1).getDependencies()), hasItem(_t0Fragment));
-    assertThat(TestUtil.getOrderEntry(_t0, _t1).isExported(), equalTo(false));
-    assertThat(TestUtil.getOrderEntry(_t0Fragment, _t1).isExported(), equalTo(false));
-  }
+    @Test
+    public void testHostImporterHasDependencyOnFragment() {
+        assertThat(ModuleRootManager.getInstance(t1).getDependencies().length, equalTo(2));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t1).getDependencies()), hasItem(t0));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t1).getDependencies()), hasItem(t0Fragment));
+        assertThat(TestUtil.getOrderEntry(t0, t1).isExported(), equalTo(false));
+        assertThat(TestUtil.getOrderEntry(t0Fragment, t1).isExported(), equalTo(false));
+    }
 
-  @Test
-  public void testFragmentForRequiredExportedHostIsAlsoExported()
-  {
-    assertThat(ModuleRootManager.getInstance(_t2).getDependencies().length, equalTo(2));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t2).getDependencies()), hasItem(_t0));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t2).getDependencies()), hasItem(_t0Fragment));
-    assertThat(TestUtil.getOrderEntry(_t0, _t2).isExported(), equalTo(true));
-    assertThat(TestUtil.getOrderEntry(_t0Fragment, _t2).isExported(), equalTo(true));
-  }
+    @Test
+    public void testFragmentForRequiredExportedHostIsAlsoExported() {
+        assertThat(ModuleRootManager.getInstance(t2).getDependencies().length, equalTo(2));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t2).getDependencies()), hasItem(t0));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t2).getDependencies()), hasItem(t0Fragment));
+        assertThat(TestUtil.getOrderEntry(t0, t2).isExported(), equalTo(true));
+        assertThat(TestUtil.getOrderEntry(t0Fragment, t2).isExported(), equalTo(true));
+    }
 
-  @SuppressWarnings({"ConstantConditions"})
-  @Test
-  public void testImportsOfFragmentClassesBehaveAsIfTheHostContainsThem()
-  {
-    PsiFile psiFile = TestUtil.loadPsiFile(_fixture.getProject(), "t1", "t1/Importer.java");
+    @SuppressWarnings({"ConstantConditions"})
+    @Test
+    public void testImportsOfFragmentClassesBehaveAsIfTheHostContainsThem() {
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Importer.java");
 
-    List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, _fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
 
-    assertThat(list , notNullValue());
-    assertThat(list.size(), equalTo(6));
+        assertThat(list, notNullValue());
+        assertThat(list.size(), equalTo(6));
 
-    ProblemDescriptor problem = list.get(0);
-    assertThat(problem.getLineNumber(), equalTo(4));
+        ProblemDescriptor problem = list.get(0);
+        assertThat(problem.getLineNumber(), equalTo(4));
 
-    problem = list.get(1);
-    assertThat(problem.getLineNumber(), equalTo(5));
+        problem = list.get(1);
+        assertThat(problem.getLineNumber(), equalTo(5));
 
-    problem = list.get(2);
-    assertThat(problem.getLineNumber(), equalTo(12));
+        problem = list.get(2);
+        assertThat(problem.getLineNumber(), equalTo(12));
 
-    problem = list.get(3);
-    assertThat(problem.getLineNumber(), equalTo(12));
+        problem = list.get(3);
+        assertThat(problem.getLineNumber(), equalTo(12));
 
-    problem = list.get(4);
-    assertThat(problem.getLineNumber(), equalTo(13));
+        problem = list.get(4);
+        assertThat(problem.getLineNumber(), equalTo(13));
 
-    problem = list.get(5);
-    assertThat(problem.getLineNumber(), equalTo(13));
+        problem = list.get(5);
+        assertThat(problem.getLineNumber(), equalTo(13));
 
-  }
+    }
 
-  @SuppressWarnings({"ConstantConditions"})
-  @Test
-  public void testImportsOfHostClassesInFragmentClassesAreValid()
-  {
-    PsiFile psiFile = TestUtil.loadPsiFile(_fixture.getProject(), "t0.fragment", "t0/internal/NotExportedClass.java");
+    @SuppressWarnings({"ConstantConditions"})
+    @Test
+    public void testImportsOfHostClassesInFragmentClassesAreValid() {
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t0.fragment", "t0/internal/NotExportedClass.java");
 
-    List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, _fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
 
-    assertThat(list , nullValue());
-  }
+        assertThat(list, nullValue());
+    }
 
-  @Test
-  public void testFragmentDependenciesAreMergedInTheHostAndAddedBackToFragmentDependencies()
-  {
-    assertThat(ModuleRootManager.getInstance(_t3).getDependencies().length, equalTo(3));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3).getDependencies()), hasItem(_t0));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3).getDependencies()), hasItem(_t0Fragment));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3).getDependencies()), hasItem(_t2));
+    @Test
+    public void testFragmentDependenciesAreMergedInTheHostAndAddedBackToFragmentDependencies() {
+        assertThat(ModuleRootManager.getInstance(t3).getDependencies().length, equalTo(3));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3).getDependencies()), hasItem(t0));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3).getDependencies()), hasItem(t0Fragment));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3).getDependencies()), hasItem(t2));
 
-    assertThat(ModuleRootManager.getInstance(_t3Fragment1).getDependencies().length, equalTo(4));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3Fragment1).getDependencies()), hasItem(_t3));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3Fragment1).getDependencies()), hasItem(_t0));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3Fragment1).getDependencies()), hasItem(_t0Fragment));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3Fragment1).getDependencies()), hasItem(_t2));
+        assertThat(ModuleRootManager.getInstance(t3Fragment1).getDependencies().length, equalTo(4));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3Fragment1).getDependencies()), hasItem(t3));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3Fragment1).getDependencies()), hasItem(t0));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3Fragment1).getDependencies()), hasItem(t0Fragment));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3Fragment1).getDependencies()), hasItem(t2));
 
-    assertThat(ModuleRootManager.getInstance(_t3Fragment2).getDependencies().length, equalTo(4));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3Fragment2).getDependencies()), hasItem(_t3));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3Fragment2).getDependencies()), hasItem(_t0));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3Fragment2).getDependencies()), hasItem(_t0Fragment));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3Fragment2).getDependencies()), hasItem(_t2));
-  }
+        assertThat(ModuleRootManager.getInstance(t3Fragment2).getDependencies().length, equalTo(4));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3Fragment2).getDependencies()), hasItem(t3));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3Fragment2).getDependencies()), hasItem(t0));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3Fragment2).getDependencies()), hasItem(t0Fragment));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3Fragment2).getDependencies()), hasItem(t2));
+    }
 
-  @SuppressWarnings({"ConstantConditions"})
-  @Test
-  public void testImportsOfClassesOfRequiredPackagesInFragmentClassesAreValid()
-  {
-    PsiFile psiFile = TestUtil.loadPsiFile(_fixture.getProject(), "t3.fragment.2", "t3/Importer.java");
+    @SuppressWarnings({"ConstantConditions"})
+    @Test
+    public void testImportsOfClassesOfRequiredPackagesInFragmentClassesAreValid() {
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t3.fragment.2", "t3/Importer.java");
 
-    List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, _fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
 
-    assertThat(list , nullValue());
-  }
+        assertThat(list, nullValue());
+    }
 
 
-
-
-
-  private IdeaProjectTestFixture _fixture;
-  private TempDirTestFixture myTempDirFixture;
-  private Module _t0;
-  private Module _t0Fragment;
-  private Module _t1;
-  private Module _t2;
-  private Module _t3;
-  private Module _t3Fragment1;
-  private Module _t3Fragment2;
+    private IdeaProjectTestFixture fixture;
+    private TempDirTestFixture myTempDirFixture;
+    private Module t0;
+    private Module t0Fragment;
+    private Module t1;
+    private Module t2;
+    private Module t3;
+    private Module t3Fragment1;
+    private Module t3Fragment2;
 }

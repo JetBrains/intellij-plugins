@@ -52,128 +52,114 @@ import java.util.Arrays;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ModuleDependencySynchronizerTest
-{
+public class ModuleDependencySynchronizerTest {
 
-  public ModuleDependencySynchronizerTest() throws Exception
-  {
-    _fixture = TestUtil.createTestFixture();
-  }
-
-  @Before
-  public void setUp() throws Exception
-  {
-    myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-    myTempDirFixture.setUp();
-    _fixture.setUp();
-    TestUtil.loadModules("ModuleDependencySynchronizerTest", _fixture.getProject(), myTempDirFixture.getTempDirPath());
-    TestUtil.createOsmorFacetForAllModules(_fixture.getProject());
-  }
-
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-    myTempDirFixture.tearDown();
-  }
-
-  @Test
-  public void testDependencySynchronisation()
-  {
-    ModuleManager moduleManager = ModuleManager.getInstance(_fixture.getProject());
-
-
-    Module t0 = moduleManager.findModuleByName("t0");
-    Module t1 = moduleManager.findModuleByName("t1");
-    Module t2 = moduleManager.findModuleByName("t2");
-    Module t3 = moduleManager.findModuleByName("t3");
-
-    assertThat(ModuleRootManager.getInstance(t0).getDependencies().length, equalTo(0));
-    assertThat(ModuleRootManager.getInstance(t1).getDependencies().length, equalTo(0));
-
-    assertThat(ModuleRootManager.getInstance(t2).getDependencies().length, equalTo(1));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(t2).getDependencies()), hasItem(t1));
-    assertThat(TestUtil.getOrderEntry(t1, t2).isExported(), equalTo(false));
-
-    assertThat(ModuleRootManager.getInstance(t3).getDependencies().length, equalTo(2));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(t3).getDependencies()), hasItem(t2));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(t3).getDependencies()), hasItem(t0));
-    assertThat(TestUtil.getOrderEntry(t0, t3).isExported(), equalTo(true));
-  }
-
-  @Test
-  public void testForwardDependency() throws Exception
-  {
-    ModuleManager moduleManager = ModuleManager.getInstance(_fixture.getProject());
-
-    Module t5 = moduleManager.findModuleByName("t5");
-    Module t6 = moduleManager.findModuleByName("t6");
-
-    assertThat(ModuleRootManager.getInstance(t6).getDependencies().length, equalTo(0));
-
-    assertThat(ModuleRootManager.getInstance(t5).getDependencies().length, equalTo(1));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(t5).getDependencies()), hasItem(t6));
-    assertThat(TestUtil.getOrderEntry(t6, t5).isExported(), equalTo(false));
-  }
-
-  @Test
-  public void testExportChange() throws Exception
-  {
-    ModuleManager moduleManager = ModuleManager.getInstance(_fixture.getProject());
-
-    final Module t7 = moduleManager.findModuleByName("t7");
-    final Module t8 = moduleManager.findModuleByName("t8");
-
-    assertThat(ModuleRootManager.getInstance(t7).getDependencies().length, equalTo(0));
-    assertThat(ModuleRootManager.getInstance(t8).getDependencies().length, equalTo(0));
-
-    replaceExportPackage(t8, "t8");
-
-    Thread.sleep(100);
-    assertThat(ModuleRootManager.getInstance(t7).getDependencies().length, equalTo(1));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(t7).getDependencies()), hasItem(t8));
-    assertThat(TestUtil.getOrderEntry(t8, t7).isExported(), equalTo(false));
-
-    replaceExportPackage(t8, "t8.sub");
-
-    Thread.sleep(100);
-    assertThat(ModuleRootManager.getInstance(t7).getDependencies().length, equalTo(0));
-  }
-
-  private void replaceExportPackage(Module module, final String replacement)
-  {
-    VirtualFile contentRoot = ModuleRootManager.getInstance(module).getContentRoots()[0];
-    VirtualFile manifestFile = contentRoot.findFileByRelativePath("META-INF/MANIFEST.MF");
-
-    PsiFile manifestPsiFile = PsiManager.getInstance(_fixture.getProject()).findFile(manifestFile);
-    ManifestHeader lastHeader = null;
-
-    for (PsiElement psiElement : manifestPsiFile.getChildren())
-    {
-      if (psiElement instanceof ManifestHeader)
-      {
-        lastHeader = (ManifestHeader) psiElement;
-      }
+    public ModuleDependencySynchronizerTest() throws Exception {
+        fixture = TestUtil.createTestFixture();
     }
 
-    ManifestClause clause = (ManifestClause) lastHeader.getLastChild();
-    final ManifestHeaderValueImpl value = (ManifestHeaderValueImpl) clause.getLastChild();
+    @Before
+    public void setUp() throws Exception {
+        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+        myTempDirFixture.setUp();
+        fixture.setUp();
+        TestUtil.loadModules("ModuleDependencySynchronizerTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
+        TestUtil.createOsmorFacetForAllModules(fixture.getProject());
+    }
 
-    CommandProcessor.getInstance().executeCommand(_fixture.getProject(), new Runnable()
-    {
-      public void run()
-      {
-        ApplicationManager.getApplication().runWriteAction(new Runnable()
-        {
-          public void run()
-          {
-            ReplaceUtil.replace(value, replacement);
-          }
-        });
-      }
-    }, "test", "testid");
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+        myTempDirFixture.tearDown();
+    }
 
-  private IdeaProjectTestFixture _fixture;
-  private TempDirTestFixture myTempDirFixture;
+    @Test
+    public void testDependencySynchronisation() {
+        ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
+
+
+        Module t0 = moduleManager.findModuleByName("t0");
+        Module t1 = moduleManager.findModuleByName("t1");
+        Module t2 = moduleManager.findModuleByName("t2");
+        Module t3 = moduleManager.findModuleByName("t3");
+
+        assertThat(ModuleRootManager.getInstance(t0).getDependencies().length, equalTo(0));
+        assertThat(ModuleRootManager.getInstance(t1).getDependencies().length, equalTo(0));
+
+        assertThat(ModuleRootManager.getInstance(t2).getDependencies().length, equalTo(1));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t2).getDependencies()), hasItem(t1));
+        assertThat(TestUtil.getOrderEntry(t1, t2).isExported(), equalTo(false));
+
+        assertThat(ModuleRootManager.getInstance(t3).getDependencies().length, equalTo(2));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3).getDependencies()), hasItem(t2));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3).getDependencies()), hasItem(t0));
+        assertThat(TestUtil.getOrderEntry(t0, t3).isExported(), equalTo(true));
+    }
+
+    @Test
+    public void testForwardDependency() throws Exception {
+        ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
+
+        Module t5 = moduleManager.findModuleByName("t5");
+        Module t6 = moduleManager.findModuleByName("t6");
+
+        assertThat(ModuleRootManager.getInstance(t6).getDependencies().length, equalTo(0));
+
+        assertThat(ModuleRootManager.getInstance(t5).getDependencies().length, equalTo(1));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t5).getDependencies()), hasItem(t6));
+        assertThat(TestUtil.getOrderEntry(t6, t5).isExported(), equalTo(false));
+    }
+
+    @Test
+    public void testExportChange() throws Exception {
+        ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
+
+        final Module t7 = moduleManager.findModuleByName("t7");
+        final Module t8 = moduleManager.findModuleByName("t8");
+
+        assertThat(ModuleRootManager.getInstance(t7).getDependencies().length, equalTo(0));
+        assertThat(ModuleRootManager.getInstance(t8).getDependencies().length, equalTo(0));
+
+        replaceExportPackage(t8, "t8");
+
+        Thread.sleep(100);
+        assertThat(ModuleRootManager.getInstance(t7).getDependencies().length, equalTo(1));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t7).getDependencies()), hasItem(t8));
+        assertThat(TestUtil.getOrderEntry(t8, t7).isExported(), equalTo(false));
+
+        replaceExportPackage(t8, "t8.sub");
+
+        Thread.sleep(100);
+        assertThat(ModuleRootManager.getInstance(t7).getDependencies().length, equalTo(0));
+    }
+
+    private void replaceExportPackage(Module module, final String replacement) {
+        VirtualFile contentRoot = ModuleRootManager.getInstance(module).getContentRoots()[0];
+        VirtualFile manifestFile = contentRoot.findFileByRelativePath("META-INF/MANIFEST.MF");
+
+        PsiFile manifestPsiFile = PsiManager.getInstance(fixture.getProject()).findFile(manifestFile);
+        ManifestHeader lastHeader = null;
+
+        for (PsiElement psiElement : manifestPsiFile.getChildren()) {
+            if (psiElement instanceof ManifestHeader) {
+                lastHeader = (ManifestHeader) psiElement;
+            }
+        }
+
+        ManifestClause clause = (ManifestClause) lastHeader.getLastChild();
+        final ManifestHeaderValueImpl value = (ManifestHeaderValueImpl) clause.getLastChild();
+
+        CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
+            public void run() {
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    public void run() {
+                        ReplaceUtil.replace(value, replacement);
+                    }
+                });
+            }
+        }, "test", "testid");
+    }
+
+    private IdeaProjectTestFixture fixture;
+    private TempDirTestFixture myTempDirFixture;
 }

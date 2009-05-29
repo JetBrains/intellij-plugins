@@ -33,53 +33,47 @@ import org.junit.Test;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ApplicationSettingsUpdateNotifierTest
-{
+public class ApplicationSettingsUpdateNotifierTest {
 
-  @Before
-  public void setUp()
-  {
-    _applicationSettingsChangeListener = new ApplicationSettingsUpdateNotifier.Listener()
-    {
-      public void applicationSettingsChanged()
-      {
-        _applicationSettingsChanged = true;
-      }
-    };
+    @Before
+    public void setUp() {
+        applicationSettingsChangeListener = new ApplicationSettingsUpdateNotifier.Listener() {
+            public void applicationSettingsChanged() {
+                applicationSettingsChanged = true;
+            }
+        };
 
-    _testObject = new ApplicationSettingsUpdateNotifier();
-  }
+        testObject = new ApplicationSettingsUpdateNotifier();
+    }
 
-  public void testWithoutListeners()
-  {
-    _applicationSettingsChanged = false;
+    public void testWithoutListeners() {
+        applicationSettingsChanged = false;
 
-    _testObject.fireApplicationSettingsChanged();
+        testObject.fireApplicationSettingsChanged();
 
-    assertThat(_applicationSettingsChanged, equalTo(false));
-  }
+        assertThat(applicationSettingsChanged, equalTo(false));
+    }
 
-  @Test
-  public void testWithListener()
-  {
-    _testObject.addListener(_applicationSettingsChangeListener);
+    @Test
+    public void testWithListener() {
+        testObject.addListener(applicationSettingsChangeListener);
 
-    _applicationSettingsChanged = false;
+        applicationSettingsChanged = false;
 
-    _testObject.fireApplicationSettingsChanged();
+        testObject.fireApplicationSettingsChanged();
 
-    assertThat(_applicationSettingsChanged, equalTo(true));
+        assertThat(applicationSettingsChanged, equalTo(true));
 
-    _testObject.removeListener(_applicationSettingsChangeListener);
+        testObject.removeListener(applicationSettingsChangeListener);
 
-    _applicationSettingsChanged = false;
+        applicationSettingsChanged = false;
 
-    _testObject.fireApplicationSettingsChanged();
+        testObject.fireApplicationSettingsChanged();
 
-    assertThat(_applicationSettingsChanged, equalTo(false));
-  }
+        assertThat(applicationSettingsChanged, equalTo(false));
+    }
 
-  private boolean _applicationSettingsChanged;
-  private ApplicationSettingsUpdateNotifier.Listener _applicationSettingsChangeListener;
-  private ApplicationSettingsUpdateNotifier _testObject;
+    private boolean applicationSettingsChanged;
+    private ApplicationSettingsUpdateNotifier.Listener applicationSettingsChangeListener;
+    private ApplicationSettingsUpdateNotifier testObject;
 }

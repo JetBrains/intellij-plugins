@@ -49,98 +49,83 @@ import java.text.MessageFormat;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxFrameworkInstanceManagerTest
-{
-  public EquinoxFrameworkInstanceManagerTest()
-  {
-    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-        IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
-    _fixture = fixtureBuilder.getFixture();
-  }
+public class EquinoxFrameworkInstanceManagerTest {
+    public EquinoxFrameworkInstanceManagerTest() {
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
+                IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
+        fixture = fixtureBuilder.getFixture();
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    _fixture.setUp();
-    _root = ModuleRootManager.getInstance(_fixture.getModule()).getContentRoots()[0];
-    _fileSystem = createMock(LocalFileSystem.class);
-    _testObject =
-        new EquinoxFrameworkInstanceManager(new LibraryHandlerImpl(), _fileSystem, ApplicationManager.getApplication());
-    _instanceDefinition = new FrameworkInstanceDefinition();
-    _instanceDefinition.setBaseFolder(new File(_root.getPath(), "eclipse").getAbsolutePath());
-    _instanceDefinition.setName("test");
-  }
+    @Before
+    public void setUp() throws Exception {
+        fixture.setUp();
+        root = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots()[0];
+        fileSystem = createMock(LocalFileSystem.class);
+        testObject =
+                new EquinoxFrameworkInstanceManager(new LibraryHandlerImpl(), fileSystem, ApplicationManager.getApplication());
+        instanceDefinition = new FrameworkInstanceDefinition();
+        instanceDefinition.setBaseFolder(new File(root.getPath(), "eclipse").getAbsolutePath());
+        instanceDefinition.setName("test");
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+    }
 
-  @Test
-  public void testCheckValidityFolderDoesNotExist()
-  {
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("eclipse"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition),
-        equalTo(MessageFormat.format(EquinoxFrameworkInstanceManager.FOLDER_DOES_NOT_EXIST,
-            _instanceDefinition.getBaseFolder())));
-    verify(_fileSystem);
-  }
+    @Test
+    public void testCheckValidityFolderDoesNotExist() {
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("eclipse"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition),
+                equalTo(MessageFormat.format(EquinoxFrameworkInstanceManager.FOLDER_DOES_NOT_EXIST,
+                        instanceDefinition.getBaseFolder())));
+        verify(fileSystem);
+    }
 
-  @Test
-  public void testCheckValidityNoPluginsFolder() throws Exception
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          _root.createChildDirectory(this, "eclipse");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+    @Test
+    public void testCheckValidityNoPluginsFolder() throws Exception {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    root.createChildDirectory(this, "eclipse");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("eclipse"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition),
-        equalTo(MessageFormat.format(EquinoxFrameworkInstanceManager.NO_PLUGINS_FOLDER,
-            _instanceDefinition.getBaseFolder())));
-    verify(_fileSystem);
-  }
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("eclipse"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition),
+                equalTo(MessageFormat.format(EquinoxFrameworkInstanceManager.NO_PLUGINS_FOLDER,
+                        instanceDefinition.getBaseFolder())));
+        verify(fileSystem);
+    }
 
-  @Test
-  public void testCheckValidityOK() throws Exception
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          _root.createChildDirectory(this, "eclipse").createChildDirectory(this, "plugins");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+    @Test
+    public void testCheckValidityOK() throws Exception {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    root.createChildDirectory(this, "eclipse").createChildDirectory(this, "plugins");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("eclipse"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition), nullValue());
-    verify(_fileSystem);
-  }
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("eclipse"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition), nullValue());
+        verify(fileSystem);
+    }
 
-  private IdeaProjectTestFixture _fixture;
-  private VirtualFile _root;
-  private EquinoxFrameworkInstanceManager _testObject;
-  private FrameworkInstanceDefinition _instanceDefinition;
-  private LocalFileSystem _fileSystem;
+    private IdeaProjectTestFixture fixture;
+    private VirtualFile root;
+    private EquinoxFrameworkInstanceManager testObject;
+    private FrameworkInstanceDefinition instanceDefinition;
+    private LocalFileSystem fileSystem;
 }

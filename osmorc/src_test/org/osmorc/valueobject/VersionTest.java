@@ -31,18 +31,16 @@ import org.junit.Test;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class VersionTest
-{
-  @Test
-  public void testCompareTo()
-  {
-    assertThat(new Version(2, 0, 0, null).compareTo(new Version(3, 0, 0, null)), lessThan(0));
-    assertThat(new Version(2, 0, 0, null).compareTo(new Version(2, 1, 0, null)), lessThan(0));
-    assertThat(new Version(2, 0, 0, null).compareTo(new Version(2, 0, 1, null)), lessThan(0));
-    assertThat(new Version(2, 0, 0, null).compareTo(new Version(2, 0, 0, "b20")), lessThan(0));
-    assertThat(new Version(2, 0, 0, null).compareTo(new Version(2, 0, 0, "")),equalTo(0));
-    assertThat(new Version(2, 0, 0, null).compareTo(new Version(1, 0, 0, "")), greaterThan(0));
-    assertThat(new Version(2, 1, 0, null).compareTo(new Version(2, 0, 0, "")), greaterThan(0));
-    assertThat(new Version(2, 0, 1, null).compareTo(new Version(2, 0, 0, "")), greaterThan(0));
-  }
+public class VersionTest {
+    @Test
+    public void testCompareTo() {
+        assertThat(new Version(2, 0, 0, null).compareTo(new Version(3, 0, 0, null)), lessThan(0));
+        assertThat(new Version(2, 0, 0, null).compareTo(new Version(2, 1, 0, null)), lessThan(0));
+        assertThat(new Version(2, 0, 0, null).compareTo(new Version(2, 0, 1, null)), lessThan(0));
+        assertThat(new Version(2, 0, 0, null).compareTo(new Version(2, 0, 0, "b20")), lessThan(0));
+        assertThat(new Version(2, 0, 0, null).compareTo(new Version(2, 0, 0, "")), equalTo(0));
+        assertThat(new Version(2, 0, 0, null).compareTo(new Version(1, 0, 0, "")), greaterThan(0));
+        assertThat(new Version(2, 1, 0, null).compareTo(new Version(2, 0, 0, "")), greaterThan(0));
+        assertThat(new Version(2, 0, 1, null).compareTo(new Version(2, 0, 0, "")), greaterThan(0));
+    }
 }

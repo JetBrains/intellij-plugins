@@ -49,152 +49,127 @@ import java.io.IOException;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class KnopflerfishFrameworkInstanceManagerTest
-{
-  public KnopflerfishFrameworkInstanceManagerTest()
-  {
-    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-        IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
-    _fixture = fixtureBuilder.getFixture();
-  }
+public class KnopflerfishFrameworkInstanceManagerTest {
+    public KnopflerfishFrameworkInstanceManagerTest() {
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
+                IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
+        fixture = fixtureBuilder.getFixture();
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    _fixture.setUp();
-    _root = ModuleRootManager.getInstance(_fixture.getModule()).getContentRoots()[0];
-    _fileSystem = createMock(LocalFileSystem.class);
-    _testObject = new KnopflerfishFrameworkInstanceManager(new LibraryHandlerImpl(), _fileSystem,
-        ApplicationManager.getApplication());
-    _instanceDefinition = new FrameworkInstanceDefinition();
-    _instanceDefinition.setBaseFolder(new File(_root.getPath(), "knopflerfish").getAbsolutePath());
-    _instanceDefinition.setName("test");
-  }
+    @Before
+    public void setUp() throws Exception {
+        fixture.setUp();
+        root = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots()[0];
+        fileSystem = createMock(LocalFileSystem.class);
+        testObject = new KnopflerfishFrameworkInstanceManager(new LibraryHandlerImpl(), fileSystem,
+                ApplicationManager.getApplication());
+        instanceDefinition = new FrameworkInstanceDefinition();
+        instanceDefinition.setBaseFolder(new File(root.getPath(), "knopflerfish").getAbsolutePath());
+        instanceDefinition.setName("test");
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+    }
 
-  @Test
-  public void testCheckValidityFolderDoesNotExist()
-  {
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("knopflerfish"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition),
-        equalTo(
-            OsmorcBundle.getTranslation("knopflerfish.folder.does.not.exist", _instanceDefinition.getBaseFolder())));
-    verify(_fileSystem);
-  }
+    @Test
+    public void testCheckValidityFolderDoesNotExist() {
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("knopflerfish"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition),
+                equalTo(
+                        OsmorcBundle.getTranslation("knopflerfish.folder.does.not.exist", instanceDefinition.getBaseFolder())));
+        verify(fileSystem);
+    }
 
-  @Test
-  public void testCheckValidityNoKnopflerfishOrgFolder() throws Exception
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          _root.createChildDirectory(this, "knopflerfish");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+    @Test
+    public void testCheckValidityNoKnopflerfishOrgFolder() throws Exception {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    root.createChildDirectory(this, "knopflerfish");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("knopflerfish"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition),
-        equalTo(OsmorcBundle.getTranslation("knopflerfish.folder.knopflerfish.org.missing",
-            _instanceDefinition.getBaseFolder())));
-    verify(_fileSystem);
-  }
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("knopflerfish"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition),
+                equalTo(OsmorcBundle.getTranslation("knopflerfish.folder.knopflerfish.org.missing",
+                        instanceDefinition.getBaseFolder())));
+        verify(fileSystem);
+    }
 
-  @Test
-  public void testCheckValidityNoOSGIFolder() throws Exception
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          _root.createChildDirectory(this, "knopflerfish").createChildDirectory(this, "knopflerfish.org");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+    @Test
+    public void testCheckValidityNoOSGIFolder() throws Exception {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    root.createChildDirectory(this, "knopflerfish").createChildDirectory(this, "knopflerfish.org");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("knopflerfish"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition),
-        equalTo(OsmorcBundle.getTranslation("knopflerfish.folder.osgi.missing",
-            _root.findFileByRelativePath("knopflerfish/knopflerfish.org").getPath())));
-    verify(_fileSystem);
-  }
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("knopflerfish"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition),
+                equalTo(OsmorcBundle.getTranslation("knopflerfish.folder.osgi.missing",
+                        root.findFileByRelativePath("knopflerfish/knopflerfish.org").getPath())));
+        verify(fileSystem);
+    }
 
-  @Test
-  public void testCheckValidityNoBundleFolder() throws Exception
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          _root.createChildDirectory(this, "knopflerfish").createChildDirectory(this, "knopflerfish.org")
-              .createChildDirectory(this, "osgi");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+    @Test
+    public void testCheckValidityNoBundleFolder() throws Exception {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    root.createChildDirectory(this, "knopflerfish").createChildDirectory(this, "knopflerfish.org")
+                            .createChildDirectory(this, "osgi");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("knopflerfish"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition),
-        equalTo(OsmorcBundle.getTranslation("knopflerfish.folder.jars.missing",
-            _root.findFileByRelativePath("knopflerfish/knopflerfish.org/osgi").getPath())));
-    verify(_fileSystem);
-  }
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("knopflerfish"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition),
+                equalTo(OsmorcBundle.getTranslation("knopflerfish.folder.jars.missing",
+                        root.findFileByRelativePath("knopflerfish/knopflerfish.org/osgi").getPath())));
+        verify(fileSystem);
+    }
 
-  @Test
-  public void testCheckValidityOK() throws Exception
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          _root.createChildDirectory(this, "knopflerfish").createChildDirectory(this, "knopflerfish.org")
-              .createChildDirectory(this, "osgi").createChildDirectory(this, "jars");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+    @Test
+    public void testCheckValidityOK() throws Exception {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    root.createChildDirectory(this, "knopflerfish").createChildDirectory(this, "knopflerfish.org")
+                            .createChildDirectory(this, "osgi").createChildDirectory(this, "jars");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("knopflerfish"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition), nullValue());
-    verify(_fileSystem);
-  }
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("knopflerfish"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition), nullValue());
+        verify(fileSystem);
+    }
 
-  private IdeaProjectTestFixture _fixture;
-  private VirtualFile _root;
-  private KnopflerfishFrameworkInstanceManager _testObject;
-  private FrameworkInstanceDefinition _instanceDefinition;
-  private LocalFileSystem _fileSystem;
+    private IdeaProjectTestFixture fixture;
+    private VirtualFile root;
+    private KnopflerfishFrameworkInstanceManager testObject;
+    private FrameworkInstanceDefinition instanceDefinition;
+    private LocalFileSystem fileSystem;
 }

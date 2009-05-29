@@ -49,7 +49,7 @@ public class EquinoxConfigurationType implements ConfigurationType {
         legacyEquinoxOsgiRunConfigurationLoader = new LegacyEquinoxOsgiRunConfigurationLoader();
         myFactory = new ConfigurationFactory(this) {
             public RunConfiguration createTemplateConfiguration(Project project) {
-                return (OsgiRunConfiguration) EquinoxConfigurationType.this.osgiConfigurationType.getConfigurationFactories()[0].createTemplateConfiguration(project);
+                return EquinoxConfigurationType.this.osgiConfigurationType.getConfigurationFactories()[0].createTemplateConfiguration(project);
             }
 
             public RunConfiguration createConfiguration(String name, RunConfiguration template) {

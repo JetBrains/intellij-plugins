@@ -46,142 +46,134 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class InvalidImportInspectionTest
-{
-  public InvalidImportInspectionTest()
-  {
-    _fixture = TestUtil.createTestFixture();
-  }
+public class InvalidImportInspectionTest {
+    public InvalidImportInspectionTest() {
+        fixture = TestUtil.createTestFixture();
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-    myTempDirFixture.setUp();
-    _fixture.setUp();
-    TestUtil.loadModules("InvalidImportInspectionTest", _fixture.getProject(), myTempDirFixture.getTempDirPath());
-    TestUtil.createOsmorFacetForAllModules(_fixture.getProject());
+    @Before
+    public void setUp() throws Exception {
+        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+        myTempDirFixture.setUp();
+        fixture.setUp();
+        TestUtil.loadModules("InvalidImportInspectionTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
+        TestUtil.createOsmorFacetForAllModules(fixture.getProject());
 
-    ModuleManager moduleManager = ModuleManager.getInstance(_fixture.getProject());
+        ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
 
-    _t0 = moduleManager.findModuleByName("t0");
-    _t1 = moduleManager.findModuleByName("t1");
-    _t2 = moduleManager.findModuleByName("t2");
-    _t3 = moduleManager.findModuleByName("t3");
-    _t4 = moduleManager.findModuleByName("t4");
-  }
+        t0 = moduleManager.findModuleByName("t0");
+        t1 = moduleManager.findModuleByName("t1");
+        t2 = moduleManager.findModuleByName("t2");
+        t3 = moduleManager.findModuleByName("t3");
+        t4 = moduleManager.findModuleByName("t4");
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-    myTempDirFixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+        myTempDirFixture.tearDown();
+    }
 
-  @SuppressWarnings({"ConstantConditions"})
-  @Test
-  public void testImportPackageImport()
-  {
-    assertThat(ModuleRootManager.getInstance(_t1).getDependencies().length, equalTo(1));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t1).getDependencies()), hasItem(_t0));
-    assertThat(TestUtil.getOrderEntry(_t0, _t1).isExported(), equalTo(false));
+    @SuppressWarnings({"ConstantConditions"})
+    @Test
+    public void testImportPackageImport() {
+        assertThat(ModuleRootManager.getInstance(t1).getDependencies().length, equalTo(1));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t1).getDependencies()), hasItem(t0));
+        assertThat(TestUtil.getOrderEntry(t0, t1).isExported(), equalTo(false));
 
-    PsiFile psiFile = TestUtil.loadPsiFile(_fixture.getProject(), "t1", "t1/Importer.java");
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Importer.java");
 
-    List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, _fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
 
-    assertThat(list , notNullValue());
-    assertThat(list.size(), equalTo(6));
+        assertThat(list, notNullValue());
+        assertThat(list.size(), equalTo(6));
 
-    ProblemDescriptor problem = list.get(0);
-    assertThat(problem.getLineNumber(), equalTo(4));
+        ProblemDescriptor problem = list.get(0);
+        assertThat(problem.getLineNumber(), equalTo(4));
 
-    problem = list.get(1);
-    assertThat(problem.getLineNumber(), equalTo(5));
+        problem = list.get(1);
+        assertThat(problem.getLineNumber(), equalTo(5));
 
-    problem = list.get(2);
-    assertThat(problem.getLineNumber(), equalTo(12));
+        problem = list.get(2);
+        assertThat(problem.getLineNumber(), equalTo(12));
 
-    problem = list.get(3);
-    assertThat(problem.getLineNumber(), equalTo(12));
+        problem = list.get(3);
+        assertThat(problem.getLineNumber(), equalTo(12));
 
-    problem = list.get(4);
-    assertThat(problem.getLineNumber(), equalTo(13));
+        problem = list.get(4);
+        assertThat(problem.getLineNumber(), equalTo(13));
 
-    problem = list.get(5);
-    assertThat(problem.getLineNumber(), equalTo(13));
-  }
+        problem = list.get(5);
+        assertThat(problem.getLineNumber(), equalTo(13));
+    }
 
-  @SuppressWarnings({"ConstantConditions"})
-  @Test
-  public void testDirectRequireBundleImport()
-  {
-    assertThat(ModuleRootManager.getInstance(_t2).getDependencies().length, equalTo(1));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t2).getDependencies()), hasItem(_t0));
-    assertThat(TestUtil.getOrderEntry(_t0, _t2).isExported(), equalTo(true));
+    @SuppressWarnings({"ConstantConditions"})
+    @Test
+    public void testDirectRequireBundleImport() {
+        assertThat(ModuleRootManager.getInstance(t2).getDependencies().length, equalTo(1));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t2).getDependencies()), hasItem(t0));
+        assertThat(TestUtil.getOrderEntry(t0, t2).isExported(), equalTo(true));
 
-    PsiFile psiFile = TestUtil.loadPsiFile(_fixture.getProject(), "t2", "t2/Importer.java");
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t2", "t2/Importer.java");
 
-    List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, _fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
 
-    assertThat(list , notNullValue());
-    assertThat(list.size(), equalTo(3));
+        assertThat(list, notNullValue());
+        assertThat(list.size(), equalTo(3));
 
-    ProblemDescriptor problem = list.get(0);
-    assertThat(problem.getLineNumber(), equalTo(5));
+        ProblemDescriptor problem = list.get(0);
+        assertThat(problem.getLineNumber(), equalTo(5));
 
-    problem = list.get(1);
-    assertThat(problem.getLineNumber(), equalTo(13));
+        problem = list.get(1);
+        assertThat(problem.getLineNumber(), equalTo(13));
 
-    problem = list.get(2);
-    assertThat(problem.getLineNumber(), equalTo(13));
-  }
+        problem = list.get(2);
+        assertThat(problem.getLineNumber(), equalTo(13));
+    }
 
-  @SuppressWarnings({"ConstantConditions"})
-  @Test
-  public void testRecursiveRequireBundleWithReexportImport()
-  {
-    assertThat(ModuleRootManager.getInstance(_t3).getDependencies().length, equalTo(1));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t3).getDependencies()), hasItem(_t2));
-    assertThat(TestUtil.getOrderEntry(_t2, _t3).isExported(), equalTo(false));
+    @SuppressWarnings({"ConstantConditions"})
+    @Test
+    public void testRecursiveRequireBundleWithReexportImport() {
+        assertThat(ModuleRootManager.getInstance(t3).getDependencies().length, equalTo(1));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t3).getDependencies()), hasItem(t2));
+        assertThat(TestUtil.getOrderEntry(t2, t3).isExported(), equalTo(false));
 
-    PsiFile psiFile = TestUtil.loadPsiFile(_fixture.getProject(), "t3", "t3/Importer.java");
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t3", "t3/Importer.java");
 
-    List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, _fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
 
-    assertThat(list , notNullValue());
-    assertThat(list.size(), equalTo(3));
+        assertThat(list, notNullValue());
+        assertThat(list.size(), equalTo(3));
 
-    ProblemDescriptor problem = list.get(0);
-    assertThat(problem.getLineNumber(), equalTo(5));
+        ProblemDescriptor problem = list.get(0);
+        assertThat(problem.getLineNumber(), equalTo(5));
 
-    problem = list.get(1);
-    assertThat(problem.getLineNumber(), equalTo(13));
+        problem = list.get(1);
+        assertThat(problem.getLineNumber(), equalTo(13));
 
-    problem = list.get(2);
-    assertThat(problem.getLineNumber(), equalTo(13));
-  }
+        problem = list.get(2);
+        assertThat(problem.getLineNumber(), equalTo(13));
+    }
 
-  @SuppressWarnings({"ConstantConditions"})
-  @Test
-  public void testRecursiveRequireBundleWithoutReexportImport()
-  {
-    assertThat(ModuleRootManager.getInstance(_t4).getDependencies().length, equalTo(1));
-    assertThat(Arrays.asList(ModuleRootManager.getInstance(_t4).getDependencies()), hasItem(_t3));
-    assertThat(TestUtil.getOrderEntry(_t3, _t4).isExported(), equalTo(false));
+    @SuppressWarnings({"ConstantConditions"})
+    @Test
+    public void testRecursiveRequireBundleWithoutReexportImport() {
+        assertThat(ModuleRootManager.getInstance(t4).getDependencies().length, equalTo(1));
+        assertThat(Arrays.asList(ModuleRootManager.getInstance(t4).getDependencies()), hasItem(t3));
+        assertThat(TestUtil.getOrderEntry(t3, t4).isExported(), equalTo(false));
 
-    PsiFile psiFile = TestUtil.loadPsiFile(_fixture.getProject(), "t4", "t4/Importer.java");
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t4", "t4/Importer.java");
 
-    List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, _fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
 
-    assertThat(list , nullValue());
-  }
+        assertThat(list, nullValue());
+    }
 
-  private IdeaProjectTestFixture _fixture;
-  private TempDirTestFixture myTempDirFixture;
-  private Module _t0;
-  private Module _t1;
-  private Module _t2;
-  private Module _t3;
-  private Module _t4;
+    private IdeaProjectTestFixture fixture;
+    private TempDirTestFixture myTempDirFixture;
+    private Module t0;
+    private Module t1;
+    private Module t2;
+    private Module t3;
+    private Module t4;
 }

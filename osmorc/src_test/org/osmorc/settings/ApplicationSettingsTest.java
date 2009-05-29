@@ -37,44 +37,40 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ApplicationSettingsTest
-{
-  @Before
-  public void setUp()
-  {
-    _testObject = new ApplicationSettings();
-    _frameworkInstanceDefinition = new FrameworkInstanceDefinition();
-    _frameworkInstanceDefinition.setName("T");
-    _frameworkInstanceDefinition.setFrameworkIntegratorName("i");
-    _frameworkInstanceDefinition.setBaseFolder("b");
-    _testObject.addFrameworkInstanceDefinition(_frameworkInstanceDefinition);
-  }
+public class ApplicationSettingsTest {
+    @Before
+    public void setUp() {
+        testObject = new ApplicationSettings();
+        frameworkInstanceDefinition = new FrameworkInstanceDefinition();
+        frameworkInstanceDefinition.setName("T");
+        frameworkInstanceDefinition.setFrameworkIntegratorName("i");
+        frameworkInstanceDefinition.setBaseFolder("b");
+        testObject.addFrameworkInstanceDefinition(frameworkInstanceDefinition);
+    }
 
-  @Test
-  public void testCreateCopy()
-  {
-    ApplicationSettings copy = _testObject.createCopy();
+    @Test
+    public void testCreateCopy() {
+        ApplicationSettings copy = testObject.createCopy();
 
-    assertNotSame(copy, _testObject);
-    assertNotSame(copy.getFrameworkInstanceDefinitions(), _testObject.getFrameworkInstanceDefinitions());
+        assertNotSame(copy, testObject);
+        assertNotSame(copy.getFrameworkInstanceDefinitions(), testObject.getFrameworkInstanceDefinitions());
 
-    List<FrameworkInstanceDefinition> orgDefinitions = _testObject.getFrameworkInstanceDefinitions();
-    List<FrameworkInstanceDefinition> copiedDefinitions = copy.getFrameworkInstanceDefinitions();
+        List<FrameworkInstanceDefinition> orgDefinitions = testObject.getFrameworkInstanceDefinitions();
+        List<FrameworkInstanceDefinition> copiedDefinitions = copy.getFrameworkInstanceDefinitions();
 
-    assertThat(orgDefinitions.size(), equalTo(1));
-    assertThat(copiedDefinitions.size(), equalTo(1));
-    assertNotSame(orgDefinitions.get(0), copiedDefinitions.get(0));
-    assertEquals(orgDefinitions.get(0), copiedDefinitions.get(0));
-  }
-  
-  @Test
-  public void testGetFrameworkInstance()
-  {
-    FrameworkInstanceDefinition frameworkInstance =
-        _testObject.getFrameworkInstance(_frameworkInstanceDefinition.getName());
-    assertThat(frameworkInstance, sameInstance(_frameworkInstanceDefinition));
-  }
+        assertThat(orgDefinitions.size(), equalTo(1));
+        assertThat(copiedDefinitions.size(), equalTo(1));
+        assertNotSame(orgDefinitions.get(0), copiedDefinitions.get(0));
+        assertEquals(orgDefinitions.get(0), copiedDefinitions.get(0));
+    }
 
-  private ApplicationSettings _testObject;
-  private FrameworkInstanceDefinition _frameworkInstanceDefinition;
+    @Test
+    public void testGetFrameworkInstance() {
+        FrameworkInstanceDefinition frameworkInstance =
+                testObject.getFrameworkInstance(frameworkInstanceDefinition.getName());
+        assertThat(frameworkInstance, sameInstance(frameworkInstanceDefinition));
+    }
+
+    private ApplicationSettings testObject;
+    private FrameworkInstanceDefinition frameworkInstanceDefinition;
 }

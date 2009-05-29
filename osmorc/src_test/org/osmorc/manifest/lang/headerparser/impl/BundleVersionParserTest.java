@@ -42,60 +42,54 @@ import org.osmorc.valueobject.Version;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class BundleVersionParserTest
-{
-  public BundleVersionParserTest()
-  {
-    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-        IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
-    _fixture = fixtureBuilder.getFixture();
-  }
+public class BundleVersionParserTest {
+    public BundleVersionParserTest() {
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
+                IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
+        fixture = fixtureBuilder.getFixture();
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    _fixture.setUp();
-  }
+    @Before
+    public void setUp() throws Exception {
+        fixture.setUp();
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+    }
 
-  @Test
-  public void testGetValue()
-  {
-    ManifestHeaderValue headerValueMock = createMock(ManifestHeaderValue.class);
-    expect(headerValueMock.getValueText()).andReturn("1.2.3.b300");
+    @Test
+    public void testGetValue() {
+        ManifestHeaderValue headerValueMock = createMock(ManifestHeaderValue.class);
+        expect(headerValueMock.getValueText()).andReturn("1.2.3.b300");
 
-    replay(headerValueMock);
+        replay(headerValueMock);
 
-    BundleVersionParser testObject = new BundleVersionParser(new ValueParserRepository());
+        BundleVersionParser testObject = new BundleVersionParser(new ValueParserRepository());
 
-    assertThat(testObject.getValue(headerValueMock), equalTo((Object) new Version(1, 2, 3, "b300")));
+        assertThat(testObject.getValue(headerValueMock), equalTo((Object) new Version(1, 2, 3, "b300")));
 
-    verify(headerValueMock);
-  }
+        verify(headerValueMock);
+    }
 
-  @Test
-  public void testAnnotate()
-  {
-    AnnotationHolder annotationHolderMock = createMock(AnnotationHolder.class);
-    ManifestHeaderValue headerValueMock = createMock(ManifestHeaderValue.class);
-    expect(headerValueMock.getValueText()).andReturn("1.0,u");
-    expect(headerValueMock.getTextRange()).andReturn(new TextRange(10, 15));
-    expect(annotationHolderMock.createErrorAnnotation(new TextRange(12, 15),
-        "The minor component of the defined version is not a valid number")).andReturn(null);
+    @Test
+    public void testAnnotate() {
+        AnnotationHolder annotationHolderMock = createMock(AnnotationHolder.class);
+        ManifestHeaderValue headerValueMock = createMock(ManifestHeaderValue.class);
+        expect(headerValueMock.getValueText()).andReturn("1.0,u");
+        expect(headerValueMock.getTextRange()).andReturn(new TextRange(10, 15));
+        expect(annotationHolderMock.createErrorAnnotation(new TextRange(12, 15),
+                "The minor component of the defined version is not a valid number")).andReturn(null);
 
-    replay(headerValueMock, annotationHolderMock);
+        replay(headerValueMock, annotationHolderMock);
 
-    BundleVersionParser testObject = new BundleVersionParser(new ValueParserRepository());
+        BundleVersionParser testObject = new BundleVersionParser(new ValueParserRepository());
 
-    testObject.annotate(headerValueMock, annotationHolderMock);
+        testObject.annotate(headerValueMock, annotationHolderMock);
 
-    verify(headerValueMock, annotationHolderMock);
-  }
+        verify(headerValueMock, annotationHolderMock);
+    }
 
-  private IdeaProjectTestFixture _fixture;
+    private IdeaProjectTestFixture fixture;
 }

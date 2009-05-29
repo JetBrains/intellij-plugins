@@ -36,77 +36,73 @@ import org.junit.Test;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class SubfolderFileFilterTest
-{
-  @Test
-  public void testAcceptContainedFile()
-  {
-    VirtualFileSystem fileSystem = createMock(VirtualFileSystem.class);
-    VirtualFile rootFolder1 = createMock(VirtualFile.class);
-    VirtualFile rootFolder2 = createMock(VirtualFile.class);
-    VirtualFile file = createMock(VirtualFile.class);
-    PsiFile psiFile = createMock(PsiFile.class);
+public class SubfolderFileFilterTest {
+    @Test
+    public void testAcceptContainedFile() {
+        VirtualFileSystem fileSystem = createMock(VirtualFileSystem.class);
+        VirtualFile rootFolder1 = createMock(VirtualFile.class);
+        VirtualFile rootFolder2 = createMock(VirtualFile.class);
+        VirtualFile file = createMock(VirtualFile.class);
+        PsiFile psiFile = createMock(PsiFile.class);
 
-    expect(psiFile.getVirtualFile()).andReturn(file).anyTimes();
-    expect(rootFolder1.getFileSystem()).andReturn(fileSystem).anyTimes();
-    expect(rootFolder2.getFileSystem()).andReturn(fileSystem).anyTimes();
-    expect(file.getFileSystem()).andReturn(fileSystem).anyTimes();
-    expect(file.getParent()).andReturn(rootFolder2).anyTimes();
-    expect(rootFolder1.getParent()).andReturn(null).anyTimes();
-    expect(rootFolder2.getParent()).andReturn(null).anyTimes();
+        expect(psiFile.getVirtualFile()).andReturn(file).anyTimes();
+        expect(rootFolder1.getFileSystem()).andReturn(fileSystem).anyTimes();
+        expect(rootFolder2.getFileSystem()).andReturn(fileSystem).anyTimes();
+        expect(file.getFileSystem()).andReturn(fileSystem).anyTimes();
+        expect(file.getParent()).andReturn(rootFolder2).anyTimes();
+        expect(rootFolder1.getParent()).andReturn(null).anyTimes();
+        expect(rootFolder2.getParent()).andReturn(null).anyTimes();
 
-    replay(fileSystem, rootFolder1, rootFolder2, file, psiFile);
+        replay(fileSystem, rootFolder1, rootFolder2, file, psiFile);
 
-    SubfolderFileFilter testOject = new SubfolderFileFilter(new VirtualFile[]{rootFolder1, rootFolder2});
+        SubfolderFileFilter testOject = new SubfolderFileFilter(new VirtualFile[]{rootFolder1, rootFolder2});
 
-    assertTrue(testOject.accept(psiFile));
+        assertTrue(testOject.accept(psiFile));
 
-    verify(fileSystem, rootFolder1, rootFolder2, file, psiFile);
-  }
+        verify(fileSystem, rootFolder1, rootFolder2, file, psiFile);
+    }
 
-  @Test
-  public void testAcceptNotContainedFile()
-  {
-    VirtualFileSystem fileSystem = createMock(VirtualFileSystem.class);
-    VirtualFile rootFolder1 = createMock(VirtualFile.class);
-    VirtualFile rootFolder2 = createMock(VirtualFile.class);
-    VirtualFile file = createMock(VirtualFile.class);
-    PsiFile psiFile = createMock(PsiFile.class);
+    @Test
+    public void testAcceptNotContainedFile() {
+        VirtualFileSystem fileSystem = createMock(VirtualFileSystem.class);
+        VirtualFile rootFolder1 = createMock(VirtualFile.class);
+        VirtualFile rootFolder2 = createMock(VirtualFile.class);
+        VirtualFile file = createMock(VirtualFile.class);
+        PsiFile psiFile = createMock(PsiFile.class);
 
-    expect(psiFile.getVirtualFile()).andReturn(file).anyTimes();
-    expect(rootFolder1.getFileSystem()).andReturn(fileSystem).anyTimes();
-    expect(rootFolder2.getFileSystem()).andReturn(fileSystem).anyTimes();
-    expect(file.getFileSystem()).andReturn(fileSystem).anyTimes();
-    expect(file.getParent()).andReturn(rootFolder2).anyTimes();
-    expect(rootFolder1.getParent()).andReturn(null).anyTimes();
-    expect(rootFolder2.getParent()).andReturn(null).anyTimes();
+        expect(psiFile.getVirtualFile()).andReturn(file).anyTimes();
+        expect(rootFolder1.getFileSystem()).andReturn(fileSystem).anyTimes();
+        expect(rootFolder2.getFileSystem()).andReturn(fileSystem).anyTimes();
+        expect(file.getFileSystem()).andReturn(fileSystem).anyTimes();
+        expect(file.getParent()).andReturn(rootFolder2).anyTimes();
+        expect(rootFolder1.getParent()).andReturn(null).anyTimes();
+        expect(rootFolder2.getParent()).andReturn(null).anyTimes();
 
-    replay(fileSystem, rootFolder1, rootFolder2, file, psiFile);
+        replay(fileSystem, rootFolder1, rootFolder2, file, psiFile);
 
-    SubfolderFileFilter testOject = new SubfolderFileFilter(new VirtualFile[]{rootFolder1});
+        SubfolderFileFilter testOject = new SubfolderFileFilter(new VirtualFile[]{rootFolder1});
 
-    assertFalse(testOject.accept(psiFile));
+        assertFalse(testOject.accept(psiFile));
 
-    verify(fileSystem, rootFolder1, rootFolder2, file, psiFile);
-  }
+        verify(fileSystem, rootFolder1, rootFolder2, file, psiFile);
+    }
 
-  @Test
-  public void testAcceptNoFile()
-  {
-    VirtualFile rootFolder1 = createMock(VirtualFile.class);
-    VirtualFile rootFolder2 = createMock(VirtualFile.class);
-    PsiFile psiFile = createMock(PsiFile.class);
+    @Test
+    public void testAcceptNoFile() {
+        VirtualFile rootFolder1 = createMock(VirtualFile.class);
+        VirtualFile rootFolder2 = createMock(VirtualFile.class);
+        PsiFile psiFile = createMock(PsiFile.class);
 
-    expect(psiFile.getVirtualFile()).andReturn(null).anyTimes();
-    expect(rootFolder1.getParent()).andReturn(null).anyTimes();
-    expect(rootFolder2.getParent()).andReturn(null).anyTimes();
+        expect(psiFile.getVirtualFile()).andReturn(null).anyTimes();
+        expect(rootFolder1.getParent()).andReturn(null).anyTimes();
+        expect(rootFolder2.getParent()).andReturn(null).anyTimes();
 
-    replay(rootFolder1, rootFolder2, psiFile);
+        replay(rootFolder1, rootFolder2, psiFile);
 
-    SubfolderFileFilter testOject = new SubfolderFileFilter(new VirtualFile[]{rootFolder1});
+        SubfolderFileFilter testOject = new SubfolderFileFilter(new VirtualFile[]{rootFolder1});
 
-    assertFalse(testOject.accept(psiFile));
+        assertFalse(testOject.accept(psiFile));
 
-    verify(rootFolder1, rootFolder2, psiFile);
-  }
+        verify(rootFolder1, rootFolder2, psiFile);
+    }
 }

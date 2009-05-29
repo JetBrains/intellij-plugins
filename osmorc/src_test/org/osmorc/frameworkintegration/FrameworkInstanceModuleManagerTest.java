@@ -57,99 +57,89 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 @SuppressWarnings({"ConstantConditions"})
-public class FrameworkInstanceModuleManagerTest
-{
-  public FrameworkInstanceModuleManagerTest()
-  {
-    _fixture = TestUtil.createTestFixture();
-  }
-
-  @Before
-  public void setUp() throws Exception
-  {
-    _fixture.setUp();
-    Application application = ApplicationManager.getApplication();
-    _projectSettings = new ProjectSettings();
-    _testObject = new FrameworkInstanceModuleManager(ServiceManager.getService(LibraryHandler.class), _projectSettings,
-        application, _fixture.getProject(),
-        ModuleManager.getInstance(_fixture.getProject()));
-    _project = _fixture.getProject();
-    application.runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        LibraryTable.ModifiableModel modifiableModel =
-            LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel();
-        _libraryA1 = modifiableModel.createLibrary("Osmorc/an Instance/libA1_1.0.0");
-        _libraryA2 = modifiableModel.createLibrary("Osmorc/an Instance/libA2_1.0.0");
-        _libraryB1 = modifiableModel.createLibrary("Osmorc/another Instance/libB1_1.0.0");
-        _libraryB2 = modifiableModel.createLibrary("Osmorc/another Instance/libB2_1.0.0");
-        _libraryB3 = modifiableModel.createLibrary("Osmorc/another Instance/libB3_1.0.0");
-        modifiableModel.commit();
-      }
-    });
-
-  }
-
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-  }
-
-  @Test
-  public void testUpdateFrameworkInstanceModule()
-  {
-    _projectSettings.setCreateFrameworkInstanceModule(true);
-    _projectSettings.setFrameworkInstanceName("an Instance");
-    _testObject.updateFrameworkInstanceModule();
-    Module module = ModuleManager.getInstance(_project)
-        .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
-    ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-    OrderEntry[] orderEntries = model.getOrderEntries();
-    model.dispose();
-    assertContainsOnlyGivenLibraries(orderEntries, _libraryA1, _libraryA2);
-
-    _projectSettings.setFrameworkInstanceName("another Instance");
-    _testObject.updateFrameworkInstanceModule();
-    ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
-    orderEntries = rootModel.getOrderEntries();
-    rootModel.dispose();
-    assertContainsOnlyGivenLibraries(orderEntries, _libraryB1, _libraryB2, _libraryB3);
-
-    _projectSettings.setCreateFrameworkInstanceModule(false);
-    _projectSettings.setFrameworkInstanceName("an Instance");
-    _testObject.updateFrameworkInstanceModule();
-    module = ModuleManager.getInstance(_project)
-        .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
-    assertThat(module, nullValue());
-  }
-
-  public void assertContainsOnlyGivenLibraries(OrderEntry[] orderEntries, Library... libraries)
-  {
-    List<Library> libs = new ArrayList<Library>(Arrays.asList(libraries));
-    int findCount = 0;
-
-    for (OrderEntry orderEntry : orderEntries)
-    {
-      if (orderEntry instanceof LibraryOrderEntry)
-      {
-        assertTrue(libs.remove(((LibraryOrderEntry) orderEntry).getLibrary()));
-        findCount++;
-      }
+public class FrameworkInstanceModuleManagerTest {
+    public FrameworkInstanceModuleManagerTest() {
+        fixture = TestUtil.createTestFixture();
     }
 
-    assertThat(libraries.length, equalTo(findCount));
-  }
+    @Before
+    public void setUp() throws Exception {
+        fixture.setUp();
+        Application application = ApplicationManager.getApplication();
+        projectSettings = new ProjectSettings();
+        testObject = new FrameworkInstanceModuleManager(ServiceManager.getService(LibraryHandler.class), projectSettings,
+                application, fixture.getProject(),
+                ModuleManager.getInstance(fixture.getProject()));
+        project = fixture.getProject();
+        application.runWriteAction(new Runnable() {
+            public void run() {
+                LibraryTable.ModifiableModel modifiableModel =
+                        LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel();
+                libraryA1 = modifiableModel.createLibrary("Osmorc/an Instance/libA1_1.0.0");
+                libraryA2 = modifiableModel.createLibrary("Osmorc/an Instance/libA2_1.0.0");
+                libraryB1 = modifiableModel.createLibrary("Osmorc/another Instance/libB1_1.0.0");
+                libraryB2 = modifiableModel.createLibrary("Osmorc/another Instance/libB2_1.0.0");
+                libraryB3 = modifiableModel.createLibrary("Osmorc/another Instance/libB3_1.0.0");
+                modifiableModel.commit();
+            }
+        });
 
-  private IdeaProjectTestFixture _fixture;
-  private FrameworkInstanceModuleManager _testObject;
-  private Project _project;
+    }
 
-  private Library _libraryA1;
-  private Library _libraryA2;
-  private Library _libraryB1;
-  private Library _libraryB2;
-  private Library _libraryB3;
-  private ProjectSettings _projectSettings;
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+    }
+
+    @Test
+    public void testUpdateFrameworkInstanceModule() {
+        projectSettings.setCreateFrameworkInstanceModule(true);
+        projectSettings.setFrameworkInstanceName("an Instance");
+        testObject.updateFrameworkInstanceModule();
+        Module module = ModuleManager.getInstance(project)
+                .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
+        ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+        OrderEntry[] orderEntries = model.getOrderEntries();
+        model.dispose();
+        assertContainsOnlyGivenLibraries(orderEntries, libraryA1, libraryA2);
+
+        projectSettings.setFrameworkInstanceName("another Instance");
+        testObject.updateFrameworkInstanceModule();
+        ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+        orderEntries = rootModel.getOrderEntries();
+        rootModel.dispose();
+        assertContainsOnlyGivenLibraries(orderEntries, libraryB1, libraryB2, libraryB3);
+
+        projectSettings.setCreateFrameworkInstanceModule(false);
+        projectSettings.setFrameworkInstanceName("an Instance");
+        testObject.updateFrameworkInstanceModule();
+        module = ModuleManager.getInstance(project)
+                .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
+        assertThat(module, nullValue());
+    }
+
+    public void assertContainsOnlyGivenLibraries(OrderEntry[] orderEntries, Library... libraries) {
+        List<Library> libs = new ArrayList<Library>(Arrays.asList(libraries));
+        int findCount = 0;
+
+        for (OrderEntry orderEntry : orderEntries) {
+            if (orderEntry instanceof LibraryOrderEntry) {
+                assertTrue(libs.remove(((LibraryOrderEntry) orderEntry).getLibrary()));
+                findCount++;
+            }
+        }
+
+        assertThat(libraries.length, equalTo(findCount));
+    }
+
+    private IdeaProjectTestFixture fixture;
+    private FrameworkInstanceModuleManager testObject;
+    private Project project;
+
+    private Library libraryA1;
+    private Library libraryA2;
+    private Library libraryB1;
+    private Library libraryB2;
+    private Library libraryB3;
+    private ProjectSettings projectSettings;
 }

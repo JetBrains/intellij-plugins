@@ -60,214 +60,181 @@ import java.util.Map;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class TestUtil
-{
-  public static IdeaProjectTestFixture createTestFixture()
-  {
-    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-        IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder();
+public class TestUtil {
+    public static IdeaProjectTestFixture createTestFixture() {
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
+                IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder();
 
-    return fixtureBuilder.getFixture();
-  }
+        return fixtureBuilder.getFixture();
+    }
 
-  public static void loadModules(final String projectName, final Project project, final String projectDirPath) throws Exception
-  {
-    final File projectZIP = new File(getTestDataDir(), projectName + ".zip");
-    assert projectZIP.exists();
-    assert !projectZIP.isDirectory();
+    public static void loadModules(final String projectName, final Project project, final String projectDirPath) throws Exception {
+        final File projectZIP = new File(getTestDataDir(), projectName + ".zip");
+        assert projectZIP.exists();
+        assert !projectZIP.isDirectory();
 
-    final File projectDir = new File(projectDirPath);
-    ZipUtil.extract(projectZIP, projectDir, null);
+        final File projectDir = new File(projectDirPath);
+        ZipUtil.extract(projectZIP, projectDir, null);
 
-    final ModifiableModuleModel moduleModel = ModuleManager.getInstance(project).getModifiableModel();
+        final ModifiableModuleModel moduleModel = ModuleManager.getInstance(project).getModifiableModel();
 
-    final Map<String, Boolean> _moduleHasOsmorcFacet = new HashMap<String, Boolean>();
+        final Map<String, Boolean> _moduleHasOsmorcFacet = new HashMap<String, Boolean>();
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          List<ModifiableRootModel> rootModels = new ArrayList<ModifiableRootModel>();
-          for (File moduleDir : projectDir.listFiles(new FileFilter()
-          {
-            public boolean accept(File pathname)
-            {
-              return pathname.isDirectory() && !pathname.getName().startsWith(".");
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    List<ModifiableRootModel> rootModels = new ArrayList<ModifiableRootModel>();
+                    for (File moduleDir : projectDir.listFiles(new FileFilter() {
+                        public boolean accept(File pathname) {
+                            return pathname.isDirectory() && !pathname.getName().startsWith(".");
+                        }
+                    })) {
+                        String moduleDirPath = moduleDir.getPath().replace(File.separatorChar, '/') + "/";
+                        Module module = moduleModel.loadModule(
+                                moduleDirPath + moduleDir.getName() + ".iml");
+                        ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+                        VirtualFile file = VirtualFileManager.getInstance().getFileSystem("file").findFileByPath(moduleDirPath);
+                        ContentEntry contentEntry = rootModel.addContentEntry(file);
+                        contentEntry.addSourceFolder(file.findChild("src"), false);
+                        rootModels.add(rootModel);
+
+                        _moduleHasOsmorcFacet.put(module.getName(),
+                                PsiManager.getInstance(project).findFile(module.getModuleFile()).getText().contains(
+                                        "<facet type=\"Osmorc\" name=\"Osmorc\">"));
+
+                    }
+
+                    ProjectRootManager.getInstance(project).multiCommit(moduleModel,
+                            rootModels.toArray(new ModifiableRootModel[rootModels.size()]));
+                }
+                catch (InvalidDataException e) {
+                    throw new RuntimeException(e);
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                catch (JDOMException e) {
+                    throw new RuntimeException(e);
+                }
+                catch (ModuleWithNameAlreadyExists e) {
+                    throw new RuntimeException(e);
+                }
             }
-          }))
-          {
-            String moduleDirPath = moduleDir.getPath().replace(File.separatorChar, '/') + "/";
-            Module module = moduleModel.loadModule(
-                moduleDirPath + moduleDir.getName() + ".iml");
-            ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
-            VirtualFile file = VirtualFileManager.getInstance().getFileSystem("file").findFileByPath(moduleDirPath);
-            ContentEntry contentEntry = rootModel.addContentEntry(file);
-            contentEntry.addSourceFolder(file.findChild("src"), false);
-            rootModels.add(rootModel);
-
-            _moduleHasOsmorcFacet.put(module.getName(),
-                PsiManager.getInstance(project).findFile(module.getModuleFile()).getText().contains(
-                    "<facet type=\"Osmorc\" name=\"Osmorc\">"));
-
-          }
-
-          ProjectRootManager.getInstance(project).multiCommit(moduleModel,
-              rootModels.toArray(new ModifiableRootModel[rootModels.size()]));
-        }
-        catch (InvalidDataException e)
-        {
-          throw new RuntimeException(e);
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-        catch (JDOMException e)
-        {
-          throw new RuntimeException(e);
-        }
-        catch (ModuleWithNameAlreadyExists e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
-  }
-
-  public static void createOsmorFacetForAllModules(final Project project)
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        final Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules)
-        {
-          final ModifiableFacetModel modifiableFacetModel = FacetManager.getInstance(module).createModifiableModel();
-          final OsmorcFacet facet = new OsmorcFacet(module);
-          facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
-          facet.getConfiguration().setManifestLocation("META-INF");
-          facet.getConfiguration().setOsmorcControlsManifest(false);
-          modifiableFacetModel.addFacet(facet);
-          modifiableFacetModel.commit();
-        }
-      }
-    });
-  }
-
-  public static void createOsmorFacetForModule(final Project project, final String moduleName)
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        final Module module = ModuleManager.getInstance(project).findModuleByName(moduleName);
-        final ModifiableFacetModel modifiableFacetModel = FacetManager.getInstance(module).createModifiableModel();
-        final OsmorcFacet facet = new OsmorcFacet(module);
-        facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
-        facet.getConfiguration().setManifestLocation("META-INF");
-        facet.getConfiguration().setOsmorcControlsManifest(false);
-        modifiableFacetModel.addFacet(facet);
-        modifiableFacetModel.commit();
-      }
-    });
-  }
-
-  public static void createModuleDependency(final Project project, final String fromModuleName, final String toModuleName)
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        final Module fromModule = ModuleManager.getInstance(project).findModuleByName(fromModuleName);
-        final Module toModule = ModuleManager.getInstance(project).findModuleByName(toModuleName);
-
-        ModifiableRootModel rootModel = ModuleRootManager.getInstance(fromModule).getModifiableModel();
-        rootModel.addModuleOrderEntry(toModule);
-        rootModel.commit();
-      }
-    });
-  }
-
-  public static PsiFile loadPsiFile(Project project, String moduleName, String filePathInSource)
-  {
-    final ModuleRootManager rootManager = getModuleRootManager(project, moduleName);
-    final VirtualFile root = rootManager.getSourceRoots()[0];
-    VirtualFile file = root.findFileByRelativePath(filePathInSource);
-
-    return PsiManager.getInstance(project).findFile(file);
-  }
-
-  public static PsiFile loadPsiFileUnderContent(Project project, String moduleName, String filePathInContent)
-  {
-    final ModuleRootManager rootManager = getModuleRootManager(project, moduleName);
-    VirtualFile root = rootManager.getContentRoots()[0];
-    VirtualFile file = root.findFileByRelativePath(filePathInContent);
-
-    return PsiManager.getInstance(project).findFile(file);
-  }
-
-  private static ModuleRootManager getModuleRootManager(Project project, String moduleName) {
-    ModuleManager moduleManager = ModuleManager.getInstance(project);
-
-    Module module = moduleManager.findModuleByName(moduleName);
-
-    final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-    return rootManager;
-  }
-
-  public static List<ProblemDescriptor> runInspection(LocalInspectionTool inspection, PsiFile psiFile, Project project)
-  {
-    ProblemsHolder holder = new ProblemsHolder(InspectionManager.getInstance(project), psiFile);
-    final PsiElementVisitor elementVisitor = inspection.buildVisitor(holder, true);
-
-    psiFile.accept(new PsiRecursiveElementVisitor()
-    {
-
-      public void visitElement(PsiElement psielement)
-      {
-        psielement.accept(elementVisitor);
-        super.visitElement(psielement);
-      }
-    });
-
-
-    return holder.getResults();
-  }
-
-  public static File getTestDataDir()
-  {
-    if (TEST_DATA_DIR == null)
-    {
-      TEST_DATA_DIR = new File(TestUtil.class.getResource("/").getFile(), "../../../testdata");
-      if (!TEST_DATA_DIR.exists()) {
-        TEST_DATA_DIR = new File(PathManager.getHomePath(), "svnPlugins/osmorc/testdata");
-      }
-      assert TEST_DATA_DIR.exists();
-      assert TEST_DATA_DIR.isDirectory();
+        });
     }
 
-    return TEST_DATA_DIR;
-  }
-
-  public static ModuleOrderEntry getOrderEntry(Module forModule, Module inModule)
-  {
-    ModuleOrderEntry result = null;
-    ModifiableRootModel model = ModuleRootManager.getInstance(inModule).getModifiableModel();
-    OrderEntry[] orderEntries = model.getOrderEntries();
-    model.dispose();
-    for (OrderEntry orderEntry : orderEntries)
-    {
-      if (orderEntry instanceof ModuleOrderEntry && ((ModuleOrderEntry) orderEntry).getModule() == forModule)
-      {
-        result = (ModuleOrderEntry) orderEntry;
-        break;
-      }
+    public static void createOsmorFacetForAllModules(final Project project) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                final Module[] modules = ModuleManager.getInstance(project).getModules();
+                for (Module module : modules) {
+                    final ModifiableFacetModel modifiableFacetModel = FacetManager.getInstance(module).createModifiableModel();
+                    final OsmorcFacet facet = new OsmorcFacet(module);
+                    facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
+                    facet.getConfiguration().setManifestLocation("META-INF");
+                    facet.getConfiguration().setOsmorcControlsManifest(false);
+                    modifiableFacetModel.addFacet(facet);
+                    modifiableFacetModel.commit();
+                }
+            }
+        });
     }
-    return result;
-  }
 
-  private static File TEST_DATA_DIR;
+    public static void createOsmorFacetForModule(final Project project, final String moduleName) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                final Module module = ModuleManager.getInstance(project).findModuleByName(moduleName);
+                final ModifiableFacetModel modifiableFacetModel = FacetManager.getInstance(module).createModifiableModel();
+                final OsmorcFacet facet = new OsmorcFacet(module);
+                facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
+                facet.getConfiguration().setManifestLocation("META-INF");
+                facet.getConfiguration().setOsmorcControlsManifest(false);
+                modifiableFacetModel.addFacet(facet);
+                modifiableFacetModel.commit();
+            }
+        });
+    }
+
+    public static void createModuleDependency(final Project project, final String fromModuleName, final String toModuleName) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                final Module fromModule = ModuleManager.getInstance(project).findModuleByName(fromModuleName);
+                final Module toModule = ModuleManager.getInstance(project).findModuleByName(toModuleName);
+
+                ModifiableRootModel rootModel = ModuleRootManager.getInstance(fromModule).getModifiableModel();
+                rootModel.addModuleOrderEntry(toModule);
+                rootModel.commit();
+            }
+        });
+    }
+
+    public static PsiFile loadPsiFile(Project project, String moduleName, String filePathInSource) {
+        final ModuleRootManager rootManager = getModuleRootManager(project, moduleName);
+        final VirtualFile root = rootManager.getSourceRoots()[0];
+        VirtualFile file = root.findFileByRelativePath(filePathInSource);
+
+        return PsiManager.getInstance(project).findFile(file);
+    }
+
+    public static PsiFile loadPsiFileUnderContent(Project project, String moduleName, String filePathInContent) {
+        final ModuleRootManager rootManager = getModuleRootManager(project, moduleName);
+        VirtualFile root = rootManager.getContentRoots()[0];
+        VirtualFile file = root.findFileByRelativePath(filePathInContent);
+
+        return PsiManager.getInstance(project).findFile(file);
+    }
+
+    private static ModuleRootManager getModuleRootManager(Project project, String moduleName) {
+        ModuleManager moduleManager = ModuleManager.getInstance(project);
+
+        Module module = moduleManager.findModuleByName(moduleName);
+
+        final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
+        return rootManager;
+    }
+
+    public static List<ProblemDescriptor> runInspection(LocalInspectionTool inspection, PsiFile psiFile, Project project) {
+        ProblemsHolder holder = new ProblemsHolder(InspectionManager.getInstance(project), psiFile);
+        final PsiElementVisitor elementVisitor = inspection.buildVisitor(holder, true);
+
+        psiFile.accept(new PsiRecursiveElementVisitor() {
+
+            public void visitElement(PsiElement psielement) {
+                psielement.accept(elementVisitor);
+                super.visitElement(psielement);
+            }
+        });
+
+
+        return holder.getResults();
+    }
+
+    public static File getTestDataDir() {
+        if (TEST_DATA_DIR == null) {
+            TEST_DATA_DIR = new File(TestUtil.class.getResource("/").getFile(), "../../../testdata");
+            if (!TEST_DATA_DIR.exists()) {
+                TEST_DATA_DIR = new File(PathManager.getHomePath(), "svnPlugins/osmorc/testdata");
+            }
+            assert TEST_DATA_DIR.exists();
+            assert TEST_DATA_DIR.isDirectory();
+        }
+
+        return TEST_DATA_DIR;
+    }
+
+    public static ModuleOrderEntry getOrderEntry(Module forModule, Module inModule) {
+        ModuleOrderEntry result = null;
+        ModifiableRootModel model = ModuleRootManager.getInstance(inModule).getModifiableModel();
+        OrderEntry[] orderEntries = model.getOrderEntries();
+        model.dispose();
+        for (OrderEntry orderEntry : orderEntries) {
+            if (orderEntry instanceof ModuleOrderEntry && ((ModuleOrderEntry) orderEntry).getModule() == forModule) {
+                result = (ModuleOrderEntry) orderEntry;
+                break;
+            }
+        }
+        return result;
+    }
+
+    private static File TEST_DATA_DIR;
 }

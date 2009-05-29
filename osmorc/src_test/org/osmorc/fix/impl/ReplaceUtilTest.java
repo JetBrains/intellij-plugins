@@ -41,43 +41,38 @@ import org.osmorc.manifest.lang.psi.ManifestHeaderName;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ReplaceUtilTest
-{
-  public ReplaceUtilTest()
-  {
-    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-        IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
-    _fixture = fixtureBuilder.getFixture();
-  }
+public class ReplaceUtilTest {
+    public ReplaceUtilTest() {
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
+                IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
+        fixture = fixtureBuilder.getFixture();
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    _fixture.setUp();
-  }
+    @Before
+    public void setUp() throws Exception {
+        fixture.setUp();
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+    }
 
-  @SuppressWarnings({"ConstantConditions"})
-  @Test
-  public void replaceHeaderName()
-  {
-    PsiFile fromText = PsiFileFactory.getInstance(_fixture.getProject()).createFileFromText("DUMMY.MF", "testname: testvalue");
+    @SuppressWarnings({"ConstantConditions"})
+    @Test
+    public void replaceHeaderName() {
+        PsiFile fromText = PsiFileFactory.getInstance(fixture.getProject()).createFileFromText("DUMMY.MF", "testname: testvalue");
 
-    ManifestHeader header = PsiTreeUtil.getChildOfType(fromText, ManifestHeader.class);
-    ManifestHeaderName name = PsiTreeUtil.getChildOfType(header, ManifestHeaderName.class);
+        ManifestHeader header = PsiTreeUtil.getChildOfType(fromText, ManifestHeader.class);
+        ManifestHeaderName name = PsiTreeUtil.getChildOfType(header, ManifestHeaderName.class);
 
-    assertThat(name.getText(), equalTo("testname"));
+        assertThat(name.getText(), equalTo("testname"));
 
-    ReplaceUtil.replace(name, "othername");
+        ReplaceUtil.replace(name, "othername");
 
-    name = PsiTreeUtil.getChildOfType(header, ManifestHeaderName.class);
-    assertThat(name.getText(), equalTo("othername"));
-  }
+        name = PsiTreeUtil.getChildOfType(header, ManifestHeaderName.class);
+        assertThat(name.getText(), equalTo("othername"));
+    }
 
-  private IdeaProjectTestFixture _fixture;
+    private IdeaProjectTestFixture fixture;
 }

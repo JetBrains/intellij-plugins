@@ -47,116 +47,101 @@ import java.io.PrintWriter;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class AddFacetTest
-{
-  @Before
-  public void setUp() throws Exception
-  {
-    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-        JavaTestFixtureFactory.createFixtureBuilder();
-    final JavaModuleFixtureBuilder moduleBuilder = fixtureBuilder.addModule(JavaModuleFixtureBuilder.class);
+public class AddFacetTest {
+    @Before
+    public void setUp() throws Exception {
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
+                JavaTestFixtureFactory.createFixtureBuilder();
+        final JavaModuleFixtureBuilder moduleBuilder = fixtureBuilder.addModule(JavaModuleFixtureBuilder.class);
 
-    myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-    _fixture = fixtureBuilder.getFixture();
+        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+        fixture = fixtureBuilder.getFixture();
 
-    myTempDirFixture.setUp();
-    moduleBuilder.addContentRoot(myTempDirFixture.getTempDirPath());
-    _fixture.setUp();
+        myTempDirFixture.setUp();
+        moduleBuilder.addContentRoot(myTempDirFixture.getTempDirPath());
+        fixture.setUp();
 
-    _orgTestDialog = Messages.setTestDialog(new TestDialog()
-    {
-      public int show(String message)
-      {
-        _shownMessage = message;
-        return _dialogResult;
-      }
-    });
+        orgTestDialog = Messages.setTestDialog(new TestDialog() {
+            public int show(String message) {
+                shownMessage = message;
+                return dialogResult;
+            }
+        });
 
-  }
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    Messages.setTestDialog(_orgTestDialog);
-    _fixture.tearDown();
-    myTempDirFixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        Messages.setTestDialog(orgTestDialog);
+        fixture.tearDown();
+        myTempDirFixture.tearDown();
+    }
 
-  @Test
-  public void testAddFacetAfterCreatingManifest() throws Exception
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          VirtualFile[] files = ModuleRootManager.getInstance(_fixture.getModule()).getContentRoots();
-          VirtualFile childDirectory = files[0].createChildDirectory(this, "META-INF");
-          VirtualFile data = childDirectory.createChildData(this, "MANIFEST.MF");
-          OutputStream outputStream = data.getOutputStream(this);
-          PrintWriter writer = new PrintWriter(outputStream);
-          writer.write("Manifest-Version: 1.0\n" +
-              "Bundle-ManifestVersion: 2\n" +
-              "Bundle-Name: Test\n" +
-              "Bundle-SymbolicName: test\n" +
-              "Bundle-Version: 1.0.0\n");
-          writer.flush();
-          writer.close();
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+    @Test
+    public void testAddFacetAfterCreatingManifest() throws Exception {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    VirtualFile[] files = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots();
+                    VirtualFile childDirectory = files[0].createChildDirectory(this, "META-INF");
+                    VirtualFile data = childDirectory.createChildData(this, "MANIFEST.MF");
+                    OutputStream outputStream = data.getOutputStream(this);
+                    PrintWriter writer = new PrintWriter(outputStream);
+                    writer.write("Manifest-Version: 1.0\n" +
+                            "Bundle-ManifestVersion: 2\n" +
+                            "Bundle-Name: Test\n" +
+                            "Bundle-SymbolicName: test\n" +
+                            "Bundle-Version: 1.0.0\n");
+                    writer.flush();
+                    writer.close();
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        ModifiableFacetModel modifiableFacetModel =
-            FacetManager.getInstance(_fixture.getModule()).createModifiableModel();
-        OsmorcFacet facet = new OsmorcFacet(_fixture.getModule());
-        facet.getConfiguration().setOsmorcControlsManifest(false);
-        modifiableFacetModel.addFacet(facet);
-        modifiableFacetModel.commit();
-      }
-    });
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                ModifiableFacetModel modifiableFacetModel =
+                        FacetManager.getInstance(fixture.getModule()).createModifiableModel();
+                OsmorcFacet facet = new OsmorcFacet(fixture.getModule());
+                facet.getConfiguration().setOsmorcControlsManifest(false);
+                modifiableFacetModel.addFacet(facet);
+                modifiableFacetModel.commit();
+            }
+        });
 
 
-  }
+    }
 
-  @Test
-  public void testAddFacetWithoutManifest() throws Exception
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
+    @Test
+    public void testAddFacetWithoutManifest() throws Exception {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
 
-        ModifiableFacetModel modifiableFacetModel =
-            FacetManager.getInstance(_fixture.getModule()).createModifiableModel();
-        OsmorcFacet facet = new OsmorcFacet(_fixture.getModule());
-        facet.getConfiguration().setOsmorcControlsManifest(false);
-        modifiableFacetModel.addFacet(facet);
+                ModifiableFacetModel modifiableFacetModel =
+                        FacetManager.getInstance(fixture.getModule()).createModifiableModel();
+                OsmorcFacet facet = new OsmorcFacet(fixture.getModule());
+                facet.getConfiguration().setOsmorcControlsManifest(false);
+                modifiableFacetModel.addFacet(facet);
 
-        _shownMessage = null;
-        _dialogResult = DialogWrapper.CANCEL_EXIT_CODE;
-        
-        modifiableFacetModel.commit();
-        assertThat(_shownMessage,
-            equalTo("The manifest file META-INF/MANIFEST.MF was not found. Should it be created now?"));
-      }
-    });
+                shownMessage = null;
+                dialogResult = DialogWrapper.CANCEL_EXIT_CODE;
+
+                modifiableFacetModel.commit();
+                assertThat(shownMessage,
+                        equalTo("The manifest file META-INF/MANIFEST.MF was not found. Should it be created now?"));
+            }
+        });
 
 
-  }
+    }
 
 
-  private IdeaProjectTestFixture _fixture;
-  private String _shownMessage;
-  private TestDialog _orgTestDialog;
-  private int _dialogResult;
-  private TempDirTestFixture myTempDirFixture;
+    private IdeaProjectTestFixture fixture;
+    private String shownMessage;
+    private TestDialog orgTestDialog;
+    private int dialogResult;
+    private TempDirTestFixture myTempDirFixture;
 }

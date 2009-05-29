@@ -33,25 +33,23 @@ import org.osmorc.run.ui.SelectedBundle;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class StartLevelComparatorTest
-{
-  @Test
-  public void testCompare()
-  {
-    OsgiRunState.StartLevelComparator testObject = new OsgiRunState.StartLevelComparator();
-    SelectedBundle bundle1 = new SelectedBundle("org.osmorc.testbundle1", null, SelectedBundle.BundleType.Module);
-    SelectedBundle bundle2 = new SelectedBundle("org.osmorc.testbundle2", null, SelectedBundle.BundleType.Module);
+public class StartLevelComparatorTest {
+    @Test
+    public void testCompare() {
+        OsgiRunState.StartLevelComparator testObject = new OsgiRunState.StartLevelComparator();
+        SelectedBundle bundle1 = new SelectedBundle("org.osmorc.testbundle1", null, SelectedBundle.BundleType.Module);
+        SelectedBundle bundle2 = new SelectedBundle("org.osmorc.testbundle2", null, SelectedBundle.BundleType.Module);
 
-    bundle1.setStartLevel(1);
-    bundle2.setStartLevel(1);
-    assertThat(testObject.compare(bundle1, bundle2), equalTo(0));
+        bundle1.setStartLevel(1);
+        bundle2.setStartLevel(1);
+        assertThat(testObject.compare(bundle1, bundle2), equalTo(0));
 
-    bundle1.setStartLevel(1);
-    bundle2.setStartLevel(2);
-    assertThat(testObject.compare(bundle1, bundle2), lessThan(0));
+        bundle1.setStartLevel(1);
+        bundle2.setStartLevel(2);
+        assertThat(testObject.compare(bundle1, bundle2), lessThan(0));
 
-    bundle1.setStartLevel(4);
-    bundle2.setStartLevel(2);
-    assertThat(testObject.compare(bundle1, bundle2), greaterThan(0));
-  }
+        bundle1.setStartLevel(4);
+        bundle2.setStartLevel(2);
+        assertThat(testObject.compare(bundle1, bundle2), greaterThan(0));
+    }
 }

@@ -41,43 +41,39 @@ import java.util.List;
 
 /**
  * Test for bug OSMORC-63.
+ *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ImportProvidedByNonOsmorcModuleTest
-{
-  public ImportProvidedByNonOsmorcModuleTest() throws Exception
-  {
-    _fixture = TestUtil.createTestFixture();
-  }
+public class ImportProvidedByNonOsmorcModuleTest {
+    public ImportProvidedByNonOsmorcModuleTest() throws Exception {
+        fixture = TestUtil.createTestFixture();
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-    myTempDirFixture.setUp();
-    _fixture.setUp();
-    TestUtil.loadModules("ImportProvidedByNonOsmorcModuleTest", _fixture.getProject(), myTempDirFixture.getTempDirPath());
-    TestUtil.createOsmorFacetForModule(_fixture.getProject(), "t1");
-    TestUtil.createModuleDependency(_fixture.getProject(), "t1", "t0");
-  }
+    @Before
+    public void setUp() throws Exception {
+        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+        myTempDirFixture.setUp();
+        fixture.setUp();
+        TestUtil.loadModules("ImportProvidedByNonOsmorcModuleTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
+        TestUtil.createOsmorFacetForModule(fixture.getProject(), "t1");
+        TestUtil.createModuleDependency(fixture.getProject(), "t1", "t0");
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-    myTempDirFixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+        myTempDirFixture.tearDown();
+    }
 
-  @Test
-  public void testBug()
-  {
-    PsiFile psiFile = TestUtil.loadPsiFile(_fixture.getProject(), "t1", "t1/Importer.java");
+    @Test
+    public void testBug() {
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Importer.java");
 
-    List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, _fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
 
-    assertThat(list , nullValue());
-  }
+        assertThat(list, nullValue());
+    }
 
-  private IdeaProjectTestFixture _fixture;
-  private TempDirTestFixture myTempDirFixture;
+    private IdeaProjectTestFixture fixture;
+    private TempDirTestFixture myTempDirFixture;
 }

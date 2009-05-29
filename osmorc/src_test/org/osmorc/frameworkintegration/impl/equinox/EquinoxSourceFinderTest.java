@@ -42,101 +42,82 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxSourceFinderTest
-{
-  public EquinoxSourceFinderTest()
-  {
-    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-        IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
-    _fixture = fixtureBuilder.getFixture();
+public class EquinoxSourceFinderTest {
+    public EquinoxSourceFinderTest() {
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
+                IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
+        fixture = fixtureBuilder.getFixture();
 
-  }
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    _fixture.setUp();
-    _root = ModuleRootManager.getInstance(_fixture.getModule()).getContentRoots()[0];
-    _testObject = new EquinoxSourceFinder();
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          _testBundle = _root.createChildData(this, "somebundle_1.0.0.jar");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
-  }
+    @Before
+    public void setUp() throws Exception {
+        fixture.setUp();
+        root = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots()[0];
+        testObject = new EquinoxSourceFinder();
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    testBundle = root.createChildData(this, "somebundle_1.0.0.jar");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+    }
 
 
-  @Test
-  public void testGetSourceForLibraryClassesNoSourceFolder()
-  {
-    List<VirtualFile> sources = _testObject.getSourceForLibraryClasses(_testBundle);
-    assertThat(sources, notNullValue());
-    assertThat(sources.size(), equalTo(0));
-  }
+    @Test
+    public void testGetSourceForLibraryClassesNoSourceFolder() {
+        List<VirtualFile> sources = testObject.getSourceForLibraryClasses(testBundle);
+        assertThat(sources, notNullValue());
+        assertThat(sources.size(), equalTo(0));
+    }
 
-  @Test
-  public void testGetSourceForLibraryClassesSourceFolderWithoutBundleSource()
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          _root.createChildDirectory(this, "source").createChildDirectory(this, "src");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
-    List<VirtualFile> sources = _testObject.getSourceForLibraryClasses(_testBundle);
-    assertThat(sources, notNullValue());
-    assertThat(sources.size(), equalTo(0));
-  }
+    @Test
+    public void testGetSourceForLibraryClassesSourceFolderWithoutBundleSource() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    root.createChildDirectory(this, "source").createChildDirectory(this, "src");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        List<VirtualFile> sources = testObject.getSourceForLibraryClasses(testBundle);
+        assertThat(sources, notNullValue());
+        assertThat(sources.size(), equalTo(0));
+    }
 
-  @Test
-  public void testGetSourceForLibraryClassesSourceWithBundleSource()
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          _root.createChildDirectory(this, "some_source").createChildDirectory(this, "src")
-              .createChildDirectory(this, "somebundle_1.0.0").createChildData(this, "src.zip");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
-    List<VirtualFile> sources = _testObject.getSourceForLibraryClasses(_testBundle);
-    assertThat(sources, notNullValue());
-    assertThat(sources.size(), equalTo(1));
-    assertThat(sources.get(0), sameInstance(_root.findFileByRelativePath("some_source/src/somebundle_1.0.0/src.zip")));
-  }
+    @Test
+    public void testGetSourceForLibraryClassesSourceWithBundleSource() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    root.createChildDirectory(this, "some_source").createChildDirectory(this, "src")
+                            .createChildDirectory(this, "somebundle_1.0.0").createChildData(this, "src.zip");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        List<VirtualFile> sources = testObject.getSourceForLibraryClasses(testBundle);
+        assertThat(sources, notNullValue());
+        assertThat(sources.size(), equalTo(1));
+        assertThat(sources.get(0), sameInstance(root.findFileByRelativePath("some_source/src/somebundle_1.0.0/src.zip")));
+    }
 
-  private IdeaProjectTestFixture _fixture;
-  private VirtualFile _root;
-  private EquinoxSourceFinder _testObject;
-  private VirtualFile _testBundle;
+    private IdeaProjectTestFixture fixture;
+    private VirtualFile root;
+    private EquinoxSourceFinder testObject;
+    private VirtualFile testBundle;
 }

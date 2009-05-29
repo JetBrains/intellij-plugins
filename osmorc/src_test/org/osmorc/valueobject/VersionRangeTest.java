@@ -33,29 +33,27 @@ import static org.osmorc.valueobject.VersionRange.Boundary.INCLUSIVE;
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
-public class VersionRangeTest
-{
-  @Test
-  public void testContains()
-  {
-    Version version100 = new Version(1, 0, 0, null);
-    Version version101 = new Version(1, 0, 1, null);
-    Version version200 = new Version(2, 0, 0, null);
-    Version version300 = new Version(3, 0, 0, null);
-    Version version301 = new Version(3, 0, 1, null);
+public class VersionRangeTest {
+    @Test
+    public void testContains() {
+        Version version100 = new Version(1, 0, 0, null);
+        Version version101 = new Version(1, 0, 1, null);
+        Version version200 = new Version(2, 0, 0, null);
+        Version version300 = new Version(3, 0, 0, null);
+        Version version301 = new Version(3, 0, 1, null);
 
-    assertTrue(new VersionRange(version100).contains(version100));
-    assertTrue(new VersionRange(version100).contains(version301));
+        assertTrue(new VersionRange(version100).contains(version100));
+        assertTrue(new VersionRange(version100).contains(version301));
 
-    assertTrue(new VersionRange(INCLUSIVE, version100, version301, INCLUSIVE).contains(version100));
-    assertTrue(new VersionRange(EXCLUSIVE, version100, version301, INCLUSIVE).contains(version101));
-    assertFalse(new VersionRange(EXCLUSIVE, version100, version301, INCLUSIVE).contains(version100));
+        assertTrue(new VersionRange(INCLUSIVE, version100, version301, INCLUSIVE).contains(version100));
+        assertTrue(new VersionRange(EXCLUSIVE, version100, version301, INCLUSIVE).contains(version101));
+        assertFalse(new VersionRange(EXCLUSIVE, version100, version301, INCLUSIVE).contains(version100));
 
-    assertTrue(new VersionRange(INCLUSIVE, version100, version301, INCLUSIVE).contains(version200));
-    assertTrue(new VersionRange(EXCLUSIVE, version100, version301, EXCLUSIVE).contains(version200));
+        assertTrue(new VersionRange(INCLUSIVE, version100, version301, INCLUSIVE).contains(version200));
+        assertTrue(new VersionRange(EXCLUSIVE, version100, version301, EXCLUSIVE).contains(version200));
 
-    assertTrue(new VersionRange(INCLUSIVE, version100, version301, INCLUSIVE).contains(version301));
-    assertTrue(new VersionRange(INCLUSIVE, version100, version301, EXCLUSIVE).contains(version300));
-    assertFalse(new VersionRange(INCLUSIVE, version100, version301, EXCLUSIVE).contains(version301));
-  }
+        assertTrue(new VersionRange(INCLUSIVE, version100, version301, INCLUSIVE).contains(version301));
+        assertTrue(new VersionRange(INCLUSIVE, version100, version301, EXCLUSIVE).contains(version300));
+        assertFalse(new VersionRange(INCLUSIVE, version100, version301, EXCLUSIVE).contains(version301));
+    }
 }

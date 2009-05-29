@@ -38,35 +38,30 @@ import org.junit.Test;
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class BundleRequiresItselfTest
-{
-  public BundleRequiresItselfTest() throws Exception
-  {
-    _fixture = TestUtil.createTestFixture();
-  }
+public class BundleRequiresItselfTest {
+    public BundleRequiresItselfTest() throws Exception {
+        fixture = TestUtil.createTestFixture();
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-    myTempDirFixture.setUp();
-    _fixture.setUp();
-  }
+    @Before
+    public void setUp() throws Exception {
+        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+        myTempDirFixture.setUp();
+        fixture.setUp();
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-    myTempDirFixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+        myTempDirFixture.tearDown();
+    }
 
-  @Test
-  public void testBug() throws Exception
-  {
-    TestUtil.loadModules("BundleRequiresItselfTest", _fixture.getProject(), myTempDirFixture.getTempDirPath());
-    TestUtil.createOsmorFacetForAllModules(_fixture.getProject());
-  }
+    @Test
+    public void testBug() throws Exception {
+        TestUtil.loadModules("BundleRequiresItselfTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
+        TestUtil.createOsmorFacetForAllModules(fixture.getProject());
+    }
 
-  private IdeaProjectTestFixture _fixture;
-  private TempDirTestFixture myTempDirFixture;
+    private IdeaProjectTestFixture fixture;
+    private TempDirTestFixture myTempDirFixture;
 }

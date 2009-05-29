@@ -44,243 +44,235 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ModuleDependencySynchronizerMockTest
-{
-  @Before
-  public void setUp()
-  {
-    _bundleManager = createMock(BundleManager.class);
-    _moduleRootManager = createMock(ModuleRootManager.class);
-    _application = createMock(Application.class);
-    _libraryHandler = createMock(LibraryHandler.class);
-    _modifiableRootModel = createMock(ModifiableRootModel.class);
-    _module = createMock(Module.class);
-    _osmorcFacetUtil = createMock(OsmorcFacetUtil.class);
+public class ModuleDependencySynchronizerMockTest {
+    @Before
+    public void setUp() {
+        bundleManager = createMock(BundleManager.class);
+        moduleRootManager = createMock(ModuleRootManager.class);
+        application = createMock(Application.class);
+        libraryHandler = createMock(LibraryHandler.class);
+        modifiableRootModel = createMock(ModifiableRootModel.class);
+        module = createMock(Module.class);
+        osmorcFacetUtil = createMock(OsmorcFacetUtil.class);
 
-    expect(_moduleRootManager.getModule()).andReturn(_module).anyTimes();
+        expect(moduleRootManager.getModule()).andReturn(module).anyTimes();
 
-    _module1 = createMock(Module.class);
-    _module2 = createMock(Module.class);
-    _module3 = createMock(Module.class);
-    _module4 = createMock(Module.class);
+        module1 = createMock(Module.class);
+        module2 = createMock(Module.class);
+        module3 = createMock(Module.class);
+        module4 = createMock(Module.class);
 
-    _library1 = createMock(Library.class);
-    _library2 = createMock(Library.class);
-    _library3 = createMock(Library.class);
-    _library4 = createMock(Library.class);
+        library1 = createMock(Library.class);
+        library2 = createMock(Library.class);
+        library3 = createMock(Library.class);
+        library4 = createMock(Library.class);
 
-    _moduleOrderEntry1 = createMock(ModuleOrderEntry.class);
-    expect(_moduleOrderEntry1.getModule()).andReturn(_module1).anyTimes();
-    _moduleOrderEntry2 = createMock(ModuleOrderEntry.class);
-    expect(_moduleOrderEntry2.getModule()).andReturn(_module2).anyTimes();
-    _libraryOrderEntry1 = createMock(LibraryOrderEntry.class);
-    expect(_libraryOrderEntry1.getLibrary()).andReturn(_library1).anyTimes();
-    _libraryOrderEntry2 = createMock(LibraryOrderEntry.class);
-    expect(_libraryOrderEntry2.getLibrary()).andReturn(_library2).anyTimes();
-  }
+        moduleOrderEntry1 = createMock(ModuleOrderEntry.class);
+        expect(moduleOrderEntry1.getModule()).andReturn(module1).anyTimes();
+        moduleOrderEntry2 = createMock(ModuleOrderEntry.class);
+        expect(moduleOrderEntry2.getModule()).andReturn(module2).anyTimes();
+        libraryOrderEntry1 = createMock(LibraryOrderEntry.class);
+        expect(libraryOrderEntry1.getLibrary()).andReturn(library1).anyTimes();
+        libraryOrderEntry2 = createMock(LibraryOrderEntry.class);
+        expect(libraryOrderEntry2.getLibrary()).andReturn(library2).anyTimes();
+    }
 
-  @Test
-  public void testDetermineOldModuleDependencies()
-  {
-    ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
-    expect(modelMock.getOrderEntries())
-        .andReturn(new OrderEntry[]{_moduleOrderEntry1, _libraryOrderEntry1, _moduleOrderEntry2, _libraryOrderEntry2})
-        .times(1);
-    expect(_osmorcFacetUtil.hasOsmorcFacet(_module1)).andReturn(true).times(1);
-    expect(_osmorcFacetUtil.hasOsmorcFacet(_module2)).andReturn(false).times(1);
-    expect(_libraryHandler.isFrameworkInstanceLibrary(_libraryOrderEntry1)).andReturn(false);
-    expect(_libraryHandler.isFrameworkInstanceLibrary(_libraryOrderEntry2)).andReturn(true);
+    @Test
+    public void testDetermineOldModuleDependencies() {
+        ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
+        expect(modelMock.getOrderEntries())
+                .andReturn(new OrderEntry[]{moduleOrderEntry1, libraryOrderEntry1, moduleOrderEntry2, libraryOrderEntry2})
+                .times(1);
+        expect(osmorcFacetUtil.hasOsmorcFacet(module1)).andReturn(true).times(1);
+        expect(osmorcFacetUtil.hasOsmorcFacet(module2)).andReturn(false).times(1);
+        expect(libraryHandler.isFrameworkInstanceLibrary(libraryOrderEntry1)).andReturn(false);
+        expect(libraryHandler.isFrameworkInstanceLibrary(libraryOrderEntry2)).andReturn(true);
 
 
-    replay(_bundleManager, _moduleRootManager, _application, _libraryHandler, _modifiableRootModel, _module,
-        _osmorcFacetUtil, _module1, _module2, _module3, _module4, _moduleOrderEntry1, _moduleOrderEntry2, _library1,
-        _library2,
-        _library3, _library4, _libraryOrderEntry1, _libraryOrderEntry2, modelMock);
+        replay(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock);
 
-    ModuleDependencySynchronizer testObject =
-        new ModuleDependencySynchronizer(_bundleManager, _moduleRootManager, _application, _libraryHandler,
-            _osmorcFacetUtil);
-
-
-    List<OrderEntry> oldEntries = testObject.determineOldModuleDependencies(modelMock);
-
-    assertThat(oldEntries.size(), equalTo(2));
-    assertThat(oldEntries, hasItem((OrderEntry) _moduleOrderEntry1));
-    assertThat(oldEntries, hasItem((OrderEntry) _libraryOrderEntry2));
-
-    verify(_bundleManager, _moduleRootManager, _application, _libraryHandler, _modifiableRootModel, _module,
-        _osmorcFacetUtil, _module1, _module2, _module3, _module4, _moduleOrderEntry1, _moduleOrderEntry2, _library1,
-        _library2,
-        _library3, _library4, _libraryOrderEntry1, _libraryOrderEntry2, modelMock);
-  }
-
-  @Test
-  public void testDetermineObsoleteModuleDependencies()
-  {
-    replay(_bundleManager, _moduleRootManager, _application, _libraryHandler, _modifiableRootModel, _module,
-        _osmorcFacetUtil, _module1, _module2, _module3, _module4, _moduleOrderEntry1, _moduleOrderEntry2, _library1,
-        _library2,
-        _library3, _library4, _libraryOrderEntry1, _libraryOrderEntry2);
-
-    List<OrderEntry> oldOrderEntries = new ArrayList<OrderEntry>();
-    oldOrderEntries.add(_moduleOrderEntry1);
-    oldOrderEntries.add(_moduleOrderEntry2);
-    oldOrderEntries.add(_libraryOrderEntry1);
-    oldOrderEntries.add(_libraryOrderEntry2);
-
-    List<Object> newBundles = new ArrayList<Object>();
-    newBundles.add(_module1);
-    newBundles.add(_library4);
-    newBundles.add(_module3);
-    newBundles.add(_module4);
-    newBundles.add(_library2);
-    newBundles.add(_library3);
-
-    ModuleDependencySynchronizer testObject =
-        new ModuleDependencySynchronizer(_bundleManager, _moduleRootManager, _application, _libraryHandler,
-            _osmorcFacetUtil);
+        ModuleDependencySynchronizer testObject =
+                new ModuleDependencySynchronizer(bundleManager, moduleRootManager, application, libraryHandler,
+                        osmorcFacetUtil);
 
 
-    List<OrderEntry> obsoleteEntries = testObject.determineObsoleteModuleDependencies(oldOrderEntries, newBundles);
+        List<OrderEntry> oldEntries = testObject.determineOldModuleDependencies(modelMock);
 
-    assertThat(obsoleteEntries.size(), equalTo(2));
-    assertThat(obsoleteEntries, hasItem((OrderEntry) _moduleOrderEntry2));
-    assertThat(obsoleteEntries, hasItem((OrderEntry) _libraryOrderEntry1));
+        assertThat(oldEntries.size(), equalTo(2));
+        assertThat(oldEntries, hasItem((OrderEntry) moduleOrderEntry1));
+        assertThat(oldEntries, hasItem((OrderEntry) libraryOrderEntry2));
 
-    verify(_bundleManager, _moduleRootManager, _application, _libraryHandler, _modifiableRootModel, _module,
-        _osmorcFacetUtil, _module1, _module2, _module3, _module4, _moduleOrderEntry1, _moduleOrderEntry2, _library1,
-        _library2,
-        _library3, _library4, _libraryOrderEntry1, _libraryOrderEntry2);
-  }
+        verify(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock);
+    }
 
-  @Test
-  public void testRemoveObsoleteModuleDependencies()
-  {
-    ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
-    modelMock.removeOrderEntry(_moduleOrderEntry1);
-    modelMock.removeOrderEntry(_libraryOrderEntry1);
+    @Test
+    public void testDetermineObsoleteModuleDependencies() {
+        replay(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2);
 
-    replay(_bundleManager, _moduleRootManager, _application, _libraryHandler, _modifiableRootModel, _module,
-        _osmorcFacetUtil, _module1, _module2, _module3, _module4, _moduleOrderEntry1, _moduleOrderEntry2, _library1,
-        _library2,
-        _library3, _library4, _libraryOrderEntry1, _libraryOrderEntry2, modelMock);
+        List<OrderEntry> oldOrderEntries = new ArrayList<OrderEntry>();
+        oldOrderEntries.add(moduleOrderEntry1);
+        oldOrderEntries.add(moduleOrderEntry2);
+        oldOrderEntries.add(libraryOrderEntry1);
+        oldOrderEntries.add(libraryOrderEntry2);
 
-    List<OrderEntry> oldOrderEntries = new ArrayList<OrderEntry>();
-    oldOrderEntries.add(_moduleOrderEntry1);
-    oldOrderEntries.add(_libraryOrderEntry1);
+        List<Object> newBundles = new ArrayList<Object>();
+        newBundles.add(module1);
+        newBundles.add(library4);
+        newBundles.add(module3);
+        newBundles.add(module4);
+        newBundles.add(library2);
+        newBundles.add(library3);
 
-    ModuleDependencySynchronizer testObject =
-        new ModuleDependencySynchronizer(_bundleManager, _moduleRootManager, _application, _libraryHandler,
-            _osmorcFacetUtil);
-
-
-    assertThat(testObject.removeObsoleteModuleDependencies(modelMock, oldOrderEntries), equalTo(true));
-    assertThat(testObject.removeObsoleteModuleDependencies(modelMock, new ArrayList<OrderEntry>()), equalTo(false));
-
-    verify(_bundleManager, _moduleRootManager, _application, _libraryHandler, _modifiableRootModel, _module,
-        _osmorcFacetUtil, _module1, _module2, _module3, _module4, _moduleOrderEntry1, _moduleOrderEntry2, _library1,
-        _library2,
-        _library3, _library4, _libraryOrderEntry1, _libraryOrderEntry2, modelMock);
-  }
-
-  @Test
-  public void testAddNewModuleDependencies()
-  {
-    ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
-    expect(modelMock.addModuleOrderEntry(_module1)).andReturn(_moduleOrderEntry1).times(1);
-    expect(modelMock.addLibraryEntry(_library1)).andReturn(_libraryOrderEntry1).times(1);
-
-    replay(_bundleManager, _moduleRootManager, _application, _libraryHandler, _modifiableRootModel, _module,
-        _osmorcFacetUtil, _module1, _module2, _module3, _module4, _moduleOrderEntry1, _moduleOrderEntry2, _library1,
-        _library2,
-        _library3, _library4, _libraryOrderEntry1, _libraryOrderEntry2, modelMock);
-
-    List<Object> newBundles = new ArrayList<Object>();
-    newBundles.add(_module1);
-    newBundles.add(_library1);
-
-    ModuleDependencySynchronizer testObject =
-        new ModuleDependencySynchronizer(_bundleManager, _moduleRootManager, _application, _libraryHandler,
-            _osmorcFacetUtil);
+        ModuleDependencySynchronizer testObject =
+                new ModuleDependencySynchronizer(bundleManager, moduleRootManager, application, libraryHandler,
+                        osmorcFacetUtil);
 
 
-    assertThat(testObject.addNewModuleDependencies(modelMock, newBundles), equalTo(true));
-    assertThat(testObject.addNewModuleDependencies(modelMock, new ArrayList<Object>()), equalTo(false));
+        List<OrderEntry> obsoleteEntries = testObject.determineObsoleteModuleDependencies(oldOrderEntries, newBundles);
 
-    newBundles.clear();
-    newBundles.add(_module);
-    assertThat(testObject.addNewModuleDependencies(modelMock, newBundles), equalTo(false));
+        assertThat(obsoleteEntries.size(), equalTo(2));
+        assertThat(obsoleteEntries, hasItem((OrderEntry) moduleOrderEntry2));
+        assertThat(obsoleteEntries, hasItem((OrderEntry) libraryOrderEntry1));
 
-    verify(_bundleManager, _moduleRootManager, _application, _libraryHandler, _modifiableRootModel, _module,
-        _osmorcFacetUtil, _module1, _module2, _module3, _module4, _moduleOrderEntry1, _moduleOrderEntry2, _library1,
-        _library2,
-        _library3, _library4, _libraryOrderEntry1, _libraryOrderEntry2, modelMock);
-  }
+        verify(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2);
+    }
 
-  @Test
-  public void testCheckAndSetReexport()
-  {
-    ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
-    LibraryOrderEntry libraryOrderEntryWithoutLibrary = createMock(LibraryOrderEntry.class);
-    expect(libraryOrderEntryWithoutLibrary.getLibrary()).andReturn(null).anyTimes();
-    expect(libraryOrderEntryWithoutLibrary.getLibraryName()).andReturn("test").anyTimes();
-    expect(_library2.getName()).andReturn("test").anyTimes();
-    expect(_osmorcFacetUtil.hasOsmorcFacet(_module1)).andReturn(true).anyTimes();
-    expect(_osmorcFacetUtil.hasOsmorcFacet(_module2)).andReturn(true).anyTimes();
-    expect(_libraryHandler.isFrameworkInstanceLibrary(_libraryOrderEntry1)).andReturn(true).anyTimes();
-    expect(_libraryHandler.isFrameworkInstanceLibrary(libraryOrderEntryWithoutLibrary)).andReturn(true).anyTimes();
-    expect(modelMock.getOrderEntries()).andReturn(new OrderEntry[]{_moduleOrderEntry1, _moduleOrderEntry2, _libraryOrderEntry1, libraryOrderEntryWithoutLibrary});
-    expect(_bundleManager.isReexported(_module1, _module)).andReturn(true).anyTimes();
-    expect(_bundleManager.isReexported(_module2, _module)).andReturn(false).anyTimes();
-    expect(_bundleManager.isReexported(_library1, _module)).andReturn(true).anyTimes();
-    expect(_bundleManager.isReexported(_library2, _module)).andReturn(false).anyTimes();
-    expect(_moduleOrderEntry1.isExported()).andReturn(false);
-    _moduleOrderEntry1.setExported(true);
-    expect(_moduleOrderEntry2.isExported()).andReturn(false);
-    expect(_libraryOrderEntry1.isExported()).andReturn(false);
-    _libraryOrderEntry1.setExported(true);
-    expect(libraryOrderEntryWithoutLibrary.isExported()).andReturn(false);
+    @Test
+    public void testRemoveObsoleteModuleDependencies() {
+        ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
+        modelMock.removeOrderEntry(moduleOrderEntry1);
+        modelMock.removeOrderEntry(libraryOrderEntry1);
 
-    replay(_bundleManager, _moduleRootManager, _application, _libraryHandler, _modifiableRootModel, _module,
-        _osmorcFacetUtil, _module1, _module2, _module3, _module4, _moduleOrderEntry1, _moduleOrderEntry2, _library1,
-        _library2,
-        _library3, _library4, _libraryOrderEntry1, _libraryOrderEntry2, modelMock, libraryOrderEntryWithoutLibrary);
+        replay(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock);
 
-    List<Object> newBundles = new ArrayList<Object>();
-    newBundles.add(_library2);
+        List<OrderEntry> oldOrderEntries = new ArrayList<OrderEntry>();
+        oldOrderEntries.add(moduleOrderEntry1);
+        oldOrderEntries.add(libraryOrderEntry1);
 
-    ModuleDependencySynchronizer testObject =
-        new ModuleDependencySynchronizer(_bundleManager, _moduleRootManager, _application, _libraryHandler,
-            _osmorcFacetUtil);
+        ModuleDependencySynchronizer testObject =
+                new ModuleDependencySynchronizer(bundleManager, moduleRootManager, application, libraryHandler,
+                        osmorcFacetUtil);
 
 
-    assertThat(testObject.checkAndSetReexport(modelMock, newBundles), equalTo(true));
+        assertThat(testObject.removeObsoleteModuleDependencies(modelMock, oldOrderEntries), equalTo(true));
+        assertThat(testObject.removeObsoleteModuleDependencies(modelMock, new ArrayList<OrderEntry>()), equalTo(false));
 
-    verify(_bundleManager, _moduleRootManager, _application, _libraryHandler, _modifiableRootModel, _module,
-        _osmorcFacetUtil, _module1, _module2, _module3, _module4, _moduleOrderEntry1, _moduleOrderEntry2, _library1,
-        _library2,
-        _library3, _library4, _libraryOrderEntry1, _libraryOrderEntry2, modelMock, libraryOrderEntryWithoutLibrary);
-  }
+        verify(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock);
+    }
+
+    @Test
+    public void testAddNewModuleDependencies() {
+        ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
+        expect(modelMock.addModuleOrderEntry(module1)).andReturn(moduleOrderEntry1).times(1);
+        expect(modelMock.addLibraryEntry(library1)).andReturn(libraryOrderEntry1).times(1);
+
+        replay(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock);
+
+        List<Object> newBundles = new ArrayList<Object>();
+        newBundles.add(module1);
+        newBundles.add(library1);
+
+        ModuleDependencySynchronizer testObject =
+                new ModuleDependencySynchronizer(bundleManager, moduleRootManager, application, libraryHandler,
+                        osmorcFacetUtil);
 
 
+        assertThat(testObject.addNewModuleDependencies(modelMock, newBundles), equalTo(true));
+        assertThat(testObject.addNewModuleDependencies(modelMock, new ArrayList<Object>()), equalTo(false));
 
-  private BundleManager _bundleManager;
-  private ModuleRootManager _moduleRootManager;
-  private Application _application;
-  private LibraryHandler _libraryHandler;
-  private ModifiableRootModel _modifiableRootModel;
-  private Module _module;
-  private OsmorcFacetUtil _osmorcFacetUtil;
-  private Module _module1;
-  private Module _module2;
-  private Module _module3;
-  private Module _module4;
-  private Library _library1;
-  private Library _library2;
-  private Library _library3;
-  private Library _library4;
-  private ModuleOrderEntry _moduleOrderEntry1;
-  private ModuleOrderEntry _moduleOrderEntry2;
-  private LibraryOrderEntry _libraryOrderEntry1;
-  private LibraryOrderEntry _libraryOrderEntry2;
+        newBundles.clear();
+        newBundles.add(module);
+        assertThat(testObject.addNewModuleDependencies(modelMock, newBundles), equalTo(false));
+
+        verify(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock);
+    }
+
+    @Test
+    public void testCheckAndSetReexport() {
+        ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
+        LibraryOrderEntry libraryOrderEntryWithoutLibrary = createMock(LibraryOrderEntry.class);
+        expect(libraryOrderEntryWithoutLibrary.getLibrary()).andReturn(null).anyTimes();
+        expect(libraryOrderEntryWithoutLibrary.getLibraryName()).andReturn("test").anyTimes();
+        expect(library2.getName()).andReturn("test").anyTimes();
+        expect(osmorcFacetUtil.hasOsmorcFacet(module1)).andReturn(true).anyTimes();
+        expect(osmorcFacetUtil.hasOsmorcFacet(module2)).andReturn(true).anyTimes();
+        expect(libraryHandler.isFrameworkInstanceLibrary(libraryOrderEntry1)).andReturn(true).anyTimes();
+        expect(libraryHandler.isFrameworkInstanceLibrary(libraryOrderEntryWithoutLibrary)).andReturn(true).anyTimes();
+        expect(modelMock.getOrderEntries()).andReturn(new OrderEntry[]{moduleOrderEntry1, moduleOrderEntry2, libraryOrderEntry1, libraryOrderEntryWithoutLibrary});
+        expect(bundleManager.isReexported(module1, module)).andReturn(true).anyTimes();
+        expect(bundleManager.isReexported(module2, module)).andReturn(false).anyTimes();
+        expect(bundleManager.isReexported(library1, module)).andReturn(true).anyTimes();
+        expect(bundleManager.isReexported(library2, module)).andReturn(false).anyTimes();
+        expect(moduleOrderEntry1.isExported()).andReturn(false);
+        moduleOrderEntry1.setExported(true);
+        expect(moduleOrderEntry2.isExported()).andReturn(false);
+        expect(libraryOrderEntry1.isExported()).andReturn(false);
+        libraryOrderEntry1.setExported(true);
+        expect(libraryOrderEntryWithoutLibrary.isExported()).andReturn(false);
+
+        replay(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock, libraryOrderEntryWithoutLibrary);
+
+        List<Object> newBundles = new ArrayList<Object>();
+        newBundles.add(library2);
+
+        ModuleDependencySynchronizer testObject =
+                new ModuleDependencySynchronizer(bundleManager, moduleRootManager, application, libraryHandler,
+                        osmorcFacetUtil);
+
+
+        assertThat(testObject.checkAndSetReexport(modelMock, newBundles), equalTo(true));
+
+        verify(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock, libraryOrderEntryWithoutLibrary);
+    }
+
+
+    private BundleManager bundleManager;
+    private ModuleRootManager moduleRootManager;
+    private Application application;
+    private LibraryHandler libraryHandler;
+    private ModifiableRootModel modifiableRootModel;
+    private Module module;
+    private OsmorcFacetUtil osmorcFacetUtil;
+    private Module module1;
+    private Module module2;
+    private Module module3;
+    private Module module4;
+    private Library library1;
+    private Library library2;
+    private Library library3;
+    private Library library4;
+    private ModuleOrderEntry moduleOrderEntry1;
+    private ModuleOrderEntry moduleOrderEntry2;
+    private LibraryOrderEntry libraryOrderEntry1;
+    private LibraryOrderEntry libraryOrderEntry2;
 }

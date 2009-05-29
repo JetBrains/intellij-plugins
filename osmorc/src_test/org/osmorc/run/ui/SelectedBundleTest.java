@@ -32,40 +32,36 @@ import org.junit.Test;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class SelectedBundleTest
-{
-  @Test
-  public void testToString()
-  {
-    SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
-    assertThat(testObject.toString(), equalTo("testName (testURL)"));
-    testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
-    assertThat(testObject.toString(), equalTo("testName"));
-  }
+public class SelectedBundleTest {
+    @Test
+    public void testToString() {
+        SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
+        assertThat(testObject.toString(), equalTo("testName (testURL)"));
+        testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
+        assertThat(testObject.toString(), equalTo("testName"));
+    }
 
-  @Test
-  public void testEquals()
-  {
-    SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
-    assertThat(testObject, equalTo(testObject));
-    testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
-    assertThat(testObject, equalTo(testObject));
-    testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.PlainLibrary);
-    assertThat(testObject, equalTo(testObject));
-    testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.PlainLibrary);
-    assertThat(testObject, equalTo(testObject));
-  }
+    @Test
+    public void testEquals() {
+        SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
+        assertThat(testObject, equalTo(testObject));
+        testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
+        assertThat(testObject, equalTo(testObject));
+        testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.PlainLibrary);
+        assertThat(testObject, equalTo(testObject));
+        testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.PlainLibrary);
+        assertThat(testObject, equalTo(testObject));
+    }
 
-  @Test
-  public void testHashCode()
-  {
-    SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
-    testObject.hashCode();
-    testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
-    testObject.hashCode();
-    testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.PlainLibrary);
-    testObject.hashCode();
-    testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.PlainLibrary);
-    testObject.hashCode();
-  }
+    @Test
+    public void testHashCode() {
+        SelectedBundle testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.Module);
+        testObject.hashCode();
+        testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.Module);
+        testObject.hashCode();
+        testObject = new SelectedBundle("testName", "file:///c:/testURL", SelectedBundle.BundleType.PlainLibrary);
+        testObject.hashCode();
+        testObject = new SelectedBundle("testName", null, SelectedBundle.BundleType.PlainLibrary);
+        testObject.hashCode();
+    }
 }

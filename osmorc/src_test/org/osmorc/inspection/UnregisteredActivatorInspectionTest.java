@@ -42,55 +42,49 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class UnregisteredActivatorInspectionTest
-{
-  public UnregisteredActivatorInspectionTest()
-  {
-    _fixture = TestUtil.createTestFixture();
-  }
+public class UnregisteredActivatorInspectionTest {
+    public UnregisteredActivatorInspectionTest() {
+        fixture = TestUtil.createTestFixture();
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-    myTempDirFixture.setUp();
-    _fixture.setUp();
-    TestUtil.loadModules("UnregisteredActivatorInspectionTest", _fixture.getProject(), myTempDirFixture.getTempDirPath());
-    TestUtil.createOsmorFacetForAllModules(_fixture.getProject());
-  }
+    @Before
+    public void setUp() throws Exception {
+        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+        myTempDirFixture.setUp();
+        fixture.setUp();
+        TestUtil.loadModules("UnregisteredActivatorInspectionTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
+        TestUtil.createOsmorFacetForAllModules(fixture.getProject());
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-    myTempDirFixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+        myTempDirFixture.tearDown();
+    }
 
-  @Test
-  public void testInspectionWithError()
-  {
-    PsiFile psiFile = TestUtil.loadPsiFile(_fixture.getProject(), "t0", "t0/Activator.java");
+    @Test
+    public void testInspectionWithError() {
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t0", "t0/Activator.java");
 
-    List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, _fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
 
-    assertThat(list , notNullValue());
-    assertThat(list.size(), equalTo(1));
+        assertThat(list, notNullValue());
+        assertThat(list.size(), equalTo(1));
 
-    ProblemDescriptor problem = list.get(0);
-    assertThat(problem.getLineNumber(), equalTo(6));
-  }
+        ProblemDescriptor problem = list.get(0);
+        assertThat(problem.getLineNumber(), equalTo(6));
+    }
 
-  @Test
-  public void testInspectionWithoutError()
-  {
-    PsiFile psiFile = TestUtil.loadPsiFile(_fixture.getProject(), "t1", "t1/Activator.java");
+    @Test
+    public void testInspectionWithoutError() {
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
 
-    List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, _fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
 
-    assertThat(list , nullValue());
-  }
+        assertThat(list, nullValue());
+    }
 
 
-  private IdeaProjectTestFixture _fixture;
-  private TempDirTestFixture myTempDirFixture;
+    private IdeaProjectTestFixture fixture;
+    private TempDirTestFixture myTempDirFixture;
 }

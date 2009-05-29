@@ -33,55 +33,49 @@ import org.junit.Test;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ProjectSettingsUpdateNotifierTest
-{
+public class ProjectSettingsUpdateNotifierTest {
 
-  @Before
-  public void setUp()
-  {
-    _projectSettingsChangeListener = new ProjectSettingsUpdateNotifier.Listener()
-    {
-      public void projectSettingsChanged()
-      {
-        _projectSettingsChanged = true;
-      }
-    };
+    @Before
+    public void setUp() {
+        projectSettingsChangeListener = new ProjectSettingsUpdateNotifier.Listener() {
+            public void projectSettingsChanged() {
+                projectSettingsChanged = true;
+            }
+        };
 
-    _testObject = new ProjectSettingsUpdateNotifier();
-  }
+        testObject = new ProjectSettingsUpdateNotifier();
+    }
 
-  public void testWithoutListeners()
-  {
-    _projectSettingsChanged = false;
+    public void testWithoutListeners() {
+        projectSettingsChanged = false;
 
-    _testObject.fireProjectSettingsChanged();
+        testObject.fireProjectSettingsChanged();
 
-    assertThat(_projectSettingsChanged, equalTo(false));
+        assertThat(projectSettingsChanged, equalTo(false));
 
-    _projectSettingsChanged = false;
-  }
+        projectSettingsChanged = false;
+    }
 
-  @Test
-  public void testWithListeners()
-  {
-    _testObject.addListener(_projectSettingsChangeListener);
+    @Test
+    public void testWithListeners() {
+        testObject.addListener(projectSettingsChangeListener);
 
-    _projectSettingsChanged = false;
+        projectSettingsChanged = false;
 
-    _testObject.fireProjectSettingsChanged();
+        testObject.fireProjectSettingsChanged();
 
-    assertThat(_projectSettingsChanged, equalTo(true));
+        assertThat(projectSettingsChanged, equalTo(true));
 
-    _testObject.removeListener(_projectSettingsChangeListener);
+        testObject.removeListener(projectSettingsChangeListener);
 
-    _projectSettingsChanged = false;
+        projectSettingsChanged = false;
 
-    _testObject.fireProjectSettingsChanged();
+        testObject.fireProjectSettingsChanged();
 
-    assertThat(_projectSettingsChanged, equalTo(false));
-  }
-  
-  private boolean _projectSettingsChanged;
-  private ProjectSettingsUpdateNotifier.Listener _projectSettingsChangeListener;
-  private ProjectSettingsUpdateNotifier _testObject;
+        assertThat(projectSettingsChanged, equalTo(false));
+    }
+
+    private boolean projectSettingsChanged;
+    private ProjectSettingsUpdateNotifier.Listener projectSettingsChangeListener;
+    private ProjectSettingsUpdateNotifier testObject;
 }

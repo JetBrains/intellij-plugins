@@ -49,127 +49,107 @@ import java.text.MessageFormat;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class FelixFrameworkInstanceManagerTest
-{
-  public FelixFrameworkInstanceManagerTest()
-  {
-    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-        IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
-    _fixture = fixtureBuilder.getFixture();
-  }
+public class FelixFrameworkInstanceManagerTest {
+    public FelixFrameworkInstanceManagerTest() {
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
+                IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
+        fixture = fixtureBuilder.getFixture();
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    _fixture.setUp();
-    _root = ModuleRootManager.getInstance(_fixture.getModule()).getContentRoots()[0];
-    _fileSystem = createMock(LocalFileSystem.class);
-    _testObject =
-        new FelixFrameworkInstanceManager(new LibraryHandlerImpl(), _fileSystem, ApplicationManager.getApplication());
-    _instanceDefinition = new FrameworkInstanceDefinition();
-    _instanceDefinition.setBaseFolder(new File(_root.getPath(), "felix").getAbsolutePath());
-    _instanceDefinition.setName("test");
+    @Before
+    public void setUp() throws Exception {
+        fixture.setUp();
+        root = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots()[0];
+        fileSystem = createMock(LocalFileSystem.class);
+        testObject =
+                new FelixFrameworkInstanceManager(new LibraryHandlerImpl(), fileSystem, ApplicationManager.getApplication());
+        instanceDefinition = new FrameworkInstanceDefinition();
+        instanceDefinition.setBaseFolder(new File(root.getPath(), "felix").getAbsolutePath());
+        instanceDefinition.setName("test");
 
-  }
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    _fixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        fixture.tearDown();
+    }
 
-  @Test
-  public void testCheckValidityFolderDoesNotExist()
-  {
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("felix"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition),
-        equalTo(MessageFormat.format(FelixFrameworkInstanceManager.FOLDER_DOES_NOT_EXIST,
-            _instanceDefinition.getBaseFolder())));
-    verify(_fileSystem);
-  }
+    @Test
+    public void testCheckValidityFolderDoesNotExist() {
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("felix"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition),
+                equalTo(MessageFormat.format(FelixFrameworkInstanceManager.FOLDER_DOES_NOT_EXIST,
+                        instanceDefinition.getBaseFolder())));
+        verify(fileSystem);
+    }
 
-  @Test
-  public void testCheckValidityNoBinFolder() throws Exception
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          _root.createChildDirectory(this, "felix");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+    @Test
+    public void testCheckValidityNoBinFolder() throws Exception {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    root.createChildDirectory(this, "felix");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("felix"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition),
-        equalTo(
-            MessageFormat.format(FelixFrameworkInstanceManager.NO_BIN_FOLDER, _instanceDefinition.getBaseFolder())));
-    verify(_fileSystem);
-  }
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("felix"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition),
+                equalTo(
+                        MessageFormat.format(FelixFrameworkInstanceManager.NO_BIN_FOLDER, instanceDefinition.getBaseFolder())));
+        verify(fileSystem);
+    }
 
-  @Test
-  public void testCheckValidityNoBundleFolder() throws Exception
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          _root.createChildDirectory(this, "felix").createChildDirectory(this, "bin");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+    @Test
+    public void testCheckValidityNoBundleFolder() throws Exception {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    root.createChildDirectory(this, "felix").createChildDirectory(this, "bin");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("felix"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition),
-        equalTo(
-            MessageFormat.format(FelixFrameworkInstanceManager.NO_BUNDLE_FOLDER, _instanceDefinition.getBaseFolder())));
-    verify(_fileSystem);
-  }
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("felix"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition),
+                equalTo(
+                        MessageFormat.format(FelixFrameworkInstanceManager.NO_BUNDLE_FOLDER, instanceDefinition.getBaseFolder())));
+        verify(fileSystem);
+    }
 
-  @Test
-  public void testCheckValidityOK() throws Exception
-  {
-    ApplicationManager.getApplication().runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        try
-        {
-          VirtualFile felixFolder = _root.createChildDirectory(this, "felix");
-          felixFolder.createChildDirectory(this, "bin");
-          felixFolder.createChildDirectory(this, "bundle");
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+    @Test
+    public void testCheckValidityOK() throws Exception {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                try {
+                    VirtualFile felixFolder = root.createChildDirectory(this, "felix");
+                    felixFolder.createChildDirectory(this, "bin");
+                    felixFolder.createChildDirectory(this, "bundle");
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-    expect(_fileSystem.findFileByPath(_instanceDefinition.getBaseFolder())).andReturn(_root.findChild("felix"));
-    replay(_fileSystem);
-    assertThat(_testObject.checkValidity(_instanceDefinition), nullValue());
-    verify(_fileSystem);
-  }
+        expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("felix"));
+        replay(fileSystem);
+        assertThat(testObject.checkValidity(instanceDefinition), nullValue());
+        verify(fileSystem);
+    }
 
-  private IdeaProjectTestFixture _fixture;
-  private VirtualFile _root;
-  private FelixFrameworkInstanceManager _testObject;
-  private FrameworkInstanceDefinition _instanceDefinition;
-  private LocalFileSystem _fileSystem;
+    private IdeaProjectTestFixture fixture;
+    private VirtualFile root;
+    private FelixFrameworkInstanceManager testObject;
+    private FrameworkInstanceDefinition instanceDefinition;
+    private LocalFileSystem fileSystem;
 }

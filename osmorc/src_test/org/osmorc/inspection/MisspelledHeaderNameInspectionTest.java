@@ -43,66 +43,61 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class MisspelledHeaderNameInspectionTest
-{
-  public MisspelledHeaderNameInspectionTest()
-  {
-    _fixture = TestUtil.createTestFixture();
-  }
+public class MisspelledHeaderNameInspectionTest {
+    public MisspelledHeaderNameInspectionTest() {
+        fixture = TestUtil.createTestFixture();
+    }
 
-  @Before
-  public void setUp() throws Exception
-  {
-    myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-    myTempDirFixture.setUp();
-    _fixture.setUp();
-    TestUtil.loadModules("MisspelledHeaderNameInspectionTest", _fixture.getProject(), myTempDirFixture.getTempDirPath());
-    TestUtil.createOsmorFacetForAllModules(_fixture.getProject());
-  }
+    @Before
+    public void setUp() throws Exception {
+        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+        myTempDirFixture.setUp();
+        fixture.setUp();
+        TestUtil.loadModules("MisspelledHeaderNameInspectionTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
+        TestUtil.createOsmorFacetForAllModules(fixture.getProject());
+    }
 
-  @After
-  public void tearDown() throws Exception
-  {
-    myTempDirFixture.tearDown();
-    _fixture.tearDown();
-  }
+    @After
+    public void tearDown() throws Exception {
+        myTempDirFixture.tearDown();
+        fixture.tearDown();
+    }
 
-  @Test
-  public void testInspection()
-  {
-    PsiFile psiFile = TestUtil.loadPsiFileUnderContent(_fixture.getProject(), "t0", "META-INF/MANIFEST.MF");
+    @Test
+    public void testInspection() {
+        PsiFile psiFile = TestUtil.loadPsiFileUnderContent(fixture.getProject(), "t0", "META-INF/MANIFEST.MF");
 
-    List<ProblemDescriptor> list = TestUtil.runInspection(new MisspelledHeaderNameInspection(), psiFile, _fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new MisspelledHeaderNameInspection(), psiFile, fixture.getProject());
 
-    assertThat(list , notNullValue());
-    assertThat(list.size(), equalTo(4));
+        assertThat(list, notNullValue());
+        assertThat(list.size(), equalTo(4));
 
-    ProblemDescriptor problem = list.get(0);
-    assertThat(problem.getLineNumber(), equalTo(2));
-    QuickFix[] fixes = problem.getFixes();
-    assertThat(fixes.length, greaterThan(0));
-    assertThat(fixes[0].getName(), containsString("Bundle-ManifestVersion"));
+        ProblemDescriptor problem = list.get(0);
+        assertThat(problem.getLineNumber(), equalTo(2));
+        QuickFix[] fixes = problem.getFixes();
+        assertThat(fixes.length, greaterThan(0));
+        assertThat(fixes[0].getName(), containsString("Bundle-ManifestVersion"));
 
-    problem = list.get(1);
-    assertThat(problem.getLineNumber(), equalTo(3));
-    fixes = problem.getFixes();
-    assertThat(fixes.length, greaterThan(0));
-    assertThat(fixes[0].getName(), containsString("Bundle-Name"));
+        problem = list.get(1);
+        assertThat(problem.getLineNumber(), equalTo(3));
+        fixes = problem.getFixes();
+        assertThat(fixes.length, greaterThan(0));
+        assertThat(fixes[0].getName(), containsString("Bundle-Name"));
 
-    problem = list.get(2);
-    assertThat(problem.getLineNumber(), equalTo(4));
-    fixes = problem.getFixes();
-    assertThat(fixes.length, greaterThan(0));
-    assertThat(fixes[0].getName(), containsString("Bundle-SymbolicName"));
+        problem = list.get(2);
+        assertThat(problem.getLineNumber(), equalTo(4));
+        fixes = problem.getFixes();
+        assertThat(fixes.length, greaterThan(0));
+        assertThat(fixes[0].getName(), containsString("Bundle-SymbolicName"));
 
-    problem = list.get(3);
-    assertThat(problem.getLineNumber(), equalTo(6));
-    fixes = problem.getFixes();
-    assertThat(fixes.length, greaterThan(0));
-    assertThat(fixes[0].getName(), containsString("Require-Bundle"));
-  }
+        problem = list.get(3);
+        assertThat(problem.getLineNumber(), equalTo(6));
+        fixes = problem.getFixes();
+        assertThat(fixes.length, greaterThan(0));
+        assertThat(fixes[0].getName(), containsString("Require-Bundle"));
+    }
 
-  private IdeaProjectTestFixture _fixture;
-  private TempDirTestFixture myTempDirFixture;
+    private IdeaProjectTestFixture fixture;
+    private TempDirTestFixture myTempDirFixture;
 
 }
