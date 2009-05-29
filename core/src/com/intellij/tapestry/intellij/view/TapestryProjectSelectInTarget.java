@@ -1,8 +1,8 @@
 package com.intellij.tapestry.intellij.view;
 
 import com.intellij.ide.impl.ProjectViewSelectInTarget;
+import com.intellij.ide.SelectInContext;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 
 public class TapestryProjectSelectInTarget extends ProjectViewSelectInTarget {
@@ -49,7 +49,7 @@ public class TapestryProjectSelectInTarget extends ProjectViewSelectInTarget {
     /**
      * {@inheritDoc}
      */
-    public boolean isSubIdSelectable(String subId, VirtualFile file) {
+    public boolean isSubIdSelectable(String subId, SelectInContext context) {
         return true;
     }
 }
