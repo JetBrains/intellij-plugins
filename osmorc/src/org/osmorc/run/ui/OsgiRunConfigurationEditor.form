@@ -150,7 +150,9 @@
               <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
-            <properties/>
+            <properties>
+              <dialogCaption value="VM Parameters"/>
+            </properties>
           </component>
           <component id="7f86b" class="javax.swing.JCheckBox" binding="includeAllBundlesinClassPath">
             <constraints>
@@ -237,7 +239,9 @@
               <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
-            <properties/>
+            <properties>
+              <dialogCaption value="Program Parameters"/>
+            </properties>
           </component>
         </children>
       </grid>
