@@ -157,7 +157,7 @@ public class EquinoxFrameworkRunner extends AbstractFrameworkRunner<EquinoxRunPr
         FrameworkInstanceDefinition frameworkInstance = getFrameworkInstance();
         String osgiInstallArea;
         try {
-            osgiInstallArea = createFileURL(new File(frameworkInstance.getBaseFolder()).toURI().toURL().toString());
+            osgiInstallArea = createFileURL(new File(frameworkInstance.getBaseFolder()).toURL().toString());
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

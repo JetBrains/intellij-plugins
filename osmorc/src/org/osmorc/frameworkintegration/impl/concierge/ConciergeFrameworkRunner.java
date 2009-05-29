@@ -56,11 +56,15 @@ public class ConciergeFrameworkRunner extends AbstractSimpleFrameworkRunner<Conc
             int startLevel = bundle.getStartLevel();
             level = Math.max(level, startLevel);
             String installBundles = props.get("osgi.auto.install");
-            installBundles = installBundles != null ? installBundles + " " + bundle.getBundleUrl() : bundle.getBundleUrl();
+            String bundleUrl = bundle.getBundleUrl();
+            if (bundleUrl != null) {
+                bundleUrl = bundleUrl.replaceAll(" ", "%20");
+            }
+            installBundles = installBundles != null ? installBundles + " " + bundleUrl : bundleUrl;
 
             String startBundles = props.get("osgi.auto.start");
-            if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
-                startBundles = startBundles != null ? startBundles + " " + bundle.getBundleUrl() : bundle.getBundleUrl();
+            if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundleUrl)) {
+                startBundles = startBundles != null ? startBundles + " " + bundleUrl : bundleUrl;
             }
             if (installBundles != null) {
                 props.put("osgi.auto.install", installBundles);

@@ -86,11 +86,15 @@ public class FelixFrameworkRunner extends AbstractSimpleFrameworkRunner<FelixRun
                 level = Math.max(level, startLevel);
                 // XXX: this is not exactly resource conserving...
                 String installBundles = (String) props.get("felix.auto.install." + startLevel);
-                installBundles = installBundles != null ? installBundles + " " + bundle.getBundleUrl() : bundle.getBundleUrl();
+                String bundleUrl = bundle.getBundleUrl();
+                if (bundleUrl != null) {
+                    bundleUrl = bundleUrl.replaceAll(" ", "%20");
+                }
+                installBundles = installBundles != null ? installBundles + " " + bundleUrl : bundleUrl;
 
                 String startBundles = (String) props.get("felix.auto.start." + startLevel);
-                if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
-                    startBundles = startBundles != null ? startBundles + " " + bundle.getBundleUrl() : bundle.getBundleUrl();
+                if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundleUrl)) {
+                    startBundles = startBundles != null ? startBundles + " " + bundleUrl : bundleUrl;
                 }
 
                 if (installBundles != null) {
