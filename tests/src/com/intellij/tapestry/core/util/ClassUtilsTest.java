@@ -83,7 +83,7 @@ public class ClassUtilsTest {
 
     @Test
     public void getClassProperties_with_annotated_properties() {
-        IJavaField annotatedField = new JavaFieldMock("_myProp", true).addAnnotation(new JavaAnnotationMock("org.apache.tapestry.annotations.Property"));
+        IJavaField annotatedField = new JavaFieldMock("_myProp", true).addAnnotation(new JavaAnnotationMock("org.apache.tapestry5.annotations.Property"));
 
         IJavaField notAnnotatedField = new JavaFieldMock("MyField", true);
 

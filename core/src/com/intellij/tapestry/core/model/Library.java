@@ -66,11 +66,11 @@ public class Library implements Comparable {
      */
     /*public ModuleBuilder getModuleBuilder() {
         if (getBasePackage().equals(TapestryConstants.CORE_LIBRARY_PACKAGE)) {
-            return new ModuleBuilder(_project.getJavaTypeFinder().findType("org.apache.tapestry.services.TapestryModule", true), _project);
+            return new ModuleBuilder(_project.getJavaTypeFinder().findType("org.apache.tapestry5.services.TapestryModule", true), _project);
         }
 
         if (getBasePackage().equals(TapestryConstants.IOC_LIBRARY_PACKAGE)) {
-            return new ModuleBuilder(_project.getJavaTypeFinder().findType("org.apache.tapestry.ioc.services.TapestryIOCModule", true), _project);
+            return new ModuleBuilder(_project.getJavaTypeFinder().findType("org.apache.tapestry5.ioc.services.TapestryIOCModule", true), _project);
         }
 
         return new ModuleBuilder(

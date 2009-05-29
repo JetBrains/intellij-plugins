@@ -52,9 +52,7 @@ public class AddTapestrySupportUtil {
         final Module module = webFacet.getModule();
         final WebApp app = webFacet.getRoot();
 
-        if (app == null) {
-            return;
-        }
+        if (app == null) return;
 
         // register toolwindow
         module.getProject().getComponent(TapestryProjectSupportLoader.class).enableToolWindow();

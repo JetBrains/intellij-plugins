@@ -15,8 +15,8 @@ import java.util.Collection;
  */
 public class ModuleBuilder {
 
-    private static final String SCOPE_ANNOTATION = "org.apache.tapestry.ioc.annotations.Scope";
-    private static final String EAGERLOAD_ANNOTATION = "org.apache.tapestry.ioc.annotations.EagerLoad";
+    private static final String SCOPE_ANNOTATION = "org.apache.tapestry5.ioc.annotations.Scope";
+    private static final String EAGERLOAD_ANNOTATION = "org.apache.tapestry5.ioc.annotations.EagerLoad";
     private IJavaClassType _moduleBuilderClass;
     private TapestryProject _project;
     private Collection<Service> _servicesCache;

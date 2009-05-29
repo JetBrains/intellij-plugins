@@ -28,7 +28,7 @@ public class JavaArrayTypeCoercionValidator implements Command {
         }
 
         // if the target type is a GridDataSource then coerce
-        if ((((CoercionContext) context).getTargetType() instanceof IJavaClassType && ((IJavaClassType) (((CoercionContext) context).getTargetType())).getFullyQualifiedName().equals("org.apache.tapestry.grid.GridDataSource"))) {
+        if ((((CoercionContext) context).getTargetType() instanceof IJavaClassType && ((IJavaClassType) (((CoercionContext) context).getTargetType())).getFullyQualifiedName().equals("org.apache.tapestry5.grid.GridDataSource"))) {
             ((CoercionContext) context).setResult(true);
 
             return true;

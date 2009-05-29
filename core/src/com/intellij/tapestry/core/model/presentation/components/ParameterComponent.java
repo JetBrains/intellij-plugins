@@ -33,7 +33,7 @@ public class ParameterComponent extends Component {
             _parameters.put("id", new DummyTapestryParameter(tapestryProject, "name", true));
         }
 
-        return new ParameterComponent(tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry.internal.parser.ParameterToken", true), tapestryProject);
+        return new ParameterComponent(tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry5.internal.parser.ParameterToken", true), tapestryProject);
     }
 
     /**

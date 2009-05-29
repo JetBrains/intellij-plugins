@@ -15,7 +15,7 @@ public class ComponentParameterTest {
     @BeforeMethod
     public void initMocks() {
         _fieldMock = new JavaFieldMock().setPrivate(true);
-        _fieldMock.addAnnotation(new JavaAnnotationMock("org.apache.tapestry.annotations.Parameter"));
+        _fieldMock.addAnnotation(new JavaAnnotationMock("org.apache.tapestry5.annotations.Parameter"));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class ComponentParameterTest {
         _fieldMock.setName("name1");
 
         JavaFieldMock field2Mock = new JavaFieldMock("name2", true);
-        field2Mock.addAnnotation(new JavaAnnotationMock("org.apache.tapestry.annotations.Parameter"));
+        field2Mock.addAnnotation(new JavaAnnotationMock("org.apache.tapestry5.annotations.Parameter"));
 
         assert new TapestryParameter(null, _fieldMock).compareTo(new TapestryParameter(null, _fieldMock)) == 0;
 

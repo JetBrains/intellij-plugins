@@ -152,7 +152,7 @@ public class PresentationLibraryElementTest {
     public void getParameters_no_parameters() {
         assert new TestableParameterReceiverElement(_libraryMock, _classInRootComponentsPackageMock, _tapestryProjectMock).getParameters().size() == 0;
 
-        JavaFieldMock publicField = new JavaFieldMock("publicField", false).addAnnotation(new JavaAnnotationMock("org.apache.tapestry.annotations.Parameter"));
+        JavaFieldMock publicField = new JavaFieldMock("publicField", false).addAnnotation(new JavaAnnotationMock("org.apache.tapestry5.annotations.Parameter"));
         JavaFieldMock privateField = new JavaFieldMock("privateField", true);
 
         _classInSubComponentsPackageMock.addField(publicField).addField(privateField);
@@ -162,7 +162,7 @@ public class PresentationLibraryElementTest {
 
     @Test
     public void getParameters_with_parameters() {
-        JavaFieldMock privateField = new JavaFieldMock("field1", true).addAnnotation(new JavaAnnotationMock("org.apache.tapestry.annotations.Parameter"));
+        JavaFieldMock privateField = new JavaFieldMock("field1", true).addAnnotation(new JavaAnnotationMock("org.apache.tapestry5.annotations.Parameter"));
 
         _classInSubComponentsPackageMock.addField(privateField);
 

@@ -23,5 +23,15 @@ public class LocalizationUtilsTest {
         assert LocalizationUtils.unlocalizeFileName("SomeFile_pt_PT.properties").equals("SomeFile.properties");
 
         assert LocalizationUtils.unlocalizeFileName("SomeFile_yy_PT.properties").equals("SomeFile_yy_PT.properties");
+
+      assert LocalizationUtils.unlocalizeFileName("SomeFile").equals("SomeFile");
+
+      assert LocalizationUtils.unlocalizeFileName("SomeFile_pt").equals("SomeFile");
+
+      assert LocalizationUtils.unlocalizeFileName("SomeFile_yy").equals("SomeFile_yy");
+
+      assert LocalizationUtils.unlocalizeFileName("SomeFile_pt_PT").equals("SomeFile.properties");
+
+      assert LocalizationUtils.unlocalizeFileName("SomeFile_yy_PT").equals("SomeFile_yy_PT");
     }
 }

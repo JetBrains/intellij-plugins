@@ -5,7 +5,7 @@
     <display-name>My Tapestry Application</display-name>
     <filter>
         <filter-name>app</filter-name>
-        <filter-class>org.apache.tapestry.TapestryFilter</filter-class>
+        <filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>app</filter-name>

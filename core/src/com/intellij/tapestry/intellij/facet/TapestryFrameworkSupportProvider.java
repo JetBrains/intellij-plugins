@@ -51,17 +51,13 @@ public class TapestryFrameworkSupportProvider extends FacetTypeFrameworkSupportP
         facet.getWebFacet().getPackagingConfiguration().addLibraryLink(library);
     }
 
-    @NotNull
-    protected LibraryInfo[] getLibraries(String selectedVersion) {
-        TapestryVersion version = getVersion(selectedVersion);
+  @NotNull
+  protected LibraryInfo[] getLibraries(String selectedVersion) {
+    TapestryVersion version = getVersion(selectedVersion);
+    return version != null ? version.getJars() : LibraryInfo.EMPTY_ARRAY;
+  }
 
-        if (version != null)
-            return version.getJars();
-        else
-            return LibraryInfo.EMPTY_ARRAY;
-    }
-
-    protected void onFacetCreated(final TapestryFacet facet, final ModifiableRootModel rootModel, final String version) {
+  protected void onFacetCreated(final TapestryFacet facet, final ModifiableRootModel rootModel, final String version) {
         StartupManager.getInstance(facet.getModule().getProject()).runWhenProjectIsInitialized(new Runnable() {
             public void run() {
                 final TapestryFacetConfiguration configuration = new TapestryFacetConfiguration();

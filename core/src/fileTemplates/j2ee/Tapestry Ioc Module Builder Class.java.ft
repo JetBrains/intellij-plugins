@@ -1,6 +1,6 @@
 package ${PACKAGE_NAME};
 
-import org.apache.tapestry.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
 
 public class ${NAME}
 {

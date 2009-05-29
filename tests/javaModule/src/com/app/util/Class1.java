@@ -1,6 +1,6 @@
 package com.app.util;
 
-import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry5.annotations.Component;
 
 @Deprecated
 @SuppressWarnings("warning1")

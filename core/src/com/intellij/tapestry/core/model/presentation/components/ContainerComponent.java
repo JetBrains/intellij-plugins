@@ -26,7 +26,7 @@ public class ContainerComponent extends Component {
      * @return an instance of the Body component.
      */
     public static ContainerComponent getInstance(TapestryProject tapestryProject) {
-        return new ContainerComponent(tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry.internal.parser.TemplateToken", true), tapestryProject);
+        return new ContainerComponent(tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry5.internal.parser.TemplateToken", true), tapestryProject);
     }
 
     /**

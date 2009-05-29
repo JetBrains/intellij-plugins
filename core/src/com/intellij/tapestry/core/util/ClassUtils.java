@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class ClassUtils {
 
-    private static final String PROPERTY_ANNOTATION = "org.apache.tapestry.annotations.Property";
+    private static final String PROPERTY_ANNOTATION = "org.apache.tapestry5.annotations.Property";
 
     /**
      * Finds every property declared in a class.

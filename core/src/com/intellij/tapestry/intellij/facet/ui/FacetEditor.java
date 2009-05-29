@@ -62,8 +62,7 @@ public class FacetEditor extends FacetEditorTab {
 
         assert webFacet != null;
 
-        if (_configuration.getVersion() == null)
-            _configuration.setVersion(TapestryVersion.TAPESTRY_5_0_11);
+        if (_configuration.getVersion() == null) _configuration.setVersion(TapestryVersion.TAPESTRY_5_1_0_5);
 
         AddTapestrySupportUtil.addSupportInWriteCommandAction(ModuleRootManager.getInstance(facet.getModule()).getModifiableModel(), webFacet, _configuration, false, false);
     }

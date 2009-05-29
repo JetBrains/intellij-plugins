@@ -52,7 +52,7 @@ public class ModuleBuilderTest {
 
     @Test
     public void getServices_default_service_build_no_suffix() {
-        expect(_buildMethodMock.getAnnotation(startsWith("org.apache.tapestry.ioc.annotations"))).andReturn(null).anyTimes();
+        expect(_buildMethodMock.getAnnotation(startsWith("org.apache.tapestry5.ioc.annotations"))).andReturn(null).anyTimes();
         replay(_buildMethodMock);
 
         _builderClassWithBuildMethodsMock.addPublicMethod(_buildMethodMock);
@@ -70,8 +70,8 @@ public class ModuleBuilderTest {
 
         JavaAnnotationMock eagerLoadAnnotationMock = new JavaAnnotationMock();
 
-        expect(_buildMethodMock.getAnnotation(matches("org.apache.tapestry.ioc.annotations.Scope"))).andReturn(scopeAnnotationMock).anyTimes();
-        expect(_buildMethodMock.getAnnotation(matches("org.apache.tapestry.ioc.annotations.EagerLoad"))).andReturn(eagerLoadAnnotationMock).anyTimes();
+        expect(_buildMethodMock.getAnnotation(matches("org.apache.tapestry5.ioc.annotations.Scope"))).andReturn(scopeAnnotationMock).anyTimes();
+        expect(_buildMethodMock.getAnnotation(matches("org.apache.tapestry5.ioc.annotations.EagerLoad"))).andReturn(eagerLoadAnnotationMock).anyTimes();
         replay(_buildMethodMock);
 
         _builderClassWithBuildMethodsMock.addPublicMethod(_buildMethodMock);
@@ -89,7 +89,7 @@ public class ModuleBuilderTest {
 
     @Test
     public void getServices_default_service_build_with_suffix() {
-        expect(_buildMethodWithSuffixMock.getAnnotation(startsWith("org.apache.tapestry.ioc.annotations"))).andReturn(null).anyTimes();
+        expect(_buildMethodWithSuffixMock.getAnnotation(startsWith("org.apache.tapestry5.ioc.annotations"))).andReturn(null).anyTimes();
         replay(_buildMethodWithSuffixMock);
 
         _builderClassWithBuildMethodsMock.addPublicMethod(_buildMethodWithSuffixMock);
@@ -107,8 +107,8 @@ public class ModuleBuilderTest {
 
         JavaAnnotationMock eagerLoadAnnotationMock = new JavaAnnotationMock();
 
-        expect(_buildMethodWithSuffixMock.getAnnotation(matches("org.apache.tapestry.ioc.annotations.Scope"))).andReturn(scopeAnnotationMock).anyTimes();
-        expect(_buildMethodWithSuffixMock.getAnnotation(matches("org.apache.tapestry.ioc.annotations.EagerLoad"))).andReturn(eagerLoadAnnotationMock).anyTimes();
+        expect(_buildMethodWithSuffixMock.getAnnotation(matches("org.apache.tapestry5.ioc.annotations.Scope"))).andReturn(scopeAnnotationMock).anyTimes();
+        expect(_buildMethodWithSuffixMock.getAnnotation(matches("org.apache.tapestry5.ioc.annotations.EagerLoad"))).andReturn(eagerLoadAnnotationMock).anyTimes();
         replay(_buildMethodWithSuffixMock);
 
         _builderClassWithBuildMethodsMock.addPublicMethod(_buildMethodWithSuffixMock);

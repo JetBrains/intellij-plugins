@@ -1,6 +1,6 @@
 package com.app;
 
-import org.apache.tapestry.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceBinder;
 
 import java.util.ArrayList;
 import java.util.Collection;

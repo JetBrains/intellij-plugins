@@ -14,51 +14,53 @@ import org.jdom.Element;
 
 public class TapestryFacetConfiguration implements FacetConfiguration {
 
-    private String _filterName;
-    private String _applicationPackage;
-    private TapestryVersion _version;
+  private String _filterName;
+  private String _applicationPackage;
+  private TapestryVersion _version;
 
-    public FacetEditorTab[] createEditorTabs(FacetEditorContext editorContext, FacetValidatorsManager validatorsManager) {
-        FacetLibrariesValidator validator = FacetEditorsFactory.getInstance().createLibrariesValidator(TapestryVersion.TAPESTRY_5_0_11.getJars(), new TapestryLibrariesValidatorDescription(), editorContext, validatorsManager);
+  public FacetEditorTab[] createEditorTabs(FacetEditorContext editorContext, FacetValidatorsManager validatorsManager) {
+    FacetLibrariesValidator validator = FacetEditorsFactory.getInstance()
+        .createLibrariesValidator(TapestryVersion.TAPESTRY_5_1_0_5.getJars(), new TapestryLibrariesValidatorDescription(), editorContext,
+                                  validatorsManager);
 
-        validatorsManager.registerValidator(validator);
+    validatorsManager.registerValidator(validator);
 
-        return new FacetEditorTab[]{new FacetEditor((TapestryFacet) editorContext.getFacet(), this)};
-    }
+    return new FacetEditorTab[]{new FacetEditor((TapestryFacet)editorContext.getFacet(), this)};
+  }
 
-    public void readExternal(Element element) throws InvalidDataException {
-        _filterName = JDOMExternalizer.readString(element, "filterName");
-        _applicationPackage = JDOMExternalizer.readString(element, "applicationPackage");
-        _version = TapestryVersion.fromString(JDOMExternalizer.readString(element, "version"));
-    }
+  public void readExternal(Element element) throws InvalidDataException {
+    _filterName = JDOMExternalizer.readString(element, "filterName");
+    _applicationPackage = JDOMExternalizer.readString(element, "applicationPackage");
+    _version = TapestryVersion.fromString(JDOMExternalizer.readString(element, "version"));
+  }
 
-    public void writeExternal(Element element) throws WriteExternalException {
-        JDOMExternalizer.write(element, "filterName", _filterName);
-        JDOMExternalizer.write(element, "applicationPackage", _applicationPackage);
-        JDOMExternalizer.write(element, "version", _version != null ? _version.toString() : null);
-    }
+  public void writeExternal(Element element) throws WriteExternalException {
+    JDOMExternalizer.write(element, "filterName", _filterName);
+    JDOMExternalizer.write(element, "applicationPackage", _applicationPackage);
+    JDOMExternalizer.write(element, "version", _version != null ? _version.toString() : null);
+  }
 
-    public String getFilterName() {
-        return _filterName;
-    }
+  public String getFilterName() {
+    return _filterName;
+  }
 
-    public void setFilterName(String filterName) {
-        _filterName = filterName;
-    }
+  public void setFilterName(String filterName) {
+    _filterName = filterName;
+  }
 
-    public String getApplicationPackage() {
-        return _applicationPackage;
-    }
+  public String getApplicationPackage() {
+    return _applicationPackage;
+  }
 
-    public void setApplicationPackage(String applicationPackage) {
-        _applicationPackage = applicationPackage;
-    }
+  public void setApplicationPackage(String applicationPackage) {
+    _applicationPackage = applicationPackage;
+  }
 
-    public TapestryVersion getVersion() {
-        return _version;
-    }
+  public TapestryVersion getVersion() {
+    return _version;
+  }
 
-    public void setVersion(TapestryVersion version) {
-        _version = version;
-    }
+  public void setVersion(TapestryVersion version) {
+    _version = version;
+  }
 }

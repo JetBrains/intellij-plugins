@@ -38,7 +38,7 @@ public class JavaClassTypeCoercionValidator implements Command {
         CLASS_COERCION_MAP.put("java.lang.Long", Arrays.asList(
                 "java.lang.String",
                 "java.lang.Number",
-                "org.apache.tapestry.ioc.util.TimeInterval"
+                "org.apache.tapestry5.ioc.util.TimeInterval"
         ));
 
         CLASS_COERCION_MAP.put("java.lang.Byte", Arrays.asList(
@@ -65,11 +65,11 @@ public class JavaClassTypeCoercionValidator implements Command {
                 "java.lang.Object"
         ));
 
-        CLASS_COERCION_MAP.put("org.apache.tapestry.grid.GridDataSource", Arrays.asList(
+        CLASS_COERCION_MAP.put("org.apache.tapestry5.grid.GridDataSource", Arrays.asList(
                 "java.util.List"
         ));
 
-        CLASS_COERCION_MAP.put("org.apache.tapestry.ioc.util.TimeInterval", Arrays.asList(
+        CLASS_COERCION_MAP.put("org.apache.tapestry5.ioc.util.TimeInterval", Arrays.asList(
                 "java.lang.String"
         ));
     }

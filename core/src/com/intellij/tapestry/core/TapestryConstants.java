@@ -110,37 +110,37 @@ public interface TapestryConstants {
     /**
      * The base package for the Tapestry core library.
      */
-    public static final String CORE_LIBRARY_PACKAGE = "org.apache.tapestry.corelib";
+    public static final String CORE_LIBRARY_PACKAGE = "org.apache.tapestry5.corelib";
 
     /**
      * The base package for the Tapestry ioc library.
      */
-    public static final String IOC_LIBRARY_PACKAGE = "org.apache.tapestry.ioc";
+    public static final String IOC_LIBRARY_PACKAGE = "org.apache.tapestry5.ioc";
 
     /**
      * The Inject annotation class in Tapestry core.
      */
-    public static final String CORE_INJECT_ANNOTATION = "org.apache.tapestry.annotations.Inject";
+    public static final String CORE_INJECT_ANNOTATION = "org.apache.tapestry5.annotations.Inject";
 
     /**
      * The Component annotation class in Tapestry core.
      */
-    public static final String COMPONENT_ANNOTATION = "org.apache.tapestry.annotations.Component";
+    public static final String COMPONENT_ANNOTATION = "org.apache.tapestry5.annotations.Component";
 
     /**
      * The Event annotation class in Tapestry core.
      */
-    public static final String EVENT_ANNOTATION = "org.apache.tapestry.annotations.OnEvent";
+    public static final String EVENT_ANNOTATION = "org.apache.tapestry5.annotations.OnEvent";
 
     /**
      * The inject page annotation class in Tapestry core.
      */
-    public static final String INJECT_PAGE_ANNOTATION = "org.apache.tapestry.annotations.InjectPage";
+    public static final String INJECT_PAGE_ANNOTATION = "org.apache.tapestry5.annotations.InjectPage";
 
     /**
      * The mixin annotation class in Tapestry core.
      */
-    public static final String MIXIN_ANNOTATION = "org.apache.tapestry.annotations.Mixin";
+    public static final String MIXIN_ANNOTATION = "org.apache.tapestry5.annotations.Mixin";
 
     /**
      * Provided module id.
@@ -150,7 +150,7 @@ public interface TapestryConstants {
     /**
      * The Tapestry filter class.
      */
-    public static final String FILTER_CLASS = "org.apache.tapestry.TapestryFilter";
+    public static final String FILTER_CLASS = "org.apache.tapestry5.TapestryFilter";
 
     /**
      * The Tapestry Home page.
