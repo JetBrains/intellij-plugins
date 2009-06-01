@@ -27,15 +27,18 @@ package org.osmorc.facet;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
+import com.intellij.facet.FacetModel;
 import com.intellij.facet.autodetecting.FacetDetector;
 import com.intellij.facet.autodetecting.FacetDetectorRegistry;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.CompilerModuleExtension;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
@@ -155,7 +158,30 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                         }
                         OsmorcFacetConfiguration osmorcFacetConfiguration = createDefaultConfiguration();
                         osmorcFacetConfiguration.setOsmorcControlsManifest(false);
+                        osmorcFacetConfiguration.setManifestLocation(source.getPath());
+                        osmorcFacetConfiguration.setUseProjectDefaultManifestFileLocation(false);
                         return osmorcFacetConfiguration;
+                    }
+
+                    @Override
+                    public void beforeFacetAdded(@NotNull Facet facet, FacetModel facetModel, @NotNull ModifiableRootModel modifiableRootModel) {
+                        super.beforeFacetAdded(facet, facetModel, modifiableRootModel);
+                        VirtualFile[] contentRoots = modifiableRootModel.getContentRoots();
+                        OsmorcFacet osmorcFacet = (OsmorcFacet) facet;
+                        OsmorcFacetConfiguration osmorcFacetConfiguration = osmorcFacet.getConfiguration();
+                        VirtualFile manifestFile = LocalFileSystem.getInstance().findFileByPath(osmorcFacetConfiguration.getManifestLocation());
+
+                        if (manifestFile != null) {
+                            for (VirtualFile contentRoot : contentRoots) {
+                                if (VfsUtil.isAncestor(contentRoot, manifestFile, false)) {
+                                    osmorcFacetConfiguration.setManifestLocation(VfsUtil.getRelativePath(manifestFile.getParent(), contentRoot, '/'));
+                                }
+                            }
+                        }
+                        else {
+                            osmorcFacetConfiguration.setManifestLocation("");
+                            osmorcFacetConfiguration.setUseProjectDefaultManifestFileLocation(true);
+                        }
                     }
                 };
 
