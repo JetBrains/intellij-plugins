@@ -54,209 +54,182 @@ import java.util.jar.Attributes;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl
-{
-  public ModuleManifestHolderImpl(Module module,
-                                  Application application)
-  {
-    _module = module;
-    _application = application;
-    _askedQuestions = new WeakHashMap<String, Boolean>();
-  }
-
-  @Nullable
-  public BundleManifest getBundleManifest()
-  {
-    // only try to load the manifest if we have an osmorc facet for that module
-    if (_bundleManifest == null && OsmorcFacet.hasOsmorcFacet(_module))
-    {
-      OsmorcFacet facet = OsmorcFacet.getInstance(_module);
-      // and only if this manifest is manually edited
-      if (facet.getConfiguration().isManifestManuallyEdited())
-      {
-        tryCreateBundleManifest();
-        _bundleManifest = loadManifest();
-      }
-    }
-    return _bundleManifest;
-  }
-
-  private BundleManifest loadManifest()
-  {
-    VirtualFile manifestFile = getManifestFile();
-    if (manifestFile != null)
-    {
-      PsiFile psiFile = PsiManager.getInstance(_module.getProject()).findFile(manifestFile);
-      return new BundleManifestImpl(psiFile);
-    }
-    return null;
-  }
-
-
-  private void tryCreateBundleManifest()
-  {
-    // check if the file is already there, in this case leave it alone
-    VirtualFile file = getManifestFile();
-    if (file != null && file.exists())
-    {
-      return;
+public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
+    public ModuleManifestHolderImpl(Module module,
+                                    Application application) {
+        _module = module;
+        _application = application;
+        _askedQuestions = new WeakHashMap<String, Boolean>();
     }
 
-    // check if a manifest path has been set up
-    final String manifestPath = getManifestPath();
-    if (StringUtil.isEmpty(manifestPath))
-    {
-      return;
-    }
-
-    if (getContentRoots().length > 0)
-    {
-      // okay now, we have set up a manifest path, but it doesn't exist. Ask the user
-      // if  we should create it.
-      // don't ask the user more than once for the same path (unless the GC grabs our map)
-      if (!_askedQuestions.containsKey(manifestPath))
-      {
-        int result = Messages
-            .showYesNoDialog(_module.getProject(),
-                OsmorcBundle.getTranslation("manifestholder.createmanifest.question", manifestPath),
-                OsmorcBundle.getTranslation("manifestholder.createmanifest.title"), Messages.getQuestionIcon());
-
-        if (result == DialogWrapper.CANCEL_EXIT_CODE)
-        {
-          _askedQuestions.put(manifestPath, Boolean.FALSE);
-          return; // don't mess with it if the user doesn't want it
+    @Nullable
+    public BundleManifest getBundleManifest() {
+        // only try to load the manifest if we have an osmorc facet for that module
+        if (_bundleManifest == null && OsmorcFacet.hasOsmorcFacet(_module)) {
+            OsmorcFacet facet = OsmorcFacet.getInstance(_module);
+            // and only if this manifest is manually edited
+            if (facet.getConfiguration().isManifestManuallyEdited()) {
+                tryCreateBundleManifest();
+                _bundleManifest = loadManifest();
+            }
         }
-        else
-        {
-          // save decision
-          _askedQuestions.put(manifestPath, Boolean.TRUE);
+        return _bundleManifest;
+    }
+
+    private BundleManifest loadManifest() {
+        VirtualFile manifestFile = getManifestFile();
+        if (manifestFile != null) {
+            PsiFile psiFile = PsiManager.getInstance(_module.getProject()).findFile(manifestFile);
+            if (psiFile == null) {
+                Messages.showMessageDialog(_module.getProject(), String.format("The manifest file %s could not be loaded. " +
+                        "Please make sure that it is not located in an excluded directory", manifestFile.getPath()), "Error while loading manifest", Messages.getInformationIcon());
+                return null;
+            }
+            return new BundleManifestImpl(psiFile);
         }
-      }
-      else
-      {
-        if (_askedQuestions.get(manifestPath) == Boolean.FALSE)
-        {
-          return;
+        return null;
+    }
+
+
+    private void tryCreateBundleManifest() {
+        // check if the file is already there, in this case leave it alone
+        VirtualFile file = getManifestFile();
+        if (file != null && file.exists()) {
+            return;
         }
-      }
 
-      _application.runWriteAction(new Runnable()
-      {
-        public void run()
-        {
-          try
-          {
+        // check if a manifest path has been set up
+        final String manifestPath = getManifestPath();
+        if (StringUtil.isEmpty(manifestPath)) {
+            return;
+        }
 
-            VirtualFile[] contentRoots = getContentRoots();
-            VirtualFile contentRoot = contentRoots[0];
-            String completePath = contentRoot.getPath() + File.separator + manifestPath;
+        if (getContentRoots().length > 0) {
+            // okay now, we have set up a manifest path, but it doesn't exist. Ask the user
+            // if  we should create it.
+            // don't ask the user more than once for the same path (unless the GC grabs our map)
+            if (!_askedQuestions.containsKey(manifestPath)) {
+                int result = Messages
+                        .showYesNoDialog(_module.getProject(),
+                                OsmorcBundle.getTranslation("manifestholder.createmanifest.question", manifestPath),
+                                OsmorcBundle.getTranslation("manifestholder.createmanifest.title"), Messages.getQuestionIcon());
 
-            // unify file separators
-            completePath = completePath.replace('\\', '/');
-
-            // strip off the last part (its the filename)
-            int lastPathSep = completePath.lastIndexOf('/');
-            String path = completePath.substring(0, lastPathSep);
-            String filename = completePath.substring(lastPathSep + 1);
-
-            // make sure the folders exist
-            VfsUtil.createDirectories(path);
-
-            // and get the virtual file for it
-            VirtualFile parentFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
-
-            // some heuristics for bundle name and version
-            String bundleName = _module.getName();
-            Version bundleVersion = null;
-            int nextDotPos = bundleName.indexOf('.');
-            while (bundleVersion == null && nextDotPos >= 0)
-            {
-              try
-              {
-                bundleVersion = new Version(bundleName.substring(nextDotPos + 1));
-                bundleName = bundleName.substring(0, nextDotPos);
-              }
-              catch (IllegalArgumentException e)
-              {
-                // Retry after next dot.
-              }
-              nextDotPos = bundleName.indexOf('.', nextDotPos + 1);
+                if (result == DialogWrapper.CANCEL_EXIT_CODE) {
+                    _askedQuestions.put(manifestPath, Boolean.FALSE);
+                    return; // don't mess with it if the user doesn't want it
+                } else {
+                    // save decision
+                    _askedQuestions.put(manifestPath, Boolean.TRUE);
+                }
+            } else {
+                if (_askedQuestions.get(manifestPath) == Boolean.FALSE) {
+                    return;
+                }
             }
 
+            _application.runWriteAction(new Runnable() {
+                public void run() {
+                    try {
 
-            VirtualFile manifest = parentFolder.createChildData(this, filename);
-            OutputStream outputStream = manifest.getOutputStream(this);
-            PrintWriter writer = new PrintWriter(outputStream);
-            writer.write(Attributes.Name.MANIFEST_VERSION + ": 1.0.0\n" +
-                Constants.BUNDLE_MANIFESTVERSION + ": 2\n" +
-                Constants.BUNDLE_NAME + ": " + bundleName + "\n" +
-                Constants.BUNDLE_SYMBOLICNAME + ": " + bundleName + "\n" +
-                Constants.BUNDLE_VERSION + ": " + (bundleVersion != null ? bundleVersion.toString() : "1.0.0") +
-                "\n");
-            writer.flush();
-            writer.close();
-          }
-          catch (IOException e)
-          {
-            throw new RuntimeException(e);
-          }
+                        VirtualFile[] contentRoots = getContentRoots();
+                        VirtualFile contentRoot = contentRoots[0];
+                        String completePath = contentRoot.getPath() + File.separator + manifestPath;
+
+                        // unify file separators
+                        completePath = completePath.replace('\\', '/');
+
+                        // strip off the last part (its the filename)
+                        int lastPathSep = completePath.lastIndexOf('/');
+                        String path = completePath.substring(0, lastPathSep);
+                        String filename = completePath.substring(lastPathSep + 1);
+
+                        // make sure the folders exist
+                        VfsUtil.createDirectories(path);
+
+                        // and get the virtual file for it
+                        VirtualFile parentFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
+
+                        // some heuristics for bundle name and version
+                        String bundleName = _module.getName();
+                        Version bundleVersion = null;
+                        int nextDotPos = bundleName.indexOf('.');
+                        while (bundleVersion == null && nextDotPos >= 0) {
+                            try {
+                                bundleVersion = new Version(bundleName.substring(nextDotPos + 1));
+                                bundleName = bundleName.substring(0, nextDotPos);
+                            }
+                            catch (IllegalArgumentException e) {
+                                // Retry after next dot.
+                            }
+                            nextDotPos = bundleName.indexOf('.', nextDotPos + 1);
+                        }
+
+
+                        VirtualFile manifest = parentFolder.createChildData(this, filename);
+                        OutputStream outputStream = manifest.getOutputStream(this);
+                        PrintWriter writer = new PrintWriter(outputStream);
+                        writer.write(Attributes.Name.MANIFEST_VERSION + ": 1.0.0\n" +
+                                Constants.BUNDLE_MANIFESTVERSION + ": 2\n" +
+                                Constants.BUNDLE_NAME + ": " + bundleName + "\n" +
+                                Constants.BUNDLE_SYMBOLICNAME + ": " + bundleName + "\n" +
+                                Constants.BUNDLE_VERSION + ": " + (bundleVersion != null ? bundleVersion.toString() : "1.0.0") +
+                                "\n");
+                        writer.flush();
+                        writer.close();
+                    }
+                    catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+            VirtualFileManager.getInstance().refresh(false);
         }
-      });
-      VirtualFileManager.getInstance().refresh(false);
+
     }
 
-  }
+    private
+    @Nullable
+    VirtualFile getManifestFile() {
+        String path = getManifestPath();
 
-  private
-  @Nullable
-  VirtualFile getManifestFile()
-  {
-    String path = getManifestPath();
+        // if it is not set, just return null
+        if (StringUtil.isEmpty(path)) {
+            return null;
+        }
 
-    // if it is not set, just return null
-    if (StringUtil.isEmpty(path))
-    {
-      return null;
+        VirtualFile[] contentRoots = getContentRoots();
+        for (VirtualFile contentRoot : contentRoots) {
+            VirtualFile manifestFile = contentRoot.findFileByRelativePath(path);
+            if (manifestFile != null) {
+                return manifestFile;
+            }
+        }
+
+        return null;
     }
 
-    VirtualFile[] contentRoots = getContentRoots();
-    for (VirtualFile contentRoot : contentRoots)
-    {
-      VirtualFile manifestFile = contentRoot.findFileByRelativePath(path);
-      if (manifestFile != null)
-      {
-        return manifestFile;
-      }
+    private String getManifestPath() {
+        // get relative path from the configuration
+        OsmorcFacet facet = OsmorcFacet.getInstance(_module);
+        String path = facet.getManifestLocation();
+        path = path.replace('\\', '/');
+        if (!path.endsWith("/")) {
+            path = path + "/";
+        }
+        path = path + "MANIFEST.MF";
+        return path;
     }
 
-    return null;
-  }
+    private VirtualFile[] getContentRoots() {
 
-  private String getManifestPath()
-  {
-    // get relative path from the configuration
-    OsmorcFacet facet = OsmorcFacet.getInstance(_module);
-    String path = facet.getManifestLocation();
-    path = path.replace('\\', '/');
-    if (!path.endsWith("/"))
-    {
-      path = path + "/";
+        ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(_module);
+        VirtualFile[] contentRoots = moduleRootManager.getContentRoots();
+
+        return contentRoots != null ? contentRoots : new VirtualFile[0];
     }
-    path = path + "MANIFEST.MF";
-    return path;
-  }
 
-  private VirtualFile[] getContentRoots()
-  {
-
-    ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(_module);
-    VirtualFile[] contentRoots = moduleRootManager.getContentRoots();
-
-    return contentRoots != null ? contentRoots : new VirtualFile[0];
-  }
-
-  private final Module _module;
-  private final Application _application;
-  private BundleManifest _bundleManifest;
-  private WeakHashMap<String, Boolean> _askedQuestions;
+    private final Module _module;
+    private final Application _application;
+    private BundleManifest _bundleManifest;
+    private WeakHashMap<String, Boolean> _askedQuestions;
 }
