@@ -5,6 +5,7 @@ import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,10 @@ public class ParameterComponent extends Component {
             _parameters.put("id", new DummyTapestryParameter(tapestryProject, "name", true));
         }
 
-        return new ParameterComponent(tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry5.internal.parser.ParameterToken", true), tapestryProject);
+      @NotNull
+      final IJavaClassType classType =
+          tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry5.internal.parser.ParameterToken", true);
+      return new ParameterComponent(classType, tapestryProject);
     }
 
     /**
