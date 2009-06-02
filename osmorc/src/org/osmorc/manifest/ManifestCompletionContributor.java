@@ -34,8 +34,6 @@ import org.osmorc.manifest.lang.ManifestLanguage;
 import org.osmorc.manifest.lang.ManifestTokenTypes;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
 
-import java.util.Set;
-
 /**
  * Completion contributor which adds the name of all known headers to the autocomplete list.
  *
@@ -45,10 +43,8 @@ import java.util.Set;
  */
 public class ManifestCompletionContributor extends CompletionContributor
 {
-  public ManifestCompletionContributor(HeaderParserRepository headerParserRepository)
+  public ManifestCompletionContributor()
   {
-    final Set<String> availableHeaders = headerParserRepository.getAllHeaderNames();
-
     extend(CompletionType.BASIC,
         PlatformPatterns.psiElement(ManifestTokenTypes.HEADER_NAME).withLanguage(ManifestLanguage.INSTANCE),
         new CompletionProvider<CompletionParameters>()
@@ -60,7 +56,8 @@ public class ManifestCompletionContributor extends CompletionContributor
           {
             LookupElementFactoryImpl lookupelementfactoryimpl = LookupElementFactoryImpl.getInstance();
 
-            for (String availableHeader : availableHeaders)
+
+            for (String availableHeader : HeaderParserRepository.getInstance().getAllHeaderNames())
             {
               completionresultset.addElement(lookupelementfactoryimpl.createLookupElement(availableHeader));
             }

@@ -26,6 +26,7 @@ package org.osmorc.manifest.lang.headerparser;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +46,10 @@ public class HeaderParserRepository
     _simpleHeaderParser = simpleHeaderParser;
     _headerParserProviderRepositories = Extensions
         .getExtensions(new ExtensionPointName<HeaderParserProviderRepository>("Osmorc.headerParserProviderRepository"));
+  }
+
+  public static HeaderParserRepository getInstance() {
+    return ServiceManager.getService(HeaderParserRepository.class);
   }
 
   public HeaderParser getHeaderParser(@NotNull ManifestHeaderValue manifestHeaderValue)
