@@ -102,10 +102,12 @@ public class TapestryProjectSupportLoader implements ProjectComponent {
   }
 
   public void addCompilerResources() throws MalformedPatternException {
-    String[] filePatterns = ((CompilerConfigurationImpl)_project.getComponent(CompilerConfiguration.class)).getResourceFilePatterns();
+    final CompilerConfigurationImpl compilerConfiguration = (CompilerConfigurationImpl)_project.getComponent(CompilerConfiguration.class);
+    String[] filePatterns = compilerConfiguration.getResourceFilePatterns();
 
-    if (Arrays.binarySearch(filePatterns, "?*.tml") < 0) {
-      _project.getComponent(CompilerConfiguration.class).addResourceFilePattern("?*.tml");
+    final String tapestryFilePattern = "?*." + TapestryConstants.TEMPLATE_FILE_EXTENSION;
+    if (Arrays.binarySearch(filePatterns, tapestryFilePattern) < 0) {
+      compilerConfiguration.addResourceFilePattern(tapestryFilePattern);
     }
   }
 

@@ -1,5 +1,6 @@
 package com.intellij.tapestry.core.maven;
 
+import com.intellij.tapestry.core.TapestryConstants;
 import org.apache.maven.model.*;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 
@@ -48,7 +49,7 @@ public class MavenUtils {
         Build build = new Build();
         Resource resource = new Resource();
         resource.setDirectory("src/main/java");
-        resource.addInclude("**/*.tml");
+        resource.addInclude("**/*."+ TapestryConstants.TEMPLATE_FILE_EXTENSION);
         resource.addInclude("**/*.properties");
         build.addResource(resource);
 
