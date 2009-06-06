@@ -102,11 +102,12 @@ public class LegacyEquinoxOsgiRunConfigurationLoader implements LegacyOsgiRunCon
         bundlesToDeploy.clear();
 
         FrameworkInstanceDefinition frameworkInstanceDefinition = getFrameworkInstance(osgiRunConfiguration.getProject());
-        assert frameworkInstanceDefinition != null;
 
-        osgiRunConfiguration.setInstanceToUse(frameworkInstanceDefinition);
+        if (frameworkInstanceDefinition != null) {
+            osgiRunConfiguration.setInstanceToUse(frameworkInstanceDefinition);
 
-        addFrameworkBundle(bundlesToDeploy, frameworkInstanceDefinition, useUpdateConfigurator);
+            addFrameworkBundle(bundlesToDeploy, frameworkInstanceDefinition, useUpdateConfigurator);
+        }
 
         return true;
     }
