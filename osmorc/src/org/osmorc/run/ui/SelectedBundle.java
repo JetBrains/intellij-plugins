@@ -49,6 +49,10 @@ public class SelectedBundle {
         return displayName;
     }
 
+    public void setName(@NotNull String displayName) {
+        this.displayName = displayName;
+    }
+
     @Nullable
     public String getBundleUrl() {
         return bundleUrl;

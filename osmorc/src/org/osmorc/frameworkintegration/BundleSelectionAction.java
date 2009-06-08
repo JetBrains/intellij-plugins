@@ -22,48 +22,54 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.frameworkintegration.impl.knopflerfish;
 
+package org.osmorc.frameworkintegration;
+
+import com.intellij.openapi.actionSystem.AnAction;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.FrameworkRunner;
-import org.osmorc.frameworkintegration.BundleSelectionAction;
-import org.osmorc.frameworkintegration.impl.AbstractFrameworkIntegrator;
-import org.osmorc.frameworkintegration.impl.knopflerfish.ui.KnopflerfishRunPropertiesEditor;
-import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
+import org.jetbrains.annotations.Nullable;
+import org.osmorc.run.ui.SelectedBundle;
 
+import javax.swing.*;
 import java.util.List;
-import java.util.Collections;
 
 /**
- * Knopflerfish specific implementation of {@link org.osmorc.frameworkintegration.FrameworkIntegrator}.
+ * A specialized action type that is used while editing an OSGi run configuration
+ * to change the collection of selected bundles to be run.
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class KnopflerfishIntegrator extends AbstractFrameworkIntegrator {
-    public KnopflerfishIntegrator(KnopflerfishFrameworkInstanceManager frameworkInstanceManager) {
-        super(frameworkInstanceManager);
+public abstract class BundleSelectionAction extends AnAction {
+    private Context context;
+
+    protected BundleSelectionAction() {
     }
 
-    @NotNull
-    public FrameworkRunner createFrameworkRunner() {
-        return new KnopflerfishFrameworkRunner();
+    protected BundleSelectionAction(String text) {
+        super(text);
     }
 
-    @NotNull
-    public String getDisplayName() {
-        return FRAMEWORK_NAME;
+    protected BundleSelectionAction(String text, String description, Icon icon) {
+        super(text, description, icon);
     }
 
-
-    @Override
-    public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
-        return new KnopflerfishRunPropertiesEditor();
+    public void setContext(@NotNull Context context) {
+        this.context = context;
     }
 
-    @NotNull
-    public List<BundleSelectionAction> getBundleSelectionActions() {
-        return Collections.emptyList();
+    protected Context getContext() {
+        return context;
     }
 
-    private static final String FRAMEWORK_NAME = "Knopflerfish";
+    public interface Context {
+        @NotNull
+        List<SelectedBundle> getCurrentlySelectedBundles();
+
+        void addBundle(@NotNull SelectedBundle bundle);
+
+        void removeBundle(@NotNull SelectedBundle bundle);
+
+        @Nullable
+        FrameworkInstanceDefinition getUsedFrameworkInstance();
+    }
 }

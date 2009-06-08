@@ -26,41 +26,45 @@ package org.osmorc.frameworkintegration;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.frameworkintegration.util.PropertiesWrapper;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
+
+import java.util.List;
 
 /**
  * The FrameworkIntegrator is an integrating class that provides access to all framework specific components.
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface FrameworkIntegrator
-{
+public interface FrameworkIntegrator {
 
-  /**
-   * @return the display name of the framework
-   */
-  @NotNull
-  String getDisplayName();
+    /**
+     * @return the display name of the framework
+     */
+    @NotNull
+    String getDisplayName();
 
-  /**
-   * @return the {@link org.osmorc.frameworkintegration.FrameworkInstanceManager} that controls data about a specific
-   *         framework instance.
-   */
-  @NotNull
-  FrameworkInstanceManager getFrameworkInstanceManager();
+    /**
+     * @return the {@link org.osmorc.frameworkintegration.FrameworkInstanceManager} that controls data about a specific
+     *         framework instance.
+     */
+    @NotNull
+    FrameworkInstanceManager getFrameworkInstanceManager();
 
-  /**
-   * @return the framework runnner which is used to get runtime specific information about a framework.
-   */
-  @NotNull
-  FrameworkRunner createFrameworkRunner();
+    /**
+     * @return the framework runnner which is used to get runtime specific information about a framework.
+     */
+    @NotNull
+    FrameworkRunner createFrameworkRunner();
 
-  /**
-   * Creates an editor for framework specific run properties.
-   *
-   * @return an editor for framework specific run properties.
-   */
-  @Nullable
-  FrameworkRunPropertiesEditor createRunPropertiesEditor();
+    /**
+     * Creates an editor for framework specific run properties.
+     *
+     * @return an editor for framework specific run properties.
+     */
+    @Nullable
+    FrameworkRunPropertiesEditor createRunPropertiesEditor();
+
+    @NotNull
+    List<BundleSelectionAction> getBundleSelectionActions();
+
 }

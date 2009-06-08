@@ -8,12 +8,10 @@
     <border type="none"/>
     <children>
       <grid id="27dc6" layout-manager="FormLayout">
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="fill:194px:grow"/>
         <colspec value="fill:399px:grow"/>
         <colspec value="left:4dlu:noGrow"/>
-        <colspec value="fill:p:noGrow"/>
+        <colspec value="fill:max(p;4px):noGrow"/>
         <constraints>
           <tabbedpane title="Bundles"/>
         </constraints>
@@ -26,7 +24,7 @@
         <children>
           <scrollpane id="2054a">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>
             </constraints>
             <properties/>
@@ -45,32 +43,18 @@
               </component>
             </children>
           </scrollpane>
-          <component id="5251d" class="javax.swing.JLabel">
+          <grid id="e50d5" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="true" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <labelFor value="2054a"/>
-              <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="setup.bundles.to.deploy"/>
-            </properties>
-          </component>
-          <grid id="e50d5" layout-manager="FormLayout">
-            <rowspec value="center:d:grow"/>
-            <rowspec value="top:4dlu:noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <colspec value="fill:d:grow"/>
-            <constraints>
-              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-vert="false"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
             <children>
               <component id="38fe2" class="javax.swing.JButton" binding="addButton">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <forms/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <horizontalAlignment value="0"/>
@@ -79,12 +63,19 @@
               </component>
               <component id="6b918" class="javax.swing.JButton" binding="removeButton">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <forms/>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <enabled value="true"/>
                   <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="remove"/>
+                </properties>
+              </component>
+              <component id="7b144" class="javax.swing.JButton" binding="frameworkSpecificButton" default-binding="true">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Framework Specific ..."/>
                 </properties>
               </component>
             </children>

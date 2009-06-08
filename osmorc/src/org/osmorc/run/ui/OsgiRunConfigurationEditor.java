@@ -25,20 +25,25 @@
 
 package org.osmorc.run.ui;
 
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.RawCommandLineEditor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.osmorc.frameworkintegration.BundleSelectionAction;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 import org.osmorc.run.OsgiRunConfiguration;
-import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
 import org.osmorc.run.OsgiRunConfigurationChecker;
+import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
 import org.osmorc.settings.ApplicationSettings;
 
 import javax.swing.*;
@@ -59,7 +64,8 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id$
  */
-public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfiguration> {
+public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfiguration> implements BundleSelectionAction.Context {
+    private final DefaultActionGroup frameworkSpecificBundleSelectionActions;
 
     public OsgiRunConfigurationEditor(final Project project) {
         ApplicationSettings registry = ServiceManager.getService(ApplicationSettings.class);
@@ -110,6 +116,17 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
                         " configuration files", null,
                 FileChooserDescriptorFactory.createSingleFolderDescriptor());
         frameworkDirField.getTextField().setColumns(30);
+
+        frameworkSpecificBundleSelectionActions = new DefaultActionGroup("frameworkSpecificBundleSelectionActions", true);
+
+        frameworkSpecificButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JBPopupFactory.getInstance().createActionGroupPopup(
+                        null, frameworkSpecificBundleSelectionActions,
+                        DataManager.getInstance().getDataContext(frameworkSpecificButton),
+                        JBPopupFactory.ActionSelectionAid.NUMBERING, true).showUnderneathOf(frameworkSpecificButton);
+            }
+        });
     }
 
     /**
@@ -117,6 +134,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
      * any framework bundles from the list, as they are no longer in classpath.
      */
     private void onFrameworkChange() {
+        frameworkSpecificBundleSelectionActions.removeAll();
         if (frameworkInstances.getSelectedItem() != null) {
             FrameworkInstanceDefinition frameworkInstanceDefinition =
                     (FrameworkInstanceDefinition) frameworkInstances.getSelectedItem();
@@ -147,6 +165,11 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
             // remove all framework bundles from the list
             RunConfigurationTableModel model = getTableModel();
             model.removeAllOfType(SelectedBundle.BundleType.FrameworkBundle);
+
+            for (BundleSelectionAction bundleSelectionAction : integrator.getBundleSelectionActions()) {
+                bundleSelectionAction.setContext(this);
+                frameworkSpecificBundleSelectionActions.add(bundleSelectionAction);
+            }
         }
     }
 
@@ -174,6 +197,24 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
                 model.addBundle(aModule);
             }
         }
+    }
+
+    @NotNull
+    public List<SelectedBundle> getCurrentlySelectedBundles() {
+        return getBundlesToRun();
+    }
+
+    public void addBundle(@NotNull SelectedBundle bundle) {
+        getTableModel().addBundle(bundle);
+    }
+
+    public void removeBundle(@NotNull SelectedBundle bundle) {
+        getTableModel().removeBundle(bundle);
+    }
+
+    @Nullable
+    public FrameworkInstanceDefinition getUsedFrameworkInstance() {
+        return (FrameworkInstanceDefinition) frameworkInstances.getSelectedItem();
     }
 
     protected void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
@@ -258,6 +299,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     private TextFieldWithBrowseButton workingDirField;
     private TextFieldWithBrowseButton frameworkDirField;
     private RawCommandLineEditor programParameters;
+    private JButton frameworkSpecificButton;
     private final Project project;
     private FrameworkRunPropertiesEditor currentFrameworkRunPropertiesEditor;
 
@@ -274,6 +316,10 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
         public List<SelectedBundle> getBundles() {
             return selectedBundles;
+        }
+
+        public void removeBundle(SelectedBundle bundle) {
+            removeBundleAt(selectedBundles.indexOf(bundle));
         }
 
         public void removeBundleAt(final int index) {
