@@ -4,9 +4,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.CoreXmlRecursiveElementVisitor;
+import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.intellij.core.resource.xml.IntellijXmlTag;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -14,7 +15,7 @@ public class IntellijResource implements IResource {
 
     private PsiFile _psiFile;
 
-    public IntellijResource(PsiFile psiFile) {
+    public IntellijResource(@NotNull PsiFile psiFile) {
         _psiFile = psiFile;
     }
 

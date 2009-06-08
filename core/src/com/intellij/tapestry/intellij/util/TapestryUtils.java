@@ -168,6 +168,11 @@ public class TapestryUtils {
     return TapestryModuleSupportLoader.getTapestryProject(module);
   }
 
+  @Nullable
+  public static XmlAttribute getTapestryAttribute(XmlTag tag, String attrName) {
+    XmlAttribute attribute = tag.getAttribute(attrName, TapestryConstants.TEMPLATE_NAMESPACE);
+    return attribute != null ? attribute : tag.getAttribute(attrName, "");
+  }
 
   /**
    * Creates a new component.

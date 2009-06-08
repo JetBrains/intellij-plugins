@@ -9,7 +9,6 @@ import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaType;
 import com.intellij.tapestry.core.java.coercion.TypeCoercionValidator;
@@ -87,8 +86,7 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
             annotateAttribute(attr);
           }
           for (TapestryParameter parameter : component.getParameters().values()) {
-            XmlAttribute attribute = tag.getAttribute(parameter.getName(), TapestryConstants.TEMPLATE_NAMESPACE);
-            if (attribute == null) attribute = tag.getAttribute(parameter.getName(), "");
+            XmlAttribute attribute = TapestryUtils.getTapestryAttribute(tag, parameter.getName());
             if (attribute == null) {
               if (parameter.isRequired() && !TapestryUtils.parameterDefinedInClass(parameter, elementClass, tag)) {
                 _annotationHolder.createErrorAnnotation(IdeaUtils.getNameElement(tag), "Missing required parameter \"" + parameter.getName() + "\"");

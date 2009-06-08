@@ -15,7 +15,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
@@ -79,9 +78,9 @@ public class ClassTemplateNavigation extends AnAction {
         if (psiFile == null)
             return;
 
-        if (psiFile.getFileType().equals(StdFileTypes.JAVA) && event.getPresentation().getText()
-                .equals("Class <-> Template Navigation")
-                && event.getDataContext().getData(DataKeys.MODULE.getName()) != null) {
+      final Module module = (Module)event.getDataContext().getData(DataKeys.MODULE.getName());
+      if (module != null && psiFile.getFileType().equals(StdFileTypes.JAVA)
+          && event.getPresentation().getText().equals("Class <-> Template Navigation")) {
 
             PresentationLibraryElement tapestryElement;
 
@@ -90,27 +89,22 @@ public class ClassTemplateNavigation extends AnAction {
 
                 if (psiClass == null) {
                     showCantNavigateMessage();
-
                     return;
                 }
 
                 tapestryElement = PresentationLibraryElement.createProjectElementInstance(
-                        new IntellijJavaClassType((Module) event.getDataContext().getData(DataKeys.MODULE.getName()),
-                                psiClass.getContainingFile()),
-                        TapestryModuleSupportLoader.getTapestryProject(
-                                (Module) event.getDataContext().getData(DataKeys.MODULE.getName()))
+                        new IntellijJavaClassType(module, psiClass.getContainingFile()),
+                        TapestryModuleSupportLoader.getTapestryProject(module)
                 );
             } catch (NotTapestryElementException e) {
                 showCantNavigateMessage();
-
                 return;
             }
 
             if (tapestryElement.allowsTemplate() && tapestryElement.getTemplate().length != 0) {
                 IResource template = tapestryElement.getTemplate()[0];
                 if (template != null) {
-                    FileEditorManager.getInstance(project)
-                            .openFile(((IntellijResource) template).getPsiFile().getVirtualFile(), true);
+                    FileEditorManager.getInstance(project).openFile(((IntellijResource) template).getPsiFile().getVirtualFile(), true);
                 }
             } else {
                 showCantNavigateMessage();
@@ -124,8 +118,7 @@ public class ClassTemplateNavigation extends AnAction {
                 .equals("Tapestry Class")) {
 
           IJavaClassType elementClass = ComponentUtils
-                  .findClassFromTemplate(new IntellijResource(psiFile), TapestryModuleSupportLoader.getTapestryProject(
-                          (Module) event.getDataContext().getData(DataKeys.MODULE.getName())));
+                  .findClassFromTemplate(new IntellijResource(psiFile), TapestryModuleSupportLoader.getTapestryProject(module));
 
             if (elementClass != null) {
                 FileEditorManager.getInstance(project).openFile(

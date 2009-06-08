@@ -31,22 +31,10 @@ public class IntellijResourceFinder implements IResourceFinder {
      */
     public Collection<IResource> findClasspathResource(String path, boolean includeDependencies) {
         Collection<IResource> resources = new ArrayList<IResource>();
-        GlobalSearchScope searchScope;
-        if (includeDependencies) {
-            searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(_module, false);
-        } else {
-            searchScope = GlobalSearchScope.moduleScope(_module);
-        }
 
-        PsiPackage psiPackage = JavaPsiFacade.getInstance(_module.getProject()).findPackage(PathUtils.pathIntoPackage(path, true));
-        if (psiPackage == null) {
-            return resources;
-        }
-
-        PsiDirectory[] packageDirectories = psiPackage.getDirectories(searchScope);
-
-        for (PsiDirectory directory : packageDirectories) {
-            PsiFile resource = directory.findFile(PathUtils.getLastPathElement(path));
+      String filename = PathUtils.getLastPathElement(path);
+        for (PsiDirectory directory : findPackageDirectories(path, includeDependencies)) {
+            PsiFile resource = directory.findFile(filename);
             if (resource != null) {
                 resources.add(new IntellijResource(resource));
             }
@@ -55,26 +43,19 @@ public class IntellijResourceFinder implements IResourceFinder {
         return resources;
     }
 
-    /**
+  private PsiDirectory[] findPackageDirectories(String path, boolean includeDependencies) {
+    PsiPackage psiPackage = JavaPsiFacade.getInstance(_module.getProject()).findPackage(PathUtils.pathIntoPackage(path, true));
+    return psiPackage == null ? PsiDirectory.EMPTY_ARRAY : psiPackage.getDirectories(getSearchScope(includeDependencies));
+  }
+
+  /**
      * {@inheritDoc}
      */
     public Collection<IResource> findLocalizedClasspathResource(String path, boolean includeDependencies) {
         Collection<IResource> resources = new ArrayList<IResource>();
-        GlobalSearchScope searchScope;
-        if (includeDependencies) {
-            searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(_module, false);
-        } else {
-            searchScope = GlobalSearchScope.moduleScope(_module);
-        }
 
-        PsiPackage psiPackage = JavaPsiFacade.getInstance(_module.getProject()).findPackage(PathUtils.pathIntoPackage(path, true));
-        if (psiPackage == null) {
-            return resources;
-        }
-
-        PsiDirectory[] packageDirectories = psiPackage.getDirectories(searchScope);
         String filename = PathUtils.getLastPathElement(path);
-        for (PsiDirectory directory : packageDirectories) {
+        for (PsiDirectory directory : findPackageDirectories(path, includeDependencies)) {
             for (PsiFile file : directory.getFiles()) {
                 if (LocalizationUtils.unlocalizeFileName(file.getName()).equals(filename)) {
                     resources.add(new IntellijResource(file));
@@ -85,7 +66,14 @@ public class IntellijResourceFinder implements IResourceFinder {
         return resources;
     }
 
-    /**
+  private GlobalSearchScope getSearchScope(boolean includeDependencies) {
+    if (includeDependencies) {
+        return GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(_module, false);
+    }
+    return GlobalSearchScope.moduleScope(_module);
+  }
+
+  /**
      * {@inheritDoc}
      */
     @Nullable
