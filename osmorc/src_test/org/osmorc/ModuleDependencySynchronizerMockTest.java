@@ -35,6 +35,9 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.osmorc.facet.OsmorcFacetUtil;
+import org.osmorc.facet.OsmorcFacet;
+import org.osmorc.facet.OsmorcFacetType;
+import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.LibraryHandler;
 
 import java.util.ArrayList;
@@ -78,12 +81,17 @@ public class ModuleDependencySynchronizerMockTest {
     }
 
     @Test
-    public void testDetermineOldModuleDependencies() {
+    public void testDetermineOldModuleDependenciesWithManualEditing() {
         ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
         expect(modelMock.getOrderEntries())
                 .andReturn(new OrderEntry[]{moduleOrderEntry1, libraryOrderEntry1, moduleOrderEntry2, libraryOrderEntry2})
                 .times(1);
         expect(osmorcFacetUtil.hasOsmorcFacet(module1)).andReturn(true).times(1);
+
+        OsmorcFacetConfiguration configuration = new OsmorcFacetConfiguration();
+        configuration.setOsmorcControlsManifest(false);
+        OsmorcFacet facet = new OsmorcFacet(OsmorcFacetType.INSTANCE, module1, configuration, null, "OSGi");
+        expect(osmorcFacetUtil.getOsmorcFacet(module1)).andReturn(facet).times(1);
         expect(osmorcFacetUtil.hasOsmorcFacet(module2)).andReturn(false).times(1);
         expect(libraryHandler.isFrameworkInstanceLibrary(libraryOrderEntry1)).andReturn(false);
         expect(libraryHandler.isFrameworkInstanceLibrary(libraryOrderEntry2)).andReturn(true);
@@ -103,6 +111,44 @@ public class ModuleDependencySynchronizerMockTest {
 
         assertThat(oldEntries.size(), equalTo(2));
         assertThat(oldEntries, hasItem((OrderEntry) moduleOrderEntry1));
+        assertThat(oldEntries, hasItem((OrderEntry) libraryOrderEntry2));
+
+        verify(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock);
+    }
+
+    @Test
+    public void testDetermineOldModuleDependenciesWithoutManualEditing() {
+        ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
+        expect(modelMock.getOrderEntries())
+                .andReturn(new OrderEntry[]{moduleOrderEntry1, libraryOrderEntry1, moduleOrderEntry2, libraryOrderEntry2})
+                .times(1);
+        expect(osmorcFacetUtil.hasOsmorcFacet(module1)).andReturn(true).times(1);
+
+        OsmorcFacetConfiguration configuration = new OsmorcFacetConfiguration();
+        configuration.setOsmorcControlsManifest(true);
+        OsmorcFacet facet = new OsmorcFacet(OsmorcFacetType.INSTANCE, module1, configuration, null, "OSGi");
+        expect(osmorcFacetUtil.getOsmorcFacet(module1)).andReturn(facet).times(1);
+        expect(osmorcFacetUtil.hasOsmorcFacet(module2)).andReturn(false).times(1);
+        expect(libraryHandler.isFrameworkInstanceLibrary(libraryOrderEntry1)).andReturn(false);
+        expect(libraryHandler.isFrameworkInstanceLibrary(libraryOrderEntry2)).andReturn(true);
+
+
+        replay(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock);
+
+        ModuleDependencySynchronizer testObject =
+                new ModuleDependencySynchronizer(bundleManager, moduleRootManager, application, libraryHandler,
+                        osmorcFacetUtil);
+
+
+        List<OrderEntry> oldEntries = testObject.determineOldModuleDependencies(modelMock);
+
+        assertThat(oldEntries.size(), equalTo(1));
         assertThat(oldEntries, hasItem((OrderEntry) libraryOrderEntry2));
 
         verify(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
