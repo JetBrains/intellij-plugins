@@ -2,20 +2,20 @@ package com.intellij.struts2.preview;
 
 import com.intellij.javaee.web.DeployedFileUrlConverter;
 import com.intellij.javaee.web.facet.WebFacet;
-import com.intellij.psi.PsiFile;
+import com.intellij.openapi.paths.PathReference;
 import com.intellij.psi.PsiElement;
-import com.intellij.struts2.dom.struts.model.StrutsManager;
-import com.intellij.struts2.dom.struts.model.StrutsModel;
+import com.intellij.psi.PsiFile;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
+import com.intellij.struts2.dom.struts.model.StrutsManager;
+import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.Processor;
-import com.intellij.openapi.paths.PathReference;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author Dmitry Avdeev
@@ -28,7 +28,7 @@ public class Struts2UrlConverter extends DeployedFileUrlConverter {
     if (combinedModel != null) {      
       combinedModel.processActions(new Processor<Action>() {
         public boolean process(final Action action) {
-          for (Result result : action.getResults()) {
+          for (final Result result : action.getResults()) {
             final PathReference pathReference = result.getValue();
             if (pathReference != null) {
               final PsiElement psiElement = pathReference.resolve();

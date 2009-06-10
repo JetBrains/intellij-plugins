@@ -26,10 +26,10 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,8 +63,8 @@ public class NamespaceReferenceProvider extends PsiReferenceProviderBase {
 
     @NotNull
     public ResolveResult[] multiResolve(final boolean incompleteCode) {
-      final List<ResolveResult> resolveResults = new ArrayList<ResolveResult>();
       final String namespace = myElement.getValue();
+      final List<ResolveResult> resolveResults = new SmartList<ResolveResult>();
       for (final StrutsPackage strutsPackage : strutsModel.getStrutsPackages()) {
         if (namespace.equals(strutsPackage.searchNamespace())) {
           final XmlTag packageTag = strutsPackage.getXmlTag();

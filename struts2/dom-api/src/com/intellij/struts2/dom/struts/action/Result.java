@@ -17,6 +17,7 @@ package com.intellij.struts2.dom.struts.action;
 
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.struts2.dom.params.ParamsElement;
+import com.intellij.struts2.dom.struts.HasResultType;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NonNls;
@@ -28,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
  * @author Yann C&eacute;bron
  */
 @Convert(StrutsPathReferenceConverter.class)
-public interface Result extends ParamsElement, GenericDomValue<PathReference> {
+public interface Result extends HasResultType, ParamsElement, GenericDomValue<PathReference> {
 
   /**
    * Default result name.

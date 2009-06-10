@@ -22,6 +22,7 @@ import com.intellij.facet.ui.FacetEditorsFactory;
 import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.facet.ui.libraries.FacetLibrariesValidator;
 import com.intellij.facet.ui.libraries.LibraryInfo;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.WriteExternalException;
@@ -41,7 +42,7 @@ import java.util.Set;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsFacetConfiguration implements FacetConfiguration, ModificationTracker {
+public class StrutsFacetConfiguration implements FacetConfiguration, ModificationTracker, Disposable {
 
   // Filesets
   @NonNls
@@ -91,7 +92,7 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
       final String setId = ((Element) setElement).getAttributeValue(SET_ID);
       final String removed = ((Element) setElement).getAttributeValue(SET_REMOVED);
       if (setName != null && setId != null) {
-        final StrutsFileSet fileSet = new StrutsFileSet(setId, setName);
+        final StrutsFileSet fileSet = new StrutsFileSet(setId, setName, this);
         final List files = ((Element) setElement).getChildren(FILE);
         for (final Object fileElement : files) {
           final String text = ((Element) fileElement).getText();
@@ -128,4 +129,6 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
     myModificationCount++;
   }
 
+  public void dispose() {
+  }
 }

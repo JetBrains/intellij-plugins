@@ -28,6 +28,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.tree.TreeUtil;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import java.util.*;
@@ -46,16 +47,16 @@ public class StrutsFilesTree extends CheckboxTreeBase {
 
   public StrutsFilesTree() {
     super(new CheckboxTreeCellRendererBase() {
-      public void customizeCellRenderer(final JTree tree,
-                                        final Object value,
-                                        final boolean selected,
-                                        final boolean expanded,
-                                        final boolean leaf,
-                                        final int row,
-                                        final boolean hasFocus) {
+      public void customizeRenderer(final JTree tree,
+                                    final Object value,
+                                    final boolean selected,
+                                    final boolean expanded,
+                                    final boolean leaf,
+                                    final int row,
+                                    final boolean hasFocus) {
 
         final ColoredTreeCellRenderer renderer = getTextRenderer();
-        final Object object = ((CheckedTreeNode) value).getUserObject();
+        final Object object = ((DefaultMutableTreeNode) value).getUserObject();
         if (object instanceof Module) {
           final Module module = (Module) object;
           final Icon icon = module.getModuleType().getNodeIcon(expanded);

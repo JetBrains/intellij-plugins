@@ -20,6 +20,7 @@ import com.intellij.codeInsight.lookup.LookupValueFactory;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
@@ -33,8 +34,8 @@ import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
-import com.intellij.util.ProcessingContext;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +69,7 @@ public class ActionReferenceProvider extends PsiReferenceProviderBase {
     final List<Action> actions = strutsModel.findActionsByName(actionName, namespace);
     final Action action = actions.isEmpty() ? null : actions.get(0);
 
-    final int bangIndex = path.indexOf(TaglibUtil.BANG_SYMBOL);
+    final int bangIndex = StringUtil.indexOf(path, TaglibUtil.BANG_SYMBOL);
     if (bangIndex == -1) {
       return new PsiReference[]{new ActionReference(xmlAttributeValue, action, namespace, strutsModel)};
     }

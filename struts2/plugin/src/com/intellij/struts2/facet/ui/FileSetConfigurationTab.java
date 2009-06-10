@@ -17,6 +17,7 @@ package com.intellij.struts2.facet.ui;
 
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
+import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -30,7 +31,6 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.treeStructure.*;
-import com.intellij.util.Icons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,6 +103,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
       }
     };
     myTree.setRootVisible(false);
+    myTree.setShowsRootHandles(true); // show expand/collapse handles
     myBuilder = new SimpleTreeBuilder(myTree, (DefaultTreeModel) myTree.getModel(), structure, null);
     myBuilder.initRoot();
 
@@ -116,12 +117,14 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
     myAddSetButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        final StrutsFileSet fileSet = new StrutsFileSet(StrutsFileSet.getUniqueId(myBuffer),
-                                                        StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.myfileset"), myBuffer)) {
-          public boolean isNew() {
-            return true;
-          }
-        };
+        final StrutsFileSet fileSet =
+            new StrutsFileSet(StrutsFileSet.getUniqueId(myBuffer),
+                              StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.myfileset"), myBuffer),
+                              originalConfiguration) {
+              public boolean isNew() {
+                return true;
+              }
+            };
 
         final FileSetEditor editor = new FileSetEditor(myPanel,
                                                        fileSet,
@@ -129,7 +132,9 @@ public class FileSetConfigurationTab extends FacetEditorTab {
                                                        myConfigsSearcher);
         editor.show();
         if (editor.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-          myBuffer.add(editor.getEditedFileSet());
+          final StrutsFileSet editedFileSet = editor.getEditedFileSet();
+          Disposer.register(strutsFacetConfiguration, editedFileSet);
+          myBuffer.add(editedFileSet);
           myModified = true;
           myBuilder.updateFromRoot();
           selectFileSet(fileSet);
@@ -151,6 +156,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
             myModified = true;
             myBuffer.remove(fileSet);
             final StrutsFileSet edited = editor.getEditedFileSet();
+            Disposer.register(strutsFacetConfiguration, edited);
             myBuffer.add(edited);
             edited.setAutodetected(false);
             myBuilder.updateFromRoot();
@@ -216,6 +222,11 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
       if (node instanceof FileSetNode) {
         final StrutsFileSet fileSet = ((FileSetNode) node).mySet;
+        if (fileSet.getFiles().isEmpty()) {
+          myBuffer.remove(fileSet);
+          return;
+        }
+
         final int result = Messages.showYesNoDialog(myPanel,
                                                     StrutsBundle.message("facet.fileset.removefileset.question",
                                                                          fileSet.getName()),
@@ -229,8 +240,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
             myBuffer.remove(fileSet);
           }
         }
-      }
-      else if (node instanceof ConfigFileNode) {
+      } else if (node instanceof ConfigFileNode) {
         final VirtualFilePointer filePointer = ((ConfigFileNode) node).myFilePointer;
         final StrutsFileSet fileSet = ((FileSetNode) node.getParent()).mySet;
         fileSet.removeFile(filePointer);
@@ -241,7 +251,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
   @Nullable
   public Icon getIcon() {
-    return Icons.PACKAGE_ICON;
+    return StrutsIcons.STRUTS_CONFIG_FILE_ICON;
   }
 
   @Nls
@@ -274,7 +284,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
     if (module != null) {
       final Set<StrutsFileSet> sets = StrutsManager.getInstance(module.getProject()).getAllConfigFileSets(module);
       for (final StrutsFileSet fileSet : sets) {
-        myBuffer.add(new StrutsFileSet(fileSet));
+        myBuffer.add(/*new StrutsFileSet(fileSet)*/fileSet);
       }
     } else {
       final Set<StrutsFileSet> list = originalConfiguration.getFileSets();
@@ -298,17 +308,22 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
     FileSetNode(final StrutsFileSet fileSet) {
       mySet = fileSet;
+
+      final PresentationData presentationData = getPresentation();
       final String name = mySet.getName();
+
       if (fileSet.getFiles().isEmpty()) {
-        addErrorText(name, StrutsBundle.message("facet.fileset.nofiles.attached"));
+        presentationData.addText(new ColoredFragment(name, StrutsBundle.message("facet.fileset.nofiles.attached"),
+                                                     getErrorAttributes()));
       } else {
-        addPlainText(name);
+        presentationData.addText(new ColoredFragment(name, getPlainAttributes()));
       }
 
       if (fileSet.isAutodetected()) {
-        addColoredFragment(StrutsBundle.message("facet.fileset.autodetected"), SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
+        presentationData.addText(new ColoredFragment(StrutsBundle.message("facet.fileset.autodetected"),
+                                                     SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES));
       }
-      setIcons(fileSet.getIcon(), Icons.PACKAGE_OPEN_ICON);
+
     }
 
     public SimpleNode[] getChildren() {
@@ -355,11 +370,12 @@ public class FileSetConfigurationTab extends FacetEditorTab {
     private void renderFile(final SimpleTextAttributes main,
                             final SimpleTextAttributes full,
                             @Nullable final String toolTip) {
-      addColoredFragment(myFilePointer.getFileName(), toolTip, main);
+      final PresentationData presentation = getPresentation();
+      presentation.addText(new ColoredFragment(myFilePointer.getFileName(), toolTip, main));
 
       final VirtualFile file = myFilePointer.getFile();
       if (file != null) {
-        addColoredFragment(" (" + file.getPath() + ")", toolTip, full);
+        presentation.addText(new ColoredFragment(" (" + file.getPath() + ")", toolTip, full));
       }
     }
 

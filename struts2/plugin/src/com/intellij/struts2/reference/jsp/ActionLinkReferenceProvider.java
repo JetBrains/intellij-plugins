@@ -21,6 +21,7 @@ import com.intellij.javaee.web.ServletMappingInfo;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -30,8 +31,8 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.util.Function;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +66,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    if (text.indexOf("/") != -1) {
+    if (StringUtil.indexOf(text, '/') != -1) {
       return new PsiReference[]{
               new ActionLinkPackageReference((XmlElement) psiElement, offset, text, soft, strutsModel),
               new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel)
@@ -215,7 +216,7 @@ TODO not needed so far ?!
       fullActionPath = PathReference.trimPath(getValue());
       namespace = getNamespace(fullActionPath);
 
-      final int firstSlash = fullActionPath.indexOf("/");
+      final int firstSlash = StringUtil.indexOf(fullActionPath, '/');
       if (firstSlash != -1) {
         setRangeInElement(TextRange.from(offset + firstSlash, namespace.length()));
       }

@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class IncludeFileResolvingConverter extends ResolvingConverter<PsiFile> implements CustomReferenceConverter {
 
-  public String toString(@Nullable PsiFile psiFile, final ConvertContext context) {
+  public String toString(@Nullable final PsiFile psiFile, final ConvertContext context) {
     if (psiFile == null) {
       return null;
     }

@@ -123,8 +123,11 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
           final PsiDirectory directory = PsiManager.getInstance(module.getProject()).findDirectory(sourceRoots[0]);
           if (directory != null &&
               directory.findFile(StrutsConstants.STRUTS_DEFAULT_FILENAME) == null) {
-            final FileTemplate strutsXmlTemplate = FileTemplateManager.getInstance().getJ2eeTemplate(StrutsConstants.STRUTS_DEFAULT_FILENAME);
+            final FileTemplate strutsXmlTemplate = FileTemplateManager.getInstance()
+                .getJ2eeTemplate(StrutsConstants.STRUTS_DEFAULT_FILENAME);
             try {
+              final StrutsFacetConfiguration strutsFacetConfiguration = strutsFacet.getConfiguration();
+
               // create empty struts.xml & fileset
               final PsiElement psiElement = FileTemplateUtil.createFromTemplate(strutsXmlTemplate,
                                                                                 StrutsConstants.STRUTS_DEFAULT_FILENAME,
@@ -132,9 +135,10 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
                                                                                 directory);
               final Set<StrutsFileSet> empty = Collections.emptySet();
               final StrutsFileSet fileSet = new StrutsFileSet(StrutsFileSet.getUniqueId(empty),
-                                                              StrutsFileSet.getUniqueName("Default File Set", empty));
+                                                              StrutsFileSet.getUniqueName("Default File Set", empty),
+                                                              strutsFacetConfiguration);
               fileSet.addFile(((XmlFile) psiElement).getVirtualFile());
-              strutsFacet.getConfiguration().getFileSets().add(fileSet);
+              strutsFacetConfiguration.getFileSets().add(fileSet);
 
               // create filter & mapping in web.xml
               new WriteCommandAction.Simple(modifiableRootModel.getProject()) {

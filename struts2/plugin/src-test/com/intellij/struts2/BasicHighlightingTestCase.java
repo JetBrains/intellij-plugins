@@ -27,6 +27,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.struts2.facet.StrutsFacet;
+import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import com.intellij.struts2.facet.StrutsFacetType;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
@@ -173,11 +174,13 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   }
 
   protected void createStrutsFileSet(@NonNls final String... fileNames) {
-    final StrutsFileSet fileSet = new StrutsFileSet("test", "test");
+    final StrutsFacetConfiguration facetConfiguration = myFacet.getConfiguration();
+
+    final StrutsFileSet fileSet = new StrutsFileSet("test", "test", facetConfiguration);
     for (final String fileName : fileNames) {
       addToFileSet(fileSet, fileName);
     }
-    final Set<StrutsFileSet> strutsFileSetSet = myFacet.getConfiguration().getFileSets();
+    final Set<StrutsFileSet> strutsFileSetSet = facetConfiguration.getFileSets();
     strutsFileSetSet.clear();
     strutsFileSetSet.add(fileSet);
   }

@@ -15,27 +15,30 @@
 
 package com.intellij.struts2.facet.ui;
 
-import com.intellij.ide.util.ElementsChooser;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager;
-import com.intellij.util.Icons;
+import com.intellij.struts2.facet.StrutsFacetConfiguration;
+import com.intellij.util.Function;
+import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.UniqueNameGenerator;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Groups one or more struts.xml files in a named set.
+ * Groups one or more {@code struts.xml} files in a named set.
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsFileSet implements ElementsChooser.ElementProperties {
+public class StrutsFileSet implements Disposable {
 
   private final String id;
   private String name;
@@ -43,61 +46,48 @@ public class StrutsFileSet implements ElementsChooser.ElementProperties {
   private boolean autodetected;
   private boolean removed;
 
-  private final List<VirtualFilePointer> files = new ArrayList<VirtualFilePointer>();
+  private final List<VirtualFilePointer> files = new SmartList<VirtualFilePointer>();
 
-  @NonNls private static final String ID_PREFIX = "s2fileset";
+  @NonNls
+  private static final String ID_PREFIX = "s2fileset";
 
-  public StrutsFileSet(@NotNull @NonNls final String id, @NotNull @NonNls final String name) {
+  private static final Function<StrutsFileSet, String> FILESET_NAME_FUNCTION = new Function<StrutsFileSet, String>() {
+    public String fun(final StrutsFileSet strutsFileSet) {
+      return strutsFileSet.getName();
+    }
+  };
+
+  private static final Function<StrutsFileSet, String> FILESET_ID_FUNCTION = new Function<StrutsFileSet, String>() {
+    public String fun(final StrutsFileSet strutsFileSet) {
+      return strutsFileSet.getId();
+    }
+  };
+
+  public StrutsFileSet(@NotNull @NonNls final String id,
+                       @NotNull @NonNls final String name,
+                       @NotNull final StrutsFacetConfiguration parent) {
     this.id = id;
     this.name = name;
+
+    Disposer.register(parent, this);
   }
 
   public StrutsFileSet(@NotNull final StrutsFileSet original) {
-    this(original.getId(), original.getName());
-    autodetected = original.isAutodetected();
-    removed = original.isRemoved();
-    files.addAll(original.getFiles());
+    id = original.id;
+    name = original.name;
+    files.addAll(original.files);
+    autodetected = original.autodetected;
+    removed = original.removed;
   }
 
   public static String getUniqueId(final Set<StrutsFileSet> list) {
-    int index = 0;
-    for (final StrutsFileSet fileSet : list) {
-      if (fileSet.getId().startsWith(ID_PREFIX)) {
-        final String s = fileSet.getId().substring(ID_PREFIX.length());
-        try {
-          final int i = Integer.parseInt(s);
-          index = Math.max(i, index);
-        } catch (NumberFormatException e) {
-          //
-        }
-      }
-    }
-    return ID_PREFIX + (index + 1);
+    return UniqueNameGenerator.generateUniqueName(ID_PREFIX, "", "",
+                                                  ContainerUtil.map2List(list, FILESET_ID_FUNCTION));
   }
 
   public static String getUniqueName(final String prefix, final Set<StrutsFileSet> list) {
-    int index = 0;
-    for (final StrutsFileSet fileSet : list) {
-      if (fileSet.getName().startsWith(prefix)) {
-        final String s = fileSet.getName().substring(prefix.length());
-        int i;
-        try {
-          i = Integer.parseInt(s);
-        } catch (NumberFormatException e) {
-          i = 0;
-        }
-        index = Math.max(i + 1, index);
-      }
-    }
-    return index == 0 ? prefix : prefix + " " + index;
-  }
-
-  public Icon getIcon() {
-    return Icons.PACKAGE_ICON;
-  }
-
-  public Color getColor() {
-    return null;
+    return UniqueNameGenerator.generateUniqueName(prefix + " ", "", "",
+                                                  ContainerUtil.map2List(list, FILESET_NAME_FUNCTION));
   }
 
   public boolean isNew() {
@@ -143,8 +133,10 @@ public class StrutsFileSet implements ElementsChooser.ElementProperties {
   }
 
   public void addFile(@NonNls final String url) {
-    final VirtualFilePointer filePointer = VirtualFilePointerManager.getInstance().create(url, null);
-    files.add(filePointer);
+    if (!StringUtil.isEmptyOrSpaces(url)) {
+      final VirtualFilePointer filePointer = VirtualFilePointerManager.getInstance().create(url, this, null);
+      files.add(filePointer);
+    }
   }
 
   public void removeFile(final VirtualFilePointer file) {
@@ -180,4 +172,8 @@ public class StrutsFileSet implements ElementsChooser.ElementProperties {
   public String toString() {
     return name;
   }
+
+  public void dispose() {
+  }
+
 }

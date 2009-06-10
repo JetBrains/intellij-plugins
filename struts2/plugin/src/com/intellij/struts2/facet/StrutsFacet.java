@@ -22,6 +22,7 @@ import com.intellij.facet.FacetTypeId;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +42,7 @@ public class StrutsFacet extends Facet<StrutsFacetConfiguration> {
                      @NotNull final StrutsFacetConfiguration configuration,
                      final Facet underlyingFacet) {
     super(facetType, module, name, configuration, underlyingFacet);
+    Disposer.register(this, configuration);
   }
 
   /**

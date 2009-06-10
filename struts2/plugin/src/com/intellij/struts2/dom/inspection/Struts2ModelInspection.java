@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.inspection;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
@@ -116,7 +117,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     }
 
     // hack for suppressing wildcard-resolving
-    return stringValue == null || stringValue.indexOf('{') < 0;
+    return stringValue == null || StringUtil.indexOf(stringValue, '{') < 0;
   }
 
   protected void checkDomElement(final DomElement element,

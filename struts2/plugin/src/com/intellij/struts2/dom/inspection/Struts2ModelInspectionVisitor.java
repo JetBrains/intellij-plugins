@@ -43,6 +43,7 @@ import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"UnusedDeclaration"})
 class Struts2ModelInspectionVisitor implements DomElementVisitor {
 
   private final DomElementAnnotationHolder holder;
@@ -76,7 +77,7 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
 
   public void visitStrutsPackage(final StrutsPackage strutsPackage) {
     final String namespace = strutsPackage.getNamespace().getStringValue();
-    if (namespace != null && !namespace.startsWith("/")) {
+    if (namespace != null && !StringUtil.startsWithChar(namespace, '/')) {
       holder.createProblem(strutsPackage.getNamespace(),
                            StrutsBundle.message("dom.strutspackage.must.start.with.slash"));
     }

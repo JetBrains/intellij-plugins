@@ -135,11 +135,11 @@ public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaMod
       return "";
     }
 
-    public <T> T getUserData(final Key<T> key) {
+    public <T> T getUserData(@NotNull final Key<T> key) {
       return null;
     }
 
-    public <T> void putUserData(final Key<T> key, final T value) {
+    public <T> void putUserData(@NotNull final Key<T> key, final T value) {
     }
   };
 

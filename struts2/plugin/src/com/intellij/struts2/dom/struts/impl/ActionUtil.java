@@ -17,13 +17,14 @@
 package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PropertyUtil;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -48,12 +49,10 @@ final class ActionUtil {
                              @NotNull @NonNls final String checkPath) {
 
     // do we have any wildcard-markers in our path? no --> exact compare
-    if (actionPath.indexOf("*") == -1) {
+    if (StringUtil.indexOf(actionPath, '*') == -1) {
       return checkPath.equals(actionPath);
     }
-
-    final String matchString = actionPath.replaceAll("\\*", "[^/]*");
-    return Pattern.matches(matchString, checkPath);
+    return Pattern.matches(actionPath.replaceAll("\\*", "[^/]*"), checkPath);
   }
 
   /**
@@ -72,7 +71,7 @@ final class ActionUtil {
                                                                               projectScope);
     final PsiClassType exceptionType = psiElementFactory.createTypeByFQClassName("java.lang.Exception", projectScope);
 
-    final List<PsiMethod> actionMethods = new ArrayList<PsiMethod>();
+    final List<PsiMethod> actionMethods = new SmartList<PsiMethod>();
     for (final PsiMethod psiMethod : actionClass.getAllMethods()) {
 
       if (psiMethod.isConstructor()) {

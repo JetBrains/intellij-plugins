@@ -14,6 +14,7 @@
  */
 package com.intellij.struts2.reference.jsp;
 
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +28,7 @@ final class TaglibUtil {
   /**
    * Splits action-name from action-method.
    */
-  static final String BANG_SYMBOL = "!";
+  static final char BANG_SYMBOL = '!';
 
   private TaglibUtil() {
   }
@@ -52,7 +53,7 @@ final class TaglibUtil {
   @NotNull
   @NonNls
   static String trimActionPath(@NotNull @NonNls final String attributeValue) {
-    final int bangIndex = attributeValue.indexOf(BANG_SYMBOL);
+    final int bangIndex = StringUtil.indexOf(attributeValue, BANG_SYMBOL);
     if (bangIndex == -1) {
       return attributeValue;
     }

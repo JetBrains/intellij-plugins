@@ -53,7 +53,7 @@ public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvide
     }
 
     final Set<StrutsFileSet> fileSets = StrutsManager.getInstance(project).getAllConfigFileSets(module);
-    for (StrutsFileSet fileSet : fileSets) {
+    for (final StrutsFileSet fileSet : fileSets) {
       if (fileSet.hasFile(file)) {
         return true;
       }

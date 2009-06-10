@@ -24,6 +24,7 @@ import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.Function;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.Processor;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.model.impl.DomModelImpl;
@@ -84,7 +85,7 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
   // TODO performance, use caching?!
   @NotNull
   public List<Action> findActionsByClass(@NotNull final PsiClass clazz) {
-    final List<Action> actionResultList = new ArrayList<Action>();
+    final List<Action> actionResultList = new SmartList<Action>();
 
     for (final StrutsPackage strutsPackage : getStrutsPackages()) {
       for (final Action action : strutsPackage.getActions()) {

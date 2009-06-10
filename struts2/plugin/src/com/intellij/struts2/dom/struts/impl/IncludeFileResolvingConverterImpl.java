@@ -41,7 +41,7 @@ import java.util.Set;
  */
 public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConverter {
 
-  public PsiFile fromString(@Nullable @NonNls String value, final ConvertContext context) {
+  public PsiFile fromString(@Nullable @NonNls final String value, final ConvertContext context) {
     if (value == null) {
       return null;
     }

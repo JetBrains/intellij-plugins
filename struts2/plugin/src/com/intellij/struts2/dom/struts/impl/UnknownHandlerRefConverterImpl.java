@@ -67,8 +67,8 @@ public class UnknownHandlerRefConverterImpl extends UnknownHandlerRefConverter {
   private static final Function<StrutsRoot, Collection<? extends Bean>> BEANS_OF_TYPE_UNKNOWN_HANDLER_COLLECTOR =
       new Function<StrutsRoot, Collection<? extends Bean>>() {
         public Collection<? extends Bean> fun(final StrutsRoot strutsRoot) {
-          final Set<Bean> unknownHandlerBeans = new HashSet<Bean>();
-          for (Bean bean : strutsRoot.getBeans()) {
+          final Set<Bean> unknownHandlerBeans = new HashSet<Bean>(1);
+          for (final Bean bean : strutsRoot.getBeans()) {
             if (Comparing.equal(bean.getBeanType().getStringValue(), UNKNOWN_HANDLER_CLASS)) {
               unknownHandlerBeans.add(bean);
             }

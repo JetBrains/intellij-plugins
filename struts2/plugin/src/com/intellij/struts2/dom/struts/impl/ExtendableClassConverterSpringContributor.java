@@ -115,9 +115,8 @@ public class ExtendableClassConverterSpringContributor extends ExtendableClassCo
         return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
 
-      final List lookups = new ArrayList();
       final Collection<? extends SpringBeanPointer> list = model.getAllCommonBeans(true);
-
+      final List lookups = new ArrayList(list.size());
       for (final SpringBeanPointer bean : list) {
         final String beanName = bean.getName();
         final PsiFile psiFile = bean.getContainingFile();
