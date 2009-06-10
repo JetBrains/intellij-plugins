@@ -33,7 +33,7 @@ public interface Bean extends DomElement {
   GenericAttributeValue<String> getName();
 
   @Attribute(value = "type")
-  @ExtendClass(instantiatable = false, allowAbstract = false, allowInterface = true)
+  @ExtendClass(instantiatable = false, allowAbstract = true, allowInterface = true)
   GenericAttributeValue<PsiClass> getBeanType();
 
   @Attribute(value = "class")

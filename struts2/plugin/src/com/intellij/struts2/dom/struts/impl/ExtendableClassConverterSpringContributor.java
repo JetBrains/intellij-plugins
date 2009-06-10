@@ -68,15 +68,32 @@ public class ExtendableClassConverterSpringContributor extends ExtendableClassCo
   @NotNull
   public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                @NotNull final ProcessingContext context) {
-    return new PsiReference[]{new SpringBeanReference((XmlAttributeValue) element)};
+    final SpringModel springModel = getSpringModel(element);
+    if (springModel == null) {
+      return PsiReference.EMPTY_ARRAY;
+    }
+
+    return new PsiReference[]{new SpringBeanReference((XmlAttributeValue) element, springModel)};
   }
 
+  @Nullable
+  private static SpringModel getSpringModel(final PsiElement psiElement) {
+    final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
+    if (module == null) {
+      return null;
+    }
+
+    return SpringManager.getInstance(module.getProject()).getCombinedModel(module);
+  }
 
   // TODO provide QuickFix to create Spring bean?
   private static class SpringBeanReference extends PsiReferenceBase<XmlAttributeValue> {
 
-    private SpringBeanReference(final XmlAttributeValue element) {
+    private final SpringModel springModel;
+
+    private SpringBeanReference(final XmlAttributeValue element, final SpringModel springModel) {
       super(element);
+      this.springModel = springModel;
     }
 
     public boolean isSoft() {
@@ -84,13 +101,8 @@ public class ExtendableClassConverterSpringContributor extends ExtendableClassCo
     }
 
     public PsiElement resolve() {
-      final SpringModel model = getSpringModel();
-      if (model == null) {
-        return null;
-      }
-
       final String beanName = myElement.getValue();
-      final SpringBeanPointer springBean = model.findBean(beanName);
+      final SpringBeanPointer springBean = springModel.findBean(beanName);
       if (springBean == null) {
         return null;
       }
@@ -98,24 +110,9 @@ public class ExtendableClassConverterSpringContributor extends ExtendableClassCo
       return springBean.getBeanClass();
     }
 
-    @Nullable
-    private SpringModel getSpringModel() {
-      final Module module = ModuleUtil.findModuleForPsiElement(myElement);
-      if (module == null) {
-        return null;
-      }
-
-      return SpringManager.getInstance(module.getProject()).getCombinedModel(module);
-    }
-
     @SuppressWarnings({"unchecked"})
     public Object[] getVariants() {
-      final SpringModel model = getSpringModel();
-      if (model == null) {
-        return ArrayUtil.EMPTY_OBJECT_ARRAY;
-      }
-
-      final Collection<? extends SpringBeanPointer> list = model.getAllCommonBeans(true);
+      final Collection<? extends SpringBeanPointer> list = springModel.getAllCommonBeans(true);
       final List lookups = new ArrayList(list.size());
       for (final SpringBeanPointer bean : list) {
         final String beanName = bean.getName();

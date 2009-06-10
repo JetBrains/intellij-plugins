@@ -18,6 +18,7 @@ package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -29,6 +30,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomJavaUtil;
+import com.intellij.util.xml.ExtendClass;
 import com.intellij.util.xml.GenericDomValue;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -52,15 +54,16 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
 
     // first match in additional providers
     final XmlElement element = context.getReferenceXmlElement();
-    if (element == null) {
-      return null;
-    }
+    assert element != null;
 
     for (final ExtendableClassConverterContributor contributor : Extensions.getExtensions(EP_NAME)) {
       if (contributor.isSuitable(context)) {
         final PsiReference[] add = contributor.getReferencesByElement(element, new ProcessingContext());
-        if (add.length == 1 && add[0].resolve() != null) {
-          return (PsiClass) add[0].resolve();
+        if (add.length == 1) {
+          final PsiElement resolveElement = add[0].resolve();
+          if (resolveElement != null) {
+            return (PsiClass) resolveElement;
+          }
         }
       }
     }
@@ -76,20 +79,32 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
   public PsiReference[] createReferences(final GenericDomValue<PsiClass> psiClassGenericDomValue,
                                          final PsiElement element,
                                          final ConvertContext context) {
+    final ExtendClass extendClass = psiClassGenericDomValue.getAnnotation(ExtendClass.class);
+    assert extendClass != null : psiClassGenericDomValue + " must be annotated with @ExtendClass";
 
     // 1. "normal" JAVA classes
     final GlobalSearchScope scope = getResolveScope(psiClassGenericDomValue);
-    final JavaClassReferenceProvider javaClassReferenceProvider =
+    final JavaClassReferenceProvider classReferenceProvider =
         new JavaClassReferenceProvider(scope, context.getPsiManager().getProject());
+    if (extendClass.instantiatable()) {
+      classReferenceProvider.setOption(JavaClassReferenceProvider.INSTANTIATABLE, Boolean.TRUE);
+    }
+    if (!extendClass.allowAbstract()) {
+      classReferenceProvider.setOption(JavaClassReferenceProvider.CONCRETE, Boolean.TRUE);
+    }
+    final boolean allowInterface = extendClass.allowInterface();
+    if (!allowInterface) {
+      classReferenceProvider.setOption(JavaClassReferenceProvider.NOT_INTERFACE, Boolean.TRUE);
+    }
+    if (StringUtil.isNotEmpty(extendClass.value())) {
+      classReferenceProvider.setOption(JavaClassReferenceProvider.EXTEND_CLASS_NAMES,
+                                       new String[]{extendClass.value()});
+    }
+    classReferenceProvider.setSoft(true);
+    PsiReference[] javaClassReferences = classReferenceProvider.getReferencesByElement(element);
 
-    javaClassReferenceProvider.setOption(JavaClassReferenceProvider.INSTANTIATABLE, Boolean.TRUE);
-    javaClassReferenceProvider.setOption(JavaClassReferenceProvider.CONCRETE, Boolean.TRUE);
-    javaClassReferenceProvider.setOption(JavaClassReferenceProvider.NOT_INTERFACE, Boolean.TRUE);
-    javaClassReferenceProvider.setSoft(true);
-    PsiReference[] javaClassReferences = javaClassReferenceProvider.getReferencesByElement(element);
 
-
-    @NonNls String[] referenceTypes = new String[]{"class"};
+    @NonNls String[] referenceTypes = allowInterface ? new String[]{"class", "interface"} : new String[]{"class"};
 
     // 2. additional resolvers (currently Spring only)
     for (final ExtendableClassConverterContributor contributor : Extensions.getExtensions(EP_NAME)) {

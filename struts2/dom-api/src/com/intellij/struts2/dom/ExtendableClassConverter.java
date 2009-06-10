@@ -26,7 +26,8 @@ import com.intellij.util.xml.CustomReferenceConverter;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Converter for "class" attribute.
+ * Converter for "class" attribute. Must be used in conjunction with {@link com.intellij.util.xml.ExtendClass} to
+ * determine valid references (interface allowed, non-public class allowed, ..).
  *
  * @author Yann C&eacute;bron
  */
