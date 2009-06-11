@@ -53,9 +53,15 @@ public class Pico extends DefaultPicoContainer {
       if (isUnitTest()) {
         assert false: "Pico container not initialized";
       }
-      initLogger();
-      ourInstance = new Pico();
-      readPicoXml();
+      synchronized (PLUGINFILE) {
+        if (ourInstance != null) {
+          return ourInstance;
+        }
+
+        initLogger();
+        ourInstance = new Pico();
+        readPicoXml();
+      }
     }
     return ourInstance;
   }
