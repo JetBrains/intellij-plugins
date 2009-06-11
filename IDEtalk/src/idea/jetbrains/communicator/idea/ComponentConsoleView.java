@@ -163,7 +163,7 @@ class ComponentConsoleView implements ConsoleView {
     return null;
   }
   @NotNull
-public AnAction[] createUpDownStacktraceActions() {
+public AnAction[] createConsoleActions() {
   return AnAction.EMPTY_ARRAY;
 }
 }
