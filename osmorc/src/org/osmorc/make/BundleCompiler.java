@@ -421,26 +421,18 @@ public class BundleCompiler implements PackagingCompiler
       // check if we use a bnd file or get values from facet
       // fix for OSMORC-121
       Map<String, String> additionalProperties = new HashMap<String, String>();
+      File bndFile = null;
       if (configuration.isUseBndFile())
       {
-        // load bnd file and put all info there.
-        Properties p = new Properties();
-        try
-        {
-          p.load(new FileInputStream(findFileInModuleContentRoots(configuration.getBndFileLocation(), module)));
-          for (Object s : p.keySet())
-          {
-            additionalProperties.put((String) s, p.getProperty((String) s));
-          }
-        }
-        catch (IOException e)
+        bndFile = findFileInModuleContentRoots(configuration.getBndFileLocation(), module);
+        if (!bndFile.exists())
         {
           ApplicationManager.getApplication().invokeLater(new Runnable()
           {
             public void run()
             {
               compileContext.addMessage(CompilerMessageCategory.ERROR,
-                  String.format("The bnd file \"%s\" for module \"%s\" does not exist or is invalid.",
+                  String.format("The bnd file \"%s\" for module \"%s\" does not exist.",
                       configuration.getBndFileLocation(), module.getName()), configuration.getBndFileLocation(), 0, 0);
             }
           }
@@ -464,7 +456,7 @@ public class BundleCompiler implements PackagingCompiler
       }
       try
       {
-        bnd.doWrap(null, tempFile, tempFile, null, 0, additionalProperties);
+        bnd.doWrap(bndFile, tempFile, tempFile, null, 0, additionalProperties);
       }
       catch (Exception e)
       {
