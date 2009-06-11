@@ -40,7 +40,7 @@ public class TapestryUtilsTest extends BaseTestCase {
         expect(tapestryTagMock.getNamespace()).andReturn(TapestryConstants.TEMPLATE_NAMESPACE);
         replay(tapestryTagMock);
 
-        assert ComponentUtils.isComponentTag(new IntellijXmlTag(tapestryTagMock));
+        assert ComponentUtils._isComponentTag(new IntellijXmlTag(tapestryTagMock));
 
 
         reset(tapestryTagMock);
@@ -52,7 +52,7 @@ public class TapestryUtilsTest extends BaseTestCase {
         expect(tapestryTagMock.getAttributes()).andReturn(new XmlAttribute[]{attributeMock});
         replay(tapestryTagMock, attributeMock);
 
-        assert ComponentUtils.isComponentTag(new IntellijXmlTag(tapestryTagMock));
+        assert ComponentUtils._isComponentTag(new IntellijXmlTag(tapestryTagMock));
     }
 
     @Test(dataProvider = EMPTY_FIXTURE_PROVIDER)
@@ -67,7 +67,7 @@ public class TapestryUtilsTest extends BaseTestCase {
         expect(tapestryTagMock.getAttributes()).andReturn(new XmlAttribute[]{attributeMock});
         replay(tapestryTagMock, attributeMock);
 
-        assert !ComponentUtils.isComponentTag(new IntellijXmlTag(tapestryTagMock));
+        assert !ComponentUtils._isComponentTag(new IntellijXmlTag(tapestryTagMock));
     }
 
     @Test(dataProvider = EMPTY_FIXTURE_PROVIDER)

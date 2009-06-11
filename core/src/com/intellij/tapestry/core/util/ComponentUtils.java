@@ -65,7 +65,7 @@ public class ComponentUtils {
    * @param tag the tag to check.
    * @return <code>true</code> if the given tag is a opening or closing tag of a Tapestry component, <code>false</code> otherwise.
    */
-  public static boolean isComponentTag(XmlTag tag) {
+  public static boolean _isComponentTag(XmlTag tag) {
     return tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)
            || hasTapestryNamespaceAttribute(tag.getAttributes());
   }

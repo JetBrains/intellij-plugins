@@ -42,11 +42,7 @@ public class TapestryModuleSupportLoader extends AbstractModuleComponent impleme
      * @return the Tapestry project instance associated withthe given module.
      */
     public static TapestryProject getTapestryProject(Module module) {
-        if (module == null) {
-            return null;
-        }
-
-        return module.getComponent(TapestryModuleSupportLoader.class).getTapestryProject();
+      return module == null ? null : module.getComponent(TapestryModuleSupportLoader.class).getTapestryProject();
     }
 
     public TapestryProject getTapestryProject() {

@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.ex.DataConstantsEx;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -16,9 +17,9 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.java.IJavaType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaArrayType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
@@ -264,7 +265,8 @@ public class IdeaUtils {
 
   @Nullable
   public static Module getModule(XmlTag tag) {
-    VirtualFile vFile = tag.getContainingFile().getViewProvider().getVirtualFile();
-    return ProjectRootManager.getInstance(tag.getManager().getProject()).getFileIndex().getModuleForFile(vFile);
+    return ModuleUtil.findModuleForPsiElement(tag);
+    //VirtualFile vFile = tag.getContainingFile().getViewProvider().getVirtualFile();
+    //return ProjectRootManager.getInstance(tag.getManager().getProject()).getFileIndex().getModuleForFile(vFile);
   }
 }//IdeaUtils

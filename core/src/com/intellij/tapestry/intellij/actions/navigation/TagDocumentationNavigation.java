@@ -12,11 +12,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.model.presentation.Component;
-import com.intellij.tapestry.core.util.ComponentUtils;
 import com.intellij.tapestry.intellij.TapestryProjectSupportLoader;
-import com.intellij.tapestry.intellij.core.resource.xml.IntellijXmlTag;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindow;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 
@@ -47,7 +44,7 @@ public class TagDocumentationNavigation extends AnAction {
 
     XmlTag tag = PsiTreeUtil.getParentOfType(element, XmlTag.class);
 
-    if (tag == null || !ComponentUtils.isComponentTag(new IntellijXmlTag(tag))) return;
+    if (TapestryUtils.getComponentIdentifier(tag) == null) return;
 
     ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TapestryProjectSupportLoader.TAPESTRY_TOOLWINDOW_ID);
     metatoolWindow = project.getComponent(TapestryProjectSupportLoader.class).getTapestryToolWindow();

@@ -244,7 +244,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
 
             getTemplate()[i].accept(new CoreXmlRecursiveElementVisitor() {
                 public void visitTag(XmlTag tag) {
-                    if (ComponentUtils.isComponentTag(tag)) {
+                    if (ComponentUtils._isComponentTag(tag)) {
                         boolean hasAttributeType = false;
                         InjectedElement injectedElement = null;
                         Component component = null;
@@ -302,7 +302,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
 
             getTemplate()[i].accept(new CoreXmlRecursiveElementVisitor() {
                 public void visitTag(XmlTag tag) {
-                    if (ComponentUtils.isComponentTag(tag)) {
+                    if (ComponentUtils._isComponentTag(tag)) {
 
                         boolean hasAttributeType = false;
                         InjectedElement injectedElement = null;

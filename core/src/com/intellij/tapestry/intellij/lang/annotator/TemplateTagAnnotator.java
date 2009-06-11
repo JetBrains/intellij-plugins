@@ -23,7 +23,6 @@ import com.intellij.tapestry.core.util.ComponentUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
-import com.intellij.tapestry.intellij.core.resource.xml.IntellijXmlTag;
 import com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
@@ -56,7 +55,7 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
   @Override
   public void visitXmlTag(XmlTag tag) {
 
-    if (ComponentUtils.isComponentTag(new IntellijXmlTag(tag))) {
+    if (TapestryUtils.getComponentIdentifier(tag) != null) {
       // don't valid these tags
       /*tag.putUserData(XmlHighlightVisitor.DO_NOT_VALIDATE_KEY, "true");
      tag.getParent().putUserData(XmlHighlightVisitor.DO_NOT_VALIDATE_KEY, "true");*/

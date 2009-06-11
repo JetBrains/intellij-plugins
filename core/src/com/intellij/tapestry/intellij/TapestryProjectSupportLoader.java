@@ -11,16 +11,10 @@ import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.patterns.XmlPatterns;
 import com.intellij.peer.PeerFactory;
-import com.intellij.psi.filters.AndFilter;
-import com.intellij.psi.filters.ClassFilter;
-import com.intellij.psi.filters.position.TargetNamespaceFilter;
-import com.intellij.psi.impl.meta.MetaRegistry;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
-import com.intellij.psi.xml.XmlDocument;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.log.Logger;
 import com.intellij.tapestry.core.log.LoggerFactory;
-import com.intellij.tapestry.intellij.lang.reference.TapestryNamespaceDescriptor;
 import com.intellij.tapestry.intellij.lang.reference.XmlTagValueReferenceProvider;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindow;
 import com.intellij.tapestry.intellij.util.Icons;
@@ -81,11 +75,6 @@ public class TapestryProjectSupportLoader implements ProjectComponent {
     // register attribute values reference provider
     ReferenceProvidersRegistry.getInstance(_project)
         .registerReferenceProvider(XmlPatterns.xmlAttributeValue(), new XmlTagValueReferenceProvider());
-
-    // register tag reference provider
-    MetaRegistry.addMetadataBinding(
-        new AndFilter(new ClassFilter(XmlDocument.class), new TargetNamespaceFilter(TapestryConstants.TEMPLATE_NAMESPACE)),
-        TapestryNamespaceDescriptor.class);
   }
 
 

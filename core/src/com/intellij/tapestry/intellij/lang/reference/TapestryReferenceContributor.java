@@ -1,23 +1,21 @@
 package com.intellij.tapestry.intellij.lang.reference;
 
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.model.presentation.Component;
-import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.model.presentation.Page;
+import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.resource.IResource;
-import com.intellij.tapestry.core.util.ComponentUtils;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
-import com.intellij.tapestry.intellij.core.resource.xml.IntellijXmlTag;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.util.ProcessingContext;
@@ -33,13 +31,10 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   private void registerTagNameReferenceProvider(PsiReferenceRegistrar registrar) {
     PatternCondition<XmlTag> tapestryTagCondition = new PatternCondition<XmlTag>("tapestryTagCondition") {
       public boolean accepts(@NotNull XmlTag tag, final ProcessingContext context) {
-        final VirtualFile vFile = tag.getContainingFile().getVirtualFile();
-        return (vFile == null || TapestryConstants.TEMPLATE_FILE_EXTENSION.equals(vFile.getExtension())) &&
-               ComponentUtils.isComponentTag(new IntellijXmlTag(tag));
+        return TapestryUtils.isTapestryTemplate((XmlFile)tag.getContainingFile())
+               && TapestryUtils.getComponentIdentifier(tag) != null;
       }
     };
-
-
     registrar.registerReferenceProvider(XmlPatterns.xmlTag().with(tapestryTagCondition), new PsiReferenceProvider() {
       @NotNull
       public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {

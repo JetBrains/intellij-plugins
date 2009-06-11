@@ -6,10 +6,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.xml.*;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
@@ -30,9 +33,9 @@ import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
-import com.intellij.tapestry.intellij.core.resource.xml.IntellijXmlTag;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -48,6 +51,7 @@ public class TapestryUtils {
   private static final String MODULE_SIGNAL_VALUE = "true";
 
   private static final Logger _logger = Logger.getInstance(TapestryUtils.class.getName());
+  private static final Key<CachedValue<XmlElement>> COMPONENT_KEY = new Key<CachedValue<XmlElement>>("TAPESTRY_COMPONENT_KEY");
 
   /**
    * Checks if a module is a Tapestry module.
@@ -57,6 +61,11 @@ public class TapestryUtils {
    */
   public static boolean isTapestryModule(Module module) {
     return module != null && FacetManager.getInstance(module).getFacetsByType(TapestryFacetType.ID).size() > 0;
+  }
+
+  public static boolean isTapestryTemplate(XmlFile file) {
+    final VirtualFile vFile = file.getViewProvider().getVirtualFile();
+    return TapestryConstants.TEMPLATE_FILE_EXTENSION.equals(vFile.getExtension());
   }
 
   /**
@@ -85,18 +94,21 @@ public class TapestryUtils {
    * @return the attribute that identifies the type of component.
    */
   @Nullable
-  public static XmlElement getComponentIdentifier(XmlTag tag) {
-    if (!ComponentUtils.isComponentTag(new IntellijXmlTag(tag))) return null;
-
-    // embedded components
-    if (tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) return IdeaUtils.getNameElement(tag);
-
-    // using invisible instrumentation
-    return getIdentifyingAttribute(tag);
+  public static XmlElement getComponentIdentifier(@Nullable final XmlTag tag) {
+    return tag == null ? null : computeComponentIdentifier(tag);
   }
 
   @Nullable
-  public static XmlAttribute getIdentifyingAttribute(XmlTag tag) {
+  private static XmlElement computeComponentIdentifier(XmlTag tag) {
+    return tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)
+           // embedded components
+           ? IdeaUtils.getNameElement(tag)
+           // using invisible instrumentation
+           : getIdentifyingAttribute(tag);
+  }
+
+  @Nullable
+  public static XmlAttribute getIdentifyingAttribute(@NotNull XmlTag tag) {
     XmlAttribute typeAttribute = getTTypeAttribute(tag);
     return typeAttribute != null ? typeAttribute : getTIdAttribute(tag);
   }
@@ -144,7 +156,7 @@ public class TapestryUtils {
   @Nullable
   public static IJavaField findIdentifyingField(XmlTag tag) {
     final TapestryProject tapestryProject = getTapestryProject(tag);
-    if(tapestryProject == null) return null;
+    if (tapestryProject == null) return null;
     IntellijJavaClassType elementClass =
         (IntellijJavaClassType)ComponentUtils.findClassFromTemplate(new IntellijResource(tag.getContainingFile()), tapestryProject);
     return elementClass != null ? findIdentifyingField(elementClass, tag) : null;
@@ -319,32 +331,17 @@ public class TapestryUtils {
    * @return the component that the given tag represents.
    */
   @Nullable
-  public static Component getComponentFromTag(Module module, XmlTag tag) {
+  public static Component getComponentFromTag(@NotNull Module module, @NotNull XmlTag tag) {
     TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
-    if (tapestryProject == null || !ComponentUtils.isComponentTag(new IntellijXmlTag(tag))) return null;
+    if (tapestryProject == null) return null;
+    XmlElement identifier = TapestryUtils.getComponentIdentifier(tag);
+    if (identifier == null) return null;
 
-    if (tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
-      final String tagLocalName = tag.getLocalName().toLowerCase(Locale.getDefault());
-      if (tagLocalName.equals("body")) {
-        return BodyComponent.getInstance(tapestryProject);
-      }
-      if (tagLocalName.equals("block")) {
-        return BlockComponent.getInstance(tapestryProject);
-      }
-      if (tagLocalName.equals("parameter")) {
-        return ParameterComponent.getInstance(tapestryProject);
-      }
-      if (tagLocalName.equals("container")) {
-        return ContainerComponent.getInstance(tapestryProject);
-      }
-    }
-
-    XmlElement identifierElement = TapestryUtils.getComponentIdentifier(tag);
-
-    if (identifierElement instanceof XmlAttribute) {
-      final String attrName = ((XmlAttribute)identifierElement).getLocalName();
-      final String attrValue = ((XmlAttribute)identifierElement).getValue();
-      if (attrName.equals("type") && attrValue != null) {
+    if (identifier instanceof XmlAttribute) {
+      final String attrName = ((XmlAttribute)identifier).getLocalName();
+      final String attrValue = ((XmlAttribute)identifier).getValue();
+      if (attrValue == null) return null;
+      if (attrName.equals("type")) {
         return tapestryProject.findComponent(attrValue.replace('.', '/'));
       }
       if (attrName.equals("id")) {
@@ -360,12 +357,22 @@ public class TapestryUtils {
           }
         }
       }
+      return null;
     }
-
-    if (identifierElement instanceof XmlToken) {
-      return tapestryProject.findComponent(tag.getLocalName().replace('.', '/'));
+    final String tagLocalName = tag.getLocalName().toLowerCase(Locale.getDefault());
+    if (tagLocalName.equals("body")) {
+      return BodyComponent.getInstance(tapestryProject);
     }
-    return null;
+    if (tagLocalName.equals("block")) {
+      return BlockComponent.getInstance(tapestryProject);
+    }
+    if (tagLocalName.equals("parameter")) {
+      return ParameterComponent.getInstance(tapestryProject);
+    }
+    if (tagLocalName.equals("container")) {
+      return ContainerComponent.getInstance(tapestryProject);
+    }
+    return tapestryProject.findComponent(tagLocalName.replace('.', '/'));
   }
 
   /**
