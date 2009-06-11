@@ -30,8 +30,6 @@ import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.xml.DomElement;
@@ -141,7 +139,7 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
                                        boolean b)
   {
     // only run this for POM files in osmorc-controlled projects, its a waste of resources on other XML file types
-    if (!MavenDomUtil.isPomFile(psiFile) || OsmorcFacet.hasOsmorcFacet(psiFile))
+    if (!MavenDomUtil.isPomFile(psiFile) || !OsmorcFacet.hasOsmorcFacet(psiFile))
     {
       return new ProblemDescriptor[0];
     }
@@ -166,11 +164,6 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
     return null;
   }
 
-  private static com.intellij.openapi.module.Module getModuleForFile(PsiFile file)
-  {
-    ProjectFileIndex index = ProjectRootManager.getInstance(file.getProject()).getFileIndex();
-    return index.getModuleForFile(file.getVirtualFile());
-  }
 
   /**
    * Intention action which tries to find a compatible OSGi-ready version of a maven dependency in the Springsource

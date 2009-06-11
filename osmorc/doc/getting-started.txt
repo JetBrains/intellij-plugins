@@ -7,8 +7,9 @@
    - unzip to some folder "devel/openapidoc"
 
 2. Get Idea compiled for 1.5
-   - download: http://download.jetbrains.com/idea/idea-7.0.3-jdk15.zip
+   - download: http://download.jetbrains.com/idea/idea-8.1-jdk15.zip
    - unzip to some folder "devel/idea-jdk15"
+   - remove plugins/osmorc folder from that IDEA installation (if it exists)
 
 3. Set up IDEA SDK
    - Open project settings
@@ -19,6 +20,7 @@
    - Select JDKs on the left
    - In Classpath tab, click on Add..
    - Select idea.jar from "devel/idea-jdk15/lib" from step 2
+   - Select maven.jar from "plugins/maven" from step 2
    - Switch to Javadoc tab
    - Click Add...
    - Select "devel/openapi/help" folder from step 1

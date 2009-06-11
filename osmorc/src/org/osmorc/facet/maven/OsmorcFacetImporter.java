@@ -32,11 +32,11 @@ import com.jgoodies.binding.beans.BeanUtils;
 import org.jdom.Element;
 import org.jetbrains.idea.maven.facets.FacetImporter;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
+import org.jetbrains.idea.maven.project.MavenId;
 import org.jetbrains.idea.maven.project.MavenPlugin;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.jetbrains.idea.maven.project.MavenProjectsProcessorPostConfigurationTask;
 import org.jetbrains.idea.maven.project.MavenProjectsTree;
-import org.jetbrains.idea.maven.project.MavenId;
 import org.osgi.framework.Constants;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
@@ -52,20 +52,24 @@ import java.util.Map;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType> {
+public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType>
+{
 
     private final Logger logger = Logger.getInstance("#org.osmorc.facet.maven.OsmorcFacetImporter");
 
-    public OsmorcFacetImporter() {
+    public OsmorcFacetImporter()
+    {
         super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.INSTANCE, "OSGi");
     }
 
-    public boolean isApplicable(MavenProject mavenProjectModel) {
+    public boolean isApplicable(MavenProject mavenProjectModel)
+    {
         MavenPlugin p = mavenProjectModel.findPlugin(myPluginGroupID, myPluginArtifactID);
         return p != null;
     }
 
-    protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel) {
+    protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel)
+    {
 
     }
 
@@ -73,7 +77,8 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
                                  MavenRootModelAdapter mavenRootModelAdapter, OsmorcFacet osmorcFacet,
                                  MavenProjectsTree mavenProjectsTree, MavenProject mavenProject,
                                  Map<MavenProject, String> mavenProjectStringMap,
-                                 List<MavenProjectsProcessorPostConfigurationTask> mavenProjectsProcessorPostConfigurationTasks) {
+                                 List<MavenProjectsProcessorPostConfigurationTask> mavenProjectsProcessorPostConfigurationTasks)
+    {
 
         OsmorcFacetConfiguration conf = osmorcFacet.getConfiguration();
         MavenPlugin p = mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID);
@@ -87,11 +92,13 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         // version == project version
         conf.setBundleVersion(id.version);
 
-        if (p != null) {
+        if (p != null)
+        {
             logger.debug("Plugin found.");
 
             // Check if there are any overrides set up in the maven plugin settings
-            setConfigProperty(mavenProject, conf, "bundleSymbolicName", "instructions." + Constants.BUNDLE_SYMBOLICNAME);
+            setConfigProperty(mavenProject, conf, "bundleSymbolicName",
+                "instructions." + Constants.BUNDLE_SYMBOLICNAME);
             setConfigProperty(mavenProject, conf, "bundleVersion", "instructions." + Constants.BUNDLE_VERSION);
             setConfigProperty(mavenProject, conf, "bundleActivator", "instructions." + Constants.BUNDLE_ACTIVATOR);
 
@@ -100,11 +107,13 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
             Map<String, String> props = new HashMap<String, String>();
             List<Element> children = instructionsNode.getChildren();
-            for (Element child : children) {
+            for (Element child : children)
+            {
                 String name = child.getName();
                 String value = child.getValue();
                 if (value != null && !"".equals(value) && !Constants.BUNDLE_SYMBOLICNAME.equals(name) &&
-                        !Constants.BUNDLE_VERSION.equals(name) && !Constants.BUNDLE_ACTIVATOR.equals(name)) {
+                    !Constants.BUNDLE_VERSION.equals(name) && !Constants.BUNDLE_ACTIVATOR.equals(name))
+                {
                     // ok its an additional setting:
                     props.put(name, value);
                 }
@@ -116,13 +125,18 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     }
 
     private void setConfigProperty(MavenProject mavenProjectModel, OsmorcFacetConfiguration conf,
-                                   String confProperty, String mavenConfProperty) {
+                                   String confProperty, String mavenConfProperty)
+    {
         String value = findConfigValue(mavenProjectModel, mavenConfProperty);
-        if (value != null && !"".equals(value)) {
-            try {
-                BeanUtils.setValue(conf, BeanUtils.getPropertyDescriptor(OsmorcFacetConfiguration.class, confProperty), value);
+        if (value != null && !"".equals(value))
+        {
+            try
+            {
+                BeanUtils.setValue(conf, BeanUtils.getPropertyDescriptor(OsmorcFacetConfiguration.class, confProperty),
+                    value);
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 logger.error("Problem when setting property", e);
             }
         }
