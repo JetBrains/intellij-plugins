@@ -32,25 +32,6 @@
             <option name="LABEL_INDENT_ABSOLUTE" value="false" />
           </value>
         </option>
-        <option name="OTHER_INDENT_OPTIONS">
-          <value>
-            <option name="INDENT_SIZE" value="2" />
-            <option name="CONTINUATION_INDENT_SIZE" value="8" />
-            <option name="TAB_SIZE" value="2" />
-            <option name="USE_TAB_CHARACTER" value="false" />
-            <option name="SMART_TABS" value="false" />
-            <option name="LABEL_INDENT_SIZE" value="0" />
-            <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-          </value>
-        </option>
-        <option name="BRACE_STYLE" value="2" />
-        <option name="CLASS_BRACE_STYLE" value="2" />
-        <option name="METHOD_BRACE_STYLE" value="2" />
-        <option name="ELSE_ON_NEW_LINE" value="true" />
-        <option name="WHILE_ON_NEW_LINE" value="true" />
-        <option name="CATCH_ON_NEW_LINE" value="true" />
-        <option name="FINALLY_ON_NEW_LINE" value="true" />
-        <option name="FIELD_NAME_PREFIX" value="_" />
         <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="5000" />
         <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
           <value />
@@ -58,23 +39,6 @@
         <option name="FIELDS_ORDER_WEIGHT" value="3" />
         <option name="CONSTRUCTORS_ORDER_WEIGHT" value="1" />
         <option name="METHODS_ORDER_WEIGHT" value="2" />
-        <option name="CALL_PARAMETERS_WRAP" value="1" />
-        <option name="METHOD_PARAMETERS_WRAP" value="1" />
-        <option name="EXTENDS_LIST_WRAP" value="1" />
-        <option name="THROWS_LIST_WRAP" value="1" />
-        <option name="METHOD_CALL_CHAIN_WRAP" value="1" />
-        <option name="BINARY_OPERATION_WRAP" value="1" />
-        <option name="TERNARY_OPERATION_WRAP" value="1" />
-        <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
-        <option name="FOR_STATEMENT_WRAP" value="1" />
-        <option name="ARRAY_INITIALIZER_WRAP" value="1" />
-        <option name="ASSIGNMENT_WRAP" value="1" />
-        <option name="WRAP_COMMENTS" value="true" />
-        <option name="IF_BRACE_FORCE" value="3" />
-        <option name="DOWHILE_BRACE_FORCE" value="3" />
-        <option name="WHILE_BRACE_FORCE" value="3" />
-        <option name="FOR_BRACE_FORCE" value="3" />
-        <option name="ENUM_CONSTANTS_WRAP" value="1" />
         <ADDITIONAL_INDENT_OPTIONS fileType="">
           <option name="INDENT_SIZE" value="2" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
@@ -104,7 +68,7 @@
         </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="java">
           <option name="INDENT_SIZE" value="4" />
-          <option name="CONTINUATION_INDENT_SIZE" value="4" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
           <option name="TAB_SIZE" value="4" />
           <option name="USE_TAB_CHARACTER" value="false" />
           <option name="SMART_TABS" value="false" />
@@ -124,15 +88,6 @@
           <option name="INDENT_SIZE" value="4" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
           <option name="TAB_SIZE" value="4" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
-        <ADDITIONAL_INDENT_OPTIONS fileType="scala">
-          <option name="INDENT_SIZE" value="2" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
-          <option name="TAB_SIZE" value="2" />
           <option name="USE_TAB_CHARACTER" value="false" />
           <option name="SMART_TABS" value="false" />
           <option name="LABEL_INDENT_SIZE" value="0" />
@@ -158,7 +113,7 @@
         </ADDITIONAL_INDENT_OPTIONS>
       </value>
     </option>
-    <option name="USE_PER_PROJECT_SETTINGS" value="true" />
+    <option name="USE_PER_PROJECT_SETTINGS" value="false" />
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
@@ -243,8 +198,8 @@
   <component name="IdProvider" IDEtalkID="E4E0B62D7833654941CDE0FF04E7D210" />
   <component name="InspectionProjectProfileManager">
     <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
-    <scopes />
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
     <profiles>
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
@@ -453,7 +408,7 @@
       <module fileurl="file://$PROJECT_DIR$/Osmorc.iml" filepath="$PROJECT_DIR$/Osmorc.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 10331" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 10342" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="ProjectRunConfigurationManager">
@@ -613,7 +568,9 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method>
-        <option name="Make" value="true" />
+        <option name="AntTarget" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
     <configuration default="false" name="All in Osmorc" type="JUnit" factoryName="JUnit" enabled="false" merge="false" sample_coverage="true" runner="emma">
@@ -640,14 +597,16 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method>
-        <option name="Make" value="true" />
+        <option name="AntTarget" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
     <configuration default="false" name="Osmorc" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="Osmorc" />
       <option name="VM_PARAMETERS" value=" -Xms512m -Xmx512m -XX:MaxPermSize=120m -ea" />
       <option name="PROGRAM_PARAMETERS" value="" />
-      <log_file path="$PROJECT_DIR$/../../../Library/Caches/IntelliJIDEA8x/plugins-sandbox/system/log/idea.log" checked="true" skipped="true" show_all="false" alias="IDEA LOG" />
+      <log_file path="$PROJECT_DIR$/../.IntelliJIdea90/system/plugins-sandbox/system/log/idea.log" checked="false" skipped="true" show_all="false" alias="IDEA LOG" />
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="1706" />
         <option name="TRANSPORT" value="0" />
@@ -660,7 +619,9 @@
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method>
-        <option name="Make" value="true" />
+        <option name="AntTarget" enabled="false" />
+        <option name="Make" enabled="true" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
   </component>
@@ -863,7 +824,7 @@
     </LanguageOptions>
   </component>
   <UsedPathMacros>
-    <macro name="TEMPLATE" />
+    <macro name="TEMPLATE" description="" />
   </UsedPathMacros>
 </project>
 

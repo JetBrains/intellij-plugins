@@ -31,12 +31,10 @@ import com.intellij.codeInspection.InspectionToolProvider;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class OsgiMavenInspectionProvider implements InspectionToolProvider
-{
-  public Class[] getInspectionClasses()
-  {
-    return new Class[]{
-        NonOsgiMavenDependencyInspection.class
-    };
-  }
+public class OsgiMavenInspectionProvider implements InspectionToolProvider {
+    public Class[] getInspectionClasses() {
+        return new Class[]{
+                NonOsgiMavenDependencyInspection.class
+        };
+    }
 }

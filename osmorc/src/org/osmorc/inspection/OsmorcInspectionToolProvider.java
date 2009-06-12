@@ -10,6 +10,7 @@ public class OsmorcInspectionToolProvider implements InspectionToolProvider {
     return new Class[]{
         InvalidImportInspection.class,
         MisspelledHeaderNameInspection.class,
-        UnregisteredActivatorInspection.class};
+        UnregisteredActivatorInspection.class,
+        MissingFinalNewlineInspection.class};
   }
 }

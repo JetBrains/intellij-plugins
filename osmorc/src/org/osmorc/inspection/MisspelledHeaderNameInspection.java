@@ -47,95 +47,73 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class MisspelledHeaderNameInspection extends LocalInspectionTool
-{
-  @Nls
-  @NotNull
-  public String getGroupDisplayName()
-  {
-    return "Osmorc";
-  }
+public class MisspelledHeaderNameInspection extends LocalInspectionTool {
+    @Nls
+    @NotNull
+    public String getGroupDisplayName() {
+        return "OSGi";
+    }
 
-  public boolean isEnabledByDefault()
-  {
-    return true;
-  }
+    public boolean isEnabledByDefault() {
+        return true;
+    }
 
-  @NotNull
-  public HighlightDisplayLevel getDefaultLevel()
-  {
-    return HighlightDisplayLevel.WARNING;
-  }
+    @NotNull
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WARNING;
+    }
 
-  @Nls
-  @NotNull
-  public String getDisplayName()
-  {
-    return "Misspelled Header Name";
-  }
+    @Nls
+    @NotNull
+    public String getDisplayName() {
+        return "Misspelled Header Name";
+    }
 
-  @NonNls
-  @NotNull
-  public String getShortName()
-  {
-    return "osmorcMisspelledHeaderName";
-  }
+    @NonNls
+    @NotNull
+    public String getShortName() {
+        return "osmorcMisspelledHeaderName";
+    }
 
-  @NotNull
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly)
-  {
-    return new PsiElementVisitor()
-    {
-      public void visitElement(PsiElement element)
-      {
-        if (element instanceof ManifestHeaderName)
-        {
-          final ManifestHeaderName headerName = (ManifestHeaderName) element;
-          String name = headerName.getName();
-          if (name != null)
-          {
-            final List<HeaderNameSpellingQuickFix> quickFixes = new ArrayList<HeaderNameSpellingQuickFix>();
-            final Collection<HeaderNameMatch> matches = getHeaderParserRepository().getMatches(name);
-            for (HeaderNameMatch match : matches)
-            {
-              quickFixes.add(new HeaderNameSpellingQuickFix(headerName, match));
-              if (quickFixes.size() > 20)
-              {
-                break;
-              }
+    @NotNull
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+        return new PsiElementVisitor() {
+            public void visitElement(PsiElement element) {
+                if (element instanceof ManifestHeaderName) {
+                    final ManifestHeaderName headerName = (ManifestHeaderName) element;
+                    String name = headerName.getName();
+                    if (name != null) {
+                        final List<HeaderNameSpellingQuickFix> quickFixes = new ArrayList<HeaderNameSpellingQuickFix>();
+                        final Collection<HeaderNameMatch> matches = getHeaderParserRepository().getMatches(name);
+                        for (HeaderNameMatch match : matches) {
+                            quickFixes.add(new HeaderNameSpellingQuickFix(headerName, match));
+                            if (quickFixes.size() > 20) {
+                                break;
+                            }
+                        }
+
+                        if (quickFixes.size() > 0) {
+                            holder.registerProblem(headerName, "Header name is spelled incorrectly",
+                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING, quickFixes.toArray(new HeaderNameSpellingQuickFix[quickFixes.size()]));
+                        }
+                    }
+                }
             }
+        };
+    }
 
-            if (quickFixes.size() > 0)
-            {
-              holder.registerProblem(headerName, "Header name is spelled incorrectly",
-                  ProblemHighlightType.GENERIC_ERROR_OR_WARNING, quickFixes.toArray(new HeaderNameSpellingQuickFix[quickFixes.size()]));
-            }
-          }
+    HeaderParserRepository getHeaderParserRepository() {
+        if (_headerParserRepository == null) {
+            _headerParserRepository = ServiceManager.getService(HeaderParserRepository.class);
         }
-      }
-
-      public void visitReferenceExpression(PsiReferenceExpression expression)
-      {
-      }
-    };
-  }
-
-  HeaderParserRepository getHeaderParserRepository()
-  {
-    if (_headerParserRepository == null)
-    {
-      _headerParserRepository = ServiceManager.getService(HeaderParserRepository.class);
+        return _headerParserRepository;
     }
-    return _headerParserRepository;
-  }
 
-  private static class HeaderNameSpellingQuickFix extends ReplaceQuickFixQuickFix
-  {
-    private HeaderNameSpellingQuickFix(ManifestHeaderName headerName, HeaderNameMatch match)
-    {
-      super(String.format("Change to (%03d) \"%s\"", match.getDistance(), match.getProvider().getHeaderName()), headerName, match.getProvider().getHeaderName());
+    private static class HeaderNameSpellingQuickFix extends ReplaceQuickFixQuickFix {
+        private HeaderNameSpellingQuickFix(ManifestHeaderName headerName, HeaderNameMatch match) {
+            super(String.format("Change to (%03d) \"%s\"", match.getDistance(), match.getProvider().getHeaderName()), headerName, match.getProvider().getHeaderName());
+        }
     }
-  }
 
-  private HeaderParserRepository _headerParserRepository;
+    private HeaderParserRepository _headerParserRepository;
 }

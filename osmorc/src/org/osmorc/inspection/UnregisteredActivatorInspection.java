@@ -48,103 +48,83 @@ import org.osmorc.manifest.BundleManifest;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public class UnregisteredActivatorInspection extends LocalInspectionTool
-{
+public class UnregisteredActivatorInspection extends LocalInspectionTool {
 
-  @Nls
-  @NotNull
-  public String getGroupDisplayName()
-  {
-    return "Osmorc";
-  }
-
-  public boolean isEnabledByDefault()
-  {
-    return true;
-  }
-
-  @NotNull
-  public HighlightDisplayLevel getDefaultLevel()
-  {
-    return HighlightDisplayLevel.ERROR;
-  }
-
-  @Nls
-  @NotNull
-  public String getDisplayName()
-  {
-    return "Bundle Activator not registered";
-  }
-
-  @NonNls
-  @NotNull
-  public String getShortName()
-  {
-    return "osmorcUnregisteredActivator";
-  }
-
-  @NotNull
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly)
-  {
-    return new JavaElementVisitor()
-    {
-      public void visitReferenceExpression(PsiReferenceExpression expression)
-      {
-      }
-
-      @Override
-      public void visitClass(PsiClass psiClass)
-      {
-        if (OsmorcFacet.hasOsmorcFacet(psiClass))
-        {
-          PsiType[] types = psiClass.getSuperTypes();
-          for (PsiType type : types)
-          {
-            if (type.equalsToText(BundleActivator.class.getName()))
-            {
-              // okay extends bundle activator
-              OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(psiClass).getConfiguration();
-
-              // if manifest is manually written, look it up in the manifest file
-              if (configuration.isManifestManuallyEdited())
-              {
-                BundleManager bundleManager = ServiceManager.getService(psiClass.getProject(), BundleManager.class);
-                Module module = ModuleUtil.findModuleForPsiElement(psiClass);
-                if (!isActivatorRegistered(bundleManager, module, psiClass.getQualifiedName()))
-                {
-                  holder
-                      .registerProblem(psiClass.getNameIdentifier(), "Bundle activator is not registered in manifest.",
-                          ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                }
-              }
-              else
-              {
-                // automagically, so look it up in the configuration
-                String configuredActivator = configuration.getBundleActivator();
-                if (!configuredActivator.equals(psiClass.getQualifiedName()))
-                {
-                  holder.registerProblem(psiClass.getNameIdentifier(),
-                      "Bundle activator is not set up in facet configuration.",
-                      ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                }
-              }
-            }
-          }
-        }
-      }
-    };
-  }
-
-  private boolean isActivatorRegistered(BundleManager manager, Object bundle, String activatorName)
-  {
-    BundleManifest manifest = manager.getBundleManifest(bundle);
-    if (manifest != null)
-    {
-      String manifestActivator = manifest.getBundleActivator();
-      return manifestActivator != null && manifestActivator.equals(activatorName);
+    @Nls
+    @NotNull
+    public String getGroupDisplayName() {
+        return "OSGi";
     }
-    return true;
-  }
+
+    public boolean isEnabledByDefault() {
+        return true;
+    }
+
+    @NotNull
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.ERROR;
+    }
+
+    @Nls
+    @NotNull
+    public String getDisplayName() {
+        return "Bundle Activator not registered";
+    }
+
+    @NonNls
+    @NotNull
+    public String getShortName() {
+        return "osmorcUnregisteredActivator";
+    }
+
+    @NotNull
+    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
+        return new JavaElementVisitor() {
+            public void visitReferenceExpression(PsiReferenceExpression expression) {
+            }
+
+            @Override
+            public void visitClass(PsiClass psiClass) {
+                if (OsmorcFacet.hasOsmorcFacet(psiClass)) {
+                    PsiType[] types = psiClass.getSuperTypes();
+                    for (PsiType type : types) {
+                        if (type.equalsToText(BundleActivator.class.getName())) {
+                            // okay extends bundle activator
+                            OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(psiClass).getConfiguration();
+
+                            // if manifest is manually written, look it up in the manifest file
+                            if (configuration.isManifestManuallyEdited()) {
+                                BundleManager bundleManager = ServiceManager.getService(psiClass.getProject(), BundleManager.class);
+                                Module module = ModuleUtil.findModuleForPsiElement(psiClass);
+                                if (!isActivatorRegistered(bundleManager, module, psiClass.getQualifiedName())) {
+                                    holder
+                                            .registerProblem(psiClass.getNameIdentifier(), "Bundle activator is not registered in manifest.",
+                                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                }
+                            } else {
+                                // automagically, so look it up in the configuration
+                                String configuredActivator = configuration.getBundleActivator();
+                                if (!configuredActivator.equals(psiClass.getQualifiedName())) {
+                                    holder.registerProblem(psiClass.getNameIdentifier(),
+                                            "Bundle activator is not set up in facet configuration.",
+                                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    private boolean isActivatorRegistered(BundleManager manager, Object bundle, String activatorName) {
+        BundleManifest manifest = manager.getBundleManifest(bundle);
+        if (manifest != null) {
+            String manifestActivator = manifest.getBundleActivator();
+            return manifestActivator != null && manifestActivator.equals(activatorName);
+        }
+        return true;
+    }
 
 
 }
