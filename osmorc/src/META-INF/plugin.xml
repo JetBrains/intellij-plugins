@@ -182,6 +182,8 @@
                             serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.ImportPackageParser"/>
         <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.RequireBundleParser"
                             serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.RequireBundleParser"/>
+        <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.BundleActivatorParser"
+                            serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.BundleActivatorParser"/>
         <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.SimpleHeaderParser"
                             serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.SimpleHeaderParser"/>
         <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.GenericComplexHeaderParser"

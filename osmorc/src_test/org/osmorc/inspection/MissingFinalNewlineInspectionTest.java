@@ -135,6 +135,8 @@ public class MissingFinalNewlineInspectionTest {
         }, "test", "test");
         assertThat(psiFile.getText(), Matchers.endsWith("Bundle-Version: 1.0.0\n"));
 
+        list = TestUtil.runInspection(new MissingFinalNewlineInspection(), psiFile, fixture.getProject());
+        assertThat(list, nullValue());
     }
 
     @Test

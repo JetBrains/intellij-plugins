@@ -25,13 +25,13 @@
 package org.osmorc.inspection;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.codeInspection.*;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -40,12 +40,14 @@ import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.manifest.BundleManifest;
+import org.osmorc.manifest.lang.psi.ManifestHeader;
 
 /**
  * Inspection that reports classes implementing BundleActivator which are not registered in the manifest / facet
  * config.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id$
  */
 public class UnregisteredActivatorInspection extends LocalInspectionTool {
@@ -92,22 +94,25 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
                             // okay extends bundle activator
                             OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(psiClass).getConfiguration();
 
+                            String activatorName = psiClass.getQualifiedName();
                             // if manifest is manually written, look it up in the manifest file
                             if (configuration.isManifestManuallyEdited()) {
                                 BundleManager bundleManager = ServiceManager.getService(psiClass.getProject(), BundleManager.class);
                                 Module module = ModuleUtil.findModuleForPsiElement(psiClass);
-                                if (!isActivatorRegistered(bundleManager, module, psiClass.getQualifiedName())) {
-                                    holder
-                                            .registerProblem(psiClass.getNameIdentifier(), "Bundle activator is not registered in manifest.",
-                                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                if (!isActivatorRegistered(bundleManager, module, activatorName)) {
+                                    assert activatorName != null;
+                                    holder.registerProblem(psiClass.getNameIdentifier(), "Bundle activator is not registered in manifest.",
+                                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new RegisterActivatorInManifestQuickfix(
+                                                    activatorName, bundleManager.getBundleManifest(module).getManifestFile()));
                                 }
                             } else {
                                 // automagically, so look it up in the configuration
                                 String configuredActivator = configuration.getBundleActivator();
-                                if (!configuredActivator.equals(psiClass.getQualifiedName())) {
+                                if (!configuredActivator.equals(activatorName)) {
                                     holder.registerProblem(psiClass.getNameIdentifier(),
                                             "Bundle activator is not set up in facet configuration.",
-                                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                                            new RegisterActivatorInConfigurationQuickfix(activatorName, configuration));
                                 }
                             }
                         }
@@ -124,6 +129,83 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
             return manifestActivator != null && manifestActivator.equals(activatorName);
         }
         return true;
+    }
+
+    private class RegisterActivatorInManifestQuickfix implements LocalQuickFix {
+        private static final String NAME = "Register Activator In Manifest";
+        private static final String FAMILY = "Osmorc";
+        private final String activatorClassName;
+        private final PsiFile manifestFile;
+
+        private RegisterActivatorInManifestQuickfix(@NotNull final String activatorClassName, @NotNull final PsiFile manifestFile) {
+            this.activatorClassName = activatorClassName;
+            this.manifestFile = manifestFile;
+        }
+
+        @NotNull
+        public String getName() {
+            return NAME;
+        }
+
+        @NotNull
+        public String getFamilyName() {
+            return FAMILY;
+        }
+
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            ManifestHeader activatorHeader = null;
+            ManifestHeader currentHeader = PsiTreeUtil.getChildOfType(manifestFile, ManifestHeader.class);
+            while (activatorHeader == null && currentHeader != null) {
+                if ("Bundle-Activator".equalsIgnoreCase(currentHeader.getName())) {
+                    activatorHeader = currentHeader;
+                }
+                currentHeader = PsiTreeUtil.getNextSiblingOfType(currentHeader, ManifestHeader.class);
+            }
+
+            if (activatorHeader != null) {
+                String headerFormatString = "\nBundle-Activator: %s\n";
+                if (PsiTreeUtil.getNextSiblingOfType(activatorHeader, ManifestHeader.class) == null) {
+                    headerFormatString += "\n";
+                }
+                PsiFile fromText = PsiFileFactory.getInstance(manifestFile.getProject()).createFileFromText("DUMMY.MF",
+                        String.format(headerFormatString, activatorClassName));
+                ManifestHeader newheader = PsiTreeUtil.getChildOfType(fromText, ManifestHeader.class);
+                assert newheader != null;
+                activatorHeader.replace(newheader);
+            } else {
+                PsiFile fromText = PsiFileFactory.getInstance(manifestFile.getProject()).createFileFromText("DUMMY.MF",
+                        String.format("\nBundle-Activator: %s\n\n", activatorClassName));
+                ManifestHeader newheader = PsiTreeUtil.getChildOfType(fromText, ManifestHeader.class);
+                assert newheader != null;
+                manifestFile.add(newheader);
+            }
+        }
+    }
+
+    private class RegisterActivatorInConfigurationQuickfix implements LocalQuickFix {
+        private static final String NAME = "Register Activator In Configuration";
+        private static final String FAMILY = "Osmorc";
+        private final String activatorClassName;
+        private final OsmorcFacetConfiguration configuration;
+
+        private RegisterActivatorInConfigurationQuickfix(@NotNull final String activatorClassName, @NotNull final OsmorcFacetConfiguration configuration) {
+            this.activatorClassName = activatorClassName;
+            this.configuration = configuration;
+        }
+
+        @NotNull
+        public String getName() {
+            return NAME;
+        }
+
+        @NotNull
+        public String getFamilyName() {
+            return FAMILY;
+        }
+
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            configuration.setBundleActivator(activatorClassName);
+        }
     }
 
 

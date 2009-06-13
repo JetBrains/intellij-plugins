@@ -37,53 +37,51 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OSGiManifestHeaderProviderRepository implements HeaderParserProviderRepository
-{
-  public OSGiManifestHeaderProviderRepository(SimpleHeaderParser simpleHeaderParser,
-                                              GenericComplexHeaderParser genericComplexHeaderParser,
-                                              BundleSymbolicNameParser bundleSymbolicNameParser,
-                                              BundleVersionParser bundleVersionParser,
-                                              ExportPackageParser exportPackageParser,
-                                              ImportPackageParser importPackageParser,
-                                              RequireBundleParser requireBundleParser)
-  {
-    _headerProviders = new ArrayList<HeaderParserProvider>();
+public class OSGiManifestHeaderProviderRepository implements HeaderParserProviderRepository {
+    public OSGiManifestHeaderProviderRepository(SimpleHeaderParser simpleHeaderParser,
+                                                GenericComplexHeaderParser genericComplexHeaderParser,
+                                                BundleSymbolicNameParser bundleSymbolicNameParser,
+                                                BundleVersionParser bundleVersionParser,
+                                                ExportPackageParser exportPackageParser,
+                                                ImportPackageParser importPackageParser,
+                                                RequireBundleParser requireBundleParser,
+                                                BundleActivatorParser bundleActivatorParser) {
+        headerProviders = new ArrayList<HeaderParserProvider>();
 
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-ManifestVersion", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-Name", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-SymbolicName", bundleSymbolicNameParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-Version", bundleVersionParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Export-Package", exportPackageParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Import-Package", importPackageParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Require-Bundle", requireBundleParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-ManifestVersion", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-Name", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-SymbolicName", bundleSymbolicNameParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-Version", bundleVersionParser));
+        headerProviders.add(new HeaderParserProviderImpl("Export-Package", exportPackageParser));
+        headerProviders.add(new HeaderParserProviderImpl("Import-Package", importPackageParser));
+        headerProviders.add(new HeaderParserProviderImpl("Require-Bundle", requireBundleParser));
 
-    _headerProviders
-        .add(new HeaderParserProviderImpl("Bundle-RequiredExecutionEnvironment", genericComplexHeaderParser));
+        headerProviders
+                .add(new HeaderParserProviderImpl("Bundle-RequiredExecutionEnvironment", genericComplexHeaderParser));
 
 
-    _headerProviders.add(new HeaderParserProviderImpl("Fragment-Host", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-ActivationPolicy", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-Activator", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-Category", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-Classpath", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-ContactAddress", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-Copyright", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-Description", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-DocURL", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-Localization", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-NativeCode", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-UpdateLocation", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bundle-Vendor", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("DynamicImport-Package", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Export-Service", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Import-Service", simpleHeaderParser));
-  }
+        headerProviders.add(new HeaderParserProviderImpl("Fragment-Host", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-ActivationPolicy", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-Activator", bundleActivatorParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-Category", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-Classpath", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-ContactAddress", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-Copyright", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-Description", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-DocURL", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-Localization", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-NativeCode", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-UpdateLocation", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-Vendor", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("DynamicImport-Package", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Export-Service", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Import-Service", simpleHeaderParser));
+    }
 
-  @NotNull
-  public Collection<HeaderParserProvider> getHeaderParserProviders()
-  {
-    return Collections.unmodifiableList(_headerProviders);
-  }
+    @NotNull
+    public Collection<HeaderParserProvider> getHeaderParserProviders() {
+        return Collections.unmodifiableList(headerProviders);
+    }
 
-  private final List<HeaderParserProvider> _headerProviders;
+    private final List<HeaderParserProvider> headerProviders;
 }

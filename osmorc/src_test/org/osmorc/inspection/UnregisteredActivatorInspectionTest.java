@@ -26,6 +26,9 @@
 package org.osmorc.inspection;
 
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.QuickFix;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
@@ -71,8 +74,26 @@ public class UnregisteredActivatorInspectionTest {
         assertThat(list, notNullValue());
         assertThat(list.size(), equalTo(1));
 
-        ProblemDescriptor problem = list.get(0);
+        final ProblemDescriptor problem = list.get(0);
         assertThat(problem.getLineNumber(), equalTo(6));
+
+        final QuickFix[] fixes = problem.getFixes();
+        assertThat(fixes, notNullValue());
+        assertThat(fixes.length, equalTo(1));
+
+        CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
+            public void run() {
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    public void run() {
+                        //noinspection unchecked
+                        fixes[0].applyFix(fixture.getProject(), problem);
+                    }
+                });
+            }
+        }, "test", "test");
+
+        list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
+        assertThat(list, nullValue());
     }
 
     @Test
@@ -85,6 +106,6 @@ public class UnregisteredActivatorInspectionTest {
     }
 
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private TempDirTestFixture myTempDirFixture;
 }
