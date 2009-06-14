@@ -34,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
+ * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsmorcFacetRefactoringListenerProvider implements RefactoringElementListenerProvider {
     private OsmorcFacetUtil osmorcFacetUtil;
