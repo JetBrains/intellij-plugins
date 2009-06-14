@@ -238,6 +238,7 @@
         <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
         <fileTypeFactory implementation="org.osmorc.manifest.ManifestFileTypeFactory"/>
         <compiler implementation="org.osmorc.make.BundleCompiler"/>
+        <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
     </extensions>
 
 

@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.fix.ReplaceQuickFixQuickFix;
 import org.osmorc.manifest.lang.psi.ManifestHeaderValueImpl;
+import org.osmorc.manifest.lang.psi.ManifestFile;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -69,14 +70,18 @@ public class MissingFinalNewlineInspection extends LocalInspectionTool {
 
     @Override
     public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
-        String text = file.getText();
-        if (text.charAt(text.length() - 1) != '\n') {
-            ManifestHeaderValueImpl headerValue = PsiTreeUtil.findElementOfClassAtOffset(file, text.length() - 1,
-                    ManifestHeaderValueImpl.class, false);
-            return new ProblemDescriptor[]{manager.createProblemDescriptor(headerValue,
-                    "Manifest file doen't end with a final newline",
-                    new AddNewlineQuickFix(headerValue), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)};
+        if (file instanceof ManifestFile) {
+            String text = file.getText();
+            if (text.charAt(text.length() - 1) != '\n') {
+                ManifestHeaderValueImpl headerValue = PsiTreeUtil.findElementOfClassAtOffset(file, text.length() - 1,
+                        ManifestHeaderValueImpl.class, false);
+                if (headerValue != null) {
+                    return new ProblemDescriptor[]{manager.createProblemDescriptor(headerValue,
+                            "Manifest file doen't end with a final newline",
+                            new AddNewlineQuickFix(headerValue), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)};
+                }
 
+            }
         }
         return new ProblemDescriptor[0];
     }
