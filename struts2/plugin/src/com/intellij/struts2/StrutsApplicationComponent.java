@@ -24,7 +24,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.struts2.dom.params.Param;
 import com.intellij.struts2.dom.struts.*;
-import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.*;
 import com.intellij.struts2.dom.struts.impl.*;
 import com.intellij.struts2.dom.struts.impl.path.StrutsPathReferenceConverterImpl;
@@ -44,7 +43,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -182,21 +180,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
           return exceptionClass.getName();
         }
         return globalExceptionMapping.getName().getStringValue();
-      }
-    });
-
-    // <interceptor-ref>
-    ElementPresentationManager.registerIconProvider(new NullableFunction<Object, Icon>() {
-      public Icon fun(final Object o) {
-        if (o instanceof InterceptorRef) {
-          final InterceptorOrStackBase interceptorOrStackBase = ((InterceptorRef) o).getName().getValue();
-          if (interceptorOrStackBase instanceof Interceptor) {
-            return StrutsIcons.INTERCEPTOR;
-          } else if (interceptorOrStackBase instanceof InterceptorStack) {
-            return StrutsIcons.INTERCEPTOR_STACK;
-          }
-        }
-        return null;
       }
     });
 

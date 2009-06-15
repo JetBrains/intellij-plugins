@@ -14,7 +14,6 @@
  */
 package com.intellij.struts2;
 
-import com.intellij.ide.IconProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Iconable;
@@ -23,13 +22,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorRef;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
+import com.intellij.struts2.dom.struts.strutspackage.Interceptor;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorStack;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.validator.Validators;
 import com.intellij.struts2.dom.validator.config.ValidatorsConfig;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.ui.LayeredIcon;
+import com.intellij.util.xml.DomIconProvider;
 import com.intellij.util.xml.DomManager;
+import com.intellij.util.xml.DomElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,9 +45,22 @@ import javax.swing.*;
  *
  * @author Yann C&eacute;bron
  */
-public class Struts2IconProvider extends IconProvider {
+public class Struts2IconProvider extends DomIconProvider {
 
   private boolean active;
+
+  public Icon getIcon(@NotNull DomElement element, int flags) {
+    if (element instanceof InterceptorRef) {
+      final InterceptorOrStackBase interceptorOrStackBase = ((InterceptorRef) element).getName().getValue();
+      if (interceptorOrStackBase instanceof Interceptor) {
+        return StrutsIcons.INTERCEPTOR;
+      }
+      if (interceptorOrStackBase instanceof InterceptorStack) {
+        return StrutsIcons.INTERCEPTOR_STACK;
+      }
+    }
+    return null;
+  }
 
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, final int flags) {
