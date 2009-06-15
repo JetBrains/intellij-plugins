@@ -24,6 +24,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
    *
    * @return the declared Tapestry parameters.
    */
+  @NotNull
   public Map<String, TapestryParameter> getParameters() {
     if (_parametersCache != null && getElementClass().getFile().getFile().lastModified() <= _parametersCacheTimestamp) {
       return _parametersCache;
@@ -49,6 +50,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
    *
    * @return the declared Tapestry required parameters.
    */
+  @NotNull
   public Map<String, TapestryParameter> getRequiredParameters() {
     Map<String, TapestryParameter> parameters = getParameters();
     Map<String, TapestryParameter> requiredParameters = new THashMap<String, TapestryParameter>();

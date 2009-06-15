@@ -5,6 +5,7 @@ import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class ContainerComponent extends Component {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     public Map<String, TapestryParameter> getParameters() {
         return _parameters;
     }

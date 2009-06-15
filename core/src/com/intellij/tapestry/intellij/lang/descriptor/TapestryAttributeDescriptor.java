@@ -1,7 +1,11 @@
 package com.intellij.tapestry.intellij.lang.descriptor;
 
-import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.psi.PsiElement;
+import com.intellij.tapestry.core.model.presentation.TapestryParameter;
+import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
+import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Alexey Chmutov
@@ -9,47 +13,53 @@ import com.intellij.psi.PsiElement;
  *         Time: 2:45:07 PM
  */
 public class TapestryAttributeDescriptor extends BasicXmlAttributeDescriptor {
+  private final TapestryParameter myParam;
+
+  public TapestryAttributeDescriptor(@NotNull TapestryParameter param) {
+    myParam = param;
+  }
+
   public PsiElement getDeclaration() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return ((IntellijJavaField)myParam.getParameterField()).getPsiField();
   }
 
   public String getName() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return myParam.getName();
   }
 
   public void init(PsiElement element) {
-    //To change body of implemented methods use File | Settings | File Templates.
   }
 
   public Object[] getDependences() {
-    return new Object[0];  //To change body of implemented methods use File | Settings | File Templates.
+    return new Object[0];
   }
 
   public boolean isRequired() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return myParam.isRequired();
   }
 
   public boolean isFixed() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
   public boolean hasIdType() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
   public boolean hasIdRefType() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  public String getDefaultValue() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
   public boolean isEnumerated() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+    return false;
   }
 
+  @Nullable
   public String[] getEnumeratedValues() {
-    return new String[0];  //To change body of implemented methods use File | Settings | File Templates.
+    return null;
+  }
+
+  public String getDefaultValue() {
+    return myParam.getDefaultValue();
   }
 }

@@ -1,6 +1,5 @@
 package com.intellij.tapestry.intellij;
 
-import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
@@ -12,7 +11,6 @@ import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.intellij.core.log.IntellijLoggerFactory;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
-import com.intellij.tapestry.intellij.lang.completion.TemplateCompletionData;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,9 +48,6 @@ public class TapestryApplicationSupportLoader implements ApplicationComponent {
 
         // Add Tapestry support for web modules.
         FacetTypeRegistry.getInstance().registerFacetType(TapestryFacetType.INSTANCE);
-
-        // Register completion data.
-        CompletionUtil.registerCompletionData(StdFileTypes.HTML, new TemplateCompletionData());
 
         // Register Tapestry template extension as HTML file type.
         if (!ApplicationManager.getApplication().isUnitTestMode() && FileTypeManager.getInstance().getFileTypeByExtension(TapestryConstants.TEMPLATE_FILE_EXTENSION) == StdFileTypes.UNKNOWN) {

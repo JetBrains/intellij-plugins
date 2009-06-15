@@ -50,6 +50,7 @@ public class ParameterComponent extends Component {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     public Map<String, TapestryParameter> getParameters() {
         return _parameters;
     }
