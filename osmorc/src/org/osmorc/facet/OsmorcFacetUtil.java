@@ -30,11 +30,32 @@ import com.intellij.psi.PsiElement;
 
 /**
  * @author: Robert F. Beeger (robert@beeger.net)
+ * @deprecated this duplicates the methods in {@link org.osmorc.facet.OsmorcFacet} which should be used instead.
  */
+@Deprecated
 public interface OsmorcFacetUtil
 {
+  /**
+   * @deprecated use {@link org.osmorc.facet.OsmorcFacet#getInstance(com.intellij.openapi.module.Module)}
+   */
+  @Deprecated
   OsmorcFacet getOsmorcFacet(Module module);
+
+  /**
+   * @deprecated use {@link org.osmorc.facet.OsmorcFacet#getInstance(com.intellij.psi.PsiElement)}
+   */
+  @Deprecated
   OsmorcFacet getOsmorcFacet(PsiElement element);
+
+  /**
+   * @deprecated use {@link org.osmorc.facet.OsmorcFacet#hasOsmorcFacet(com.intellij.openapi.module.Module)}
+   */
+  @Deprecated
   boolean hasOsmorcFacet(Module module);
+
+  /**
+   * @deprecated use {@link org.osmorc.facet.OsmorcFacet#hasOsmorcFacet(com.intellij.psi.PsiElement)}
+   */
+  @Deprecated
   boolean hasOsmorcFacet(PsiElement element);
 }

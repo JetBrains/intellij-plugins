@@ -406,6 +406,8 @@ public class BundleCompiler implements PackagingCompiler {
             // finally bundlify all the libs for this one
             bundlifyLibraries(module, progressIndicator);
         }
+      compileContext.addMessage(CompilerMessageCategory.INFORMATION,  String.format("Module \"%s\" successfully (re-)built.",
+                                             module.getName()),null,0,0);
     }
 
     private static void addFileToJar(final Module module, final CompileContext compileContext, File tempFile, JarOutputStream jaroutputstream, FileFilter fileFilter, String sourceFilePath, String destFilePath) throws IOException {
@@ -426,7 +428,7 @@ public class BundleCompiler implements PackagingCompiler {
         }
     }
 
-    private static File findFileInModuleContentRoots(String file, Module module) {
+    protected static File findFileInModuleContentRoots(String file, Module module) {
         ModuleRootManager manager = ModuleRootManager.getInstance(module);
         for (VirtualFile root : manager.getContentRoots()) {
             VirtualFile result = VfsUtil.findRelativeFile(file, root);
