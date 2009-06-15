@@ -59,7 +59,7 @@ public class BundleRequiresItselfTest {
     @Test
     public void testBug() throws Exception {
         TestUtil.loadModules("BundleRequiresItselfTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
-        TestUtil.createOsmorFacetForAllModules(fixture.getProject());
+        TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
     }
 
     private IdeaProjectTestFixture fixture;

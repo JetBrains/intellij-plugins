@@ -64,7 +64,7 @@ public class ModuleDependencySynchronizerTest {
         myTempDirFixture.setUp();
         fixture.setUp();
         TestUtil.loadModules("ModuleDependencySynchronizerTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
-        TestUtil.createOsmorFacetForAllModules(fixture.getProject());
+        TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
     }
 
     @After

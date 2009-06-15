@@ -78,8 +78,6 @@ public class TestUtil {
 
         final ModifiableModuleModel moduleModel = ModuleManager.getInstance(project).getModifiableModel();
 
-        final Map<String, Boolean> _moduleHasOsmorcFacet = new HashMap<String, Boolean>();
-
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
                 try {
@@ -97,11 +95,6 @@ public class TestUtil {
                         ContentEntry contentEntry = rootModel.addContentEntry(file);
                         contentEntry.addSourceFolder(file.findChild("src"), false);
                         rootModels.add(rootModel);
-
-                        _moduleHasOsmorcFacet.put(module.getName(),
-                                PsiManager.getInstance(project).findFile(module.getModuleFile()).getText().contains(
-                                        "<facet type=\"Osmorc\" name=\"Osmorc\">"));
-
                     }
 
                     ProjectRootManager.getInstance(project).multiCommit(moduleModel,
@@ -123,7 +116,7 @@ public class TestUtil {
         });
     }
 
-    public static void createOsmorFacetForAllModules(final Project project) {
+    public static void createOsmorcFacetForAllModules(final Project project) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
                 final Module[] modules = ModuleManager.getInstance(project).getModules();
@@ -140,7 +133,7 @@ public class TestUtil {
         });
     }
 
-    public static void createOsmorFacetForModule(final Project project, final String moduleName) {
+    public static void createOsmorcFacetForModule(final Project project, final String moduleName) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
                 final Module module = ModuleManager.getInstance(project).findModuleByName(moduleName);
@@ -184,13 +177,12 @@ public class TestUtil {
         return PsiManager.getInstance(project).findFile(file);
     }
 
-    private static ModuleRootManager getModuleRootManager(Project project, String moduleName) {
+    public static ModuleRootManager getModuleRootManager(Project project, String moduleName) {
         ModuleManager moduleManager = ModuleManager.getInstance(project);
 
         Module module = moduleManager.findModuleByName(moduleName);
 
-        final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-        return rootManager;
+        return ModuleRootManager.getInstance(module);
     }
 
     public static List<ProblemDescriptor> runInspection(LocalInspectionTool inspection, PsiFile psiFile, Project project) {
@@ -209,7 +201,7 @@ public class TestUtil {
         return holder.getResults();
     }
 
-    public static File getTestDataDir() {
+    private static File getTestDataDir() {
         if (TEST_DATA_DIR == null) {
             TEST_DATA_DIR = new File(TestUtil.class.getResource("/").getFile(), "../../../testdata");
             if (!TEST_DATA_DIR.exists()) {

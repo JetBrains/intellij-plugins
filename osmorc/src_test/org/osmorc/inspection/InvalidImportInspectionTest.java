@@ -57,7 +57,7 @@ public class InvalidImportInspectionTest {
         myTempDirFixture.setUp();
         fixture.setUp();
         TestUtil.loadModules("InvalidImportInspectionTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
-        TestUtil.createOsmorFacetForAllModules(fixture.getProject());
+        TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
 
         ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
 

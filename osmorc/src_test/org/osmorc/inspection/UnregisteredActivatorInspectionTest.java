@@ -39,6 +39,8 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.osmorc.TestUtil;
+import org.osmorc.facet.OsmorcFacetConfiguration;
+import org.osmorc.facet.OsmorcFacet;
 
 import java.util.List;
 
@@ -56,7 +58,7 @@ public class UnregisteredActivatorInspectionTest {
         myTempDirFixture.setUp();
         fixture.setUp();
         TestUtil.loadModules("UnregisteredActivatorInspectionTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
-        TestUtil.createOsmorFacetForAllModules(fixture.getProject());
+        TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
     }
 
     @After
@@ -66,7 +68,7 @@ public class UnregisteredActivatorInspectionTest {
     }
 
     @Test
-    public void testInspectionWithError() {
+    public void testInspectionWithErrorForManuallyEditedManifest() {
         PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t0", "t0/Activator.java");
 
         List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
@@ -97,8 +99,63 @@ public class UnregisteredActivatorInspectionTest {
     }
 
     @Test
-    public void testInspectionWithoutError() {
+    public void testInspectionWithoutErrorForManuallyEditedManifest() {
         PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
+
+        List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
+
+        assertThat(list, nullValue());
+    }
+
+    @Test
+    public void testInspectionWithErrorForGeneratedManifest() {
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t0", "t0/Activator.java");
+        final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(psiFile).getConfiguration();
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                configuration.setOsmorcControlsManifest(true);
+                configuration.setBundleActivator("");
+            }
+        });
+
+        List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
+
+        assertThat(list, notNullValue());
+        assertThat(list.size(), equalTo(1));
+
+        final ProblemDescriptor problem = list.get(0);
+        assertThat(problem.getLineNumber(), equalTo(6));
+
+        final QuickFix[] fixes = problem.getFixes();
+        assertThat(fixes, notNullValue());
+        assertThat(fixes.length, equalTo(1));
+
+        CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
+            public void run() {
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    public void run() {
+                        //noinspection unchecked
+                        fixes[0].applyFix(fixture.getProject(), problem);
+                    }
+                });
+            }
+        }, "test", "test");
+
+        list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
+        assertThat(list, nullValue());
+    }
+
+    @Test
+    public void testInspectionWithoutErrorForGeneratedManifest() {
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
+        final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(psiFile).getConfiguration();
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                configuration.setOsmorcControlsManifest(true);
+                configuration.setBundleActivator("t1.Activator");
+            }
+        });
+
 
         List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
 

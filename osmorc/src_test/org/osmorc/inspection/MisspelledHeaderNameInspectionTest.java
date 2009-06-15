@@ -54,7 +54,7 @@ public class MisspelledHeaderNameInspectionTest {
         myTempDirFixture.setUp();
         fixture.setUp();
         TestUtil.loadModules("MisspelledHeaderNameInspectionTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
-        TestUtil.createOsmorFacetForAllModules(fixture.getProject());
+        TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
     }
 
     @After
