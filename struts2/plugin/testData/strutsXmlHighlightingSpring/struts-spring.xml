@@ -46,6 +46,8 @@
     <interceptors>
       <interceptor name="mySpringInterceptor" class="springInterceptor"/>
       <interceptor name="invalidSpringInterceptor" class="<error>INVALID_VALUE</error>"/>
+      <!-- valid Spring bean, but not proper subclass -->
+      <interceptor name="wrongClassType" class="<error>springResultType</error>"/>
     </interceptors>
   </package>
 

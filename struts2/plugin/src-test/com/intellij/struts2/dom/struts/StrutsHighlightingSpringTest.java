@@ -40,6 +40,9 @@ import java.util.Set;
  */
 public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @NonNls
+  private static final String SPRING_XML = "spring.xml";
+
   @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlHighlightingSpring";
@@ -59,23 +62,36 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
 
   public void testStrutsSpringHighlighting() throws Throwable {
     final SpringFileSet springFileSet = configureSpringFileSet();
-    addFile(springFileSet, "spring.xml");
+    addFile(springFileSet, SPRING_XML);
 
     performHighlightingTest("struts-spring.xml");
   }
 
   public void testStrutsSpringCompletionVariants() throws Throwable {
-    createStrutsFileSet("struts-completionvariants-spring.xml");
+    @NonNls final String strutsXml = "struts-completionvariants-spring.xml";
+    createStrutsFileSet(strutsXml);
 
     final SpringFileSet springFileSet = configureSpringFileSet();
-    addFile(springFileSet, "spring.xml");
+    addFile(springFileSet, SPRING_XML);
 
     // TODO <alias> does not appear here, see com.intellij.spring.impl.SpringModelImpl#myOwnBeans
-    final List<String> variants = myFixture.getCompletionVariants("struts-completionvariants-spring.xml");
+    final List<String> variants = myFixture.getCompletionVariants(strutsXml);
 
     Assert.assertTrue(CollectionUtils.isSubCollection(Arrays.asList("MyClass", "bean1", "bean2", "springInterceptor",
                                                                     "springResultType"),
                                                       variants));
+  }
+
+  public void testStrutsSpringCompletionVariantsSubclass() throws Throwable {
+    @NonNls final String strutsXml = "struts-completionvariants-subclass-spring.xml";
+    createStrutsFileSet(strutsXml);
+
+    final SpringFileSet springFileSet = configureSpringFileSet();
+    addFile(springFileSet, SPRING_XML);
+
+    final List<String> variants = myFixture.getCompletionVariants(strutsXml);
+
+    Assert.assertTrue(CollectionUtils.isSubCollection(Arrays.asList("springInterceptor"), variants));
   }
 
   // stuff below is Spring related ===============================================
@@ -95,7 +111,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
       myFixture.copyFileToProject(path);
     }
     catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("error copying '" + path + "'", e);
     }
 
     final VirtualFile file = myFixture.getTempDirFixture().getFile(path);
@@ -110,7 +126,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   protected SpringFacet createSpringFacet() {
     final RunResult<SpringFacet> runResult = new WriteCommandAction<SpringFacet>(myFixture.getProject()) {
       protected void run(final Result<SpringFacet> result) throws Throwable {
-        String name = SpringFacetType.INSTANCE.getPresentableName();
+        final String name = SpringFacetType.INSTANCE.getPresentableName();
         final SpringFacet facet = FacetManager.getInstance(myModule).addFacet(SpringFacetType.INSTANCE, name, null);
         result.setResult(facet);
       }

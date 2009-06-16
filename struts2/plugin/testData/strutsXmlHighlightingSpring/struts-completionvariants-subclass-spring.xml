@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<!-- test <interceptor> completion with Spring support enabled -->
+<struts>
+
+  <package name="testCompletionWithSpringBeans">
+
+    <interceptors>
+      <!-- must only show Spring beans of proper subclass -->
+      <interceptor name="mySpringInterceptor" class="<caret>"/>
+    </interceptors>
+
+  </package>
+</struts>
