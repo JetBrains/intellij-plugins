@@ -16,7 +16,6 @@
 package com.intellij.struts2;
 
 import com.intellij.facet.FacetTypeRegistry;
-import com.intellij.javaee.ExternalResourceManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.text.StringUtil;
@@ -89,8 +88,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
 
   public void initComponent() {
     FacetTypeRegistry.getInstance().registerFacetType(StrutsFacetType.INSTANCE);
-
-    initExternalResources();
 
     registerStrutsDomPresentation();
     registerValidationDomPresentation();
@@ -327,57 +324,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
         return null;
       }
     });
-  }
-
-  /**
-   * Adds all Struts2-related DTDs to the available external resources.
-   */
-  private static void initExternalResources() {
-    addDTDResource(StrutsConstants.STRUTS_2_0_DTD_URI,
-                   StrutsConstants.STRUTS_2_0_DTD_ID,
-                   "/resources/dtds/struts-2.0.dtd");
-
-    addDTDResource(StrutsConstants.STRUTS_2_1_DTD_URI,
-                   StrutsConstants.STRUTS_2_1_DTD_ID,
-                   "/resources/dtds/struts-2.1.dtd");
-
-    addDTDResource(StrutsConstants.VALIDATOR_1_00_DTD_URI,
-                   StrutsConstants.VALIDATOR_1_00_DTD_ID,
-                   "/resources/dtds/xwork-validator-1.0.dtd");
-
-    addDTDResource(StrutsConstants.VALIDATOR_1_02_DTD_URI,
-                   StrutsConstants.VALIDATOR_1_02_DTD_ID,
-                   "/resources/dtds/xwork-validator-1.0.2.dtd");
-
-    addDTDResource(StrutsConstants.VALIDATOR_CONFIG_DTD_URI,
-                   StrutsConstants.VALIDATOR_CONFIG_DTD_ID,
-                   "/resources/dtds/xwork-validator-config-1.0.dtd");
-
-    addDTDResource(StrutsConstants.TILES_2_0_DTD_URI_STRUTS,
-                   StrutsConstants.TILES_2_0_DTD_ID,
-                   "/resources/dtds/struts-tiles-config_2_0.dtd");
-
-    addDTDResource(StrutsConstants.TILES_2_0_DTD_URI,
-                   StrutsConstants.TILES_2_0_DTD_ID,
-                   "/resources/dtds/tiles-config_2_0.dtd");
-
-    addDTDResource(StrutsConstants.TILES_2_1_DTD_URI,
-                   StrutsConstants.TILES_2_1_DTD_ID,
-                   "/resources/dtds/tiles-config_2_1.dtd");
-  }
-
-  /**
-   * Adds a DTD resource from local classpath.
-   *
-   * @param uri       Resource URI.
-   * @param id        Resource ID.
-   * @param localFile Local path to resource.
-   */
-  private static void addDTDResource(@NonNls final String uri,
-                                     @NonNls final String id,
-                                     @NonNls final String localFile) {
-    ExternalResourceManager.getInstance().addStdResource(uri, localFile, StrutsApplicationComponent.class);
-    ExternalResourceManager.getInstance().addStdResource(id, localFile, StrutsApplicationComponent.class);
   }
 
   /**

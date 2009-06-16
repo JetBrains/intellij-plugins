@@ -99,7 +99,7 @@
 
     <!-- inject CSS into Struts UI tags -->
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibCssInlineStyleInjector"/>
-
+    <standardResourceProvider implementation="com.intellij.struts2.Struts2ResourceProvider"/>
   </extensions>
 
   <application-components>
