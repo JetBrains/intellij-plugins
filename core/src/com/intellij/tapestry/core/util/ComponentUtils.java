@@ -29,7 +29,7 @@ public class ComponentUtils {
    */
   @Nullable
   public static IJavaClassType findClassFromTemplate(@NotNull IResource template, @NotNull TapestryProject project) {
-    String resourcePath = template.getFile().getAbsolutePath();
+    String templatePath = template.getFile().getAbsolutePath();
     String templateFilename = LocalizationUtils.unlocalizeFileName(template.getName());
 
     Library applicationLibrary;
@@ -40,11 +40,11 @@ public class ComponentUtils {
       return null;
     }
 
-    resourcePath = PathUtils.removeLastFilePathElement(resourcePath, false) + File.separator + templateFilename;
+    templatePath = PathUtils.removeLastFilePathElement(templatePath, false) + File.separator + templateFilename;
 
-    IJavaClassType type = checkFirstResourceForEach(resourcePath, applicationLibrary.getComponents().values());
+    IJavaClassType type = checkFirstResourceForEach(templatePath, applicationLibrary.getComponents().values());
     if(type != null) return type;
-    return checkFirstResourceForEach(resourcePath, applicationLibrary.getPages().values());
+    return checkFirstResourceForEach(templatePath, applicationLibrary.getPages().values());
   }
 
   @Nullable

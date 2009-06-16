@@ -24,9 +24,9 @@
 
     <psi.referenceContributor implementation="com.intellij.tapestry.intellij.lang.reference.TapestryReferenceContributor"/>
 
-    <!--<xml.elementDescriptorProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryTagDescriptorProvider"/>-->
+    <xml.elementDescriptorProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryTagDescriptorProvider"/>
 
-    <!--<xml.attributeDescriptorsProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryAttributeDescriptorsProvider"/>-->
+    <xml.attributeDescriptorsProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryAttributeDescriptorsProvider"/>
 
   </extensions>
 

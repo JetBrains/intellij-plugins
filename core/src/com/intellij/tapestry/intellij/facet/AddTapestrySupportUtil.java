@@ -83,9 +83,12 @@ public class AddTapestrySupportUtil {
 
         if (contentRoots == null || contentRoots.length == 0) {
             _logger.warn("Couldn't generate pom because it wasn't possible to determine the module content root.");
-
             return;
         }
+      if (rootModel.getSourceRoots().length == 0) {
+          _logger.warn("Coulnd't generate startup application because it wasn't possible to determine module source root");
+          return;
+      }
 
         String modulePath = contentRoots[0].getPath();
 
