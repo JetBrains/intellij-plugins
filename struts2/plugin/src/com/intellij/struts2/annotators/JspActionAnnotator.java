@@ -21,6 +21,8 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.jsp.JspFileViewProvider;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
@@ -36,13 +38,15 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.Icons;
+import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlNSDescriptor;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -60,6 +64,12 @@ public class JspActionAnnotator implements Annotator {
 
   @NonNls
   private static final String[] TAGS_WITH_ACTION_ATTRIBUTE = new String[]{"action", "form", "reset", "submit", "url"};
+
+  private static final NullableFunction<Action,PsiMethod> ACTION_METHOD_FUNCTION = new NullableFunction<Action, PsiMethod>() {
+    public PsiMethod fun(final Action action) {
+      return action.searchActionMethod();
+    }
+  };
 
   static {
     ACTION_CLASS_ICON.setIcon(Icons.CLASS_ICON, 0);
@@ -94,26 +104,27 @@ public class JspActionAnnotator implements Annotator {
         return;
       }
 
-      final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject()).getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
+      final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject())
+          .getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
       if (strutsModel == null) {
         return;
       }
+
       final String namespace = xmlTag.getAttributeValue("namespace");
       final List<Action> actions = strutsModel.findActionsByName(actionPath, namespace);
       if (!actions.isEmpty()) {
 
-        // resolve to action method should be exactly 0||1
-        final List<PsiMethod> navigationTargets = new ArrayList<PsiMethod>(actions.size());
-        for (final Action action : actions) {
-          ContainerUtil.addIfNotNull(action.searchActionMethod(), navigationTargets);
-        }
-
-        if (!navigationTargets.isEmpty()) {
-          NavigationGutterIconBuilder.create(ACTION_CLASS_ICON).
+        // resolve to action method should be exactly 1
+        NavigationGutterIconBuilder.create(ACTION_CLASS_ICON).
             setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
-            setTargets(navigationTargets).
+            setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.notfound")).
+            setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {
+              @NotNull
+              protected Collection<PsiMethod> compute() {
+                return ContainerUtil.mapNotNull(actions, ACTION_METHOD_FUNCTION);
+              }
+            }).
             install(annotationHolder, xmlTag);
-        }
       }
     }
   }
@@ -142,7 +153,7 @@ public class JspActionAnnotator implements Annotator {
       final XmlNSDescriptor descriptor = rootTag.getNSDescriptor(namespaceByPrefix, true);
       if (descriptor != null && descriptor instanceof TldDescriptor) {
         final String uri = ((TldDescriptor) descriptor).getUri();
-        if (uri != null && uri.equals(StrutsConstants.TAGLIB_STRUTS_UI_URI)) {  // URI is optional in TLD!
+        if (Comparing.equal(uri, StrutsConstants.TAGLIB_STRUTS_UI_URI)) {  // URI is optional in TLD!
           return prefix;
         }
       }
