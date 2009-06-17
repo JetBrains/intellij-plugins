@@ -39,6 +39,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsConstants;
+import com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.struts2.facet.ui.StrutsVersion;
 import com.intellij.util.Function;
@@ -123,8 +124,13 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
           final PsiDirectory directory = PsiManager.getInstance(module.getProject()).findDirectory(sourceRoots[0]);
           if (directory != null &&
               directory.findFile(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME) == null) {
+
+            final boolean is2_1_X = version.startsWith("2.1");
             final FileTemplate strutsXmlTemplate = FileTemplateManager.getInstance()
-                .getJ2eeTemplate(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME);
+                .getJ2eeTemplate(is2_1_X ?
+                                 StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_1_XML :
+                                 StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_0_XML);
+
             try {
               final StrutsFacetConfiguration strutsFacetConfiguration = strutsFacet.getConfiguration();
 
@@ -151,7 +157,7 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
                   strutsFilter.getFilterName().setStringValue("struts2");
 
                   @NonNls final String filterClass;
-                  if (version.startsWith("2.1")) {
+                  if (is2_1_X) {
                     filterClass = STRUTS_2_1_FILTER_CLASS;
                   } else {
                     filterClass = STRUTS_2_0_FILTER_CLASS;

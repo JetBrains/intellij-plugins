@@ -17,6 +17,7 @@ package com.intellij.struts2;
 import com.intellij.ide.fileTemplates.FileTemplateDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * Provides filetemplates for struts.mxl/validator.xml files.
@@ -25,11 +26,26 @@ import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory;
  */
 public class StrutsFileTemplateGroupDescriptorFactory implements FileTemplateGroupDescriptorFactory {
 
+  /**
+   * Template for {@code 2.0.x}.
+   */
+  @NonNls
+  public static final String STRUTS_2_0_XML = "struts.xml";
+
+  /**
+   * Template for {@code 2.1.x}.
+   */
+  @NonNls
+  public static final String STRUTS_2_1_XML = "struts_2_1.xml";
+
   public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
     final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor(StrutsBundle.message("struts2"),
                                                                               StrutsIcons.ACTION);
-    group.addTemplate(new FileTemplateDescriptor(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME,
+    group.addTemplate(new FileTemplateDescriptor(STRUTS_2_0_XML,
                                                  StrutsIcons.STRUTS_CONFIG_FILE_ICON));
+    group.addTemplate(new FileTemplateDescriptor(STRUTS_2_1_XML,
+                                                 StrutsIcons.STRUTS_CONFIG_FILE_ICON));
+
     group.addTemplate(new FileTemplateDescriptor("validator.xml", StrutsIcons.VALIDATION_CONFIG_FILE_ICON));
     return group;
   }
