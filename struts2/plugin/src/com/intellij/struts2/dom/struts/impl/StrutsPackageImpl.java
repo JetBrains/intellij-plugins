@@ -19,6 +19,7 @@ import com.intellij.struts2.dom.struts.strutspackage.DefaultClassRef;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.structure.LocationPresentation;
+import com.intellij.util.xml.DomUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +45,7 @@ public abstract class StrutsPackageImpl implements StrutsPackage, LocationPresen
   public DefaultClassRef searchDefaultClassRef() {
     StrutsPackage currentPackage = this;
     while (currentPackage != null) {
-      if (currentPackage.getDefaultClassRef().getXmlElement() != null) {
+      if (DomUtil.hasXml(currentPackage.getDefaultClassRef())) {
         return currentPackage.getDefaultClassRef();
       }
       currentPackage = currentPackage.getExtends().getValue();

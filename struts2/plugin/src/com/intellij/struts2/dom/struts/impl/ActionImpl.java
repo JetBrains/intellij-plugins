@@ -64,7 +64,7 @@ public abstract class ActionImpl implements Action {
   @Nullable
   public PsiClass searchActionClass() {
     final GenericAttributeValue<PsiClass> actionClassAttribute = getActionClass();
-    if (actionClassAttribute.getXmlElement() != null) {
+    if (DomUtil.hasXml(actionClassAttribute)) {
       return actionClassAttribute.getValue();
     }
 
@@ -81,7 +81,7 @@ public abstract class ActionImpl implements Action {
   @Nullable
   public PsiMethod searchActionMethod() {
     final GenericAttributeValue<PsiMethod> methodValue = getMethod();
-    if (methodValue.getXmlElement() != null) {
+    if (DomUtil.hasXml(methodValue)) {
       return methodValue.getValue();
     }
 
