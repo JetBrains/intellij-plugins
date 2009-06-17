@@ -103,7 +103,7 @@
     </change-notes>
     <version>0.13.0</version>
     <vendor url="http://osmorc.org" email="info@osmorc.org">Osmorc Development Team</vendor>
-    <idea-version since-build="10000" until-build="10400"/>
+    <idea-version since-build="10000"/>
     <category>Framework integration</category>
 
 
