@@ -28,7 +28,7 @@ public class StrutsFileTemplateGroupDescriptorFactory implements FileTemplateGro
   public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
     final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor(StrutsBundle.message("struts2"),
                                                                               StrutsIcons.ACTION);
-    group.addTemplate(new FileTemplateDescriptor(StrutsConstants.STRUTS_DEFAULT_FILENAME,
+    group.addTemplate(new FileTemplateDescriptor(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME,
                                                  StrutsIcons.STRUTS_CONFIG_FILE_ICON));
     group.addTemplate(new FileTemplateDescriptor("validator.xml", StrutsIcons.VALIDATION_CONFIG_FILE_ICON));
     return group;

@@ -21,11 +21,13 @@ import com.intellij.javaee.StandardResourceProvider;
 import org.jetbrains.annotations.NonNls;
 
 /**
+ * Provides "External resources" (DTDs).
+ *
  * @author Dmitry Avdeev
  */
 public class Struts2ResourceProvider implements StandardResourceProvider {
 
-  public void registerResources(ResourceRegistrar registrar) {
+  public void registerResources(final ResourceRegistrar registrar) {
     addDTDResource(StrutsConstants.STRUTS_2_0_DTD_URI,
                    StrutsConstants.STRUTS_2_0_DTD_ID,
                    "/resources/dtds/struts-2.0.dtd", registrar);
@@ -65,14 +67,14 @@ public class Struts2ResourceProvider implements StandardResourceProvider {
    * @param uri       Resource URI.
    * @param id        Resource ID.
    * @param localFile Local path to resource.
-   * @param registrar
+   * @param registrar Resource registrar.
    */
   private static void addDTDResource(@NonNls final String uri,
                                      @NonNls final String id,
-                                     @NonNls final String localFile, ResourceRegistrar registrar) {
+                                     @NonNls final String localFile,
+                                     final ResourceRegistrar registrar) {
     registrar.addStdResource(uri, localFile, StrutsApplicationComponent.class);
     registrar.addStdResource(id, localFile, StrutsApplicationComponent.class);
   }
-
 
 }

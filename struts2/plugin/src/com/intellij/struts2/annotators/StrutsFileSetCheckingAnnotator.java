@@ -37,10 +37,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
+import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
-import com.intellij.util.Icons;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
@@ -143,7 +143,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
                                                    new ArrayList<StrutsFileSet>(strutsFileSets)) {
 
                 public Icon getIconFor(final StrutsFileSet aValue) {
-                  return Icons.PACKAGE_ICON;
+                  return StrutsIcons.STRUTS_CONFIG_FILE_ICON;
                 }
 
                 public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {

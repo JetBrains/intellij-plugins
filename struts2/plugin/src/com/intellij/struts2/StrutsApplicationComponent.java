@@ -50,8 +50,7 @@ import java.util.Map;
  * <p/>
  * <ul>
  * <li>StrutsFacet</li>
- * <li>External resources (DTDs)</li>
- * <li>DOM Icons/presentation</li>
+ * <li>DOM Icons/Presentation/Converters</li>
  * </ul>
  *
  * @author Yann C&eacute;bron

@@ -78,7 +78,7 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
   public void registerDetectors(final FacetDetectorRegistry<StrutsFacetConfiguration> facetDetectorRegistry) {
     final FacetDetectorRegistryEx<StrutsFacetConfiguration> registry =
             (FacetDetectorRegistryEx<StrutsFacetConfiguration>) facetDetectorRegistry;
-    registry.registerUniversalDetectorByFileNameAndRootTag(StrutsConstants.STRUTS_DEFAULT_FILENAME, StrutsRoot.TAG_NAME,
+    registry.registerUniversalDetectorByFileNameAndRootTag(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME, StrutsRoot.TAG_NAME,
                                                            new StrutsFacetDetector(), WebUtilImpl.BY_PARENT_WEB_ROOT_SELECTOR);
   }
 

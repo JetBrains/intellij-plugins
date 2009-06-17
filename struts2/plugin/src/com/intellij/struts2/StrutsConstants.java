@@ -27,8 +27,11 @@ public final class StrutsConstants {
   private StrutsConstants() {
   }
 
+  /**
+   * Default filename for Struts configuration file.
+   */
   @NonNls
-  public static final String STRUTS_DEFAULT_FILENAME = "struts.xml";
+  public static final String STRUTS_XML_DEFAULT_FILENAME = "struts.xml";
 
   /**
    * struts.xml 2.0 URI.

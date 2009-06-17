@@ -122,15 +122,15 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
         if (sourceRoots.length > 0) {
           final PsiDirectory directory = PsiManager.getInstance(module.getProject()).findDirectory(sourceRoots[0]);
           if (directory != null &&
-              directory.findFile(StrutsConstants.STRUTS_DEFAULT_FILENAME) == null) {
+              directory.findFile(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME) == null) {
             final FileTemplate strutsXmlTemplate = FileTemplateManager.getInstance()
-                .getJ2eeTemplate(StrutsConstants.STRUTS_DEFAULT_FILENAME);
+                .getJ2eeTemplate(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME);
             try {
               final StrutsFacetConfiguration strutsFacetConfiguration = strutsFacet.getConfiguration();
 
               // create empty struts.xml & fileset
               final PsiElement psiElement = FileTemplateUtil.createFromTemplate(strutsXmlTemplate,
-                                                                                StrutsConstants.STRUTS_DEFAULT_FILENAME,
+                                                                                StrutsConstants.STRUTS_XML_DEFAULT_FILENAME,
                                                                                 null,
                                                                                 directory);
               final Set<StrutsFileSet> empty = Collections.emptySet();
