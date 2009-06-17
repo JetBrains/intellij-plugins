@@ -50,13 +50,12 @@ public final class WebDescriptorUtils {
      * @return the context parameter name value, <code>null</code> if the parameter isn't found.
      */
     private static String getContextParam(@Nullable Document document, @NotNull String paramName) {
-        if (document == null)
-            return null;
+        if (document == null) return null;
 
         NodeList nodeList = document.getElementsByTagName(CONTEXT_PARAM_NAME);
 
         for (int i = 0; i < nodeList.getLength(); i++)
-            if (nodeList.item(i).getTextContent().equals(paramName)) {
+            if (paramName.equals(nodeList.item(i).getTextContent())) {
                 NodeList paramNodeList = nodeList.item(i).getParentNode().getChildNodes();
                 for (int j = 0; j < paramNodeList.getLength(); j++)
                     if (paramNodeList.item(j).getNodeName().equals(CONTEXT_PARAM_VALUE)) {
