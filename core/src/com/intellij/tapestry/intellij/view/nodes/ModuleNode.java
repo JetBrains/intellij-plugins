@@ -9,11 +9,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiPackage;
-import com.intellij.ui.treeStructure.SimpleNode;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.view.TapestryProjectViewPane;
+import com.intellij.ui.treeStructure.SimpleNode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.TreeSet;
@@ -42,15 +41,10 @@ public class ModuleNode extends AbstractModuleNode {
 
                             PsiPackage aPackage = IdeaUtils.getPackage(psiDirectory);
                             if (TapestryProjectViewPane.getInstance(myProject).isFromBasePackage()) {
-                                try {
-                                    if (aPackage.getName() != null && aPackage.getQualifiedName()
-                                            .equals(TapestryModuleSupportLoader.getTapestryProject(_module).getApplicationLibrary().getBasePackage())) {
-                                        children.add(new LibraryNode(TapestryModuleSupportLoader.getTapestryProject(_module).getApplicationLibrary(), psiDirectory, _module, _treeBuilder));
-                                    }
-                                } catch (NotFoundException e) {
-                                    return true;
-                                }
-
+                              if (aPackage.getName() != null && aPackage.getQualifiedName()
+                                      .equals(TapestryModuleSupportLoader.getTapestryProject(_module).getApplicationLibrary().getBasePackage())) {
+                                  children.add(new LibraryNode(TapestryModuleSupportLoader.getTapestryProject(_module).getApplicationLibrary(), psiDirectory, _module, _treeBuilder));
+                              }
                             } else if (aPackage.getName() != null
                                     && (aPackage.getParentPackage() == null || aPackage.getParentPackage().getName() == null)) {
                                 children.add(new PackageNode(PsiManager.getInstance(myProject).findDirectory(virtualfile), (Module) getElement(), _treeBuilder));

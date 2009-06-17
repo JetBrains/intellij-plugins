@@ -22,7 +22,6 @@ import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
-import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.model.presentation.TemplateElement;
 import com.intellij.tapestry.core.model.presentation.components.BlockComponent;
 import com.intellij.tapestry.core.model.presentation.components.BodyComponent;
@@ -63,8 +62,11 @@ public class TapestryUtils {
     return module != null && FacetManager.getInstance(module).getFacetsByType(TapestryFacetType.ID).size() > 0;
   }
 
-  public static boolean isTapestryTemplate(XmlFile file) {
-    final VirtualFile vFile = file.getViewProvider().getVirtualFile();
+  public static boolean isTapestryTemplate(@NotNull XmlFile file) {
+    return isTapestryTemplate(file.getViewProvider().getVirtualFile());
+  }
+
+  public static boolean isTapestryTemplate(@NotNull VirtualFile vFile) {
     return TapestryConstants.TEMPLATE_FILE_EXTENSION.equals(vFile.getExtension());
   }
 
@@ -126,12 +128,12 @@ public class TapestryUtils {
   /**
    * Verify the existence of parameter declaration in elementClass
    *
-   * @param parameter    the parameter to check
+   * @param paramName    the parameter name to check
    * @param elementClass the class to get the fields
    * @param tag          the component to get the parameters
    * @return <code>true</code> if the parameter is defined in the class, <code>false</code> otherwise.
    */
-  public static boolean parameterDefinedInClass(TapestryParameter parameter, IntellijJavaClassType elementClass, XmlTag tag) {
+  public static boolean parameterDefinedInClass(String paramName, IntellijJavaClassType elementClass, XmlTag tag) {
 
     IJavaField field = findIdentifyingField(elementClass, tag);
     if (field == null) return false;
@@ -141,13 +143,13 @@ public class TapestryUtils {
     if (fieldParameters == null) return false;
     for (String fieldParameter : fieldParameters) {
       final String[] paramNameValue = fieldParameter.split("=");
-      if (paramNameValue.length == 2 && paramNameValue[0].equals(parameter.getName())) return true;
+      if (paramNameValue.length == 2 && paramNameValue[0].equals(paramName)) return true;
     }
     return false;
   }//parameterDefinedInClass
 
 
-  static boolean isFieldIdEqualsToTagId(String[] fieldIds, IJavaField field, String tagId) {
+  private static boolean isFieldIdEqualsToTagId(String[] fieldIds, IJavaField field, String tagId) {
     return fieldIds != null && fieldIds.length > 0 && fieldIds[0] != null && fieldIds[0].length() > 0
            ? fieldIds[0].equals(tagId)
            : field.getName().equals(tagId);
@@ -320,7 +322,7 @@ public class TapestryUtils {
   public static Component getComponentFromTag(XmlTag tag) {
     Module module = IdeaUtils.getModule(tag);
     if (module == null) return null;
-    return TapestryUtils.getComponentFromTag(module, tag);
+    return getComponentFromTag(module, tag);
   }
 
   /**

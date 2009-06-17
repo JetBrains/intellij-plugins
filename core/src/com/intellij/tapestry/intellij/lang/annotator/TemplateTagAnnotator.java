@@ -85,10 +85,11 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
             annotateAttribute(attr);
           }
           for (TapestryParameter parameter : component.getParameters().values()) {
-            XmlAttribute attribute = TapestryUtils.getTapestryAttribute(tag, parameter.getName());
+            final String paramName = parameter.getName();
+            XmlAttribute attribute = TapestryUtils.getTapestryAttribute(tag, paramName);
             if (attribute == null) {
-              if (parameter.isRequired() && !TapestryUtils.parameterDefinedInClass(parameter, elementClass, tag)) {
-                _annotationHolder.createErrorAnnotation(IdeaUtils.getNameElement(tag), "Missing required parameter \"" + parameter.getName() + "\"");
+              if (parameter.isRequired() && !TapestryUtils.parameterDefinedInClass(paramName, elementClass, tag)) {
+                _annotationHolder.createErrorAnnotation(IdeaUtils.getNameElement(tag), "Missing required parameter \"" + paramName + "\"");
               }
               continue;
             }

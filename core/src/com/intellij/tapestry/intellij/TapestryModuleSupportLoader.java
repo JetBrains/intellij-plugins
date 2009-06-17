@@ -4,7 +4,13 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.tapestry.core.TapestryProject;
+import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaTypeCreator;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaTypeFinder;
 import com.intellij.tapestry.intellij.core.resource.IntellijResourceFinder;
@@ -20,22 +26,34 @@ import org.jetbrains.annotations.NotNull;
 )
 public class TapestryModuleSupportLoader extends AbstractModuleComponent implements PersistentStateComponent<TapestryModuleSupportLoader.ModuleConfiguration> {
 
-    private final TapestryProject _tapestryProject;
-    private ModuleConfiguration _configuration;
+  private final TapestryProject _tapestryProject;
+  private ModuleConfiguration _configuration;
+  private final CachedValue<PresentationLibraryElement[]> myComponents;
 
-    public TapestryModuleSupportLoader(Module module) {
-        super(module);
+  public TapestryModuleSupportLoader(Module module) {
+    super(module);
 
-        _configuration = new ModuleConfiguration();
+    _configuration = new ModuleConfiguration();
 
-        _tapestryProject = new TapestryProject(new IntellijResourceFinder(module), new IntellijJavaTypeFinder(module), new IntellijJavaTypeCreator(module));
-    }
+    _tapestryProject =
+        new TapestryProject(new IntellijResourceFinder(module), new IntellijJavaTypeFinder(module), new IntellijJavaTypeCreator(module));
+    final CachedValuesManager manager = PsiManager.getInstance(module.getProject()).getCachedValuesManager();
+    myComponents = manager.createCachedValue(new CachedValueProvider<PresentationLibraryElement[]>() {
+      public Result<PresentationLibraryElement[]> compute() {
+        return CachedValueProvider.Result.create(_tapestryProject.getAllAvailableComponents(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+      }
+    }, false);
+  }
 
-    public static TapestryModuleSupportLoader getInstance(Module module) {
-        return module.getComponent(TapestryModuleSupportLoader.class);
-    }
+  public PresentationLibraryElement[] getComponents() {
+    return myComponents.getValue();
+  }
 
-    /**
+  public static TapestryModuleSupportLoader getInstance(Module module) {
+    return module.getComponent(TapestryModuleSupportLoader.class);
+  }
+
+  /**
      * Finds the Tapestry project instance associated with a module.
      *
      * @param module the module to look for the Tapestry project.

@@ -2,15 +2,14 @@ package com.intellij.tapestry.core.util;
 
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.xml.XmlAttribute;
 import com.intellij.tapestry.core.resource.xml.XmlTag;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
@@ -32,13 +31,8 @@ public class ComponentUtils {
     String templatePath = template.getFile().getAbsolutePath();
     String templateFilename = LocalizationUtils.unlocalizeFileName(template.getName());
 
-    Library applicationLibrary;
-    try {
-      applicationLibrary = project.getApplicationLibrary();
-    }
-    catch (NotFoundException e) {
-      return null;
-    }
+    Library applicationLibrary = project.getApplicationLibrary();
+    if(applicationLibrary == null) return null;
 
     templatePath = PathUtils.removeLastFilePathElement(templatePath, false) + File.separator + templateFilename;
 

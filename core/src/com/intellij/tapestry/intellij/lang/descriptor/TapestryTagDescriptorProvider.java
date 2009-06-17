@@ -14,6 +14,6 @@ import com.intellij.xml.XmlElementDescriptor;
 public class TapestryTagDescriptorProvider implements XmlElementDescriptorProvider {
   public XmlElementDescriptor getDescriptor(XmlTag tag) {
     Component component = TapestryUtils.getComponentFromTag(tag);
-    return component == null ? null : new TapestryTagDescriptor(component);
+    return component == null ? null : new TapestryTagDescriptor(component, tag.getNamespacePrefix());
   }
 }

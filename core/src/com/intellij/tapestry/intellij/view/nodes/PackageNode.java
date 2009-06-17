@@ -116,21 +116,19 @@ public class PackageNode extends TapestryNode {
         try {
             TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(_module);
             String applicationRootPackage = tapestryProject.getApplicationRootPackage();
-            if (applicationRootPackage != null) {
-                String packageName = IdeaUtils.getPackage(psiDirectory).getQualifiedName();
-                if (applicationRootPackage.equals(packageName)) {
-                    return new LibraryNode(tapestryProject.getApplicationLibrary(), psiDirectory, _module, _treeBuilder);
-                } else
-                if (tapestryProject.getPagesRootPackage().equals(packageName)) {
-                    return new PagesNode(psiDirectory, _module, _treeBuilder);
-                } else
-                if (tapestryProject.getComponentsRootPackage().equals(packageName)) {
-                    return new ComponentsNode(psiDirectory, _module, _treeBuilder);
-                } else
-                if (tapestryProject.getMixinsRootPackage().equals(packageName)) {
-                    return new MixinsNode(psiDirectory, _module, _treeBuilder);
-                }
-            }
+          String packageName = IdeaUtils.getPackage(psiDirectory).getQualifiedName();
+          if (applicationRootPackage.equals(packageName)) {
+              return new LibraryNode(tapestryProject.getApplicationLibrary(), psiDirectory, _module, _treeBuilder);
+          } else
+          if (tapestryProject.getPagesRootPackage().equals(packageName)) {
+              return new PagesNode(psiDirectory, _module, _treeBuilder);
+          } else
+          if (tapestryProject.getComponentsRootPackage().equals(packageName)) {
+              return new ComponentsNode(psiDirectory, _module, _treeBuilder);
+          } else
+          if (tapestryProject.getMixinsRootPackage().equals(packageName)) {
+              return new MixinsNode(psiDirectory, _module, _treeBuilder);
+          }
         } catch (NotFoundException e) {
             return null;
         }

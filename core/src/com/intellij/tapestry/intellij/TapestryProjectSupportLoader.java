@@ -3,6 +3,9 @@ package com.intellij.tapestry.intellij;
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.CompilerConfigurationImpl;
 import com.intellij.compiler.MalformedPatternException;
+import com.intellij.javaee.ExternalResourceManagerEx;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
@@ -15,6 +18,7 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.log.Logger;
 import com.intellij.tapestry.core.log.LoggerFactory;
+import com.intellij.tapestry.intellij.lang.descriptor.TapestryNamespaceDescriptor;
 import com.intellij.tapestry.intellij.lang.reference.XmlTagValueReferenceProvider;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindow;
 import com.intellij.tapestry.intellij.util.Icons;
@@ -23,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-public class TapestryProjectSupportLoader implements ProjectComponent {
+public class TapestryProjectSupportLoader implements ProjectComponent, Disposable {
 
   public static final String TAPESTRY_TOOLWINDOW_ID = "Tapestry";
 
@@ -43,9 +47,14 @@ public class TapestryProjectSupportLoader implements ProjectComponent {
   }
 
   public void initComponent() {
+    ExternalResourceManagerEx.getInstanceEx().addImplicitNamespace(TapestryConstants.TEMPLATE_NAMESPACE, new TapestryNamespaceDescriptor(), this);
+  }
+
+  public void dispose() {
   }
 
   public void disposeComponent() {
+    Disposer.dispose(this);
   }
 
   @NotNull

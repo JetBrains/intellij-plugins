@@ -2,8 +2,6 @@ package com.intellij.tapestry.core.model.presentation;
 
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.model.externalizable.documentation.generationchain.DocumentationGenerationChain;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaClassType;
@@ -11,9 +9,10 @@ import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.externalizable.ExternalizableToClass;
 import com.intellij.tapestry.core.model.externalizable.ExternalizableToDocumentation;
+import com.intellij.tapestry.core.model.externalizable.documentation.generationchain.DocumentationGenerationChain;
 import com.intellij.tapestry.core.model.externalizable.toclasschain.ExternalizeToClassChain;
-import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.CoreXmlRecursiveElementVisitor;
+import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.xml.XmlAttribute;
 import com.intellij.tapestry.core.resource.xml.XmlTag;
 import com.intellij.tapestry.core.util.ComponentUtils;
@@ -111,11 +110,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
      * @throws NotTapestryElementException if the given parameters do not correspond to a Tapestry element.
      */
     public static PresentationLibraryElement createProjectElementInstance(IJavaClassType elementClass, TapestryProject project) throws NotTapestryElementException {
-        try {
-            return createElementInstance(project.getApplicationLibrary(), elementClass, project);
-        } catch (NotFoundException ex) {
-            throw new NotTapestryElementException(ex.getMessage());
-        }
+      return createElementInstance(project.getApplicationLibrary(), elementClass, project);
     }
 
     /**
