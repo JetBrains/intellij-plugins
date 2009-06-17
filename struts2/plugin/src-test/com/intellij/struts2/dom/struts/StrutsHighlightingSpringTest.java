@@ -19,12 +19,14 @@ import com.intellij.facet.FacetManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.RunResult;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.spring.facet.SpringFacet;
 import com.intellij.spring.facet.SpringFacetConfiguration;
 import com.intellij.spring.facet.SpringFacetType;
 import com.intellij.spring.facet.SpringFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.util.containers.ContainerUtil;
 import junit.framework.Assert;
 import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NonNls;
@@ -91,7 +93,23 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
 
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
 
-    Assert.assertTrue(CollectionUtils.isSubCollection(Arrays.asList("springInterceptor"), variants));
+    final List<String> springCompletionVariants = filterSpringBeanCompletionVariants(variants);
+
+    assertSameElements(springCompletionVariants, "springInterceptor");
+  }
+
+  /**
+   * Returns all completions variants without '.', i.e. all Spring bean names.
+   *
+   * @param variants Original variants.
+   * @return Remaining (Spring Bean) variants.
+   */
+  private List<String> filterSpringBeanCompletionVariants(final List<String> variants) {
+    return ContainerUtil.findAll(variants, new Condition<String>() {
+      public boolean value(final String s) {
+        return !s.contains(".");
+      }
+    });
   }
 
   // stuff below is Spring related ===============================================
