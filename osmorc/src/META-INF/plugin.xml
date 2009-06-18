@@ -226,7 +226,7 @@
         <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
         <lang.parserDefinition language="Manifest"
                                implementationClass="org.osmorc.manifest.lang.ManifestParserDefinition"/>
-        <completion.contributor implementation="org.osmorc.manifest.ManifestCompletionContributor"/>
+        <completion.contributor language="Manifest" implementationClass="org.osmorc.manifest.ManifestCompletionContributor"/>
         <syntaxHighlighter key="Manifest" factoryClass="org.osmorc.manifest.lang.ManifestSyntaxHighlighterProvider"/>
         <annotator language="Manifest" implementationClass="org.osmorc.manifest.lang.headerparser.HeaderAnnotator"/>
         <lang.elementManipulator forClass="org.osmorc.manifest.lang.psi.ManifestHeaderValue"
