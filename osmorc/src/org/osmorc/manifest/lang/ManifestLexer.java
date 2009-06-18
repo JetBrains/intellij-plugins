@@ -88,18 +88,6 @@ public class ManifestLexer extends LexerBase
     return _buffer;
   }
 
-  @Deprecated
-  public void start(char[] buffer, int startOffset, int endOffset, int initialState)
-  {
-    throw new UnsupportedOperationException();
-  }
-
-  @Deprecated
-  public char[] getBuffer()
-  {
-    throw new UnsupportedOperationException();
-  }
-
   private void parseNextToken()
   {
     if (_tokenStart < _endOffset)

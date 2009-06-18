@@ -120,6 +120,6 @@ public class ManifestParserDefinition implements ParserDefinition
   public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right)
   {
     Lexer lexer = createLexer(left.getPsi().getProject());
-    return LanguageUtil.canStickTokensTogetherByLexer(left, right, lexer, 0);
+    return LanguageUtil.canStickTokensTogetherByLexer(left, right, lexer);
   }
 }
