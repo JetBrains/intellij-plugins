@@ -15,6 +15,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.intellij.TapestryProjectSupportLoader;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindow;
+import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 
 import java.util.Arrays;
@@ -28,7 +29,6 @@ public class TagDocumentationNavigation extends AnAction {
    * {@inheritDoc}
    */
   public void actionPerformed(AnActionEvent event) {
-    TapestryToolWindow metatoolWindow;
 
     Project project = (Project)event.getDataContext().getData(DataKeys.PROJECT.getName());
     if (project == null) return;
@@ -46,8 +46,8 @@ public class TagDocumentationNavigation extends AnAction {
 
     if (TapestryUtils.getComponentIdentifier(tag) == null) return;
 
-    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TapestryProjectSupportLoader.TAPESTRY_TOOLWINDOW_ID);
-    metatoolWindow = project.getComponent(TapestryProjectSupportLoader.class).getTapestryToolWindow();
+    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TapestryToolWindowFactory.TAPESTRY_TOOLWINDOW_ID);
+    TapestryToolWindow metatoolWindow = project.getComponent(TapestryProjectSupportLoader.class).getTapestryToolWindow();
 
     Component component = TapestryUtils.getComponentFromTag(module, tag);
     if (component == null) return;
@@ -57,6 +57,5 @@ public class TagDocumentationNavigation extends AnAction {
     }
 
     metatoolWindow.update(module, component, Arrays.asList(component.getElementClass()));
-    project.getComponent(TapestryProjectSupportLoader.class).enableToolWindow();
   }
 }

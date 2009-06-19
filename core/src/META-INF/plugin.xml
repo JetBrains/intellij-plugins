@@ -28,6 +28,12 @@
 
     <xml.attributeDescriptorsProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryAttributeDescriptorsProvider"/>
 
+    <toolWindow id="Tapestry"
+                anchor="bottom"
+                secondary="false"
+                icon="/com/intellij/tapestry/core/icons/tapestry_logo_small.png"
+                factoryClass="com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory"
+                conditionClass="com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory"/>
   </extensions>
 
   <actions>
@@ -41,12 +47,6 @@
             id="TagDocumentationNavigation" text="Tag to Documentation Navigation"
             description="Navigate from a tag to it's corresponding documentation.">
       <keyboard-shortcut first-keystroke="control shift D" keymap="$default"/>
-    </action>
-
-    <action class="com.intellij.tapestry.intellij.actions.OpenCloseToolWindowAction" id="TapestryToolWindow"
-            text="Open/Close Tapestry ToolWindow"
-            description="Opens the Tapestry ToolWindow if it's not already open. If the window is open and active this action closes it.">
-      <keyboard-shortcut first-keystroke="control shift W" keymap="$default"/>
     </action>
 
     <group id="GoToTapestryTemplate"

@@ -8,12 +8,12 @@ import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.VerticalFlowLayout;
-import com.intellij.ui.HyperlinkLabel;
 import com.intellij.tapestry.intellij.facet.AddTapestrySupportUtil;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
 import com.intellij.tapestry.intellij.facet.TapestryVersion;
 import com.intellij.tapestry.intellij.util.IntellijWebDescriptorUtils;
+import com.intellij.ui.HyperlinkLabel;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,16 +28,14 @@ public class FacetEditor extends FacetEditorTab {
     private JTextField _applicationPackage;
     private JPanel _descriptionPanel;
     private TapestryFacetConfiguration _configuration;
-    private TapestryFacet _facet;
 
     public FacetEditor(TapestryFacet facet, TapestryFacetConfiguration configuration) {
-        _facet = facet;
         _configuration = configuration;
 
-        Filter filter = IntellijWebDescriptorUtils.getTapestryFilter(_facet.getWebFacet().getRoot());
+        Filter filter = IntellijWebDescriptorUtils.getTapestryFilter(facet.getWebFacet().getRoot());
 
         _configuration.setFilterName(filter != null ? filter.getFilterName().getValue() : null);
-        _configuration.setApplicationPackage(IntellijWebDescriptorUtils.getApplicationPackage(_facet.getWebFacet().getRoot()));
+        _configuration.setApplicationPackage(IntellijWebDescriptorUtils.getApplicationPackage(facet.getWebFacet().getRoot()));
 
         if (_configuration.getFilterName() == null)
             _configuration.setFilterName(facet.getModule().getName().toLowerCase());
@@ -55,19 +53,20 @@ public class FacetEditor extends FacetEditorTab {
         return _mainPanel;
     }
 
-    public void onFacetInitialized(@NotNull final Facet facet) {
-        final TapestryFacet strutsFacet = (TapestryFacet) facet;
+  public void onFacetInitialized(@NotNull final Facet facet) {
+    final TapestryFacet tapestryFacet = (TapestryFacet)facet;
 
-        final WebFacet webFacet = strutsFacet.getWebFacet();
+    final WebFacet webFacet = tapestryFacet.getWebFacet();
 
-        assert webFacet != null;
+    assert webFacet != null;
 
-        if (_configuration.getVersion() == null) _configuration.setVersion(TapestryVersion.TAPESTRY_5_1_0_5);
+    if (_configuration.getVersion() == null) _configuration.setVersion(TapestryVersion.TAPESTRY_5_1_0_5);
 
-        AddTapestrySupportUtil.addSupportInWriteCommandAction(ModuleRootManager.getInstance(facet.getModule()).getModifiableModel(), webFacet, _configuration, false, false);
-    }
+    ModuleRootManager model = ModuleRootManager.getInstance(facet.getModule());
+    AddTapestrySupportUtil.addSupportInWriteCommandAction(model, webFacet, _configuration, false, false);
+  }
 
-    public boolean isModified() {
+  public boolean isModified() {
         return _configuration.getFilterName() != _filterName.getText() ||
                 _configuration.getApplicationPackage() != _applicationPackage.getText();
     }

@@ -4,8 +4,7 @@ import com.intellij.javaee.model.xml.web.WebApp;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.roots.ModuleRootModel;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -21,7 +20,6 @@ import com.intellij.tapestry.core.maven.MavenConfiguration;
 import com.intellij.tapestry.core.maven.MavenUtils;
 import com.intellij.tapestry.core.maven.RemoteRepositoryDescription;
 import com.intellij.tapestry.core.util.StringUtils;
-import com.intellij.tapestry.intellij.TapestryProjectSupportLoader;
 import com.intellij.tapestry.intellij.util.IntellijWebDescriptorUtils;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.descriptors.ConfigFile;
@@ -35,7 +33,7 @@ public class AddTapestrySupportUtil {
 
     private static final Logger _logger = LoggerFactory.getInstance().getLogger(AddTapestrySupportUtil.class);
 
-    public static void addSupportInWriteCommandAction(final ModifiableRootModel rootModel, final WebFacet webFacet, final TapestryFacetConfiguration configuration, final boolean generateStartupApplication, final boolean generatePom) {
+    public static void addSupportInWriteCommandAction(final ModuleRootModel rootModel, final WebFacet webFacet, final TapestryFacetConfiguration configuration, final boolean generateStartupApplication, final boolean generatePom) {
         new WriteCommandAction.Simple(webFacet.getModule().getProject(), getTapestryFiles(webFacet)) {
             protected void run() throws Throwable {
                 try {
@@ -48,25 +46,22 @@ public class AddTapestrySupportUtil {
         }.execute();
     }
 
-    public static void addSupport(ModifiableRootModel rootModel, WebFacet webFacet, TapestryFacetConfiguration configuration, boolean generateStartupApplication, boolean generatePom) throws Exception {
+    public static void addSupport(ModuleRootModel rootModel, WebFacet webFacet, TapestryFacetConfiguration configuration, boolean generateStartupApplication, boolean generatePom) throws Exception {
         final Module module = webFacet.getModule();
         final WebApp app = webFacet.getRoot();
 
         if (app == null) return;
 
-        // register toolwindow
-        module.getProject().getComponent(TapestryProjectSupportLoader.class).enableToolWindow();
-
-        StartupManager.getInstance(module.getProject()).registerPostStartupActivity(new Runnable() {
-            public void run() {
-                try {
-                    // add compiler resources
-                    module.getProject().getComponent(TapestryProjectSupportLoader.class).addCompilerResources();
-                } catch (Exception ex) {
-                    _logger.warn(ex);
-                }
-            }
-        });
+        //StartupManager.getInstance(module.getProject()).registerPostStartupActivity(new Runnable() {
+        //    public void run() {
+        //        try {
+        //            // add compiler resources
+        //            module.getProject().getComponent(TapestryProjectSupportLoader.class).addCompilerResources();
+        //        } catch (Exception ex) {
+        //            _logger.warn(ex);
+        //        }
+        //    }
+        //});
 
         // update web.xml
         patchWebXml(app, configuration);
@@ -78,7 +73,7 @@ public class AddTapestrySupportUtil {
             generatePom(rootModel, configuration);
     }
 
-    private static void generatePom(ModifiableRootModel rootModel, TapestryFacetConfiguration configuration) throws IOException {
+    private static void generatePom(ModuleRootModel rootModel, TapestryFacetConfiguration configuration) throws IOException {
         VirtualFile[] contentRoots = rootModel.getContentRoots();
 
         if (contentRoots == null || contentRoots.length == 0) {
@@ -118,7 +113,7 @@ public class AddTapestrySupportUtil {
         IntellijWebDescriptorUtils.setApplicationPackage(app, configuration.getApplicationPackage());
     }
 
-    private static void generateStartupApplication(ModifiableRootModel rootModel, Module module, WebFacet webFacet, TapestryFacetConfiguration configuration) {
+    private static void generateStartupApplication(ModuleRootModel rootModel, Module module, WebFacet webFacet, TapestryFacetConfiguration configuration) {
         if (rootModel.getSourceRoots().length == 0) {
             _logger.warn("Coulnd't generate startup application because it wasn't possible to determine module source root");
 
