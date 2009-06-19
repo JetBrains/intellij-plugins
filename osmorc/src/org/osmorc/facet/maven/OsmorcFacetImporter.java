@@ -26,17 +26,13 @@
 package org.osmorc.facet.maven;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.jgoodies.binding.beans.BeanUtils;
 import org.jdom.Element;
 import org.jetbrains.idea.maven.facets.FacetImporter;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
-import org.jetbrains.idea.maven.project.MavenId;
-import org.jetbrains.idea.maven.project.MavenPlugin;
-import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.project.MavenProjectsProcessorPostConfigurationTask;
-import org.jetbrains.idea.maven.project.MavenProjectsTree;
+import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider;
+import org.jetbrains.idea.maven.project.*;
 import org.osgi.framework.Constants;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
@@ -73,11 +69,11 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
     }
 
-    protected void reimportFacet(ModifiableModuleModel modifiableModuleModel, Module module,
+    protected void reimportFacet(MavenModifiableModelsProvider modelsProvider, Module module,
                                  MavenRootModelAdapter mavenRootModelAdapter, OsmorcFacet osmorcFacet,
                                  MavenProjectsTree mavenProjectsTree, MavenProject mavenProject,
                                  Map<MavenProject, String> mavenProjectStringMap,
-                                 List<MavenProjectsProcessorPostConfigurationTask> mavenProjectsProcessorPostConfigurationTasks)
+                                 List<MavenProjectsProcessorTask> mavenProjectsProcessorPostConfigurationTasks)
     {
 
         OsmorcFacetConfiguration conf = osmorcFacet.getConfiguration();
