@@ -116,6 +116,9 @@
         <component>
             <implementation-class>org.osmorc.settings.SettingsEditor</implementation-class>
         </component>
+        <component>
+            <implementation-class>org.osmorc.ModuleChangeHandler</implementation-class>
+        </component>
     </project-components>
     <module-components>
         <component>
@@ -130,6 +133,7 @@
         <extensionPoint name="headerParserProviderRepository"
                         beanClass="org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository"/>
         <extensionPoint name="obr" beanClass="org.osmorc.obrimport.Obr"/>
+        <extensionPoint name="moduleChangeListener" beanClass="org.osmorc.ModuleChangeListener"/>
     </extensionPoints>
     <extensions defaultExtensionNs="com.intellij">
         <!-- ##### Application Services ##### -->
@@ -261,5 +265,7 @@
 
         <!-- Known bundle repositories -->
         <obr implementation="org.osmorc.obrimport.springsource.SpringSourceObr"/>
+
+        <moduleChangeListener implementation="org.osmorc.run.OsgiRunConfigurationModuleChangeListener" />
     </extensions>
 </idea-plugin>

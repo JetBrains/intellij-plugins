@@ -41,97 +41,83 @@ import org.osmorc.facet.OsmorcFacetType;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcModuleComponent implements ModuleComponent
-{
-  public OsmorcModuleComponent(Module module, ModuleDependencySynchronizer moduleDependencySynchronizer,
-                               AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager, Application application)
-  {
-    _module = module;
-    _moduleDependencySynchronizer = moduleDependencySynchronizer;
-    _additionalJARContentsWatcherManager = additionalJARContentsWatcherManager;
-    _application = application;
-    _disposed = false;
-  }
+public class OsmorcModuleComponent implements ModuleComponent {
+    private MessageBusConnection connection;
 
-  public void projectOpened()
-  {
-    _application.invokeLater(new Runnable()
-    {
-      public void run()
-      {
-        if (!_disposed && OsmorcFacet.hasOsmorcFacet(_module))
-        {
-          _moduleDependencySynchronizer.syncDependenciesFromManifest();
-        }
-      }
-    });
-  }
-
-  public void projectClosed()
-  {
-    _additionalJARContentsWatcherManager.dispose();
-  }
-
-  public void moduleAdded()
-  {
-  }
-
-  @NonNls
-  @NotNull
-  public String getComponentName()
-  {
-    return "OsmorcModuleComponent";
-  }
-
-  public void initComponent()
-  {
-    _disposed = false;
-    MessageBusConnection connection = _module.getMessageBus().connect();
-    connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter()
-    {
-      public void facetAdded(@NotNull Facet facet)
-      {
-        if (!_disposed && facet.getTypeId() == OsmorcFacetType.ID)
-        {
-          _moduleDependencySynchronizer.syncDependenciesFromManifest();
-          syncAllModuleDependencies();
-          _additionalJARContentsWatcherManager.updateWatcherSetup();
-        }
-      }
-
-      public void facetConfigurationChanged(@NotNull Facet facet)
-      {
-        if (!_disposed && facet.getTypeId() == OsmorcFacetType.ID)
-        {
-          _moduleDependencySynchronizer.syncDependenciesFromManifest();
-          syncAllModuleDependencies();
-          _additionalJARContentsWatcherManager.updateWatcherSetup();
-        }
-      }
-    });
-  }
-
-  public void disposeComponent()
-  {
-    _disposed = true;
-  }
-
-  private void syncAllModuleDependencies()
-  {
-    Module[] modules = ModuleManager.getInstance(_module.getProject()).getModules();
-    for (Module module : modules)
-    {
-      if (OsmorcFacet.hasOsmorcFacet(module))
-      {
-        ModuleDependencySynchronizer.getInstance(module).syncDependenciesFromManifest();
-      }
+    public OsmorcModuleComponent(Module module, ModuleDependencySynchronizer moduleDependencySynchronizer,
+                                 AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager, Application application) {
+        this.module = module;
+        this.moduleDependencySynchronizer = moduleDependencySynchronizer;
+        this.additionalJARContentsWatcherManager = additionalJARContentsWatcherManager;
+        this.application = application;
+        disposed = false;
     }
-  }
+
+    public void projectOpened() {
+        application.invokeLater(new Runnable() {
+            public void run() {
+                if (!disposed && OsmorcFacet.hasOsmorcFacet(module)) {
+                    moduleDependencySynchronizer.syncDependenciesFromManifest();
+                }
+            }
+        });
+    }
+
+    public void projectClosed() {
+        additionalJARContentsWatcherManager.dispose();
+    }
+
+    public void moduleAdded() {
+    }
+
+    @NonNls
+    @NotNull
+    public String getComponentName() {
+        return "OsmorcModuleComponent";
+    }
+
+    public void initComponent() {
+        disposed = false;
+        connection = module.getMessageBus().connect();
+        connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
+            public void facetAdded(@NotNull Facet facet) {
+                if (!disposed && facet.getTypeId() == OsmorcFacetType.ID) {
+                    moduleDependencySynchronizer.syncDependenciesFromManifest();
+                    syncAllModuleDependencies();
+                    additionalJARContentsWatcherManager.updateWatcherSetup();
+                }
+            }
+
+            public void facetConfigurationChanged(@NotNull Facet facet) {
+                if (!disposed && facet.getTypeId() == OsmorcFacetType.ID) {
+                    moduleDependencySynchronizer.syncDependenciesFromManifest();
+                    syncAllModuleDependencies();
+                    additionalJARContentsWatcherManager.updateWatcherSetup();
+                }
+            }
+        });
+    }
+
+    public void disposeComponent() {
+        if (connection != null) {
+            connection.disconnect();
+        }
+        disposed = true;
+    }
+
+    private void syncAllModuleDependencies() {
+        Module[] modules = ModuleManager.getInstance(module.getProject()).getModules();
+        for (Module module : modules) {
+            if (OsmorcFacet.hasOsmorcFacet(module)) {
+                ModuleDependencySynchronizer.getInstance(module).syncDependenciesFromManifest();
+            }
+        }
+    }
 
 
-  private final Module _module;
-  private final ModuleDependencySynchronizer _moduleDependencySynchronizer;
-  private AdditionalJARContentsWatcherManager _additionalJARContentsWatcherManager;
-  private final Application _application;
-  private boolean _disposed;
+    private final Module module;
+    private final ModuleDependencySynchronizer moduleDependencySynchronizer;
+    private final AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager;
+    private final Application application;
+    private boolean disposed;
 }
