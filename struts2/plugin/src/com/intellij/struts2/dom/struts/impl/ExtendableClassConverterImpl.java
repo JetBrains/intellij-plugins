@@ -123,7 +123,7 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
   @Nullable
   private static GlobalSearchScope getResolveScope(final GenericDomValue genericdomvalue) {
     final Module module = genericdomvalue.getModule();
-    return module != null ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module) : null;
+    return module != null ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false) : null;
   }
 
 }

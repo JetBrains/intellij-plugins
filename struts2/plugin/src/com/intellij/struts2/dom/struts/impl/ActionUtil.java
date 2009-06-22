@@ -16,6 +16,8 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -64,12 +66,17 @@ final class ActionUtil {
   static List<PsiMethod> findActionMethods(@NotNull final PsiClass actionClass) {
     final Project project = actionClass.getProject();
     final PsiElementFactory psiElementFactory = JavaPsiFacade.getInstance(project).getElementFactory();
-    final GlobalSearchScope projectScope = GlobalSearchScope.allScope(project);
+
+    final Module module = ModuleUtil.findModuleForPsiElement(actionClass);
+    assert module != null : "could not find module for " + actionClass;
+    final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
+
     final PsiClassType stringType = psiElementFactory.createTypeByFQClassName(CommonClassNames.JAVA_LANG_STRING,
-                                                                              projectScope);
+                                                                              scope);
     final PsiClassType resultType = psiElementFactory.createTypeByFQClassName("com.opensymphony.xwork2.Result",
-                                                                              projectScope);
-    final PsiClassType exceptionType = psiElementFactory.createTypeByFQClassName("java.lang.Exception", projectScope);
+                                                                              scope);
+    final PsiClassType exceptionType = psiElementFactory.createTypeByFQClassName(CommonClassNames.JAVA_LANG_EXCEPTION,
+                                                                                 scope);
 
     final List<PsiMethod> actionMethods = new SmartList<PsiMethod>();
     for (final PsiMethod psiMethod : actionClass.getAllMethods()) {

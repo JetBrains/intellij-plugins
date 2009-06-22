@@ -124,6 +124,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
    * @param module Current module.
    * @return {@code null} if not found.
    */
+  @Nullable
   private XmlFile findDefaultValidatorsFile(final Module module) {
     final Project project = module.getProject();
 

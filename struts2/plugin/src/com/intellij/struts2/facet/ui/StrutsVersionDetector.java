@@ -43,7 +43,7 @@ public class StrutsVersionDetector {
 
   @Nullable
   public static String detectStrutsVersion(@NotNull final Module module) {
-    final GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
+    final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
     final JavaPsiFacade psiManager = JavaPsiFacade.getInstance(module.getProject());
     try {
       final ZipFile zipFile = getStrutsJar(scope, psiManager);

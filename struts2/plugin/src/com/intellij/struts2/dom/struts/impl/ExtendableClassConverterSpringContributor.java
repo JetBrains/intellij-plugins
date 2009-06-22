@@ -102,7 +102,7 @@ public class ExtendableClassConverterSpringContributor extends ExtendableClassCo
     final String subClassName = extendClass.value();
     if (StringUtil.isNotEmpty(subClassName)) {
       return JavaPsiFacade.getInstance(psiElement.getProject())
-          .findClass(subClassName, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
+          .findClass(subClassName, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false));
     }
     return null;
   }

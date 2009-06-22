@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
+import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.*;
 
@@ -29,7 +30,7 @@ public interface GlobalExceptionMapping extends DomElement /* ParamsElement TODO
   GenericAttributeValue<String> getName();
 
   @Attribute("exception")
-  @ExtendClass(value = "java.lang.Exception", instantiatable = false, allowInterface = false)
+  @ExtendClass(value = CommonClassNames.JAVA_LANG_EXCEPTION, instantiatable = false, allowInterface = false)
   @Required
   GenericAttributeValue<PsiClass> getExceptionClass();
 

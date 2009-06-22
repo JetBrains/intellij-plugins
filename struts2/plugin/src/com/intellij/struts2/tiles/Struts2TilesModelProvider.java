@@ -72,16 +72,16 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
   public Collection<TilesModel> computeModels(@NotNull final Module module) {
     final Project project = module.getProject();
     final JavaPsiFacade facade = JavaPsiFacade.getInstance(project);
+    final GlobalSearchScope moduleScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
 
     // struts2-tiles plugin must be available
     final PsiClass strutsTilesListenerClass = facade.findClass(STRUTS_TILES_LISTENER_CLASS,
-                                                               GlobalSearchScope.allScope(project));
+                                                               moduleScope);
     if (strutsTilesListenerClass == null) {
       return Collections.emptyList();
     }
 
-    final PsiClass tilesListenerClass = facade.findClass(TILES_LISTENER_CLASS,
-                                                         GlobalSearchScope.allScope(project));
+    final PsiClass tilesListenerClass = facade.findClass(TILES_LISTENER_CLASS, moduleScope);
 
     final StrutsPluginDomFactory<TilesDefinitions, TilesModel> factory =
         StrutsProjectComponent.getInstance(project).getTilesFactory();
