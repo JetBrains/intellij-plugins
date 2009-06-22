@@ -76,7 +76,7 @@ public class AddTapestrySupportUtil {
     private static void generatePom(ModuleRootModel rootModel, TapestryFacetConfiguration configuration) throws IOException {
         VirtualFile[] contentRoots = rootModel.getContentRoots();
 
-        if (contentRoots == null || contentRoots.length == 0) {
+        if (contentRoots.length == 0) {
             _logger.warn("Couldn't generate pom because it wasn't possible to determine the module content root.");
             return;
         }
