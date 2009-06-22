@@ -190,5 +190,5 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                 virtualFileFilter, detector);
     }
 
-    private final String[] DETECTION_HEADERS = {Constants.BUNDLE_MANIFESTVERSION, Constants.BUNDLE_SYMBOLICNAME};
+    private final String[] DETECTION_HEADERS = {Constants.BUNDLE_SYMBOLICNAME};
 }
