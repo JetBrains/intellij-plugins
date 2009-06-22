@@ -18,6 +18,7 @@ package com.intellij.struts2.dom.validator;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ResourceFileUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
@@ -29,12 +30,14 @@ import com.intellij.psi.util.PsiUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
 import com.intellij.struts2.dom.validator.config.ValidatorsConfig;
+import com.intellij.struts2.facet.ui.StrutsVersionDetector;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,35 +72,64 @@ public class ValidatorManagerImpl extends ValidatorManager {
     }
 
     final DomFileElement<ValidatorsConfig> validatorsConfigElement = getValidatorsConfigFileElement((XmlFile) validatorsFile);
-
     if (validatorsConfigElement == null) {
       return Collections.emptyList();
     }
 
-    return validatorsConfigElement.getRootElement().getValidatorConfigs();
+    final List<ValidatorConfig> validatorConfigs = validatorsConfigElement.getRootElement().getValidatorConfigs();
+    if (!isCustomValidatorConfigFile(validatorsFile)) {
+      return validatorConfigs;
+    }
+
+    // add validators from default.xml for Struts > 2.0.8
+    final String version = StrutsVersionDetector.detectStrutsVersion(module);
+    if (StringUtil.compareVersionNumbers(version, "2.0.8") == 1) {
+      final XmlFile defaultValidatorFile = findDefaultValidatorsFile(module);
+      if (defaultValidatorFile != null) {
+        final List<ValidatorConfig> defaultValidators =
+            getValidatorsConfigFileElement(defaultValidatorFile).getRootElement().getValidatorConfigs();
+
+        final List<ValidatorConfig> allValidatorConfigs = new ArrayList<ValidatorConfig>(defaultValidators);
+        allValidatorConfigs.addAll(validatorConfigs); // custom overrides defaults
+        return allValidatorConfigs;
+      }
+    }
+
+    return validatorConfigs;
   }
 
   @Nullable
-  public PsiFile getValidatorConfigFile(@NotNull final Module module) {
+  public XmlFile getValidatorConfigFile(@NotNull final Module module) {
     final Project project = module.getProject();
     final PsiManager psiManager = PsiManager.getInstance(project);
 
     final VirtualFile validatorsVirtualFile =
-            ResourceFileUtil.findResourceFileInScope(VALIDATORS_XML, project,
-                                                     GlobalSearchScope.moduleRuntimeScope(module, false));
+        ResourceFileUtil.findResourceFileInScope(VALIDATORS_XML, project,
+                                                 GlobalSearchScope.moduleRuntimeScope(module, false));
 
     if (validatorsVirtualFile != null) {
       final PsiFile file = psiManager.findFile(validatorsVirtualFile);
       if (file != null &&
           getValidatorsConfigFileElement((XmlFile) file) != null) {
-        return file;
+        return (XmlFile) file;
       }
     }
 
-    // find com/opensymphony/xwork2/validator/validators/default.xml from xwork.jar
+    return findDefaultValidatorsFile(module);
+  }
+
+  /**
+   * Find {@code com/opensymphony/xwork2/validator/validators/default.xml} from {@code xwork.jar}.
+   *
+   * @param module Current module.
+   * @return {@code null} if not found.
+   */
+  private XmlFile findDefaultValidatorsFile(final Module module) {
+    final Project project = module.getProject();
+
     final PsiClass emailValidatorClass = JavaPsiFacade.getInstance(project).findClass(
-            "com.opensymphony.xwork2.validator.validators.EmailValidator",
-            GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
+        "com.opensymphony.xwork2.validator.validators.EmailValidator",
+        GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false));
     if (emailValidatorClass == null) {
       return null;
     }
@@ -115,7 +147,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
     final VirtualFile vfDefaultXml = parent.findChild(VALIDATORS_DEFAULT_XML);
     assert vfDefaultXml != null : "VF for default.xml null, parent=" + parent;
 
-    return psiManager.findFile(vfDefaultXml);
+    return (XmlFile) PsiManager.getInstance(project).findFile(vfDefaultXml);
   }
 
 }

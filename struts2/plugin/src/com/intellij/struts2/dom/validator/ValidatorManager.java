@@ -47,7 +47,7 @@ public abstract class ValidatorManager {
   public abstract boolean isValidatorsFile(@NotNull XmlFile xmlFile);
 
   /**
-   * Gets the available validators from validators.xml.
+   * Gets the available validators from {@code validators.xml}.
    *
    * @param module Current module to search within.
    *
@@ -66,10 +66,10 @@ public abstract class ValidatorManager {
    *
    * @param module Module to search within
    *
-   * @return validator-config.xml or null if none was found.
+   * @return configuration file or {@code null} if none was found.
    */
   @Nullable
-  public abstract PsiFile getValidatorConfigFile(@NotNull final Module module);
+  public abstract XmlFile getValidatorConfigFile(@NotNull final Module module);
 
   /**
    * Checks whether the given file is a custom validators.xml.
