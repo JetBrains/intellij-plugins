@@ -81,21 +81,23 @@ public class OsmorcModuleComponent implements ModuleComponent {
         connection = module.getMessageBus().connect();
         connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
             public void facetAdded(@NotNull Facet facet) {
-                if (!disposed && facet.getTypeId() == OsmorcFacetType.ID) {
-                    moduleDependencySynchronizer.syncDependenciesFromManifest();
-                    syncAllModuleDependencies();
-                    additionalJARContentsWatcherManager.updateWatcherSetup();
-                }
+                handleFacetChange(facet);
             }
 
             public void facetConfigurationChanged(@NotNull Facet facet) {
-                if (!disposed && facet.getTypeId() == OsmorcFacetType.ID) {
-                    moduleDependencySynchronizer.syncDependenciesFromManifest();
-                    syncAllModuleDependencies();
-                    additionalJARContentsWatcherManager.updateWatcherSetup();
-                }
+                handleFacetChange(facet);
             }
         });
+    }
+
+    private void handleFacetChange(Facet facet) {
+        if (!disposed && facet.getTypeId() == OsmorcFacetType.ID) {
+            if (facet.getModule().getProject().isInitialized()) {
+                moduleDependencySynchronizer.syncDependenciesFromManifest();
+                syncAllModuleDependencies();
+            }
+            additionalJARContentsWatcherManager.updateWatcherSetup();
+        }
     }
 
     public void disposeComponent() {
