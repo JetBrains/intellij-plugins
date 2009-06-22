@@ -84,9 +84,9 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         // Symbolic name == groupId + "." + artifactId
         // TODO: we should use DefaultMaven2OsgiConverter to do this, so we get the same results as the plugin would get
         MavenId id = mavenProject.getMavenId();
-        conf.setBundleSymbolicName(id.groupId + "." + id.artifactId);
+        conf.setBundleSymbolicName(id.getGroupId() + "." + id.getArtifactId());
         // version == project version
-        conf.setBundleVersion(id.version);
+        conf.setBundleVersion(id.getVersion());
 
         if (p != null)
         {
