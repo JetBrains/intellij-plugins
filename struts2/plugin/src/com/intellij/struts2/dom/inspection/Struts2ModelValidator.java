@@ -17,19 +17,21 @@ package com.intellij.struts2.dom.inspection;
 
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.util.InspectionValidatorUtil;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
-import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.struts2.facet.ui.StrutsFileSet;
+import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.FactoryMap;
+import gnu.trove.THashSet;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -46,21 +48,32 @@ public class Struts2ModelValidator extends ValidatorBase {
 
   public Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context) {
     final StrutsManager strutsManager = StrutsManager.getInstance(project);
+    final PsiManager psiManager = PsiManager.getInstance(project);
 
-    final Set<VirtualFile> files = new HashSet<VirtualFile>();
-    for (final Module module : ModuleManager.getInstance(project).getModules()) {
-      if (isEnabledForModule(module)) {
-        final StrutsFacet strutsFacet = StrutsFacet.getInstance(module);
-        if (strutsFacet != null) {
-          for (final StrutsFileSet fileSet : strutsManager.getAllConfigFileSets(module)) {
-            for (final VirtualFilePointer pointer : fileSet.getFiles()) {
-              final VirtualFile file = pointer.getFile();
-              ContainerUtil.addIfNotNull(file, files);
+    // cache validation settings per module
+    final FactoryMap<Module, Boolean> enabledForModule = new FactoryMap<Module, Boolean>() {
+      protected Boolean create(final Module module) {
+        return isEnabledForModule(module);
+      }
+    };
+
+    final Set<VirtualFile> files = new THashSet<VirtualFile>();
+    for (final VirtualFile file : context.getCompileScope().getFiles(StdFileTypes.XML, false)) {
+      final Module module = context.getModuleByFile(file);
+      if (module != null &&
+          enabledForModule.get(module)) {
+        final PsiFile psiFile = psiManager.findFile(file);
+        if (psiFile instanceof XmlFile) {
+          final StrutsModel model = strutsManager.getModelByFile((XmlFile) psiFile);
+          if (model != null) {
+            for (final XmlFile configFile : model.getConfigFiles()) {
+              ContainerUtil.addIfNotNull(configFile.getVirtualFile(), files);
             }
           }
         }
       }
     }
+
     InspectionValidatorUtil.expandCompileScopeIfNeeded(files, context);
     return files;
   }

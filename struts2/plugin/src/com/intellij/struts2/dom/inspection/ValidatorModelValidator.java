@@ -29,11 +29,11 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.validator.ValidatorManager;
 import com.intellij.struts2.facet.StrutsFacet;
+import com.intellij.util.containers.FactoryMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -56,8 +56,16 @@ public class ValidatorModelValidator extends ValidatorBase {
     final PsiManager psiManager = PsiManager.getInstance(project);
     final ValidatorManager validatorManager = ValidatorManager.getInstance(project);
 
+    // cache S2facet/validation settings per module
+    final FactoryMap<Module, Boolean> enabledForModule = new FactoryMap<Module, Boolean>() {
+      protected Boolean create(final Module module) {
+        return isEnabledForModule(module) &&
+               StrutsFacet.getInstance(module) != null;
+      }
+    };
+
     // collect all validation.xml files located in sources of S2-modules
-    final Set<VirtualFile> files = new HashSet<VirtualFile>();
+    final Set<VirtualFile> files = new THashSet<VirtualFile>();
     for (final VirtualFile file : context.getProjectCompileScope().getFiles(StdFileTypes.XML, true)) {
       if (file.getName().endsWith(FILENAME_EXTENSION_VALIDATION_XML)) {
         final PsiFile psiFile = psiManager.findFile(file);
@@ -65,8 +73,7 @@ public class ValidatorModelValidator extends ValidatorBase {
             validatorManager.isValidatorsFile((XmlFile) psiFile)) {
           final Module module = ModuleUtil.findModuleForFile(file, project);
           if (module != null &&
-              StrutsFacet.getInstance(module) != null &&
-              isEnabledForModule(module)) {
+              enabledForModule.get(module)) {
             files.add(file);
           }
         }
@@ -74,10 +81,9 @@ public class ValidatorModelValidator extends ValidatorBase {
     }
 
     // add validator-config.xml if not default one from xwork.jar
-    final THashSet<VirtualFile> descriptorFiles = new THashSet<VirtualFile>();
+    final Set<VirtualFile> descriptorFiles = new THashSet<VirtualFile>();
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
-      if (StrutsFacet.getInstance(module) != null &&
-          isEnabledForModule(module)) {
+      if (enabledForModule.get(module)) {
         final PsiFile psiFile = validatorManager.getValidatorConfigFile(module);
         if (psiFile != null &&
             validatorManager.isCustomValidatorConfigFile(psiFile)) {
