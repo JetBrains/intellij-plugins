@@ -37,56 +37,31 @@ public class TmlLexer extends XHtmlLexer {
     myTokenStart = super.getTokenStart();
     myTokenEnd = super.getTokenEnd();
 
-    if (myTokenType == ELTokenType.TAP5_EL_CONTENT) {
-      myTokenType = ELTokenType.TAP5_EL_HOLDER;
+    if (myTokenType == TelElementTypes.TAP5_EL_CONTENT) {
+      myTokenType = TelElementTypes.TAP5_EL_HOLDER;
     }
 
     return myTokenType;
   }
 
   public int getTokenStart() {
-    if (myTokenType != null) {
-      return myTokenStart;
-    }
-    return super.getTokenStart();
+    return myTokenType != null ? myTokenStart : super.getTokenStart();
   }
 
   public int getTokenEnd() {
-    if (myTokenType != null) {
-      return myTokenEnd;
-    }
-    return super.getTokenEnd();
+    return myTokenType != null ? myTokenEnd : super.getTokenEnd();
   }
 
   protected boolean isValidAttributeValueTokenType(final IElementType tokenType) {
-    return super.isValidAttributeValueTokenType(tokenType) || tokenType == ELTokenType.TAP5_EL_CONTENT;
+    return super.isValidAttributeValueTokenType(tokenType) || tokenType == TelElementTypes.TAP5_EL_CONTENT;
   }
 
   public static XmlLexer createElAwareXmlLexer() {
-    return new XmlLexer(new XmlLexerWithEL());
+    return new XmlLexer(new _XmlLexer(new __XmlLexer((Reader)null) {
+      {
+        elTokenType = TelElementTypes.TAP5_EL_CONTENT;
+        elTokenType2 = TelElementTypes.TAP5_EL_CONTENT;
+      }
+    }));
   }
-
-  private static class XmlLexerWithEL extends _XmlLexer implements ELHostLexer {
-    public XmlLexerWithEL() {
-      super(new __XmlLexerWithEL());
-      setElTypes(ELTokenType.TAP5_EL_CONTENT, ELTokenType.TAP5_EL_CONTENT);
-    }
-
-    public void setElTypes(final IElementType jspElContent, final IElementType jspElContent1) {
-      ((ELHostLexer)getFlex()).setElTypes(jspElContent, jspElContent1);
-    }
-  }
-
-  private static class __XmlLexerWithEL extends __XmlLexer implements ELHostLexer {
-
-    public __XmlLexerWithEL() {
-      super((Reader)null);
-    }
-
-    public void setElTypes(IElementType _elTokenType, IElementType _elTokenType2) {
-      elTokenType = _elTokenType;
-      elTokenType2 = _elTokenType2;
-    }
-  }
-
 }

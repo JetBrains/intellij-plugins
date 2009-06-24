@@ -10,7 +10,7 @@ import com.intellij.lang.xml.XMLLanguage;
 public class TmlLanguage extends XMLLanguage {
   public static final TmlLanguage INSTANCE = new TmlLanguage();
 
-  public TmlLanguage() {
+  private TmlLanguage() {
     super("TML");
   }
 }

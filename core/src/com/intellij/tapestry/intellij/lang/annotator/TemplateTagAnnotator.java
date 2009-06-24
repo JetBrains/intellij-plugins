@@ -2,7 +2,6 @@ package com.intellij.tapestry.intellij.lang.annotator;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.XmlRecursiveElementVisitor;
@@ -145,13 +144,12 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
 
   private void annotateTag(XmlElement element) {
     _annotationHolder.createInfoAnnotation(element, null)
-        .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_TAG_KEY));
+        .setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
   }
 
   private void annotateAttribute(XmlAttribute attribute) {
-    // annotate attribute name
     _annotationHolder.createInfoAnnotation(attribute.getFirstChild(), null)
-        .setTextAttributes(TextAttributesKey.find(TemplateColorSettingsPage.TAPESTRY_COMPONENT_PARAMETER_KEY));
+        .setTextAttributes(TemplateColorSettingsPage.ATTR_NAME);
   }
 
 }//TemplateTagAnnotator
