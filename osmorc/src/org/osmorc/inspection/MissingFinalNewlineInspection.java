@@ -77,7 +77,7 @@ public class MissingFinalNewlineInspection extends LocalInspectionTool {
                         ManifestHeaderValueImpl.class, false);
                 if (headerValue != null) {
                     return new ProblemDescriptor[]{manager.createProblemDescriptor(headerValue,
-                            "Manifest file doen't end with a final newline",
+                            "Manifest file doesn't end with a final newline",
                             new AddNewlineQuickFix(headerValue), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)};
                 }
 
