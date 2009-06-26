@@ -26,12 +26,21 @@ import com.intellij.lexer.FlexLexer;
 
 IDENT=[:jletter:][:jletterdigit:]*
 
+%state TEL
+
 %%
 
-{IDENT} { return TelElementTypes.TAP5_EL_IDENTIFIER; }
-"${"    { return TelElementTypes.TAP5_EL_START; }
-"}"     { return TelElementTypes.TAP5_EL_END; }
-":"     { return TelElementTypes.TAP5_EL_COLON; }
-"."     { return TelElementTypes.TAP5_EL_DOT; }
+<TEL> {
+	\}     		    { yybegin(YYINITIAL); return TelElementTypes.TAP5_EL_END; }
+	{IDENT} 	    { return TelElementTypes.TAP5_EL_IDENTIFIER; }
+	\:     		    { return TelElementTypes.TAP5_EL_COLON; }
+	\.	     	    { return TelElementTypes.TAP5_EL_DOT; }
+	\,         		{ return TelElementTypes.TAP5_EL_COMMA; }
+	[^\.\,\:\}]* 	{ return TelElementTypes.TAP5_EL_BAD_CHAR; }
+}
 
-[^] { return TokenType.BAD_CHARACTER; }
+<YYINITIAL> {
+	\$\{    	    { yybegin(TEL); return TelElementTypes.TAP5_EL_START; }
+	[^] 		      { return TokenType.BAD_CHARACTER; }
+}
+

@@ -17,11 +17,13 @@ import com.intellij.tapestry.lang.TelLanguage;
 public abstract class TelElementTypes {
   public static final IFileElementType TEL_FILE = new IFileElementType(Language.findInstance(TelLanguage.class));
 
-  public static final IElementType TAP5_EL_START = new TelElementType("TEL_START");
-  public static final IElementType TAP5_EL_END = new TelElementType("TEL_END");
-  public static final IElementType TAP5_EL_IDENTIFIER = new TelElementType("TEL_IDENTIFIER");
-  public static final IElementType TAP5_EL_DOT = new TelElementType("TEL_DOT");
-  public static final IElementType TAP5_EL_COLON = new TelElementType("TEL_COLON");
+  public static final IElementType TAP5_EL_START = new TelElementType("TAP5_EL_START");
+  public static final IElementType TAP5_EL_END = new TelElementType("TAP5_EL_END");
+  public static final IElementType TAP5_EL_IDENTIFIER = new TelElementType("TAP5_EL_IDENTIFIER");
+  public static final IElementType TAP5_EL_DOT = new TelElementType("TAP5_EL_DOT");
+  public static final IElementType TAP5_EL_COLON = new TelElementType("TAP5_EL_COLON");
+  public static final IElementType TAP5_EL_COMMA = new TelElementType("TAP5_EL_COMMA");
+  public static final IElementType TAP5_EL_BAD_CHAR = new TelElementType("TAP5_EL_BAD_CHAR");
 
   static final IElementType TAP5_EL_CONTENT = new TelElementType("TAP5_EL_CONTENT");
   static final Key<ASTNode> TAP5_CONTEXT_NODE_KEY = Key.create("TAP5_CONTEXT_NODE_KEY");

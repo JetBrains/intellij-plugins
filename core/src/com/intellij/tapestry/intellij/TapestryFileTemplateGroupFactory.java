@@ -16,10 +16,10 @@ public class TapestryFileTemplateGroupFactory implements FileTemplateGroupDescri
 
         root.addTemplate(new FileTemplateDescriptor(TapestryConstants.MODULE_BUILDER_CLASS_TEMPLATE_NAME, StdFileTypes.JAVA.getIcon()));
         root.addTemplate(new FileTemplateDescriptor(TapestryConstants.COMPONENT_CLASS_TEMPLATE_NAME, StdFileTypes.JAVA.getIcon()));
-        root.addTemplate(new FileTemplateDescriptor(TapestryConstants.COMPONENT_TEMPLATE_TEMPLATE_NAME, StdFileTypes.HTML.getIcon()));
+        root.addTemplate(new FileTemplateDescriptor(TapestryConstants.COMPONENT_TEMPLATE_TEMPLATE_NAME, Icons.TAPESTRY_LOGO_SMALL));
         root.addTemplate(new FileTemplateDescriptor(TapestryConstants.MIXIN_CLASS_TEMPLATE_NAME, StdFileTypes.JAVA.getIcon()));
         root.addTemplate(new FileTemplateDescriptor(TapestryConstants.PAGE_CLASS_TEMPLATE_NAME, StdFileTypes.JAVA.getIcon()));
-        root.addTemplate(new FileTemplateDescriptor(TapestryConstants.PAGE_TEMPLATE_TEMPLATE_NAME, StdFileTypes.HTML.getIcon()));
+        root.addTemplate(new FileTemplateDescriptor(TapestryConstants.PAGE_TEMPLATE_TEMPLATE_NAME, Icons.TAPESTRY_LOGO_SMALL));
         root.addTemplate(new FileTemplateDescriptor(TapestryConstants.POM_TEMPLATE_NAME, StdFileTypes.XML.getIcon()));
 
         return root;

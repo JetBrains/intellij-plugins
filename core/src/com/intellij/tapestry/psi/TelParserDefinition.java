@@ -12,6 +12,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.tapestry.lang.TelFileType;
+import com.intellij.tapestry.psi.impl.TelExpressionHolder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -71,11 +72,14 @@ public class TelParserDefinition implements ParserDefinition {
   @NotNull
   public PsiElement createElement(ASTNode node) {
 
-    final IElementType type = node.getElementType();
-    if (type instanceof TelElementType) {
-      return ((TelElementType)type).createPsiElement(node);
+    final IElementType elementType = node.getElementType();
+    if (elementType instanceof TelElementType) {
+      return ((TelElementType)elementType).createPsiElement(node);
     }
-    throw new AssertionError("Unknown type: " + type);
+    if (elementType == TelElementTypes.TAP5_EL_HOLDER) {
+      return new TelExpressionHolder(node);
+    }
+    throw new AssertionError("Unknown type: " + elementType);
   }
 
 }

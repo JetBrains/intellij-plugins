@@ -1,6 +1,12 @@
 package com.intellij.tapestry.lang;
 
 import com.intellij.ide.highlighter.XmlFileHighlighter;
+import com.intellij.lexer.Lexer;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.tapestry.psi.TelElementType;
+import com.intellij.tapestry.psi.TmlHighlightingLexer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
@@ -8,5 +14,20 @@ import com.intellij.ide.highlighter.XmlFileHighlighter;
  *         Time: 2:48:18 PM
  */
 public class TmlHighlighter extends XmlFileHighlighter {
+
+  @NotNull
+  @Override
+  public Lexer getHighlightingLexer() {
+    return new TmlHighlightingLexer();
+  }
+
+  @Override
+  @NotNull
+  public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+    return tokenType instanceof TelElementType
+           ? TelHighlighter.getTokenHighlightsStatic(tokenType)
+           : super.getTokenHighlights(tokenType);
+  }
+
 }
 

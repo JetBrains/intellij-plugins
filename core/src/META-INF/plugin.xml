@@ -19,8 +19,14 @@
     <fileTemplateGroup implementation="com.intellij.tapestry.intellij.TapestryFileTemplateGroupFactory"/>
 
     <colorSettingsPage implementation="com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage"/>
+    
+    <fileTypeFactory implementation="com.intellij.tapestry.lang.TmlFileTypeFactory"/>
+    <lang.fileViewProviderFactory language="TML" implementationClass="com.intellij.tapestry.lang.TmlFileViewProviderFactory"/>
+    <syntaxHighlighter key="TML" implementationClass="com.intellij.tapestry.lang.TmlHighlighter"/>
+    <lang.parserDefinition language="TML" implementationClass="com.intellij.tapestry.psi.TmlParserDefinition"/>
+    <lang.parserDefinition language="TEL" implementationClass="com.intellij.tapestry.psi.TelParserDefinition"/>
 
-    <annotator language="HTML" implementationClass="com.intellij.tapestry.intellij.lang.annotator.TemplateTagAnnotator"/>
+    <annotator language="TML" implementationClass="com.intellij.tapestry.intellij.lang.annotator.TemplateTagAnnotator"/>
 
     <psi.referenceContributor implementation="com.intellij.tapestry.intellij.lang.reference.TapestryReferenceContributor"/>
 

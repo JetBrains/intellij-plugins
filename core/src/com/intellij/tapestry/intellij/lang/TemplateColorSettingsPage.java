@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.JspHighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.XmlHighlighterColors;
+import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
@@ -32,6 +33,7 @@ public class TemplateColorSettingsPage implements ColorSettingsPage {
   public static final TextAttributesKey TEL_IDENT = createTextAttributesKey("TEL_IDENT", CodeInsightColors.LOCAL_VARIABLE_ATTRIBUTES);
   public static final TextAttributesKey TEL_DOT = createTextAttributesKey("TEL_DOT", SyntaxHighlighterColors.DOT);
   public static final TextAttributesKey TEL_BACKGROUND = createTextAttributesKey("TEL_BACKGROUND", JspHighlighterColors.JSP_SCRIPTING_BACKGROUND);
+  public static final TextAttributesKey TEL_BAD_CHAR = createTextAttributesKey("TEL_BAD_CHAR", HighlighterColors.BAD_CHARACTER);
 
   private static TextAttributesKey createTextAttributesKey(@NonNls String externalName, TextAttributesKey defaultTextAttr) {
     return TextAttributesKey.createTextAttributesKey(externalName, defaultTextAttr.getDefaultAttributes());
@@ -49,6 +51,7 @@ public class TemplateColorSettingsPage implements ColorSettingsPage {
           createAttributesDescriptor("EL identifier", TEL_IDENT),
           createAttributesDescriptor("EL dot", TEL_DOT),
           createAttributesDescriptor("EL background", TEL_BACKGROUND),
+          createAttributesDescriptor("Bad character", TEL_BAD_CHAR),
       };
 
   @NotNull

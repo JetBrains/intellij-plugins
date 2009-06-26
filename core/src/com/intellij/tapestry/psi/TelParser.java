@@ -41,6 +41,7 @@ public class TelParser implements PsiParser {
   }
 
   private static void parseExpressionInner(PsiBuilder builder) {
-    //To change body of created methods use File | Settings | File Templates.
+    builder.getTokenType(); // todo
+    builder.advanceLexer();
   }
 }

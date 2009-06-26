@@ -25,11 +25,13 @@ public class TmlLexer extends XHtmlLexer {
     super.start(buffer, startOffset, endOffset, initialState);
   }
 
+  @Override
   public void advance() {
     myTokenType = null;
     super.advance();
   }
 
+  @Override
   public IElementType getTokenType() {
     if (myTokenType != null) return myTokenType;
 
@@ -44,14 +46,17 @@ public class TmlLexer extends XHtmlLexer {
     return myTokenType;
   }
 
+  @Override
   public int getTokenStart() {
     return myTokenType != null ? myTokenStart : super.getTokenStart();
   }
 
+  @Override
   public int getTokenEnd() {
     return myTokenType != null ? myTokenEnd : super.getTokenEnd();
   }
 
+  @Override
   protected boolean isValidAttributeValueTokenType(final IElementType tokenType) {
     return super.isValidAttributeValueTokenType(tokenType) || tokenType == TelElementTypes.TAP5_EL_CONTENT;
   }

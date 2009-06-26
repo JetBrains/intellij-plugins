@@ -25,16 +25,20 @@ public class TelHighlighter extends SyntaxHighlighterBase {
 
   @NotNull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
-    return SyntaxHighlighterBase.pack(ourMap.get(tokenType), TEL_BACKGROUND);
+    return getTokenHighlightsStatic(tokenType);
   }
 
+  public static TextAttributesKey[] getTokenHighlightsStatic(IElementType tokenType) {
+    return SyntaxHighlighterBase.pack(ourMap.get(tokenType), TEL_BACKGROUND);
+  }
   private static final Map<IElementType, TextAttributesKey> ourMap;
 
   static {
     ourMap = new THashMap<IElementType, TextAttributesKey>();
     SyntaxHighlighterBase.fillMap(ourMap, TEL_BOUNDS, TelElementTypes.TAP5_EL_START, TelElementTypes.TAP5_EL_END);
     SyntaxHighlighterBase.fillMap(ourMap, TEL_IDENT, TelElementTypes.TAP5_EL_IDENTIFIER);
-    SyntaxHighlighterBase.fillMap(ourMap, TEL_DOT, TelElementTypes.TAP5_EL_DOT, TelElementTypes.TAP5_EL_COLON);
+    SyntaxHighlighterBase.fillMap(ourMap, TEL_DOT, TelElementTypes.TAP5_EL_DOT, TelElementTypes.TAP5_EL_COLON, TelElementTypes.TAP5_EL_COMMA);
+    SyntaxHighlighterBase.fillMap(ourMap, TEL_BAD_CHAR, TelElementTypes.TAP5_EL_BAD_CHAR);
   }
 
 }
