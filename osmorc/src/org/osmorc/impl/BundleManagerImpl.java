@@ -54,437 +54,355 @@ import java.util.jar.Manifest;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class BundleManagerImpl implements BundleManager
-{
-  public BundleManagerImpl(ModuleManager moduleManager, ManifestHolderRegistry manifestHolderRegistry,
-                       FrameworkIntegratorRegistry frameworkIntegratorRegistry,
-                       ProjectSettings projectSettings, ApplicationSettings applicationSettings)
-  {
-    _moduleManager = moduleManager;
-    _manifestHolderRegistry = manifestHolderRegistry;
-    _frameworkIntegratorRegistry = frameworkIntegratorRegistry;
-    _projectSettings = projectSettings;
-    _applicationSettings = applicationSettings;
-  }
-
-  public Object findBundle(String bundleSymbolicName)
-  {
-    Module[] modules = _moduleManager.getModules();
-    for (Module module : modules)
-    {
-      BundleManifest bundleManifest = getBundleManifest(module);
-      if (bundleManifest != null && bundleSymbolicName.equals(bundleManifest.getBundleSymbolicName()))
-      {
-        return module;
-      }
+public class BundleManagerImpl implements BundleManager {
+    public BundleManagerImpl(ModuleManager moduleManager, ManifestHolderRegistry manifestHolderRegistry,
+                             FrameworkIntegratorRegistry frameworkIntegratorRegistry,
+                             ProjectSettings projectSettings, ApplicationSettings applicationSettings) {
+        this.moduleManager = moduleManager;
+        this.manifestHolderRegistry = manifestHolderRegistry;
+        this.frameworkIntegratorRegistry = frameworkIntegratorRegistry;
+        this.projectSettings = projectSettings;
+        this.applicationSettings = applicationSettings;
     }
 
-    List<Library> libraries = getFrameworkInstanceLibraries();
-    for (Library library : libraries)
-    {
-      BundleManifest bundleManifest = getBundleManifest(library);
-      if (bundleManifest != null && bundleSymbolicName.equals(bundleManifest.getBundleSymbolicName()))
-      {
-        return library;
-      }
-
-    }
-
-    return null;
-  }
-
-  public BundleManifest getBundleManifest(String bundleSymbolicName)
-  {
-    Object bundle = findBundle(bundleSymbolicName);
-
-    if (bundle != null)
-    {
-      return getBundleManifest(bundle);
-    }
-    return null;
-  }
-
-  public BundleManifest getBundleManifest(@NotNull Object bundle)
-  {
-    return getManifestHolder(bundle).getBundleManifest();
-  }
-
-  public void addOrUpdateBundle(@NotNull Object bundle)
-  {
-    createInitialState();
-    addOrUpdateBundleInternal(bundle);
-    _state.resolve();
-  }
-
-  private void addOrUpdateBundleInternal(Object bundle)
-  {
-    BundleManifest bundleManifest = getBundleManifest(bundle);
-    if (bundleManifest != null)
-    {
-      try
-      {
-        BundleDescription oldDescription = getBundleDescription(bundle);
-        BundleDescription bundleDescription = createBundleDescription(bundleManifest,
-            oldDescription != null ? oldDescription.getBundleId() : _state.getHighestBundleId() + 1);
-
-        if (bundleDescription != null)
-        {
-          getManifestHolder(bundle).setBundleID(bundleDescription.getBundleId());
-          bundleDescription.setUserObject(bundle);
-          if (oldDescription != null)
-          {
-            _state.updateBundle(bundleDescription);
-          }
-          else
-          {
-            _state.addBundle(bundleDescription);
-          }
+    public Object findBundle(String bundleSymbolicName) {
+        Module[] modules = moduleManager.getModules();
+        for (Module module : modules) {
+            BundleManifest bundleManifest = getBundleManifest(module);
+            if (bundleManifest != null && bundleSymbolicName.equals(bundleManifest.getBundleSymbolicName())) {
+                return module;
+            }
         }
-      }
-      catch (IOException e)
-      {
-        LOG.debug(e);
-      }
-    }
-  }
 
-  @Nullable
-  public BundleDescription getBundleDescription(Object bundle)
-  {
-    long bundleID = getManifestHolder(bundle).getBundleID();
-    return bundleID >= 0 ? _state.getBundle(bundleID) : null;
-  }
+        List<Library> libraries = getFrameworkInstanceLibraries();
+        for (Library library : libraries) {
+            BundleManifest bundleManifest = getBundleManifest(library);
+            if (bundleManifest != null && bundleSymbolicName.equals(bundleManifest.getBundleSymbolicName())) {
+                return library;
+            }
 
-  public Collection<Object> determineBundleDependencies(@NotNull Object bundle)
-  {
-    createInitialState();
-    Collection<Object> result = new HashSet<Object>();
-
-    BundleDescription bundleDescription = getBundleDescription(bundle);
-    if (bundleDescription == null && bundle instanceof Module && OsmorcFacet.hasOsmorcFacet((Module) bundle))
-    {
-      addOrUpdateBundle(bundle);
-      bundleDescription = getBundleDescription(bundle);
-    }
-
-    if (bundleDescription != null)
-    {
-      List<BundleDescription> resolvedRequires = getResolvedRequires(bundle);
-      for (BundleDescription resolvedRequire : resolvedRequires)
-      {
-        Object resolvedRequiredBundle = resolvedRequire.getUserObject();
-        result.add(resolvedRequiredBundle);
-        result.addAll(determineReexportedRequiredBundlesOnLibraries(resolvedRequiredBundle));
-      }
-      List<ExportPackageDescription> resolvedImports = getResolvedImports(bundle);
-      for (ExportPackageDescription resolvedImport : resolvedImports)
-      {
-        result.add(resolvedImport.getExporter().getUserObject());
-      }
-
-      result.addAll(getFragments(result));
-      HostSpecification hostSpecification = bundleDescription.getHost();
-      if (hostSpecification != null && hostSpecification.getHosts() != null)
-      {
-        for (BundleDescription hostBundleDescription : hostSpecification.getHosts())
-        {
-          result.add(hostBundleDescription.getUserObject());
         }
-      }
-      result.remove(bundle);
+
+        return null;
     }
 
-    return result;
-  }
+    public BundleManifest getBundleManifest(String bundleSymbolicName) {
+        Object bundle = findBundle(bundleSymbolicName);
 
-  public List<BundleDescription> getResolvedRequires(@NotNull Object bundle)
-  {
-    List<BundleDescription> result = new ArrayList<BundleDescription>();
-    BundleDescription bundleDescription = getBundleDescription(bundle);
-    if (bundleDescription != null )
-    {
-      result.addAll(Arrays.asList(bundleDescription.getResolvedRequires()));
-      HostSpecification hostSpecification = bundleDescription.getHost();
-      if (hostSpecification != null && hostSpecification.getHosts() != null)
-      {
-        for (BundleDescription hostBundleDescription : hostSpecification.getHosts())
-        {
-          result.addAll(getResolvedRequires(hostBundleDescription.getUserObject()));
+        if (bundle != null) {
+            return getBundleManifest(bundle);
         }
-      }
+        return null;
     }
 
-    return result;
-  }
+    public BundleManifest getBundleManifest(@NotNull Object bundle) {
+        return getManifestHolder(bundle).getBundleManifest();
+    }
 
-  private List<BundleSpecification> getRequiredBundles(@NotNull Object bundle)
-  {
-    List<BundleSpecification> result = new ArrayList<BundleSpecification>();
-    BundleDescription bundleDescription = getBundleDescription(bundle);
-    if (bundleDescription != null)
-    {
-      result.addAll(Arrays.asList(bundleDescription.getRequiredBundles()));
-      HostSpecification hostSpecification = bundleDescription.getHost();
-      if (hostSpecification != null && hostSpecification.getHosts() != null)
-      {
-        for (BundleDescription hostBundleDescription : hostSpecification.getHosts())
-        {
-          result.addAll(getRequiredBundles(hostBundleDescription.getUserObject()));
+    public void addOrUpdateBundle(@NotNull Object bundle) {
+        createInitialState();
+        addOrUpdateBundleInternal(bundle);
+        _state.resolve();
+    }
+
+    private void addOrUpdateBundleInternal(Object bundle) {
+        BundleManifest bundleManifest = getBundleManifest(bundle);
+        if (bundleManifest != null) {
+            try {
+                BundleDescription oldDescription = getBundleDescription(bundle);
+                BundleDescription bundleDescription = createBundleDescription(bundleManifest,
+                        oldDescription != null ? oldDescription.getBundleId() : _state.getHighestBundleId() + 1);
+
+                if (bundleDescription != null) {
+                    getManifestHolder(bundle).setBundleID(bundleDescription.getBundleId());
+                    bundleDescription.setUserObject(bundle);
+                    if (oldDescription != null) {
+                        _state.updateBundle(bundleDescription);
+                    } else {
+                        _state.addBundle(bundleDescription);
+                    }
+                }
+            }
+            catch (IOException e) {
+                LOG.debug(e);
+            }
         }
-      }
     }
 
-    return result;
-  }
+    @Nullable
+    public BundleDescription getBundleDescription(Object bundle) {
+        long bundleID = getManifestHolder(bundle).getBundleID();
+        return bundleID >= 0 ? _state.getBundle(bundleID) : null;
+    }
 
-  public List<ExportPackageDescription> getResolvedImports(@NotNull Object bundle)
-  {
-    List<ExportPackageDescription> result = new ArrayList<ExportPackageDescription>();
-    BundleDescription bundleDescription = getBundleDescription(bundle);
-    if (bundleDescription != null)
-    {
-      result.addAll(Arrays.asList(bundleDescription.getResolvedImports()));
-      HostSpecification hostSpecification = bundleDescription.getHost();
-      if (hostSpecification != null && hostSpecification.getHosts() != null)
-      {
-        for (BundleDescription hostBundleDescription : hostSpecification.getHosts())
-        {
-          result.addAll(getResolvedImports(hostBundleDescription.getUserObject()));
+    public Collection<Object> determineBundleDependencies(@NotNull Object bundle) {
+        createInitialState();
+        Collection<Object> result = new HashSet<Object>();
+
+        BundleDescription bundleDescription = getBundleDescription(bundle);
+        if (bundleDescription == null && bundle instanceof Module && OsmorcFacet.hasOsmorcFacet((Module) bundle)) {
+            addOrUpdateBundle(bundle);
+            bundleDescription = getBundleDescription(bundle);
         }
-      }
-    }
 
-    return result;
-  }
-
-  private Collection<Object>  getFragments(Collection<Object> bundles)
-  {
-    Collection<Object> result = new HashSet<Object>();
-
-    for (Object bundle : bundles)
-    {
-      BundleDescription bundleDescription = getBundleDescription(bundle);
-      if (bundleDescription != null)
-      {
-        BundleDescription[] fragments = bundleDescription.getFragments();
-        if (fragments != null)
-        {
-          for (BundleDescription fragment : fragments)
-          {
-            result.add(fragment.getUserObject());
-          }
-        }
-      }
-    }
-
-    return result;
-  }
-
-  private Collection<Object> determineReexportedRequiredBundlesOnLibraries(@NotNull Object bundle)
-  {
-    Collection<Object> result = new HashSet<Object>();
-    if (bundle instanceof Library)
-    {
-      List<BundleDescription> resolvedRequires = getResolvedRequires(bundle);
-      List<BundleSpecification> requiredBundles = getRequiredBundles(bundle);
-      if (requiredBundles != null && requiredBundles.size() > 0)
-      {
-        for (BundleSpecification requiredBundle : requiredBundles)
-        {
-          if (requiredBundle.isExported())
-          {
-            for (BundleDescription resolvedRequire : resolvedRequires)
-            {
-              if (requiredBundle.isSatisfiedBy(resolvedRequire))
-              {
+        if (bundleDescription != null) {
+            List<BundleDescription> resolvedRequires = getResolvedRequires(bundle);
+            for (BundleDescription resolvedRequire : resolvedRequires) {
                 Object resolvedRequiredBundle = resolvedRequire.getUserObject();
                 result.add(resolvedRequiredBundle);
                 result.addAll(determineReexportedRequiredBundlesOnLibraries(resolvedRequiredBundle));
-              }
             }
-          }
+            List<ExportPackageDescription> resolvedImports = getResolvedImports(bundle);
+            for (ExportPackageDescription resolvedImport : resolvedImports) {
+                result.add(resolvedImport.getExporter().getUserObject());
+            }
+
+            result.addAll(getFragments(result));
+            HostSpecification hostSpecification = bundleDescription.getHost();
+            if (hostSpecification != null && hostSpecification.getHosts() != null) {
+                for (BundleDescription hostBundleDescription : hostSpecification.getHosts()) {
+                    result.add(hostBundleDescription.getUserObject());
+                }
+            }
+            result.remove(bundle);
         }
-      }
+
+        return result;
     }
-    return result;
-  }
 
-  public boolean isReexported(@NotNull Object reexportCandidate, @NotNull Object exporter)
-  {
-    BundleDescription reexportCandidateDescription = getBundleDescription(reexportCandidate);
+    public List<BundleDescription> getResolvedRequires(@NotNull Object bundle) {
+        List<BundleDescription> result = new ArrayList<BundleDescription>();
+        BundleDescription bundleDescription = getBundleDescription(bundle);
+        if (bundleDescription != null) {
+            result.addAll(Arrays.asList(bundleDescription.getResolvedRequires()));
+            HostSpecification hostSpecification = bundleDescription.getHost();
+            if (hostSpecification != null && hostSpecification.getHosts() != null) {
+                for (BundleDescription hostBundleDescription : hostSpecification.getHosts()) {
+                    result.addAll(getResolvedRequires(hostBundleDescription.getUserObject()));
+                }
+            }
+        }
 
-    if (reexportCandidateDescription != null)
-    {
-      HostSpecification hostSpecification = reexportCandidateDescription.getHost();
-      if (hostSpecification != null && hostSpecification.getHosts() != null)
-      {
-        for (BundleDescription hostBundleDescription : hostSpecification.getHosts())
-        {
-          if (isReexported(hostBundleDescription.getUserObject(), exporter))
-          {
+        return result;
+    }
+
+    private List<BundleSpecification> getRequiredBundles(@NotNull Object bundle) {
+        List<BundleSpecification> result = new ArrayList<BundleSpecification>();
+        BundleDescription bundleDescription = getBundleDescription(bundle);
+        if (bundleDescription != null) {
+            result.addAll(Arrays.asList(bundleDescription.getRequiredBundles()));
+            HostSpecification hostSpecification = bundleDescription.getHost();
+            if (hostSpecification != null && hostSpecification.getHosts() != null) {
+                for (BundleDescription hostBundleDescription : hostSpecification.getHosts()) {
+                    result.addAll(getRequiredBundles(hostBundleDescription.getUserObject()));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public List<ExportPackageDescription> getResolvedImports(@NotNull Object bundle) {
+        List<ExportPackageDescription> result = new ArrayList<ExportPackageDescription>();
+        BundleDescription bundleDescription = getBundleDescription(bundle);
+        if (bundleDescription != null) {
+            result.addAll(Arrays.asList(bundleDescription.getResolvedImports()));
+            HostSpecification hostSpecification = bundleDescription.getHost();
+            if (hostSpecification != null && hostSpecification.getHosts() != null) {
+                for (BundleDescription hostBundleDescription : hostSpecification.getHosts()) {
+                    result.addAll(getResolvedImports(hostBundleDescription.getUserObject()));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private Collection<Object> getFragments(Collection<Object> bundles) {
+        Collection<Object> result = new HashSet<Object>();
+
+        for (Object bundle : bundles) {
+            BundleDescription bundleDescription = getBundleDescription(bundle);
+            if (bundleDescription != null) {
+                BundleDescription[] fragments = bundleDescription.getFragments();
+                if (fragments != null) {
+                    for (BundleDescription fragment : fragments) {
+                        result.add(fragment.getUserObject());
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private Collection<Object> determineReexportedRequiredBundlesOnLibraries(@NotNull Object bundle) {
+        Collection<Object> result = new HashSet<Object>();
+        if (bundle instanceof Library) {
+            List<BundleDescription> resolvedRequires = getResolvedRequires(bundle);
+            List<BundleSpecification> requiredBundles = getRequiredBundles(bundle);
+            if (requiredBundles != null && requiredBundles.size() > 0) {
+                for (BundleSpecification requiredBundle : requiredBundles) {
+                    if (requiredBundle.isExported()) {
+                        for (BundleDescription resolvedRequire : resolvedRequires) {
+                            if (requiredBundle.isSatisfiedBy(resolvedRequire)) {
+                                Object resolvedRequiredBundle = resolvedRequire.getUserObject();
+                                result.add(resolvedRequiredBundle);
+                                result.addAll(determineReexportedRequiredBundlesOnLibraries(resolvedRequiredBundle));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    public boolean isReexported(@NotNull Object reexportCandidate, @NotNull Object exporter) {
+        BundleDescription reexportCandidateDescription = getBundleDescription(reexportCandidate);
+
+        if (reexportCandidateDescription != null) {
+            HostSpecification hostSpecification = reexportCandidateDescription.getHost();
+            if (hostSpecification != null && hostSpecification.getHosts() != null) {
+                for (BundleDescription hostBundleDescription : hostSpecification.getHosts()) {
+                    if (isReexported(hostBundleDescription.getUserObject(), exporter)) {
+                        return true;
+                    }
+                }
+            }
+
+            BundleDescription exporterDescription = getBundleDescription(exporter);
+            if (exporterDescription != null) {
+                BundleSpecification[] requiredBundles = exporterDescription.getRequiredBundles();
+                if (requiredBundles != null && requiredBundles.length > 0) {
+                    for (BundleSpecification requiredBundle : requiredBundles) {
+                        if (requiredBundle.isSatisfiedBy(reexportCandidateDescription)) {
+                            return requiredBundle.isExported();
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public Collection<Object> getHostBundles(@NotNull Object bundle) {
+        Collection<Object> result = new ArrayList<Object>();
+        BundleDescription bundleDescription = getBundleDescription(bundle);
+        if (bundleDescription != null && bundleDescription.getHost() != null) {
+            HostSpecification hostSpecification = bundleDescription.getHost();
+            BundleDescription[] hosts = hostSpecification.getHosts();
+            if (hosts != null) {
+                for (BundleDescription host : hosts) {
+                    result.add(host.getUserObject());
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public boolean reloadFrameworkInstanceLibraries(boolean onlyIfFrameworkInstanceSelectionChanged) {
+        String frameworkInstanceName = projectSettings.getFrameworkInstanceName();
+        if (!onlyIfFrameworkInstanceSelectionChanged ||
+                (frameworkInstanceName != null && !frameworkInstanceName.equals(_currentFrameworkInstanceName))) {
+            if (_state == null) {
+                createInitialState();
+            } else {
+                List<Long> longs = manifestHolderRegistry.getLibraryBundleIDs();
+                for (Long libraryBundleID : longs) {
+                    _state.removeBundle(libraryBundleID);
+                }
+                manifestHolderRegistry.clearLibraryManifestHolders();
+                loadFrameworkInstanceLibraryBundles();
+                _state.resolve();
+            }
             return true;
-          }
         }
-      }
+        return false;
+    }
 
-      BundleDescription exporterDescription = getBundleDescription(exporter);
-      if (exporterDescription != null)
-      {
-        BundleSpecification[] requiredBundles = exporterDescription.getRequiredBundles();
-        if (requiredBundles != null && requiredBundles.length > 0)
-        {
-          for (BundleSpecification requiredBundle : requiredBundles)
-          {
-            if (requiredBundle.isSatisfiedBy(reexportCandidateDescription))
-            {
-              return requiredBundle.isExported();
+    private BundleDescription createBundleDescription(BundleManifest bundleManifest, long bundleID) throws IOException {
+        BundleDescription bundleDescription = null;
+        try {
+            InputStream inputStream =
+                    new ByteArrayInputStream((bundleManifest.getManifestFile().getText() + "\n").getBytes());
+            Manifest manifest = new Manifest(inputStream);
+            Attributes mainAttributes = manifest.getMainAttributes();
+            Properties properties = new Properties();
+            for (Object attributeKey : mainAttributes.keySet()) {
+                properties.put(attributeKey.toString(), mainAttributes.get(attributeKey));
             }
-          }
+
+            // TODO: Replace this creation of BundleDescription with one without additional parsing as soon as Osmorc parses all necessary headers, attributes and directives.
+            bundleDescription =
+                    StateObjectFactory.defaultFactory.createBundleDescription(_state, properties, null, bundleID);
         }
-      }
-    }
-    return false;
-  }
-
-  public Collection<Object> getHostBundles(@NotNull Object bundle)
-  {
-    Collection<Object> result = new ArrayList<Object>();
-    BundleDescription bundleDescription = getBundleDescription(bundle);
-    if (bundleDescription != null && bundleDescription.getHost() != null)
-    {
-      HostSpecification hostSpecification = bundleDescription.getHost();
-      BundleDescription[] hosts = hostSpecification.getHosts();
-      if (hosts != null)
-      {
-        for (BundleDescription host : hosts)
-        {
-          result.add(host.getUserObject());
+        catch (BundleException e) {
+            LOG.debug(e);
         }
-      }
-    }
-
-    return result;
-  }
-
-  public boolean reloadFrameworkInstanceLibraries(boolean onlyIfFrameworkInstanceSelectionChanged)
-  {
-    String frameworkInstanceName = _projectSettings.getFrameworkInstanceName();
-    if (!onlyIfFrameworkInstanceSelectionChanged ||
-        (frameworkInstanceName != null && !frameworkInstanceName.equals(_currentFrameworkInstanceName)))
-    {
-      if (_state == null)
-      {
-        createInitialState();
-      }
-      else
-      {
-        List<Long> longs = _manifestHolderRegistry.getLibraryBundleIDs();
-        for (Long libraryBundleID : longs)
-        {
-          _state.removeBundle(libraryBundleID);
+        catch (NumberFormatException e) {
+            LOG.debug(e);
         }
-        _manifestHolderRegistry.clearLibraryManifestHolders();
-        loadFrameworkInstanceLibraryBundles();
-        _state.resolve();
-      }
-      return true;
+        catch (IllegalArgumentException e) {
+            LOG.debug(e);
+        }
+        return bundleDescription;
     }
-    return false;
-  }
 
-  private BundleDescription createBundleDescription(BundleManifest bundleManifest, long bundleID) throws IOException
-  {
-    BundleDescription bundleDescription = null;
-    try
-    {
-      InputStream inputStream =
-          new ByteArrayInputStream((bundleManifest.getManifestFile().getText() + "\n").getBytes());
-      Manifest manifest = new Manifest(inputStream);
-      Attributes mainAttributes = manifest.getMainAttributes();
-      Properties properties = new Properties();
-      for (Object attributeKey : mainAttributes.keySet())
-      {
-        properties.put(attributeKey.toString(), mainAttributes.get(attributeKey));
-      }
+    private void createInitialState() {
+        if (_state == null) {
+            _state = StateObjectFactory.defaultFactory.createState(true);
+            Module[] modules = moduleManager.getModules();
+            for (Module module : modules) {
+                addOrUpdateBundleInternal(module);
+            }
 
-      // TODO: Replace this creation of BundleDescription with one without additional parsing as soon as Osmorc parses all necessary headers, attributes and directives.
-      bundleDescription =
-          StateObjectFactory.defaultFactory.createBundleDescription(_state, properties, null, bundleID);
+            loadFrameworkInstanceLibraryBundles();
+            Properties platformProperties = new Properties();
+            platformProperties.put(org.eclipse.osgi.framework.internal.core.Constants.OSGI_RESOLVER_MODE,
+                    org.eclipse.osgi.framework.internal.core.Constants.DEVELOPMENT_MODE);
+            _state.setPlatformProperties(platformProperties);
+            _state.resolve();
+        }
     }
-    catch (BundleException e)
-    {
-      LOG.debug(e);
+
+    private void loadFrameworkInstanceLibraryBundles() {
+        _currentFrameworkInstanceName = projectSettings.getFrameworkInstanceName();
+        if (_currentFrameworkInstanceName != null) {
+            List<Library> libraries = getFrameworkInstanceLibraries();
+            for (Library library : libraries) {
+                addOrUpdateBundleInternal(library);
+            }
+        }
     }
-    catch (NumberFormatException e)
-    {
-      LOG.debug(e);
+
+    private List<Library> getFrameworkInstanceLibraries() {
+        FrameworkInstanceDefinition frameworkInstanceDefinition =
+                applicationSettings.getFrameworkInstance(projectSettings.getFrameworkInstanceName());
+        List<Library> libraries = null;
+        if (frameworkInstanceDefinition != null) {
+            FrameworkIntegrator frameworkIntegrator =
+                    frameworkIntegratorRegistry.findIntegratorByInstanceDefinition(frameworkInstanceDefinition);
+            libraries = frameworkIntegrator.getFrameworkInstanceManager().getLibraries(frameworkInstanceDefinition);
+        }
+        if (libraries == null) {
+            libraries = Collections.emptyList();
+        }
+        return libraries;
     }
-    return bundleDescription;
-  }
 
-  private void createInitialState()
-  {
-    if (_state == null)
-    {
-      _state = StateObjectFactory.defaultFactory.createState(true);
-      Module[] modules = _moduleManager.getModules();
-      for (Module module : modules)
-      {
-        addOrUpdateBundleInternal(module);
-      }
-
-      loadFrameworkInstanceLibraryBundles();
-      Properties platformProperties = new Properties();
-      platformProperties.put(org.eclipse.osgi.framework.internal.core.Constants.OSGI_RESOLVER_MODE,
-          org.eclipse.osgi.framework.internal.core.Constants.DEVELOPMENT_MODE);
-      _state.setPlatformProperties(platformProperties);
-      _state.resolve();
+    protected ManifestHolder getManifestHolder(Object bundle) {
+        return manifestHolderRegistry.getManifestHolder(bundle);
     }
-  }
 
-  private void loadFrameworkInstanceLibraryBundles()
-  {
-    _currentFrameworkInstanceName = _projectSettings.getFrameworkInstanceName();
-    if (_currentFrameworkInstanceName != null)
-    {
-      List<Library> libraries = getFrameworkInstanceLibraries();
-      for (Library library : libraries)
-      {
-        addOrUpdateBundleInternal(library);
-      }
-    }
-  }
+    private final ModuleManager moduleManager;
+    private final ManifestHolderRegistry manifestHolderRegistry;
+    private final FrameworkIntegratorRegistry frameworkIntegratorRegistry;
+    private final ProjectSettings projectSettings;
+    private final ApplicationSettings applicationSettings;
+    private State _state;
 
-  private List<Library> getFrameworkInstanceLibraries()
-  {
-    FrameworkInstanceDefinition frameworkInstanceDefinition =
-        _applicationSettings.getFrameworkInstance(_projectSettings.getFrameworkInstanceName());
-    List<Library> libraries = null;
-    if (frameworkInstanceDefinition != null)
-    {
-      FrameworkIntegrator frameworkIntegrator =
-          _frameworkIntegratorRegistry.findIntegratorByInstanceDefinition(frameworkInstanceDefinition);
-      libraries = frameworkIntegrator.getFrameworkInstanceManager().getLibraries(frameworkInstanceDefinition);
-    }
-    if (libraries == null)
-    {
-      libraries = Collections.emptyList();
-    }
-    return libraries;
-  }
-
-  protected ManifestHolder getManifestHolder(Object bundle)
-  {
-    return _manifestHolderRegistry.getManifestHolder(bundle);
-  }
-
-  private final ModuleManager _moduleManager;
-  private final ManifestHolderRegistry _manifestHolderRegistry;
-  private final FrameworkIntegratorRegistry _frameworkIntegratorRegistry;
-  private final ProjectSettings _projectSettings;
-  private final ApplicationSettings _applicationSettings;
-  private State _state;
-
-  private static final Logger LOG = Logger.getInstance("org.osmorc.BundleManagerImpl");
-  private String _currentFrameworkInstanceName;
+    private static final Logger LOG = Logger.getInstance("org.osmorc.BundleManagerImpl");
+    private String _currentFrameworkInstanceName;
 }

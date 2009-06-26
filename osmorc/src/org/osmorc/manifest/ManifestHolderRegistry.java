@@ -22,80 +22,20 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.osmorc.manifest;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleServiceManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.impl.LibraryManifestHolderImpl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public final class ManifestHolderRegistry
-{
-  public ManifestHolderRegistry(Project project)
-  {
-    _project = project;
-    _libraryManifestHolders = new HashMap<Library, ManifestHolder>();
-  }
+public interface ManifestHolderRegistry {
+    ManifestHolder getManifestHolder(@NotNull Object bundle);
 
-  public ManifestHolder getManifestHolder(@NotNull Object bundle)
-  {
-    if (bundle instanceof Module)
-    {
-      return getModuleManifestHolder((Module) bundle);
-    }
-    else if (bundle instanceof Library)
-    {
-      return getLibraryManifestHolder((Library) bundle);
-    }
-    throw new RuntimeException(
-        "The bundle is neither a Module nor a Library. It is of type " + bundle.getClass().getName());
-  }
+    List<Long> getLibraryBundleIDs();
 
-  private ManifestHolder getModuleManifestHolder(@NotNull Module module)
-  {
-    return ModuleServiceManager.getService(module, ManifestHolder.class);
-  }
-
-  private ManifestHolder getLibraryManifestHolder(@NotNull Library library)
-  {
-    ManifestHolder result = _libraryManifestHolders.get(library);
-    if (result == null)
-    {
-      result = new LibraryManifestHolderImpl(library, _project);
-      _libraryManifestHolders.put(library, result);
-    }
-
-    return result;
-  }
-
-  public List<Long> getLibraryBundleIDs()
-  {
-    List<Long> ids = new ArrayList<Long>();
-
-    for (ManifestHolder manifestHolder : _libraryManifestHolders.values())
-    {
-      ids.add(manifestHolder.getBundleID());
-    }
-
-    return ids;
-  }
-
-  public void clearLibraryManifestHolders()
-  {
-    _libraryManifestHolders.clear();
-  }
-
-
-  private final Project _project;
-  private final Map<Library, ManifestHolder> _libraryManifestHolders;
+    void clearLibraryManifestHolders();
 }

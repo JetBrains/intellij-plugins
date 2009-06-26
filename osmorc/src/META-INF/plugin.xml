@@ -221,7 +221,7 @@
         <projectService serviceInterface="org.osmorc.BundleManager"
                         serviceImplementation="org.osmorc.impl.BundleManagerImpl"/>
         <projectService serviceInterface="org.osmorc.manifest.ManifestHolderRegistry"
-                        serviceImplementation="org.osmorc.manifest.ManifestHolderRegistry"/>
+                        serviceImplementation="org.osmorc.manifest.impl.ManifestHolderRegistryImpl"/>
         <projectService serviceInterface="org.osmorc.frameworkintegration.FrameworkInstanceModuleManager"
                         serviceImplementation="org.osmorc.frameworkintegration.FrameworkInstanceModuleManager"/>
 
