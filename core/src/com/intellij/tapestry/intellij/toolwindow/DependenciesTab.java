@@ -60,7 +60,9 @@ public class DependenciesTab {
                             Object selectedObject = selectedNode.getUserObject();
 
                             if (selectedNode.getParent() instanceof InjectedPagesNode || selectedNode.getParent() instanceof EmbeddedComponentsNode) {
+                              if (selectedObject instanceof InjectedElement) {
                                 ((IntellijJavaField) ((InjectedElement) selectedObject).getField()).getPsiField().navigate(true);
+                              }
                             }
                         }
 
