@@ -59,12 +59,7 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
      tag.getParent().putUserData(XmlHighlightVisitor.DO_NOT_VALIDATE_KEY, "true");*/
 
       // annotate the tag start
-      annotateTag(IdeaUtils.getNameElement(tag));
-
-      // only annotation closing tag if the tag isn't empty like <t:body/>
-      if (!tag.isEmpty()) {
-        annotateTag(IdeaUtils.getNameElementClosing(tag));
-      }
+      annotateTapestryTag(tag);
 
       Module module = IdeaUtils.getModule(tag);
       if (module == null) return;
@@ -80,18 +75,18 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
         if (elementClass != null) {
           XmlAttribute attr = TapestryUtils.getIdentifyingAttribute(tag);
           if (attr != null) {
-            annotateAttribute(attr);
+            annotateTapestryAttribute(attr);
           }
           for (TapestryParameter parameter : component.getParameters().values()) {
             final String paramName = parameter.getName();
             XmlAttribute attribute = TapestryUtils.getTapestryAttribute(tag, paramName);
             if (attribute == null) {
               if (parameter.isRequired() && !TapestryUtils.parameterDefinedInClass(paramName, elementClass, tag)) {
-                _annotationHolder.createErrorAnnotation(IdeaUtils.getNameElement(tag), "Missing required parameter \"" + paramName + "\"");
+                annotateTapestryTag(tag, "Missing required parameter \"" + paramName + "\"");
               }
               continue;
             }
-            annotateAttribute(attribute);
+            annotateTapestryAttribute(attribute);
 
             ResolvedValue resolvedValue;
             try {
@@ -132,7 +127,7 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
             _annotationHolder.createErrorAnnotation(componentIdentifier.getLastChild(), msg);
           }
           else {
-            _annotationHolder.createErrorAnnotation(componentIdentifier.getNavigationElement(), "Unknown component type");
+            annotateTapestryTag(tag, "Unknown component type");
           }
         }
       }
@@ -141,11 +136,21 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
     tag.acceptChildren(this);
   }//visitXmlTag
 
-  private void annotateTag(XmlElement element) {
-    _annotationHolder.createInfoAnnotation(element, null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
+  private void annotateTapestryTag(XmlTag tag, String errorMsg) {
+    _annotationHolder.createErrorAnnotation(IdeaUtils.getNameElement(tag), errorMsg);
+    if (!tag.isEmpty()) {
+      _annotationHolder.createErrorAnnotation(IdeaUtils.getNameElementClosing(tag), errorMsg);
+    }
   }
 
-  private void annotateAttribute(XmlAttribute attribute) {
+  private void annotateTapestryTag(XmlTag tag) {
+    _annotationHolder.createInfoAnnotation(IdeaUtils.getNameElement(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
+    if (!tag.isEmpty()) {
+      _annotationHolder.createInfoAnnotation(IdeaUtils.getNameElementClosing(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
+    }
+  }
+
+  private void annotateTapestryAttribute(XmlAttribute attribute) {
     _annotationHolder.createInfoAnnotation(attribute.getFirstChild(), null).setTextAttributes(TemplateColorSettingsPage.ATTR_NAME);
   }
 
