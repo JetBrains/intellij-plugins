@@ -30,11 +30,7 @@ public class IntellijResource implements IResource {
      * {@inheritDoc}
      */
     public File getFile() {
-        VirtualFile virtualFile = _psiFile.getVirtualFile();
-        if (virtualFile == null) {
-            virtualFile = _psiFile.getOriginalFile().getVirtualFile();
-        }
-
+        VirtualFile virtualFile = _psiFile.getViewProvider().getVirtualFile();
         return new File(virtualFile.getPath());
     }
 

@@ -49,7 +49,7 @@ public class TagDocumentationNavigation extends AnAction {
     ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TapestryToolWindowFactory.TAPESTRY_TOOLWINDOW_ID);
     TapestryToolWindow metatoolWindow = project.getComponent(TapestryProjectSupportLoader.class).getTapestryToolWindow();
 
-    Component component = TapestryUtils.getComponentFromTag(module, tag);
+    Component component = TapestryUtils.getTypeOfTag(tag);
     if (component == null) return;
 
     if (!metatoolWindow.getMainPanel().isDisplayable() && toolWindow != null) {

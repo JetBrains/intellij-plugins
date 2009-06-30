@@ -29,7 +29,6 @@ import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
-import com.intellij.tapestry.core.util.ComponentUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.TapestryProjectSupportLoader;
 import com.intellij.tapestry.intellij.actions.safedelete.SafeDeleteProvider;
@@ -523,9 +522,8 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane
                 }
 
                 if (selectedNode instanceof FileNode) {
-                  IResource template = new IntellijResource((PsiFile)selectedNode.getElement());
 
-                  elementClass = ComponentUtils.findClassFromTemplate(template, tapestryProject);
+                  elementClass = tapestryProject.findElementByTemplate((PsiFile)selectedNode.getElement()).getElementClass();
 
                   if (elementClass != null) {
                     component = PresentationLibraryElement.createProjectElementInstance(elementClass, tapestryProject);

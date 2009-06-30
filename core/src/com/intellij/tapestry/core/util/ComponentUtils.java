@@ -1,57 +1,13 @@
 package com.intellij.tapestry.core.util;
 
 import com.intellij.tapestry.core.TapestryConstants;
-import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.model.Library;
-import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
-import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.xml.XmlAttribute;
 import com.intellij.tapestry.core.resource.xml.XmlTag;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.Collection;
 
 /**
  * Utility methods related to Tapestry components.
- */
+ */  // todo remove it
 public class ComponentUtils {
-
-  /**
-   * Finds the component class from it's template.
-   *
-   * @param template the component template.
-   * @param project  the project to look in.
-   * @return the component class.
-   */
-  @Nullable
-  public static IJavaClassType findClassFromTemplate(@NotNull IResource template, @NotNull TapestryProject project) {
-    String templatePath = template.getFile().getAbsolutePath();
-    String templateFilename = LocalizationUtils.unlocalizeFileName(template.getName());
-
-    Library applicationLibrary = project.getApplicationLibrary();
-    if(applicationLibrary == null) return null;
-
-    templatePath = PathUtils.removeLastFilePathElement(templatePath, false) + File.separator + templateFilename;
-
-    IJavaClassType type = checkFirstResourceForEach(templatePath, applicationLibrary.getComponents().values());
-    if(type != null) return type;
-    return checkFirstResourceForEach(templatePath, applicationLibrary.getPages().values());
-  }
-
-  @Nullable
-  public static IJavaClassType checkFirstResourceForEach(String resourcePath, Collection<PresentationLibraryElement> components) {
-    for (PresentationLibraryElement component : components) {
-      final IResource[] resources = component.getTemplate();
-      if (resources.length > 0 &&
-          LocalizationUtils.unlocalizeFileName(resources[0].getFile().getAbsolutePath()).equals(resourcePath)) {
-        return component.getElementClass();
-      }
-    }
-    return null;
-  }
 
   /**
    * Checks if a tag in a HTML document is a component tag.

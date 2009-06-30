@@ -6,19 +6,16 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.xml.*;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
-import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
@@ -27,11 +24,9 @@ import com.intellij.tapestry.core.model.presentation.components.BlockComponent;
 import com.intellij.tapestry.core.model.presentation.components.BodyComponent;
 import com.intellij.tapestry.core.model.presentation.components.ContainerComponent;
 import com.intellij.tapestry.core.model.presentation.components.ParameterComponent;
-import com.intellij.tapestry.core.util.ComponentUtils;
 import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
-import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -46,11 +41,7 @@ import java.util.Locale;
  */
 public class TapestryUtils {
 
-  private static final String MODULE_SIGNAL_KEY = "TAPESTRY_MODULE";
-  private static final String MODULE_SIGNAL_VALUE = "true";
-
   private static final Logger _logger = Logger.getInstance(TapestryUtils.class.getName());
-  private static final Key<CachedValue<XmlElement>> COMPONENT_KEY = new Key<CachedValue<XmlElement>>("TAPESTRY_COMPONENT_KEY");
 
   /**
    * Checks if a module is a Tapestry module.
@@ -97,16 +88,11 @@ public class TapestryUtils {
    */
   @Nullable
   public static XmlElement getComponentIdentifier(@Nullable final XmlTag tag) {
-    return tag == null ? null : computeComponentIdentifier(tag);
-  }
-
-  @Nullable
-  private static XmlElement computeComponentIdentifier(XmlTag tag) {
-    return tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)
-           // embedded components
-           ? IdeaUtils.getNameElement(tag)
-           // using invisible instrumentation
-           : getIdentifyingAttribute(tag);
+    return tag == null ? null : tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)
+                                // embedded components
+                                ? IdeaUtils.getNameElement(tag)
+                                // using invisible instrumentation
+                                : getIdentifyingAttribute(tag);
   }
 
   @Nullable
@@ -146,7 +132,7 @@ public class TapestryUtils {
       if (paramNameValue.length == 2 && paramNameValue[0].equals(paramName)) return true;
     }
     return false;
-  }//parameterDefinedInClass
+  }
 
 
   private static boolean isFieldIdEqualsToTagId(String[] fieldIds, IJavaField field, String tagId) {
@@ -159,9 +145,8 @@ public class TapestryUtils {
   public static IJavaField findIdentifyingField(XmlTag tag) {
     final TapestryProject tapestryProject = getTapestryProject(tag);
     if (tapestryProject == null) return null;
-    IntellijJavaClassType elementClass =
-        (IntellijJavaClassType)ComponentUtils.findClassFromTemplate(new IntellijResource(tag.getContainingFile()), tapestryProject);
-    return elementClass != null ? findIdentifyingField(elementClass, tag) : null;
+    PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
+    return element != null ? findIdentifyingField((IntellijJavaClassType)element.getElementClass(), tag) : null;
   }
 
   @Nullable
@@ -319,11 +304,18 @@ public class TapestryUtils {
    * @return the component that the given tag represents.
    */
   @Nullable
-  public static Component getComponentFromTag(XmlTag tag) {
-    Module module = IdeaUtils.getModule(tag);
-    if (module == null) return null;
-    return getComponentFromTag(module, tag);
+  public static Component getTypeOfTag(XmlTag tag) {
+    return outTagToComponentMap.get(tag);
   }
+
+  private static final PsiElementBasedCachedUserDataCache<Component, XmlTag> outTagToComponentMap =
+      new PsiElementBasedCachedUserDataCache<Component, XmlTag>("TapestryTagToComponentMap") {
+        public Component computeValue(XmlTag tag) {
+          Module module = IdeaUtils.getModule(tag);
+          if (module == null) return null;
+          return getTypeOfTag(module, tag);
+        }
+      };
 
   /**
    * Builds the component object that corresponds to a HTML tag.
@@ -333,7 +325,7 @@ public class TapestryUtils {
    * @return the component that the given tag represents.
    */
   @Nullable
-  public static Component getComponentFromTag(@NotNull Module module, @NotNull XmlTag tag) {
+  private static Component getTypeOfTag(@NotNull Module module, @NotNull XmlTag tag) {
     TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
     if (tapestryProject == null) return null;
     XmlElement identifier = TapestryUtils.getComponentIdentifier(tag);
@@ -347,14 +339,11 @@ public class TapestryUtils {
         return tapestryProject.findComponent(attrValue.replace('.', '/'));
       }
       if (attrName.equals("id")) {
-        IJavaClassType contextClass = ComponentUtils.findClassFromTemplate(new IntellijResource(tag.getContainingFile()), tapestryProject);
-        if (contextClass != null) {
-          PresentationLibraryElement contextElement = tapestryProject.findElement(contextClass);
-          if (contextElement != null) {
-            for (TemplateElement embeddedComponent : contextElement.getEmbeddedComponents()) {
-              if (embeddedComponent.getElement().getElementId().equals(attrValue)) {
-                return (Component)embeddedComponent.getElement().getElement();
-              }
+        PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
+        if (element != null) {
+          for (TemplateElement embeddedComponent : element.getEmbeddedComponents()) {
+            if (embeddedComponent.getElement().getElementId().equals(attrValue)) {
+              return (Component)embeddedComponent.getElement().getElement();
             }
           }
         }

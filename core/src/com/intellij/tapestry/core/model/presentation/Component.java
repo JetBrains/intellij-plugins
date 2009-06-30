@@ -45,7 +45,8 @@ public class Component extends ParameterReceiverElement implements Externalizabl
             return _templateCache;
         }
 
-        String packageName = getElementClass().getFullyQualifiedName().substring(0, getElementClass().getFullyQualifiedName().lastIndexOf('.'));
+      final String fqn = getElementClass().getFullyQualifiedName();
+      String packageName = fqn.substring(0, fqn.lastIndexOf('.'));
 
         // Search in the classpath
         Collection<IResource> resources = getProject().getResourceFinder().findLocalizedClasspathResource(

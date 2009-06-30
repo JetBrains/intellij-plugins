@@ -75,7 +75,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
   @Nullable
   private PsiReferenceBase<PsiElement> getReferenceToComponentClass(XmlTag tag, TextRange range) {
-    final Component component = TapestryUtils.getComponentFromTag(tag);
+    final Component component = TapestryUtils.getTypeOfTag(tag);
     if (component == null) return null;
     final IntellijJavaClassType elementClass = (IntellijJavaClassType)component.getElementClass();
 
@@ -114,7 +114,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   private PsiReferenceBase<PsiElement> getReferenceToPage(XmlTag tag, XmlAttribute pageAttr) {
     if (pageAttr == null) return null;
 
-    Component component = TapestryUtils.getComponentFromTag(tag);
+    Component component = TapestryUtils.getTypeOfTag(tag);
     if (component == null) return null;
 
     TapestryParameter pageParam = component.getParameters().get(pageAttr.getName());

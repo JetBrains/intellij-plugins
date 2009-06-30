@@ -15,13 +15,12 @@ import com.intellij.tapestry.core.log.Logger;
 import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
+import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.AbstractValueResolver;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.ResolvedValue;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.ValueResolverChain;
-import com.intellij.tapestry.core.util.ComponentUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
-import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
@@ -69,18 +68,18 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
 
       Module module = IdeaUtils.getModule(tag);
       if (module == null) return;
-      Component component = TapestryUtils.getComponentFromTag(module, tag);
+      Component component = TapestryUtils.getTypeOfTag(tag);
 
       if (component != null) {
         TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
 
-        IntellijJavaClassType elementClass =
-            (IntellijJavaClassType)ComponentUtils.findClassFromTemplate(new IntellijResource(tag.getContainingFile()), tapestryProject);
+        final PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
 
+        IntellijJavaClassType elementClass = element != null ? (IntellijJavaClassType)element.getElementClass() : null;
         // annotate the tag parameters
         if (elementClass != null) {
           XmlAttribute attr = TapestryUtils.getIdentifyingAttribute(tag);
-          if(attr != null) {
+          if (attr != null) {
             annotateAttribute(attr);
           }
           for (TapestryParameter parameter : component.getParameters().values()) {
@@ -143,13 +142,11 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
   }//visitXmlTag
 
   private void annotateTag(XmlElement element) {
-    _annotationHolder.createInfoAnnotation(element, null)
-        .setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
+    _annotationHolder.createInfoAnnotation(element, null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
   }
 
   private void annotateAttribute(XmlAttribute attribute) {
-    _annotationHolder.createInfoAnnotation(attribute.getFirstChild(), null)
-        .setTextAttributes(TemplateColorSettingsPage.ATTR_NAME);
+    _annotationHolder.createInfoAnnotation(attribute.getFirstChild(), null).setTextAttributes(TemplateColorSettingsPage.ATTR_NAME);
   }
 
 }//TemplateTagAnnotator

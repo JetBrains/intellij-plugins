@@ -42,7 +42,7 @@ public class TapestryTagDescriptor implements XmlElementDescriptor, PsiWritableM
   }
 
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
-    Component childComponent = TapestryUtils.getComponentFromTag(childTag);
+    Component childComponent = TapestryUtils.getTypeOfTag(childTag);
     if (childComponent == null) return null;
     return new TapestryTagDescriptor(childComponent, myNamespacePrefix);
   }

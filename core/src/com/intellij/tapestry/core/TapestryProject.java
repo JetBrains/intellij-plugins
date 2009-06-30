@@ -1,5 +1,7 @@
 package com.intellij.tapestry.core;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.psi.PsiFile;
 import com.intellij.tapestry.core.events.TapestryEventsManager;
 import com.intellij.tapestry.core.exceptions.CoreException;
 import com.intellij.tapestry.core.exceptions.NotFoundException;
@@ -12,6 +14,7 @@ import com.intellij.tapestry.core.model.presentation.Page;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.IResourceFinder;
+import com.intellij.tapestry.core.util.LocalizationUtils;
 import static com.intellij.tapestry.core.util.StringUtils.isNotEmpty;
 import com.intellij.tapestry.core.util.WebDescriptorUtils;
 import org.jetbrains.annotations.NotNull;
@@ -45,40 +48,43 @@ public class TapestryProject {
 
   private static final Collection<Library> EMPTY_LIBRARY_LIST = new ArrayList<Library>();
 
-  private static DocumentBuilder _documentBuilder;
-  private final Library _coreLibrary = new Library(CORE_LIBRARY_ID, TapestryConstants.CORE_LIBRARY_PACKAGE, this);
+  private static DocumentBuilder myDocumentBuilder;
+  private final Library myCoreLibrary = new Library(CORE_LIBRARY_ID, TapestryConstants.CORE_LIBRARY_PACKAGE, this);
+  private final Module myModule;
   //private final Library _iocLibrary = new Library("ioc", TapestryConstants.IOC_LIBRARY_PACKAGE, this);
-  private final IResourceFinder _resourceFinder;
-  private long _webApplicationDescriptorTimestamp;
-  private Document _webApplicationDescriptorDocument;
-  private String _cachedRootPackage;
-  private String _cachedFilterName;
-  private Collection<Library> _cachedLibraries;
-  private String _lastApplicationPackage;
+  private final IResourceFinder myResourceFinder;
+  private long myWebApplicationDescriptorTimestamp;
+  private Document myWebApplicationDescriptorDocument;
+  private String myCachedRootPackage;
+  private String myCachedFilterName;
+  private Collection<Library> myCachedLibraries;
+  private String myLastApplicationPackage;
 
-  private final IJavaTypeFinder _javaTypeFinder;
-  private final IJavaTypeCreator _javaTypeCreator;
-  private final TapestryEventsManager _eventsManager;
+  private final IJavaTypeFinder myJavaTypeFinder;
+  private final IJavaTypeCreator myJavaTypeCreator;
+  private final TapestryEventsManager myEventsManager;
 
 
   static {
     try {
-      _documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+      myDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
     }
     catch (ParserConfigurationException ex) {
       throw new CoreException(ex);
     }
   }
 
-  public TapestryProject(@NotNull IResourceFinder resourceFinder,
+  public TapestryProject(@NotNull Module module,
+                         @NotNull IResourceFinder resourceFinder,
                          @NotNull IJavaTypeFinder javaTypeFinder,
                          @NotNull IJavaTypeCreator javaTypeCreator) {
-    _resourceFinder = resourceFinder;
-    _javaTypeFinder = javaTypeFinder;
-    _javaTypeCreator = javaTypeCreator;
+    myModule = module;
+    myResourceFinder = resourceFinder;
+    myJavaTypeFinder = javaTypeFinder;
+    myJavaTypeCreator = javaTypeCreator;
 
-    _eventsManager = new TapestryEventsManager();
-    _lastApplicationPackage = null;
+    myEventsManager = new TapestryEventsManager();
+    myLastApplicationPackage = null;
   }
 
   /**
@@ -98,16 +104,16 @@ public class TapestryProject {
       throw new NotFoundException(ex);
     }
 
-    if (!updated && _cachedFilterName != null) {
-      return _cachedFilterName;
+    if (!updated && myCachedFilterName != null) {
+      return myCachedFilterName;
     }
 
-    _cachedFilterName = WebDescriptorUtils.getTapestryFilterName(_webApplicationDescriptorDocument);
-    if (_cachedFilterName == null) {
+    myCachedFilterName = WebDescriptorUtils.getTapestryFilterName(myWebApplicationDescriptorDocument);
+    if (myCachedFilterName == null) {
       throw new NotFoundException();
     }
 
-    return _cachedFilterName;
+    return myCachedFilterName;
   }
 
   /**
@@ -125,16 +131,16 @@ public class TapestryProject {
       throw new NotFoundException(ex);
     }
 
-    if (!updated && _cachedRootPackage != null) {
-      return _cachedRootPackage;
+    if (!updated && myCachedRootPackage != null) {
+      return myCachedRootPackage;
     }
 
-    _cachedRootPackage = WebDescriptorUtils.getApplicationPackage(_webApplicationDescriptorDocument);
-    if (_cachedRootPackage == null) {
+    myCachedRootPackage = WebDescriptorUtils.getApplicationPackage(myWebApplicationDescriptorDocument);
+    if (myCachedRootPackage == null) {
       throw new NotFoundException();
     }
 
-    return _cachedRootPackage;
+    return myCachedRootPackage;
   }
 
   /**
@@ -180,20 +186,20 @@ public class TapestryProject {
       return EMPTY_LIBRARY_LIST;
     }
 
-    if (_cachedLibraries != null && isNotEmpty(_lastApplicationPackage)) {
-      if (_lastApplicationPackage.equals(applicationRootPackage)) {
-        return _cachedLibraries;
+    if (myCachedLibraries != null && isNotEmpty(myLastApplicationPackage)) {
+      if (myLastApplicationPackage.equals(applicationRootPackage)) {
+        return myCachedLibraries;
       }
     }
 
-    _cachedLibraries = new ArrayList<Library>();
-    _lastApplicationPackage = applicationRootPackage;
+    myCachedLibraries = new ArrayList<Library>();
+    myLastApplicationPackage = applicationRootPackage;
 
-    _cachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage, this));
-    _cachedLibraries.add(_coreLibrary);
-    //_cachedLibraries.add(_iocLibrary);
+    myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage, this));
+    myCachedLibraries.add(myCoreLibrary);
+    //myCachedLibraries.add(_iocLibrary);
 
-    return _cachedLibraries;
+    return myCachedLibraries;
   }
 
   /**
@@ -242,17 +248,14 @@ public class TapestryProject {
    */
   @Nullable
   public Page findPage(@NotNull IJavaClassType pageClass) {
-    for (Library library : getLibraries()) {
-      Map<String, PresentationLibraryElement> libraryPages = library.getPages();
-      for (PresentationLibraryElement page : libraryPages.values()) {
-        if (page.getElementClass().getFullyQualifiedName().equals(pageClass.getFullyQualifiedName())) {
-          return (Page)page;
-        }
-      }
-    }
-
-    return null;
+    return (Page)ourFqnToPageMap.get(myModule).get(pageClass.getFullyQualifiedName());
   }
+
+  private static final ElementsCachedMap ourFqnToPageMap = new ElementsCachedMap("ourFqnToPageMap", false, true) {
+    protected String computeKey(PresentationLibraryElement element) {
+      return element.getElementClass().getFullyQualifiedName();
+    }
+  };
 
   /**
    * Finds a component by name in the Tapestry application.
@@ -268,7 +271,6 @@ public class TapestryProject {
         return (Component)libraryComponents.get(componentName);
       }
     }
-
     return null;
   }
 
@@ -281,11 +283,7 @@ public class TapestryProject {
   @Nullable
   public PresentationLibraryElement findElement(@NotNull IJavaClassType elementClass) {
     Component component = findComponent(elementClass);
-    if (component != null) {
-      return component;
-    }
-
-    return findPage(elementClass);
+    return component != null ? component : findPage(elementClass);
   }
 
   /**
@@ -296,41 +294,57 @@ public class TapestryProject {
    */
   @Nullable
   public Component findComponent(@NotNull IJavaClassType componentClass) {
-    for (Library library : getLibraries()) {
-      Map<String, PresentationLibraryElement> libraryComponents = library.getComponents();
-
-      for (PresentationLibraryElement component : libraryComponents.values()) {
-        if (component.getElementClass().getFullyQualifiedName().equals(componentClass.getFullyQualifiedName())) {
-          return (Component)component;
-        }
-      }
-    }
-
-    return null;
+    return (Component)ourFqnToComponentMap.get(myModule).get(componentClass.getFullyQualifiedName());
   }
+
+  private static final ElementsCachedMap ourFqnToComponentMap = new ElementsCachedMap("ourFqnToComponentMap", true, false) {
+    protected String computeKey(PresentationLibraryElement element) {
+      return element.getElementClass().getFullyQualifiedName();
+    }
+  };
+
+  /**
+   * Finds the component class from it's template.
+   *
+   * @param template the component template.
+   * @return the component class.
+   */
+  @Nullable
+  public PresentationLibraryElement findElementByTemplate(@NotNull PsiFile template) {
+    String templatePath = new File(template.getViewProvider().getVirtualFile().getPath()).getAbsolutePath();
+    return ourTemplateToElementMap.get(myModule).get(LocalizationUtils.unlocalizeFileName(templatePath));
+  }
+
+  private static final ElementsCachedMap ourTemplateToElementMap = new ElementsCachedMap("ourTemplateToElementMap", true, true) {
+    @Nullable
+    protected String computeKey(PresentationLibraryElement element) {
+      final IResource[] resources = element.getTemplate();
+      return resources.length > 0 ? LocalizationUtils.unlocalizeFileName(resources[0].getFile().getAbsolutePath()) : null;
+    }
+  };
 
   @NotNull
   public IJavaTypeFinder getJavaTypeFinder() {
-    return _javaTypeFinder;
+    return myJavaTypeFinder;
   }
 
   @NotNull
   public IJavaTypeCreator getJavaTypeCreator() {
-    return _javaTypeCreator;
+    return myJavaTypeCreator;
   }
 
   public IResourceFinder getResourceFinder() {
-    return _resourceFinder;
+    return myResourceFinder;
   }
 
   @NotNull
   public TapestryEventsManager getEventsManager() {
-    return _eventsManager;
+    return myEventsManager;
   }
 
   @Nullable
   public String getWebXmlPath() {
-    IResource resource = _resourceFinder.findContextResource(WEBXML_PATH);
+    IResource resource = myResourceFinder.findContextResource(WEBXML_PATH);
     return resource != null ? resource.getFile().getAbsolutePath() : null;
   }
 
@@ -341,14 +355,15 @@ public class TapestryProject {
    * @throws Exception when an error occurs parsing the web.xml file.
    */
   private boolean updateDocument() throws Exception {
-    File file = _resourceFinder.findContextResource(WEBXML_PATH).getFile();
+    File file = myResourceFinder.findContextResource(WEBXML_PATH).getFile();
 
-    if (file.lastModified() > _webApplicationDescriptorTimestamp) {
-      _webApplicationDescriptorDocument = _documentBuilder.parse(file);
-      _webApplicationDescriptorTimestamp = file.lastModified();
+    if (file.lastModified() > myWebApplicationDescriptorTimestamp) {
+      myWebApplicationDescriptorDocument = myDocumentBuilder.parse(file);
+      myWebApplicationDescriptorTimestamp = file.lastModified();
       return true;
     }
 
     return false;
   }
+
 }

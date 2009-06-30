@@ -1,8 +1,8 @@
 package com.intellij.tapestry.intellij.lang.completion;
 
 import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
@@ -18,12 +18,11 @@ import com.intellij.psi.filters.position.LeftNeighbour;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.text.CharArrayUtil;
-import com.intellij.xml.util.HtmlUtil;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
+import com.intellij.util.text.CharArrayUtil;
+import com.intellij.xml.util.HtmlUtil;
 
 import java.util.Set;
 
@@ -62,7 +61,7 @@ public class TemplateCompletionData extends HtmlCompletionData {
         // Completion of tag attributes
         if (element instanceof XmlAttribute) {
             XmlTag tag = PsiTreeUtil.getParentOfType(psiElement, XmlTag.class);
-          Component component = TapestryUtils.getComponentFromTag(module, tag);
+          Component component = TapestryUtils.getTypeOfTag(tag);
           if(component == null) return;
 
             for (TapestryParameter parameter : component.getParameters().values()) {

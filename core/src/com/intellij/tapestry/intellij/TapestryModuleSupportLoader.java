@@ -15,6 +15,7 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaTypeCreator;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaTypeFinder;
 import com.intellij.tapestry.intellij.core.resource.IntellijResourceFinder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @State(
         name = "Loomy",
@@ -36,7 +37,7 @@ public class TapestryModuleSupportLoader extends AbstractModuleComponent impleme
     _configuration = new ModuleConfiguration();
 
     _tapestryProject =
-        new TapestryProject(new IntellijResourceFinder(module), new IntellijJavaTypeFinder(module), new IntellijJavaTypeCreator(module));
+        new TapestryProject(module, new IntellijResourceFinder(module), new IntellijJavaTypeFinder(module), new IntellijJavaTypeCreator(module));
     final CachedValuesManager manager = PsiManager.getInstance(module.getProject()).getCachedValuesManager();
     myComponents = manager.createCachedValue(new CachedValueProvider<PresentationLibraryElement[]>() {
       public Result<PresentationLibraryElement[]> compute() {
@@ -59,6 +60,7 @@ public class TapestryModuleSupportLoader extends AbstractModuleComponent impleme
      * @param module the module to look for the Tapestry project.
      * @return the Tapestry project instance associated withthe given module.
      */
+    @Nullable
     public static TapestryProject getTapestryProject(Module module) {
       return module == null ? null : module.getComponent(TapestryModuleSupportLoader.class).getTapestryProject();
     }

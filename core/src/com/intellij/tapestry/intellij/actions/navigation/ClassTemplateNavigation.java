@@ -19,7 +19,6 @@ import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
-import com.intellij.tapestry.core.util.ComponentUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
@@ -117,8 +116,8 @@ public class ClassTemplateNavigation extends AnAction {
                 || psiFile.getFileType().equals(StdFileTypes.HTML) && event.getPresentation().getText()
                 .equals("Tapestry Class")) {
 
-          IJavaClassType elementClass = ComponentUtils
-                  .findClassFromTemplate(new IntellijResource(psiFile), TapestryModuleSupportLoader.getTapestryProject(module));
+          IJavaClassType elementClass =
+              TapestryModuleSupportLoader.getTapestryProject(module).findElementByTemplate(psiFile).getElementClass();
 
             if (elementClass != null) {
                 FileEditorManager.getInstance(project).openFile(

@@ -18,7 +18,7 @@ import java.util.Collection;
  */
 class DescriptorUtil {
   public static XmlAttributeDescriptor[] getAttributeDescriptors(@NotNull XmlTag context) {
-    Component component = TapestryUtils.getComponentFromTag(context);
+    Component component = TapestryUtils.getTypeOfTag(context);
     if(component == null) return XmlAttributeDescriptor.EMPTY;
     return getAttributeDescriptors(component);
   }
@@ -34,7 +34,7 @@ class DescriptorUtil {
   }
 
   public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName, @NotNull XmlTag context) {
-    Component component = TapestryUtils.getComponentFromTag(context);
+    Component component = TapestryUtils.getTypeOfTag(context);
     if(component == null) return null;
     XmlAttribute attr = TapestryUtils.getIdentifyingAttribute(context);
     if(attr != null && attr.getLocalName().equals(attributeName)) return new TapestryIdOrTypeAttributeDescriptor(attributeName);

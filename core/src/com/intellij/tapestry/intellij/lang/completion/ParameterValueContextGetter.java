@@ -11,7 +11,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.log.Logger;
 import com.intellij.tapestry.core.log.LoggerFactory;
@@ -22,10 +21,8 @@ import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.ResolvedValue;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.ValueResolverChain;
 import com.intellij.tapestry.core.util.ClassUtils;
-import com.intellij.tapestry.core.util.ComponentUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
-import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 
 import java.util.*;
@@ -64,7 +61,7 @@ public class ParameterValueContextGetter implements ContextGetter {
             }
 
             // Try to match the tag to a component
-          Component component = TapestryUtils.getComponentFromTag(module, tag);
+          Component component = TapestryUtils.getTypeOfTag(tag);
           if(component == null) return new Object[0];
 
             TapestryProject tapestryProject = TapestryModuleSupportLoader
@@ -75,7 +72,7 @@ public class ParameterValueContextGetter implements ContextGetter {
                 return completePageLinkPageParameter(tapestryProject);
             }
 
-          IntellijJavaClassType elementClass = (IntellijJavaClassType) ComponentUtils.findClassFromTemplate(new IntellijResource(completionContext.file), tapestryProject);
+          IntellijJavaClassType elementClass = (IntellijJavaClassType) tapestryProject.findElementByTemplate(completionContext.file).getElementClass();
           if(elementClass == null) return new Object[0];
 
             for (TapestryParameter parameter : component.getParameters().values()) {
