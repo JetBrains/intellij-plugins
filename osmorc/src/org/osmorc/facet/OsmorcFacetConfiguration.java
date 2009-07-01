@@ -63,7 +63,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
     setOsmorcControlsManifest(Boolean.parseBoolean(element.getAttributeValue(OSMORC_CONTROLS_MANIFEST, "true")));
     setUseBndFile(Boolean.parseBoolean(element.getAttributeValue(USE_BND_FILE, "false")));
     setBndFileLocation(element.getAttributeValue(BND_FILE_LOCATION));
-    setAdditionalBndArgs(element.getAttributeValue(ADDITIONAL_BND_ARGS));
     setManifestLocation(element.getAttributeValue(MANIFEST_LOCATION));
     setJarFileLocation(element.getAttributeValue(JARFILE_LOCATION));
     setBundleActivator(element.getAttributeValue(BUNDLE_ACTIVATOR));
@@ -118,7 +117,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
     element.setAttribute(OSMORC_CONTROLS_MANIFEST, String.valueOf(isOsmorcControlsManifest()));
     element.setAttribute(MANIFEST_LOCATION, getManifestLocation());
     element.setAttribute(JARFILE_LOCATION, getJarFileLocation());
-    element.setAttribute(ADDITIONAL_BND_ARGS, getAdditionalBndArgs());
     element.setAttribute(USE_BND_FILE, String.valueOf(isUseBndFile()));
     element.setAttribute(BND_FILE_LOCATION, getBndFileLocation());
     element.setAttribute(BUNDLE_ACTIVATOR, getBundleActivator());
@@ -270,7 +268,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
 
   /**
    * Returns all additional properties as a map.Changes to this map will not change the facet configuration. If you want
-   * to change additional properties use the {@link #importAdditionalProperties(java.util.Map)} method to reimport the
+   * to change additional properties use the {@link #importAdditionalProperties(java.util.Map, boolean)} method to reimport the
    * map once you have changed it.
    *
    * @return the additional properties as a Map for convenciene.
@@ -349,16 +347,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
     _bndFileLocation = bndFileLocation;
   }
 
-  @NotNull
-  public String getAdditionalBndArgs()
-  {
-    return _additionalBndArgs != null ? _additionalBndArgs : "";
-  }
-
-  public void setAdditionalBndArgs(String additionalBndArgs)
-  {
-    _additionalBndArgs = additionalBndArgs;
-  }
 
   @NotNull
   public List<Pair<String, String>> getAdditionalJARContents()
@@ -410,7 +398,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
   private boolean _useProjectDefaultManifestFileLocation = true;
   private boolean _useBndFile;
   private String _bndFileLocation;
-  private String _additionalBndArgs;
   private String _ignoreFilePattern;
   private boolean _alwaysRebuildBundleJAR;
 
@@ -418,7 +405,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
   private static final String OSMORC_CONTROLS_MANIFEST = "osmorcControlsManifest";
   private static final String USE_BND_FILE = "useBndFile";
   private static final String BND_FILE_LOCATION = "bndFileLocation";
-  private static final String ADDITIONAL_BND_ARGS = "additionalBndArgs";
   private static final String MANIFEST_LOCATION = "manifestLocation";
   private static final String JARFILE_LOCATION = "jarfileLocation";
   private static final String BUNDLE_ACTIVATOR = "bundleActivator";

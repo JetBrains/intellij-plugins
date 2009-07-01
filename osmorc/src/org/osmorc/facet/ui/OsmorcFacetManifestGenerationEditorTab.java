@@ -118,8 +118,6 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab
     _bundleVersion.setEnabled(!isManuallyEdited && !useBndFile);
     _additionalProperties.setEnabled(!isManuallyEdited && !useBndFile);
     _additionalPropertiesLabel.setEnabled(!isManuallyEdited && !useBndFile);
-    _additionalBndArgs.setEnabled(!isManuallyEdited && !useBndFile);
-    _additionalBndArgsLabel.setEnabled(!isManuallyEdited && !useBndFile);
 
     _bndFile.setEnabled(!isManuallyEdited && useBndFile);
     _bndFileLabel.setEnabled(!isManuallyEdited && useBndFile);
@@ -195,7 +193,6 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab
     configuration.setBundleSymbolicName(_bundleSymbolicName.getText());
     configuration.setBundleVersion(_bundleVersion.getText());
     configuration.setAdditionalProperties(_additionalProperties.getText());
-    configuration.setAdditionalBndArgs(_additionalBndArgs.getText());
 
     configuration.setUseBndFile(_useExistingBndFile.isSelected());
     String bndFileLocation = _bndFile.getText();
@@ -211,7 +208,6 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab
     _bundleVersion.setText(configuration.getBundleVersion());
     _additionalProperties.setText(configuration.getAdditionalProperties());
     _bndFile.setText(configuration.getBndFileLocation());
-    _additionalBndArgs.setText(configuration.getAdditionalBndArgs());
     if (configuration.isUseBndFile())
     {
       _useExistingBndFile.setSelected(true);
@@ -244,10 +240,8 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab
   private JLabel _bundleVersionLabel;
   private JTextArea _additionalProperties;
   private JLabel _additionalPropertiesLabel;
-  private JTextField _additionalBndArgs;
   private JRadioButton _generateWithTheseSettings;
   private JRadioButton _useExistingBndFile;
-  private JLabel _additionalBndArgsLabel;
   private JLabel _bndFileLabel;
   private TextFieldWithBrowseButton _bndFile;
   private boolean _modified;
