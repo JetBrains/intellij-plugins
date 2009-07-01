@@ -29,7 +29,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 
 /**
- * @author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  * @deprecated this duplicates the methods in {@link org.osmorc.facet.OsmorcFacet} which should be used instead.
  */
 @Deprecated

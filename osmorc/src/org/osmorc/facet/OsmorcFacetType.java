@@ -78,27 +78,31 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
         return moduleType instanceof JavaModuleType;
     }
 
-    private void completeDefaultConfiguration(OsmorcFacetConfiguration configuration, Module module) {
+    private void completeDefaultConfiguration(final OsmorcFacetConfiguration configuration, final Module module) {
         if (configuration.getJarFileLocation().length() == 0) {
-            String outputPathUrl = CompilerModuleExtension.getInstance(module).getCompilerOutputUrl();
+            final String outputPathUrl = CompilerModuleExtension.getInstance(module).getCompilerOutputUrl();
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    try {
+                        // Must be run in event dispatch thread therefore... we put all there..
+                        VfsUtil.createDirectories(VfsUtil.urlToPath(outputPathUrl));
+                    }
+                    catch (IOException e) {
+                        return;
+                    }
+                    VirtualFile moduleCompilerOutputPath = CompilerModuleExtension.getInstance(module).getCompilerOutputPath();
+                    if (moduleCompilerOutputPath == null) {
+                        return;
+                    }
 
-            try {
-                VfsUtil.createDirectories(VfsUtil.urlToPath(outputPathUrl));
-            }
-            catch (IOException e) {
-                return;
-            }
+                    String jarFileName = module.getName();
+                    jarFileName = jarFileName.replaceAll("[\\s]", "_");
+                    String jarFilePath = new File(moduleCompilerOutputPath.getParent().getPath(), jarFileName + ".jar")
+                            .getAbsolutePath().replace('\\', '/');
+                    configuration.setJarFileLocation(jarFilePath);
+                }
+            });
 
-            VirtualFile moduleCompilerOutputPath = CompilerModuleExtension.getInstance(module).getCompilerOutputPath();
-            if (moduleCompilerOutputPath == null) {
-                return;
-            }
-
-            String jarFileName = module.getName();
-            jarFileName = jarFileName.replaceAll("[\\s]", "_");
-            String jarFilePath = new File(moduleCompilerOutputPath.getParent().getPath(), jarFileName + ".jar")
-                    .getAbsolutePath().replace('\\', '/');
-            configuration.setJarFileLocation(jarFilePath);
         }
     }
 
