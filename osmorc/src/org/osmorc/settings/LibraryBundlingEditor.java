@@ -156,8 +156,6 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     _beanAdapter = new BeanAdapter<LibraryBundlificationRule>(new LibraryBundlificationRule());
     _libraryRegex = BasicComponentFactory.createTextField(_beanAdapter.getValueModel("ruleRegex"), false);
     _manifestEntries = BasicComponentFactory.createTextArea(_beanAdapter.getValueModel("additionalProperties"), false);
-    _additionalBndArguments =
-        BasicComponentFactory.createTextField(_beanAdapter.getValueModel("additionalBndArguments"), false);
     _neverBundle = BasicComponentFactory.createCheckBox(_beanAdapter.getValueModel("doNotBundle"), "");
     _selectedRule.addValueChangeListener(new PropertyChangeListener()
     {
@@ -257,7 +255,6 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
   private JButton _upButton;
   private JButton _downButton;
   private JList _libraries;
-  private JTextField _additionalBndArguments;
   private JTextArea _manifestEntries;
   private JCheckBox _neverBundle;
   private SelectionInList<LibraryBundlificationRule> _selectedRule;

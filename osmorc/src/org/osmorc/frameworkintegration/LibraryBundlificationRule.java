@@ -62,20 +62,6 @@ public class LibraryBundlificationRule extends Model
     });
   }
 
-  /**
-   * @return a list of additioanl arguments to bnd
-   */
-  public String getAdditionalBndArguments()
-  {
-    return _additionalBndArguments;
-  }
-
-  public void setAdditionalBndArguments(String additionalBndArguments)
-  {
-    String oldArgs = _additionalBndArguments;
-    _additionalBndArguments = additionalBndArguments;
-    firePropertyChange("additionalBndArguments", oldArgs, _additionalBndArguments);
-  }
 
   /**
    * @return a map containing additional manifest properties to be added to the bundle manifest definition of all
@@ -187,7 +173,6 @@ public class LibraryBundlificationRule extends Model
     LibraryBundlificationRule result = new LibraryBundlificationRule();
     result._additionalProperties = _additionalProperties;
     result._ruleRegex = _ruleRegex;
-    result._additionalBndArguments = _additionalBndArguments;
     result._doNotBundle = _doNotBundle;
     return result;
   }
