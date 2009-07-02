@@ -42,7 +42,6 @@ import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel;
 import org.jetbrains.idea.maven.dom.model.MavenDomRepository;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
-import org.jetbrains.idea.maven.utils.MavenUtil;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.obrimport.ObrSearchDialog;
@@ -174,7 +173,7 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
                     protected void run(Result result) throws Throwable
 
                     {
-                        MavenDomProjectModel model = MavenUtil.getMavenModel(getProject(), psiFile.getVirtualFile());
+                        MavenDomProjectModel model = MavenDomUtil.getMavenDomProjectModel(getProject(), psiFile.getVirtualFile());
                         // adds a new dependency to the end of the list
                         MavenDomDependency dummy = model.getDependencies().addDependency();
                         dummy.getArtifactId().setStringValue(mavenResult.getArtifactId());
