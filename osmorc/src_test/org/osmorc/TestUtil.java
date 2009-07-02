@@ -43,27 +43,25 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
-import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
+import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.util.io.ZipUtil;
 import org.jdom.JDOMException;
 import org.osmorc.facet.OsmorcFacet;
+import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class TestUtil {
     public static IdeaProjectTestFixture createTestFixture() {
-        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-                IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder();
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = JavaTestFixtureFactory.createFixtureBuilder();
 
         return fixtureBuilder.getFixture();
     }
@@ -133,16 +131,31 @@ public class TestUtil {
         });
     }
 
-    public static void createOsmorcFacetForModule(final Project project, final String moduleName) {
+    public static void createOsmorcFacetForModule(final Project project, final String moduleName, boolean isManifestGenerated) {
+        final Module module = ModuleManager.getInstance(project).findModuleByName(moduleName);
+        createOsmorcFacetForModule(module, isManifestGenerated);
+    }
+
+    public static void createOsmorcFacetForModule(final Module module, final boolean isManifestGenerated) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
-                final Module module = ModuleManager.getInstance(project).findModuleByName(moduleName);
                 final ModifiableFacetModel modifiableFacetModel = FacetManager.getInstance(module).createModifiableModel();
                 final OsmorcFacet facet = new OsmorcFacet(module);
                 facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
                 facet.getConfiguration().setManifestLocation("META-INF");
-                facet.getConfiguration().setOsmorcControlsManifest(false);
+                facet.getConfiguration().setOsmorcControlsManifest(isManifestGenerated);
                 modifiableFacetModel.addFacet(facet);
+                modifiableFacetModel.commit();
+            }
+        });
+    }
+
+    public static void removeOsmorcFacetOfModule(final Module module) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                final ModifiableFacetModel modifiableFacetModel = FacetManager.getInstance(module).createModifiableModel();
+                OsmorcFacet facet = modifiableFacetModel.getFacetByType(OsmorcFacetType.ID);
+                modifiableFacetModel.removeFacet(facet);
                 modifiableFacetModel.commit();
             }
         });

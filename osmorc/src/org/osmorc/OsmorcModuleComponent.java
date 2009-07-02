@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetType;
+import org.osmorc.frameworkintegration.FrameworkInstanceModuleManager;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -45,9 +46,12 @@ public class OsmorcModuleComponent implements ModuleComponent {
     private MessageBusConnection connection;
 
     public OsmorcModuleComponent(Module module, ModuleDependencySynchronizer moduleDependencySynchronizer,
-                                 AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager, Application application) {
+                                 FrameworkInstanceModuleManager frameworkInstanceModuleManager,
+                                 AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager,
+                                 Application application) {
         this.module = module;
         this.moduleDependencySynchronizer = moduleDependencySynchronizer;
+        this.frameworkInstanceModuleManager = frameworkInstanceModuleManager;
         this.additionalJARContentsWatcherManager = additionalJARContentsWatcherManager;
         this.application = application;
         disposed = false;
@@ -84,6 +88,11 @@ public class OsmorcModuleComponent implements ModuleComponent {
                 handleFacetChange(facet);
             }
 
+            @Override
+            public void facetRemoved(@NotNull Facet facet) {
+                frameworkInstanceModuleManager.updateFrameworkInstanceModule();
+            }
+
             public void facetConfigurationChanged(@NotNull Facet facet) {
                 handleFacetChange(facet);
             }
@@ -95,6 +104,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
             if (facet.getModule().getProject().isInitialized()) {
                 moduleDependencySynchronizer.syncDependenciesFromManifest();
                 syncAllModuleDependencies();
+                frameworkInstanceModuleManager.updateFrameworkInstanceModule();
             }
             additionalJARContentsWatcherManager.updateWatcherSetup();
         }
@@ -119,6 +129,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
 
     private final Module module;
     private final ModuleDependencySynchronizer moduleDependencySynchronizer;
+    private FrameworkInstanceModuleManager frameworkInstanceModuleManager;
     private final AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager;
     private final Application application;
     private boolean disposed;

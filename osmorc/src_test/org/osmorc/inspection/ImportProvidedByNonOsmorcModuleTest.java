@@ -55,7 +55,7 @@ public class ImportProvidedByNonOsmorcModuleTest {
         myTempDirFixture.setUp();
         fixture.setUp();
         TestUtil.loadModules("ImportProvidedByNonOsmorcModuleTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
-        TestUtil.createOsmorcFacetForModule(fixture.getProject(), "t1");
+        TestUtil.createOsmorcFacetForModule(fixture.getProject(), "t1", false);
         TestUtil.createModuleDependency(fixture.getProject(), "t1", "t0");
     }
 
@@ -74,6 +74,6 @@ public class ImportProvidedByNonOsmorcModuleTest {
         assertThat(list, nullValue());
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private TempDirTestFixture myTempDirFixture;
 }

@@ -38,15 +38,17 @@ import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
+import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.testFramework.fixtures.*;
+import static org.easymock.EasyMock.*;
+import org.easymock.classextension.EasyMock;
+import static org.hamcrest.Matchers.*;
 import org.junit.After;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
-import org.osmorc.TestUtil;
+import org.osmorc.facet.OsmorcFacetUtil;
 import org.osmorc.settings.ProjectSettings;
 
 import java.util.ArrayList;
@@ -58,19 +60,33 @@ import java.util.List;
  */
 @SuppressWarnings({"ConstantConditions"})
 public class FrameworkInstanceModuleManagerTest {
-    public FrameworkInstanceModuleManagerTest() {
-        fixture = TestUtil.createTestFixture();
-    }
+    private Module module;
+    private TempDirTestFixture myTempDirFixture;
+    private OsmorcFacetUtil osmorcFacetUtil;
 
     @Before
     public void setUp() throws Exception {
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
+                JavaTestFixtureFactory.createFixtureBuilder();
+        final JavaModuleFixtureBuilder moduleBuilder = fixtureBuilder.addModule(JavaModuleFixtureBuilder.class);
+
+        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+
+        myTempDirFixture.setUp();
+        moduleBuilder.addContentRoot(myTempDirFixture.getTempDirPath());
+
+        fixture = fixtureBuilder.getFixture();
         fixture.setUp();
+
+        osmorcFacetUtil = createMock(OsmorcFacetUtil.class);
+
         Application application = ApplicationManager.getApplication();
         projectSettings = new ProjectSettings();
         testObject = new FrameworkInstanceModuleManager(ServiceManager.getService(LibraryHandler.class), projectSettings,
                 application, fixture.getProject(),
-                ModuleManager.getInstance(fixture.getProject()));
+                ModuleManager.getInstance(fixture.getProject()), osmorcFacetUtil);
         project = fixture.getProject();
+        module = fixture.getModule();
         application.runWriteAction(new Runnable() {
             public void run() {
                 LibraryTable.ModifiableModel modifiableModel =
@@ -92,7 +108,11 @@ public class FrameworkInstanceModuleManagerTest {
     }
 
     @Test
-    public void testUpdateFrameworkInstanceModule() {
+    public void testUpdateFrameworkInstanceModuleCreatesAndUpdatesModule() {
+        expect(osmorcFacetUtil.hasOsmorcFacet(EasyMock.not(same(module)))).andReturn(false).anyTimes();
+        expect(osmorcFacetUtil.hasOsmorcFacet(same(module))).andReturn(true).times(2);
+        replay(osmorcFacetUtil);
+
         projectSettings.setCreateFrameworkInstanceModule(true);
         projectSettings.setFrameworkInstanceName("an Instance");
         testObject.updateFrameworkInstanceModule();
@@ -116,6 +136,46 @@ public class FrameworkInstanceModuleManagerTest {
         module = ModuleManager.getInstance(project)
                 .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
         assertThat(module, nullValue());
+
+        verify(osmorcFacetUtil);
+    }
+
+    @Test
+    public void testUpdateFrameworkInstanceModuleDoesntCreateModule() {
+        expect(osmorcFacetUtil.hasOsmorcFacet(EasyMock.not(same(module)))).andReturn(false).anyTimes();
+        expect(osmorcFacetUtil.hasOsmorcFacet(same(module))).andReturn(false).once();
+        replay(osmorcFacetUtil);
+
+        projectSettings.setCreateFrameworkInstanceModule(true);
+        projectSettings.setFrameworkInstanceName("an Instance");
+        testObject.updateFrameworkInstanceModule();
+        Module module = ModuleManager.getInstance(project)
+                .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
+        assertThat(module, nullValue());
+
+        verify(osmorcFacetUtil);
+    }
+
+    @Test
+    public void testUpdateFrameworkInstanceModuleRemovesModule() {
+        expect(osmorcFacetUtil.hasOsmorcFacet(EasyMock.not(same(module)))).andReturn(false).anyTimes();
+        expect(osmorcFacetUtil.hasOsmorcFacet(same(module))).andReturn(true).once();
+        expect(osmorcFacetUtil.hasOsmorcFacet(same(module))).andReturn(false).once();
+        replay(osmorcFacetUtil);
+
+        projectSettings.setCreateFrameworkInstanceModule(true);
+        projectSettings.setFrameworkInstanceName("an Instance");
+        testObject.updateFrameworkInstanceModule();
+        module = ModuleManager.getInstance(project)
+                .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
+        assertThat(module, notNullValue());
+
+        testObject.updateFrameworkInstanceModule();
+        Module module = ModuleManager.getInstance(project)
+                .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
+        assertThat(module, nullValue());
+
+        verify(osmorcFacetUtil);
     }
 
     public void assertContainsOnlyGivenLibraries(OrderEntry[] orderEntries, Library... libraries) {

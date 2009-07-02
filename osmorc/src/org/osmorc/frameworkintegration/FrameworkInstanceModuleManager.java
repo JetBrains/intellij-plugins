@@ -36,6 +36,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.settings.ProjectSettings;
+import org.osmorc.facet.OsmorcFacetUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,148 +46,130 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class FrameworkInstanceModuleManager
-{
-  public FrameworkInstanceModuleManager(LibraryHandler libraryHandler, ProjectSettings projectSettings,
-                                        Application application, Project project,
-                                        ModuleManager moduleManager)
-  {
-    _projectSettings = projectSettings;
-    _application = application;
-    _project = project;
-    _libraryHandler = libraryHandler;
-    _moduleManager = moduleManager;
-  }
-
-  public void updateFrameworkInstanceModule()
-  {
-    if (_projectSettings.isCreateFrameworkInstanceModule())
-    {
-      ensureFrameworkInstanceModuleExists();
-      updateModuleLibraries(_projectSettings.getFrameworkInstanceName());
+public class FrameworkInstanceModuleManager {
+    public FrameworkInstanceModuleManager(LibraryHandler libraryHandler, ProjectSettings projectSettings,
+                                          Application application, Project project,
+                                          ModuleManager moduleManager, OsmorcFacetUtil osmorcFacetUtil) {
+        this.projectSettings = projectSettings;
+        this.application = application;
+        this.project = project;
+        this.libraryHandler = libraryHandler;
+        this.moduleManager = moduleManager;
+        this.osmorcFacetUtil = osmorcFacetUtil;
     }
-    else
-    {
-      final Module module = getFrameworkInstanceModule();
-      if (module != null)
-      {
-        _application.runWriteAction(new Runnable()
-        {
-          public void run()
-          {
-            try
-            {
-              final VirtualFile file = module.getModuleFile();
-              final ModifiableModuleModel moduleModel = _moduleManager.getModifiableModel();
-              moduleModel.disposeModule(module);
-              moduleModel.commit();
-              if (file != null && file.exists())
-              {
-                file.delete(this);
-              }
+
+    public void updateFrameworkInstanceModule() {
+        if (projectSettings.isCreateFrameworkInstanceModule() && isExistsAtLeastOneOsmorcFacetInProject()) {
+            ensureFrameworkInstanceModuleExists();
+            updateModuleLibraries(projectSettings.getFrameworkInstanceName());
+        } else {
+            final Module module = getFrameworkInstanceModule();
+            if (module != null) {
+                application.runWriteAction(new Runnable() {
+                    public void run() {
+                        try {
+                            final VirtualFile file = module.getModuleFile();
+                            final ModifiableModuleModel moduleModel = moduleManager.getModifiableModel();
+                            moduleModel.disposeModule(module);
+                            moduleModel.commit();
+                            if (file != null && file.exists()) {
+                                file.delete(this);
+                            }
+                        }
+                        catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
             }
-            catch (IOException e)
-            {
-              throw new RuntimeException(e);
+        }
+    }
+
+    private boolean isExistsAtLeastOneOsmorcFacetInProject() {
+        Module[] modules = moduleManager.getModules();
+        for (Module module : modules) {
+            if (osmorcFacetUtil.hasOsmorcFacet(module)) {
+                return true;
             }
-          }
+        }
+        return false;
+    }
+
+
+    private void updateModuleLibraries(@Nullable String instanceName) {
+        final List<Library> libraries = instanceName != null ? libraryHandler.getLibraries(instanceName) : new ArrayList<Library>();
+        application.runWriteAction(new Runnable() {
+            public void run() {
+                final Module module = getFrameworkInstanceModule();
+                ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+
+                List<OrderEntry> oldOrderEntries = new ArrayList<OrderEntry>();
+                for (OrderEntry oldOrderEntry : model.getOrderEntries()) {
+                    if (oldOrderEntry instanceof LibraryOrderEntry) {
+                        oldOrderEntries.add(oldOrderEntry);
+                    }
+                }
+
+                for (Iterator<OrderEntry> oldOrderEntriesIterator = oldOrderEntries.iterator();
+                     oldOrderEntriesIterator.hasNext();) {
+                    OrderEntry orderEntry = oldOrderEntriesIterator.next();
+
+                    if (orderEntry instanceof LibraryOrderEntry) {
+                        if (libraries.remove(((LibraryOrderEntry) orderEntry).getLibrary())) {
+                            oldOrderEntriesIterator.remove();
+                        }
+                    }
+                }
+
+                boolean commitNeeded = false;
+                for (OrderEntry orderEntry : oldOrderEntries) {
+                    model.removeOrderEntry(orderEntry);
+                    commitNeeded = true;
+                }
+
+                for (Library newBundle : libraries) {
+                    model.addLibraryEntry(newBundle);
+                    commitNeeded = true;
+                }
+                if (commitNeeded) {
+                    model.commit();
+                } else {
+                    model.dispose();
+                }
+            }
         });
-      }
     }
-  }
 
-  private void updateModuleLibraries(@Nullable String instanceName)
-  {
-    final List<Library> libraries = instanceName != null ? _libraryHandler.getLibraries(instanceName) : new ArrayList<Library>();
-    _application.runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        final Module module = getFrameworkInstanceModule();
-        ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-
-        List<OrderEntry> oldOrderEntries = new ArrayList<OrderEntry>();
-        for (OrderEntry oldOrderEntry : model.getOrderEntries())
-        {
-          if (oldOrderEntry instanceof LibraryOrderEntry)
-          {
-            oldOrderEntries.add(oldOrderEntry);
-          }
+    private void ensureFrameworkInstanceModuleExists() {
+        final Module frameworkInstanceModule = getFrameworkInstanceModule();
+        if (frameworkInstanceModule == null) {
+            application.runWriteAction(new Runnable() {
+                public void run() {
+                    final VirtualFile baseDir = project.getBaseDir();
+                    assert baseDir != null;
+                    String path = baseDir.getPath();
+                    if (!path.endsWith("/")) {
+                        path = path + '/';
+                    }
+                    path = path + FRAMEWORK_INSTANCE_MODULE_NAME + ".iml";
+                    final Module module = moduleManager.newModule(path, StdModuleTypes.JAVA);
+                    ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
+                    model.setSdk(ProjectRootManager.getInstance(project).getProjectJdk());
+                    model.commit();
+                }
+            });
         }
-
-        for (Iterator<OrderEntry> oldOrderEntriesIterator = oldOrderEntries.iterator();
-             oldOrderEntriesIterator.hasNext();)
-        {
-          OrderEntry orderEntry = oldOrderEntriesIterator.next();
-
-          if (orderEntry instanceof LibraryOrderEntry)
-          {
-            if (libraries.remove(((LibraryOrderEntry) orderEntry).getLibrary()))
-            {
-              oldOrderEntriesIterator.remove();
-            }
-          }
-        }
-
-        boolean commitNeeded = false;
-        for (OrderEntry orderEntry : oldOrderEntries)
-        {
-          model.removeOrderEntry(orderEntry);
-          commitNeeded = true;
-        }
-
-        for (Library newBundle : libraries)
-        {
-          model.addLibraryEntry(newBundle);
-          commitNeeded = true;
-        }
-        if (commitNeeded)
-        {
-          model.commit();
-        }
-        else
-        {
-          model.dispose();
-        }
-      }
-    });
-  }
-
-  private void ensureFrameworkInstanceModuleExists()
-  {
-    final Module frameworkInstanceModule = getFrameworkInstanceModule();
-    if (frameworkInstanceModule == null)
-    {
-      _application.runWriteAction(new Runnable()
-      {
-        public void run()
-        {
-          final VirtualFile baseDir = _project.getBaseDir();
-          assert baseDir != null;
-          String path = baseDir.getPath();
-          if (!path.endsWith("/"))
-          {
-            path = path + '/';
-          }
-          path = path + FRAMEWORK_INSTANCE_MODULE_NAME + ".iml";
-          final Module module = _moduleManager.newModule(path, StdModuleTypes.JAVA);
-          ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-          model.setSdk(ProjectRootManager.getInstance(_project).getProjectJdk());
-          model.commit();
-        }
-      });
     }
-  }
 
-  private Module getFrameworkInstanceModule()
-  {
-    return _moduleManager.findModuleByName(FRAMEWORK_INSTANCE_MODULE_NAME);
-  }
+    private Module getFrameworkInstanceModule() {
+        return moduleManager.findModuleByName(FRAMEWORK_INSTANCE_MODULE_NAME);
+    }
 
-  private final ProjectSettings _projectSettings;
-  private final Application _application;
-  private final Project _project;
-  private final LibraryHandler _libraryHandler;
-  private final ModuleManager _moduleManager;
-  protected static final String FRAMEWORK_INSTANCE_MODULE_NAME = "FrameworkInstance";
+    private final ProjectSettings projectSettings;
+    private final Application application;
+    private final Project project;
+    private final LibraryHandler libraryHandler;
+    private final ModuleManager moduleManager;
+    private final OsmorcFacetUtil osmorcFacetUtil;
+    protected static final String FRAMEWORK_INSTANCE_MODULE_NAME = "FrameworkInstance";
 }
