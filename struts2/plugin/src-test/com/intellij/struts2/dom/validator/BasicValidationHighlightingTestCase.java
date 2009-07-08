@@ -41,7 +41,7 @@ public abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFi
    */
   protected void performHighlightingTest(@NonNls final String validationXmlFileName) throws Throwable {
     final long duration = myFixture.testHighlighting(true, false, true, validationXmlFileName);
-    System.out.println(validationXmlFileName + " = " + duration);
+    //System.out.println(validationXmlFileName + " = " + duration);
   }
 
   /**
