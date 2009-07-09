@@ -123,7 +123,7 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
     public ProblemDescriptor[] checkFile(@NotNull PsiFile psiFile, @NotNull InspectionManager inspectionManager,
                                          boolean b) {
         // only run this for POM files in osmorc-controlled projects, its a waste of resources on other XML file types
-        if (!MavenDomUtil.isPomFile(psiFile) || !OsmorcFacet.hasOsmorcFacet(psiFile)) {
+        if (!MavenDomUtil.isMavenFile(psiFile) || !OsmorcFacet.hasOsmorcFacet(psiFile)) {
             return new ProblemDescriptor[0];
         } else {
             return super.checkFile(psiFile, inspectionManager, b);
