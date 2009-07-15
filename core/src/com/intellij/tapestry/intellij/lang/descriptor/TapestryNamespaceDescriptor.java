@@ -4,6 +4,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlDocument;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.xml.XmlElementDescriptor;
@@ -15,6 +16,21 @@ public class TapestryNamespaceDescriptor extends XmlNSDescriptorImpl {
   @Override
   public void init(PsiElement element) {
     throw new UnsupportedOperationException("Method init is not yet implemented in " + getClass().getName());
+  }
+
+  @Override
+  public XmlElementDescriptor getElementDescriptor(@NotNull XmlTag tag) {
+    return super.getElementDescriptor(tag);
+  }
+
+  @Override
+  protected XmlElementDescriptor createElementDescriptor(XmlTag tag) {
+    return super.createElementDescriptor(tag);
+  }
+
+  @Override
+  public XmlElementDescriptor getElementDescriptor(String localName, String namespace) {
+    return super.getElementDescriptor(localName, namespace);
   }
 
   @Override

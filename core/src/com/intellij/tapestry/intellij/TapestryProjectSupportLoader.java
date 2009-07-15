@@ -28,7 +28,7 @@ public class TapestryProjectSupportLoader implements ProjectComponent, Disposabl
   }
 
   public void initComponent() {
-    ExternalResourceManagerEx.getInstanceEx().addImplicitNamespace(TapestryConstants.TEMPLATE_NAMESPACE, new TapestryNamespaceDescriptor(), this);
+    ExternalResourceManagerEx.getInstanceEx().registerImplicitNamespace(TapestryConstants.TEMPLATE_NAMESPACE, new TapestryNamespaceDescriptor(), this);
   }
 
   public void dispose() {
