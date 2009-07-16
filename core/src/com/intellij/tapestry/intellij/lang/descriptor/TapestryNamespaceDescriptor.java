@@ -1,46 +1,72 @@
 package com.intellij.tapestry.intellij.lang.descriptor;
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlDocument;
+import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
-import com.intellij.tapestry.core.TapestryConstants;
+import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.xml.XmlElementDescriptor;
-import com.intellij.xml.impl.schema.XmlNSDescriptorImpl;
+import com.intellij.xml.XmlNSDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TapestryNamespaceDescriptor extends XmlNSDescriptorImpl {
-  @Override
-  public void init(PsiElement element) {
-    throw new UnsupportedOperationException("Method init is not yet implemented in " + getClass().getName());
+/**
+ * @author Alexey Chmutov
+ *         Date: Jul 1, 2009
+ *         Time: 3:43:26 PM
+ */
+public class TapestryNamespaceDescriptor implements XmlNSDescriptor {
+  public static final TapestryNamespaceDescriptor INSTANCE = new TapestryNamespaceDescriptor();
+  private XmlFile myFile;
+  private XmlElement myElement;
+
+  private TapestryNamespaceDescriptor() {
   }
 
-  @Override
   public XmlElementDescriptor getElementDescriptor(@NotNull XmlTag tag) {
-    return super.getElementDescriptor(tag);
+    return DescriptorUtil.getDescriptor(tag);
   }
 
-  @Override
-  protected XmlElementDescriptor createElementDescriptor(XmlTag tag) {
-    return super.createElementDescriptor(tag);
-  }
-
-  @Override
-  public XmlElementDescriptor getElementDescriptor(String localName, String namespace) {
-    return super.getElementDescriptor(localName, namespace);
-  }
-
-  @Override
   @NotNull
-  public XmlElementDescriptor[] getRootElementsDescriptors(@Nullable final XmlDocument doc) {
+  public XmlElementDescriptor[] getRootElementsDescriptors(@Nullable XmlDocument doc) {
     if (doc == null) return XmlElementDescriptor.EMPTY_ARRAY;
-    Module module = ModuleUtil.findModuleForPsiElement(doc.getContainingFile());
-    TapestryModuleSupportLoader tapestryModuleSupport = TapestryModuleSupportLoader.getInstance(module);
-    if (tapestryModuleSupport == null) return XmlElementDescriptor.EMPTY_ARRAY;
-    String namespacePrefix = doc.getRootTag().getPrefixByNamespace(TapestryConstants.TEMPLATE_NAMESPACE);
-    return DescriptorUtil.getElementsDescriptors(tapestryModuleSupport.getComponents(), namespacePrefix);
+    XmlTag rootTag = doc.getRootTag();
+    if (rootTag == null) return XmlElementDescriptor.EMPTY_ARRAY;
+    return DescriptorUtil.getElementDescriptors(rootTag);
+  }
+
+  @Nullable
+  public XmlFile getDescriptorFile() {
+    return myFile;
+  }
+
+  public boolean isHierarhyEnabled() {
+    return false;
+  }
+
+  public PsiElement getDeclaration() {
+    return myElement;
+  }
+
+  public String getName(PsiElement context) {
+    return getName();
+  }
+
+  public String getName() {
+    return myFile.getName();
+  }
+
+  public void init(PsiElement element) {
+    myFile = (XmlFile)element.getContainingFile();
+    myElement = (XmlElement)element;
+
+    if (element instanceof XmlDocument) {
+      myElement = ((XmlDocument)element).getRootTag();
+    }
+  }
+
+  public Object[] getDependences() {
+    return TapestryProject.JAVA_STRUCTURE_DEPENDENCY;
   }
 }

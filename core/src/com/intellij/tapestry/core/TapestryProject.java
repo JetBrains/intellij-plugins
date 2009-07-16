@@ -2,8 +2,8 @@ package com.intellij.tapestry.core;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.tapestry.core.events.TapestryEventsManager;
-import com.intellij.tapestry.core.exceptions.CoreException;
 import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaTypeCreator;
@@ -16,18 +16,15 @@ import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.IResourceFinder;
 import com.intellij.tapestry.core.util.LocalizationUtils;
 import static com.intellij.tapestry.core.util.StringUtils.isNotEmpty;
-import com.intellij.tapestry.core.util.WebDescriptorUtils;
+import com.intellij.tapestry.intellij.facet.TapestryFacet;
+import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.Document;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -35,6 +32,8 @@ import java.util.Map;
  */
 public class TapestryProject {
 
+  public static final Object[] JAVA_STRUCTURE_DEPENDENCY = {PsiModificationTracker.JAVA_STRUCTURE_MODIFICATION_COUNT};
+  public static final Object[] OUT_OF_CODE_BLOCK_DEPENDENCY = {PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT};
   /**
    * The application library id.
    */
@@ -44,19 +43,9 @@ public class TapestryProject {
    */
   public static final String CORE_LIBRARY_ID = "core";
 
-  private static final String WEBXML_PATH = "/WEB-INF/web.xml";
-
-  private static final Collection<Library> EMPTY_LIBRARY_LIST = new ArrayList<Library>();
-
-  private static DocumentBuilder myDocumentBuilder;
   private final Library myCoreLibrary = new Library(CORE_LIBRARY_ID, TapestryConstants.CORE_LIBRARY_PACKAGE, this);
   private final Module myModule;
-  //private final Library _iocLibrary = new Library("ioc", TapestryConstants.IOC_LIBRARY_PACKAGE, this);
   private final IResourceFinder myResourceFinder;
-  private long myWebApplicationDescriptorTimestamp;
-  private Document myWebApplicationDescriptorDocument;
-  private String myCachedRootPackage;
-  private String myCachedFilterName;
   private Collection<Library> myCachedLibraries;
   private String myLastApplicationPackage;
 
@@ -64,15 +53,6 @@ public class TapestryProject {
   private final IJavaTypeCreator myJavaTypeCreator;
   private final TapestryEventsManager myEventsManager;
 
-
-  static {
-    try {
-      myDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-    }
-    catch (ParserConfigurationException ex) {
-      throw new CoreException(ex);
-    }
-  }
 
   public TapestryProject(@NotNull Module module,
                          @NotNull IResourceFinder resourceFinder,
@@ -88,59 +68,12 @@ public class TapestryProject {
   }
 
   /**
-   * Finds the configured Tapestry filter name.
-   *
-   * @return the configured Tapestry filter name.
-   * @throws NotFoundException when for some reason the filter name couldn't be found.
-   */
-  @NotNull
-  public String getTapestryFilterName() throws NotFoundException {
-    boolean updated;
-
-    try {
-      updated = updateDocument();
-    }
-    catch (Exception ex) {
-      throw new NotFoundException(ex);
-    }
-
-    if (!updated && myCachedFilterName != null) {
-      return myCachedFilterName;
-    }
-
-    myCachedFilterName = WebDescriptorUtils.getTapestryFilterName(myWebApplicationDescriptorDocument);
-    if (myCachedFilterName == null) {
-      throw new NotFoundException();
-    }
-
-    return myCachedFilterName;
-  }
-
-  /**
    * @return the application root package.
-   * @throws NotFoundException when for some reason the application package couldn't be found.
    */
-  @NotNull
-  public String getApplicationRootPackage() throws NotFoundException {
-    boolean updated;
-
-    try {
-      updated = updateDocument();
-    }
-    catch (Exception ex) {
-      throw new NotFoundException(ex);
-    }
-
-    if (!updated && myCachedRootPackage != null) {
-      return myCachedRootPackage;
-    }
-
-    myCachedRootPackage = WebDescriptorUtils.getApplicationPackage(myWebApplicationDescriptorDocument);
-    if (myCachedRootPackage == null) {
-      throw new NotFoundException();
-    }
-
-    return myCachedRootPackage;
+  @Nullable
+  public String getApplicationRootPackage() {
+    TapestryFacetConfiguration myConfiguration = TapestryFacet.findFacetConfiguration(myModule);
+    return myConfiguration == null ? null : myConfiguration.getApplicationPackage();
   }
 
   /**
@@ -178,14 +111,8 @@ public class TapestryProject {
   @NotNull
   public Collection<Library> getLibraries() {
 
-    String applicationRootPackage;
-    try {
-      applicationRootPackage = getApplicationRootPackage();
-    }
-    catch (NotFoundException e) {
-      return EMPTY_LIBRARY_LIST;
-    }
-
+    String applicationRootPackage = getApplicationRootPackage();
+    if (applicationRootPackage == null) return Collections.emptyList();
     if (myCachedLibraries != null && isNotEmpty(myLastApplicationPackage)) {
       if (myLastApplicationPackage.equals(applicationRootPackage)) {
         return myCachedLibraries;
@@ -197,7 +124,6 @@ public class TapestryProject {
 
     myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage, this));
     myCachedLibraries.add(myCoreLibrary);
-    //myCachedLibraries.add(_iocLibrary);
 
     return myCachedLibraries;
   }
@@ -211,15 +137,6 @@ public class TapestryProject {
   public Library getApplicationLibrary() {
     Collection<Library> libraries = getLibraries();
     return libraries.size() == 0 ? null : libraries.iterator().next();
-  }
-
-  @NotNull
-  public PresentationLibraryElement[] getAllAvailableComponents() {
-    List<PresentationLibraryElement> components = new ArrayList<PresentationLibraryElement>();
-    for (Library library : getLibraries()) {
-      components.addAll(library.getComponents().values());
-    }
-    return components.toArray(new PresentationLibraryElement[components.size()]);
   }
 
   /**
@@ -324,6 +241,11 @@ public class TapestryProject {
   };
 
   @NotNull
+  public Collection<PresentationLibraryElement> getAllAvailableElements() {
+    return ourFqnToComponentMap.get(myModule).values();
+  }
+
+  @NotNull
   public IJavaTypeFinder getJavaTypeFinder() {
     return myJavaTypeFinder;
   }
@@ -340,30 +262,6 @@ public class TapestryProject {
   @NotNull
   public TapestryEventsManager getEventsManager() {
     return myEventsManager;
-  }
-
-  @Nullable
-  public String getWebXmlPath() {
-    IResource resource = myResourceFinder.findContextResource(WEBXML_PATH);
-    return resource != null ? resource.getFile().getAbsolutePath() : null;
-  }
-
-  /**
-   * Checks if the file as been changed since last access. If so, builds a new document of it into memory.
-   *
-   * @return <code>true</code> if the file was changed since last access, <code>false</code> otherwise.
-   * @throws Exception when an error occurs parsing the web.xml file.
-   */
-  private boolean updateDocument() throws Exception {
-    File file = myResourceFinder.findContextResource(WEBXML_PATH).getFile();
-
-    if (file.lastModified() > myWebApplicationDescriptorTimestamp) {
-      myWebApplicationDescriptorDocument = myDocumentBuilder.parse(file);
-      myWebApplicationDescriptorTimestamp = file.lastModified();
-      return true;
-    }
-
-    return false;
   }
 
 }

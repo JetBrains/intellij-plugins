@@ -3,8 +3,6 @@ package com.intellij.tapestry.intellij.facet.ui;
 import com.intellij.facet.Facet;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.BrowserUtil;
-import com.intellij.javaee.model.xml.web.Filter;
-import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.VerticalFlowLayout;
@@ -12,7 +10,6 @@ import com.intellij.tapestry.intellij.facet.AddTapestrySupportUtil;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
 import com.intellij.tapestry.intellij.facet.TapestryVersion;
-import com.intellij.tapestry.intellij.util.IntellijWebDescriptorUtils;
 import com.intellij.ui.HyperlinkLabel;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -32,10 +29,10 @@ public class FacetEditor extends FacetEditorTab {
     public FacetEditor(TapestryFacet facet, TapestryFacetConfiguration configuration) {
         _configuration = configuration;
 
-        Filter filter = IntellijWebDescriptorUtils.getTapestryFilter(facet.getWebFacet().getRoot());
+        //Filter filter = IntellijWebDescriptorUtils.getTapestryFilter(facet.getWebFacet().getRoot());
 
-        _configuration.setFilterName(filter != null ? filter.getFilterName().getValue() : null);
-        _configuration.setApplicationPackage(IntellijWebDescriptorUtils.getApplicationPackage(facet.getWebFacet().getRoot()));
+        //_configuration.setFilterName(filter != null ? filter.getFilterName().getValue() : null);
+        //_configuration.setApplicationPackage(IntellijWebDescriptorUtils.getApplicationPackage(facet.getWebFacet().getRoot()));
 
         if (_configuration.getFilterName() == null)
             _configuration.setFilterName(facet.getModule().getName().toLowerCase());
@@ -53,17 +50,14 @@ public class FacetEditor extends FacetEditorTab {
         return _mainPanel;
     }
 
+  @Override
   public void onFacetInitialized(@NotNull final Facet facet) {
     final TapestryFacet tapestryFacet = (TapestryFacet)facet;
-
-    final WebFacet webFacet = tapestryFacet.getWebFacet();
-
-    assert webFacet != null;
 
     if (_configuration.getVersion() == null) _configuration.setVersion(TapestryVersion.TAPESTRY_5_1_0_5);
 
     ModuleRootManager model = ModuleRootManager.getInstance(facet.getModule());
-    AddTapestrySupportUtil.addSupportInWriteCommandAction(model, webFacet, _configuration, false, false);
+    AddTapestrySupportUtil.addSupportInWriteCommandAction(model, _configuration, false, false);
   }
 
   public boolean isModified() {

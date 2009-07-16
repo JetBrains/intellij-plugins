@@ -310,7 +310,7 @@ public class TapestryUtils {
 
   private static final PsiElementBasedCachedUserDataCache<Component, XmlTag> outTagToComponentMap =
       new PsiElementBasedCachedUserDataCache<Component, XmlTag>("TapestryTagToComponentMap") {
-        public Component computeValue(XmlTag tag) {
+        protected Component computeValue(XmlTag tag) {
           Module module = IdeaUtils.getModule(tag);
           if (module == null) return null;
           return getTypeOfTag(module, tag);

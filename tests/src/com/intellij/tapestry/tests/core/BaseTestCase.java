@@ -1,15 +1,11 @@
 package com.intellij.tapestry.tests.core;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.impl.ComponentManagerImpl;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
-import com.intellij.tapestry.intellij.TapestryApplicationSupportLoader;
-import com.intellij.tapestry.tests.mocks.TapestryApplicationSupportLoaderMock;
+import com.intellij.tapestry.tests.Util;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.testng.annotations.AfterSuite;
@@ -36,7 +32,7 @@ public class BaseTestCase {
             _emptyFixture.setUp();
         }
 
-        registerApplicationComponent();
+        Util.registerApplicationComponent();
 
         return new Object[][]{{_emptyFixture}};
     }
@@ -56,7 +52,7 @@ public class BaseTestCase {
             _javaModuleFixture.setUp();
         }
 
-        registerApplicationComponent();
+        Util.registerApplicationComponent();
 
         return new Object[][]{{_javaModuleFixture}};
     }
@@ -64,24 +60,15 @@ public class BaseTestCase {
     @DataProvider(name = WEB_MODULE_FIXTURE_PROVIDER)
     public Object[][] createWebModuleFixtureData() throws Exception {
         if (_webModuleFixture == null) {
-            TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder();
-            WebModuleFixtureBuilder webBuilder = fixtureBuilder.addModule(WebModuleFixtureBuilder.class);
-            webBuilder.addContentRoot(new File("").getAbsoluteFile() + "/src/test/webModule");
-            webBuilder.addSourceRoot("src");
-            webBuilder.addJdk(System.getProperty("jdk.home"));
-            webBuilder.addWebRoot(new File("").getAbsoluteFile() + "/src/test/webModule/resources", "/");
-            webBuilder.addWebRoot(new File("").getAbsoluteFile() + "/src/test/webModule/WEB-INF", "/WEB-INF");
-
-            _webModuleFixture = fixtureBuilder.getFixture();
-            _webModuleFixture.setUp();
+          _webModuleFixture = Util.getWebModuleFixture();
         }
 
-        registerApplicationComponent();
+        Util.registerApplicationComponent();
 
         return new Object[][]{{_webModuleFixture}};
     }
 
-    @AfterSuite
+  @AfterSuite
     public void releaseFixture() throws Exception {
         releaseFixture(_emptyFixture);
         _emptyFixture = null;
@@ -93,15 +80,14 @@ public class BaseTestCase {
         _webModuleFixture = null;
     }
 
-    void registerApplicationComponent() {
-        if (!ApplicationManager.getApplication().hasComponent(TapestryApplicationSupportLoader.class)) {
-            ((ComponentManagerImpl) ApplicationManager.getApplication()).registerComponent(TapestryApplicationSupportLoader.class, TapestryApplicationSupportLoaderMock.class);
-        }
-    }
-
     private void releaseFixture(IdeaTestFixture fixture) throws Exception {
         if (fixture != null) {
+          try {
             fixture.tearDown();
+          }
+          catch (Exception e) {
+            // ignored
+          }
         }
     }
 

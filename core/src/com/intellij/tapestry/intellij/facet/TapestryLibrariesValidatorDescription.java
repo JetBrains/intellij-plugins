@@ -12,6 +12,6 @@ public class TapestryLibrariesValidatorDescription extends FacetLibrariesValidat
     }
 
     public void onLibraryAdded(final Facet facet, @NotNull final Library library) {
-        ((TapestryFacet) facet).getWebFacet().getPackagingConfiguration().addLibraryLink(library);
+        //((TapestryFacet) facet).getWebFacet().getPackagingConfiguration().addLibraryLink(library);
     }
 }

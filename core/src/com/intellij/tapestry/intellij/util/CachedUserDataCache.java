@@ -26,7 +26,7 @@ public abstract class CachedUserDataCache<T, Owner extends UserDataHolder> exten
     }, false);
   }
 
-  public abstract T computeValue(Owner owner);
+  protected abstract T computeValue(Owner owner);
 
   protected Object[] getDependencies(Owner owner) {
     return new Object[]{owner};

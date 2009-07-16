@@ -19,37 +19,40 @@ import java.util.List;
 
 public class TapestryFrameworkSupportProvider extends FacetTypeFrameworkSupportProvider<TapestryFacet> {
 
-    public TapestryFrameworkSupportProvider() {
-        super(TapestryFacetType.INSTANCE);
+  public TapestryFrameworkSupportProvider() {
+    super(TapestryFacetType.INSTANCE);
+  }
+
+  protected void setupConfiguration(TapestryFacet tapestryFacet, ModifiableRootModel modifiableRootModel, String s) {
+  }
+
+  @Override
+  @NotNull
+  public String[] getVersions() {
+    List<String> versions = new ArrayList<String>();
+
+    for (TapestryVersion version : TapestryVersion.values()) {
+      versions.add(version.toString());
     }
 
-    protected void setupConfiguration(TapestryFacet tapestryFacet, ModifiableRootModel modifiableRootModel, String s) {
-    }
+    return versions.toArray(new String[versions.size()]);
+  }
 
-    @NotNull
-    public String[] getVersions() {
-        List<String> versions = new ArrayList<String>();
+  @Override
+  public String getTitle() {
+    return "Tapestry";
+  }
 
-        for (TapestryVersion version : TapestryVersion.values()) {
-            versions.add(version.toString());
-        }
+  @Override
+  @NotNull
+  @NonNls
+  protected String getLibraryName(final String selectedVersion) {
+    return "tapestry-" + selectedVersion;
+  }
 
-        return versions.toArray(new String[versions.size()]);
-    }
-
-    public String getTitle() {
-        return "Tapestry";
-    }
-
-    @NotNull
-    @NonNls
-    protected String getLibraryName(final String selectedVersion) {
-        return "tapestry-" + selectedVersion;
-    }
-
-    protected void onLibraryAdded(final TapestryFacet facet, final @NotNull Library library) {
-        facet.getWebFacet().getPackagingConfiguration().addLibraryLink(library);
-    }
+  @Override
+  protected void onLibraryAdded(final TapestryFacet facet, final @NotNull Library library) {
+  }
 
   @NotNull
   protected LibraryInfo[] getLibraries(String selectedVersion) {
@@ -57,62 +60,65 @@ public class TapestryFrameworkSupportProvider extends FacetTypeFrameworkSupportP
     return version != null ? version.getJars() : LibraryInfo.EMPTY_ARRAY;
   }
 
+  @Override
   protected void onFacetCreated(final TapestryFacet facet, final ModifiableRootModel rootModel, final String version) {
-        StartupManager.getInstance(facet.getModule().getProject()).runWhenProjectIsInitialized(new Runnable() {
-            public void run() {
-                final TapestryFacetConfiguration configuration = new TapestryFacetConfiguration();
-                configuration.setFilterName(rootModel.getModule().getName().toLowerCase());
-                configuration.setVersion(getVersion(version));
+    StartupManager.getInstance(facet.getModule().getProject()).runWhenProjectIsInitialized(new Runnable() {
+      public void run() {
+        final TapestryFacetConfiguration configuration = new TapestryFacetConfiguration();
+        configuration.setFilterName(rootModel.getModule().getName().toLowerCase());
+        configuration.setVersion(getVersion(version));
 
-                final NewFacetDialog newFacetDialog = new NewFacetDialog();
-                final DialogBuilder builder = new DialogBuilder(rootModel.getModule().getProject());
+        final NewFacetDialog newFacetDialog = new NewFacetDialog();
+        final DialogBuilder builder = new DialogBuilder(rootModel.getModule().getProject());
 
-                builder.setCenterPanel(newFacetDialog.getMainPanel());
-                builder.setTitle("New Tapestry Support");
-                builder.setButtonsAlignment(SwingConstants.CENTER);
-                builder.setOkOperation(new Runnable() {
+        builder.setCenterPanel(newFacetDialog.getMainPanel());
+        builder.setTitle("New Tapestry Support");
+        builder.setButtonsAlignment(SwingConstants.CENTER);
+        builder.setOkOperation(new Runnable() {
 
-                    public void run() {
-                        if (newFacetDialog.getFilterName() == null || newFacetDialog.getFilterName().length() == 0) {
-                            Messages.showErrorDialog("You must provide a filter name!", CommonBundle.getErrorTitle());
-                            return;
-                        }
-
-                        if (!Validators.isValidPackageName(newFacetDialog.getApplicationPackage())) {
-                            Messages.showErrorDialog("Invalid package!", CommonBundle.getErrorTitle());
-                            return;
-                        }
-
-                        configuration.setFilterName(newFacetDialog.getFilterName());
-                        configuration.setApplicationPackage(newFacetDialog.getApplicationPackage());
-
-                        builder.getWindow().dispose();
-                    }
-                });
-
-                builder.setCancelOperation(new Runnable() {
-
-                    public void run() {
-                        newFacetDialog.setGenerateStartupApplication(false);
-
-                        builder.getWindow().dispose();
-                    }
-                });
-
-                builder.showModal(true);
-
-                AddTapestrySupportUtil.addSupportInWriteCommandAction(rootModel, facet.getWebFacet(), configuration, newFacetDialog.shouldGenerateStartupApplication(), newFacetDialog.shouldGeneratePom());
+          public void run() {
+            if (newFacetDialog.getFilterName() == null || newFacetDialog.getFilterName().length() == 0) {
+              Messages.showErrorDialog("You must provide a filter name!", CommonBundle.getErrorTitle());
+              return;
             }
+
+            if (!Validators.isValidPackageName(newFacetDialog.getApplicationPackage())) {
+              Messages.showErrorDialog("Invalid package!", CommonBundle.getErrorTitle());
+              return;
+            }
+
+            configuration.setFilterName(newFacetDialog.getFilterName());
+            configuration.setApplicationPackage(newFacetDialog.getApplicationPackage());
+
+            builder.getWindow().dispose();
+          }
         });
+
+        builder.setCancelOperation(new Runnable() {
+
+          public void run() {
+            newFacetDialog.setGenerateStartupApplication(false);
+
+            builder.getWindow().dispose();
+          }
+        });
+
+        builder.showModal(true);
+
+        AddTapestrySupportUtil.addSupportInWriteCommandAction(rootModel, configuration,
+                                                              newFacetDialog.shouldGenerateStartupApplication(),
+                                                              newFacetDialog.shouldGeneratePom());
+      }
+    });
+  }
+
+  private static TapestryVersion getVersion(String versionName) {
+    for (TapestryVersion version : TapestryVersion.values()) {
+      if (versionName.equals(version.toString())) {
+        return version;
+      }
     }
 
-    private static TapestryVersion getVersion(String versionName) {
-        for (TapestryVersion version : TapestryVersion.values()) {
-            if (versionName.equals(version.toString())) {
-                return version;
-            }
-        }
-
-        return null;
-    }
+    return null;
+  }
 }

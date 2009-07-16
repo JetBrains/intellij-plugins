@@ -5,8 +5,7 @@ import com.intellij.psi.meta.PsiWritableMetaData;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.model.presentation.Component;
-import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
-import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
+import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
@@ -20,13 +19,14 @@ import org.jetbrains.annotations.Nullable;
  *         Date: Jun 10, 2009
  *         Time: 3:56:33 PM
  */
-public class TapestryTagDescriptor implements XmlElementDescriptor, PsiWritableMetaData {
-  private final PresentationLibraryElement myComponent;
+public class TapestryUnknownTagDescriptor implements XmlElementDescriptor, PsiWritableMetaData {
+  private final String myQualifiedName;
   private final String myNamespacePrefix;
 
-  public TapestryTagDescriptor(@NotNull PresentationLibraryElement component, @Nullable String namespacePrefix) {
-    myComponent = component;
+  public TapestryUnknownTagDescriptor(@NotNull String componentName, @Nullable String namespacePrefix) {
+    String name = componentName.toLowerCase();
     myNamespacePrefix = namespacePrefix;
+    myQualifiedName = myNamespacePrefix != null && myNamespacePrefix.length() > 0 ? myNamespacePrefix + ":" + name : name;
   }
 
   public String getQualifiedName() {
@@ -34,35 +34,25 @@ public class TapestryTagDescriptor implements XmlElementDescriptor, PsiWritableM
   }
 
   public String getDefaultName() {
-    String name = myComponent.getName().toLowerCase();
-    if (myNamespacePrefix != null && myNamespacePrefix.length() > 0) name = myNamespacePrefix + ":" + name;
-    return name;
+    return myQualifiedName;
   }
 
   public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
-    XmlElementDescriptor htmlDescriptor = findHtmlDescriptorOfParent(context);
-    // todo
     return DescriptorUtil.getElementDescriptors(context);
   }
 
-  private XmlElementDescriptor findHtmlDescriptorOfParent(XmlTag context) {
-    return null;  //To change body of created methods use File | Settings | File Templates.
-  }
-
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
-    return DescriptorUtil.getDescriptor(childTag);
+    Component childComponent = TapestryUtils.getTypeOfTag(childTag);
+    if (childComponent == null) return null;
+    return new TapestryTagDescriptor(childComponent, myNamespacePrefix);
   }
 
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    return context != null
-           ? DescriptorUtil.getAttributeDescriptors(context)
-           : DescriptorUtil.getAttributeDescriptors((Component)myComponent);
+    return context != null ? DescriptorUtil.getAttributeDescriptors(context) : XmlAttributeDescriptor.EMPTY;
   }
 
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls String attributeName, @Nullable XmlTag context) {
-    return context != null
-           ? DescriptorUtil.getAttributeDescriptor(attributeName, context)
-           : DescriptorUtil.getAttributeDescriptor(attributeName, (Component)myComponent);
+    return context != null ? DescriptorUtil.getAttributeDescriptor(attributeName, context) : null;
   }
 
   public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
@@ -78,7 +68,7 @@ public class TapestryTagDescriptor implements XmlElementDescriptor, PsiWritableM
   }
 
   public PsiElement getDeclaration() {
-    return ((IntellijJavaClassType)myComponent.getElementClass()).getPsiClass();
+    return null;
   }
 
   public String getName(PsiElement context) {

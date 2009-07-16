@@ -2,7 +2,6 @@ package com.intellij.tapestry.core;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
@@ -30,9 +29,10 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
     assert myCachePages || myCacheComponents;
   }
 
-  public Map<String, PresentationLibraryElement> computeValue(Module module) {
+  protected Map<String, PresentationLibraryElement> computeValue(Module module) {
     Map<String, PresentationLibraryElement> map = new THashMap<String, PresentationLibraryElement>();
     TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(module);
+    assert project != null;
     for (Library library : project.getLibraries()) {
       if (myCacheComponents) computeKeyAndAdd(map, library.getComponents().values());
       if (myCachePages) computeKeyAndAdd(map, library.getPages().values());
@@ -42,7 +42,7 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
 
   @Override
   protected Object[] getDependencies(Module module) {
-    return new Object[]{PsiModificationTracker.JAVA_STRUCTURE_MODIFICATION_COUNT};
+    return TapestryProject.JAVA_STRUCTURE_DEPENDENCY;
   }
 
   protected Project getProject(Module projectOwner) {

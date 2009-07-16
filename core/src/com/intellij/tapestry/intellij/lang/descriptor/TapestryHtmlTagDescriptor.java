@@ -1,0 +1,103 @@
+package com.intellij.tapestry.intellij.lang.descriptor;
+
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.meta.PsiWritableMetaData;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.tapestry.core.TapestryConstants;
+import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
+import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.ArrayUtil;
+import com.intellij.xml.XmlAttributeDescriptor;
+import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.XmlNSDescriptor;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * @author Alexey Chmutov
+ *         Date: Jul 8, 2009
+ *         Time: 9:18:09 PM
+ */
+public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWritableMetaData {
+  private final XmlElementDescriptor myHtmlDelegate;
+  private final Component myComponent;
+
+  public TapestryHtmlTagDescriptor(@NotNull XmlElementDescriptor htmlDelegate, @Nullable Component component) {
+    myHtmlDelegate = htmlDelegate;
+    myComponent = component;
+  }
+
+  public String getQualifiedName() {
+    return myHtmlDelegate.getQualifiedName();
+  }
+
+  public String getDefaultName() {
+    return myHtmlDelegate.getDefaultName();
+  }
+
+  public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
+    XmlElementDescriptor[] htmlDescriptors = myHtmlDelegate.getElementsDescriptors(context);
+    XmlElementDescriptor[] tapestryDescriptors = DescriptorUtil.getElementDescriptors(context);
+    return ArrayUtil.mergeArrays(htmlDescriptors, tapestryDescriptors, XmlElementDescriptor.class);
+  }
+
+  public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
+    XmlElementDescriptor childDescriptor = myHtmlDelegate.getElementDescriptor(childTag, contextTag);
+    if (childDescriptor != null) return childDescriptor;
+    return TapestryConstants.TEMPLATE_NAMESPACE.equals(childTag.getNamespace()) ? DescriptorUtil.getDescriptor(childTag) : null;
+  }
+
+  public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
+    XmlAttributeDescriptor[] tapestryAttrs =
+        context != null ? DescriptorUtil.getAttributeDescriptors(context) : DescriptorUtil.getAttributeDescriptors(myComponent);
+    return ArrayUtil.mergeArrays(tapestryAttrs, myHtmlDelegate.getAttributesDescriptors(context), XmlAttributeDescriptor.class);
+  }
+
+  public XmlAttributeDescriptor getAttributeDescriptor(@NonNls String attributeName, @Nullable XmlTag context) {
+    XmlAttributeDescriptor attributeDescriptor = myHtmlDelegate.getAttributeDescriptor(attributeName, context);
+    if (attributeDescriptor != null) return attributeDescriptor;
+    return context != null
+           ? DescriptorUtil.getAttributeDescriptor(attributeName, context)
+           : DescriptorUtil.getAttributeDescriptor(attributeName, myComponent);
+  }
+
+  public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
+    return getAttributeDescriptor(attribute.getLocalName(), attribute.getParent());
+  }
+
+  public XmlNSDescriptor getNSDescriptor() {
+    return TapestryNamespaceDescriptor.INSTANCE;
+  }
+
+  public int getContentType() {
+    return myHtmlDelegate.getContentType();
+  }
+
+  public PsiElement getDeclaration() {
+    if (myComponent != null) return ((IntellijJavaClassType)myComponent.getElementClass()).getPsiClass();
+    return myHtmlDelegate.getDeclaration();
+  }
+
+  public String getName(PsiElement context) {
+    return myHtmlDelegate.getName(context);
+  }
+
+  public String getName() {
+    return myHtmlDelegate.getName();
+  }
+
+  public void init(PsiElement element) {
+    //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  public Object[] getDependences() {
+    return new Object[0];  //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  public void setName(String name) throws IncorrectOperationException {
+    //To change body of implemented methods use File | Settings | File Templates.
+  }
+}

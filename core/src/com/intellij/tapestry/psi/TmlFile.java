@@ -13,4 +13,9 @@ public class TmlFile extends XmlFileImpl implements XmlFile {
   public TmlFile(FileViewProvider viewProvider) {
     super(viewProvider, TmlElementType.TML_FILE);
   }
+
+  @Override
+  public String toString() {
+    return "TmlFile:" + getName();
+  }
 }
