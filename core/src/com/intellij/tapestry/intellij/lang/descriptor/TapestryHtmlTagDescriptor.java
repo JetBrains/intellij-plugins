@@ -40,14 +40,14 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
 
   public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
     XmlElementDescriptor[] htmlDescriptors = myHtmlDelegate.getElementsDescriptors(context);
-    XmlElementDescriptor[] tapestryDescriptors = DescriptorUtil.getElementDescriptors(context);
+    XmlElementDescriptor[] tapestryDescriptors = DescriptorUtil.getTmlSubelementDescriptors(context);
     return ArrayUtil.mergeArrays(htmlDescriptors, tapestryDescriptors, XmlElementDescriptor.class);
   }
 
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
     XmlElementDescriptor childDescriptor = myHtmlDelegate.getElementDescriptor(childTag, contextTag);
     if (childDescriptor != null) return childDescriptor;
-    return TapestryConstants.TEMPLATE_NAMESPACE.equals(childTag.getNamespace()) ? DescriptorUtil.getDescriptor(childTag) : null;
+    return TapestryConstants.TEMPLATE_NAMESPACE.equals(childTag.getNamespace()) ? DescriptorUtil.getTmlTagDescriptor(childTag) : null;
   }
 
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
@@ -90,14 +90,12 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   }
 
   public void init(PsiElement element) {
-    //To change body of implemented methods use File | Settings | File Templates.
   }
 
   public Object[] getDependences() {
-    return new Object[0];  //To change body of implemented methods use File | Settings | File Templates.
+    return new Object[0];
   }
 
   public void setName(String name) throws IncorrectOperationException {
-    //To change body of implemented methods use File | Settings | File Templates.
   }
 }

@@ -25,7 +25,7 @@ public class TapestryNamespaceDescriptor implements XmlNSDescriptor {
   }
 
   public XmlElementDescriptor getElementDescriptor(@NotNull XmlTag tag) {
-    return DescriptorUtil.getDescriptor(tag);
+    return DescriptorUtil.getTmlOrHtmlTagDescriptor(tag);
   }
 
   @NotNull
@@ -33,7 +33,7 @@ public class TapestryNamespaceDescriptor implements XmlNSDescriptor {
     if (doc == null) return XmlElementDescriptor.EMPTY_ARRAY;
     XmlTag rootTag = doc.getRootTag();
     if (rootTag == null) return XmlElementDescriptor.EMPTY_ARRAY;
-    return DescriptorUtil.getElementDescriptors(rootTag);
+    return DescriptorUtil.getTmlSubelementDescriptors(rootTag);
   }
 
   @Nullable

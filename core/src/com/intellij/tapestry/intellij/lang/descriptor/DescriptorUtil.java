@@ -29,17 +29,17 @@ import java.util.Collection;
  */
 class DescriptorUtil {
   private static final PsiElementBasedCachedUserDataCache<XmlNSDescriptor, TmlFile> ourHtmlNSDescriptorCache =
-    new PsiElementBasedCachedUserDataCache<XmlNSDescriptor, TmlFile>("ourHtmlNSDescriptorCache") {
-      protected XmlNSDescriptor computeValue(TmlFile tmlFile) {
-        XmlDocument doc = tmlFile.getDocument();
-        if (doc == null) return null;
-        return new HtmlNSDescriptorImpl(doc.getDefaultNSDescriptor(XmlUtil.XHTML_URI, false));
-      }
-    };
+      new PsiElementBasedCachedUserDataCache<XmlNSDescriptor, TmlFile>("ourHtmlNSDescriptorCache") {
+        protected XmlNSDescriptor computeValue(TmlFile tmlFile) {
+          XmlDocument doc = tmlFile.getDocument();
+          if (doc == null) return null;
+          return new HtmlNSDescriptorImpl(doc.getDefaultNSDescriptor(XmlUtil.XHTML_URI, false));
+        }
+      };
 
   public static XmlAttributeDescriptor[] getAttributeDescriptors(@NotNull XmlTag context) {
     Component component = TapestryUtils.getTypeOfTag(context);
-    if(component == null) return XmlAttributeDescriptor.EMPTY;
+    if (component == null) return XmlAttributeDescriptor.EMPTY;
     return getAttributeDescriptors(component);
   }
 
@@ -47,7 +47,7 @@ class DescriptorUtil {
     Collection<TapestryParameter> params = component.getParameters().values();
     XmlAttributeDescriptor[] descriptors = new XmlAttributeDescriptor[params.size()];
     int i = 0;
-    for(TapestryParameter param : params) {
+    for (TapestryParameter param : params) {
       descriptors[i++] = new TapestryAttributeDescriptor(param);
     }
     return descriptors;
@@ -55,9 +55,9 @@ class DescriptorUtil {
 
   public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName, @NotNull XmlTag context) {
     Component component = TapestryUtils.getTypeOfTag(context);
-    if(component == null) return null;
+    if (component == null) return null;
     XmlAttribute attr = TapestryUtils.getIdentifyingAttribute(context);
-    if(attr != null && attr.getLocalName().equals(attributeName)) return new TapestryIdOrTypeAttributeDescriptor(attributeName);
+    if (attr != null && attr.getLocalName().equals(attributeName)) return new TapestryIdOrTypeAttributeDescriptor(attributeName);
     return getAttributeDescriptor(attributeName, component);
   }
 
@@ -66,33 +66,40 @@ class DescriptorUtil {
     return param == null ? null : new TapestryAttributeDescriptor(param);
   }
 
-  private static XmlElementDescriptor[] getElementDescriptors(@NotNull Collection<PresentationLibraryElement> elements, String namespacePrefix) {
+  private static XmlElementDescriptor[] getElementDescriptors(@NotNull Collection<PresentationLibraryElement> elements,
+                                                              String namespacePrefix) {
     TapestryTagDescriptor[] descriptors = new TapestryTagDescriptor[elements.size()];
     int i = 0;
-    for(PresentationLibraryElement component : elements) {
+    for (PresentationLibraryElement component : elements) {
       descriptors[i++] = new TapestryTagDescriptor(component, namespacePrefix);
     }
     return descriptors;
   }
 
-  public static XmlElementDescriptor[] getElementDescriptors(@NotNull XmlTag context) {
+  public static XmlElementDescriptor[] getTmlSubelementDescriptors(@NotNull XmlTag context) {
     TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(context);
     if (project == null) return XmlElementDescriptor.EMPTY_ARRAY;
     String namespacePrefix = context.getPrefixByNamespace(TapestryConstants.TEMPLATE_NAMESPACE);
     return getElementDescriptors(project.getAllAvailableElements(), namespacePrefix);
   }
 
-  public static XmlElementDescriptor getDescriptor(XmlTag tag) {
+  public static XmlElementDescriptor getTmlOrHtmlTagDescriptor(XmlTag tag) {
     PsiFile file = tag.getContainingFile();
     if (!(file instanceof TmlFile)) return null;
-    final Component component = TapestryUtils.getTypeOfTag(tag);
-    if (TapestryConstants.TEMPLATE_NAMESPACE.equals(tag.getNamespace())) {
-      final String prefix = tag.getNamespacePrefix();
-      return component == null
-             ? new TapestryUnknownTagDescriptor(tag.getLocalName(), prefix)
-             : new TapestryTagDescriptor(component, prefix);
-    }
+    if (TapestryConstants.TEMPLATE_NAMESPACE.equals(tag.getNamespace())) return getTmlTagDescriptor(tag);
     XmlElementDescriptor htmlDescriptor = ourHtmlNSDescriptorCache.get((TmlFile)file).getElementDescriptor(tag);
-    return htmlDescriptor != null ? new TapestryHtmlTagDescriptor(htmlDescriptor, component) : null;
+    return htmlDescriptor != null ? new TapestryHtmlTagDescriptor(htmlDescriptor, TapestryUtils.getTypeOfTag(tag)) : null;
+  }
+
+  public static XmlElementDescriptor getTmlTagDescriptor(XmlTag tag) {
+    final Component component = TapestryUtils.getTypeOfTag(tag);
+    final String prefix = tag.getNamespacePrefix();
+    return component == null ? new TapestryUnknownTagDescriptor(tag.getLocalName(), prefix) : new TapestryTagDescriptor(component, prefix);
+  }
+
+  public static XmlElementDescriptor[] getHtmlTagDescriptors(XmlDocument doc) {
+    PsiFile file = doc.getContainingFile();
+    if (!(file instanceof TmlFile)) return null;
+    return ourHtmlNSDescriptorCache.get((TmlFile)file).getRootElementsDescriptors(doc);
   }
 }
