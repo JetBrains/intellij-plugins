@@ -16,27 +16,22 @@ public abstract class AbstractValueResolver implements Command {
      */
     @Nullable
     public static String getCleanValue(@Nullable String value) {
-        if (value == null)
-            return null;
+        if (value == null) return null;
 
         String cleanValue = value.trim();
 
         if (cleanValue.startsWith("${")) {
-            cleanValue = cleanValue.substring(2);
-            cleanValue = cleanValue.substring(0, cleanValue.lastIndexOf('}'));
-
+            final int endIndex = cleanValue.lastIndexOf('}');
+            cleanValue = endIndex != -1 ? cleanValue.substring(2, endIndex) : cleanValue.substring(2);
             cleanValue = cleanValue.trim();
         }
 
         String prefix = getPrefix(value, "");
 
-        if (prefix == null)
-            return null;
+        if (prefix == null) return null;
 
-        if (prefix.length() == 0)
-            return cleanValue;
+        return prefix.length() == 0 ? cleanValue : cleanValue.substring(prefix.length() + 1).trim();
 
-        return cleanValue.substring(prefix.length() + 1).trim();
     }
 
     /**

@@ -32,6 +32,9 @@ public class AbstractValueResolverTest {
         assert AbstractValueResolver.getCleanValue("prefix: value ").equals("value");
 
         assert AbstractValueResolver.getCleanValue("${prefix: value }").equals("value");
+
+        assert AbstractValueResolver.getCleanValue("${prefix: value ").equals("value");
+
         assert AbstractValueResolver.getPrefix("${prefix: value }", "default").equals("prefix");
     }
 
@@ -44,5 +47,7 @@ public class AbstractValueResolverTest {
         assert AbstractValueResolver.getCleanValue(" value ").equals("value");
 
         assert AbstractValueResolver.getCleanValue("${ value }").equals("value");
+
+        assert AbstractValueResolver.getCleanValue("${ value ").equals("value");
     }
 }
