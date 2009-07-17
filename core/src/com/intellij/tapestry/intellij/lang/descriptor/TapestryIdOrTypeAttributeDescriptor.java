@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.lang.descriptor;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,13 +13,15 @@ import org.jetbrains.annotations.Nullable;
  */
 public class TapestryIdOrTypeAttributeDescriptor extends BasicXmlAttributeDescriptor {
   private final String myName;
+  private final XmlTag myContext;
 
-  public TapestryIdOrTypeAttributeDescriptor(@NotNull String name) {
+  public TapestryIdOrTypeAttributeDescriptor(@NotNull String name, @NotNull XmlTag context) {
     myName = name;
+    myContext = context;
   }
 
   public PsiElement getDeclaration() {
-    return null;
+    return myContext;
   }
 
   public String getName() {

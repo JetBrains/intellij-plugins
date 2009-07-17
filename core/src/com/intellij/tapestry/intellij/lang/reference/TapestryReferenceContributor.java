@@ -6,9 +6,7 @@ import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.Page;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
@@ -16,8 +14,8 @@ import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
-import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
+import com.intellij.tapestry.psi.TmlFile;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +29,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   private void registerTagNameReferenceProvider(PsiReferenceRegistrar registrar) {
     PatternCondition<XmlTag> tapestryTagCondition = new PatternCondition<XmlTag>("tapestryTagCondition") {
       public boolean accepts(@NotNull XmlTag tag, final ProcessingContext context) {
-        return TapestryUtils.isTapestryTemplate((XmlFile)tag.getContainingFile())
-               && TapestryUtils.getComponentIdentifier(tag) != null;
+        return tag.getContainingFile() instanceof TmlFile && TapestryUtils.getTypeOfTag(tag) != null;
       }
     };
     registrar.registerReferenceProvider(XmlPatterns.xmlTag().with(tapestryTagCondition), new PsiReferenceProvider() {
@@ -41,21 +38,14 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
         if (!(element instanceof XmlTag)) return PsiReference.EMPTY_ARRAY;
         final XmlTag tag = (XmlTag)element;
         PsiReference typeRef = null;
-        if (tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
-          PsiElement nameElem = IdeaUtils.getNameElement(tag);
-          TextRange range = TextRange.from(nameElem.getStartOffsetInParent(), nameElem.getTextLength());
-          typeRef = getReferenceToComponentClass(tag, range);
+        XmlAttribute typeAttr = TapestryUtils.getTTypeAttribute(tag);
+        if (typeAttr != null) {
+          typeRef = getReferenceToComponentClass(tag, getValueTextRangeInTag(typeAttr, tag));
         }
         else {
-          XmlAttribute typeAttr = TapestryUtils.getTTypeAttribute(tag);
-          if (typeAttr != null) {
-            typeRef = getReferenceToComponentClass(tag, getValueTextRangeInTag(typeAttr, tag));
-          }
-          else {
-            XmlAttribute idAttr = TapestryUtils.getTIdAttribute(tag);
-            if (idAttr != null) {
-              typeRef = getReferenceToEmbeddedComponent(tag, getValueTextRangeInTag(idAttr, tag));
-            }
+          XmlAttribute idAttr = TapestryUtils.getTIdAttribute(tag);
+          if (idAttr != null) {
+            typeRef = getReferenceToEmbeddedComponent(tag, getValueTextRangeInTag(idAttr, tag));
           }
         }
 

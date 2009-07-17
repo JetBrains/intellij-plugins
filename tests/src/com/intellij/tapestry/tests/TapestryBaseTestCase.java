@@ -32,9 +32,11 @@ import java.io.IOException;
  *         Time: 3:49:34 PM
  */
 public abstract class TapestryBaseTestCase extends UsefulTestCase {
-  private static final String TEST_APPLICATION_PACKAGE = "com.testapp";
-  private static final String COMPONENTS = "components";
-  private static final String COMPONENTS_PACKAGE_PATH = TEST_APPLICATION_PACKAGE.replace('.', '/') + "/" + COMPONENTS + "/";
+  static final String TEST_APPLICATION_PACKAGE = "com.testapp";
+  static final String COMPONENTS = "components";
+  static final String PAGES = "pages";
+  static final String COMPONENTS_PACKAGE_PATH = TEST_APPLICATION_PACKAGE.replace('.', '/') + "/" + COMPONENTS + "/";
+  static final String PAGES_PACKAGE_PATH = TEST_APPLICATION_PACKAGE.replace('.', '/') + "/" + PAGES + "/";
 
   @NonNls
   protected abstract String getBasePath();
@@ -149,13 +151,22 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   protected void addComponentToProject(String className) throws IOException {
-    String targetPath = COMPONENTS_PACKAGE_PATH + className + ".java";
-    Assert.assertNotNull(myFixture.addFileToProject(targetPath, getCommonTestDataFileText(className + ".java")));
+    addElementToProject(COMPONENTS_PACKAGE_PATH, className, ".java");
+  }
+
+  protected void addPageToProject(String className) throws IOException {
+    addElementToProject(PAGES_PACKAGE_PATH, className, ".tml");
+    addElementToProject(PAGES_PACKAGE_PATH, className, ".java");
+  }
+
+  private void addElementToProject(String relativePath, String className, String ext) throws IOException {
+    String targetPath = relativePath + className + ext;
+    Assert.assertNotNull(myFixture.addFileToProject(targetPath, getCommonTestDataFileText(className + ext)));
   }
 
   protected String getCommonTestDataFileText(@NotNull String fileName) throws IOException {
     File file = new File(getCommonTestDataPath() + "/" + fileName);
-    Assert.assertTrue(file.exists());
+    Assert.assertTrue(file + " doesn't exists", file.exists());
     return FileUtil.loadTextAndClose(new FileReader(file));
   }
 

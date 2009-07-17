@@ -34,8 +34,6 @@
 
     <xml.elementDescriptorProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryTagDescriptorProvider"/>
 
-    <xml.attributeDescriptorsProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryAttributeDescriptorsProvider"/>
-
     <toolWindow id="Tapestry"
                 anchor="bottom"
                 secondary="false"

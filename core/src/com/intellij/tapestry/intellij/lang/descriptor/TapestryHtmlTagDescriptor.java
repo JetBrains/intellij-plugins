@@ -65,7 +65,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   }
 
   public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
-    return getAttributeDescriptor(attribute.getLocalName(), attribute.getParent());
+    return getAttributeDescriptor(attribute.getName(), attribute.getParent());
   }
 
   public XmlNSDescriptor getNSDescriptor() {

@@ -6,7 +6,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -51,14 +50,6 @@ public class TapestryUtils {
    */
   public static boolean isTapestryModule(Module module) {
     return module != null && FacetManager.getInstance(module).getFacetsByType(TapestryFacetType.ID).size() > 0;
-  }
-
-  public static boolean isTapestryTemplate(@NotNull XmlFile file) {
-    return isTapestryTemplate(file.getViewProvider().getVirtualFile());
-  }
-
-  public static boolean isTapestryTemplate(@NotNull VirtualFile vFile) {
-    return TapestryConstants.TEMPLATE_FILE_EXTENSION.equals(vFile.getExtension());
   }
 
   /**

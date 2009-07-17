@@ -54,14 +54,14 @@ class DescriptorUtil {
   }
 
   public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName, @NotNull XmlTag context) {
+    XmlAttribute attr = TapestryUtils.getIdentifyingAttribute(context);
+    if (attr != null && attr.getName().equals(attributeName)) return new TapestryIdOrTypeAttributeDescriptor(attributeName, context);
     Component component = TapestryUtils.getTypeOfTag(context);
     if (component == null) return null;
-    XmlAttribute attr = TapestryUtils.getIdentifyingAttribute(context);
-    if (attr != null && attr.getLocalName().equals(attributeName)) return new TapestryIdOrTypeAttributeDescriptor(attributeName);
     return getAttributeDescriptor(attributeName, component);
   }
 
-  public static XmlAttributeDescriptor getAttributeDescriptor(String attributeName, Component component) {
+  public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName, @NotNull Component component) {
     TapestryParameter param = component.getParameters().get(attributeName);
     return param == null ? null : new TapestryAttributeDescriptor(param);
   }
