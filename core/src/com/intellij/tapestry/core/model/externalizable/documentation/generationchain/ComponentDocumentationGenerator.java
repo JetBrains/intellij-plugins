@@ -26,7 +26,7 @@ public class ComponentDocumentationGenerator extends PresentationElementDocument
         Map<String, Object> velocityContext = buildVelocityContext();
 
         velocityContext.put("element", component);
-        velocityContext.put("icon", getClass().getResource(ICON).toURI());
+        velocityContext.put("icon", getClass().getResource(ICON));
 
         try {
             velocityContext.put("documentation", new PresentationElementDocumentationWrapper(getDocumentationURL(component.getLibrary().getId(), "components", component.getName())));

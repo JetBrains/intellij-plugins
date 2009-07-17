@@ -26,7 +26,7 @@ public class MixinDocumentationGenerator extends PresentationElementDocumentatio
         Map<String, Object> velocityContext = buildVelocityContext();
 
         velocityContext.put("element", mixin);
-        velocityContext.put("icon", getClass().getResource(ICON).toURI());
+        velocityContext.put("icon", getClass().getResource(ICON));
 
         try {
             velocityContext.put("documentation", new PresentationElementDocumentationWrapper(getDocumentationURL(mixin.getLibrary().getId(), "mixins", mixin.getName())));

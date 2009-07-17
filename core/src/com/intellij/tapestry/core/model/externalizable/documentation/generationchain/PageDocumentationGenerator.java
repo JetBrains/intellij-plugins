@@ -26,7 +26,7 @@ public class PageDocumentationGenerator extends PresentationElementDocumentation
         Map<String, Object> velocityContext = buildVelocityContext();
 
         velocityContext.put("element", page);
-        velocityContext.put("icon", getClass().getResource(ICON).toURI());
+        velocityContext.put("icon", getClass().getResource(ICON));
 
         try {
             velocityContext.put("documentation", new PresentationElementDocumentationWrapper(getDocumentationURL(page.getLibrary().getId(), "pages", page.getName())));
