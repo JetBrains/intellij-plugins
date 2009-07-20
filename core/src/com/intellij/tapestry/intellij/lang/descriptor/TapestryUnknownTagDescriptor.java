@@ -16,7 +16,7 @@ public class TapestryUnknownTagDescriptor extends BasicTapestryTagDescriptor {
 
   public TapestryUnknownTagDescriptor(@NotNull String componentName, @Nullable String namespacePrefix) {
     super(namespacePrefix);
-    myQualifiedName = getPrefix() + componentName.toLowerCase();
+    myQualifiedName = getPrefixWithColon() + componentName.toLowerCase();
   }
 
   public String getDefaultName() {

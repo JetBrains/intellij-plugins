@@ -3,13 +3,9 @@ package com.intellij.tapestry.intellij.lang.descriptor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiWritableMetaData;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlTag;
-import static com.intellij.tapestry.intellij.lang.descriptor.DescriptorUtil.getTmlOrHtmlTagDescriptor;
-import static com.intellij.tapestry.intellij.lang.descriptor.DescriptorUtil.getTmlSubelementDescriptors;
-import static com.intellij.tapestry.intellij.lang.descriptor.DescriptorUtil.getHtmlTagDescriptors;
+import static com.intellij.tapestry.intellij.lang.descriptor.DescriptorUtil.*;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.ArrayUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptor;
@@ -27,7 +23,7 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
     myNamespacePrefix = namespacePrefix;
   }
 
-  protected final String getPrefix() {
+  protected final String getPrefixWithColon() {
     return myNamespacePrefix != null && myNamespacePrefix.length() > 0 ? myNamespacePrefix + ":" : "";
   }
 
@@ -36,10 +32,7 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
   }
 
   public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
-    PsiElement parent = context.getParent();
-    XmlElementDescriptor[] childDescriptors = getTmlSubelementDescriptors(context);
-    if(!(parent instanceof XmlDocument)) return childDescriptors;
-    return ArrayUtil.mergeArrays(childDescriptors, getHtmlTagDescriptors((XmlDocument)parent), XmlElementDescriptor.class);
+    return getTmlSubelementDescriptors(context);
   }
 
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {

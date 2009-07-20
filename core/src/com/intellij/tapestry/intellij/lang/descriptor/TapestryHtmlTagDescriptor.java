@@ -4,11 +4,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiWritableMetaData;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
-import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptor;
@@ -47,7 +46,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
     XmlElementDescriptor childDescriptor = myHtmlDelegate.getElementDescriptor(childTag, contextTag);
     if (childDescriptor != null) return childDescriptor;
-    return TapestryConstants.TEMPLATE_NAMESPACE.equals(childTag.getNamespace()) ? DescriptorUtil.getTmlTagDescriptor(childTag) : null;
+    return DescriptorUtil.getTmlTagDescriptor(childTag);
   }
 
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
@@ -69,7 +68,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   }
 
   public XmlNSDescriptor getNSDescriptor() {
-    return TapestryNamespaceDescriptor.INSTANCE;
+    return myHtmlDelegate.getNSDescriptor();
   }
 
   public int getContentType() {

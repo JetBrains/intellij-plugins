@@ -10,8 +10,6 @@ import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
 
-import java.util.List;
-
 /**
  * @author Alexey Chmutov
  */
@@ -53,17 +51,25 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
 
   }
 
+  public void testRootTagName() throws Throwable {
+    initByComponent();
+    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_ELEMENT_NAMES, getElementTagName()));
+  }
+
   public void testTagNameWithinTmlRootTag() throws Throwable {
     initByComponent();
-    doTestBasicCompletionVariants(
-        mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, getElementTagName(), "a", "abbr", "acronym", "address", "applet", "area", "b", "base",
-                    "basefont", "bdo", "big", "blockquote", "body", "br", "button", "caption", "center", "cite", "code", "col", "colgroup",
-                    "dd", "del", "dfn", "dir", "div", "dl", "dt", "em", "fieldset", "font", "form", "h1", "h2", "h3", "h4", "h5", "h6",
-                    "head", "hr", "html", "i", "iframe", "img", "input", "ins", "isindex", "kbd", "label", "legend", "li", "link", "map",
-                    "menu", "meta", "noframes", "noscript", "object", "ol", "optgroup", "option", "p", "param", "pre", "q", "s", "samp",
-                    "script", "select", "small", "span", "strike", "strong", "style", "sub", "sup", "table", "tbody", "td", "textarea",
-                    "tfoot", "th", "thead", "title", "tr", "tt", "u", "ul", "var"));
+    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_ELEMENT_NAMES, getElementTagName()));
+  }
 
+  public void testTagNameWithoutHtmlContext() throws Throwable {
+    initByComponent();
+    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_ELEMENT_NAMES, getElementTagName()));
+  }
+
+  public void testInvalidTagName() throws Throwable {
+    initByComponent();
+    UsefulTestCase.assertEmpty(myFixture.complete(CompletionType.BASIC));
+    UsefulTestCase.assertEmpty(myFixture.getLookupElementStrings());
   }
 
 
@@ -75,13 +81,6 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     final LookupElement[] items = myFixture.complete(type);
     Assert.assertNotNull("No lookup was shown, probably there was only one lookup element that was inserted automatically", items);
     UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings(), expectedItems);
-  }
-
-  private List<String> getCompletionVariants(final String fileBefore, final CompletionType type) throws Throwable {
-    myFixture.configureByFiles(fileBefore);
-    final LookupElement[] items = myFixture.complete(type);
-    Assert.assertNotNull("No lookup was shown, probably there was only one lookup element that was inserted automatically", items);
-    return myFixture.getLookupElementStrings();
   }
 
   @Override
@@ -96,4 +95,14 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
           "t:output", "t:outputraw", "t:pagelink", "t:palette", "t:passwordfield", "t:progressivedisplay", "t:propertydisplay",
           "t:propertyeditor", "t:radio", "t:radiogroup", "t:removerowlink", "t:renderobject", "t:select", "t:submit", "t:submitnotifier",
           "t:textarea", "t:textfield", "t:textoutput", "t:unless", "t:zone"};
+
+  public static final String[] HTML_ELEMENT_NAMES =
+      {"a", "abbr", "acronym", "address", "applet", "area", "b", "base", "basefont", "bdo", "big", "blockquote", "body", "br", "button",
+          "caption", "center", "cite", "code", "col", "colgroup", "dd", "del", "dfn", "dir", "div", "dl", "dt", "em", "fieldset", "font",
+          "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "hr", "html", "i", "iframe", "img", "input", "ins", "isindex", "kbd", "label",
+          "legend", "li", "link", "map", "menu", "meta", "noframes", "noscript", "object", "ol", "optgroup", "option", "p", "param", "pre",
+          "q", "s", "samp", "script", "select", "small", "span", "strike", "strong", "style", "sub", "sup", "table", "tbody", "td",
+          "textarea", "tfoot", "th", "thead", "title", "tr", "tt", "u", "ul", "var"};
+
+  public static final String[] HTML_AND_CORE_5_1_0_5_ELEMENT_NAMES = mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, HTML_ELEMENT_NAMES);
 }

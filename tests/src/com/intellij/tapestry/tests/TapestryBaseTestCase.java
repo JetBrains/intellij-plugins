@@ -170,7 +170,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return FileUtil.loadTextAndClose(new FileReader(file));
   }
 
-  protected String[] mergeArrays(String[] array, @NonNls String... list) throws Throwable {
+  protected static String[] mergeArrays(String[] array, @NonNls String... list) {
     return ArrayUtil.mergeArrays(array, list, String.class);
   }
 

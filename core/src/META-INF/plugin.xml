@@ -30,6 +30,8 @@
 
     <psi.referenceContributor implementation="com.intellij.tapestry.intellij.lang.reference.TapestryReferenceContributor"/>
 
+    <xml.xmlExtension implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryXmlExtension"/>
+
     <xml.schemaProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestrySchemaProvider"/>
 
     <xml.elementDescriptorProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryTagDescriptorProvider"/>

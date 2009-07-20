@@ -253,9 +253,14 @@ public class IdeaUtils {
         return JavaPsiFacade.getInstance(project).findPackage(packageName);
     }
 
-  @NotNull
+  @Nullable
   public static XmlElement getNameElement(@NotNull XmlTag tag) {
-    return (XmlElement)tag.getFirstChild().getNextSibling();
+    PsiElement child = tag.getFirstChild();
+    while (child != null) {
+      child = child.getNextSibling();
+      if (child instanceof XmlElement) return (XmlElement)child;
+    }
+    return null;
   }
 
   @NotNull
@@ -267,7 +272,5 @@ public class IdeaUtils {
   @Nullable
   public static Module getModule(XmlTag tag) {
     return ModuleUtil.findModuleForPsiElement(tag);
-    //VirtualFile vFile = tag.getContainingFile().getViewProvider().getVirtualFile();
-    //return ProjectRootManager.getInstance(tag.getManager().getProject()).getFileIndex().getModuleForFile(vFile);
   }
 }//IdeaUtils
