@@ -4,7 +4,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiWritableMetaData;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import static com.intellij.tapestry.intellij.lang.descriptor.DescriptorUtil.*;
+import static com.intellij.tapestry.intellij.lang.descriptor.DescriptorUtil.getTmlOrHtmlTagDescriptor;
+import static com.intellij.tapestry.intellij.lang.descriptor.DescriptorUtil.getTmlSubelementDescriptors;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
@@ -40,7 +41,10 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
   }
 
   public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
-    return getAttributeDescriptor(attribute.getName(), attribute.getParent());
+    String prefix = attribute.getNamespacePrefix();
+    return prefix.length() == 0 || prefix.equals(myNamespacePrefix)
+           ? getAttributeDescriptor(attribute.getName(), attribute.getParent())
+           : null;
   }
 
   public XmlNSDescriptor getNSDescriptor() {

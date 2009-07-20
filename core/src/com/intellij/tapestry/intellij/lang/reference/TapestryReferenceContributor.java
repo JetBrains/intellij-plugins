@@ -29,7 +29,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   private void registerTagNameReferenceProvider(PsiReferenceRegistrar registrar) {
     PatternCondition<XmlTag> tapestryTagCondition = new PatternCondition<XmlTag>("tapestryTagCondition") {
       public boolean accepts(@NotNull XmlTag tag, final ProcessingContext context) {
-        return tag.getContainingFile() instanceof TmlFile && TapestryUtils.getTypeOfTag(tag) != null;
+        return tag.getContainingFile() instanceof TmlFile/* && TapestryUtils.getTypeOfTag(tag) != null*/;
       }
     };
     registrar.registerReferenceProvider(XmlPatterns.xmlTag().with(tapestryTagCondition), new PsiReferenceProvider() {
@@ -65,14 +65,13 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
   @Nullable
   private PsiReferenceBase<PsiElement> getReferenceToComponentClass(XmlTag tag, TextRange range) {
-    final Component component = TapestryUtils.getTypeOfTag(tag);
-    if (component == null) return null;
-    final IntellijJavaClassType elementClass = (IntellijJavaClassType)component.getElementClass();
+    Component component = TapestryUtils.getTypeOfTag(tag);
+    final IntellijJavaClassType elementClass = component == null ? null : (IntellijJavaClassType)component.getElementClass();
 
     return new PsiReferenceBase<PsiElement>(tag, range) {
       @Nullable
       public PsiElement resolve() {
-        return elementClass.getPsiClass();
+        return elementClass == null ? null : elementClass.getPsiClass();
       }
 
       @NotNull
@@ -85,12 +84,11 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   @Nullable
   private PsiReferenceBase<PsiElement> getReferenceToEmbeddedComponent(XmlTag tag, TextRange range) {
     final IntellijJavaField field = (IntellijJavaField)TapestryUtils.findIdentifyingField(tag);
-    if (field == null) return null;
 
     return new PsiReferenceBase<PsiElement>(tag, range) {
       @Nullable
       public PsiElement resolve() {
-        return field.getPsiField();
+        return field == null ? null : field.getPsiField();
       }
 
       @NotNull

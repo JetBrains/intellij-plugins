@@ -38,7 +38,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     doTestBasicCompletionVariants("accesskey", "charset", "class", "coords", "dir", "href", "hreflang", "id", "lang", "name", "onblur",
                                   "onclick", "ondblclick", "onfocus", "onkeydown", "onkeypress", "onkeyup", "onmousedown", "onmousemove",
                                   "onmouseout", "onmouseover", "onmouseup", "rel", "rev", "shape", "style", "tabindex", "target", "title",
-                                  "type");
+                                  "type", "t:type", "t:id");
 
   }
 
@@ -72,6 +72,10 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     UsefulTestCase.assertEmpty(myFixture.getLookupElementStrings());
   }
 
+  public void testTagNameWithDoctypePresent() throws Throwable {
+    //initByComponent();
+    //doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, "comment", getElementTagName()));
+  }
 
   private void doTestBasicCompletionVariants(@NonNls String... expectedItems) throws Throwable {
     doTestCompletionVariants(CompletionType.BASIC, expectedItems);

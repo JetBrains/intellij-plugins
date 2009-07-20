@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWritableMetaData {
   private final XmlElementDescriptor myHtmlDelegate;
+  @Nullable
   private final Component myComponent;
 
   public TapestryHtmlTagDescriptor(@NotNull XmlElementDescriptor htmlDelegate, @Nullable Component component) {

@@ -5,6 +5,11 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryConstants;
+import com.intellij.tapestry.core.TapestryProject;
+import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
+import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
+import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
+import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.psi.TmlFile;
 import com.intellij.xml.DefaultXmlExtension;
 import com.intellij.xml.XmlNSDescriptor;
@@ -44,6 +49,15 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
   @Override
   public boolean isAvailable(PsiFile file) {
     return file instanceof TmlFile;
+  }
+
+  @Override
+  public boolean isRequiredAttributeImplicitlyPresent(XmlTag tag, String attrName) {
+    TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(tag);
+    if(tapestryProject == null) return super.isRequiredAttributeImplicitlyPresent(tag, attrName);
+
+    final PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
+    return element != null && TapestryUtils.parameterDefinedInClass(attrName, (IntellijJavaClassType)element.getElementClass(), tag);
   }
 
   @Override

@@ -3,6 +3,7 @@ package com.intellij.tapestry.tests;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.psi.TmlFile;
 import junit.framework.Assert;
@@ -54,6 +55,32 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     Assert.assertEquals("end", ref.getName());
   }
 
+  public void testTmlAttrNameWithPrefix() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
+    Assert.assertEquals("end", ref.getName());
+  }
+
+  public void testAttrNameWithUnknownPrefix() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    checkReferenceAtCaretPositionUnresolved();
+  }
+
+  private void checkReferenceAtCaretPositionUnresolved() {
+    PsiReference ref = getReferenceAtCaretPosition();
+    Assert.assertNotNull(ref);
+    final PsiElement element = ref.resolve();
+    Assert.assertNull(String.valueOf(element), element);
+  }
+
+  public void testUnknownAttrName() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    checkReferenceAtCaretPositionUnresolved();
+  }
+
   public void testTypeAttrName() throws Throwable {
     addComponentToProject("Count");
     initByComponent();
@@ -66,6 +93,12 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     initByComponent();
     PsiClass ref = resolveReferenceAtCaretPosition(PsiClass.class);
     Assert.assertEquals(TEST_APPLICATION_PACKAGE + "." + COMPONENTS + ".Count", ref.getQualifiedName());
+  }
+
+  public void testTypeAttrUnknownValue() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    checkReferenceAtCaretPositionUnresolved();
   }
 
   public void testIdAttrValue() throws Throwable {
@@ -91,6 +124,8 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
   private <T> T resolveReferenceAtCaretPosition(Class<T> aClass) {
     PsiReference ref = getReferenceAtCaretPosition();
     Assert.assertNotNull("No reference at caret", ref);
-    return assertInstanceOf(ref.resolve(), aClass);
+    final PsiElement element = ref.resolve();
+    Assert.assertNotNull("unresolved reference '" + ref.getCanonicalText() + "'", element);
+    return assertInstanceOf(element, aClass);
   }
 }
