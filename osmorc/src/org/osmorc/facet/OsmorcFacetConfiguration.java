@@ -33,6 +33,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.osgi.framework.Constants;
 import org.osmorc.facet.ui.OsmorcFacetGeneralEditorTab;
 import org.osmorc.facet.ui.OsmorcFacetJAREditorTab;
 import org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab;
@@ -264,6 +265,18 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
   public String getAdditionalProperties()
   {
     return _additionalProperties != null ? _additionalProperties : "";
+  }
+
+
+  /**
+   * @return the contents of this configuration as a single string that can be put into a manifest file.
+   */
+  public String asManifestString()
+  {
+    return Constants.BUNDLE_SYMBOLICNAME + ":" + getBundleSymbolicName() + "\n" +
+        Constants.BUNDLE_VERSION + ":" + getBundleVersion() + "\n" +
+        Constants.BUNDLE_ACTIVATOR + ":" + getBundleActivator() + "\n" +
+        getAdditionalProperties() + "\n";
   }
 
   /**

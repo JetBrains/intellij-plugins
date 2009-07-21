@@ -182,14 +182,22 @@ public class BundleValidityState implements ValidityState
     try
     {
       String contents = VfsUtil.loadText(bndFile);
-      Pattern p = Pattern.compile("-include (.*)");
+      Pattern p = Pattern.compile("-include[:=\\s](.+)");
       Matcher m = p.matcher(contents);
       while (m.find())
       {
-        // get the filename
+        // get the file list
         String dependentFileLocation = m.group(1);
+
+        String[] listMembers = dependentFileLocation.split(",");
+        for (String listMember : listMembers)
+        {
+          // trim it, and remove any leading tilde or minus chars, which do not belong to the path name
+          listMember = listMember.trim().replaceFirst("^[~-]", "");
+
         // according to bnd specs all file locations are relative to the including file
-        VirtualFile dependentFile = VfsUtil.findRelativeFile(dependentFileLocation, bndFile);
+          // TODO: we currently do not support replacing bnd's properties or macros in the file locations
+          VirtualFile dependentFile = VfsUtil.findRelativeFile(listMember, bndFile);
         if (dependentFile != null && dependentFile.exists())
         {
           if (url2Timestamps.containsKey(dependentFile.getUrl()))
@@ -204,7 +212,9 @@ public class BundleValidityState implements ValidityState
             registerDependencies(dependentFile, url2Timestamps);
           }
         }
+
       }
+    }
     }
     catch (IOException e)
     {

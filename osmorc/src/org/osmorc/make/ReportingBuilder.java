@@ -25,23 +25,57 @@
 
 package org.osmorc.make;
 
-import java.io.File;
-import java.io.FileFilter;
+import aQute.lib.osgi.Builder;
+import com.intellij.openapi.compiler.CompileContext;
+import com.intellij.openapi.compiler.CompilerMessageCategory;
+
+import java.text.MessageFormat;
 
 /**
- * File filter which filters out manifests as they interfere with our JAR building.
- *
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
- */
-public class ManifestFileFilter implements FileFilter
+ * Created by IntelliJ IDEA. User: kork Date: Jul 20, 2009 Time: 9:51:18 PM To change this template use File | Settings
+* | File Templates.
+*/
+class ReportingBuilder extends Builder
 {
-  public static final ManifestFileFilter Instance = new ManifestFileFilter();
-  public static final String MANIFEST_FILENAME = "MANIFEST.MF";
-
-  public boolean accept(File file)
+  public ReportingBuilder(CompileContext context, String sourceFileName)
   {
-    return !(MANIFEST_FILENAME.equals(file.getName()) && file.getParentFile() != null &&
-        file.getParentFile().getName().equals("META-INF"));
+    super();
+    _context = context;
+    _sourceFileName = sourceFileName;
   }
+
+
+  @Override
+  public void error(String s, Object... objects)
+  {
+    _context.addMessage(CompilerMessageCategory.ERROR, MessageFormat.format(s, objects), _sourceFileName, 0,0);
+  }
+
+  @Override
+  public void error(String s, Throwable throwable, Object... objects)
+  {
+    _context.addMessage(CompilerMessageCategory.ERROR, MessageFormat.format(s, objects) + "(" + throwable.getMessage() + ")", _sourceFileName, 0, 0);
+  }
+
+  @Override
+  public void warning(String s, Object... objects)
+  {
+    _context.addMessage(CompilerMessageCategory.WARNING, MessageFormat.format(s, objects), _sourceFileName, 0,0);
+
+  }
+
+  @Override
+  public void progress(String s, Object... objects)
+  {
+    _context.addMessage(CompilerMessageCategory.INFORMATION, MessageFormat.format(s, objects), _sourceFileName, 0,0);
+
+  }
+
+  public void begin() {
+    super.begin();
+  }
+
+  private CompileContext _context;
+  private String _sourceFileName;
+
 }

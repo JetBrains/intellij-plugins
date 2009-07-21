@@ -33,10 +33,7 @@ import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -47,6 +44,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.compiler.DummyCompileContext;
 import com.intellij.util.PathsList;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
@@ -173,7 +171,8 @@ public class OsgiRunState extends JavaCommandLineState {
                                 selectedBundle.setBundleUrl(new URL("file", "/", BundleCompiler.getJarFileName(
                                         module)).toString());
                                 // add all the dependencies of the bundle
-                                String[] depUrls = BundleCompiler.bundlifyLibraries(module, progressIndicator);
+                                String[] depUrls = BundleCompiler.bundlifyLibraries(module, progressIndicator,
+                                    DummyCompileContext.getInstance());
                                 for (String depUrl : depUrls) {
                                     SelectedBundle dependency =
                                             new SelectedBundle("Dependency", depUrl, SelectedBundle.BundleType.PlainLibrary);
