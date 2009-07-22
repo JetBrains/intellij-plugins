@@ -72,10 +72,15 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     UsefulTestCase.assertEmpty(myFixture.getLookupElementStrings());
   }
 
-  public void testTagNameWithDoctypePresent() throws Throwable {
-    //initByComponent();
-    //doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, "comment", getElementTagName()));
-  }
+  //public void testTagNameWithDoctypePresent() throws Throwable {
+  //  initByComponent();
+  //  doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, "comment", getElementTagName()));
+  //}
+  //
+  //public void testTagNameWithDoctypeAndExplicitHtmlNSPresent() throws Throwable {
+  //  initByComponent();
+  //  doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, "comment", getElementTagName()));
+  //}
 
   private void doTestBasicCompletionVariants(@NonNls String... expectedItems) throws Throwable {
     doTestCompletionVariants(CompletionType.BASIC, expectedItems);

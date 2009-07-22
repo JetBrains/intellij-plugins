@@ -55,6 +55,18 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     Assert.assertEquals("end", ref.getName());
   }
 
+  public void testTmlAttrNameInHtmlTag() throws Throwable {
+    initByComponent();
+    PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
+    Assert.assertEquals("page", ref.getName());
+  }
+
+  public void testTmlAttrNameWithoutPrefixInHtmlTag() throws Throwable {
+    initByComponent();
+    PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
+    Assert.assertEquals("page", ref.getName());
+  }
+
   public void testTmlAttrNameWithPrefix() throws Throwable {
     addComponentToProject("Count");
     initByComponent();
@@ -68,17 +80,23 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     checkReferenceAtCaretPositionUnresolved();
   }
 
-  private void checkReferenceAtCaretPositionUnresolved() {
-    PsiReference ref = getReferenceAtCaretPosition();
-    Assert.assertNotNull(ref);
-    final PsiElement element = ref.resolve();
-    Assert.assertNull(String.valueOf(element), element);
+  public void testAttrNameWithUnknownPrefixInHtmlTag() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    checkReferenceAtCaretPositionUnresolved();
   }
 
   public void testUnknownAttrName() throws Throwable {
     addComponentToProject("Count");
     initByComponent();
     checkReferenceAtCaretPositionUnresolved();
+  }
+
+  public void testHtmlTypeAttrName() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    XmlTag ref = resolveReferenceAtCaretPosition(XmlTag.class);
+    Assert.assertEquals("xs:attribute", ref.getName());
   }
 
   public void testTypeAttrName() throws Throwable {
@@ -99,6 +117,20 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     addComponentToProject("Count");
     initByComponent();
     checkReferenceAtCaretPositionUnresolved();
+  }
+
+  public void testHtmlIdAttrName() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    XmlTag ref = resolveReferenceAtCaretPosition(XmlTag.class);
+    Assert.assertEquals("xs:attribute", ref.getName());
+  }
+
+  public void testIdAttrName() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    XmlTag ref = resolveReferenceAtCaretPosition(XmlTag.class);
+    Assert.assertEquals("a", ref.getName());
   }
 
   public void testIdAttrValue() throws Throwable {
@@ -127,5 +159,12 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     final PsiElement element = ref.resolve();
     Assert.assertNotNull("unresolved reference '" + ref.getCanonicalText() + "'", element);
     return assertInstanceOf(element, aClass);
+  }
+
+  private void checkReferenceAtCaretPositionUnresolved() {
+    PsiReference ref = getReferenceAtCaretPosition();
+    Assert.assertNotNull(ref);
+    final PsiElement element = ref.resolve();
+    Assert.assertNull(String.valueOf(element), element);
   }
 }

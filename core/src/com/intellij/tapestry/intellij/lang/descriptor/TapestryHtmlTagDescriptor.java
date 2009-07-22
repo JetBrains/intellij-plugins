@@ -5,12 +5,14 @@ import com.intellij.psi.meta.PsiWritableMetaData;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptor;
+import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +67,10 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   }
 
   public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
-    return getAttributeDescriptor(attribute.getName(), attribute.getParent());
+    final String ns = attribute.getNamespace();
+    return attribute.getNamespacePrefix().length() == 0 || TapestryConstants.TEMPLATE_NAMESPACE.equals(ns) || XmlUtil.XHTML_URI.equals(ns)
+           ? getAttributeDescriptor(attribute.getName(), attribute.getParent())
+           : null;
   }
 
   public XmlNSDescriptor getNSDescriptor() {
