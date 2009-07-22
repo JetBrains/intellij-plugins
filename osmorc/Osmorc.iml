@@ -76,7 +76,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar:////Users/kork/devel/java/osmorc/lib/bnd-0.0.337.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/bnd-0.0.337.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
