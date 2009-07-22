@@ -80,7 +80,7 @@ class DescriptorUtil {
     TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(context);
     if (project == null) return XmlElementDescriptor.EMPTY_ARRAY;
     String namespacePrefix = context.getPrefixByNamespace(TapestryConstants.TEMPLATE_NAMESPACE);
-    return getElementDescriptors(project.getAllAvailableElements(), namespacePrefix);
+    return getElementDescriptors(project.getAvailableElements(), namespacePrefix);
   }
 
   public static XmlElementDescriptor getTmlOrHtmlTagDescriptor(@NotNull XmlTag tag) {

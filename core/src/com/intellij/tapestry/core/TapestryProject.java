@@ -22,10 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A Tapestry project. Every IDE implementation must hold a reference to an instance of this class for each project.
@@ -147,15 +144,21 @@ public class TapestryProject {
    */
   @Nullable
   public Page findPage(String pageName) {
-    for (Library library : getLibraries()) {
-      Map<String, PresentationLibraryElement> libraryPages = library.getPages();
-      if (libraryPages.containsKey(pageName)) {
-        return (Page)libraryPages.get(pageName);
-      }
-    }
-
-    return null;
+    return (Page)ourNameToPageMap.get(myModule).get(pageName.toLowerCase());
   }
+
+  @NotNull
+  public String[] getAvailablePageNames() {
+    final Set<String> names = ourNameToPageMap.get(myModule).keySet();
+    return names.toArray(new String[names.size()]);
+  }
+
+  private static final ElementsCachedMap ourNameToPageMap = new ElementsCachedMap("ourFqnToComponentMap", false, true) {
+    protected String computeKey(PresentationLibraryElement element) {
+      return element.getName().toLowerCase().replace('/', '.');
+    }
+  };
+
 
   /**
    * Finds a page by class in the Tapestry application.
@@ -182,14 +185,20 @@ public class TapestryProject {
    */
   @Nullable
   public Component findComponent(@NotNull String componentName) {
-    for (Library library : getLibraries()) {
-      Map<String, PresentationLibraryElement> libraryComponents = library.getComponents();
-      if (libraryComponents.containsKey(componentName)) {
-        return (Component)libraryComponents.get(componentName);
-      }
-    }
-    return null;
+    return (Component)ourNameToComponentMap.get(myModule).get(componentName.toLowerCase());
   }
+
+  @NotNull
+  public String[] getAvailableComponentNames() {
+    final Set<String> names = ourNameToComponentMap.get(myModule).keySet();
+    return names.toArray(new String[names.size()]);
+  }
+
+  private static final ElementsCachedMap ourNameToComponentMap = new ElementsCachedMap("ourFqnToComponentMap", true, false) {
+    protected String computeKey(PresentationLibraryElement element) {
+      return element.getName().toLowerCase().replace('/', '.');
+    }
+  };
 
   /**
    * Finds a Tapestry element, either a component or page can be returned.
@@ -241,7 +250,7 @@ public class TapestryProject {
   };
 
   @NotNull
-  public Collection<PresentationLibraryElement> getAllAvailableElements() {
+  public Collection<PresentationLibraryElement> getAvailableElements() {
     return ourFqnToComponentMap.get(myModule).values();
   }
 

@@ -48,6 +48,13 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     Assert.assertEquals(TEST_APPLICATION_PACKAGE + "." + COMPONENTS + ".Count", ref.getQualifiedName());
   }
 
+  public void testTmlTagNameUsingSubpackage() throws Throwable {
+    addComponentToProject("other.Count");
+    initByComponent();
+    PsiClass ref = resolveReferenceAtCaretPosition(PsiClass.class);
+    Assert.assertEquals(TEST_APPLICATION_PACKAGE + "." + COMPONENTS + ".other.Count", ref.getQualifiedName());
+  }
+
   public void testTmlAttrName() throws Throwable {
     addComponentToProject("Count");
     initByComponent();

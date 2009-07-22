@@ -327,7 +327,7 @@ public class TapestryUtils {
       final String attrValue = ((XmlAttribute)identifier).getValue();
       if (attrValue == null) return null;
       if (attrName.equals("type")) {
-        return tapestryProject.findComponent(attrValue.replace('.', '/'));
+        return tapestryProject.findComponent(attrValue);
       }
       if (attrName.equals("id")) {
         PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
@@ -354,7 +354,7 @@ public class TapestryUtils {
     if (tagLocalName.equals("container")) {
       return ContainerComponent.getInstance(tapestryProject);
     }
-    return tapestryProject.findComponent(tagLocalName.replace('.', '/'));
+    return tapestryProject.findComponent(tagLocalName);
   }
 
   /**

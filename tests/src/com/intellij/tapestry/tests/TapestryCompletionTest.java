@@ -22,14 +22,13 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
 
   public void testTagNameInHtmlParent() throws Throwable {
     initByComponent();
-    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, "head", "body", getElementTagName()));
+    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "head", "body", getElementTagName()));
   }
 
   public void testTagNameInTmlParent() throws Throwable {
     initByComponent();
     doTestBasicCompletionVariants(
-        mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, "base", "isindex", "link", "meta", "object", "script", "style", "title",
-                    getElementTagName()));
+        mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "isindex", "link", "meta", "object", "script", "style", "title", getElementTagName()));
 
   }
 
@@ -53,17 +52,17 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
 
   public void testRootTagName() throws Throwable {
     initByComponent();
-    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_ELEMENT_NAMES, getElementTagName()));
+    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES, getElementTagName()));
   }
 
   public void testTagNameWithinTmlRootTag() throws Throwable {
     initByComponent();
-    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_ELEMENT_NAMES, getElementTagName()));
+    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES, getElementTagName()));
   }
 
   public void testTagNameWithoutHtmlContext() throws Throwable {
     initByComponent();
-    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_ELEMENT_NAMES, getElementTagName()));
+    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES, getElementTagName()));
   }
 
   public void testInvalidTagName() throws Throwable {
@@ -72,14 +71,26 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     UsefulTestCase.assertEmpty(myFixture.getLookupElementStrings());
   }
 
+  public void testTypeAttrValue() throws Throwable {
+    initByComponent();
+    addComponentToProject("mycomps.Count");
+    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, getLowerCaseElementName(), "mycomps.count"));
+  }
+
+  public void testPageAttrValue() throws Throwable {
+    addPageToProject("StartPage");
+    initByComponent();
+    doTestBasicCompletionVariants("exceptionreport", "propertydisplayblocks", "propertyeditblocks", "servicestatus", "startpage");
+  }
+
   //public void testTagNameWithDoctypePresent() throws Throwable {
   //  initByComponent();
-  //  doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, "comment", getElementTagName()));
+  //  doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "comment", getElementTagName()));
   //}
   //
   //public void testTagNameWithDoctypeAndExplicitHtmlNSPresent() throws Throwable {
   //  initByComponent();
-  //  doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, "comment", getElementTagName()));
+  //  doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "comment", getElementTagName()));
   //}
 
   private void doTestBasicCompletionVariants(@NonNls String... expectedItems) throws Throwable {
@@ -98,14 +109,21 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public static final String[] CORE_5_1_0_5_ELEMENT_NAMES =
-      {"t:actionlink", "t:addrowlink", "t:ajaxformloop", "t:any", "t:beandisplay", "t:beaneditform", "t:beaneditor", "t:checkbox",
-          "t:datefield", "t:delegate", "t:errors", "t:eventlink", "t:exceptiondisplay", "t:form", "t:formfragment", "t:forminjector",
-          "t:grid", "t:gridcell", "t:gridcolumns", "t:gridpager", "t:gridrows", "t:hidden", "t:if", "t:label", "t:linksubmit", "t:loop",
-          "t:output", "t:outputraw", "t:pagelink", "t:palette", "t:passwordfield", "t:progressivedisplay", "t:propertydisplay",
-          "t:propertyeditor", "t:radio", "t:radiogroup", "t:removerowlink", "t:renderobject", "t:select", "t:submit", "t:submitnotifier",
-          "t:textarea", "t:textfield", "t:textoutput", "t:unless", "t:zone"};
+      {"actionlink", "addrowlink", "ajaxformloop", "any", "beandisplay", "beaneditform", "beaneditor", "checkbox", "datefield", "delegate",
+          "errors", "eventlink", "exceptiondisplay", "form", "formfragment", "forminjector", "grid", "gridcell", "gridcolumns", "gridpager",
+          "gridrows", "hidden", "if", "label", "linksubmit", "loop", "output", "outputraw", "pagelink", "palette", "passwordfield",
+          "progressivedisplay", "propertydisplay", "propertyeditor", "radio", "radiogroup", "removerowlink", "renderobject", "select",
+          "submit", "submitnotifier", "textarea", "textfield", "textoutput", "unless", "zone"};
+  public static final String[] CORE_5_1_0_5_TAG_NAMES;
 
-  public static final String[] HTML_ELEMENT_NAMES =
+  static {
+    CORE_5_1_0_5_TAG_NAMES = new String[CORE_5_1_0_5_ELEMENT_NAMES.length];
+    for (int i = 0; i < CORE_5_1_0_5_TAG_NAMES.length; i++) {
+      CORE_5_1_0_5_TAG_NAMES[i] = "t:" + CORE_5_1_0_5_ELEMENT_NAMES[i];
+    }
+  }
+
+  public static final String[] HTML_TAG_NAMES =
       {"a", "abbr", "acronym", "address", "applet", "area", "b", "base", "basefont", "bdo", "big", "blockquote", "body", "br", "button",
           "caption", "center", "cite", "code", "col", "colgroup", "dd", "del", "dfn", "dir", "div", "dl", "dt", "em", "fieldset", "font",
           "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "hr", "html", "i", "iframe", "img", "input", "ins", "isindex", "kbd", "label",
@@ -113,5 +131,5 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
           "q", "s", "samp", "script", "select", "small", "span", "strike", "strong", "style", "sub", "sup", "table", "tbody", "td",
           "textarea", "tfoot", "th", "thead", "title", "tr", "tt", "u", "ul", "var"};
 
-  public static final String[] HTML_AND_CORE_5_1_0_5_ELEMENT_NAMES = mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, HTML_ELEMENT_NAMES);
+  public static final String[] HTML_AND_CORE_5_1_0_5_TAG_NAMES = mergeArrays(CORE_5_1_0_5_TAG_NAMES, HTML_TAG_NAMES);
 }

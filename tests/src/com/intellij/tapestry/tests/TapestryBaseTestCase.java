@@ -106,14 +106,17 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   protected void addTapestryLibraries(final JavaModuleFixtureBuilder moduleBuilder) {
-    //PsiTestUtil.addLibrary(myModule, "JavaEE", PathManager.getHomePath(), "/lib/", "javaee.jar", "javase-javax.jar");
     moduleBuilder.addLibraryJars("tapestry_5.1.0.5", getCommonTestDataPath() + "libs", "antlr-runtime-3.1.1.jar", "commons-codec.jar",
                                  "javassist.jar", "log4j.jar", "slf4j-api.jar", "slf4j-log4j12.jar", "stax2.jar",
                                  "tapestry5-annotations.jar", "tapestry-core.jar", "tapestry-ioc.jar", "wstx-asl.jar");
   }
 
   protected String getElementTagName() {
-    return "t:" + getElementName().toLowerCase();
+    return "t:" + getLowerCaseElementName();
+  }
+
+  protected String getLowerCaseElementName() {
+    return getElementName().toLowerCase();
   }
 
   protected String getElementName() {
@@ -160,10 +163,26 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   private void addElementToProject(String relativePath, String className, String ext) throws IOException {
+    final int afterDotIndex = className.lastIndexOf('.');
+    String fileText;
+    if (afterDotIndex != -1) {
+      final String subpackage = className.substring(0, afterDotIndex);
+      relativePath += subpackage.replace('.', '/') + '/';
+      className = className.substring(afterDotIndex + 1);
+      fileText = getCommonTestDataFileText(className + ext);
+      if (fileText.startsWith("package " + TEST_APPLICATION_PACKAGE)) {
+        int toPasteSubpackageIndex = fileText.indexOf(';');
+        fileText = fileText.substring(0, toPasteSubpackageIndex) + '.' + subpackage + fileText.substring(toPasteSubpackageIndex);
+      }
+    }
+    else {
+      fileText = getCommonTestDataFileText(className + ext);
+    }
     String targetPath = relativePath + className + ext;
-    Assert.assertNotNull(myFixture.addFileToProject(targetPath, getCommonTestDataFileText(className + ext)));
+    Assert.assertNotNull(myFixture.addFileToProject(targetPath, fileText));
   }
 
+  @NotNull
   protected String getCommonTestDataFileText(@NotNull String fileName) throws IOException {
     File file = new File(getCommonTestDataPath() + "/" + fileName);
     Assert.assertTrue(file + " doesn't exists", file.exists());

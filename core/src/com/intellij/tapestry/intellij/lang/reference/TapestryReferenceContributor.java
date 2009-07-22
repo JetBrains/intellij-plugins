@@ -11,10 +11,12 @@ import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.Page;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.resource.IResource;
+import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
+import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.psi.TmlFile;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -56,15 +58,15 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
     });
   }
 
-  @NotNull
+  @Nullable
   private TextRange getValueTextRangeInTag(@NotNull XmlAttribute typeAttr, XmlTag parent) {
     XmlAttributeValue attrValue = typeAttr.getValueElement();
-    int start = attrValue.getTextOffset() - parent.getTextOffset() - 1;
-    return TextRange.from(start, attrValue.getTextLength());
+    return attrValue == null ? null : attrValue.getValueTextRange().shiftRight(-parent.getTextOffset());
   }
 
   @Nullable
-  private PsiReferenceBase<PsiElement> getReferenceToComponentClass(XmlTag tag, TextRange range) {
+  private PsiReferenceBase<PsiElement> getReferenceToComponentClass(final XmlTag tag, @Nullable TextRange range) {
+    if (range == null) return null;
     Component component = TapestryUtils.getTypeOfTag(tag);
     final IntellijJavaClassType elementClass = component == null ? null : (IntellijJavaClassType)component.getElementClass();
 
@@ -76,13 +78,15 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
       @NotNull
       public Object[] getVariants() {
-        return EMPTY_ARRAY;
+        TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(tag);
+        return project == null ? EMPTY_ARRAY : project.getAvailableComponentNames();
       }
     };
   }
 
   @Nullable
-  private PsiReferenceBase<PsiElement> getReferenceToEmbeddedComponent(XmlTag tag, TextRange range) {
+  private PsiReferenceBase<PsiElement> getReferenceToEmbeddedComponent(XmlTag tag, @Nullable TextRange range) {
+    if (range == null) return null;
     final IntellijJavaField field = (IntellijJavaField)TapestryUtils.findIdentifyingField(tag);
 
     return new PsiReferenceBase<PsiElement>(tag, range) {
@@ -93,14 +97,18 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
       @NotNull
       public Object[] getVariants() {
+        // @Component annotated field IDs
         return EMPTY_ARRAY;
       }
     };
   }
 
   @Nullable
-  private PsiReferenceBase<PsiElement> getReferenceToPage(XmlTag tag, XmlAttribute pageAttr) {
+  private PsiReferenceBase<PsiElement> getReferenceToPage(final XmlTag tag, XmlAttribute pageAttr) {
     if (pageAttr == null) return null;
+
+    final TextRange range = getValueTextRangeInTag(pageAttr, tag);
+    if (range == null) return null;
 
     Component component = TapestryUtils.getTypeOfTag(tag);
     if (component == null) return null;
@@ -110,7 +118,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
     final Page page = component.getProject().findPage(pageAttr.getValue());
 
-    return new PsiReferenceBase<PsiElement>(tag, getValueTextRangeInTag(pageAttr, tag)) {
+    return new PsiReferenceBase<PsiElement>(tag, range) {
       @Nullable
       public PsiElement resolve() {
         if (page == null) return null;
@@ -120,7 +128,8 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
       @NotNull
       public Object[] getVariants() {
-        return EMPTY_ARRAY;
+        TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(tag);
+        return project == null ? EMPTY_ARRAY : project.getAvailablePageNames();
       }
     };
   }
