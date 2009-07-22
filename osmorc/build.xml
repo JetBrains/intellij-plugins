@@ -70,7 +70,7 @@
     <path id="osmorc.module.classpath">
         <path refid="${module.jdk.classpath.osmorc}"/>
         <pathelement location="${module.osmorc.basedir}/lib/org.eclipse.osgi.jar"/>
-        <pathelement location="${module.osmorc.basedir}/lib/bnd-0.0.254.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/bnd-0.0.337.jar"/>
         <pathelement location="${module.osmorc.basedir}/lib/binding-2.0.6.jar"/>
     </path>
 
@@ -133,7 +133,7 @@
         </jar>
         <copy file="${module.osmorc.basedir}/lib/org.eclipse.osgi.jar"
               tofile="${tmp.dir.osmorc}/lib/org.eclipse.osgi.jar"/>
-        <copy file="${module.osmorc.basedir}/lib/bnd-0.0.254.jar" tofile="${tmp.dir.osmorc}/lib/bnd-0.0.254.jar"/>
+        <copy file="${module.osmorc.basedir}/lib/bnd-0.0.337.jar" tofile="${tmp.dir.osmorc}/lib/bnd-0.0.254.jar"/>
         <copy file="${module.osmorc.basedir}/lib/binding-2.0.6.jar" tofile="${tmp.dir.osmorc}/lib/binding-2.0.6.jar"/>
         <copy file="${module.osmorc.basedir}/lib/commons-lang-2.4.jar"
               tofile="${tmp.dir.osmorc}/lib/commons-lang-2.4.jar"/>
