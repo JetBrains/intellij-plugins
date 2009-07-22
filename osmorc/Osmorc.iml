@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module relativePaths="true" type="PLUGIN_MODULE" version="4">
-  <component name="DevKit.ModuleBuildProperties" url="file:$TEMPLATE$/$MODULE_DIR$/src/META-INF/plugin.xml" />
+  <component name="DevKit.ModuleBuildProperties" url="file://$MODULE_DIR$/src/META-INF/plugin.xml" />
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file:$TEMPLATE$/$MODULE_DIR$">
-      <sourceFolder url="file:$TEMPLATE$/$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file:$TEMPLATE$/$MODULE_DIR$/src_test" isTestSource="true" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src_test" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar:$TEMPLATE$/$MODULE_DIR$/lib/easymock.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/easymock.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar:$TEMPLATE$/$MODULE_DIR$/lib/easymock_src.zip!/" />
+          <root url="jar://$MODULE_DIR$/lib/easymock_src.zip!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar:$TEMPLATE$/$MODULE_DIR$/lib/easymockclassextension.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/easymockclassextension.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar:$TEMPLATE$/$MODULE_DIR$/lib/easymockclassextension_src.zip!/" />
+          <root url="jar://$MODULE_DIR$/lib/easymockclassextension_src.zip!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar:$TEMPLATE$/$MODULE_DIR$/lib/org.eclipse.osgi.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/org.eclipse.osgi.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar:$TEMPLATE$/$MODULE_DIR$/lib/org.eclipse.osgi_src.zip!/" />
+          <root url="jar://$MODULE_DIR$/lib/org.eclipse.osgi_src.zip!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar:$TEMPLATE$/$MODULE_DIR$/lib/binding-2.0.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/binding-2.0.6.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -54,29 +54,29 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar:$TEMPLATE$/$MODULE_DIR$/lib/hamcrest-library-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/hamcrest-library-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar:$TEMPLATE$/$MODULE_DIR$/lib/hamcrest-library-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/hamcrest-library-1.1.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar:$TEMPLATE$/$MODULE_DIR$/lib/commons-lang-2.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/commons-lang-2.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar:$TEMPLATE$/$MODULE_DIR$/lib/commons-lang-2.4-sources.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/commons-lang-2.4-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar:$TEMPLATE$/$TEMPLATE$/Users/kork/devel/java/osmorc/lib/bnd-0.0.337.jar!/" />
+          <root url="jar:////Users/kork/devel/java/osmorc/lib/bnd-0.0.337.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

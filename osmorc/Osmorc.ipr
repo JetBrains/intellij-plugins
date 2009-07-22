@@ -2,7 +2,7 @@
 <project relativePaths="true" version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
-    <buildFile url="file:$TEMPLATE$/$PROJECT_DIR$/build.xml">
+    <buildFile url="file://$PROJECT_DIR$/build.xml">
       <additionalClassPath />
       <antReference projectDefault="true" />
       <customJdkName value="" />
@@ -393,7 +393,7 @@
         <default-constraints vsize-policy="6" hsize-policy="0" anchor="0" fill="2" />
       </item>
     </group>
-    <group name="$TEMPLATE$">
+    <group name="/">
       <item class="com.intellij.openapi.ui.TextFieldWithBrowseButton" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>
@@ -418,11 +418,11 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file:$TEMPLATE$/$PROJECT_DIR$/Osmorc.iml" filepath="$PROJECT_DIR$/Osmorc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Osmorc.iml" filepath="$PROJECT_DIR$/Osmorc.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 10590" project-jdk-type="IDEA JDK">
-    <output url="file:$TEMPLATE$/$PROJECT_DIR$/classes" />
+    <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="ProjectRunConfigurationManager">
     <configuration default="false" name="All in Osmorc (code coverage)" type="JUnit" factoryName="JUnit" enabled="true" merge="false" per_test_coverage_enabled="false" sample_coverage="true" runner="emma">
@@ -567,7 +567,7 @@
       <option name="TEST_OBJECT" value="package" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file:$TEMPLATE$/$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
       <option name="ADDITIONAL_CLASS_PATH" />
@@ -596,7 +596,7 @@
       <option name="TEST_OBJECT" value="package" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file:$TEMPLATE$/$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
       <option name="ADDITIONAL_CLASS_PATH" />
@@ -836,8 +836,5 @@
       <option name="useAlternate" value="false" />
     </LanguageOptions>
   </component>
-  <UsedPathMacros>
-    <macro name="TEMPLATE" description="" />
-  </UsedPathMacros>
 </project>
 
