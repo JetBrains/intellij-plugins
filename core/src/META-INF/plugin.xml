@@ -42,6 +42,8 @@
                 icon="/com/intellij/tapestry/core/icons/tapestry_logo_small.png"
                 factoryClass="com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory"
                 conditionClass="com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory"/>
+
+    <projectViewPane implementation="com.intellij.tapestry.intellij.view.TapestryProjectViewPane"/>
   </extensions>
 
   <actions>
@@ -97,10 +99,6 @@
   <project-components>
     <component>
       <implementation-class>com.intellij.tapestry.intellij.TapestryProjectSupportLoader</implementation-class>
-    </component>
-    <component>
-      <implementation-class>com.intellij.tapestry.intellij.view.TapestryProjectViewPane</implementation-class>
-      <interface-class>com.intellij.tapestry.intellij.view.TapestryProjectViewPane</interface-class>
     </component>
     <component>
       <implementation-class>com.intellij.tapestry.intellij.TapestryListenersSupportLoader</implementation-class>

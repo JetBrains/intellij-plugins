@@ -9,7 +9,6 @@ import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.ide.projectView.impl.ProjectViewTree;
 import com.intellij.ide.ui.customization.CustomActionsSchema;
 import com.intellij.ide.util.treeView.NodeDescriptor;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -17,7 +16,6 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -69,8 +67,7 @@ import java.util.List;
 /**
  * The Tapestry view pane.
  */
-public class TapestryProjectViewPane extends AbstractProjectViewPane
-    implements Disposable, FileSystemListener, TapestryModelChangeListener {
+public class TapestryProjectViewPane extends AbstractProjectViewPane implements FileSystemListener, TapestryModelChangeListener {
 
   private static final String VIEW_TITLE = "Tapestry";
   private static final String ID = "TapestryProjectView";
@@ -80,7 +77,6 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane
   private final ModuleListener myModuleListener;
   private TapestryIdeView myIdeView;
   private JScrollPane myComponent;
-  private boolean myInitialized;
   private boolean myShown;
   private boolean myGroupElementFiles = true;
   private boolean myShowLibraries = true;
@@ -112,6 +108,17 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane
     }
   }//Constructor
 
+  @Override
+  public boolean isInitiallyVisible() {
+    myShown = false;
+    for (Module module : ModuleManager.getInstance(myProject).getModules()) {
+      if (TapestryUtils.isTapestryModule(module)) {
+        myShown = true;
+        break;
+      }
+    }
+    return myShown;
+  }
 
   /**
    * {@inheritDoc}
@@ -172,7 +179,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane
    * @return the project instance of this view pane.
    */
   public static TapestryProjectViewPane getInstance(@NotNull final Project project) {
-    return project.getComponent(TapestryProjectViewPane.class);
+    return (TapestryProjectViewPane) ProjectView.getInstance(project).getProjectViewPaneById(ID);
   }//getInstance
 
   /**
@@ -247,20 +254,6 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane
   /**
    * {@inheritDoc}
    */
-  public void projectOpened() {
-    StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
-      public void run() {
-        synchronized (TapestryProjectViewPane.this) {
-          myInitialized = true;
-          modulesChanged();
-        }
-      }
-    });
-  }//projectOpened
-
-  /**
-   * {@inheritDoc}
-   */
   public void fileCreated(String path) {
     updateFromRoot(true);
   }//fieCreated
@@ -303,33 +296,13 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane
   /**
    * {@inheritDoc}
    */
-  public void projectClosed() {
-    //do nothing
-  }//projectClosed
-
-  /**
-   * {@inheritDoc}
-   */
-  @NotNull
-  public String getComponentName() {
-    return COMPONENT_NAME;
-  }//getComponentName
-
-  /**
-   * {@inheritDoc}
-   */
-  public void initComponent() {
-    //do nothing
-  }//initComponent
-
-  /**
-   * {@inheritDoc}
-   */
-  public void disposeComponent() {
+  @Override
+  public void dispose() {
     if (myModuleListener != null) {
       myMessageBusConnection.disconnect();
     }
-  }//disposeComponent
+    super.dispose();
+  }
 
   /**
    * Check if a file can be selected.
@@ -586,10 +559,6 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane
   }//addTreeListeners
 
   private void modulesChanged() {
-    if (!isInitialized()) {
-      return;
-    }
-
     boolean shouldShow = false;
     for (Module module : ModuleManager.getInstance(myProject).getModules()) {
       TapestryModuleSupportLoader.getTapestryProject(module).getEventsManager().removeFileSystemListener(this);
@@ -622,9 +591,5 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane
     projectView.removeProjectPane(this);
     myShown = false;
   }//removeMe
-
-  private synchronized boolean isInitialized() {
-    return myInitialized;
-  }//isInitialized
 
 }//TapestryProjectViewPane
