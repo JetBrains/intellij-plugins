@@ -8,6 +8,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.intellij.facet.ui.NewFacetDialog;
 import com.intellij.tapestry.intellij.util.Validators;
 import org.jetbrains.annotations.NonNls;
@@ -23,7 +24,12 @@ public class TapestryFrameworkSupportProvider extends FacetTypeFrameworkSupportP
     super(TapestryFacetType.INSTANCE);
   }
 
-  protected void setupConfiguration(TapestryFacet tapestryFacet, ModifiableRootModel modifiableRootModel, String s) {
+  protected void setupConfiguration(TapestryFacet tapestryFacet, ModifiableRootModel modifiableRootModel, String version) {
+    TapestryFacetConfiguration conf = tapestryFacet.getConfiguration();
+    conf.setVersion(getVersion(version));
+
+    if(StringUtil.isEmpty(conf.getFilterName())) conf.setFilterName(tapestryFacet.getModule().getName().toLowerCase());
+    if(StringUtil.isEmpty(conf.getApplicationPackage())) conf.setApplicationPackage("com.app");
   }
 
   @Override
@@ -64,45 +70,30 @@ public class TapestryFrameworkSupportProvider extends FacetTypeFrameworkSupportP
   protected void onFacetCreated(final TapestryFacet facet, final ModifiableRootModel rootModel, final String version) {
     StartupManager.getInstance(facet.getModule().getProject()).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
-        final TapestryFacetConfiguration configuration = new TapestryFacetConfiguration();
-        configuration.setFilterName(rootModel.getModule().getName().toLowerCase());
-        configuration.setVersion(getVersion(version));
+        final TapestryFacetConfiguration configuration = facet.getConfiguration();
 
-        final NewFacetDialog newFacetDialog = new NewFacetDialog();
+        final NewFacetDialog newFacetDialog = new NewFacetDialog(configuration);
         final DialogBuilder builder = new DialogBuilder(rootModel.getModule().getProject());
 
+        builder.removeAllActions();
+        builder.addOkAction();
         builder.setCenterPanel(newFacetDialog.getMainPanel());
         builder.setTitle("New Tapestry Support");
         builder.setButtonsAlignment(SwingConstants.CENTER);
         builder.setOkOperation(new Runnable() {
 
           public void run() {
-            if (newFacetDialog.getFilterName() == null || newFacetDialog.getFilterName().length() == 0) {
-              Messages.showErrorDialog("You must provide a filter name!", CommonBundle.getErrorTitle());
-              return;
-            }
-
+            facet.getConfiguration();
             if (!Validators.isValidPackageName(newFacetDialog.getApplicationPackage())) {
               Messages.showErrorDialog("Invalid package!", CommonBundle.getErrorTitle());
               return;
             }
-
             configuration.setFilterName(newFacetDialog.getFilterName());
             configuration.setApplicationPackage(newFacetDialog.getApplicationPackage());
 
             builder.getWindow().dispose();
           }
         });
-
-        builder.setCancelOperation(new Runnable() {
-
-          public void run() {
-            newFacetDialog.setGenerateStartupApplication(false);
-
-            builder.getWindow().dispose();
-          }
-        });
-
         builder.showModal(true);
 
         AddTapestrySupportUtil.addSupportInWriteCommandAction(rootModel, configuration,

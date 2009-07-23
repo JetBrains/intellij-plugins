@@ -22,6 +22,7 @@ import com.intellij.tapestry.core.maven.RemoteRepositoryDescription;
 import com.intellij.tapestry.core.util.StringUtils;
 import com.intellij.tapestry.intellij.util.IntellijWebDescriptorUtils;
 import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,10 +32,11 @@ public class AddTapestrySupportUtil {
 
   private static final Logger _logger = LoggerFactory.getInstance().getLogger(AddTapestrySupportUtil.class);
 
-  public static void addSupportInWriteCommandAction(final ModuleRootModel rootModel,
-                                                    final TapestryFacetConfiguration configuration,
+  public static void addSupportInWriteCommandAction(@NotNull final ModuleRootModel rootModel,
+                                                    @NotNull final TapestryFacetConfiguration configuration,
                                                     final boolean generateStartupApplication,
                                                     final boolean generatePom) {
+    if (configuration.getApplicationPackage() == null) return;
     new WriteCommandAction.Simple(rootModel.getModule().getProject()) {
       protected void run() throws Throwable {
         try {
@@ -47,7 +49,7 @@ public class AddTapestrySupportUtil {
     }.execute();
   }
 
-  public static void addSupport(ModuleRootModel rootModel,
+  private static void addSupport(ModuleRootModel rootModel,
                                 TapestryFacetConfiguration configuration,
                                 boolean generateStartupApplication,
                                 boolean generatePom) throws Exception {
