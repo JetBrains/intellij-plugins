@@ -237,7 +237,7 @@ public class TapestryProject {
    */
   @Nullable
   public PresentationLibraryElement findElementByTemplate(@NotNull PsiFile template) {
-    String templatePath = new File(template.getViewProvider().getVirtualFile().getPath()).getAbsolutePath();
+    String templatePath = new File(template.getOriginalFile().getViewProvider().getVirtualFile().getPath()).getAbsolutePath();
     return ourTemplateToElementMap.get(myModule).get(LocalizationUtils.unlocalizeFileName(templatePath));
   }
 

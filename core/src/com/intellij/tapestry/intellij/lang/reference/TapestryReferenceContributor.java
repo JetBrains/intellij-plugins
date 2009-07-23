@@ -12,6 +12,7 @@ import com.intellij.tapestry.core.model.presentation.Page;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.TapestryProject;
+import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
@@ -21,6 +22,9 @@ import com.intellij.tapestry.psi.TmlFile;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
+import java.util.Set;
 
 public class TapestryReferenceContributor extends PsiReferenceContributor {
 
@@ -85,8 +89,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   }
 
   @Nullable
-  private PsiReferenceBase<PsiElement> getReferenceToEmbeddedComponent(XmlTag tag, @Nullable TextRange range) {
-    if (range == null) return null;
+  private PsiReferenceBase<PsiElement> getReferenceToEmbeddedComponent(final XmlTag tag, TextRange range) {
     final IntellijJavaField field = (IntellijJavaField)TapestryUtils.findIdentifyingField(tag);
 
     return new PsiReferenceBase<PsiElement>(tag, range) {
@@ -97,8 +100,9 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
 
       @NotNull
       public Object[] getVariants() {
-        // @Component annotated field IDs
-        return EMPTY_ARRAY;
+        Map<String, IJavaField> fields = TapestryUtils.findIdentifyingFields(tag);
+        Set<String> fieldIdSet = fields.keySet();
+        return fieldIdSet.toArray(new String[fieldIdSet.size()]);
       }
     };
   }

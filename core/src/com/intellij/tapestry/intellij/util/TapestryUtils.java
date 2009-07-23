@@ -31,9 +31,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Utility methods related to Tapestry.
@@ -125,11 +123,12 @@ public class TapestryUtils {
     return false;
   }
 
-
-  private static boolean isFieldIdEqualsToTagId(String[] fieldIds, IJavaField field, String tagId) {
-    return fieldIds != null && fieldIds.length > 0 && fieldIds[0] != null && fieldIds[0].length() > 0
-           ? fieldIds[0].equals(tagId)
-           : field.getName().equals(tagId);
+  @Nullable
+  public static String getFieldId(IJavaField field) {
+    final IJavaAnnotation annotation = field.getAnnotations().get(TapestryConstants.COMPONENT_ANNOTATION);
+    if (annotation == null) return null;
+    String[] fieldIds = annotation.getParameters().get("id");
+    return fieldIds != null && fieldIds.length > 0 && fieldIds[0] != null && fieldIds[0].length() > 0 ? fieldIds[0] : field.getName();
   }
 
   @Nullable
@@ -140,13 +139,28 @@ public class TapestryUtils {
     return element != null ? findIdentifyingField((IntellijJavaClassType)element.getElementClass(), tag) : null;
   }
 
+  @NotNull
+  public static Map<String, IJavaField> findIdentifyingFields(XmlTag tag) {
+    final TapestryProject tapestryProject = getTapestryProject(tag);
+    if (tapestryProject == null) return Collections.emptyMap();
+    PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
+    if (element == null) return Collections.emptyMap();
+    HashMap<String, IJavaField> map = new HashMap<String, IJavaField>();
+    for (IJavaField field : element.getElementClass().getFields(false).values()) {
+      String fieldId = getFieldId(field);
+      if (fieldId != null) {
+        map.put(fieldId, field);
+      }
+    }
+    return map;
+  }
+
   @Nullable
   private static IJavaField findIdentifyingField(IntellijJavaClassType elementClass, XmlTag tag) {
     final String tagId = tag.getAttributeValue("id", TapestryConstants.TEMPLATE_NAMESPACE);
     if (tagId == null) return null;
     for (IJavaField field : elementClass.getFields(false).values()) {
-      final IJavaAnnotation annotation = field.getAnnotations().get(TapestryConstants.COMPONENT_ANNOTATION);
-      if (annotation != null && isFieldIdEqualsToTagId(annotation.getParameters().get("id"), field, tagId)) return field;
+      if (tagId.equals(getFieldId(field))) return field;
     }
     return null;
   }

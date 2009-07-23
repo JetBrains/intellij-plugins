@@ -83,6 +83,12 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     doTestBasicCompletionVariants("exceptionreport", "propertydisplayblocks", "propertyeditblocks", "servicestatus", "startpage");
   }
 
+  public void testIdAttrValue() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    doTestBasicCompletionVariants("index", "link2", "link3");
+  }
+  
   //public void testTagNameWithDoctypePresent() throws Throwable {
   //  initByComponent();
   //  doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "comment", getElementTagName()));
