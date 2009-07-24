@@ -30,9 +30,6 @@ public abstract class TapestryNode extends SimpleNode {
      * @param presentation the node presentation configuration.
      */
     public void init(@NotNull final Object id, @NotNull final ItemPresentation presentation) {
-        assert id != null;
-
-        assert presentation != null;
 
         _element = id;
         _presentation = presentation;
