@@ -13,7 +13,6 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.xml.*;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.presentation.Component;
@@ -211,11 +210,6 @@ public class TapestryUtils {
     catch (FileAlreadyExistsException ex) {
       errorMsg = "Some component file already exists, the existing version was kept!\n\n";
     }
-    catch (NotFoundException ex) {
-      errorMsg = "An error occured creating the component!\n\n";
-
-      _logger.error(ex);
-    }
 
     if (errorMsg.length() > 0) {
       throw new IllegalStateException(errorMsg);
@@ -255,11 +249,6 @@ public class TapestryUtils {
     catch (FileAlreadyExistsException e) {
       errorMsg = "Some page file already exists, the existing version was kept!\n\n";
     }
-    catch (NotFoundException ex) {
-      errorMsg = "An error occured creating the page!\n\n";
-
-      _logger.error(ex);
-    }
 
 
     if (errorMsg.length() > 0) {
@@ -290,11 +279,6 @@ public class TapestryUtils {
     }
     catch (FileAlreadyExistsException e) {
       errorMsg = "Some mixin file already exists, the existing version was kept!\n\n";
-    }
-    catch (NotFoundException ex) {
-      errorMsg = "An error occured creating the mixin!\n\n";
-
-      _logger.error(ex);
     }
 
     if (errorMsg.length() > 0) {

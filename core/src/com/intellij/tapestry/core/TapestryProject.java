@@ -4,7 +4,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.tapestry.core.events.TapestryEventsManager;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaTypeCreator;
 import com.intellij.tapestry.core.java.IJavaTypeFinder;
@@ -22,7 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * A Tapestry project. Every IDE implementation must hold a reference to an instance of this class for each project.
@@ -75,31 +77,34 @@ public class TapestryProject {
 
   /**
    * @return the application pages root package.
-   * @throws NotFoundException when the pages root package can't be found.
    */
-  @NotNull
-  public String getPagesRootPackage() throws NotFoundException {
-    return getApplicationRootPackage() + "." + TapestryConstants.PAGES_PACKAGE;
+  @Nullable
+  public String getPagesRootPackage() {
+    return getElementsRootPackage(TapestryConstants.PAGES_PACKAGE);
   }
 
   /**
    * @return the application components root package.
-   * @throws NotFoundException when the components root package can't be found.
    */
-  @NotNull
-  public String getComponentsRootPackage() throws NotFoundException {
-    return getApplicationRootPackage() + "." + TapestryConstants.COMPONENTS_PACKAGE;
+  @Nullable
+  public String getComponentsRootPackage() {
+    return getElementsRootPackage(TapestryConstants.COMPONENTS_PACKAGE);
   }
 
   /**
    * @return the application mixins root package.
-   * @throws NotFoundException when the mixins root package can't be found.
    */
-  @NotNull
-  public String getMixinsRootPackage() throws NotFoundException {
-    return getApplicationRootPackage() + "." + TapestryConstants.MIXINS_PACKAGE;
+  @Nullable
+  public String getMixinsRootPackage() {
+    return getElementsRootPackage(TapestryConstants.MIXINS_PACKAGE);
   }
 
+  @Nullable
+  private String getElementsRootPackage(@NotNull String subpackage) {
+    final String rootPackage = getApplicationRootPackage();
+    if(rootPackage == null) return null;
+    return rootPackage + "." + subpackage;
+  }
   /**
    * Finds the available libraries of this project.
    *

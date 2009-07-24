@@ -4,22 +4,18 @@ import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.intellij.ui.treeStructure.SimpleNode;
-import com.intellij.tapestry.core.exceptions.NotFoundException;
+import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
-import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.Icons;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.view.TapestryProjectViewPane;
+import com.intellij.ui.treeStructure.SimpleNode;
 
 import java.util.TreeSet;
 
@@ -100,39 +96,26 @@ public class PackageNode extends TapestryNode {
         return children.toArray(new TapestryNode[children.size()]);
     }
 
-    public Library getLibrary() {
-        return _library;
+  private PackageNode createNewNode(PsiDirectory psiDirectory) {
+    final PsiPackage aPackage = IdeaUtils.getPackage(psiDirectory);
+    if (aPackage == null) return null;
+    TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(_module);
+    if (tapestryProject == null) return null;
+    String applicationRootPackage = tapestryProject.getApplicationRootPackage();
+    String packageName = aPackage.getQualifiedName();
+    if (packageName.equals(applicationRootPackage)) {
+      return new LibraryNode(tapestryProject.getApplicationLibrary(), psiDirectory, _module, _treeBuilder);
+    }
+    if (packageName.equals(tapestryProject.getPagesRootPackage())) {
+      return new PagesNode(psiDirectory, _module, _treeBuilder);
+    }
+    if (packageName.equals(tapestryProject.getComponentsRootPackage())) {
+      return new ComponentsNode(psiDirectory, _module, _treeBuilder);
+    }
+    if (packageName.equals(tapestryProject.getMixinsRootPackage())) {
+      return new MixinsNode(psiDirectory, _module, _treeBuilder);
     }
 
-    public static PsiPackage getPackage(PsiDirectory psiDirectory) {
-        Project project = psiDirectory.getProject();
-        ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-        String packageName = projectFileIndex.getPackageNameByDirectory(psiDirectory.getVirtualFile());
-        if (packageName == null) return null;
-        return JavaPsiFacade.getInstance(project).findPackage(packageName);
-    }
-
-    private PackageNode createNewNode(PsiDirectory psiDirectory) {
-        try {
-            TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(_module);
-            String applicationRootPackage = tapestryProject.getApplicationRootPackage();
-          String packageName = IdeaUtils.getPackage(psiDirectory).getQualifiedName();
-          if (applicationRootPackage.equals(packageName)) {
-              return new LibraryNode(tapestryProject.getApplicationLibrary(), psiDirectory, _module, _treeBuilder);
-          } else
-          if (tapestryProject.getPagesRootPackage().equals(packageName)) {
-              return new PagesNode(psiDirectory, _module, _treeBuilder);
-          } else
-          if (tapestryProject.getComponentsRootPackage().equals(packageName)) {
-              return new ComponentsNode(psiDirectory, _module, _treeBuilder);
-          } else
-          if (tapestryProject.getMixinsRootPackage().equals(packageName)) {
-              return new MixinsNode(psiDirectory, _module, _treeBuilder);
-          }
-        } catch (NotFoundException e) {
-            return null;
-        }
-
-        return new PackageNode(psiDirectory, _module, _treeBuilder);
-    }
+    return new PackageNode(psiDirectory, _module, _treeBuilder);
+  }
 }
