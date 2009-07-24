@@ -25,6 +25,7 @@
     <syntaxHighlighter key="TML" implementationClass="com.intellij.tapestry.lang.TmlHighlighter"/>
     <lang.parserDefinition language="TML" implementationClass="com.intellij.tapestry.psi.TmlParserDefinition"/>
     <lang.parserDefinition language="TEL" implementationClass="com.intellij.tapestry.psi.TelParserDefinition"/>
+    <lang.ast.factory language="TML" implementationClass="com.intellij.tapestry.psi.impl.TmlElementFactory"/>
 
     <annotator language="TML" implementationClass="com.intellij.tapestry.intellij.lang.annotator.TemplateTagAnnotator"/>
 

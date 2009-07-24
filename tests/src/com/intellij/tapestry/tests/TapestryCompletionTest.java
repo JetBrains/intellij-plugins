@@ -89,15 +89,15 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     doTestBasicCompletionVariants("index", "link2", "link3");
   }
   
-  //public void testTagNameWithDoctypePresent() throws Throwable {
-  //  initByComponent();
-  //  doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "comment", getElementTagName()));
-  //}
-  //
-  //public void testTagNameWithDoctypeAndExplicitHtmlNSPresent() throws Throwable {
-  //  initByComponent();
-  //  doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "comment", getElementTagName()));
-  //}
+  public void testTagNameWithDoctypePresent() throws Throwable {
+    initByComponent();
+    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "head", getElementTagName()));
+  }
+
+  public void testTagNameWithDoctypeAndExplicitHtmlNSPresent() throws Throwable {
+    initByComponent();
+    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "head", getElementTagName()));
+  }
 
   private void doTestBasicCompletionVariants(@NonNls String... expectedItems) throws Throwable {
     doTestCompletionVariants(CompletionType.BASIC, expectedItems);
