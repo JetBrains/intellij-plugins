@@ -1,7 +1,7 @@
 package com.intellij.tapestry.intellij.view;
 
-import com.intellij.ide.impl.ProjectViewSelectInTarget;
 import com.intellij.ide.SelectInContext;
+import com.intellij.ide.impl.ProjectViewSelectInTarget;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFileSystemItem;
 
@@ -22,6 +22,7 @@ public class TapestryProjectSelectInTarget extends ProjectViewSelectInTarget {
      * {@inheritDoc}
      */
     protected boolean canSelect(PsiFileSystemItem psiFileSystemItem) {
+        if (!super.canSelect(psiFileSystemItem)) return false;
         return TapestryProjectViewPane.getInstance(myProject).canSelect();
     }
 
