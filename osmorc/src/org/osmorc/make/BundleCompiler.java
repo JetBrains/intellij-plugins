@@ -29,12 +29,7 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.Result;
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompileScope;
-import com.intellij.openapi.compiler.CompilerMessageCategory;
-import com.intellij.openapi.compiler.DummyCompileContext;
-import com.intellij.openapi.compiler.PackagingCompiler;
-import com.intellij.openapi.compiler.ValidityState;
+import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.compiler.make.BuildInstruction;
 import com.intellij.openapi.compiler.make.BuildInstructionVisitor;
 import com.intellij.openapi.compiler.make.BuildRecipe;
@@ -50,40 +45,30 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.CompilerModuleExtension;
-import com.intellij.openapi.roots.JdkOrderEntry;
-import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.io.ZipUtil;
+import com.intellij.psi.PsiFile;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.LibraryHandler;
 import org.osmorc.i18n.OsmorcBundle;
+import org.osmorc.manifest.BundleManifest;
 
-import java.io.DataInput;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.BufferedOutputStream;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.jar.JarOutputStream;
-import java.util.jar.Manifest;
 
 /**
  * This is a compiler step that builds up a bundle. Depending on user settings the compiler either uses a user-edited
@@ -233,7 +218,7 @@ public class BundleCompiler implements PackagingCompiler {
      * @throws IOException in case something goes wrong.
      */
     private static void buildBundle(final Module module, final ProgressIndicator progressIndicator,
-                            final CompileContext compileContext)
+                                    final CompileContext compileContext)
             throws IOException {
         // create the jar file
         final File jarFile = new File(VfsUtil.urlToPath(getJarFileName(module)));
@@ -249,15 +234,13 @@ public class BundleCompiler implements PackagingCompiler {
             }
         }).execute().getResultObject();
 
-    final BndWrapper wrapper = new BndWrapper();
+        final BndWrapper wrapper = new BndWrapper();
         final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(module).getConfiguration();
-    final List<String> classPaths = new ArrayList<String>();
+        final List<String> classPaths = new ArrayList<String>();
 
-    // get all the classpaths together
-    try
-                {
-      buildrecipe.visitInstructionsWithExceptions(new BuildInstructionVisitor()
-                  {
+        // get all the classpaths together
+        try {
+            buildrecipe.visitInstructionsWithExceptions(new BuildInstructionVisitor() {
                 public boolean visitInstruction(BuildInstruction buildinstruction)
                         throws IOException {
                     ProgressManager.getInstance().checkCanceled();
@@ -269,15 +252,15 @@ public class BundleCompiler implements PackagingCompiler {
                         }
 
                         String s2 = FileUtil.toSystemDependentName(file2.getPath());
-            classPaths.add(VfsUtil.pathToUrl(s2));
-                        }
+                        classPaths.add(VfsUtil.pathToUrl(s2));
+                    }
                     return true;
                 }
             }, false);
         }
         catch (ProcessCanceledException e) {
             // Fix for OSMORC-118
-      compileContext.addMessage(CompilerMessageCategory.INFORMATION, "Process canceled.", null, 0,0);
+            compileContext.addMessage(CompilerMessageCategory.INFORMATION, "Process canceled.", null, 0, 0);
             return;
         }
         catch (Exception e) {
@@ -286,78 +269,81 @@ public class BundleCompiler implements PackagingCompiler {
         }
 
 
-    // build a bnd file or use a provided one.
-    String bndFileUrl = "";
-    Map<String,String> additionalProperties = new HashMap<String, String>();
+        // build a bnd file or use a provided one.
+        String bndFileUrl = "";
+        Map<String, String> additionalProperties = new HashMap<String, String>();
         if (configuration.isOsmorcControlsManifest()) {
             if (configuration.isUseBndFile()) {
-        File bndFile = findFileInModuleContentRoots(configuration.getBndFileLocation(), module);
-        if (bndFile == null || !bndFile.exists())
-        {
-          compileContext.addMessage(CompilerMessageCategory.ERROR, String.format("The bnd file \"%s\" for module \"%s\" does not exist.",
-                                            configuration.getBndFileLocation(), module.getName()), configuration.getBndFileLocation(), 0, 0);
-          return;
-                        }
-        else {
-          bndFileUrl = VfsUtil.pathToUrl(bndFile.getPath());
+                File bndFile = findFileInModuleContentRoots(configuration.getBndFileLocation(), module);
+                if (bndFile == null || !bndFile.exists()) {
+                    compileContext.addMessage(CompilerMessageCategory.ERROR, String.format("The bnd file \"%s\" for module \"%s\" does not exist.",
+                            configuration.getBndFileLocation(), module.getName()), configuration.getBndFileLocation(), 0, 0);
+                    return;
+                } else {
+                    bndFileUrl = VfsUtil.pathToUrl(bndFile.getPath());
+                }
+            } else {
+                // fully osmorc controlled, no bnd file.
+                bndFileUrl = makeBndFile(module, configuration.asManifestString());
+            }
+        } else {
+            boolean manifestExists = false;
+            BundleManager bundleManager = ServiceManager.getService(module.getProject(), BundleManager.class);
+            BundleManifest bundleManifest = bundleManager.getBundleManifest(module);
+            if (bundleManifest != null) {
+                PsiFile manifestFile = bundleManifest.getManifestFile();
+                if (manifestFile != null) {
+                    String manifestFilePath = manifestFile.getVirtualFile().getPath();
+                    if (manifestFilePath != null) {
+                        bndFileUrl = makeBndFile(module, "-manifest " + manifestFilePath + "\n");
+                        manifestExists = true;
                     }
                 }
-      else {
-        // fully osmorc controlled, no bnd file.
-        bndFileUrl = makeBndFile(module, configuration.asManifestString());
             }
+            if (!manifestExists) {
+                compileContext.addMessage(CompilerMessageCategory.ERROR, "Manifest file in " + OsmorcFacet.getInstance(module).getManifestLocation() + " does not exist.", null, 0, 0);
+                return;
             }
-    else {
-      File manifestFile = findFileInModuleContentRoots(configuration.getManifestLocation() + File.separator + ManifestFileFilter.MANIFEST_FILENAME, module);
-      if (manifestFile == null || !manifestFile.exists()) {
-        compileContext.addMessage(CompilerMessageCategory.ERROR, "Manifest file " + configuration.getManifestLocation() + " does not exist.", null, 0,0);
-        return;
-            }
-      bndFileUrl = makeBndFile(module, "-manifest " + manifestFile.getPath() + "\n");
         }
 
-    if (!configuration.isOsmorcControlsManifest() || ( configuration.isOsmorcControlsManifest() && !configuration.isUseBndFile() ) ) {
-      // in this case we manually add all the classpaths as resources
-      StringBuilder pathBuilder = new StringBuilder();
-      // add all the classpaths to include resources, so stuff from the project gets copied over.
-      // XXX: one could argue if this should be done for a non-osmorc build
-      for (int i = 0; i < classPaths.size(); i++)
-      {
-        String classPath = classPaths.get(i);
-        String relPath = FileUtil.getRelativePath(new File(VfsUtil.urlToPath(bndFileUrl)), new File(VfsUtil.urlToPath(classPath)));
-        if ( i!= 0) pathBuilder.append(",");
-        pathBuilder.append(relPath);
-        }
+        if (!configuration.isOsmorcControlsManifest() || (configuration.isOsmorcControlsManifest() && !configuration.isUseBndFile())) {
+            // in this case we manually add all the classpaths as resources
+            StringBuilder pathBuilder = new StringBuilder();
+            // add all the classpaths to include resources, so stuff from the project gets copied over.
+            // XXX: one could argue if this should be done for a non-osmorc build
+            for (int i = 0; i < classPaths.size(); i++) {
+                String classPath = classPaths.get(i);
+                String relPath = FileUtil.getRelativePath(new File(VfsUtil.urlToPath(bndFileUrl)), new File(VfsUtil.urlToPath(classPath)));
+                if (i != 0) pathBuilder.append(",");
+                pathBuilder.append(relPath);
+            }
 
-      // now include the paths from the configuration
-      List<Pair<String,String>> list = configuration.getAdditionalJARContents();
-      for (Pair<String, String> stringStringPair : list)
-      {
-        pathBuilder.append(",").append(stringStringPair.second).append(" = ").append(stringStringPair.first);
-                }
+            // now include the paths from the configuration
+            List<Pair<String, String>> list = configuration.getAdditionalJARContents();
+            for (Pair<String, String> stringStringPair : list) {
+                pathBuilder.append(",").append(stringStringPair.second).append(" = ").append(stringStringPair.first);
+            }
 
-      // and tell bnd what resources to include
-      additionalProperties.put("Include-Resource", pathBuilder.toString());
+            // and tell bnd what resources to include
+            additionalProperties.put("Include-Resource", pathBuilder.toString());
 
-      // add the ignore pattern for the resources
-      if ( !"".equals(configuration.getIgnoreFilePattern())) {
-        additionalProperties.put("-donotcopy", configuration.getIgnoreFilePattern());
+            // add the ignore pattern for the resources
+            if (!"".equals(configuration.getIgnoreFilePattern())) {
+                additionalProperties.put("-donotcopy", configuration.getIgnoreFilePattern());
             }
 
         }
 
-    wrapper.build(compileContext, bndFileUrl, classPaths.toArray(new String[classPaths.size()]), jarFile.getPath(), additionalProperties);
+        wrapper.build(compileContext, bndFileUrl, classPaths.toArray(new String[classPaths.size()]), jarFile.getPath(), additionalProperties);
 
-    if (configuration.isOsmorcControlsManifest())
-    {
+        if (configuration.isOsmorcControlsManifest()) {
             // finally bundlify all the libs for this one
-      bundlifyLibraries(module, progressIndicator, compileContext);
+            bundlifyLibraries(module, progressIndicator, compileContext);
         }
     }
 
-  private static String makeBndFile(Module module, String contents) throws IOException
-  {
-        File tmpFile = File.createTempFile( "osmorc", ".bnd", new File(getOutputPath(module)));
+    private static String makeBndFile(Module module, String contents) throws IOException {
+        File tmpFile = File.createTempFile("osmorc", ".bnd", new File(getOutputPath(module)));
         // create one
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tmpFile));
         bos.write(contents.getBytes());
@@ -365,11 +351,12 @@ public class BundleCompiler implements PackagingCompiler {
         tmpFile.deleteOnExit();
         return VfsUtil.pathToUrl(tmpFile.getPath());
 
-                }
+    }
 
 
-  protected static @Nullable File findFileInModuleContentRoots(String file, Module module)
-  {
+    protected static
+    @Nullable
+    File findFileInModuleContentRoots(String file, Module module) {
         ModuleRootManager manager = ModuleRootManager.getInstance(module);
         for (VirtualFile root : manager.getContentRoots()) {
             VirtualFile result = VfsUtil.findRelativeFile(file, root);
@@ -459,14 +446,13 @@ public class BundleCompiler implements PackagingCompiler {
      * Bundlifies all libraries that belong to the given module and that are not bundles. The bundles are cached, so if
      * the source library does not change, it will not be bundlified again.
      *
-     * @param module    the module whose libraries are to be bundled.
-     * @param indicator a progress indicator.
-   * @param compileContext
+     * @param module         the module whose libraries are to be bundled.
+     * @param indicator      a progress indicator.
+     * @param compileContext
      * @return a string array containing the urls of the bundlified libraries.
      */
-  public static String[] bundlifyLibraries(Module module, ProgressIndicator indicator,
-                                           @NotNull CompileContext compileContext)
-  {
+    public static String[] bundlifyLibraries(Module module, ProgressIndicator indicator,
+                                             @NotNull CompileContext compileContext) {
         ArrayList<String> result = new ArrayList<String>();
         final ModuleRootManager manager = ModuleRootManager.getInstance(module);
         LibraryHandler libraryHandler = ServiceManager.getService(LibraryHandler.class);
@@ -485,19 +471,18 @@ public class BundleCompiler implements PackagingCompiler {
                 continue; // do not bundlify framework instance libraries
             }
 
-      BndWrapper wrapper = new BndWrapper();
+            BndWrapper wrapper = new BndWrapper();
 
             String[] urls = entry.getUrls(OrderRootType.CLASSES);
             for (String url : urls) {
                 url = convertJarUrlToFileUrl(url);
 
 
-        if (!CachingBundleInfoProvider.isBundle(url))
-        {
-          indicator.setText("Bundling non-OSGi libraries for module: " + module.getName());
+                if (!CachingBundleInfoProvider.isBundle(url)) {
+                    indicator.setText("Bundling non-OSGi libraries for module: " + module.getName());
                     indicator.setText2(url);
                     // ok it is not a bundle, so we need to bundlify
-          String bundledLocation = wrapper.wrapLibrary(compileContext, url, getOutputPath(module));
+                    String bundledLocation = wrapper.wrapLibrary(compileContext, url, getOutputPath(module));
                     // if no bundle could (or should) be created, we exempt this library
                     if (bundledLocation != null) {
                         result.add(fixFileURL(bundledLocation));
