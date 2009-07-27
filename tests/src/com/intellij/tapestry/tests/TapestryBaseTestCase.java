@@ -18,6 +18,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
 import com.intellij.util.ArrayUtil;
+import com.intellij.psi.PsiFile;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -131,11 +132,12 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return getElementName() + ".tml";
   }
 
-  protected void initByComponent() throws IOException {
+  protected VirtualFile initByComponent() throws IOException {
     copyOrCreateElementClassFile(getElementClassFileName());
     final String tName = getElementTemplateFileName();
     VirtualFile vFile = myFixture.copyFileToProject(tName, COMPONENTS_PACKAGE_PATH + tName);
     myFixture.configureFromExistingVirtualFile(vFile);
+    return vFile;
   }
 
   protected File getFileByPath(@NonNls String filePath) {
@@ -145,11 +147,11 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   protected void copyOrCreateElementClassFile(@NonNls String classFileName) throws IOException {
     String targetPath = COMPONENTS_PACKAGE_PATH + classFileName;
     if (getFileByPath(classFileName).exists()) {
-      myFixture.copyFileToProject(classFileName, targetPath);
+      VirtualFile copy = myFixture.copyFileToProject(classFileName, targetPath);
+      myFixture.allowTreeAccessForFile(copy);
     }
     else {
-      myFixture.addFileToProject(targetPath,
-                                 "package " + TEST_APPLICATION_PACKAGE + "." + COMPONENTS + "; public class " + getElementName() + " {}");
+      addFileAndAllowTreeAccess(targetPath, "package " + TEST_APPLICATION_PACKAGE + "." + COMPONENTS + "; public class " + getElementName() + " {}");
     }
   }
 
@@ -178,8 +180,14 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     else {
       fileText = getCommonTestDataFileText(className + ext);
     }
-    String targetPath = relativePath + className + ext;
-    Assert.assertNotNull(myFixture.addFileToProject(targetPath, fileText));
+    addFileAndAllowTreeAccess(relativePath + className + ext, fileText);
+  }
+
+  private void addFileAndAllowTreeAccess(String targetPath, String fileText) throws IOException {
+    final PsiFile file = myFixture.addFileToProject(targetPath, fileText);
+    Assert.assertNotNull(file);
+    Assert.assertNotNull(file.getVirtualFile());
+    myFixture.allowTreeAccessForFile(file.getVirtualFile());
   }
 
   @NotNull

@@ -1,0 +1,8 @@
+<html xmlns:t="<error>http://tapestry.apache.org/schema/tapestry_5_0_0.xsd</error>">
+    <head>
+        <<info>t:count</info> <info>end</info>="2" <info>t:start</info>="5">
+        </<info>t:count</info>>
+    </head>
+    <body>
+    </body>
+</html>
