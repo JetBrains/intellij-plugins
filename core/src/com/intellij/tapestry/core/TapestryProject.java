@@ -11,6 +11,10 @@ import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.Page;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
+import com.intellij.tapestry.core.model.presentation.components.BodyComponent;
+import com.intellij.tapestry.core.model.presentation.components.BlockComponent;
+import com.intellij.tapestry.core.model.presentation.components.ParameterComponent;
+import com.intellij.tapestry.core.model.presentation.components.ContainerComponent;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.IResourceFinder;
 import com.intellij.tapestry.core.util.LocalizationUtils;
@@ -21,10 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A Tapestry project. Every IDE implementation must hold a reference to an instance of this class for each project.
@@ -102,9 +103,10 @@ public class TapestryProject {
   @Nullable
   private String getElementsRootPackage(@NotNull String subpackage) {
     final String rootPackage = getApplicationRootPackage();
-    if(rootPackage == null) return null;
+    if (rootPackage == null) return null;
     return rootPackage + "." + subpackage;
   }
+
   /**
    * Finds the available libraries of this project.
    *
@@ -204,6 +206,15 @@ public class TapestryProject {
       return element.getName().toLowerCase().replace('/', '.');
     }
   };
+
+  public Collection<PresentationLibraryElement> getBuiltinComponents() {
+    return Arrays.<PresentationLibraryElement>asList(BodyComponent.getInstance(this), BlockComponent.getInstance(this), ParameterComponent.getInstance(this),
+                         ContainerComponent.getInstance(this));
+  }
+
+  public Collection<PresentationLibraryElement> getBuiltinPages() {
+    return Collections.emptyList();
+  }
 
   /**
    * Finds a Tapestry element, either a component or page can be returned.

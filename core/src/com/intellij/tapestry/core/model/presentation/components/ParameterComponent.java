@@ -34,10 +34,9 @@ public class ParameterComponent extends Component {
             _parameters.put("id", new DummyTapestryParameter(tapestryProject, "name", true));
         }
 
-      @NotNull
       final IJavaClassType classType =
           tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry5.internal.parser.ParameterToken", true);
-      return new ParameterComponent(classType, tapestryProject);
+      return classType == null ? null : new ParameterComponent(classType, tapestryProject);
     }
 
     /**

@@ -34,9 +34,11 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
     TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(module);
     assert project != null;
     for (Library library : project.getLibraries()) {
-      if (myCacheComponents) computeKeyAndAdd(map, library.getComponents().values());
-      if (myCachePages) computeKeyAndAdd(map, library.getPages().values());
+      if (myCacheComponents) computeKeyAndAddAll(map, library.getComponents().values());
+      if (myCachePages) computeKeyAndAddAll(map, library.getPages().values());
     }
+    if (myCacheComponents) computeKeyAndAddAll(map, project.getBuiltinComponents());
+    if (myCachePages) computeKeyAndAddAll(map, project.getBuiltinPages());
     return map;
   }
 
@@ -49,9 +51,9 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
     return projectOwner.getProject();
   }
 
-  private void computeKeyAndAdd(Map<String, PresentationLibraryElement> map, Collection<PresentationLibraryElement> elements) {
+  private void computeKeyAndAddAll(Map<String, PresentationLibraryElement> map, Collection<PresentationLibraryElement> elements) {
     for (PresentationLibraryElement element : elements) {
-      String key = computeKey(element);
+      String key = element == null ? null : computeKey(element);
       if (key != null) {
         map.put(key, element);
       }

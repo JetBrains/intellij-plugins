@@ -34,7 +34,9 @@ public class BlockComponent extends Component {
             _parameters.put("id", new DummyTapestryParameter(tapestryProject, "id", false));
         }
 
-        return new BlockComponent(tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry5.internal.parser.BlockToken", true), tapestryProject);
+      final IJavaClassType classType =
+          tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry5.internal.parser.BlockToken", true);
+      return classType == null ? null : new BlockComponent(classType, tapestryProject);
     }
 
     /**

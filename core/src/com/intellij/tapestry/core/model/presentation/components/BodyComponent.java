@@ -28,7 +28,8 @@ public class BodyComponent extends Component {
      * @return an instance of the Body component.
      */
     public static BodyComponent getInstance(TapestryProject tapestryProject) {
-        return new BodyComponent(tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry5.internal.parser.BodyToken", true), tapestryProject);
+      final IJavaClassType classType = tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry5.internal.parser.BodyToken", true);
+      return classType == null ? null : new BodyComponent(classType, tapestryProject);
     }
 
     /**

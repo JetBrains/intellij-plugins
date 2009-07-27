@@ -18,10 +18,6 @@ import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.TemplateElement;
-import com.intellij.tapestry.core.model.presentation.components.BlockComponent;
-import com.intellij.tapestry.core.model.presentation.components.BodyComponent;
-import com.intellij.tapestry.core.model.presentation.components.ContainerComponent;
-import com.intellij.tapestry.core.model.presentation.components.ParameterComponent;
 import com.intellij.tapestry.core.util.PathUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
@@ -340,18 +336,6 @@ public class TapestryUtils {
       return null;
     }
     final String tagLocalName = tag.getLocalName().toLowerCase(Locale.getDefault());
-    if (tagLocalName.equals("body")) {
-      return BodyComponent.getInstance(tapestryProject);
-    }
-    if (tagLocalName.equals("block")) {
-      return BlockComponent.getInstance(tapestryProject);
-    }
-    if (tagLocalName.equals("parameter")) {
-      return ParameterComponent.getInstance(tapestryProject);
-    }
-    if (tagLocalName.equals("container")) {
-      return ContainerComponent.getInstance(tapestryProject);
-    }
     return tapestryProject.findComponent(tagLocalName);
   }
 

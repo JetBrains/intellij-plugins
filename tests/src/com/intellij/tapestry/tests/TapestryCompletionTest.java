@@ -88,7 +88,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     initByComponent();
     doTestBasicCompletionVariants("index", "link2", "link3");
   }
-  
+
   public void testTagNameWithDoctypePresent() throws Throwable {
     initByComponent();
     doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "head", getElementTagName()));
@@ -115,11 +115,12 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public static final String[] CORE_5_1_0_5_ELEMENT_NAMES =
-      {"actionlink", "addrowlink", "ajaxformloop", "any", "beandisplay", "beaneditform", "beaneditor", "checkbox", "datefield", "delegate",
-          "errors", "eventlink", "exceptiondisplay", "form", "formfragment", "forminjector", "grid", "gridcell", "gridcolumns", "gridpager",
-          "gridrows", "hidden", "if", "label", "linksubmit", "loop", "output", "outputraw", "pagelink", "palette", "passwordfield",
-          "progressivedisplay", "propertydisplay", "propertyeditor", "radio", "radiogroup", "removerowlink", "renderobject", "select",
-          "submit", "submitnotifier", "textarea", "textfield", "textoutput", "unless", "zone"};
+      {"actionlink", "addrowlink", "ajaxformloop", "any", "beandisplay", "beaneditform", "beaneditor", "block", "body", "checkbox",
+          "container", "datefield", "delegate", "errors", "eventlink", "exceptiondisplay", "form", "formfragment", "forminjector", "grid",
+          "gridcell", "gridcolumns", "gridpager", "gridrows", "hidden", "if", "label", "linksubmit", "loop", "output", "outputraw",
+          "pagelink", "palette", "parameter", "passwordfield", "progressivedisplay", "propertydisplay", "propertyeditor", "radio",
+          "radiogroup", "removerowlink", "renderobject", "select", "submit", "submitnotifier", "textarea", "textfield", "textoutput",
+          "unless", "zone"};
   public static final String[] CORE_5_1_0_5_TAG_NAMES;
 
   static {
