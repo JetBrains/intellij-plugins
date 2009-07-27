@@ -80,7 +80,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   public void testPageAttrValue() throws Throwable {
     addPageToProject("StartPage");
     initByComponent();
-    doTestBasicCompletionVariants("exceptionreport", "propertydisplayblocks", "propertyeditblocks", "servicestatus", "startpage");
+    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_PAGE_NAMES, "startpage"));
   }
 
   public void testIdAttrValue() throws Throwable {
@@ -114,6 +114,8 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     return "completion/";
   }
 
+  public static final String[] CORE_5_1_0_5_PAGE_NAMES =
+      {"exceptionreport", "propertydisplayblocks", "propertyeditblocks", "servicestatus"};
   public static final String[] CORE_5_1_0_5_ELEMENT_NAMES =
       {"actionlink", "addrowlink", "ajaxformloop", "any", "beandisplay", "beaneditform", "beaneditor", "block", "body", "checkbox",
           "container", "datefield", "delegate", "errors", "eventlink", "exceptiondisplay", "form", "formfragment", "forminjector", "grid",
