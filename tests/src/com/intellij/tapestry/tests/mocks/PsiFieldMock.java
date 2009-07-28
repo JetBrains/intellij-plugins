@@ -357,4 +357,7 @@ public class PsiFieldMock implements PsiField {
     public boolean isDeprecated() {
         return false;
     }
+  public PsiType getTypeNoResolve() {
+    return getType();
+  }
 }
