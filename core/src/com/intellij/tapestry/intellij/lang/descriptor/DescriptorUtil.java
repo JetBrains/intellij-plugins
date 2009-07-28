@@ -32,18 +32,19 @@ class DescriptorUtil {
 
   public static XmlAttributeDescriptor[] getAttributeDescriptors(@NotNull XmlTag context) {
     Component component = TapestryUtils.getTypeOfTag(context);
-    if (component == null) {
-      String prefix = context.getPrefixByNamespace(TapestryConstants.TEMPLATE_NAMESPACE);
-      if (prefix == null) return XmlAttributeDescriptor.EMPTY;
-      String type = prefix.length() > 0 ? prefix + ":type" : "type";
-      String id = prefix.length() > 0 ? prefix + ":id" : "id";
-      return new XmlAttributeDescriptor[]{new TapestryIdOrTypeAttributeDescriptor(type, context),
-          new TapestryIdOrTypeAttributeDescriptor(id, context)};
-    }
-    return getAttributeDescriptors(component);
+    if (component != null) return getAttributeDescriptors(component);
+    String prefix = context.getPrefixByNamespace(TapestryConstants.TEMPLATE_NAMESPACE);
+    if (prefix == null) return XmlAttributeDescriptor.EMPTY;
+    String type = prefix.length() > 0 ? prefix + ":type" : "type";
+    String id = prefix.length() > 0 ? prefix + ":id" : "id";
+    return new XmlAttributeDescriptor[]{
+        new TapestryIdOrTypeAttributeDescriptor(type, context),
+        new TapestryIdOrTypeAttributeDescriptor(id, context)
+    };
   }
 
-  public static XmlAttributeDescriptor[] getAttributeDescriptors(@NotNull Component component) {
+  public static XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable Component component) {
+    if (component == null) return XmlAttributeDescriptor.EMPTY;
     Collection<TapestryParameter> params = component.getParameters().values();
     XmlAttributeDescriptor[] descriptors = new XmlAttributeDescriptor[params.size()];
     int i = 0;
@@ -56,12 +57,11 @@ class DescriptorUtil {
   public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName, @NotNull XmlTag context) {
     XmlAttribute attr = TapestryUtils.getIdentifyingAttribute(context);
     if (attr != null && attr.getName().equals(attributeName)) return new TapestryIdOrTypeAttributeDescriptor(attributeName, context);
-    Component component = TapestryUtils.getTypeOfTag(context);
-    if (component == null) return null;
-    return getAttributeDescriptor(attributeName, component);
+    return getAttributeDescriptor(attributeName, TapestryUtils.getTypeOfTag(context));
   }
 
-  public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName, @NotNull Component component) {
+  public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName, @Nullable Component component) {
+    if (component == null) return null;
     TapestryParameter param = component.getParameters().get(XmlUtil.findLocalNameByQualifiedName(attributeName));
     return param == null ? null : new TapestryAttributeDescriptor(param);
   }
@@ -94,8 +94,9 @@ class DescriptorUtil {
 
   private static XmlElementDescriptor getHtmlTagDescriptor(XmlTag tag, TmlFile file) {
     XmlNSDescriptor htmlNSDescriptor = getHtmlNSDescriptor(file);
-    return htmlNSDescriptor instanceof XmlNSDescriptorImpl ? ((XmlNSDescriptorImpl)htmlNSDescriptor)
-        .getElementDescriptor(tag.getLocalName(), tag.getNamespace()) : htmlNSDescriptor.getElementDescriptor(tag);
+    return htmlNSDescriptor instanceof XmlNSDescriptorImpl
+           ? ((XmlNSDescriptorImpl)htmlNSDescriptor).getElementDescriptor(tag.getLocalName(), tag.getNamespace())
+           : htmlNSDescriptor.getElementDescriptor(tag);
   }
 
   private static TmlFile getTmlFile(XmlTag tag) {

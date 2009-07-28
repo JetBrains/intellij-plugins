@@ -3,6 +3,7 @@ package com.intellij.tapestry.intellij.lang.descriptor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlDocument;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
@@ -13,6 +14,7 @@ import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.psi.TmlFile;
 import com.intellij.xml.DefaultXmlExtension;
 import com.intellij.xml.XmlNSDescriptor;
+import com.intellij.xml.impl.dtd.XmlNSDescriptorImpl;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,4 +72,14 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
     return null;
   }
 
+  @Override
+  public XmlNSDescriptor getDescriptorFromDoctype(final XmlFile file, final XmlNSDescriptor descriptor) {
+    if (file instanceof TmlFile && descriptor instanceof XmlNSDescriptorImpl) {
+      XmlDocument doc = file.getDocument();
+      if(doc != null && doc.getProlog().getDoctype() != null) {
+        return DescriptorUtil.getHtmlNSDescriptor((TmlFile)file);
+      }
+    }
+    return descriptor;
+  }
 }
