@@ -1,6 +1,6 @@
 <html xmlns:t="<error>http://tapestry.apache.org/schema/tapestry_5_0_0.xsd</error>">
     <body>
-	    <<info>a</info> <info>t:type</info>="pagelink" <info>t:page</info>="eee" <error>t:notattr</error>="value">xxxx</<info>a</info>>
+	    <<info>a</info> <info>t:type</info>="pagelink" <info>t:page</info>="<error>eee</error>" <error>t:notattr</error>="value">xxxx</<info>a</info>>
       <<info>a</info> <info>t:type</info>="pagelink">xxxx</<info>a</info>>
     </body>
 </html>
