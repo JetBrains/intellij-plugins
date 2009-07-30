@@ -35,7 +35,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
   private void registerTagNameReferenceProvider(PsiReferenceRegistrar registrar) {
     PatternCondition<XmlTag> tapestryTagCondition = new PatternCondition<XmlTag>("tapestryTagCondition") {
       public boolean accepts(@NotNull XmlTag tag, final ProcessingContext context) {
-        return tag.getContainingFile() instanceof TmlFile/* && TapestryUtils.getTypeOfTag(tag) != null*/;
+        return tag.getContainingFile() instanceof TmlFile;
       }
     };
     registrar.registerReferenceProvider(XmlPatterns.xmlTag().with(tapestryTagCondition), new PsiReferenceProvider() {
@@ -117,7 +117,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
     Component component = TapestryUtils.getTypeOfTag(tag);
     if (component == null) return null;
 
-    TapestryParameter pageParam = component.getParameters().get(pageAttr.getName());
+    TapestryParameter pageParam = component.getParameters().get(pageAttr.getLocalName());
     if (pageParam == null) return null;
 
     final Page page = component.getProject().findPage(pageAttr.getValue());

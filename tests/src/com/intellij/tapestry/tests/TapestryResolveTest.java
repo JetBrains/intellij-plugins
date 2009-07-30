@@ -154,6 +154,13 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     Assert.assertEquals("StartPage.tml", ref.getName());
   }
 
+  public void testPrefixedPageAttrValue() throws Throwable {
+    addPageToProject("StartPage");
+    initByComponent();
+    TmlFile ref = resolveReferenceAtCaretPosition(TmlFile.class);
+    Assert.assertEquals("StartPage.tml", ref.getName());
+  }
+
   @Nullable
   private PsiReference getReferenceAtCaretPosition() {
     return myFixture.getFile().findReferenceAt(myFixture.getEditor().getCaretModel().getOffset());
