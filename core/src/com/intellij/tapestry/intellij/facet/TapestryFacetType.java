@@ -5,12 +5,18 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
 import com.intellij.facet.autodetecting.FacetDetector;
 import com.intellij.facet.autodetecting.FacetDetectorRegistry;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFile;
+import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.intellij.util.Icons;
 import com.intellij.tapestry.lang.TmlFileType;
 import org.jetbrains.annotations.NotNull;
@@ -52,25 +58,46 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
   public void registerDetectors(final FacetDetectorRegistry<TapestryFacetConfiguration> registry) {
     VirtualFileFilter filter = new VirtualFileFilter() {
       public boolean accept(VirtualFile virtualFile) {
-        final String extension = virtualFile.getExtension();
-        return extension != null && FileTypeManager.getInstance().getStdFileType(extension) instanceof TmlFileType;
+        return virtualFile.getFileType() instanceof TmlFileType;
       }
     };
-    registry.registerUniversalDetector(new TmlFileType(), filter, new TapestryFacetDetector());
-
+    final TapestryFacetDetector detector = new TapestryFacetDetector();
+    registry.registerOnTheFlyDetector(TmlFileType.INSTANCE, filter, Condition.TRUE, detector);
   }
 
-  private static class TapestryFacetDetector extends FacetDetector<VirtualFile, TapestryFacetConfiguration> {
+  private static class TapestryFacetDetector extends FacetDetector<PsiFile, TapestryFacetConfiguration> {
+    public TapestryFacetDetector() {
+      super("tapestry-detector");
+    }
 
-    public TapestryFacetConfiguration detectFacet(final VirtualFile source,
+    public TapestryFacetConfiguration detectFacet(final PsiFile source,
                                                   final Collection<TapestryFacetConfiguration> existentFacetConfigurations) {
-      if (existentFacetConfigurations.size() > 0) return null;
-      //PsiFile psi = myManager.findFile(source);
-      //
-      //if (psi != null && psi.getParent() instanceof PsiPackage) {
-      //  return new TapestryFacetConfiguration();
-      //}
-      return new TapestryFacetConfiguration();
+      PsiDirectory sourceParent = source.getParent();
+      if (sourceParent == null || existentFacetConfigurations.size() > 0) return null;
+
+      Module module = ModuleUtil.findModuleForPsiElement(sourceParent);
+      String relativePath;
+      for (VirtualFile srcRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
+        relativePath = VfsUtil.getRelativePath(sourceParent.getVirtualFile(), srcRoot, '.');
+        if (relativePath == null) continue;
+        for (String packageName : TapestryConstants.ELEMENT_PACKAGES) {
+          final int i = indexOf(relativePath, packageName);
+          if (i < 0) continue;
+          final TapestryFacetConfiguration conf = new TapestryFacetConfiguration();
+          conf.setApplicationPackage(relativePath.substring(0, i));
+          TapestryFrameworkSupportProvider.setupConfiguration(conf, module, TapestryVersion.TAPESTRY_5_1_0_5.toString());
+          return conf;
+        }
+      }
+      return null;
+    }
+
+    private static int indexOf(String relativePath, String packageName) {
+      if(relativePath.startsWith(packageName + ".")) return 0;
+      int start = relativePath.indexOf("." + packageName);
+      final int end = start + packageName.length() + 1;
+      if (start > 0 && (end == relativePath.length() || relativePath.charAt(end) == '.')) return start;
+      return -1;
     }
   }
 }

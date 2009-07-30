@@ -14,7 +14,9 @@ import javax.swing.*;
  */
 public class TmlFileType extends XmlLikeFileType {
 
-  public TmlFileType() {
+  public static final TmlFileType INSTANCE = new TmlFileType();
+
+  private TmlFileType() {
     super(TmlLanguage.INSTANCE);
   }
 

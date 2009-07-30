@@ -82,6 +82,7 @@ public interface TapestryConstants {
    */
   public static final String MIXINS_PACKAGE = "mixins";
 
+  public static final String[] ELEMENT_PACKAGES = {PAGES_PACKAGE, COMPONENTS_PACKAGE, MIXINS_PACKAGE};
   /**
    * Base package for Tapestry services.
    */

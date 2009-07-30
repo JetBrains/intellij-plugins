@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TmlFileTypeFactory extends FileTypeFactory {
   public void createFileTypes(final @NotNull FileTypeConsumer consumer) {
-    final TmlFileType fileType = new TmlFileType();
+    final TmlFileType fileType = TmlFileType.INSTANCE;
     consumer.consume(fileType, fileType.getDefaultExtension());
   }
 }

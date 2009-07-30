@@ -3,6 +3,8 @@ package com.intellij.tapestry.intellij.facet;
 import com.intellij.CommonBundle;
 import com.intellij.facet.impl.ui.FacetTypeFrameworkSupportProvider;
 import com.intellij.facet.ui.libraries.LibraryInfo;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.startup.StartupManager;
@@ -25,10 +27,12 @@ public class TapestryFrameworkSupportProvider extends FacetTypeFrameworkSupportP
   }
 
   protected void setupConfiguration(TapestryFacet tapestryFacet, ModifiableRootModel modifiableRootModel, String version) {
-    TapestryFacetConfiguration conf = tapestryFacet.getConfiguration();
-    conf.setVersion(getVersion(version));
+    setupConfiguration(tapestryFacet.getConfiguration(), tapestryFacet.getModule(), version);
+  }
 
-    if(StringUtil.isEmpty(conf.getFilterName())) conf.setFilterName(tapestryFacet.getModule().getName().toLowerCase());
+  protected static void setupConfiguration(TapestryFacetConfiguration conf, Module module, String version) {
+    conf.setVersion(TapestryVersion.fromString(version));
+    if(StringUtil.isEmpty(conf.getFilterName())) conf.setFilterName(module.getName().toLowerCase());
     if(StringUtil.isEmpty(conf.getApplicationPackage())) conf.setApplicationPackage("com.app");
   }
 
@@ -62,18 +66,19 @@ public class TapestryFrameworkSupportProvider extends FacetTypeFrameworkSupportP
 
   @NotNull
   protected LibraryInfo[] getLibraries(String selectedVersion) {
-    TapestryVersion version = getVersion(selectedVersion);
+    TapestryVersion version = TapestryVersion.fromString(selectedVersion);
     return version != null ? version.getJars() : LibraryInfo.EMPTY_ARRAY;
   }
 
   @Override
   protected void onFacetCreated(final TapestryFacet facet, final ModifiableRootModel rootModel, final String version) {
-    StartupManager.getInstance(facet.getModule().getProject()).runWhenProjectIsInitialized(new Runnable() {
+    final Project project = facet.getModule().getProject();
+    StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
         final TapestryFacetConfiguration configuration = facet.getConfiguration();
 
         final NewFacetDialog newFacetDialog = new NewFacetDialog(configuration);
-        final DialogBuilder builder = new DialogBuilder(rootModel.getModule().getProject());
+        final DialogBuilder builder = new DialogBuilder(project);
 
         builder.removeAllActions();
         builder.addOkAction();
@@ -101,15 +106,5 @@ public class TapestryFrameworkSupportProvider extends FacetTypeFrameworkSupportP
                                                               newFacetDialog.shouldGeneratePom());
       }
     });
-  }
-
-  private static TapestryVersion getVersion(String versionName) {
-    for (TapestryVersion version : TapestryVersion.values()) {
-      if (versionName.equals(version.toString())) {
-        return version;
-      }
-    }
-
-    return null;
   }
 }
