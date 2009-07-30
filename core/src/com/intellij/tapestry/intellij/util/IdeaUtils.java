@@ -265,8 +265,12 @@ public class IdeaUtils {
 
   @Nullable
   public static XmlElement getNameElementClosing(@NotNull XmlTag tag) {
-    PsiElement closingElem = tag.getLastChild().getPrevSibling();
-    return (XmlElement) (closingElem instanceof XmlElement ? closingElem : closingElem.getPrevSibling());
+    PsiElement child = tag.getLastChild();
+    while (child != null) {
+      child = child.getPrevSibling();
+      if (child instanceof XmlElement) return (XmlElement)child;
+    }
+    return null;
   }
 
   @Nullable
