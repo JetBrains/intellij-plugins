@@ -5,8 +5,8 @@
   <extensions defaultExtensionNs="com.intellij">
 
     <!-- resolve <constant> "value" to Spring bean definition -->
-    <struts2.constantValueContributor
-            implementation="com.intellij.struts2.dom.struts.impl.ConstantValueConverterSpringContributor"/>
+    <struts2.constantValueClassContributor
+            implementation="com.intellij.struts2.dom.struts.impl.ConstantValueConverterSpringClassContributor"/>
 
     <!-- resolve "class" to Spring bean definition -->
     <struts2.classContributor

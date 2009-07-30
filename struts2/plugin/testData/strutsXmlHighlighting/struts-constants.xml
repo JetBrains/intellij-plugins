@@ -12,6 +12,10 @@
 
   <constant name="struts.configuration.xml.reload" value="<error>INVALID_VALUE</error>"/>
 
+  <!-- duplicate definition -->
+  <constant name="<error>struts.action.extension</error>" value="DUPLICATE"/>
+  <constant name="<error>struts.action.extension</error>" value="DUPLICATE"/>
+
   <constant name="struts.objectFactory.spring.autoWire" value="<error>INVALID_VALUE</error>"/>
 
   <constant name="struts.freemarker.manager.classname" value="<error>INVALID_VALUE</error>"/>
