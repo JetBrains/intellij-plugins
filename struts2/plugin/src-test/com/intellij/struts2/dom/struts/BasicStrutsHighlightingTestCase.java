@@ -41,7 +41,7 @@ public abstract class BasicStrutsHighlightingTestCase<T extends JavaModuleFixtur
   protected void performHighlightingTest(@NonNls final String... strutsXmlFileNames) throws Throwable {
     createStrutsFileSet(strutsXmlFileNames);
     final long duration = myFixture.testHighlighting(true, false, true, strutsXmlFileNames);
-    System.out.println(strutsXmlFileNames[0] + " = " + duration);
+//    System.out.println(strutsXmlFileNames[0] + " = " + duration);
   }
 
   /**
