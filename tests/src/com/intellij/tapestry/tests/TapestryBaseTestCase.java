@@ -1,13 +1,11 @@
 package com.intellij.tapestry.tests;
 
 import com.intellij.facet.FacetManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.RunResult;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
@@ -21,10 +19,8 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.psi.PsiFile;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 
 /**
@@ -44,11 +40,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
 
   @NonNls
   protected final String getTestDataPath() {
-    return getCommonTestDataPath() + getBasePath();
-  }
-
-  private String getCommonTestDataPath() {
-    return PathManager.getHomePath().replace(File.separatorChar, '/') + "/plugins/tapestry/tests/testData/";
+    return Util.getCommonTestDataPath() + getBasePath();
   }
 
   protected CodeInsightTestFixture myFixture;
@@ -107,7 +99,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   protected void addTapestryLibraries(final JavaModuleFixtureBuilder moduleBuilder) {
-    moduleBuilder.addLibraryJars("tapestry_5.1.0.5", getCommonTestDataPath() + "libs", "antlr-runtime-3.1.1.jar", "commons-codec.jar",
+    moduleBuilder.addLibraryJars("tapestry_5.1.0.5", Util.getCommonTestDataPath() + "libs", "antlr-runtime-3.1.1.jar", "commons-codec.jar",
                                  "javassist.jar", "log4j.jar", "slf4j-api.jar", "slf4j-log4j12.jar", "stax2.jar",
                                  "tapestry5-annotations.jar", "tapestry-core.jar", "tapestry-ioc.jar", "wstx-asl.jar");
   }
@@ -125,11 +117,11 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   protected String getElementClassFileName() {
-    return getElementName() + ".java";
+    return getElementName() + Util.DOT_JAVA;
   }
 
   protected String getElementTemplateFileName() {
-    return getElementName() + ".tml";
+    return getElementName() + Util.DOT_TML;
   }
 
   protected VirtualFile initByComponent() throws IOException {
@@ -156,12 +148,12 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   protected void addComponentToProject(String className) throws IOException {
-    addElementToProject(COMPONENTS_PACKAGE_PATH, className, ".java");
+    addElementToProject(COMPONENTS_PACKAGE_PATH, className, Util.DOT_JAVA);
   }
 
   protected void addPageToProject(String className) throws IOException {
-    addElementToProject(PAGES_PACKAGE_PATH, className, ".tml");
-    addElementToProject(PAGES_PACKAGE_PATH, className, ".java");
+    addElementToProject(PAGES_PACKAGE_PATH, className, Util.DOT_TML);
+    addElementToProject(PAGES_PACKAGE_PATH, className, Util.DOT_JAVA);
   }
 
   private void addElementToProject(String relativePath, String className, String ext) throws IOException {
@@ -171,14 +163,14 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
       final String subpackage = className.substring(0, afterDotIndex);
       relativePath += subpackage.replace('.', '/') + '/';
       className = className.substring(afterDotIndex + 1);
-      fileText = getCommonTestDataFileText(className + ext);
+      fileText = Util.getCommonTestDataFileText(className + ext);
       if (fileText.startsWith("package " + TEST_APPLICATION_PACKAGE)) {
         int toPasteSubpackageIndex = fileText.indexOf(';');
         fileText = fileText.substring(0, toPasteSubpackageIndex) + '.' + subpackage + fileText.substring(toPasteSubpackageIndex);
       }
     }
     else {
-      fileText = getCommonTestDataFileText(className + ext);
+      fileText = Util.getCommonTestDataFileText(className + ext);
     }
     addFileAndAllowTreeAccess(relativePath + className + ext, fileText);
   }
@@ -188,13 +180,6 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     Assert.assertNotNull(file);
     Assert.assertNotNull(file.getVirtualFile());
     myFixture.allowTreeAccessForFile(file.getVirtualFile());
-  }
-
-  @NotNull
-  protected String getCommonTestDataFileText(@NotNull String fileName) throws IOException {
-    File file = new File(getCommonTestDataPath() + "/" + fileName);
-    Assert.assertTrue(file + " doesn't exists", file.exists());
-    return FileUtil.loadTextAndClose(new FileReader(file));
   }
 
   protected static String[] mergeArrays(String[] array, @NonNls String... list) {

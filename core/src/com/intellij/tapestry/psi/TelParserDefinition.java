@@ -1,7 +1,10 @@
 package com.intellij.tapestry.psi;
 
 import com.intellij.extapi.psi.PsiFileBase;
-import com.intellij.lang.*;
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.LanguageUtil;
+import com.intellij.lang.ParserDefinition;
+import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
@@ -33,7 +36,7 @@ public class TelParserDefinition implements ParserDefinition {
 
   @NotNull
   public TokenSet getWhitespaceTokens() {
-    return TokenSet.EMPTY;
+    return TelElementTypes.WHITESPACES;
   }
 
   @NotNull
@@ -43,7 +46,7 @@ public class TelParserDefinition implements ParserDefinition {
 
   @NotNull
   public TokenSet getStringLiteralElements() {
-    return TokenSet.EMPTY;
+    return TelElementTypes.STRING_LITERALS;
   }
 
   @NotNull

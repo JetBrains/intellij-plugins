@@ -6,6 +6,8 @@ import com.intellij.openapi.util.Key;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.ILazyParseableElementType;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.TokenType;
 import com.intellij.tapestry.lang.TelFileType;
 import com.intellij.tapestry.lang.TelLanguage;
 
@@ -23,20 +25,35 @@ public abstract class TelElementTypes {
   public static final IElementType TAP5_EL_DOT = new TelElementType("TAP5_EL_DOT");
   public static final IElementType TAP5_EL_COLON = new TelElementType("TAP5_EL_COLON");
   public static final IElementType TAP5_EL_COMMA = new TelElementType("TAP5_EL_COMMA");
+  public static final IElementType TAP5_EL_QUESTION_DOT = new TelElementType("TAP5_EL_QUESTION_DOT");
+  public static final IElementType TAP5_EL_RANGE = new TelElementType("TAP5_EL_RANGE");
+  public static final IElementType TAP5_EL_EXCLAMATION = new TelElementType("TAP5_EL_EXCLAMATION");
+  public static final IElementType TAP5_EL_LEFT_PARENTH = new TelElementType("TAP5_EL_LEFT_PARENTH");
+  public static final IElementType TAP5_EL_RIGHT_PARENTH = new TelElementType("TAP5_EL_RIGHT_PARENTH");
+  public static final IElementType TAP5_EL_LEFT_BRACKET = new TelElementType("TAP5_EL_LEFT_BRACKET");
+  public static final IElementType TAP5_EL_RIGHT_BRACKET = new TelElementType("TAP5_EL_RIGHT_BRACKET");
+  public static final IElementType TAP5_EL_STRING = new TelElementType("TAP5_EL_STRING");
+  public static final IElementType TAP5_EL_INTEGER = new TelElementType("TAP5_EL_INTEGER");
+  public static final IElementType TAP5_EL_DECIMAL = new TelElementType("TAP5_EL_DECIMAL");
+
   public static final IElementType TAP5_EL_BAD_CHAR = new TelElementType("TAP5_EL_BAD_CHAR");
 
   static final IElementType TAP5_EL_CONTENT = new TelElementType("TAP5_EL_CONTENT");
   static final Key<ASTNode> TAP5_CONTEXT_NODE_KEY = Key.create("TAP5_CONTEXT_NODE_KEY");
-  static final ILazyParseableElementType TAP5_EL_HOLDER = new ILazyParseableElementType("TAP5_EL_HOLDER", TelFileType.INSTANCE.getLanguage()) {
-    public ASTNode parseContents(ASTNode chameleon) {
-      final Project project = chameleon.getPsi().getProject();
-      final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, getLanguage(), chameleon.getText());
-      final PsiParser parser = LanguageParserDefinitions.INSTANCE.forLanguage(getLanguage()).createParser(project);
+  static final ILazyParseableElementType TAP5_EL_HOLDER =
+      new ILazyParseableElementType("TAP5_EL_HOLDER", TelFileType.INSTANCE.getLanguage()) {
+        public ASTNode parseContents(ASTNode chameleon) {
+          final Project project = chameleon.getPsi().getProject();
+          final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, getLanguage(), chameleon.getText());
+          final PsiParser parser = LanguageParserDefinitions.INSTANCE.forLanguage(getLanguage()).createParser(project);
 
-      builder.putUserData(TAP5_CONTEXT_NODE_KEY, chameleon.getTreeParent());
-      final ASTNode result = parser.parse(this, builder).getFirstChildNode();
-      builder.putUserData(TAP5_CONTEXT_NODE_KEY, null);
-      return result;
-    }
-  };
+          builder.putUserData(TAP5_CONTEXT_NODE_KEY, chameleon.getTreeParent());
+          final ASTNode result = parser.parse(this, builder).getFirstChildNode();
+          builder.putUserData(TAP5_CONTEXT_NODE_KEY, null);
+          return result;
+        }
+      };
+
+  public static final TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
+  public static final TokenSet STRING_LITERALS = TokenSet.create(TAP5_EL_STRING);
 }

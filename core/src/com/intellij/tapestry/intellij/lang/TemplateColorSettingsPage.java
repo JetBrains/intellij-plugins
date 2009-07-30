@@ -32,6 +32,10 @@ public class TemplateColorSettingsPage implements ColorSettingsPage {
   public static final TextAttributesKey TEL_BOUNDS = createTextAttributesKey("TEL_BOUNDS", SyntaxHighlighterColors.KEYWORD);
   public static final TextAttributesKey TEL_IDENT = createTextAttributesKey("TEL_IDENT", CodeInsightColors.LOCAL_VARIABLE_ATTRIBUTES);
   public static final TextAttributesKey TEL_DOT = createTextAttributesKey("TEL_DOT", SyntaxHighlighterColors.DOT);
+  public static final TextAttributesKey TEL_NUMBER = createTextAttributesKey("TEL_NUMBER", SyntaxHighlighterColors.NUMBER);
+  public static final TextAttributesKey TEL_PARENTHS = createTextAttributesKey("TEL_PARENTHS", SyntaxHighlighterColors.PARENTHS);
+  public static final TextAttributesKey TEL_BRACKETS = createTextAttributesKey("TEL_BRACKETS", SyntaxHighlighterColors.BRACKETS);
+  public static final TextAttributesKey TEL_STRING = createTextAttributesKey("TEL_STRING", SyntaxHighlighterColors.STRING);
   public static final TextAttributesKey TEL_BACKGROUND = createTextAttributesKey("TEL_BACKGROUND", JspHighlighterColors.JSP_SCRIPTING_BACKGROUND);
   public static final TextAttributesKey TEL_BAD_CHAR = createTextAttributesKey("TEL_BAD_CHAR", HighlighterColors.BAD_CHARACTER);
 
@@ -50,6 +54,10 @@ public class TemplateColorSettingsPage implements ColorSettingsPage {
           createAttributesDescriptor("EL bounds", TEL_BOUNDS),
           createAttributesDescriptor("EL identifier", TEL_IDENT),
           createAttributesDescriptor("EL dot", TEL_DOT),
+          createAttributesDescriptor("EL number", TEL_NUMBER),
+          createAttributesDescriptor("EL parenths", TEL_PARENTHS),
+          createAttributesDescriptor("EL brackets", TEL_BRACKETS),
+          createAttributesDescriptor("EL string", TEL_STRING),
           createAttributesDescriptor("EL background", TEL_BACKGROUND),
           createAttributesDescriptor("Bad character", TEL_BAD_CHAR),
       };
