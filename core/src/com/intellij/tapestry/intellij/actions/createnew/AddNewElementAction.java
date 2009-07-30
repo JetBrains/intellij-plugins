@@ -102,7 +102,7 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
         }
         WebFacet webFacet = IdeaUtils.getWebFacet(module);
 
-        if (webFacet != null && WebUtil.isInsideWebRoots(((PsiDirectory)eventPsiElement).getVirtualFile(), webFacet.getWebRoots(false))) {
+        if (eventPsiElement instanceof PsiDirectory && webFacet != null && WebUtil.isInsideWebRoots(((PsiDirectory)eventPsiElement).getVirtualFile(), webFacet.getWebRoots(false))) {
           enabled = true;
         }
       }
