@@ -30,7 +30,6 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.OsgiConfigurationType;
 import org.osmorc.run.OsgiRunConfiguration;
 
@@ -57,19 +56,24 @@ public class EquinoxConfigurationType implements ConfigurationType {
                 runConfiguration.setLegacyOsgiRunConfigurationLoader(legacyEquinoxOsgiRunConfigurationLoader);
                 return runConfiguration;
             }
+
+            @Override
+            public String getName() {
+                return "Eclipse Equinox";
+            }
         };
     }
 
     public String getDisplayName() {
-        return "Eclipse Equinox";
+        return "";
     }
 
     public String getConfigurationTypeDescription() {
-        return "Run Eclipse Equinox";
+        return "";
     }
 
     public Icon getIcon() {
-        return OsmorcBundle.getSmallIcon();
+        return null;
     }
 
     @NotNull
