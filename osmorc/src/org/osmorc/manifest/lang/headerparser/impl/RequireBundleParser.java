@@ -27,31 +27,26 @@ package org.osmorc.manifest.lang.headerparser.impl;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.BundleReference;
-import org.osmorc.manifest.lang.psi.ManifestClause;
-import org.osmorc.manifest.lang.psi.ManifestHeaderValue;
+import org.osmorc.manifest.lang.psi.Clause;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class RequireBundleParser extends AbstractHeaderParserImpl
-{
-  public RequireBundleParser(ValueParserRepository valueParserRepository)
-  {
-    super(valueParserRepository);
-  }
-
-  public PsiReference[] getReferences(@NotNull ManifestHeaderValue headerValue)
-  {
-    if (headerValue.getParent() instanceof ManifestClause)
-    {
-      return new PsiReference[]{new BundleReference(headerValue)};
+public class RequireBundleParser extends AbstractHeaderParserImpl {
+    public RequireBundleParser(ValueParserRepository valueParserRepository) {
+        super(valueParserRepository);
     }
-    return EMPTY_PSI_REFERENCE_ARRAY;
-  }
 
-  public boolean isSimpleHeader()
-  {
-    return false;
-  }
+    public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+        if (headerValuePart.getParent() instanceof Clause) {
+            return new PsiReference[]{new BundleReference(headerValuePart)};
+        }
+        return EMPTY_PSI_REFERENCE_ARRAY;
+    }
+
+    public boolean isSimpleHeader() {
+        return false;
+    }
 }

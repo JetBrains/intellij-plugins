@@ -28,7 +28,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
@@ -65,30 +64,36 @@ public class ParsingTest {
     public void testSimple() {
         PsiFile fromText = PsiFileFactory.getInstance(fixture.getProject()).createFileFromText("DUMMY.MF", "test0: testvalue\n");
         PsiElement currentElement = fromText.getFirstChild();
-        assertThat(currentElement, is(ManifestHeader.class));
-        ManifestHeader header = (ManifestHeader) currentElement;
+        assertThat(currentElement, is(Section.class));
+
+       currentElement = currentElement.getFirstChild();
+        assertThat(currentElement, is(Header.class));
+
+        Header header = (Header) currentElement;
         assertThat(header.getName(), equalTo("test0"));
 
         currentElement = currentElement.getFirstChild();
-        assertThat(currentElement, is(ManifestHeaderName.class));
-        assertThat(((ManifestHeaderName) currentElement).getName(), equalTo("test0"));
+        assertThat(currentElement, is(ManifestToken.class));
+        assertThat(((ManifestToken) currentElement).getTokenType(), is(ManifestTokenType.HEADER_NAME));
+        assertThat(currentElement.getText(), equalTo("test0"));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(LeafPsiElement.class));
-        assertThat(((LeafPsiElement) currentElement).getElementType(), is(ManifestTokenTypes.HEADER_ASSIGNMENT));
+        assertThat(currentElement, is(ManifestToken.class));
+        assertThat(((ManifestToken) currentElement).getTokenType(), is(ManifestTokenType.COLON));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(PsiWhiteSpace.class));
+        assertThat(currentElement, is(ManifestToken.class));
+        assertThat(((ManifestToken) currentElement).getTokenType(), is(ManifestTokenType.SIGNIFICANT_SPACE));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(ManifestClause.class));
+        assertThat(currentElement, is(Clause.class));
 
         currentElement = currentElement.getFirstChild();
-        assertThat(currentElement, is(ManifestHeaderValue.class));
-        ManifestHeaderValue headerValue = (ManifestHeaderValue) currentElement;
-        assertThat(headerValue.getText(), equalTo("testvalue"));
-        assertThat(headerValue.getValueText(), equalTo("testvalue"));
-        assertThat(headerValue.getValue(), equalTo((Object) "testvalue"));
+        assertThat(currentElement, is(HeaderValuePart.class));
+        HeaderValuePart headerValue = (HeaderValuePart) currentElement;
+        assertThat(headerValue.getText(), equalTo("testvalue\n"));
+        assertThat(headerValue.getUnwrappedText(), equalTo("testvalue"));
+        assertThat(headerValue.getConvertedValue(), equalTo((Object) "testvalue"));
 
     }
 
@@ -96,33 +101,35 @@ public class ParsingTest {
     @Test
     public void testTwoLineHeader() {
         PsiFile fromText = PsiFileFactory.getInstance(fixture.getProject()).createFileFromText("DUMMY.MF",
-                "test0 : test\n" +
+                "test0: test\n" +
                         " value\n");
         PsiElement currentElement = fromText.getFirstChild();
-        assertThat(currentElement, is(ManifestHeader.class));
+        assertThat(currentElement, is(Section.class));
 
         currentElement = currentElement.getFirstChild();
-        assertThat(currentElement, is(ManifestHeaderName.class));
-
-        currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(PsiWhiteSpace.class));
-
-        currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(LeafPsiElement.class));
-        assertThat(((LeafPsiElement) currentElement).getElementType(), is(ManifestTokenTypes.HEADER_ASSIGNMENT));
-
-        currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(PsiWhiteSpace.class));
-
-        currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(ManifestClause.class));
+        assertThat(currentElement, is(Header.class));
 
         currentElement = currentElement.getFirstChild();
-        assertThat(currentElement, is(ManifestHeaderValue.class));
-        ManifestHeaderValue headerValue = (ManifestHeaderValue) currentElement;
-        assertThat(headerValue.getText(), equalTo("test\n value"));
-        assertThat(headerValue.getValueText(), equalTo("testvalue"));
-        assertThat(headerValue.getValue(), equalTo((Object) "testvalue"));
+        assertThat(currentElement, is(ManifestToken.class));
+
+
+        currentElement = currentElement.getNextSibling();
+        assertThat(currentElement, is(ManifestToken.class));
+        assertThat(((ManifestToken) currentElement).getTokenType(), is(ManifestTokenType.COLON));
+
+        currentElement = currentElement.getNextSibling();
+        assertThat(currentElement, is(ManifestToken.class));
+        assertThat(((ManifestToken) currentElement).getTokenType(), is(ManifestTokenType.SIGNIFICANT_SPACE));
+
+        currentElement = currentElement.getNextSibling();
+        assertThat(currentElement, is(Clause.class));
+
+        currentElement = currentElement.getFirstChild();
+        assertThat(currentElement, is(HeaderValuePart.class));
+        HeaderValuePart headerValue = (HeaderValuePart) currentElement;
+        assertThat(headerValue.getText(), equalTo("test\n value\n"));
+        assertThat(headerValue.getUnwrappedText(), equalTo("testvalue"));
+        assertThat(headerValue.getConvertedValue(), equalTo((Object) "testvalue"));
     }
 
     @SuppressWarnings({"ConstantConditions"})
@@ -133,47 +140,53 @@ public class ParsingTest {
                         " value\n" +
                         "test1: testvalue2");
         PsiElement currentElement = fromText.getFirstChild();
-        assertThat(currentElement, is(ManifestHeader.class));
-        assertThat(((ManifestHeader) currentElement).getName(), equalTo("test0"));
+        assertThat(currentElement, is(Section.class));
+
+        currentElement = currentElement.getFirstChild();
+        assertThat(currentElement, is(Header.class));
+        assertThat(((Header) currentElement).getName(), equalTo("test0"));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(PsiWhiteSpace.class));
-
-        currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(ManifestHeader.class));
-        assertThat(((ManifestHeader) currentElement).getName(), equalTo("test1"));
+        assertThat(currentElement, is(Header.class));
+        assertThat(((Header) currentElement).getName(), equalTo("test1"));
     }
 
     @SuppressWarnings({"ConstantConditions"})
     @Test
     public void testClauses() {
         PsiFile fromText = PsiFileFactory.getInstance(fixture.getProject()).createFileFromText("DUMMY.MF",
-                "Require-Bundle:t1,t2");
+                "Require-Bundle: t1,t2");
         PsiElement currentElement = fromText.getFirstChild();
-        assertThat(currentElement, is(ManifestHeader.class));
+        assertThat(currentElement, is(Section.class));
 
         currentElement = currentElement.getFirstChild();
-        assertThat(currentElement, is(ManifestHeaderName.class));
-
-        currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(LeafPsiElement.class));
-
-        currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(ManifestClause.class));
+        assertThat(currentElement, is(Header.class));
 
         currentElement = currentElement.getFirstChild();
-        assertThat(currentElement, is(ManifestHeaderValue.class));
+        assertThat(currentElement, is(ManifestToken.class));
+
+        currentElement = currentElement.getNextSibling();
+        assertThat(currentElement, is(ManifestToken.class));
+
+        currentElement = currentElement.getNextSibling();
+        assertThat(currentElement, is(ManifestToken.class));
+
+        currentElement = currentElement.getNextSibling();
+        assertThat(currentElement, is(Clause.class));
+
+        currentElement = currentElement.getFirstChild();
+        assertThat(currentElement, is(HeaderValuePart.class));
         assertThat(currentElement.getText(), equalTo("t1"));
 
         currentElement = currentElement.getParent().getNextSibling();
-        assertThat(currentElement, is(LeafPsiElement.class));
-        assertThat(((LeafPsiElement) currentElement).getElementType(), equalTo(ManifestTokenTypes.CLAUSE_SEPARATOR));
+        assertThat(currentElement, is(ManifestToken.class));
+        assertThat(((ManifestToken) currentElement).getTokenType(), equalTo(ManifestTokenType.COMMA));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(ManifestClause.class));
+        assertThat(currentElement, is(Clause.class));
 
         currentElement = currentElement.getFirstChild();
-        assertThat(currentElement, is(ManifestHeaderValue.class));
+        assertThat(currentElement, is(HeaderValuePart.class));
         assertThat(currentElement.getText(), equalTo("t2"));
     }
 
@@ -181,70 +194,67 @@ public class ParsingTest {
     @Test
     public void testDirectivesAndAttributes() {
         PsiFile fromText = PsiFileFactory.getInstance(fixture.getProject()).createFileFromText("DUMMY.MF",
-                "Require-Bundle:t1;d1:=p1;a1=p2; d2 := p3 ;  a2 = p4");
+                "Require-Bundle: t1;d1:=p1;a1=p2; d2 := p3 ;  a2 = p4");
         PsiElement currentElement = fromText.getFirstChild();
-        assertThat(currentElement, is(ManifestHeader.class));
+        assertThat(currentElement, is(Section.class));
 
         currentElement = currentElement.getFirstChild();
-        assertThat(currentElement, is(ManifestHeaderName.class));
-
-        currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(LeafPsiElement.class));
-
-        currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(ManifestClause.class));
+        assertThat(currentElement, is(Header.class));
 
         currentElement = currentElement.getFirstChild();
-        assertThat(currentElement, is(ManifestHeaderValue.class));
-        ManifestHeaderValue headerValue = (ManifestHeaderValue) currentElement;
-        assertThat(headerValue.getValueText(), equalTo("t1"));
+        assertThat(currentElement, is(ManifestToken.class));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(LeafPsiElement.class));
-        assertThat(((LeafPsiElement) currentElement).getElementType(), equalTo(ManifestTokenTypes.PARAMETER_SEPARATOR));
+        assertThat(currentElement, is(ManifestToken.class));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(ManifestDirective.class));
-        assertThat(((ManifestDirective) currentElement).getName(), equalTo("d1"));
-        assertThat(((ManifestDirective) currentElement).getValue().getValueText(), equalTo("p1"));
+        assertThat(currentElement, is(ManifestToken.class));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(LeafPsiElement.class));
-        assertThat(((LeafPsiElement) currentElement).getElementType(), equalTo(ManifestTokenTypes.PARAMETER_SEPARATOR));
+        assertThat(currentElement, is(Clause.class));
+
+        currentElement = currentElement.getFirstChild();
+        assertThat(currentElement, is(HeaderValuePart.class));
+        HeaderValuePart headerValue = (HeaderValuePart) currentElement;
+        assertThat(headerValue.getUnwrappedText(), equalTo("t1"));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(ManifestAttribute.class));
-        assertThat(((ManifestAttribute) currentElement).getName(), equalTo("a1"));
-        assertThat(((ManifestAttribute) currentElement).getValue().getValueText(), equalTo("p2"));
+        assertThat(currentElement, is(ManifestToken.class));
+        assertThat(((ManifestToken) currentElement).getTokenType(), equalTo(ManifestTokenType.SEMICOLON));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(LeafPsiElement.class));
-        assertThat(((LeafPsiElement) currentElement).getElementType(), equalTo(ManifestTokenTypes.PARAMETER_SEPARATOR));
+        assertThat(currentElement, is(Directive.class));
+        assertThat(((Directive) currentElement).getName(), equalTo("d1"));
+        assertThat(((Directive) currentElement).getValue(), equalTo("p1"));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(PsiWhiteSpace.class));
+        assertThat(currentElement, is(ManifestToken.class));
+        assertThat(((ManifestToken) currentElement).getTokenType(), equalTo(ManifestTokenType.SEMICOLON));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(ManifestDirective.class));
-        assertThat(((ManifestDirective) currentElement).getName(), equalTo("d2"));
-        assertThat(((ManifestDirective) currentElement).getValue().getValueText(), equalTo("p3"));
+        assertThat(currentElement, is(Attribute.class));
+        assertThat(((Attribute) currentElement).getName(), equalTo("a1"));
+        assertThat(((Attribute) currentElement).getValue(), equalTo("p2"));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(LeafPsiElement.class));
-        assertThat(((LeafPsiElement) currentElement).getElementType(), equalTo(ManifestTokenTypes.PARAMETER_SEPARATOR));
+        assertThat(currentElement, is(ManifestToken.class));
+        assertThat(((ManifestToken) currentElement).getTokenType(), equalTo(ManifestTokenType.SEMICOLON));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(PsiWhiteSpace.class));
+        assertThat(currentElement, is(Directive.class));
+        assertThat(((Directive) currentElement).getName(), equalTo("d2"));
+        assertThat(((Directive) currentElement).getValue(), equalTo("p3"));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(PsiWhiteSpace.class));
+        assertThat(currentElement, is(ManifestToken.class));
+        assertThat(((ManifestToken) currentElement).getTokenType(), equalTo(ManifestTokenType.SEMICOLON));
 
         currentElement = currentElement.getNextSibling();
-        assertThat(currentElement, is(ManifestAttribute.class));
-        assertThat(((ManifestAttribute) currentElement).getName(), equalTo("a2"));
-        assertThat(((ManifestAttribute) currentElement).getValue().getValueText(), equalTo("p4"));
+        assertThat(currentElement, is(Attribute.class));
+        assertThat(((Attribute) currentElement).getName(), equalTo("a2"));
+        assertThat(((Attribute) currentElement).getValue(), equalTo("p4"));
 
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
 }

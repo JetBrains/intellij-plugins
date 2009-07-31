@@ -27,30 +27,25 @@ package org.osmorc.manifest.lang.headerparser;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
-import org.osmorc.manifest.lang.psi.ManifestHeaderValue;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class HeaderAnnotator implements Annotator
-{
-  public HeaderAnnotator(HeaderParserRepository repository)
-  {
-    _repository = repository;
-  }
-
-  public void annotate(PsiElement psiElement, AnnotationHolder holder)
-  {
-    if (psiElement instanceof ManifestHeaderValue)
-    {
-      ManifestHeaderValue headerValue = (ManifestHeaderValue) psiElement;
-      HeaderParser headerParser = _repository.getHeaderParser(headerValue);
-      if (headerParser != null)
-      {
-        headerParser.annotate(headerValue, holder);
-      }
+public class HeaderAnnotator implements Annotator {
+    public HeaderAnnotator(HeaderParserRepository repository) {
+        _repository = repository;
     }
-  }
 
-  private final HeaderParserRepository _repository;
+    public void annotate(PsiElement psiElement, AnnotationHolder holder) {
+        if (psiElement instanceof HeaderValuePart) {
+            HeaderValuePart headerValue = (HeaderValuePart) psiElement;
+            HeaderParser headerParser = _repository.getHeaderParser(headerValue);
+            if (headerParser != null) {
+                headerParser.annotate(headerValue, holder);
+            }
+        }
+    }
+
+    private final HeaderParserRepository _repository;
 }

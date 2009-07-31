@@ -22,26 +22,27 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.manifest.lang;
 
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.ManifestFileTypeFactory;
+package org.osmorc.manifest.lang.psi.stub.impl;
+
+import com.intellij.psi.stubs.StubBase;
+import com.intellij.psi.stubs.StubElement;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.osmorc.manifest.lang.psi.ManifestStubElementTypes;
+import org.osmorc.manifest.lang.psi.stub.HeaderValuePartStub;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestElementType extends IElementType
-{
-  public ManifestElementType(
-      @NotNull @NonNls String debugName)
-  {
-    super(debugName, ManifestFileTypeFactory.MANIFEST.getLanguage());
-  }
+public class HeaderValuePartStubImpl extends StubBase<HeaderValuePart> implements HeaderValuePartStub {
+    private final String unwrappedText;
 
-  public String toString()
-  {
-    return "Manifest: " + super.toString();
-  }
+    public HeaderValuePartStubImpl(StubElement parent, String unwrappedText) {
+        super(parent, ManifestStubElementTypes.HEADER_VALUE_PART);
+        this.unwrappedText = unwrappedText;
+    }
+
+    public String getUnwrappedText() {
+        return unwrappedText;
+    }
 }

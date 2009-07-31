@@ -22,19 +22,31 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.manifest.lang.psi;
 
+package org.osmorc.manifest.lang.psi.elementtype;
+
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.stubs.StubElement;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.manifest.lang.ManifestLanguage;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestDirective extends AbstractBinaryManifestExpression
-{
-  public ManifestDirective(@NotNull ASTNode node)
-  {
-    super(node);
-  }
+public abstract class AbstractManifestStubElementType<StubT extends StubElement, PsiT extends PsiElement> extends IStubElementType<StubT, PsiT> {
+    private static final String ETERNAL_ID_PREFIX = "Osmorc.Manifest.";
+    private final String externalId;
 
+    public AbstractManifestStubElementType(@NotNull final String debugName) {
+        super(debugName, ManifestLanguage.INSTANCE);
+        externalId = ETERNAL_ID_PREFIX + debugName;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public abstract PsiT createPsi(ASTNode node);
 }

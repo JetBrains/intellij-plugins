@@ -33,6 +33,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
@@ -43,9 +44,10 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.osmorc.fix.impl.ReplaceUtil;
-import org.osmorc.manifest.lang.psi.ManifestClause;
-import org.osmorc.manifest.lang.psi.ManifestHeader;
-import org.osmorc.manifest.lang.psi.ManifestHeaderValueImpl;
+import org.osmorc.manifest.lang.psi.Clause;
+import org.osmorc.manifest.lang.psi.Header;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.osmorc.manifest.lang.psi.Section;
 
 import java.util.Arrays;
 
@@ -138,16 +140,18 @@ public class ModuleDependencySynchronizerTest {
         VirtualFile manifestFile = contentRoot.findFileByRelativePath("META-INF/MANIFEST.MF");
 
         PsiFile manifestPsiFile = PsiManager.getInstance(fixture.getProject()).findFile(manifestFile);
-        ManifestHeader lastHeader = null;
+        Section section = (Section) manifestPsiFile.getFirstChild();
 
-        for (PsiElement psiElement : manifestPsiFile.getChildren()) {
-            if (psiElement instanceof ManifestHeader) {
-                lastHeader = (ManifestHeader) psiElement;
+        Header lastHeader = null;
+
+        for (PsiElement psiElement : section.getChildren()) {
+            if (psiElement instanceof Header) {
+                lastHeader = (Header) psiElement;
             }
         }
 
-        ManifestClause clause = (ManifestClause) lastHeader.getLastChild();
-        final ManifestHeaderValueImpl value = (ManifestHeaderValueImpl) clause.getLastChild();
+        Clause clause = (Clause) lastHeader.getLastChild();
+        final HeaderValuePart value = (HeaderValuePart) clause.getLastChild();
 
         CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
             public void run() {
@@ -160,6 +164,6 @@ public class ModuleDependencySynchronizerTest {
         }, "test", "testid");
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private TempDirTestFixture myTempDirFixture;
 }

@@ -35,8 +35,7 @@ import org.junit.After;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
-import org.osmorc.manifest.lang.psi.ManifestHeader;
-import org.osmorc.manifest.lang.psi.ManifestHeaderName;
+import org.osmorc.manifest.lang.psi.Header;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -58,21 +57,5 @@ public class ReplaceUtilTest {
         fixture.tearDown();
     }
 
-    @SuppressWarnings({"ConstantConditions"})
-    @Test
-    public void replaceHeaderName() {
-        PsiFile fromText = PsiFileFactory.getInstance(fixture.getProject()).createFileFromText("DUMMY.MF", "testname: testvalue");
-
-        ManifestHeader header = PsiTreeUtil.getChildOfType(fromText, ManifestHeader.class);
-        ManifestHeaderName name = PsiTreeUtil.getChildOfType(header, ManifestHeaderName.class);
-
-        assertThat(name.getText(), equalTo("testname"));
-
-        ReplaceUtil.replace(name, "othername");
-
-        name = PsiTreeUtil.getChildOfType(header, ManifestHeaderName.class);
-        assertThat(name.getText(), equalTo("othername"));
-    }
-
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
 }

@@ -22,43 +22,14 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.manifest.lang.psi;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.ManifestFileTypeFactory;
+package org.osmorc.manifest.lang.psi.stub;
+
+import com.intellij.psi.stubs.StubElement;
+import org.osmorc.manifest.lang.psi.Section;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public abstract class ManifestElementBase extends ASTWrapperPsiElement
-{
-  public ManifestElementBase(@NotNull ASTNode node)
-  {
-    super(node);
-  }
-
-  @NotNull
-  public Language getLanguage()
-  {
-    return ManifestFileTypeFactory.MANIFEST.getLanguage();
-  }
-
-
-  public void delete() throws IncorrectOperationException
-  {
-    getNode().getTreeParent().removeChild(getNode());
-  }
-
-  public PsiElement replace(@NotNull PsiElement newElement) throws IncorrectOperationException
-  {
-    final ASTNode myNode = getNode();
-    final ASTNode result = newElement.getNode().copyElement();
-    myNode.getTreeParent().replaceChild(myNode, result);
-    return result.getPsi();
-  }
+public interface SectionStub extends StubElement<Section> {
 }

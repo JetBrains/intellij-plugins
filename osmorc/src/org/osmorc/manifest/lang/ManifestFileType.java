@@ -33,38 +33,32 @@ import org.osmorc.i18n.OsmorcBundle;
 import javax.swing.*;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestFileType extends LanguageFileType
-{
-  public ManifestFileType()
-  {
-    super(ManifestLanguage.INSTANCE);
-  }
+public class ManifestFileType extends LanguageFileType {
+    public ManifestFileType() {
+        super(ManifestLanguage.INSTANCE);
+    }
 
-  @NotNull
-  @NonNls
-  public String getName()
-  {
-    return "Manifest";
-  }
+    @NotNull
+    @NonNls
+    public String getName() {
+        return "Manifest";
+    }
 
-  @NotNull
-  public String getDescription()
-  {
-    return "Manifest";
-  }
+    @NotNull
+    public String getDescription() {
+        return "Manifest";
+    }
 
-  @NotNull
-  @NonNls
-  public String getDefaultExtension()
-  {
-    return "MF";
-  }
+    @NotNull
+    @NonNls
+    public String getDefaultExtension() {
+        return "MF";
+    }
 
-  @Nullable
-  public Icon getIcon()
-  {
-    return OsmorcBundle.getSmallIcon();
-  }
+    @Nullable
+    public Icon getIcon() {
+        return OsmorcBundle.getSmallIcon();
+    }
 }

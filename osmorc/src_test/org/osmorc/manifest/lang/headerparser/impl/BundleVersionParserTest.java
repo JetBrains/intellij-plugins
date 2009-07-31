@@ -35,8 +35,8 @@ import org.junit.After;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
-import org.osmorc.manifest.lang.psi.ManifestHeaderValue;
 import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.valueobject.Version;
 
 /**
@@ -61,8 +61,8 @@ public class BundleVersionParserTest {
 
     @Test
     public void testGetValue() {
-        ManifestHeaderValue headerValueMock = createMock(ManifestHeaderValue.class);
-        expect(headerValueMock.getValueText()).andReturn("1.2.3.b300");
+        HeaderValuePart headerValueMock = createMock(HeaderValuePart.class);
+        expect(headerValueMock.getUnwrappedText()).andReturn("1.2.3.b300");
 
         replay(headerValueMock);
 
@@ -76,8 +76,8 @@ public class BundleVersionParserTest {
     @Test
     public void testAnnotate() {
         AnnotationHolder annotationHolderMock = createMock(AnnotationHolder.class);
-        ManifestHeaderValue headerValueMock = createMock(ManifestHeaderValue.class);
-        expect(headerValueMock.getValueText()).andReturn("1.0,u");
+        HeaderValuePart headerValueMock = createMock(HeaderValuePart.class);
+        expect(headerValueMock.getUnwrappedText()).andReturn("1.0,u");
         expect(headerValueMock.getTextRange()).andReturn(new TextRange(10, 15));
         expect(annotationHolderMock.createErrorAnnotation(new TextRange(12, 15),
                 "The minor component of the defined version is not a valid number")).andReturn(null);
@@ -91,5 +91,5 @@ public class BundleVersionParserTest {
         verify(headerValueMock, annotationHolderMock);
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
 }

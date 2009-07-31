@@ -24,26 +24,25 @@
  */
 package org.osmorc.manifest.lang;
 
-import com.intellij.lang.Language;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
+import org.osmorc.manifest.lang.psi.ManifestStubElementTypes;
 
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestElementTypes
-{
-  public static final IFileElementType FILE = new IFileElementType(Language.findInstance(ManifestLanguage.class));
-  public static final IElementType HEADER = new ManifestElementType("HEADER");
-  public static final IElementType HEADER_NAME = new ManifestElementType("HEADER_NAME");
-  public static final IElementType HEADER_VALUE = new ManifestElementType("HEADER_VALUE");
-  public static final IElementType CLAUSE = new ManifestElementType("CLAUSE");
-  public static final IElementType DIRECTIVE = new ManifestElementType("DIRECTIVE");
-  public static final IElementType ATTRIBUTE = new ManifestElementType("ATTRIBUTE");
+public class ManifestElementTypes {
+    public static final IFileElementType FILE = ManifestStubElementTypes.FILE;
+    public static final IElementType HEADER = ManifestStubElementTypes.HEADER;
 
-  private ManifestElementTypes()
-  {
+    public static final IElementType SECTION = ManifestStubElementTypes.SECTION;
+    public static final IElementType CLAUSE = ManifestStubElementTypes.CLAUSE;
+    public static final IElementType DIRECTIVE = ManifestStubElementTypes.DIRECTIVE;
+    public static final IElementType ATTRIBUTE = ManifestStubElementTypes.ATTRIBUTE;
+    public static final IElementType HEADER_VALUE_PART = ManifestStubElementTypes.HEADER_VALUE_PART;
 
-  }
+    private ManifestElementTypes() {
+
+    }
 }

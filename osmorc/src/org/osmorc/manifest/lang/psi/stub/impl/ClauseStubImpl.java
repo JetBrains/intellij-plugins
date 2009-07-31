@@ -22,26 +22,20 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.manifest.lang.psi;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
+package org.osmorc.manifest.lang.psi.stub.impl;
+
+import com.intellij.psi.stubs.StubBase;
+import com.intellij.psi.stubs.StubElement;
+import org.osmorc.manifest.lang.psi.Clause;
+import org.osmorc.manifest.lang.psi.ManifestStubElementTypes;
+import org.osmorc.manifest.lang.psi.stub.ClauseStub;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestHeader extends ManifestElementBase
-{
-  public ManifestHeader(@NotNull ASTNode node)
-  {
-    super(node);
-  }
-
-  public String getName()
-  {
-    ManifestHeaderName headerName = PsiTreeUtil.getChildOfType(this, ManifestHeaderName.class);
-
-    return headerName != null ? headerName.getName() : null;
-  }
+public class ClauseStubImpl extends StubBase<Clause> implements ClauseStub {
+    public ClauseStubImpl(StubElement parent) {
+        super(parent, ManifestStubElementTypes.CLAUSE);
+    }
 }

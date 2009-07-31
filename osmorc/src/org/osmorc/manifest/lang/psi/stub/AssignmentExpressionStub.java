@@ -22,28 +22,16 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.manifest.lang.psi;
 
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.AbstractElementManipulator;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.util.IncorrectOperationException;
+package org.osmorc.manifest.lang.psi.stub;
+
+import com.intellij.psi.stubs.StubElement;
+import org.osmorc.manifest.lang.psi.AssignmentExpression;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestHeaderValueManipulator extends AbstractElementManipulator<ManifestHeaderValue>
-{
-  public ManifestHeaderValue handleContentChange(ManifestHeaderValue element, TextRange range, String newContent)
-      throws IncorrectOperationException
-  {
-    String newText = range.replace(element.getText(), newContent);
-    PsiFileFactory fileFactory = PsiFileFactory.getInstance(element.getProject());
-    PsiFile fromText = fileFactory.createFileFromText("DUMMY.MF", " " + newText);
-    ManifestClause clause = (ManifestClause) fromText.getFirstChild().getNextSibling();
-    ManifestHeaderValue headerValue = (ManifestHeaderValue) clause.getFirstChild();
-
-    return (ManifestHeaderValue) element.replace(headerValue);
-  }
+public interface AssignmentExpressionStub extends StubElement<AssignmentExpression> {
+    String getName();
+    String getValue();
 }

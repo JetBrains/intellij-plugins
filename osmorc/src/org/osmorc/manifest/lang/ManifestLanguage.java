@@ -27,14 +27,12 @@ package org.osmorc.manifest.lang;
 import com.intellij.lang.Language;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestLanguage extends Language
-{
-  public ManifestLanguage()
-  {
-    super("Manifest");
-  }
+public class ManifestLanguage extends Language {
+    public ManifestLanguage() {
+        super("Manifest");
+    }
 
-  public static final ManifestLanguage INSTANCE = new ManifestLanguage();
+    public static final ManifestLanguage INSTANCE = new ManifestLanguage();
 }

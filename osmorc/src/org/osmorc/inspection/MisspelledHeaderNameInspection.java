@@ -25,20 +25,17 @@
 package org.osmorc.inspection;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.codeInspection.*;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiReferenceExpression;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.fix.ReplaceQuickFixQuickFix;
 import org.osmorc.manifest.lang.headerparser.HeaderNameMatch;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
-import org.osmorc.manifest.lang.psi.ManifestHeaderName;
+import org.osmorc.manifest.lang.psi.Header;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,21 +76,21 @@ public class MisspelledHeaderNameInspection extends LocalInspectionTool {
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
         return new PsiElementVisitor() {
             public void visitElement(PsiElement element) {
-                if (element instanceof ManifestHeaderName) {
-                    final ManifestHeaderName headerName = (ManifestHeaderName) element;
-                    String name = headerName.getName();
-                    if (name != null) {
+                if (element instanceof Header) {
+                    final Header header = (Header) element;
+                    String name = header.getName();
+                    if (name != null && name.length() > 0) {
                         final List<HeaderNameSpellingQuickFix> quickFixes = new ArrayList<HeaderNameSpellingQuickFix>();
                         final Collection<HeaderNameMatch> matches = getHeaderParserRepository().getMatches(name);
                         for (HeaderNameMatch match : matches) {
-                            quickFixes.add(new HeaderNameSpellingQuickFix(headerName, match));
+                            quickFixes.add(new HeaderNameSpellingQuickFix(header, match));
                             if (quickFixes.size() > 20) {
                                 break;
                             }
                         }
 
                         if (quickFixes.size() > 0) {
-                            holder.registerProblem(headerName, "Header name is spelled incorrectly",
+                            holder.registerProblem(header.getNameToken(), "Header name is spelled incorrectly",
                                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING, quickFixes.toArray(new HeaderNameSpellingQuickFix[quickFixes.size()]));
                         }
                     }
@@ -109,9 +106,27 @@ public class MisspelledHeaderNameInspection extends LocalInspectionTool {
         return _headerParserRepository;
     }
 
-    private static class HeaderNameSpellingQuickFix extends ReplaceQuickFixQuickFix {
-        private HeaderNameSpellingQuickFix(ManifestHeaderName headerName, HeaderNameMatch match) {
-            super(String.format("Change to (%03d) \"%s\"", match.getDistance(), match.getProvider().getHeaderName()), headerName, match.getProvider().getHeaderName());
+    private static class HeaderNameSpellingQuickFix implements LocalQuickFix {
+        private final Header header;
+        private final HeaderNameMatch match;
+
+        private HeaderNameSpellingQuickFix(Header header, HeaderNameMatch match) {
+            this.header = header;
+            this.match = match;
+        }
+
+        @NotNull
+        public String getName() {
+            return String.format("Change to (%03d) \"%s\"", match.getDistance(), match.getProvider().getHeaderName());
+        }
+
+        @NotNull
+        public String getFamilyName() {
+            return "Osmorc";
+        }
+
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            header.setName(match.getProvider().getHeaderName());
         }
     }
 

@@ -28,44 +28,37 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.HeaderParser;
-import org.osmorc.manifest.lang.psi.ManifestHeaderValue;
 import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public abstract class AbstractHeaderParserImpl implements HeaderParser
-{
-  AbstractHeaderParserImpl(ValueParserRepository valueParserRepository)
-  {
-    _valueParserRepository = valueParserRepository;
-  }
+public abstract class AbstractHeaderParserImpl implements HeaderParser {
+    AbstractHeaderParserImpl(ValueParserRepository valueParserRepository) {
+        _valueParserRepository = valueParserRepository;
+    }
 
-  public Object getValue(@NotNull ManifestHeaderValue headerValue)
-  {
-    return headerValue.getValueText();
-  }
+    public Object getValue(@NotNull HeaderValuePart headerValuePart) {
+        return headerValuePart.getUnwrappedText();
+    }
 
-  public boolean isSimpleHeader()
-  {
-    return true;
-  }
+    public boolean isSimpleHeader() {
+        return true;
+    }
 
-  public PsiReference[] getReferences(@NotNull ManifestHeaderValue headerValue)
-  {
-    return EMPTY_PSI_REFERENCE_ARRAY;
-  }
+    public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+        return EMPTY_PSI_REFERENCE_ARRAY;
+    }
 
-  public void annotate(@NotNull ManifestHeaderValue headerValue, @NotNull AnnotationHolder holder)
-  {
+    public void annotate(@NotNull HeaderValuePart headerValue, @NotNull AnnotationHolder holder) {
 
-  }
+    }
 
-  ValueParserRepository getValueParserRepository()
-  {
-    return _valueParserRepository;
-  }
+    ValueParserRepository getValueParserRepository() {
+        return _valueParserRepository;
+    }
 
-  static final PsiReference[] EMPTY_PSI_REFERENCE_ARRAY = new PsiReference[0];
-  private final ValueParserRepository _valueParserRepository;
+    static final PsiReference[] EMPTY_PSI_REFERENCE_ARRAY = new PsiReference[0];
+    private final ValueParserRepository _valueParserRepository;
 }

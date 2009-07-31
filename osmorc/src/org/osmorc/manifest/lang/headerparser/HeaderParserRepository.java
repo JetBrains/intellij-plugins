@@ -31,112 +31,90 @@ import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.impl.SimpleHeaderParser;
-import org.osmorc.manifest.lang.psi.ManifestHeader;
-import org.osmorc.manifest.lang.psi.ManifestHeaderValue;
+import org.osmorc.manifest.lang.psi.Header;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
 
 import java.util.*;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class HeaderParserRepository
-{
-  public HeaderParserRepository(SimpleHeaderParser simpleHeaderParser)
-  {
-    _simpleHeaderParser = simpleHeaderParser;
-    _headerParserProviderRepositories = Extensions
-        .getExtensions(new ExtensionPointName<HeaderParserProviderRepository>("Osmorc.headerParserProviderRepository"));
-  }
+public class HeaderParserRepository {
+    public HeaderParserRepository(SimpleHeaderParser simpleHeaderParser) {
+        _simpleHeaderParser = simpleHeaderParser;
+        _headerParserProviderRepositories = Extensions
+                .getExtensions(new ExtensionPointName<HeaderParserProviderRepository>("Osmorc.headerParserProviderRepository"));
+    }
 
-  public static HeaderParserRepository getInstance() {
-    return ServiceManager.getService(HeaderParserRepository.class);
-  }
+    public static HeaderParserRepository getInstance() {
+        return ServiceManager.getService(HeaderParserRepository.class);
+    }
 
-  public HeaderParser getHeaderParser(@NotNull ManifestHeaderValue manifestHeaderValue)
-  {
-    ManifestHeader manifestHeader = findHeader(manifestHeaderValue);
-    String headerName = manifestHeader != null ? manifestHeader.getName() : null;
-    return getHeaderParser(headerName);
-  }
+    public HeaderParser getHeaderParser(@NotNull HeaderValuePart manifestHeaderValue) {
+        Header manifestHeader = findHeader(manifestHeaderValue);
+        String headerName = manifestHeader != null ? manifestHeader.getName() : null;
+        return getHeaderParser(headerName);
+    }
 
-  public HeaderParser getHeaderParser(@NotNull ManifestHeader manifestHeader)
-  {
-    return getHeaderParser(manifestHeader.getName());
-  }
+    public HeaderParser getHeaderParser(@NotNull Header manifestHeader) {
+        return getHeaderParser(manifestHeader.getName());
+    }
 
-  public HeaderParser getHeaderParser(String headerName)
-  {
-    if (headerName != null)
-    {
-      for (HeaderParserProviderRepository headerParserProviderRepository : _headerParserProviderRepositories)
-      {
-        for (HeaderParserProvider headerParserProvider : headerParserProviderRepository.getHeaderParserProviders())
-        {
-          if (headerName.equalsIgnoreCase(headerParserProvider.getHeaderName()))
-          {
-            return headerParserProvider.getHeaderParser();
-          }
+    public HeaderParser getHeaderParser(String headerName) {
+        if (headerName != null) {
+            for (HeaderParserProviderRepository headerParserProviderRepository : _headerParserProviderRepositories) {
+                for (HeaderParserProvider headerParserProvider : headerParserProviderRepository.getHeaderParserProviders()) {
+                    if (headerName.equalsIgnoreCase(headerParserProvider.getHeaderName())) {
+                        return headerParserProvider.getHeaderParser();
+                    }
+                }
+            }
         }
-      }
+        return _simpleHeaderParser;
     }
-    return _simpleHeaderParser;
-  }
 
-  public Collection<HeaderNameMatch> getMatches(@NotNull String headerName)
-  {
-    SortedSet<HeaderNameMatch> result = new TreeSet<HeaderNameMatch>();
+    public Collection<HeaderNameMatch> getMatches(@NotNull String headerName) {
+        SortedSet<HeaderNameMatch> result = new TreeSet<HeaderNameMatch>();
 
-    for (HeaderParserProviderRepository headerParserProviderRepository : _headerParserProviderRepositories)
-    {
-      for (HeaderParserProvider headerParserProvider : headerParserProviderRepository.getHeaderParserProviders())
-      {
-        if (headerName.equals(headerParserProvider.getHeaderName()))
-        {
-          return new ArrayList<HeaderNameMatch>();
+        for (HeaderParserProviderRepository headerParserProviderRepository : _headerParserProviderRepositories) {
+            for (HeaderParserProvider headerParserProvider : headerParserProviderRepository.getHeaderParserProviders()) {
+                if (headerName.equals(headerParserProvider.getHeaderName())) {
+                    return new ArrayList<HeaderNameMatch>();
+                } else {
+                    result.add(
+                            new HeaderNameMatch(StringUtils.getLevenshteinDistance(headerName, headerParserProvider.getHeaderName()),
+                                    headerParserProvider));
+                }
+            }
         }
-        else
-        {
-          result.add(
-              new HeaderNameMatch(StringUtils.getLevenshteinDistance(headerName, headerParserProvider.getHeaderName()),
-                  headerParserProvider));
+
+        return result;
+    }
+
+    public Set<String> getAllHeaderNames() {
+        Set<String> result = new HashSet<String>();
+
+        for (HeaderParserProviderRepository headerParserProviderRepository : _headerParserProviderRepositories) {
+            Collection<HeaderParserProvider> headerParserProviders =
+                    headerParserProviderRepository.getHeaderParserProviders();
+            for (HeaderParserProvider headerParserProvider : headerParserProviders) {
+                result.add(headerParserProvider.getHeaderName());
+            }
         }
-      }
+
+        return result;
     }
 
-    return result;
-  }
-
-  public Set<String> getAllHeaderNames()
-  {
-    Set<String> result = new HashSet<String>();
-
-    for (HeaderParserProviderRepository headerParserProviderRepository : _headerParserProviderRepositories)
-    {
-      Collection<HeaderParserProvider> headerParserProviders =
-          headerParserProviderRepository.getHeaderParserProviders();
-      for (HeaderParserProvider headerParserProvider : headerParserProviders)
-      {
-        result.add(headerParserProvider.getHeaderName());
-      }
+    private Header findHeader(PsiElement element) {
+        if (element == null) {
+            return null;
+        } else if (element instanceof Header) {
+            return (Header) element;
+        }
+        return findHeader(element.getParent());
     }
 
-    return result;
-  }
 
-  private ManifestHeader findHeader(PsiElement element)
-  {
-    if (element == null)
-    {
-      return null;
-    }
-    else if (element instanceof ManifestHeader)
-    {
-      return (ManifestHeader) element;
-    }
-    return findHeader(element.getParent());
-  }
-
-
-  private HeaderParserProviderRepository[] _headerParserProviderRepositories;
-  private SimpleHeaderParser _simpleHeaderParser;
+    private final HeaderParserProviderRepository[] _headerParserProviderRepositories;
+    private final SimpleHeaderParser _simpleHeaderParser;
 }

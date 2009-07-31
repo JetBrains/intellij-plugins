@@ -22,18 +22,18 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.manifest.lang.psi;
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
+package org.osmorc.manifest.lang.psi.stub.impl;
+
+import com.intellij.psi.stubs.StubElement;
+import org.osmorc.manifest.lang.psi.ManifestStubElementTypes;
+import org.osmorc.manifest.lang.psi.stub.AttributeStub;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestAttribute extends AbstractBinaryManifestExpression
-{
-  public ManifestAttribute(@NotNull ASTNode node)
-  {
-    super(node);
-  }
+public class AttributeStubImpl extends AbstractAssignmentExpressionStubImpl implements AttributeStub {
+    public AttributeStubImpl(StubElement parent, String name, String value) {
+        super(parent, ManifestStubElementTypes.ATTRIBUTE, name, value);
+    }
 }

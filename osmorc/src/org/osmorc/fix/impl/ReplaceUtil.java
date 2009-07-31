@@ -25,74 +25,48 @@
 package org.osmorc.fix.impl;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import org.osmorc.manifest.lang.psi.*;
+import org.osmorc.manifest.lang.psi.Clause;
+import org.osmorc.manifest.lang.psi.Header;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ReplaceUtil
-{
-  public static void replace(ManifestElementBase element, String with)
-  {
-    replace(element, element.getTextRange(), with);
-  }
-
-  public static void replace(ManifestElementBase element, TextRange range, String with)
-  {
-    TextRange relativeTextRange =
-        TextRange.from(range.getStartOffset() - element.getTextRange().getStartOffset(), range.getLength());
-    String newText = relativeTextRange.replace(element.getText(), with);
-
-    if (element instanceof ManifestHeaderName)
-    {
-      replace((ManifestHeaderName) element, newText);
-    }
-    else if (element instanceof ManifestHeaderValue)
-    {
-      replace((ManifestHeaderValue) element, newText);
+public class ReplaceUtil {
+    public static void replace(PsiElement element, String with) {
+        replace(element, element.getTextRange(), with);
     }
 
-  }
+    public static void replace(PsiElement element, TextRange range, String with) {
+        TextRange relativeTextRange =
+                TextRange.from(range.getStartOffset() - element.getTextRange().getStartOffset(), range.getLength());
+        String newText = relativeTextRange.replace(element.getText(), with);
 
-  private static void replace(ManifestHeaderName headerName, String with)
-  {
-    PsiFile fromText = PsiFileFactory.getInstance(headerName.getProject()).createFileFromText("DUMMY.MF", with + ": dummy");
-    ManifestHeader header = PsiTreeUtil.getChildOfType(fromText, ManifestHeader.class);
-    assert header != null;
-    ManifestHeaderName name = PsiTreeUtil.getChildOfType(header, ManifestHeaderName.class);
+        if (element instanceof HeaderValuePart) {
+            replace((HeaderValuePart) element, newText);
+        }
 
-    try
-    {
-      assert name != null;
-      headerName.replace(name);
     }
-    catch (IncorrectOperationException e)
-    {
-      throw new RuntimeException(e);
-    }
-  }
 
-  private static void replace(ManifestHeaderValue headerValue, String with)
-  {
-    PsiFile fromText = PsiFileFactory.getInstance(headerValue.getProject()).createFileFromText("DUMMY.MF", "dummy : " + with);
-    ManifestHeader header = PsiTreeUtil.getChildOfType(fromText, ManifestHeader.class);
-    assert header != null;
-    ManifestClause clause = PsiTreeUtil.getChildOfType(header, ManifestClause.class);
-    assert clause != null;
-    ManifestHeaderValue value = PsiTreeUtil.getChildOfAnyType(clause, ManifestHeaderValue.class);
+    private static void replace(HeaderValuePart headerValue, String with) {
+        PsiFile fromText = PsiFileFactory.getInstance(headerValue.getProject()).createFileFromText("DUMMY.MF", "dummy: " + with);
+        Header header = PsiTreeUtil.getChildOfType(fromText.getFirstChild(), Header.class);
+        assert header != null;
+        Clause clause = PsiTreeUtil.getChildOfType(header, Clause.class);
+        assert clause != null;
+        HeaderValuePart value = PsiTreeUtil.getChildOfAnyType(clause, HeaderValuePart.class);
 
-    try
-    {
-      assert value != null;
-      headerValue.replace(value);
+        try {
+            assert value != null;
+            headerValue.replace(value);
+        }
+        catch (IncorrectOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
-    catch (IncorrectOperationException e)
-    {
-      throw new RuntimeException(e);
-    }
-  }
 }

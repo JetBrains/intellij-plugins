@@ -28,159 +28,225 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.TokenType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.osmorc.manifest.lang.headerparser.HeaderParser;
+import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-class ManifestParser implements PsiParser
-{
-  @NotNull
-  public ASTNode parse(IElementType root, PsiBuilder builder)
-  {
-    builder.setDebugMode(true);
-    final PsiBuilder.Marker rootMarker = builder.mark();
-
-    while (!builder.eof())
-    {
-      parse(builder);
+class ManifestParser implements PsiParser {
+    ManifestParser(@NotNull final HeaderParserRepository headerParserRepository) {
+        this.headerParserRepository = headerParserRepository;
     }
 
-    closeBinMarker(null);
-    if (_clauseMarker != null)
-    {
-      _clauseMarker.done(ManifestElementTypes.CLAUSE);
-      _clauseMarker = null;
-    }
-    if (_headerMarker != null)
-    {
-      _headerMarker.done(ManifestElementTypes.HEADER);
-      _headerMarker = null;
-    }
-    rootMarker.done(root);
-    return builder.getTreeBuilt();
-  }
+    @NotNull
+    public ASTNode parse(IElementType root, PsiBuilder builder) {
+        builder.setDebugMode(DEBUG_MODE);
+        final PsiBuilder.Marker rootMarker = builder.mark();
 
-  protected void parse(PsiBuilder builder)
-  {
-    IElementType tokenType = builder.getTokenType();
-    if (tokenType == ManifestTokenTypes.HEADER_NAME)
-    {
-      closeBinMarker(null);
-      parseHeaderName(builder);
-    }
-    else if (isValueAttributeOrDirective(tokenType))
-    {
-      if (_clauseMarker == null)
-      {
-        _clauseMarker = builder.mark();
-      }
-      _headerValuePartMarker = builder.mark();
-      builder.advanceLexer();
-      tokenType = builder.getTokenType();
-      if (isValueAttributeOrDirective(tokenType))
-      {
-        _headerValuePartMarker.error("Separator between header value parts missing");
-      }
-      else
-      {
-        _headerValuePartMarker.done(ManifestElementTypes.HEADER_VALUE);
-      }
-      closeBinMarker(null);
-    }
-    else if (tokenType == ManifestTokenTypes.DIRECTIVE_ASSIGNMENT ||
-        tokenType == ManifestTokenTypes.ATTRIBUTE_ASSIGNMENT)
-    {
-      closeBinMarker("Cannot concatenate or cascade directives or attribute assignements.");
-      if (_headerValuePartMarker != null)
-      {
-        _binMarker = _headerValuePartMarker.precede();
-        _binMarkerType = tokenType == ManifestTokenTypes.DIRECTIVE_ASSIGNMENT ? ManifestElementTypes.DIRECTIVE :
-            ManifestElementTypes.ATTRIBUTE;
-      }
-      else
-      {
-        builder.error("Missing left side value");
-      }
-      builder.advanceLexer();
-    }
-    else if (tokenType == ManifestTokenTypes.CLAUSE_SEPARATOR)
-    {
-      closeBinMarker(null);
-      if (_clauseMarker != null)
-      {
-        _clauseMarker.done(ManifestElementTypes.CLAUSE);
-        _clauseMarker = null;
-      }
-      builder.advanceLexer();
-    }
-    else if (tokenType == ManifestTokenTypes.PARAMETER_SEPARATOR)
-    {
-      closeBinMarker(null);
-      builder.advanceLexer();
-    }
-    else if (tokenType == ManifestTokenTypes.HEADER_ASSIGNMENT)
-    {
-      builder.error("Header assignment not allowed here.");
-      builder.advanceLexer();
-    }
-  }
+        while (!builder.eof()) {
+            parse(builder);
+        }
 
-  private boolean isValueAttributeOrDirective(IElementType tokenType)
-  {
-    return tokenType == ManifestTokenTypes.HEADER_VALUE || tokenType == ManifestTokenTypes.ATTRIBUTE_NAME ||
-        tokenType == ManifestTokenTypes.DIRECTIVE_NAME;
-  }
+        closeAssignmentMarker(null);
+        closeClause();
+        closeHeader();
+        closeSection();
+        rootMarker.done(root);
+        return builder.getTreeBuilt();
+    }
 
-  private void closeBinMarker(@Nullable String errorMessage)
-  {
-    if (_binMarker != null)
-    {
-      if (errorMessage != null)
-      {
-        _binMarker.error(errorMessage);
-      }
-      else
-      {
-        _binMarker.done(_binMarkerType);
-      }
-      _binMarker = null;
-      _binMarkerType = null;
+    protected void parse(PsiBuilder builder) {
+        if (sectionMarker == null) {
+            sectionMarker = builder.mark();
+        }
+        if (builder.getTokenType() == ManifestTokenType.HEADER_NAME) {
+            parseHeaderName(builder);
+        } else if (builder.getTokenType() == ManifestTokenType.HEADER_VALUE_PART) {
+            HeaderParser headerParser = headerParserRepository.getHeaderParser(currentHeaderName);
+            if (headerParser != null && !headerParser.isSimpleHeader()) {
+                parseComplexHeaderValue(builder);
+            } else {
+                parseSimpleHeaderValue(builder);
+            }
+        } else if (builder.getTokenType() == ManifestTokenType.SECTION_END) {
+            closeSection();
+            builder.advanceLexer();
+        } else if (builder.getTokenType() == ManifestTokenType.SIGNIFICANT_SPACE || builder.getTokenType() == TokenType.BAD_CHARACTER || builder.getTokenType() == ManifestTokenType.NEWLINE) {
+            builder.advanceLexer();
+        }
     }
-  }
 
-  private void parseHeaderName(PsiBuilder builder)
-  {
-    IElementType tokenType;
-    if (_clauseMarker != null)
-    {
-      _clauseMarker.done(ManifestElementTypes.CLAUSE);
-      _clauseMarker = null;
+    private void parseSimpleHeaderValue(PsiBuilder builder) {
+        clauseMarker = builder.mark();
+        headerValuePartMarker = builder.mark();
+        while (!builder.eof() &&
+                builder.getTokenType() != ManifestTokenType.SECTION_END &&
+                builder.getTokenType() != ManifestTokenType.HEADER_NAME) {
+            builder.advanceLexer();
+        }
+        closeHeaderValuePart();
+        closeClause();
+        closeHeader();
     }
-    if (_headerMarker != null)
-    {
-      _headerMarker.done(ManifestElementTypes.HEADER);
-      _headerMarker = null;
-    }
-    _headerMarker = builder.mark();
-    PsiBuilder.Marker headerNameMarker = builder.mark();
-    builder.advanceLexer();
-    tokenType = builder.getTokenType();
-    if (tokenType == ManifestTokenTypes.HEADER_ASSIGNMENT)
-    {
-      headerNameMarker.done(ManifestElementTypes.HEADER_NAME);
-    }
-    else
-    {
-      headerNameMarker.error("':' expected");
-    }
-    builder.advanceLexer();
-  }
 
-  private PsiBuilder.Marker _headerMarker;
-  private PsiBuilder.Marker _clauseMarker;
-  private PsiBuilder.Marker _headerValuePartMarker;
-  private PsiBuilder.Marker _binMarker;
-  private IElementType _binMarkerType;
+    private void parseComplexHeaderValue(PsiBuilder builder) {
+        while (!builder.eof() &&
+                builder.getTokenType() != ManifestTokenType.SECTION_END &&
+                builder.getTokenType() != ManifestTokenType.HEADER_NAME) {
+            if (clauseMarker == null) {
+                clauseMarker = builder.mark();
+            }
+            if (headerValuePartMarker == null) {
+                headerValuePartMarker = builder.mark();
+            }
+            boolean lexerAdvanced = parseQuotedString(builder) ||
+                            parseClause(builder) ||
+                            parseParameter(builder) ||
+                            parseDirective(builder) ||
+                            parseAttribute(builder);
+            if (!lexerAdvanced) {
+                builder.advanceLexer();
+            }
+        }
+
+        closeHeaderValuePart();
+        closeAssignmentMarker(null);
+        closeClause();
+        closeHeader();
+    }
+
+    private boolean parseQuotedString(PsiBuilder builder) {
+        if (builder.getTokenType() == ManifestTokenType.QUOTE) {
+            do {
+                builder.advanceLexer();
+            } while (!builder.eof() &&
+                    builder.getTokenType() != ManifestTokenType.QUOTE &&
+                    builder.getTokenType() != ManifestTokenType.SECTION_END &&
+                    builder.getTokenType() != ManifestTokenType.HEADER_NAME);
+            if (builder.getTokenType() == ManifestTokenType.QUOTE) {
+                builder.advanceLexer();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean parseClause(PsiBuilder builder) {
+        if (builder.getTokenType() == ManifestTokenType.COMMA) {
+            closeHeaderValuePart();
+            closeAssignmentMarker(null);
+            closeClause();
+            builder.advanceLexer();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean parseParameter(PsiBuilder builder) {
+        if (builder.getTokenType() == ManifestTokenType.SEMICOLON) {
+            closeHeaderValuePart();
+            closeAssignmentMarker(null);
+            builder.advanceLexer();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean parseDirective(PsiBuilder builder) {
+        if (builder.getTokenType() == ManifestTokenType.COLON && assignmentMarkerType == null) {
+            assignmentMarker = headerValuePartMarker.precede();
+            assignmentMarkerType = ManifestElementTypes.DIRECTIVE;
+            closeHeaderValuePart();
+            builder.advanceLexer();
+            if (builder.getTokenType() == ManifestTokenType.NEWLINE) {
+                builder.advanceLexer();
+                if (builder.getTokenType() == ManifestTokenType.SIGNIFICANT_SPACE) {
+                    builder.advanceLexer();
+                }
+            }
+            if (builder.getTokenType() == ManifestTokenType.EQUALS) {
+                builder.advanceLexer();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean parseAttribute(PsiBuilder builder) {
+        if (builder.getTokenType() == ManifestTokenType.EQUALS && assignmentMarkerType == null) {
+            assignmentMarker = headerValuePartMarker.precede();
+            assignmentMarkerType = ManifestElementTypes.ATTRIBUTE;
+            closeHeaderValuePart();
+            builder.advanceLexer();
+            return true;
+        }
+        return false;
+    }
+
+    private void parseHeaderName(PsiBuilder builder) {
+        closeHeader();
+        headerMarker = builder.mark();
+        currentHeaderName = builder.getTokenText();
+        builder.advanceLexer();
+
+        while (!builder.eof() && builder.getTokenType() != ManifestTokenType.COLON && builder.getTokenType() != ManifestTokenType.NEWLINE) {
+            builder.advanceLexer();
+        }
+
+        builder.advanceLexer();
+    }
+
+    private void closeHeader() {
+        if (headerMarker != null) {
+            headerMarker.done(ManifestElementTypes.HEADER);
+            headerMarker = null;
+        }
+    }
+
+    private void closeClause() {
+        if (clauseMarker != null) {
+            clauseMarker.done(ManifestElementTypes.CLAUSE);
+            clauseMarker = null;
+        }
+    }
+
+    private void closeSection() {
+        if (sectionMarker != null) {
+            sectionMarker.done(ManifestElementTypes.SECTION);
+            sectionMarker = null;
+        }
+    }
+
+    private void closeAssignmentMarker(@Nullable String errorMessage) {
+        if (assignmentMarker != null) {
+            if (errorMessage != null) {
+                assignmentMarker.error(errorMessage);
+            } else {
+                assignmentMarker.done(assignmentMarkerType);
+            }
+            assignmentMarker = null;
+            assignmentMarkerType = null;
+        }
+    }
+
+    private void closeHeaderValuePart() {
+        if (headerValuePartMarker != null) {
+            headerValuePartMarker.done(ManifestElementTypes.HEADER_VALUE_PART);
+            headerValuePartMarker = null;
+        }
+    }
+
+    private String currentHeaderName;
+    private final HeaderParserRepository headerParserRepository;
+    private PsiBuilder.Marker headerValuePartMarker;
+    private PsiBuilder.Marker sectionMarker;
+    private PsiBuilder.Marker headerMarker;
+    private PsiBuilder.Marker clauseMarker;
+    private PsiBuilder.Marker assignmentMarker;
+    private IElementType assignmentMarkerType;
+    private static final boolean DEBUG_MODE = Boolean.getBoolean("Osmorc.debug");
 }

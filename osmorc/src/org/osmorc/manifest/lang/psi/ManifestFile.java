@@ -22,32 +22,13 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package org.osmorc.manifest.lang.psi;
 
-import com.intellij.extapi.psi.PsiFileBase;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.psi.FileViewProvider;
-import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.ManifestFileTypeFactory;
+import com.intellij.psi.PsiFile;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestFile extends PsiFileBase
-{
-  public ManifestFile(FileViewProvider viewProvider)
-  {
-    super(viewProvider, ManifestFileTypeFactory.MANIFEST.getLanguage());
-  }
-
-  @NotNull
-  public FileType getFileType()
-  {
-    return ManifestFileTypeFactory.MANIFEST;
-  }
-
-  @Override
-  public String toString() {
-    return "ManifestFile:" + getName();
-  }
+public interface ManifestFile extends PsiFile {
 }

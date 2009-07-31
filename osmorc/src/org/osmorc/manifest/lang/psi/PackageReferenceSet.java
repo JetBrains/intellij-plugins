@@ -30,20 +30,17 @@ import com.intellij.psi.util.ReferenceSetBase;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class PackageReferenceSet extends ReferenceSetBase<PackageReference>
-{
+public class PackageReferenceSet extends ReferenceSetBase<PackageReference> {
 
-  public PackageReferenceSet(@NotNull final String str, @NotNull final PsiElement element, final int startInElement)
-  {
-    super(str, element, startInElement, '.');
-  }
+    public PackageReferenceSet(@NotNull final String str, @NotNull final PsiElement element, final int startInElement) {
+        super(str, element, startInElement, '.');
+    }
 
-  @NotNull
-  protected PackageReference createReference(final TextRange range, final int index)
-  {
-    return new PackageReference(this, range, index);
-  }
+    @NotNull
+    protected PackageReference createReference(final TextRange range, final int index) {
+        return new PackageReference(this, range, index);
+    }
 
 }

@@ -233,8 +233,10 @@
         <completion.contributor language="Manifest" implementationClass="org.osmorc.manifest.ManifestCompletionContributor"/>
         <syntaxHighlighter key="Manifest" factoryClass="org.osmorc.manifest.lang.ManifestSyntaxHighlighterProvider"/>
         <annotator language="Manifest" implementationClass="org.osmorc.manifest.lang.headerparser.HeaderAnnotator"/>
-        <lang.elementManipulator forClass="org.osmorc.manifest.lang.psi.ManifestHeaderValue"
-                                 implementationClass="org.osmorc.manifest.lang.psi.ManifestHeaderValueManipulator"/>
+        <annotator language="Manifest" implementationClass="org.osmorc.manifest.lang.ManifestHighlightingAnnotator"/>
+        <lang.elementManipulator forClass="org.osmorc.manifest.lang.psi.HeaderValuePart"
+                                 implementationClass="org.osmorc.manifest.lang.psi.HeaderValuePartManipulator"/>
+        <lang.ast.factory language="Manifest" implementationClass="org.osmorc.manifest.lang.psi.impl.ManifestASTFactory"/>
         <configurationType implementation="org.osmorc.run.OsgiConfigurationType"/>
         <configurationType implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxConfigurationType"/>
 

@@ -30,45 +30,39 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.fix.impl.ReplaceUtil;
-import org.osmorc.manifest.lang.psi.ManifestElementBase;
+import org.osmorc.manifest.lang.psi.impl.ManifestElementBase;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ReplaceQuickFixQuickFix implements LocalQuickFix
-{
-  public ReplaceQuickFixQuickFix(String name, ManifestElementBase element, String newText)
-  {
-    this(name, element, element.getTextRange(), newText);
-  }
+public class ReplaceQuickFixQuickFix implements LocalQuickFix {
+    public ReplaceQuickFixQuickFix(String name, ManifestElementBase element, String newText) {
+        this(name, element, element.getTextRange(), newText);
+    }
 
-  public ReplaceQuickFixQuickFix(String name, ManifestElementBase element, TextRange range, String newText)
-  {
-    _name = name;
-    _element = element;
-    _range = range;
-    _newText = newText;
-  }
+    public ReplaceQuickFixQuickFix(String name, ManifestElementBase element, TextRange range, String newText) {
+        _name = name;
+        _element = element;
+        _range = range;
+        _newText = newText;
+    }
 
-  @NotNull
-  public String getName()
-  {
-    return _name;
-  }
+    @NotNull
+    public String getName() {
+        return _name;
+    }
 
-  @NotNull
-  public String getFamilyName()
-  {
-    return "Osmorc";
-  }
+    @NotNull
+    public String getFamilyName() {
+        return "Osmorc";
+    }
 
-  public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor)
-  {
-    ReplaceUtil.replace(_element, _range, _newText);
-  }
+    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+        ReplaceUtil.replace(_element, _range, _newText);
+    }
 
-  private String _name;
-  private ManifestElementBase _element;
-  private TextRange _range;
-  private String _newText;
+    private final String _name;
+    private final ManifestElementBase _element;
+    private final TextRange _range;
+    private final String _newText;
 }

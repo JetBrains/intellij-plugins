@@ -40,7 +40,9 @@ import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.manifest.BundleManifest;
-import org.osmorc.manifest.lang.psi.ManifestHeader;
+import org.osmorc.manifest.lang.psi.Header;
+import org.osmorc.manifest.lang.psi.Section;
+import org.osmorc.manifest.lang.ManifestTokenType;
 
 /**
  * Inspection that reports classes implementing BundleActivator which are not registered in the manifest / facet
@@ -153,32 +155,53 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
         }
 
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            ManifestHeader activatorHeader = null;
-            ManifestHeader currentHeader = PsiTreeUtil.getChildOfType(manifestFile, ManifestHeader.class);
+            Section mainSection = (Section) manifestFile.getFirstChild();
+
+            Header activatorHeader = null;
+            Header currentHeader = PsiTreeUtil.getChildOfType(mainSection, Header.class);
             while (activatorHeader == null && currentHeader != null) {
                 if ("Bundle-Activator".equalsIgnoreCase(currentHeader.getName())) {
                     activatorHeader = currentHeader;
                 }
-                currentHeader = PsiTreeUtil.getNextSiblingOfType(currentHeader, ManifestHeader.class);
+                currentHeader = PsiTreeUtil.getNextSiblingOfType(currentHeader, Header.class);
             }
 
             if (activatorHeader != null) {
-                String headerFormatString = "\nBundle-Activator: %s\n";
-                if (PsiTreeUtil.getNextSiblingOfType(activatorHeader, ManifestHeader.class) == null) {
-                    headerFormatString += "\n";
-                }
-                PsiFile fromText = PsiFileFactory.getInstance(manifestFile.getProject()).createFileFromText("DUMMY.MF",
-                        String.format(headerFormatString, activatorClassName));
-                ManifestHeader newheader = PsiTreeUtil.getChildOfType(fromText, ManifestHeader.class);
-                assert newheader != null;
-                activatorHeader.replace(newheader);
+                replaceExistingActivatorHeader(activatorHeader);
             } else {
-                PsiFile fromText = PsiFileFactory.getInstance(manifestFile.getProject()).createFileFromText("DUMMY.MF",
-                        String.format("\nBundle-Activator: %s\n\n", activatorClassName));
-                ManifestHeader newheader = PsiTreeUtil.getChildOfType(fromText, ManifestHeader.class);
-                assert newheader != null;
-                manifestFile.add(newheader);
+                addActivatorHeader();
             }
+        }
+
+        private void addActivatorHeader() {
+            PsiFile fromText = PsiFileFactory.getInstance(manifestFile.getProject()).createFileFromText("DUMMY.MF",
+                    String.format("Bundle-Activator: %s\n", activatorClassName));
+            Header newheader = PsiTreeUtil.getChildOfType(fromText.getFirstChild(), Header.class);
+            assert newheader != null;
+
+            Section section = (Section) manifestFile.getFirstChild();
+            addMissiingNewline(section);
+            section.add(newheader);
+        }
+
+        private void addMissiingNewline(Section section) {
+            String sectionText = section.getText();
+            if (sectionText.charAt(sectionText.length() - 1) != '\n') {
+            PsiElement lastChild = section.getLastChild();
+            if (lastChild instanceof Header) {
+                Header header = (Header) lastChild;
+                header.getNode().addLeaf(ManifestTokenType.NEWLINE, "\n", null);
+            }
+        }
+        }
+
+        private void replaceExistingActivatorHeader(Header activatorHeader) {
+            String headerFormatString = "Bundle-Activator: %s\n";
+            PsiFile fromText = PsiFileFactory.getInstance(manifestFile.getProject()).createFileFromText("DUMMY.MF",
+                    String.format(headerFormatString, activatorClassName));
+            Header newheader = PsiTreeUtil.getChildOfType(fromText.getFirstChild(), Header.class);
+            assert newheader != null;
+            activatorHeader.replace(newheader);
         }
     }
 

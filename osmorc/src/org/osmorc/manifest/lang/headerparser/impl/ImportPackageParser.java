@@ -28,32 +28,27 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PackageReferenceSet;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PsiPackageReference;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.lang.psi.ManifestClause;
-import org.osmorc.manifest.lang.psi.ManifestHeaderValue;
+import org.osmorc.manifest.lang.psi.Clause;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ImportPackageParser extends AbstractHeaderParserImpl
-{
-  public ImportPackageParser(ValueParserRepository valueParserRepository)
-  {
-    super(valueParserRepository);
-  }
-
-  public PsiReference[] getReferences(@NotNull ManifestHeaderValue headerValue)
-  {
-    if (headerValue.getParent() instanceof ManifestClause)
-    {
-      PackageReferenceSet referenceSet = new PackageReferenceSet(headerValue.getValueText(), headerValue, 0);
-      return referenceSet.getReferences().toArray(new PsiPackageReference[referenceSet.getReferences().size()]);
+public class ImportPackageParser extends AbstractHeaderParserImpl {
+    public ImportPackageParser(ValueParserRepository valueParserRepository) {
+        super(valueParserRepository);
     }
-    return EMPTY_PSI_REFERENCE_ARRAY;
-  }
 
-  public boolean isSimpleHeader()
-  {
-    return false;
-  }
+    public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+        if (headerValuePart.getParent() instanceof Clause) {
+            PackageReferenceSet referenceSet = new PackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, 0);
+            return referenceSet.getReferences().toArray(new PsiPackageReference[referenceSet.getReferences().size()]);
+        }
+        return EMPTY_PSI_REFERENCE_ARRAY;
+    }
+
+    public boolean isSimpleHeader() {
+        return false;
+    }
 }

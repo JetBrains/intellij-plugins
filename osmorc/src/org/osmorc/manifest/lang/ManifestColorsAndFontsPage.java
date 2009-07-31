@@ -41,76 +41,69 @@ import java.util.Map;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestColorsAndFontsPage implements ColorSettingsPage
-{
-  @NotNull
-  public String getDisplayName()
-  {
-    return "Manifest";
-  }
+public class ManifestColorsAndFontsPage implements ColorSettingsPage {
 
-  @Nullable
-  public Icon getIcon()
-  {
-    return OsmorcBundle.getSmallIcon();
-  }
+    @NotNull
+    public String getDisplayName() {
+        return "Manifest";
+    }
 
-  @NotNull
-  public AttributesDescriptor[] getAttributeDescriptors()
-  {
-    return ATTRIBUTE_DESCRIPTORS;
-  }
+    @Nullable
+    public Icon getIcon() {
+        return OsmorcBundle.getSmallIcon();
+    }
 
-  @NotNull
-  public ColorDescriptor[] getColorDescriptors()
-  {
-    return new ColorDescriptor[0];
-  }
+    @NotNull
+    public AttributesDescriptor[] getAttributeDescriptors() {
+        return ATTRIBUTE_DESCRIPTORS;
+    }
 
-  @NotNull
-  public SyntaxHighlighter getHighlighter()
-  {
-    return SyntaxHighlighter.PROVIDER.create(ManifestFileTypeFactory.MANIFEST, null, null);
-  }
+    @NotNull
+    public ColorDescriptor[] getColorDescriptors() {
+        return new ColorDescriptor[0];
+    }
 
-  @NonNls
-  @NotNull
-  public String getDemoText()
-  {
-    return "Manifest-Version: 1.0\n" +
-        "Bundle-ManifestVersion: 2\n" +
-        "Bundle-Name: Osmorc Test\n" +
-        "Bundle-SymbolicName: org.osmorc.test; singleton:=true\n" +
-        "Bundle-Version: 0.1.0\n" +
-        "Require-Bundle: some.bundle;bundle-version=2.0.0,\n" +
-        " other.bundle";
-  }
+    @NotNull
+    public SyntaxHighlighter getHighlighter() {
+        return SyntaxHighlighter.PROVIDER.create(ManifestFileTypeFactory.MANIFEST, null, null);
+    }
 
-  @Nullable
-  public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap()
-  {
-    return null;
-  }
+    @NonNls
+    @NotNull
+    public String getDemoText() {
+        return "Manifest-Version: 1.0\n" +
+                "Bundle-ManifestVersion: 2\n" +
+                "Bundle-Name: Osmorc Test\n" +
+                "Bundle-SymbolicName: org.osmorc.test; singleton:=true\n" +
+                "Bundle-Version: 0.1.0\n" +
+                "Require-Bundle: some.bundle;bundle-version=2.0.0,\n" +
+                " other.bundle";
+    }
 
-  private static final AttributesDescriptor[] ATTRIBUTE_DESCRIPTORS;
+    @Nullable
+    public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+        return null;
+    }
 
-  static
-  {
-    ATTRIBUTE_DESCRIPTORS = new AttributesDescriptor[]{
-        new AttributesDescriptor("Header name", ManifestSyntaxHighlighter.HEADER_NAME_KEY),
-        new AttributesDescriptor("Header assignment",
-            ManifestSyntaxHighlighter.HEADER_ASSIGNMENT_KEY),
-        new AttributesDescriptor("Header value", ManifestSyntaxHighlighter.HEADER_VALUE_KEY),
-        new AttributesDescriptor("Directive name", ManifestSyntaxHighlighter.DIRECTIVE_NAME_KEY),
-        new AttributesDescriptor("Directive assignment",
-            ManifestSyntaxHighlighter.DIRECTIVE_ASSIGNMENT_KEY),
-        new AttributesDescriptor("Attribute name", ManifestSyntaxHighlighter.ATTRIBUTE_NAME_KEY),
-        new AttributesDescriptor("Attribute assignment",
-            ManifestSyntaxHighlighter.ATTRIBUTE_ASSIGNMENT_KEY),
-        new AttributesDescriptor("Clause separator",
-            ManifestSyntaxHighlighter.CLAUSE_SEPARATOR_KEY),
-        new AttributesDescriptor("Parameter separator",
-            ManifestSyntaxHighlighter.PARAMETER_SEPARATOR_KEY)
-    };
-  }
+    private static final AttributesDescriptor[] ATTRIBUTE_DESCRIPTORS;
+
+
+    static {
+        ATTRIBUTE_DESCRIPTORS = new AttributesDescriptor[]{
+                new AttributesDescriptor("Header name", ManifestColorsAndFonts.HEADER_NAME_KEY),
+                new AttributesDescriptor("Header assignment",
+                        ManifestColorsAndFonts.HEADER_ASSIGNMENT_KEY),
+                new AttributesDescriptor("Header value", ManifestColorsAndFonts.HEADER_VALUE_KEY),
+                new AttributesDescriptor("Directive name", ManifestColorsAndFonts.DIRECTIVE_NAME_KEY),
+                new AttributesDescriptor("Directive assignment",
+                        ManifestColorsAndFonts.DIRECTIVE_ASSIGNMENT_KEY),
+                new AttributesDescriptor("Attribute name", ManifestColorsAndFonts.ATTRIBUTE_NAME_KEY),
+                new AttributesDescriptor("Attribute assignment",
+                        ManifestColorsAndFonts.ATTRIBUTE_ASSIGNMENT_KEY),
+                new AttributesDescriptor("Clause separator",
+                        ManifestColorsAndFonts.CLAUSE_SEPARATOR_KEY),
+                new AttributesDescriptor("Parameter separator",
+                        ManifestColorsAndFonts.PARAMETER_SEPARATOR_KEY)
+        };
+    }
 }

@@ -38,76 +38,62 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class PackageReference extends PsiReferenceBase<PsiElement> implements EmptyResolveMessageProvider
-{
-  private final PackageReferenceSet myReferenceSet;
-  private final int myIndex;
+public class PackageReference extends PsiReferenceBase<PsiElement> implements EmptyResolveMessageProvider {
+    private final PackageReferenceSet myReferenceSet;
+    private final int myIndex;
 
-  public PackageReference(final PackageReferenceSet set, final TextRange range, final int index)
-  {
-    super(set.getElement(), range);
-    myReferenceSet = set;
-    myIndex = index;
-    Module module = ModuleUtil.findModuleForPsiElement(set.getElement());
-    if (module != null)
-    {
-      _moduleWithLibrariesScope = module.getModuleWithLibrariesScope();
-    }
-    else
-    {
-      _moduleWithLibrariesScope = GlobalSearchScope.allScope(set.getElement().getProject());
-    }
-  }
-
-  @Nullable
-  private PsiPackage getPsiPackage()
-  {
-    return myIndex == 0 ? JavaPsiFacade.getInstance(getElement().getProject()).findPackage("")
-        : myReferenceSet.getReference(myIndex - 1).resolve();
-  }
-
-  public boolean isSoft()
-  {
-    return true;
-  }
-
-  @Nullable
-  public PsiPackage resolve()
-  {
-    final PsiPackage parentPackage = getPsiPackage();
-    if (parentPackage != null)
-    {
-      for (PsiPackage aPackage : parentPackage.getSubPackages(_moduleWithLibrariesScope))
-      {
-        if (Comparing.equal(aPackage.getName(), getCanonicalText()))
-        {
-          return aPackage;
+    public PackageReference(final PackageReferenceSet set, final TextRange range, final int index) {
+        super(set.getElement(), range);
+        myReferenceSet = set;
+        myIndex = index;
+        Module module = ModuleUtil.findModuleForPsiElement(set.getElement());
+        if (module != null) {
+            _moduleWithLibrariesScope = module.getModuleWithLibrariesScope();
+        } else {
+            _moduleWithLibrariesScope = GlobalSearchScope.allScope(set.getElement().getProject());
         }
-      }
     }
-    return null;
-  }
 
-  public Object[] getVariants()
-  {
-    final PsiPackage psiPackage = getPsiPackage();
-    if (psiPackage == null)
-    {
-      return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    @Nullable
+    private PsiPackage getPsiPackage() {
+        return myIndex == 0 ? JavaPsiFacade.getInstance(getElement().getProject()).findPackage("")
+                : myReferenceSet.getReference(myIndex - 1).resolve();
     }
-    final PsiPackage[] psiPackages = psiPackage.getSubPackages(_moduleWithLibrariesScope);
-    final Object[] variants = new Object[psiPackages.length];
-    System.arraycopy(psiPackages, 0, variants, 0, variants.length);
-    return variants;
-  }
+
+    public boolean isSoft() {
+        return true;
+    }
+
+    @Nullable
+    public PsiPackage resolve() {
+        final PsiPackage parentPackage = getPsiPackage();
+        if (parentPackage != null) {
+            for (PsiPackage aPackage : parentPackage.getSubPackages(_moduleWithLibrariesScope)) {
+                if (Comparing.equal(aPackage.getName(), getCanonicalText())) {
+                    return aPackage;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Object[] getVariants() {
+        final PsiPackage psiPackage = getPsiPackage();
+        if (psiPackage == null) {
+            return ArrayUtil.EMPTY_OBJECT_ARRAY;
+        }
+        final PsiPackage[] psiPackages = psiPackage.getSubPackages(_moduleWithLibrariesScope);
+        final Object[] variants = new Object[psiPackages.length];
+        System.arraycopy(psiPackages, 0, variants, 0, variants.length);
+        return variants;
+    }
 
 
-  public String getUnresolvedMessagePattern()
-  {
-    return "Cannot resolve symbol";
-  }
+    public String getUnresolvedMessagePattern() {
+        return "Cannot resolve symbol";
+    }
 
-  private final GlobalSearchScope _moduleWithLibrariesScope;
+    private final GlobalSearchScope _moduleWithLibrariesScope;
 }

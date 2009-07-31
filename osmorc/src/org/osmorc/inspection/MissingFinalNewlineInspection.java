@@ -26,17 +26,17 @@
 package org.osmorc.inspection;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
-import com.intellij.codeInspection.InspectionManager;
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.codeInspection.*;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.fix.ReplaceQuickFixQuickFix;
-import org.osmorc.manifest.lang.psi.ManifestHeaderValueImpl;
+import org.osmorc.manifest.lang.ManifestTokenType;
+import org.osmorc.manifest.lang.psi.Header;
 import org.osmorc.manifest.lang.psi.ManifestFile;
+import org.osmorc.manifest.lang.psi.Section;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -73,12 +73,12 @@ public class MissingFinalNewlineInspection extends LocalInspectionTool {
         if (file instanceof ManifestFile) {
             String text = file.getText();
             if (text.charAt(text.length() - 1) != '\n') {
-                ManifestHeaderValueImpl headerValue = PsiTreeUtil.findElementOfClassAtOffset(file, text.length() - 1,
-                        ManifestHeaderValueImpl.class, false);
-                if (headerValue != null) {
-                    return new ProblemDescriptor[]{manager.createProblemDescriptor(headerValue,
+                Section section = PsiTreeUtil.findElementOfClassAtOffset(file, text.length() - 1,
+                        Section.class, false);
+                if (section != null) {
+                    return new ProblemDescriptor[]{manager.createProblemDescriptor(section.getLastChild(),
                             "Manifest file doesn't end with a final newline",
-                            new AddNewlineQuickFix(headerValue), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)};
+                            new AddNewlineQuickFix(section), ProblemHighlightType.GENERIC_ERROR_OR_WARNING)};
                 }
 
             }
@@ -86,10 +86,31 @@ public class MissingFinalNewlineInspection extends LocalInspectionTool {
         return new ProblemDescriptor[0];
     }
 
-    private static class AddNewlineQuickFix extends ReplaceQuickFixQuickFix {
-        private AddNewlineQuickFix(ManifestHeaderValueImpl headerValue) {
-            // TODO: This is a hack. Osmorc currently doesn't handle manifest file sections. Need to fix this once Osmorc handles sections.
-            super("Add newline", headerValue, headerValue.getText() + "\n\n");
+    private static class AddNewlineQuickFix implements LocalQuickFix {
+        private final Section section;
+
+        private AddNewlineQuickFix(Section section) {
+            this.section = section;
+        }
+
+        @NotNull
+        public String getName() {
+            return "Add newline";
+        }
+
+        @NotNull
+        public String getFamilyName() {
+            return "Osmorc";
+        }
+
+        public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+            PsiElement lastChild = section.getLastChild();
+            if (lastChild instanceof Header) {
+                Header header = (Header) lastChild;
+                header.getNode().addLeaf(ManifestTokenType.NEWLINE, "\n", null);
+            } else {
+                throw new RuntimeException("No header found to add a newline to");
+            }
         }
     }
 

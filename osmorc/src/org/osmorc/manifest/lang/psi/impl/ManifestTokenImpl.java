@@ -22,18 +22,34 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.manifest.lang.psi;
 
-import com.intellij.lang.ASTNode;
+package org.osmorc.manifest.lang.psi.impl;
+
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import org.osmorc.manifest.lang.ManifestTokenType;
+import org.osmorc.manifest.lang.psi.ManifestToken;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestClause extends ManifestElementBase
-{
-  public ManifestClause(@NotNull ASTNode node)
-  {
-    super(node);
-  }
+public class ManifestTokenImpl extends LeafPsiElement implements ManifestToken {
+    private static final String TO_STRING_PREFIX = "ManifestToken: ";
+
+    public ManifestTokenImpl(ManifestTokenType type, CharSequence text) {
+        super(type, text);
+    }
+
+    public ManifestTokenType getTokenType() {
+        return (ManifestTokenType) getElementType();
+    }
+
+    public ManifestToken replaceToken(@NotNull String text) {
+        return (ManifestToken) replaceWithText(text);
+    }
+
+    @Override
+    public String toString() {
+        return TO_STRING_PREFIX + getTokenType();
+    }
 }

@@ -27,17 +27,16 @@ package org.osmorc.manifest.lang.valueparser;
 import com.intellij.lang.annotation.AnnotationHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.manifest.lang.psi.ManifestHeaderValue;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface ValueParser<T>
-{
-  T parseValue(@NotNull ManifestHeaderValue headerValue, @Nullable AnnotationHolder annotationHolder);
+public interface ValueParser<T> {
+    T parseValue(@NotNull HeaderValuePart headerValuePart, @Nullable AnnotationHolder annotationHolder);
 
-  T parseValue(@NotNull ManifestHeaderValue headerValue, int start, int end,
-               @Nullable AnnotationHolder annotationHolder);
+    T parseValue(@NotNull HeaderValuePart headerValuePart, int start, int end,
+                 @Nullable AnnotationHolder annotationHolder);
 
-  T parseValue(@NotNull String text, int start, int end);
+    T parseValue(@NotNull String text, int start, int end);
 }

@@ -31,8 +31,8 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.lang.psi.ManifestClause;
-import org.osmorc.manifest.lang.psi.ManifestHeaderValue;
+import org.osmorc.manifest.lang.psi.Clause;
+import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
 
 /**
@@ -43,19 +43,19 @@ public class BundleActivatorParser extends AbstractHeaderParserImpl {
         super(valueParserRepository);
     }
 
-    public PsiReference[] getReferences(@NotNull ManifestHeaderValue headerValue) {
-        if (headerValue.getParent() instanceof ManifestClause) {
-            Module module = ModuleUtil.findModuleForPsiElement(headerValue);
+    public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+        if (headerValuePart.getParent() instanceof Clause) {
+            Module module = ModuleUtil.findModuleForPsiElement(headerValuePart);
             JavaClassReferenceProvider provider;
             if (module != null) {
-                provider = new JavaClassReferenceProvider(GlobalSearchScope.moduleScope(module), headerValue.getProject());
+                provider = new JavaClassReferenceProvider(GlobalSearchScope.moduleScope(module), headerValuePart.getProject());
             } else {
-                provider = new JavaClassReferenceProvider(headerValue.getProject());
+                provider = new JavaClassReferenceProvider(headerValuePart.getProject());
             }
 
             provider.setOption(JavaClassReferenceProvider.EXTEND_CLASS_NAMES, new String[]{"org.osgi.framework.BundleActivator"});
             provider.setOption(JavaClassReferenceProvider.CONCRETE, true);
-            return provider.getReferencesByElement(headerValue);
+            return provider.getReferencesByElement(headerValuePart);
         }
         return EMPTY_PSI_REFERENCE_ARRAY;
     }

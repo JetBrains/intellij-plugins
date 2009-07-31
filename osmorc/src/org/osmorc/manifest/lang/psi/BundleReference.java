@@ -33,32 +33,31 @@ import org.osmorc.BundleManager;
 import org.osmorc.manifest.BundleManifest;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
-public class BundleReference extends PsiReferenceBase<ManifestHeaderValue> implements EmptyResolveMessageProvider
-{
-  public BundleReference(ManifestHeaderValue element)
-  {
-    super(element);
-    _bundleManager = ServiceManager.getService(element.getProject(), BundleManager.class);
-  }
+public class BundleReference extends PsiReferenceBase<HeaderValuePart> implements EmptyResolveMessageProvider {
+    public BundleReference(HeaderValuePart element) {
+        super(element);
+        _bundleManager = ServiceManager.getService(element.getProject(), BundleManager.class);
+    }
 
-  @Nullable
-  public PsiElement resolve()
-  {
-    BundleManifest bundleManifest = _bundleManager.getBundleManifest(getCanonicalText());
-    return bundleManifest != null ? bundleManifest.getManifestFile() : null;
-  }
+    @Nullable
+    public PsiElement resolve() {
+        BundleManifest bundleManifest = _bundleManager.getBundleManifest(unwrap(getCanonicalText()));
+        return bundleManifest != null ? bundleManifest.getManifestFile() : null;
+    }
 
-  public Object[] getVariants()
-  {
-    return new Object[0];
-  }
+    private String unwrap(String text) {
+        return text != null ? text.replaceAll("\n ", "").trim() : null;
+    }
 
-  public String getUnresolvedMessagePattern()
-  {
-    return "Cannot resolve bundle";
-  }
+    public Object[] getVariants() {
+        return new Object[0];
+    }
 
-  private final BundleManager _bundleManager;
+    public String getUnresolvedMessagePattern() {
+        return "Cannot resolve bundle";
+    }
+
+    private final BundleManager _bundleManager;
 }

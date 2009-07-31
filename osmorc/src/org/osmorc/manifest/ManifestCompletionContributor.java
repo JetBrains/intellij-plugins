@@ -31,7 +31,7 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.ManifestLanguage;
-import org.osmorc.manifest.lang.ManifestTokenTypes;
+import org.osmorc.manifest.lang.ManifestTokenType;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
 
 /**
@@ -46,7 +46,7 @@ public class ManifestCompletionContributor extends CompletionContributor
   public ManifestCompletionContributor()
   {
     extend(CompletionType.BASIC,
-        PlatformPatterns.psiElement(ManifestTokenTypes.HEADER_NAME).withLanguage(ManifestLanguage.INSTANCE),
+        PlatformPatterns.psiElement(ManifestTokenType.HEADER_NAME).withLanguage(ManifestLanguage.INSTANCE),
         new CompletionProvider<CompletionParameters>()
         {
 
