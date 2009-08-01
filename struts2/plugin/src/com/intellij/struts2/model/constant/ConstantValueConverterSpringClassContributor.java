@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.struts2.dom.struts.constant;
+package com.intellij.struts2.model.constant;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
@@ -29,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
  * Resolve to Spring bean for suitable &lt;constant> "value".
  *
  * @author Yann C&eacute;bron
- * @see ConstantValueConverter
  */
 public class ConstantValueConverterSpringClassContributor implements ConstantValueConverterClassContributor {
 
@@ -43,10 +42,7 @@ public class ConstantValueConverterSpringClassContributor implements ConstantVal
       return null;
     }
 
-    if (DomJavaUtil.findClass(SPRING_OBJECT_FACTORY,
-                              convertContext.getFile(),
-                              module,
-                              null) == null) {
+    if (DomJavaUtil.findClass(SPRING_OBJECT_FACTORY, convertContext.getInvocationElement()) == null) {
       return null;
     }
 

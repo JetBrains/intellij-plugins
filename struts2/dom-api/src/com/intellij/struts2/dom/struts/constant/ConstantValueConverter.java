@@ -14,7 +14,6 @@
  */
 package com.intellij.struts2.dom.struts.constant;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.util.xml.WrappingConverter;
 
 /**
@@ -23,12 +22,5 @@ import com.intellij.util.xml.WrappingConverter;
  * @author Yann C&eacute;bron
  */
 public abstract class ConstantValueConverter extends WrappingConverter {
-
-  /**
-   * Extend possible resolving to class.
-   */
-  public static final ExtensionPointName<ConstantValueConverterClassContributor> EP_NAME =
-      new ExtensionPointName<ConstantValueConverterClassContributor>(
-          "com.intellij.struts2.constantValueClassContributor");
 
 }

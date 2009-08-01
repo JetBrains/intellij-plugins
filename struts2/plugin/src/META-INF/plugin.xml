@@ -27,8 +27,10 @@
 
   <!-- published extension points -->
   <extensionPoints>
+    <extensionPoint name="constantContributor"
+                    interface="com.intellij.struts2.model.constant.StrutsConstantContributor"/>
     <extensionPoint name="constantValueClassContributor"
-                    interface="com.intellij.struts2.dom.struts.constant.ConstantValueConverterClassContributor"/>
+                    interface="com.intellij.struts2.model.constant.ConstantValueConverterClassContributor"/>
     <extensionPoint name="resultContributor"
                     interface="com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor"/>
     <extensionPoint name="classContributor"
@@ -73,6 +75,18 @@
         implementation="com.intellij.struts2.dom.struts.impl.path.ActionPathResultContributor"/>
     <struts2.resultContributor
         implementation="com.intellij.struts2.dom.struts.impl.path.ActionChainOrRedirectResultContributor"/>
+
+
+    <projectService serviceInterface="com.intellij.struts2.model.constant.StrutsConstantManager"
+                    serviceImplementation="com.intellij.struts2.model.constant.StrutsConstantManagerImpl"/>
+    <struts2.constantContributor
+        implementation="com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor"/>
+    <struts2.constantContributor
+        implementation="com.intellij.struts2.model.constant.contributor.StrutsConventionPluginConstantContributor"/>
+    <struts2.constantContributor
+        implementation="com.intellij.struts2.model.constant.contributor.StrutsOSGiPluginConstantContributor"/>
+    <struts2.constantContributor
+        implementation="com.intellij.struts2.model.constant.contributor.StrutsRESTPluginConstantContributor"/>
 
 
     <!-- validation.xml/validator-config.xml -->

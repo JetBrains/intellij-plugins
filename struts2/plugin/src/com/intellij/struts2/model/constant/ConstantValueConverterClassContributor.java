@@ -1,5 +1,6 @@
-package com.intellij.struts2.dom.struts.constant;
+package com.intellij.struts2.model.constant;
 
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiClass;
 import com.intellij.util.xml.ConvertContext;
 import org.jetbrains.annotations.NonNls;
@@ -7,11 +8,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Extend resolving to class for {@link com.intellij.struts2.dom.struts.constant.ConstantValueConverter}.
+ * Extend resolving to class.
  *
  * @author Yann C&eacute;bron
  */
 public interface ConstantValueConverterClassContributor {
+
+  /**
+   * Extend possible resolving to class.
+   */
+  ExtensionPointName<ConstantValueConverterClassContributor> EP_NAME =
+      new ExtensionPointName<ConstantValueConverterClassContributor>(
+          "com.intellij.struts2.constantValueClassContributor");
 
   /**
    * Performs the actual conversion.

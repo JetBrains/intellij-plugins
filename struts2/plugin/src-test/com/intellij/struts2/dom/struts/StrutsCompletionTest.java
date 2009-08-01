@@ -15,8 +15,14 @@
 
 package com.intellij.struts2.dom.struts;
 
+import com.intellij.struts2.model.constant.StrutsConstant;
+import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * @author Yann C&eacute;bron
@@ -74,6 +80,21 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
                                  "validActionMethodWithException",
                                  "getValidActionMethodNoUnderlyingField",
                                  "validActionMethodResult");
+  }
+
+  /**
+   * Verify all core constants are present.
+   */
+  public void testCompletionVariantsConstantName() throws Throwable {
+    final StrutsCoreConstantContributor coreConstantContributor = new StrutsCoreConstantContributor();
+    final List<StrutsConstant> constants = coreConstantContributor.getStrutsConstantDefinitions(myModule);
+    final String[] variants = ContainerUtil.map2Array(constants, String.class, new Function<StrutsConstant, String>() {
+      public String fun(final StrutsConstant strutsConstant) {
+        return strutsConstant.getName();
+      }
+    });
+
+    performCompletionVariantTest("struts-completionvariants-constant_name.xml", variants);
   }
 
 }

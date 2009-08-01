@@ -13,13 +13,14 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.dom.struts.constant;
+package com.intellij.struts2.model.constant.contributor;
 
 import com.intellij.jpa.model.xml.impl.converters.ClassConverterBase;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
+import com.intellij.struts2.model.constant.ConstantValueConverterClassContributor;
 import com.intellij.util.xml.ConvertContext;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Resolves to Shortcut-name, JAVA-Class or result from {@link ConstantValueConverterClassContributor}.
+ * Resolves to Shortcut-name, JAVA-Class or result from {@link com.intellij.struts2.model.constant.ConstantValueConverterClassContributor}.
  */
 class ConstantValueClassConverter extends ClassConverterBase {
 
@@ -38,7 +39,7 @@ class ConstantValueClassConverter extends ClassConverterBase {
   private final boolean hasShortCuts;
 
   ConstantValueClassConverter(@NonNls final String baseClass,
-                                      final Map<String, String> shortCutToPsiClassMap) {
+                              final Map<String, String> shortCutToPsiClassMap) {
 
     this.baseClass = baseClass;
     this.shortCutToPsiClassMap = shortCutToPsiClassMap;
@@ -60,8 +61,8 @@ class ConstantValueClassConverter extends ClassConverterBase {
     }
 
     // 2. first non-null result from extension point contributor (currently only Spring)
-    for (final ConstantValueConverterClassContributor converterClassContributor : Extensions.getExtensions(
-        ConstantValueConverter.EP_NAME)) {
+    for (final ConstantValueConverterClassContributor converterClassContributor :
+        Extensions.getExtensions(ConstantValueConverterClassContributor.EP_NAME)) {
       final PsiClass contributorClass = converterClassContributor.fromString(s, convertContext);
       if (contributorClass != null) {
         return contributorClass;

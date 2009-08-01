@@ -6,7 +6,7 @@
 
     <!-- resolve <constant> "value" to Spring bean definition -->
     <struts2.constantValueClassContributor
-            implementation="com.intellij.struts2.dom.struts.constant.ConstantValueConverterSpringClassContributor"/>
+            implementation="com.intellij.struts2.model.constant.ConstantValueConverterSpringClassContributor"/>
 
     <!-- resolve "class" to Spring bean definition -->
     <struts2.classContributor
