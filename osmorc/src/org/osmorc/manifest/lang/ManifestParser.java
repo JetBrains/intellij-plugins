@@ -30,7 +30,6 @@ import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.TokenType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.lang.headerparser.HeaderParser;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
 
@@ -38,6 +37,7 @@ import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 class ManifestParser implements PsiParser {
+
     ManifestParser(@NotNull final HeaderParserRepository headerParserRepository) {
         this.headerParserRepository = headerParserRepository;
     }
@@ -51,7 +51,7 @@ class ManifestParser implements PsiParser {
             parse(builder);
         }
 
-        closeAssignmentMarker(null);
+        closeAssignmentMarker();
         closeClause();
         closeHeader();
         closeSection();
@@ -65,22 +65,16 @@ class ManifestParser implements PsiParser {
         }
         if (builder.getTokenType() == ManifestTokenType.HEADER_NAME) {
             parseHeaderName(builder);
-        } else if (builder.getTokenType() == ManifestTokenType.HEADER_VALUE_PART) {
-            HeaderParser headerParser = headerParserRepository.getHeaderParser(currentHeaderName);
-            if (headerParser != null && !headerParser.isSimpleHeader()) {
-                parseComplexHeaderValue(builder);
-            } else {
-                parseSimpleHeaderValue(builder);
-            }
         } else if (builder.getTokenType() == ManifestTokenType.SECTION_END) {
             closeSection();
             builder.advanceLexer();
         } else if (builder.getTokenType() == ManifestTokenType.SIGNIFICANT_SPACE || builder.getTokenType() == TokenType.BAD_CHARACTER || builder.getTokenType() == ManifestTokenType.NEWLINE) {
             builder.advanceLexer();
+        } else if (currentHeaderIsSimpleHeader) {
+            parseSimpleHeaderValue(builder);
         } else {
-            builder.advanceLexer();
+            parseComplexHeaderValue(builder);
         }
-
     }
 
     private void parseSimpleHeaderValue(PsiBuilder builder) {
@@ -117,7 +111,7 @@ class ManifestParser implements PsiParser {
         }
 
         closeHeaderValuePart();
-        closeAssignmentMarker(null);
+        closeAssignmentMarker();
         closeClause();
         closeHeader();
     }
@@ -141,7 +135,7 @@ class ManifestParser implements PsiParser {
     private boolean parseClause(PsiBuilder builder) {
         if (builder.getTokenType() == ManifestTokenType.COMMA) {
             closeHeaderValuePart();
-            closeAssignmentMarker(null);
+            closeAssignmentMarker();
             closeClause();
             builder.advanceLexer();
             return true;
@@ -152,7 +146,7 @@ class ManifestParser implements PsiParser {
     private boolean parseParameter(PsiBuilder builder) {
         if (builder.getTokenType() == ManifestTokenType.SEMICOLON) {
             closeHeaderValuePart();
-            closeAssignmentMarker(null);
+            closeAssignmentMarker();
             builder.advanceLexer();
             return true;
         }
@@ -194,6 +188,10 @@ class ManifestParser implements PsiParser {
         closeHeader();
         headerMarker = builder.mark();
         currentHeaderName = builder.getTokenText();
+
+        HeaderParser headerParser = headerParserRepository.getHeaderParser(currentHeaderName);
+        currentHeaderIsSimpleHeader = headerParser == null || headerParser.isSimpleHeader();
+
         builder.advanceLexer();
 
         while (!builder.eof() && builder.getTokenType() != ManifestTokenType.COLON && builder.getTokenType() != ManifestTokenType.NEWLINE) {
@@ -224,13 +222,9 @@ class ManifestParser implements PsiParser {
         }
     }
 
-    private void closeAssignmentMarker(@Nullable String errorMessage) {
+    private void closeAssignmentMarker() {
         if (assignmentMarker != null) {
-            if (errorMessage != null) {
-                assignmentMarker.error(errorMessage);
-            } else {
-                assignmentMarker.done(assignmentMarkerType);
-            }
+            assignmentMarker.done(assignmentMarkerType);
             assignmentMarker = null;
             assignmentMarkerType = null;
         }
@@ -244,6 +238,7 @@ class ManifestParser implements PsiParser {
     }
 
     private String currentHeaderName;
+    private boolean currentHeaderIsSimpleHeader;
     private final HeaderParserRepository headerParserRepository;
     private PsiBuilder.Marker headerValuePartMarker;
     private PsiBuilder.Marker sectionMarker;

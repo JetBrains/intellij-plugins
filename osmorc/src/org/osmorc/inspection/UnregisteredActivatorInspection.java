@@ -187,12 +187,12 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
         private void addMissiingNewline(Section section) {
             String sectionText = section.getText();
             if (sectionText.charAt(sectionText.length() - 1) != '\n') {
-            PsiElement lastChild = section.getLastChild();
-            if (lastChild instanceof Header) {
-                Header header = (Header) lastChild;
-                header.getNode().addLeaf(ManifestTokenType.NEWLINE, "\n", null);
+                PsiElement lastChild = section.getLastChild();
+                if (lastChild instanceof Header) {
+                    Header header = (Header) lastChild;
+                    header.getNode().addLeaf(ManifestTokenType.NEWLINE, "\n", null);
+                }
             }
-        }
         }
 
         private void replaceExistingActivatorHeader(Header activatorHeader) {
