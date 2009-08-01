@@ -77,7 +77,10 @@ class ManifestParser implements PsiParser {
             builder.advanceLexer();
         } else if (builder.getTokenType() == ManifestTokenType.SIGNIFICANT_SPACE || builder.getTokenType() == TokenType.BAD_CHARACTER || builder.getTokenType() == ManifestTokenType.NEWLINE) {
             builder.advanceLexer();
+        } else {
+            builder.advanceLexer();
         }
+
     }
 
     private void parseSimpleHeaderValue(PsiBuilder builder) {
