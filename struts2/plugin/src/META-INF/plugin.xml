@@ -28,7 +28,7 @@
   <!-- published extension points -->
   <extensionPoints>
     <extensionPoint name="constantValueClassContributor"
-                    interface="com.intellij.struts2.dom.struts.ConstantValueConverterClassContributor"/>
+                    interface="com.intellij.struts2.dom.struts.constant.ConstantValueConverterClassContributor"/>
     <extensionPoint name="resultContributor"
                     interface="com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor"/>
     <extensionPoint name="classContributor"
@@ -43,6 +43,8 @@
     <iconProvider implementation="com.intellij.struts2.Struts2IconProvider"/>
 
     <inspectionToolProvider implementation="com.intellij.struts2.StrutsInspectionToolProvider"/>
+
+    <standardResourceProvider implementation="com.intellij.struts2.Struts2ResourceProvider"/>
 
     <fileTemplateGroup implementation="com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory"/>
 
@@ -99,7 +101,6 @@
 
     <!-- inject CSS into Struts UI tags -->
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibCssInlineStyleInjector"/>
-    <standardResourceProvider implementation="com.intellij.struts2.Struts2ResourceProvider"/>
   </extensions>
 
   <application-components>

@@ -24,6 +24,7 @@ import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.struts2.dom.params.Param;
 import com.intellij.struts2.dom.struts.*;
 import com.intellij.struts2.dom.struts.action.*;
+import com.intellij.struts2.dom.struts.constant.*;
 import com.intellij.struts2.dom.struts.impl.*;
 import com.intellij.struts2.dom.struts.impl.path.StrutsPathReferenceConverterImpl;
 import com.intellij.struts2.dom.struts.strutspackage.*;
@@ -64,6 +65,10 @@ public class StrutsApplicationComponent implements ApplicationComponent {
   }
 
   public StrutsApplicationComponent(final ConverterManager converterManager) {
+    converterManager.registerConverterImplementation(ConstantNameConverter.class,
+                                                     new ConstantNameConverterImpl());
+    converterManager.registerConverterImplementation(ConstantValueConverter.class,
+                                                     new ConstantValueConverterImpl());
     converterManager.registerConverterImplementation(ExtendableClassConverter.class,
                                                      new ExtendableClassConverterImpl());
     converterManager.registerConverterImplementation(StrutsPackageExtendsResolveConverter.class,

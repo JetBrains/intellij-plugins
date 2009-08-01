@@ -21,6 +21,8 @@ import com.intellij.struts2.dom.params.Param;
 import com.intellij.struts2.dom.params.ParamImpl;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
+import com.intellij.struts2.dom.struts.constant.Constant;
+import com.intellij.struts2.dom.struts.constant.ConstantImpl;
 import com.intellij.struts2.dom.struts.impl.*;
 import com.intellij.struts2.dom.struts.strutspackage.GlobalResult;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorRef;

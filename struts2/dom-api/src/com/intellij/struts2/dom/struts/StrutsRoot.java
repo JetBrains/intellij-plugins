@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.struts2.dom.StrutsDomConstants;
+import com.intellij.struts2.dom.struts.constant.Constant;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.Namespace;
