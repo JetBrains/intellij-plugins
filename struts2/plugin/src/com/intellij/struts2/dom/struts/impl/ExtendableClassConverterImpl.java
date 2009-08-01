@@ -47,7 +47,7 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
     }
 
     // resolve JAVA-class directly
-    final PsiClass psiClass = DomJavaUtil.findClass(s, context.getFile(), context.getModule(), null);
+    final PsiClass psiClass = DomJavaUtil.findClass(s, context.getInvocationElement());
     if (psiClass != null) {
       return psiClass;
     }

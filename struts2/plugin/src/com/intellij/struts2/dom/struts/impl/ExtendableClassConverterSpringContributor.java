@@ -56,10 +56,7 @@ public class ExtendableClassConverterSpringContributor extends ExtendableClassCo
    * @return true if yes.
    */
   public boolean isSuitable(@NotNull final ConvertContext convertContext) {
-    return DomJavaUtil.findClass(STRUTS_SPRING_OBJECT_FACTORY,
-                                 convertContext.getFile(),
-                                 convertContext.getModule(),
-                                 null) != null;
+    return DomJavaUtil.findClass(STRUTS_SPRING_OBJECT_FACTORY, convertContext.getInvocationElement()) != null;
   }
 
   public String getContributorType() {
