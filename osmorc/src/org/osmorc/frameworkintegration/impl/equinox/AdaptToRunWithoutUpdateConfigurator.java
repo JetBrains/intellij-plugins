@@ -77,7 +77,7 @@ class AdaptToRunWithoutUpdateConfigurator  extends BundleSelectionAction {
             for (String url : urls) {
                 if (!url.contains(ORG_ECLIPSE_UPDATE_CONFIGURATOR_URL) && !url.contains(ORG_ECLIPSE_OSGI_URL)) {
                     prototypeBundle = createSelectedFrameworkBundle(prototypeBundle, url);
-                    if (!currentlySelectedBundles.contains(prototypeBundle)) {
+                    if (prototypeBundle != null && !currentlySelectedBundles.contains(prototypeBundle)) {
                         adaptBundle(prototypeBundle);
                         getContext().addBundle(prototypeBundle);
                         prototypeBundle = null;
@@ -87,20 +87,21 @@ class AdaptToRunWithoutUpdateConfigurator  extends BundleSelectionAction {
         }
     }
 
-    private SelectedBundle createSelectedFrameworkBundle(SelectedBundle prototypeBundle, String url) {
-        url = BundleCompiler.convertJarUrlToFileUrl(url);
-        url = BundleCompiler.fixFileURL(url);
-        String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(url);
+    private SelectedBundle createSelectedFrameworkBundle(final SelectedBundle prototypeBundle, final String url) {
+        String bundleUrl = BundleCompiler.convertJarUrlToFileUrl(url);
+        bundleUrl = BundleCompiler.fixFileURL(bundleUrl);
+        String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(bundleUrl);
         SelectedBundle bundle = null;
+        
         if (bundleName != null) {
             bundle = prototypeBundle;
-            String bundleVersion = CachingBundleInfoProvider.getBundleVersions(url);
+            String bundleVersion = CachingBundleInfoProvider.getBundleVersions(bundleUrl);
             String displayName = bundleName + " - " + bundleVersion;
-            if (prototypeBundle != null) {
+            if (bundle != null) {
                 bundle.setName(displayName);
-                bundle.setBundleUrl(url);
+                bundle.setBundleUrl(bundleUrl);
             } else {
-                bundle = new SelectedBundle(displayName, url, SelectedBundle.BundleType.FrameworkBundle);
+                bundle = new SelectedBundle(displayName, bundleUrl, SelectedBundle.BundleType.FrameworkBundle);
             }
         }
         return bundle;
