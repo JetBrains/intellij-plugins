@@ -36,29 +36,52 @@ import org.osmorc.i18n.OsmorcBundle;
 import javax.swing.*;
 
 /**
- * TODO: migrate all to JGoodies Binding.
- *
  * @author Robert F. Beeger (robert@beeger.net)
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class SettingsEditor implements ProjectComponent, Configurable, Configurable.Composite {
+public class SettingsEditor implements ProjectComponent, Configurable, Configurable.Composite, ApplicationSettingsProvider, ProjectSettingsProvider {
+
     public SettingsEditor(ApplicationSettings applicationSettings, ProjectSettings projectSettings,
                           ProjectSettingsEditor projectSettingsEditor, IDESettingsEditor ideSettingsEditor) {
         this.projectSettingsEditor = projectSettingsEditor;
         this.ideSettingsEditor = ideSettingsEditor;
 
-        ApplicationSettings applicationSettingsWorkingCopy = applicationSettings.createCopy();
-        ProjectSettings projectSettingsWorkingCopy = projectSettings.createCopy();
+        this.applicationSettings = applicationSettings;
+        this.projectSettings = projectSettings;
 
-        this.projectSettingsEditor.setProjectSettings(projectSettings, projectSettingsWorkingCopy);
-        this.projectSettingsEditor.setApplicationSettings(applicationSettings, applicationSettingsWorkingCopy);
+        this.projectSettingsEditor.setProjectSettingsProvider(this);
+        this.projectSettingsEditor.setApplicationSettingsProvider(this);
 
-        this.ideSettingsEditor.setProjectSettings(projectSettings, projectSettingsWorkingCopy);
-        this.ideSettingsEditor.setApplicationSettings(applicationSettings, applicationSettingsWorkingCopy);
+        this.ideSettingsEditor.setProjectSettingsProvider(this);
+        this.ideSettingsEditor.setApplicationSettingsProvider(this);
     }
 
     public Configurable[] getConfigurables() {
+        applicationSettingsWorkingCopy = null;
+        projectSettingsWorkingCopy = null;
         return new Configurable[]{projectSettingsEditor, ideSettingsEditor};
+    }
+
+    public ApplicationSettings getApplicationSettings() {
+        return applicationSettings;
+    }
+
+    public ApplicationSettings getApplicationSettingsWorkingCopy() {
+        if (applicationSettingsWorkingCopy == null) {
+            applicationSettingsWorkingCopy = this.applicationSettings.createCopy();
+        }
+        return applicationSettingsWorkingCopy;
+    }
+
+    public ProjectSettings getProjectSettings() {
+        return projectSettings;
+    }
+
+    public ProjectSettings getProjectSettingsWorkingCopy() {
+        if (projectSettingsWorkingCopy == null) {
+            projectSettingsWorkingCopy = this.projectSettings.createCopy();
+        }
+        return projectSettingsWorkingCopy;
     }
 
     public void projectOpened() {
@@ -118,4 +141,8 @@ public class SettingsEditor implements ProjectComponent, Configurable, Configura
     private JPanel mainPanel;
     private ProjectSettingsEditor projectSettingsEditor;
     private IDESettingsEditor ideSettingsEditor;
+    private ApplicationSettings applicationSettings;
+    private ProjectSettings projectSettings;
+    private ApplicationSettings applicationSettingsWorkingCopy;
+    private ProjectSettings projectSettingsWorkingCopy;
 }

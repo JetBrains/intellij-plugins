@@ -25,11 +25,10 @@
 
 package org.osmorc.settings;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface ApplicationSettingsAwareEditor {
-    void setApplicationSettingsProvider(@NotNull ApplicationSettingsProvider applicationSettingsProvider);
+public interface ApplicationSettingsProvider {
+    ApplicationSettings getApplicationSettings();
+    ApplicationSettings getApplicationSettingsWorkingCopy();
 }

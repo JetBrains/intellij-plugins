@@ -25,10 +25,11 @@
 
 package org.osmorc.settings;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface ProjectSettingsAwareEditor
-{
-  void setProjectSettings(ProjectSettings projectSettings, ProjectSettings projectSettingsWorkingCopy);
+public interface ProjectSettingsAwareEditor {
+    void setProjectSettingsProvider(@NotNull ProjectSettingsProvider projectSettingsProvider);
 }

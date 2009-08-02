@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.osmorc.settings.LibraryBundlingEditor">
-  <grid id="27dc6" binding="_mainPanel" layout-manager="GridLayoutManager" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="664" height="400"/>
@@ -17,7 +17,7 @@
           <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="settings.libbundle.libregex"/>
         </properties>
       </component>
-      <component id="28f19" class="javax.swing.JTextField" binding="_libraryRegex" custom-create="true">
+      <component id="28f19" class="javax.swing.JTextField" binding="libraryRegex" custom-create="true">
         <constraints>
           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
@@ -59,14 +59,14 @@
             </clientProperties>
             <border type="none"/>
             <children>
-              <component id="2b64" class="javax.swing.JButton" binding="_addRuleButton">
+              <component id="2b64" class="javax.swing.JButton" binding="addRuleButton">
                 <constraints/>
                 <properties>
                   <icon value="general/add.png"/>
                   <text value=""/>
                 </properties>
               </component>
-              <component id="dda42" class="javax.swing.JButton" binding="_removeRuleButton">
+              <component id="dda42" class="javax.swing.JButton" binding="removeRuleButton">
                 <constraints/>
                 <properties>
                   <icon value="general/remove.png"/>
@@ -77,21 +77,21 @@
                   <html.disable class="java.lang.Boolean" value="false"/>
                 </clientProperties>
               </component>
-              <component id="681d7" class="javax.swing.JButton" binding="_duplicateButton">
+              <component id="681d7" class="javax.swing.JButton" binding="duplicateButton">
                 <constraints/>
                 <properties>
                   <icon value="actions/copy.png"/>
                   <text value=""/>
                 </properties>
               </component>
-              <component id="90e48" class="javax.swing.JButton" binding="_upButton">
+              <component id="90e48" class="javax.swing.JButton" binding="upButton">
                 <constraints/>
                 <properties>
                   <icon value="actions/moveUp.png"/>
                   <text value=""/>
                 </properties>
               </component>
-              <component id="cbdca" class="javax.swing.JButton" binding="_downButton">
+              <component id="cbdca" class="javax.swing.JButton" binding="downButton">
                 <constraints/>
                 <properties>
                   <icon value="actions/moveDown.png"/>
@@ -107,7 +107,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="380d7" class="javax.swing.JList" binding="_libraries" custom-create="true">
+              <component id="380d7" class="javax.swing.JList" binding="libraries" custom-create="true">
                 <constraints/>
                 <properties/>
               </component>
@@ -122,7 +122,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="3e86d" class="javax.swing.JTextArea" binding="_manifestEntries" custom-create="true" default-binding="true">
+          <component id="3e86d" class="javax.swing.JTextArea" binding="manifestEntries" custom-create="true" default-binding="true">
             <constraints/>
             <properties>
               <text value=""/>
@@ -138,7 +138,7 @@
           <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="settings.libbundle.dontbundle"/>
         </properties>
       </component>
-      <component id="7d500" class="javax.swing.JCheckBox" binding="_neverBundle" custom-create="true">
+      <component id="7d500" class="javax.swing.JCheckBox" binding="neverBundle" custom-create="true">
         <constraints>
           <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>

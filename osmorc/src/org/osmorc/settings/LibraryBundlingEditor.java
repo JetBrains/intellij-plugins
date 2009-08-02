@@ -32,6 +32,7 @@ import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.beans.BeanAdapter;
 import com.jgoodies.binding.list.SelectionInList;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 
 import javax.swing.*;
@@ -45,223 +46,193 @@ import java.util.List;
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class LibraryBundlingEditor implements Configurable, ApplicationSettingsAwareEditor
-{
-  public LibraryBundlingEditor(ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier)
-  {
-    _applicationSettingsUpdateNotifier = applicationSettingsUpdateNotifier;
-    _addRuleButton.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)
-      {
-        List<LibraryBundlificationRule> list = _applicationSettingsWorkingCopy.getLibraryBundlificationRules();
-        LibraryBundlificationRule newRule = new LibraryBundlificationRule();
-        list.add(newRule);
-        _selectedRule.fireIntervalAdded(list.size() - 1, list.size() - 1);
-        _selectedRule.setSelection(newRule);
-        notifyChanged();
-      }
-    });
+public class LibraryBundlingEditor implements Configurable, ApplicationSettingsAwareEditor {
+    private ApplicationSettingsProvider applicationSettingsProvider;
 
-    _removeRuleButton.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)
-      {
-        List<LibraryBundlificationRule> list = _applicationSettingsWorkingCopy.getLibraryBundlificationRules();
-        if (list.size() == 1)
-        {
-          LibraryBundlificationRule newRule = new LibraryBundlificationRule();
-          list.set(0, newRule);
-          _selectedRule.fireContentsChanged(0, 1);
-          _selectedRule.setSelection(newRule);
-        }
-        else
-        {
-          int oldSelectionIndex = _selectedRule.getSelectionIndex();
-          list.remove(_selectedRule.getValue());
-          _selectedRule.fireIntervalRemoved(list.size(), list.size());
-          _selectedRule.setSelectionIndex(oldSelectionIndex > 0 ? oldSelectionIndex - 1 : oldSelectionIndex);
-        }
-        notifyChanged();
-      }
-    });
+    public LibraryBundlingEditor(ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier) {
+        this.applicationSettingsUpdateNotifier = applicationSettingsUpdateNotifier;
+        addRuleButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                List<LibraryBundlificationRule> list = getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
+                LibraryBundlificationRule newRule = new LibraryBundlificationRule();
+                list.add(newRule);
+                selectedRule.fireIntervalAdded(list.size() - 1, list.size() - 1);
+                selectedRule.setSelection(newRule);
+                notifyChanged();
+            }
+        });
 
-    _duplicateButton.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)
-      {
-        LibraryBundlificationRule rule = _selectedRule.getSelection();
-        if (rule != null)
-        {
-          LibraryBundlificationRule newRule = rule.copy();
-          List<LibraryBundlificationRule> list = _applicationSettingsWorkingCopy.getLibraryBundlificationRules();
-          int selectedIndex = _selectedRule.getSelectionIndex();
-          list.add(selectedIndex, newRule);
-          _selectedRule.fireIntervalAdded(selectedIndex, selectedIndex);
-          notifyChanged();
-        }
-      }
-    });
+        removeRuleButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                List<LibraryBundlificationRule> list = getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
+                if (list.size() == 1) {
+                    LibraryBundlificationRule newRule = new LibraryBundlificationRule();
+                    list.set(0, newRule);
+                    selectedRule.fireContentsChanged(0, 1);
+                    selectedRule.setSelection(newRule);
+                } else {
+                    int oldSelectionIndex = selectedRule.getSelectionIndex();
+                    list.remove(selectedRule.getValue());
+                    selectedRule.fireIntervalRemoved(list.size(), list.size());
+                    selectedRule.setSelectionIndex(oldSelectionIndex > 0 ? oldSelectionIndex - 1 : oldSelectionIndex);
+                }
+                notifyChanged();
+            }
+        });
 
-    _upButton.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)
-      {
-        List<LibraryBundlificationRule> list = _applicationSettingsWorkingCopy.getLibraryBundlificationRules();
-        int selectionIndex = _selectedRule.getSelectionIndex();
-        if (selectionIndex > 0)
-        {
-          LibraryBundlificationRule ruleToMove = list.get(selectionIndex);
-          list.set(selectionIndex, list.get(selectionIndex - 1));
-          list.set(selectionIndex - 1, ruleToMove);
-          _selectedRule.fireContentsChanged(selectionIndex - 1, selectionIndex);
-          _selectedRule.setSelectionIndex(selectionIndex - 1);
-          notifyChanged();
-        }
-      }
-    });
+        duplicateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                LibraryBundlificationRule rule = selectedRule.getSelection();
+                if (rule != null) {
+                    LibraryBundlificationRule newRule = rule.copy();
+                    List<LibraryBundlificationRule> list = getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
+                    int selectedIndex = selectedRule.getSelectionIndex();
+                    list.add(selectedIndex, newRule);
+                    selectedRule.fireIntervalAdded(selectedIndex, selectedIndex);
+                    notifyChanged();
+                }
+            }
+        });
 
-    _downButton.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent event)
-      {
-        List<LibraryBundlificationRule> list = _applicationSettingsWorkingCopy.getLibraryBundlificationRules();
-        int selectionIndex = _selectedRule.getSelectionIndex();
-        if (selectionIndex < list.size() - 1)
-        {
-          LibraryBundlificationRule ruleToMove = list.get(selectionIndex);
-          list.set(selectionIndex, list.get(selectionIndex + 1));
-          list.set(selectionIndex + 1, ruleToMove);
-          _selectedRule.fireContentsChanged(selectionIndex, selectionIndex + 1);
-          _selectedRule.setSelectionIndex(selectionIndex + 1);
-          notifyChanged();
-        }
-      }
-    });
+        upButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                List<LibraryBundlificationRule> list = getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
+                int selectionIndex = selectedRule.getSelectionIndex();
+                if (selectionIndex > 0) {
+                    LibraryBundlificationRule ruleToMove = list.get(selectionIndex);
+                    list.set(selectionIndex, list.get(selectionIndex - 1));
+                    list.set(selectionIndex - 1, ruleToMove);
+                    selectedRule.fireContentsChanged(selectionIndex - 1, selectionIndex);
+                    selectedRule.setSelectionIndex(selectionIndex - 1);
+                    notifyChanged();
+                }
+            }
+        });
+
+        downButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                List<LibraryBundlificationRule> list = getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
+                int selectionIndex = selectedRule.getSelectionIndex();
+                if (selectionIndex < list.size() - 1) {
+                    LibraryBundlificationRule ruleToMove = list.get(selectionIndex);
+                    list.set(selectionIndex, list.get(selectionIndex + 1));
+                    list.set(selectionIndex + 1, ruleToMove);
+                    selectedRule.fireContentsChanged(selectionIndex, selectionIndex + 1);
+                    selectedRule.setSelectionIndex(selectionIndex + 1);
+                    notifyChanged();
+                }
+            }
+        });
 
 
-  }
-
-  private void notifyChanged()
-  {
-    _applicationSettingsUpdateNotifier.fireApplicationSettingsChanged();
-    _changed = true;
-  }
-
-  private void createUIComponents()
-  {
-    _selectedRule = new SelectionInList<LibraryBundlificationRule>();
-    _libraries = BasicComponentFactory.createList(_selectedRule);
-    // adapter always holds currently selected bean
-    _beanAdapter = new BeanAdapter<LibraryBundlificationRule>(new LibraryBundlificationRule());
-    _libraryRegex = BasicComponentFactory.createTextField(_beanAdapter.getValueModel("ruleRegex"), false);
-    _manifestEntries = BasicComponentFactory.createTextArea(_beanAdapter.getValueModel("additionalProperties"), false);
-    _neverBundle = BasicComponentFactory.createCheckBox(_beanAdapter.getValueModel("doNotBundle"), "");
-    _selectedRule.addValueChangeListener(new PropertyChangeListener()
-    {
-      public void propertyChange(PropertyChangeEvent event)
-      {
-        // put currently selected bean into adapter, so all the textfields know which bean to work on.
-        _beanAdapter.setBean(_selectedRule.getSelection());
-      }
-    });
-
-    _beanPropertyChangeListener = new PropertyChangeListener()
-    {
-      public void propertyChange(PropertyChangeEvent event)
-      {
-        _selectedRule.fireContentsChanged(_selectedRule.getSelectionIndex(), 1);
-        notifyChanged();
-      }
-    };
-  }
-
-  @Nls
-  public String getDisplayName()
-  {
-    return "Library Bundling";
-  }
-
-  public Icon getIcon()
-  {
-    return null;
-  }
-
-  public String getHelpTopic()
-  {
-    return null;
-  }
-
-  public JComponent createComponent()
-  {
-    _beanAdapter.addBeanPropertyChangeListener(_beanPropertyChangeListener);
-    return _mainPanel;
-  }
-
-  public boolean isModified()
-  {
-    return _changed;
-  }
-
-  public void apply() throws ConfigurationException
-  {
-    copySettings(_applicationSettingsWorkingCopy, _applicationSettings);
-    _changed = false;
-  }
-
-  public void reset()
-  {
-    if (_applicationSettings != null)
-    {
-      copySettings(_applicationSettings, _applicationSettingsWorkingCopy);
-
-      _selectedRule.setList(_applicationSettingsWorkingCopy.getLibraryBundlificationRules());
-      _selectedRule.setSelectionIndex(0);
-      _changed = false;
     }
-  }
 
-  private void copySettings(ApplicationSettings from, ApplicationSettings to)
-  {
-    List<LibraryBundlificationRule> copiedRules = new ArrayList<LibraryBundlificationRule>();
-    for (LibraryBundlificationRule libraryBundlificationRule : from.getLibraryBundlificationRules())
-    {
-      LibraryBundlificationRule copiedRule = new LibraryBundlificationRule();
-      XmlSerializerUtil.copyBean(libraryBundlificationRule, copiedRule);
-      copiedRules.add(copiedRule);
+    private void notifyChanged() {
+        applicationSettingsUpdateNotifier.fireApplicationSettingsChanged();
+        changed = true;
     }
-    to.setLibraryBundlificationRules(copiedRules);
-  }
 
-  public void disposeUIResources()
-  {
-    _beanAdapter.removeBeanPropertyChangeListener(_beanPropertyChangeListener);
-  }
+    private void createUIComponents() {
+        selectedRule = new SelectionInList<LibraryBundlificationRule>();
+        libraries = BasicComponentFactory.createList(selectedRule);
+        // adapter always holds currently selected bean
+        beanAdapter = new BeanAdapter<LibraryBundlificationRule>(new LibraryBundlificationRule());
+        libraryRegex = BasicComponentFactory.createTextField(beanAdapter.getValueModel("ruleRegex"), false);
+        manifestEntries = BasicComponentFactory.createTextArea(beanAdapter.getValueModel("additionalProperties"), false);
+        neverBundle = BasicComponentFactory.createCheckBox(beanAdapter.getValueModel("doNotBundle"), "");
+        selectedRule.addValueChangeListener(new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event) {
+                // put currently selected bean into adapter, so all the textfields know which bean to work on.
+                beanAdapter.setBean(selectedRule.getSelection());
+            }
+        });
 
-  public void setApplicationSettings(ApplicationSettings applicationSettings,
-                                     ApplicationSettings applicationSettingsWorkingCopy)
-  {
-    _applicationSettings = applicationSettings;
-    _applicationSettingsWorkingCopy = applicationSettingsWorkingCopy;
-    reset();
-  }
+        beanPropertyChangeListener = new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event) {
+                selectedRule.fireContentsChanged(selectedRule.getSelectionIndex(), 1);
+                notifyChanged();
+            }
+        };
+    }
 
+    @Nls
+    public String getDisplayName() {
+        return "Library Bundling";
+    }
 
-  private JPanel _mainPanel;
-  private JTextField _libraryRegex;
-  private JButton _addRuleButton;
-  private JButton _removeRuleButton;
-  private JButton _duplicateButton;
-  private JButton _upButton;
-  private JButton _downButton;
-  private JList _libraries;
-  private JTextArea _manifestEntries;
-  private JCheckBox _neverBundle;
-  private SelectionInList<LibraryBundlificationRule> _selectedRule;
-  private boolean _changed;
-  private ApplicationSettings _applicationSettings;
-  private ApplicationSettings _applicationSettingsWorkingCopy;
-  private ApplicationSettingsUpdateNotifier _applicationSettingsUpdateNotifier;
-  private PropertyChangeListener _beanPropertyChangeListener;
-  private BeanAdapter<LibraryBundlificationRule> _beanAdapter;
+    public Icon getIcon() {
+        return null;
+    }
+
+    public String getHelpTopic() {
+        return null;
+    }
+
+    public JComponent createComponent() {
+        beanAdapter.addBeanPropertyChangeListener(beanPropertyChangeListener);
+        return mainPanel;
+    }
+
+    public boolean isModified() {
+        return changed;
+    }
+
+    public void apply() throws ConfigurationException {
+        copySettings(getApplicationSettingsWorkingCopy(), getApplicationSettings());
+        changed = false;
+    }
+
+    public void reset() {
+        if (getApplicationSettings() != null) {
+            copySettings(getApplicationSettings(), getApplicationSettingsWorkingCopy());
+
+            selectedRule.setList(getApplicationSettingsWorkingCopy().getLibraryBundlificationRules());
+            selectedRule.setSelectionIndex(0);
+            changed = false;
+        }
+    }
+
+    private void copySettings(ApplicationSettings from, ApplicationSettings to) {
+        List<LibraryBundlificationRule> copiedRules = new ArrayList<LibraryBundlificationRule>();
+        for (LibraryBundlificationRule libraryBundlificationRule : from.getLibraryBundlificationRules()) {
+            LibraryBundlificationRule copiedRule = new LibraryBundlificationRule();
+            XmlSerializerUtil.copyBean(libraryBundlificationRule, copiedRule);
+            copiedRules.add(copiedRule);
+        }
+        to.setLibraryBundlificationRules(copiedRules);
+    }
+
+    public void disposeUIResources() {
+        beanAdapter.removeBeanPropertyChangeListener(beanPropertyChangeListener);
+    }
+
+    public void setApplicationSettingsProvider(
+            @NotNull ApplicationSettingsProvider applicationSettingsProvider) {
+        this.applicationSettingsProvider = applicationSettingsProvider;
+        reset();
+    }
+
+    private ApplicationSettings getApplicationSettings() {
+        return applicationSettingsProvider != null ? applicationSettingsProvider.getApplicationSettings() : null;
+    }
+
+    private ApplicationSettings getApplicationSettingsWorkingCopy() {
+        return applicationSettingsProvider != null ? applicationSettingsProvider.getApplicationSettingsWorkingCopy() : null;
+    }
+
+    private JPanel mainPanel;
+    private JTextField libraryRegex;
+    private JButton addRuleButton;
+    private JButton removeRuleButton;
+    private JButton duplicateButton;
+    private JButton upButton;
+    private JButton downButton;
+    private JList libraries;
+    private JTextArea manifestEntries;
+    private JCheckBox neverBundle;
+    private SelectionInList<LibraryBundlificationRule> selectedRule;
+    private boolean changed;
+    private ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;
+    private PropertyChangeListener beanPropertyChangeListener;
+    private BeanAdapter<LibraryBundlificationRule> beanAdapter;
 }

@@ -28,6 +28,7 @@ package org.osmorc.settings;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -35,70 +36,57 @@ import javax.swing.*;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class IDESettingsEditor implements Configurable, Configurable.Composite, ProjectSettingsAwareEditor, ApplicationSettingsAwareEditor
-{
-  public IDESettingsEditor(FrameworkDefinitionsEditor frameworkDefinitionsEditor, LibraryBundlingEditor libraryBundlingEditor)
-  {
-    _frameworkDefinitionsEditor = frameworkDefinitionsEditor;
-    _libraryBundlingEditor = libraryBundlingEditor;
-  }
+public class IDESettingsEditor implements Configurable, Configurable.Composite, ProjectSettingsAwareEditor, ApplicationSettingsAwareEditor {
+    public IDESettingsEditor(FrameworkDefinitionsEditor frameworkDefinitionsEditor, LibraryBundlingEditor libraryBundlingEditor) {
+        this.frameworkDefinitionsEditor = frameworkDefinitionsEditor;
+        this.libraryBundlingEditor = libraryBundlingEditor;
+    }
 
-  @Nls
-  public String getDisplayName()
-  {
-    return "IDE Settings";
-  }
+    @Nls
+    public String getDisplayName() {
+        return "IDE Settings";
+    }
 
-  public Icon getIcon()
-  {
-    return null;
-  }
+    public Icon getIcon() {
+        return null;
+    }
 
-  public String getHelpTopic()
-  {
-    return null;
-  }
+    public String getHelpTopic() {
+        return null;
+    }
 
-  public JComponent createComponent()
-  {
-    return _mainPanel;
-  }
+    public JComponent createComponent() {
+        return mainPanel;
+    }
 
-  public boolean isModified()
-  {
-    return false;
-  }
+    public boolean isModified() {
+        return false;
+    }
 
-  public void apply() throws ConfigurationException
-  {
-  }
+    public void apply() throws ConfigurationException {
+    }
 
-  public void reset()
-  {
-  }
+    public void reset() {
+    }
 
-  public void disposeUIResources()
-  {
-  }
+    public void disposeUIResources() {
+    }
 
-  public Configurable[] getConfigurables()
-  {
-    return new Configurable[]{_frameworkDefinitionsEditor, _libraryBundlingEditor};
-  }
+    public Configurable[] getConfigurables() {
+        return new Configurable[]{frameworkDefinitionsEditor, libraryBundlingEditor};
+    }
 
-  public void setProjectSettings(ProjectSettings projectSettings, ProjectSettings projectSettingsWorkingCopy)
-  {
-    _frameworkDefinitionsEditor.setProjectSettings(projectSettings, projectSettingsWorkingCopy);
-  }
+    public void setProjectSettingsProvider(@NotNull ProjectSettingsProvider projectSettingsProvider) {
+        frameworkDefinitionsEditor.setProjectSettingsProvider(projectSettingsProvider);
+    }
 
-  public void setApplicationSettings(ApplicationSettings applicationSettings,
-                                     ApplicationSettings applicationSettingsWorkingCopy)
-  {
-    _frameworkDefinitionsEditor.setApplicationSettings(applicationSettings, applicationSettingsWorkingCopy);
-    _libraryBundlingEditor.setApplicationSettings(applicationSettings, applicationSettingsWorkingCopy);
-  }
+    public void setApplicationSettingsProvider(
+            @NotNull ApplicationSettingsProvider applicationSettingsProvider) {
+        frameworkDefinitionsEditor.setApplicationSettingsProvider(applicationSettingsProvider);
+        libraryBundlingEditor.setApplicationSettingsProvider(applicationSettingsProvider);
+    }
 
-  private JPanel _mainPanel;
-  private FrameworkDefinitionsEditor _frameworkDefinitionsEditor;
-  private LibraryBundlingEditor _libraryBundlingEditor;
+    private JPanel mainPanel;
+    private FrameworkDefinitionsEditor frameworkDefinitionsEditor;
+    private LibraryBundlingEditor libraryBundlingEditor;
 }

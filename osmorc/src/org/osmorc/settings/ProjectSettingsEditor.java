@@ -30,6 +30,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkInstanceUpdateNotifier;
 
@@ -42,208 +43,186 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ProjectSettingsEditor implements Configurable, ProjectSettingsAwareEditor, ApplicationSettingsAwareEditor,
-    ApplicationSettingsUpdateNotifier.Listener
-{
-  public ProjectSettingsEditor(Project project, FrameworkInstanceUpdateNotifier updateNotifier,
-                               ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier,
-                               ProjectSettingsUpdateNotifier projectSettingsUpdateNotifier)
-  {
-    _project = project;
-    _updateNotifier = updateNotifier;
-    _projectSettingsUpdateNotifier = projectSettingsUpdateNotifier;
+        ApplicationSettingsUpdateNotifier.Listener {
 
-    _frameworkInstance.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        if (!_updatingFrameworkInstanceComboBox && _frameworkInstance.getSelectedItem() != null)
-        {
-          _projectSettingsWorkingCopy.setFrameworkInstanceName(
-              ((FrameworkInstanceDefinition) _frameworkInstance.getSelectedItem()).getName());
-          _projectSettingsUpdateNotifier.fireProjectSettingsChanged();
-          updateChangedFlag();
-          refreshFrameworkInstanceCombobox();
+    public ProjectSettingsEditor(Project project, FrameworkInstanceUpdateNotifier updateNotifier,
+                                 ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier,
+                                 ProjectSettingsUpdateNotifier projectSettingsUpdateNotifier) {
+        this.project = project;
+        this.updateNotifier = updateNotifier;
+        this.projectSettingsUpdateNotifier = projectSettingsUpdateNotifier;
+
+        frameworkInstance.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (!updatingFrameworkInstanceComboBox && frameworkInstance.getSelectedItem() != null) {
+                    getProjectSettingsWorkingCopy().setFrameworkInstanceName(
+                            ((FrameworkInstanceDefinition) frameworkInstance.getSelectedItem()).getName());
+                    ProjectSettingsEditor.this.projectSettingsUpdateNotifier.fireProjectSettingsChanged();
+                    updateChangedFlag();
+                    refreshFrameworkInstanceCombobox();
+                }
+            }
+        });
+
+        createFrameworkInstanceModule.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                getProjectSettingsWorkingCopy().setCreateFrameworkInstanceModule(createFrameworkInstanceModule.isSelected());
+                ProjectSettingsEditor.this.projectSettingsUpdateNotifier.fireProjectSettingsChanged();
+                updateChangedFlag();
+            }
+        });
+
+        defaultManifestFileLocation.setEditable(true);
+        defaultManifestFileLocation.addItem("META-INF");
+        defaultManifestFileLocation.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (defaultManifestFileLocation.getSelectedItem() != null) {
+                    getProjectSettingsWorkingCopy()
+                            .setDefaultManifestFileLocation((String) defaultManifestFileLocation.getSelectedItem());
+                    ProjectSettingsEditor.this.projectSettingsUpdateNotifier.fireProjectSettingsChanged();
+                    updateChangedFlag();
+                }
+            }
+        });
+
+        this.applicationSettingsUpdateNotifier = applicationSettingsUpdateNotifier;
+    }
+
+    public void applicationSettingsChanged() {
+        if (getApplicationSettingsWorkingCopy() != null) {
+            refreshFrameworkInstanceCombobox();
         }
-      }
-    });
+    }
 
-    _createFrameworkInstanceModule.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        _projectSettingsWorkingCopy.setCreateFrameworkInstanceModule(_createFrameworkInstanceModule.isSelected());
-        _projectSettingsUpdateNotifier.fireProjectSettingsChanged();
-        updateChangedFlag();
-      }
-    });
 
-    _defaultManifestFileLocation.setEditable(true);
-    _defaultManifestFileLocation.addItem("META-INF");
-    _defaultManifestFileLocation.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        if (_defaultManifestFileLocation.getSelectedItem() != null)
-        {
-          _projectSettingsWorkingCopy
-              .setDefaultManifestFileLocation((String) _defaultManifestFileLocation.getSelectedItem());
-          _projectSettingsUpdateNotifier.fireProjectSettingsChanged();
-          updateChangedFlag();
+    private void updateChangedFlag() {
+        changed = !Comparing
+                .strEqual(getProjectSettingsWorkingCopy().getFrameworkInstanceName(), getProjectSettings().getFrameworkInstanceName()) ||
+                getProjectSettingsWorkingCopy().isCreateFrameworkInstanceModule() !=
+                        getProjectSettings().isCreateFrameworkInstanceModule() ||
+                !Comparing.strEqual(getProjectSettingsWorkingCopy().getDefaultManifestFileLocation(),
+                        getProjectSettings().getDefaultManifestFileLocation());
+    }
+
+
+    @Nls
+    public String getDisplayName() {
+        return "Project Settings";
+    }
+
+    public Icon getIcon() {
+        return null;
+    }
+
+    public String getHelpTopic() {
+        return null;
+    }
+
+    public JComponent createComponent() {
+        applicationSettingsUpdateNotifier.addListener(this);
+        return mainPanel;
+    }
+
+    public void disposeUIResources() {
+        applicationSettingsUpdateNotifier.removeListener(this);
+    }
+
+    public boolean isModified() {
+        return changed;
+    }
+
+    public void apply() throws ConfigurationException {
+        String oldFrameworkInstanceName = getProjectSettings().getFrameworkInstanceName();
+        final boolean oldCreateFrameworkInstanceModule = getProjectSettings().isCreateFrameworkInstanceModule();
+
+        copySettings(getProjectSettingsWorkingCopy(), getProjectSettings());
+
+        if (!Comparing.strEqual(getProjectSettings().getFrameworkInstanceName(), oldFrameworkInstanceName)) {
+            updateNotifier.fireUpdateFrameworkInstanceSelection(project);
         }
-      }
-    });
-
-    _applicationSettingsUpdateNotifier = applicationSettingsUpdateNotifier;
-  }
-
-  public void applicationSettingsChanged()
-  {
-    if (_applicationSettingsWorkingCopy != null)
-    {
-      refreshFrameworkInstanceCombobox();
+        if (oldCreateFrameworkInstanceModule != getProjectSettings().isCreateFrameworkInstanceModule()) {
+            updateNotifier.fireFrameworkInstanceModuleHandlingChanged(project);
+        }
+        changed = false;
     }
-  }
 
+    public void reset() {
+        if (getProjectSettingsWorkingCopy() != null && getApplicationSettingsWorkingCopy() != null) {
+            copySettings(getProjectSettings(), getProjectSettingsWorkingCopy());
 
-  private void updateChangedFlag()
-  {
-    _changed = !Comparing
-        .strEqual(_projectSettingsWorkingCopy.getFrameworkInstanceName(), _projectSettings.getFrameworkInstanceName()) ||
-        _projectSettingsWorkingCopy.isCreateFrameworkInstanceModule() !=
-            _projectSettings.isCreateFrameworkInstanceModule() ||
-        !Comparing.strEqual(_projectSettingsWorkingCopy.getDefaultManifestFileLocation(),
-            _projectSettings.getDefaultManifestFileLocation());
-  }
-
-
-  @Nls
-  public String getDisplayName()
-  {
-    return "Project Settings";
-  }
-
-  public Icon getIcon()
-  {
-    return null;
-  }
-
-  public String getHelpTopic()
-  {
-    return null;
-  }
-
-  public JComponent createComponent()
-  {
-    _applicationSettingsUpdateNotifier.addListener(this);
-    return _mainPanel;
-  }
-
-  public void disposeUIResources()
-  {
-    _applicationSettingsUpdateNotifier.removeListener(this);
-  }
-
-  public boolean isModified()
-  {
-    return _changed;
-  }
-
-  public void apply() throws ConfigurationException
-  {
-    String oldFrameworkInstanceName = _projectSettings.getFrameworkInstanceName();
-    final boolean oldCreateFrameworkInstanceModule = _projectSettings.isCreateFrameworkInstanceModule();
-
-    copySettings(_projectSettingsWorkingCopy, _projectSettings);
-
-    if (!Comparing.strEqual(_projectSettings.getFrameworkInstanceName(), oldFrameworkInstanceName))
-    {
-      _updateNotifier.fireUpdateFrameworkInstanceSelection(_project);
+            refreshFrameworkInstanceCombobox();
+            defaultManifestFileLocation.setSelectedItem(getProjectSettingsWorkingCopy().getDefaultManifestFileLocation());
+            createFrameworkInstanceModule.setSelected(getProjectSettingsWorkingCopy().isCreateFrameworkInstanceModule());
+            changed = false;
+        }
     }
-    if (oldCreateFrameworkInstanceModule != _projectSettings.isCreateFrameworkInstanceModule())
-    {
-      _updateNotifier.fireFrameworkInstanceModuleHandlingChanged(_project);
+
+    private void refreshFrameworkInstanceCombobox() {
+        updatingFrameworkInstanceComboBox = true;
+        List<FrameworkInstanceDefinition> instanceDefinitions =
+                getApplicationSettingsWorkingCopy().getFrameworkInstanceDefinitions();
+
+        String projectFrameworkInstanceName = getProjectSettingsWorkingCopy().getFrameworkInstanceName();
+        FrameworkInstanceDefinition projectFrameworkInstance = null;
+
+        frameworkInstance.removeAllItems();
+        for (FrameworkInstanceDefinition instanceDefinition : instanceDefinitions) {
+            frameworkInstance.addItem(instanceDefinition);
+            if (instanceDefinition.getName().equals(projectFrameworkInstanceName)) {
+                projectFrameworkInstance = instanceDefinition;
+            }
+        }
+        if (projectFrameworkInstance == null && projectFrameworkInstanceName != null) {
+            projectFrameworkInstance = new FrameworkInstanceDefinition();
+            projectFrameworkInstance.setName(projectFrameworkInstanceName);
+            projectFrameworkInstance.setDefined(false);
+            frameworkInstance.addItem(projectFrameworkInstance);
+        }
+        frameworkInstance.setSelectedItem(projectFrameworkInstance);
+
+        updatingFrameworkInstanceComboBox = false;
     }
-    _changed = false;
-  }
 
-  public void reset()
-  {
-    if (_projectSettingsWorkingCopy != null && _applicationSettingsWorkingCopy != null)
-    {
-      copySettings(_projectSettings, _projectSettingsWorkingCopy);
+    private void copySettings(ProjectSettings from, ProjectSettings to) {
+        to.setDefaultManifestFileLocation(from.getDefaultManifestFileLocation());
+        to.setCreateFrameworkInstanceModule(from.isCreateFrameworkInstanceModule());
+        to.setFrameworkInstanceName(from.getFrameworkInstanceName());
 
-      refreshFrameworkInstanceCombobox();
-      _defaultManifestFileLocation.setSelectedItem(_projectSettingsWorkingCopy.getDefaultManifestFileLocation());
-      _createFrameworkInstanceModule.setSelected(_projectSettingsWorkingCopy.isCreateFrameworkInstanceModule());
-      _changed = false;
     }
-  }
 
-  private void refreshFrameworkInstanceCombobox()
-  {
-    _updatingFrameworkInstanceComboBox = true;
-    List<FrameworkInstanceDefinition> instanceDefinitions =
-        _applicationSettingsWorkingCopy.getFrameworkInstanceDefinitions();
-
-    String projectFrameworkInstanceName = _projectSettingsWorkingCopy.getFrameworkInstanceName();
-    FrameworkInstanceDefinition projectFrameworkInstance = null;
-
-    _frameworkInstance.removeAllItems();
-    for (FrameworkInstanceDefinition instanceDefinition : instanceDefinitions)
-    {
-      _frameworkInstance.addItem(instanceDefinition);
-      if (instanceDefinition.getName().equals(projectFrameworkInstanceName))
-      {
-        projectFrameworkInstance = instanceDefinition;
-      }
+    public void setProjectSettingsProvider(@NotNull ProjectSettingsProvider projectSettingsProvider) {
+        this.projectSettingsProvider = projectSettingsProvider;
+        reset();
     }
-    if (projectFrameworkInstance == null && projectFrameworkInstanceName != null)
-    {
-      projectFrameworkInstance = new FrameworkInstanceDefinition();
-      projectFrameworkInstance.setName(projectFrameworkInstanceName);
-      projectFrameworkInstance.setDefined(false);
-      _frameworkInstance.addItem(projectFrameworkInstance);
+
+    public void setApplicationSettingsProvider(
+            @NotNull ApplicationSettingsProvider applicationSettingsProvider) {
+        this.applicationSettingsProvider = applicationSettingsProvider;
+        reset();
     }
-    _frameworkInstance.setSelectedItem(projectFrameworkInstance);
 
-    _updatingFrameworkInstanceComboBox = false;
-  }
+    private ProjectSettings getProjectSettings() {
+        return projectSettingsProvider != null ? projectSettingsProvider.getProjectSettings() : null;
+    }
 
-  private void copySettings(ProjectSettings from, ProjectSettings to)
-  {
-    to.setDefaultManifestFileLocation(from.getDefaultManifestFileLocation());
-    to.setCreateFrameworkInstanceModule(from.isCreateFrameworkInstanceModule());
-    to.setFrameworkInstanceName(from.getFrameworkInstanceName());
+    private ProjectSettings getProjectSettingsWorkingCopy() {
+        return projectSettingsProvider != null ? projectSettingsProvider.getProjectSettingsWorkingCopy() : null;
+    }
 
-  }
+    private ApplicationSettings getApplicationSettingsWorkingCopy() {
+        return applicationSettingsProvider != null ? applicationSettingsProvider.getApplicationSettingsWorkingCopy() : null;
+    }
 
-  public void setProjectSettings(ProjectSettings projectSettings, ProjectSettings projectSettingsWorkingCopy)
-  {
-    _projectSettings = projectSettings;
-    _projectSettingsWorkingCopy = projectSettingsWorkingCopy;
-
-    reset();
-  }
-
-  public void setApplicationSettings(ApplicationSettings applicationSettings,
-                                     ApplicationSettings applicationSettingsWorkingCopy)
-  {
-    _applicationSettingsWorkingCopy = applicationSettingsWorkingCopy;
-
-    reset();
-  }
-
-  private JPanel _mainPanel;
-  private JComboBox _frameworkInstance;
-  private JCheckBox _createFrameworkInstanceModule;
-  private JComboBox _defaultManifestFileLocation;
-  private ProjectSettings _projectSettings;
-  private ProjectSettings _projectSettingsWorkingCopy;
-  private ApplicationSettings _applicationSettingsWorkingCopy;
-  private Project _project;
-  private FrameworkInstanceUpdateNotifier _updateNotifier;
-  private ProjectSettingsUpdateNotifier _projectSettingsUpdateNotifier;
-  private boolean _changed;
-  private ApplicationSettingsUpdateNotifier _applicationSettingsUpdateNotifier;
-  private boolean _updatingFrameworkInstanceComboBox = false;
+    private JPanel mainPanel;
+    private JComboBox frameworkInstance;
+    private JCheckBox createFrameworkInstanceModule;
+    private JComboBox defaultManifestFileLocation;
+    private Project project;
+    private FrameworkInstanceUpdateNotifier updateNotifier;
+    private ProjectSettingsUpdateNotifier projectSettingsUpdateNotifier;
+    private boolean changed;
+    private ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;
+    private boolean updatingFrameworkInstanceComboBox = false;
+    private ProjectSettingsProvider projectSettingsProvider;
+    private ApplicationSettingsProvider applicationSettingsProvider;
 }

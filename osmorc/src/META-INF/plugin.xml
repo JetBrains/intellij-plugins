@@ -140,12 +140,6 @@
         <!-- Applications settings and application settings editors -->
         <applicationService serviceInterface="org.osmorc.settings.ApplicationSettings"
                             serviceImplementation="org.osmorc.settings.ApplicationSettings"/>
-        <applicationService serviceInterface="org.osmorc.settings.IDESettingsEditor"
-                            serviceImplementation="org.osmorc.settings.IDESettingsEditor"/>
-        <applicationService serviceInterface="org.osmorc.settings.FrameworkDefinitionsEditor"
-                            serviceImplementation="org.osmorc.settings.FrameworkDefinitionsEditor"/>
-        <applicationService serviceInterface="org.osmorc.settings.LibraryBundlingEditor"
-                            serviceImplementation="org.osmorc.settings.LibraryBundlingEditor"/>
         <applicationService serviceInterface="org.osmorc.settings.ApplicationSettingsUpdateNotifier"
                             serviceImplementation="org.osmorc.settings.ApplicationSettingsUpdateNotifier"/>
 
@@ -216,6 +210,12 @@
                         serviceImplementation="org.osmorc.settings.ProjectSettingsEditor"/>
         <projectService serviceInterface="org.osmorc.settings.ProjectSettingsUpdateNotifier"
                         serviceImplementation="org.osmorc.settings.ProjectSettingsUpdateNotifier"/>
+        <projectService serviceInterface="org.osmorc.settings.IDESettingsEditor"
+                        serviceImplementation="org.osmorc.settings.IDESettingsEditor"/>
+        <projectService serviceInterface="org.osmorc.settings.FrameworkDefinitionsEditor"
+                        serviceImplementation="org.osmorc.settings.FrameworkDefinitionsEditor"/>
+        <projectService serviceInterface="org.osmorc.settings.LibraryBundlingEditor"
+                        serviceImplementation="org.osmorc.settings.LibraryBundlingEditor"/>
 
         <!-- Other project services -->
         <projectService serviceInterface="org.osmorc.BundleManager"
