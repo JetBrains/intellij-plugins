@@ -23,6 +23,7 @@ import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.util.ProcessingContext;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,6 +35,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ThemeReferenceProvider extends PsiReferenceProviderBase {
 
+  @NonNls
+  private static final Object[] DEFAULT_THEMES = new Object[]{
+    LookupValueFactory.createLookupValue("simple", StrutsIcons.THEME),
+    LookupValueFactory.createLookupValue("xhtml", StrutsIcons.THEME),
+    LookupValueFactory.createLookupValue("ajax", StrutsIcons.THEME)
+  };
+
   @NotNull
   public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
     return new PsiReference[]{new PsiReferenceBase<XmlAttributeValue>((XmlAttributeValue) element) {
@@ -42,11 +50,7 @@ public class ThemeReferenceProvider extends PsiReferenceProviderBase {
       }
 
       public Object[] getVariants() {
-        return new Object[]{
-          LookupValueFactory.createLookupValue("simple", StrutsIcons.THEME),
-          LookupValueFactory.createLookupValue("xhtml", StrutsIcons.THEME),
-          LookupValueFactory.createLookupValue("ajax", StrutsIcons.THEME)
-        };
+        return DEFAULT_THEMES;
       }
 
     }};
