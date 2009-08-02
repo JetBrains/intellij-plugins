@@ -60,12 +60,6 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
 
   private static final Logger LOG = Logger.getInstance("#com.intellij.struts2.facet.StrutsFrameworkSupportProvider");
 
-  @NonNls
-  private static final String STRUTS_2_0_FILTER_CLASS = "org.apache.struts2.dispatcher.FilterDispatcher";
-
-  @NonNls
-  private static final String STRUTS_2_1_FILTER_CLASS = "org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter";
-
   protected StrutsFrameworkSupportProvider() {
     super(StrutsFacetType.INSTANCE);
   }
@@ -158,9 +152,9 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
 
                   @NonNls final String filterClass;
                   if (is2_1_X) {
-                    filterClass = STRUTS_2_1_FILTER_CLASS;
+                    filterClass = StrutsConstants.STRUTS_2_1_FILTER_CLASS;
                   } else {
-                    filterClass = STRUTS_2_0_FILTER_CLASS;
+                    filterClass = StrutsConstants.STRUTS_2_0_FILTER_CLASS;
                   }
                   strutsFilter.getFilterClass().setStringValue(filterClass);
 

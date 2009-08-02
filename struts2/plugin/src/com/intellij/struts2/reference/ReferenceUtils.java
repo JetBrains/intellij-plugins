@@ -15,11 +15,16 @@
 
 package com.intellij.struts2.reference;
 
+import com.intellij.javaee.model.xml.ParamValue;
+import com.intellij.javaee.model.xml.web.Filter;
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import static com.intellij.patterns.DomPatterns.*;
 import com.intellij.patterns.ElementPattern;
+import static com.intellij.patterns.PsiJavaPatterns.psiClass;
 import static com.intellij.patterns.StandardPatterns.and;
 import static com.intellij.patterns.StandardPatterns.or;
 import static com.intellij.patterns.StandardPatterns.string;
+import com.intellij.patterns.XmlElementPattern;
 import static com.intellij.patterns.XmlPatterns.*;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
@@ -83,6 +88,22 @@ class ReferenceUtils {
       xmlAttributeValue()
           .inVirtualFile(virtualFile().ofType(StdFileTypes.XML))
           .withSuperParent(2, xmlTag().withNamespace(string().oneOf(StrutsConstants.STRUTS_DTDS)));
+
+  /**
+   * web.xml: match inside {@code <filter>}-element with S2-Filter.
+   */
+  static final XmlElementPattern.Capture WEB_XML_STRUTS_FILTER =
+      withDom(domElement().
+          withParent(domElement(ParamValue.class).
+          withParent(domElement(Filter.class).
+          withChild("filter-class",genericDomValue().withValue(
+          or(psiClass().inheritorOf(false,
+                                    psiClass().withQualifiedName(StrutsConstants.STRUTS_2_0_FILTER_CLASS)),
+             psiClass().inheritorOf(false,
+                                    psiClass().withQualifiedName(StrutsConstants.STRUTS_2_1_FILTER_CLASS))
+
+          )))))
+      );
 
   /**
    * Register the given provider on the given XmlAttribute/Namespace/XmlTag(s) combination.

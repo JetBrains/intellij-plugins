@@ -16,6 +16,7 @@
 package com.intellij.struts2.reference;
 
 import com.intellij.openapi.paths.PathReferenceManager;
+import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
 import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
@@ -23,12 +24,14 @@ import static com.intellij.struts2.reference.ReferenceUtils.*;
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
 import com.intellij.struts2.reference.jsp.NamespaceReferenceProvider;
 import com.intellij.struts2.reference.jsp.ThemeReferenceProvider;
+import com.intellij.struts2.reference.web.WebXmlStrutsConstantNameReferenceProvider;
+import com.intellij.struts2.reference.web.WebXmlStrutsConstantValueReferenceProvider;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Registers all {@link PsiReferenceProvider}s for JSP/XML.
+ * Registers all {@link PsiReferenceProvider}s for JSP/XML/web.xml.
  *
  * @author Yann C&eacute;bron
  */
@@ -50,10 +53,26 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
   };
 
   public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
-
     registerUITags(registrar);
 
     registerStrutsXmlTags(registrar);
+
+    registerWebXml(registrar);
+  }
+
+  /**
+   * {@code <param-name>/<param-value>}.
+   *
+   * @param registrar Registrar.
+   */
+  private static void registerWebXml(final PsiReferenceRegistrar registrar) {
+    registrar.registerReferenceProvider(
+        XmlPatterns.xmlTag().withLocalName("param-name").and(WEB_XML_STRUTS_FILTER),
+        new WebXmlStrutsConstantNameReferenceProvider());
+
+    registrar.registerReferenceProvider(
+        XmlPatterns.xmlTag().withLocalName("param-value").and(WEB_XML_STRUTS_FILTER),
+        new WebXmlStrutsConstantValueReferenceProvider());
   }
 
   private static void registerStrutsXmlTags(final PsiReferenceRegistrar registrar) {

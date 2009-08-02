@@ -27,6 +27,12 @@ public final class StrutsConstants {
   private StrutsConstants() {
   }
 
+  @NonNls
+  public static final String STRUTS_2_0_FILTER_CLASS = "org.apache.struts2.dispatcher.FilterDispatcher";
+
+  @NonNls
+  public static final String STRUTS_2_1_FILTER_CLASS = "org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter";
+
   /**
    * Default filename for Struts configuration file.
    */
