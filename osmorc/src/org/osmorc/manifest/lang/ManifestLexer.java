@@ -84,12 +84,14 @@ public class ManifestLexer extends LexerBase {
                 tokenType = isLineStart(tokenStart) ? ManifestTokenType.SECTION_END : ManifestTokenType.NEWLINE;
                 tokenEnd = tokenStart + 1;
                 currentState = INITIAL_STATE;
-            } else if (currentState == WAITING_FOR_HEADER_ASSIGNMENT_STATE) {
+            } else if (currentState == WAITING_FOR_HEADER_ASSIGNMENT_STATE ||
+                    currentState == WAITING_FOR_HEADER_ASSIGNMENT_AFTER_BAD_CHARACTER_STATE) {
                 if (isColon(tokenStart)) {
                     tokenType = ManifestTokenType.COLON;
                     currentState = WAITING_FOR_SPACE_AFTER_HEADER_NAME_STATE;
                 } else {
                     tokenType = TokenType.BAD_CHARACTER;
+                    currentState = WAITING_FOR_HEADER_ASSIGNMENT_AFTER_BAD_CHARACTER_STATE;
                 }
                 tokenEnd = tokenStart + 1;
             } else if (currentState == WAITING_FOR_SPACE_AFTER_HEADER_NAME_STATE) {
@@ -179,7 +181,8 @@ public class ManifestLexer extends LexerBase {
 
     private static final int INITIAL_STATE = 0;
     private static final int WAITING_FOR_HEADER_ASSIGNMENT_STATE = 1;
-    private static final int WAITING_FOR_SPACE_AFTER_HEADER_NAME_STATE = 2;
+    private static final int WAITING_FOR_HEADER_ASSIGNMENT_AFTER_BAD_CHARACTER_STATE = 2;
+    private static final int WAITING_FOR_SPACE_AFTER_HEADER_NAME_STATE = 3;
 
     private static final Map<Character, IElementType> SPECIAL_CHARACTERS_TOKEN_MAPPING;
 
