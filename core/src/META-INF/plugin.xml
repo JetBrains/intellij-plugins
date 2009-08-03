@@ -36,6 +36,8 @@
 
     <xml.elementDescriptorProvider implementation="com.intellij.tapestry.intellij.lang.descriptor.TapestryTagDescriptorProvider"/>
 
+    <lang.formatter language="TML" implementationClass="com.intellij.lang.xhtml.XhtmlFormattingModelBuilder"/>
+
     <toolWindow id="Tapestry"
                 anchor="bottom"
                 secondary="false"
