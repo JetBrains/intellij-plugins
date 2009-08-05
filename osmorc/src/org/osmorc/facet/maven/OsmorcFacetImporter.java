@@ -68,7 +68,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     protected void reimportFacet(MavenModifiableModelsProvider modelsProvider, Module module,
                                  MavenRootModelAdapter mavenRootModelAdapter, OsmorcFacet osmorcFacet,
                                  MavenProjectsTree mavenProjectsTree, MavenProject mavenProject,
-                                 Map<MavenProject, String> mavenProjectStringMap,
+                                 MavenProjectChanges changes, Map<MavenProject, String> mavenProjectStringMap,
                                  List<MavenProjectsProcessorTask> mavenProjectsProcessorPostConfigurationTasks) {
 
         OsmorcFacetConfiguration conf = osmorcFacet.getConfiguration();
