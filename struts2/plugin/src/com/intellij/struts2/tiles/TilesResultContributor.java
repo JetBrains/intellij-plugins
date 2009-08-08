@@ -88,7 +88,7 @@ public class TilesResultContributor extends StrutsResultContributor {
     };
   }
 
-  private List<TilesModel> getAllTilesModels(@NotNull final PsiElement psiElement) {
+  private static List<TilesModel> getAllTilesModels(@NotNull final PsiElement psiElement) {
     final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
     if (module == null) {
       return Collections.emptyList();

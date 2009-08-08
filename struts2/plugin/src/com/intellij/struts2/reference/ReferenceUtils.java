@@ -39,6 +39,9 @@ import org.jetbrains.annotations.NonNls;
  */
 class ReferenceUtils {
 
+  private ReferenceUtils() {
+  }
+
   /**
    * JSP custom tags names.
    */

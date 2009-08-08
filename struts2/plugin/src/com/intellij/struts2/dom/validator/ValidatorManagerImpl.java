@@ -125,7 +125,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
    * @return {@code null} if not found.
    */
   @Nullable
-  private XmlFile findDefaultValidatorsFile(final Module module) {
+  private static XmlFile findDefaultValidatorsFile(final Module module) {
     final Project project = module.getProject();
 
     final PsiClass emailValidatorClass = JavaPsiFacade.getInstance(project).findClass(

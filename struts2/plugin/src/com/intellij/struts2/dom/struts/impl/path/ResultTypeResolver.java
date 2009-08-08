@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 /**
  * @author Yann C&eacute;bron
+ * @deprecated will be removed
  */
 public class ResultTypeResolver {
 

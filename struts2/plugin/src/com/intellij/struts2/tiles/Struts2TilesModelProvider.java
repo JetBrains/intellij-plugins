@@ -141,7 +141,7 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
    * @param webApp Web application.
    * @return File names.
    */
-  private Set<String> findConfiguredTilesPaths(final WebApp webApp) {
+  private static Set<String> findConfiguredTilesPaths(final WebApp webApp) {
     @NonNls final Set<String> tilesConfigNames = new HashSet<String>();
     final List<ParamValue> params = webApp.getContextParams();
     for (final ParamValue param : params) {
