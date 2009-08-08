@@ -17,15 +17,19 @@ package com.intellij.struts2.model.constant.contributor;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.struts2.model.constant.StrutsConstant;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Struts 2 "core" constants.
+ * Struts 2 core constants.
  *
  * @author Yann C&eacute;bron
  */
@@ -34,25 +38,31 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
   @NonNls
   private static final List<StrutsConstant> CONSTANTS = Arrays.asList(
       addClassWithShortcutProperty("struts.configuration", ""),
-      addStringProperty("struts.i18n.encoding"),
+      addStringValuesProperty("struts.i18n.encoding",
+                              ContainerUtil.map2Array(CharsetToolkit.getAvailableCharsets(), String.class,
+                                                      new Function<Charset, String>() {
+                                                        public String fun(final Charset charset) {
+                                                          return charset.name();
+                                                        }
+                                                      })),
 
       addClassWithShortcutProperty("struts.objectFactory",
                                    "com.opensymphony.xwork2.ObjectFactory",
-                                   new Pair<String, String>("struts", "org.apache.struts2.impl.StrutsObjectFactory"),
-                                   new Pair<String, String>("spring",
-                                                            "org.apache.struts2.spring.StrutsSpringObjectFactory")),
+                                   Pair.create("struts", "org.apache.struts2.impl.StrutsObjectFactory"),
+                                   Pair.create("spring", "org.apache.struts2.spring.StrutsSpringObjectFactory")),
 
       addStringValuesProperty("struts.objectFactory.spring.autoWire", "name", "type", "auto", "constructor"),
+      addBooleanProperty("struts.objectFactory.spring.autoWire.alwaysRespect"),
       addBooleanProperty("struts.objectFactory.spring.useClassCache"),
 
       addClassWithShortcutProperty("struts.objectTypeDeterminer",
                                    "com.opensymphony.xwork2.util.ObjectTypeDeterminer",
-                                   new Pair<String, String>("tiger",
-                                                            "com.opensymphony.xwork2.conversion.impl.DefaultObjectTypeDeterminer"),
-                                   new Pair<String, String>("notiger",
-                                                            "com.opensymphony.xwork2.conversion.impl.DefaultObjectTypeDeterminer"),
-                                   new Pair<String, String>("struts",
-                                                            "com.opensymphony.xwork2.conversion.impl.DefaultObjectTypeDeterminer")),
+                                   Pair.create("tiger",
+                                               "com.opensymphony.xwork2.conversion.impl.DefaultObjectTypeDeterminer"),
+                                   Pair.create("notiger",
+                                               "com.opensymphony.xwork2.conversion.impl.DefaultObjectTypeDeterminer"),
+                                   Pair.create("struts",
+                                               "com.opensymphony.xwork2.conversion.impl.DefaultObjectTypeDeterminer")),
 
       addStringValuesProperty("struts.multipart.parser", "cos", "pell", "jakarta"),
       addStringProperty("struts.multipart.saveDir"),
