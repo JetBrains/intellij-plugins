@@ -11,8 +11,6 @@
     <orderEntry type="module" module-name="dom-openapi" />
     <orderEntry type="module" module-name="codeInsight-impl" />
     <orderEntry type="module" module-name="openapi" />
-    <orderEntry type="module" module-name="jam-support-openapi" />
-    <orderEntry type="module" module-name="jam-support-impl" />
     <orderEntry type="module" module-name="ExtendedApi" />
   </component>
   <component name="copyright">
