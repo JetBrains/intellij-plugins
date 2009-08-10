@@ -25,6 +25,7 @@ import com.intellij.openapi.application.RunResult;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
@@ -33,6 +34,7 @@ import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,11 +53,25 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected Module myModule;
   protected StrutsFacet myFacet;
 
+  /**
+   * Absolute path to /testData.
+   */
+  protected String testDataRootPath;
+
   @NonNls
   protected static final String SOURCE_DIR = "src";
 
   @NonNls
   protected static final String SOURCE_PATH = "/" + SOURCE_DIR;
+
+  @NonNls
+  protected static final String STRUTS_XML = "struts.xml";
+
+  @NonNls
+  private static final String STRUTS2_CORE_JAR_FILENAME = "struts2-core-2.1.6.jar";
+
+  @NonNls
+  protected static final String STRUTS2_SPRING_PLUGIN_JAR = "struts2-spring-plugin-2.1.6.jar";
 
   protected Class<T> getModuleFixtureBuilderClass() {
     //noinspection unchecked
@@ -70,7 +86,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected abstract LocalInspectionTool[] getHighlightingInspections();
 
   /**
-   * Return true if the test uses JAVA sources.
+   * Return true if test uses JAVA sources.
    *
    * @return false.
    */
@@ -80,6 +96,9 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
 
   protected void setUp() throws Exception {
     super.setUp();
+
+    // little hack..
+    testDataRootPath = new File(getTestDataBasePath()).getAbsolutePath();
 
     final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder =
         JavaTestFixtureFactory.createFixtureBuilder();
@@ -121,17 +140,14 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
    */
   protected final void addStrutsJars(final T moduleBuilder) throws Exception {
     addLibrary(moduleBuilder, "struts2",
-               "struts2-core-2.1.6.jar",
+               STRUTS2_CORE_JAR_FILENAME,
                "freemarker-2.3.13.jar",
                "ognl-2.6.11.jar",
                "xwork-2.1.2.jar");
   }
 
   protected void addLibrary(final T moduleBuilder, @NonNls final String libraryName, @NonNls final String... jarPaths) {
-    final File testDataBasePathFile = new File(getTestDataBasePath()); // little hack to get absolute path..
-    moduleBuilder.addLibraryJars(libraryName,
-                                 testDataBasePathFile.getAbsolutePath(),
-                                 jarPaths);
+    moduleBuilder.addLibraryJars(libraryName, testDataRootPath, jarPaths);
   }
 
   protected final StrutsFacet createFacet() {
@@ -183,6 +199,24 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     final Set<StrutsFileSet> strutsFileSetSet = facetConfiguration.getFileSets();
     strutsFileSetSet.clear();
     strutsFileSetSet.add(fileSet);
+  }
+
+  /**
+   * Adds {@code struts.xml} files located in JARs.
+   * <p/>
+   * Must be called <em>after</em> {@link #createStrutsFileSet(String...)}.
+   *
+   * @param jarPath Path to struts.xml contained in JAR ({@code [PATH_TO_JAR]!/[PATH_TO_STRUTS_XML]}.
+   */
+  protected void addStrutsXmlFromJar(@NotNull @NonNls final String jarPath) {
+    final StrutsFacetConfiguration facetConfiguration = myFacet.getConfiguration();
+    final Set<StrutsFileSet> fileSets = facetConfiguration.getFileSets();
+    assert !fileSets.isEmpty() : "call createStrutsFileSet() before";
+    final StrutsFileSet fileSet = fileSets.iterator().next();
+
+    final VirtualFile virtualFile = JarFileSystem.getInstance().findFileByPath(testDataRootPath + "/" + jarPath);
+    assert virtualFile != null : "could not find '" + jarPath + "'";
+    fileSet.addFile(virtualFile);
   }
 
 }

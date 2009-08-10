@@ -59,7 +59,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     super.configureModule(moduleBuilder);
 
     addLibrary(moduleBuilder, "spring", "spring.jar");
-    addLibrary(moduleBuilder, "struts2-spring-plugin", "struts2-spring-plugin-2.1.6.jar");
+    addLibrary(moduleBuilder, "struts2-spring-plugin", STRUTS2_SPRING_PLUGIN_JAR);
   }
 
   public void testStrutsSpringHighlighting() throws Throwable {

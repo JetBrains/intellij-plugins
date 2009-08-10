@@ -19,6 +19,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Provides access to all defined constants.
+ * Provides access to all defined constant configuration properties.
  *
  * @author Yann C&eacute;bron
  */
@@ -62,4 +63,14 @@ public abstract class StrutsConstantManager {
   public abstract StrutsConstant findByName(@NotNull final Module module,
                                             @NotNull @NonNls final String name);
 
+  /**
+   * Determines the constant value for the given name.
+   *
+   * @param context Current context.
+   * @param name    Constant name.
+   * @return Value or {@code null} if no value could be determined.
+   */
+  @Nullable
+  public abstract String getValue(@NotNull final PsiFile context,
+                                  @NotNull @NonNls final String name);
 }
