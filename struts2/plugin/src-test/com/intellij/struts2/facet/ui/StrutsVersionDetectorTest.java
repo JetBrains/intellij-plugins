@@ -16,7 +16,6 @@
 
 package com.intellij.struts2.facet.ui;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -27,10 +26,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Yann C&eacute;bron
  */
 public class StrutsVersionDetectorTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
-
-  protected LocalInspectionTool[] getHighlightingInspections() {
-    return new LocalInspectionTool[0];
-  }
 
   @NotNull
   protected String getTestDataLocation() {

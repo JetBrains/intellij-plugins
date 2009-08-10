@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.model.constant;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -32,11 +31,6 @@ import static org.junit.Assert.assertThat;
  * @author Yann C&eacute;bron
  */
 public abstract class StrutsConstantManagerTestCase<B extends JavaModuleFixtureBuilder> extends BasicHighlightingTestCase<B> {
-
-  @Override
-  protected LocalInspectionTool[] getHighlightingInspections() {
-    return new LocalInspectionTool[0];
-  }
 
   protected void performResolveTest(@NotNull final VirtualFile invokingFile,
                                     @NotNull @NonNls final String name,

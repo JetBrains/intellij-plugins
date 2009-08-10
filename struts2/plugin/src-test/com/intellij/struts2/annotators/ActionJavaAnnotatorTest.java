@@ -16,7 +16,6 @@
 package com.intellij.struts2.annotators;
 
 import com.intellij.codeInsight.navigation.NavigationGutterIconRenderer;
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
@@ -34,10 +33,6 @@ import java.util.Set;
  * @author Yann C&eacute;bron
  */
 public class ActionJavaAnnotatorTest extends BasicStrutsHighlightingTestCase {
-
-  protected LocalInspectionTool[] getHighlightingInspections() {
-    return new LocalInspectionTool[0];
-  }
 
   @NotNull
   protected String getTestDataLocation() {

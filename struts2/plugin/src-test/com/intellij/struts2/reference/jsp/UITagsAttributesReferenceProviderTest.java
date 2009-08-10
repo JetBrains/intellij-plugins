@@ -14,7 +14,6 @@
  */
 package com.intellij.struts2.reference.jsp;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -25,10 +24,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Yann C&eacute;bron
  */
 public class UITagsAttributesReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
-
-  protected LocalInspectionTool[] getHighlightingInspections() {
-    return new LocalInspectionTool[0];
-  }
 
   @NotNull
   protected String getTestDataLocation() {

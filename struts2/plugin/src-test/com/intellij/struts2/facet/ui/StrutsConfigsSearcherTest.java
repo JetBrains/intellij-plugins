@@ -16,7 +16,6 @@
 
 package com.intellij.struts2.facet.ui;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.facet.Facet;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
@@ -46,10 +45,6 @@ import java.util.Map;
  * @author Yann C&eacute;bron
  */
 public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
-
-  protected LocalInspectionTool[] getHighlightingInspections() {
-    return new LocalInspectionTool[0];
-  }
 
   @NotNull
   protected String getTestDataLocation() {

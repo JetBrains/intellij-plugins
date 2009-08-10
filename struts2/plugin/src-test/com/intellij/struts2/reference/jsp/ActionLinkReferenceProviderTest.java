@@ -14,7 +14,6 @@
  */
 package com.intellij.struts2.reference.jsp;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlTag;
@@ -27,10 +26,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
-
-  protected LocalInspectionTool[] getHighlightingInspections() {
-    return new LocalInspectionTool[0];
-  }
 
   @NotNull
   protected String getTestDataLocation() {
