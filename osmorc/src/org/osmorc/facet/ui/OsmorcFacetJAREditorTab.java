@@ -236,6 +236,18 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab
 
   private void updateGui()
   {
+    Boolean data = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY);
+    boolean isBnd = data != null ? data : true;
+    _jarFileChooser.setEnabled(!isBnd);
+    _additionalJARContentsTable.setEnabled(!isBnd);
+    _ignoreFilePatternTextField.setEnabled(!isBnd);
+    _addButton.setEnabled(!isBnd);
+    _removeButton.setEnabled(!isBnd);
+    _editButton.setEnabled(!isBnd);
+    _alwaysRebuildBundleJARCheckBox.setEnabled(!isBnd);
+    _additionalJarContentsLabel.setEnabled(!isBnd);
+    _jarFileToCreateLabel.setEnabled(!isBnd);
+    _fileIgnorePatternLabel.setEnabled(!isBnd);
   }
 
   private void onJarFileSelect()
@@ -383,6 +395,9 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab
   private JButton _removeButton;
   private JButton _editButton;
   private JCheckBox _alwaysRebuildBundleJARCheckBox;
+  private JLabel _additionalJarContentsLabel;
+  private JLabel _jarFileToCreateLabel;
+  private JLabel _fileIgnorePatternLabel;
   private boolean _modified;
   private final FacetEditorContext _editorContext;
   private AdditionalJARContentsTableModel _additionalJARContentsTableModel;

@@ -28,16 +28,11 @@ package org.osmorc.facet.ui;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.util.TreeClassChooserDialog;
-import com.intellij.ide.util.TreeFileChooserDialog;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
@@ -45,12 +40,15 @@ import org.jetbrains.annotations.Nls;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 /**
  * The facet editor tab which is used to set up Osmorc facet settings concerning the generation of the manifest file by
@@ -64,13 +62,6 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab
   public OsmorcFacetManifestGenerationEditorTab(FacetEditorContext editorContext)
   {
     _editorContext = editorContext;
-    _bndFile.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        onBndFileSelect();
-      }
-    });
 
     ChangeListener listener = new ChangeListener()
     {
@@ -79,7 +70,6 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab
         updateGui();
       }
     };
-    _useExistingBndFile.addChangeListener(listener);
 
     UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(new UserActivityListener()
@@ -105,22 +95,18 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab
   {
     Boolean data = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.MANUAL_MANIFEST_EDITING_KEY);
     boolean isManuallyEdited = data != null ? data : true;
-    boolean useBndFile = _useExistingBndFile.isSelected();
+    data = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY);
+    boolean isBnd = data != null ? data : true;
 
-    _useExistingBndFile.setEnabled(!isManuallyEdited);
-    _generateWithTheseSettings.setEnabled(!isManuallyEdited);
+    _bundleActivatorLabel.setEnabled(!isManuallyEdited && !isBnd);
+    _bundleActivator.setEnabled(!isManuallyEdited && !isBnd);
+    _bundleSymbolicName.setEnabled(!isManuallyEdited && !isBnd);
+    _bundleSymbolicNameLabel.setEnabled(!isManuallyEdited && !isBnd);
+    _bundleVersionLabel.setEnabled(!isManuallyEdited && !isBnd);
+    _bundleVersion.setEnabled(!isManuallyEdited && !isBnd);
+    _additionalProperties.setEnabled(!isManuallyEdited && !isBnd);
+    _additionalPropertiesLabel.setEnabled(!isManuallyEdited && !isBnd);
 
-    _bundleActivatorLabel.setEnabled(!isManuallyEdited && !useBndFile);
-    _bundleActivator.setEnabled(!isManuallyEdited && !useBndFile);
-    _bundleSymbolicName.setEnabled(!isManuallyEdited && !useBndFile);
-    _bundleSymbolicNameLabel.setEnabled(!isManuallyEdited && !useBndFile);
-    _bundleVersionLabel.setEnabled(!isManuallyEdited && !useBndFile);
-    _bundleVersion.setEnabled(!isManuallyEdited && !useBndFile);
-    _additionalProperties.setEnabled(!isManuallyEdited && !useBndFile);
-    _additionalPropertiesLabel.setEnabled(!isManuallyEdited && !useBndFile);
-
-    _bndFile.setEnabled(!isManuallyEdited && useBndFile);
-    _bndFileLabel.setEnabled(!isManuallyEdited && useBndFile);
 
   }
 
@@ -143,32 +129,6 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab
     }
   }
 
-  private void onBndFileSelect()
-  {
-    VirtualFile[] roots = ModuleRootManager.getInstance(_editorContext.getModule()).getContentRoots();
-    TreeFileChooserDialog dialog =
-        new TreeFileChooserDialog(_editorContext.getProject(),
-            OsmorcBundle.getTranslation("faceteditor.select.bndfile"), null,
-            null, new SubfolderFileFilter(roots), false,
-            false);
-    dialog.showDialog();
-    PsiFile file = dialog.getSelectedFile();
-    if (file != null)
-    {
-      VirtualFile bndFileLocation = file.getVirtualFile();
-      for (VirtualFile root : roots)
-      {
-        String relativePath = VfsUtil
-            .getRelativePath(bndFileLocation, root, File.separatorChar);
-        if (relativePath != null)
-        {
-          _bndFile.setText(relativePath);
-          break;
-        }
-
-      }
-    }
-  }
 
   @Nls
   public String getDisplayName()
@@ -193,11 +153,6 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab
     configuration.setBundleSymbolicName(_bundleSymbolicName.getText());
     configuration.setBundleVersion(_bundleVersion.getText());
     configuration.setAdditionalProperties(_additionalProperties.getText());
-
-    configuration.setUseBndFile(_useExistingBndFile.isSelected());
-    String bndFileLocation = _bndFile.getText();
-    bndFileLocation = bndFileLocation.replace('\\', '/');
-    configuration.setBndFileLocation(bndFileLocation);
   }
 
   public void reset()
@@ -207,15 +162,6 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab
     _bundleSymbolicName.setText(configuration.getBundleSymbolicName());
     _bundleVersion.setText(configuration.getBundleVersion());
     _additionalProperties.setText(configuration.getAdditionalProperties());
-    _bndFile.setText(configuration.getBndFileLocation());
-    if (configuration.isUseBndFile())
-    {
-      _useExistingBndFile.setSelected(true);
-    }
-    else
-    {
-      _generateWithTheseSettings.setSelected(true);
-    }
     updateGui();
   }
 
@@ -240,10 +186,6 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab
   private JLabel _bundleVersionLabel;
   private JTextArea _additionalProperties;
   private JLabel _additionalPropertiesLabel;
-  private JRadioButton _generateWithTheseSettings;
-  private JRadioButton _useExistingBndFile;
-  private JLabel _bndFileLabel;
-  private TextFieldWithBrowseButton _bndFile;
   private boolean _modified;
   private final FacetEditorContext _editorContext;
 }

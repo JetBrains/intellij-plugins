@@ -53,7 +53,7 @@
         <border type="none"/>
         <children/>
       </grid>
-      <component id="24db4" class="javax.swing.JLabel">
+      <component id="24db4" class="javax.swing.JLabel" binding="_additionalJarContentsLabel">
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>
@@ -79,7 +79,7 @@
           </component>
         </children>
       </scrollpane>
-      <component id="98433" class="javax.swing.JLabel">
+      <component id="98433" class="javax.swing.JLabel" binding="_fileIgnorePatternLabel">
         <constraints>
           <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>
@@ -124,7 +124,7 @@
           <text value="Edit..."/>
         </properties>
       </component>
-      <component id="78a8a" class="javax.swing.JLabel">
+      <component id="78a8a" class="javax.swing.JLabel" binding="_jarFileToCreateLabel">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>

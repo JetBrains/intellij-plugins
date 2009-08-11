@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab">
   <grid id="bbf5b" binding="_root" layout-manager="FormLayout">
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:6dlu:noGrow"/>
     <rowspec value="center:271px:grow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
-    <rowspec value="top:3dlu:noGrow"/>
-    <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:d:grow"/>
     <constraints>
       <xy x="20" y="20" width="825" height="912"/>
@@ -29,7 +23,7 @@
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-vert="false"/>
         </constraints>
         <properties/>
@@ -119,59 +113,8 @@
           </scrollpane>
         </children>
       </grid>
-      <component id="51a9" class="javax.swing.JRadioButton" binding="_generateWithTheseSettings" default-binding="true">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <selected value="true"/>
-          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.generatewiththesesettings"/>
-        </properties>
-      </component>
-      <component id="c09b8" class="javax.swing.JRadioButton" binding="_useExistingBndFile" default-binding="true">
-        <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.useexistingbndfile"/>
-        </properties>
-      </component>
-      <grid id="4c7e5" layout-manager="FormLayout">
-        <rowspec value="center:d:grow"/>
-        <rowspec value="top:3dlu:noGrow"/>
-        <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="left:p:noGrow"/>
-        <colspec value="left:4dlu:noGrow"/>
-        <colspec value="fill:d:grow"/>
-        <constraints>
-          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties/>
-        <border type="none" title="Bnd File"/>
-        <children>
-          <component id="6c36b" class="javax.swing.JLabel" binding="_bndFileLabel">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.bndfile"/>
-            </properties>
-          </component>
-          <component id="92cce" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_bndFile">
-            <constraints>
-              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties/>
-          </component>
         </children>
       </grid>
-    </children>
-  </grid>
   <buttonGroups>
     <group name="_manifestPolicy">
       <member id="444b1"/>
