@@ -16,6 +16,7 @@
 package com.intellij.struts2.annotators;
 
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.module.Module;
@@ -29,9 +30,9 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 
@@ -43,14 +44,7 @@ import java.util.List;
  */
 abstract class ActionAnnotatorBase implements Annotator {
 
-  private static final DomElementListCellRenderer ACTION_RENDERER =
-      new DomElementListCellRenderer<Action>(StrutsBundle.message("annotators.action.noname")) {
-        @NotNull
-        @NonNls
-        public String getAdditionalLocation(final Action action) {
-          return action != null ? "[" + action.getNamespace() + "] " : "";
-        }
-      };
+  private static DomElementListCellRenderer ACTION_RENDERER;
 
   /**
    * Determine the Action-PsiClass.
@@ -93,9 +87,22 @@ abstract class ActionAnnotatorBase implements Annotator {
       NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR)
           .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
           .setTargets(actions).setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip"))
-          .setCellRenderer(ACTION_RENDERER)
+          .setCellRenderer(getActionRenderer())
           .install(annotationHolder, clazz.getNameIdentifier());
     }
+  }
+
+  private static synchronized PsiElementListCellRenderer getActionRenderer() {
+    if (ACTION_RENDERER == null) {
+      ACTION_RENDERER = new DomElementListCellRenderer<Action>(StrutsBundle.message("annotators.action.noname")) {
+        @NotNull
+        @NonNls
+        public String getAdditionalLocation(final Action action) {
+          return action != null ? "[" + action.getNamespace() + "] " : "";
+        }
+      };
+    }
+    return ACTION_RENDERER;
   }
 
 }
