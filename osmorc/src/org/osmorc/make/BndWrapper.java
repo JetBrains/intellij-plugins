@@ -96,7 +96,12 @@ public class BndWrapper
           additionalProperties.putAll(bundlificationRule.getAdditionalPropertiesMap());
           // if a rule applies which has been changed recently we need to re-bundle the file
           lastModified = Math.max(lastModified, bundlificationRule.getLastModified());
+
+          // if stop after this rule is true, we will no longer try to find any more matching rules
+          if ( bundlificationRule.isStopAfterThisRule()) {
+            break;
         }
+      }
       }
 
 
@@ -169,8 +174,9 @@ public class BndWrapper
     if (analyzer.getProperty(Constants.EXPORT_PACKAGE) == null)
     {
       // avoid spurious error messages about string starting with ","
-      String export = analyzer.calculateExportsFromContents(dot).replaceFirst("^\\s*,", "");
-      analyzer.setProperty(Constants.EXPORT_PACKAGE, export);
+      // String export = analyzer.calculateExportsFromContents(dot).replaceFirst("^\\s*,", "");
+      analyzer.setProperty(Constants.EXPORT_PACKAGE, "*");
+//      analyzer.setProperty(Constants.EXPORT_PACKAGE, export);
     }
     analyzer.mergeManifest(dot.getManifest());
     String version = analyzer.getProperty(Constants.BUNDLE_VERSION);

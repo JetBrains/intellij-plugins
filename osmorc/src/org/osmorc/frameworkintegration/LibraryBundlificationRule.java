@@ -168,18 +168,29 @@ public class LibraryBundlificationRule extends Model
     firePropertyChange("doNotBundle", old, doNotBundle);
   }
 
+  public void setStopAfterThisRule(boolean stopAfterThisRule) {
+    boolean old = _stopAfterThisRule;
+    _stopAfterThisRule = stopAfterThisRule;
+    firePropertyChange("stopAfterThisRule", old, stopAfterThisRule);
+  }
+
+  public boolean isStopAfterThisRule() {
+    return _stopAfterThisRule;
+  }
+
   public LibraryBundlificationRule copy()
   {
     LibraryBundlificationRule result = new LibraryBundlificationRule();
     result._additionalProperties = _additionalProperties;
     result._ruleRegex = _ruleRegex;
     result._doNotBundle = _doNotBundle;
+    result._stopAfterThisRule = _stopAfterThisRule;
     return result;
   }
 
   private String _additionalProperties = Constants.IMPORT_PACKAGE + ": *;resolution:=optional";
   private String _ruleRegex = ".*";
-  private String _additionalBndArguments = "";
   private long _lastModified = System.currentTimeMillis();
   private boolean _doNotBundle = false;
+  private boolean _stopAfterThisRule = false;
 }

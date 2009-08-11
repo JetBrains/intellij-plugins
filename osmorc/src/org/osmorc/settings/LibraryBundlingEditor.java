@@ -53,7 +53,8 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
         this.applicationSettingsUpdateNotifier = applicationSettingsUpdateNotifier;
         addRuleButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                List<LibraryBundlificationRule> list = getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
+                List<LibraryBundlificationRule> list =
+                        getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
                 LibraryBundlificationRule newRule = new LibraryBundlificationRule();
                 list.add(newRule);
                 selectedRule.fireIntervalAdded(list.size() - 1, list.size() - 1);
@@ -64,17 +65,26 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
 
         removeRuleButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                List<LibraryBundlificationRule> list = getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
+                List<LibraryBundlificationRule> list =
+                        getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
                 if (list.size() == 1) {
                     LibraryBundlificationRule newRule = new LibraryBundlificationRule();
                     list.set(0, newRule);
                     selectedRule.fireContentsChanged(0, 1);
                     selectedRule.setSelection(newRule);
-                } else {
+                }
+                else {
                     int oldSelectionIndex = selectedRule.getSelectionIndex();
                     list.remove(selectedRule.getValue());
                     selectedRule.fireIntervalRemoved(list.size(), list.size());
-                    selectedRule.setSelectionIndex(oldSelectionIndex > 0 ? oldSelectionIndex - 1 : oldSelectionIndex);
+                    final int newSelectionIndex = oldSelectionIndex > 0 ? oldSelectionIndex - 1 : oldSelectionIndex;
+
+                    if (newSelectionIndex == oldSelectionIndex) {
+                        // force a change event, since the underlying list has changed and this needs to be reflected in the text fields
+                        selectedRule.clearSelection();
+                    }
+
+                    selectedRule.setSelectionIndex(newSelectionIndex);
                 }
                 notifyChanged();
             }
@@ -85,7 +95,8 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
                 LibraryBundlificationRule rule = selectedRule.getSelection();
                 if (rule != null) {
                     LibraryBundlificationRule newRule = rule.copy();
-                    List<LibraryBundlificationRule> list = getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
+                    List<LibraryBundlificationRule> list =
+                            getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
                     int selectedIndex = selectedRule.getSelectionIndex();
                     list.add(selectedIndex, newRule);
                     selectedRule.fireIntervalAdded(selectedIndex, selectedIndex);
@@ -96,7 +107,8 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
 
         upButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                List<LibraryBundlificationRule> list = getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
+                List<LibraryBundlificationRule> list =
+                        getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
                 int selectionIndex = selectedRule.getSelectionIndex();
                 if (selectionIndex > 0) {
                     LibraryBundlificationRule ruleToMove = list.get(selectionIndex);
@@ -111,7 +123,8 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
 
         downButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                List<LibraryBundlificationRule> list = getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
+                List<LibraryBundlificationRule> list =
+                        getApplicationSettingsWorkingCopy().getLibraryBundlificationRules();
                 int selectionIndex = selectedRule.getSelectionIndex();
                 if (selectionIndex < list.size() - 1) {
                     LibraryBundlificationRule ruleToMove = list.get(selectionIndex);
@@ -138,8 +151,10 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
         // adapter always holds currently selected bean
         beanAdapter = new BeanAdapter<LibraryBundlificationRule>(new LibraryBundlificationRule());
         libraryRegex = BasicComponentFactory.createTextField(beanAdapter.getValueModel("ruleRegex"), false);
-        manifestEntries = BasicComponentFactory.createTextArea(beanAdapter.getValueModel("additionalProperties"), false);
+        manifestEntries =
+                BasicComponentFactory.createTextArea(beanAdapter.getValueModel("additionalProperties"), false);
         neverBundle = BasicComponentFactory.createCheckBox(beanAdapter.getValueModel("doNotBundle"), "");
+        stopAfterThisRule = BasicComponentFactory.createCheckBox(beanAdapter.getValueModel("stopAfterThisRule"), "");
         selectedRule.addValueChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 // put currently selected bean into adapter, so all the textfields know which bean to work on.
@@ -217,7 +232,9 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     }
 
     private ApplicationSettings getApplicationSettingsWorkingCopy() {
-        return applicationSettingsProvider != null ? applicationSettingsProvider.getApplicationSettingsWorkingCopy() : null;
+        return applicationSettingsProvider != null ?
+                applicationSettingsProvider.getApplicationSettingsWorkingCopy() :
+                null;
     }
 
     private JPanel mainPanel;
@@ -230,6 +247,7 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     private JList libraries;
     private JTextArea manifestEntries;
     private JCheckBox neverBundle;
+    private JCheckBox stopAfterThisRule;
     private SelectionInList<LibraryBundlificationRule> selectedRule;
     private boolean changed;
     private ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;
