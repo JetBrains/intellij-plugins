@@ -2,6 +2,7 @@ package com.intellij.tapestry.intellij.lang.descriptor;
 
 import com.intellij.javaee.ExternalResourceManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.tapestry.core.TapestryConstants;
@@ -20,7 +21,7 @@ import java.util.Set;
  *         Date: Jul 7, 2009
  *         Time: 3:51:19 PM
  */
-public class TapestrySchemaProvider extends XmlSchemaProvider {
+public class TapestrySchemaProvider extends XmlSchemaProvider implements DumbAware {
   public XmlFile getSchema(@NotNull @NonNls String url, @Nullable Module module, @NotNull PsiFile baseFile) {
     final String location = ExternalResourceManager.getInstance().getResourceLocation(url, baseFile.getProject());
     return XmlUtil.findXmlFile(baseFile, location);
