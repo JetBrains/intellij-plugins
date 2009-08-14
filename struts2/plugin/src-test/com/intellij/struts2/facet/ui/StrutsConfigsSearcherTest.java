@@ -52,94 +52,96 @@ public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaMod
   }
 
 
-  private final FacetEditorContext myFacetEditorContext = new FacetEditorContext() {
+  private FacetEditorContext createContext() {
+    return new FacetEditorContext() {
 
-    @Nullable
-    public Project getProject() {
-      return myProject;
-    }
+      @NotNull
+      public Project getProject() {
+        return myProject;
+      }
 
-    @Nullable
-    public Library findLibrary(@NotNull final String name) {
-      return null;
-    }
+      @Nullable
+      public Library findLibrary(@NotNull final String name) {
+        return null;
+      }
 
-    @Nullable
-    public ModuleBuilder getModuleBuilder() {
-      return null;
-    }
+      @Nullable
+      public ModuleBuilder getModuleBuilder() {
+        return null;
+      }
 
-    @Nullable
-    public Facet getFacet() {
-      return null;
-    }
+      @NotNull
+      public Facet getFacet() {
+        throw new UnsupportedOperationException();
+      }
 
-    @Nullable
-    public Facet getParentFacet() {
-      return null;
-    }
+      @Nullable
+      public Facet getParentFacet() {
+        return null;
+      }
 
-    @NotNull
-    public FacetsProvider getFacetsProvider() {
-      throw new UnsupportedOperationException("'getFacetsProvider' not implemented in " + getClass().getName());
-    }
+      @NotNull
+      public FacetsProvider getFacetsProvider() {
+        throw new UnsupportedOperationException("'getFacetsProvider' not implemented in " + getClass().getName());
+      }
 
-    @NotNull
-    public ModulesProvider getModulesProvider() {
-      throw new UnsupportedOperationException("'getModulesProvider' not implemented in " + getClass().getName());
-    }
+      @NotNull
+      public ModulesProvider getModulesProvider() {
+        throw new UnsupportedOperationException("'getModulesProvider' not implemented in " + getClass().getName());
+      }
 
-    @Nullable
-    public ModifiableRootModel getModifiableRootModel() {
-      return null;
-    }
+      @NotNull
+      public ModifiableRootModel getModifiableRootModel() {
+        throw new UnsupportedOperationException();
+      }
 
-    @Nullable
-    public ModuleRootModel getRootModel() {
-      return null;
-    }
+      @NotNull
+      public ModuleRootModel getRootModel() {
+        throw new UnsupportedOperationException();
+      }
 
-    public boolean isNewFacet() {
-      return false;
-    }
+      public boolean isNewFacet() {
+        return false;
+      }
 
-    @Nullable
-    public Module getModule() {
-      return myModule;
-    }
+      @NotNull
+      public Module getModule() {
+        return myModule;
+      }
 
-    public Library[] getLibraries() {
-      return new Library[0];
-    }
+      public Library[] getLibraries() {
+        return new Library[0];
+      }
 
-    @Nullable
-    public WizardContext getWizardContext() {
-      return null;
-    }
+      @Nullable
+      public WizardContext getWizardContext() {
+        return null;
+      }
 
-    public Library createProjectLibrary(final String name, final VirtualFile[] roots, final VirtualFile[] sources) {
-      throw new UnsupportedOperationException("'createProjectLibrary' not implemented in " + getClass().getName());
-    }
+      public Library createProjectLibrary(final String name, final VirtualFile[] roots, final VirtualFile[] sources) {
+        throw new UnsupportedOperationException("'createProjectLibrary' not implemented in " + getClass().getName());
+      }
 
-    public VirtualFile[] getLibraryFiles(final Library library, final OrderRootType rootType) {
-      return VirtualFile.EMPTY_ARRAY;
-    }
+      public VirtualFile[] getLibraryFiles(final Library library, final OrderRootType rootType) {
+        return VirtualFile.EMPTY_ARRAY;
+      }
 
-    @NotNull
-    public String getFacetName() {
-      return "";
-    }
+      @NotNull
+      public String getFacetName() {
+        return "";
+      }
 
-    public <T> T getUserData(@NotNull final Key<T> key) {
-      return null;
-    }
+      public <T> T getUserData(@NotNull final Key<T> key) {
+        return null;
+      }
 
-    public <T> void putUserData(@NotNull final Key<T> key, final T value) {
-    }
-  };
+      public <T> void putUserData(@NotNull final Key<T> key, final T value) {
+      }
+    };
+  }
 
   public void testSearch() throws Exception {
-    final StrutsConfigsSearcher configsSearcher = new StrutsConfigsSearcher(myFacetEditorContext);
+    final StrutsConfigsSearcher configsSearcher = new StrutsConfigsSearcher(createContext());
     configsSearcher.search();
 
     final Map<Module, List<PsiFile>> map = configsSearcher.getFilesByModules();
