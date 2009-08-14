@@ -87,6 +87,10 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
     public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder problemsHolder, boolean b) {
         return new XmlElementVisitor() {
             public void visitXmlTag(XmlTag xmltag) {
+                // suppress inspection for projects not having an OSGi context.
+                if ( !OsmorcFacet.hasOsmorcFacet(xmltag)) {
+                    return;
+                }
                 // get the dependency
                 MavenDomDependency dependency = getDependency(xmltag);
                 if (dependency != null) {
