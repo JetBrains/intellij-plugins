@@ -25,6 +25,7 @@
 package org.osmorc.fix.impl;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
@@ -54,19 +55,23 @@ public class ReplaceUtil {
     }
 
     private static void replace(HeaderValuePart headerValue, String with) {
-        PsiFile fromText = PsiFileFactory.getInstance(headerValue.getProject()).createFileFromText("DUMMY.MF", "dummy: " + with);
-        Header header = PsiTreeUtil.getChildOfType(fromText.getFirstChild(), Header.class);
-        assert header != null;
-        Clause clause = PsiTreeUtil.getChildOfType(header, Clause.class);
-        assert clause != null;
-        HeaderValuePart value = PsiTreeUtil.getChildOfAnyType(clause, HeaderValuePart.class);
+        ReadonlyStatusHandler.OperationStatus status = ReadonlyStatusHandler.getInstance(headerValue.getProject()).ensureFilesWritable(PsiTreeUtil.getParentOfType(headerValue, PsiFile.class, false).getVirtualFile());
 
-        try {
-            assert value != null;
-            headerValue.replace(value);
-        }
-        catch (IncorrectOperationException e) {
-            throw new RuntimeException(e);
+        if (!status.hasReadonlyFiles()) {
+            PsiFile fromText = PsiFileFactory.getInstance(headerValue.getProject()).createFileFromText("DUMMY.MF", "dummy: " + with);
+            Header header = PsiTreeUtil.getChildOfType(fromText.getFirstChild(), Header.class);
+            assert header != null;
+            Clause clause = PsiTreeUtil.getChildOfType(header, Clause.class);
+            assert clause != null;
+            HeaderValuePart value = PsiTreeUtil.getChildOfAnyType(clause, HeaderValuePart.class);
+
+            try {
+                assert value != null;
+                headerValue.replace(value);
+            }
+            catch (IncorrectOperationException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

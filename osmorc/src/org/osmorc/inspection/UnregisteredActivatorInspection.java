@@ -30,6 +30,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
@@ -155,21 +156,25 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
         }
 
         public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-            Section mainSection = (Section) manifestFile.getFirstChild();
+            ReadonlyStatusHandler.OperationStatus status = ReadonlyStatusHandler.getInstance(manifestFile.getProject()).ensureFilesWritable(manifestFile.getVirtualFile());
 
-            Header activatorHeader = null;
-            Header currentHeader = PsiTreeUtil.getChildOfType(mainSection, Header.class);
-            while (activatorHeader == null && currentHeader != null) {
-                if ("Bundle-Activator".equalsIgnoreCase(currentHeader.getName())) {
-                    activatorHeader = currentHeader;
+            if (!status.hasReadonlyFiles()) {
+                Section mainSection = (Section) manifestFile.getFirstChild();
+
+                Header activatorHeader = null;
+                Header currentHeader = PsiTreeUtil.getChildOfType(mainSection, Header.class);
+                while (activatorHeader == null && currentHeader != null) {
+                    if ("Bundle-Activator".equalsIgnoreCase(currentHeader.getName())) {
+                        activatorHeader = currentHeader;
+                    }
+                    currentHeader = PsiTreeUtil.getNextSiblingOfType(currentHeader, Header.class);
                 }
-                currentHeader = PsiTreeUtil.getNextSiblingOfType(currentHeader, Header.class);
-            }
 
-            if (activatorHeader != null) {
-                replaceExistingActivatorHeader(activatorHeader);
-            } else {
-                addActivatorHeader();
+                if (activatorHeader != null) {
+                    replaceExistingActivatorHeader(activatorHeader);
+                } else {
+                    addActivatorHeader();
+                }
             }
         }
 
