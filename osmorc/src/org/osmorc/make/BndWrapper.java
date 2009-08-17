@@ -240,6 +240,12 @@ public class BndWrapper
     builder.setPedantic(false);
     builder.setProperties(bndFile);
     builder.mergeProperties(additionalProperties, true);
+
+    // FIX for IDEADEV-39089
+    // am not really sure if this is a good idea all the time but then again what use is building a bundle without exports in 90% of the cases?
+    if ( builder.getProperty(Constants.EXPORT_PACKAGE) == null ) {
+      builder.setProperty(Constants.EXPORT_PACKAGE, "*");
+    }
     builder.setClasspath(classpath);
     // XXX: seems to be a new bug in bnd, when calling build(), begin is not called, therefore the ignores dont work..
     // so i have overridden it and calling it manually here..
