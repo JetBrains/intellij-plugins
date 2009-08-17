@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * The facet configuration of an osmorc facet.
@@ -395,6 +396,21 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
   {
     _alwaysRebuildBundleJAR = alwaysRebuildBundleJAR;
   }
+
+
+  public boolean isIgnorePatternValid() {
+    if ( _ignoreFilePattern == null || _ignoreFilePattern.equals("") ) {
+      return true; // empty pattern is ok
+    }
+    try {
+      Pattern p = Pattern.compile(_ignoreFilePattern);
+      return true;
+    }
+    catch(Exception e) {
+      return false;
+    }
+  }
+
 
 
   // Important: This setting must be true by default otherwise you get some dialog when importing from

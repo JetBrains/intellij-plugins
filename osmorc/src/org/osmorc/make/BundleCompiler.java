@@ -327,6 +327,11 @@ public class BundleCompiler implements PackagingCompiler {
             // and tell bnd what resources to include
             additionalProperties.put("Include-Resource", pathBuilder.toString());
 
+            if (!configuration.isIgnorePatternValid() ) {
+                compileContext.addMessage(CompilerMessageCategory.ERROR, "The file ignore pattern in the facet configuration is invalid.",null, 0,0);
+                return;
+            }
+
             // add the ignore pattern for the resources
             if (!"".equals(configuration.getIgnoreFilePattern())) {
                 additionalProperties.put("-donotcopy", configuration.getIgnoreFilePattern());

@@ -32,6 +32,7 @@ import com.intellij.openapi.fileChooser.FileChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -46,6 +47,10 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.WindowManager;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
+import com.intellij.ui.EditorTextField;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import com.intellij.util.io.FileTypeFilter;
@@ -58,6 +63,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileView;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -74,6 +80,20 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab
   public OsmorcFacetJAREditorTab(FacetEditorContext editorContext)
   {
     _editorContext = editorContext;
+    final Project project = editorContext.getProject();
+    _ignoreFilePatternTextField = new EditorTextField("", project, FileTypes.PLAIN_TEXT);
+    FileType fileType = FileTypeManager.getInstance().getFileTypeByFileName("*.regexp");
+    if (fileType == FileTypes.UNKNOWN)
+    {
+      fileType = FileTypeManager.getInstance().getFileTypeByFileName("*.txt"); // RegExp plugin is not installed
+    }
+
+    final PsiFile file = PsiFileFactory.getInstance(project)
+        .createFileFromText("*.regexp", fileType, _ignoreFilePatternTextField.getText(), -1, true);
+    _ignoreFilePatternTextField
+        .setNewDocumentAndFileType(fileType, PsiDocumentManager.getInstance(project).getDocument(file));
+    _ignoreFilePatternPanel.add(_ignoreFilePatternTextField, BorderLayout.CENTER);
+
     UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(new UserActivityListener()
     {
@@ -390,7 +410,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab
   private TextFieldWithBrowseButton _jarFileChooser;
   private JPanel _root;
   private JTable _additionalJARContentsTable;
-  private JTextField _ignoreFilePatternTextField;
+  private EditorTextField _ignoreFilePatternTextField;
   private JButton _addButton;
   private JButton _removeButton;
   private JButton _editButton;
@@ -398,7 +418,8 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab
   private JLabel _additionalJarContentsLabel;
   private JLabel _jarFileToCreateLabel;
   private JLabel _fileIgnorePatternLabel;
-  private boolean _modified;
+    private JPanel _ignoreFilePatternPanel;
+    private boolean _modified;
   private final FacetEditorContext _editorContext;
   private AdditionalJARContentsTableModel _additionalJARContentsTableModel;
 

@@ -88,15 +88,6 @@
           <text value="File Ignore Pattern (regex)"/>
         </properties>
       </component>
-      <component id="c11d0" class="javax.swing.JTextField" binding="_ignoreFilePatternTextField">
-        <constraints>
-          <grid row="15" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-          <forms defaultalign-horz="false"/>
-        </constraints>
-        <properties/>
-      </component>
       <component id="6ff8a" class="javax.swing.JButton" binding="_addButton" default-binding="true">
         <constraints>
           <grid row="7" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -142,6 +133,15 @@
           <text value="Always rebuild bundle JAR"/>
         </properties>
       </component>
+      <grid id="2e26f" binding="_ignoreFilePatternPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints>
+          <grid row="15" column="2" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
     </children>
   </grid>
   <buttonGroups>
