@@ -20,6 +20,8 @@ import com.intellij.javaee.web.CustomServletReferenceAdapter;
 import com.intellij.javaee.web.ServletMappingInfo;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -31,10 +33,10 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.struts2.model.constant.StrutsConstantHelper;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,32 +50,31 @@ import java.util.List;
  */
 public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
 
-  /**
-   * TODO hardcoded.
-   */
-  @NonNls
-  private static final String ACTION_EXTENSION = ".action";
-
   protected PsiReference[] createReferences(@NotNull final PsiElement psiElement,
                                             final int offset,
                                             final String text,
                                             @Nullable final ServletMappingInfo info,
                                             final boolean soft) {
     final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject()).
-            getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
+        getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
 
     if (strutsModel == null) {
       return PsiReference.EMPTY_ARRAY;
     }
 
+    final List<String> actionExtensions = StrutsConstantHelper.getActionExtensions(psiElement);
+    if (actionExtensions.isEmpty()) {
+      return PsiReference.EMPTY_ARRAY;
+    }
+
     if (StringUtil.indexOf(text, '/') != -1) {
       return new PsiReference[]{
-              new ActionLinkPackageReference((XmlElement) psiElement, offset, text, soft, strutsModel),
-              new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel)
+          new ActionLinkPackageReference((XmlElement) psiElement, offset, text, soft, strutsModel, actionExtensions),
+          new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel, actionExtensions)
       };
     } else {
       return new PsiReference[]{
-              new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel)
+          new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel, actionExtensions)
       };
 
     }
@@ -100,15 +101,18 @@ TODO not needed so far ?!
   private static class ActionLinkReference extends PsiReferenceBase<XmlElement> implements EmptyResolveMessageProvider {
 
     private final StrutsModel strutsModel;
+    private final List<String> actionExtensions;
     private final String fullActionPath;
 
     private ActionLinkReference(final XmlElement element,
                                 final int offset,
                                 final String text,
                                 final boolean soft,
-                                final StrutsModel strutsModel) {
+                                final StrutsModel strutsModel,
+                                final List<String> actionExtensions) {
       super(element, new TextRange(offset, offset + text.length()), soft);
       this.strutsModel = strutsModel;
+      this.actionExtensions = actionExtensions;
 
       fullActionPath = PathReference.trimPath(getValue());
       final int lastSlash = fullActionPath.lastIndexOf("/");
@@ -119,19 +123,26 @@ TODO not needed so far ?!
       }
 
       // reduce to action-name if full path given
-      final int extensionIndex = fullActionPath.indexOf(ACTION_EXTENSION);
-      if (extensionIndex != -1) {
-        setRangeInElement(TextRange.from(getRangeInElement().getStartOffset(),
-                                         getRangeInElement().getLength() - ACTION_EXTENSION.length()));
+      for (final String actionExtension : actionExtensions) {
+        if (StringUtil.endsWith(fullActionPath, actionExtension)) {
+          setRangeInElement(TextRange.from(getRangeInElement().getStartOffset(),
+                                           getRangeInElement().getLength() - actionExtension.length()));
+          break;
+        }
       }
     }
 
     public PsiElement resolve() {
-      if (!fullActionPath.endsWith(ACTION_EXTENSION)) {
+      final String ourActionExtension = ContainerUtil.find(actionExtensions, new Condition<String>() {
+        public boolean value(final String s) {
+          return StringUtil.endsWith(fullActionPath, s);
+        }
+      });
+      if (ourActionExtension == null) {
         return null;
       }
 
-      final String actionName = getActionName(fullActionPath);
+      final String actionName = getActionName(fullActionPath, ourActionExtension);
       final String namespace = getNamespace(fullActionPath);
       final List<Action> actions = strutsModel.findActionsByName(actionName, namespace);
       if (actions.isEmpty()) {
@@ -145,15 +156,16 @@ TODO not needed so far ?!
     public Object[] getVariants() {
       final String namespace = getNamespace(fullActionPath);
 
+      final String firstExtension = actionExtensions.get(0);
+
       final List<Action> actionList = strutsModel.getActionsForNamespace(namespace);
       final List<Object> variants = new ArrayList<Object>(actionList.size());
       for (final Action action : actionList) {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
-          final Object variant = LookupValueFactory.createLookupValueWithHint(
-                  actionPath + ACTION_EXTENSION,
-                  StrutsIcons.ACTION,
-                  action.getNamespace());
+          final Object variant = LookupValueFactory.createLookupValueWithHint(actionPath + firstExtension,
+                                                                              StrutsIcons.ACTION,
+                                                                              action.getNamespace());
           variants.add(variant);
         }
       }
@@ -165,9 +177,10 @@ TODO not needed so far ?!
     }
 
     @NotNull
-    private static String getActionName(final String fullActionPath) {
+    private static String getActionName(final String fullActionPath,
+                                        final String ourActionExtension) {
       final int slashIndex = fullActionPath.lastIndexOf("/");
-      final int extensionIndex = fullActionPath.lastIndexOf(ACTION_EXTENSION);
+      final int extensionIndex = fullActionPath.lastIndexOf(ourActionExtension);
       return fullActionPath.substring(slashIndex + 1, extensionIndex);
     }
 
@@ -205,13 +218,16 @@ TODO not needed so far ?!
     private final String namespace;
     private final List<StrutsPackage> allStrutsPackages;
     private final String fullActionPath;
+    private final List<String> actionExtensions;
 
     private ActionLinkPackageReference(final XmlElement element,
                                        final int offset,
                                        final String text,
                                        final boolean soft,
-                                       final StrutsModel strutsModel) {
+                                       final StrutsModel strutsModel,
+                                       final List<String> actionExtensions) {
       super(element, new TextRange(offset, offset + text.length()), soft);
+      this.actionExtensions = actionExtensions;
 
       fullActionPath = PathReference.trimPath(getValue());
       namespace = getNamespace(fullActionPath);
@@ -225,12 +241,17 @@ TODO not needed so far ?!
     }
 
     public PsiElement resolve() {
-      if (!fullActionPath.endsWith(ACTION_EXTENSION)) {
+      final String validExtension = ContainerUtil.find(actionExtensions, new Condition<String>() {
+        public boolean value(final String s) {
+          return StringUtil.endsWith(fullActionPath, s);
+        }
+      });
+      if (validExtension == null) {
         return null;
       }
 
       for (final StrutsPackage strutsPackage : allStrutsPackages) {
-        if (namespace.equals(strutsPackage.searchNamespace())) {
+        if (Comparing.equal(namespace, strutsPackage.searchNamespace())) {
           return strutsPackage.getXmlTag();
         }
       }
@@ -243,8 +264,8 @@ TODO not needed so far ?!
         public Object fun(final StrutsPackage strutsPackage) {
           final String packageNamespace = strutsPackage.searchNamespace();
           return LookupValueFactory.createLookupValueWithHint(
-                  packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace,
-                  StrutsIcons.PACKAGE, strutsPackage.getName().getStringValue());
+              packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace,
+              StrutsIcons.PACKAGE, strutsPackage.getName().getStringValue());
         }
       });
     }

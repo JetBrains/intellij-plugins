@@ -28,6 +28,7 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.struts2.model.constant.StrutsConstantHelper;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -43,10 +44,6 @@ import java.util.List;
  */
 public class ActionPathResultContributor extends StrutsResultContributor {
 
-  // TODO determine dynamically
-  @NonNls
-  private static final String ACTION_EXTENSION = ".action";
-
   @Override
   public boolean matchesResultType(@NonNls @Nullable final String resultType) {
     return !ResultTypeResolver.isChainOrRedirectType(resultType);
@@ -56,7 +53,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
     final StrutsModel model = StrutsManager.getInstance(psiElement.getProject())
-            .getModelByFile((XmlFile) psiElement.getContainingFile());
+        .getModelByFile((XmlFile) psiElement.getContainingFile());
     if (model == null) {
       return false;
     }
@@ -66,40 +63,16 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       return false;
     }
 
-    final PsiReference actionReference = new PsiReferenceBase<PsiElement>(psiElement, soft) {
+    final List<String> actionExtensions = StrutsConstantHelper.getActionExtensions(psiElement);
+    if (actionExtensions.isEmpty()) {
+      return false;
+    }
 
-      public PsiElement resolve() {
-        return resolveActionPath(psiElement, currentPackage, model);
-      }
-
-      public Object[] getVariants() {
-        final List<LookupItem<ActionLookupItem>> variants = new ArrayList<LookupItem<ActionLookupItem>>();
-
-        final List<Action> allActions = model.getActionsForNamespace(null);
-        for (final Action action : allActions) {
-          final String actionPath = action.getName().getStringValue();
-          if (actionPath != null) {
-            final boolean isInCurrentPackage = action.getNamespace().equals(currentPackage);
-            final ActionLookupItem actionItem = new ActionLookupItem(action, isInCurrentPackage);
-
-            // prepend package-name if not default ("/") or "current" package
-            final String actionNamespace = action.getNamespace();
-            final String fullPath;
-            if (!actionNamespace.equals(StrutsPackage.DEFAULT_NAMESPACE) && !isInCurrentPackage) {
-              fullPath = actionNamespace + "/" + actionPath + ACTION_EXTENSION;
-            } else {
-              fullPath = actionPath + ACTION_EXTENSION;
-            }
-
-            final LookupItem<ActionLookupItem> item = new LookupItem<ActionLookupItem>(actionItem, fullPath);
-            item.putUserData(LookupItem.OVERWRITE_ON_AUTOCOMPLETE_ATTR, Boolean.TRUE);
-            variants.add(item);
-          }
-        }
-
-        return ArrayUtil.toObjectArray(variants);
-      }
-    };
+    final PsiReference actionReference = new ActionPathReference(psiElement,
+                                                                 soft,
+                                                                 currentPackage,
+                                                                 model,
+                                                                 actionExtensions);
 
     references.add(actionReference);
     return false;
@@ -108,7 +81,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
   @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
     final StrutsModel model = StrutsManager.getInstance(element.getProject())
-            .getModelByFile((XmlFile) element.getContainingFile());
+        .getModelByFile((XmlFile) element.getContainingFile());
     if (model == null) {
       return null;
     }
@@ -118,7 +91,12 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       return null;
     }
 
-    final PsiElement actionTag = resolveActionPath(element, currentPackage, model);
+    final List<String> actionExtensions = StrutsConstantHelper.getActionExtensions(element);
+    if (actionExtensions.isEmpty()) {
+      return null;
+    }
+
+    final PsiElement actionTag = resolveActionPath(element, currentPackage, model, actionExtensions);
     if (actionTag == null) {
       return null;
     }
@@ -134,10 +112,18 @@ public class ActionPathResultContributor extends StrutsResultContributor {
   @Nullable
   private static PsiElement resolveActionPath(@NotNull final PsiElement psiElement,
                                               @NotNull @NonNls final String currentPackage,
-                                              @NotNull final StrutsModel model) {
+                                              @NotNull final StrutsModel model,
+                                              @NotNull @NonNls final List<String> actionExtensions) {
     final XmlTagValue tagValue = ((XmlTag) psiElement).getValue();
     final String path = tagValue.getText();
-    final int extensionIndex = path.lastIndexOf(ACTION_EXTENSION);
+
+    int extensionIndex = -1;
+    for (final String actionExtension : actionExtensions) {
+      extensionIndex = path.lastIndexOf(actionExtension);
+      if (extensionIndex != -1) {
+        break;
+      }
+    }
     if (extensionIndex == -1) {
       return null;
     }
@@ -151,7 +137,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       namespace = currentPackage;
     }
 
-    // "/XX/" behind ".action" --> not parseable
+    // "/XX/" behind ".extension" --> not parseable
     if (namespacePrefixIndex > extensionIndex) {
       return null;
     }
@@ -165,6 +151,60 @@ public class ActionPathResultContributor extends StrutsResultContributor {
     }
 
     return null;
+  }
+
+  private static class ActionPathReference extends PsiReferenceBase<PsiElement> {
+
+    private final PsiElement psiElement;
+    private final String currentPackage;
+    private final StrutsModel model;
+    private final List<String> actionExtensions;
+
+    private ActionPathReference(final PsiElement psiElement,
+                                final boolean soft,
+                                final String currentPackage,
+                                final StrutsModel model,
+                                @NotNull @NonNls final List<String> actionExtensions) {
+      super(psiElement, soft);
+      this.psiElement = psiElement;
+      this.currentPackage = currentPackage;
+      this.model = model;
+      this.actionExtensions = actionExtensions;
+    }
+
+    public PsiElement resolve() {
+      return resolveActionPath(psiElement, currentPackage, model, actionExtensions);
+    }
+
+    public Object[] getVariants() {
+      final List<LookupItem<ActionLookupItem>> variants = new ArrayList<LookupItem<ActionLookupItem>>();
+
+      final String firstExtension = actionExtensions.get(0);
+
+      final List<Action> allActions = model.getActionsForNamespace(null);
+      for (final Action action : allActions) {
+        final String actionPath = action.getName().getStringValue();
+        if (actionPath != null) {
+          final boolean isInCurrentPackage = action.getNamespace().equals(currentPackage);
+          final ActionLookupItem actionItem = new ActionLookupItem(action, isInCurrentPackage);
+
+          // prepend package-name if not default ("/") or "current" package
+          final String actionNamespace = action.getNamespace();
+          final String fullPath;
+          if (!actionNamespace.equals(StrutsPackage.DEFAULT_NAMESPACE) && !isInCurrentPackage) {
+            fullPath = actionNamespace + "/" + actionPath + firstExtension;
+          } else {
+            fullPath = actionPath + firstExtension;
+          }
+
+          final LookupItem<ActionLookupItem> item = new LookupItem<ActionLookupItem>(actionItem, fullPath);
+          item.putUserData(LookupItem.OVERWRITE_ON_AUTOCOMPLETE_ATTR, Boolean.TRUE);
+          variants.add(item);
+        }
+      }
+
+      return ArrayUtil.toObjectArray(variants);
+    }
   }
 
 }
