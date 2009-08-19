@@ -60,14 +60,12 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
       }
     });
     final Module module = editorContext.getModule();
-    if (module != null) {
-      final String version = StrutsVersionDetector.detectStrutsVersion(module);
-      if (version != null) {
-        versionComboBox.setModel(new DefaultComboBoxModel(new String[]{version}));
-        versionComboBox.getModel().setSelectedItem(version);
-        versionComboBox.setEnabled(false);
-        return;
-      }
+    final String version = StrutsVersionDetector.detectStrutsVersion(module);
+    if (version != null) {
+      versionComboBox.setModel(new DefaultComboBoxModel(new String[]{version}));
+      versionComboBox.getModel().setSelectedItem(version);
+      versionComboBox.setEnabled(false);
+      return;
     }
     versionComboBox.setModel(new EnumComboBoxModel<StrutsVersion>(StrutsVersion.class));
     versionComboBox.getModel().setSelectedItem(StrutsVersion.STRUTS_2_1_6);

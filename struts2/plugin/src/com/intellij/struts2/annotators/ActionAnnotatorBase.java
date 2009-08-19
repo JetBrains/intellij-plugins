@@ -30,9 +30,9 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ abstract class ActionAnnotatorBase implements Annotator {
   /**
    * Determine the Action-PsiClass.
    *
-   * @param psiElement Passed from anntator.
+   * @param psiElement Passed from annotator.
    * @return null if PsiClass cannot be determined or is not suitable.
    */
   @Nullable
