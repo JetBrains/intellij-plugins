@@ -30,15 +30,11 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.PsiPackageR
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
-import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ImportPackageParser extends AbstractHeaderParserImpl {
-    public ImportPackageParser(ValueParserRepository valueParserRepository) {
-        super(valueParserRepository);
-    }
 
     public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
         if (headerValuePart.getParent() instanceof Clause) {

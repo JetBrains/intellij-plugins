@@ -24,17 +24,11 @@
  */
 package org.osmorc.manifest.lang.headerparser.impl;
 
-import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
-
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
  */
 public class BundleSymbolicNameParser extends AbstractHeaderParserImpl
 {
-  public BundleSymbolicNameParser(ValueParserRepository valueParserRepository)
-  {
-    super(valueParserRepository);
-  }
 
   public boolean isSimpleHeader()
   {

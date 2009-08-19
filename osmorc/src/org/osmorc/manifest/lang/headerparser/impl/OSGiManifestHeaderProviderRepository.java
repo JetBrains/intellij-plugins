@@ -38,14 +38,14 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OSGiManifestHeaderProviderRepository implements HeaderParserProviderRepository {
-    public OSGiManifestHeaderProviderRepository(SimpleHeaderParser simpleHeaderParser,
-                                                GenericComplexHeaderParser genericComplexHeaderParser,
+    public OSGiManifestHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser,
                                                 BundleSymbolicNameParser bundleSymbolicNameParser,
                                                 BundleVersionParser bundleVersionParser,
                                                 ExportPackageParser exportPackageParser,
                                                 ImportPackageParser importPackageParser,
                                                 RequireBundleParser requireBundleParser,
                                                 BundleActivatorParser bundleActivatorParser) {
+      AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
         headerProviders = new ArrayList<HeaderParserProvider>();
 
         headerProviders.add(new HeaderParserProviderImpl("Bundle-ManifestVersion", simpleHeaderParser));

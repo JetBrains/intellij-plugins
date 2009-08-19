@@ -29,15 +29,11 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.BundleReference;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
-import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class RequireBundleParser extends AbstractHeaderParserImpl {
-    public RequireBundleParser(ValueParserRepository valueParserRepository) {
-        super(valueParserRepository);
-    }
 
     public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
         if (headerValuePart.getParent() instanceof Clause) {

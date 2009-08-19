@@ -28,16 +28,13 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.HeaderParser;
-import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public abstract class AbstractHeaderParserImpl implements HeaderParser {
-    AbstractHeaderParserImpl(ValueParserRepository valueParserRepository) {
-        _valueParserRepository = valueParserRepository;
-    }
+public class AbstractHeaderParserImpl implements HeaderParser {
+  public static final AbstractHeaderParserImpl SIMPLE = new AbstractHeaderParserImpl();
 
     public Object getValue(@NotNull HeaderValuePart headerValuePart) {
         return headerValuePart.getUnwrappedText();
@@ -55,10 +52,5 @@ public abstract class AbstractHeaderParserImpl implements HeaderParser {
 
     }
 
-    ValueParserRepository getValueParserRepository() {
-        return _valueParserRepository;
-    }
-
-    static final PsiReference[] EMPTY_PSI_REFERENCE_ARRAY = new PsiReference[0];
-    private final ValueParserRepository _valueParserRepository;
+  static final PsiReference[] EMPTY_PSI_REFERENCE_ARRAY = new PsiReference[0];
 }

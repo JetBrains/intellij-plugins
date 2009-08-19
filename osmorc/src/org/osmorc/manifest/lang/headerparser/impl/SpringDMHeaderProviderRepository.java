@@ -39,9 +39,9 @@ import java.util.List;
  */
 public class SpringDMHeaderProviderRepository implements HeaderParserProviderRepository
 {
-  public SpringDMHeaderProviderRepository(SimpleHeaderParser simpleHeaderParser,
-                                          GenericComplexHeaderParser genericComplexHeaderParser)
+  public SpringDMHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser)
   {
+    AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
     _headerProviders = new ArrayList<HeaderParserProvider>();
 
     _headerProviders.add(new HeaderParserProviderImpl("Spring-Context", genericComplexHeaderParser));

@@ -35,7 +35,6 @@ import org.junit.After;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
-import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.valueobject.Version;
 
@@ -66,7 +65,7 @@ public class BundleVersionParserTest {
 
         replay(headerValueMock);
 
-        BundleVersionParser testObject = new BundleVersionParser(new ValueParserRepository());
+        BundleVersionParser testObject = new BundleVersionParser();
 
         assertThat(testObject.getValue(headerValueMock), equalTo((Object) new Version(1, 2, 3, "b300")));
 
@@ -84,7 +83,7 @@ public class BundleVersionParserTest {
 
         replay(headerValueMock, annotationHolderMock);
 
-        BundleVersionParser testObject = new BundleVersionParser(new ValueParserRepository());
+        BundleVersionParser testObject = new BundleVersionParser();
 
         testObject.annotate(headerValueMock, annotationHolderMock);
 

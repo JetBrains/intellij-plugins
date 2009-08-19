@@ -39,9 +39,10 @@ import java.util.List;
  */
 public class EquinoxHeaderProviderRepository implements HeaderParserProviderRepository
 {
-  public EquinoxHeaderProviderRepository(SimpleHeaderParser simpleHeaderParser,
-                                         GenericComplexHeaderParser genericComplexHeaderParser)
+  public EquinoxHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser)
   {
+    AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
+
     _headerProviders = new ArrayList<HeaderParserProvider>();
 
     _headerProviders.add(new HeaderParserProviderImpl("Eclipse-LazyStart", genericComplexHeaderParser));

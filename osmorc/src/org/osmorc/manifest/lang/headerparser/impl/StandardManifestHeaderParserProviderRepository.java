@@ -39,8 +39,9 @@ import java.util.List;
  */
 public class StandardManifestHeaderParserProviderRepository implements HeaderParserProviderRepository
 {
-  public StandardManifestHeaderParserProviderRepository(SimpleHeaderParser simpleHeaderParser)
+  public StandardManifestHeaderParserProviderRepository()
   {
+    AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
     _headerProviders = new ArrayList<HeaderParserProvider>();
 
     _headerProviders.add(new HeaderParserProviderImpl("Manifest-Version", simpleHeaderParser));

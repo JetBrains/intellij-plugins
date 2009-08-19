@@ -168,8 +168,6 @@
                             serviceImplementation="org.osmorc.manifest.lang.headerparser.HeaderParserRepository"/>
         <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.HeaderAnnotator"
                             serviceImplementation="org.osmorc.manifest.lang.headerparser.HeaderAnnotator"/>
-        <applicationService serviceInterface="org.osmorc.manifest.lang.valueparser.ValueParserRepository"
-                            serviceImplementation="org.osmorc.manifest.lang.valueparser.ValueParserRepository"/>
         <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.BundleSymbolicNameParser"
                             serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.BundleSymbolicNameParser"/>
         <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.BundleVersionParser"
@@ -182,8 +180,6 @@
                             serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.RequireBundleParser"/>
         <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.BundleActivatorParser"
                             serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.BundleActivatorParser"/>
-        <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.SimpleHeaderParser"
-                            serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.SimpleHeaderParser"/>
         <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.GenericComplexHeaderParser"
                             serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.GenericComplexHeaderParser"/>
 

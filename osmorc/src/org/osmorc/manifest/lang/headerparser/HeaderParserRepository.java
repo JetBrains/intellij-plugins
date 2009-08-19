@@ -24,13 +24,13 @@
  */
 package org.osmorc.manifest.lang.headerparser;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.lang.headerparser.impl.SimpleHeaderParser;
+import org.osmorc.manifest.lang.headerparser.impl.AbstractHeaderParserImpl;
 import org.osmorc.manifest.lang.psi.Header;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 
@@ -40,9 +40,8 @@ import java.util.*;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class HeaderParserRepository {
-    public HeaderParserRepository(SimpleHeaderParser simpleHeaderParser) {
-        _simpleHeaderParser = simpleHeaderParser;
-        _headerParserProviderRepositories = Extensions
+    public HeaderParserRepository() {
+      _headerParserProviderRepositories = Extensions
                 .getExtensions(new ExtensionPointName<HeaderParserProviderRepository>("Osmorc.headerParserProviderRepository"));
     }
 
@@ -70,7 +69,7 @@ public class HeaderParserRepository {
                 }
             }
         }
-        return _simpleHeaderParser;
+        return AbstractHeaderParserImpl.SIMPLE;
     }
 
     public Collection<HeaderNameMatch> getMatches(@NotNull String headerName) {
@@ -116,5 +115,4 @@ public class HeaderParserRepository {
 
 
     private final HeaderParserProviderRepository[] _headerParserProviderRepositories;
-    private final SimpleHeaderParser _simpleHeaderParser;
 }

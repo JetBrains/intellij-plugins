@@ -25,8 +25,6 @@
 
 package org.osmorc.manifest.lang.headerparser.impl;
 
-import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
-
 /**
  * This parser is used as a placeholder for complex headers for which no specific parser has yet been developed.
  * It makes sure that clauses, directives and attributes are highlighted correctly.
@@ -35,10 +33,6 @@ import org.osmorc.manifest.lang.valueparser.ValueParserRepository;
  */
 public class GenericComplexHeaderParser extends AbstractHeaderParserImpl
 {
-  GenericComplexHeaderParser(ValueParserRepository valueParserRepository)
-  {
-    super(valueParserRepository);
-  }
 
   @Override
   public boolean isSimpleHeader()

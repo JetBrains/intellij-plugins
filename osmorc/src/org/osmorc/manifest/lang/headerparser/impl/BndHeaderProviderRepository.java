@@ -39,8 +39,7 @@ import java.util.List;
  */
 public class BndHeaderProviderRepository implements HeaderParserProviderRepository
 {
-  public BndHeaderProviderRepository(SimpleHeaderParser simpleHeaderParser,
-                                     GenericComplexHeaderParser genericComplexHeaderParser)
+  public BndHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser)
   {
     _headerProviders = new ArrayList<HeaderParserProvider>();
 
