@@ -7,15 +7,12 @@ import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * The built-in Block element.
  */
 public class BlockComponent extends Component {
-
-    private static Map<String, TapestryParameter> _parameters;
 
     protected BlockComponent(IJavaClassType componentClass, TapestryProject project) throws NotTapestryElementException {
         super(componentClass, project);
@@ -28,10 +25,8 @@ public class BlockComponent extends Component {
      * @return an instance of the Block component.
      */
     public synchronized static BlockComponent getInstance(TapestryProject tapestryProject) {
-        if (_parameters == null) {
-            _parameters = new HashMap<String, TapestryParameter>();
-
-            _parameters.put("id", new DummyTapestryParameter(tapestryProject, "id", false));
+        if (tapestryProject.getParameters().isEmpty()) {
+            tapestryProject.getParameters().put("id", new DummyTapestryParameter(tapestryProject, "id", false));
         }
 
       final IJavaClassType classType =
@@ -51,7 +46,7 @@ public class BlockComponent extends Component {
      */
     @NotNull
     public Map<String, TapestryParameter> getParameters() {
-        return _parameters;
+        return getProject().getParameters();
     }
 
     /**
