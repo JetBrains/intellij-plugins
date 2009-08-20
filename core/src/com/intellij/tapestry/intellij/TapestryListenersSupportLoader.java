@@ -14,7 +14,6 @@ import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.util.messages.MessageBusConnection;
-import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -22,10 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TapestryListenersSupportLoader implements ProjectComponent {
 
-    private static final Logger _logger = Logger.getLogger(TapestryListenersSupportLoader.class);
-
     private Project _project;
-    private MessageBusConnection _messageBusConnection;
 
   public TapestryListenersSupportLoader(Project project) {
         _project = project;
@@ -52,7 +48,6 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
     }
 
     public void projectOpened() {
-        _messageBusConnection = _project.getMessageBus().connect();
 
         // Listener for file deletion
         PsiManager.getInstance(_project).addPsiTreeChangeListener(
@@ -137,6 +132,7 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
                 }
         );
 
+      MessageBusConnection _messageBusConnection = _project.getMessageBus().connect(_project);
         _messageBusConnection.subscribe(ProjectTopics.PROJECT_ROOTS,
                 new ModuleRootListener() {
                     public void beforeRootsChange(ModuleRootEvent event) {
@@ -157,7 +153,6 @@ public class TapestryListenersSupportLoader implements ProjectComponent {
     }
 
     public void projectClosed() {
-        _messageBusConnection.disconnect();
     }
 
     private Module getModuleFromEvent(PsiTreeChangeEvent event) {
