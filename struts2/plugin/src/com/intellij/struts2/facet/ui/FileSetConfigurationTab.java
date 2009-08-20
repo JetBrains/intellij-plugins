@@ -84,7 +84,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
   // original config
   private final StrutsFacetConfiguration originalConfiguration;
-  private final FacetEditorContext facetEditorContext;
+  private Module module;
 
   // local config
   private final Set<StrutsFileSet> myBuffer = new LinkedHashSet<StrutsFileSet>();
@@ -93,8 +93,8 @@ public class FileSetConfigurationTab extends FacetEditorTab {
   public FileSetConfigurationTab(@NotNull final StrutsFacetConfiguration strutsFacetConfiguration,
                                  @NotNull final FacetEditorContext facetEditorContext) {
     originalConfiguration = strutsFacetConfiguration;
-    this.facetEditorContext = facetEditorContext;
-    myConfigsSearcher = new StrutsConfigsSearcher(facetEditorContext);
+    module = facetEditorContext.getModule();
+    myConfigsSearcher = new StrutsConfigsSearcher(module);
 
     // init tree
     final SimpleTreeStructure structure = new SimpleTreeStructure() {
@@ -280,17 +280,9 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
   public void reset() {
     myBuffer.clear();
-    final Module module = facetEditorContext.getModule();
-    if (module != null) {
-      final Set<StrutsFileSet> sets = StrutsManager.getInstance(module.getProject()).getAllConfigFileSets(module);
-      for (final StrutsFileSet fileSet : sets) {
-        myBuffer.add(/*new StrutsFileSet(fileSet)*/fileSet);
-      }
-    } else {
-      final Set<StrutsFileSet> list = originalConfiguration.getFileSets();
-      for (final StrutsFileSet fileSet : list) {
-        myBuffer.add(new StrutsFileSet(fileSet));
-      }
+    final Set<StrutsFileSet> sets = StrutsManager.getInstance(module.getProject()).getAllConfigFileSets(module);
+    for (final StrutsFileSet fileSet : sets) {
+      myBuffer.add(/*new StrutsFileSet(fileSet)*/fileSet);
     }
 
     myBuilder.updateFromRoot();

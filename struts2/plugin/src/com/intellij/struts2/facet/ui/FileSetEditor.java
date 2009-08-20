@@ -57,7 +57,6 @@ public class FileSetEditor extends DialogWrapper {
   private StrutsFilesTree myFilesTree;
 
   private final StrutsFileSet myFileSet;
-  private final CheckedTreeNode myRoot = new CheckedTreeNode(null);
   private final StrutsFileSet myOriginalSet;
 
   protected FileSetEditor(final Component parent,
@@ -72,29 +71,24 @@ public class FileSetEditor extends DialogWrapper {
     myOriginalSet = fileSet;
     myFileSet = new StrutsFileSet(fileSet);
 
+    final CheckedTreeNode myRoot = new CheckedTreeNode(null);
     myFilesTree.setModel(new DefaultTreeModel(myRoot));
     searcher.search();
     final Map<Module, List<PsiFile>> files = searcher.getFilesByModules();
     final Map<VirtualFile, List<PsiFile>> jars = searcher.getJars();
     final Set<PsiFile> psiFiles = myFilesTree.buildModuleNodes(files, jars, fileSet);
-    final List<VirtualFile> virtualFiles = searcher.getVirtualFiles();
-    for (final VirtualFile virtualFile : virtualFiles) {
-      myFilesTree.addFile(virtualFile);
-    }
 
     final Project project = context.getProject();
-    if (project != null) {
-      final PsiManager psiManager = PsiManager.getInstance(project);
-      final List<VirtualFilePointer> list = fileSet.getFiles();
-      for (final VirtualFilePointer pointer : list) {
-        final VirtualFile file = pointer.getFile();
-        if (file != null) {
-          final PsiFile psiFile = psiManager.findFile(file);
-          if (psiFile != null && psiFiles.contains(psiFile)) {
-            continue;
-          }
-          myFilesTree.addFile(file);
+    final PsiManager psiManager = PsiManager.getInstance(project);
+    final List<VirtualFilePointer> list = fileSet.getFiles();
+    for (final VirtualFilePointer pointer : list) {
+      final VirtualFile file = pointer.getFile();
+      if (file != null) {
+        final PsiFile psiFile = psiManager.findFile(file);
+        if (psiFile != null && psiFiles.contains(psiFile)) {
+          continue;
         }
+        myFilesTree.addFile(file);
       }
     }
 
