@@ -166,7 +166,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab
     if (preselectedPath == null)
     {
       Module module = _editorContext.getModule();
-      VirtualFile[] contentRoots = module != null ? ModuleRootManager.getInstance(module).getContentRoots() : new VirtualFile[0];
+      VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
       if (contentRoots.length > 0)
       {
         for (VirtualFile contentRoot : contentRoots)
@@ -183,7 +183,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab
           preselectedPath = contentRoots[0];
         }
       }
-      else if (project != null && project.getBaseDir() != null)
+      else if (project.getBaseDir() != null)
       {
         preselectedPath = project.getBaseDir();
       }
@@ -214,12 +214,12 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab
         FileChooserFactory.getInstance().createFileChooser(descriptor, project);
     VirtualFile rootFolder = null;
     Module module = _editorContext.getModule();
-    VirtualFile[] contentRoots = module != null ? ModuleRootManager.getInstance(module).getContentRoots() : new VirtualFile[0];
+    VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
     if (contentRoots.length > 0)
     {
       rootFolder = contentRoots[0];
     }
-    else if (project != null && project.getBaseDir() != null)
+    else if (project.getBaseDir() != null)
     {
       rootFolder = project.getBaseDir();
     }
@@ -237,7 +237,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab
     Project project = _editorContext.getProject();
     Module module = _editorContext.getModule();
 
-    VirtualFile[] contentRoots = module != null ? ModuleRootManager.getInstance(module).getContentRoots() : new VirtualFile[0];
+    VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
     for (VirtualFile contentRoot : contentRoots)
     {
       if (VfsUtil.isAncestor(contentRoot, file, false))
@@ -246,7 +246,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab
       }
     }
 
-    VirtualFile projectBaseFolder = project != null ? project.getBaseDir() : null;
+    VirtualFile projectBaseFolder = project.getBaseDir();
     if (projectBaseFolder != null && VfsUtil.isAncestor(projectBaseFolder, file, false))
     {
       return VfsUtil.getRelativePath(file, projectBaseFolder, '/');
