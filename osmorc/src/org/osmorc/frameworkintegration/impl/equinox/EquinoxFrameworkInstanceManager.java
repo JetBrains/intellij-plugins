@@ -38,136 +38,115 @@ import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkInstanceManager;
 import org.osmorc.frameworkintegration.LibraryHandler;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxFrameworkInstanceManager implements FrameworkInstanceManager
-{
-  public EquinoxFrameworkInstanceManager(LibraryHandler libraryHandler, LocalFileSystem fileSystem,
-                                         Application application)
-  {
-    _libraryHandler = libraryHandler;
-    _fileSystem = fileSystem;
-    _application = application;
-    _equinoxSourceFinder = new EquinoxSourceFinder();
-  }
+public class EquinoxFrameworkInstanceManager implements FrameworkInstanceManager {
 
-  public void createLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    VirtualFile equinoxFolder = _fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
-    assert equinoxFolder != null;
-    final VirtualFile pluginsFolder = equinoxFolder.findChild("plugins");
+    public EquinoxFrameworkInstanceManager(LibraryHandler libraryHandler, LocalFileSystem fileSystem,
+                                           Application application) {
+        this.libraryHandler = libraryHandler;
+        this.fileSystem = fileSystem;
+        this.application = application;
+        equinoxSourceFinder = new EquinoxSourceFinder();
+    }
 
-    if (pluginsFolder != null)
-    {
-      _application.runWriteAction(new Runnable()
-      {
-        public void run()
-        {
-          pluginsFolder.refresh(false, true);
-          _libraryHandler.startLibraryChanges();
-          _libraryHandler.createLibrariesFromBundles(pluginsFolder, frameworkInstanceDefinition.getName(),
-              _equinoxSourceFinder);
-          _libraryHandler.commitLibraryChanges();
+    public void createLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition) {
+        VirtualFile equinoxFolder = fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+        assert equinoxFolder != null;
+        final VirtualFile pluginsFolder = equinoxFolder.findChild("plugins");
 
+        if (pluginsFolder != null) {
+            application.runWriteAction(new Runnable() {
+                public void run() {
+                    pluginsFolder.refresh(false, true);
+                    libraryHandler.startLibraryChanges();
+                    libraryHandler.createLibrariesFromBundles(pluginsFolder, frameworkInstanceDefinition.getName(),
+                            equinoxSourceFinder);
+                    libraryHandler.commitLibraryChanges();
+
+                }
+            });
+        } else {
+            throw new RuntimeException("the folder " + equinoxFolder.getName() + " does not contain a plugins folder.");
         }
-      });
-    }
-    else
-    {
-      throw new RuntimeException("the folder " + equinoxFolder.getName() + " does not contain a plugins folder.");
-    }
-  }
-
-  public void removeLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    _application.runWriteAction(new Runnable()
-    {
-      public void run()
-      {
-        _libraryHandler.startLibraryChanges();
-        _libraryHandler.deleteLibraries(frameworkInstanceDefinition.getName());
-        _libraryHandler.commitLibraryChanges();
-      }
-    });
-  }
-
-  public List<Library> getLibraries(FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    return _libraryHandler.getLibraries(frameworkInstanceDefinition.getName());
-  }
-
-  public String checkValidity(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    if (frameworkInstanceDefinition.getName() == null || frameworkInstanceDefinition.getName().trim().length() == 0)
-    {
-      return "A name for the framework instance needs to be given.";
     }
 
-    VirtualFile equinoxFolder = _fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
-
-    if (equinoxFolder == null || !equinoxFolder.isDirectory())
-    {
-      return MessageFormat.format(FOLDER_DOES_NOT_EXIST, frameworkInstanceDefinition.getBaseFolder());
-    }
-    VirtualFile pluginsFolder = equinoxFolder.findChild("plugins");
-    if (pluginsFolder == null || !pluginsFolder.isDirectory())
-    {
-      return MessageFormat.format(NO_PLUGINS_FOLDER, frameworkInstanceDefinition.getBaseFolder());
+    public void removeLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition) {
+        application.runWriteAction(new Runnable() {
+            public void run() {
+                libraryHandler.startLibraryChanges();
+                libraryHandler.deleteLibraries(frameworkInstanceDefinition.getName());
+                libraryHandler.commitLibraryChanges();
+            }
+        });
     }
 
-    return null;
-  }
+    public List<Library> getLibraries(FrameworkInstanceDefinition frameworkInstanceDefinition) {
+        return libraryHandler.getLibraries(frameworkInstanceDefinition.getName());
+    }
 
-  @Nullable
-  public Version getEclipseVersion(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    Version result = null;
-    VirtualFile equinoxFolder = _fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
-
-    if (equinoxFolder != null && equinoxFolder.exists() && equinoxFolder.isDirectory())
-    {
-      VirtualFile eclipseProductFile = equinoxFolder.findChild(".eclipseproduct");
-      if (eclipseProductFile != null && eclipseProductFile.exists() && !eclipseProductFile.isDirectory())
-      {
-        try
-        {
-          Properties eclipseProductProperties = new Properties();
-          eclipseProductProperties.load(eclipseProductFile.getInputStream());
-          String versionString = eclipseProductProperties.getProperty("version");
-          if (versionString != null)
-          {
-            result = Version.parseVersion(versionString);
-          }
+    public String checkValidity(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
+        if (frameworkInstanceDefinition.getName() == null || frameworkInstanceDefinition.getName().trim().length() == 0) {
+            return "A name for the framework instance needs to be given.";
         }
-        catch (IOException e)
-        {
-          LOG.warn("Error on reading properties from eclipse product file", e);
+
+        VirtualFile equinoxFolder = fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
+
+        if (equinoxFolder == null || !equinoxFolder.isDirectory()) {
+            return MessageFormat.format(FOLDER_DOES_NOT_EXIST, frameworkInstanceDefinition.getBaseFolder());
         }
-      }
+        VirtualFile pluginsFolder = equinoxFolder.findChild("plugins");
+        if (pluginsFolder == null || !pluginsFolder.isDirectory()) {
+            return MessageFormat.format(NO_PLUGINS_FOLDER, frameworkInstanceDefinition.getBaseFolder());
+        }
+
+        return null;
     }
 
-    return result;
-  }
+    @Nullable
+    public Version getEclipseVersion(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
+        Version result = null;
+        VirtualFile equinoxFolder = fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
 
-  private final LibraryHandler _libraryHandler;
-  private final VirtualFileSystem _fileSystem;
-  private Application _application;
-  private final EquinoxSourceFinder _equinoxSourceFinder;
-  protected static final String FOLDER_DOES_NOT_EXIST =
-      "The folder <strong>{0}</strong> does not exist or is not a folder. The folder should be an existing folder containing a <strong>plugins</strong> folder which contains the bundles of your Equinox installation. "
-      ;
-  protected static final String NO_PLUGINS_FOLDER =
-      "The folder  <strong>{0}</strong> does not contain a <strong>plugins</strong> folder or <strong>plugins</strong> is not a folder. The base folder needs to be " +
-          "the folder of your Equinox installation which contains a <strong>plugins</strong> folder containing all bundle" +
-          " JARs of your Equinox installation.";
+        if (equinoxFolder != null && equinoxFolder.exists() && equinoxFolder.isDirectory()) {
+            VirtualFile pluginsFolder = equinoxFolder.findChild("plugins");
 
-  private static final Logger LOG =
-      Logger.getInstance("org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager");
+            if (pluginsFolder != null && pluginsFolder.exists() && pluginsFolder.isDirectory()) {
+                VirtualFile[] files = pluginsFolder.getChildren();
+                for (VirtualFile file : files) {
+                    String name = file.getName();
+                    if (name.startsWith(ECLIPSE_VERSIONCHECK_PREFIX) && name.endsWith(ECLIPSE_VERSIONCHECK_POSTFIX)) {
+                        String versionString = name.substring(ECLIPSE_VERSIONCHECK_PREFIX.length(), name.length() - ECLIPSE_VERSIONCHECK_POSTFIX.length());
+                        if (versionString != null) {
+                            result = Version.parseVersion(versionString);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private final LibraryHandler libraryHandler;
+    private final VirtualFileSystem fileSystem;
+    private Application application;
+    private final EquinoxSourceFinder equinoxSourceFinder;
+    protected static final String FOLDER_DOES_NOT_EXIST =
+            "The folder <strong>{0}</strong> does not exist or is not a folder. The folder should be an existing folder containing a <strong>plugins</strong> folder which contains the bundles of your Equinox installation. ";
+    protected static final String NO_PLUGINS_FOLDER =
+            "The folder  <strong>{0}</strong> does not contain a <strong>plugins</strong> folder or <strong>plugins</strong> is not a folder. The base folder needs to be " +
+                    "the folder of your Equinox installation which contains a <strong>plugins</strong> folder containing all bundle" +
+                    " JARs of your Equinox installation.";
+    private static final String ECLIPSE_VERSIONCHECK_PREFIX = "org.eclipse.osgi_";
+    private static final String ECLIPSE_VERSIONCHECK_POSTFIX = ".jar";
+
+    private static final Logger LOG =
+            Logger.getInstance("org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager");
 
 }
