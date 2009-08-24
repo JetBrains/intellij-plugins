@@ -31,6 +31,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.util.io.UrlConnectionUtil;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.obrimport.MavenRepository;
 import org.osmorc.obrimport.Obr;
 
 import java.io.IOException;
@@ -204,9 +205,9 @@ public class SpringSourceObr implements Obr
   }
 
   @NotNull
-  public String[] getMavenRepositoryUrls()
+  public MavenRepository[] getMavenRepositories()
   {
-    return SPRINGSOURCE_REPO_URLS;
+    return SPRINGSOURCE_REPOS;
   }
 
   private static final Pattern RESULT_PARSING_PATTERN = Pattern.compile("<a\\s+href=\"([^\"]+)\"[^>]*>([^<]+)");
@@ -214,8 +215,10 @@ public class SpringSourceObr implements Obr
   private static final Pattern ARTIFACT_ID_PATTERN = Pattern.compile("&lt;artifactId&gt;(.*?)&lt;/artifactId&gt;");
   private static final Pattern VERSION_PATTERN = Pattern.compile("&lt;version&gt;(.*?)&lt;/version&gt;");
   private static final Pattern CLASSIFIER_PATTERN = Pattern.compile("&lt;classifier&gt;(.*?)&lt;/classifier&gt;");
-  private static final String[] SPRINGSOURCE_REPO_URLS = new String[]{
-      "http://repository.springsource.com/maven/bundles/release",
-      "http://repository.springsource.com/maven/bundles/external"
+  private static final MavenRepository[] SPRINGSOURCE_REPOS = new MavenRepository[]{
+      new MavenRepository("repository.springsource.com.release", "SpringSource OBR - Release",
+          "http://repository.springsource.com/maven/bundles/release"),
+      new MavenRepository("repository.springsource.com.external", "SpringSource OBR - External",
+          "http://repository.springsource.com/maven/bundles/external")
   };
 }

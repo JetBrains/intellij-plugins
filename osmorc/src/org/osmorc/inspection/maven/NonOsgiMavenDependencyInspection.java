@@ -44,6 +44,7 @@ import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.jetbrains.idea.maven.utils.MavenArtifactUtil;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
+import org.osmorc.obrimport.MavenRepository;
 import org.osmorc.obrimport.ObrSearchDialog;
 import org.osmorc.obrimport.springsource.ObrMavenResult;
 
@@ -88,7 +89,7 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
         return new XmlElementVisitor() {
             public void visitXmlTag(XmlTag xmltag) {
                 // suppress inspection for projects not having an OSGi context.
-                if ( !OsmorcFacet.hasOsmorcFacet(xmltag)) {
+                if (!OsmorcFacet.hasOsmorcFacet(xmltag)) {
                     return;
                 }
                 // get the dependency
@@ -104,7 +105,8 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
                     // try to resolve the jar file
                     File artifactFile = MavenArtifactUtil
                             .getArtifactFile(manager.getLocalRepository(), dependency.getGroupId().getStringValue(),
-                                    dependency.getArtifactId().getStringValue(), dependency.getVersion().getStringValue(), "jar");
+                                    dependency.getArtifactId().getStringValue(),
+                                    dependency.getVersion().getStringValue(), "jar");
                     if (artifactFile.exists()) {
                         try {
                             String url = artifactFile.toURL().toString();
@@ -129,7 +131,8 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
         // only run this for POM files in osmorc-controlled projects, its a waste of resources on other XML file types
         if (!MavenDomUtil.isMavenFile(psiFile) || !OsmorcFacet.hasOsmorcFacet(psiFile)) {
             return new ProblemDescriptor[0];
-        } else {
+        }
+        else {
             return super.checkFile(psiFile, inspectionManager, b);
         }
     }
@@ -177,7 +180,8 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
                     protected void run(Result result) throws Throwable
 
                     {
-                        MavenDomProjectModel model = MavenDomUtil.getMavenDomProjectModel(getProject(), psiFile.getVirtualFile());
+                        MavenDomProjectModel model =
+                                MavenDomUtil.getMavenDomProjectModel(getProject(), psiFile.getVirtualFile());
                         // adds a new dependency to the end of the list
                         MavenDomDependency dummy = model.getDependencies().addDependency();
                         dummy.getArtifactId().setStringValue(mavenResult.getArtifactId());
@@ -197,22 +201,33 @@ public class NonOsgiMavenDependencyInspection extends XmlSuppressableInspectionT
                         newDep.delete();
 
                         // finally check the repo urls, if we need to add a new one.
-                        String[] repoUrls = mavenResult.getBundleRepository().getMavenRepositoryUrls();
+                        MavenRepository[] repos = mavenResult.getBundleRepository().getMavenRepositories();
                         List<MavenDomRepository> repositories = model.getRepositories().getRepositories();
 
-                        List<String> unknownUrls = new ArrayList<String>(Arrays.asList(repoUrls));
+                        List<MavenRepository> knownRepositories = new ArrayList<MavenRepository>();
                         for (MavenDomRepository repository : repositories) {
                             String knownRepoUrl = repository.getUrl().getStringValue();
-                            unknownUrls.remove(knownRepoUrl);
+                            for (MavenRepository repo : repos) {
+                                if (repo.getRepositoryUrl().equals(knownRepoUrl)) {
+                                    knownRepositories.add(repo);
+                                    break;
+                                }
+                            }
                         }
 
-                        // now we have a list of URLs we still don't know.
+                        List<MavenRepository> unknownRepositories =
+                                new ArrayList<MavenRepository>(Arrays.asList(repos));
+                        unknownRepositories.removeAll(knownRepositories);
+
+                        // now we have a list of Repos we still don't know.
                         // add these to the repo list
-                        for (String unknownUrl : unknownUrls) {
+                        for (MavenRepository unknownRepository : unknownRepositories) {
+                            // fix up  	 IDEA-24324, we use the ID provided by MavenRepository instead of using its URL
+                            // which breaks maven on windows systems.
                             MavenDomRepository repo = model.getRepositories().addRepository();
-                            repo.getId().setStringValue(unknownUrl);
-                            repo.getUrl().setStringValue(unknownUrl);
-                            repo.getName().setStringValue(mavenResult.getBundleRepository().getDisplayName());
+                            repo.getId().setStringValue(unknownRepository.getRepositoryId());
+                            repo.getUrl().setStringValue(unknownRepository.getRepositoryUrl());
+                            repo.getName().setStringValue(unknownRepository.getRepositoryDescription());
                         }
                     }
                 }.execute();

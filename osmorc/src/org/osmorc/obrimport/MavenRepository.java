@@ -25,50 +25,58 @@
 
 package org.osmorc.obrimport;
 
-import com.intellij.openapi.progress.ProgressIndicator;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.obrimport.springsource.ObrMavenResult;
-
-import java.io.IOException;
 
 /**
- * A query interface for an Open Bundle Repository.
+ * Class representing a maven repository.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public interface Obr
+public class MavenRepository
 {
-  /**
-   * @return the name of the Obr, which is displayed to the user.
-   */
-  public String getDisplayName();
+  private String repositoryId;
+  private String repositoryDescription;
+  private String repositoryUrl;
 
-  /**
-   * @return true, if the repository supports maven, false otherwise.
-   */
-  public boolean supportsMaven();
+  public MavenRepository(@NotNull String repositoryId, @NotNull String repositoryDescription,
+                         @NotNull String repositoryUrl)
+  {
+    this.repositoryId = repositoryId;
+    this.repositoryDescription = repositoryDescription;
+    this.repositoryUrl = repositoryUrl;
+  }
 
-  /**
-   * Queries the remote repository and returns information about possibly matching maven dependencies.
-   *
-   * @param queryString       the query string. This is usually the name of the bundle that should be found.
-   * @param progressIndicator a progress indicator, to show progress on the querying action.
-   * @return a list of results. If nothing is found an empty array is returned.
-   * @throws IOException if the connection to the bundle repository failed.
-   */
-  public
   @NotNull
-  ObrMavenResult[] queryForMavenArtifact(@NotNull String queryString,
-                                         @NotNull ProgressIndicator progressIndicator) throws
-      IOException;
+  public String getRepositoryId()
+  {
+    return repositoryId;
+  }
 
-  /**
-   * Returns a list of maven repositories where artifacts which are returned by this OBR can be retrieved.
-   *
-   * @return a list of repositories or an empty array if this obr does not support maven.
-   */
-  public
+  public void setRepositoryId(@NotNull String repositoryId)
+  {
+    this.repositoryId = repositoryId;
+  }
+
   @NotNull
-  MavenRepository[] getMavenRepositories();
+  public String getRepositoryDescription()
+  {
+    return repositoryDescription;
+  }
+
+  public void setRepositoryDescription(@NotNull String repositoryDescription)
+  {
+    this.repositoryDescription = repositoryDescription;
+  }
+
+  @NotNull
+  public String getRepositoryUrl()
+  {
+    return repositoryUrl;
+  }
+
+  public void setRepositoryUrl(@NotNull String repositoryUrl)
+  {
+    this.repositoryUrl = repositoryUrl;
+  }
 }
