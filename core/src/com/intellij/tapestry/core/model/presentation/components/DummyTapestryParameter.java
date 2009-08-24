@@ -16,71 +16,74 @@ import java.util.Map;
  */
 public class DummyTapestryParameter extends TapestryParameter {
 
+  private final String _name;
+  private final boolean _required;
+
+  DummyTapestryParameter(TapestryProject tapestryProject, String name, boolean required) {
+    super(null, new DummyJavaField(name, tapestryProject.getJavaTypeFinder().findType("java.lang.String", true)));
+    _name = name;
+    _required = required;
+  }
+
+  @Override
+  public String getName() {
+    return _name;
+  }
+
+  @Override
+  public boolean isRequired() {
+    return _required;
+  }
+
+  @Override
+  public String getDefaultPrefix() {
+    return "literal";
+  }
+
+  @Override
+  public IJavaField getParameterField() {
+    return super.getParameterField();
+  }
+
+  /**
+   * A dummy java field.
+   */
+  static class DummyJavaField implements IJavaField {
+
     private String _name;
-    private boolean _required;
+    private IJavaClassType _type;
 
-    DummyTapestryParameter(TapestryProject tapestryProject, String name, boolean required) {
-        super(null, new DummyJavaField(name, tapestryProject.getJavaTypeFinder().findType("java.lang.String", true)));
-
-        _name = name;
-        _required = required;
+    public DummyJavaField(String name, IJavaClassType type) {
+      _name = name;
+      _type = type;
     }
 
     public String getName() {
-        return _name;
+      return _name;
     }
 
-    public boolean isRequired() {
-        return _required;
+    public IJavaType getType() {
+      return _type;
     }
 
-    public String getDefaultPrefix() {
-        return "literal";
+    public boolean isPrivate() {
+      return true;
     }
 
-    public IJavaField getParameterField() {
-        return super.getParameterField();
+    public Map<String, IJavaAnnotation> getAnnotations() {
+      return new HashMap<String, IJavaAnnotation>();
     }
 
-    /**
-     * A dummy java field.
-     */
-    static class DummyJavaField implements IJavaField {
-
-        private String _name;
-        private IJavaClassType _type;
-
-        public DummyJavaField(String name, IJavaClassType type) {
-            _name = name;
-            _type = type;
-        }
-
-        public String getName() {
-            return _name;
-        }
-
-        public IJavaType getType() {
-            return _type;
-        }
-
-        public boolean isPrivate() {
-            return true;
-        }
-
-        public Map<String, IJavaAnnotation> getAnnotations() {
-            return new HashMap<String, IJavaAnnotation>();
-        }
-
-        public String getDocumentation() {
-            return "";
-        }
-
-        public String getStringRepresentation() {
-            return "";
-        }
-
-        public boolean isValid() {
-            return true;
-        }
+    public String getDocumentation() {
+      return "";
     }
+
+    public String getStringRepresentation() {
+      return "";
+    }
+
+    public boolean isValid() {
+      return true;
+    }
+  }
 }

@@ -11,7 +11,6 @@ import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.Page;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
-import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.model.presentation.components.BlockComponent;
 import com.intellij.tapestry.core.model.presentation.components.BodyComponent;
 import com.intellij.tapestry.core.model.presentation.components.ContainerComponent;
@@ -22,7 +21,6 @@ import com.intellij.tapestry.core.util.LocalizationUtils;
 import static com.intellij.tapestry.core.util.StringUtils.isNotEmpty;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -289,11 +287,5 @@ public class TapestryProject {
   @NotNull
   public TapestryEventsManager getEventsManager() {
     return myEventsManager;
-  }
-
-  private final Map<String, TapestryParameter> parameters = new THashMap<String, TapestryParameter>();
-
-  public Map<String, TapestryParameter> getParameters() {
-    return parameters;
   }
 }

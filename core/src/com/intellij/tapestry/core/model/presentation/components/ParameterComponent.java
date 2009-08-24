@@ -15,49 +15,47 @@ import java.util.Map;
  */
 public class ParameterComponent extends Component {
 
-    private static Map<String, TapestryParameter> _parameters;
+  private final Map<String, TapestryParameter> myParameters = new HashMap<String, TapestryParameter>();
 
-    protected ParameterComponent(IJavaClassType componentClass, TapestryProject project) throws NotTapestryElementException {
-        super(componentClass, project);
-    }
+  private ParameterComponent(IJavaClassType componentClass, TapestryProject project) throws NotTapestryElementException {
+    super(componentClass, project);
+    myParameters.put("id", new DummyTapestryParameter(project, "name", true));
+  }
 
-    /**
-     * Returns an instance of the Parameter component.
-     *
-     * @param tapestryProject the current Tapestry project.
-     * @return an instance of the Parameter component.
-     */
-    public synchronized static ParameterComponent getInstance(TapestryProject tapestryProject) {
-        if (_parameters == null) {
-            _parameters = new HashMap<String, TapestryParameter>();
+  /**
+   * Returns an instance of the Parameter component.
+   *
+   * @param tapestryProject the current Tapestry project.
+   * @return an instance of the Parameter component.
+   */
+  public synchronized static ParameterComponent getInstance(TapestryProject tapestryProject) {
+    final IJavaClassType classType =
+        tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry5.internal.parser.ParameterToken", true);
+    return classType == null ? null : new ParameterComponent(classType, tapestryProject);
+  }
 
-            _parameters.put("id", new DummyTapestryParameter(tapestryProject, "name", true));
-        }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String getName() {
+    return "parameter";
+  }
 
-      final IJavaClassType classType =
-          tapestryProject.getJavaTypeFinder().findType("org.apache.tapestry5.internal.parser.ParameterToken", true);
-      return classType == null ? null : new ParameterComponent(classType, tapestryProject);
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  @NotNull
+  public Map<String, TapestryParameter> getParameters() {
+    return myParameters;
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getName() {
-        return "parameter";
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @NotNull
-    public Map<String, TapestryParameter> getParameters() {
-        return _parameters;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected String getElementNameFromClass(String rootPackage) throws NotTapestryElementException {
-        return "parameter";
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected String getElementNameFromClass(String rootPackage) throws NotTapestryElementException {
+    return getName();
+  }
 }
