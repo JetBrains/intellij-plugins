@@ -41,7 +41,6 @@
     </orderEntry>
     <orderEntry type="module" module-name="dom-openapi" />
     <orderEntry type="module" module-name="maven" />
-    <orderEntry type="module" module-name="ExtendedApi" />
     <orderEntry type="module" module-name="idea" />
     <orderEntry type="module-library">
       <library>

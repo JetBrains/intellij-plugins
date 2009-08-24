@@ -11,7 +11,7 @@
     <orderEntry type="module" module-name="dom-openapi" />
     <orderEntry type="module" module-name="codeInsight-impl" />
     <orderEntry type="module" module-name="openapi" />
-    <orderEntry type="module" module-name="ExtendedApi" />
+    <orderEntry type="module" module-name="idea" />
   </component>
   <component name="copyright">
     <Base>
