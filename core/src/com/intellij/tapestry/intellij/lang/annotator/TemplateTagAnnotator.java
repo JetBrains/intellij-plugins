@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaType;
 import com.intellij.tapestry.core.java.coercion.TypeCoercionValidator;
@@ -83,31 +84,30 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
   private void annotateAttributeValue(TapestryProject tapestryProject, IntellijJavaClassType elementClass, TapestryParameter parameter,
                                       XmlAttribute attribute) {
     ResolvedValue resolvedValue;
+    final XmlAttributeValue value = attribute.getValueElement();
+    if(value == null) return;
     try {
       resolvedValue = ValueResolverChain.getInstance()
           .resolve(tapestryProject, elementClass, attribute.getValue(), parameter.getDefaultPrefix());
     }
     catch (Exception ex) {
       _logger.error(ex);
-      _annotationHolder.createErrorAnnotation(attribute.getValueElement(), "Invalid value");
+      _annotationHolder.createErrorAnnotation(value, "Invalid value");
       return;
     }
 
     if (resolvedValue == null) {
-      _annotationHolder.createErrorAnnotation(attribute.getValueElement(), "Invalid value");
+      _annotationHolder.createErrorAnnotation(value, "Invalid value");
       return;
     }
 
     IJavaType parameterType = parameter.getParameterField().getType();
     if (!TypeCoercionValidator
-        .canCoerce(tapestryProject, resolvedValue.getType(), AbstractValueResolver.getCleanValue(attribute.getValue()),
-                   parameterType)) {
-      _annotationHolder.createErrorAnnotation(attribute.getValueElement(), "Can't coerce a " +
-                                                                           resolvedValue.getType().getName() +
-                                                                           " to a " +
-                                                                           (parameterType != null
-                                                                            ? parameterType.getName()
-                                                                            : "undefined"));
+        .canCoerce(tapestryProject, resolvedValue.getType(), AbstractValueResolver.getCleanValue(attribute.getValue()), parameterType)) {
+      _annotationHolder.createErrorAnnotation(value, "Can't coerce a " +
+                                                     resolvedValue.getType().getName() +
+                                                     " to a " +
+                                                     (parameterType != null ? parameterType.getName() : "undefined"));
     }
   }
 
