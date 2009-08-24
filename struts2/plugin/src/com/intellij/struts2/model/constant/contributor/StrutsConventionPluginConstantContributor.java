@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Provides Convention-plugin specific configuration properties.
+ * <a href="http://cwiki.apache.org/WW/convention-plugin.html#ConventionPlugin-Configurationreference">List of properties</a>.
+ *
  * @author Yann C&eacute;bron
  */
 public class StrutsConventionPluginConstantContributor extends StrutsConstantContributorBase {
@@ -50,7 +53,8 @@ public class StrutsConventionPluginConstantContributor extends StrutsConstantCon
       addStringProperty("struts.convention.exclude.packages"),
       addStringProperty("struts.convention.package.locators.basePackage"),
       addStringProperty("struts.convention.relative.result.types"),
-      addBooleanProperty("struts.convention.redirect.to.slash")
+      addBooleanProperty("struts.convention.redirect.to.slash"),
+      addBooleanProperty("struts.convention.classLoader.excludeParent")
   );
 
   @NotNull
