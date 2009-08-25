@@ -84,7 +84,7 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
   // original config
   private final StrutsFacetConfiguration originalConfiguration;
-  private Module module;
+  private final Module module;
 
   // local config
   private final Set<StrutsFileSet> myBuffer = new LinkedHashSet<StrutsFileSet>();
