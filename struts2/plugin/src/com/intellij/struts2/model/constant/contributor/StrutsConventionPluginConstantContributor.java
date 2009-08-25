@@ -45,7 +45,7 @@ public class StrutsConventionPluginConstantContributor extends StrutsConstantCon
       addBooleanProperty("struts.convention.action.disableScanning"),
       addBooleanProperty("struts.convention.action.mapAllMatches"),
       addBooleanProperty("struts.convention.action.checkImplementsAction"),
-      addStringProperty("struts.convention.default.parent.package"),
+      addStrutsPackage("struts.convention.default.parent.package"),
       addBooleanProperty("struts.convention.action.name.lowercase"),
       addStringProperty("struts.convention.action.name.separator"),
       addStringProperty("struts.convention.package.locators"),

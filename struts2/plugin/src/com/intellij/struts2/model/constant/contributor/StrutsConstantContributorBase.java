@@ -82,4 +82,8 @@ public abstract class StrutsConstantContributorBase implements StrutsConstantCon
     return new StrutsConstant(propertyName, new ConstantValueClassConverter(baseClass, shortCutToPsiClassMap));
   }
 
+  protected static StrutsConstant addStrutsPackage(@NonNls final String propertyName) {
+    return new StrutsConstant(propertyName, new StrutsPackageConverter());
+  }
+
 }
