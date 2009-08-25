@@ -12,40 +12,37 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 @State(
-        name = "Loomy",
-        storages = {
-        @Storage(
-                id = "Loomy",
-                file = "$APP_CONFIG$/tapestry.xml"
-        )}
-)
+    name = "Loomy",
+    storages = {@Storage(
+        id = "Loomy",
+        file = "$APP_CONFIG$/tapestry.xml")})
 public class TapestryApplicationSupportLoader implements ApplicationComponent {
 
-    public static final String PLUGIN_ID = "Loomy";
+  public static final String PLUGIN_ID = "Loomy";
 
 
-    static {
-        LoggerFactory.setLoggerFactoryImplementation(new IntellijLoggerFactory());
-    }//static
+  static {
+    LoggerFactory.setLoggerFactoryImplementation(new IntellijLoggerFactory());
+  }//static
 
 
-    public static TapestryApplicationSupportLoader getInstance() {
-        return ApplicationManager.getApplication().getComponent(TapestryApplicationSupportLoader.class);
-    }//getInstance
+  public static TapestryApplicationSupportLoader getInstance() {
+    return ApplicationManager.getApplication().getComponent(TapestryApplicationSupportLoader.class);
+  }//getInstance
 
 
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return TapestryApplicationSupportLoader.class.getName();
-    }//getComponentName
+  @NonNls
+  @NotNull
+  public String getComponentName() {
+    return TapestryApplicationSupportLoader.class.getName();
+  }//getComponentName
 
 
-    public void initComponent() {
-        // Add Tapestry support for web modules.
-        FacetTypeRegistry.getInstance().registerFacetType(TapestryFacetType.INSTANCE);
-    }
+  public void initComponent() {
+    // Add Tapestry support for web modules.
+    FacetTypeRegistry.getInstance().registerFacetType(TapestryFacetType.INSTANCE);
+  }
 
-    public void disposeComponent() { /* do nothing */ }
+  public void disposeComponent() { /* do nothing */ }
 
 }//TapestryApplicationSupportLoader
