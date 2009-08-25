@@ -49,6 +49,7 @@ public class ThemeReferenceProvider extends PsiReferenceProviderBase {
         return myElement;
       }
 
+      @NotNull
       public Object[] getVariants() {
         return DEFAULT_THEMES;
       }

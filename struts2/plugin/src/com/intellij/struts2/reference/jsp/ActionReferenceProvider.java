@@ -117,6 +117,7 @@ public class ActionReferenceProvider extends PsiReferenceProviderBase {
       });
     }
 
+    @NotNull
     public Object[] getVariants() {
       if (action == null) {
         return new Object[0];
@@ -159,6 +160,7 @@ public class ActionReferenceProvider extends PsiReferenceProviderBase {
       return action.getXmlTag();
     }
 
+    @NotNull
     public Object[] getVariants() {
       final List<Action> actionList = strutsModel.getActionsForNamespace(namespace);
 

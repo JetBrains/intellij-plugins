@@ -122,6 +122,7 @@ public class TilesResultContributor extends StrutsResultContributor {
       return null;
     }
 
+    @NotNull
     public Object[] getVariants() {
       final List<Definition> variants = new ArrayList<Definition>();
       for (final TilesModel tilesModel : allTilesModels) {

@@ -56,6 +56,7 @@ public class WebXmlStrutsConstantNameReferenceProvider extends PsiReferenceProvi
       return myElement;
     }
 
+    @NotNull
     public Object[] getVariants() {
       final Module module = ModuleUtil.findModuleForPsiElement(myElement);
       if (module == null) {

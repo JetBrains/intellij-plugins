@@ -68,6 +68,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
         return resolveActionPath(psiElement, currentPackage, model);
       }
 
+      @NotNull
       public Object[] getVariants() {
         final List<LookupItem<ActionLookupItem>> variants = new ArrayList<LookupItem<ActionLookupItem>>();
 

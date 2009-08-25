@@ -176,6 +176,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       return resolveActionPath(psiElement, currentPackage, model, actionExtensions);
     }
 
+    @NotNull
     public Object[] getVariants() {
       final List<LookupItem<ActionLookupItem>> variants = new ArrayList<LookupItem<ActionLookupItem>>();
 

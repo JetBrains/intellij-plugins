@@ -153,6 +153,7 @@ TODO not needed so far ?!
       return myAction.getXmlTag();
     }
 
+    @NotNull
     public Object[] getVariants() {
       final String namespace = getNamespace(fullActionPath);
 
@@ -259,6 +260,7 @@ TODO not needed so far ?!
       return null;
     }
 
+    @NotNull
     public Object[] getVariants() {
       return ContainerUtil.map2Array(allStrutsPackages, Object.class, new Function<StrutsPackage, Object>() {
         public Object fun(final StrutsPackage strutsPackage) {

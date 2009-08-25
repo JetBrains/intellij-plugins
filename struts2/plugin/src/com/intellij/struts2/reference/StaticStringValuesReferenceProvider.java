@@ -71,6 +71,7 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProviderBas
         return Arrays.binarySearch(values, myValue) > -1 ? myElement : null;
       }
 
+      @NotNull
       public Object[] getVariants() {
         return values;
       }

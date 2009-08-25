@@ -75,6 +75,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProviderBase {
       return resolveResults.toArray(new ResolveResult[resolveResults.size()]);
     }
 
+    @NotNull
     public Object[] getVariants() {
       return ContainerUtil.map2Array(strutsModel.getStrutsPackages(), new Function<StrutsPackage, Object>() {
         public Object fun(final StrutsPackage strutsPackage) {

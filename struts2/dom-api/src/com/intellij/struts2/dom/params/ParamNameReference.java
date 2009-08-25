@@ -63,6 +63,7 @@ class ParamNameReference extends PsiReferenceBase<PsiElement>
     return (PsiMethod) (resolveResults.length == 1 ? resolveResults[0].getElement() : null);
   }
 
+  @NotNull
   public Object[] getVariants() {
     final PsiClass psiClass = getPsiClass();
     if (psiClass == null) {

@@ -134,6 +134,7 @@ public class ExtendableClassConverterSpringContributor extends ExtendableClassCo
       return springBean.getBeanClass();
     }
 
+    @NotNull
     @SuppressWarnings({"unchecked"})
     public Object[] getVariants() {
       final Collection<? extends SpringBeanPointer> list;
