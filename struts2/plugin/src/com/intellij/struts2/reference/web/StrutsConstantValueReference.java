@@ -27,11 +27,11 @@ import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.model.constant.StrutsConstant;
 import com.intellij.struts2.model.constant.StrutsConstantManager;
-import com.intellij.util.SmartList;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -71,6 +71,11 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
       return null;
     }
 
+    // DomElement
+    if (resolveObject instanceof DomElement) {
+      return ((DomElement) resolveObject).getXmlTag();
+    }
+
     // fake self-reference (e.g. String value from Converter)
     if (!(resolveObject instanceof PsiElement)) {
       return myElement;
@@ -90,6 +95,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
     return converter.getErrorMessage(getValue(), AbstractConvertContext.createConvertContext(pair.first));
   }
 
+  @NotNull
   @SuppressWarnings({"unchecked"})
   public Object[] getVariants() {
     final Pair<DomElement, Converter> domElementConverterPair = getElementConverterPair();
@@ -108,7 +114,16 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
     final DomElement paramValueElement = domElementConverterPair.first;
     final ConvertContext convertContext = AbstractConvertContext.createConvertContext(paramValueElement);
 
-    final Collection variants = new SmartList(resolvingConverter.getVariants(convertContext));
+    final Collection converterVariants = resolvingConverter.getVariants(convertContext);
+
+    final Collection variants;
+    if (!converterVariants.isEmpty() &&
+        converterVariants.iterator().next() instanceof DomElement) {
+      variants = Arrays.asList(ElementPresentationManager.getInstance().createVariants(converterVariants));
+    } else {
+      variants = converterVariants;
+    }
+
     variants.addAll(resolvingConverter.getAdditionalVariants(convertContext));
 
     // add custom created references
