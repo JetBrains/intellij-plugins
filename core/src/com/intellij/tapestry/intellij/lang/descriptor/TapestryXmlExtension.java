@@ -58,6 +58,10 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
     TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(tag);
     if(tapestryProject == null) return super.isRequiredAttributeImplicitlyPresent(tag, attrName);
 
+    if(tag.getAttribute(attrName, TapestryConstants.TEMPLATE_NAMESPACE) != null) {
+      return true;
+    }
+
     final PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
     return element != null && TapestryUtils.parameterDefinedInClass(attrName, (IntellijJavaClassType)element.getElementClass(), tag);
   }

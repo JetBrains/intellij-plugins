@@ -1,6 +1,7 @@
 package com.intellij.tapestry.tests;
 
 import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.openapi.vfs.VirtualFile;
 
 /**
@@ -38,6 +39,10 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest();
   }
 
+  public void testTmlAttrNameWithPrefix() throws Throwable {
+    addComponentToProject("Count");
+    doTest(new RequiredAttributesInspection());
+  }
 
   protected void doTest(LocalInspectionTool... tools) throws Throwable {
     VirtualFile templateFile = initByComponent();
