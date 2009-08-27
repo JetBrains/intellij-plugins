@@ -1,9 +1,6 @@
 package com.intellij.tapestry.tests;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.psi.TmlFile;
 import junit.framework.Assert;
@@ -159,6 +156,20 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     initByComponent();
     TmlFile ref = resolveReferenceAtCaretPosition(TmlFile.class);
     Assert.assertEquals("StartPage.tml", ref.getName());
+  }
+
+  public void testTapestryAttrValueWithPropPrefix() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    PsiMethod ref = resolveReferenceAtCaretPosition(PsiMethod.class);
+    Assert.assertEquals("getHours", ref.getName());
+  }
+
+  public void testTapestryAttrValueReferencingToField() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
+    Assert.assertEquals("intFieldProp", ref.getName());
   }
 
   @Nullable

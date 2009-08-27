@@ -10,51 +10,52 @@ import org.jetbrains.annotations.Nullable;
 
 public class PsiAttributeValueReference implements PsiReference {
 
-    private XmlAttributeValue _attributeValue;
-    private PsiElement _bindElement;
+  private XmlAttributeValue _attributeValue;
+  private PsiElement _bindElement;
 
-    public PsiAttributeValueReference(XmlAttributeValue attributeValue, PsiElement bindElement) {
-        _attributeValue = attributeValue;
-        _bindElement = bindElement;
+  public PsiAttributeValueReference(XmlAttributeValue attributeValue, PsiElement bindElement) {
+    _attributeValue = attributeValue;
+    _bindElement = bindElement;
+  }
+
+  public PsiElement getElement() {
+    return _attributeValue;
+  }
+
+  public TextRange getRangeInElement() {
+    if (_attributeValue.getText().startsWith("\"") || _attributeValue.getText().startsWith("\'")) {
+      return TextRange.from(1, _attributeValue.getTextRange().getLength() - 2);
     }
+    return TextRange.from(0, _attributeValue.getValue().length());
+  }
 
-    public PsiElement getElement() {
-        return _attributeValue;
-    }
+  @Nullable
+  public PsiElement resolve() {
+    return _bindElement;
+  }
 
-    public TextRange getRangeInElement() {
-        if (_attributeValue.getText().startsWith("\"") || _attributeValue.getText().startsWith("\'"))
-            return TextRange.from(1, _attributeValue.getTextRange().getLength() - 2);
+  public String getCanonicalText() {
+    return _bindElement.getText();
+  }
 
-        return TextRange.from(0, _attributeValue.getValue().length());
-    }
+  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    throw new UnsupportedOperationException();
+  }
 
-    @Nullable
-    public PsiElement resolve() {
-        return _bindElement;
-    }
+  public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
+    throw new UnsupportedOperationException();
+  }
 
-    public String getCanonicalText() {
-        return _bindElement.getText();
-    }
+  public boolean isReferenceTo(PsiElement element) {
+    return resolve() == element;
+  }
 
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-        throw new UnsupportedOperationException();
-    }
+  @NotNull
+  public Object[] getVariants() {
+    return new Object[0];
+  }
 
-    public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
-        throw new UnsupportedOperationException();
-    }
-
-    public boolean isReferenceTo(PsiElement element) {
-        return resolve() == element;
-    }
-
-    public Object[] getVariants() {
-        return new Object[0];
-    }
-
-    public boolean isSoft() {
-        return false;
-    }
+  public boolean isSoft() {
+    return false;
+  }
 }

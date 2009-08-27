@@ -38,6 +38,8 @@
 
     <lang.formatter language="TML" implementationClass="com.intellij.lang.xhtml.XhtmlFormattingModelBuilder"/>
 
+    <completionData fileType="TML" className="com.intellij.tapestry.intellij.lang.completion.TemplateCompletionData"/>
+
     <toolWindow id="Tapestry"
                 anchor="bottom"
                 secondary="false"

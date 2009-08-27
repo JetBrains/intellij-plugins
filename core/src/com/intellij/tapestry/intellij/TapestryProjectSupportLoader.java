@@ -2,11 +2,8 @@ package com.intellij.tapestry.intellij;
 
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
-import com.intellij.patterns.XmlPatterns;
-import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.tapestry.core.log.Logger;
 import com.intellij.tapestry.core.log.LoggerFactory;
-import com.intellij.tapestry.intellij.lang.reference.XmlTagValueReferenceProvider;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindow;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
@@ -49,10 +46,6 @@ public class TapestryProjectSupportLoader implements ProjectComponent {
     //    }
     //  });
     //}
-
-    // register attribute values reference provider
-    ReferenceProvidersRegistry.getInstance(myProject)
-        .registerReferenceProvider(XmlPatterns.xmlAttributeValue(), new XmlTagValueReferenceProvider());
   }
 
 

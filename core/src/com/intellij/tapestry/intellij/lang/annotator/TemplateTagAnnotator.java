@@ -58,20 +58,20 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
       }
 
       Component component = TapestryUtils.getTypeOfTag(tag);
-      TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(tag);
 
       if (component != null) {
-        final PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
+        TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(tag);
+        final PresentationLibraryElement element =
+            tapestryProject == null ? null : tapestryProject.findElementByTemplate(tag.getContainingFile());
 
         IntellijJavaClassType elementClass = element != null ? (IntellijJavaClassType)element.getElementClass() : null;
         // annotate the tag parameters
-        if (elementClass != null) {
-          for (TapestryParameter parameter : component.getParameters().values()) {
-            final String paramName = parameter.getName();
-            XmlAttribute attribute = TapestryUtils.getTapestryAttribute(tag, paramName);
-            if (attribute == null) continue;
-            annotateTapestryAttribute(attribute);
-
+        for (TapestryParameter parameter : component.getParameters().values()) {
+          final String paramName = parameter.getName();
+          XmlAttribute attribute = TapestryUtils.getTapestryAttribute(tag, paramName);
+          if (attribute == null) continue;
+          annotateTapestryAttribute(attribute);
+          if (elementClass != null) {
             annotateAttributeValue(tapestryProject, elementClass, parameter, attribute);
           }
         }

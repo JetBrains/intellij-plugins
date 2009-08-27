@@ -89,6 +89,18 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     doTestBasicCompletionVariants("index", "link2", "link3");
   }
 
+  public void testAttrValueWithPropPrefix() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    doTestBasicCompletionVariants("prop:strProp.chars", "prop:strProp.bytes");
+  }
+
+  public void testTapestryAttrValue() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    doTestBasicCompletionVariants("dateProp", "strProp", "intFieldProp");
+  }
+
   public void testTagNameWithDoctypePresent() throws Throwable {
     initByComponent();
     doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "head", getElementTagName()));

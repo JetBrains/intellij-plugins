@@ -135,19 +135,15 @@ public class TapestryUtils {
   }
 
   @NotNull
-  public static Map<String, IJavaField> findIdentifyingFields(XmlTag tag) {
+  public static List<String> getEmbeddedComponentIds(XmlTag tag) {
     final TapestryProject tapestryProject = getTapestryProject(tag);
-    if (tapestryProject == null) return Collections.emptyMap();
+    if (tapestryProject == null) return Collections.emptyList();
     PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
-    if (element == null) return Collections.emptyMap();
-    HashMap<String, IJavaField> map = new HashMap<String, IJavaField>();
-    for (IJavaField field : element.getElementClass().getFields(false).values()) {
-      String fieldId = getFieldId(field);
-      if (fieldId != null) {
-        map.put(fieldId, field);
-      }
-    }
-    return map;
+    if (element == null) return Collections.emptyList();
+    List<String> embeddedIds = new ArrayList<String>();
+    for (TemplateElement injectedElement : element.getEmbeddedComponents())
+        embeddedIds.add(injectedElement.getElement().getElementId());
+    return embeddedIds;
   }
 
   @Nullable
