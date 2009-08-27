@@ -122,7 +122,7 @@ public class SafeDeleteProvider implements DeleteProvider {
                 canDelete = true;
             }
 
-            // The element to delete is an HTML file
+            // The element to delete is an TML file
             if (((TapestryNode) node.getUserObject()).getElement() instanceof PsiFile && !(((PsiFile) ((TapestryNode) node.getUserObject()).getElement())
                     .getVirtualFile() instanceof VirtualFileImpl)) {
                 canDelete = true;

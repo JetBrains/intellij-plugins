@@ -19,6 +19,7 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.intellij.view.nodes.TapestryNode;
+import com.intellij.tapestry.lang.TmlFileType;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -87,7 +88,7 @@ public class ViewTransferHandler extends TransferHandler {
                 }
             }
 
-            if (typeFileInEditor.equals(StdFileTypes.HTML) && _data instanceof ExternalizableToTemplate) {
+            if (typeFileInEditor.equals(TmlFileType.INSTANCE) && _data instanceof ExternalizableToTemplate) {
                 try {
                     return ((ExternalizableToTemplate) _data).getTemplateRepresentation(TapestryUtils.getTapestryNamespacePrefix((XmlFile) fileInEditor));
                 } catch (Exception ex) {

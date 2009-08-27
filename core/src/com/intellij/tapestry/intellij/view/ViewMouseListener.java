@@ -21,6 +21,7 @@ import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.intellij.view.nodes.ComponentNode;
 import com.intellij.tapestry.intellij.view.nodes.MixinNode;
 import com.intellij.tapestry.intellij.view.nodes.PageNode;
+import com.intellij.tapestry.lang.TmlFileType;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
@@ -59,8 +60,8 @@ class ViewMouseListener extends MouseInputAdapter {
             );
             FileType typeFileInEditor = fileInEditor.getFileType();
 
-            // If the file in editor isn't either JAVA or HTML don't drag
-            if (!typeFileInEditor.equals(StdFileTypes.JAVA) && !typeFileInEditor.equals(StdFileTypes.HTML)) {
+            // If the file in editor isn't either JAVA or TML don't drag
+            if (!typeFileInEditor.equals(StdFileTypes.JAVA) && !typeFileInEditor.equals(TmlFileType.INSTANCE)) {
                 return;
             }
 
@@ -70,8 +71,8 @@ class ViewMouseListener extends MouseInputAdapter {
                 return;
             }
 
-            // If the file in the editor is a HTML file
-            if (typeFileInEditor.equals(StdFileTypes.HTML)) {
+            // If the file in the editor is a TML file
+            if (typeFileInEditor.equals(TmlFileType.INSTANCE)) {
                 // If the file doesn't declare the Tapestry namespace don't drag
                 if (TapestryUtils.getTapestryNamespacePrefix((XmlFile) fileInEditor) == null) {
                     return;

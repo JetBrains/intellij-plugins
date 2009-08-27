@@ -7,6 +7,8 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.psi.PsiFile;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
@@ -16,7 +18,6 @@ import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
 import com.intellij.util.ArrayUtil;
-import com.intellij.psi.PsiFile;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
 
@@ -124,27 +125,37 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return getElementName() + Util.DOT_TML;
   }
 
-  protected VirtualFile initByComponent() throws IOException {
-    copyOrCreateElementClassFile(getElementClassFileName());
-    final String tName = getElementTemplateFileName();
-    VirtualFile vFile = myFixture.copyFileToProject(tName, COMPONENTS_PACKAGE_PATH + tName);
-    myFixture.configureFromExistingVirtualFile(vFile);
-    return vFile;
+  protected void initByComponent() throws IOException {
+    initByComponent(true);
+  }
+
+  protected VirtualFile initByComponent(boolean configureByTmlNotJava) throws IOException {
+    VirtualFile javaFile = copyOrCreateComponentClassFile(getElementClassFileName());
+    final String tmlName = getElementTemplateFileName();
+    VirtualFile tmlFile = myFixture.copyFileToProject(tmlName, COMPONENTS_PACKAGE_PATH + tmlName);
+    final VirtualFile result = configureByTmlNotJava ? tmlFile : javaFile;
+    myFixture.configureFromExistingVirtualFile(result);
+    return result;
   }
 
   protected File getFileByPath(@NonNls String filePath) {
     return new File(myFixture.getTestDataPath() + "/" + filePath);
   }
 
-  protected void copyOrCreateElementClassFile(@NonNls String classFileName) throws IOException {
+  protected VirtualFile copyOrCreateComponentClassFile(@NonNls String classFileName) throws IOException {
     String targetPath = COMPONENTS_PACKAGE_PATH + classFileName;
+    VirtualFile destFile;
     if (getFileByPath(classFileName).exists()) {
-      VirtualFile copy = myFixture.copyFileToProject(classFileName, targetPath);
-      myFixture.allowTreeAccessForFile(copy);
+      destFile = myFixture.copyFileToProject(classFileName, targetPath);
+      myFixture.allowTreeAccessForFile(destFile);
     }
     else {
       addFileAndAllowTreeAccess(targetPath, "package " + TEST_APPLICATION_PACKAGE + "." + COMPONENTS + "; public class " + getElementName() + " {}");
+      File ioFile = new File(myFixture.getTempDirPath() + "/" + targetPath);
+      destFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(ioFile);
     }
+    Assert.assertNotNull(destFile);
+    return destFile;
   }
 
   protected void addComponentToProject(String className) throws IOException {

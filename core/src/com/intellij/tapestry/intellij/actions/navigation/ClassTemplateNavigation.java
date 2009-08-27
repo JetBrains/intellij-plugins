@@ -11,6 +11,7 @@ import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
@@ -24,134 +25,118 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
+import com.intellij.tapestry.lang.TmlFileType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Allows navigation from a class to it's corresponding template and vice-versa.
  */
 public class ClassTemplateNavigation extends AnAction {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void update(AnActionEvent event) {
-        Presentation presentation = event.getPresentation();
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void update(AnActionEvent event) {
+    Presentation presentation = event.getPresentation();
 
-        Module module;
-        try {
-            module = (Module) event.getDataContext().getData(DataKeys.MODULE.getName());
-        } catch (Throwable ex) {
-            presentation.setEnabled(false);
-            presentation.setVisible(false);
-
-            return;
-        }
-
-        if (!TapestryUtils.isTapestryModule(module)) {
-            presentation.setEnabled(false);
-            presentation.setVisible(false);
-
-            return;
-        }
-
-        PsiFile psiFile = getEventPsiFile(event);
-
-        if (psiFile == null || !psiFile.getFileType().equals(StdFileTypes.HTML) && event.getPresentation().getText()
-                .equals("Tapestry Class")) {
-            presentation.setEnabled(false);
-
-            return;
-        }
-
-        presentation.setEnabled(true);
-        presentation.setVisible(true);
+    Module module;
+    try {
+      module = (Module)event.getDataContext().getData(DataKeys.MODULE.getName());
+    }
+    catch (Throwable ex) {
+      presentation.setEnabled(false);
+      presentation.setVisible(false);
+      return;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void actionPerformed(AnActionEvent event) {
-        Project project = (Project) event.getDataContext().getData(DataKeys.PROJECT.getName());
+    if (!TapestryUtils.isTapestryModule(module)) {
+      presentation.setEnabled(false);
+      presentation.setVisible(false);
+      return;
+    }
 
-        PsiFile psiFile = getEventPsiFile(event);
-        if (psiFile == null)
-            return;
+    PsiFile psiFile = getEventPsiFile(event);
 
-      final Module module = (Module)event.getDataContext().getData(DataKeys.MODULE.getName());
-      if (module != null && psiFile.getFileType().equals(StdFileTypes.JAVA)
-          && event.getPresentation().getText().equals("Class <-> Template Navigation")) {
+    if (psiFile == null ||
+        !psiFile.getFileType().equals(TmlFileType.INSTANCE) && event.getPresentation().getText().equals("Tapestry Class")) {
+      presentation.setEnabled(false);
+      return;
+    }
 
-            PresentationLibraryElement tapestryElement;
+    presentation.setEnabled(true);
+    presentation.setVisible(true);
+  }
 
-            try {
-                PsiClass psiClass = IdeaUtils.findPublicClass(((PsiJavaFile) psiFile).getClasses());
+  /**
+   * {@inheritDoc}
+   */
+  public void actionPerformed(AnActionEvent event) {
+    Project project = (Project)event.getDataContext().getData(DataKeys.PROJECT.getName());
 
-                if (psiClass == null) {
-                    showCantNavigateMessage();
-                    return;
-                }
+    PsiFile psiFile = getEventPsiFile(event);
+    Module module = (Module)event.getDataContext().getData(DataKeys.MODULE.getName());
+    if (psiFile == null || module == null) return;
+    String presentationText = event.getPresentation().getText();
+    VirtualFile navigationTarget = findNavigationTarget(psiFile, module, presentationText);
+    if (navigationTarget != null) {
+      FileEditorManager.getInstance(project).openFile(navigationTarget, true);
+    }
+    else {
+      showCantNavigateMessage();
+    }
+  }
 
-                tapestryElement = PresentationLibraryElement.createProjectElementInstance(
-                        new IntellijJavaClassType(module, psiClass.getContainingFile()),
-                        TapestryModuleSupportLoader.getTapestryProject(module)
-                );
-            } catch (NotTapestryElementException e) {
-                showCantNavigateMessage();
-                return;
-            }
+  public static VirtualFile findNavigationTarget(@NotNull PsiFile psiFile, @NotNull Module module, String presentationText) {
+    if (psiFile.getFileType().equals(StdFileTypes.JAVA) && presentationText.equals("Class <-> Template Navigation")) {
+      try {
+        PsiClass psiClass = IdeaUtils.findPublicClass(((PsiJavaFile)psiFile).getClasses());
+        if (psiClass == null) return null;
 
-            if (tapestryElement.allowsTemplate() && tapestryElement.getTemplate().length != 0) {
-                IResource template = tapestryElement.getTemplate()[0];
-                if (template != null) {
-                    FileEditorManager.getInstance(project).openFile(((IntellijResource) template).getPsiFile().getVirtualFile(), true);
-                }
-            } else {
-                showCantNavigateMessage();
-                return;
-            }
+        PresentationLibraryElement tapestryElement = PresentationLibraryElement
+            .createProjectElementInstance(new IntellijJavaClassType(module, psiClass.getContainingFile()),
+                                          TapestryModuleSupportLoader.getTapestryProject(module));
+        if (!tapestryElement.allowsTemplate() || tapestryElement.getTemplate().length == 0) return null;
+        IResource template = tapestryElement.getTemplate()[0];
+        if (template != null) {
+          return ((IntellijResource)template).getPsiFile().getVirtualFile();
         }
-
-        if (psiFile.getFileType().equals(StdFileTypes.HTML) && event.getPresentation().getText()
-                .equals("Class <-> Template Navigation")
-                || psiFile.getFileType().equals(StdFileTypes.HTML) && event.getPresentation().getText()
-                .equals("Tapestry Class")) {
-
-          IJavaClassType elementClass =
-              TapestryModuleSupportLoader.getTapestryProject(module).findElementByTemplate(psiFile).getElementClass();
-
-            if (elementClass != null) {
-                FileEditorManager.getInstance(project).openFile(
-                        ((IntellijJavaClassType) elementClass).getPsiClass().getContainingFile().getVirtualFile(),
-                        true);
-            } else {
-                showCantNavigateMessage();
-            }
-        }
+      }
+      catch (NotTapestryElementException e) {
+      }
+      return null;
     }
 
-    /**
-     * Finds the PsiFile on which the event occured.
-     *
-     * @param event the event.
-     * @return the PsiFile on which the event occured, or <code>null</code> if the file couldn't be determined.
-     */
-    public PsiFile getEventPsiFile(AnActionEvent event) {
-        FileEditorManager fileEditorManager = FileEditorManager
-                .getInstance((Project) event.getDataContext().getData(DataKeys.PROJECT.getName()));
-
-        if (fileEditorManager == null)
-            return null;
-
-        Editor editor = fileEditorManager.getSelectedTextEditor();
-
-        if (editor == null)
-            return null;
-
-        return PsiManager.getInstance((Project) event.getDataContext().getData(DataKeys.PROJECT.getName()))
-                .findFile(FileDocumentManager.getInstance().getFile(editor.getDocument()));
+    if (psiFile.getFileType().equals(TmlFileType.INSTANCE) &&
+        (presentationText.equals("Class <-> Template Navigation") || presentationText.equals("Tapestry Class"))) {
+      IJavaClassType elementClass = TapestryModuleSupportLoader.getTapestryProject(module).findElementByTemplate(psiFile).getElementClass();
+      if (elementClass != null) {
+        return ((IntellijJavaClassType)elementClass).getPsiClass().getContainingFile().getVirtualFile();
+      }
     }
+    return null;
+  }
 
-    public void showCantNavigateMessage() {
-        Messages.showInfoMessage("Couldn't find a file to navigate to.", "Not Tapestry file");
-    }
+  /**
+   * Finds the PsiFile on which the event occured.
+   *
+   * @param event the event.
+   * @return the PsiFile on which the event occured, or <code>null</code> if the file couldn't be determined.
+   */
+  public PsiFile getEventPsiFile(AnActionEvent event) {
+    final Project project = (Project)event.getDataContext().getData(DataKeys.PROJECT.getName());
+    if (project == null) return null;
+
+    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+    if (fileEditorManager == null) return null;
+
+    Editor editor = fileEditorManager.getSelectedTextEditor();
+    if (editor == null) return null;
+
+    return PsiManager.getInstance(project).findFile(FileDocumentManager.getInstance().getFile(editor.getDocument()));
+  }
+
+  public void showCantNavigateMessage() {
+    Messages.showInfoMessage("Couldn't find a file to navigate to.", "Not Tapestry file");
+  }
 }

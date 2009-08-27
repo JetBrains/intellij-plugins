@@ -15,6 +15,7 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.Icons;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.view.TapestryProjectViewPane;
+import com.intellij.tapestry.lang.TmlFileType;
 import com.intellij.ui.treeStructure.SimpleNode;
 
 import java.util.TreeSet;
@@ -84,7 +85,7 @@ public class PackageNode extends TapestryNode {
                 }
             }
 
-            if (psiFile.getFileType().equals(StdFileTypes.HTML) && !TapestryProjectViewPane.getInstance(myProject).isGroupElementFiles()) {
+            if (psiFile.getFileType().equals(TmlFileType.INSTANCE) && !TapestryProjectViewPane.getInstance(myProject).isGroupElementFiles()) {
                 children.add(new FileNode(psiFile, _module, _treeBuilder));
             }
 
