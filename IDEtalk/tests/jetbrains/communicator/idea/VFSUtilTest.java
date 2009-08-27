@@ -45,7 +45,7 @@ public class VFSUtilTest extends IdeaTestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    final File dir = createTempDir(getClass().getName());
+    final File dir = createTempDirectory();
     updateRoots(new Updater() {
       public void update(ModifiableRootModel modifiableModel) {
         myContentRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir);
@@ -112,7 +112,7 @@ public class VFSUtilTest extends IdeaTestCase {
   }
 
   public void testNoContentRoot() throws Exception {
-    File dir = createTempDir(getClass().getName());
+    File dir = createTempDirectory();
     VirtualFile someDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir);
 
     VirtualFile file = someDir.createChildData(this, "some.file");
