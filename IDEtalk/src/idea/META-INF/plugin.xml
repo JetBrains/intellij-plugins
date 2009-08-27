@@ -52,10 +52,12 @@
     </component>
     <component>
       <implementation-class>jetbrains.communicator.idea.toolWindow.IDEtalkToolWindow</implementation-class>
+      <headless-implementation-class/>
     </component>
     <component>
       <interface-class>jetbrains.communicator.idea.IDEtalkMessagesWindow</interface-class>
       <implementation-class>jetbrains.communicator.idea.messagesWindow.IDEtalkMessagesWindowImpl</implementation-class>
+      <headless-implementation-class/>
     </component>
 
   </project-components>
