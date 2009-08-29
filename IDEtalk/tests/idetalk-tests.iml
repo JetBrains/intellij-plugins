@@ -15,7 +15,7 @@
     <orderEntry type="module" module-name="idetalk-idea" />
     <orderEntry type="module" module-name="execution-openapi" />
     <orderEntry type="module" module-name="openapi" />
-    <orderEntry type="module" module-name="ExtendedApi" />
+    <orderEntry type="module" module-name="testFramework-java" />
     <orderEntry type="library" name="Mocks" level="project" />
     <orderEntry type="module" module-name="platform-impl" />
     <orderEntry type="module" module-name="idea" />

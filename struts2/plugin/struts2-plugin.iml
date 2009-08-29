@@ -33,7 +33,7 @@
     <orderEntry type="module" module-name="properties" />
     <orderEntry type="library" name="JUnit4" level="project" />
     <orderEntry type="library" name="commons-collections" level="project" />
-    <orderEntry type="module" module-name="ExtendedApi" />
+    <orderEntry type="module" module-name="testFramework-java" />
   </component>
   <component name="copyright">
     <Base>
