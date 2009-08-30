@@ -29,10 +29,7 @@ import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Delegates {@link com.intellij.struts2.model.constant.StrutsConstant#getConverter()} references.
@@ -111,7 +108,8 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
     final DomElement paramValueElement = elementConverterPair.first;
     final ConvertContext convertContext = AbstractConvertContext.createConvertContext(paramValueElement);
 
-    final Collection converterVariants = resolvingConverter.getVariants(convertContext);
+    // wrap explicitly for empty list
+    final Collection converterVariants = new ArrayList(resolvingConverter.getVariants(convertContext));
 
     final Collection variants;
     if (!converterVariants.isEmpty() &&
