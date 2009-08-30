@@ -15,9 +15,9 @@
 
 package com.intellij.struts2.dom.struts.constant;
 
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.struts2.model.constant.StrutsConstant;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.struts2.model.constant.StrutsConstantKey;
 import com.intellij.struts2.model.constant.StrutsConstantManager;
 import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.GenericDomValue;
@@ -39,17 +39,11 @@ public class ConstantValueConverterImpl extends ConstantValueConverter {
       return null;
     }
 
-    final Module module = domElement.getModule();
-    if (module == null) {
-      return null;
-    }
+    final XmlTag xmlTag = domElement.getXmlTag();
+    final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(xmlTag.getProject());
 
-    final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(module.getProject());
-
-    @SuppressWarnings({"ConstantConditions"})
-    final StrutsConstant strutsConstant = constantManager.findByName(module, constantName);
-
-    return strutsConstant != null ? strutsConstant.getConverter() : null;
+    //noinspection ConstantConditions
+    return constantManager.findConverter(xmlTag, StrutsConstantKey.<Object>create(constantName));
   }
 
 }

@@ -19,6 +19,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.spring.SpringManager;
 import com.intellij.spring.SpringModel;
 import com.intellij.spring.model.xml.beans.SpringBeanPointer;
+import com.intellij.struts2.StrutsConstants;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomJavaUtil;
 import org.jetbrains.annotations.NonNls;
@@ -32,8 +33,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ConstantValueConverterSpringClassContributor implements ConstantValueConverterClassContributor {
 
-  @NonNls
-  private static final String SPRING_OBJECT_FACTORY = "org.apache.struts2.spring.StrutsSpringObjectFactory";
 
   @Nullable
   public PsiClass fromString(@NotNull @NonNls final String s, final ConvertContext convertContext) {
@@ -42,7 +41,8 @@ public class ConstantValueConverterSpringClassContributor implements ConstantVal
       return null;
     }
 
-    if (DomJavaUtil.findClass(SPRING_OBJECT_FACTORY, convertContext.getInvocationElement()) == null) {
+    if (DomJavaUtil.findClass(StrutsConstants.SPRING_OBJECT_FACTORY_CLASS,
+                              convertContext.getInvocationElement()) == null) {
       return null;
     }
 

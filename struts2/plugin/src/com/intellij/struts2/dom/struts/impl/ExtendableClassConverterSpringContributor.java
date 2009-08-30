@@ -27,11 +27,11 @@ import com.intellij.spring.SpringManager;
 import com.intellij.spring.SpringModel;
 import com.intellij.spring.model.xml.beans.SpringBeanPointer;
 import com.intellij.struts2.StrutsBundle;
+import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.*;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,9 +46,6 @@ import java.util.List;
  */
 public class ExtendableClassConverterSpringContributor extends ExtendableClassConverter.ExtendableClassConverterContributor {
 
-  @NonNls
-  private static final String STRUTS_SPRING_OBJECT_FACTORY = "org.apache.struts2.spring.StrutsSpringObjectFactory";
-
   /**
    * Checks if struts2-spring-plugin is present in current module.
    *
@@ -56,7 +53,8 @@ public class ExtendableClassConverterSpringContributor extends ExtendableClassCo
    * @return true if yes.
    */
   public boolean isSuitable(@NotNull final ConvertContext convertContext) {
-    return DomJavaUtil.findClass(STRUTS_SPRING_OBJECT_FACTORY, convertContext.getInvocationElement()) != null;
+    return DomJavaUtil.findClass(StrutsConstants.SPRING_OBJECT_FACTORY_CLASS,
+                                 convertContext.getInvocationElement()) != null;
   }
 
   public String getContributorType() {

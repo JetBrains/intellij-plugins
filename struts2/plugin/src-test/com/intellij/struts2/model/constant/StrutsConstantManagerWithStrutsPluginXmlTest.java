@@ -16,6 +16,10 @@
 package com.intellij.struts2.model.constant;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.struts2.StrutsConstants;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstantManagerTestCase {
+public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstantManagerTestCase<JavaModuleFixtureBuilder> {
 
   @NotNull
   @Override
@@ -43,8 +47,13 @@ public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstant
     createStrutsFileSet(STRUTS_XML);
     addStrutsXmlFromJar(STRUTS2_SPRING_PLUGIN_JAR + "!/struts-plugin.xml");
 
+    final PsiClass springObjectFactoryClass = JavaPsiFacade.getInstance(myProject)
+        .findClass(StrutsConstants.SPRING_OBJECT_FACTORY_CLASS,
+                   GlobalSearchScope.moduleWithLibrariesScope(myModule));
+    assertNotNull(springObjectFactoryClass);
+
     final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
-    performResolveTest(dummyFile, "struts.objectFactory", "spring");
+    performResolveTest(dummyFile, StrutsConstantKey.create("struts.objectFactory"), springObjectFactoryClass);
   }
 
 }

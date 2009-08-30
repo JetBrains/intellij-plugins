@@ -16,6 +16,8 @@
 package com.intellij.struts2.model.constant;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
+import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsConstantManagerWithStrutsPropertiesTest extends StrutsConstantManagerTestCase {
+public class StrutsConstantManagerWithStrutsPropertiesTest extends StrutsConstantManagerTestCase<JavaModuleFixtureBuilder> {
 
   @NotNull
   @Override
@@ -44,7 +46,7 @@ public class StrutsConstantManagerWithStrutsPropertiesTest extends StrutsConstan
     createStrutsFileSet(STRUTS_XML);
 
     final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
-    performResolveTest(dummyFile, "struts.action.extension", "foo");
+    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, "foo");
   }
 
 }

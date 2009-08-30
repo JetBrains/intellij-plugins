@@ -16,6 +16,7 @@
 package com.intellij.struts2.model.constant;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +52,7 @@ public class StrutsConstantManagerWithWebXmlTest extends StrutsConstantManagerTe
     myFixture.copyFileToProject("/WEB-INF/web.xml");
 
     final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
-    performResolveTest(dummyFile, "struts.action.extension", "foo");
+    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, "foo");
   }
 
 }

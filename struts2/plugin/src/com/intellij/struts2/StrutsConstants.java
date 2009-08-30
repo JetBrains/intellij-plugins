@@ -33,6 +33,10 @@ public final class StrutsConstants {
   @NonNls
   public static final String STRUTS_2_1_FILTER_CLASS = "org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter";
 
+  /** Spring object factory. */
+  @NonNls
+  public static final String SPRING_OBJECT_FACTORY_CLASS = "org.apache.struts2.spring.StrutsSpringObjectFactory";
+
   /**
    * Default filename for Struts configuration file.
    */

@@ -19,8 +19,8 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.psi.PsiElement;
+import com.intellij.util.xml.Converter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,24 +53,27 @@ public abstract class StrutsConstantManager {
   public abstract List<StrutsConstant> getConstants(@NotNull final Module module);
 
   /**
-   * Returns the constant for the given name.
+   * Returns the Converter for the given constant.
    *
-   * @param module Module.
-   * @param name   Constant name.
-   * @return Definition or {@code null} if unknown.
+   * @param context           Current context.
+   * @param strutsConstantKey Key.
+   * @param <T>               Converted value type.
+   * @return {@code null} if no Converter could be determined.
    */
   @Nullable
-  public abstract StrutsConstant findByName(@NotNull final Module module,
-                                            @NotNull @NonNls final String name);
+  public abstract <T> Converter<T> findConverter(@NotNull final PsiElement context,
+                                                 @NotNull final StrutsConstantKey<T> strutsConstantKey);
 
   /**
    * Determines the constant value for the given name.
    *
-   * @param context Current context.
-   * @param name    Constant name.
-   * @return Value or {@code null} if no value could be determined.
+   * @param context           Current context.
+   * @param strutsConstantKey Constant key.
+   * @param <T>               Constant value type.
+   * @return Converted value or {@code null} on errors.
    */
   @Nullable
-  public abstract String getValue(@NotNull final PsiFile context,
-                                  @NotNull @NonNls final String name);
+  public abstract <T> T getConvertedValue(@NotNull final PsiElement context,
+                                          @NotNull final StrutsConstantKey<T> strutsConstantKey);
+
 }

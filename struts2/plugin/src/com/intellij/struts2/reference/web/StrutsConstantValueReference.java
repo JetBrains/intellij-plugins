@@ -17,15 +17,13 @@ package com.intellij.struts2.reference.web;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.javaee.model.xml.ParamValue;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.struts2.model.constant.StrutsConstant;
+import com.intellij.struts2.model.constant.StrutsConstantKey;
 import com.intellij.struts2.model.constant.StrutsConstantManager;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NotNull;
@@ -43,19 +41,22 @@ import java.util.Set;
  */
 class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements EmptyResolveMessageProvider {
 
+  @Nullable
+  private final Pair<DomElement, Converter> elementConverterPair;
+
   StrutsConstantValueReference(@NotNull final XmlTag xmlTag) {
     super(xmlTag, false);
+    elementConverterPair = getElementConverterPair();
   }
 
   @SuppressWarnings({"unchecked"})
   public PsiElement resolve() {
-    final Pair<DomElement, Converter> pair = getElementConverterPair();
-    if (pair == null) {
+    if (elementConverterPair == null) {
       return myElement;
     }
 
-    final Converter converter = pair.getSecond();
-    final ConvertContext convertContext = AbstractConvertContext.createConvertContext(pair.first);
+    final Converter converter = elementConverterPair.getSecond();
+    final ConvertContext convertContext = AbstractConvertContext.createConvertContext(elementConverterPair.first);
 
     // additional variants (String only)
     if (converter instanceof ResolvingConverter) {
@@ -86,24 +87,20 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
   }
 
   public String getUnresolvedMessagePattern() {
-    final Pair<DomElement, Converter> pair = getElementConverterPair();
-    assert pair != null;
-
-    final Converter converter = pair.second;
-    assert converter != null;
-
-    return converter.getErrorMessage(getValue(), AbstractConvertContext.createConvertContext(pair.first));
+    assert elementConverterPair != null;
+    
+    return elementConverterPair.second
+        .getErrorMessage(getValue(), AbstractConvertContext.createConvertContext(elementConverterPair.first));
   }
 
   @NotNull
   @SuppressWarnings({"unchecked"})
   public Object[] getVariants() {
-    final Pair<DomElement, Converter> domElementConverterPair = getElementConverterPair();
-    if (domElementConverterPair == null) {
+    if (elementConverterPair == null) {
       return EMPTY_ARRAY;
     }
 
-    final Converter converter = domElementConverterPair.second;
+    final Converter converter = elementConverterPair.second;
     if (!(converter instanceof ResolvingConverter)) {
       return EMPTY_ARRAY;
     }
@@ -111,7 +108,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
     final ResolvingConverter resolvingConverter = (ResolvingConverter) converter;
 
     // merge "normal" + additional variants
-    final DomElement paramValueElement = domElementConverterPair.first;
+    final DomElement paramValueElement = elementConverterPair.first;
     final ConvertContext convertContext = AbstractConvertContext.createConvertContext(paramValueElement);
 
     final Collection converterVariants = resolvingConverter.getVariants(convertContext);
@@ -163,19 +160,10 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
       return null;
     }
 
-    final Module module = ModuleUtil.findModuleForPsiElement(myElement);
-    if (module == null) {
-      return null;
-    }
-
     final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(myElement.getProject());
-    @SuppressWarnings({"ConstantConditions"})
-    final StrutsConstant strutsConstant = constantManager.findByName(module, paramName);
-    if (strutsConstant == null) {
-      return null;
-    }
 
-    final Converter converter = strutsConstant.getConverter();
+    @SuppressWarnings({"ConstantConditions"})
+    final Converter converter = constantManager.findConverter(myElement, StrutsConstantKey.create(paramName));
     if (converter == null) {
       return null;
     }

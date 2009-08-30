@@ -17,6 +17,7 @@ package com.intellij.struts2.model.constant;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -38,15 +39,17 @@ public class StrutsConstantHelper {
    * Returns the current action extension(s) ("{@code .action}").
    *
    * @param psiElement Invocation element.
-   * @return {@code null} on configuration problems.
+   * @return empty list on configuration problems.
    */
   @NotNull
   public static List<String> getActionExtensions(final PsiElement psiElement) {
-    final String actionExtension = StrutsConstantManager.getInstance(psiElement.getProject())
-        .getValue(psiElement.getContainingFile(), "struts.action.extension");
+    final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(psiElement.getProject());
+
+    final String actionExtension = constantManager.getConvertedValue(psiElement,
+                                                                     StrutsCoreConstantContributor.ACTION_EXTENSION);
+
     if (actionExtension == null) {
       return Collections.emptyList();
-
     }
 
     return ContainerUtil.map(StringUtil.split(actionExtension, ","), new Function<String, String>() {

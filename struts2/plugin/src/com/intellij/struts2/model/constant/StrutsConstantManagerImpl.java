@@ -32,6 +32,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.InheritanceUtil;
 import com.intellij.psi.xml.XmlFile;
@@ -44,6 +45,9 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.FilteringProcessor;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.xml.AbstractConvertContext;
+import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.DomFileElement;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -92,30 +96,67 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
 
   @Override
   @Nullable
-  public StrutsConstant findByName(@NotNull final Module module, @NotNull @NonNls final String name) {
-    return ContainerUtil.find(getConstants(module), new Condition<StrutsConstant>() {
+  public <T> Converter<T> findConverter(@NotNull final PsiElement context,
+                                        @NotNull final StrutsConstantKey<T> strutsConstantKey) {
+    final Module module = ModuleUtil.findModuleForPsiElement(context);
+    if (module == null) {
+      return null;
+    }
+
+    final StrutsConstant strutsConstant = ContainerUtil.find(getConstants(module), new Condition<StrutsConstant>() {
       public boolean value(final StrutsConstant strutsConstant) {
-        return strutsConstant.getName().equals(name);
+        return strutsConstant.getName().equals(strutsConstantKey.getKey());
       }
     });
+
+    //noinspection unchecked
+    return strutsConstant != null ? strutsConstant.getConverter() : null;
   }
 
   @Override
   @Nullable
-  public String getValue(@NotNull final PsiFile context, @NotNull @NonNls final String name) {
+  public <T> T getConvertedValue(@NotNull final PsiElement context,
+                                 @NotNull final StrutsConstantKey<T> strutsConstantKey) {
+    final PsiFile containingFile = context.getContainingFile();
+    final StrutsModel strutsModel = getStrutsModel(containingFile);
+    if (strutsModel == null) {
+      return null;
+    }
+
+    final String stringValue = getStringValue(containingFile,
+                                              strutsModel,
+                                              strutsConstantKey.getKey());
+    if (stringValue == null) {
+      return null;
+    }
+
+    final Converter<T> converter = findConverter(context, strutsConstantKey);
+    if (converter == null) {
+      //noinspection unchecked
+      return (T) stringValue;
+    }
+
+    final DomFileElement<StrutsRoot> first = strutsModel.getRoots().iterator().next();
+
+    final ConvertContext convertContext = AbstractConvertContext.createConvertContext(first);
+    //noinspection unchecked
+    return converter.fromString(stringValue, convertContext);
+  }
+
+  /**
+   * Returns the plain String value for the given constant.
+   *
+   * @param context     Current context.
+   * @param strutsModel StrutsModel.
+   * @param name        Name of constant.
+   * @return {@code null} if no value could be resolved.
+   */
+  @Nullable
+  private static String getStringValue(@NotNull final PsiFile context,
+                                       @NotNull final StrutsModel strutsModel,
+                                       @NotNull @NonNls final String name) {
     final Project project = context.getProject();
     final Module module = ModuleUtil.findModuleForPsiElement(context);
-    final StrutsManager strutsManager = StrutsManager.getInstance(project);
-
-    // determine best matching StrutsModel
-    final StrutsModel model;
-    if (context instanceof XmlFile &&
-        strutsManager.isStruts2ConfigFile((XmlFile) context)) {
-      model = strutsManager.getModelByFile((XmlFile) context);
-    } else {
-      model = strutsManager.getCombinedModel(module);
-    }
-    assert model != null;
 
     // collect all properties with matching key
     final List<Property> properties =
@@ -150,9 +191,9 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     };
 
     final List<DomFileElement<StrutsRoot>> domFileElements = new ArrayList<DomFileElement<StrutsRoot>>();
-    collectStrutsXmls(domFileElements, model, "struts-default.xml", true);
-    collectStrutsXmls(domFileElements, model, "struts-plugin.xml", true);
-    collectStrutsXmls(domFileElements, model, "struts.xml", false);
+    collectStrutsXmls(domFileElements, strutsModel, "struts-default.xml", true);
+    collectStrutsXmls(domFileElements, strutsModel, "struts-plugin.xml", true);
+    collectStrutsXmls(domFileElements, strutsModel, "struts.xml", false);
     for (final DomFileElement<StrutsRoot> domFileElement : domFileElements) {
       final Constant constant = ContainerUtil.find(domFileElement.getRootElement().getConstants(),
                                                    constantNameCondition);
@@ -201,6 +242,25 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
   }
 
   /**
+   * Determines best matching StrutsModel.
+   *
+   * @param psiFile Context file.
+   * @return {@code null} if no model could be determined.
+   */
+  @Nullable
+  private static StrutsModel getStrutsModel(final PsiFile psiFile) {
+    final StrutsManager strutsManager = StrutsManager.getInstance(psiFile.getProject());
+    final StrutsModel model;
+    if (psiFile instanceof XmlFile &&
+        strutsManager.isStruts2ConfigFile((XmlFile) psiFile)) {
+      model = strutsManager.getModelByFile((XmlFile) psiFile);
+    } else {
+      model = strutsManager.getCombinedModel(ModuleUtil.findModuleForPsiElement(psiFile));
+    }
+    return model;
+  }
+
+  /**
    * Adds all struts.xml files matching the given filename.
    *
    * @param domFileElements Elements to add to.
@@ -212,22 +272,35 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
                                         @NotNull final StrutsModel model,
                                         @NotNull @NonNls final String strutsXmlName,
                                         final boolean onlyInJARs) {
-    ContainerUtil.process(
-        model.getRoots(),
-        new FilteringProcessor<DomFileElement<StrutsRoot>>(new Condition<DomFileElement<StrutsRoot>>() {
-          public boolean value(final DomFileElement<StrutsRoot> strutsRootDomFileElement) {
-            final XmlFile xmlFile = strutsRootDomFileElement.getFile();
-            final boolean nameMatch = Comparing.equal(xmlFile.getName(), strutsXmlName);
-            if (!onlyInJARs) {
-              return nameMatch;
-            }
+    ContainerUtil.process(model.getRoots(),
+                          new FilteringProcessor<DomFileElement<StrutsRoot>>(
+                              getStrutsXmlCondition(strutsXmlName, onlyInJARs),
+                              new CommonProcessors.CollectProcessor<DomFileElement<StrutsRoot>>(domFileElements)));
+  }
 
-            final VirtualFile virtualFile = xmlFile.getVirtualFile();
-            return nameMatch &&
-                   virtualFile != null &&
-                   virtualFile.getFileSystem() instanceof JarFileSystem;
-          }
-        }, new CommonProcessors.CollectProcessor<DomFileElement<StrutsRoot>>(domFileElements)));
+  /**
+   * Returns matcher condition.
+   *
+   * @param strutsXmlName Filename to match.
+   * @param onlyInJARs    Only include struts.xml files located in JAR files.
+   * @return Condition.
+   */
+  private static Condition<DomFileElement<StrutsRoot>> getStrutsXmlCondition(final String strutsXmlName,
+                                                                             final boolean onlyInJARs) {
+    return new Condition<DomFileElement<StrutsRoot>>() {
+      public boolean value(final DomFileElement<StrutsRoot> strutsRootDomFileElement) {
+        final XmlFile xmlFile = strutsRootDomFileElement.getFile();
+        final boolean nameMatch = Comparing.equal(xmlFile.getName(), strutsXmlName);
+        if (!onlyInJARs) {
+          return nameMatch;
+        }
+
+        final VirtualFile virtualFile = xmlFile.getVirtualFile();
+        return nameMatch &&
+               virtualFile != null &&
+               virtualFile.getFileSystem() instanceof JarFileSystem;
+      }
+    };
   }
 
 }

@@ -23,6 +23,7 @@ import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import static org.hamcrest.core.Is.is;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -32,15 +33,15 @@ import static org.junit.Assert.assertThat;
  */
 public abstract class StrutsConstantManagerTestCase<B extends JavaModuleFixtureBuilder> extends BasicHighlightingTestCase<B> {
 
-  protected void performResolveTest(@NotNull final VirtualFile invokingFile,
-                                    @NotNull @NonNls final String name,
-                                    @NotNull @NonNls final String value) {
+  protected <T> void performResolveTest(@NotNull final VirtualFile invokingFile,
+                                        @NotNull final StrutsConstantKey<T> strutsConstantKey,
+                                        @Nullable @NonNls final T value) {
     final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(myProject);
 
     final PsiFile invokingPsiFile = PsiManager.getInstance(myProject).findFile(invokingFile);
     assert invokingPsiFile != null : invokingFile.getPath();
 
-    final String constantValue = constantManager.getValue(invokingPsiFile, name);
+    final T constantValue = constantManager.getConvertedValue(invokingPsiFile, strutsConstantKey);
     assertThat(constantValue, is(value));
   }
 

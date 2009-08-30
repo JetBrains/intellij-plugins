@@ -16,6 +16,8 @@
 package com.intellij.struts2.model.constant;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
+import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTestCase {
+public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTestCase<JavaModuleFixtureBuilder> {
 
   @NotNull
   @Override
@@ -38,7 +40,7 @@ public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTest
     createStrutsFileSet(STRUTS_XML);
 
     final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
-    performResolveTest(dummyFile, "struts.action.extension", "action,,");
+    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, "action,,");
   }
 
   /**
@@ -48,7 +50,18 @@ public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTest
     createStrutsFileSet(STRUTS_XML);
 
     final VirtualFile dummyFile = myFixture.copyFileToProject("dummy.xml");
-    performResolveTest(dummyFile, "struts.action.extension", "action,,");
+    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, "action,,");
+  }
+
+
+  /**
+   * Non-existent configuration property.
+   */
+  public void testNoCustomNonExistentConfiguration() throws Throwable {
+    createStrutsFileSet(STRUTS_XML);
+
+    final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
+    performResolveTest(dummyFile, StrutsConstantKey.<Object>create("XXX_NON_EXISTENT_XXX"), null);
   }
 
 }

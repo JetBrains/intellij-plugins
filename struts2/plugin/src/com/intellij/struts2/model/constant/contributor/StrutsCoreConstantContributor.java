@@ -18,7 +18,9 @@ package com.intellij.struts2.model.constant.contributor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.model.constant.StrutsConstant;
+import com.intellij.struts2.model.constant.StrutsConstantKey;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
@@ -35,6 +37,9 @@ import java.util.List;
  */
 public class StrutsCoreConstantContributor extends StrutsConstantContributorBase {
 
+  /** {@code struts.action.extension}. */
+  public static final StrutsConstantKey<String> ACTION_EXTENSION = StrutsConstantKey.create("struts.action.extension");
+
   @NonNls
   private static final List<StrutsConstant> CONSTANTS = Arrays.asList(
       addClassWithShortcutProperty("struts.configuration", ""),
@@ -49,7 +54,7 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
       addClassWithShortcutProperty("struts.objectFactory",
                                    "com.opensymphony.xwork2.ObjectFactory",
                                    Pair.create("struts", "org.apache.struts2.impl.StrutsObjectFactory"),
-                                   Pair.create("spring", "org.apache.struts2.spring.StrutsSpringObjectFactory")),
+                                   Pair.create("spring", StrutsConstants.SPRING_OBJECT_FACTORY_CLASS)),
 
       addStringValuesProperty("struts.objectFactory.spring.autoWire", "name", "type", "auto", "constructor"),
       addBooleanProperty("struts.objectFactory.spring.autoWire.alwaysRespect"),
@@ -69,7 +74,7 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
       addIntegerProperty("struts.multipart.maxSize"),
       addStringProperty("struts.custom.properties"),
       addClassWithShortcutProperty("struts.mapper.class", ""),
-      addStringProperty("struts.action.extension"),
+      addStringProperty(ACTION_EXTENSION.getKey()),
       addBooleanProperty("struts.serve.static"),
       addBooleanProperty("struts.serve.static.browserCache"),
       addBooleanProperty("struts.enable.DynamicMethodInvocation"),
