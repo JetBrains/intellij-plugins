@@ -37,6 +37,7 @@ import org.osmorc.manifest.ManifestFileTypeFactory;
 
 import javax.swing.*;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -58,6 +59,11 @@ public class ManifestColorsAndFontsPage implements ColorSettingsPage {
         return ATTRIBUTE_DESCRIPTORS;
     }
 
+    @Nullable
+    public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
+        return ADDITIONAL_HIGHLIGHTING;
+    }
+
     @NotNull
     public ColorDescriptor[] getColorDescriptors() {
         return new ColorDescriptor[0];
@@ -71,21 +77,17 @@ public class ManifestColorsAndFontsPage implements ColorSettingsPage {
     @NonNls
     @NotNull
     public String getDemoText() {
-        return "Manifest-Version: 1.0\n" +
-                "Bundle-ManifestVersion: 2\n" +
-                "Bundle-Name: Osmorc Test\n" +
-                "Bundle-SymbolicName: org.osmorc.test; singleton:=true\n" +
-                "Bundle-Version: 0.1.0\n" +
-                "Require-Bundle: some.bundle;bundle-version=2.0.0,\n" +
+        return "Manifest-Version<headerAssignment>:</headerAssignment> 1.0\n" +
+                "Bundle-ManifestVersion<headerAssignment>:</headerAssignment> 2\n" +
+                "Bundle-Name<headerAssignment>:</headerAssignment> Osmorc Test\n" +
+                "Bundle-SymbolicName<headerAssignment>:</headerAssignment> org.osmorc.test<parameterSeparator>;</parameterSeparator> <directiveName>singleton</directiveName><directiveAssignment>:=</directiveAssignment>true\n" +
+                "Bundle-Version<headerAssignment>:</headerAssignment> 0.1.0\n" +
+                "Require-Bundle<headerAssignment>:</headerAssignment> some.bundle<parameterSeparator>;</parameterSeparator><attributeName>bundle-version</attributeName><attributeAssignment>=</attributeAssignment>2.0.0<clauseSeparator>,</clauseSeparator>\n" +
                 " other.bundle";
     }
 
-    @Nullable
-    public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
-        return null;
-    }
-
     private static final AttributesDescriptor[] ATTRIBUTE_DESCRIPTORS;
+    private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHTING;
 
 
     static {
@@ -105,5 +107,13 @@ public class ManifestColorsAndFontsPage implements ColorSettingsPage {
                 new AttributesDescriptor("Parameter separator",
                         ManifestColorsAndFonts.PARAMETER_SEPARATOR_KEY)
         };
+        ADDITIONAL_HIGHLIGHTING = new HashMap<String, TextAttributesKey>();
+        ADDITIONAL_HIGHLIGHTING.put("headerAssignment", ManifestColorsAndFonts.HEADER_ASSIGNMENT_KEY);
+        ADDITIONAL_HIGHLIGHTING.put("directiveName", ManifestColorsAndFonts.DIRECTIVE_NAME_KEY);
+        ADDITIONAL_HIGHLIGHTING.put("directiveAssignment", ManifestColorsAndFonts.DIRECTIVE_ASSIGNMENT_KEY);
+        ADDITIONAL_HIGHLIGHTING.put("attributeName", ManifestColorsAndFonts.ATTRIBUTE_NAME_KEY);
+        ADDITIONAL_HIGHLIGHTING.put("attributeAssignment", ManifestColorsAndFonts.ATTRIBUTE_ASSIGNMENT_KEY);
+        ADDITIONAL_HIGHLIGHTING.put("clauseSeparator", ManifestColorsAndFonts.CLAUSE_SEPARATOR_KEY);
+        ADDITIONAL_HIGHLIGHTING.put("parameterSeparator", ManifestColorsAndFonts.PARAMETER_SEPARATOR_KEY);
     }
 }
