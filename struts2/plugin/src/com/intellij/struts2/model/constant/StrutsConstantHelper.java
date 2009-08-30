@@ -59,7 +59,7 @@ public class StrutsConstantHelper {
    */
   @NotNull
   public static List<String> getActionExtensions(final PsiElement psiElement) {
-    final PsiFile psiFile = psiElement.getContainingFile();
+    final PsiFile psiFile = psiElement.getContainingFile().getOriginalFile();
 
     CachedValue<List<String>> extensions = psiFile.getUserData(KEY_EXTENSIONS);
     if (extensions == null) {
