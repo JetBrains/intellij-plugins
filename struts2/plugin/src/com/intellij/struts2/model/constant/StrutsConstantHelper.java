@@ -15,8 +15,13 @@
 
 package com.intellij.struts2.model.constant;
 
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -32,8 +37,19 @@ import java.util.List;
  */
 public class StrutsConstantHelper {
 
+  private static final Function<String, String> DOT_PATH_FUNCTION = new Function<String, String>() {
+    public String fun(final String s) {
+      return "." + s;
+    }
+  };
+
   private StrutsConstantHelper() {
   }
+
+  /**
+   * Caches action extensions per file.
+   */
+  private static final Key<CachedValue<List<String>>> KEY_EXTENSIONS = Key.create("STRUTS2_ACTION_EXTENSIONS");
 
   /**
    * Returns the current action extension(s) ("{@code .action}").
@@ -43,20 +59,33 @@ public class StrutsConstantHelper {
    */
   @NotNull
   public static List<String> getActionExtensions(final PsiElement psiElement) {
-    final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(psiElement.getProject());
+    final PsiFile psiFile = psiElement.getContainingFile();
 
-    final String actionExtension = constantManager.getConvertedValue(psiElement,
-                                                                     StrutsCoreConstantContributor.ACTION_EXTENSION);
+    CachedValue<List<String>> extensions = psiFile.getUserData(KEY_EXTENSIONS);
+    if (extensions == null) {
+      extensions = psiElement.getManager().getCachedValuesManager().createCachedValue(
+          new CachedValueProvider<List<String>>() {
+            public Result<List<String>> compute() {
+              final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(psiElement.getProject());
 
-    if (actionExtension == null) {
-      return Collections.emptyList();
+              final String actionExtension = constantManager.getConvertedValue(psiElement,
+                                                                               StrutsCoreConstantContributor.ACTION_EXTENSION);
+
+              final List<String> myExtensions;
+              if (actionExtension == null) {
+                myExtensions = Collections.emptyList();
+              } else {
+                myExtensions = ContainerUtil.map(StringUtil.split(actionExtension, ","), DOT_PATH_FUNCTION);
+              }
+
+              return Result.create(myExtensions, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+            }
+          }, false);
+
+      psiFile.putUserData(KEY_EXTENSIONS, extensions);
     }
 
-    return ContainerUtil.map(StringUtil.split(actionExtension, ","), new Function<String, String>() {
-      public String fun(final String s) {
-        return "." + s;
-      }
-    });
+    return extensions.getValue();
   }
 
 }
