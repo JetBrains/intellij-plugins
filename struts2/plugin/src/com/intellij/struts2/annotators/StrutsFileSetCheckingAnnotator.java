@@ -16,7 +16,7 @@
 package com.intellij.struts2.annotators;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
-import com.intellij.codeInsight.daemon.impl.quickfix.ShowModulePropertiesFix;
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.annotation.Annotation;
@@ -28,6 +28,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
+import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
@@ -103,12 +104,34 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
       final AddToFileSetFix addToFileSetFix = new AddToFileSetFix(xmlFile.getName());
       annotation.registerFix(addToFileSetFix);
     } else {
-      annotation.registerFix(new ShowModulePropertiesFix(xmlFile) {
+      annotation.registerFix(new IntentionAction() {
         @NotNull
         public String getText() {
           return StrutsBundle.message("annotators.fileset.edit.facet.settings");
         }
+
+        @NotNull
+        public String getFamilyName() {
+          return StrutsBundle.message("intentions.familyname");
+        }
+
+        public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile psiFile) {
+          return true;
+        }
+
+        public void invoke(@NotNull final Project project,
+                           final Editor editor,
+                           final PsiFile psiFile) throws IncorrectOperationException {
+          final StrutsFacet strutsFacet = StrutsFacet.getInstance(module);
+          assert strutsFacet != null;
+          ModulesConfigurator.showFacetSettingsDialog(strutsFacet, null);
+        }
+
+        public boolean startInWriteAction() {
+          return false;
+        }
       });
+
     }
   }
 
