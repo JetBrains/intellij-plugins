@@ -19,6 +19,7 @@ package com.intellij.struts2.dom.struts.impl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -41,7 +42,7 @@ final class ActionUtil {
   }
 
   /**
-   * Does the given path match the Action's path (including support for wildcards).
+   * Does the given path match the Action's path (including support for wild-cards).
    *
    * @param actionPath Path of Action.
    * @param checkPath  Path to check.
@@ -52,9 +53,9 @@ final class ActionUtil {
 
     // do we have any wildcard-markers in our path? no --> exact compare
     if (StringUtil.indexOf(actionPath, '*') == -1) {
-      return checkPath.equals(actionPath);
+      return Comparing.equal(checkPath, actionPath);
     }
-    return Pattern.matches(actionPath.replaceAll("\\*", "[^/]*"), checkPath);
+    return Pattern.matches(StringUtil.replace(actionPath, "*", "[^/]*"), checkPath);
   }
 
   /**
