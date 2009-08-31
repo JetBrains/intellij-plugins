@@ -34,8 +34,6 @@ import java.util.List;
  */
 public interface StrutsModel extends DomModel<StrutsRoot> {
 
-  StrutsModel[] EMPTY_ARRAY = new StrutsModel[0];
-
   /**
    * Get all {@link StrutsRoot} elements of the files belonging to this model.
    *
@@ -56,7 +54,7 @@ public interface StrutsModel extends DomModel<StrutsRoot> {
    * Gets all Actions for the given name and optionally namespace.
    *
    * @param name      Name of the action.
-   * @param namespace Namespace to search within, <code>null</code> for any.
+   * @param namespace Namespace to search within, {@code null} for all from this model.
    *
    * @return List of all Actions.
    */
