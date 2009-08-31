@@ -38,7 +38,7 @@ public class ValidatorConfigModelInspection extends BasicDomElementsInspection<V
   @NotNull
   @Override
   public String[] getGroupPath() {
-    return new String[]{"Struts", getGroupDisplayName()};
+    return new String[]{StrutsBundle.message("inspections.grouppathname"), getGroupDisplayName()};
   }
 
   @NotNull
