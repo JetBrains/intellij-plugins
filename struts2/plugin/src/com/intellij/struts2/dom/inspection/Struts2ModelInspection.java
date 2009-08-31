@@ -123,10 +123,13 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
   protected void checkDomElement(final DomElement element,
                                  final DomElementAnnotationHolder holder,
                                  final DomHighlightingHelper helper) {
-    super.checkDomElement(element, holder, helper);
+    final int oldSize = holder.getSize();
 
-    final Struts2ModelInspectionVisitor visitor = new Struts2ModelInspectionVisitor(holder);
-    element.accept(visitor);
+    element.accept(new Struts2ModelInspectionVisitor(holder));
+
+    if (oldSize == holder.getSize()) {
+      super.checkDomElement(element, holder, helper);
+    }
   }
 
   @NotNull
