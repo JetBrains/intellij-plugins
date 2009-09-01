@@ -43,4 +43,20 @@ public final class ConverterUtil {
     return StrutsManager.getInstance(xmlFile.getProject()).getModelByFile(xmlFile);
   }
 
+  /**
+   * Gets the StrutsModel for the current context (=file) or combined model for current module.
+   *
+   * @param context Invoking context.
+   * @return <code>null</code> if no StrutsModel found in current file/module.
+   */
+  @Nullable
+  public static StrutsModel getStrutsModelOrCombined(final ConvertContext context) {
+    final StrutsModel modelByFile = getStrutsModel(context);
+    if (modelByFile != null) {
+      return modelByFile;
+    }
+
+    return StrutsManager.getInstance(context.getFile().getProject()).getCombinedModel(context.getModule());
+  }
+
 }

@@ -18,8 +18,7 @@ package com.intellij.struts2.model.constant.contributor;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.struts2.dom.struts.model.StrutsManager;
+import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.containers.ContainerUtil;
@@ -69,16 +68,7 @@ class StrutsPackageConverter extends ResolvingConverter<StrutsPackage> {
   }
 
   private static List<StrutsPackage> getStrutsPackages(final ConvertContext convertContext) {
-    final XmlFile xmlFile = convertContext.getFile();
-    final StrutsManager strutsManager = StrutsManager.getInstance(xmlFile.getProject());
-
-    // find best matching StrutsModel
-    final StrutsModel model;
-    if (strutsManager.isStruts2ConfigFile(xmlFile)) {
-      model = strutsManager.getModelByFile(xmlFile);
-    } else {
-      model = strutsManager.getCombinedModel(convertContext.getModule());
-    }
+    final StrutsModel model = ConverterUtil.getStrutsModelOrCombined(convertContext);
     if (model == null) {
       return Collections.emptyList();
     }
