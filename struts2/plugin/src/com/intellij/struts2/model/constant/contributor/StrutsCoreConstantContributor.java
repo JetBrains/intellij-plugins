@@ -38,7 +38,7 @@ import java.util.List;
 public class StrutsCoreConstantContributor extends StrutsConstantContributorBase {
 
   /** {@code struts.action.extension}. */
-  public static final StrutsConstantKey<String> ACTION_EXTENSION = StrutsConstantKey.create("struts.action.extension");
+  public static final StrutsConstantKey<List<String>> ACTION_EXTENSION = StrutsConstantKey.create("struts.action.extension");
 
   @NonNls
   private static final List<StrutsConstant> CONSTANTS = Arrays.asList(
@@ -74,7 +74,7 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
       addIntegerProperty("struts.multipart.maxSize"),
       addStringProperty("struts.custom.properties"),
       addClassWithShortcutProperty("struts.mapper.class", ""),
-      addStringProperty(ACTION_EXTENSION.getKey()),
+      addDelimitedStringValuesProperty(ACTION_EXTENSION.getKey()),
       addBooleanProperty("struts.serve.static"),
       addBooleanProperty("struts.serve.static.browserCache"),
       addBooleanProperty("struts.enable.DynamicMethodInvocation"),

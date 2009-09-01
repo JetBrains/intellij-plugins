@@ -71,6 +71,10 @@ public abstract class StrutsConstantContributorBase implements StrutsConstantCon
     return new StrutsConstant(propertyName, new StringValuesConverter(values));
   }
 
+  protected static StrutsConstant addDelimitedStringValuesProperty(@NonNls final String propertyName) {
+    return new StrutsConstant(propertyName, new DelimitedStringValuesConverter());
+  }
+
   protected static StrutsConstant addClassWithShortcutProperty(@NonNls final String propertyName,
                                                                @NonNls final String baseClass,
                                                                final Pair<String, String>... shortcuts) {

@@ -20,6 +20,8 @@ import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContrib
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 /**
  * Tests for {@link com.intellij.struts2.model.constant.StrutsConstantManager} with custom constant property in
  * {@code web.xml}.
@@ -52,7 +54,7 @@ public class StrutsConstantManagerWithWebXmlTest extends StrutsConstantManagerTe
     myFixture.copyFileToProject("/WEB-INF/web.xml");
 
     final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
-    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, "foo");
+    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, Arrays.asList("foo"));
   }
 
 }

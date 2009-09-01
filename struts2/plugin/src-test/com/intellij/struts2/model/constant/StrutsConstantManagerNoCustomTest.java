@@ -20,6 +20,8 @@ import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContrib
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+
 /**
  * Tests for {@link com.intellij.struts2.model.constant.StrutsConstantManager} w/o any custom set property values (--> S2 default.properties).
  *
@@ -40,7 +42,7 @@ public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTest
     createStrutsFileSet(STRUTS_XML);
 
     final VirtualFile dummyFile = myFixture.findFileInTempDir(STRUTS_XML);
-    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, "action,,");
+    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, Arrays.asList("action"));
   }
 
   /**
@@ -50,7 +52,7 @@ public class StrutsConstantManagerNoCustomTest extends StrutsConstantManagerTest
     createStrutsFileSet(STRUTS_XML);
 
     final VirtualFile dummyFile = myFixture.copyFileToProject("dummy.xml");
-    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, "action,,");
+    performResolveTest(dummyFile, StrutsCoreConstantContributor.ACTION_EXTENSION, Arrays.asList("action"));
   }
 
 

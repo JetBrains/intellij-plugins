@@ -16,7 +16,6 @@
 package com.intellij.struts2.model.constant;
 
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValue;
@@ -68,17 +67,17 @@ public class StrutsConstantHelper {
             public Result<List<String>> compute() {
               final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(psiElement.getProject());
 
-              final String actionExtension = constantManager.getConvertedValue(psiElement,
-                                                                               StrutsCoreConstantContributor.ACTION_EXTENSION);
+              final List<String> extensions = constantManager.getConvertedValue(psiElement,
+                                                                                StrutsCoreConstantContributor.ACTION_EXTENSION);
 
-              final List<String> myExtensions;
-              if (actionExtension == null) {
-                myExtensions = Collections.emptyList();
+              final List<String> processedExtensions;
+              if (extensions == null) {
+                processedExtensions = Collections.emptyList();
               } else {
-                myExtensions = ContainerUtil.map(StringUtil.split(actionExtension, ","), DOT_PATH_FUNCTION);
+                processedExtensions = ContainerUtil.map(extensions, DOT_PATH_FUNCTION);
               }
 
-              return Result.create(myExtensions, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+              return Result.create(processedExtensions, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
             }
           }, false);
 

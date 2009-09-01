@@ -37,7 +37,7 @@ public class StrutsConventionPluginConstantContributor extends StrutsConstantCon
   @NonNls
   private static final List<StrutsConstant> CONSTANTS = Arrays.asList(
       addBooleanProperty("struts.convention.action.alwaysMapExecute"),
-      addStringProperty("struts.convention.action.includeJars"),
+      addDelimitedStringValuesProperty("struts.convention.action.includeJars"),
       addStringProperty("struts.convention.action.packages"),
       addStringProperty("struts.convention.result.path"),
       addBooleanProperty("struts.convention.result.flatLayout"),
@@ -48,11 +48,11 @@ public class StrutsConventionPluginConstantContributor extends StrutsConstantCon
       addStrutsPackage("struts.convention.default.parent.package"),
       addBooleanProperty("struts.convention.action.name.lowercase"),
       addStringProperty("struts.convention.action.name.separator"),
-      addStringProperty("struts.convention.package.locators"),
+      addDelimitedStringValuesProperty("struts.convention.package.locators"),
       addBooleanProperty("struts.convention.package.locators.disable"),
-      addStringProperty("struts.convention.exclude.packages"),
+      addDelimitedStringValuesProperty("struts.convention.exclude.packages"),
       addStringProperty("struts.convention.package.locators.basePackage"),
-      addStringProperty("struts.convention.relative.result.types"),
+      addDelimitedStringValuesProperty("struts.convention.relative.result.types"),
       addBooleanProperty("struts.convention.redirect.to.slash"),
       addBooleanProperty("struts.convention.classLoader.excludeParent")
   );
