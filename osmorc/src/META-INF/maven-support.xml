@@ -25,7 +25,7 @@
 <!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
 <idea-plugin url="http://www.jetbrains.com/idea">
     <extensions xmlns="org.jetbrains.idea.maven">
-        <facetImporter implementation="org.osmorc.facet.maven.OsmorcFacetImporter"/>
+        <importer implementation="org.osmorc.facet.maven.OsmorcFacetImporter"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
         <inspectionToolProvider implementation="org.osmorc.inspection.maven.OsgiMavenInspectionProvider"/>
