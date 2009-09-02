@@ -55,6 +55,10 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     performHighlightingTest("struts-default.xml");
   }
 
+  public void testStrutsDefault217() throws Throwable {
+    performHighlightingTest("struts-default-2_1_7.xml");
+  }
+
   public void testUnknownHandlerStack() throws Throwable {
     performHighlightingTest("struts-unknownhandlerstack.xml");
   }

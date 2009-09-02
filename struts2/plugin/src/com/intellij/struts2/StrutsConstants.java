@@ -67,6 +67,18 @@ public final class StrutsConstants {
   @NonNls
   public static final String STRUTS_2_1_DTD_ID = "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN";
 
+  /**
+   * struts.xml 2.1.7 URI.
+   */
+  @NonNls
+  public static final String STRUTS_2_1_7_DTD_URI = "http://struts.apache.org/dtds/struts-2.1.7.dtd";
+
+  /**
+   * struts.xml 2.1.7 ID.
+   */
+  @NonNls
+  public static final String STRUTS_2_1_7_DTD_ID = "Apache Software Foundation//DTD Struts Configuration 2.1.7//EN";
+
 
   /**
    * All struts.xml DTD-IDs/URIs.
@@ -74,7 +86,8 @@ public final class StrutsConstants {
   @NonNls
   public static final String[] STRUTS_DTDS = {
       STRUTS_2_0_DTD_ID, STRUTS_2_0_DTD_URI,
-      STRUTS_2_1_DTD_ID, STRUTS_2_1_DTD_URI
+      STRUTS_2_1_DTD_ID, STRUTS_2_1_DTD_URI,
+      STRUTS_2_1_7_DTD_URI, STRUTS_2_1_7_DTD_ID
   };
 
   @NonNls

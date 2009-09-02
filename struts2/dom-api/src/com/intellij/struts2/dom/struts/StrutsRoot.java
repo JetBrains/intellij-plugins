@@ -19,6 +19,7 @@ import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.struts.constant.Constant;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.Namespace;
 import com.intellij.util.xml.SubTagList;
 import org.jetbrains.annotations.NonNls;
@@ -37,6 +38,8 @@ public interface StrutsRoot extends DomElement {
 
   @NonNls
   String TAG_NAME = "struts";
+
+  GenericAttributeValue<Integer> getOrder();
 
   @SubTagList(value = "package")
   @NotNull
