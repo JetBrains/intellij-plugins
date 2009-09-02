@@ -9,7 +9,7 @@
   <package name="actionPathTest" namespace="/actionPathTest">
 
     <global-results>
-      <result name="globalInvalidNonExistingAction"><error>INVALID_VALUE.action</error></result>
+      <result name="globalInvalidNonExistingAction"><error descr="Cannot resolve symbol 'INVALID_VALUE.action'">INVALID_VALUE.action</error></result>
     </global-results>
 
     <action name="actionPath1">
@@ -21,9 +21,9 @@
       <result name="differentPackageFQPath">/anotherActionPathTest/anotherActionPath1.action</result>
 
 
-      <result name="invalidNonExistingAction"><error>INVALID_VALUE.action</error></result>
-      <result name="invalidActionExtension"><error>actionPath1.INVALID_VALUE</error></result>
-      <result name="invalidMustHaveExtension"><error>actionPath1</error></result>
+      <result name="invalidNonExistingAction"><error descr="Cannot resolve symbol 'INVALID_VALUE.action'">INVALID_VALUE.action</error></result>
+      <result name="invalidActionExtension"><error descr="Cannot resolve symbol 'actionPath1.INVALID_VALUE'">actionPath1.INVALID_VALUE</error></result>
+      <result name="invalidMustHaveExtension"><error descr="Cannot resolve symbol 'actionPath1'">actionPath1</error></result>
     </action>
 
   </package>
@@ -43,9 +43,9 @@
       <result name="validWithWildcardValue">wildcardAnythingGoesHere.action</result>
       <result name="validWithHyphenValue">wildcard-Any-thing-Goes-Here.action</result>
 
-      <result name="invalidCase"><error>wILdcardSomething.action</error></result>
-      <result name="invalidDoesNotMatch"><error>wildcarXXX.action</error></result>
-      <result name="invalidActionExtension"><error>wildcardAnythingGoesHere.INVALID_VALUE</error></result>
+      <result name="invalidCase"><error descr="Cannot resolve symbol 'wILdcardSomething.action'">wILdcardSomething.action</error></result>
+      <result name="invalidDoesNotMatch"><error descr="Cannot resolve symbol 'wildcarXXX.action'">wildcarXXX.action</error></result>
+      <result name="invalidActionExtension"><error descr="Cannot resolve symbol 'wildcardAnythingGoesHere.INVALID_VALUE'">wildcardAnythingGoesHere.INVALID_VALUE</error></result>
     </action>
 
     <action name="wild*InBetween">

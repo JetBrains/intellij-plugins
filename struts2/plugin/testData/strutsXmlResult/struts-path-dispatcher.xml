@@ -10,7 +10,7 @@
   <package name="dispatchTest">
 
     <global-results>
-      <result name="globalInvalid1"><error>INVALID_VALUE</error></result>
+      <result name="globalInvalid1"><error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error></result>
     </global-results>
 
     <action name="testValidPaths">
@@ -24,9 +24,9 @@
     </action>
 
     <action name="testInvalidPaths">
-      <result name="invalid1"><error><</error>/result>
-      <result name="invalid2"><error>INVALID_VALUE</error></result>
-      <result name="invalid3"><error>/jsp/index.jsp</error></result>
+      <result name="invalid1"><error descr="Cannot resolve symbol ''"><</error>/result>
+      <result name="invalid2"><error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error></result>
+      <result name="invalid3"><error descr="Cannot resolve symbol '/jsp/index.jsp'">/jsp/index.jsp</error></result>
     </action>
 
   </package>
@@ -40,8 +40,8 @@
     </action>
 
     <action name="testInvalid2nd">
-      <result name="invalidWrongPathMapping"><error>/jsp2/jsp2-index.jsp</error></result>
-      <result name="invalidWrongFile">/2ndWebRoot/<error>invalid.jsp</error></result>
+      <result name="invalidWrongPathMapping"><error descr="Cannot resolve symbol '/jsp2/jsp2-index.jsp'">/jsp2/jsp2-index.jsp</error></result>
+      <result name="invalidWrongFile">/2ndWebRoot/<error descr="Cannot resolve file 'invalid.jsp'">invalid.jsp</error></result>
     </action>
 
   </package>

@@ -12,7 +12,7 @@
     </result-types>
 
     <global-results>
-      <result name="globalNonExistingAction" type="chain"><error>INVALID_VALUE</error></result>
+      <result name="globalNonExistingAction" type="chain"><error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error></result>
     </global-results>
 
     <action name="actionPath1">
@@ -22,8 +22,8 @@
 
       <result name="withParameters" type="chain">actionPath2?myParam=myValue</result>
 
-      <result name="nonExistingAction" type="chain"><error>INVALID_VALUE</error></result>
-      <result name="mustNotHaveExtension" type="chain"><error>actionPath2.action</error></result>
+      <result name="nonExistingAction" type="chain"><error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error></result>
+      <result name="mustNotHaveExtension" type="chain"><error descr="Cannot resolve symbol 'actionPath2.action'">actionPath2.action</error></result>
     </action>
 
     <action name="actionPath2"/>

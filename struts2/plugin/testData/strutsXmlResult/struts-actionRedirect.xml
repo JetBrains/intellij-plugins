@@ -15,7 +15,7 @@
     </result-types>
 
     <global-results>
-      <result name="globalNonExistingAction" type="redirectAction"><error>INVALID_VALUE</error></result>
+      <result name="globalNonExistingAction" type="redirectAction"><error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error></result>
     </global-results>
 
     <action name="actionPath1">
@@ -28,8 +28,8 @@
 
       <result name="actionWithParameters" type="redirectAction">actionPath2?myParam=myValue</result>
 
-      <result name="nonExistingAction" type="redirectAction"><error>INVALID_VALUE</error></result>
-      <result name="mustNotHaveExtension" type="redirectAction"><error>actionPath2.action</error></result>
+      <result name="nonExistingAction" type="redirectAction"><error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error></result>
+      <result name="mustNotHaveExtension" type="redirectAction"><error descr="Cannot resolve symbol 'actionPath2.action'">actionPath2.action</error></result>
     </action>
 
     <action name="actionPath2"/>

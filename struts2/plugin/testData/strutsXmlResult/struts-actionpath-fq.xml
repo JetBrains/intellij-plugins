@@ -18,8 +18,8 @@
       <result name="otherPackage">/anotherPackage/inAnotherPackageAction.action</result>
 
       <!-- invalid -->
-      <result name="invalid"><error>INVALID_VALUE.action</error></result>
-      <result name="invalidOtherPackage"><error>/INVALID_VALUE/inAnotherPackageAction.action</error></result>
+      <result name="invalid"><error descr="Cannot resolve symbol 'INVALID_VALUE.action'">INVALID_VALUE.action</error></result>
+      <result name="invalidOtherPackage"><error descr="Cannot resolve symbol '/INVALID_VALUE/inAnotherPackageAction.action'">/INVALID_VALUE/inAnotherPackageAction.action</error></result>
     </action>
 
     <action name="actionPath2"/>
