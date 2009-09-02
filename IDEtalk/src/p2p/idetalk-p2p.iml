@@ -8,17 +8,9 @@
     <orderEntry type="module" module-name="idetalk-core" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../lib/xmlrpc-2.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="openapi" />
     <orderEntry type="module" module-name="idea" />
+    <orderEntry type="library" name="XmlRPC" level="project" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ACTIVE_VCS_NAME" value="svn" />

@@ -9,15 +9,6 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/xpp3-1.1.4-min.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/xstream.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -50,6 +41,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="xpp3-1.1.4-min" level="project" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ACTIVE_VCS_NAME" value="svn" />
