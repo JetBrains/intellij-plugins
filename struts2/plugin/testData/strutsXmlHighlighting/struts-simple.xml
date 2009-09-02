@@ -13,7 +13,7 @@
   <bean class="MyClass"/>
   <bean class="<error>INVALID_VALUE</error>"/>
 
-  <bean class="<error>MyInterface</error>"/>
+  <bean class="<error descr="Interface not allowed">MyInterface</error>"/>
 
   <bean class="MyInterfaceImpl" type="MyInterface"/>
 
@@ -23,7 +23,7 @@
   <bean class="MyClass" scope="request"/>
   <bean class="MyClass" scope="session"/>
   <bean class="MyClass" scope="thread"/>
-  <bean class="MyClass" scope="<error>INVALID_VALUE</error>"/>
+  <bean class="MyClass" scope="<error descr="Unknown enum value INVALID_VALUE">INVALID_VALUE</error>"/>
 
   <bean class="MyClass" static="false"/>
   <bean class="MyClass" static="true"/>
@@ -74,7 +74,7 @@
   </package>
 
   <package name="defaultActionRefInvalid">
-    <default-action-ref name="<error>INVALID_VALUE</error>"/>
+    <default-action-ref name="<error descr="Cannot resolve Action INVALID_VALUE">INVALID_VALUE</error>"/>
   </package>
 
 

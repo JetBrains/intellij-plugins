@@ -33,9 +33,8 @@
     <action name="TestExceptionMapping">
       <exception-mapping exception="MyException" result="exceptionResult"/>
       <exception-mapping exception="<error>MyInterface</error>" result="exceptionResult"/>
-      <exception-mapping exception="<error>INVALID_VALUE</error>" result="exceptionResult"/>
-
-      <exception-mapping exception="MyException" result="<error>INVALID_VALUE</error>"/>
+      <exception-mapping exception="<error descr="Cannot resolve class 'INVALID_VALUE'">INVALID_VALUE</error>" result="exceptionResult"/>
+      <exception-mapping exception="MyException" result="<error descr="Cannot resolve action-result 'INVALID_VALUE'">INVALID_VALUE</error>"/>
 
       <result name="exceptionResult">TestExceptionMapping.action</result>
     </action>
@@ -49,11 +48,11 @@
     </global-results>
 
     <global-exception-mappings>
-      <exception-mapping exception="MyException" result="<error>exceptionResult</error>"/>
+      <exception-mapping exception="MyException" result='<error descr="Cannot resolve global result 'exceptionResult'">exceptionResult</error>'/>
     </global-exception-mappings>
 
     <action name="TestExceptionMapping">
-      <exception-mapping exception="MyException" result="<error>global1</error>"/>
+      <exception-mapping exception="MyException" result="<error descr="Cannot resolve action-result 'global1'">global1</error>"/>
       <result name="exceptionResult">TestExceptionMapping.action</result>
     </action>
   </package>
