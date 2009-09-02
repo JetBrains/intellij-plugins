@@ -25,7 +25,7 @@
 
       <result name="INVALID_VALUE"
               type="tiles">
-        <error>INVALID_VALUE</error>
+        <error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error>
       </result>
     </action>
   </package>
