@@ -15,33 +15,27 @@
  */
 package jetbrains.communicator.idea;
 
-import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.project.Project;
 import jetbrains.communicator.core.Pico;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.picocontainer.MutablePicoContainer;
 
 /**
  * @author Kir
  */
-public class IDEtalkContainerRegistry implements ProjectComponent {
-
+public class IDEtalkContainerRegistry extends AbstractProjectComponent {
   private final MutablePicoContainer myProjectContainer = Pico.getInstance().makeChildContainer();
 
-  public void projectOpened() {
+  public IDEtalkContainerRegistry(Project project) {
+    super(project);
   }
 
-  public void projectClosed() {
-  }
-
+  @NotNull
   @NonNls
   public String getComponentName() {
     return "IDEtalkContainerRegistry";
-  }
-
-  public void initComponent() {
-  }
-
-  public void disposeComponent() {
   }
 
   public MutablePicoContainer getContainer() {

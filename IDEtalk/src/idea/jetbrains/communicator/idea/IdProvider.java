@@ -15,13 +15,14 @@
  */
 package jetbrains.communicator.idea;
 
-import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -30,26 +31,19 @@ import java.util.Random;
 /**
  * @author Kir
  */
-public class IdProvider implements ProjectComponent, JDOMExternalizable {
+public class IdProvider extends AbstractProjectComponent implements JDOMExternalizable {
   private static final Logger LOG = Logger.getLogger(IdProvider.class);
 
   public static final String ID = "IDEtalkID";
   private String myId;
 
-  public void projectOpened() {
+  protected IdProvider(Project project) {
+    super(project);
   }
 
-  public void projectClosed() {
-  }
-
+  @NotNull
   public String getComponentName() {
     return "IdProvider";
-  }
-
-  public void initComponent() {
-  }
-
-  public void disposeComponent() {
   }
 
   public static IdProvider getInstance(Project project) {
@@ -72,11 +66,11 @@ public class IdProvider implements ProjectComponent, JDOMExternalizable {
     return myId;
   }
 
-  private static final char[] NUMS = new char[] {
+  private static final char[] NUMS = {
       '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
   };
   
-  private String md5(String s) {
+  private static String md5(String s) {
     try {
       MessageDigest md5 = MessageDigest.getInstance("MD5");
       byte[] bytes = md5.digest(s.getBytes());

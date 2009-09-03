@@ -22,12 +22,12 @@ import junit.framework.TestCase;
  */
 public class IdProviderTest extends TestCase {
   public void testGenerateUniqueId() throws Exception {
-    IdProvider idProvider = new IdProvider();
+    IdProvider idProvider = new IdProvider(null);
     String id = idProvider.getId();
     assertNotNull(id);
     assertEquals(id, idProvider.getId());
     assertEquals(32, id.length());
 
-    assertFalse("Id for different projects should differ", id.equals(new IdProvider().getId()));
+    assertFalse("Id for different projects should differ", id.equals(new IdProvider(null).getId()));
   }
 }
