@@ -26,7 +26,7 @@
 package org.osmorc.manifest;
 
 import com.intellij.codeInsight.completion.*;
-import com.intellij.codeInsight.lookup.LookupElementFactoryImpl;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -54,12 +54,9 @@ public class ManifestCompletionContributor extends CompletionContributor
                                      ProcessingContext processingcontext,
                                      @NotNull CompletionResultSet completionresultset)
           {
-            LookupElementFactoryImpl lookupelementfactoryimpl = LookupElementFactoryImpl.getInstance();
-
-
             for (String availableHeader : HeaderParserRepository.getInstance().getAllHeaderNames())
             {
-              completionresultset.addElement(lookupelementfactoryimpl.createLookupElement(availableHeader));
+              completionresultset.addElement(LookupElementBuilder.create(availableHeader));
             }
           }
         }
