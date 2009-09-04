@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.model.constant.contributor;
 
-import com.intellij.codeInsight.lookup.LookupItem;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.GenericDomValue;
@@ -48,7 +48,7 @@ class DelimitedStringValuesConverter extends DelimitedListConverter<String> {
   @Override
   protected Object[] getReferenceVariants(final ConvertContext convertContext,
                                           final GenericDomValue<List<String>> listGenericDomValue) {
-    return LookupItem.EMPTY_ARRAY;
+    return LookupElement.EMPTY_ARRAY;
   }
 
   @Override
