@@ -64,8 +64,8 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-namespace_given.jsp",
                                      "/actionLink/",
-                                     "/actionLink/actionLink1.action",
-                                     "/actionLink/actionLink2.action");
+                                     "actionLink1.action",
+                                     "actionLink2.action");
   }
 
   public void testActionLinkCompletionVariantsNoNamespace() throws Throwable {
@@ -73,10 +73,10 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-no-namespace.jsp",
                                      "/",
-                                     "/WEB-INF",
-                                     "/actionLink-completionvariants-no-namespace.jsp",
+                                     "WEB-INF",
+                                     "actionLink-completionvariants-no-namespace.jsp",
                                      "/actionLink/",
-                                     "/rootActionLink.action"
+                                     "rootActionLink.action"
     );
   }
 
