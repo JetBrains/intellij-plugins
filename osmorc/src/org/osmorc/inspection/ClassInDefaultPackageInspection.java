@@ -29,11 +29,7 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiJavaFile;
-import com.intellij.psi.PsiReferenceExpression;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -98,8 +94,11 @@ public class ClassInDefaultPackageInspection extends LocalInspectionTool
           PsiJavaFile file = (PsiJavaFile) psiClass.getContainingFile();
           if ("".equals(file.getPackageName()))
           {
-            holder.registerProblem(psiClass.getNameIdentifier(), "Class is in default package",
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+              PsiIdentifier nameIdentifier = psiClass.getNameIdentifier();
+              if (nameIdentifier != null) {
+                  holder.registerProblem(nameIdentifier, "Class is in default package",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+              }
           }
 
         }
