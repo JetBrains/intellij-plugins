@@ -90,7 +90,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="4fe24"/>
-                  <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="frameworkinstance.integrator"/>
+                  <text value="&amp;Type" noi18n="true"/>
                 </properties>
               </component>
               <vspacer id="cd4f7">
@@ -110,7 +110,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="4b84a"/>
-                  <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="frameworkinstance.baseFolder"/>
+                  <text value="&amp;Base Folder" noi18n="true"/>
                 </properties>
               </component>
               <component id="4b84a" class="javax.swing.JTextField" binding="baseFolder">
@@ -133,7 +133,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="30a9e"/>
-                  <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="frameworkinstance.name"/>
+                  <text value="&amp;Name" noi18n="true"/>
                 </properties>
               </component>
             </children>

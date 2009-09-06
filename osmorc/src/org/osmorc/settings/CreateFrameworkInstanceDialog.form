@@ -17,7 +17,7 @@
         </constraints>
         <properties>
           <labelFor value="49465"/>
-          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="frameworkinstance.name"/>
+          <text value="&amp;Name" noi18n="true"/>
         </properties>
       </component>
       <component id="7b7a5" class="javax.swing.JLabel">
@@ -26,7 +26,7 @@
         </constraints>
         <properties>
           <labelFor value="eec86"/>
-          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="frameworkinstance.integrator"/>
+          <text value="&amp;Type" noi18n="true"/>
         </properties>
       </component>
       <component id="2d8a2" class="javax.swing.JLabel">
@@ -36,7 +36,7 @@
           </grid>
         </constraints>
         <properties>
-          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="frameworkinstance.baseFolder"/>
+          <text value="&amp;Base Folder" noi18n="true"/>
         </properties>
       </component>
       <component id="81edb" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_baseFolderChooser">
