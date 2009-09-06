@@ -31,6 +31,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -57,35 +58,41 @@ import java.util.jar.Attributes;
 public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
     public ModuleManifestHolderImpl(Module module,
                                     Application application) {
-        _module = module;
-        _application = application;
-        _askedQuestions = new WeakHashMap<String, Boolean>();
+        this.module = module;
+        this.application = application;
+        askedQuestions = new WeakHashMap<String, Boolean>();
     }
 
     @Nullable
     public BundleManifest getBundleManifest() {
         // only try to load the manifest if we have an osmorc facet for that module
-        if (_bundleManifest == null && OsmorcFacet.hasOsmorcFacet(_module)) {
-            OsmorcFacet facet = OsmorcFacet.getInstance(_module);
+        if (bundleManifest == null && OsmorcFacet.hasOsmorcFacet(module)) {
+            OsmorcFacet facet = OsmorcFacet.getInstance(module);
             // and only if this manifest is manually edited
             if (facet.getConfiguration().isManifestManuallyEdited()) {
                 tryCreateBundleManifest();
-                _bundleManifest = loadManifest();
+                bundleManifest = loadManifest();
             }
         }
-        return _bundleManifest;
+        return bundleManifest;
     }
 
     private BundleManifest loadManifest() {
-        VirtualFile manifestFile = getManifestFile();
+        final VirtualFile manifestFile = getManifestFile();
         if (manifestFile != null) {
-            PsiFile psiFile = PsiManager.getInstance(_module.getProject()).findFile(manifestFile);
-            if (psiFile == null) {
-                Messages.showMessageDialog(_module.getProject(), String.format("The manifest file %s could not be loaded. " +
-                        "Please make sure that it is not located in an excluded directory", manifestFile.getPath()), "Error while loading manifest", Messages.getInformationIcon());
-                return null;
-            }
-            return new BundleManifestImpl(psiFile);
+           return application.runReadAction(new Computable<BundleManifest>() {
+                public BundleManifest compute() {
+                    PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(manifestFile);
+                    if (psiFile == null) {
+                        if (application.isDispatchThread() || application.isUnitTestMode()) {
+                            Messages.showMessageDialog(module.getProject(), String.format("The manifest file %s could not be loaded. " +
+                                    "Please make sure that it is not located in an excluded directory", manifestFile.getPath()), "Error while loading manifest", Messages.getInformationIcon());
+                        }
+                        return null;
+                    }
+                    return new BundleManifestImpl(psiFile);
+                }
+            });
         }
         return null;
     }
@@ -108,26 +115,30 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
             // okay now, we have set up a manifest path, but it doesn't exist. Ask the user
             // if  we should create it.
             // don't ask the user more than once for the same path (unless the GC grabs our map)
-            if (!_askedQuestions.containsKey(manifestPath)) {
-                int result = Messages
-                        .showYesNoDialog(_module.getProject(),
-                                OsmorcBundle.getTranslation("manifestholder.createmanifest.question", manifestPath),
-                                OsmorcBundle.getTranslation("manifestholder.createmanifest.title"), Messages.getQuestionIcon());
+            if (!askedQuestions.containsKey(manifestPath)) {
+                int result = DialogWrapper.CANCEL_EXIT_CODE;
+                // TODO: Need to refactor this out of here. Don't want to check for dispatcher thread and unit test mode everywhere a message dialog is opened.
+                if (application.isDispatchThread() || application.isUnitTestMode()) {
+                    result = Messages
+                            .showYesNoDialog(module.getProject(),
+                                    OsmorcBundle.getTranslation("manifestholder.createmanifest.question", manifestPath),
+                                    OsmorcBundle.getTranslation("manifestholder.createmanifest.title"), Messages.getQuestionIcon());
+                }
 
                 if (result == DialogWrapper.CANCEL_EXIT_CODE) {
-                    _askedQuestions.put(manifestPath, Boolean.FALSE);
+                    askedQuestions.put(manifestPath, Boolean.FALSE);
                     return; // don't mess with it if the user doesn't want it
                 } else {
                     // save decision
-                    _askedQuestions.put(manifestPath, Boolean.TRUE);
+                    askedQuestions.put(manifestPath, Boolean.TRUE);
                 }
             } else {
-                if (_askedQuestions.get(manifestPath) == Boolean.FALSE) {
+                if (askedQuestions.get(manifestPath) == Boolean.FALSE) {
                     return;
                 }
             }
 
-            _application.runWriteAction(new Runnable() {
+            application.runWriteAction(new Runnable() {
                 public void run() {
                     try {
 
@@ -150,7 +161,7 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
                         VirtualFile parentFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
 
                         // some heuristics for bundle name and version
-                        String bundleName = _module.getName();
+                        String bundleName = module.getName();
                         Version bundleVersion = null;
                         int nextDotPos = bundleName.indexOf('.');
                         while (bundleVersion == null && nextDotPos >= 0) {
@@ -210,7 +221,7 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
 
     private String getManifestPath() {
         // get relative path from the configuration
-        OsmorcFacet facet = OsmorcFacet.getInstance(_module);
+        OsmorcFacet facet = OsmorcFacet.getInstance(module);
         String path = facet.getManifestLocation();
         path = path.replace('\\', '/');
         if (!path.endsWith("/")) {
@@ -222,14 +233,14 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
 
     private VirtualFile[] getContentRoots() {
 
-        ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(_module);
+        ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
         VirtualFile[] contentRoots = moduleRootManager.getContentRoots();
 
         return contentRoots != null ? contentRoots : new VirtualFile[0];
     }
 
-    private final Module _module;
-    private final Application _application;
-    private BundleManifest _bundleManifest;
-    private WeakHashMap<String, Boolean> _askedQuestions;
+    private final Module module;
+    private final Application application;
+    private BundleManifest bundleManifest;
+    private WeakHashMap<String, Boolean> askedQuestions;
 }
