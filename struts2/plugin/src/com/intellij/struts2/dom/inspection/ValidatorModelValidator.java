@@ -22,6 +22,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -67,7 +68,7 @@ public class ValidatorModelValidator extends ValidatorBase {
     // collect all validation.xml files located in sources of S2-modules
     final Set<VirtualFile> files = new THashSet<VirtualFile>();
     for (final VirtualFile file : context.getProjectCompileScope().getFiles(StdFileTypes.XML, true)) {
-      if (file.getName().endsWith(FILENAME_EXTENSION_VALIDATION_XML)) {
+      if (StringUtil.endsWith(file.getName(), FILENAME_EXTENSION_VALIDATION_XML)) {
         final PsiFile psiFile = psiManager.findFile(file);
         if (psiFile instanceof XmlFile &&
             validatorManager.isValidatorsFile((XmlFile) psiFile)) {

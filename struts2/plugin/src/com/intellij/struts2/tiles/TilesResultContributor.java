@@ -29,12 +29,14 @@ import com.intellij.struts.StrutsManager;
 import com.intellij.struts.TilesModel;
 import com.intellij.struts.dom.tiles.Definition;
 import com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ElementPresentationManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,7 +62,6 @@ public class TilesResultContributor extends StrutsResultContributor {
     if (currentPackage == null) {
       return false;
     }
-    
 
     final List<TilesModel> allTilesModels = getAllTilesModels(psiElement);
     psiReferences.add(new TilesDefinitionReference((XmlTag) psiElement, allTilesModels));
@@ -104,6 +105,13 @@ public class TilesResultContributor extends StrutsResultContributor {
     private final List<TilesModel> allTilesModels;
     private final String definitionName;
 
+    private static final Function<TilesModel, Collection<? extends Definition>> DEFINITION_COLLECTOR =
+        new Function<TilesModel, Collection<? extends Definition>>() {
+          public Collection<? extends Definition> fun(final TilesModel tilesModel) {
+            return tilesModel.getDefinitions();
+          }
+        };
+
     private TilesDefinitionReference(@NotNull final XmlTag xmlElement,
                                      @NotNull final List<TilesModel> allTilesModels) {
       super(xmlElement, true);
@@ -124,12 +132,8 @@ public class TilesResultContributor extends StrutsResultContributor {
 
     @NotNull
     public Object[] getVariants() {
-      final List<Definition> variants = new ArrayList<Definition>();
-      for (final TilesModel tilesModel : allTilesModels) {
-        variants.addAll(tilesModel.getDefinitions());
-      }
-
-      return ElementPresentationManager.getInstance().createVariants(variants);
+      final List<Definition> definitions = ContainerUtil.concat(allTilesModels, DEFINITION_COLLECTOR);
+      return ElementPresentationManager.getInstance().createVariants(definitions);
     }
 
     public String getUnresolvedMessagePattern() {

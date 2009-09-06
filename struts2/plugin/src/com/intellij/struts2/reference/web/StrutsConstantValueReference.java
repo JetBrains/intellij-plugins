@@ -143,14 +143,10 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
   @Nullable
   private Pair<DomElement, Converter> getElementConverterPair() {
     final DomElement paramValueElement = DomUtil.getDomElement(myElement);
-    if (paramValueElement == null) {
-      return null;
-    }
+    assert paramValueElement != null;
 
     final DomElement domElement = paramValueElement.getParent();
-    if (!(domElement instanceof ParamValue)) {
-      return null;
-    }
+    assert domElement instanceof ParamValue;
 
     final ParamValue initParamElement = (ParamValue) domElement;
     final String paramName = initParamElement.getParamName().getStringValue();

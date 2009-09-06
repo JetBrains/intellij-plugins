@@ -111,7 +111,7 @@ public class StrutsConfigsSearcher {
                 for (final VirtualFile child : fileOrDir.getChildren()) {
                   processFile(child);
                 }
-              } else if (fileOrDir.getName().endsWith(XML_EXTENSION)) {
+              } else if (StringUtil.endsWith(fileOrDir.getName(), XML_EXTENSION)) {
                 final PsiFile psiFile = psiManager.findFile(fileOrDir);
                 if (psiFile instanceof XmlFile && strutsManager.isStruts2ConfigFile((XmlFile) psiFile)) {
                   list.add(psiFile);

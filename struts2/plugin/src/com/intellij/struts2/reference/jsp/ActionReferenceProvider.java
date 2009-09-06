@@ -120,7 +120,7 @@ public class ActionReferenceProvider extends PsiReferenceProviderBase {
     @NotNull
     public Object[] getVariants() {
       if (action == null) {
-        return new Object[0];
+        return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
 
       return action.getActionMethods().toArray(new PsiMethod[action.getActionMethods().size()]);

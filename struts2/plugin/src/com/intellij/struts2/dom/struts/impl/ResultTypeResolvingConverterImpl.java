@@ -75,7 +75,6 @@ public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConvert
 
   private static List<ResultType> getMergedResultTypes(@NotNull final StrutsModel strutsModel) {
     return ContainerUtil.concat(strutsModel.getStrutsPackages(), RESULT_TYPE_COLLECTOR);
-
   }
 
 }

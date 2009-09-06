@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.reference;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -64,7 +65,8 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProviderBas
     return new PsiReference[]{new PsiReferenceBase<XmlAttributeValue>((XmlAttributeValue) element) {
       public PsiElement resolve() {
         final String myValue = myElement.getValue();
-        if (allowOtherValues || myValue.startsWith("%{")) {
+        if (allowOtherValues ||
+            StringUtil.startsWith(myValue, "%{")) {
           return myElement;
         }
 

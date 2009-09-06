@@ -41,7 +41,7 @@ final class TaglibUtil {
    * @return true if yes, false otherwise.
    */
   static boolean isDynamicExpression(@NotNull @NonNls final String attributeValue) {
-    return attributeValue.startsWith("%{");
+    return StringUtil.startsWith(attributeValue, "%{");
   }
 
   /**
