@@ -17,6 +17,7 @@ package com.intellij.struts2.gotosymbol;
 
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
@@ -58,7 +59,7 @@ public class GoToPackageSymbolProvider extends GoToSymbolProvider {
     final List<StrutsPackage> strutsPackageList = strutsModel.getStrutsPackages();
 
     for (final StrutsPackage strutsPackage : strutsPackageList) {
-      if (name.equals(strutsPackage.getName().getStringValue())) {
+      if (Comparing.equal(name, strutsPackage.getName().getStringValue())) {
         final NavigationItem item = createNavigationItem(strutsPackage);
         ContainerUtil.addIfNotNull(item, result);
       }

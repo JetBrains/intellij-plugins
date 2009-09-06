@@ -18,6 +18,7 @@ package com.intellij.struts2.reference.jsp;
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupValueFactory;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -112,7 +113,7 @@ public class ActionReferenceProvider extends PsiReferenceProviderBase {
       final String methodName = getValue();
       return ContainerUtil.find(action.getActionMethods(), new Condition<PsiMethod>() {
         public boolean value(final PsiMethod psiMethod) {
-          return psiMethod.getName().equals(methodName);
+          return Comparing.equal(psiMethod.getName(), methodName);
         }
       });
     }

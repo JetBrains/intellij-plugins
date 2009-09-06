@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
+import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -111,7 +112,7 @@ public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConve
 
   public String getErrorMessage(@Nullable final String value, final ConvertContext context) {
     // check if user tries to include current file
-    if (context.getFile().getName().equals(value)) {
+    if (Comparing.equal(context.getFile().getName(), value)) {
       return "Recursive inclusion of current file";
     }
 

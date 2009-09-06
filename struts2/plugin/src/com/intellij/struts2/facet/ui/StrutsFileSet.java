@@ -16,6 +16,7 @@
 package com.intellij.struts2.facet.ui;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -159,10 +160,10 @@ public class StrutsFileSet implements Disposable {
   public boolean equals(final Object another) {
     if (another instanceof StrutsFileSet) {
       final StrutsFileSet obj = (StrutsFileSet) another;
-      return obj.getId().equals(id);
-    } else {
-      return false;
+      return Comparing.equal(obj.getId(), id);
     }
+
+    return false;
   }
 
   public int hashCode() {

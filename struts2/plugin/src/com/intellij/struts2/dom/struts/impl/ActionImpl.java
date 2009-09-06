@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
@@ -40,7 +41,7 @@ public abstract class ActionImpl implements Action {
 
   private static final Condition<PsiMethod> DEFAULT_ACTION_METHOD_CONDITION = new Condition<PsiMethod>() {
     public boolean value(final PsiMethod psiMethod) {
-      return psiMethod.getName().equals(DEFAULT_ACTION_METHOD_NAME);
+      return Comparing.equal(psiMethod.getName(), DEFAULT_ACTION_METHOD_NAME);
     }
   };
 

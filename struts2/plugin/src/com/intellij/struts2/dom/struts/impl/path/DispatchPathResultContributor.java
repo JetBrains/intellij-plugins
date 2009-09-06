@@ -19,6 +19,7 @@ import com.intellij.javaee.web.WebRoot;
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -82,7 +83,7 @@ public class DispatchPathResultContributor extends StrutsResultContributor {
                 }
 
                 // 2. add parent <package> "namespace" as result prefix directory path if not ROOT
-                if (!packageNamespace.equals(StrutsPackage.DEFAULT_NAMESPACE)) {
+                if (!Comparing.equal(packageNamespace, StrutsPackage.DEFAULT_NAMESPACE)) {
                   final WebDirectoryElement packageBase = directoryUtil.findWebDirectoryElementByPath(
                           packageNamespace,
                           webFacet);

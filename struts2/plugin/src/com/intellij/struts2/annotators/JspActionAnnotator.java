@@ -94,11 +94,12 @@ public class JspActionAnnotator implements Annotator {
     }
 
     // match tag-prefix/name
-    if (xmlTag.getNamespacePrefix().equals(uiTaglibPrefix) &&
+    if (Comparing.equal(xmlTag.getNamespacePrefix(), uiTaglibPrefix) &&
         Arrays.binarySearch(TAGS_WITH_ACTION_ATTRIBUTE, xmlTag.getLocalName()) > -1) {
 
       // special case for <action> 
-      final String actionPath = xmlTag.getLocalName().equals(ACTION_ATTRIBUTE_NAME) ? xmlTag.getAttributeValue("name") :
+      final String actionPath = Comparing.equal(xmlTag.getLocalName(), ACTION_ATTRIBUTE_NAME) ?
+                                xmlTag.getAttributeValue("name") :
                                 xmlTag.getAttributeValue(ACTION_ATTRIBUTE_NAME);
       if (actionPath == null) {
         return;

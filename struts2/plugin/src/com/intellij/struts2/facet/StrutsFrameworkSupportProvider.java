@@ -32,6 +32,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -87,7 +88,7 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
   private static StrutsVersion getVersion(final String versionName) {
     final StrutsVersion strutsVersion = ContainerUtil.find(StrutsVersion.values(), new Condition<StrutsVersion>() {
       public boolean value(final StrutsVersion strutsVersion) {
-        return versionName.equals(strutsVersion.toString());
+        return Comparing.equal(versionName, strutsVersion.toString());
       }
     });
 

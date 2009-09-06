@@ -105,7 +105,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
 
     final StrutsConstant strutsConstant = ContainerUtil.find(getConstants(module), new Condition<StrutsConstant>() {
       public boolean value(final StrutsConstant strutsConstant) {
-        return strutsConstant.getName().equals(strutsConstantKey.getKey());
+        return Comparing.equal(strutsConstant.getName(), strutsConstantKey.getKey());
       }
     });
 

@@ -19,6 +19,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.pom.Navigatable;
@@ -63,7 +64,7 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
     final Action action = getActionElement(context);
     return ContainerUtil.find(action.getActionMethods(), new Condition<PsiMethod>() {
       public boolean value(final PsiMethod psiMethod) {
-        return psiMethod.getName().equals(value);
+        return Comparing.equal(psiMethod.getName(), value);
       }
     });
   }

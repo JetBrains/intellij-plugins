@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.struts.model;
 
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
@@ -150,8 +151,8 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
           final List<Action> actionResultList = new SmartList<Action>();
 
           for (final StrutsPackage strutsPackage : getStrutsPackages()) {
-            if (namespace.equals(EMPTY_NAMESPACE) ||
-                namespace.equals(strutsPackage.searchNamespace())) {
+            if (Comparing.equal(namespace, EMPTY_NAMESPACE) ||
+                Comparing.equal(namespace, strutsPackage.searchNamespace())) {
               actionResultList.addAll(strutsPackage.getActions());
             }
           }

@@ -26,6 +26,7 @@ import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
@@ -137,12 +138,12 @@ public class FileSetEditor extends DialogWrapper {
 
     final List<VirtualFilePointer> pointers = myFileSet.getFiles();
     for (int i = 0; i < pointers.size(); i++) {
-      if (!pointers.get(i).getUrl().equals(myOriginalSet.getFiles().get(i).getUrl())) {
+      if (!Comparing.equal(pointers.get(i).getUrl(), myOriginalSet.getFiles().get(i).getUrl())) {
         return true;
       }
     }
 
-    return !myFileSet.getName().equals(myOriginalSet.getName());
+    return !Comparing.equal(myFileSet.getName(), myOriginalSet.getName());
   }
 
   protected void doOKAction() {

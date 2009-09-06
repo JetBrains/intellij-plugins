@@ -143,7 +143,6 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
       }
     };
 
-
     @Override
     public String fromString(final String s, final ConvertContext convertContext) {
       if (StringUtil.isEmpty(s)) {

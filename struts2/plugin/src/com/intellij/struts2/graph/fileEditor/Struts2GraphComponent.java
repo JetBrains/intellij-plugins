@@ -25,6 +25,7 @@ import com.intellij.openapi.graph.view.Graph2D;
 import com.intellij.openapi.graph.view.Graph2DView;
 import com.intellij.openapi.graph.view.Overview;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.graph.StrutsDataModel;
@@ -173,7 +174,7 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
 
   @Nullable
   public Object getData(@NonNls final String dataId) {
-    if (dataId.equals(STRUTS2_DESIGNER_COMPONENT)) {
+    if (Comparing.equal(dataId, STRUTS2_DESIGNER_COMPONENT)) {
       return this;
     }
 

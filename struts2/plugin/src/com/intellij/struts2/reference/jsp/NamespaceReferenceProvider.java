@@ -17,6 +17,7 @@ package com.intellij.struts2.reference.jsp;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -66,7 +67,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProviderBase {
       final String namespace = myElement.getValue();
       final List<ResolveResult> resolveResults = new SmartList<ResolveResult>();
       for (final StrutsPackage strutsPackage : strutsModel.getStrutsPackages()) {
-        if (namespace.equals(strutsPackage.searchNamespace())) {
+        if (Comparing.equal(namespace, strutsPackage.searchNamespace())) {
           final XmlTag packageTag = strutsPackage.getXmlTag();
           assert packageTag != null;
           resolveResults.add(new PsiElementResolveResult(packageTag));

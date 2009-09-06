@@ -18,6 +18,7 @@ package com.intellij.struts2.dom.validator;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ResourceFileUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -62,7 +63,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
   }
 
   public boolean isCustomValidatorConfigFile(@NotNull final PsiFile psiFile) {
-    return !psiFile.getName().equals(VALIDATORS_DEFAULT_XML);
+    return !Comparing.equal(psiFile.getName(), VALIDATORS_DEFAULT_XML);
   }
 
   public List<ValidatorConfig> getValidators(@NotNull final Module module) {

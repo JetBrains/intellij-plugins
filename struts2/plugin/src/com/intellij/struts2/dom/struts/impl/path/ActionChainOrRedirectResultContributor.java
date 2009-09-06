@@ -17,6 +17,7 @@ package com.intellij.struts2.dom.struts.impl.path;
 
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -76,13 +77,14 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
         for (final Action action : allActions) {
           final String actionPath = action.getName().getStringValue();
           if (actionPath != null) {
-            final boolean isInCurrentPackage = action.getNamespace().equals(currentPackage);
+            final boolean isInCurrentPackage = Comparing.equal(action.getNamespace(), currentPackage);
             final ActionLookupItem actionItem = new ActionLookupItem(action, isInCurrentPackage);
 
             // prepend package-name if not default ("/") or "current" package
             final String actionNamespace = action.getNamespace();
             final String fullPath;
-            if (!actionNamespace.equals(StrutsPackage.DEFAULT_NAMESPACE) && !isInCurrentPackage) {
+            if (!Comparing.equal(actionNamespace, StrutsPackage.DEFAULT_NAMESPACE) &&
+                !isInCurrentPackage) {
               fullPath = actionNamespace + "/" + actionPath;
             } else {
               fullPath = actionPath;

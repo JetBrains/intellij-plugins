@@ -19,6 +19,7 @@ import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -52,7 +53,7 @@ public class TilesResultContributor extends StrutsResultContributor {
 
   @Override
   protected boolean matchesResultType(@NonNls @Nullable final String resultType) {
-    return TILES_RESULT_TYPE.equals(resultType);
+    return Comparing.equal(resultType, TILES_RESULT_TYPE);
   }
 
   public boolean createReferences(@NotNull final PsiElement psiElement,

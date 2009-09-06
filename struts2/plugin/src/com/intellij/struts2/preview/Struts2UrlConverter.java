@@ -3,6 +3,7 @@ package com.intellij.struts2.preview;
 import com.intellij.javaee.web.DeployedFileUrlConverter;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -47,7 +48,7 @@ public class Struts2UrlConverter extends DeployedFileUrlConverter {
             final PsiElement psiElement = pathReference.resolve();
             if (psiElement != null && psiElement.equals(sourceFile)) {
               String namespace = action.getNamespace();
-              if (!namespace.equals(StrutsPackage.DEFAULT_NAMESPACE)) {
+              if (!Comparing.equal(namespace, StrutsPackage.DEFAULT_NAMESPACE)) {
                 namespace += "/";
               }
               list.add(namespace + action.getName().getStringValue() + actionExtension);

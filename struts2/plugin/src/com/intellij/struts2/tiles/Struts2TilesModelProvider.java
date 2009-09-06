@@ -21,6 +21,7 @@ import com.intellij.javaee.model.xml.web.WebApp;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -145,7 +146,7 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
     @NonNls final Set<String> tilesConfigNames = new HashSet<String>();
     final List<ParamValue> params = webApp.getContextParams();
     for (final ParamValue param : params) {
-      if (TILES_CONTEXT_PARAM.equals(param.getParamName().getStringValue())) {
+      if (Comparing.equal(TILES_CONTEXT_PARAM, param.getParamName().getStringValue())) {
         final String paramValue = param.getParamValue().getStringValue();
         if (paramValue != null) {
           for (final String file : paramValue.split(",")) {
