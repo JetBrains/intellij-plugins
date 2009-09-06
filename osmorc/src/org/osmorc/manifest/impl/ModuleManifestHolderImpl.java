@@ -234,9 +234,8 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
     private VirtualFile[] getContentRoots() {
 
         ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-        VirtualFile[] contentRoots = moduleRootManager.getContentRoots();
 
-        return contentRoots != null ? contentRoots : new VirtualFile[0];
+        return moduleRootManager.getContentRoots();
     }
 
     private final Module module;
