@@ -15,11 +15,14 @@
 
 package com.intellij.struts2.model.constant;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
 import com.intellij.util.Function;
@@ -48,7 +51,8 @@ public class StrutsConstantHelper {
   /**
    * Caches action extensions per file.
    */
-  private static final Key<CachedValue<List<String>>> KEY_EXTENSIONS = Key.create("STRUTS2_ACTION_EXTENSIONS");
+  private static final Key<CachedValue<AtomicNotNullLazyValue<List<String>>>> KEY_ACTION_EXTENSIONS =
+      Key.create("STRUTS2_ACTION_EXTENSIONS");
 
   /**
    * Returns the current action extension(s) ("{@code .action}").
@@ -60,31 +64,36 @@ public class StrutsConstantHelper {
   public static List<String> getActionExtensions(final PsiElement psiElement) {
     final PsiFile psiFile = psiElement.getContainingFile().getOriginalFile();
 
-    CachedValue<List<String>> extensions = psiFile.getUserData(KEY_EXTENSIONS);
+    CachedValue<AtomicNotNullLazyValue<List<String>>> extensions = psiFile.getUserData(KEY_ACTION_EXTENSIONS);
     if (extensions == null) {
-      extensions = psiElement.getManager().getCachedValuesManager().createCachedValue(
-          new CachedValueProvider<List<String>>() {
-            public Result<List<String>> compute() {
-              final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(psiElement.getProject());
+      final Project project = psiElement.getProject();
+      extensions = CachedValuesManager.getManager(project).createCachedValue(
+          new CachedValueProvider<AtomicNotNullLazyValue<List<String>>>() {
+            public Result<AtomicNotNullLazyValue<List<String>>> compute() {
+              final AtomicNotNullLazyValue<List<String>> lazyValue = new AtomicNotNullLazyValue<List<String>>() {
+                @NotNull
+                @Override
+                protected List<String> compute() {
+                  final List<String> extensions = StrutsConstantManager.getInstance(project)
+                      .getConvertedValue(psiElement, StrutsCoreConstantContributor.ACTION_EXTENSION);
 
-              final List<String> extensions = constantManager.getConvertedValue(psiElement,
-                                                                                StrutsCoreConstantContributor.ACTION_EXTENSION);
-
-              final List<String> processedExtensions;
-              if (extensions == null) {
-                processedExtensions = Collections.emptyList();
-              } else {
-                processedExtensions = ContainerUtil.map(extensions, DOT_PATH_FUNCTION);
-              }
-
-              return Result.create(processedExtensions, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+                  final List<String> processedExtensions;
+                  if (extensions == null) {
+                    processedExtensions = Collections.emptyList();
+                  } else {
+                    processedExtensions = ContainerUtil.map(extensions, DOT_PATH_FUNCTION);
+                  }
+                  return processedExtensions;
+                }
+              };
+              return Result.create(lazyValue, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
             }
           }, false);
 
-      psiFile.putUserData(KEY_EXTENSIONS, extensions);
+      psiFile.putUserData(KEY_ACTION_EXTENSIONS, extensions);
     }
 
-    return extensions.getValue();
+    return extensions.getValue().getValue();
   }
 
 }
