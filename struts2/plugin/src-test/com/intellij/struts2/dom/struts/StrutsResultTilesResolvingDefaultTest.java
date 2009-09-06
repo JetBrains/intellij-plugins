@@ -57,6 +57,7 @@ public class StrutsResultTilesResolvingDefaultTest extends BasicStrutsHighlighti
                                      "definition1",
                                      "definition2",
                                      "struts-tiles.xml",
+                                     "struts-tiles-completion.xml",
                                      "testTiles.action");
   }
 
