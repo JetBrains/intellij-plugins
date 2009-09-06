@@ -16,19 +16,25 @@
 package com.intellij.struts2.model.constant.contributor;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.model.constant.StrutsConstant;
 import com.intellij.struts2.model.constant.StrutsConstantKey;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.ResolvingConverter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Struts 2 core constants.
@@ -37,19 +43,16 @@ import java.util.List;
  */
 public class StrutsCoreConstantContributor extends StrutsConstantContributorBase {
 
-  /** {@code struts.action.extension}. */
-  public static final StrutsConstantKey<List<String>> ACTION_EXTENSION = StrutsConstantKey.create("struts.action.extension");
+  /**
+   * {@code struts.action.extension}.
+   */
+  public static final StrutsConstantKey<List<String>> ACTION_EXTENSION = StrutsConstantKey.create(
+      "struts.action.extension");
 
   @NonNls
   private static final List<StrutsConstant> CONSTANTS = Arrays.asList(
       addClassWithShortcutProperty("struts.configuration", ""),
-      addStringValuesProperty("struts.i18n.encoding",
-                              ContainerUtil.map2Array(CharsetToolkit.getAvailableCharsets(), String.class,
-                                                      new Function<Charset, String>() {
-                                                        public String fun(final Charset charset) {
-                                                          return charset.name();
-                                                        }
-                                                      })),
+      new StrutsConstant("struts.i18n.encoding", new EncodingConverter()),
 
       addClassWithShortcutProperty("struts.objectFactory",
                                    "com.opensymphony.xwork2.ObjectFactory",
@@ -119,6 +122,42 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
   @NotNull
   public List<StrutsConstant> getStrutsConstantDefinitions(@NotNull final Module module) {
     return CONSTANTS;
+  }
+
+
+  /**
+   * Converter for {@code struts.i18n.encoding}.
+   */
+  private static class EncodingConverter extends ResolvingConverter.StringConverter {
+
+    private final AtomicNotNullLazyValue<Set<String>> charSets = new AtomicNotNullLazyValue<Set<String>>() {
+      @NotNull
+      @Override
+      protected Set<String> compute() {
+        return ContainerUtil.map2Set(CharsetToolkit.getAvailableCharsets(),
+                                     new Function<Charset, String>() {
+                                       public String fun(final Charset charset) {
+                                         return charset.name();
+                                       }
+                                     });
+      }
+    };
+
+
+    @Override
+    public String fromString(final String s, final ConvertContext convertContext) {
+      if (StringUtil.isEmpty(s)) {
+        return null;
+      }
+
+      return charSets.getValue().contains(s) ? s : null;
+    }
+
+    @NotNull
+    @Override
+    public Collection<? extends String> getVariants(final ConvertContext convertContext) {
+      return charSets.getValue();
+    }
   }
 
 }
