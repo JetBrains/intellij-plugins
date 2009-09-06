@@ -86,6 +86,8 @@
     <struts2.constantContributor
         implementation="com.intellij.struts2.model.constant.contributor.StrutsOSGiPluginConstantContributor"/>
     <struts2.constantContributor
+        implementation="com.intellij.struts2.model.constant.contributor.StrutsSpringPluginConstantContributor"/>
+    <struts2.constantContributor
         implementation="com.intellij.struts2.model.constant.contributor.StrutsRESTPluginConstantContributor"/>
 
 

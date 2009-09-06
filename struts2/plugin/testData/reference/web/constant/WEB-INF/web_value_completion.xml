@@ -11,7 +11,7 @@
     <filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
 
     <init-param>
-      <param-name>struts.objectFactory.spring.autoWire</param-name>
+      <param-name>struts.url.includeParams</param-name>
       <param-value><caret></param-value>
     </init-param>
   </filter>

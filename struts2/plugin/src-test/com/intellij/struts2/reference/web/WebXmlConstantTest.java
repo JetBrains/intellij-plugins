@@ -83,7 +83,7 @@ public class WebXmlConstantTest extends BasicHighlightingTestCase<WebModuleFixtu
   public void testValueCompletion() throws Throwable {
     myFixture.copyFileToProject("/WEB-INF/web_value_completion.xml");
     myFixture.testCompletionVariants("/WEB-INF/web_value_completion.xml",
-                                     "name", "type", "auto", "constructor");
+                                     "none", "get", "all");
   }
 
   /**

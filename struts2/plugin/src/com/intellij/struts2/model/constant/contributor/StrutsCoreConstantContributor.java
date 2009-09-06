@@ -53,16 +53,10 @@ public class StrutsCoreConstantContributor extends StrutsConstantContributorBase
   private static final List<StrutsConstant> CONSTANTS = Arrays.asList(
       addClassWithShortcutProperty("struts.configuration", ""),
       new StrutsConstant("struts.i18n.encoding", new EncodingConverter()),
-
       addClassWithShortcutProperty("struts.objectFactory",
                                    "com.opensymphony.xwork2.ObjectFactory",
                                    Pair.create("struts", "org.apache.struts2.impl.StrutsObjectFactory"),
                                    Pair.create("spring", StrutsConstants.SPRING_OBJECT_FACTORY_CLASS)),
-
-      addStringValuesProperty("struts.objectFactory.spring.autoWire", "name", "type", "auto", "constructor"),
-      addBooleanProperty("struts.objectFactory.spring.autoWire.alwaysRespect"),
-      addBooleanProperty("struts.objectFactory.spring.useClassCache"),
-
       addClassWithShortcutProperty("struts.objectTypeDeterminer",
                                    "com.opensymphony.xwork2.util.ObjectTypeDeterminer",
                                    Pair.create("tiger",
