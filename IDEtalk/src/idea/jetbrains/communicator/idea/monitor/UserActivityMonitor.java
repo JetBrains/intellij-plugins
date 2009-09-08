@@ -19,6 +19,7 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerAdapter;
+import com.intellij.openapi.application.ApplicationManager;
 import jetbrains.communicator.core.IDEtalkOptions;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.transport.Transport;
@@ -48,10 +49,10 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
 
   private final Object myMonitor = new Object();
   private long myLastActionTimestamp;
-  private boolean myStop;
+  private volatile boolean myStop;
   private int myRefreshInterval = REFRESH_INTERVAL;
   private final ProjectManager myProjectManager;
-
+  private volatile boolean myThreadDisposed = true;
 
   public UserActivityMonitor(ProjectManager projectManager) {
     myProjectManager = projectManager;
@@ -64,6 +65,7 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
   }
 
   public void initComponent() {
+    if (ApplicationManager.getApplication().isUnitTestMode()) return;
 
     KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
       public boolean dispatchKeyEvent(KeyEvent e) {
@@ -93,6 +95,13 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
 
   public void disposeComponent() {
     myStop = true;
+    try {
+      while (!myThreadDisposed) {
+        Thread.sleep(100);
+      }
+    }
+    catch (InterruptedException ignored) {
+    }
   }
 
   void activity() {
@@ -114,8 +123,8 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
 
   public void run() {
     try {
+      myThreadDisposed = false;
       while (!myStop) {
-
         UserPresence userPresence = calculatePresence();
         LOG.debug("Calculated own presence: " + userPresence);
         for (Object o : Pico.getInstance().getComponentInstancesOfType(Transport.class)) {
@@ -128,10 +137,13 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
         synchronized (myMonitor) {
           myMonitor.wait(myRefreshInterval);
         }
-
       }
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       LOG.info("Interrupted");
+    }
+    finally {
+      myThreadDisposed = true;
     }
   }
 
@@ -149,7 +161,7 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
     }
   }
 
-  private double timeout(String option, int defaultVal) {
+  private static double timeout(String option, int defaultVal) {
     IDEtalkOptions options = Pico.getOptions();
     if (options == null) return -1;
 

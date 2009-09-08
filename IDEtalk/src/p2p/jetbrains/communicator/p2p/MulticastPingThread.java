@@ -40,7 +40,8 @@ class MulticastPingThread extends Thread {
   private static final int BUFFER_SIZE = PING_MESSAGE.getBytes().length + 6;
   private static final int ALLOWED_FAILURES = 3000;
 
-  private boolean myIsRunning;
+  private volatile boolean myIsRunning;
+  private volatile boolean myDisposed;
   private MulticastSocket myDatagramSocket;
   protected boolean myStarted;
 
@@ -145,6 +146,7 @@ class MulticastPingThread extends Thread {
       logError(e);
     }
     finally {
+      myDisposed = true;
       myIsRunning = false;
       if (myDatagramSocket != null && !myDatagramSocket.isClosed()){
         myDatagramSocket.close();
@@ -193,6 +195,13 @@ class MulticastPingThread extends Thread {
       myDatagramSocket.close();
     }
     myIsRunning = false;
+    try {
+      while (!myDisposed) {
+        Thread.sleep(100);
+      }
+    }
+    catch (InterruptedException ignored) {
+    }
   }
 
   public boolean isStarted() {

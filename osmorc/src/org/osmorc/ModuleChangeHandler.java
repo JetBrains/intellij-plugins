@@ -45,8 +45,7 @@ import java.util.HashMap;
 public class ModuleChangeHandler implements ProjectComponent {
     @NotNull
     private final Project project;
-    private MessageBusConnection connection;
-    @NotNull
+  @NotNull
     private final Map<Module, String> moduleNames;
     @NotNull
     private final ModuleChangeListener[] moduleChangeListeners;
@@ -70,7 +69,7 @@ public class ModuleChangeHandler implements ProjectComponent {
     }
 
     public void initComponent() {
-        connection = project.getMessageBus().connect();
+      MessageBusConnection connection = project.getMessageBus().connect(project);
         connection.subscribe(ProjectTopics.MODULES, new ModuleListener() {
             public void moduleAdded(Project project, Module module) {
                 if (ModuleChangeHandler.this.project == project) {
@@ -118,9 +117,5 @@ public class ModuleChangeHandler implements ProjectComponent {
     }
 
     public void disposeComponent() {
-        if (connection != null) {
-            connection.disconnect();
-        }
     }
-
 }

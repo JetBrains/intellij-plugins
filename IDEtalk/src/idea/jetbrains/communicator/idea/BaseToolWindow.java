@@ -68,14 +68,11 @@ public abstract class BaseToolWindow implements ProjectComponent {
     myPanel.setBackground(Color.white);
 
     createToolWindowComponent();
-    myToolWindow = myToolWindowManager.registerToolWindow(getToolWindowId(), myPanel, getAnchor());
+    myToolWindow = myToolWindowManager.registerToolWindow(getToolWindowId(), myPanel, getAnchor(), myProject);
     myToolWindow.setIcon(WORKER_ICON);
   }
 
   public void projectClosed() {
-    if (myToolWindowManager != null && myToolWindowManager.getToolWindow(getToolWindowId()) != null) {
-      myToolWindowManager.unregisterToolWindow(getToolWindowId());
-    }
   }
 
   public void disposeComponent() {
@@ -102,7 +99,7 @@ public abstract class BaseToolWindow implements ProjectComponent {
     waitForOpen(semaphore);
   }
 
-  private void waitForOpen(Semaphore semaphore) {
+  private static void waitForOpen(Semaphore semaphore) {
     if (!EventQueue.isDispatchThread()) {
       try {
         semaphore.tryAcquire(1, TimeUnit.SECONDS);

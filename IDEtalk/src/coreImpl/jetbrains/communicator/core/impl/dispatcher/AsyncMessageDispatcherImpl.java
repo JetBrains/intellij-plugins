@@ -116,7 +116,7 @@ public class AsyncMessageDispatcherImpl extends AbstractMessageDispatcher implem
       myWorkingThread = null;
       myWorkingThreadLock.notifyAll();
     }
-    new WaitFor(1000){
+    new WaitFor(10000){
       protected boolean condition() {
         return !isRunning();
       }
