@@ -97,6 +97,9 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
     myStop = true;
     try {
       while (!myThreadDisposed) {
+        synchronized (myMonitor) {
+          myMonitor.notifyAll();
+        }
         Thread.sleep(100);
       }
     }
