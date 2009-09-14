@@ -93,7 +93,7 @@ public class OsmorcBundle
     Icon result = _iconCache.get(property);
     if (result == null)
     {
-      result = IconLoader.getTransparentIcon(IconLoader.getIcon(getTranslation(property)));
+      result = IconLoader.getIcon(getTranslation(property));
       _iconCache.put(property, result);
     }
     return result;
