@@ -26,6 +26,7 @@ package org.osmorc.run;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
+import com.intellij.execution.CantRunException;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.ParametersList;
@@ -34,6 +35,7 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.openapi.compiler.DummyCompileContext;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -41,29 +43,21 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.JavaSdk;
+import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.compiler.DummyCompileContext;
 import com.intellij.util.PathsList;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
-import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.FrameworkIntegrator;
-import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
-import org.osmorc.frameworkintegration.FrameworkRunner;
+import org.osmorc.frameworkintegration.*;
 import org.osmorc.make.BundleCompiler;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 /**
  * RunState for launching the OSGI framework.
@@ -75,7 +69,7 @@ import java.util.Map;
 public class OsgiRunState extends JavaCommandLineState {
     private final OsgiRunConfiguration runConfiguration;
     private final Project project;
-    private final Sdk projectJdk;
+    private final Sdk jdkForRun;
     private SelectedBundle[] _selectedBundles;
     private final FrameworkRunner runner;
     private static final String FILE_URL_PREFIX = "file:///";
@@ -85,7 +79,19 @@ public class OsgiRunState extends JavaCommandLineState {
         super(env);
         this.runConfiguration = configuration;
         this.project = project;
-        this.projectJdk = projectJdk;
+
+        if ( configuration.isUseAlternativeJre() ) {
+            String path = configuration.getAlternativeJrePath();
+            if ( path == null || "".equals(path) || !JdkUtil.checkForJre(path)) {
+                this.jdkForRun = null;
+            }
+            else {
+                this.jdkForRun = JavaSdk.getInstance().createJdk("", configuration.getAlternativeJrePath());
+            }
+        }
+        else {
+            this.jdkForRun = projectJdk;
+        }
         setConsoleBuilder(new TextConsoleBuilderImpl(project));
         FrameworkInstanceDefinition definition = runConfiguration.getInstanceToUse();
         FrameworkIntegratorRegistry registry = ServiceManager.getService(project, FrameworkIntegratorRegistry.class);
@@ -95,14 +101,16 @@ public class OsgiRunState extends JavaCommandLineState {
     }
 
     protected JavaParameters createJavaParameters() throws ExecutionException {
+        if ( jdkForRun == null ) {
+            throw CantRunException.noJdkConfigured();
+        }
         final JavaParameters params = new JavaParameters();
 
         params.setWorkingDirectory(runner.getWorkingDir());
 
         // only add JDK classes to the classpath
         // the rest is is to be provided by bundles
-        params.configureByProject(project, JavaParameters.JDK_ONLY, projectJdk);
-
+        params.configureByProject(project, JavaParameters.JDK_ONLY, jdkForRun);
         PathsList classpath = params.getClassPath();
         for (VirtualFile libraryFile : runner.getFrameworkStarterLibraries()) {
             classpath.add(libraryFile);

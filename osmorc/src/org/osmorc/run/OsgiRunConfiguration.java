@@ -27,6 +27,7 @@ package org.osmorc.run;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
@@ -39,6 +40,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -65,7 +67,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     private LegacyOsgiRunConfigurationLoader legacyOsgiRunConfigurationLoader;
     private boolean needsFinishRunForLegacyOsgiRunConfigurationLoader = true;
 
-    protected OsgiRunConfiguration(final Project project, final ConfigurationFactory configurationFactory, final String name) {
+    protected OsgiRunConfiguration(final Project project, final ConfigurationFactory configurationFactory,
+                                   final String name) {
         super(project, configurationFactory, name);
         bundlesToDeploy = new ArrayList<SelectedBundle>();
         additionalProperties = new HashMap<String, String>();
@@ -93,6 +96,12 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
         }
         if (instanceToUse == null) {
             throw new RuntimeConfigurationError(OsmorcBundle.getTranslation("runconfiguration.no.instance.selected"));
+        }
+        if (isUseAlternativeJre()) {
+            final String jrePath = this.getAlternativeJrePath();
+            if (jrePath == null || jrePath.length() == 0 || !JavaSdkImpl.checkForJre(jrePath)) {
+                throw new RuntimeConfigurationWarning(ExecutionBundle.message("jre.not.valid.error.message", jrePath));
+            }
         }
         if (checker != null) {
             checker.checkConfiguration(this);
@@ -193,6 +202,21 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
         this.programParameters = programParameters;
     }
 
+    public String getAlternativeJrePath() {
+        return alternativeJrePath;
+    }
+
+    public void setAlternativeJrePath(String alternativeJrePath) {
+        this.alternativeJrePath = alternativeJrePath;
+    }
+
+    public boolean isUseAlternativeJre() {
+        return useAlternativeJre;
+    }
+
+    public void setUseAlternativeJre(boolean useAlternativeJre) {
+        this.useAlternativeJre = useAlternativeJre;
+    }
 
     public void readExternal(final Element element) throws InvalidDataException {
         if (legacyOsgiRunConfigurationLoader == null || !legacyOsgiRunConfigurationLoader.readExternal(element, this)) {
@@ -202,6 +226,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
             programParameters = element.getAttributeValue(PROGRAM_PARAMETERS_ATTRIBUTE);
             includeAllBundlesInClassPath = Boolean.valueOf(element.getAttributeValue(
                     INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, "false"));
+            useAlternativeJre = Boolean.valueOf(element.getAttributeValue(USE_ALTERNATIVE_JRE_ATTRIBUTE, "false"));
+            alternativeJrePath = element.getAttributeValue(ALTERNATIVE_JRE_PATH, "");
 
             // noinspection unchecked
             List<Element> children = element.getChildren(BUNDLE_ELEMENT);
@@ -262,9 +288,12 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
         // store the vm parameters
         element.setAttribute(VM_PARAMETERS_ATTRIBUTE, vmParameters == null ? "" : vmParameters);
         element.setAttribute(PROGRAM_PARAMETERS_ATTRIBUTE, programParameters == null ? "" : programParameters);
-        element.setAttribute(INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, Boolean.toString(includeAllBundlesInClassPath));
+        element.setAttribute(INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE,
+                Boolean.toString(includeAllBundlesInClassPath));
         element.setAttribute(WORKING_DIR_ATTRIBUTE, workingDir == null ? "" : workingDir);
         element.setAttribute(FRAMEWORK_DIR_ATTRIBUTE, frameworkDir == null ? "" : frameworkDir);
+        element.setAttribute(USE_ALTERNATIVE_JRE_ATTRIBUTE, String.valueOf(useAlternativeJre));
+        element.setAttribute(ALTERNATIVE_JRE_PATH, alternativeJrePath != null ? alternativeJrePath : "");
 
         // all module's names
         for (SelectedBundle selectedBundle : bundlesToDeploy) {
@@ -275,7 +304,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
             }
             bundle.setAttribute(START_LEVEL_ATTRIBUTE, String.valueOf(selectedBundle.getStartLevel()));
             bundle.setAttribute(TYPE_ATTRIBUTE, selectedBundle.getBundleType().name());
-            bundle.setAttribute(START_AFTER_INSTALLATION_ATTRIBUTE, Boolean.toString(selectedBundle.isStartAfterInstallation()));
+            bundle.setAttribute(START_AFTER_INSTALLATION_ATTRIBUTE,
+                    Boolean.toString(selectedBundle.isStartAfterInstallation()));
             element.addContent(bundle);
         }
 
@@ -287,7 +317,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
         Element additionalProperties = new Element(ADDITIONAL_PROPERTIES_ELEMENT);
 
         for (String additionalPropertyName : this.additionalProperties.keySet()) {
-            additionalProperties.setAttribute(additionalPropertyName, this.additionalProperties.get(additionalPropertyName));
+            additionalProperties
+                    .setAttribute(additionalPropertyName, this.additionalProperties.get(additionalPropertyName));
         }
 
         element.addContent(additionalProperties);
@@ -320,6 +351,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
 
     private String programParameters;
     private String vmParameters;
+    private String alternativeJrePath;
+    private boolean useAlternativeJre;
     private FrameworkInstanceDefinition instanceToUse;
     private Map<String, String> additionalProperties;
     private boolean includeAllBundlesInClassPath;
@@ -354,4 +387,9 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     private static final String START_LEVEL_ATTRIBUTE = "startLevel";
     @NonNls
     private static final String INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE = "includeAllBundlesInClassPath";
+    @NonNls
+    private static final String USE_ALTERNATIVE_JRE_ATTRIBUTE = "useAlternativeJre";
+    @NonNls
+    private static final String ALTERNATIVE_JRE_PATH = "alternativeJrePath";
+
 }

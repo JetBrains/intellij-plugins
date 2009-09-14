@@ -64,6 +64,7 @@ import org.osmorc.frameworkintegration.LibraryHandler;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.manifest.BundleManifest;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,7 +79,7 @@ import java.util.Map;
  * @version $Id$
  */
 public class BundleCompiler implements PackagingCompiler {
-    private static String getOutputPath(Module m) {
+    private static String getOutputPath(final Module m) {
         VirtualFile moduleCompilerOutputPath =
                 CompilerModuleExtension.getInstance(m).getCompilerOutputPath();
 
@@ -91,13 +92,17 @@ public class BundleCompiler implements PackagingCompiler {
             String outputPathUrl = CompilerModuleExtension.getInstance(m).getCompilerOutputUrl();
 
             // create the paths
-            try {
-                VfsUtil.createDirectories(VfsUtil.urlToPath(outputPathUrl));
-            }
-            catch (IOException e) {
-                Messages.showErrorDialog(m.getProject(), OsmorcBundle.getTranslation("error"),
-                        OsmorcBundle.getTranslation("faceteditor.cannot.create.outputpath"));
+            // FIX  	 IDEADEV-40112
+            File f = new File(VfsUtil.urlToPath(outputPathUrl));
+            if (!f.mkdirs()) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        Messages.showErrorDialog(m.getProject(), OsmorcBundle.getTranslation("error"),
+                                OsmorcBundle.getTranslation("faceteditor.cannot.create.outputpath"));
+                    }
+                });
                 throw new IllegalStateException("Cannot create output path");
+
             }
 
             // now try again to get VirtualFile object for it
@@ -127,7 +132,8 @@ public class BundleCompiler implements PackagingCompiler {
      * @param s              ??
      * @param validityState  the validity state of the item that is outdated
      */
-    public void processOutdatedItem(CompileContext compileContext, String s, @Nullable final ValidityState validityState) {
+    public void processOutdatedItem(CompileContext compileContext, String s,
+                                    @Nullable final ValidityState validityState) {
         // delete the jar file of the module in case the stuff is outdated
         // TODO: find a way to update jar files so we can speed this up
         if (validityState != null) {
@@ -276,17 +282,22 @@ public class BundleCompiler implements PackagingCompiler {
             if (configuration.isUseBndFile()) {
                 File bndFile = findFileInModuleContentRoots(configuration.getBndFileLocation(), module);
                 if (bndFile == null || !bndFile.exists()) {
-                    compileContext.addMessage(CompilerMessageCategory.ERROR, String.format("The bnd file \"%s\" for module \"%s\" does not exist.",
-                            configuration.getBndFileLocation(), module.getName()), configuration.getBndFileLocation(), 0, 0);
+                    compileContext.addMessage(CompilerMessageCategory.ERROR,
+                            String.format("The bnd file \"%s\" for module \"%s\" does not exist.",
+                                    configuration.getBndFileLocation(), module.getName()),
+                            configuration.getBndFileLocation(), 0, 0);
                     return;
-                } else {
+                }
+                else {
                     bndFileUrl = VfsUtil.pathToUrl(bndFile.getPath());
                 }
-            } else {
+            }
+            else {
                 // fully osmorc controlled, no bnd file.
                 bndFileUrl = makeBndFile(module, configuration.asManifestString());
             }
-        } else {
+        }
+        else {
             boolean manifestExists = false;
             BundleManager bundleManager = ServiceManager.getService(module.getProject(), BundleManager.class);
             BundleManifest bundleManifest = bundleManager.getBundleManifest(module);
@@ -301,20 +312,26 @@ public class BundleCompiler implements PackagingCompiler {
                 }
             }
             if (!manifestExists) {
-                compileContext.addMessage(CompilerMessageCategory.ERROR, "Manifest file in " + OsmorcFacet.getInstance(module).getManifestLocation() + " does not exist.", null, 0, 0);
+                compileContext.addMessage(CompilerMessageCategory.ERROR,
+                        "Manifest file in " + OsmorcFacet.getInstance(module).getManifestLocation() +
+                                " does not exist.", null, 0, 0);
                 return;
             }
         }
 
-        if (!configuration.isOsmorcControlsManifest() || (configuration.isOsmorcControlsManifest() && !configuration.isUseBndFile())) {
+        if (!configuration.isOsmorcControlsManifest() ||
+                (configuration.isOsmorcControlsManifest() && !configuration.isUseBndFile())) {
             // in this case we manually add all the classpaths as resources
             StringBuilder pathBuilder = new StringBuilder();
             // add all the classpaths to include resources, so stuff from the project gets copied over.
             // XXX: one could argue if this should be done for a non-osmorc build
             for (int i = 0; i < classPaths.size(); i++) {
                 String classPath = classPaths.get(i);
-                String relPath = FileUtil.getRelativePath(new File(VfsUtil.urlToPath(bndFileUrl)), new File(VfsUtil.urlToPath(classPath)));
-                if (i != 0) pathBuilder.append(",");
+                String relPath = FileUtil.getRelativePath(new File(VfsUtil.urlToPath(bndFileUrl)),
+                        new File(VfsUtil.urlToPath(classPath)));
+                if (i != 0) {
+                    pathBuilder.append(",");
+                }
                 pathBuilder.append(relPath);
             }
 
@@ -327,8 +344,9 @@ public class BundleCompiler implements PackagingCompiler {
             // and tell bnd what resources to include
             additionalProperties.put("Include-Resource", pathBuilder.toString());
 
-            if (!configuration.isIgnorePatternValid() ) {
-                compileContext.addMessage(CompilerMessageCategory.ERROR, "The file ignore pattern in the facet configuration is invalid.",null, 0,0);
+            if (!configuration.isIgnorePatternValid()) {
+                compileContext.addMessage(CompilerMessageCategory.ERROR,
+                        "The file ignore pattern in the facet configuration is invalid.", null, 0, 0);
                 return;
             }
 
@@ -339,7 +357,8 @@ public class BundleCompiler implements PackagingCompiler {
 
         }
 
-        wrapper.build(compileContext, bndFileUrl, classPaths.toArray(new String[classPaths.size()]), jarFile.getPath(), additionalProperties);
+        wrapper.build(compileContext, bndFileUrl, classPaths.toArray(new String[classPaths.size()]), jarFile.getPath(),
+                additionalProperties);
 
         if (configuration.isOsmorcControlsManifest()) {
             // finally bundlify all the libs for this one
@@ -472,7 +491,8 @@ public class BundleCompiler implements PackagingCompiler {
                 continue; // do not bundlify JDKs
             }
 
-            if (entry instanceof LibraryOrderEntry && libraryHandler.isFrameworkInstanceLibrary((LibraryOrderEntry) entry)) {
+            if (entry instanceof LibraryOrderEntry &&
+                    libraryHandler.isFrameworkInstanceLibrary((LibraryOrderEntry) entry)) {
                 continue; // do not bundlify framework instance libraries
             }
 
@@ -492,7 +512,8 @@ public class BundleCompiler implements PackagingCompiler {
                     if (bundledLocation != null) {
                         result.add(fixFileURL(bundledLocation));
                     }
-                } else {
+                }
+                else {
                     result.add(fixFileURL(url));
                 }
             }
@@ -515,10 +536,10 @@ public class BundleCompiler implements PackagingCompiler {
     }
 
     /**
-     * On Windows a file url must have at least 3 slashes at the beginning. 2 for the protocoll separation and one for the
-     * empty host (e.g.: file:///c:/bla instead of file://c:/bla). If there are only two the drive letter is interpreted
-     * as the host of the url which naturally doesn't exist. On Unix systems it's the same case, but since all paths start
-     * with a slash, a misinterpretation of part of the path as a host cannot occur.
+     * On Windows a file url must have at least 3 slashes at the beginning. 2 for the protocoll separation and one for
+     * the empty host (e.g.: file:///c:/bla instead of file://c:/bla). If there are only two the drive letter is
+     * interpreted as the host of the url which naturally doesn't exist. On Unix systems it's the same case, but since
+     * all paths start with a slash, a misinterpretation of part of the path as a host cannot occur.
      *
      * @param url The URL to fix
      * @return The fixed URL

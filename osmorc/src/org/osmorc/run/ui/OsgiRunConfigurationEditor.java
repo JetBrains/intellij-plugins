@@ -35,6 +35,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.execution.ui.AlternativeJREPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.BundleSelectionAction;
@@ -249,8 +250,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         frameworkDirField.setEnabled(useUserDefinedFields);
         userDefinedRadioButton.setSelected(useUserDefinedFields);
         osmorcControlledRadioButton.setSelected(!useUserDefinedFields);
-
-
+        alternativeJREPanel.init(osgiRunConfiguration.getAlternativeJrePath(),osgiRunConfiguration.isUseAlternativeJre());
     }
 
     protected void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
@@ -261,6 +261,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         osgiRunConfiguration.setIncludeAllBundlesInClassPath(includeAllBundlesinClassPath.isSelected());
         osgiRunConfiguration.setWorkingDir(workingDirField.getText().replace('\\', '/'));
         osgiRunConfiguration.setFrameworkDir(frameworkDirField.getText().replace('\\', '/'));
+        osgiRunConfiguration.setUseAlternativeJre(alternativeJREPanel.isPathEnabled());
+        osgiRunConfiguration.setAlternativeJrePath(alternativeJREPanel.getPath());
         FrameworkInstanceDefinition frameworkInstanceDefinition =
                 (FrameworkInstanceDefinition) frameworkInstances.getSelectedItem();
         if (frameworkInstanceDefinition != null) {
@@ -300,8 +302,10 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     private TextFieldWithBrowseButton frameworkDirField;
     private RawCommandLineEditor programParameters;
     private JButton frameworkSpecificButton;
+    private AlternativeJREPanel alternativeJREPanel;
     private final Project project;
     private FrameworkRunPropertiesEditor currentFrameworkRunPropertiesEditor;
+
 
     private static class RunConfigurationTableModel extends AbstractTableModel {
         private final List<SelectedBundle> selectedBundles;
