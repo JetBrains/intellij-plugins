@@ -22,6 +22,7 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.jsp.JspFileViewProvider;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -65,7 +66,7 @@ public class JspActionAnnotator implements Annotator {
   @NonNls
   private static final String[] TAGS_WITH_ACTION_ATTRIBUTE = new String[]{"action", "form", "reset", "submit", "url"};
 
-  private static final NullableFunction<Action,PsiMethod> ACTION_METHOD_FUNCTION = new NullableFunction<Action, PsiMethod>() {
+  private static final NullableFunction<Action, PsiMethod> ACTION_METHOD_FUNCTION = new NullableFunction<Action, PsiMethod>() {
     public PsiMethod fun(final Action action) {
       return action.searchActionMethod();
     }
@@ -149,17 +150,17 @@ public class JspActionAnnotator implements Annotator {
     }
 
     final Set<String> knownTaglibPrefixes = ((JspFileViewProvider) jspFile.getViewProvider()).getKnownTaglibPrefixes();
-    for (final String prefix : knownTaglibPrefixes) {
-      final String namespaceByPrefix = rootTag.getNamespaceByPrefix(prefix);
-      final XmlNSDescriptor descriptor = rootTag.getNSDescriptor(namespaceByPrefix, true);
-      if (descriptor != null && descriptor instanceof TldDescriptor) {
-        final String uri = ((TldDescriptor) descriptor).getUri();
-        if (Comparing.equal(uri, StrutsConstants.TAGLIB_STRUTS_UI_URI)) {  // URI is optional in TLD!
-          return prefix;
+    return ContainerUtil.find(knownTaglibPrefixes, new Condition<String>() {
+      public boolean value(final String s) {
+        final String namespaceByPrefix = rootTag.getNamespaceByPrefix(s);
+        final XmlNSDescriptor descriptor = rootTag.getNSDescriptor(namespaceByPrefix, true);
+        if (descriptor instanceof TldDescriptor) {
+          final String uri = ((TldDescriptor) descriptor).getUri(); // URI is optional in TLD!
+          return Comparing.equal(uri, StrutsConstants.TAGLIB_STRUTS_UI_URI);
         }
+        return false;
       }
-    }
-    return null;
+    });
   }
 
 }

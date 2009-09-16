@@ -27,58 +27,63 @@ import org.jetbrains.annotations.NonNls;
  */
 public class Struts2ResourceProvider implements StandardResourceProvider {
 
+  @NonNls
+  private static final String DTD_PATH = "/resources/dtds/";
+
   public void registerResources(final ResourceRegistrar registrar) {
     addDTDResource(StrutsConstants.STRUTS_2_0_DTD_URI,
                    StrutsConstants.STRUTS_2_0_DTD_ID,
-                   "/resources/dtds/struts-2.0.dtd", registrar);
+                   "struts-2.0.dtd", registrar);
 
     addDTDResource(StrutsConstants.STRUTS_2_1_DTD_URI,
                    StrutsConstants.STRUTS_2_1_DTD_ID,
-                   "/resources/dtds/struts-2.1.dtd", registrar);
+                   "struts-2.1.dtd", registrar);
 
     addDTDResource(StrutsConstants.STRUTS_2_1_7_DTD_URI,
-                   StrutsConstants.STRUTS_2_1_7_DTD_ID, 
-                   "/resources/dtds/struts-2.1.7.dtd", registrar);
+                   StrutsConstants.STRUTS_2_1_7_DTD_ID,
+                   "struts-2.1.7.dtd", registrar);
+
 
     addDTDResource(StrutsConstants.VALIDATOR_1_00_DTD_URI,
                    StrutsConstants.VALIDATOR_1_00_DTD_ID,
-                   "/resources/dtds/xwork-validator-1.0.dtd", registrar);
+                   "xwork-validator-1.0.dtd", registrar);
 
     addDTDResource(StrutsConstants.VALIDATOR_1_02_DTD_URI,
                    StrutsConstants.VALIDATOR_1_02_DTD_ID,
-                   "/resources/dtds/xwork-validator-1.0.2.dtd", registrar);
+                   "xwork-validator-1.0.2.dtd", registrar);
 
     addDTDResource(StrutsConstants.VALIDATOR_CONFIG_DTD_URI,
                    StrutsConstants.VALIDATOR_CONFIG_DTD_ID,
-                   "/resources/dtds/xwork-validator-config-1.0.dtd", registrar);
+                   "xwork-validator-config-1.0.dtd", registrar);
+
 
     addDTDResource(StrutsConstants.TILES_2_0_DTD_URI_STRUTS,
                    StrutsConstants.TILES_2_0_DTD_ID,
-                   "/resources/dtds/struts-tiles-config_2_0.dtd", registrar);
+                   "struts-tiles-config_2_0.dtd", registrar);
 
     addDTDResource(StrutsConstants.TILES_2_0_DTD_URI,
                    StrutsConstants.TILES_2_0_DTD_ID,
-                   "/resources/dtds/tiles-config_2_0.dtd", registrar);
+                   "tiles-config_2_0.dtd", registrar);
 
     addDTDResource(StrutsConstants.TILES_2_1_DTD_URI,
                    StrutsConstants.TILES_2_1_DTD_ID,
-                   "/resources/dtds/tiles-config_2_1.dtd", registrar);
+                   "tiles-config_2_1.dtd", registrar);
   }
 
   /**
-   * Adds a DTD resource from local classpath.
+   * Adds a DTD resource from local DTD resource path.
    *
    * @param uri       Resource URI.
    * @param id        Resource ID.
-   * @param localFile Local path to resource.
+   * @param localFile DTD filename.
    * @param registrar Resource registrar.
    */
   private static void addDTDResource(@NonNls final String uri,
                                      @NonNls final String id,
                                      @NonNls final String localFile,
                                      final ResourceRegistrar registrar) {
-    registrar.addStdResource(uri, localFile, StrutsApplicationComponent.class);
-    registrar.addStdResource(id, localFile, StrutsApplicationComponent.class);
+    registrar.addStdResource(uri, DTD_PATH + localFile, StrutsApplicationComponent.class);
+    registrar.addStdResource(id, DTD_PATH + localFile, StrutsApplicationComponent.class);
   }
 
 }

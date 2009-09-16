@@ -22,6 +22,8 @@ import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -38,6 +40,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.xml.DomFileElement;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,8 +50,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Provides Tiles-model configured via <code>org.apache.struts2.tiles.StrutsTilesListener</code> or
- * <code>org.apache.tiles.listener.TilesListener</code> in web.xml.
+ * Provides Tiles-model configured via {@code org.apache.struts2.tiles.StrutsTilesListener} or
+ * {@code org.apache.tiles.listener.TilesListener} in web.xml.
  *
  * @author Yann C&eacute;bron
  */
@@ -68,6 +71,12 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
 
   @NonNls
   private static final String STRUTS2_TILES_MODEL = "struts2TilesModel";
+
+  private static final Condition<ParamValue> TILES_CONTEXT_PARAM_CONDITION = new Condition<ParamValue>() {
+    public boolean value(final ParamValue paramValue) {
+      return Comparing.equal(TILES_CONTEXT_PARAM, paramValue.getParamName().getStringValue());
+    }
+  };
 
   @NotNull
   public Collection<TilesModel> computeModels(@NotNull final Module module) {
@@ -118,7 +127,7 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
       for (final String tilesPath : tilesConfigNames) {
         final PsiElement tilesXmlFile = webDirectoryUtil.findFileByPath(tilesPath, webFacet);
         if (tilesXmlFile instanceof XmlFile) {
-          ContainerUtil.addIfNotNull((XmlFile) tilesXmlFile, tilesFileSet);
+          tilesFileSet.add((XmlFile) tilesXmlFile);
         }
       }
 
@@ -127,7 +136,7 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
         final PsiClass listenerClass = listener.getListenerClass().getValue();
         if (strutsTilesListenerClass.equals(listenerClass)) {
           consumer.consume(tilesFileSet);
-        } else if (tilesListenerClass != null && tilesListenerClass.equals(listenerClass)) {
+        } else if (Comparing.equal(tilesListenerClass, listenerClass)) {
           consumer.consume(tilesFileSet);
         }
       }
@@ -143,18 +152,19 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
    * @return File names.
    */
   private static Set<String> findConfiguredTilesPaths(final WebApp webApp) {
-    @NonNls final Set<String> tilesConfigNames = new HashSet<String>();
-    final List<ParamValue> params = webApp.getContextParams();
-    for (final ParamValue param : params) {
-      if (Comparing.equal(TILES_CONTEXT_PARAM, param.getParamName().getStringValue())) {
-        final String paramValue = param.getParamValue().getStringValue();
-        if (paramValue != null) {
-          for (final String file : paramValue.split(",")) {
-            tilesConfigNames.add(file.trim());
-          }
-        }
-        break;
-      }
+    @NonNls final Set<String> tilesConfigNames = new THashSet<String>();
+    final ParamValue tilesParamValue = ContainerUtil.find(webApp.getContextParams(), TILES_CONTEXT_PARAM_CONDITION);
+    if (tilesParamValue == null) {
+      return tilesConfigNames;
+    }
+
+    final String paramValue = tilesParamValue.getParamValue().getStringValue();
+    if (paramValue == null) {
+      return tilesConfigNames;
+    }
+
+    for (final String file : StringUtil.split(paramValue, ",")) {
+      tilesConfigNames.add(file.trim());
     }
 
     return tilesConfigNames;
