@@ -1,51 +1,48 @@
 package com.intellij.tapestry.intellij.facet;
 
 import com.intellij.CommonBundle;
-import com.intellij.facet.impl.ui.FacetTypeFrameworkSupportProvider;
-import com.intellij.facet.ui.libraries.LibraryInfo;
+import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
+import com.intellij.ide.util.frameworkSupport.FrameworkVersion;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.intellij.facet.ui.NewFacetDialog;
 import com.intellij.tapestry.intellij.util.Validators;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TapestryFrameworkSupportProvider extends FacetTypeFrameworkSupportProvider<TapestryFacet> {
+public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupportProvider<TapestryFacet> {
 
   public TapestryFrameworkSupportProvider() {
     super(TapestryFacetType.INSTANCE);
   }
 
-  protected void setupConfiguration(TapestryFacet tapestryFacet, ModifiableRootModel modifiableRootModel, String version) {
-    setupConfiguration(tapestryFacet.getConfiguration(), tapestryFacet.getModule(), version);
+  protected void setupConfiguration(TapestryFacet tapestryFacet, ModifiableRootModel modifiableRootModel, FrameworkVersion version) {
+    setupConfiguration(tapestryFacet.getConfiguration(), tapestryFacet.getModule(), TapestryVersion.fromString(version.getVersionName()));
   }
 
-  protected static void setupConfiguration(TapestryFacetConfiguration conf, Module module, String version) {
-    conf.setVersion(TapestryVersion.fromString(version));
+  protected static void setupConfiguration(TapestryFacetConfiguration conf, Module module, final TapestryVersion version) {
+    conf.setVersion(version);
     if(StringUtil.isEmpty(conf.getFilterName())) conf.setFilterName(module.getName().toLowerCase());
     if(StringUtil.isEmpty(conf.getApplicationPackage())) conf.setApplicationPackage("com.app");
   }
 
   @Override
   @NotNull
-  public String[] getVersions() {
-    List<String> versions = new ArrayList<String>();
-
+  public List<FrameworkVersion> getVersions() {
+    List<FrameworkVersion> result = new ArrayList<FrameworkVersion>();
     for (TapestryVersion version : TapestryVersion.values()) {
-      versions.add(version.toString());
+      final String name = version.toString();
+      result.add(new FrameworkVersion(name, "tapestry-" + name, version.getJars()));
     }
-
-    return versions.toArray(new String[versions.size()]);
+    return result;
   }
 
   @Override
@@ -54,24 +51,7 @@ public class TapestryFrameworkSupportProvider extends FacetTypeFrameworkSupportP
   }
 
   @Override
-  @NotNull
-  @NonNls
-  protected String getLibraryName(final String selectedVersion) {
-    return "tapestry-" + selectedVersion;
-  }
-
-  @Override
-  protected void onLibraryAdded(final TapestryFacet facet, final @NotNull Library library) {
-  }
-
-  @NotNull
-  protected LibraryInfo[] getLibraries(String selectedVersion) {
-    TapestryVersion version = TapestryVersion.fromString(selectedVersion);
-    return version != null ? version.getJars() : LibraryInfo.EMPTY_ARRAY;
-  }
-
-  @Override
-  protected void onFacetCreated(final TapestryFacet facet, final ModifiableRootModel rootModel, final String version) {
+  protected void onFacetCreated(final TapestryFacet facet, final ModifiableRootModel rootModel, final FrameworkVersion version) {
     final Project project = facet.getModule().getProject();
     StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
       public void run() {

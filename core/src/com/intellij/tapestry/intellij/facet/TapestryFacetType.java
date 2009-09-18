@@ -85,7 +85,7 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
           if (i < 0) continue;
           final TapestryFacetConfiguration conf = new TapestryFacetConfiguration();
           conf.setApplicationPackage(relativePath.substring(0, i));
-          TapestryFrameworkSupportProvider.setupConfiguration(conf, module, TapestryVersion.TAPESTRY_5_1_0_5.toString());
+          TapestryFrameworkSupportProvider.setupConfiguration(conf, module, TapestryVersion.TAPESTRY_5_1_0_5);
           return conf;
         }
       }
