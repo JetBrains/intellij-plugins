@@ -14,8 +14,8 @@
  */
 package com.intellij.struts2.facet;
 
-import com.intellij.facet.impl.ui.FacetTypeFrameworkSupportProvider;
-import com.intellij.facet.ui.libraries.LibraryInfo;
+import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
+import com.intellij.ide.util.frameworkSupport.FrameworkVersion;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
@@ -32,8 +32,6 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -43,13 +41,13 @@ import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.struts2.facet.ui.StrutsVersion;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -57,7 +55,7 @@ import java.util.Set;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportProvider<StrutsFacet> {
+public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportProvider<StrutsFacet> {
 
   private static final Logger LOG = Logger.getInstance("#com.intellij.struts2.facet.StrutsFrameworkSupportProvider");
 
@@ -65,41 +63,18 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
     super(StrutsFacetType.INSTANCE);
   }
 
-  @NotNull
-  protected String getLibraryName(final String version) {
-    return "struts2-" + version;
-  }
-
   public String getTitle() {
     return UIUtil.replaceMnemonicAmpersand("Struts &2");
   }
 
   @NotNull
-  public String[] getVersions() {
-    return ContainerUtil.map2Array(StrutsVersion.values(), String.class,
-                                   new Function<StrutsVersion, String>() {
-                                     public String fun(final StrutsVersion strutsVersion) {
-                                       return strutsVersion.toString();
-                                     }
-                                   });
-  }
-
-  @NotNull
-  private static StrutsVersion getVersion(final String versionName) {
-    final StrutsVersion strutsVersion = ContainerUtil.find(StrutsVersion.values(), new Condition<StrutsVersion>() {
-      public boolean value(final StrutsVersion strutsVersion) {
-        return Comparing.equal(versionName, strutsVersion.toString());
-      }
-    });
-
-    LOG.assertTrue(strutsVersion != null, "Invalid S2 version '" + versionName + "'");
-    return strutsVersion;
-  }
-
-  @NotNull
-  protected LibraryInfo[] getLibraries(final String selectedVersion) {
-    final StrutsVersion version = getVersion(selectedVersion);
-    return version.getLibraryInfos();
+  public List<FrameworkVersion> getVersions() {
+    final List<FrameworkVersion> result = new ArrayList<FrameworkVersion>();
+    for (StrutsVersion version : StrutsVersion.values()) {
+      final String name = version.toString();
+      result.add(new FrameworkVersion(name, "struts2-" + name, version.getLibraryInfos()));
+    }
+    return result;
   }
 
   protected void onLibraryAdded(final StrutsFacet facet, @NotNull final Library library) {
@@ -110,7 +85,7 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
   }
 
   protected void setupConfiguration(final StrutsFacet strutsFacet,
-                                    final ModifiableRootModel modifiableRootModel, final String version) {
+                                    final ModifiableRootModel modifiableRootModel, final FrameworkVersion version) {
     final Module module = strutsFacet.getModule();
     StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
@@ -120,7 +95,7 @@ public class StrutsFrameworkSupportProvider extends FacetTypeFrameworkSupportPro
           if (directory != null &&
               directory.findFile(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME) == null) {
 
-            final boolean is2_1_X = version.startsWith("2.1");
+            final boolean is2_1_X = version.getLibraryName().startsWith("2.1");
             final FileTemplate strutsXmlTemplate = FileTemplateManager.getInstance()
                 .getJ2eeTemplate(is2_1_X ?
                                  StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_1_XML :
