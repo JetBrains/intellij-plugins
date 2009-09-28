@@ -46,7 +46,7 @@ public abstract class BasicStrutsTestCase extends UsefulTestCase {
   @NonNls
   @NotNull
   protected final String getTestDataBasePath() {
-    return PathManager.getHomePath().replace(File.separatorChar, '/') + "/svnPlugins/struts2/plugin/testData/";
+    return PathManager.getHomePath().replace(File.separatorChar, '/') + "/contrib/struts2/plugin/testData/";
   }
 
   /**
