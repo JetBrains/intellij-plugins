@@ -68,8 +68,8 @@ public class TestUtil {
 
     public static void loadModules(final String projectName, final Project project, final String projectDirPath) throws Exception {
         final File projectZIP = new File(getTestDataDir(), projectName + ".zip");
-        assert projectZIP.exists();
-        assert !projectZIP.isDirectory();
+        assert projectZIP.exists() : projectZIP.getAbsoluteFile() + " not found";
+        assert !projectZIP.isDirectory() : projectZIP.getAbsolutePath() + " is a directory";
 
         final File projectDir = new File(projectDirPath);
         ZipUtil.extract(projectZIP, projectDir, null);
@@ -218,7 +218,7 @@ public class TestUtil {
         if (TEST_DATA_DIR == null) {
             TEST_DATA_DIR = new File(TestUtil.class.getResource("/").getFile(), "../../../testdata");
             if (!TEST_DATA_DIR.exists()) {
-                TEST_DATA_DIR = new File(PathManager.getHomePath(), "svnPlugins/osmorc/testdata");
+                TEST_DATA_DIR = new File(PathManager.getHomePath(), "contrib/osmorc/testdata");
             }
             assert TEST_DATA_DIR.exists();
             assert TEST_DATA_DIR.isDirectory();
