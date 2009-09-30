@@ -25,7 +25,6 @@
 
   <version>1.0</version>
   <vendor logo="/general/ijLogo.png" url="http://www.jetbrains.com">JetBrains</vendor>
-  <idea-version since-build="5010"/>
   <change-notes>
     <![CDATA[
     Jabber support<br>
