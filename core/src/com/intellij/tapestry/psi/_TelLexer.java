@@ -6,7 +6,7 @@ package com.intellij.tapestry.psi;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.lexer.FlexLexer;
-import static com.intellij.tapestry.psi.TelElementTypes.*;
+import static com.intellij.tapestry.psi.TelTokenTypes.*;
 
 
 /**

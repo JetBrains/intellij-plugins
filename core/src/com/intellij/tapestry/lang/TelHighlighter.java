@@ -5,7 +5,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
 import static com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage.*;
-import static com.intellij.tapestry.psi.TelElementTypes.*;
+import static com.intellij.tapestry.psi.TelTokenTypes.*;
 import com.intellij.tapestry.psi.TelLexer;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;

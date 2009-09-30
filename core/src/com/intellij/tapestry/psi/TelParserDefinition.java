@@ -31,12 +31,12 @@ public class TelParserDefinition implements ParserDefinition {
   }
 
   public IFileElementType getFileNodeType() {
-    return TelElementTypes.TEL_FILE;
+    return TelTokenTypes.TEL_FILE;
   }
 
   @NotNull
   public TokenSet getWhitespaceTokens() {
-    return TelElementTypes.WHITESPACES;
+    return TelTokenTypes.WHITESPACES;
   }
 
   @NotNull
@@ -46,7 +46,7 @@ public class TelParserDefinition implements ParserDefinition {
 
   @NotNull
   public TokenSet getStringLiteralElements() {
-    return TelElementTypes.STRING_LITERALS;
+    return TelTokenTypes.STRING_LITERALS;
   }
 
   @NotNull
@@ -57,7 +57,7 @@ public class TelParserDefinition implements ParserDefinition {
   public PsiFile createFile(FileViewProvider viewProvider) {
     return new PsiFileBase(viewProvider, TelFileType.INSTANCE.getLanguage()) {
       {
-        init(TelElementTypes.TEL_FILE, TelElementTypes.TAP5_EL_HOLDER);
+        init(TelTokenTypes.TEL_FILE, TelTokenTypes.TAP5_EL_HOLDER);
       }
 
       @NotNull
@@ -76,10 +76,10 @@ public class TelParserDefinition implements ParserDefinition {
   public PsiElement createElement(ASTNode node) {
 
     final IElementType elementType = node.getElementType();
-    if (elementType instanceof TelElementType) {
-      return ((TelElementType)elementType).createPsiElement(node);
+    if (elementType instanceof TelCompositeElementType) {
+      return ((TelCompositeElementType)elementType).createPsiElement(node);
     }
-    if (elementType == TelElementTypes.TAP5_EL_HOLDER) {
+    if (elementType == TelTokenTypes.TAP5_EL_HOLDER) {
       return new TelExpressionHolder(node);
     }
     throw new AssertionError("Unknown type: " + elementType);

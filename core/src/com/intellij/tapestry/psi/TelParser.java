@@ -1,29 +1,33 @@
 package com.intellij.tapestry.psi;
 
-import com.intellij.lang.PsiParser;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
+import static com.intellij.tapestry.psi.TelTokenTypes.*;
+import static com.intellij.tapestry.psi.TelCompositeElementType.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
-* @author Alexey Chmutov
-*         Date: Jun 22, 2009
-*         Time: 9:53:11 PM
-*/
+ * @author Alexey Chmutov
+ *         Date: Jun 22, 2009
+ *         Time: 9:53:11 PM
+ */
 public class TelParser implements PsiParser {
   @NotNull
   public ASTNode parse(IElementType root, PsiBuilder builder) {
-    final ASTNode contextNode = builder.getUserData(TelElementTypes.TAP5_CONTEXT_NODE_KEY);
+    //builder.setDebugMode(true);
+    final ASTNode contextNode = builder.getUserData(TAP5_CONTEXT_NODE_KEY);
     final PsiBuilder.Marker rootMarker = builder.mark();
-    final boolean elUnderFile = contextNode != null && contextNode.getElementType() == TelElementTypes.TEL_FILE;
+    final boolean elUnderFile = contextNode != null && contextNode.getElementType() == TEL_FILE;
     final PsiBuilder.Marker markerUnderFile = elUnderFile ? builder.mark() : null;
     while (!builder.eof()) {
       parseExpression(builder);
     }
     if (markerUnderFile != null) {
       markerUnderFile.done(root);
-      rootMarker.done(TelElementTypes.TEL_FILE);
+      rootMarker.done(TEL_FILE);
     }
     else {
       rootMarker.done(root);
@@ -32,16 +36,130 @@ public class TelParser implements PsiParser {
   }
 
   public static void parseExpression(PsiBuilder builder) {
-    final IElementType tokenType = builder.getTokenType();
-    if (tokenType == TelElementTypes.TAP5_EL_START ||
-        tokenType == TelElementTypes.TAP5_EL_END) {
-      builder.advanceLexer();
+    if (consumeToken(builder, TAP5_EL_START)) {
+      parseExpressionInner(builder);
+      //while (TAP5_EL_END != builder.getTokenType()) builder.advanceLexer();
+      consumeToken(builder, TAP5_EL_END);
     }
-    parseExpressionInner(builder);
   }
 
-  private static void parseExpressionInner(PsiBuilder builder) {
-    builder.getTokenType(); // todo
+  private static boolean parseExpressionInner(PsiBuilder builder) {
+    PsiBuilder.Marker mark = builder.mark();
+    TelCompositeElementType res = null;
+    try {
+      if (consumeOptionalToken(builder, TAP5_EL_LEFT_BRACKET)) {
+        res = LIST_EXPRESSION;
+        parseExpressionList(builder);
+        consumeToken(builder, TAP5_EL_RIGHT_BRACKET);
+        return true;
+      }
+      if (consumeOptionalToken(builder, TAP5_EL_EXCLAMATION)) {
+        res = NOT_OP_EXPRESSION;
+        parseExpressionInner(builder);
+        return true;
+      }
+      res = parseConstantExpr(builder);
+      boolean propertyChainFound = false;
+      if (res == null) {
+        propertyChainFound = parsePropertyChainExpr(builder);
+      }
+      if ((propertyChainFound || res == INTEGER_LITERAL) && builder.getTokenType() == TAP5_EL_RANGE) {
+        if (res != null) {
+          mark.done(res);
+          mark = mark.precede();
+        }
+        consumeToken(builder, TAP5_EL_RANGE);
+        res = RANGE_EXPRESSION;
+        if (!parseIntegerLiteral(builder) && !parsePropertyChainExpr(builder)) {
+          builder.error("property chain or integer literal expected");
+        }
+      }
+      return propertyChainFound || res != null;
+    }
+    finally {
+      if (res != null) {
+        mark.done(res);
+      }
+      else {
+        mark.drop();
+      }
+    }
+  }
+
+  private static boolean parseIntegerLiteral(PsiBuilder builder) {
+    PsiBuilder.Marker mark = builder.mark();
+    final boolean result = consumeOptionalToken(builder, TAP5_EL_INTEGER);
+    if (result) {
+      mark.done(INTEGER_LITERAL);
+    }
+    else {
+      mark.drop();
+    }
+    return result;
+  }
+
+  private static boolean consumeOptionalToken(PsiBuilder builder, TelTokenType tokenType) {
+    if (tokenType != builder.getTokenType()) return false;
     builder.advanceLexer();
+    return true;
+  }
+
+  private static boolean consumeToken(PsiBuilder builder, TelTokenType tokenType) {
+    if (tokenType != builder.getTokenType()) {
+      builder.error(tokenType.toString().substring("TAP5_EL_".length()) + " expected");
+      return false;
+    }
+    builder.advanceLexer();
+    return true;
+  }
+
+  @Nullable
+  private static TelCompositeElementType parseConstantExpr(PsiBuilder builder) {
+    if (consumeOptionalToken(builder, TAP5_EL_BOOLEAN)) {
+      return BOOLEAN_LITERAL;
+    }
+    if (consumeOptionalToken(builder, TAP5_EL_INTEGER)) {
+      return INTEGER_LITERAL;
+    }
+    if (consumeOptionalToken(builder, TAP5_EL_DECIMAL)) {
+      return DECIMAL_LITERAL;
+    }
+    if (consumeOptionalToken(builder, TAP5_EL_STRING)) {
+      return STRING_LITERAL;
+    }
+    if (consumeOptionalToken(builder, TAP5_EL_NULL)) {
+      return NULL_LITERAL;
+    }
+    return null;
+  }
+
+  private static boolean parsePropertyChainExpr(PsiBuilder builder) {
+    if (TAP5_EL_IDENTIFIER != builder.getTokenType()) return false;
+    PsiBuilder.Marker referenceExpression = builder.mark();
+    builder.advanceLexer();
+    referenceExpression.done(REFERENCE_EXPRESSION);
+    referenceExpression = referenceExpression.precede();
+    while (consumeOptionalToken(builder, TAP5_EL_DOT) || consumeOptionalToken(builder, TAP5_EL_QUESTION_DOT)) {
+      if (!consumeToken(builder, TAP5_EL_IDENTIFIER)) break;
+      referenceExpression.done(REFERENCE_EXPRESSION);
+      if (consumeOptionalToken(builder, TAP5_EL_LEFT_PARENTH)) {
+        referenceExpression = referenceExpression.precede();
+        parseExpressionList(builder);
+        consumeToken(builder, TAP5_EL_RIGHT_PARENTH);
+        referenceExpression.done(METHOD_CALL_EXPRESSION);
+      }
+      referenceExpression = referenceExpression.precede();
+    }
+    referenceExpression.drop();
+    return true;
+  }
+
+  private static void parseExpressionList(PsiBuilder builder) {
+    if (!parseExpressionInner(builder)) return;
+    while (consumeOptionalToken(builder, TAP5_EL_COMMA)) {
+      if (!parseExpressionInner(builder)) {
+        builder.error("expression expected");
+      }
+    }
   }
 }

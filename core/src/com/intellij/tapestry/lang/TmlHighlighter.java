@@ -4,7 +4,7 @@ import com.intellij.ide.highlighter.XmlFileHighlighter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.tapestry.psi.TelElementType;
+import com.intellij.tapestry.psi.TelTokenType;
 import com.intellij.tapestry.psi.TmlHighlightingLexer;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,7 @@ public class TmlHighlighter extends XmlFileHighlighter {
   @Override
   @NotNull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
-    return tokenType instanceof TelElementType
+    return tokenType instanceof TelTokenType
            ? TelHighlighter.getTokenHighlightsStatic(tokenType)
            : super.getTokenHighlights(tokenType);
   }

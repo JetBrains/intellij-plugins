@@ -13,17 +13,17 @@ public class TmlHighlightingLexer extends XHtmlHighlightingLexer {
 
   public TmlHighlightingLexer() {
     super(TmlLexer.createElAwareXmlLexer());
-    registerHandler(TelElementTypes.TAP5_EL_CONTENT, new ElEmbeddmentHandler());
+    registerHandler(TelTokenTypes.TAP5_EL_CONTENT, new ElEmbeddmentHandler());
   }
 
   @Override
   protected boolean isValidAttributeValueTokenType(final IElementType tokenType) {
-    return super.isValidAttributeValueTokenType(tokenType) ||tokenType == TelElementTypes.TAP5_EL_CONTENT;
+    return super.isValidAttributeValueTokenType(tokenType) ||tokenType == TelTokenTypes.TAP5_EL_CONTENT;
   }
 
   @Override
   protected Lexer createELLexer(Lexer newLexer) {
-    return getTokenType() == TelElementTypes.TAP5_EL_CONTENT ? new TelLexer() : newLexer;
+    return getTokenType() == TelTokenTypes.TAP5_EL_CONTENT ? new TelLexer() : newLexer;
   }
 }
 

@@ -91,10 +91,14 @@ public class IntellijResourceFinder implements IResourceFinder {
                 relativePath = PathUtils.toUnixPath(path).substring(webRoot.getRelativePath().length() + (webRoot.getRelativePath().endsWith("/") ? 0 : 1));
             }
 
-            if (webRoot.getFile() != null) {
-                VirtualFile virtualFile = webRoot.getFile().findFileByRelativePath(relativePath);
+          final VirtualFile file = webRoot.getFile();
+          if (file != null) {
+                VirtualFile virtualFile = file.findFileByRelativePath(relativePath);
                 if (virtualFile != null) {
-                    return new IntellijResource(PsiManager.getInstance(_module.getProject()).findFile(virtualFile));
+                  final PsiFile psiFile = PsiManager.getInstance(_module.getProject()).findFile(virtualFile);
+                  if (psiFile != null) {
+                    return new IntellijResource(psiFile);
+                  }
                 }
             }
         }
@@ -124,18 +128,19 @@ public class IntellijResourceFinder implements IResourceFinder {
             }
 
             String parentPath = PathUtils.removeLastFilePathElement(relativePath, true);
-            VirtualFile parentVirtualFile;
 
-            if (parentPath.length() > 0) {
-                parentVirtualFile = webRoot.getFile().findFileByRelativePath(parentPath);
-            } else {
-                parentVirtualFile = webRoot.getFile();
-            }
 
+          final VirtualFile virtualFile = webRoot.getFile();
+          VirtualFile parentVirtualFile = parentPath.length() > 0 && virtualFile != null
+                                          ? virtualFile.findFileByRelativePath(parentPath)
+                                          : virtualFile;
             if (parentVirtualFile != null) {
                 for (VirtualFile file : parentVirtualFile.getChildren()) {
                     if (LocalizationUtils.unlocalizeFileName(file.getName()).equals(filename)) {
-                        resources.add(new IntellijResource(PsiManager.getInstance(_module.getProject()).findFile(file)));
+                      final PsiFile psiFile = PsiManager.getInstance(_module.getProject()).findFile(file);
+                      if (psiFile != null) {
+                        resources.add(new IntellijResource(psiFile));
+                      }
                     }
                 }
             }

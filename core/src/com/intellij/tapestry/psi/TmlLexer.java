@@ -39,8 +39,8 @@ public class TmlLexer extends XHtmlLexer {
     myTokenStart = super.getTokenStart();
     myTokenEnd = super.getTokenEnd();
 
-    if (myTokenType == TelElementTypes.TAP5_EL_CONTENT) {
-      myTokenType = TelElementTypes.TAP5_EL_HOLDER;
+    if (myTokenType == TelTokenTypes.TAP5_EL_CONTENT) {
+      myTokenType = TelTokenTypes.TAP5_EL_HOLDER;
     }
 
     return myTokenType;
@@ -58,14 +58,14 @@ public class TmlLexer extends XHtmlLexer {
 
   @Override
   protected boolean isValidAttributeValueTokenType(final IElementType tokenType) {
-    return super.isValidAttributeValueTokenType(tokenType) || tokenType == TelElementTypes.TAP5_EL_CONTENT;
+    return super.isValidAttributeValueTokenType(tokenType) || tokenType == TelTokenTypes.TAP5_EL_CONTENT;
   }
 
   public static XmlLexer createElAwareXmlLexer() {
     return new XmlLexer(new _XmlLexer(new __XmlLexer((Reader)null) {
       {
-        elTokenType = TelElementTypes.TAP5_EL_CONTENT;
-        elTokenType2 = TelElementTypes.TAP5_EL_CONTENT;
+        elTokenType = TelTokenTypes.TAP5_EL_CONTENT;
+        elTokenType2 = TelTokenTypes.TAP5_EL_CONTENT;
       }
     }));
   }

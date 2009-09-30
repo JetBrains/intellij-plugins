@@ -27,6 +27,10 @@ public class TapestryLexerTest extends UsefulTestCase {
     doHighlightingTest();
   }
 
+  public void testRangeOpHighlighting() throws Throwable {
+    doHighlightingTest();
+  }
+
   public void testELHighlightingInAttr() throws Throwable {
     doHighlightingTest();
   }

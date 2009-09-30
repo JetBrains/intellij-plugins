@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
  *         Date: Jun 22, 2009
  *         Time: 10:14:34 PM
  */
-public class TelElementType extends IElementType {
-  public TelElementType(@NotNull @NonNls String debugName) {
+public class TelTokenType extends IElementType {
+  public TelTokenType(@NotNull @NonNls String debugName) {
     super(debugName, TelFileType.INSTANCE.getLanguage());
   }
 
