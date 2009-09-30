@@ -57,5 +57,4 @@ public class ActionUtilTest {
     assertFalse(ActionUtil.matchesPath("some*Action*Stuff", "some/Action/Stuff"));
   }
 
-
 }
