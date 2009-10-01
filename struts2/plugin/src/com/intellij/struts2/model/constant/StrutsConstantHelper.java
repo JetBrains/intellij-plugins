@@ -15,8 +15,10 @@
 
 package com.intellij.struts2.model.constant;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -68,27 +70,31 @@ public class StrutsConstantHelper {
     if (extensions == null) {
       final Project project = psiElement.getProject();
       extensions = CachedValuesManager.getManager(project).createCachedValue(
-          new CachedValueProvider<AtomicNotNullLazyValue<List<String>>>() {
-            public Result<AtomicNotNullLazyValue<List<String>>> compute() {
-              final AtomicNotNullLazyValue<List<String>> lazyValue = new AtomicNotNullLazyValue<List<String>>() {
-                @NotNull
-                @Override
-                protected List<String> compute() {
-                  final List<String> extensions = StrutsConstantManager.getInstance(project)
+        new CachedValueProvider<AtomicNotNullLazyValue<List<String>>>() {
+          public Result<AtomicNotNullLazyValue<List<String>>> compute() {
+            final AtomicNotNullLazyValue<List<String>> lazyValue = new AtomicNotNullLazyValue<List<String>>() {
+              @NotNull
+              @Override
+              protected List<String> compute() {
+                final List<String> extensions = ApplicationManager.getApplication().runReadAction(new Computable<List<String>>() {
+                  public List<String> compute() {
+                    return StrutsConstantManager.getInstance(project)
                       .getConvertedValue(psiElement, StrutsCoreConstantContributor.ACTION_EXTENSION);
-
-                  final List<String> processedExtensions;
-                  if (extensions == null) {
-                    processedExtensions = Collections.emptyList();
-                  } else {
-                    processedExtensions = ContainerUtil.map(extensions, DOT_PATH_FUNCTION);
                   }
-                  return processedExtensions;
+                });
+
+                final List<String> processedExtensions;
+                if (extensions == null) {
+                  processedExtensions = Collections.emptyList();
+                } else {
+                  processedExtensions = ContainerUtil.map(extensions, DOT_PATH_FUNCTION);
                 }
-              };
-              return Result.create(lazyValue, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
-            }
-          }, false);
+                return processedExtensions;
+              }
+            };
+            return Result.create(lazyValue, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+          }
+        }, false);
 
       psiFile.putUserData(KEY_ACTION_EXTENSIONS, extensions);
     }
