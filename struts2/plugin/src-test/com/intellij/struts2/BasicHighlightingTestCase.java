@@ -68,10 +68,10 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected static final String STRUTS_XML = "struts.xml";
 
   @NonNls
-  private static final String STRUTS2_CORE_JAR_FILENAME = "struts2-core-2.1.6.jar";
+  private static final String STRUTS2_CORE_JAR_FILENAME = "struts2-core-2.1.8.jar";
 
   @NonNls
-  protected static final String STRUTS2_SPRING_PLUGIN_JAR = "struts2-spring-plugin-2.1.6.jar";
+  protected static final String STRUTS2_SPRING_PLUGIN_JAR = "struts2-spring-plugin-2.1.8.jar";
 
   protected Class<T> getModuleFixtureBuilderClass() {
     //noinspection unchecked
@@ -143,9 +143,9 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected final void addStrutsJars(final T moduleBuilder) throws Exception {
     addLibrary(moduleBuilder, "struts2",
                STRUTS2_CORE_JAR_FILENAME,
-               "freemarker-2.3.13.jar",
-               "ognl-2.6.11.jar",
-               "xwork-2.1.2.jar");
+               "freemarker-2.3.15.jar",
+               "ognl-2.7.3.jar",
+               "xwork-core-2.1.6.jar");
   }
 
   protected void addLibrary(final T moduleBuilder, @NonNls final String libraryName, @NonNls final String... jarPaths) {

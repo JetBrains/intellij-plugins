@@ -35,15 +35,15 @@ public enum StrutsVersion {
           createSubMavenJarInfo("/opensymphony/", "ognl", "2.6.11", "ognl.Ognl")
   }),
 
-  STRUTS_2_1_6("2.1.6", new LibraryInfo[]{
-          createSubMavenJarInfo("/org/apache/struts", "struts2-core", "2.1.6", "org.apache.struts2.StrutsConstants"),
-          createMavenJarInfo("commons-fileupload", "1.2.1", "org.apache.commons.fileupload.FileUpload"),
-          createMavenJarInfo("commons-io", "1.3.2", "org.apache.commons.io.FileUtils"),
-          createMavenJarInfo("commons-logging", "1.1", "org.apache.commons.logging.Log"),
-          createSubMavenJarInfo("/org/freemarker", "freemarker", "2.3.13", "freemarker.core.TemplateElement"),
-          createSubMavenJarInfo("/com/opensymphony/", "xwork", "2.1.2", "com.opensymphony.xwork2.XWorkException"),
-          createSubMavenJarInfo("/opensymphony/", "ognl", "2.6.11", "ognl.Ognl")
-  });
+  STRUTS_2_1_8("2.1.8", new LibraryInfo[]{
+           createSubMavenJarInfo("/org/apache/struts", "struts2-core", "2.1.8", "org.apache.struts2.StrutsConstants"),
+           createMavenJarInfo("commons-fileupload", "1.2.1", "org.apache.commons.fileupload.FileUpload"),
+           createMavenJarInfo("commons-io", "1.3.2", "org.apache.commons.io.FileUtils"),
+           createMavenJarInfo("commons-logging", "1.1", "org.apache.commons.logging.Log"),
+           createSubMavenJarInfo("/org/freemarker", "freemarker", "2.3.15", "freemarker.core.TemplateElement"),
+           createSubMavenJarInfo("/com/opensymphony/", "xwork-core", "2.1.6", "com.opensymphony.xwork2.XWorkException"),
+           createSubMavenJarInfo("ognl", "ognl", "2.7.3", "ognl.Ognl")
+   });
 
   private final String version;
   private final LibraryInfo[] libraryInfos;

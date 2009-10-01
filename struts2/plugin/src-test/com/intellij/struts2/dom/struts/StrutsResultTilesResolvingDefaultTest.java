@@ -41,7 +41,7 @@ public class StrutsResultTilesResolvingDefaultTest extends BasicStrutsHighlighti
     moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
     moduleBuilder.addWebRoot(getTestDataPath(), "/");
 
-    addLibrary(moduleBuilder, "struts2-tiles-plugin", "struts2-tiles-plugin-2.1.6.jar");
+    addLibrary(moduleBuilder, "struts2-tiles-plugin", "struts2-tiles-plugin-2.1.8.jar");
   }
 
   public void testHighlighting() throws Throwable {

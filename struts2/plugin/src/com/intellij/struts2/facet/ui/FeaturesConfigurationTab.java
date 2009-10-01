@@ -68,11 +68,11 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
       return;
     }
     versionComboBox.setModel(new EnumComboBoxModel<StrutsVersion>(StrutsVersion.class));
-    versionComboBox.getModel().setSelectedItem(StrutsVersion.STRUTS_2_1_6);
+    versionComboBox.getModel().setSelectedItem(StrutsVersion.STRUTS_2_1_8);
 
     // TODO remove hard-coded version
     validator.setRequiredLibraries(getRequiredLibraries());
-    validator.setDescription(new StrutsFacetLibrariesValidatorDescription(StrutsVersion.STRUTS_2_1_6.getVersion()));
+    validator.setDescription(new StrutsFacetLibrariesValidatorDescription(StrutsVersion.STRUTS_2_1_8.getVersion()));
   }
 
 
