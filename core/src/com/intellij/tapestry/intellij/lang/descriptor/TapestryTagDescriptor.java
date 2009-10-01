@@ -24,7 +24,7 @@ public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
   }
 
   public String getDefaultName() {
-    return getPrefixWithColon() + myComponent.getName().toLowerCase();
+    return getPrefixWithColon() + myComponent.getName().toLowerCase().replace('/', '.');
   }
 
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {

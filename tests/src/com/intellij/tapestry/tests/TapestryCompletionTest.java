@@ -27,8 +27,9 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
 
   public void testTagNameInTmlParent() throws Throwable {
     initByComponent();
+    addComponentToProject("subpackage.Count");
     doTestBasicCompletionVariants(
-        mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "isindex", "link", "meta", "object", "script", "style", "title", getElementTagName()));
+        mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "isindex", "link", "meta", "object", "script", "style", "title", "t:subpackage.count", getElementTagName()));
 
   }
 
@@ -74,7 +75,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   public void testTypeAttrValue() throws Throwable {
     initByComponent();
     addComponentToProject("mycomps.Count");
-    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, getLowerCaseElementName(), "mycomps.count"));
+    doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_ELEMENT_NAMES, getLowerCaseElementName(), "mycomps/count"));
   }
 
   public void testPageAttrValue() throws Throwable {

@@ -2,6 +2,6 @@
     <head>
     </head>
     <body>
-        <a href="#" t:type="pagelink" page="subpack.st<caret>artpage"  >${currDate}</a>
+        <a href="#" t:type="pagelink" page="subpack/st<caret>artpage"  >${currDate}</a>
     </body>
 </html>

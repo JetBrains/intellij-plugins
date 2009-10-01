@@ -29,6 +29,8 @@ import java.util.Collection;
  *         Time: 12:54:29 PM
  */
 class DescriptorUtil {
+  private DescriptorUtil() {
+  }
 
   public static XmlAttributeDescriptor[] getAttributeDescriptors(@NotNull XmlTag context) {
     Component component = TapestryUtils.getTypeOfTag(context);
@@ -54,12 +56,14 @@ class DescriptorUtil {
     return descriptors;
   }
 
+  @Nullable
   public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName, @NotNull XmlTag context) {
     XmlAttribute attr = TapestryUtils.getIdentifyingAttribute(context);
     if (attr != null && attr.getName().equals(attributeName)) return new TapestryIdOrTypeAttributeDescriptor(attributeName, context);
     return getAttributeDescriptor(attributeName, TapestryUtils.getTypeOfTag(context));
   }
 
+  @Nullable
   public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName, @Nullable Component component) {
     if (component == null) return null;
     TapestryParameter param = component.getParameters().get(XmlUtil.findLocalNameByQualifiedName(attributeName));
@@ -83,6 +87,7 @@ class DescriptorUtil {
     return getElementDescriptors(project.getAvailableElements(), namespacePrefix);
   }
 
+  @Nullable
   public static XmlElementDescriptor getTmlOrHtmlTagDescriptor(@NotNull XmlTag tag) {
     TmlFile file = getTmlFile(tag);
     if (file == null) return null;
@@ -92,6 +97,7 @@ class DescriptorUtil {
     return htmlDescriptor != null ? new TapestryHtmlTagDescriptor(htmlDescriptor, TapestryUtils.getTypeOfTag(tag)) : null;
   }
 
+  @Nullable
   private static XmlElementDescriptor getHtmlTagDescriptor(XmlTag tag, TmlFile file) {
     XmlNSDescriptor htmlNSDescriptor = getHtmlNSDescriptor(file);
     return htmlNSDescriptor instanceof XmlNSDescriptorImpl
@@ -99,6 +105,7 @@ class DescriptorUtil {
            : htmlNSDescriptor.getElementDescriptor(tag);
   }
 
+  @Nullable
   private static TmlFile getTmlFile(XmlTag tag) {
     PsiFile file = tag.getContainingFile();
     if (file instanceof TmlFile) return (TmlFile)file;
@@ -108,6 +115,7 @@ class DescriptorUtil {
     return file instanceof TmlFile ? (TmlFile)file : null;
   }
 
+  @Nullable
   public static XmlNSDescriptor getHtmlNSDescriptor(TmlFile tmlFile) {
     XmlDocument doc = tmlFile.getDocument();
     if (doc == null) return null;

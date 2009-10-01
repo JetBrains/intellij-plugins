@@ -160,9 +160,9 @@ public class TapestryProject {
     return names.toArray(new String[names.size()]);
   }
 
-  private static final ElementsCachedMap ourNameToPageMap = new ElementsCachedMap("ourFqnToComponentMap", false, true) {
+  private static final ElementsCachedMap ourNameToPageMap = new ElementsCachedMap("ourNameToPageMap", false, true) {
     protected String computeKey(PresentationLibraryElement element) {
-      return element.getName().toLowerCase().replace('/', '.');
+      return element.getName().toLowerCase();
     }
   };
 
@@ -201,9 +201,9 @@ public class TapestryProject {
     return names.toArray(new String[names.size()]);
   }
 
-  private static final ElementsCachedMap ourNameToComponentMap = new ElementsCachedMap("ourFqnToComponentMap", true, false) {
+  private static final ElementsCachedMap ourNameToComponentMap = new ElementsCachedMap("ourNameToComponentMap", true, false) {
     protected String computeKey(PresentationLibraryElement element) {
-      return element.getName().toLowerCase().replace('/', '.');
+      return element.getName().toLowerCase();
     }
   };
 

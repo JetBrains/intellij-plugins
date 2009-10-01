@@ -331,7 +331,8 @@ public class TapestryUtils {
       }
       return null;
     }
-    final String tagLocalName = tag.getLocalName().toLowerCase(Locale.getDefault());
+    final String tagLocalName = tag.getLocalName().toLowerCase().replace('.', '/');
+    // element names are delimited by slashes but tag names may not contain slashes 
     return tapestryProject.findComponent(tagLocalName);
   }
 
