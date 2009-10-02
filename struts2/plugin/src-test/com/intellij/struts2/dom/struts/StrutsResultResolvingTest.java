@@ -86,7 +86,6 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
     performCompletionVariantTest("struts-completionvariants.xml",
                                  "/anotherActionPathTest/anotherActionPath1.action",
                                  "2ndWebRoot",
-                                 "WEB-INF",
                                  "actionPath1.action",
                                  "index.jsp",
                                  "jsp2-index.jsp");
@@ -96,7 +95,6 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
     performCompletionVariantTest("struts-completionvariants-chain.xml",
                                  "/anotherActionPathTest/anotherActionPath1",
                                  "2ndWebRoot",
-                                 "WEB-INF",
                                  "actionPath1",
                                  "index.jsp",
                                  "jsp2-index.jsp");
