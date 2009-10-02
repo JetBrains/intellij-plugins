@@ -15,22 +15,19 @@
 package com.intellij.struts2.facet;
 
 import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
-import com.intellij.ide.util.frameworkSupport.FrameworkVersion;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
-import com.intellij.javaee.facet.JavaeeFacetType;
+import com.intellij.ide.util.frameworkSupport.FrameworkVersion;
 import com.intellij.javaee.model.xml.web.Filter;
 import com.intellij.javaee.model.xml.web.FilterMapping;
 import com.intellij.javaee.model.xml.web.WebApp;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.deployment.PackagingMethod;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -75,13 +72,6 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
       result.add(new FrameworkVersion(name, "struts2-" + name, version.getLibraryInfos()));
     }
     return result;
-  }
-
-  protected void onLibraryAdded(final StrutsFacet facet, @NotNull final Library library) {
-    final WebFacet webFacet = facet.getWebFacet();
-    webFacet.getPackagingConfiguration().addLibraryLink(library,
-                                                        PackagingMethod.COPY_FILES,
-                                                        ((JavaeeFacetType) webFacet.getType()).getDefaultUriForJar());
   }
 
   protected void setupConfiguration(final StrutsFacet strutsFacet,

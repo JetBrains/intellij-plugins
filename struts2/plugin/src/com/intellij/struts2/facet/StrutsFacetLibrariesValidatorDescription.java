@@ -16,9 +16,8 @@ package com.intellij.struts2.facet;
 
 import com.intellij.facet.Facet;
 import com.intellij.facet.ui.libraries.FacetLibrariesValidatorDescription;
-import com.intellij.javaee.facet.JavaeeFacetType;
+import com.intellij.javaee.artifact.JavaeeArtifactUtil;
 import com.intellij.javaee.web.facet.WebFacet;
-import com.intellij.openapi.deployment.PackagingMethod;
 import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,9 +45,7 @@ public class StrutsFacetLibrariesValidatorDescription extends FacetLibrariesVali
     super.onLibraryAdded(facet, library);
     final StrutsFacet strutsFacet = (StrutsFacet) facet;
     final WebFacet webFacet = strutsFacet.getWebFacet();
-    webFacet.getPackagingConfiguration().addLibraryLink(library,
-                                                        PackagingMethod.COPY_FILES,
-                                                        ((JavaeeFacetType) webFacet.getType()).getDefaultUriForJar());
+    JavaeeArtifactUtil.getInstance().addLibraryToAllArtifactsContainingFacet(library, webFacet);
   }
 
 }
