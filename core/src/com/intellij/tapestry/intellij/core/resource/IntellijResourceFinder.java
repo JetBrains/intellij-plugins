@@ -83,7 +83,7 @@ public class IntellijResourceFinder implements IResourceFinder {
         if (webFacet == null)
             return null;
 
-        List<WebRoot> webRoots = webFacet.getWebRoots(false);
+        List<WebRoot> webRoots = webFacet.getWebRoots();
 
         for (WebRoot webRoot : webRoots) {
             String relativePath = path;
@@ -117,7 +117,7 @@ public class IntellijResourceFinder implements IResourceFinder {
         if (webFacet == null)
             return resources;
 
-        List<WebRoot> webRoots = webFacet.getWebRoots(false);
+        List<WebRoot> webRoots = webFacet.getWebRoots();
 
         String filename = PathUtils.getLastPathElement(path);
 

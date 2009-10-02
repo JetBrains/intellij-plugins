@@ -102,7 +102,7 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
         }
         WebFacet webFacet = IdeaUtils.getWebFacet(module);
 
-        if (eventPsiElement instanceof PsiDirectory && webFacet != null && WebUtil.isInsideWebRoots(((PsiDirectory)eventPsiElement).getVirtualFile(), webFacet.getWebRoots(false))) {
+        if (eventPsiElement instanceof PsiDirectory && webFacet != null && WebUtil.isInsideWebRoots(((PsiDirectory)eventPsiElement).getVirtualFile(), webFacet.getWebRoots())) {
           enabled = true;
         }
       }
@@ -158,7 +158,7 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
     if (eventPsiElement != null && psiPackage == null) {
       WebFacet webFacet = IdeaUtils.getWebFacet(module);
 
-      WebRoot webRoot = WebUtil.findParentWebRoot(((PsiDirectory)eventPsiElement).getVirtualFile(), webFacet.getWebRoots(false));
+      WebRoot webRoot = WebUtil.findParentWebRoot(((PsiDirectory)eventPsiElement).getVirtualFile(), webFacet.getWebRoots());
       defaultPagePath = ((PsiDirectory)eventPsiElement).getVirtualFile().getPath().replaceFirst(webRoot.getFile().getPath(), "") +
                         PathUtils.TAPESTRY_PATH_SEPARATOR;
       if (defaultPagePath.startsWith(File.separator)) {

@@ -63,7 +63,7 @@ public class IdeaUtils {
         if (webFacet == null)
             return finalWebRoots;
 
-        List<WebRoot> webRoots = webFacet.getWebRoots(false);
+        List<WebRoot> webRoots = webFacet.getWebRoots();
 
         for (WebRoot webRoot : webRoots)
             if (!webRoot.getRelativePath().equals("/WEB-INF")) {
@@ -110,7 +110,7 @@ public class IdeaUtils {
         if (webFacet == null)
             return false;
 
-        List<WebRoot> webRoots = webFacet.getWebRoots(false);
+        List<WebRoot> webRoots = webFacet.getWebRoots();
 
         for (WebRoot webRoot : webRoots)
             if (webRoot.getFile().getPath().equals(directory.getPath())) {
