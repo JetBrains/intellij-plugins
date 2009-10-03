@@ -16,11 +16,14 @@
 package com.intellij.struts2.tiles;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
+import com.intellij.codeInsight.lookup.LookupValueFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlElement;
@@ -30,13 +33,14 @@ import com.intellij.struts.StrutsManager;
 import com.intellij.struts.TilesModel;
 import com.intellij.struts.dom.tiles.Definition;
 import com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xml.ElementPresentationManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -131,10 +135,27 @@ public class TilesResultContributor extends StrutsResultContributor {
       return null;
     }
 
+    @SuppressWarnings({"unchecked"})
     @NotNull
     public Object[] getVariants() {
       final List<Definition> definitions = ContainerUtil.concat(allTilesModels, DEFINITION_COLLECTOR);
-      return ElementPresentationManager.getInstance().createVariants(definitions);
+      final List variants = new ArrayList();
+      for (final Definition definition : definitions) {
+        final String definitionName = definition.getName().getStringValue();
+        final XmlElement xmlElement = definition.getXmlElement();
+        assert xmlElement != null;
+        final PsiFile psiFile = xmlElement.getContainingFile();
+
+        if (psiFile != null &&
+            StringUtil.isNotEmpty(definitionName)) {
+          //noinspection ConstantConditions
+          variants.add(LookupValueFactory.createLookupValueWithHint(definitionName,
+                                                                    StrutsIcons.TILE_ICON,
+                                                                    psiFile.getName()));
+        }
+      }
+      
+      return ArrayUtil.toObjectArray(variants);
     }
 
     public String getUnresolvedMessagePattern() {
