@@ -3,10 +3,11 @@ package com.intellij.tapestry.intellij.util;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.UserDataCache;
 import com.intellij.openapi.util.UserDataHolder;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Alexey Chmutov
@@ -19,13 +20,14 @@ public abstract class CachedUserDataCache<T, Owner extends UserDataHolder> exten
   }
 
   protected final CachedValue<T> compute(final Owner owner, Object p) {
-    return PsiManager.getInstance(getProject(owner)).getCachedValuesManager().createCachedValue(new CachedValueProvider<T>() {
+    return CachedValuesManager.getManager(getProject(owner)).createCachedValue(new CachedValueProvider<T>() {
       public Result<T> compute() {
         return Result.create(computeValue(owner), getDependencies(owner));
       }
     }, false);
   }
 
+  @Nullable
   protected abstract T computeValue(Owner owner);
 
   protected Object[] getDependencies(Owner owner) {

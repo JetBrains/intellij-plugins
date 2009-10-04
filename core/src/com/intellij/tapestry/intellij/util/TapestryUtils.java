@@ -291,6 +291,7 @@ public class TapestryUtils {
 
   private static final PsiElementBasedCachedUserDataCache<Component, XmlTag> outTagToComponentMap =
       new PsiElementBasedCachedUserDataCache<Component, XmlTag>("TapestryTagToComponentMap") {
+        @Nullable
         protected Component computeValue(XmlTag tag) {
           Module module = IdeaUtils.getModule(tag);
           if (module == null) return null;
@@ -309,7 +310,7 @@ public class TapestryUtils {
   private static Component getTypeOfTag(@NotNull Module module, @NotNull XmlTag tag) {
     TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
     if (tapestryProject == null) return null;
-    XmlElement identifier = TapestryUtils.getComponentIdentifier(tag);
+    XmlElement identifier = getComponentIdentifier(tag);
     if (identifier == null) return null;
 
     if (identifier instanceof XmlAttribute) {
@@ -342,6 +343,7 @@ public class TapestryUtils {
    * @param template the template to search for the prefix;
    * @return the Tapestry namespace prefix declared in the given template or <code>null</code> if none is found.
    */
+  @Nullable
   public static String getTapestryNamespacePrefix(XmlFile template) {
     XmlDocument doc = template.getDocument();
     if (doc == null) return null;
@@ -411,13 +413,10 @@ public class TapestryUtils {
         IdeaUtils.findOrCreateDirectoryForPackage(sourceDirectory, PathUtils.getFullComponentPackage(basePackage, pageName));
 
     String fileName = PathUtils.getComponentFileName(pageName) + "." + TapestryConstants.TEMPLATE_FILE_EXTENSION;
-    if (templateDirectory.findFile(fileName) != null) {
-      if (!replaceExistingFiles) {
-        throw new FileAlreadyExistsException();
-      }
-      else {
-        templateDirectory.findFile(fileName).delete();
-      }
+    final PsiFile psiFile = templateDirectory.findFile(fileName);
+    if (psiFile != null) {
+      if (!replaceExistingFiles) throw new FileAlreadyExistsException();
+      psiFile.delete();
     }
 
     PsiFile pageTemplate = PsiFileFactory.getInstance(module.getProject())
