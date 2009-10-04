@@ -37,9 +37,26 @@ public class TelParser implements PsiParser {
 
   public static void parseExpression(PsiBuilder builder) {
     if (consumeToken(builder, TAP5_EL_START)) {
-      parseExpressionInner(builder);
-      //while (TAP5_EL_END != builder.getTokenType()) builder.advanceLexer();
+      PsiBuilder.Marker referenceExpression = consumeIdentifierAndMark(builder);
+      if (referenceExpression != null) {
+        if(consumeOptionalToken(builder, TAP5_EL_COLON)) {
+          try {
+            parseExpressionInner(builder);
+          }
+          finally {
+            referenceExpression.done(EXPLICIT_BINDING);
+          }
+        } else {
+          parsePropertyChainTrailer(builder, referenceExpression);
+        }
+      }
+      else {
+        parseExpressionInner(builder);
+      }
       consumeToken(builder, TAP5_EL_END);
+    }
+    else {
+      builder.advanceLexer();
     }
   }
 
@@ -61,7 +78,7 @@ public class TelParser implements PsiParser {
       res = parseConstantExpr(builder);
       boolean propertyChainFound = false;
       if (res == null) {
-        propertyChainFound = parsePropertyChainExpr(builder);
+        propertyChainFound = parsePropertyChainExpression(builder);
       }
       if ((propertyChainFound || res == INTEGER_LITERAL) && builder.getTokenType() == TAP5_EL_RANGE) {
         if (res != null) {
@@ -70,7 +87,7 @@ public class TelParser implements PsiParser {
         }
         consumeToken(builder, TAP5_EL_RANGE);
         res = RANGE_EXPRESSION;
-        if (!parseIntegerLiteral(builder) && !parsePropertyChainExpr(builder)) {
+        if (!parseIntegerLiteral(builder) && !parsePropertyChainExpression(builder)) {
           builder.error("property chain or integer literal expected");
         }
       }
@@ -106,7 +123,9 @@ public class TelParser implements PsiParser {
 
   private static boolean consumeToken(PsiBuilder builder, TelTokenType tokenType) {
     if (tokenType != builder.getTokenType()) {
-      builder.error(tokenType.toString().substring("TAP5_EL_".length()) + " expected");
+      String s = tokenType.toString();
+      if (s.startsWith("TAP5_EL_")) s = s.substring("TAP5_EL_".length());
+      builder.error(s + " expected");
       return false;
     }
     builder.advanceLexer();
@@ -133,10 +152,22 @@ public class TelParser implements PsiParser {
     return null;
   }
 
-  private static boolean parsePropertyChainExpr(PsiBuilder builder) {
-    if (TAP5_EL_IDENTIFIER != builder.getTokenType()) return false;
-    PsiBuilder.Marker referenceExpression = builder.mark();
+  private static boolean parsePropertyChainExpression(PsiBuilder builder) {
+    PsiBuilder.Marker referenceExpression = consumeIdentifierAndMark(builder);
+    if (referenceExpression == null) return false;
+    parsePropertyChainTrailer(builder, referenceExpression);
+    return true;
+  }
+
+  @Nullable
+  private static PsiBuilder.Marker consumeIdentifierAndMark(PsiBuilder builder) {
+    if (TAP5_EL_IDENTIFIER != builder.getTokenType()) return null;
+    PsiBuilder.Marker mark = builder.mark();
     builder.advanceLexer();
+    return mark;
+  }
+
+  private static void parsePropertyChainTrailer(PsiBuilder builder, PsiBuilder.Marker referenceExpression) {
     referenceExpression.done(REFERENCE_EXPRESSION);
     referenceExpression = referenceExpression.precede();
     while (consumeOptionalToken(builder, TAP5_EL_DOT) || consumeOptionalToken(builder, TAP5_EL_QUESTION_DOT)) {
@@ -151,7 +182,6 @@ public class TelParser implements PsiParser {
       referenceExpression = referenceExpression.precede();
     }
     referenceExpression.drop();
-    return true;
   }
 
   private static void parseExpressionList(PsiBuilder builder) {

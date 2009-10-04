@@ -31,6 +31,13 @@ public abstract class TelCompositeElementType extends IElementType implements IC
     return new CompositeElement(this);
   }
 
+
+  public static final TelCompositeElementType EXPLICIT_BINDING = new TelCompositeElementType("ExplicitBinding") {
+    public PsiElement createPsiElement(final ASTNode node) {
+      return new TelCompositeElement(node);
+    }
+  };
+
   public static final TelCompositeElementType REFERENCE_EXPRESSION = new TelCompositeElementType("ReferenceExpression") {
     public PsiElement createPsiElement(final ASTNode node) {
       return new TelCompositeElement(node);
