@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import gnu.trove.THashMap;
 
+import java.util.Collections;
 import java.util.Map;
 
 public abstract class ParameterReceiverElement extends PresentationLibraryElement {
@@ -30,7 +31,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
       return _parametersCache;
     }
 
-    _parametersCache = new THashMap<String, TapestryParameter>();
+    Map<String, TapestryParameter> _parameters = new THashMap<String, TapestryParameter>();
     _parametersCacheTimestamp = getElementClass().getFile().getFile().lastModified();
 
     Map<String, IJavaField> fields = getElementClass().getFields(true);
@@ -38,10 +39,10 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
     for (IJavaField field : fields.values()) {
       if (field.isPrivate() && field.getAnnotations().containsKey(PARAMETER_ANNOTATION) && field.isValid()) {
         TapestryParameter parameter = new TapestryParameter(getElementClass(), field);
-        _parametersCache.put(parameter.getName(), parameter);
+        _parameters.put(parameter.getName(), parameter);
       }
     }
-
+    _parametersCache = Collections.unmodifiableMap(_parameters);
     return _parametersCache;
   }
 
