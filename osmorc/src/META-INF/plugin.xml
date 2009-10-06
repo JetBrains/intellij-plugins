@@ -126,7 +126,9 @@
         </component>
     </module-components>
 
+    <!--
     <helpset file="OsmorcHelp.jar" path="/OsmorcHelp.hs"/>
+    -->
 
     <extensionPoints>
         <extensionPoint name="frameworkIntegrator" beanClass="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
