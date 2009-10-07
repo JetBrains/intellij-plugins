@@ -18,7 +18,7 @@ import com.intellij.tapestry.lang.TelLanguage;
  */
 @SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class TelTokenTypes {
-  public static final IFileElementType TEL_FILE = new IFileElementType(Language.findInstance(TelLanguage.class));
+  public static final IFileElementType TEL_FILE = new IFileElementType(TelLanguage.INSTANCE);
 
   public static final TelTokenType TAP5_EL_START = new TelTokenType("${");
   public static final TelTokenType TAP5_EL_END = new TelTokenType("}");

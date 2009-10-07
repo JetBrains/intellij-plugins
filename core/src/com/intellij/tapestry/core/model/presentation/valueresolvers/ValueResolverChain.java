@@ -6,6 +6,7 @@ import com.intellij.tapestry.core.log.Logger;
 import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.property.PropResolver;
 import org.apache.commons.chain.impl.ChainBase;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The starting point of the resolvers chain.
@@ -40,6 +41,7 @@ public class ValueResolverChain extends ChainBase {
      * @return the resolved value or <code>null</code> if it wasn't possible to resolve the value.
      * @throws Exception if an error occurs resolving the value.
      */
+    @Nullable
     public ResolvedValue resolve(TapestryProject project, IJavaClassType contextClass, String value, String defaultPrefix) throws Exception {
         ValueResolverContext context = new ValueResolverContext(project, contextClass, value, defaultPrefix);
 

@@ -15,7 +15,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TelLanguage extends Language implements InjectableLanguage {
 
-  TelLanguage() {
+  public static final TelLanguage INSTANCE = new TelLanguage();
+
+  private TelLanguage() {
     super("TEL");
 
     SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {

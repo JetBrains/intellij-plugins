@@ -92,12 +92,12 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
     }
     catch (Exception ex) {
       _logger.error(ex);
-      _annotationHolder.createErrorAnnotation(value, "Invalid value");
+      //_annotationHolder.createErrorAnnotation(value, "Invalid value");
       return;
     }
 
     if (resolvedValue == null) {
-      _annotationHolder.createErrorAnnotation(value, "Invalid value");
+      //_annotationHolder.createErrorAnnotation(value, "Invalid value");
       return;
     }
 

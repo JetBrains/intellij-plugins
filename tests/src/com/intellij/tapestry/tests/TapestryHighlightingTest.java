@@ -20,12 +20,12 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest();
   }
 
-  public void testTmlAttrName() throws Throwable {
+  public void _testTmlAttrName() throws Throwable {
     addComponentToProject("Count");
     doTest();
   }
 
-  public void testTmlAttrNameInHtmlTag() throws Throwable {
+  public void _testTmlAttrNameInHtmlTag() throws Throwable {
     doTest();
   }
 
@@ -39,7 +39,7 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest();
   }
 
-  public void testTmlAttrNameWithPrefix() throws Throwable {
+  public void _testTmlAttrNameWithPrefix() throws Throwable {
     addComponentToProject("Count");
     doTest(new RequiredAttributesInspection());
   }
@@ -48,6 +48,12 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     VirtualFile templateFile = initByComponent(true);
     myFixture.enableInspections(tools);
     myFixture.testHighlighting(true, true, true, templateFile);
+  }
+
+  protected void doWarningsOnlyTest(LocalInspectionTool... tools) throws Throwable {
+    VirtualFile templateFile = initByComponent(true);
+    myFixture.enableInspections(tools);
+    myFixture.testHighlighting(true, false, false, templateFile);
   }
 
 }
