@@ -21,10 +21,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Tests for {@link com.intellij.struts2.facet.ui.StrutsConfigsSearcher}.
@@ -38,15 +36,20 @@ public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaMod
     return "configsSearcher";
   }
 
+  protected boolean hasJavaSources() {
+    return true;
+  }
+
   public void testSearch() throws Exception {
     final StrutsConfigsSearcher configsSearcher = new StrutsConfigsSearcher(myModule);
     configsSearcher.search();
 
-    final Map<Module, List<PsiFile>> map = configsSearcher.getFilesByModules();
+    final MultiMap<Module,PsiFile> map = configsSearcher.getFilesByModules();
     assertEquals(1, map.size());
     assertEquals(1, map.get(myModule).size()); // /src/struts.xml
+    assertEquals(STRUTS_XML, map.get(myModule).iterator().next().getName());
 
-    final Map<VirtualFile, List<PsiFile>> configsInJars = configsSearcher.getJars();
+    final MultiMap<VirtualFile, PsiFile> configsInJars = configsSearcher.getJars();
     assertEquals(1, configsInJars.size()); // default-xxx.xml in struts2-core.jar
   }
 

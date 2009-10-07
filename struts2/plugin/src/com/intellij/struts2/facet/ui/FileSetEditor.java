@@ -37,6 +37,7 @@ import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.EditorTextField;
+import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.tree.TreeModelAdapter;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NonNls;
@@ -48,7 +49,6 @@ import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class FileSetEditor extends DialogWrapper {
@@ -75,8 +75,8 @@ public class FileSetEditor extends DialogWrapper {
     final CheckedTreeNode myRoot = new CheckedTreeNode(null);
     myFilesTree.setModel(new DefaultTreeModel(myRoot));
     searcher.search();
-    final Map<Module, List<PsiFile>> files = searcher.getFilesByModules();
-    final Map<VirtualFile, List<PsiFile>> jars = searcher.getJars();
+    final MultiMap<Module,PsiFile> files = searcher.getFilesByModules();
+    final MultiMap<VirtualFile, PsiFile> jars = searcher.getJars();
     final Set<PsiFile> psiFiles = myFilesTree.buildModuleNodes(files, jars, fileSet);
 
     final Project project = context.getProject();
