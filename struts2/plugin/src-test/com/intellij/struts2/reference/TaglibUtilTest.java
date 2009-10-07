@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.struts2.reference.jsp;
+package com.intellij.struts2.reference;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;

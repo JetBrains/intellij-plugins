@@ -35,6 +35,7 @@ import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
+import com.intellij.struts2.reference.TaglibUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;

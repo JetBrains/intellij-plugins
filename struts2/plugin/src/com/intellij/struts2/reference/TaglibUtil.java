@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.intellij.struts2.reference.jsp;
+package com.intellij.struts2.reference;
 
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NonNls;
@@ -23,12 +23,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-final class TaglibUtil {
+public final class TaglibUtil {
 
   /**
    * Splits action-name from action-method.
    */
-  static final char BANG_SYMBOL = '!';
+  public static final char BANG_SYMBOL = '!';
 
   private TaglibUtil() {
   }
@@ -40,7 +40,7 @@ final class TaglibUtil {
    * @param attributeValue The attribute value to check.
    * @return true if yes, false otherwise.
    */
-  static boolean isDynamicExpression(@NotNull @NonNls final String attributeValue) {
+  public static boolean isDynamicExpression(@NotNull @NonNls final String attributeValue) {
     return StringUtil.startsWith(attributeValue, "%{");
   }
 
@@ -52,7 +52,7 @@ final class TaglibUtil {
    */
   @NotNull
   @NonNls
-  static String trimActionPath(@NotNull @NonNls final String attributeValue) {
+  public static String trimActionPath(@NotNull @NonNls final String attributeValue) {
     final int bangIndex = StringUtil.indexOf(attributeValue, BANG_SYMBOL);
     if (bangIndex == -1) {
       return attributeValue;

@@ -20,6 +20,7 @@ import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
 import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
+import com.intellij.psi.xml.XmlAttributeValue;
 import static com.intellij.struts2.reference.ReferenceUtils.*;
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
 import com.intellij.struts2.reference.jsp.NamespaceReferenceProvider;
@@ -48,7 +49,8 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
     @NotNull
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                  @NotNull final ProcessingContext context) {
-      return PathReferenceManager.getInstance().createReferences(element, false, false, true);
+      final String pathValue = ((XmlAttributeValue) element).getValue();
+      return PathReferenceManager.getInstance().createReferences(element, TaglibUtil.isDynamicExpression(pathValue), false, true);
     }
   };
 
