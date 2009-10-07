@@ -9,7 +9,7 @@
   <depends>IntentionPowerPack</depends>
   <depends>com.intellij.javaee</depends>
 
-  <helpset file="help.jar" path="/Help.hs"/>
+  <!--<helpset file="help.jar" path="/Help.hs"/>-->
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
