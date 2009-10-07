@@ -26,7 +26,7 @@
 <div class="section">ViewAccount.tml</div>
 
 <div class="source"><pre>
-&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"&gt;<br/>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
     &lt;body&gt;<br/>
         &lt;h1&gt;View Account&lt;/h1&gt;<br/>
 <br/>

@@ -23,7 +23,7 @@
 <div class="section">Search.tml</div>
 
 <div class="source"><pre>
-&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"&gt;<br/>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
     &lt;body&gt;<br/>
 <br/>
     &lt;t:form&gt;<br/>

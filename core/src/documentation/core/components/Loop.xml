@@ -38,7 +38,7 @@
 <div class="section">NavBar.tml</div>
 
 <div class="source"><pre>
-&lt;table class="navigation" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"&gt;<br/>
+&lt;table class="navigation" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
 <br/>
    &lt;tr&gt;<br/>
         &lt;t:loop source="pageNames" value="pageName"&gt;<br/>
@@ -112,7 +112,7 @@ public class NavBar<br/>
 <div class="section">NavBar.tml</div>
 
 <div class="source"><pre>
-&lt;table class="navigation" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"&gt;<br/>
+&lt;table class="navigation" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
 <br/>
    &lt;tr&gt;<br/>
 <br/>
@@ -160,7 +160,7 @@ public class NavBar<br/>
 
 <div class="section">EditOrder.tml</div>
 <div class="source"><pre>
-&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"&gt;<br/>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
     &lt;body&gt;<br/>
 <br/>
         &lt;h1&gt;Edit Order Quantities&lt;/h1&gt;<br/>

@@ -103,7 +103,7 @@ public class User<br/>
 </p>
 
 <div class="source"><pre>
-&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"&gt;<br/>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
 <br/>
     &lt;body&gt;<br/>
         &lt;h1&gt;List Users&lt;/h1&gt;<br/>
@@ -178,7 +178,7 @@ public class UserList<br/>
 
 
 <div class="source"><pre>
-&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"&gt;<br/>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
     &lt;body&gt;<br/>
         &lt;h1&gt;List Users&lt;/h1&gt;<br/>
 <br/>

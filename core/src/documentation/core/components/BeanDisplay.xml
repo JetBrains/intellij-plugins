@@ -95,7 +95,7 @@ public class MyPage<br/>
 <div class="section">MyPage.tml</div>
 
 <div class="source"><pre>
-&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"&gt;<br/>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
     &lt;body&gt;<br/>
         &lt;h1&gt;My Bean&lt;/h1&gt;<br/>
         &lt;t:beandisplay object="bean"&gt;<br/>

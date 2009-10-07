@@ -35,7 +35,7 @@ the use of the EventLink component.
 <div class="section">GridColumns.tml</div>
 
 <div class="source"><pre>
-&lt;thead xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"&gt;<br/>
+&lt;thead xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
     &lt;tr&gt;<br/>
         &lt;th t:type="Loop" source="columnNames" value="columnName"&gt;<br/>
 <br/>

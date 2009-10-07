@@ -1,4 +1,4 @@
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
     <body lang="">
     <a t:type="count" value="prop:dateP<caret>rop.hours"></a>
     </body>

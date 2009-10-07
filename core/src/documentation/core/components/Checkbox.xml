@@ -30,7 +30,7 @@ In this example, a Checkbox will be used alone to manipulate a property of the p
 <div class="section">ViewAccounts.tml</div>
 
 <div class="source"><pre>
-&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"&gt;<br/>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
     &lt;body&gt;<br/>
         &lt;h1&gt;View Accounts&lt;/h1&gt;<br/>
 <br/>
