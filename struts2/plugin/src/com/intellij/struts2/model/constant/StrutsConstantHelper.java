@@ -63,7 +63,7 @@ public class StrutsConstantHelper {
    * @return empty list on configuration problems.
    */
   @NotNull
-  public static List<String> getActionExtensions(final PsiElement psiElement) {
+  public static List<String> getActionExtensions(@NotNull final PsiElement psiElement) {
     final PsiFile psiFile = psiElement.getContainingFile().getOriginalFile();
 
     CachedValue<AtomicNotNullLazyValue<List<String>>> extensions = psiFile.getUserData(KEY_ACTION_EXTENSIONS);
@@ -79,7 +79,7 @@ public class StrutsConstantHelper {
                 final List<String> extensions = ApplicationManager.getApplication().runReadAction(new Computable<List<String>>() {
                   public List<String> compute() {
                     return StrutsConstantManager.getInstance(project)
-                      .getConvertedValue(psiElement, StrutsCoreConstantContributor.ACTION_EXTENSION);
+                      .getConvertedValue(psiFile, StrutsCoreConstantContributor.ACTION_EXTENSION);
                   }
                 });
 
