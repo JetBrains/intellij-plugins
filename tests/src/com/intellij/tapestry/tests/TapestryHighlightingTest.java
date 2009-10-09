@@ -20,12 +20,12 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest();
   }
 
-  public void _testTmlAttrName() throws Throwable {
+  public void testTmlAttrName() throws Throwable {
     addComponentToProject("Count");
     doTest();
   }
 
-  public void _testTmlAttrNameInHtmlTag() throws Throwable {
+  public void testTmlAttrNameInHtmlTag() throws Throwable {
     doTest();
   }
 
@@ -39,7 +39,7 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest();
   }
 
-  public void _testTmlAttrNameWithPrefix() throws Throwable {
+  public void testTmlAttrNameWithPrefix() throws Throwable {
     addComponentToProject("Count");
     doTest(new RequiredAttributesInspection());
   }
