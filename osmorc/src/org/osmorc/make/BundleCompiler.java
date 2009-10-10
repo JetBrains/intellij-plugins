@@ -482,7 +482,9 @@ public class BundleCompiler implements PackagingCompiler {
         LibraryHandler libraryHandler = ServiceManager.getService(LibraryHandler.class);
         OrderEntry[] entries = new ReadAction<OrderEntry[]>() {
             protected void run(Result<OrderEntry[]> result) throws Throwable {
-                result.setResult(manager.getModifiableModel().getOrderEntries());
+                ModifiableRootModel model = manager.getModifiableModel();
+                result.setResult(model.getOrderEntries());
+                model.dispose();
             }
         }.execute().getResultObject();
 
