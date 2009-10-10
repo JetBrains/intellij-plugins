@@ -28,6 +28,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import org.osmorc.facet.OsmorcFacetUtil;
 import org.osmorc.frameworkintegration.LibraryHandler;
@@ -101,6 +102,7 @@ public class ModuleDependencySynchronizer {
         return oldOrderEntries;
     }
 
+    @SuppressWarnings({"MethodMayBeStatic"})
     protected List<OrderEntry> determineObsoleteModuleDependencies(List<OrderEntry> oldOrderEntries,
                                                                    Collection<Object> newBundles) {
         List<OrderEntry> result = new ArrayList<OrderEntry>();
@@ -122,6 +124,7 @@ public class ModuleDependencySynchronizer {
         return result;
     }
 
+    @SuppressWarnings({"MethodMayBeStatic"})
     protected boolean removeObsoleteModuleDependencies(ModifiableRootModel model, List<OrderEntry> oldOrderEntries) {
         boolean commitNeeded = false;
 
@@ -138,7 +141,7 @@ public class ModuleDependencySynchronizer {
             if (newBundle instanceof Module && newBundle != module) {
                 model.addModuleOrderEntry((Module) newBundle);
                 commitNeeded = true;
-            } else if (newBundle instanceof Library) {
+            } else if (newBundle instanceof Library && !(newBundle instanceof LibraryEx && ((LibraryEx) newBundle).isDisposed())) {
                 model.addLibraryEntry((Library) newBundle);
                 commitNeeded = true;
             }

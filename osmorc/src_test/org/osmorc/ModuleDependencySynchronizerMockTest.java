@@ -27,6 +27,7 @@ package org.osmorc;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import static org.easymock.classextension.EasyMock.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -65,7 +66,7 @@ public class ModuleDependencySynchronizerMockTest {
         module3 = createMock(Module.class);
         module4 = createMock(Module.class);
 
-        library1 = createMock(Library.class);
+        library1 = createMock(LibraryEx.class);
         library2 = createMock(Library.class);
         library3 = createMock(Library.class);
         library4 = createMock(Library.class);
@@ -228,7 +229,41 @@ public class ModuleDependencySynchronizerMockTest {
     public void testAddNewModuleDependencies() {
         ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
         expect(modelMock.addModuleOrderEntry(module1)).andReturn(moduleOrderEntry1).times(1);
+        expect(library1.isDisposed()).andReturn(false).times(1);
         expect(modelMock.addLibraryEntry(library1)).andReturn(libraryOrderEntry1).times(1);
+
+        replay(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock);
+
+        List<Object> newBundles = new ArrayList<Object>();
+        newBundles.add(module1);
+        newBundles.add(library1);
+
+        ModuleDependencySynchronizer testObject =
+                new ModuleDependencySynchronizer(bundleManager, moduleRootManager, application, libraryHandler,
+                        osmorcFacetUtil);
+
+
+        assertThat(testObject.addNewModuleDependencies(modelMock, newBundles), equalTo(true));
+        assertThat(testObject.addNewModuleDependencies(modelMock, new ArrayList<Object>()), equalTo(false));
+
+        newBundles.clear();
+        newBundles.add(module);
+        assertThat(testObject.addNewModuleDependencies(modelMock, newBundles), equalTo(false));
+
+        verify(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
+                osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
+                library2,
+                library3, library4, libraryOrderEntry1, libraryOrderEntry2, modelMock);
+    }
+
+    @Test
+    public void testAddNewModuleDependenciesWithDisposedLibrary() {
+        ModifiableRootModel modelMock = createMock(ModifiableRootModel.class);
+        expect(modelMock.addModuleOrderEntry(module1)).andReturn(moduleOrderEntry1).times(1);
+        expect(library1.isDisposed()).andReturn(true).times(1);
 
         replay(bundleManager, moduleRootManager, application, libraryHandler, modifiableRootModel, module,
                 osmorcFacetUtil, module1, module2, module3, module4, moduleOrderEntry1, moduleOrderEntry2, library1,
@@ -313,7 +348,7 @@ public class ModuleDependencySynchronizerMockTest {
     private Module module2;
     private Module module3;
     private Module module4;
-    private Library library1;
+    private LibraryEx library1;
     private Library library2;
     private Library library3;
     private Library library4;
