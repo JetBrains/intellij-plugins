@@ -84,6 +84,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         modulesList.setModel(model);
         modulesList.setRowSelectionAllowed(true);
         modulesList.setColumnSelectionAllowed(false);
+        modulesList.setDefaultEditor(Integer.class, new StartLevelCellEditor());
+
 
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
