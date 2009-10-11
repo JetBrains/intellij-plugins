@@ -54,7 +54,8 @@ public class StrutsConventionPluginConstantContributor extends StrutsConstantCon
       addStringProperty("struts.convention.package.locators.basePackage"),
       addResultTypeProperty("struts.convention.relative.result.types"),
       addBooleanProperty("struts.convention.redirect.to.slash"),
-      addBooleanProperty("struts.convention.classLoader.excludeParent")
+      addBooleanProperty("struts.convention.classLoader.excludeParent"),
+      addBooleanProperty("struts.convention.classes.reload")
   );
 
   @NotNull
