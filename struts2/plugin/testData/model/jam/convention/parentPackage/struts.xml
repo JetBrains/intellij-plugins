@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+  <package name="myPackage" namespace="/myPath">
+  </package>
+
+  <package name="myPackage2" namespace="/myPath2">
+  </package>
+
+  <!-- empty "name" - skip -->
+  <package name="" namespace="/myPath3">
+  </package>
+
+  <!-- empty "namespace" - skip -->
+  <package name="emptyNamespace" namespace="">
+  </package>
+
+</struts>

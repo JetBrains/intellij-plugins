@@ -15,6 +15,9 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.struts2.dom.struts.strutspackage.DefaultClassRef;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
@@ -69,4 +72,17 @@ public abstract class StrutsPackageImpl implements StrutsPackage, LocationPresen
     return null;
   }
 
+  public PsiElement getIdentifyingPsiElement() {
+    return getXmlElement();
+  }
+
+  @Nullable
+  public PsiFile getContainingFile() {
+    return DomUtil.getFile(this);
+  }
+
+  public PsiManager getPsiManager() {
+    return PsiManager.getInstance(getManager().getProject());
+  }
+  
 }

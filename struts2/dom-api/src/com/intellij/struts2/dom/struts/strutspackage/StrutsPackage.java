@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2009 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
+import com.intellij.javaee.model.common.CommonModelElement;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.util.xml.*;
@@ -24,12 +25,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * <code>package</code>
+ * {@code package}
  *
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
-public interface StrutsPackage extends DomElement {
+public interface StrutsPackage extends DomElement, CommonModelElement {
 
   String DEFAULT_NAMESPACE = "/";
 
