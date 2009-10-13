@@ -65,9 +65,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     @Nullable
     private OsgiRunConfigurationChecker checker;
     private LegacyOsgiRunConfigurationLoader legacyOsgiRunConfigurationLoader;
-    private boolean needsFinishRunForLegacyOsgiRunConfigurationLoader = true;
 
-    protected OsgiRunConfiguration(final Project project, final ConfigurationFactory configurationFactory,
+    public OsgiRunConfiguration(final Project project, final ConfigurationFactory configurationFactory,
                                    final String name) {
         super(project, configurationFactory, name);
         bundlesToDeploy = new ArrayList<SelectedBundle>();
@@ -88,12 +87,10 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     }
 
     public void checkConfiguration() throws RuntimeConfigurationException {
-        if (needsFinishRunForLegacyOsgiRunConfigurationLoader) {
-            needsFinishRunForLegacyOsgiRunConfigurationLoader = false;
             if (legacyOsgiRunConfigurationLoader != null) {
                 legacyOsgiRunConfigurationLoader.finishAfterModulesAreAvailable(this);
+                legacyOsgiRunConfigurationLoader = null;
             }
-        }
         if (instanceToUse == null) {
             throw new RuntimeConfigurationError(OsmorcBundle.getTranslation("runconfiguration.no.instance.selected"));
         }
@@ -110,10 +107,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
 
     public void setAdditionalChecker(@Nullable OsgiRunConfigurationChecker checker) {
         this.checker = checker;
-    }
-
-    public void setLegacyOsgiRunConfigurationLoader(LegacyOsgiRunConfigurationLoader legacyOsgiRunConfigurationLoader) {
-        this.legacyOsgiRunConfigurationLoader = legacyOsgiRunConfigurationLoader;
     }
 
     @NotNull
@@ -219,7 +212,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     }
 
     public void readExternal(final Element element) throws InvalidDataException {
-        if (legacyOsgiRunConfigurationLoader == null || !legacyOsgiRunConfigurationLoader.readExternal(element, this)) {
             workingDir = element.getAttributeValue(WORKING_DIR_ATTRIBUTE);
             frameworkDir = element.getAttributeValue(FRAMEWORK_DIR_ATTRIBUTE);
             vmParameters = element.getAttributeValue(VM_PARAMETERS_ATTRIBUTE);
@@ -237,6 +229,20 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
                 String url = child.getAttributeValue(URL_ATTRIBUTE);
                 String startLevel = child.getAttributeValue(START_LEVEL_ATTRIBUTE);
                 String typeName = child.getAttributeValue(TYPE_ATTRIBUTE);
+
+                if ("legacyLoader".equals(name)) {
+                    try {
+                        legacyOsgiRunConfigurationLoader = (LegacyOsgiRunConfigurationLoader) Class.forName(url).newInstance();
+                    } catch (InstantiationException e) {
+                        throw new InvalidDataException(e);
+                    } catch (IllegalAccessException e) {
+                        throw new InvalidDataException(e);
+                    } catch (ClassNotFoundException e) {
+                        throw new InvalidDataException(e);
+                    }
+                    break;
+                }
+
                 SelectedBundle.BundleType type;
                 try {
                     type = SelectedBundle.BundleType.valueOf(typeName);
@@ -279,7 +285,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
                     this.additionalProperties.put(attribute.getName(), attribute.getValue());
                 }
             }
-        }
 
         super.readExternal(element);
     }

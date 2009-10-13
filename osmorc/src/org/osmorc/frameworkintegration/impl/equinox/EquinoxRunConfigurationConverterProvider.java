@@ -23,16 +23,30 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.osmorc.run;
+package org.osmorc.frameworkintegration.impl.equinox;
 
-import com.intellij.openapi.util.InvalidDataException;
-import org.jdom.Element;
+import com.intellij.conversion.ConversionContext;
+import com.intellij.conversion.ConverterProvider;
+import com.intellij.conversion.ProjectConverter;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Used to load legacy Osmorc run configurations as OSGi run configurations.
- *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface LegacyOsgiRunConfigurationLoader {
-    void finishAfterModulesAreAvailable(OsgiRunConfiguration osgiRunConfiguration);
+public class EquinoxRunConfigurationConverterProvider extends ConverterProvider {
+    protected EquinoxRunConfigurationConverterProvider() {
+        super("org.osmorc.EquinoxRunConfigurationConverterProvider");
+    }
+
+    @NotNull
+    @Override
+    public String getConversionDescription() {
+        return "Legacy Eclipse Equinox run configurations will be converted to OSGi Bundles run configurations";
+    }
+
+    @NotNull
+    @Override
+    public ProjectConverter createConverter(@NotNull ConversionContext context) {
+        return new EquinoxRunConfigurationConverter();
+    }
 }

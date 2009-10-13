@@ -31,10 +31,8 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.InvalidDataException;
-import org.jdom.Element;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.frameworkintegration.*;
 import org.osmorc.make.BundleCompiler;
@@ -48,117 +46,68 @@ import java.util.List;
 
 /**
  * Loads the legacy Eclipse Equinox Run Configurations as OSGi Run Configurations.
+ * @author Robert F. Beeger (robert@beeger.net)
  */
+@SuppressWarnings({"MethodMayBeStatic", "UnusedDeclaration"})
 public class LegacyEquinoxOsgiRunConfigurationLoader implements LegacyOsgiRunConfigurationLoader {
-    @NonNls
-    private static final String APPLICATION_ATTRIBUTE = "application";
-    @NonNls
-    private static final String PRODUCT_ATTRIBUTE = "product";
-    @NonNls
-    private static final String WORKING_DIR_ATTRIBUTE = "workingDir";
-    @NonNls
-    private static final String CONFIG_DIR_ATTRIBUTE = "configDir";
-    @NonNls
-    private static final String JVM_ARGS_ATTRIBUTE = "jvmArgs";
-    @NonNls
-    private static final String ADDITIONAL_ARGS_ATTRIBUTE = "additionalEquinoxArgs";
-    @NonNls
-    private static final String EQUINOX_CONSOLE = "equinoxConsole";
-    @NonNls
-    private static final String EQUINOX_DEBUG = "equinoxDebug";
-    @NonNls
-    private static final String USE_UPDATE_CONFIGURATOR = "useUpdateConfigurator";
-    @NonNls
-    private static final String CLEAN = "clean";
 
-    public boolean readExternal(Element element, OsgiRunConfiguration osgiRunConfiguration) throws InvalidDataException {
-        String application = element.getAttributeValue(APPLICATION_ATTRIBUTE);
-        String product = element.getAttributeValue(PRODUCT_ATTRIBUTE);
-        String workingDir = element.getAttributeValue(WORKING_DIR_ATTRIBUTE);
-        String configDir = element.getAttributeValue(CONFIG_DIR_ATTRIBUTE);
-        String jvmArgs = element.getAttributeValue(JVM_ARGS_ATTRIBUTE);
-        String additionalEquinoxArgs = element.getAttributeValue(ADDITIONAL_ARGS_ATTRIBUTE);
-        boolean equinoxConsole = Boolean.valueOf(element.getAttributeValue(EQUINOX_CONSOLE, "false"));
-        boolean equinoxDebug = Boolean.valueOf(element.getAttributeValue(EQUINOX_DEBUG, "false"));
-        boolean useUpdateConfigurator = Boolean.valueOf(element.getAttributeValue(USE_UPDATE_CONFIGURATOR, "true"));
-        boolean clean = Boolean.valueOf(element.getAttributeValue(CLEAN, "true"));
-
-        osgiRunConfiguration.setWorkingDir(workingDir);
-        osgiRunConfiguration.setFrameworkDir(configDir);
-        osgiRunConfiguration.setVmParameters(jvmArgs);
-        osgiRunConfiguration.setProgramParameters(additionalEquinoxArgs);
-
-        EquinoxRunProperties runProperties = new EquinoxRunProperties(osgiRunConfiguration.getAdditionalProperties());
-        runProperties.setEquinoxApplication(application);
-        runProperties.setEquinoxProduct(product);
-        runProperties.setStartEquinoxOSGIConsole(equinoxConsole);
-        runProperties.setDebugMode(equinoxDebug);
-        runProperties.setCleanEquinoxCache(clean);
-        runProperties.setRecreateEquinoxConfigIni(clean);
-
-        osgiRunConfiguration.putAdditionalProperties(runProperties.getProperties());
-
+    public void finishAfterModulesAreAvailable(OsgiRunConfiguration osgiRunConfiguration) {
         List<SelectedBundle> bundlesToDeploy = osgiRunConfiguration.getBundlesToDeploy();
-        bundlesToDeploy.clear();
+        addModuleBundles(bundlesToDeploy, osgiRunConfiguration.getProject());
 
         FrameworkInstanceDefinition frameworkInstanceDefinition = getFrameworkInstance(osgiRunConfiguration.getProject());
 
         if (frameworkInstanceDefinition != null) {
             osgiRunConfiguration.setInstanceToUse(frameworkInstanceDefinition);
 
-            addFrameworkBundle(bundlesToDeploy, frameworkInstanceDefinition, useUpdateConfigurator);
+            addFrameworkBundle(bundlesToDeploy, frameworkInstanceDefinition);
         }
 
-        return true;
     }
 
-    public void finishAfterModulesAreAvailable(OsgiRunConfiguration osgiRunConfiguration) {
-        List<SelectedBundle> bundlesToDeploy = osgiRunConfiguration.getBundlesToDeploy();
-        addModuleBundles(bundlesToDeploy, osgiRunConfiguration.getProject());
+    @Nullable
+    private FrameworkInstanceDefinition getFrameworkInstance(Project project) {
+        ApplicationSettings applicationSettings = ServiceManager.getService(ApplicationSettings.class);
+        ProjectSettings projectSettings = ServiceManager.getService(project, ProjectSettings.class);
+        return applicationSettings.getFrameworkInstance(projectSettings.getFrameworkInstanceName());
     }
 
-    private FrameworkInstanceDefinition getFrameworkInstance(Project project)
-    {
-      ApplicationSettings applicationSettings = ServiceManager.getService(ApplicationSettings.class);
-      ProjectSettings projectSettings = ServiceManager.getService(project, ProjectSettings.class);
-      return applicationSettings.getFrameworkInstance(projectSettings.getFrameworkInstanceName());
+    private void addModuleBundles(List<SelectedBundle> bundlesToDeploy, Project project) {
+        Module[] modules = ModuleManager.getInstance(project).getModules();
+        for (Module module : modules) {
+            if (OsmorcFacet.hasOsmorcFacet(module)) {
+                SelectedBundle bundle = new SelectedBundle(module.getName(), null, SelectedBundle.BundleType.Module);
+                bundle.setStartLevel(4);
+                bundlesToDeploy.add(bundle);
+            }
+        }
     }
 
-
-
-    private void addFrameworkBundle(List<SelectedBundle> bundlesToDeploy, @NotNull FrameworkInstanceDefinition frameworkInstanceDefinition, boolean useUpdateConfigurator) {
+    private void addFrameworkBundle(List<SelectedBundle> bundlesToDeploy, @NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
 
         List<Library> libraries = getFrameworkLibraries(frameworkInstanceDefinition);
         for (Library library : libraries) {
             String[] urls = library.getUrls(OrderRootType.CLASSES);
             for (String url : urls) {
-                if (useUpdateConfigurator) {
-                    if (url.contains("org.eclipse.equinox.common_")) {
-                        SelectedBundle bundle = createSelectedFrameworkBundle(url);
+                if (url.contains("org.eclipse.equinox.common_")) {
+                    SelectedBundle bundle = createSelectedFrameworkBundle(url);
+                    if (bundle != null) {
                         bundle.setStartLevel(2);
                         bundle.setStartAfterInstallation(true);
                         bundlesToDeploy.add(bundle);
-                    } else if (url.contains("org.eclipse.update.configurator_")) {
-                        SelectedBundle bundle = createSelectedFrameworkBundle(url);
+                    }
+                } else if (url.contains("org.eclipse.update.configurator_")) {
+                    SelectedBundle bundle = createSelectedFrameworkBundle(url);
+                    if (bundle != null) {
                         bundle.setStartLevel(3);
                         bundle.setStartAfterInstallation(true);
                         bundlesToDeploy.add(bundle);
-                    } else if (url.contains("org.eclipse.core.runtime_")) {
-                        SelectedBundle bundle = createSelectedFrameworkBundle(url);
-                        bundle.setStartLevel(4);
-                        bundle.setStartAfterInstallation(true);
-                        bundlesToDeploy.add(bundle);
                     }
-                } else {
-                    if (url.contains("org.eclipse.core.runtime_")) {
-                        SelectedBundle bundle = createSelectedFrameworkBundle(url);
+                } else if (url.contains("org.eclipse.core.runtime_")) {
+                    SelectedBundle bundle = createSelectedFrameworkBundle(url);
+                    if (bundle != null) {
                         bundle.setStartLevel(4);
                         bundle.setStartAfterInstallation(true);
-                        bundlesToDeploy.add(bundle);
-                    } else if (!url.contains("org.eclipse.update.configurator_") && !url.contains("org.eclipse.osgi_")) {
-                        SelectedBundle bundle = createSelectedFrameworkBundle(url);
-                        bundle.setStartLevel(4);
-                        bundle.setStartAfterInstallation(false);
                         bundlesToDeploy.add(bundle);
                     }
                 }
@@ -166,6 +115,7 @@ public class LegacyEquinoxOsgiRunConfigurationLoader implements LegacyOsgiRunCon
         }
     }
 
+    @Nullable
     private SelectedBundle createSelectedFrameworkBundle(String url) {
         url = BundleCompiler.convertJarUrlToFileUrl(url);
         url = BundleCompiler.fixFileURL(url);
@@ -187,14 +137,4 @@ public class LegacyEquinoxOsgiRunConfigurationLoader implements LegacyOsgiRunCon
     }
 
 
-    private void addModuleBundles(List<SelectedBundle> bundlesToDeploy, Project project) {
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules) {
-            if (OsmorcFacet.hasOsmorcFacet(module)) {
-                SelectedBundle bundle = new SelectedBundle(module.getName(), null, SelectedBundle.BundleType.Module);
-                bundle.setStartLevel(4);
-                bundlesToDeploy.add(bundle);
-            }
-        }
-    }
 }

@@ -170,7 +170,8 @@
                                  implementationClass="org.osmorc.manifest.lang.psi.HeaderValuePartManipulator"/>
         <lang.ast.factory language="Manifest" implementationClass="org.osmorc.manifest.lang.psi.impl.ManifestASTFactory"/>
         <configurationType implementation="org.osmorc.run.OsgiConfigurationType"/>
-        <configurationType implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxConfigurationType"/>
+
+        <project.converterProvider implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxRunConfigurationConverterProvider" />
 
         <inspectionToolProvider implementation="org.osmorc.inspection.OsmorcInspectionToolProvider"/>
         <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
