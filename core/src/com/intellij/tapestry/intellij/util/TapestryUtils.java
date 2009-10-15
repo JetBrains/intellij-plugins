@@ -5,11 +5,9 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaDirectoryService;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.*;
 import com.intellij.psi.xml.*;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
@@ -26,7 +24,9 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Utility methods related to Tapestry.
@@ -157,8 +157,8 @@ public class TapestryUtils {
   }
 
   @Nullable
-  public static TapestryProject getTapestryProject(XmlTag tag) {
-    Module module = IdeaUtils.getModule(tag);
+  public static TapestryProject getTapestryProject(PsiElement psiElement) {
+    Module module = ModuleUtil.findModuleForPsiElement(psiElement);
     if (module == null) return null;
     return TapestryModuleSupportLoader.getTapestryProject(module);
   }
@@ -293,7 +293,7 @@ public class TapestryUtils {
       new PsiElementBasedCachedUserDataCache<Component, XmlTag>("TapestryTagToComponentMap") {
         @Nullable
         protected Component computeValue(XmlTag tag) {
-          Module module = IdeaUtils.getModule(tag);
+          Module module = ModuleUtil.findModuleForPsiElement(tag);
           if (module == null) return null;
           return getTypeOfTag(module, tag);
         }

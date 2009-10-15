@@ -37,7 +37,7 @@ public class TelParser implements PsiParser {
 
   public static void parseExpression(PsiBuilder builder) {
     if (consumeToken(builder, TAP5_EL_START)) {
-      PsiBuilder.Marker referenceExpression = consumeIdentifierAndMark(builder);
+      PsiBuilder.Marker referenceExpression = tryToConsumeIdentifierAndMark(builder);
       if (referenceExpression != null) {
         if(consumeOptionalToken(builder, TAP5_EL_COLON)) {
           try {
@@ -153,14 +153,14 @@ public class TelParser implements PsiParser {
   }
 
   private static boolean parsePropertyChainExpression(PsiBuilder builder) {
-    PsiBuilder.Marker referenceExpression = consumeIdentifierAndMark(builder);
+    PsiBuilder.Marker referenceExpression = tryToConsumeIdentifierAndMark(builder);
     if (referenceExpression == null) return false;
     parsePropertyChainTrailer(builder, referenceExpression);
     return true;
   }
 
   @Nullable
-  private static PsiBuilder.Marker consumeIdentifierAndMark(PsiBuilder builder) {
+  private static PsiBuilder.Marker tryToConsumeIdentifierAndMark(PsiBuilder builder) {
     if (TAP5_EL_IDENTIFIER != builder.getTokenType()) return null;
     PsiBuilder.Marker mark = builder.mark();
     builder.advanceLexer();
@@ -169,19 +169,28 @@ public class TelParser implements PsiParser {
 
   private static void parsePropertyChainTrailer(PsiBuilder builder, PsiBuilder.Marker referenceExpression) {
     referenceExpression.done(REFERENCE_EXPRESSION);
-    referenceExpression = referenceExpression.precede();
+    referenceExpression = parseMethodCallArgumentList(builder, referenceExpression).precede();
     while (consumeOptionalToken(builder, TAP5_EL_DOT) || consumeOptionalToken(builder, TAP5_EL_QUESTION_DOT)) {
       if (!consumeToken(builder, TAP5_EL_IDENTIFIER)) break;
       referenceExpression.done(REFERENCE_EXPRESSION);
-      if (consumeOptionalToken(builder, TAP5_EL_LEFT_PARENTH)) {
-        referenceExpression = referenceExpression.precede();
-        parseExpressionList(builder);
-        consumeToken(builder, TAP5_EL_RIGHT_PARENTH);
-        referenceExpression.done(METHOD_CALL_EXPRESSION);
-      }
-      referenceExpression = referenceExpression.precede();
+      referenceExpression = parseMethodCallArgumentList(builder, referenceExpression).precede();
     }
     referenceExpression.drop();
+  }
+
+  private static PsiBuilder.Marker parseMethodCallArgumentList(PsiBuilder builder, PsiBuilder.Marker referenceExpression) {
+    if (!consumeOptionalToken(builder, TAP5_EL_LEFT_PARENTH)) return referenceExpression;
+    referenceExpression = referenceExpression.precede();
+    PsiBuilder.Marker mark = builder.mark();
+    try {
+      parseExpressionList(builder);
+    }
+    finally {
+      mark.done(ARGUMENT_LIST);
+    }
+    consumeToken(builder, TAP5_EL_RIGHT_PARENTH);
+    referenceExpression.done(METHOD_CALL_EXPRESSION);
+    return referenceExpression;
   }
 
   private static void parseExpressionList(PsiBuilder builder) {

@@ -1,0 +1,62 @@
+package com.intellij.tapestry.psi;
+
+import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiType;
+import com.intellij.util.IncorrectOperationException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * @author Alexey Chmutov
+ *         Date: 09.10.2009
+ *         Time: 16:29:14
+ */
+public class TelReferenceExpression extends TelCompositeElement implements TelReferenceQualifier {
+
+  private final TelQualifiedReference myReference = new TelQualifiedReference(this) {
+    public TextRange getRangeInElement() {
+      final PsiElement element = getReferenceNameElement();
+      if (element == null) return TextRange.from(0, getTextLength());
+      return TextRange.from(element.getStartOffsetInParent(), element.getTextLength());
+    }
+
+    @Nullable
+    public String getReferenceName() {
+      final PsiElement element = getReferenceNameElement();
+      return element == null ? null : element.getText();
+    }
+
+    @Nullable
+    public TelReferenceQualifier getReferenceQualifier() {
+      return findChildByClass(TelReferenceQualifier.class);
+    }
+
+    public PsiElement handleElementRename(final String newElementName) throws IncorrectOperationException {
+      final PsiElement newReferenceName = TelPsiUtil.parseReference(newElementName, getProject()).getReferenceNameElement();
+      getNode().replaceChild(getReferenceNameElement().getNode(), newReferenceName.getNode());
+      return TelReferenceExpression.this;
+    }
+  };
+
+  protected TelReferenceExpression(@NotNull final ASTNode node) {
+    super(node);
+  }
+
+  private PsiElement getReferenceNameElement() {
+    return findChildByType(TelTokenTypes.TAP5_EL_IDENTIFIER);
+  }
+
+  @Override
+  @NotNull
+  public TelQualifiedReference getReference() {
+    return myReference;
+  }
+
+  @Nullable
+  public PsiType getPsiType() {
+    return myReference.getPsiType();
+  }
+
+}

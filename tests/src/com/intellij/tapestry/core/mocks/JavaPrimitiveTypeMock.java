@@ -2,6 +2,7 @@ package com.intellij.tapestry.core.mocks;
 
 import com.intellij.tapestry.core.java.IJavaPrimitiveType;
 import com.intellij.tapestry.core.java.IJavaType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Utility class for easy creation of JavaPrimitiveType mocks.
@@ -21,7 +22,8 @@ public class JavaPrimitiveTypeMock implements IJavaPrimitiveType {
         return false;
     }
 
+    @NotNull
     public Object getUnderlyingObject() {
-        return null;
+        return _name;
     }
 }

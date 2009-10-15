@@ -2,6 +2,7 @@ package com.intellij.tapestry.core.mocks;
 
 import com.intellij.tapestry.core.java.*;
 import com.intellij.tapestry.core.resource.IResource;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -143,7 +144,8 @@ public class JavaClassTypeMock implements IJavaClassType {
         return false;
     }
 
+    @NotNull
     public Object getUnderlyingObject() {
-        return null;
+        return _fullyQualifiedName;
     }
 }

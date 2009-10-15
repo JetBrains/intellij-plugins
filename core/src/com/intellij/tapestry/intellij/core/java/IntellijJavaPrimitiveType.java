@@ -2,6 +2,7 @@ package com.intellij.tapestry.intellij.core.java;
 
 import com.intellij.psi.PsiPrimitiveType;
 import com.intellij.tapestry.core.java.IJavaPrimitiveType;
+import org.jetbrains.annotations.NotNull;
 
 public class IntellijJavaPrimitiveType extends IntellijJavaType implements IJavaPrimitiveType {
 
@@ -15,6 +16,7 @@ public class IntellijJavaPrimitiveType extends IntellijJavaType implements IJava
         return _psiPrimitiveType.getPresentableText();
     }
 
+    @NotNull
     public Object getUnderlyingObject() {
         return _psiPrimitiveType;
     }

@@ -1,5 +1,6 @@
 package com.intellij.tapestry.core.util;
 
+import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
@@ -14,9 +15,7 @@ import java.util.Map;
  */
 public class ClassUtils {
 
-    private static final String PROPERTY_ANNOTATION = "org.apache.tapestry5.annotations.Property";
-
-    /**
+  /**
      * Finds every property declared in a class.
      *
      * @param javaClassType the class to look for properties in.
@@ -54,8 +53,8 @@ public class ClassUtils {
         Map<String, Object> propertyFields = new HashMap<String, Object>();
 
         for (Map.Entry<String, IJavaField> field : allFields.entrySet()) {
-            if (field.getValue().getAnnotations().containsKey(PROPERTY_ANNOTATION)) {
-                IJavaAnnotation annotation = field.getValue().getAnnotations().get(PROPERTY_ANNOTATION);
+            if (field.getValue().getAnnotations().containsKey(TapestryConstants.PROPERTY_ANNOTATION)) {
+                IJavaAnnotation annotation = field.getValue().getAnnotations().get(TapestryConstants.PROPERTY_ANNOTATION);
 
                 if (annotation.getParameters().containsKey("read") && annotation.getParameters().get("read")[0].equals("false"))
                     continue;

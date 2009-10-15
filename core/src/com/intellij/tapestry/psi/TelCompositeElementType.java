@@ -40,13 +40,19 @@ public abstract class TelCompositeElementType extends IElementType implements IC
 
   public static final TelCompositeElementType REFERENCE_EXPRESSION = new TelCompositeElementType("ReferenceExpression") {
     public PsiElement createPsiElement(final ASTNode node) {
-      return new TelCompositeElement(node);
+      return new TelReferenceExpression(node);
+    }
+  };
+
+  public static final TelCompositeElementType ARGUMENT_LIST = new TelCompositeElementType("ArgumentList") {
+    public PsiElement createPsiElement(final ASTNode node) {
+      return new TelArgumentList(node);
     }
   };
 
   public static final TelCompositeElementType METHOD_CALL_EXPRESSION = new TelCompositeElementType("MethodCallExpression") {
     public PsiElement createPsiElement(final ASTNode node) {
-      return new TelCompositeElement(node);
+      return new TelMethodCallExpression(node);
     }
   };
 

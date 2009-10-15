@@ -1,5 +1,7 @@
 package com.intellij.tapestry.core.java;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A type that is assignable to every other type.
  */
@@ -19,7 +21,8 @@ public class AssignableToAll implements IJavaType {
         return true;
     }
 
+    @NotNull
     public Object getUnderlyingObject() {
-        return null;
+        return this;
     }
 }

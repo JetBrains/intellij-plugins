@@ -124,6 +124,10 @@ public interface TapestryConstants {
   String CORE_INJECT_ANNOTATION = "org.apache.tapestry5.annotations.Inject";
 
   /**
+   * The Property annotation class in Tapestry core.
+   */
+  String PROPERTY_ANNOTATION = "org.apache.tapestry5.annotations.Property";
+  /**
    * The Component annotation class in Tapestry core.
    */
   String COMPONENT_ANNOTATION = "org.apache.tapestry5.annotations.Component";

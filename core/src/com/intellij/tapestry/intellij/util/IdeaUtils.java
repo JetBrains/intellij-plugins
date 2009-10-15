@@ -273,8 +273,4 @@ public class IdeaUtils {
     return null;
   }
 
-  @Nullable
-  public static Module getModule(XmlTag tag) {
-    return ModuleUtil.findModuleForPsiElement(tag);
-  }
 }//IdeaUtils

@@ -1,5 +1,6 @@
 package com.intellij.tapestry.core.java;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -27,5 +28,6 @@ public interface IJavaType {
     /**
      * @return returns the underlying object of this class. This is usually an IDE specific object.
      */
+    @NotNull
     Object getUnderlyingObject();
 }

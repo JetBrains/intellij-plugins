@@ -5,6 +5,7 @@ import com.intellij.psi.PsiArrayType;
 import com.intellij.tapestry.core.java.IJavaArrayType;
 import com.intellij.tapestry.core.java.IJavaType;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
+import org.jetbrains.annotations.NotNull;
 
 public class IntellijJavaArrayType extends IntellijJavaType implements IJavaArrayType {
 
@@ -20,6 +21,7 @@ public class IntellijJavaArrayType extends IntellijJavaType implements IJavaArra
         return _psiArrayType.getPresentableText();
     }
 
+    @NotNull
     public Object getUnderlyingObject() {
         return _psiArrayType;
     }
