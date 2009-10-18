@@ -1,5 +1,6 @@
 package com.intellij.tapestry.psi;
 
+import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.completion.util.SimpleMethodCallLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -157,10 +158,18 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
         assert name != null;
         LookupElementBuilder lookupElement = LookupElementBuilder.create(element, name);
         lookupElement = lookupElement.addLookupString(name);
+        if (element instanceof PsiField) {
+          return lookupElement.setTypeText(((PsiField)element).getType().getPresentableText());
+        }
+        if (element instanceof PropertyAccessorElement) {
+          final PsiType type = ((PropertyAccessorElement)element).getMethodReturnType();
+          return lookupElement.setTypeText(type.getPresentableText()).setTailText("()")
+            .setInsertHandler(ParenthesesInsertHandler.getInstance(type == PsiType.VOID));
+        }
         if (element instanceof BeanPropertyElement) {
           final PsiType type = ((BeanPropertyElement)element).getPropertyType();
           if (type != null) {
-            lookupElement = lookupElement.setTypeText(type.getPresentableText());
+            return lookupElement.setTypeText(type.getPresentableText());
           }
         }
         return lookupElement;
@@ -185,6 +194,9 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
       final BeanProperty beanProperty = (BeanProperty)element;
       return getSubstitutedType(beanProperty.getMethod(), beanProperty.getPropertyType());
     }
+    if (element instanceof PropertyAccessorElement) {
+      return ((PropertyAccessorElement)element).getMethodReturnType();
+    }
     return null;
   }
 
@@ -193,9 +205,10 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     PsiClassType resultClassType = (PsiClassType)result;
     PsiClassType qualifierClassType;
     final TelReferenceQualifier qualifier = getReferenceQualifier();
-    if(qualifier != null) {
+    if (qualifier != null) {
       qualifierClassType = (PsiClassType)qualifier.getPsiType();
-    } else {
+    }
+    else {
       IntellijJavaClassType psiClassType = getPsiClassTypeForContainingTmlFile();
       qualifierClassType = (PsiClassType)psiClassType.getUnderlyingObject();
     }

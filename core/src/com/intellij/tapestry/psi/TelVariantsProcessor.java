@@ -79,18 +79,19 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
         }
       }
       if (propertyAnnotation == null) return true;
-      if (myForCompletion ||
-          myMethodCall && isFieldAccessorReference(field) ||
-          !myMethodCall && myReferenceName.equalsIgnoreCase(namedElement.getName())) {
+      if (myForCompletion || !myMethodCall && myReferenceName.equalsIgnoreCase(namedElement.getName())) {
         addIfNotNull(createResult(namedElement, true), myResult);
+      }
+      final String getterName = PropertyUtil.suggestGetterName(field.getProject(), field);
+      if (myForCompletion || myMethodCall && myReferenceName.equalsIgnoreCase(getterName)) {
+        addIfNotNull(createResult(new PropertyAccessorElement(field, getterName, true), true), myResult);
+      }
+      final String setterName = PropertyUtil.suggestSetterName(field.getProject(), field);
+      if (myForCompletion || myMethodCall && myReferenceName.equalsIgnoreCase(setterName)) {
+        addIfNotNull(createResult(new PropertyAccessorElement(field, setterName, false), true), myResult);
       }
     }
     return myForCompletion || myResult.size() != 1;
-  }
-
-  private boolean isFieldAccessorReference(PsiField field) {
-    return myReferenceName.equalsIgnoreCase(PropertyUtil.suggestGetterName(field.getProject(), field)) ||
-           myReferenceName.equalsIgnoreCase(PropertyUtil.suggestSetterName(field.getProject(), field));
   }
 
   @Nullable
