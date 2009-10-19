@@ -32,12 +32,12 @@ public class TelLiteralExpressionType extends TelCompositeElementType {
     return new TelLiteralExpression(node);
   }
 
-  public class TelLiteralExpression extends TelCompositeElement implements PsiExpression {
+  public class TelLiteralExpression extends TelCompositeElement implements TelExpression {
     public TelLiteralExpression(@NotNull final ASTNode node) {
       super(node);
     }
 
-    public PsiType getType() {
+    public PsiType getPsiType() {
       if (myPrimitiveType != null) {
         return myPrimitiveType;
       }

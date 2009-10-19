@@ -29,7 +29,8 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     initByComponent();
     addComponentToProject("subpackage.Count");
     doTestBasicCompletionVariants(
-        mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "isindex", "link", "meta", "object", "script", "style", "title", "t:subpackage.count", getElementTagName()));
+      mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "isindex", "link", "meta", "object", "script", "style", "title", "t:subpackage.count",
+                  getElementTagName()));
 
   }
 
@@ -112,6 +113,33 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "head", getElementTagName()));
   }
 
+  public void testTelSecondSegmentAfterProp() throws Throwable {
+    initByComponent();
+    doTestBasicCompletionVariants("after", "before", "class", "clone", "compareTo", "compareTo", "date", "day", "equals", "getClass",
+                                  "getDate", "getDay", "getHours", "getMinutes", "getMonth", "getSeconds", "getTime", "getTimezoneOffset",
+                                  "getYear", "hashCode", "hours", "minutes", "month", "seconds", "setDate", "setHours", "setMinutes",
+                                  "setMonth", "setSeconds", "setTime", "setYear", "time", "timezoneOffset", "toGMTString", "toLocaleString",
+                                  "toString", "year");
+  }
+
+  public void testTelFirstSegment() throws Throwable {
+    initByComponent();
+    doTestBasicCompletionVariants("class", "currentTime", "equals", "getClass", "getCurrentTime", "getSomeProp", "hashCode", "setSomeProp",
+                                  "someProp", "toString");
+  }
+
+  public void testTelSetterByProperty() throws Throwable {
+    initByComponent();
+    myFixture.complete(CompletionType.BASIC);
+    checkResultByFile();
+  }
+
+  public void testTelPropertyByGetter() throws Throwable {
+    initByComponent();
+    myFixture.complete(CompletionType.BASIC);
+    checkResultByFile();
+  }
+
   private void doTestBasicCompletionVariants(@NonNls String... expectedItems) throws Throwable {
     doTestCompletionVariants(CompletionType.BASIC, expectedItems);
   }
@@ -128,14 +156,13 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   private static final String[] CORE_5_1_0_5_PAGE_NAMES =
-      {"exceptionreport", "propertydisplayblocks", "propertyeditblocks", "servicestatus"};
+    {"exceptionreport", "propertydisplayblocks", "propertyeditblocks", "servicestatus"};
   private static final String[] CORE_5_1_0_5_ELEMENT_NAMES =
-      {"actionlink", "addrowlink", "ajaxformloop", "any", "beandisplay", "beaneditform", "beaneditor", "block", "body", "checkbox",
-          "container", "datefield", "delegate", "errors", "eventlink", "exceptiondisplay", "form", "formfragment", "forminjector", "grid",
-          "gridcell", "gridcolumns", "gridpager", "gridrows", "hidden", "if", "label", "linksubmit", "loop", "output", "outputraw",
-          "pagelink", "palette", "parameter", "passwordfield", "progressivedisplay", "propertydisplay", "propertyeditor", "radio",
-          "radiogroup", "removerowlink", "renderobject", "select", "submit", "submitnotifier", "textarea", "textfield", "textoutput",
-          "unless", "zone"};
+    {"actionlink", "addrowlink", "ajaxformloop", "any", "beandisplay", "beaneditform", "beaneditor", "block", "body", "checkbox",
+      "container", "datefield", "delegate", "errors", "eventlink", "exceptiondisplay", "form", "formfragment", "forminjector", "grid",
+      "gridcell", "gridcolumns", "gridpager", "gridrows", "hidden", "if", "label", "linksubmit", "loop", "output", "outputraw", "pagelink",
+      "palette", "parameter", "passwordfield", "progressivedisplay", "propertydisplay", "propertyeditor", "radio", "radiogroup",
+      "removerowlink", "renderobject", "select", "submit", "submitnotifier", "textarea", "textfield", "textoutput", "unless", "zone"};
   private static final String[] CORE_5_1_0_5_TAG_NAMES;
 
   static {
@@ -146,12 +173,12 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   private static final String[] HTML_TAG_NAMES =
-      {"a", "abbr", "acronym", "address", "applet", "area", "b", "base", "basefont", "bdo", "big", "blockquote", "body", "br", "button",
-          "caption", "center", "cite", "code", "col", "colgroup", "dd", "del", "dfn", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "font",
-          "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "hr", "html", "i", "iframe", "img", "input", "ins", "isindex", "kbd", "label",
-          "legend", "li", "link", "map", "menu", "meta", "noframes", "noscript", "object", "ol", "optgroup", "option", "p", "param", "pre",
-          "q", "s", "samp", "script", "select", "small", "span", "strike", "strong", "style", "sub", "sup", "table", "tbody", "td",
-          "textarea", "tfoot", "th", "thead", "title", "tr", "tt", "u", "ul", "var"};
+    {"a", "abbr", "acronym", "address", "applet", "area", "b", "base", "basefont", "bdo", "big", "blockquote", "body", "br", "button",
+      "caption", "center", "cite", "code", "col", "colgroup", "dd", "del", "dfn", "dir", "div", "dl", "dt", "em", "embed", "fieldset",
+      "font", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "hr", "html", "i", "iframe", "img", "input", "ins", "isindex", "kbd",
+      "label", "legend", "li", "link", "map", "menu", "meta", "noframes", "noscript", "object", "ol", "optgroup", "option", "p", "param",
+      "pre", "q", "s", "samp", "script", "select", "small", "span", "strike", "strong", "style", "sub", "sup", "table", "tbody", "td",
+      "textarea", "tfoot", "th", "thead", "title", "tr", "tt", "u", "ul", "var"};
 
   private static final String[] HTML_AND_CORE_5_1_0_5_TAG_NAMES = mergeArrays(CORE_5_1_0_5_TAG_NAMES, HTML_TAG_NAMES);
 }

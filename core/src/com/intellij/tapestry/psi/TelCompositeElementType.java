@@ -58,13 +58,13 @@ public abstract class TelCompositeElementType extends IElementType implements IC
 
   public static final TelCompositeElementType RANGE_EXPRESSION = new TelCompositeElementType("RangeExpression") {
     public PsiElement createPsiElement(ASTNode node) {
-      return new TelCompositeElement(node);
+      return new TelRangeExpression(node);
     }
   };
 
-  public static final TelCompositeElementType NOT_OP_EXPRESSION = new TelCompositeElementType("Not_Op_Expression") {
+  public static final TelCompositeElementType NOT_OP_EXPRESSION = new TelCompositeElementType("NotOpExpression") {
     public PsiElement createPsiElement(ASTNode node) {
-      return new TelCompositeElement(node);
+      return new TelNotOpExpression(node);
     }
   };
 

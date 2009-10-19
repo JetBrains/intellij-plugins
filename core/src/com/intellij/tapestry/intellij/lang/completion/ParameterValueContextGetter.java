@@ -23,10 +23,7 @@ import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Provides all parameters context values
@@ -139,7 +136,7 @@ public class ParameterValueContextGetter implements ContextGetter {
         // Completion of boolean parameter
         if (parameter.getParameterField().getType() != null) {
           if (parameter.getParameterField().getType().getName().toLowerCase(Locale.getDefault()).equals("boolean")) {
-            Set<String> attributes = ClassUtils.getClassProperties(elementClass).keySet();
+            Set<String> attributes = new HashSet(ClassUtils.getClassProperties(elementClass).keySet());
             attributes.add("literal:true");
             attributes.add("literal:false");
 

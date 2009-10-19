@@ -3,6 +3,7 @@ package com.intellij.tapestry.tests;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.tapestry.intellij.inspections.TelReferencesInspection;
 
 /**
  * @author Alexey Chmutov
@@ -46,6 +47,10 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
 
   public void testNonPropBindingPrefix() throws Throwable {
     doTest();
+  }
+
+  public void testTelPropertiesAndAccessors() throws Throwable {
+    doTest(new TelReferencesInspection());
   }
 
   protected void doTest(LocalInspectionTool... tools) throws Throwable {

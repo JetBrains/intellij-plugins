@@ -2,6 +2,7 @@ package com.intellij.tapestry.tests;
 
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.tapestry.psi.TapestryAccessorMethod;
 import com.intellij.tapestry.psi.TmlFile;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
@@ -177,6 +178,20 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     initByComponent();
     PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
     Assert.assertEquals("intFieldProp", ref.getName());
+  }
+
+  public void testTelSetterByProperty() throws Throwable {
+    initByComponent();
+    TapestryAccessorMethod ref = resolveReferenceAtCaretPosition(TapestryAccessorMethod.class);
+    Assert.assertEquals("setSomeProp", ref.getName());
+    PsiField field = assertInstanceOf(ref.getNavigationElement(), PsiField.class);
+    Assert.assertEquals("someProp", field.getName());
+  }
+
+  public void testTelPropertyByGetter() throws Throwable {
+    initByComponent();
+    PsiMethod ref = resolveReferenceAtCaretPosition(PsiMethod.class);
+    Assert.assertEquals("getCurrentTime", ref.getName());
   }
 
   @Nullable

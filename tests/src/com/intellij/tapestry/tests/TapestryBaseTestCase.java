@@ -138,6 +138,12 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return result;
   }
 
+  protected void checkResultByFile() throws Exception {
+    String afterFileName = getElementName() + Util.AFTER + Util.DOT_TML;
+    myFixture.checkResultByFile(afterFileName);
+  }
+
+
   protected File getFileByPath(@NonNls String filePath) {
     return new File(myFixture.getTestDataPath() + "/" + filePath);
   }

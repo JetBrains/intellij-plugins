@@ -10,8 +10,11 @@ import com.intellij.psi.scope.BaseScopeProcessor;
 import com.intellij.psi.util.PropertyUtil;
 import com.intellij.tapestry.core.TapestryConstants;
 import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
+import gnu.trove.THashSet;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -21,14 +24,19 @@ import java.util.Set;
  */
 abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
 
+  @NonNls private static final THashSet<String> INSECURE_OBJECT_METHODS =
+    new THashSet<String>(Arrays.asList("wait", "notify", "notifyAll"));
+
   private final Set<T> myResult = new LinkedHashSet<T>();
   private final boolean myForCompletion;
   private final boolean myMethodCall;
   private final String myReferenceName;
   private final JavaMethodResolveHelper myPropertyAccessors;
   private final JavaMethodResolveHelper myMethods;
+  private final boolean myAllowStatic;
 
-  protected TelVariantsProcessor(@Nullable PsiElement parent, @Nullable String referenceName) {
+  protected TelVariantsProcessor(@Nullable PsiElement parent, @Nullable String referenceName, boolean allowStatic) {
+    myAllowStatic = allowStatic;
     myForCompletion = referenceName == null;
     myReferenceName = referenceName;
     myMethodCall = parent instanceof TelMethodCallExpression;
@@ -57,7 +65,12 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
     final boolean isField = namedElement instanceof PsiField;
     if (isMethod) {
       final PsiMethod method = (PsiMethod)namedElement;
-      if (!method.hasModifierProperty(PUBLIC) || method.isConstructor()) return true;
+      if (!method.hasModifierProperty(PUBLIC) ||
+          method.isConstructor() ||
+          !myAllowStatic && method.hasModifierProperty(STATIC) ||
+          INSECURE_OBJECT_METHODS.contains(method.getName())) {
+        return true;
+      }
       if (!myMethodCall &&
           myPropertyAccessors != null &&
           PropertyUtil.isSimplePropertyGetter(method) &&
@@ -71,7 +84,7 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
     else if (isField) {
       final PsiField field = (PsiField)namedElement;
       final PsiModifierList modifierList = field.getModifierList();
-      if (!field.hasModifierProperty(PRIVATE) || modifierList == null) return true;
+      if (!field.hasModifierProperty(PRIVATE) || modifierList == null || field.hasModifierProperty(STATIC)) return true;
       String propertyAnnotation = null;
       for (PsiAnnotation psiAnnotation : modifierList.getAnnotations()) {
         if (TapestryConstants.PROPERTY_ANNOTATION.equals(psiAnnotation.getQualifiedName())) {
@@ -84,11 +97,13 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
       }
       final String getterName = PropertyUtil.suggestGetterName(field.getProject(), field);
       if (myForCompletion || myMethodCall && myReferenceName.equalsIgnoreCase(getterName)) {
-        addIfNotNull(createResult(new PropertyAccessorElement(field, getterName, true), true), myResult);
+        myMethods.addMethod(new TapestryAccessorMethod(field, true, getterName), state.get(PsiSubstitutor.KEY), false);
+        //addIfNotNull(createResult(new PropertyAccessorElement(field, getterName, true), true), myResult);
       }
       final String setterName = PropertyUtil.suggestSetterName(field.getProject(), field);
-      if (myForCompletion || myMethodCall && myReferenceName.equalsIgnoreCase(setterName)) {
-        addIfNotNull(createResult(new PropertyAccessorElement(field, setterName, false), true), myResult);
+      if (!field.hasModifierProperty(FINAL) && (myForCompletion || myMethodCall && myReferenceName.equalsIgnoreCase(setterName))) {
+        myMethods.addMethod(new TapestryAccessorMethod(field, false, setterName), state.get(PsiSubstitutor.KEY), false);
+        //addIfNotNull(createResult(new PropertyAccessorElement(field, setterName, false), true), myResult);
       }
     }
     return myForCompletion || myResult.size() != 1;
@@ -108,7 +123,7 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
     }
     if (myMethods != null) {
       for (final JavaMethodCandidateInfo methodCandidateInfo : myMethods.getMethods()) {
-        final boolean validResult = myMethods.getResolveError() == JavaMethodResolveHelper.ErrorType.RESOLVE;
+        final boolean validResult = myMethods.getResolveError() == JavaMethodResolveHelper.ErrorType.NONE;
         addIfNotNull(createResult(methodCandidateInfo.getMethod(), validResult), myResult);
       }
     }

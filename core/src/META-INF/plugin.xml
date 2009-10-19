@@ -48,6 +48,8 @@
                 conditionClass="com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory"/>
 
     <projectViewPane implementation="com.intellij.tapestry.intellij.view.TapestryProjectViewPane"/>
+
+    <inspectionToolProvider implementation="com.intellij.tapestry.intellij.inspections.TapestryInspectionToolProvider"/>
   </extensions>
 
   <actions>

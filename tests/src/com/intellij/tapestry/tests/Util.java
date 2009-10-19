@@ -28,6 +28,7 @@ import java.io.IOException;
 public class Util {
   protected static final String DOT_TML = "." + TapestryConstants.TEMPLATE_FILE_EXTENSION;
   protected static final String DOT_JAVA = ".java";
+  protected static final String AFTER = "_after";
   public static final String DOT_EXPECTED = ".expected";
 
   private Util() {

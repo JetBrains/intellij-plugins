@@ -1,9 +1,9 @@
 package com.intellij.tapestry.psi;
 
-import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.completion.util.SimpleMethodCallLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.beanProperties.BeanProperty;
@@ -12,6 +12,7 @@ import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiUtil;
 import com.intellij.psi.util.TypeConversionUtil;
+import com.intellij.tapestry.TapestryBundle;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
@@ -91,14 +92,15 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     final String referenceName = getReferenceName();
     if (referenceName == null) return ResolveResult.EMPTY_ARRAY;
 
-    final TelVariantsProcessor<ResolveResult> processor = new TelVariantsProcessor<ResolveResult>(myElement.getParent(), referenceName) {
-      protected ResolveResult createResult(PsiNamedElement element, final boolean validResult) {
-        if (element instanceof BeanPropertyElement) {
-          element = ((BeanPropertyElement)element).getMethod();
+    final TelVariantsProcessor<ResolveResult> processor =
+      new TelVariantsProcessor<ResolveResult>(myElement.getParent(), referenceName, getReferenceQualifier() == null) {
+        protected ResolveResult createResult(PsiNamedElement element, final boolean validResult) {
+          if (element instanceof BeanPropertyElement) {
+            element = ((BeanPropertyElement)element).getMethod();
+          }
+          return new PsiElementResolveResult(element, validResult);
         }
-        return new PsiElementResolveResult(element, validResult);
-      }
-    };
+      };
     processVariantsInner(processor, ResolveState.initial());
     return processor.getVariants(ResolveResult.EMPTY_ARRAY);
   }
@@ -141,11 +143,12 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
 
   @NotNull
   public Object[] getVariants() {
-    final TelVariantsProcessor<PsiNamedElement> processor = new TelVariantsProcessor<PsiNamedElement>(myElement.getParent(), null) {
-      protected PsiNamedElement createResult(final PsiNamedElement element, final boolean validResult) {
-        return element;
-      }
-    };
+    final TelVariantsProcessor<PsiNamedElement> processor =
+      new TelVariantsProcessor<PsiNamedElement>(myElement.getParent(), null, getReferenceQualifier() == null) {
+        protected PsiNamedElement createResult(final PsiNamedElement element, final boolean validResult) {
+          return element;
+        }
+      };
     processVariantsInner(processor, ResolveState.initial());
 
     final PsiNamedElement[] elements = processor.getVariants(PsiNamedElement.EMPTY_ARRAY);
@@ -161,11 +164,11 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
         if (element instanceof PsiField) {
           return lookupElement.setTypeText(((PsiField)element).getType().getPresentableText());
         }
-        if (element instanceof PropertyAccessorElement) {
-          final PsiType type = ((PropertyAccessorElement)element).getMethodReturnType();
-          return lookupElement.setTypeText(type.getPresentableText()).setTailText("()")
-            .setInsertHandler(ParenthesesInsertHandler.getInstance(type == PsiType.VOID));
-        }
+        //if (element instanceof PropertyAccessorElement) {
+        //  final PsiType type = ((PropertyAccessorElement)element).getMethodReturnType();
+        //  return lookupElement.setTypeText(type.getPresentableText()).setTailText("()")
+        //    .setInsertHandler(ParenthesesInsertHandler.getInstance(type == PsiType.VOID));
+        //}
         if (element instanceof BeanPropertyElement) {
           final PsiType type = ((BeanPropertyElement)element).getPropertyType();
           if (type != null) {
@@ -175,6 +178,13 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
         return lookupElement;
       }
     });
+  }
+
+  public boolean isQualifierResolved() {
+    TelReferenceQualifier qualifier = getReferenceQualifier();
+    if (qualifier == null) return true;
+    final PsiReference reference = qualifier.getReference();
+    return reference == null || reference.resolve() != null;
   }
 
   @Nullable
@@ -194,8 +204,11 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
       final BeanProperty beanProperty = (BeanProperty)element;
       return getSubstitutedType(beanProperty.getMethod(), beanProperty.getPropertyType());
     }
-    if (element instanceof PropertyAccessorElement) {
-      return ((PropertyAccessorElement)element).getMethodReturnType();
+    //if (element instanceof PropertyAccessorElement) {
+    //  return ((PropertyAccessorElement)element).getMethodReturnType();
+    //}
+    if (element instanceof PsiField) {
+      return ((PsiField)element).getType();
     }
     return null;
   }
@@ -203,18 +216,17 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
   private PsiType getSubstitutedType(PsiMethod method, PsiType result) {
     if (!(result instanceof PsiClassType)) return result;
     PsiClassType resultClassType = (PsiClassType)result;
-    PsiClassType qualifierClassType;
-    final TelReferenceQualifier qualifier = getReferenceQualifier();
-    if (qualifier != null) {
-      qualifierClassType = (PsiClassType)qualifier.getPsiType();
-    }
-    else {
-      IntellijJavaClassType psiClassType = getPsiClassTypeForContainingTmlFile();
-      qualifierClassType = (PsiClassType)psiClassType.getUnderlyingObject();
-    }
-    assert qualifierClassType != null;
-    final PsiSubstitutor substitutor = getSuperClassSubstitutor(method.getContainingClass(), qualifierClassType);
+    PsiType qualifierType = getQualifierClassType();
+    if (!(qualifierType instanceof PsiClassType)) return result;
+    final PsiSubstitutor substitutor = getSuperClassSubstitutor(method.getContainingClass(), (PsiClassType)qualifierType);
     return substitutor.substitute(resultClassType);
+  }
+
+  private PsiType getQualifierClassType() {
+    final TelReferenceQualifier qualifier = getReferenceQualifier();
+    if (qualifier != null) return qualifier.getPsiType();
+    IntellijJavaClassType psiClassType = getPsiClassTypeForContainingTmlFile();
+    return (PsiClassType)psiClassType.getUnderlyingObject();
   }
 
   @NotNull
@@ -223,4 +235,21 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     return TypeConversionUtil.getSuperClassSubstitutor(superClass, classResolveResult.getElement(), classResolveResult.getSubstitutor());
   }
 
+  public String getUnresolvedMessage(boolean resolvedWithError) {
+    final String referenceName = getReferenceName();
+    String typeName = TelPsiUtil.getPresentableText(getQualifierClassType());
+    final PsiElement elementParent = myElement.getParent();
+    if (!(elementParent instanceof TelMethodCallExpression)) {
+      return TapestryBundle.message("error.cannot.resolve.property", referenceName, typeName);
+    }
+    if (!resolvedWithError) {
+      return TapestryBundle.message("error.cannot.resolve.method", referenceName, typeName);
+    }
+    String argumentTypes = StringUtil.join(((TelMethodCallExpression)elementParent).getArgumentTypes(), new Function<PsiType, String>() {
+      public String fun(final PsiType psiType) {
+        return TelPsiUtil.getPresentableText(psiType);
+      }
+    }, ", ");
+    return TapestryBundle.message("error.no.applicable.method", referenceName, typeName, "(" + argumentTypes + ")");
+  }
 }
