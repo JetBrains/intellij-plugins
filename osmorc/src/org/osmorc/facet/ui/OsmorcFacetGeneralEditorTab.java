@@ -27,24 +27,20 @@ package org.osmorc.facet.ui;
 
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
-import com.intellij.ide.util.TreeFileChooserDialog;
-import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.Nls;
 import org.osmorc.facet.OsmorcFacetConfiguration;
-import org.osmorc.i18n.OsmorcBundle;
 
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
@@ -130,38 +126,39 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab
     _modified = true;
   }
 
-  private void onManifestFileSelect()
-  {
-    VirtualFile[] roots = ModuleRootManager.getInstance(_editorContext.getModule()).getContentRoots();
-    TreeFileChooserDialog dialog =
-        new TreeFileChooserDialog(_editorContext.getProject(),
-            OsmorcBundle.getTranslation("faceteditor.select.manifest"), null,
-            FileTypeManager.getInstance().getFileTypeByFileName("MANIFEST.MF"), new SubfolderFileFilter(roots), false,
-            false);
-    dialog.showDialog();
-    PsiFile file = dialog.getSelectedFile();
-    if (file != null)
-    {
-      VirtualFile manifestFileLocation = file.getVirtualFile();
-        if (manifestFileLocation != null) {
-            //IDEADEV-40357 allow any file name
-//      if (manifestFileLocation != null && !manifestFileLocation.isDirectory())
-//      {
-//        manifestFileLocation = manifestFileLocation.getParent();
-//      }
-      for (VirtualFile root : roots)
-      {
-        String relativePath = VfsUtil
-            .getRelativePath(manifestFileLocation, root, File.separatorChar);
-        if (relativePath != null)
-        {
-          _manifestFileChooser.setText(relativePath);
-          break;
+    private void onManifestFileSelect() {
+        VirtualFile[] roots = ModuleRootManager.getInstance(_editorContext.getModule()).getContentRoots();
+        VirtualFile currentFile = null;
+        for (VirtualFile root : roots) {
+            currentFile = VfsUtil.findRelativeFile(_manifestFileChooser.getText(), root);
+            if (currentFile != null) {
+                break;
+            }
         }
-      }
+
+        VirtualFile[] result = FileChooser.chooseFiles(_editorContext.getProject(),
+                new FileChooserDescriptor(true, true, false, false, false, false), currentFile);
+
+        if (result.length == 1) {
+            VirtualFile manifestFileLocation = result[0]; //file.getVirtualFile();
+            if (manifestFileLocation != null) {
+                for (VirtualFile root : roots) {
+                    String relativePath = VfsUtil
+                            .getRelativePath(manifestFileLocation, root, File.separatorChar);
+                    if (relativePath != null) {
+                        // okay, it resides inside one of our content roots, so far so good.
+                        if (manifestFileLocation.isDirectory()) {
+                            // its a folder, so add "MANIFEST.MF" to it as a default.
+                            relativePath += "/MANIFEST.MF";
+                        }
+                        
+                        _manifestFileChooser.setText(relativePath);
+                        break;
+                    }
+                }
+            }
+        }
     }
-  }
-  }
 
   @Nls
   public String getDisplayName()
@@ -179,35 +176,36 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab
     return _modified;
   }
 
-  private void onBndFileSelect()
-  {
-    VirtualFile[] roots = ModuleRootManager.getInstance(_editorContext.getModule()).getContentRoots();
-    TreeFileChooserDialog dialog =
-        new TreeFileChooserDialog(_editorContext.getProject(),
-            OsmorcBundle.getTranslation("faceteditor.select.bndfile"), null,
-            null, new SubfolderFileFilter(roots), false,
-            false);
-    dialog.showDialog();
-    PsiFile file = dialog.getSelectedFile();
-    if (file != null)
-    {
-      VirtualFile bndFileLocation = file.getVirtualFile();
-      for (VirtualFile root : roots)
-      {
-        String relativePath = VfsUtil
-            .getRelativePath(bndFileLocation, root, File.separatorChar);
-        if (relativePath != null)
-        {
-          _bndFile.setText(relativePath);
-          break;
+    private void onBndFileSelect() {
+        VirtualFile[] roots = ModuleRootManager.getInstance(_editorContext.getModule()).getContentRoots();
+        VirtualFile currentFile = null;
+        for (VirtualFile root : roots) {
+            currentFile = VfsUtil.findRelativeFile(_bndFile.getText(), root);
+            if (currentFile != null) {
+                break;
+            }
         }
 
-      }
-    }
-    updateGui();
-  }
+        VirtualFile[] result = FileChooser.chooseFiles(_editorContext.getProject(),
+                new FileChooserDescriptor(true, false, false, false, false, false), currentFile);
 
-  public void apply() throws ConfigurationException
+
+        if (result.length == 1) {
+            VirtualFile bndFileLocation = result[0];
+            for (VirtualFile root : roots) {
+                String relativePath = VfsUtil
+                        .getRelativePath(bndFileLocation, root, File.separatorChar);
+                if (relativePath != null) {
+                    _bndFile.setText(relativePath);
+                    break;
+                }
+
+            }
+        }
+        updateGui();
+    }
+
+    public void apply() throws ConfigurationException
   {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration) _editorContext.getFacet().getConfiguration();
     configuration.setOsmorcControlsManifest(_controlledByOsmorcRadioButton.isSelected());
