@@ -403,9 +403,10 @@ public class BundleCompiler implements PackagingCompiler {
         ModuleRootManager manager = ModuleRootManager.getInstance(module);
         for (VirtualFile root : manager.getContentRoots()) {
             VirtualFile result = VfsUtil.findRelativeFile(facet.getManifestLocation(), root);
-            if (result != null) {
-                result = result.findChild("MANIFEST.MF");
-            }
+            // IDEADEV-40357
+//            if (result != null) {
+//                result = result.findChild("MANIFEST.MF");
+//            }
             if (result != null) {
                 return result;
             }

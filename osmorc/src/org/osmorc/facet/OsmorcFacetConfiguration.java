@@ -66,6 +66,13 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
     setUseBndFile(Boolean.parseBoolean(element.getAttributeValue(USE_BND_FILE, "false")));
     setBndFileLocation(element.getAttributeValue(BND_FILE_LOCATION));
     setManifestLocation(element.getAttributeValue(MANIFEST_LOCATION));
+
+      // IDEADEV-40357 backwards compatibility
+      if ( !"".equals(getManifestLocation()) && !getManifestLocation().contains("/") && !getManifestLocation().contains(".MF") ) {
+          // its an old directory setting.fix it by appending MANIFEST.MF
+          setManifestLocation(getManifestLocation()+"/MANIFEST.MF");
+      }
+
     setJarFileLocation(element.getAttributeValue(JARFILE_LOCATION));
     setBundleActivator(element.getAttributeValue(BUNDLE_ACTIVATOR));
     setBundleSymbolicName(element.getAttributeValue(BUNDLE_SYMBOLIC_NAME));

@@ -178,7 +178,9 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                         if (manifestFile != null) {
                             for (VirtualFile contentRoot : contentRoots) {
                                 if (VfsUtil.isAncestor(contentRoot, manifestFile, false)) {
-                                    osmorcFacetConfiguration.setManifestLocation(VfsUtil.getRelativePath(manifestFile.getParent(), contentRoot, '/'));
+                                    // IDEADEV-40357
+                                    osmorcFacetConfiguration.setManifestLocation(VfsUtil.getRelativePath(manifestFile , contentRoot, '/'));
+                                    break;
                                 }
                             }
                         }

@@ -39,15 +39,6 @@
         <option name="FIELDS_ORDER_WEIGHT" value="3" />
         <option name="CONSTRUCTORS_ORDER_WEIGHT" value="1" />
         <option name="METHODS_ORDER_WEIGHT" value="2" />
-        <ADDITIONAL_INDENT_OPTIONS fileType="">
-          <option name="INDENT_SIZE" value="2" />
-          <option name="CONTINUATION_INDENT_SIZE" value="8" />
-          <option name="TAB_SIZE" value="2" />
-          <option name="USE_TAB_CHARACTER" value="false" />
-          <option name="SMART_TABS" value="false" />
-          <option name="LABEL_INDENT_SIZE" value="0" />
-          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
-        </ADDITIONAL_INDENT_OPTIONS>
         <ADDITIONAL_INDENT_OPTIONS fileType="groovy">
           <option name="INDENT_SIZE" value="2" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
@@ -207,8 +198,8 @@
   <component name="IdProvider" IDEtalkID="E4E0B62D7833654941CDE0FF04E7D210" />
   <component name="InspectionProjectProfileManager">
     <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
-    <scopes />
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
     <profiles>
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
@@ -408,11 +399,6 @@
   <component name="ProjectDetails">
     <option name="projectName" value="Osmorc" />
   </component>
-  <component name="ProjectFileVersion" converted="true">
-    <converter id="javaee-modules" />
-    <converter id="ror-modules" />
-    <converter id="SelenaRunConfToDiana" />
-  </component>
   <component name="ProjectKey">
     <option name="state" value="http://svn.jetbrains.org/idea/Trunk/bundled/osmorc/Osmorc.ipr" />
   </component>
@@ -421,7 +407,7 @@
       <module fileurl="file://$PROJECT_DIR$/Osmorc.iml" filepath="$PROJECT_DIR$/Osmorc.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 10590" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA 10793" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>
   <component name="ProjectRunConfigurationManager">
@@ -570,7 +556,6 @@
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="ADDITIONAL_CLASS_PATH" />
       <option name="TEST_SEARCH_SCOPE">
         <value defaultName="singleModule" />
       </option>
@@ -581,9 +566,7 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method>
-        <option name="AntTarget" value="false" />
-        <option name="Maven.BeforeRunTask" value="false" />
-        <option name="Make" value="false" />
+        <option name="Make" enabled="false" />
       </method>
     </configuration>
     <configuration default="false" name="All in Osmorc" type="JUnit" factoryName="JUnit" enabled="false" merge="false" sample_coverage="true" runner="emma">
@@ -599,7 +582,6 @@
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ENV_VARIABLES" />
       <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="ADDITIONAL_CLASS_PATH" />
       <option name="TEST_SEARCH_SCOPE">
         <value defaultName="singleModule" />
       </option>
@@ -610,16 +592,14 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
       <method>
-        <option name="AntTarget" value="false" />
-        <option name="Maven.BeforeRunTask" value="false" />
-        <option name="Make" value="false" />
+        <option name="Make" enabled="false" />
       </method>
     </configuration>
     <configuration default="false" name="Osmorc" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="Osmorc" />
-      <option name="VM_PARAMETERS" value=" -Xms512m -Xmx512m -XX:MaxPermSize=120m -ea" />
+      <option name="VM_PARAMETERS" value=" -Xms128m -Xmx768m -XX:MaxPermSize=180m -ea" />
       <option name="PROGRAM_PARAMETERS" value="" />
-      <log_file path="$PROJECT_DIR$/../../../Library/Caches/IntelliJIDEA8x/plugins-sandbox/system/log/idea.log" checked="true" skipped="true" show_all="false" alias="IDEA LOG" />
+      <log_file path="$PROJECT_DIR$/../../../../Library/Caches/IntelliJIDEA90/plugins-sandbox9/system/log/idea.log" checked="true" skipped="true" show_all="false" alias="IDEA LOG" />
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="1706" />
         <option name="TRANSPORT" value="0" />
@@ -632,9 +612,7 @@
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
       <method>
-        <option name="AntTarget" value="false" />
-        <option name="Maven.BeforeRunTask" value="false" />
-        <option name="Make" value="false" />
+        <option name="Make" enabled="false" />
       </method>
     </configuration>
   </component>
@@ -674,7 +652,7 @@
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="svn" />
+    <mapping directory="" vcs="Git" />
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="com.intellij.jsf.UserDefinedFacesConfigs">

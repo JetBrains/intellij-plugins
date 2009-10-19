@@ -71,6 +71,9 @@ class ReportingBuilder extends Builder
 
   }
 
+  /**
+   * Overridden to make it public.
+   */
   public void begin() {
     super.begin();
   }

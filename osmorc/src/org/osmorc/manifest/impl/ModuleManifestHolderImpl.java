@@ -224,10 +224,12 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
         OsmorcFacet facet = OsmorcFacet.getInstance(module);
         String path = facet.getManifestLocation();
         path = path.replace('\\', '/');
-        if (!path.endsWith("/")) {
-            path = path + "/";
-        }
-        path = path + "MANIFEST.MF";
+        //IDEADEV-40357 allow any file name
+
+//        if (!path.endsWith("/")) {
+//            path = path + "/";
+//        }
+//        path = path + "MANIFEST.MF";
         return path;
     }
 

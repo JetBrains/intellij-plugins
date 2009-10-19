@@ -143,10 +143,12 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab
     if (file != null)
     {
       VirtualFile manifestFileLocation = file.getVirtualFile();
-      if (manifestFileLocation != null && !manifestFileLocation.isDirectory())
-      {
-        manifestFileLocation = manifestFileLocation.getParent();
-      }
+        if (manifestFileLocation != null) {
+            //IDEADEV-40357 allow any file name
+//      if (manifestFileLocation != null && !manifestFileLocation.isDirectory())
+//      {
+//        manifestFileLocation = manifestFileLocation.getParent();
+//      }
       for (VirtualFile root : roots)
       {
         String relativePath = VfsUtil
@@ -156,9 +158,9 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab
           _manifestFileChooser.setText(relativePath);
           break;
         }
-
       }
     }
+  }
   }
 
   @Nls

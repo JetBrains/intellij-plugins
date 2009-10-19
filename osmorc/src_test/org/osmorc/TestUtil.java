@@ -122,7 +122,7 @@ public class TestUtil {
                     final ModifiableFacetModel modifiableFacetModel = FacetManager.getInstance(module).createModifiableModel();
                     final OsmorcFacet facet = new OsmorcFacet(module);
                     facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
-                    facet.getConfiguration().setManifestLocation("META-INF");
+                    facet.getConfiguration().setManifestLocation("META-INF/MANIFEST.MF");
                     facet.getConfiguration().setOsmorcControlsManifest(false);
                     modifiableFacetModel.addFacet(facet);
                     modifiableFacetModel.commit();
@@ -142,7 +142,7 @@ public class TestUtil {
                 final ModifiableFacetModel modifiableFacetModel = FacetManager.getInstance(module).createModifiableModel();
                 final OsmorcFacet facet = new OsmorcFacet(module);
                 facet.getConfiguration().setUseProjectDefaultManifestFileLocation(false);
-                facet.getConfiguration().setManifestLocation("META-INF");
+                facet.getConfiguration().setManifestLocation("META-INF/MANIFEST.MF");
                 facet.getConfiguration().setOsmorcControlsManifest(isManifestGenerated);
                 modifiableFacetModel.addFacet(facet);
                 modifiableFacetModel.commit();
