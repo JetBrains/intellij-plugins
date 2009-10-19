@@ -30,6 +30,7 @@ import com.intellij.openapi.compiler.ValidityState;
 import com.intellij.openapi.compiler.make.BuildInstructionVisitor;
 import com.intellij.openapi.compiler.make.BuildRecipe;
 import com.intellij.openapi.compiler.make.FileCopyInstruction;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
@@ -42,6 +43,8 @@ import gnu.trove.TObjectLongHashMap;
 import gnu.trove.TObjectLongProcedure;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
+import org.osmorc.frameworkintegration.LibraryBundlificationRule;
+import org.osmorc.settings.ApplicationSettings;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -169,6 +172,12 @@ public class BundleValidityState implements ValidityState
       // and copy
       url2Timestamps.forEachEntry(tobjectlongprocedure);
     }
+      long lastModified = 0;
+      ApplicationSettings settings = ServiceManager.getService(ApplicationSettings.class);
+      for (LibraryBundlificationRule bundlificationRule : settings.getLibraryBundlificationRules()) {
+          lastModified = Math.max(lastModified,  bundlificationRule.getLastModified());
+      }
+      rulesModifiedTimeStamp = lastModified;
   }
 
   /**
@@ -247,6 +256,7 @@ public class BundleValidityState implements ValidityState
 
     jarUrl = IOUtil.readString(in);
     jarLastModificationTime = in.readLong();
+      rulesModifiedTimeStamp = in.readLong();
   }
 
   /**
@@ -272,6 +282,7 @@ public class BundleValidityState implements ValidityState
 
     IOUtil.writeString(jarUrl, out);
     out.writeLong(jarLastModificationTime);
+      out.writeLong(rulesModifiedTimeStamp);
   }
 
 
@@ -294,6 +305,9 @@ public class BundleValidityState implements ValidityState
       return false;
     }
     BundleValidityState myvalstate = (BundleValidityState) validitystate;
+      if ( rulesModifiedTimeStamp != myvalstate.rulesModifiedTimeStamp ) {
+          return false;
+      }
     if (!moduleName.equals(myvalstate.moduleName))
     {
       return false;
@@ -311,7 +325,6 @@ public class BundleValidityState implements ValidityState
         return false;
       }
     }
-
     return Comparing.strEqual(jarUrl, myvalstate.jarUrl) &&
         jarLastModificationTime == myvalstate.jarLastModificationTime;
   }
@@ -322,6 +335,7 @@ public class BundleValidityState implements ValidityState
   private final String jarUrl;
   private final long jarLastModificationTime;
   private final boolean alwaysRebuildBundleJAR;
+    private final long rulesModifiedTimeStamp;
 
 
   private static void registerTimestamps(VirtualFile virtualfile, TObjectLongHashMap<String> url2Timestamps)

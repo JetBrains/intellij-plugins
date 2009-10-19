@@ -360,7 +360,7 @@ public class BundleCompiler implements PackagingCompiler {
         wrapper.build(compileContext, bndFileUrl, classPaths.toArray(new String[classPaths.size()]), jarFile.getPath(),
                 additionalProperties);
 
-        if (configuration.isOsmorcControlsManifest()) {
+        if (!configuration.isUseBndFile() ) {
             // finally bundlify all the libs for this one
             bundlifyLibraries(module, progressIndicator, compileContext);
         }
@@ -481,47 +481,55 @@ public class BundleCompiler implements PackagingCompiler {
         ArrayList<String> result = new ArrayList<String>();
         final ModuleRootManager manager = ModuleRootManager.getInstance(module);
         LibraryHandler libraryHandler = ServiceManager.getService(LibraryHandler.class);
-        OrderEntry[] entries = new ReadAction<OrderEntry[]>() {
-            protected void run(Result<OrderEntry[]> result) throws Throwable {
+        ModifiableRootModel model = new ReadAction<ModifiableRootModel>() {
+            protected void run(Result<ModifiableRootModel> result) throws Throwable {
                 ModifiableRootModel model = manager.getModifiableModel();
-                result.setResult(model.getOrderEntries());
-                model.dispose();
+                result.setResult(model);
+               // this breaks the build as the resulting order entries are all in disposed state and cannot be used
+                // afterwards.
+                //  model.dispose();
+                // therefore the model is returned, and disposed after reading.
             }
         }.execute().getResultObject();
 
-        for (OrderEntry entry : entries) {
-            if (entry instanceof JdkOrderEntry) {
-                continue; // do not bundlify JDKs
-            }
+        OrderEntry[] entries = model.getOrderEntries();
+        try {
+            for (OrderEntry entry : entries) {
+                if (entry instanceof JdkOrderEntry) {
+                    continue; // do not bundlify JDKs
+                }
 
-            if (entry instanceof LibraryOrderEntry &&
-                    libraryHandler.isFrameworkInstanceLibrary((LibraryOrderEntry) entry)) {
-                continue; // do not bundlify framework instance libraries
-            }
+                if (entry instanceof LibraryOrderEntry &&
+                        libraryHandler.isFrameworkInstanceLibrary((LibraryOrderEntry) entry)) {
+                    continue; // do not bundlify framework instance libraries
+                }
 
-            BndWrapper wrapper = new BndWrapper();
+                BndWrapper wrapper = new BndWrapper();
+                String[] urls = entry.getUrls(OrderRootType.CLASSES);
+                for (String url : urls) {
+                    url = convertJarUrlToFileUrl(url);
 
-            String[] urls = entry.getUrls(OrderRootType.CLASSES);
-            for (String url : urls) {
-                url = convertJarUrlToFileUrl(url);
 
-
-                if (!CachingBundleInfoProvider.isBundle(url)) {
-                    indicator.setText("Bundling non-OSGi libraries for module: " + module.getName());
-                    indicator.setText2(url);
-                    // ok it is not a bundle, so we need to bundlify
-                    String bundledLocation = wrapper.wrapLibrary(compileContext, url, getOutputPath(module));
-                    // if no bundle could (or should) be created, we exempt this library
-                    if (bundledLocation != null) {
-                        result.add(fixFileURL(bundledLocation));
+                    if (!CachingBundleInfoProvider.isBundle(url)) {
+                        indicator.setText("Bundling non-OSGi libraries for module: " + module.getName());
+                        indicator.setText2(url);
+                        // ok it is not a bundle, so we need to bundlify
+                        String bundledLocation = wrapper.wrapLibrary(compileContext, url, getOutputPath(module));
+                        // if no bundle could (or should) be created, we exempt this library
+                        if (bundledLocation != null) {
+                            result.add(fixFileURL(bundledLocation));
+                        }
+                    }
+                    else {
+                        result.add(fixFileURL(url));
                     }
                 }
-                else {
-                    result.add(fixFileURL(url));
-                }
             }
+            return result.toArray(new String[result.size()]);
         }
-        return result.toArray(new String[result.size()]);
+        finally {
+            model.dispose();
+        }
     }
 
     /**
