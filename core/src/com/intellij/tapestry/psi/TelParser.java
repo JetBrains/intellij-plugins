@@ -3,6 +3,7 @@ package com.intellij.tapestry.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.tree.IElementType;
 import static com.intellij.tapestry.psi.TelTokenTypes.*;
 import static com.intellij.tapestry.psi.TelCompositeElementType.*;
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
  *         Time: 9:53:11 PM
  */
 public class TelParser implements PsiParser {
+  private static final Key<String> LAST_FOUND_IDENT = Key.create("LAST_FOUND_IDENT");
+
   @NotNull
   public ASTNode parse(IElementType root, PsiBuilder builder) {
     //builder.setDebugMode(true);
@@ -41,10 +44,15 @@ public class TelParser implements PsiParser {
       if (referenceExpression != null) {
         if(consumeOptionalToken(builder, TAP5_EL_COLON)) {
           try {
-            parseExpressionInner(builder);
+            if("prop".equalsIgnoreCase(builder.getUserData(LAST_FOUND_IDENT))) {
+              parseExpressionInner(builder);
+            } else {
+              while (TAP5_EL_END != builder.getTokenType()) builder.advanceLexer();
+            }
           }
           finally {
             referenceExpression.done(EXPLICIT_BINDING);
+            builder.putUserData(LAST_FOUND_IDENT, null);
           }
         } else {
           parsePropertyChainTrailer(builder, referenceExpression);
@@ -53,7 +61,12 @@ public class TelParser implements PsiParser {
       else {
         parseExpressionInner(builder);
       }
-      consumeToken(builder, TAP5_EL_END);
+      if(!consumeToken(builder, TAP5_EL_END)) {
+        while (!builder.eof() && builder.getTokenType() != TAP5_EL_END && builder.getTokenType() != TAP5_EL_START) {
+          builder.advanceLexer();
+        }
+        consumeOptionalToken(builder, TAP5_EL_END);
+      }
     }
     else {
       builder.advanceLexer();
@@ -163,6 +176,7 @@ public class TelParser implements PsiParser {
   private static PsiBuilder.Marker tryToConsumeIdentifierAndMark(PsiBuilder builder) {
     if (TAP5_EL_IDENTIFIER != builder.getTokenType()) return null;
     PsiBuilder.Marker mark = builder.mark();
+    builder.putUserData(LAST_FOUND_IDENT, builder.getTokenText());
     builder.advanceLexer();
     return mark;
   }
