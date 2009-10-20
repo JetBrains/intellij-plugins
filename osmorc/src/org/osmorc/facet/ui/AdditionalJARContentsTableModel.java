@@ -74,11 +74,12 @@ class AdditionalJARContentsTableModel extends AbstractTableModel
     fireTableRowsDeleted(row, row);
   }
 
-  public void addAdditionalJARContent(@NotNull String sourcePath, @NotNull String destPath)
+  public int addAdditionalJARContent(@NotNull String sourcePath, @NotNull String destPath)
   {
     _additionalContents.add(Pair.create(sourcePath, destPath));
     int lastRow = _additionalContents.size() - 1;
     fireTableRowsInserted(lastRow, lastRow);
+      return lastRow;
   }
 
   public int getRowCount()
@@ -108,7 +109,7 @@ class AdditionalJARContentsTableModel extends AbstractTableModel
   @Override
   public boolean isCellEditable(int rowIndex, int columnIndex)
   {
-    return columnIndex == 1;
+    return true;  //columnIndex == 1;
   }
 
   public Object getValueAt(int rowIndex, int columnIndex)
