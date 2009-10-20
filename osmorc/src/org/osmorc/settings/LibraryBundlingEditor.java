@@ -27,8 +27,12 @@ package org.osmorc.settings;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
+import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.beans.BeanAdapter;
 import com.jgoodies.binding.list.SelectionInList;
 import org.jetbrains.annotations.Nls;
@@ -36,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -49,8 +54,12 @@ import java.util.List;
 public class LibraryBundlingEditor implements Configurable, ApplicationSettingsAwareEditor {
     private ApplicationSettingsProvider applicationSettingsProvider;
 
-    public LibraryBundlingEditor(ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier) {
+    public LibraryBundlingEditor(Project project, ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier) {
         this.applicationSettingsUpdateNotifier = applicationSettingsUpdateNotifier;
+        manifestEntries = new ManifestEditor(project, "");
+        Bindings.bind(manifestEntries, "text", beanAdapter.getValueModel("additionalProperties"));
+        _manifestEntriesHolder.add(manifestEntries, BorderLayout.CENTER);
+
         addRuleButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 List<LibraryBundlificationRule> list =
@@ -151,8 +160,6 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
         // adapter always holds currently selected bean
         beanAdapter = new BeanAdapter<LibraryBundlificationRule>(new LibraryBundlificationRule());
         libraryRegex = BasicComponentFactory.createTextField(beanAdapter.getValueModel("ruleRegex"), false);
-        manifestEntries =
-                BasicComponentFactory.createTextArea(beanAdapter.getValueModel("additionalProperties"), false);
         neverBundle = BasicComponentFactory.createCheckBox(beanAdapter.getValueModel("doNotBundle"), "");
         stopAfterThisRule = BasicComponentFactory.createCheckBox(beanAdapter.getValueModel("stopAfterThisRule"), "");
         selectedRule.addValueChangeListener(new PropertyChangeListener() {
@@ -207,6 +214,7 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
         }
     }
 
+
     private void copySettings(ApplicationSettings from, ApplicationSettings to) {
         List<LibraryBundlificationRule> copiedRules = new ArrayList<LibraryBundlificationRule>();
         for (LibraryBundlificationRule libraryBundlificationRule : from.getLibraryBundlificationRules()) {
@@ -219,6 +227,7 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
 
     public void disposeUIResources() {
         beanAdapter.removeBeanPropertyChangeListener(beanPropertyChangeListener);
+        Disposer.dispose(manifestEntries);
     }
 
     public void setApplicationSettingsProvider(
@@ -245,9 +254,10 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     private JButton upButton;
     private JButton downButton;
     private JList libraries;
-    private JTextArea manifestEntries;
+    private ManifestEditor manifestEntries;
     private JCheckBox neverBundle;
     private JCheckBox stopAfterThisRule;
+    private JPanel _manifestEntriesHolder;
     private SelectionInList<LibraryBundlificationRule> selectedRule;
     private boolean changed;
     private ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;

@@ -89,32 +89,24 @@
               <forms defaultalign-vert="false"/>
             </constraints>
             <properties>
-              <labelFor value="40284"/>
               <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.additionalproperties"/>
               <verticalAlignment value="0"/>
               <verticalTextPosition value="0"/>
             </properties>
           </component>
-          <scrollpane id="d12eb">
+          <grid id="777c4" binding="_editorPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints>
-              <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
-            <children>
-              <component id="40284" class="javax.swing.JTextArea" binding="_additionalProperties">
-                <constraints/>
-                <properties>
-                  <text value=""/>
-                </properties>
-              </component>
-            </children>
-          </scrollpane>
+            <children/>
+          </grid>
         </children>
       </grid>
-        </children>
-      </grid>
+    </children>
+  </grid>
   <buttonGroups>
     <group name="_manifestPolicy">
       <member id="444b1"/>
