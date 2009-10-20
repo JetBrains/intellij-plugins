@@ -28,7 +28,6 @@ package org.osmorc.settings;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
@@ -55,8 +54,10 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     private ApplicationSettingsProvider applicationSettingsProvider;
 
     public LibraryBundlingEditor(Project project, ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier) {
+        // TODO: please do not create ui components on component creation !
         this.applicationSettingsUpdateNotifier = applicationSettingsUpdateNotifier;
         manifestEntries = new ManifestEditor(project, "");
+        Disposer.register(project, manifestEntries);
         Bindings.bind(manifestEntries, "text", beanAdapter.getValueModel("additionalProperties"));
         _manifestEntriesHolder.add(manifestEntries, BorderLayout.CENTER);
 
