@@ -313,7 +313,7 @@ public class BundleCompiler implements PackagingCompiler {
             }
             if (!manifestExists) {
                 compileContext.addMessage(CompilerMessageCategory.ERROR,
-                        "Manifest file in " + OsmorcFacet.getInstance(module).getManifestLocation() +
+                        "Manifest file  " + OsmorcFacet.getInstance(module).getManifestLocation() +
                                 " does not exist.", null, 0, 0);
                 return;
             }

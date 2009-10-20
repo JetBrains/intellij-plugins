@@ -88,6 +88,10 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
   public void setDefaultManifestFileLocation(@NotNull String defaultManifestFileLocation)
   {
     _defaultManifestFileLocation = defaultManifestFileLocation;
+      if ( _defaultManifestFileLocation.equals("META-INF") ) {
+          // we specify full names, so to work with older projects, we have to convert this
+          _defaultManifestFileLocation = "META-INF/MANIFEST.MF";
+      }
   }
 
   @NotNull
@@ -98,5 +102,5 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
 
   private @Nullable String _frameworkInstanceName;
   private boolean _createFrameworkInstanceModule;
-  private @NotNull String _defaultManifestFileLocation = "META-INF";
+  private @NotNull String _defaultManifestFileLocation = "META-INF/MANIFEST.MF";
 }

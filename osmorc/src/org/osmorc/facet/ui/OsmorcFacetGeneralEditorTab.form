@@ -63,6 +63,8 @@
         <rowspec value="center:max(d;4px):noGrow"/>
         <rowspec value="top:3dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
+        <rowspec value="top:3dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -71,51 +73,75 @@
         <properties/>
         <border type="none" title="Manifest file location (relative to module root)"/>
         <children>
-      <component id="70cf9" class="javax.swing.JRadioButton" binding="_useProjectDefaultManifestFileLocation">
-        <constraints>
+          <component id="70cf9" class="javax.swing.JRadioButton" binding="_useProjectDefaultManifestFileLocation">
+            <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <selected value="true"/>
-          <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.manifestfilelocation.useprojectdefault"/>
-        </properties>
-      </component>
-      <grid id="e8153" layout-manager="FormLayout">
-        <rowspec value="center:d:grow"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <selected value="true"/>
+              <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.manifestfilelocation.useprojectdefault"/>
+            </properties>
+          </component>
+          <grid id="e8153" layout-manager="FormLayout">
+            <rowspec value="center:d:grow"/>
             <colspec value="left:34px:noGrow"/>
             <colspec value="fill:max(d;4px):noGrow"/>
-        <colspec value="left:d:grow(2.0)"/>
-        <constraints>
+            <colspec value="left:d:grow(2.0)"/>
+            <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="ba183" class="javax.swing.JRadioButton" binding="_useModuleSpecificManifestFileLocation">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-horz="false"/>
+              <forms/>
             </constraints>
-            <properties>
-              <horizontalAlignment value="10"/>
-              <text value=""/>
-            </properties>
-          </component>
-          <component id="c3c4b" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_manifestFileChooser">
-            <constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="ba183" class="javax.swing.JRadioButton" binding="_useModuleSpecificManifestFileLocation">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <horizontalAlignment value="10"/>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="c3c4b" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_manifestFileChooser">
+                <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <forms defaultalign-horz="false"/>
+                  <forms defaultalign-horz="false"/>
+                </constraints>
+                <properties>
+                  <enabled value="false"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="89127" binding="_warningPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms/>
             </constraints>
-            <properties>
-              <enabled value="false"/>
-            </properties>
-          </component>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="17311" class="org.osmorc.settings.MyErrorText" binding="_errorText" custom-create="true">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </component>
+              <component id="dc45a" class="javax.swing.JButton" binding="_createButton">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Create"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
         </children>
       </grid>
-    </children>
-  </grid>
       <grid id="c756d" binding="_bndPanel" layout-manager="FormLayout">
         <rowspec value="center:d:grow"/>
         <rowspec value="top:3dlu:noGrow"/>

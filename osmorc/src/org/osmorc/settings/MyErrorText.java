@@ -23,46 +23,52 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.osmorc;
+package org.osmorc.settings;
 
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.osmorc.manifest.BundleManifest;
+import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.ui.UIUtil;
 
-import java.util.Collection;
-import java.util.List;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 
 /**
- * The bundle manager allows for queries over the bundles which are known in the current project.
+ * This is actually built into DialogWrapper, but it does not resize properly on long strings, so i had
+ * to duplicate it. Relayout of the dialog should fix OSMORC-111
  *
- * @author Robert F. Beeger (robert@beeger.net)
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @version $Id:$
  */
-public interface BundleManager {
-    // TODO: not used outside, refactor it out
-    Object findBundle(String bundleSymbolicName);
+public class MyErrorText extends JPanel {
 
-    BundleManifest getBundleManifest(String bundleSymbolicName);
+    public void setError(String text) {
+        if (text == null) {
+            myLabel.setText("");
+            myLabel.setIcon(null);
+            setBorder(null);
+        }
+        else {
+            myLabel.setText((new StringBuilder()).append("<html><body><font color=red><left>").append(text)
+                    .append("</left></b></font></body></html>").toString());
+            myLabel.setIcon(IconLoader.getIcon("/actions/lightning.png"));
+            myLabel.setBorder(new EmptyBorder(2, 2, 0, 0));
+            myPrefSize = myLabel.getPreferredSize();
+        }
+        revalidate();
+    }
 
-    @Nullable
-    BundleManifest getBundleManifest(@NotNull Object bundle);
+    public Dimension getPreferredSize() {
+        return myPrefSize != null ? myPrefSize : super.getPreferredSize();
+    }
 
-    void addOrUpdateBundle(@NotNull Object bundle);
+    private final JLabel myLabel = new JLabel();
+    private Dimension myPrefSize;
 
-    @Nullable
-    BundleDescription getBundleDescription(Object bundle);
-
-    Collection<Object> determineBundleDependencies(@NotNull Object bundle);
-
-    boolean isReexported(@NotNull Object reexportCandidate, @NotNull Object exporter);
-
-    boolean reloadFrameworkInstanceLibraries(boolean onlyIfFrameworkInstanceSelectionChanged);
-
-    Collection<Object> getHostBundles(@NotNull Object bundle);
-
-    List<BundleDescription> getResolvedRequires(@NotNull Object bundle);
-
-    List<ExportPackageDescription> getResolvedImports(@NotNull Object bundle);
+    public MyErrorText() {
+        myLabel.setVerticalAlignment(JLabel.TOP);
+        setLayout(new BorderLayout());
+        setBorder(null);
+        UIUtil.removeQuaquaVisualMarginsIn(this);
+        add(myLabel, "Center");
+    }
 }

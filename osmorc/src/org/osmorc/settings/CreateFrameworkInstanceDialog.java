@@ -28,18 +28,14 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -50,7 +46,7 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper
 {
   private void createUIComponents()
   {
-    _errorText = new ErrorText();
+    _errorText = new MyErrorText();
   }
 
 
@@ -141,7 +137,7 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper
       definition.setFrameworkIntegratorName(getIntegratorName());
       definition.setBaseFolder(getBaseFolder());
       String errorInfoText = integrator.getFrameworkInstanceManager().checkValidity(definition);
-      ((ErrorText) _errorText).setError(errorInfoText);
+      ((MyErrorText) _errorText).setError(errorInfoText);
       isFrameworkDefinitionValid = (errorInfoText == null || errorInfoText.length() == 0);
     }
     setOKActionEnabled(_nameTextField.getText().length() > 0 && integrator != null &&
@@ -165,49 +161,7 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper
     return _nameTextField.getText();
   }
 
-  // This is actually built into DialogWrapper, but it does not resize properly on long strings, so i had
-  // to duplicate it. Relayout of the dialog should fix OSMORC-111
-  private static class ErrorText extends JPanel
-  {
-
-    public void setError(String text)
-    {
-      if (text == null)
-      {
-        myLabel.setText("");
-        myLabel.setIcon(null);
-        setBorder(null);
-      }
-      else
-      {
-        myLabel.setText((new StringBuilder()).append("<html><body><font color=red><left>").append(text)
-            .append("</left></b></font></body></html>").toString());
-        myLabel.setIcon(IconLoader.getIcon("/actions/lightning.png"));
-        myLabel.setBorder(new EmptyBorder(2, 2, 0, 0));
-        myPrefSize = myLabel.getPreferredSize();
-      }
-      revalidate();
-    }
-
-    public Dimension getPreferredSize()
-    {
-      return myPrefSize != null ? myPrefSize : super.getPreferredSize();
-    }
-
-    private final JLabel myLabel = new JLabel();
-    private Dimension myPrefSize;
-
-    public ErrorText()
-    {
-      myLabel.setVerticalAlignment(JLabel.TOP);
-      setLayout(new BorderLayout());
-      setBorder(null);
-      UIUtil.removeQuaquaVisualMarginsIn(this);
-      add(myLabel, "Center");
-    }
-  }
-
-  private JPanel _mainPanel;
+    private JPanel _mainPanel;
   private JComboBox _integratorComboBox;
   private JTextField _nameTextField;
   private TextFieldWithBrowseButton _baseFolderChooser;
