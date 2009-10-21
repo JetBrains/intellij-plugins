@@ -249,7 +249,7 @@ public class BundleCompiler implements PackagingCompiler {
             buildrecipe.visitInstructionsWithExceptions(new BuildInstructionVisitor() {
                 public boolean visitInstruction(BuildInstruction buildinstruction)
                         throws IOException {
-                    ProgressManager.getInstance().checkCanceled();
+                    ProgressManager.checkCanceled();
                     if (buildinstruction instanceof FileCopyInstruction) {
                         FileCopyInstruction filecopyinstruction = (FileCopyInstruction) buildinstruction;
                         File file2 = filecopyinstruction.getFile();
