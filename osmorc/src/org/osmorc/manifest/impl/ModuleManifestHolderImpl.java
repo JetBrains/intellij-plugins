@@ -105,9 +105,10 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
         return null;
     }
 
-    private String getManifestPath() {
+    private @Nullable String getManifestPath() {
         // get relative path from the configuration
         OsmorcFacet facet = OsmorcFacet.getInstance(module);
+        if (facet == null) return null;
         String path = facet.getManifestLocation();
         path = path.replace('\\', '/');
         //IDEADEV-40357 allow any file name
