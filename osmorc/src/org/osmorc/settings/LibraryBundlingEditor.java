@@ -54,12 +54,8 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     private ApplicationSettingsProvider applicationSettingsProvider;
 
     public LibraryBundlingEditor(Project project, ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier) {
-        // TODO: please do not create ui components on component creation !
+        this.project = project;
         this.applicationSettingsUpdateNotifier = applicationSettingsUpdateNotifier;
-        manifestEntries = new ManifestEditor(project, "");
-        Disposer.register(project, manifestEntries);
-        Bindings.bind(manifestEntries, "text", beanAdapter.getValueModel("additionalProperties"));
-        _manifestEntriesHolder.add(manifestEntries, BorderLayout.CENTER);
 
         addRuleButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
@@ -82,8 +78,7 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
                     list.set(0, newRule);
                     selectedRule.fireContentsChanged(0, 1);
                     selectedRule.setSelection(newRule);
-                }
-                else {
+                } else {
                     int oldSelectionIndex = selectedRule.getSelectionIndex();
                     list.remove(selectedRule.getValue());
                     selectedRule.fireIntervalRemoved(list.size(), list.size());
@@ -206,6 +201,12 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     }
 
     public void reset() {
+        if (manifestEntries == null) {
+            // moved down here because the gui should not be created in the ctor.
+            manifestEntries = new ManifestEditor(project, "");
+            Bindings.bind(manifestEntries, "text", beanAdapter.getValueModel("additionalProperties"));
+            _manifestEntriesHolder.add(manifestEntries, BorderLayout.CENTER);
+        }
         if (getApplicationSettings() != null) {
             copySettings(getApplicationSettings(), getApplicationSettingsWorkingCopy());
 
@@ -227,8 +228,6 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     }
 
     public void disposeUIResources() {
-        beanAdapter.removeBeanPropertyChangeListener(beanPropertyChangeListener);
-        Disposer.dispose(manifestEntries);
     }
 
     public void setApplicationSettingsProvider(
@@ -261,6 +260,7 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     private JPanel _manifestEntriesHolder;
     private SelectionInList<LibraryBundlificationRule> selectedRule;
     private boolean changed;
+    private Project project;
     private ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;
     private PropertyChangeListener beanPropertyChangeListener;
     private BeanAdapter<LibraryBundlificationRule> beanAdapter;

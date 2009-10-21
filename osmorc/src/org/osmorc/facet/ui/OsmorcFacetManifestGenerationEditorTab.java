@@ -28,11 +28,12 @@ package org.osmorc.facet.ui;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.util.TreeClassChooserDialog;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.psi.*;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.UserActivityListener;
@@ -40,7 +41,6 @@ import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.Nls;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.manifest.ManifestFileTypeFactory;
 import org.osmorc.settings.ManifestEditor;
 
 import javax.swing.*;
@@ -61,7 +61,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     public OsmorcFacetManifestGenerationEditorTab(FacetEditorContext editorContext) {
         _editorContext = editorContext;
         // create the editor
-        _additionalProperties = new ManifestEditor(editorContext.getProject(), "");
+        _additionalProperties = new ManifestEditor(_editorContext.getProject(), "");
         _editorPanel.add(_additionalProperties, BorderLayout.CENTER);
 
         ChangeListener listener = new ChangeListener() {
@@ -162,7 +162,6 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     }
 
     public void disposeUIResources() {
-
     }
 
 
@@ -173,7 +172,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     private JLabel _bundleActivatorLabel;
     private JTextField _bundleVersion;
     private JLabel _bundleVersionLabel;
-    private EditorTextField _additionalProperties;
+    private ManifestEditor _additionalProperties;
     private JLabel _additionalPropertiesLabel;
     private JPanel _editorPanel;
     private boolean _modified;

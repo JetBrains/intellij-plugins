@@ -52,6 +52,7 @@ public class ManifestEditor extends EditorTextField implements Disposable {
 
     public ManifestEditor(Project project, String text) {
         super("", project, ManifestFileTypeFactory.MANIFEST);
+        addDocumentListener(listener);
         setText(text);
     }
 
@@ -62,11 +63,7 @@ public class ManifestEditor extends EditorTextField implements Disposable {
         final PsiFile file = PsiFileFactory.getInstance(getProject())
                 .createFileFromText("*.MF", ManifestFileTypeFactory.MANIFEST, text, -1, true);
         final Document document = PsiDocumentManager.getInstance(getProject()).getDocument(file);
-        if (document != null && listener != null ) {
-            document.addDocumentListener(listener, this);
-        }
         setNewDocumentAndFileType(ManifestFileTypeFactory.MANIFEST, document);
-
     }
 
     protected EditorEx createEditor() {
@@ -77,9 +74,9 @@ public class ManifestEditor extends EditorTextField implements Disposable {
     }
 
     public void dispose() {
+        removeDocumentListener(listener);
     }
 
-   
 
     private class MyDocumentAdapter extends DocumentAdapter {
         @Override
