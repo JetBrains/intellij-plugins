@@ -15,6 +15,8 @@
 
 package com.intellij.struts2.model.jam.convention;
 
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiPackage;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -44,16 +46,28 @@ public class JamParentPackageTest extends BasicHighlightingTestCase<JavaModuleFi
 
   public void testCompletionAction() throws Exception {
     createStrutsFileSet(STRUTS_XML);
-    myFixture.testCompletionVariants("/src/com/Action.java",
+    myFixture.testCompletionVariants("/src/testcompletion/Action.java",
                                      "myPackage", "myPackage2");
   }
 
-/* TODO 
+/* TODO not working yet
   public void testCompletionPackageInfo() throws Exception {
     createStrutsFileSet(STRUTS_XML);
-    myFixture.testCompletionVariants("/src/com/package-info.java",
+    myFixture.testCompletionVariants("/src/testcompletion/package-info.java",
                                      "myPackage", "myPackage2");
   }
 */
+
+  public void testJamPackageInfo() throws Exception {
+    createStrutsFileSet(STRUTS_XML);
+
+    myFixture.configureByFile("/src/jam/package-info.java");
+    final PsiPackage myPackage = JavaPsiFacade.getInstance(myProject).findPackage("jam");
+    assertNotNull(myPackage);
+
+    final JamParentPackage jamElement = JamParentPackage.META_PACKAGE.getJamElement(myPackage);
+    assertNotNull(jamElement);
+    assertTrue(jamElement.getPsiElement() instanceof PsiPackage);
+  }
 
 }

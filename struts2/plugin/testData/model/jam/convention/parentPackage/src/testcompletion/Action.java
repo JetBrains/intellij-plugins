@@ -1,4 +1,4 @@
-package com;
+package testcompletion;
 
 import org.apache.struts2.convention.annotation.ParentPackage;
 

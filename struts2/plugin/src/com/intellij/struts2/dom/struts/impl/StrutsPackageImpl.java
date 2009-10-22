@@ -72,6 +72,7 @@ public abstract class StrutsPackageImpl implements StrutsPackage, LocationPresen
     return null;
   }
 
+  @Nullable
   public PsiElement getIdentifyingPsiElement() {
     return getXmlElement();
   }

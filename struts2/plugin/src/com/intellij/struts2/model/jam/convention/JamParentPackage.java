@@ -16,16 +16,21 @@ package com.intellij.struts2.model.jam.convention;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.jam.JamConverter;
 import com.intellij.jam.JamElement;
 import com.intellij.jam.JamSimpleReferenceConverter;
 import com.intellij.jam.JamStringAttributeElement;
+import com.intellij.jam.annotations.JamPsiConnector;
 import com.intellij.jam.reflect.JamAnnotationMeta;
 import com.intellij.jam.reflect.JamClassMeta;
+import com.intellij.jam.reflect.JamMemberMeta;
 import com.intellij.jam.reflect.JamStringAttributeMeta;
 import com.intellij.javaee.model.common.CommonModelElement;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPackage;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
@@ -49,9 +54,20 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
   @NonNls
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.ParentPackage";
 
-  private static final JamSimpleReferenceConverter<StrutsPackage> STRUTS_PACKAGE_JAM_CONVERTER =
+  @NotNull
+  @JamPsiConnector
+  public abstract PsiElement getPsiElement();
+
+  private static final JamConverter<StrutsPackage> STRUTS_PACKAGE_JAM_CONVERTER =
 
     new JamSimpleReferenceConverter<StrutsPackage>() {
+
+      private final Condition<StrutsPackage> EXTENDABLE_STRUTS_PACKAGE_CONDITION = new Condition<StrutsPackage>() {
+        public boolean value(final StrutsPackage strutsPackage) {
+          return StringUtil.isNotEmpty(strutsPackage.getName().getStringValue()) &&
+                 StringUtil.isNotEmpty(strutsPackage.getNamespace().getStringValue());
+        }
+      };
 
       @Override
       public StrutsPackage fromString(@Nullable final String s, final JamStringAttributeElement<StrutsPackage> context) {
@@ -74,12 +90,7 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
           return Collections.emptyList();
         }
 
-        return ContainerUtil.findAll(strutsModel.getStrutsPackages(), new Condition<StrutsPackage>() {
-          public boolean value(final StrutsPackage strutsPackage) {
-            return StringUtil.isNotEmpty(strutsPackage.getName().getStringValue()) &&
-                   StringUtil.isNotEmpty(strutsPackage.getNamespace().getStringValue());
-          }
-        });
+        return ContainerUtil.findAll(strutsModel.getStrutsPackages(), EXTENDABLE_STRUTS_PACKAGE_CONDITION);
       }
 
       @NotNull
@@ -97,7 +108,10 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
 
   private static final JamAnnotationMeta PARENT_PACKAGE_META = new JamAnnotationMeta(ANNOTATION_NAME).addAttribute(VALUE_ATTRIBUTE);
 
-  public static final JamClassMeta<JamParentPackage> META =
+  public static final JamClassMeta<JamParentPackage> META_CLASS =
     new JamClassMeta<JamParentPackage>(JamParentPackage.class).addAnnotation(PARENT_PACKAGE_META);
 
+  public static final JamMemberMeta<PsiPackage, JamParentPackage> META_PACKAGE =
+    new JamMemberMeta<PsiPackage, JamParentPackage>(null, JamParentPackage.class)
+      .addAnnotation(PARENT_PACKAGE_META);
 }

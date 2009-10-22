@@ -92,7 +92,7 @@
         implementation="com.intellij.struts2.model.constant.contributor.StrutsRESTPluginConstantContributor"/>
 
     <!-- Struts-JAM -->
-    <semContributor implementation="com.intellij.struts2.model.jam.StrutsJamContributor"/>
+    <semContributor implementation="com.intellij.struts2.model.jam.StrutsSemContributor"/>
 
     <!-- validation.xml/validator-config.xml -->
     <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorDomFileDescription"/>
