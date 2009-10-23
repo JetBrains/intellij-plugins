@@ -23,14 +23,13 @@ import com.intellij.jam.JamStringAttributeElement;
 import com.intellij.jam.annotations.JamPsiConnector;
 import com.intellij.jam.reflect.JamAnnotationMeta;
 import com.intellij.jam.reflect.JamClassMeta;
-import com.intellij.jam.reflect.JamMemberMeta;
+import com.intellij.jam.reflect.JamPackageMeta;
 import com.intellij.jam.reflect.JamStringAttributeMeta;
 import com.intellij.javaee.model.common.CommonModelElement;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPackage;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
@@ -111,7 +110,7 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
   public static final JamClassMeta<JamParentPackage> META_CLASS =
     new JamClassMeta<JamParentPackage>(JamParentPackage.class).addAnnotation(PARENT_PACKAGE_META);
 
-  public static final JamMemberMeta<PsiPackage, JamParentPackage> META_PACKAGE =
-    new JamMemberMeta<PsiPackage, JamParentPackage>(null, JamParentPackage.class)
+  public static final JamPackageMeta<JamParentPackage> META_PACKAGE =
+    new JamPackageMeta<JamParentPackage>(null, JamParentPackage.class)
       .addAnnotation(PARENT_PACKAGE_META);
 }

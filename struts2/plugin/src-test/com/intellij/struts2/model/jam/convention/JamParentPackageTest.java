@@ -50,13 +50,11 @@ public class JamParentPackageTest extends BasicHighlightingTestCase<JavaModuleFi
                                      "myPackage", "myPackage2");
   }
 
-/* TODO not working yet
   public void testCompletionPackageInfo() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     myFixture.testCompletionVariants("/src/testcompletion/package-info.java",
                                      "myPackage", "myPackage2");
   }
-*/
 
   public void testJamPackageInfo() throws Exception {
     createStrutsFileSet(STRUTS_XML);
