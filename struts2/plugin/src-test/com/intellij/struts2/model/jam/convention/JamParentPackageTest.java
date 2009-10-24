@@ -17,7 +17,7 @@ package com.intellij.struts2.model.jam.convention;
 
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiPackage;
-import com.intellij.struts2.BasicHighlightingTestCase;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,22 +26,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class JamParentPackageTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtureBuilder> {
 
   @NotNull
-  protected String getTestDataLocation() {
-    return "model/jam/convention/parentPackage";
-  }
-
   @Override
-  protected boolean hasJavaSources() {
-    return true;
-  }
-
-  @Override
-  protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
-    super.configureModule(moduleBuilder);
-    addLibrary(moduleBuilder, "struts2-convention-plugin", "struts2-convention-plugin-2.1.8.jar");
+  protected String getTestDataFolder() {
+    return "parentPackage";
   }
 
   public void testCompletionAction() throws Exception {
@@ -56,7 +46,13 @@ public class JamParentPackageTest extends BasicHighlightingTestCase<JavaModuleFi
                                      "myPackage", "myPackage2");
   }
 
-  public void testJamPackageInfo() throws Exception {
+  public void testResolveAction() throws Exception {
+    createStrutsFileSet(STRUTS_XML);
+    final JamParentPackage jamParentPackage = getClassJam("jam.Action", JamParentPackage.META_CLASS);
+    checkResolve(jamParentPackage);
+  }
+
+  public void testResolveJamPackageInfo() throws Exception {
     createStrutsFileSet(STRUTS_XML);
 
     myFixture.configureByFile("/src/jam/package-info.java");
@@ -65,7 +61,13 @@ public class JamParentPackageTest extends BasicHighlightingTestCase<JavaModuleFi
 
     final JamParentPackage jamElement = JamParentPackage.META_PACKAGE.getJamElement(myPackage);
     assertNotNull(jamElement);
-    assertTrue(jamElement.getPsiElement() instanceof PsiPackage);
+    checkResolve(jamElement);
+  }
+
+  private void checkResolve(@NotNull final JamParentPackage jamParentPackage) {
+    final StrutsPackage strutsPackage = jamParentPackage.getValue().getValue();
+    assertNotNull(strutsPackage);
+    assertEquals("myPackage", strutsPackage.getName().getStringValue());
   }
 
 }

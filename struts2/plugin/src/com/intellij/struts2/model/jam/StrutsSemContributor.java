@@ -17,11 +17,13 @@ package com.intellij.struts2.model.jam;
 
 import com.intellij.patterns.PsiClassPattern;
 import com.intellij.patterns.PsiJavaPatterns;
-import static com.intellij.patterns.PsiJavaPatterns.psiClass;
 import com.intellij.psi.PsiPackage;
 import com.intellij.semantic.SemContributor;
 import com.intellij.semantic.SemRegistrar;
 import com.intellij.struts2.model.jam.convention.JamParentPackage;
+import com.intellij.struts2.model.jam.convention.JamResultPath;
+
+import static com.intellij.patterns.PsiJavaPatterns.psiClass;
 
 /**
  * Registers JAM.
@@ -37,6 +39,9 @@ public class StrutsSemContributor extends SemContributor {
     JamParentPackage.META_CLASS.register(registrar, psiClassPattern.withAnnotation(JamParentPackage.ANNOTATION_NAME));
     JamParentPackage.META_PACKAGE.register(registrar, PsiJavaPatterns.psiElement(PsiPackage.class));
 
+    // @ResultPath
+    JamResultPath.META_CLASS.register(registrar, psiClassPattern.withAnnotation(JamResultPath.ANNOTATION_NAME));
+    JamResultPath.META_PACKAGE.register(registrar, PsiJavaPatterns.psiElement(PsiPackage.class));
   }
 
 }

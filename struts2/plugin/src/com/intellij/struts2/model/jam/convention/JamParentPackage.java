@@ -21,15 +21,13 @@ import com.intellij.jam.JamElement;
 import com.intellij.jam.JamSimpleReferenceConverter;
 import com.intellij.jam.JamStringAttributeElement;
 import com.intellij.jam.annotations.JamPsiConnector;
-import com.intellij.jam.reflect.JamAnnotationMeta;
-import com.intellij.jam.reflect.JamClassMeta;
-import com.intellij.jam.reflect.JamPackageMeta;
-import com.intellij.jam.reflect.JamStringAttributeMeta;
+import com.intellij.jam.reflect.*;
 import com.intellij.javaee.model.common.CommonModelElement;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
@@ -48,14 +46,11 @@ import java.util.Collections;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class JamParentPackage extends CommonModelElement.PsiBase implements JamElement {
 
   @NonNls
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.ParentPackage";
-
-  @NotNull
-  @JamPsiConnector
-  public abstract PsiElement getPsiElement();
 
   private static final JamConverter<StrutsPackage> STRUTS_PACKAGE_JAM_CONVERTER =
 
@@ -70,6 +65,10 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
 
       @Override
       public StrutsPackage fromString(@Nullable final String s, final JamStringAttributeElement<StrutsPackage> context) {
+        if (s == null) {
+          return null;
+        }
+
         final StrutsModel strutsModel = StrutsJamUtils.getStrutsModel(context);
         if (strutsModel == null) {
           return null;
@@ -103,9 +102,10 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
     };
 
   private static final JamStringAttributeMeta.Single<StrutsPackage> VALUE_ATTRIBUTE =
-    JamStringAttributeMeta.singleString("value", STRUTS_PACKAGE_JAM_CONVERTER);
+    JamAttributeMeta.singleString("value", STRUTS_PACKAGE_JAM_CONVERTER);
 
-  private static final JamAnnotationMeta PARENT_PACKAGE_META = new JamAnnotationMeta(ANNOTATION_NAME).addAttribute(VALUE_ATTRIBUTE);
+  private static final JamAnnotationMeta PARENT_PACKAGE_META =
+    new JamAnnotationMeta(ANNOTATION_NAME).addAttribute(VALUE_ATTRIBUTE);
 
   public static final JamClassMeta<JamParentPackage> META_CLASS =
     new JamClassMeta<JamParentPackage>(JamParentPackage.class).addAnnotation(PARENT_PACKAGE_META);
@@ -113,4 +113,23 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
   public static final JamPackageMeta<JamParentPackage> META_PACKAGE =
     new JamPackageMeta<JamParentPackage>(null, JamParentPackage.class)
       .addAnnotation(PARENT_PACKAGE_META);
+
+  @JamPsiConnector
+  public abstract PsiModifierListOwner getOwner();
+
+  @NotNull
+  @Override
+  public PsiElement getPsiElement() {
+    return getOwner();
+  }
+
+  /**
+   * Returns "value" attribute.
+   *
+   * @return JAM-Attribute.
+   */
+  public JamStringAttributeElement<StrutsPackage> getValue() {
+    return PARENT_PACKAGE_META.getAttribute(getOwner(), VALUE_ATTRIBUTE);
+  }
+
 }
