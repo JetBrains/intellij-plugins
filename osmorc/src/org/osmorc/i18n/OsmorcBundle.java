@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.PropertyKey;
 
 import javax.swing.*;
+import java.io.*;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.Map;
@@ -42,77 +43,110 @@ import java.util.WeakHashMap;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public class OsmorcBundle
-{
+public class OsmorcBundle {
 
-  private static Reference<ResourceBundle> _ourBundle;
-  private static Map<String, Icon> _iconCache = new WeakHashMap<String, Icon>();
+    private static Reference<ResourceBundle> _ourBundle;
+    private static String infoHtml;
+    private static Map<String, Icon> _iconCache = new WeakHashMap<String, Icon>();
 
-  @NonNls
-  private static final String BUNDLE = "org.osmorc.i18n.OsmorcBundle";
+    @NonNls
+    private static final String BUNDLE = "org.osmorc.i18n.OsmorcBundle";
 
-  private OsmorcBundle()
-  {
-  }
-
-  /**
-   * Translates the given message.
-   *
-   * @param key    the key to be used for translation
-   * @param params the parameters for the translation
-   * @return the translated message.
-   */
-  public static String getTranslation(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params)
-  {
-    return CommonBundle.message(getBundle(), key, params);
-  }
-
-  /**
-   * Returns the resource bundle. In case there is a memory shortage the resource bundle is garbage collected. This
-   * method will provide a new resource bundle in case the previous one got garbage collected.
-   *
-   * @return the resoruce bundle.
-   */
-  private static ResourceBundle getBundle()
-  {
-    ResourceBundle bundle = null;
-    if (_ourBundle != null)
-    {
-      bundle = _ourBundle.get();
+    private OsmorcBundle() {
     }
-    if (bundle == null)
-    {
-      bundle = ResourceBundle.getBundle(BUNDLE);
-      _ourBundle = new SoftReference<ResourceBundle>(bundle);
+
+    /**
+     * Translates the given message.
+     *
+     * @param key    the key to be used for translation
+     * @param params the parameters for the translation
+     * @return the translated message.
+     */
+    public static String getTranslation(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
+        return CommonBundle.message(getBundle(), key, params);
     }
-    return bundle;
-  }
 
-  private static Icon getCachedIcon(@PropertyKey(resourceBundle = OsmorcBundle.BUNDLE) String property)
-  {
-    Icon result = _iconCache.get(property);
-    if (result == null)
-    {
-      result = IconLoader.getIcon(getTranslation(property));
-      _iconCache.put(property, result);
+    /**
+     * Returns the resource bundle. In case there is a memory shortage the resource bundle is garbage collected. This
+     * method will provide a new resource bundle in case the previous one got garbage collected.
+     *
+     * @return the resoruce bundle.
+     */
+    private static ResourceBundle getBundle() {
+        ResourceBundle bundle = null;
+        if (_ourBundle != null) {
+            bundle = _ourBundle.get();
+        }
+        if (bundle == null) {
+            bundle = ResourceBundle.getBundle(BUNDLE);
+            _ourBundle = new SoftReference<ResourceBundle>(bundle);
+        }
+        return bundle;
     }
-    return result;
-  }
 
-  /**
-   * @return a small icon for Osmorc
-   */
-  public static Icon getSmallIcon()
-  {
-    return getCachedIcon("runconfiguration.icon");
-  }
+    private static Icon getCachedIcon(@PropertyKey(resourceBundle = OsmorcBundle.BUNDLE) String property) {
+        Icon result = _iconCache.get(property);
+        if (result == null) {
+            result = IconLoader.getIcon(getTranslation(property));
+            _iconCache.put(property, result);
+        }
+        return result;
+    }
+
+    /**
+     * @return a small icon for Osmorc
+     */
+    public static Icon getSmallIcon() {
+        return getCachedIcon("runconfiguration.icon");
+    }
 
 
-  /**
-   * @return a big icon for Osmorc
-   */
-  public static Icon getBigIcon()
-  {
-    return getCachedIcon("projectconfiguration.icon");
-  }
+    /**
+     * @return a big icon for Osmorc
+     */
+    public static Icon getBigIcon() {
+        return getCachedIcon("projectconfiguration.icon");
+    }
+
+    public static Icon getLogo() {
+        return getCachedIcon("logo.icon");
+    }
+
+    public static String getInfo() {
+        if (infoHtml == null) {
+            StringBuffer buffer = new StringBuffer();
+            FileReader reader = null;
+            BufferedReader bReader = null;
+
+            try {
+                String infoFileName = getTranslation("info.file");
+                reader = new FileReader(OsmorcBundle.class.getResource(infoFileName).getFile());
+                bReader = new BufferedReader(reader);
+                while (bReader.ready()) {
+                    buffer.append(bReader.readLine());
+                }
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            finally {
+                try {
+                    if (bReader != null) {
+                        bReader.close();
+                    }
+                    if (reader != null) {
+                        reader.close();
+                    }
+                }
+                catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            infoHtml = buffer.toString();
+
+        }
+
+        return infoHtml;
+    }
 }

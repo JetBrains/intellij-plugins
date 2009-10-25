@@ -54,6 +54,7 @@ public class SettingsEditor implements ProjectComponent, Configurable, Configura
 
         this.ideSettingsEditor.setProjectSettingsProvider(this);
         this.ideSettingsEditor.setApplicationSettingsProvider(this);
+
     }
 
     public Configurable[] getConfigurables() {
@@ -122,6 +123,7 @@ public class SettingsEditor implements ProjectComponent, Configurable, Configura
     }
 
     public JComponent createComponent() {
+        editorPane1.setText(OsmorcBundle.getInfo());
         return mainPanel;
     }
 
@@ -139,6 +141,7 @@ public class SettingsEditor implements ProjectComponent, Configurable, Configura
     }
 
     private JPanel mainPanel;
+    private JEditorPane editorPane1;
     private ProjectSettingsEditor projectSettingsEditor;
     private IDESettingsEditor ideSettingsEditor;
     private ApplicationSettings applicationSettings;
