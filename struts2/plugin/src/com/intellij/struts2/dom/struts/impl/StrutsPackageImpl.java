@@ -15,9 +15,7 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.javaee.model.xml.impl.BaseImpl;
 import com.intellij.struts2.dom.struts.strutspackage.DefaultClassRef;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
@@ -32,7 +30,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @SuppressWarnings({"AbstractClassNeverImplemented"})
-public abstract class StrutsPackageImpl implements StrutsPackage, LocationPresentation {
+public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackage, LocationPresentation {
 
   public String getLocation() {
     return getNamespace().getStringValue();
@@ -72,18 +70,4 @@ public abstract class StrutsPackageImpl implements StrutsPackage, LocationPresen
     return null;
   }
 
-  @Nullable
-  public PsiElement getIdentifyingPsiElement() {
-    return getXmlElement();
-  }
-
-  @Nullable
-  public PsiFile getContainingFile() {
-    return DomUtil.getFile(this);
-  }
-
-  public PsiManager getPsiManager() {
-    return PsiManager.getInstance(getManager().getProject());
-  }
-  
 }

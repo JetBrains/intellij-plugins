@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
-import com.intellij.javaee.model.common.CommonModelElement;
+import com.intellij.javaee.model.xml.CommonDomModelElement;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.util.xml.*;
@@ -30,7 +30,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
-public interface StrutsPackage extends DomElement, CommonModelElement {
+public interface StrutsPackage extends CommonDomModelElement {
 
   String DEFAULT_NAMESPACE = "/";
 
