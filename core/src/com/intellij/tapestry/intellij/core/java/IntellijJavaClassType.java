@@ -26,6 +26,7 @@ import java.util.Map;
 public class IntellijJavaClassType extends IntellijJavaType implements IJavaClassType {
 
   private static final Logger ourLogger = LoggerFactory.getInstance().getLogger(IntellijJavaClassType.class);
+  @NotNull
   private final String _classFilePath;
   private PsiClassType _psiClassType;
   private Module _module;
