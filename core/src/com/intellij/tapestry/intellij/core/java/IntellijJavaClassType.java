@@ -11,6 +11,8 @@ import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.java.IJavaMethod;
+import com.intellij.tapestry.core.log.Logger;
+import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,7 @@ import java.util.Map;
 
 public class IntellijJavaClassType extends IntellijJavaType implements IJavaClassType {
 
+  private static final Logger ourLogger = LoggerFactory.getInstance().getLogger(IntellijJavaClassType.class);
   private final String _classFilePath;
   private PsiClassType _psiClassType;
   private Module _module;
@@ -231,11 +234,17 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
    */
   @Nullable
   public PsiClass getPsiClass() {
+    PsiClass res;
     if (_psiClassType != null && _psiClassType.isValid() && _psiClassType.resolve().getContainingFile().isValid()) {
-      return _psiClassType.resolve();
+      res = _psiClassType.resolve();
+    } else {
+      processPsiClassType();
+      res = _psiClassType != null ? _psiClassType.resolve() : null;
     }
-    processPsiClassType();
-    return _psiClassType != null ? _psiClassType.resolve() : null;
+    if(res == null) {
+      ourLogger.error((_psiClassType != null) + ", unresolved: " + _classFilePath);
+    }
+    return res;
   }
 
 
