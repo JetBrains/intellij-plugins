@@ -114,16 +114,18 @@ public class OsmorcBundle {
 
     public static String getInfo() {
         if (infoHtml == null) {
-            StringBuffer buffer = new StringBuffer();
-            FileReader reader = null;
+            StringBuilder builder = new StringBuilder();
+            InputStream stream = null;
+            InputStreamReader streamReader =  null;
             BufferedReader bReader = null;
 
             try {
                 String infoFileName = getTranslation("info.file");
-                reader = new FileReader(OsmorcBundle.class.getResource(infoFileName).getFile());
-                bReader = new BufferedReader(reader);
+                stream = OsmorcBundle.class.getResourceAsStream(infoFileName);
+                streamReader = new InputStreamReader(stream);
+                bReader = new BufferedReader(streamReader);
                 while (bReader.ready()) {
-                    buffer.append(bReader.readLine());
+                    builder.append(bReader.readLine());
                 }
             }
             catch (IOException e) {
@@ -134,8 +136,11 @@ public class OsmorcBundle {
                     if (bReader != null) {
                         bReader.close();
                     }
-                    if (reader != null) {
-                        reader.close();
+                    if (streamReader != null) {
+                        streamReader.close();
+                    }
+                    if (stream != null) {
+                        stream.close();
                     }
                 }
                 catch (IOException e) {
@@ -143,7 +148,7 @@ public class OsmorcBundle {
                 }
             }
 
-            infoHtml = buffer.toString();
+            infoHtml = builder.toString();
 
         }
 

@@ -123,6 +123,7 @@
                 <attribute name="Manifest-Version" value="1.0"/>
             </manifest>
         </jar>
+<!--
         <mkdir dir="${tmp.dir.osmorc}/help"/>
         <jar destfile="${tmp.dir.osmorc}/help/OsmorcHelp.jar" duplicate="preserve">
             <zipfileset dir="${module.osmorc.basedir}/help" prefix=""/>
@@ -131,6 +132,7 @@
                 <attribute name="Manifest-Version" value="1.0"/>
             </manifest>
         </jar>
+-->
         <copy file="${module.osmorc.basedir}/lib/org.eclipse.osgi.jar"
               tofile="${tmp.dir.osmorc}/lib/org.eclipse.osgi.jar"/>
         <copy file="${module.osmorc.basedir}/lib/bnd-0.0.337.jar" tofile="${tmp.dir.osmorc}/lib/bnd-0.0.254.jar"/>
