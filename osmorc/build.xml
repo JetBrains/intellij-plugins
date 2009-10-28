@@ -144,6 +144,7 @@
                 <include name="license/**/*"/>
             </fileset>
         </copy>
+        <delete file="${bin.jar}" quiet="true"/>
         <zip destfile="${bin.jar}">
             <zipfileset dir="${tmp.dir.osmorc}" prefix="Osmorc"/>
         </zip>
@@ -161,6 +162,9 @@
                 <exclude name="*Osmorc*.zip"/>
                 <exclude name="*OsmorcIssueSubmitter/**"/>
                 <exclude name="*testdataTemp/**"/>
+                <exclude name="help/**"/>
+                <exclude name="build.properties"/>
+                <exclude name="osmorc-idea.iml"/>
                 <exclude name="**.iws"/>
                 <exclude name="*classes/**"/>
             </fileset>
