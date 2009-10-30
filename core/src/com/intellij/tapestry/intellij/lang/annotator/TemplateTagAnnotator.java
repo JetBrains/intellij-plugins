@@ -31,18 +31,23 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
 
   private static final Logger _logger = LoggerFactory.getInstance().getLogger(TemplateTagAnnotator.class);
 
-  private AnnotationHolder _annotationHolder;
+  private AnnotationHolder annotationHolder;
 
   public TemplateTagAnnotator() {
     super();
 
-    _annotationHolder = null;
+    annotationHolder = null;
   }//Constructor
 
-  public synchronized void annotate(PsiElement psiElement, AnnotationHolder annotationHolder) {
-    _annotationHolder = annotationHolder;
+  public void annotate(PsiElement psiElement, AnnotationHolder annotationHolder) {
+    this.annotationHolder = annotationHolder;
 
-    psiElement.accept(this);
+    try {
+      psiElement.accept(this);
+    }
+    finally {
+      this.annotationHolder = null;
+    }
   }//annotate
 
   @Override
@@ -92,19 +97,19 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
     }
     catch (Exception ex) {
       _logger.error(ex);
-      //_annotationHolder.createErrorAnnotation(value, "Invalid value");
+      //annotationHolder.createErrorAnnotation(value, "Invalid value");
       return;
     }
 
     if (resolvedValue == null) {
-      //_annotationHolder.createErrorAnnotation(value, "Invalid value");
+      //annotationHolder.createErrorAnnotation(value, "Invalid value");
       return;
     }
 
     IJavaType parameterType = parameter.getParameterField().getType();
     if (!TypeCoercionValidator
         .canCoerce(tapestryProject, resolvedValue.getType(), AbstractValueResolver.getCleanValue(attribute.getValue()), parameterType)) {
-      _annotationHolder.createErrorAnnotation(value, "Can't coerce a " +
+      annotationHolder.createErrorAnnotation(value, "Can't coerce a " +
                                                      resolvedValue.getType().getName() +
                                                      " to a " +
                                                      (parameterType != null ? parameterType.getName() : "undefined"));
@@ -112,14 +117,14 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
   }
 
   private void annotateTapestryTag(XmlTag tag) {
-    _annotationHolder.createInfoAnnotation(IdeaUtils.getNameElement(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
+    annotationHolder.createInfoAnnotation(IdeaUtils.getNameElement(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
     if (!tag.isEmpty()) {
-      _annotationHolder.createInfoAnnotation(IdeaUtils.getNameElementClosing(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
+      annotationHolder.createInfoAnnotation(IdeaUtils.getNameElementClosing(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
     }
   }
 
   private void annotateTapestryAttribute(XmlAttribute attribute) {
-    _annotationHolder.createInfoAnnotation(attribute.getFirstChild(), null).setTextAttributes(TemplateColorSettingsPage.ATTR_NAME);
+    annotationHolder.createInfoAnnotation(attribute.getFirstChild(), null).setTextAttributes(TemplateColorSettingsPage.ATTR_NAME);
   }
 
 }//TemplateTagAnnotator
