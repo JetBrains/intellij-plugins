@@ -40,11 +40,8 @@ import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
-import static org.easymock.EasyMock.*;
 import org.easymock.IAnswer;
-import static org.hamcrest.Matchers.equalTo;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.osmorc.TestUtil;
@@ -53,6 +50,10 @@ import org.osmorc.manifest.ManifestFileTypeFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.easymock.EasyMock.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -120,11 +121,15 @@ public class FacetDetectionTest {
         OsmorcFacet osmorcFacet = OsmorcFacetType.INSTANCE.createFacet(t0, "OSGi", osmorcFacetConfiguration, null);
 
         ModifiableRootModel model = ModuleRootManager.getInstance(t0).getModifiableModel();
-        detector.beforeFacetAdded(osmorcFacet, FacetManager.getInstance(t0), model);
-        
-        assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo("src/META-INF"));
+        try {
+            detector.beforeFacetAdded(osmorcFacet, FacetManager.getInstance(t0), model);
 
-        model.dispose();
+            assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo("src/META-INF/MANIFEST.MF"));
+        }
+        finally {
+            model.dispose();
+        }
+
         verify(registry);
     }
 

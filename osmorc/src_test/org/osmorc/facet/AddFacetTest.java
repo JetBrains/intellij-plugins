@@ -34,15 +34,16 @@ import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
-import static org.hamcrest.Matchers.equalTo;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -115,8 +116,8 @@ public class AddFacetTest {
 
     }
 
-    @Test
-    public void testAddFacetWithoutManifest() throws Exception {
+    //@Test
+    public void _testAddFacetWithoutManifest() throws Exception {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
 
