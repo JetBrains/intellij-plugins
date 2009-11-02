@@ -25,7 +25,6 @@
 
 package org.osmorc.make;
 
-import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.Result;
@@ -36,8 +35,6 @@ import com.intellij.openapi.compiler.make.BuildRecipe;
 import com.intellij.openapi.compiler.make.FileCopyInstruction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.deployment.DeploymentUtil;
-import com.intellij.openapi.deployment.ModuleLink;
-import com.intellij.openapi.deployment.PackagingMethod;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -451,19 +448,17 @@ public class BundleCompiler implements PackagingCompiler {
      * @return the build recipe
      */
     static BuildRecipe getBuildRecipe(Module module) {
-        DummyCompileContext dummycompilecontext = DummyCompileContext.getInstance();
-
         BuildRecipe buildrecipe = DeploymentUtil.getInstance().createBuildRecipe();
 
         // okay this is some hacking. we try to re-use the settings for building jars here and emulate
         // the jar settings dialog... YEEHA..
-        ModuleLink link = DeploymentUtil.getInstance().createModuleLink(module, module);
-        link.setPackagingMethod(PackagingMethod.COPY_FILES);
-        link.setURI("/");
-        ModuleLink[] modules = new ModuleLink[]{link};
-        //noinspection UnresolvedPropertyKey
-        DeploymentUtil.getInstance().addJavaModuleOutputs(module, modules, buildrecipe, dummycompilecontext, null,
-                IdeBundle.message("jar.build.module.presentable.name", module.getName()));
+
+        final CompilerModuleExtension extension = CompilerModuleExtension.getInstance(module);
+        if (extension != null) {
+            final String url = extension.getCompilerOutputUrl();
+            final File root = new File(FileUtil.toSystemDependentName(VfsUtil.urlToPath(url)));
+            buildrecipe.addFileCopyInstruction(root, true, "");
+        }
         return buildrecipe;
     }
 
