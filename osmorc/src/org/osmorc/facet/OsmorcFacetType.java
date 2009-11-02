@@ -118,34 +118,36 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
             public boolean accept(VirtualFile file) {
                 List<String> headersToDetect = new ArrayList<String>(Arrays.asList(DETECTION_HEADERS));
 
-                BufferedReader bufferedReader = null;
-                try {
-                    InputStream inputStream = file.getInputStream();
-                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    bufferedReader = new BufferedReader(inputStreamReader);
+                if (file != null && file.exists() && !file.isDirectory()) {
+                    BufferedReader bufferedReader = null;
+                    try {
+                        InputStream inputStream = file.getInputStream();
+                        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                        bufferedReader = new BufferedReader(inputStreamReader);
 
-                    while (bufferedReader.ready() && headersToDetect.size() > 0) {
-                        String line = bufferedReader.readLine();
-                        for (Iterator<String> headersToDetectIterator = headersToDetect.iterator();
-                             headersToDetectIterator.hasNext();) {
-                            String headertoDeteect = headersToDetectIterator.next();
-                            if (line.startsWith(headertoDeteect)) {
-                                headersToDetectIterator.remove();
-                                break;
+                        while (bufferedReader.ready() && headersToDetect.size() > 0) {
+                            String line = bufferedReader.readLine();
+                            for (Iterator<String> headersToDetectIterator = headersToDetect.iterator();
+                                 headersToDetectIterator.hasNext();) {
+                                String headertoDeteect = headersToDetectIterator.next();
+                                if (line.startsWith(headertoDeteect)) {
+                                    headersToDetectIterator.remove();
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                finally {
-                    if (bufferedReader != null) {
-                        try {
-                            bufferedReader.close();
-                        }
-                        catch (IOException e) {
-                            throw new RuntimeException(e);
+                    catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    finally {
+                        if (bufferedReader != null) {
+                            try {
+                                bufferedReader.close();
+                            }
+                            catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                 }
