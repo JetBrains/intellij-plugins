@@ -218,6 +218,9 @@ public class TestUtil {
         if (TEST_DATA_DIR == null) {
             TEST_DATA_DIR = new File(TestUtil.class.getResource("/").getFile(), "../../../testdata");
             if (!TEST_DATA_DIR.exists()) {
+                TEST_DATA_DIR = new File(TestUtil.class.getResource("").getFile(), "../../../../../testdata");
+            }
+            if (!TEST_DATA_DIR.exists()) {
                 TEST_DATA_DIR = new File(PathManager.getHomePath(), "contrib/osmorc/testdata");
             }
             assert TEST_DATA_DIR.exists();

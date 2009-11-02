@@ -116,30 +116,6 @@ public class AddFacetTest {
 
     }
 
-    //@Test
-    public void _testAddFacetWithoutManifest() throws Exception {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            public void run() {
-
-                ModifiableFacetModel modifiableFacetModel =
-                        FacetManager.getInstance(fixture.getModule()).createModifiableModel();
-                OsmorcFacet facet = new OsmorcFacet(fixture.getModule());
-                facet.getConfiguration().setOsmorcControlsManifest(false);
-                modifiableFacetModel.addFacet(facet);
-
-                shownMessage = null;
-                dialogResult = DialogWrapper.CANCEL_EXIT_CODE;
-
-                modifiableFacetModel.commit();
-                assertThat(shownMessage,
-                        equalTo("The manifest file META-INF/MANIFEST.MF was not found. Should it be created now?"));
-            }
-        });
-
-
-    }
-
-
     private IdeaProjectTestFixture fixture;
     private String shownMessage;
     private TestDialog orgTestDialog;
