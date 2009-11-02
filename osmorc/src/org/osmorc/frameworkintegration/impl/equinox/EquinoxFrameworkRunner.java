@@ -229,7 +229,9 @@ public class EquinoxFrameworkRunner extends AbstractFrameworkRunner<EquinoxRunPr
                 }
             }
         }
-        properties.put("osgi.framework", osgiFramework);
+        if (osgiFramework != null) {
+            properties.put("osgi.framework", osgiFramework);
+        }
     }
 
     private String createFileURL(final String path) {
