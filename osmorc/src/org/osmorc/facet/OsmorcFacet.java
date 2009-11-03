@@ -33,6 +33,7 @@ import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.settings.ProjectSettings;
 
 /**
@@ -59,6 +60,7 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
      * @param module the module
      * @return the Osmorc facet of this module or null if the module doesn't have an Osmorc facet.
      */
+    @Nullable
     public static OsmorcFacet getInstance(Module module) {
         return FacetManager.getInstance(module).getFacetByType(OsmorcFacetType.ID);
     }

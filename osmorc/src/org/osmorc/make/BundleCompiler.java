@@ -284,17 +284,14 @@ public class BundleCompiler implements PackagingCompiler {
                                     configuration.getBndFileLocation(), module.getName()),
                             configuration.getBndFileLocation(), 0, 0);
                     return;
-                }
-                else {
+                } else {
                     bndFileUrl = VfsUtil.pathToUrl(bndFile.getPath());
                 }
-            }
-            else {
+            } else {
                 // fully osmorc controlled, no bnd file.
                 bndFileUrl = makeBndFile(module, configuration.asManifestString());
             }
-        }
-        else {
+        } else {
             boolean manifestExists = false;
             BundleManager bundleManager = ServiceManager.getService(module.getProject(), BundleManager.class);
             BundleManifest bundleManifest = bundleManager.getBundleManifest(module);
@@ -357,7 +354,7 @@ public class BundleCompiler implements PackagingCompiler {
         wrapper.build(compileContext, bndFileUrl, classPaths.toArray(new String[classPaths.size()]), jarFile.getPath(),
                 additionalProperties);
 
-        if (!configuration.isUseBndFile() ) {
+        if (!configuration.isUseBndFile()) {
             // finally bundlify all the libs for this one
             bundlifyLibraries(module, progressIndicator, compileContext);
         }
@@ -480,7 +477,7 @@ public class BundleCompiler implements PackagingCompiler {
             protected void run(Result<ModifiableRootModel> result) throws Throwable {
                 ModifiableRootModel model = manager.getModifiableModel();
                 result.setResult(model);
-               // this breaks the build as the resulting order entries are all in disposed state and cannot be used
+                // this breaks the build as the resulting order entries are all in disposed state and cannot be used
                 // afterwards.
                 //  model.dispose();
                 // therefore the model is returned, and disposed after reading.
@@ -514,8 +511,7 @@ public class BundleCompiler implements PackagingCompiler {
                         if (bundledLocation != null) {
                             result.add(fixFileURL(bundledLocation));
                         }
-                    }
-                    else {
+                    } else {
                         result.add(fixFileURL(url));
                     }
                 }
@@ -558,10 +554,16 @@ public class BundleCompiler implements PackagingCompiler {
      * Builds the name of the jar file for a given module.
      *
      * @param module the module
-     * @return the name of the jar file that will be produced for this module by this compiler
+     * @return the name of the jar file that will be produced for this module by this compiler, or
+     *         null if the module does not have an Osmorc facet attached.
      */
+    @Nullable
     public static String getJarFileName(final Module module) {
-        return OsmorcFacet.getInstance(module).getConfiguration().getJarFileLocation();
+        final OsmorcFacet facet = OsmorcFacet.getInstance(module);
+        if (facet != null) {
+            return facet.getConfiguration().getJarFileLocation();
+        }
+        return null;
     }
 
 }

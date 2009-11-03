@@ -46,15 +46,21 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathsList;
+import com.intellij.util.messages.impl.Message;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.frameworkintegration.*;
 import org.osmorc.make.BundleCompiler;
 import org.osmorc.run.ui.SelectedBundle;
 
+import javax.swing.*;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -136,7 +142,9 @@ public class OsgiRunState extends JavaCommandLineState {
         // setup any integrator specific parameters:
         final ParametersList programParameters = params.getProgramParametersList();
         SelectedBundle[] bundles = getSelectedBundles();
-
+        if ( bundles == null ) {
+            throw new CantRunException("One or more modules seem to be missing their OSGi facets. Please re-add the OSGi facets and try again.");
+        }
         runner.fillCommandLineParameters(programParameters, bundles);
         programParameters.addParametersString(runConfiguration.getProgramParameters());
 
@@ -158,6 +166,7 @@ public class OsgiRunState extends JavaCommandLineState {
      *
      * @return the sorted list of all bundles to start.
      */
+    @Nullable
     private SelectedBundle[] getSelectedBundles() {
 
         if (_selectedBundles == null) {
@@ -170,12 +179,26 @@ public class OsgiRunState extends JavaCommandLineState {
                     ModuleManager moduleManager = ModuleManager.getInstance(project);
                     int bundleCount = runConfiguration.getBundlesToDeploy().size();
                     for (int i = 0; i < bundleCount; i++) {
-                        SelectedBundle selectedBundle = runConfiguration.getBundlesToDeploy().get(i);
+                        final SelectedBundle selectedBundle = runConfiguration.getBundlesToDeploy().get(i);
                         progressIndicator.setFraction(i / bundleCount);
                         if (selectedBundle.isModule()) {
                             // use the output jar name if it is a module
                             try {
                                 final Module module = moduleManager.findModuleByName(selectedBundle.getName());
+                                if ( !OsmorcFacet.hasOsmorcFacet(module) ) {
+                                    // actually this should not happen, but it seemed to happen once, so we check this here.
+                                    try {
+                                        SwingUtilities.invokeAndWait(new Runnable() {
+                                            public void run() {
+                                                Messages.showErrorDialog("Module '" + selectedBundle.getName() + "' has no OSGi facet, but should have. Please re-add the OSGi facet to this module.", "Error");
+                                            }
+                                        });
+                                    } catch (Exception e) {
+                                        // it's ok.
+                                    }
+                                    _selectedBundles = null;
+                                    return;
+                                }
                                 selectedBundle.setBundleUrl(new URL("file", "/", BundleCompiler.getJarFileName(
                                         module)).toString());
                                 // add all the dependencies of the bundle

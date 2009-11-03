@@ -42,128 +42,125 @@ import java.awt.event.ActionListener;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class CreateFrameworkInstanceDialog extends DialogWrapper
-{
-  private void createUIComponents()
-  {
-    _errorText = new MyErrorText();
-  }
+public class CreateFrameworkInstanceDialog extends DialogWrapper {
 
-
-  public CreateFrameworkInstanceDialog(FrameworkIntegratorRegistry frameworkIntegratorRegistry,
-                                       String frameworkInstanceName)
-  {
-    super(true);
-    setTitle("Create new Framework Instance");
-    setModal(true);
-
-    if (frameworkInstanceName != null)
-    {
-      _nameTextField.setText(frameworkInstanceName);
+    private void createUIComponents() {
+        _errorText = new MyErrorText();
     }
 
-    FrameworkIntegrator[] integrators = frameworkIntegratorRegistry.getFrameworkIntegrators();
-    _integratorComboBox.removeAllItems();
-    for (FrameworkIntegrator integrator : integrators)
-    {
-      _integratorComboBox.addItem(integrator);
-    }
 
-    _integratorComboBox.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        if (_integratorComboBox.getSelectedItem() != null && _nameTextField.getText().length() == 0)
-        {
-          _nameTextField.setText(((FrameworkIntegrator) _integratorComboBox.getSelectedItem()).getDisplayName());
+    public CreateFrameworkInstanceDialog(FrameworkIntegratorRegistry frameworkIntegratorRegistry,
+                                         String frameworkInstanceName) {
+        super(true);
+        setTitle("OSGi Framework Instance");
+        setModal(true);
+
+        if (frameworkInstanceName != null) {
+            _nameTextField.setText(frameworkInstanceName);
         }
-      }
-    });
 
-    _nameTextField.getDocument().addDocumentListener(new DocumentAdapter()
-    {
-      protected void textChanged(DocumentEvent e)
-      {
+        FrameworkIntegrator[] integrators = frameworkIntegratorRegistry.getFrameworkIntegrators();
+        _integratorComboBox.removeAllItems();
+        for (FrameworkIntegrator integrator : integrators) {
+            _integratorComboBox.addItem(integrator);
+        }
+
+        _integratorComboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (_integratorComboBox.getSelectedItem() != null && _nameTextField.getText().length() == 0) {
+                    _nameTextField.setText(((FrameworkIntegrator) _integratorComboBox.getSelectedItem()).getDisplayName());
+                }
+            }
+        });
+
+        _nameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
+            protected void textChanged(DocumentEvent e) {
+                checkButtonOKEnabled();
+            }
+        });
+
+        _integratorComboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                checkButtonOKEnabled();
+            }
+        });
+
+        FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
+        _baseFolderChooser.addBrowseFolderListener("Choose framework instance base folder", "", null,
+                fileChooserDescriptor);
+        _baseFolderChooser.getTextField().setEditable(false);
+        _baseFolderChooser.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
+            protected void textChanged(DocumentEvent e) {
+                checkButtonOKEnabled();
+            }
+        });
+        init();
+
+        // add a check right here!
         checkButtonOKEnabled();
-      }
-    });
-
-    _integratorComboBox.addActionListener(new ActionListener()
-    {
-      public void actionPerformed(ActionEvent e)
-      {
-        checkButtonOKEnabled();
-      }
-    });
-
-    FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    _baseFolderChooser.addBrowseFolderListener("Choose framework instance base folder", "", null,
-        fileChooserDescriptor);
-    _baseFolderChooser.getTextField().setEditable(false);
-    _baseFolderChooser.getTextField().getDocument().addDocumentListener(new DocumentAdapter()
-    {
-      protected void textChanged(DocumentEvent e)
-      {
-        checkButtonOKEnabled();
-      }
-    });
-    init();
-
-    // add a check right here!
-    checkButtonOKEnabled();
-  }
-
-  @Override
-  public JComponent getPreferredFocusedComponent()
-  {
-    // OSMORC-111 - focus the name field
-    return _nameTextField;
-  }
-
-  @Nullable
-  protected JComponent createCenterPanel()
-  {
-    return _mainPanel;
-  }
-
-  private void checkButtonOKEnabled()
-  {
-    final FrameworkIntegrator integrator = (FrameworkIntegrator) _integratorComboBox.getSelectedItem();
-    boolean isFrameworkDefinitionValid = false;
-    if (integrator != null /* && baseFolderChooser.getText().length() > 0 */)
-    {
-      FrameworkInstanceDefinition definition = new FrameworkInstanceDefinition();
-      definition.setName(getName());
-      definition.setFrameworkIntegratorName(getIntegratorName());
-      definition.setBaseFolder(getBaseFolder());
-      String errorInfoText = integrator.getFrameworkInstanceManager().checkValidity(definition);
-      ((MyErrorText) _errorText).setError(errorInfoText);
-      isFrameworkDefinitionValid = (errorInfoText == null || errorInfoText.length() == 0);
     }
-    setOKActionEnabled(_nameTextField.getText().length() > 0 && integrator != null &&
-        isFrameworkDefinitionValid);
-  }
+
+    @Override
+    public JComponent getPreferredFocusedComponent() {
+        // OSMORC-111 - focus the name field
+        return _nameTextField;
+    }
+
+    @Nullable
+    protected JComponent createCenterPanel() {
+        return _mainPanel;
+    }
+
+    private void checkButtonOKEnabled() {
+        final FrameworkIntegrator integrator = (FrameworkIntegrator) _integratorComboBox.getSelectedItem();
+        boolean isFrameworkDefinitionValid = false;
+        if (integrator != null /* && baseFolderChooser.getText().length() > 0 */) {
+            FrameworkInstanceDefinition definition = new FrameworkInstanceDefinition();
+            definition.setName(getName());
+            definition.setFrameworkIntegratorName(getIntegratorName());
+            definition.setBaseFolder(getBaseFolder());
+            String errorInfoText = integrator.getFrameworkInstanceManager().checkValidity(definition);
+            ((MyErrorText) _errorText).setError(errorInfoText);
+            isFrameworkDefinitionValid = (errorInfoText == null || errorInfoText.length() == 0);
+        }
+        setOKActionEnabled(_nameTextField.getText().length() > 0 && integrator != null &&
+                isFrameworkDefinitionValid);
+    }
 
 
-  public String getIntegratorName()
-  {
-    FrameworkIntegrator integrator = (FrameworkIntegrator) _integratorComboBox.getSelectedItem();
-    return integrator != null ? integrator.getDisplayName() : "";
-  }
+    public String getIntegratorName() {
+        FrameworkIntegrator integrator = (FrameworkIntegrator) _integratorComboBox.getSelectedItem();
+        return integrator != null ? integrator.getDisplayName() : "";
+    }
 
-  public String getBaseFolder()
-  {
-    return _baseFolderChooser.getText();
-  }
+    public void setIntegratorName(String value) {
+        int count = _integratorComboBox.getItemCount();
+        for (int i = 0; i < count; i++) {
+            FrameworkIntegrator integrator = (FrameworkIntegrator) _integratorComboBox.getItemAt(i);
+            if (integrator.getDisplayName().equals(value)) {
+                _integratorComboBox.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
 
-  public String getName()
-  {
-    return _nameTextField.getText();
-  }
+    public String getBaseFolder() {
+        return _baseFolderChooser.getText();
+    }
+
+    public void setBaseFolder(String value) {
+        _baseFolderChooser.setText(value);
+    }
+
+
+    public String getName() {
+        return _nameTextField.getText();
+    }
 
     private JPanel _mainPanel;
-  private JComboBox _integratorComboBox;
-  private JTextField _nameTextField;
-  private TextFieldWithBrowseButton _baseFolderChooser;
-  private JPanel _errorText;
+    private JComboBox _integratorComboBox;
+    private JTextField _nameTextField;
+    private TextFieldWithBrowseButton _baseFolderChooser;
+    private JPanel _errorText;
+
 }

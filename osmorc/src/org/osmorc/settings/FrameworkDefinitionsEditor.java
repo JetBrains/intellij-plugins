@@ -37,6 +37,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,13 +59,15 @@ public class FrameworkDefinitionsEditor implements Configurable, ApplicationSett
         removedFrameworkInstances = new ArrayList<FrameworkInstanceDefinition>();
         reloadedFrameworkInstances = new ArrayList<FrameworkInstanceDefinition>();
 
-        baseFolder.setEditable(false);
-        frameworkInstanceName.setEditable(false);
-        frameworkIntegrator.setEditable(false);
-
         addFramework.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 addFrameworkInstance();
+            }
+        });
+
+        editFramework.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                editFrameworkInstance();
             }
         });
         removeFramework.addActionListener(new ActionListener() {
@@ -71,6 +75,7 @@ public class FrameworkDefinitionsEditor implements Configurable, ApplicationSett
                 removeFrameworkInstance();
             }
         });
+        editFramework.setEnabled(selectedFrameworkInstance != null);
 
         frameworkInstances.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
@@ -81,9 +86,19 @@ public class FrameworkDefinitionsEditor implements Configurable, ApplicationSett
                     baseFolder.setText(selectedFrameworkInstance.getBaseFolder());
                     frameworkInstanceName.setText(selectedFrameworkInstance.getName());
                 }
+                editFramework.setEnabled(selectedFrameworkInstance != null);
             }
         });
 
+        frameworkInstances.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if ( selectedFrameworkInstance != null && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+                    // edit on doubleclick
+                    editFrameworkInstance();
+                }
+            }
+        });
     }
 
     private void addFrameworkInstance() {
@@ -119,6 +134,42 @@ public class FrameworkDefinitionsEditor implements Configurable, ApplicationSett
             addedFrameworkInstances.add(instanceDefinition);
             removedFrameworkInstances.remove(instanceDefinition);
             assert !reloadedFrameworkInstances.contains(instanceDefinition);
+        }
+    }
+
+
+    private void editFrameworkInstance() {
+        final FrameworkInstanceDefinition frameworkInstanceDefinition = selectedFrameworkInstance;
+        if ( frameworkInstanceDefinition == null ) {
+            return; // usually should not happen, but you never know.
+        }
+
+        CreateFrameworkInstanceDialog dialog =
+                new CreateFrameworkInstanceDialog(frameworkIntegratorRegistry,
+                        frameworkInstanceDefinition.getName());
+        dialog.setIntegratorName(frameworkInstanceDefinition.getFrameworkIntegratorName());
+        dialog.setBaseFolder(frameworkInstanceDefinition.getBaseFolder());
+        dialog.pack();
+        dialog.show();
+
+        if (dialog.isOK()) {
+            // remove old libraries
+            getFrameworkInistanceManager(frameworkInstanceDefinition).removeLibraries(frameworkInstanceDefinition);
+
+            // set new properties
+            frameworkInstanceDefinition.setName(dialog.getName());
+            frameworkInstanceDefinition.setFrameworkIntegratorName(dialog.getIntegratorName());
+            frameworkInstanceDefinition.setBaseFolder(dialog.getBaseFolder());
+
+            // create new libraries
+            getFrameworkInistanceManager(frameworkInstanceDefinition).createLibraries(frameworkInstanceDefinition);
+
+            // fire settings change.
+            applicationSettingsUpdateNotifier.fireApplicationSettingsChanged();
+            changed = true;
+            refreshFrameworkInstanceList();
+            frameworkInstances.setSelectedValue(frameworkInstanceDefinition, true);
+            reloadedFrameworkInstances.add(frameworkInstanceDefinition);
         }
     }
 
@@ -252,9 +303,10 @@ public class FrameworkDefinitionsEditor implements Configurable, ApplicationSett
     private JList frameworkInstances;
     private JButton addFramework;
     private JButton removeFramework;
-    private JTextField frameworkIntegrator;
-    private JTextField baseFolder;
-    private JTextField frameworkInstanceName;
+    private JLabel frameworkIntegrator;
+    private JLabel baseFolder;
+    private JLabel frameworkInstanceName;
+    private JButton editFramework;
     private FrameworkIntegratorRegistry frameworkIntegratorRegistry;
     private FrameworkInstanceUpdateNotifier updateNotifier;
     private ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;
