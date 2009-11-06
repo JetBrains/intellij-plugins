@@ -40,6 +40,15 @@
 
     <completionData fileType="TML" className="com.intellij.tapestry.intellij.lang.completion.TemplateCompletionData"/>
 
+    <lang.commenter language="TML" implementationClass="com.intellij.lang.xml.XmlCommenter"/>
+    <lang.foldingBuilder language="TML" implementationClass="com.intellij.lang.xml.XmlFoldingBuilder"/>
+    <codeInsight.parameterInfo language="TML" implementationClass="com.intellij.codeInsight.hint.api.impls.XmlParameterInfoHandler"/>
+    <lang.psiStructureViewFactory language="TML" implementationClass="com.intellij.lang.xml.XmlStructureViewBuilderFactory"/>
+    <!--<codeInsight.wordCompletionFilter language="TML" implementationClass="com.intellij.lang.xml.XmlWordCompletionFilter"/>-->
+    <!--<lang.smartEnterProcessor language="TML" implementationClass="com.intellij.codeInsight.completion.XmlSmartEnterProcessor"/>-->
+    <!--<braceMatcher filetype="TML" implementationClass="com.intellij.xml.impl.XmlBraceMatcher"/>-->
+    <!--<quoteHandler fileType="TML" className="com.intellij.codeInsight.editorActions.HtmlQuoteHandler"/>-->
+
     <toolWindow id="Tapestry"
                 anchor="bottom"
                 secondary="false"
