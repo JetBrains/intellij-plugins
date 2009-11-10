@@ -33,7 +33,7 @@
     </description>
     <change-notes>
         <![CDATA[
-    ]]>
+                ]]>
     </change-notes>
     <version>1.1.0</version>
     <vendor url="http://osmorc.org" email="info@osmorc.org">Osmorc Development Team</vendor>
@@ -162,16 +162,19 @@
         <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
         <lang.parserDefinition language="Manifest"
                                implementationClass="org.osmorc.manifest.lang.ManifestParserDefinition"/>
-        <completion.contributor language="Manifest" implementationClass="org.osmorc.manifest.ManifestCompletionContributor"/>
+        <completion.contributor language="Manifest"
+                                implementationClass="org.osmorc.manifest.ManifestCompletionContributor"/>
         <syntaxHighlighter key="Manifest" factoryClass="org.osmorc.manifest.lang.ManifestSyntaxHighlighterProvider"/>
         <annotator language="Manifest" implementationClass="org.osmorc.manifest.lang.headerparser.HeaderAnnotator"/>
         <annotator language="Manifest" implementationClass="org.osmorc.manifest.lang.ManifestHighlightingAnnotator"/>
         <lang.elementManipulator forClass="org.osmorc.manifest.lang.psi.HeaderValuePart"
                                  implementationClass="org.osmorc.manifest.lang.psi.HeaderValuePartManipulator"/>
-        <lang.ast.factory language="Manifest" implementationClass="org.osmorc.manifest.lang.psi.impl.ManifestASTFactory"/>
+        <lang.ast.factory language="Manifest"
+                          implementationClass="org.osmorc.manifest.lang.psi.impl.ManifestASTFactory"/>
         <configurationType implementation="org.osmorc.run.OsgiConfigurationType"/>
 
-        <project.converterProvider implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxRunConfigurationConverterProvider" />
+        <project.converterProvider
+                implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxRunConfigurationConverterProvider"/>
 
         <inspectionToolProvider implementation="org.osmorc.inspection.OsmorcInspectionToolProvider"/>
         <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
@@ -201,6 +204,14 @@
         <!-- Known bundle repositories -->
         <obr implementation="org.osmorc.obrimport.springsource.SpringSourceObr"/>
 
-        <moduleChangeListener implementation="org.osmorc.run.OsgiRunConfigurationModuleChangeListener" />
+        <moduleChangeListener implementation="org.osmorc.run.OsgiRunConfigurationModuleChangeListener"/>
     </extensions>
+
+    <actions>
+        <group id="osmorc.viewGeneratedManifests" class="org.osmorc.make.ViewGeneratedManifestGroup" popup="true"
+               text="View Generated Manifest" description="View the manifest of a recently generated OSGi bundle"
+                icon="/org/osmorc/i18n/Osmorc-Icon_16x16.png">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </group>
+    </actions>
 </idea-plugin>
