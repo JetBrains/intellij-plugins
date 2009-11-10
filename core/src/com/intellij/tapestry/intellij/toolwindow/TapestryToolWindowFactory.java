@@ -9,13 +9,13 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.peer.PeerFactory;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
 import com.intellij.tapestry.intellij.util.Icons;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.intellij.TapestryProjectSupportLoader;
 import com.intellij.ui.content.Content;
+import com.intellij.ui.content.ContentFactory;
 
 /**
  * @author Alexey Chmutov
@@ -28,7 +28,7 @@ public class TapestryToolWindowFactory implements ToolWindowFactory, Condition<P
   public void createToolWindowContent(Project project, ToolWindow toolWindow) {
     toolWindow.setAvailable(true, null);
     TapestryToolWindow tapestryToolWindow = new TapestryToolWindow(project);
-    Content content = PeerFactory.getInstance().getContentFactory().createContent(tapestryToolWindow.getMainPanel(), "Tapestry", true);
+    Content content = ContentFactory.SERVICE.getInstance().createContent(tapestryToolWindow.getMainPanel(), "Tapestry", true);
     toolWindow.getContentManager().addContent(content);
     toolWindow.setIcon(Icons.TAPESTRY_LOGO_SMALL);
     project.getComponent(TapestryProjectSupportLoader.class).initTapestryToolWindow(tapestryToolWindow);
