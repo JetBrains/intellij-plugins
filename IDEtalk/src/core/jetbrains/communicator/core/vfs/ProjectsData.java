@@ -16,6 +16,7 @@
 
 package jetbrains.communicator.core.vfs;
 
+import com.intellij.util.ArrayUtil;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.apache.log4j.Logger;
@@ -53,7 +54,7 @@ public class ProjectsData {
   public String[] getProjects() {
     Set<String> set = new HashSet<String>(myStatus.keySet());
     set.remove(NON_PROJECT_KEY);
-    return set.toArray(new String[set.size()]);
+    return ArrayUtil.toStringArray(set);
   }
 
   private static Hashtable<String,Vector<List>> initFrom(Element rootElement) {

@@ -50,6 +50,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.ArrayUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -351,8 +352,7 @@ public class BundleCompiler implements PackagingCompiler {
 
         }
 
-        wrapper.build(compileContext, bndFileUrl, classPaths.toArray(new String[classPaths.size()]), jarFile.getPath(),
-                additionalProperties);
+        wrapper.build(compileContext, bndFileUrl, ArrayUtil.toStringArray(classPaths), jarFile.getPath(), additionalProperties);
 
         if (!configuration.isUseBndFile()) {
             // finally bundlify all the libs for this one
@@ -516,7 +516,7 @@ public class BundleCompiler implements PackagingCompiler {
                     }
                 }
             }
-            return result.toArray(new String[result.size()]);
+          return ArrayUtil.toStringArray(result);
         }
         finally {
             model.dispose();
