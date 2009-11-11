@@ -13,6 +13,7 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiUtil;
 import com.intellij.psi.util.TypeConversionUtil;
 import com.intellij.tapestry.TapestryBundle;
+import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
@@ -136,7 +137,9 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     PsiFile file = myElement.getContainingFile();
     if (file.getLanguage() == TelLanguage.INSTANCE) file = file.getContext().getContainingFile();
     assert file instanceof TmlFile;
-    PresentationLibraryElement libraryElement = TapestryUtils.getTapestryProject(file).findElementByTemplate(file);
+    final TapestryProject project = TapestryUtils.getTapestryProject(file);
+    if (project == null) return null;
+    PresentationLibraryElement libraryElement = project.findElementByTemplate(file);
     if (libraryElement == null) return null;
     return ((IntellijJavaClassType)libraryElement.getElementClass());
   }
@@ -222,11 +225,12 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     return substitutor.substitute(resultClassType);
   }
 
+  @Nullable
   private PsiType getQualifierClassType() {
     final TelReferenceQualifier qualifier = getReferenceQualifier();
     if (qualifier != null) return qualifier.getPsiType();
     IntellijJavaClassType psiClassType = getPsiClassTypeForContainingTmlFile();
-    return (PsiClassType)psiClassType.getUnderlyingObject();
+    return psiClassType == null ? null : (PsiClassType)psiClassType.getUnderlyingObject();
   }
 
   @NotNull
