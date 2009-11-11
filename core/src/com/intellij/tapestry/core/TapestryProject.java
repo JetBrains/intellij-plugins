@@ -21,6 +21,7 @@ import com.intellij.tapestry.core.util.LocalizationUtils;
 import static com.intellij.tapestry.core.util.StringUtils.isNotEmpty;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -157,7 +158,7 @@ public class TapestryProject {
   @NotNull
   public String[] getAvailablePageNames() {
     final Set<String> names = ourNameToPageMap.get(myModule).keySet();
-    return names.toArray(new String[names.size()]);
+    return ArrayUtil.toStringArray(names);
   }
 
   private static final ElementsCachedMap ourNameToPageMap = new ElementsCachedMap("ourNameToPageMap", false, true) {
@@ -198,7 +199,7 @@ public class TapestryProject {
   @NotNull
   public String[] getAvailableComponentNames() {
     final Set<String> names = ourNameToComponentMap.get(myModule).keySet();
-    return names.toArray(new String[names.size()]);
+    return ArrayUtil.toStringArray(names);
   }
 
   private static final ElementsCachedMap ourNameToComponentMap = new ElementsCachedMap("ourNameToComponentMap", true, false) {
