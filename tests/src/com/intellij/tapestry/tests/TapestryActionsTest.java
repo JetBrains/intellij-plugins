@@ -1,5 +1,8 @@
 package com.intellij.tapestry.tests;
 
+import com.intellij.codeInsight.actions.CodeInsightAction;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.tapestry.intellij.actions.navigation.ClassTemplateNavigation;
@@ -21,7 +24,7 @@ public class TapestryActionsTest extends TapestryBaseTestCase {
     final PsiFile psiFile = myFixture.getPsiManager().findFile(tmlFile);
     assertNotNull("No PsiFile for template", psiFile);
     VirtualFile fileFoundByAction =
-        ClassTemplateNavigation.findNavigationTarget(psiFile, myFixture.getModule(), "Class <-> Template Navigation");
+      ClassTemplateNavigation.findNavigationTarget(psiFile, myFixture.getModule(), "Class <-> Template Navigation");
     assertNotNull("Java file not found by the action", fileFoundByAction);
     assertEquals(getElementClassFileName(), fileFoundByAction.getName());
   }
@@ -31,9 +34,31 @@ public class TapestryActionsTest extends TapestryBaseTestCase {
     final PsiFile psiFile = myFixture.getPsiManager().findFile(javaFile);
     assertNotNull("No PsiFile for java file", psiFile);
     VirtualFile fileFoundByAction =
-        ClassTemplateNavigation.findNavigationTarget(psiFile, myFixture.getModule(), "Class <-> Template Navigation");
+      ClassTemplateNavigation.findNavigationTarget(psiFile, myFixture.getModule(), "Class <-> Template Navigation");
     assertNotNull("Template file not found by the action", fileFoundByAction);
     assertEquals(getElementTemplateFileName(), fileFoundByAction.getName());
   }
 
+  public void testCommentBlock() throws Throwable {
+    doTest(IdeActions.ACTION_COMMENT_BLOCK);
+  }
+
+  public void testCommentLine() throws Throwable {
+    doTest(IdeActions.ACTION_COMMENT_LINE);
+  }
+
+  public void testUncommentBlock() throws Throwable {
+    doTest(IdeActions.ACTION_COMMENT_BLOCK);
+  }
+
+  public void testUncommentLine() throws Throwable {
+    doTest(IdeActions.ACTION_COMMENT_LINE);
+  }
+
+  private void doTest(final String actionId) throws Throwable {
+    initByComponent(true);
+    CodeInsightAction action = (CodeInsightAction)ActionManager.getInstance().getAction(actionId);
+    action.actionPerformedImpl(myModule.getProject(), myFixture.getEditor());
+    checkResultByFile();
+  }
 }
