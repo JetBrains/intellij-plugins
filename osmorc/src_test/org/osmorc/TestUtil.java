@@ -86,13 +86,15 @@ public class TestUtil {
                         }
                     })) {
                         String moduleDirPath = moduleDir.getPath().replace(File.separatorChar, '/') + "/";
-                        Module module = moduleModel.loadModule(
-                                moduleDirPath + moduleDir.getName() + ".iml");
+                        final String moduleFileName = moduleDirPath + moduleDir.getName() + ".iml";
+                        if ( new File(moduleFileName).exists()) {
+                        Module module = moduleModel.loadModule(moduleFileName);
                         ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
                         VirtualFile file = VirtualFileManager.getInstance().getFileSystem("file").findFileByPath(moduleDirPath);
                         ContentEntry contentEntry = rootModel.addContentEntry(file);
                         contentEntry.addSourceFolder(file.findChild("src"), false);
                         rootModels.add(rootModel);
+                        }
                     }
 
                     ProjectRootManager.getInstance(project).multiCommit(moduleModel,
