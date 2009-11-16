@@ -25,9 +25,9 @@
 package org.osmorc.facet;
 
 import com.intellij.facet.Facet;
+import com.intellij.facet.FacetModel;
 import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
-import com.intellij.facet.FacetModel;
 import com.intellij.facet.autodetecting.FacetDetector;
 import com.intellij.facet.autodetecting.FacetDetectorRegistry;
 import com.intellij.openapi.module.JavaModuleType;
@@ -35,10 +35,11 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
@@ -81,7 +82,7 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
     private void completeDefaultConfiguration(final OsmorcFacetConfiguration configuration, final Module module) {
         if (configuration.getJarFileLocation().length() == 0) {
             final String outputPathUrl = CompilerModuleExtension.getInstance(module).getCompilerOutputUrl();
-            SwingUtilities.invokeLater(new Runnable() {
+            StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(new Runnable() {
                 public void run() {
                     try {
                         // Must be run in event dispatch thread therefore... we put all there..
