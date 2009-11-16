@@ -67,7 +67,7 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
       if (component != null) {
         TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(tag);
         final PresentationLibraryElement element =
-            tapestryProject == null ? null : tapestryProject.findElementByTemplate(tag.getContainingFile());
+          tapestryProject == null ? null : tapestryProject.findElementByTemplate(tag.getContainingFile());
 
         IntellijJavaClassType elementClass = element != null ? (IntellijJavaClassType)element.getElementClass() : null;
         // annotate the tag parameters
@@ -86,14 +86,16 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
     tag.acceptChildren(this);
   }//visitXmlTag
 
-  private void annotateAttributeValue(TapestryProject tapestryProject, IntellijJavaClassType elementClass, TapestryParameter parameter,
+  private void annotateAttributeValue(TapestryProject tapestryProject,
+                                      IntellijJavaClassType elementClass,
+                                      TapestryParameter parameter,
                                       XmlAttribute attribute) {
     ResolvedValue resolvedValue;
     final XmlAttributeValue value = attribute.getValueElement();
-    if(value == null) return;
+    if (value == null) return;
     try {
-      resolvedValue = ValueResolverChain.getInstance()
-          .resolve(tapestryProject, elementClass, attribute.getValue(), parameter.getDefaultPrefix());
+      resolvedValue =
+        ValueResolverChain.getInstance().resolve(tapestryProject, elementClass, attribute.getValue(), parameter.getDefaultPrefix());
     }
     catch (Exception ex) {
       _logger.error(ex);
@@ -107,24 +109,31 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
     }
 
     IJavaType parameterType = parameter.getParameterField().getType();
-    if (!TypeCoercionValidator
-        .canCoerce(tapestryProject, resolvedValue.getType(), AbstractValueResolver.getCleanValue(attribute.getValue()), parameterType)) {
-      annotationHolder.createErrorAnnotation(value, "Can't coerce a " +
-                                                     resolvedValue.getType().getName() +
-                                                     " to a " +
-                                                     (parameterType != null ? parameterType.getName() : "undefined"));
+    final AnnotationHolder holder = annotationHolder;
+    if (holder != null &&
+        !TypeCoercionValidator
+          .canCoerce(tapestryProject, resolvedValue.getType(), AbstractValueResolver.getCleanValue(attribute.getValue()), parameterType)) {
+      holder.createErrorAnnotation(value, "Can't coerce a " +
+                                          resolvedValue.getType().getName() +
+                                          " to a " +
+                                          (parameterType != null ? parameterType.getName() : "undefined"));
     }
   }
 
   private void annotateTapestryTag(XmlTag tag) {
-    annotationHolder.createInfoAnnotation(IdeaUtils.getNameElement(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
+    final AnnotationHolder holder = annotationHolder;
+    if (holder == null) return;
+    holder.createInfoAnnotation(IdeaUtils.getNameElement(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
     if (!tag.isEmpty()) {
-      annotationHolder.createInfoAnnotation(IdeaUtils.getNameElementClosing(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
+      holder.createInfoAnnotation(IdeaUtils.getNameElementClosing(tag), null).setTextAttributes(TemplateColorSettingsPage.TAG_NAME);
     }
   }
 
   private void annotateTapestryAttribute(XmlAttribute attribute) {
-    annotationHolder.createInfoAnnotation(attribute.getFirstChild(), null).setTextAttributes(TemplateColorSettingsPage.ATTR_NAME);
+    final AnnotationHolder holder = annotationHolder;
+    if (holder != null) {
+      holder.createInfoAnnotation(attribute.getFirstChild(), null).setTextAttributes(TemplateColorSettingsPage.ATTR_NAME);
+    }
   }
 
 }//TemplateTagAnnotator
