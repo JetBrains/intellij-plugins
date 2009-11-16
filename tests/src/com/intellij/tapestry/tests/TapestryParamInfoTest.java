@@ -14,12 +14,12 @@ import com.intellij.xml.XmlElementDescriptor;
  * @author Alexey.Chmutov
  */
 public class TapestryParamInfoTest extends TapestryBaseTestCase {
-  public void _testTmlTagAttrs() throws Exception {
+  public void testTmlTagAttrs() throws Exception {
     addComponentToProject("Count");
     doTest("end start value");
   }
 
-  public void _testHtmlTagAttrs() throws Exception {
+  public void testHtmlTagAttrs() throws Exception {
     addComponentToProject("Count");
     doTest("class dir end id lang onclick ondblclick onkeydown onkeypress onkeyup onmousedown onmousemove onmouseout onmouseover onmouseup start style title value");
   }
