@@ -24,6 +24,7 @@
  */
 package org.osmorc.frameworkintegration.impl.knopflerfish;
 
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
@@ -71,7 +72,7 @@ public class KnopflerfishFrameworkRunner extends AbstractSimpleFrameworkRunner<K
         }
         params.add("-startlevel");
         params.add(String.valueOf(level));
-        return params.toArray(new String[params.size()]);
+      return ArrayUtil.toStringArray(params);
     }
 
     @NotNull

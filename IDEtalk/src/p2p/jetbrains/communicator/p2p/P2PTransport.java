@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.p2p;
 
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher;
@@ -243,7 +244,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   public String[] getProjects(User user) {
     Collection<String> projects = getNotNullOnlineInfo(user).getProjects();
-    return projects.toArray(new String[projects.size()]);
+    return ArrayUtil.toStringArray(projects);
   }
 
   @NotNull

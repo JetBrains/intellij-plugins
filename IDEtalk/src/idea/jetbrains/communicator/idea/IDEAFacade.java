@@ -37,6 +37,7 @@ import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.TreeToolTipHandler;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.diff.Diff;
 import com.intellij.util.ui.tree.TreeUtil;
 import jetbrains.communicator.commands.FindUsersCommand;
@@ -215,7 +216,7 @@ public class IDEAFacade implements IDEFacade {
     for (Project project : projects) {
       result.add(project.getName());
     }
-    return result.toArray(new String[result.size()]);
+    return ArrayUtil.toStringArray(result);
   }
 
   public void showUserFiles(User user, ProjectsData data) {

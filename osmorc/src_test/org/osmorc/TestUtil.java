@@ -201,7 +201,7 @@ public class TestUtil {
     }
 
     public static List<ProblemDescriptor> runInspection(LocalInspectionTool inspection, PsiFile psiFile, Project project) {
-        ProblemsHolder holder = new ProblemsHolder(InspectionManager.getInstance(project), psiFile);
+        ProblemsHolder holder = new ProblemsHolder(InspectionManager.getInstance(project), psiFile, true);
         final PsiElementVisitor elementVisitor = inspection.buildVisitor(holder, true);
 
         psiFile.accept(new PsiRecursiveElementVisitor() {

@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.p2p.commands;
 
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.core.dispatcher.Message;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.p2p.NetworkUtil;
@@ -75,7 +76,7 @@ public class P2PNetworkMessage implements Message {
   }
 
   public String[] getParameters() {
-    return myCommandParameters.toArray(new String[myCommandParameters.size()]);
+    return ArrayUtil.toStringArray(myCommandParameters);
   }
 
   public boolean equals(Object o) {

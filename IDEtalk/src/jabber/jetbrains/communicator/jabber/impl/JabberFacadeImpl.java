@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.jabber.impl;
 
+import com.intellij.util.ArrayUtil;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.UserPresence;
@@ -94,7 +95,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
         Element element = (Element) aChildren;
         result.add(element.getAttributeValue("jid"));
       }
-      return result.toArray(new String[result.size()]);
+      return ArrayUtil.toStringArray(result);
     } catch (JDOMException e) {
       LOG.error(e.getMessage(), e);
     } catch (IOException e) {
