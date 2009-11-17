@@ -44,9 +44,11 @@ import org.osmorc.settings.ApplicationSettings;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -147,8 +149,7 @@ public class BndWrapper {
             Matcher m = p.matcher(base);
             if (m.matches()) {
                 base = m.group(1);
-            }
-            else {
+            } else {
                 compileContext.addMessage(CompilerMessageCategory.ERROR,
                         "Can not calculate name of output bundle, rename jar or use -properties", sourceFileUrl, 0, 0);
                 return false;
@@ -247,6 +248,28 @@ public class BndWrapper {
         // XXX: seems to be a new bug in bnd, when calling build(), begin is not called, therefore the ignores dont work..
         // so i have overridden it and calling it manually here..
         builder.begin();
+
+        // Check if the manifest version is missing (IDEADEV-41174)
+        String manifest = builder.getProperty(ReportingBuilder.MANIFEST);
+        if (manifest != null) {
+            File manifestFile = builder.getFile(manifest);
+            if (manifestFile != null && manifestFile.exists() && manifestFile.canRead()) {
+                Properties props = new Properties();
+                try {
+                    props.load(new FileInputStream(manifestFile));
+                    final String value = props.getProperty(Attributes.Name.MANIFEST_VERSION.toString());
+                    if (value == null || value.length() == 0 || value.trim().length() == 0) {
+                        compileContext.addMessage(CompilerMessageCategory.WARNING,
+                                "Your manifest does not contain a Manifest-Version entry. This will produce an empty manifest in the resulting bundle.",
+                                VfsUtil.pathToUrl(manifestFile.getAbsolutePath()), 0, 0);
+                    }
+                }
+                catch (Exception ex) {
+                    compileContext.addMessage(CompilerMessageCategory.INFORMATION, "There was a problem reading your manifest.", null, 0, 0);
+                }
+            }
+        }
+
         Jar jar = builder.build();
         jar.setName(output.getName());
         jar.write(output);
