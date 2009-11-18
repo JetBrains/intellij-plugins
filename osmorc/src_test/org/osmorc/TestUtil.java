@@ -36,6 +36,7 @@ import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.InvalidDataException;
@@ -181,7 +182,10 @@ public class TestUtil {
         final VirtualFile root = rootManager.getSourceRoots()[0];
         VirtualFile file = root.findFileByRelativePath(filePathInSource);
 
-        return PsiManager.getInstance(project).findFile(file);
+      PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+      DumbService.getInstance(project).waitForSmartMode();
+
+      return psiFile;
     }
 
     public static PsiFile loadPsiFileUnderContent(Project project, String moduleName, String filePathInContent) {
