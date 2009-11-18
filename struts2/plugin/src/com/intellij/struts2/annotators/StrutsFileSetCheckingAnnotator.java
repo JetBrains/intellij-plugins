@@ -32,7 +32,6 @@ import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -174,7 +173,8 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
                   selectedValue.addFile(file.getVirtualFile());
                   ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     public void run() {
-                      ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
+                      ProjectRootManagerEx.getInstanceEx(project).beforeRootsChange(false);
+                      ProjectRootManagerEx.getInstanceEx(project).rootsChanged(false);
                     }
                   });
 
