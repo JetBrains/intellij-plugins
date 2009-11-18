@@ -137,7 +137,7 @@ public class ExtendableClassConverterSpringContributor extends ExtendableClassCo
     public Object[] getVariants() {
       final Collection<? extends SpringBeanPointer> list;
       if (subClass != null) {
-        list = springModel.findBeansByPsiClassWithInheritance(subClass.getQualifiedName());
+        list = springModel.findBeansByPsiClassWithInheritance(subClass);
       } else {
         list = springModel.getAllCommonBeans(true);
       }
