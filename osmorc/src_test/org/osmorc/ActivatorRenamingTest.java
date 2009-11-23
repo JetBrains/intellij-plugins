@@ -30,23 +30,24 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.RefactoringFactory;
 import com.intellij.refactoring.JavaRefactoringFactory;
 import com.intellij.refactoring.MoveDestination;
+import com.intellij.refactoring.RefactoringFactory;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.equalTo;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
+
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -71,7 +72,7 @@ public class ActivatorRenamingTest {
         myTempDirFixture.tearDown();
     }
 
-    //@Test
+    @Test
     public void testRenameForManuallyEditedManifest() {
         PsiFile activatorClassFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
         PsiFile manifest = TestUtil.loadPsiFileUnderContent(fixture.getProject(), "t1", "META-INF/MANIFEST.MF");
@@ -94,7 +95,7 @@ public class ActivatorRenamingTest {
     }
 
 
-    //@Test
+    @Test
     public void testMoveForManuallyEditedManifest() {
         PsiFile activatorClassFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
         PsiFile manifest = TestUtil.loadPsiFileUnderContent(fixture.getProject(), "t1", "META-INF/MANIFEST.MF");
@@ -119,7 +120,7 @@ public class ActivatorRenamingTest {
         assertThat(manifest.getText(), endsWith("Bundle-Activator: tx.Activator\n"));
     }
 
-    // @Test
+    @Test
     public void testRenameForGeneratedManifest() {
         PsiFile activatorClassFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
         final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(activatorClassFile).getConfiguration();
@@ -146,7 +147,7 @@ public class ActivatorRenamingTest {
     }
 
 
-    // @Test
+    @Test
     public void testMoveForGeneratedManifest() {
         PsiFile activatorClassFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
         final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(activatorClassFile).getConfiguration();

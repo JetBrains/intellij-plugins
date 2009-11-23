@@ -26,7 +26,6 @@ package org.osmorc.manifest.lang.headerparser;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
@@ -35,8 +34,8 @@ import org.osmorc.manifest.lang.psi.HeaderValuePart;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class HeaderAnnotator implements Annotator {
-    public HeaderAnnotator() {
-        _repository = ServiceManager.getService(HeaderParserRepository.class);
+    public HeaderAnnotator(HeaderParserRepository repository) {
+        _repository = repository;
     }
 
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
