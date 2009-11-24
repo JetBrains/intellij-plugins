@@ -106,6 +106,10 @@ public class BndWrapper {
                 if (doWrap(compileContext, sourceFile, targetFile, additionalProperties)) {
                     return VfsUtil.pathToUrl(targetFile.getCanonicalPath());
                 }
+            } else {
+                // Fixes IDEADEV-39099. When the wrapper does not return anything the library is not regarded
+                // as a bundle.
+                return VfsUtil.pathToUrl(targetFile.getCanonicalPath());
             }
         }
         catch (final Exception e) {
