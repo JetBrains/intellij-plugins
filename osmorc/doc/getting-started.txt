@@ -11,11 +11,11 @@
    - unzip to some folder "devel/idea-jdk15"
    - remove plugins/osmorc folder from that IDEA installation (if it exists)
 
-3. Set up IDEA SDK
+3. Set up IDEA Plugin SDK
    - Open project settings
    - Select Project SDK
    - Click "New"
-   - Select "IntelliJ IDEA SDK"
+   - Select "?IntelliJ IDEA Plugin SDK"
    - Select the folder "devel/idea-jdk15"
    - Select the new JDK on the left
    - In Classpath tab, click on Add..

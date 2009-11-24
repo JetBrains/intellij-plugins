@@ -183,7 +183,6 @@ public class TestUtil {
         VirtualFile file = root.findFileByRelativePath(filePathInSource);
 
       PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-      DumbService.getInstance(project).waitForSmartMode();
 
       return psiFile;
     }
