@@ -26,22 +26,28 @@
 package org.osmorc.inspection;
 
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
-import static org.hamcrest.Matchers.*;
+import com.intellij.util.indexing.FileBasedIndex;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.osmorc.TestUtil;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -66,6 +72,10 @@ public class InvalidImportInspectionTest {
         t2 = moduleManager.findModuleByName("t2");
         t3 = moduleManager.findModuleByName("t3");
         t4 = moduleManager.findModuleByName("t4");
+
+      DumbService.getInstance(fixture.getProject()).waitForSmartMode();
+      FileBasedIndex.getInstance().ensureUpToDate(StubUpdatingIndex.INDEX_ID, fixture.getProject(), null);
+
     }
 
     @After
@@ -77,13 +87,12 @@ public class InvalidImportInspectionTest {
     @SuppressWarnings({"ConstantConditions"})
     @Test
     public void testImportPackageImport() {
+
         assertThat(ModuleRootManager.getInstance(t1).getDependencies().length, equalTo(1));
         assertThat(Arrays.asList(ModuleRootManager.getInstance(t1).getDependencies()), hasItem(t0));
         assertThat(TestUtil.getOrderEntry(t0, t1).isExported(), equalTo(false));
 
-        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Importer.java");
-
-        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
+      List<ProblemDescriptor> list = runTest("t1", "t1/Importer.java");
 
         assertThat(list, notNullValue());
         assertThat(list.size(), equalTo(6));
@@ -107,16 +116,24 @@ public class InvalidImportInspectionTest {
         assertThat(problem.getLineNumber(), equalTo(13));
     }
 
-    @SuppressWarnings({"ConstantConditions"})
+  private List<ProblemDescriptor> runTest(final String moduleName, final String filePathInSource) {
+    return ApplicationManager.getApplication().runReadAction(new Computable<List<ProblemDescriptor>>(){
+      public List<ProblemDescriptor> compute() {
+        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), moduleName, filePathInSource);
+
+        return TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
+      }
+    });
+  }
+
+  @SuppressWarnings({"ConstantConditions"})
     @Test
     public void testDirectRequireBundleImport() {
         assertThat(ModuleRootManager.getInstance(t2).getDependencies().length, equalTo(1));
         assertThat(Arrays.asList(ModuleRootManager.getInstance(t2).getDependencies()), hasItem(t0));
         assertThat(TestUtil.getOrderEntry(t0, t2).isExported(), equalTo(true));
 
-        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t2", "t2/Importer.java");
-
-        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
+    List<ProblemDescriptor> list = runTest("t2", "t2/Importer.java");
 
         assertThat(list, notNullValue());
         assertThat(list.size(), equalTo(3));
@@ -138,9 +155,7 @@ public class InvalidImportInspectionTest {
         assertThat(Arrays.asList(ModuleRootManager.getInstance(t3).getDependencies()), hasItem(t2));
         assertThat(TestUtil.getOrderEntry(t2, t3).isExported(), equalTo(false));
 
-        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t3", "t3/Importer.java");
-
-        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
+      List<ProblemDescriptor> list = runTest("t3", "t3/Importer.java");
 
         assertThat(list, notNullValue());
         assertThat(list.size(), equalTo(3));
@@ -162,14 +177,12 @@ public class InvalidImportInspectionTest {
         assertThat(Arrays.asList(ModuleRootManager.getInstance(t4).getDependencies()), hasItem(t3));
         assertThat(TestUtil.getOrderEntry(t3, t4).isExported(), equalTo(false));
 
-        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t4", "t4/Importer.java");
-
-        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
+      List<ProblemDescriptor> list = runTest("t4", "t4/Importer.java");
 
         assertThat(list, nullValue());
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private TempDirTestFixture myTempDirFixture;
     private Module t0;
     private Module t1;
