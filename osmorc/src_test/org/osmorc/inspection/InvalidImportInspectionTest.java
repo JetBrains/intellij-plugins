@@ -30,6 +30,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiFile;
@@ -73,9 +74,12 @@ public class InvalidImportInspectionTest {
         t3 = moduleManager.findModuleByName("t3");
         t4 = moduleManager.findModuleByName("t4");
 
-      DumbService.getInstance(fixture.getProject()).waitForSmartMode();
-      FileBasedIndex.getInstance().ensureUpToDate(StubUpdatingIndex.INDEX_ID, fixture.getProject(), null);
-
+      try {
+        FileBasedIndex.getInstance().ensureUpToDate(StubUpdatingIndex.INDEX_ID, fixture.getProject(), null);
+      }
+      catch (IndexNotReadyException e) {
+        DumbService.getInstance(fixture.getProject()).waitForSmartMode();
+      }
     }
 
     @After
