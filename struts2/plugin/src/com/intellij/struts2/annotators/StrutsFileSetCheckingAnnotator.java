@@ -57,7 +57,7 @@ import java.util.Set;
  */
 public class StrutsFileSetCheckingAnnotator implements Annotator {
 
-  public void annotate(final PsiElement psiElement, final AnnotationHolder holder) {
+  public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
     if (psiElement instanceof JspFile) {
       return;
     }
