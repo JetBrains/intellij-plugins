@@ -55,7 +55,7 @@ abstract class ActionAnnotatorBase implements Annotator {
   @Nullable
   protected abstract PsiClass getActionPsiClass(@NotNull final PsiElement psiElement);
 
-  public final void annotate(final PsiElement psiElement, final AnnotationHolder annotationHolder) {
+  public final void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder annotationHolder) {
     final PsiClass clazz = getActionPsiClass(psiElement);
     if (clazz == null) {
       return;

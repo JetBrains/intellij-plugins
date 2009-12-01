@@ -20,11 +20,16 @@ import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
+import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.ex.StatusBarEx;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -117,6 +122,10 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
     myAddSetButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
+        if (isDumb()) {
+          return;
+        }
+
         final StrutsFileSet fileSet =
             new StrutsFileSet(StrutsFileSet.getUniqueId(myBuffer),
                               StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.myfileset"), myBuffer),
@@ -145,6 +154,10 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
     myEditButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
+        if (isDumb()) {
+          return;
+        }
+
         final StrutsFileSet fileSet = getCurrentFileSet();
         if (fileSet != null) {
           final FileSetEditor editor = new FileSetEditor(myPanel,
@@ -169,6 +182,10 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
     myRemoveButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
+        if (isDumb()) {
+          return;
+        }
+
         remove();
         myModified = true;
         myBuilder.updateFromRoot();
@@ -176,6 +193,23 @@ public class FileSetConfigurationTab extends FacetEditorTab {
       }
     });
 
+  }
+
+  /**
+   * Displays a warning balloon if dumb mode is active.
+   *
+   * @return {@code true} if dumb mode is active.
+   */
+  private boolean isDumb() {
+    final Project project = module.getProject();
+    if (!DumbService.getInstance(project).isDumb()) {
+      return false;
+    }
+    final StatusBarEx statusBar = (StatusBarEx) WindowManager.getInstance().getIdeFrame(project).getStatusBar();
+    statusBar.notifyProgressByBalloon(MessageType.WARNING,
+                                      "Editing File Sets is not available while IDEA performs background indexing.",
+                                      null, null);
+    return true;
   }
 
   @Nullable

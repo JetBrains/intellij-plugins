@@ -77,7 +77,7 @@ public class JspActionAnnotator implements Annotator {
     ACTION_CLASS_ICON.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, StrutsIcons.SMALL_ICON_Y_OFFSET);
   }
 
-  public void annotate(final PsiElement psiElement, final AnnotationHolder annotationHolder) {
+  public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder annotationHolder) {
     if (!(psiElement instanceof XmlTag)) {
       return;
     }
