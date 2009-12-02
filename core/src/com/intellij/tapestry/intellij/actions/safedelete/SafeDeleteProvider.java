@@ -7,7 +7,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.newvfs.impl.VirtualFileImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
 import com.intellij.refactoring.RefactoringFactory;
 import com.intellij.refactoring.SafeDeleteRefactoring;
 import com.intellij.tapestry.core.TapestryProject;
@@ -108,7 +107,7 @@ public class SafeDeleteProvider implements DeleteProvider {
     public boolean canDeleteElement(DataContext dataContext) {
         final Project project = (Project) dataContext.getData(DataKeys.PROJECT.getName());
 
-        if (TapestryProjectViewPane.getInstance(project).getSelectionPaths() == null) {
+        if (project == null || TapestryProjectViewPane.getInstance(project).getSelectionPaths() == null) {
             return false;
         }
 
@@ -147,10 +146,10 @@ public class SafeDeleteProvider implements DeleteProvider {
      * @param elementsList the list for add the elements to delete
      * @return the list of elements to delete
      */
-    public List addElementToDelete(DefaultMutableTreeNode child, List<PsiElement> elementsList) {
-        PsiElement elementClass = ((IntellijResource) ((PresentationLibraryElement) ((TapestryNode) child.getUserObject()).getElement()).getElementClass().getFile()).getPsiFile();
+    public static List addElementToDelete(DefaultMutableTreeNode child, List<PsiElement> elementsList) {
+        PsiFile elementClass = ((IntellijResource) ((PresentationLibraryElement) ((TapestryNode) child.getUserObject()).getElement()).getElementClass().getFile()).getPsiFile();
 
-        elementsList.add(IdeaUtils.findPublicClass(((PsiJavaFile) elementClass).getClasses()));
+        elementsList.add(IdeaUtils.findPublicClass(elementClass));
 
         for (IResource template : ((PresentationLibraryElement) ((TapestryNode) child.getUserObject()).getElement()).getTemplate())
             elementsList.add(((IntellijResource) template).getPsiFile());

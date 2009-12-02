@@ -33,7 +33,8 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
 
   public IntellijJavaClassType(Module module, PsiFile psiFile) {
     _module = module;
-    _classFilePath = psiFile.getVirtualFile().getUrl();
+    final VirtualFile virtualFile = psiFile.getVirtualFile();
+    _classFilePath = virtualFile.getUrl();
   }
 
   /**
@@ -238,11 +239,12 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
     PsiClass res;
     if (_psiClassType != null && _psiClassType.isValid() && _psiClassType.resolve().getContainingFile().isValid()) {
       res = _psiClassType.resolve();
-    } else {
+    }
+    else {
       processPsiClassType();
       res = _psiClassType != null ? _psiClassType.resolve() : null;
     }
-    if(res == null) {
+    if (res == null) {
       ourLogger.error((_psiClassType != null) + ", unresolved: " + _classFilePath);
     }
     return res;
@@ -258,14 +260,19 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   private void processPsiClassType() {
     PsiFile psiFile = PsiManager.getInstance(_module.getProject()).findFile(VirtualFileManager.getInstance().findFileByUrl(_classFilePath));
 
-    if (psiFile instanceof PsiJavaFile) {
-      PsiClass[] psiClasses = ((PsiJavaFile)psiFile).getClasses();
+    if (psiFile instanceof PsiClassOwner) {
+      PsiClass[] psiClasses = ((PsiClassOwner)psiFile).getClasses();
 
       if (psiClasses.length > 0) {
-        PsiClass psiClass = ((PsiJavaFile)psiFile).getClasses()[0];
-
-        _psiClassType = JavaPsiFacade.getInstance(_module.getProject()).getElementFactory().createType(psiClass);
+        _psiClassType = JavaPsiFacade.getInstance(_module.getProject()).getElementFactory().createType(psiClasses[0]);
+      }
+      else {
+        throw new AssertionError("no classes found: " + _classFilePath);
       }
     }
+    else {
+      throw new AssertionError(psiFile + ": " + _classFilePath);
+    }
+
   }
 }

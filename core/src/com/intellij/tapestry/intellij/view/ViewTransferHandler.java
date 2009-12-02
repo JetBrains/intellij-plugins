@@ -4,10 +4,9 @@ import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
+import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.tapestry.core.java.IJavaClassType;
@@ -75,9 +74,9 @@ public class ViewTransferHandler extends TransferHandler {
                     .findFile(FileDocumentManager.getInstance().getFile(FileEditorManager.getInstance(_tapestryProjectViewPane.getProject()).getSelectedTextEditor().getDocument()));
             FileType typeFileInEditor = fileInEditor.getFileType();
 
-            if (typeFileInEditor.equals(StdFileTypes.JAVA) && _data instanceof ExternalizableToClass) {
+            if (fileInEditor instanceof PsiClassOwner && _data instanceof ExternalizableToClass) {
                 IJavaClassType dropClass = new IntellijJavaClassType((Module) _tapestryProjectViewPane.getData(DataKeys.MODULE.getName()),
-                        IdeaUtils.findPublicClass(((PsiJavaFile) fileInEditor).getClasses()).getContainingFile());
+                        IdeaUtils.findPublicClass(fileInEditor).getContainingFile());
 
                 try {
                     return ((ExternalizableToClass) _data).getClassRepresentation(dropClass);

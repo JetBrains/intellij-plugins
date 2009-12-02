@@ -2,12 +2,11 @@ package com.intellij.tapestry.intellij.actions.navigation;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
@@ -16,8 +15,8 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Allows navigation to all templates of the class
@@ -53,14 +52,14 @@ public class TemplatesNavigation extends ActionGroup {
         if (psiFile == null)
             return EMPTY_ACTION_ARRAY;
 
-        if (psiFile.getFileType().equals(StdFileTypes.JAVA) && event.getPresentation().getText()
+        if (psiFile instanceof PsiClassOwner && event.getPresentation().getText()
                 .equals("Tapestry Template")) {
             TemplateNavigate templateNavigate;
 
             DefaultActionGroup actions = new DefaultActionGroup("TemplatesGroup", true);
 
             try {
-                PsiClass psiClass = IdeaUtils.findPublicClass(((PsiJavaFile) psiFile).getClasses());
+                PsiClass psiClass = IdeaUtils.findPublicClass(psiFile);
 
                 // does current file contain a class ?
                 if (psiClass == null) {

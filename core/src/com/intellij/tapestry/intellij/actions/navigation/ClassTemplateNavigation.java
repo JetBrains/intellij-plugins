@@ -7,14 +7,13 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
@@ -27,6 +26,7 @@ import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.lang.TmlFileType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Allows navigation from a class to it's corresponding template and vice-versa.
@@ -88,9 +88,9 @@ public class ClassTemplateNavigation extends AnAction {
   }
 
   public static VirtualFile findNavigationTarget(@NotNull PsiFile psiFile, @NotNull Module module, String presentationText) {
-    if (psiFile.getFileType().equals(StdFileTypes.JAVA) && presentationText.equals("Class <-> Template Navigation")) {
+    if (psiFile instanceof PsiClassOwner && presentationText.equals("Class <-> Template Navigation")) {
       try {
-        PsiClass psiClass = IdeaUtils.findPublicClass(((PsiJavaFile)psiFile).getClasses());
+        PsiClass psiClass = IdeaUtils.findPublicClass(psiFile);
         if (psiClass == null) return null;
 
         PresentationLibraryElement tapestryElement = PresentationLibraryElement
@@ -102,7 +102,7 @@ public class ClassTemplateNavigation extends AnAction {
           return ((IntellijResource)template).getPsiFile().getVirtualFile();
         }
       }
-      catch (NotTapestryElementException e) {
+      catch (NotTapestryElementException ignored) {
       }
       return null;
     }
@@ -123,7 +123,8 @@ public class ClassTemplateNavigation extends AnAction {
    * @param event the event.
    * @return the PsiFile on which the event occured, or <code>null</code> if the file couldn't be determined.
    */
-  public PsiFile getEventPsiFile(AnActionEvent event) {
+  @Nullable
+  public static PsiFile getEventPsiFile(AnActionEvent event) {
     final Project project = (Project)event.getDataContext().getData(DataKeys.PROJECT.getName());
     if (project == null) return null;
 
@@ -136,7 +137,7 @@ public class ClassTemplateNavigation extends AnAction {
     return PsiManager.getInstance(project).findFile(FileDocumentManager.getInstance().getFile(editor.getDocument()));
   }
 
-  public void showCantNavigateMessage() {
+  public static void showCantNavigateMessage() {
     Messages.showInfoMessage("Couldn't find a file to navigate to.", "Not Tapestry file");
   }
 }

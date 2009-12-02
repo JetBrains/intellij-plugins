@@ -3,6 +3,7 @@ package com.intellij.tapestry.intellij.view.nodes;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
+import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.tapestry.core.model.presentation.Mixin;
@@ -27,6 +28,6 @@ public class MixinNode extends TapestryNode {
     public SimpleNode[] getChildren() {
         Mixin mixin = (Mixin) getElement();
 
-        return new SimpleNode[]{new ClassNode((PsiJavaFile) ((IntellijJavaClassType) mixin.getElementClass()).getPsiClass().getContainingFile(), getModule(), _treeBuilder)};
+        return new SimpleNode[]{new ClassNode((PsiClassOwner) ((IntellijJavaClassType) mixin.getElementClass()).getPsiClass().getContainingFile(), getModule(), _treeBuilder)};
     }
 }

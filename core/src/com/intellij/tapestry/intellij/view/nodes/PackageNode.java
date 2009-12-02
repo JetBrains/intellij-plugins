@@ -49,22 +49,22 @@ public class PackageNode extends TapestryNode {
         }
 
         for (PsiFile psiFile : ((PsiDirectory) getElement()).getFiles()) {
-            if (psiFile.getFileType().equals(StdFileTypes.JAVA) || psiFile.getFileType().equals(StdFileTypes.CLASS)) {
+            if (psiFile instanceof PsiClassOwner) {
                 try {
-                    if (IdeaUtils.findPublicClass(((PsiJavaFile) psiFile).getClasses()) == null || !TapestryProjectViewPane.getInstance(myProject).isGroupElementFiles()) {
+                    if (IdeaUtils.findPublicClass(psiFile) == null || !TapestryProjectViewPane.getInstance(myProject).isGroupElementFiles()) {
                         throw new NotTapestryElementException("");
                     }
 
                     PresentationLibraryElement element;
                     if (_library == null) {
                         element = PresentationLibraryElement.createProjectElementInstance((IJavaClassType) IdeaUtils.createJavaTypeFromPsiType(_module,
-                                JavaPsiFacade.getInstance(_module.getProject()).getElementFactory().createType(IdeaUtils.findPublicClass(((PsiJavaFile) psiFile).getClasses()))),
+                                JavaPsiFacade.getInstance(_module.getProject()).getElementFactory().createType(IdeaUtils.findPublicClass(psiFile))),
                                 TapestryModuleSupportLoader.getTapestryProject(_module)
                         );
                     } else {
                         element = PresentationLibraryElement.createElementInstance(
                                 _library,
-                                new IntellijJavaClassType(getModule(), IdeaUtils.findPublicClass(((PsiJavaFile) psiFile).getClasses()).getContainingFile()),
+                                new IntellijJavaClassType(getModule(), IdeaUtils.findPublicClass(psiFile).getContainingFile()),
                                 TapestryModuleSupportLoader.getTapestryProject(_module)
                         );
                     }
@@ -81,7 +81,7 @@ public class PackageNode extends TapestryNode {
                             break;
                     }
                 } catch (NotTapestryElementException e) {
-                    children.add(new ClassNode((PsiJavaFile) psiFile, _module, _treeBuilder));
+                    children.add(new ClassNode((PsiClassOwner)psiFile, _module, _treeBuilder));
                 }
             }
 

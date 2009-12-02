@@ -4,12 +4,11 @@ import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
@@ -61,7 +60,7 @@ class ViewMouseListener extends MouseInputAdapter {
             FileType typeFileInEditor = fileInEditor.getFileType();
 
             // If the file in editor isn't either JAVA or TML don't drag
-            if (!typeFileInEditor.equals(StdFileTypes.JAVA) && !typeFileInEditor.equals(TmlFileType.INSTANCE)) {
+            if (!(fileInEditor instanceof PsiClassOwner) && !typeFileInEditor.equals(TmlFileType.INSTANCE)) {
                 return;
             }
 
@@ -85,8 +84,8 @@ class ViewMouseListener extends MouseInputAdapter {
             }
 
             // If the file in the editor is a JAVA file
-            if (typeFileInEditor.equals(StdFileTypes.JAVA)) {
-                PsiClass psiClass = IdeaUtils.findPublicClass(((PsiJavaFile) fileInEditor).getClasses());
+            if (fileInEditor instanceof PsiClassOwner) {
+                PsiClass psiClass = IdeaUtils.findPublicClass(fileInEditor);
 
                 if (psiClass == null) {
                     return;

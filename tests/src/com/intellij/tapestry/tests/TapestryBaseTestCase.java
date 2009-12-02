@@ -20,6 +20,7 @@ import com.intellij.testFramework.fixtures.*;
 import com.intellij.util.ArrayUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,11 +119,23 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   protected String getElementClassFileName() {
-    return getElementName() + Util.DOT_JAVA;
+    return getElementName() + getComponentClassExtension();
+  }
+
+  protected String getComponentClassExtension() {
+    return Util.DOT_JAVA;
+  }
+
+  protected String getAuxClassExtension() {
+    return Util.DOT_JAVA;
+  }
+
+  protected String getTemplateExtension() {
+    return Util.DOT_TML;
   }
 
   protected String getElementTemplateFileName() {
-    return getElementName() + Util.DOT_TML;
+    return getElementName() + getTemplateExtension();
   }
 
   protected void initByComponent() throws IOException {
@@ -130,7 +143,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   protected VirtualFile initByComponent(boolean configureByTmlNotJava) throws IOException {
-    VirtualFile javaFile = copyOrCreateComponentClassFile(getElementClassFileName());
+    VirtualFile javaFile = copyOrCreateComponentClassFile();
     final String tmlName = getElementTemplateFileName();
     VirtualFile tmlFile = myFixture.copyFileToProject(tmlName, COMPONENTS_PACKAGE_PATH + tmlName);
     final VirtualFile result = configureByTmlNotJava ? tmlFile : javaFile;
@@ -139,7 +152,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   protected void checkResultByFile() throws Exception {
-    String afterFileName = getElementName() + Util.AFTER + Util.DOT_TML;
+    String afterFileName = getElementName() + Util.AFTER + getTemplateExtension();
     myFixture.checkResultByFile(afterFileName);
   }
 
@@ -148,15 +161,17 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return new File(myFixture.getTestDataPath() + "/" + filePath);
   }
 
-  protected VirtualFile copyOrCreateComponentClassFile(@NonNls String classFileName) throws IOException {
-    String targetPath = COMPONENTS_PACKAGE_PATH + classFileName;
-    VirtualFile destFile;
-    if (getFileByPath(classFileName).exists()) {
-      destFile = myFixture.copyFileToProject(classFileName, targetPath);
+  protected VirtualFile copyOrCreateComponentClassFile() throws IOException {
+    String existingComponentClassFile = getExistingComponentClassFileName();
+    String targetPath = COMPONENTS_PACKAGE_PATH + getElementClassFileName();
+    final VirtualFile destFile;
+    if (existingComponentClassFile != null) {
+      destFile = myFixture.copyFileToProject(existingComponentClassFile, targetPath);
       myFixture.allowTreeAccessForFile(destFile);
     }
     else {
-      addFileAndAllowTreeAccess(targetPath, "package " + TEST_APPLICATION_PACKAGE + "." + COMPONENTS + "; public class " + getElementName() + " {}");
+      addFileAndAllowTreeAccess(targetPath,
+                                "package " + TEST_APPLICATION_PACKAGE + "." + COMPONENTS + "; public class " + getElementName() + " {}");
       File ioFile = new File(myFixture.getTempDirPath() + "/" + targetPath);
       destFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(ioFile);
     }
@@ -164,13 +179,23 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return destFile;
   }
 
+  @Nullable
+  protected String getExistingComponentClassFileName() {
+    return checkTestDataFileExists(getElementClassFileName());
+  }
+
+  @Nullable
+  protected String checkTestDataFileExists(String fileName) {
+    return getFileByPath(fileName).exists() ? fileName : null;
+  }
+
   protected void addComponentToProject(String className) throws IOException {
-    addElementToProject(COMPONENTS_PACKAGE_PATH, className, Util.DOT_JAVA);
+    addElementToProject(COMPONENTS_PACKAGE_PATH, className, getAuxClassExtension());
   }
 
   protected void addPageToProject(String className) throws IOException {
-    addElementToProject(PAGES_PACKAGE_PATH, className, Util.DOT_TML);
-    addElementToProject(PAGES_PACKAGE_PATH, className, Util.DOT_JAVA);
+    addElementToProject(PAGES_PACKAGE_PATH, className, getTemplateExtension());
+    addElementToProject(PAGES_PACKAGE_PATH, className, getAuxClassExtension());
   }
 
   private void addElementToProject(String relativePath, String className, String ext) throws IOException {

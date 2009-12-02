@@ -15,11 +15,6 @@ import org.jetbrains.annotations.NonNls;
  */
 public class TapestryCompletionTest extends TapestryBaseTestCase {
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-  }
-
   public void testTagNameInHtmlParent() throws Throwable {
     initByComponent();
     doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "head", "body", getElementTagName()));
@@ -140,11 +135,11 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     checkResultByFile();
   }
 
-  private void doTestBasicCompletionVariants(@NonNls String... expectedItems) throws Throwable {
+  void doTestBasicCompletionVariants(@NonNls String... expectedItems) throws Throwable {
     doTestCompletionVariants(CompletionType.BASIC, expectedItems);
   }
 
-  private void doTestCompletionVariants(final CompletionType type, @NonNls String... expectedItems) throws Throwable {
+  void doTestCompletionVariants(final CompletionType type, @NonNls String... expectedItems) throws Throwable {
     final LookupElement[] items = myFixture.complete(type);
     Assert.assertNotNull("No lookup was shown, probably there was only one lookup element that was inserted automatically", items);
     UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings(), expectedItems);
@@ -155,15 +150,15 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     return "completion/";
   }
 
-  private static final String[] CORE_5_1_0_5_PAGE_NAMES =
+  static final String[] CORE_5_1_0_5_PAGE_NAMES =
     {"exceptionreport", "propertydisplayblocks", "propertyeditblocks", "servicestatus"};
-  private static final String[] CORE_5_1_0_5_ELEMENT_NAMES =
+  static final String[] CORE_5_1_0_5_ELEMENT_NAMES =
     {"actionlink", "addrowlink", "ajaxformloop", "any", "beandisplay", "beaneditform", "beaneditor", "block", "body", "checkbox",
       "container", "datefield", "delegate", "errors", "eventlink", "exceptiondisplay", "form", "formfragment", "forminjector", "grid",
       "gridcell", "gridcolumns", "gridpager", "gridrows", "hidden", "if", "label", "linksubmit", "loop", "output", "outputraw", "pagelink",
       "palette", "parameter", "passwordfield", "progressivedisplay", "propertydisplay", "propertyeditor", "radio", "radiogroup",
       "removerowlink", "renderobject", "select", "submit", "submitnotifier", "textarea", "textfield", "textoutput", "unless", "zone"};
-  private static final String[] CORE_5_1_0_5_TAG_NAMES;
+  static final String[] CORE_5_1_0_5_TAG_NAMES;
 
   static {
     CORE_5_1_0_5_TAG_NAMES = new String[CORE_5_1_0_5_ELEMENT_NAMES.length];
@@ -172,7 +167,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     }
   }
 
-  private static final String[] HTML_TAG_NAMES =
+  static final String[] HTML_TAG_NAMES =
     {"a", "abbr", "acronym", "address", "applet", "area", "b", "base", "basefont", "bdo", "big", "blockquote", "body", "br", "button",
       "caption", "center", "cite", "code", "col", "colgroup", "dd", "del", "dfn", "dir", "div", "dl", "dt", "em", "embed", "fieldset",
       "font", "form", "h1", "h2", "h3", "h4", "h5", "h6", "head", "hr", "html", "i", "iframe", "img", "input", "ins", "isindex", "kbd",
@@ -180,5 +175,5 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
       "pre", "q", "s", "samp", "script", "select", "small", "span", "strike", "strong", "style", "sub", "sup", "table", "tbody", "td",
       "textarea", "tfoot", "th", "thead", "title", "tr", "tt", "u", "ul", "var"};
 
-  private static final String[] HTML_AND_CORE_5_1_0_5_TAG_NAMES = mergeArrays(CORE_5_1_0_5_TAG_NAMES, HTML_TAG_NAMES);
+  static final String[] HTML_AND_CORE_5_1_0_5_TAG_NAMES = mergeArrays(CORE_5_1_0_5_TAG_NAMES, HTML_TAG_NAMES);
 }

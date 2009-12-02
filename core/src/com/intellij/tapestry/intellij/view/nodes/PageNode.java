@@ -3,6 +3,7 @@ package com.intellij.tapestry.intellij.view.nodes;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
+import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.tapestry.core.model.presentation.Page;
@@ -33,7 +34,7 @@ public class PageNode extends TapestryNode {
         Page page = (Page) getElement();
         List<SimpleNode> children = new ArrayList<SimpleNode>();
 
-        ClassNode classNode = new ClassNode((PsiJavaFile) ((IntellijJavaClassType) page.getElementClass()).getPsiClass().getContainingFile(), getModule(), _treeBuilder);
+        ClassNode classNode = new ClassNode((PsiClassOwner) ((IntellijJavaClassType) page.getElementClass()).getPsiClass().getContainingFile(), getModule(), _treeBuilder);
         children.add(classNode);
 
         for (IResource template : page.getTemplate())
