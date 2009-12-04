@@ -28,7 +28,6 @@ package org.osmorc.settings;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.adapter.Bindings;
@@ -183,7 +182,7 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     }
 
     public String getHelpTopic() {
-        return null;
+        return "reference.settings.project.osgi.library.bundling";
     }
 
     public JComponent createComponent() {

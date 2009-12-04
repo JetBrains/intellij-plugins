@@ -119,7 +119,7 @@ public class SettingsEditor implements ProjectComponent, Configurable, Configura
     @Nullable
     @NonNls
     public String getHelpTopic() {
-        return null;
+        return "reference.settings.project.osgi";
     }
 
     public JComponent createComponent() {
