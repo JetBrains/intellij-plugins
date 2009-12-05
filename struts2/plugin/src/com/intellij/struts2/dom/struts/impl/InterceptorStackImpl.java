@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2009 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,21 +13,14 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.dom.struts.strutspackage;
+package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.javaee.model.xml.CommonDomModelElement;
-import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.NameValue;
+import com.intellij.javaee.model.xml.impl.BaseImpl;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorStack;
 
 /**
- * Common base interface for {@link com.intellij.struts2.dom.struts.strutspackage.Interceptor} and
- * {@link InterceptorStack}.
- *
  * @author Yann C&eacute;bron
  */
-public interface InterceptorOrStackBase extends CommonDomModelElement {
-
-  @NameValue
-  GenericAttributeValue<String> getName();
-  
+@SuppressWarnings({"AbstractClassNeverImplemented"})
+public abstract class InterceptorStackImpl extends BaseImpl implements InterceptorStack {
 }
