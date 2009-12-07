@@ -9,7 +9,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/xstream.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/contrib/IDEtalk/lib/xstream.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -25,7 +25,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/nanocontainer-1.0-SNAPSHOT.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/contrib/IDEtalk/lib/nanocontainer-1.0-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -35,7 +35,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../../resources" />
+          <root url="file://$APPLICATION_HOME_DIR$/contrib/IDEtalk/resources" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
