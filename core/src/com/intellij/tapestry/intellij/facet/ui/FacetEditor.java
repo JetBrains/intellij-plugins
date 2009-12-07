@@ -4,7 +4,6 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.tapestry.intellij.facet.AddTapestrySupportUtil;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
@@ -52,12 +51,9 @@ public class FacetEditor extends FacetEditorTab {
 
   @Override
   public void onFacetInitialized(@NotNull final Facet facet) {
-    final TapestryFacet tapestryFacet = (TapestryFacet)facet;
-
     if (_configuration.getVersion() == null) _configuration.setVersion(TapestryVersion.TAPESTRY_5_1_0_5);
 
-    ModuleRootManager model = ModuleRootManager.getInstance(facet.getModule());
-    AddTapestrySupportUtil.addSupportInWriteCommandAction(model, _configuration, false, false);
+    AddTapestrySupportUtil.addSupportInWriteCommandAction(facet.getModule(), _configuration, false, false);
   }
 
   public boolean isModified() {

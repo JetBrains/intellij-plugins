@@ -81,7 +81,8 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
         });
         builder.showModal(true);
 
-        AddTapestrySupportUtil.addSupportInWriteCommandAction(rootModel, configuration,
+
+        AddTapestrySupportUtil.addSupportInWriteCommandAction(rootModel.getModule(), configuration,
                                                               newFacetDialog.shouldGenerateStartupApplication(),
                                                               newFacetDialog.shouldGeneratePom());
       }
