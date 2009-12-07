@@ -11,7 +11,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$APPLICATION_HOME_DIR$/contrib/IDEtalk/lib/smack.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/smack.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -20,7 +20,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$APPLICATION_HOME_DIR$/contrib/IDEtalk/lib/smackx.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/smackx.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
