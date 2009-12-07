@@ -24,9 +24,7 @@ import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.constant.Constant;
 import com.intellij.struts2.dom.struts.constant.ConstantImpl;
 import com.intellij.struts2.dom.struts.impl.*;
-import com.intellij.struts2.dom.struts.strutspackage.GlobalResult;
-import com.intellij.struts2.dom.struts.strutspackage.InterceptorRef;
-import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.struts2.dom.struts.strutspackage.*;
 import com.intellij.util.xml.DomFileDescription;
 
 /**
@@ -47,7 +45,9 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
     registerImplementation(Action.class, ActionImpl.class);
     registerImplementation(Constant.class, ConstantImpl.class);
     registerImplementation(GlobalResult.class, GlobalResultImpl.class);
+    registerImplementation(Interceptor.class, InterceptorImpl.class);
     registerImplementation(InterceptorRef.class, InterceptorRefImpl.class);
+    registerImplementation(InterceptorStack.class, InterceptorStackImpl.class);
     registerImplementation(Param.class, ParamImpl.class);
     registerImplementation(Result.class, ResultImpl.class);
     registerImplementation(StrutsPackage.class, StrutsPackageImpl.class);

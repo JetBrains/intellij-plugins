@@ -20,6 +20,7 @@ import com.intellij.patterns.PsiJavaPatterns;
 import com.intellij.psi.PsiPackage;
 import com.intellij.semantic.SemContributor;
 import com.intellij.semantic.SemRegistrar;
+import com.intellij.struts2.model.jam.convention.JamInterceptorRef;
 import com.intellij.struts2.model.jam.convention.JamParentPackage;
 import com.intellij.struts2.model.jam.convention.JamResultPath;
 
@@ -34,6 +35,10 @@ public class StrutsSemContributor extends SemContributor {
 
   public void registerSemProviders(final SemRegistrar registrar) {
     final PsiClassPattern psiClassPattern = psiClass().nonAnnotationType();
+
+    // @InterceptorRef(s)
+    JamInterceptorRef.META_CLASS.register(registrar, psiClassPattern.withAnnotation(JamInterceptorRef.ANNOTATION_NAME));
+    JamInterceptorRef.META_CLASS_LIST.register(registrar, psiClassPattern.withAnnotation(JamInterceptorRef.ANNOTATION_NAME_LIST));
 
     // @ParentPackage
     JamParentPackage.META_CLASS.register(registrar, psiClassPattern.withAnnotation(JamParentPackage.ANNOTATION_NAME));
