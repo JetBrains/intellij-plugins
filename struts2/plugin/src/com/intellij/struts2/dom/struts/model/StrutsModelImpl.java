@@ -27,6 +27,9 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
+import com.intellij.struts2.dom.struts.strutspackage.Interceptor;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorStack;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.Function;
 import com.intellij.util.NotNullFunction;
@@ -40,10 +43,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Yann C&eacute;bron
@@ -91,6 +91,18 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
   @NotNull
   public List<StrutsPackage> getStrutsPackages() {
     return ContainerUtil.concat(getMergedStrutsRoots(), STRUTS_PACKAGE_COLLECTOR);
+  }
+
+  @NotNull
+  public Set<InterceptorOrStackBase> getAllInterceptorsAndStacks() {
+    final Set<InterceptorOrStackBase> interceptorOrStackBases = new HashSet<InterceptorOrStackBase>();
+    for (final StrutsPackage strutsPackage : getStrutsPackages()) {
+      final List<InterceptorStack> interceptorList = strutsPackage.getInterceptorStacks();
+      interceptorOrStackBases.addAll(interceptorList);
+      final List<Interceptor> interceptors = strutsPackage.getInterceptors();
+      interceptorOrStackBases.addAll(interceptors);
+    }
+    return interceptorOrStackBases;
   }
 
   @NotNull

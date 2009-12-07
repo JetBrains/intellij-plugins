@@ -18,6 +18,7 @@ package com.intellij.struts2.dom.struts.model;
 import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.Processor;
 import com.intellij.util.xml.model.DomModel;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service for accessing <code>struts.xml</code> files.
@@ -51,11 +53,18 @@ public interface StrutsModel extends DomModel<StrutsRoot> {
   List<StrutsPackage> getStrutsPackages();
 
   /**
+   * Get all {@link com.intellij.struts2.dom.struts.strutspackage.Interceptor}/{@link com.intellij.struts2.dom.struts.strutspackage.InterceptorStack}s.
+   *
+   * @return Set.
+   */
+  @NotNull
+  Set<InterceptorOrStackBase> getAllInterceptorsAndStacks();
+
+  /**
    * Gets all Actions for the given name and optionally namespace.
    *
    * @param name      Name of the action.
    * @param namespace Namespace to search within, {@code null} for all from this model.
-   *
    * @return List of all Actions.
    */
   @NotNull
@@ -65,7 +74,6 @@ public interface StrutsModel extends DomModel<StrutsRoot> {
    * Gets all Actions for the given class.
    *
    * @param clazz Class to search usages for.
-   *
    * @return List of all Actions.
    */
   @NotNull
@@ -75,10 +83,10 @@ public interface StrutsModel extends DomModel<StrutsRoot> {
    * Gets all available actions for the given namespace.
    *
    * @param namespace Namespace identifier.
-   *
    * @return List of all Actions.
    */
   List<Action> getActionsForNamespace(@Nullable @NonNls final String namespace);
 
   boolean processActions(Processor<Action> processor);
+
 }
