@@ -260,7 +260,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
 
                         if (!embeddedComponents.isEmpty() && component != null) {
                             for (TemplateElement element : embeddedComponents) {
-                                if (injectedElement != null && injectedElement.getElementId() != null) {
+                                if (injectedElement.getElementId() != null) {
                                     if (element.getElement().getElementId().toUpperCase().equals(injectedElement.getElementId().toUpperCase()) &&
                                             element.getElement().getElement().getName().toUpperCase().equals(injectedElement.getTag().getLocalName().toUpperCase()) &&
                                             injectedElement.getParameters().size() != 1) {
@@ -273,7 +273,6 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
                             }
                         }
                     }
-                    return;
                 }
             });
         }

@@ -77,13 +77,7 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
         return;
       }
 
-      PsiPackage eventPackage = null;
-      if (eventPsiElement instanceof PsiDirectory) {
-        eventPackage = IdeaUtils.getPackage((PsiDirectory)eventPsiElement);
-      }
-      else if (eventPsiElement instanceof PsiPackage) {
-        eventPackage = (PsiPackage)eventPsiElement;
-      }
+      PsiPackage eventPackage = IdeaUtils.getPackage(eventPsiElement);
 
       if (eventPackage != null) {
         PsiPackage elementsRootPackage = JavaPsiFacade.getInstance(module.getProject()).findPackage(aPackage);
@@ -132,9 +126,9 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
   protected String getDefaultElementPath(AnActionEvent event, Module module) {
     final PsiElement eventPsiElement = (PsiElement)event.getDataContext().getData(DataKeys.PSI_ELEMENT.getName());
 
-    PsiPackage psiPackage = IdeaUtils.getPackage((PsiDirectory)eventPsiElement);
+    PsiPackage psiPackage = IdeaUtils.getPackage(eventPsiElement);
     String defaultPagePath = "";
-    if (eventPsiElement != null && psiPackage != null) {
+    if (psiPackage != null) {
       String eventPackage = psiPackage.getQualifiedName();
       final TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
       if (tapestryProject == null) {

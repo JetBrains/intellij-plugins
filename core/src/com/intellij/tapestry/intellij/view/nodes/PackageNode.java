@@ -17,6 +17,7 @@ import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.view.TapestryProjectViewPane;
 import com.intellij.tapestry.lang.TmlFileType;
 import com.intellij.ui.treeStructure.SimpleNode;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.TreeSet;
 
@@ -97,6 +98,7 @@ public class PackageNode extends TapestryNode {
         return children.toArray(new TapestryNode[children.size()]);
     }
 
+  @Nullable
   private PackageNode createNewNode(PsiDirectory psiDirectory) {
     final PsiPackage aPackage = IdeaUtils.getPackage(psiDirectory);
     if (aPackage == null) return null;

@@ -227,12 +227,14 @@ public class IdeaUtils {
 
 
   @Nullable
-  public static PsiPackage getPackage(PsiDirectory psiDirectory) {
-    Project project = psiDirectory.getProject();
-    ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    String packageName = projectFileIndex.getPackageNameByDirectory(psiDirectory.getVirtualFile());
-    if (packageName == null) return null;
-    return JavaPsiFacade.getInstance(project).findPackage(packageName);
+  public static PsiPackage getPackage(@Nullable PsiElement psiElement) {
+    if (psiElement instanceof PsiDirectory) {
+      Project project = psiElement.getProject();
+      ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+      String packageName = projectFileIndex.getPackageNameByDirectory(((PsiDirectory)psiElement).getVirtualFile());
+      return packageName == null ? null : JavaPsiFacade.getInstance(project).findPackage(packageName);
+    }
+    return psiElement instanceof PsiPackage ? (PsiPackage)psiElement : null;
   }
 
   @Nullable
