@@ -216,7 +216,7 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     }
 
 
-    private void copySettings(ApplicationSettings from, ApplicationSettings to) {
+    private static void copySettings(ApplicationSettings from, ApplicationSettings to) {
         List<LibraryBundlificationRule> copiedRules = new ArrayList<LibraryBundlificationRule>();
         for (LibraryBundlificationRule libraryBundlificationRule : from.getLibraryBundlificationRules()) {
             LibraryBundlificationRule copiedRule = new LibraryBundlificationRule();
@@ -227,6 +227,8 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     }
 
     public void disposeUIResources() {
+      manifestEntries = null;
+      _manifestEntriesHolder.removeAll();
     }
 
     public void setApplicationSettingsProvider(
@@ -259,8 +261,8 @@ public class LibraryBundlingEditor implements Configurable, ApplicationSettingsA
     private JPanel _manifestEntriesHolder;
     private SelectionInList<LibraryBundlificationRule> selectedRule;
     private boolean changed;
-    private Project project;
-    private ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;
+    private final Project project;
+    private final ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;
     private PropertyChangeListener beanPropertyChangeListener;
     private BeanAdapter<LibraryBundlificationRule> beanAdapter;
 }
