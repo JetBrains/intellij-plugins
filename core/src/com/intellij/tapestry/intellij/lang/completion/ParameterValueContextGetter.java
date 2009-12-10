@@ -15,6 +15,7 @@ import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.log.Logger;
 import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.ResolvedValue;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.ValueResolverChain;
@@ -63,9 +64,12 @@ public class ParameterValueContextGetter implements ContextGetter {
       if (component == null) return new Object[0];
 
       TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
+      if (tapestryProject == null) return new Object[0];
 
-      IntellijJavaClassType elementClass =
-          (IntellijJavaClassType)tapestryProject.findElementByTemplate(completionContext.file).getElementClass();
+      final PresentationLibraryElement element = tapestryProject.findElementByTemplate(completionContext.file);
+      if (element == null) return new Object[0];
+
+      IntellijJavaClassType elementClass = (IntellijJavaClassType)element.getElementClass();
       if (elementClass == null) return new Object[0];
 
       for (TapestryParameter parameter : component.getParameters().values()) {
