@@ -27,6 +27,7 @@ import java.util.List;
  */
 public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   private final PsiField myProperty;
+
   private final boolean myGetterNotSetter;
   private final String myName;
   private LightParameterList myParameterList;
@@ -58,7 +59,15 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
   @Override
   @NotNull
   public PsiElement getNavigationElement() {
+    return getProperty();
+  }
+
+  public PsiField getProperty() {
     return myProperty;
+  }
+
+  public boolean isGetter() {
+    return myGetterNotSetter;
   }
 
   public PsiDocComment getDocComment() {

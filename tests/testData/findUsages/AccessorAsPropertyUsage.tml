@@ -1,0 +1,6 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <body>
+    <t:count t:value="getStringFieldProp().length()" end="3">${stringfie<caret>ldprop.lastIndexOf(4)}</t:count>
+    ${setSTRINGFIELDPROP('3')}
+    </body>
+</html>

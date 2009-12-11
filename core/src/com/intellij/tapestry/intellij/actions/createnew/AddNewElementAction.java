@@ -59,7 +59,8 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
     }
 
     assert module != null;
-    final DefaultMutableTreeNode element = TapestryProjectViewPane.getInstance(module.getProject()).getSelectedNode();
+    final TapestryProjectViewPane pane = TapestryProjectViewPane.getInstance(module.getProject());
+    final DefaultMutableTreeNode element = pane != null ? pane.getSelectedNode() : null;
 
     // it's the project view
     if (element == null) {
@@ -96,7 +97,9 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
         }
         WebFacet webFacet = IdeaUtils.getWebFacet(module);
 
-        if (eventPsiElement instanceof PsiDirectory && webFacet != null && WebUtil.isInsideWebRoots(((PsiDirectory)eventPsiElement).getVirtualFile(), webFacet.getWebRoots())) {
+        if (eventPsiElement instanceof PsiDirectory &&
+            webFacet != null &&
+            WebUtil.isInsideWebRoots(((PsiDirectory)eventPsiElement).getVirtualFile(), webFacet.getWebRoots())) {
           enabled = true;
         }
       }
@@ -171,7 +174,7 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
   }
 
   private static void showError() {
-    Messages.showErrorDialog("Can't create element. Please check if this module is a valid Tapestry application!",
-                             CommonBundle.getErrorTitle());
+    Messages
+      .showErrorDialog("Can't create element. Please check if this module is a valid Tapestry application!", CommonBundle.getErrorTitle());
   }
 }

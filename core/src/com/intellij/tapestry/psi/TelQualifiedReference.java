@@ -74,6 +74,9 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
       if (target instanceof BeanPropertyElement && manager.areElementsEquivalent(element, ((BeanPropertyElement)target).getMethod())) {
         return true;
       }
+      if (target instanceof TapestryAccessorMethod && manager.areElementsEquivalent(element, ((TapestryAccessorMethod)target).getProperty())) {
+        return true;
+      }
     }
     return false;
   }
@@ -167,11 +170,6 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
         if (element instanceof PsiField) {
           return lookupElement.setTypeText(((PsiField)element).getType().getPresentableText());
         }
-        //if (element instanceof PropertyAccessorElement) {
-        //  final PsiType type = ((PropertyAccessorElement)element).getMethodReturnType();
-        //  return lookupElement.setTypeText(type.getPresentableText()).setTailText("()")
-        //    .setInsertHandler(ParenthesesInsertHandler.getInstance(type == PsiType.VOID));
-        //}
         if (element instanceof BeanPropertyElement) {
           final PsiType type = ((BeanPropertyElement)element).getPropertyType();
           if (type != null) {

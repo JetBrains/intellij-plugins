@@ -5,10 +5,11 @@ import com.intellij.openapi.application.Result;
 import com.intellij.openapi.application.RunResult;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
@@ -20,6 +21,7 @@ import com.intellij.testFramework.fixtures.*;
 import com.intellij.util.ArrayUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -46,7 +48,6 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   protected CodeInsightTestFixture myFixture;
-  protected Project myProject;
   protected Module myModule;
 
   protected Class<? extends JavaModuleFixtureBuilder> getModuleFixtureBuilderClass() {
@@ -64,14 +65,13 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     configureModule(moduleBuilder);
 
     myFixture.setUp();
-    myProject = myFixture.getProject();
     myModule = moduleBuilder.getFixture().getModule();
 
     createFacet();
   }
 
   protected TapestryFacet createFacet() {
-    final RunResult<TapestryFacet> runResult = new WriteCommandAction<TapestryFacet>(myProject) {
+    final RunResult<TapestryFacet> runResult = new WriteCommandAction<TapestryFacet>(myFixture.getProject()) {
       protected void run(final Result<TapestryFacet> result) throws Throwable {
         final TapestryFacetType facetType = TapestryFacetType.INSTANCE;
         final FacetManager facetManager = FacetManager.getInstance(myModule);
@@ -228,11 +228,24 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return ArrayUtil.mergeArrays(array, list, String.class);
   }
 
+  @Nullable
+  protected PsiReference getReferenceAtCaretPosition() {
+    return myFixture.getFile().findReferenceAt(myFixture.getEditor().getCaretModel().getOffset());
+  }
+
+  @NotNull
+  protected PsiElement resolveReferenceAtCaretPosition() {
+    PsiReference ref = getReferenceAtCaretPosition();
+    Assert.assertNotNull("No reference at caret", ref);
+    final PsiElement element = ref.resolve();
+    Assert.assertNotNull("unresolved reference '" + ref.getCanonicalText() + "'", element);
+    return element;
+  }
+
   @Override
   protected void tearDown() throws Exception {
     myFixture.tearDown();
     myFixture = null;
-    myProject = null;
     myModule = null;
     super.tearDown();
   }

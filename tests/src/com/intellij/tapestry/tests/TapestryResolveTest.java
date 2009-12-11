@@ -6,7 +6,6 @@ import com.intellij.tapestry.psi.TapestryAccessorMethod;
 import com.intellij.tapestry.psi.TmlFile;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Alexey Chmutov
@@ -152,6 +151,13 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     Assert.assertEquals("StartPage.tml", ref.getName());
   }
 
+  public void testPageAttrValueOfPagelinkTag() throws Throwable {
+    addPageToProject("StartPage");
+    initByComponent();
+    TmlFile ref = resolveReferenceAtCaretPosition(TmlFile.class);
+    Assert.assertEquals("StartPage.tml", ref.getName());
+  }
+
   public void testPrefixedPageAttrValue() throws Throwable {
     addPageToProject("StartPage");
     initByComponent();
@@ -194,24 +200,15 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     Assert.assertEquals("getCurrentTime", ref.getName());
   }
 
-  @Nullable
-  private PsiReference getReferenceAtCaretPosition() {
-    return myFixture.getFile().findReferenceAt(myFixture.getEditor().getCaretModel().getOffset());
-  }
-
-  @NotNull
-  private <T> T resolveReferenceAtCaretPosition(Class<T> aClass) {
-    PsiReference ref = getReferenceAtCaretPosition();
-    Assert.assertNotNull("No reference at caret", ref);
-    final PsiElement element = ref.resolve();
-    Assert.assertNotNull("unresolved reference '" + ref.getCanonicalText() + "'", element);
-    return assertInstanceOf(element, aClass);
-  }
-
   private void checkReferenceAtCaretPositionUnresolved() {
     PsiReference ref = getReferenceAtCaretPosition();
     Assert.assertNotNull(ref);
     final PsiElement element = ref.resolve();
     Assert.assertNull(String.valueOf(element), element);
+  }
+
+  @NotNull
+  private <T> T resolveReferenceAtCaretPosition(Class<T> aClass) {
+    return assertInstanceOf(resolveReferenceAtCaretPosition(), aClass);
   }
 }
