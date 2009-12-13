@@ -333,11 +333,11 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
    * {@inheritDoc}
    */
   public Object getData(String dataId) {
-    if (DataKeys.PROJECT.getName().equals(dataId)) {
+    if (DataKeys.PROJECT.is(dataId)) {
       return myProject;
     }
 
-    if (DataKeys.IDE_VIEW.getName().equals(dataId)) {
+    if (DataKeys.IDE_VIEW.is(dataId)) {
       if (getSelectedDescriptor() == null) {
         return null;
       }
@@ -351,7 +351,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       return myIdeView;
     }
 
-    if (DataKeys.MODULE.getName().equals(dataId)) {
+    if (DataKeys.MODULE.is(dataId)) {
       final NodeDescriptor nodeDescriptor = getSelectedDescriptor();
       if (nodeDescriptor != null) {
         if (nodeDescriptor instanceof TapestryNode) {
@@ -363,7 +363,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       }
     }
 
-    if (DataKeys.NAVIGATABLE.getName().equals(dataId)) {
+    if (DataKeys.NAVIGATABLE.is(dataId)) {
       if (getSelectedDescriptor() == null) {
         return null;
       }
@@ -374,7 +374,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       }
     }
 
-    if (DataKeys.DELETE_ELEMENT_PROVIDER.getName().equals(dataId)) {
+    if (DataKeys.DELETE_ELEMENT_PROVIDER.is(dataId)) {
       return new SafeDeleteProvider();
     }
 
