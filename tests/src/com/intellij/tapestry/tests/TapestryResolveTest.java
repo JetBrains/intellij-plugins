@@ -1,6 +1,7 @@
 package com.intellij.tapestry.tests;
 
 import com.intellij.psi.*;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.psi.TapestryAccessorMethod;
 import com.intellij.tapestry.psi.TmlFile;
@@ -142,6 +143,25 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     initByComponent();
     PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
     Assert.assertEquals("index55", ref.getName());
+  }
+
+  public void testIdAttrValueTypeAttrPresent() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    XmlAttribute ref = resolveReferenceAtCaretPosition(XmlAttribute.class);
+    Assert.assertEquals("t:id", ref.getName());
+  }
+
+  public void testIdAttrValueInTmlTag() throws Throwable {
+    initByComponent();
+    XmlAttribute ref = resolveReferenceAtCaretPosition(XmlAttribute.class);
+    Assert.assertEquals("t:id", ref.getName());
+  }
+
+  public void testIdAttrValueUnresolved() throws Throwable {
+    addComponentToProject("Count");
+    initByComponent();
+    checkReferenceAtCaretPositionUnresolved();
   }
 
   public void testPageAttrValue() throws Throwable {

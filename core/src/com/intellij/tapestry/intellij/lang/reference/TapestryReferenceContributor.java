@@ -70,9 +70,12 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
           @NotNull
           public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
             if (!(element instanceof XmlAttribute)) return PsiReference.EMPTY_ARRAY;
-
             XmlAttribute idAttr = (XmlAttribute)element;
-            return getReferenceToEmbeddedComponent(idAttr, getValueTextRange(idAttr));
+            XmlElement identifier = TapestryUtils.getComponentIdentifier(idAttr.getParent());
+            final TextRange valueTextRange = getValueTextRange(idAttr);
+            return identifier == idAttr
+                   ? getReferenceToEmbeddedComponent(idAttr, valueTextRange)
+                   : getReferenceByComponentId(idAttr, valueTextRange);
           }
         });
   }
@@ -177,6 +180,23 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
       public Object[] getVariants() {
         List<String> fieldsIds = TapestryUtils.getEmbeddedComponentIds(tag);
         return ArrayUtil.toStringArray(fieldsIds);
+      }
+    }};
+  }
+
+  @NotNull
+  private PsiReference[] getReferenceByComponentId(@NotNull final XmlAttribute attr, TextRange range) {
+    if (range == null) return PsiReference.EMPTY_ARRAY;
+
+    return new PsiReference[]{new PsiReferenceBase<PsiElement>(attr, range) {
+      @Nullable
+      public PsiElement resolve() {
+        return attr;
+      }
+
+      @NotNull
+      public Object[] getVariants() {
+        return EMPTY_ARRAY;
       }
     }};
   }

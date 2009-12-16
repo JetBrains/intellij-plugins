@@ -43,7 +43,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     addComponentToProject("Count");
     doTestBasicCompletionVariants("class", "dir", "end", "id", "lang", "onclick", "ondblclick", "onkeydown", "onkeypress", "onkeyup",
                                   "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "start", "style", "title",
-                                  "value");
+                                  "value", "t:id");
 
   }
 

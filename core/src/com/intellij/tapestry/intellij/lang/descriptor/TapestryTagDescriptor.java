@@ -30,7 +30,7 @@ public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
     return context != null
            ? DescriptorUtil.getAttributeDescriptors(context)
-           : DescriptorUtil.getAttributeDescriptors((Component)myComponent);
+           : DescriptorUtil.getAttributeDescriptors((Component)myComponent, null);
   }
 
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls String attributeName, @Nullable XmlTag context) {
