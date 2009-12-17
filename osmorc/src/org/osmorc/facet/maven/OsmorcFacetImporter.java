@@ -93,7 +93,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
             setConfigProperty(mavenProject, conf, "bundleActivator", "instructions." + Constants.BUNDLE_ACTIVATOR);
 
             // now find any additional properties that might have been set up:
-            Element instructionsNode = findConfigElement(mavenProject, "instructions");
+            Element instructionsNode = getConfig(mavenProject, "instructions");
             // Fix for IDEADEV-38685, NPE when the element is not set.
             if (instructionsNode != null) {
                 Map<String, String> props = new HashMap<String, String>();
