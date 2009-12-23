@@ -29,414 +29,430 @@ import java.util.List;
  */
 public abstract class PresentationLibraryElement implements ExternalizableToDocumentation, ExternalizableToClass {
 
+  /**
+   * The element type.
+   */
+  public static enum ElementType {
+
     /**
-     * The element type.
+     * A page.
      */
-    public static enum ElementType {
+    PAGE,
 
-        /**
-         * A page.
-         */
-        PAGE,
+    /**
+     * A component.
+     */
+    COMPONENT,
 
-        /**
-         * A component.
-         */
-        COMPONENT,
+    /**
+     * A mixin.
+     */
+    MIXIN
+  }
 
-        /**
-         * A mixin.
-         */
-        MIXIN
+  private final IJavaClassType _class;
+  private final TapestryProject _project;
+  private String _name;
+  private Library _library;
+  private String _documentationCache;
+  private IResource[] _messageCatalogCache;
+  private long _documentationTimestamp;
+  private ElementType _elementType;
+
+  static final String PARAMETER_ANNOTATION = "org.apache.tapestry5.annotations.Parameter";
+
+  PresentationLibraryElement(Library library, IJavaClassType elementClass, TapestryProject project) {
+    _class = elementClass;
+    _project = project;
+    _library = library;
+
+    if (library != null && library.getId() != null) {
+      _name = getElementNameFromClass(library.getBasePackage());
+      _elementType = getElementType(_class, library.getBasePackage());
+    }
+    else {
+      try {
+        _name = getElementNameFromClass(null);
+      }
+      catch (NotTapestryElementException e) {
+        // ignore
+      }
+      _elementType = ElementType.COMPONENT;
+    }
+  }
+
+  /**
+   * Creates an instance of a presentation element.
+   *
+   * @param library      the library the element belonds to.
+   * @param elementClass the class of the element.
+   * @param project      the project the element belongs to.
+   * @return the instance of the presentation element.
+   * @throws NotTapestryElementException if the given parameters do not correspond to a Tapestry element.
+   */
+  public static PresentationLibraryElement createElementInstance(Library library, IJavaClassType elementClass, TapestryProject project)
+    throws NotTapestryElementException {
+    switch (getElementType(elementClass, library.getBasePackage())) {
+      case COMPONENT:
+        return new Component(library, elementClass, project);
+      case PAGE:
+        return new Page(library, elementClass, project);
+      case MIXIN:
+        return new Mixin(library, elementClass, project);
+      default:
+        throw new NotTapestryElementException(elementClass.getFullyQualifiedName() + " is not a Tapestry class.");
+    }
+  }
+
+  /**
+   * Creates an instance of a presentation element of the current project library.
+   *
+   * @param elementClass the class of the element.
+   * @param project      the project the element belongs to.
+   * @return the instance of the presentation element.
+   * @throws NotTapestryElementException if the given parameters do not correspond to a Tapestry element.
+   */
+  public static PresentationLibraryElement createProjectElementInstance(IJavaClassType elementClass, TapestryProject project)
+    throws NotTapestryElementException {
+    return createElementInstance(project.getApplicationLibrary(), elementClass, project);
+  }
+
+  /**
+   * @return <code>true</code> if this element allows a template, <code>false</code> otherwise.
+   */
+  public abstract boolean allowsTemplate();
+
+  /**
+   * Finds the templates associated with this element and returns them.
+   * It returns an array because an element can have more than one localized template.
+   *
+   * @return the templates in no special order. This never returns <code>null</code>
+   */
+  public abstract IResource[] getTemplate();
+
+  /**
+   * Finds the message catalogs associated with this element and returns then.
+   * It returns an array because an element can have more than one localized message catalog.
+   *
+   * @return the catalogs in no special order. This never returns <code>null</code>
+   */
+  public IResource[] getMessageCatalog() {
+    if (_messageCatalogCache != null && checkAllValidResources(_messageCatalogCache)) {
+      return _messageCatalogCache;
     }
 
-    private final IJavaClassType _class;
-    private final TapestryProject _project;
-    private String _name;
-    private Library _library;
-    private String _documentationCache;
-    private IResource[] _messageCatalogCache;
-    private long _documentationTimestamp;
-    private ElementType _elementType;
+    String packageName = getElementClass().getFullyQualifiedName().substring(0, getElementClass().getFullyQualifiedName().lastIndexOf('.'));
 
-    static final String PARAMETER_ANNOTATION = "org.apache.tapestry5.annotations.Parameter";
+    // Search in the classpath
+    Collection<IResource> resources = getProject().getResourceFinder().findLocalizedClasspathResource(
+      PathUtils.packageIntoPath(packageName, true) + PathUtils.getLastPathElement(getName()) + TapestryConstants.PROPERTIES_FILE_EXTENSION,
+      true);
 
-    PresentationLibraryElement(Library library, IJavaClassType elementClass, TapestryProject project) {
-        _class = elementClass;
-        _project = project;
-        _library = library;
+    if (resources.size() > 0) {
+      List<IResource> catalogs = new ArrayList<IResource>();
 
-        if (library != null && library.getId() != null) {
-            _name = getElementNameFromClass(library.getBasePackage());
-            _elementType = getElementType(_class, library.getBasePackage());
-        } else {
-            try {
-                _name = getElementNameFromClass(null);
-            } catch (NotTapestryElementException e) {
-                // ignore
+      for (IResource catalog : resources) {
+        if (LocalizationUtils.unlocalizeFileName(catalog.getName())
+          .equals(PathUtils.getLastPathElement(getName()) + TapestryConstants.PROPERTIES_FILE_EXTENSION)) {
+          catalogs.add(catalog);
+        }
+      }
+
+      _messageCatalogCache = catalogs.toArray(new IResource[catalogs.size()]);
+
+      return _messageCatalogCache;
+    }
+    else {
+      _messageCatalogCache = new IResource[0];
+    }
+
+    return _messageCatalogCache;
+  }
+
+  /**
+   * Returns the element documentation.
+   *
+   * @return the element documentation.
+   */
+  public String getDescription() {
+    if (_documentationCache != null && getElementClass().getFile().getFile().lastModified() <= _documentationTimestamp) {
+      return _documentationCache;
+    }
+
+    _documentationCache = getElementClass().getDocumentation();
+    _documentationTimestamp = getElementClass().getFile().getFile().lastModified();
+
+    return _documentationCache;
+  }
+
+  public IJavaClassType getElementClass() {
+    return _class;
+  }
+
+  public String getName() {
+    return _name;
+  }
+
+  public TapestryProject getProject() {
+    return _project;
+  }
+
+  public Library getLibrary() {
+    return _library;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public boolean equals(Object obj) {
+    return obj != null && (obj instanceof PresentationLibraryElement) && getName().equals(((PresentationLibraryElement)obj).getName());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public int hashCode() {
+    return getName().hashCode();
+  }
+
+  /**
+   * Finds all declared embedded components.
+   *
+   * @return the declared embedded components.
+   */
+  public List<TemplateElement> getEmbeddedComponents() {
+
+    final List<TemplateElement> embeddedComponentsClass = new ArrayList<TemplateElement>();
+    final List<TemplateElement> embeddedComponentsTemplate = new ArrayList<TemplateElement>();
+    final List<TemplateElement> embeddedComponents = new ArrayList<TemplateElement>();
+
+    for (IJavaField field : _class.getFields(true).values()) {
+      if (field.isValid() &&
+          field.getAnnotations().containsKey(TapestryConstants.COMPONENT_ANNOTATION) &&
+          field.getType() instanceof IJavaClassType) {
+        IJavaAnnotation annotation = field.getAnnotations().get(TapestryConstants.COMPONENT_ANNOTATION);
+        final Component component;
+        if (annotation.getParameters().containsKey("type")) {
+          component = _project.findComponent(annotation.getParameters().get("type")[0]);
+        }
+        else {
+          component = _project.findComponent((IJavaClassType)field.getType());
+        }
+        embeddedComponents.add(new TemplateElement(new InjectedElement(field, component), "class"));
+      }
+    }
+
+    embeddedComponentsClass.addAll(embeddedComponents);
+
+    for (int i = 0; i < getTemplate().length; i++) {
+
+      getTemplate()[i].accept(new CoreXmlRecursiveElementVisitor() {
+        public void visitTag(XmlTag tag) {
+          if (!ComponentUtils._isComponentTag(tag)) return;
+          boolean hasAttributeType = false;
+          InjectedElement injectedElement = null;
+          Component component = null;
+
+          for (XmlAttribute attribute : tag.getAttributes()) {
+            if (attribute.getLocalName().equals("type") && attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
+              component = _project.findComponent(attribute.getValue());
+              injectedElement = new InjectedElement(tag, component);
+              hasAttributeType = true;
             }
-            _elementType = ElementType.COMPONENT;
-        }
-    }
+          }
 
-    /**
-     * Creates an instance of a presentation element.
-     *
-     * @param library      the library the element belonds to.
-     * @param elementClass the class of the element.
-     * @param project      the project the element belongs to.
-     * @return the instance of the presentation element.
-     * @throws NotTapestryElementException if the given parameters do not correspond to a Tapestry element.
-     */
-    public static PresentationLibraryElement createElementInstance(Library library, IJavaClassType elementClass, TapestryProject project) throws NotTapestryElementException {
-        switch (getElementType(elementClass, library.getBasePackage())) {
-            case COMPONENT:
-                return new Component(library, elementClass, project);
-            case PAGE:
-                return new Page(library, elementClass, project);
-            case MIXIN:
-                return new Mixin(library, elementClass, project);
-            default:
-                throw new NotTapestryElementException(elementClass.getFullyQualifiedName() + " is not a Tapestry class.");
-        }
-    }
+          if (!hasAttributeType) {
+            component = _project.findComponent(tag.getLocalName());
+            injectedElement = new InjectedElement(tag, component);
+          }
 
-    /**
-     * Creates an instance of a presentation element of the current project library.
-     *
-     * @param elementClass the class of the element.
-     * @param project      the project the element belongs to.
-     * @return the instance of the presentation element.
-     * @throws NotTapestryElementException if the given parameters do not correspond to a Tapestry element.
-     */
-    public static PresentationLibraryElement createProjectElementInstance(IJavaClassType elementClass, TapestryProject project) throws NotTapestryElementException {
-      return createElementInstance(project.getApplicationLibrary(), elementClass, project);
-    }
-
-    /**
-     * @return <code>true</code> if this element allows a template, <code>false</code> otherwise.
-     */
-    public abstract boolean allowsTemplate();
-
-    /**
-     * Finds the templates associated with this element and returns them.
-     * It returns an array because an element can have more than one localized template.
-     *
-     * @return the templates in no special order. This never returns <code>null</code>
-     */
-    public abstract IResource[] getTemplate();
-
-    /**
-     * Finds the message catalogs associated with this element and returns then.
-     * It returns an array because an element can have more than one localized message catalog.
-     *
-     * @return the catalogs in no special order. This never returns <code>null</code>
-     */
-    public IResource[] getMessageCatalog() {
-        if (_messageCatalogCache != null && checkAllValidResources(_messageCatalogCache)) {
-            return _messageCatalogCache;
-        }
-
-        String packageName = getElementClass().getFullyQualifiedName().substring(0, getElementClass().getFullyQualifiedName().lastIndexOf('.'));
-
-        // Search in the classpath
-        Collection<IResource> resources = getProject().getResourceFinder().findLocalizedClasspathResource(
-                PathUtils.packageIntoPath(packageName, true) +
-                        PathUtils.getLastPathElement(getName()) +
-                        TapestryConstants.PROPERTIES_FILE_EXTENSION, true
-        );
-
-        if (resources.size() > 0) {
-            List<IResource> catalogs = new ArrayList<IResource>();
-
-            for (IResource catalog : resources)
-                if (LocalizationUtils.unlocalizeFileName(catalog.getName()).equals(PathUtils.getLastPathElement(getName()) + TapestryConstants.PROPERTIES_FILE_EXTENSION)) {
-                    catalogs.add(catalog);
-                }
-
-            _messageCatalogCache = catalogs.toArray(new IResource[catalogs.size()]);
-
-            return _messageCatalogCache;
-        } else {
-            _messageCatalogCache = new IResource[0];
-        }
-
-        return _messageCatalogCache;
-    }
-
-    /**
-     * Returns the element documentation.
-     *
-     * @return the element documentation.
-     */
-    public String getDescription() {
-        if (_documentationCache != null && getElementClass().getFile().getFile().lastModified() <= _documentationTimestamp) {
-            return _documentationCache;
-        }
-
-        _documentationCache = getElementClass().getDocumentation();
-        _documentationTimestamp = getElementClass().getFile().getFile().lastModified();
-
-        return _documentationCache;
-    }
-
-    public IJavaClassType getElementClass() {
-        return _class;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public TapestryProject getProject() {
-        return _project;
-    }
-
-    public Library getLibrary() {
-        return _library;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean equals(Object obj) {
-        return !(obj == null || !(obj instanceof PresentationLibraryElement)) && getName().equals(((PresentationLibraryElement) obj).getName());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int hashCode() {
-        return getName().hashCode();
-    }
-
-    /**
-     * Finds all declared embedded components.
-     *
-     * @return the declared embedded components.
-     */
-    public List<TemplateElement> getEmbeddedComponents() {
-
-        final List<TemplateElement> embeddedComponentsClass = new ArrayList<TemplateElement>();
-        final List<TemplateElement> embeddedComponentsTemplate = new ArrayList<TemplateElement>();
-        final List<TemplateElement> embeddedComponents = new ArrayList<TemplateElement>();
-
-        for (IJavaField field : _class.getFields(true).values()) {
-            if (field.isValid() && field.getAnnotations().containsKey(TapestryConstants.COMPONENT_ANNOTATION) && field.getType() instanceof IJavaClassType) {
-                IJavaAnnotation annotation = field.getAnnotations().get(TapestryConstants.COMPONENT_ANNOTATION);
-                if (annotation.getParameters().containsKey("type")) {
-                    embeddedComponents.add(new TemplateElement(new InjectedElement(field, _project.findComponent(annotation.getParameters().get("type")[0])), "class"));
-                } else {
-                    embeddedComponents.add(new TemplateElement(new InjectedElement(field, _project.findComponent((IJavaClassType) field.getType())), "class"));
-
-                }
+          if (embeddedComponents.isEmpty() || component == null) return;
+          for (TemplateElement element : embeddedComponents) {
+            final String injectedElementId = injectedElement.getElementId();
+            if (injectedElementId == null) continue;
+            final String elementId = element.getElement().getElementId();
+            final PresentationLibraryElement libraryElement = element.getElement().getElement();
+            if (libraryElement != null &&
+                elementId != null &&
+                elementId.equalsIgnoreCase(injectedElementId) &&
+                libraryElement.getName().equalsIgnoreCase(injectedElement.getTag().getLocalName()) &&
+                injectedElement.getParameters().size() != 1) {
+              if (!embeddedComponentsClass.isEmpty()) embeddedComponentsClass.remove(element);
             }
+          }
         }
-
-        embeddedComponentsClass.addAll(embeddedComponents);
-
-        for (int i = 0; i < getTemplate().length; i++) {
-
-            getTemplate()[i].accept(new CoreXmlRecursiveElementVisitor() {
-                public void visitTag(XmlTag tag) {
-                    if (ComponentUtils._isComponentTag(tag)) {
-                        boolean hasAttributeType = false;
-                        InjectedElement injectedElement = null;
-                        Component component = null;
-
-                        for (XmlAttribute attribute : tag.getAttributes()) {
-                            if (attribute.getLocalName().equals("type") && attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
-                                component = _project.findComponent(attribute.getValue());
-                                injectedElement = new InjectedElement(tag, component);
-
-                                hasAttributeType = true;
-                            }
-                        }
-
-                        if (!hasAttributeType) {
-                            component = _project.findComponent(tag.getLocalName());
-                            injectedElement = new InjectedElement(tag, component);
-                        }
-
-                        if (!embeddedComponents.isEmpty() && component != null) {
-                            for (TemplateElement element : embeddedComponents) {
-                                if (injectedElement.getElementId() != null) {
-                                    if (element.getElement().getElementId().toUpperCase().equals(injectedElement.getElementId().toUpperCase()) &&
-                                            element.getElement().getElement().getName().toUpperCase().equals(injectedElement.getTag().getLocalName().toUpperCase()) &&
-                                            injectedElement.getParameters().size() != 1) {
-
-                                        if (!embeddedComponentsClass.isEmpty())
-                                            embeddedComponentsClass.remove(element);
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        embeddedComponentsClass.addAll(embeddedComponentsTemplate);
-
-        return embeddedComponentsClass;
+      });
     }
+    embeddedComponentsClass.addAll(embeddedComponentsTemplate);
 
-    /**
-     * Finds all component declarations in templates.
-     *
-     * @return the declared embedded components in templates.
-     */
-    public List<TemplateElement> getEmbeddedComponentsTemplate() {
+    return embeddedComponentsClass;
+  }
 
-        final List<TemplateElement> embeddedComponentsTemplate = new ArrayList<TemplateElement>();
-        final List<TemplateElement> embeddedComponentsClass = getEmbeddedComponents();
+  /**
+   * Finds all component declarations in templates.
+   *
+   * @return the declared embedded components in templates.
+   */
+  public List<TemplateElement> getEmbeddedComponentsTemplate() {
 
-        for (int i = 0; i < getTemplate().length; i++) {
-            final String _resource = getTemplate()[i].getName();
+    final List<TemplateElement> embeddedComponentsTemplate = new ArrayList<TemplateElement>();
+    final List<TemplateElement> embeddedComponentsClass = getEmbeddedComponents();
 
-            getTemplate()[i].accept(new CoreXmlRecursiveElementVisitor() {
-                public void visitTag(XmlTag tag) {
-                    if (ComponentUtils._isComponentTag(tag)) {
+    for (int i = 0; i < getTemplate().length; i++) {
+      final String _resource = getTemplate()[i].getName();
 
-                        boolean hasAttributeType = false;
-                        InjectedElement injectedElement = null;
-                        Component component = null;
+      getTemplate()[i].accept(new CoreXmlRecursiveElementVisitor() {
+        public void visitTag(XmlTag tag) {
+          if (ComponentUtils._isComponentTag(tag)) {
 
-                        for (XmlAttribute attribute : tag.getAttributes()) {
-                            if (attribute.getLocalName().equals("type") && attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
-                                component = _project.findComponent(attribute.getValue());
-                                injectedElement = new InjectedElement(tag, component);
+            boolean hasAttributeType = false;
+            InjectedElement injectedElement = null;
+            Component component = null;
 
-                                hasAttributeType = true;
-                            }
-                        }
+            for (XmlAttribute attribute : tag.getAttributes()) {
+              if (attribute.getLocalName().equals("type") && attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) {
+                component = _project.findComponent(attribute.getValue());
+                injectedElement = new InjectedElement(tag, component);
 
-                        if (!hasAttributeType) {
-                            component = _project.findComponent(tag.getLocalName());
-                            injectedElement = new InjectedElement(tag, component);
-                        }
-
-                        if (!embeddedComponentsClass.isEmpty() && component != null) {
-                            TemplateElement element = new TemplateElement(injectedElement, "class");
-
-                            if (!embeddedComponentsClass.contains(element)) {
-                                embeddedComponentsTemplate.add(new TemplateElement(injectedElement, _resource));
-                            }
-
-                        } else if (component != null)
-                            embeddedComponentsTemplate.add(new TemplateElement(injectedElement, _resource));
-
-                    }
-                    return;
-                }
-            });
-        }
-        return embeddedComponentsTemplate;
-    }
-
-    /**
-     * Finds all declared embedded components.
-     *
-     * @return the declared embedded components.
-     */
-    public List<InjectedElement> getInjectedPages() {
-        List<InjectedElement> injectedPages = new ArrayList<InjectedElement>();
-
-        for (IJavaField field : _class.getFields(true).values()) {
-            if (field.isValid() && field.getAnnotations().containsKey(TapestryConstants.INJECT_PAGE_ANNOTATION)) {
-                IJavaAnnotation annotation = field.getAnnotations().get(TapestryConstants.INJECT_PAGE_ANNOTATION);
-                if (annotation.getParameters().containsKey("value")) {
-                    if (_project.findPage(annotation.getParameters().get("value")[0]) != null) {
-                        injectedPages.add(new InjectedElement(field, _project.findPage(annotation.getParameters().get("value")[0])));
-                    }
-                } else {
-                    IJavaClassType type = (IJavaClassType) field.getType();
-                    if (type != null) {
-                        injectedPages.add(new InjectedElement(field, _project.findPage(type)));
-                    }
-                }
-            }
-        }
-
-        return injectedPages;
-    }
-
-    public ElementType getElementType() {
-        return _elementType;
-    }
-
-    public String getDocumentation() throws Exception {
-        return DocumentationGenerationChain.getInstance().generate(this);
-    }
-
-    public String getClassRepresentation(IJavaClassType targetClass) throws Exception {
-        return ExternalizeToClassChain.getInstance().externalize(this, targetClass);
-    }
-
-    /**
-     * Constructs the element name from it's class and library root package.
-     *
-     * @param libraryRootPackage the library root package.
-     * @return the element name.
-     * @throws NotTapestryElementException if this is not a Tapestry element.
-     */
-    protected String getElementNameFromClass(String libraryRootPackage) throws NotTapestryElementException {
-        if (!_class.isPublic() || !_class.hasDefaultConstructor()) {
-            throw new NotTapestryElementException(_class.getFullyQualifiedName() + " is not a valid Tapestry class.");
-        }
-
-        if (libraryRootPackage == null) {
-            throw new NotTapestryElementException(_class.getFullyQualifiedName() + " is not a valid Tapestry class.");
-        }
-
-        String elementClassFqn = _class.getFullyQualifiedName();
-        String elementName;
-
-        elementName = elementClassFqn.substring(libraryRootPackage.length() + 1);
-        if (elementName.startsWith(TapestryConstants.COMPONENTS_PACKAGE)) {
-            elementName = PathUtils.packageIntoPath(elementName.substring(TapestryConstants.COMPONENTS_PACKAGE.length() + 1), false);
-        } else if (elementName.startsWith(TapestryConstants.PAGES_PACKAGE)) {
-            elementName = PathUtils.packageIntoPath(elementName.substring(TapestryConstants.PAGES_PACKAGE.length() + 1), false);
-        } else if (elementName.startsWith(TapestryConstants.MIXINS_PACKAGE)) {
-            elementName = PathUtils.packageIntoPath(elementName.substring(TapestryConstants.MIXINS_PACKAGE.length() + 1), false);
-        } else {
-            throw new NotTapestryElementException(_class.getFullyQualifiedName() + " is not under a Tapestry base package.");
-        }
-
-        return elementName;
-    }
-
-    /**
-     * Checks if the files in a group of resources are all valid.
-     *
-     * @param resources the resources to check.
-     * @return <code>true</code if all the resources are valid, <code>false</false> otherwise.
-     */
-    protected static boolean checkAllValidResources(IResource[] resources) {
-        for (IResource resource : resources)
-            if (resource.getFile() == null || !resource.getFile().exists()) {
-                return false;
+                hasAttributeType = true;
+              }
             }
 
-        return true;
+            if (!hasAttributeType) {
+              component = _project.findComponent(tag.getLocalName());
+              injectedElement = new InjectedElement(tag, component);
+            }
+
+            if (!embeddedComponentsClass.isEmpty() && component != null) {
+              TemplateElement element = new TemplateElement(injectedElement, "class");
+
+              if (!embeddedComponentsClass.contains(element)) {
+                embeddedComponentsTemplate.add(new TemplateElement(injectedElement, _resource));
+              }
+
+            }
+            else if (component != null) embeddedComponentsTemplate.add(new TemplateElement(injectedElement, _resource));
+
+          }
+        }
+      });
+    }
+    return embeddedComponentsTemplate;
+  }
+
+  /**
+   * Finds all declared embedded components.
+   *
+   * @return the declared embedded components.
+   */
+  public List<InjectedElement> getInjectedPages() {
+    List<InjectedElement> injectedPages = new ArrayList<InjectedElement>();
+
+    for (IJavaField field : _class.getFields(true).values()) {
+      if (field.isValid() && field.getAnnotations().containsKey(TapestryConstants.INJECT_PAGE_ANNOTATION)) {
+        IJavaAnnotation annotation = field.getAnnotations().get(TapestryConstants.INJECT_PAGE_ANNOTATION);
+        if (annotation.getParameters().containsKey("value")) {
+          final Page page = _project.findPage(annotation.getParameters().get("value")[0]);
+          if (page != null) {
+            injectedPages.add(new InjectedElement(field, page));
+          }
+        }
+        else {
+          IJavaClassType type = (IJavaClassType)field.getType();
+          if (type != null) {
+            injectedPages.add(new InjectedElement(field, _project.findPage(type)));
+          }
+        }
+      }
     }
 
-    private static ElementType getElementType(IJavaClassType elementClass, String basePackage) throws NotTapestryElementException {
-        String elementName;
-        try {
-            elementName = elementClass.getFullyQualifiedName().substring(basePackage.length() + 1);
-        } catch (IndexOutOfBoundsException ex) {
-            throw new NotTapestryElementException(elementClass.getFullyQualifiedName() + " is not under a Tapestry base package.");
-        }
+    return injectedPages;
+  }
 
-        if (elementName.startsWith(TapestryConstants.COMPONENTS_PACKAGE)) {
-            return ElementType.COMPONENT;
-        } else if (elementName.startsWith(TapestryConstants.PAGES_PACKAGE)) {
-            return ElementType.PAGE;
-        } else if (elementName.startsWith(TapestryConstants.MIXINS_PACKAGE)) {
-            return ElementType.MIXIN;
-        } else {
-            throw new NotTapestryElementException(elementClass.getFullyQualifiedName() + " is not under a Tapestry base package.");
-        }
+  public ElementType getElementType() {
+    return _elementType;
+  }
+
+  public String getDocumentation() throws Exception {
+    return DocumentationGenerationChain.getInstance().generate(this);
+  }
+
+  public String getClassRepresentation(IJavaClassType targetClass) throws Exception {
+    return ExternalizeToClassChain.getInstance().externalize(this, targetClass);
+  }
+
+  /**
+   * Constructs the element name from it's class and library root package.
+   *
+   * @param libraryRootPackage the library root package.
+   * @return the element name.
+   * @throws NotTapestryElementException if this is not a Tapestry element.
+   */
+  protected String getElementNameFromClass(String libraryRootPackage) throws NotTapestryElementException {
+    if (!_class.isPublic() || !_class.hasDefaultConstructor()) {
+      throw new NotTapestryElementException(_class.getFullyQualifiedName() + " is not a valid Tapestry class.");
     }
+
+    if (libraryRootPackage == null) {
+      throw new NotTapestryElementException(_class.getFullyQualifiedName() + " is not a valid Tapestry class.");
+    }
+
+    String elementClassFqn = _class.getFullyQualifiedName();
+    String elementName;
+
+    elementName = elementClassFqn.substring(libraryRootPackage.length() + 1);
+    if (elementName.startsWith(TapestryConstants.COMPONENTS_PACKAGE)) {
+      elementName = PathUtils.packageIntoPath(elementName.substring(TapestryConstants.COMPONENTS_PACKAGE.length() + 1), false);
+    }
+    else if (elementName.startsWith(TapestryConstants.PAGES_PACKAGE)) {
+      elementName = PathUtils.packageIntoPath(elementName.substring(TapestryConstants.PAGES_PACKAGE.length() + 1), false);
+    }
+    else if (elementName.startsWith(TapestryConstants.MIXINS_PACKAGE)) {
+      elementName = PathUtils.packageIntoPath(elementName.substring(TapestryConstants.MIXINS_PACKAGE.length() + 1), false);
+    }
+    else {
+      throw new NotTapestryElementException(_class.getFullyQualifiedName() + " is not under a Tapestry base package.");
+    }
+
+    return elementName;
+  }
+
+  /**
+   * Checks if the files in a group of resources are all valid.
+   *
+   * @param resources the resources to check.
+   * @return <code>true</code if all the resources are valid, <code>false</false> otherwise.
+   */
+  protected static boolean checkAllValidResources(IResource[] resources) {
+    for (IResource resource : resources) {
+      if (resource.getFile() == null || !resource.getFile().exists()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private static ElementType getElementType(IJavaClassType elementClass, String basePackage) throws NotTapestryElementException {
+    String elementName;
+    try {
+      elementName = elementClass.getFullyQualifiedName().substring(basePackage.length() + 1);
+    }
+    catch (IndexOutOfBoundsException ex) {
+      throw new NotTapestryElementException(elementClass.getFullyQualifiedName() + " is not under a Tapestry base package.");
+    }
+
+    if (elementName.startsWith(TapestryConstants.COMPONENTS_PACKAGE)) {
+      return ElementType.COMPONENT;
+    }
+    else if (elementName.startsWith(TapestryConstants.PAGES_PACKAGE)) {
+      return ElementType.PAGE;
+    }
+    else if (elementName.startsWith(TapestryConstants.MIXINS_PACKAGE)) {
+      return ElementType.MIXIN;
+    }
+    else {
+      throw new NotTapestryElementException(elementClass.getFullyQualifiedName() + " is not under a Tapestry base package.");
+    }
+  }
 }

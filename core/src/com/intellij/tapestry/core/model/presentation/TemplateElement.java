@@ -1,14 +1,17 @@
 package com.intellij.tapestry.core.model.presentation;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * An template element.
  */
 public class TemplateElement implements Comparable {
 
+    @NotNull
     private InjectedElement _element;
     private String _template;
 
-    public TemplateElement(InjectedElement element, String template) {
+    public TemplateElement(@NotNull InjectedElement element, String template) {
         _element = element;
         _template = template;
     }
