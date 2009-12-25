@@ -90,6 +90,7 @@ public class ClassTemplateNavigation extends AnAction {
   @Nullable
   public static VirtualFile findNavigationTarget(@NotNull PsiFile psiFile, @NotNull Module module, String presentationText) {
     final TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(module);
+    if (project == null) return null;
     if (psiFile instanceof PsiClassOwner && presentationText.equals("Class <-> Template Navigation")) {
       PsiClass psiClass = IdeaUtils.findPublicClass(psiFile);
       if (psiClass == null) return null;
@@ -103,7 +104,9 @@ public class ClassTemplateNavigation extends AnAction {
 
     if (psiFile.getFileType().equals(TmlFileType.INSTANCE) &&
         (presentationText.equals("Class <-> Template Navigation") || presentationText.equals("Tapestry Class"))) {
-      IJavaClassType elementClass = project.findElementByTemplate(psiFile).getElementClass();
+      final PresentationLibraryElement template = project.findElementByTemplate(psiFile);
+      if (template == null) return null;
+      IJavaClassType elementClass = template.getElementClass();
       if (elementClass != null) {
         return ((IntellijJavaClassType)elementClass).getPsiClass().getContainingFile().getVirtualFile();
       }
