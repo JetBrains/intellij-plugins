@@ -1,6 +1,7 @@
 package com.intellij.tapestry.core.java;
 
 import com.intellij.tapestry.core.resource.IResource;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -34,6 +35,9 @@ public interface IJavaClassType extends IJavaType {
      * @return <code>true</code> if the type has the default constructor, <code>false</false> otherwise.
      */
     boolean hasDefaultConstructor();
+
+    @Nullable
+    IJavaClassType getSuperClassType();
 
     /**
      * @return @return <code>true</code> if the type is an Enum, <code>false</false> otherwise.

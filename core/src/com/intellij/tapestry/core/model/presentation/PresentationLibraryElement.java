@@ -130,6 +130,15 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
    */
   public abstract IResource[] getTemplate();
 
+  public IResource[] getTemplateConsiderSuperClass() {
+    IResource[] resources = getTemplate();
+    if (resources.length > 0) return resources;
+    IJavaClassType superClass = getElementClass().getSuperClassType();
+    if (superClass == null) return IResource.EMPTY_ARRAY;
+    PresentationLibraryElement superElement = getProject().findElement(superClass);
+    return superElement == null ? IResource.EMPTY_ARRAY : superElement.getTemplateConsiderSuperClass();
+  }
+
   /**
    * Finds the message catalogs associated with this element and returns then.
    * It returns an array because an element can have more than one localized message catalog.
@@ -163,7 +172,7 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
       return _messageCatalogCache;
     }
     else {
-      _messageCatalogCache = new IResource[0];
+      _messageCatalogCache = IResource.EMPTY_ARRAY;
     }
 
     return _messageCatalogCache;

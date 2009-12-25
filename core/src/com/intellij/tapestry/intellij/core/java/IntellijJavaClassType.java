@@ -75,6 +75,15 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   /**
    * {@inheritDoc}
    */
+  @Nullable
+  public IntellijJavaClassType getSuperClassType() {
+    PsiClass superClass = getPsiClass().getSuperClass();
+    return superClass != null ? new IntellijJavaClassType(_module, superClass.getContainingFile()) : null;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public boolean hasDefaultConstructor() {
     return PsiUtil.hasDefaultConstructor(getPsiClass());
   }

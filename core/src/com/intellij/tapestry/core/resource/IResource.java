@@ -7,26 +7,28 @@ import java.io.File;
  */
 public interface IResource {
 
-    /**
-     * @return the resource file name.
-     */
-    String getName();
+  IResource[] EMPTY_ARRAY = new IResource[0];
 
-    /**
-     * @return the file behind this resource.
-     */
-    File getFile();
+  /**
+   * @return the resource file name.
+   */
+  String getName();
 
-    /**
-     * @return the file extension without the '.'.
-     */
-    String getExtension();
+  /**
+   * @return the file behind this resource.
+   */
+  File getFile();
 
-    /**
-     * Starts the visitor pattern execution.
-     * If this resource is not a XML file then this should do nothing.
-     *
-     * @param visitor the visitor.
-     */
-    void accept(CoreXmlRecursiveElementVisitor visitor);
+  /**
+   * @return the file extension without the '.'.
+   */
+  String getExtension();
+
+  /**
+   * Starts the visitor pattern execution.
+   * If this resource is not a XML file then this should do nothing.
+   *
+   * @param visitor the visitor.
+   */
+  void accept(CoreXmlRecursiveElementVisitor visitor);
 }

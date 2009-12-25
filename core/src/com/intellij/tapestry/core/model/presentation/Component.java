@@ -20,58 +20,57 @@ import java.util.List;
  */
 public class Component extends ParameterReceiverElement implements ExternalizableToTemplate {
 
-    private IResource[] _templateCache;
+  private IResource[] _templateCache;
 
-    protected Component(@NotNull Library library, @NotNull IJavaClassType componentClass, @NotNull TapestryProject project) throws NotTapestryElementException {
-        super(library, componentClass, project);
+  protected Component(@NotNull Library library, @NotNull IJavaClassType componentClass, @NotNull TapestryProject project)
+    throws NotTapestryElementException {
+    super(library, componentClass, project);
+  }
+
+  protected Component(@NotNull IJavaClassType componentClass, @NotNull TapestryProject project) throws NotTapestryElementException {
+    super(null, componentClass, project);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public boolean allowsTemplate() {
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public IResource[] getTemplate() {
+    if (_templateCache != null && checkAllValidResources(_templateCache)) {
+      return _templateCache;
     }
 
-    protected Component(@NotNull IJavaClassType componentClass, @NotNull TapestryProject project) throws NotTapestryElementException {
-        super(null, componentClass, project);
+    final String fqn = getElementClass().getFullyQualifiedName();
+    String packageName = fqn.substring(0, fqn.lastIndexOf('.'));
+
+    // Search in the classpath
+    Collection<IResource> resources = getProject().getResourceFinder().findLocalizedClasspathResource(
+      PathUtils.packageIntoPath(packageName, true) +
+      PathUtils.getLastPathElement(getName()) +
+      "." +
+      TapestryConstants.TEMPLATE_FILE_EXTENSION, true);
+
+    if (resources.size() > 0) {
+      List<IResource> templates = new ArrayList<IResource>();
+      for (IResource template : resources) {
+        templates.add(template);
+      }
+      _templateCache = templates.toArray(new IResource[templates.size()]);
+    }
+    else {
+      _templateCache = IResource.EMPTY_ARRAY;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean allowsTemplate() {
-        return true;
-    }
+    return _templateCache;
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public IResource[] getTemplate() {
-        if (_templateCache != null && checkAllValidResources(_templateCache)) {
-            return _templateCache;
-        }
-
-      final String fqn = getElementClass().getFullyQualifiedName();
-      String packageName = fqn.substring(0, fqn.lastIndexOf('.'));
-
-        // Search in the classpath
-        Collection<IResource> resources = getProject().getResourceFinder().findLocalizedClasspathResource(
-                PathUtils.packageIntoPath(packageName, true) +
-                        PathUtils.getLastPathElement(getName()) +
-                        "." + TapestryConstants.TEMPLATE_FILE_EXTENSION, true
-        );
-
-        if (resources.size() > 0) {
-            List<IResource> templates = new ArrayList<IResource>();
-
-            for (IResource template : resources)
-                templates.add(template);
-
-            _templateCache = templates.toArray(new IResource[templates.size()]);
-
-            return _templateCache;
-        } else {
-            _templateCache = new IResource[0];
-        }
-
-        return _templateCache;
-    }
-
-    public String getTemplateRepresentation(String namespacePrefix) throws Exception {
-        return ExternalizeToTemplateChain.getInstance().externalize(this, namespacePrefix);
-    }
+  public String getTemplateRepresentation(String namespacePrefix) throws Exception {
+    return ExternalizeToTemplateChain.getInstance().externalize(this, namespacePrefix);
+  }
 }

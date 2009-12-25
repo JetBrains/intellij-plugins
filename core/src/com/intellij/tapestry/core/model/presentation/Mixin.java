@@ -23,13 +23,13 @@ public class Mixin extends ParameterReceiverElement {
      * {@inheritDoc}
      */
     public IResource[] getTemplate() {
-        return new IResource[0];
+        return IResource.EMPTY_ARRAY;
     }
 
     /**
      * {@inheritDoc}
      */
     public IResource[] getMessageCatalog() {
-        return new IResource[0];
+        return IResource.EMPTY_ARRAY;
     }
 }

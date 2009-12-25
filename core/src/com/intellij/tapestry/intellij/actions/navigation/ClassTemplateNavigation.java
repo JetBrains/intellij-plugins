@@ -15,7 +15,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
+import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
@@ -87,29 +87,23 @@ public class ClassTemplateNavigation extends AnAction {
     }
   }
 
+  @Nullable
   public static VirtualFile findNavigationTarget(@NotNull PsiFile psiFile, @NotNull Module module, String presentationText) {
+    final TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(module);
     if (psiFile instanceof PsiClassOwner && presentationText.equals("Class <-> Template Navigation")) {
-      try {
-        PsiClass psiClass = IdeaUtils.findPublicClass(psiFile);
-        if (psiClass == null) return null;
+      PsiClass psiClass = IdeaUtils.findPublicClass(psiFile);
+      if (psiClass == null) return null;
 
-        PresentationLibraryElement tapestryElement = PresentationLibraryElement
-            .createProjectElementInstance(new IntellijJavaClassType(module, psiClass.getContainingFile()),
-                                          TapestryModuleSupportLoader.getTapestryProject(module));
-        if (!tapestryElement.allowsTemplate() || tapestryElement.getTemplate().length == 0) return null;
-        IResource template = tapestryElement.getTemplate()[0];
-        if (template != null) {
-          return ((IntellijResource)template).getPsiFile().getVirtualFile();
-        }
-      }
-      catch (NotTapestryElementException ignored) {
-      }
-      return null;
+      PresentationLibraryElement tapestryElement =
+        PresentationLibraryElement.createProjectElementInstance(new IntellijJavaClassType(module, psiClass.getContainingFile()), project);
+      if (!tapestryElement.allowsTemplate()) return null;
+      IResource[] templates = tapestryElement.getTemplateConsiderSuperClass();
+      return templates.length != 0 && templates[0] != null ? ((IntellijResource)templates[0]).getPsiFile().getVirtualFile() : null;
     }
 
     if (psiFile.getFileType().equals(TmlFileType.INSTANCE) &&
         (presentationText.equals("Class <-> Template Navigation") || presentationText.equals("Tapestry Class"))) {
-      IJavaClassType elementClass = TapestryModuleSupportLoader.getTapestryProject(module).findElementByTemplate(psiFile).getElementClass();
+      IJavaClassType elementClass = project.findElementByTemplate(psiFile).getElementClass();
       if (elementClass != null) {
         return ((IntellijJavaClassType)elementClass).getPsiClass().getContainingFile().getVirtualFile();
       }

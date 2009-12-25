@@ -20,8 +20,8 @@ public class TapestryActionsTest extends TapestryBaseTestCase {
 
   public void testNavigateToTemplate() throws Throwable {
     VirtualFile tmlFile = initByComponent(true);
-
     final PsiFile psiFile = myFixture.getPsiManager().findFile(tmlFile);
+    
     assertNotNull("No PsiFile for template", psiFile);
     VirtualFile fileFoundByAction =
       ClassTemplateNavigation.findNavigationTarget(psiFile, myFixture.getModule(), "Class <-> Template Navigation");
@@ -32,11 +32,24 @@ public class TapestryActionsTest extends TapestryBaseTestCase {
   public void testNavigateToClass() throws Throwable {
     VirtualFile javaFile = initByComponent(false);
     final PsiFile psiFile = myFixture.getPsiManager().findFile(javaFile);
+
     assertNotNull("No PsiFile for java file", psiFile);
     VirtualFile fileFoundByAction =
       ClassTemplateNavigation.findNavigationTarget(psiFile, myFixture.getModule(), "Class <-> Template Navigation");
     assertNotNull("Template file not found by the action", fileFoundByAction);
     assertEquals(getElementTemplateFileName(), fileFoundByAction.getName());
+  }
+
+  public void testNavigateToTemplateFromSuper() throws Throwable {
+    VirtualFile pageTemplates = addPageToProject("StartPage");
+    VirtualFile javaFile = initByComponent(false);
+
+    final PsiFile psiFile = myFixture.getPsiManager().findFile(javaFile);
+    assertNotNull("No PsiFile for java file", psiFile);
+    VirtualFile fileFoundByAction =
+      ClassTemplateNavigation.findNavigationTarget(psiFile, myFixture.getModule(), "Class <-> Template Navigation");
+    assertNotNull("Template file not found by the action", fileFoundByAction);
+    assertEquals(pageTemplates.getName(), fileFoundByAction.getName());
   }
 
   public void testCommentBlock() throws Throwable {

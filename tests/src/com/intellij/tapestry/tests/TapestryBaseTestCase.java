@@ -142,10 +142,13 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     initByComponent(true);
   }
 
+  @NotNull
   protected VirtualFile initByComponent(boolean configureByTmlNotJava) throws IOException {
     VirtualFile javaFile = copyOrCreateComponentClassFile();
     final String tmlName = getElementTemplateFileName();
-    VirtualFile tmlFile = myFixture.copyFileToProject(tmlName, COMPONENTS_PACKAGE_PATH + tmlName);
+
+    boolean copyTmlFile = configureByTmlNotJava || new File(myFixture.getTestDataPath() + "/" + tmlName).exists();
+    VirtualFile tmlFile = copyTmlFile ? myFixture.copyFileToProject(tmlName, COMPONENTS_PACKAGE_PATH + tmlName) : null;
     final VirtualFile result = configureByTmlNotJava ? tmlFile : javaFile;
     myFixture.configureFromExistingVirtualFile(result);
     return result;
@@ -193,12 +196,12 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     addElementToProject(COMPONENTS_PACKAGE_PATH, className, getAuxClassExtension());
   }
 
-  protected void addPageToProject(String className) throws IOException {
-    addElementToProject(PAGES_PACKAGE_PATH, className, getTemplateExtension());
+  protected VirtualFile addPageToProject(String className) throws IOException {
     addElementToProject(PAGES_PACKAGE_PATH, className, getAuxClassExtension());
+    return addElementToProject(PAGES_PACKAGE_PATH, className, getTemplateExtension());
   }
 
-  private void addElementToProject(String relativePath, String className, String ext) throws IOException {
+  private VirtualFile addElementToProject(String relativePath, String className, String ext) throws IOException {
     final int afterDotIndex = className.lastIndexOf('.');
     String fileText;
     if (afterDotIndex != -1) {
@@ -214,14 +217,16 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     else {
       fileText = Util.getCommonTestDataFileText(className + ext);
     }
-    addFileAndAllowTreeAccess(relativePath + className + ext, fileText);
+    return addFileAndAllowTreeAccess(relativePath + className + ext, fileText);
   }
 
-  private void addFileAndAllowTreeAccess(String targetPath, String fileText) throws IOException {
+  private VirtualFile addFileAndAllowTreeAccess(String targetPath, String fileText) throws IOException {
     final PsiFile file = myFixture.addFileToProject(targetPath, fileText);
     Assert.assertNotNull(file);
-    Assert.assertNotNull(file.getVirtualFile());
-    myFixture.allowTreeAccessForFile(file.getVirtualFile());
+    final VirtualFile virtualFile = file.getVirtualFile();
+    Assert.assertNotNull(virtualFile);
+    myFixture.allowTreeAccessForFile(virtualFile);
+    return virtualFile;
   }
 
   protected static String[] mergeArrays(String[] array, @NonNls String... list) {

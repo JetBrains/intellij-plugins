@@ -43,7 +43,7 @@ public class TemplateElement implements Comparable {
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
-        return !(obj == null || !(obj instanceof TemplateElement)) &&
+        return obj != null && obj instanceof TemplateElement &&
                 getElement().equals(((TemplateElement) obj).getElement()) &&
                 getTemplate().equals(((TemplateElement) obj).getTemplate());
     }
