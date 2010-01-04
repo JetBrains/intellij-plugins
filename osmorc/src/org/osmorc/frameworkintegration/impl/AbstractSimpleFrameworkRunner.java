@@ -54,6 +54,7 @@ public abstract class AbstractSimpleFrameworkRunner<P extends PropertiesWrapper>
     protected AbstractSimpleFrameworkRunner() {
     }
 
+    @NotNull
     public List<VirtualFile> getFrameworkStarterLibraries() {
         List<VirtualFile> result = new ArrayList<VirtualFile>();
 
@@ -121,7 +122,7 @@ public abstract class AbstractSimpleFrameworkRunner<P extends PropertiesWrapper>
     protected abstract Map<String, String> getSystemProperties(@NotNull SelectedBundle[] bundlesToInstall,
                                                                @NotNull P additionalProperties);
 
-    public void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall) {
+    public final void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall) {
         runCustomInstallationSteps(bundlesToInstall, getAdditionalProperties());
     }
 

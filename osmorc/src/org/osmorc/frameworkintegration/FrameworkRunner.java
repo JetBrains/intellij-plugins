@@ -59,6 +59,7 @@ public interface FrameworkRunner extends Disposable {
      *
      * @return a list containing all needed library virtual files.
      */
+    @NotNull
     List<VirtualFile> getFrameworkStarterLibraries();
 
     void fillCommandLineParameters(ParametersList commandLineParameters, @NotNull SelectedBundle[] bundlesToInstall);

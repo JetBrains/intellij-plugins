@@ -35,8 +35,10 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.compiler.DummyCompileContext;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -133,6 +135,7 @@ public class OsgiRunState extends JavaCommandLineState {
                 bundlePath = bundlePath.replace('/', File.separatorChar);
 
                 classpath.add(bundlePath);
+
             }
         }
 

@@ -27,6 +27,7 @@ package org.osmorc.frameworkintegration.impl.concierge;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
+import org.osmorc.frameworkintegration.impl.AbstractPaxBasedFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.AbstractSimpleFrameworkRunner;
 import org.osmorc.run.ui.SelectedBundle;
 
@@ -40,74 +41,16 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:al@chilibi.org">Alain Greppin</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ConciergeFrameworkRunner extends AbstractSimpleFrameworkRunner<ConciergeRunProperties> {
-    @NotNull
-    protected String[] getCommandlineParameters(@NotNull SelectedBundle[] bundlesToInstall,
-                                                @NotNull ConciergeRunProperties runProperties) {
-        return new String[]{};
-    }
-
-    @NotNull
-    protected Map<String, String> getSystemProperties(@NotNull SelectedBundle[] bundlesToInstall,
-                                                      @NotNull ConciergeRunProperties runProperties) {
-        Map<String, String> props = new HashMap<String, String>();
-        int level = 0;
-        for (SelectedBundle bundle : bundlesToInstall) {
-            int startLevel = bundle.getStartLevel();
-            level = Math.max(level, startLevel);
-            String installBundles = props.get("osgi.auto.install");
-            String bundleUrl = bundle.getBundleUrl();
-            if (bundleUrl != null) {
-                bundleUrl = bundleUrl.replaceAll(" ", "%20");
-            }
-            installBundles = installBundles != null ? installBundles + " " + bundleUrl : bundleUrl;
-
-            String startBundles = props.get("osgi.auto.start");
-            if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundleUrl)) {
-                startBundles = startBundles != null ? startBundles + " " + bundleUrl : bundleUrl;
-            }
-            if (installBundles != null) {
-                props.put("osgi.auto.install", installBundles);
-            }
-            if (startBundles != null) {
-                props.put("osgi.auto.start", startBundles);
-            }
-        }
-
-        props.put("osgi.startlevel.framework", String.valueOf(level));
-        // http://concierge.sourceforge.net/properties.html
-        props.put("osgi.init", "true");
-
-        // setup the framework storage directory.
-        props.put("ch.ethz.iks.concierge.storage", getFrameworkDirCanonicalPath());
-
-        // show errors, otherwise the user will be going crazy...
-        if (runProperties.isDebugMode()) {
-            props.put("ch.ethz.iks.concierge.debug", "true");
-        }
-
-        return props;
-    }
-
-    protected void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall,
-                                              @NotNull ConciergeRunProperties runProperties) {
-    }
-
-
-    @NotNull
-    @NonNls
-    public String getMainClass() {
-        return "ch.ethz.iks.concierge.framework.Framework";
-    }
+public class ConciergeFrameworkRunner extends AbstractPaxBasedFrameworkRunner<ConciergeRunProperties> {
 
     @NotNull
     protected ConciergeRunProperties convertProperties(Map<String, String> properties) {
         return new ConciergeRunProperties(properties);
     }
 
-    protected Pattern getFrameworkStarterClasspathPattern() {
-        return FRAMEWORK_STARTER_JAR_PATTERN;
+    @NotNull
+    @Override
+    protected String getOsgiFrameworkName() {
+        return "Concierge";
     }
-
-    private static final Pattern FRAMEWORK_STARTER_JAR_PATTERN = Pattern.compile("^concierge-.*.jar");
 }
