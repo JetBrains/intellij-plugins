@@ -394,6 +394,10 @@ public class BundleCompiler implements PackagingCompiler {
     @Nullable
     public static VirtualFile getManifestFile(@NotNull Module module) {
         OsmorcFacet facet = OsmorcFacet.getInstance(module);
+        // FIXES Exception (http://ea.jetbrains.com/browser/ea_problems/17161)
+        if ( facet == null ) {
+            return null;
+        }
         ModuleRootManager manager = ModuleRootManager.getInstance(module);
         for (VirtualFile root : manager.getContentRoots()) {
             VirtualFile result = VfsUtil.findRelativeFile(facet.getManifestLocation(), root);
