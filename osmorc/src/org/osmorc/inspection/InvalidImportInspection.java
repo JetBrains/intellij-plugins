@@ -271,13 +271,20 @@ public class InvalidImportInspection extends LocalInspectionTool {
         BundleDescription containerDescription = bundleManager.getBundleDescription(containingBundle);
         BundleDescription importerDescription = bundleManager.getBundleDescription(importingBundle);
 
-        assert importerDescription != null;
-        assert containingPackage != null;
+        // FIXES Exception ID: 16964. getBundleDescription and JavaDirectoryService.getPackage are @Nullable
+//        assert importerDescription != null;
+//        assert containingPackage != null;
+
+        if ( importerDescription != null && containingPackage != null ) {
 
         return containerDescription == null ||
                 isDirectImportExport(containingPackage, exporterDescription, importerDescription, bundleManager) ||
                 isContainerExportingPackage(containingPackage, containerDescription) &&
                         isRecursiveRequired(importerDescription, containerDescription, bundleManager);
+        }
+        else {
+            return false;
+        }
 
     }
 
