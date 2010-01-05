@@ -32,7 +32,6 @@ import aQute.lib.osgi.Verifier;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -42,7 +41,6 @@ import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ApplicationSettings;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.HashMap;
@@ -113,14 +111,12 @@ public class BndWrapper {
             }
         }
         catch (final Exception e) {
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    Messages.showErrorDialog(
-                            OsmorcBundle.getTranslation("bundlecompiler.bundlifying.problem.message", sourceJarUrl,
-                                    e.toString()),
-                            OsmorcBundle.getTranslation("error"));
-                }
-            });
+            // There is some reported issue where a lot of exceptions have been thrown which caused a ton of popup
+            // boxes, so we better put this into the compile context as normal error message. Can't reproduce the issue
+            // but i think it's stil the better way.
+            // IDEA-27101
+            compileContext.addMessage(CompilerMessageCategory.ERROR,
+                    OsmorcBundle.getTranslation("bundlecompiler.bundlifying.problem.message", sourceJarUrl, e.toString()), null, 0, 0);
 
         }
         return null;
