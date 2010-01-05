@@ -115,7 +115,7 @@ public class ProjectSettingsEditor implements Configurable, ProjectSettingsAware
     }
 
     public String getHelpTopic() {
-        return null;
+        return "reference.settings.project.osgi.project.settings";
     }
 
     public JComponent createComponent() {

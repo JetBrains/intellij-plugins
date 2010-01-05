@@ -19,14 +19,16 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
-import com.intellij.struts2.dom.struts.strutspackage.*;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
+import com.intellij.struts2.dom.struts.strutspackage.InterceptorRefResolveConverter;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author Yann C&eacute;bron
@@ -41,7 +43,7 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
       return Collections.emptySet();
     }
 
-    return getAllInterceptorsAndStacks(strutsModel);
+    return strutsModel.getAllInterceptorsAndStacks();
   }
 
   public InterceptorOrStackBase fromString(@Nullable @NonNls final String name, final ConvertContext context) {
@@ -55,23 +57,11 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
       return null;
     }
 
-    return ContainerUtil.find(getAllInterceptorsAndStacks(strutsModel), new Condition<InterceptorOrStackBase>() {
+    return ContainerUtil.find(strutsModel.getAllInterceptorsAndStacks(), new Condition<InterceptorOrStackBase>() {
       public boolean value(final InterceptorOrStackBase interceptorOrStackBase) {
-        return Comparing.equal(interceptorOrStackBase.getName().getStringValue(), name);
+        return Comparing.strEqual(interceptorOrStackBase.getName().getStringValue(), name);
       }
     });
-  }
-
-  @NotNull
-  private static Set<InterceptorOrStackBase> getAllInterceptorsAndStacks(final StrutsModel strutsModel) {
-    final Set<InterceptorOrStackBase> variants = new HashSet<InterceptorOrStackBase>();
-    for (final StrutsPackage strutsPackage : strutsModel.getStrutsPackages()) {
-      final List<InterceptorStack> interceptorList = strutsPackage.getInterceptorStacks();
-      variants.addAll(interceptorList);
-      final List<Interceptor> interceptors = strutsPackage.getInterceptors();
-      variants.addAll(interceptors);
-    }
-    return variants;
   }
 
 }

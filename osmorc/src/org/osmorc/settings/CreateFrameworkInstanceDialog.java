@@ -157,7 +157,12 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
         return _nameTextField.getText();
     }
 
-    private JPanel _mainPanel;
+  @Override
+  protected String getHelpId() {
+    return "reference.settings.project.osgi.new.framework.instance";
+  }
+
+  private JPanel _mainPanel;
     private JComboBox _integratorComboBox;
     private JTextField _nameTextField;
     private TextFieldWithBrowseButton _baseFolderChooser;

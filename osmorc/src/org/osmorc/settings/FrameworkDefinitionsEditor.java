@@ -224,7 +224,7 @@ public class FrameworkDefinitionsEditor implements Configurable, ApplicationSett
     }
 
     public String getHelpTopic() {
-        return null;
+        return "reference.settings.project.osgi.framework.definitions";
     }
 
     public JComponent createComponent() {

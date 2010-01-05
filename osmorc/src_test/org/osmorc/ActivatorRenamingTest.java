@@ -54,13 +54,13 @@ import static org.junit.Assert.assertThat;
  */
 public class ActivatorRenamingTest {
     public ActivatorRenamingTest() {
-        fixture = TestUtil.createTestFixture();
     }
 
     @Before
     public void setUp() throws Exception {
         myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
         myTempDirFixture.setUp();
+        fixture = TestUtil.createTestFixture();
         fixture.setUp();
         TestUtil.loadModules("ActivatorRenamingTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
         TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
@@ -69,6 +69,7 @@ public class ActivatorRenamingTest {
     @After
     public void tearDown() throws Exception {
         fixture.tearDown();
+        fixture = null;
         myTempDirFixture.tearDown();
     }
 
@@ -177,6 +178,6 @@ public class ActivatorRenamingTest {
     }
 
 
-    private final IdeaProjectTestFixture fixture;
+    private IdeaProjectTestFixture fixture;
     private TempDirTestFixture myTempDirFixture;
 }
