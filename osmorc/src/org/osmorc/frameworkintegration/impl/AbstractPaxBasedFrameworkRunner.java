@@ -95,7 +95,14 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
         }
 
         if (runProperties.isDebugMode()) {
-            params.add("--log=debug");
+            params.add("--log=DEBUG");
+        }
+
+        if (runProperties.isStartConsole()) {
+            params.add("--console");
+        }
+        else {
+            params.add("--noConsole");
         }
 
         return ArrayUtil.toStringArray(params);

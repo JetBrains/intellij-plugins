@@ -35,44 +35,45 @@ import java.util.Map;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class GenericRunProperties extends PropertiesWrapper
-{
-  public GenericRunProperties(Map<String, String> properties)
-  {
-    super(properties);
-  }
+public class GenericRunProperties extends PropertiesWrapper {
+    public static final String DEBUG_MODE = "debugMode";
+    public static final String START_CONSOLE = "startConsole";
+    public static final String SYSTEM_PACKAGES = "systemPackages";
+    public static final String BOOT_DELEGATION = "bootDelegation";
 
-  public boolean isDebugMode()
-  {
-    return getBooleanProperty(DEBUG_MODE);
-  }
+    public GenericRunProperties(Map<String, String> properties) {
+        super(properties);
+    }
 
-  public void setDebugMode(boolean debugMode)
-  {
-    putBooleanProperty(DEBUG_MODE, debugMode);
-  }
+    public String getBootDelegation() {
+        return getProperty(BOOT_DELEGATION);
+    }
 
-  public String getSystemPackages()
-  {
-    return getProperty(SYSTEM_PACKAGES);
-  }
+    public String getSystemPackages() {
+        return getProperty(SYSTEM_PACKAGES);
+    }
 
-  public void setSystemPackages(String value)
-  {
-    putProperty(SYSTEM_PACKAGES, value);
-  }
+    public boolean isDebugMode() {
+        return getBooleanProperty(DEBUG_MODE);
+    }
 
-  public String getBootDelegation()
-  {
-    return getProperty(BOOT_DELEGATION);
-  }
+    public void setBootDelegation(String value) {
+        putProperty(BOOT_DELEGATION, value);
+    }
 
-  public void setBootDelegation(String value)
-  {
-    putProperty(BOOT_DELEGATION, value);
-  }
+    public void setDebugMode(boolean debugMode) {
+        putBooleanProperty(DEBUG_MODE, debugMode);
+    }
 
-  public static final String DEBUG_MODE = "debugMode";
-  public static final String SYSTEM_PACKAGES = "systemPackages";
-  public static final String BOOT_DELEGATION = "bootDelegation";
+    public void setSystemPackages(String value) {
+        putProperty(SYSTEM_PACKAGES, value);
+    }
+
+    public void setStartConsole(boolean value) {
+        putBooleanProperty(START_CONSOLE, value);
+    }
+
+    public boolean isStartConsole() {
+        return getBooleanProperty(START_CONSOLE);
+    }
 }
