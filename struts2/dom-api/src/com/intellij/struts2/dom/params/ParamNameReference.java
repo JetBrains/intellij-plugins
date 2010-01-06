@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.beanProperties.CreateBeanPropertyFix;
 import com.intellij.psi.util.PropertyUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,7 +68,7 @@ class ParamNameReference extends PsiReferenceBase<PsiElement>
   public Object[] getVariants() {
     final PsiClass psiClass = getPsiClass();
     if (psiClass == null) {
-      return EMPTY_ARRAY;
+      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     final Map<String, PsiMethod> properties = PropertyUtil.getAllProperties(psiClass, true, !isLast());

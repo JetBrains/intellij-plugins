@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,7 @@ import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.model.constant.StrutsConstant;
 import com.intellij.struts2.model.constant.StrutsConstantManager;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
@@ -60,7 +61,7 @@ public class WebXmlStrutsConstantNameReferenceProvider extends PsiReferenceProvi
     public Object[] getVariants() {
       final Module module = ModuleUtil.findModuleForPsiElement(myElement);
       if (module == null) {
-        return EMPTY_ARRAY;
+        return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
 
       final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(myElement.getProject());

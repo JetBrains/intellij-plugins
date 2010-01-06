@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,7 @@ import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.model.constant.StrutsConstantKey;
 import com.intellij.struts2.model.constant.StrutsConstantManager;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -94,12 +95,12 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
   @SuppressWarnings({"unchecked"})
   public Object[] getVariants() {
     if (elementConverterPair == null) {
-      return EMPTY_ARRAY;
+      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     final Converter converter = elementConverterPair.second;
     if (!(converter instanceof ResolvingConverter)) {
-      return EMPTY_ARRAY;
+      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     final ResolvingConverter resolvingConverter = (ResolvingConverter) converter;
@@ -132,7 +133,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
       }
     }
 
-    return variants.toArray(new Object[variants.size()]);
+    return ArrayUtil.toObjectArray(variants);
   }
 
   /**
