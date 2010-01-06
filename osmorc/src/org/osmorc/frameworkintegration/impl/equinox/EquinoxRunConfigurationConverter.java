@@ -54,7 +54,7 @@ public class EquinoxRunConfigurationConverter extends ProjectConverter {
             for (Element element : (Collection<? extends Element>) runManagerSettings.getRunConfigurations()) {
                 final String confType = element.getAttributeValue("type");
                 if (EQUINOX_RUN_CONFIGURATION_TYPE.equals(confType)) {
-                  return true;
+                    return true;
                 }
             }
 
@@ -98,7 +98,7 @@ public class EquinoxRunConfigurationConverter extends ProjectConverter {
                     EquinoxRunProperties runProperties = new EquinoxRunProperties(osgiRunConfiguration.getAdditionalProperties());
                     runProperties.setEquinoxApplication(application);
                     runProperties.setEquinoxProduct(product);
-                    runProperties.setStartEquinoxOSGIConsole(equinoxConsole);
+                    runProperties.setStartConsole(equinoxConsole);
                     runProperties.setDebugMode(equinoxDebug);
                     runProperties.setCleanEquinoxCache(clean);
                     runProperties.setRecreateEquinoxConfigIni(clean);
@@ -143,6 +143,6 @@ public class EquinoxRunConfigurationConverter extends ProjectConverter {
         private static final String USE_UPDATE_CONFIGURATOR = "useUpdateConfigurator";
         @NonNls
         private static final String CLEAN = "clean";
-        
+
     }
 }
