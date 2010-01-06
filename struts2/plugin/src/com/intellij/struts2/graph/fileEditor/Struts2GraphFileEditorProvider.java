@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
@@ -40,6 +41,10 @@ public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvide
     final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
 
     if (!(psiFile instanceof XmlFile)) {
+      return false;
+    }
+
+    if (psiFile instanceof JspFile) {
       return false;
     }
 
