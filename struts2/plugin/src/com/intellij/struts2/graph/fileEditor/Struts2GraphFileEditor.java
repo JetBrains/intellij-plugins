@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@ package com.intellij.struts2.graph.fileEditor;
 
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.graph.builder.util.GraphViewUtil;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -85,10 +86,28 @@ public class Struts2GraphFileEditor extends PerspectiveFileEditor {
 
   private Struts2GraphComponent getStruts2GraphComponent() {
     if (myComponent == null) {
-      myComponent = new Struts2GraphComponent(myXmlFile);
+      myComponent = createGraphComponent();
       Disposer.register(this, myComponent);
     }
     return myComponent;
+  }
+
+
+  /**
+   * Creates graph component while showing modal wait dialog.
+   *
+   * @return new instance.
+   */
+  private Struts2GraphComponent createGraphComponent() {
+    final Struts2GraphComponent[] graphComponent = {null};
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
+      public void run() {
+        graphComponent[0] = new Struts2GraphComponent(myXmlFile);
+      }
+    }, "Generating graph", false, myXmlFile.getProject());
+
+
+    return graphComponent[0];
   }
 
 }
