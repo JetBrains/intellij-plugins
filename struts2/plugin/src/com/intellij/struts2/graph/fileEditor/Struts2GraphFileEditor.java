@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.intellij.struts2.graph.fileEditor;
 
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -65,7 +66,7 @@ public class Struts2GraphFileEditor extends PerspectiveFileEditor {
 
   @Nullable
   public JComponent getPreferredFocusedComponent() {
-    return null;
+     return getStruts2GraphComponent().getBuilder().getView().getJComponent();
   }
 
   public void commit() {
