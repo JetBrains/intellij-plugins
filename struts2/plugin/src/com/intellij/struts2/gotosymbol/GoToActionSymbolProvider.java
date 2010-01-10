@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,8 +21,8 @@ import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
-import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.facet.StrutsFacet;
+import com.intellij.util.Processor;
 import com.intellij.util.xml.model.gotosymbol.GoToSymbolProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,10 +46,12 @@ public class GoToActionSymbolProvider extends GoToSymbolProvider {
       return;
     }
 
-    final List<StrutsPackage> strutsPackageList = strutsModel.getStrutsPackages();
-    for (final StrutsPackage strutsPackage : strutsPackageList) {
-      addNewNames(strutsPackage.getActions(), result);
-    }
+    strutsModel.processActions(new Processor<Action>() {
+      public boolean process(final Action action) {
+        result.add(action.getName().getStringValue());
+        return true;
+      }
+    });
   }
 
   protected void addItems(@NotNull final Module module, final String name, final List<NavigationItem> result) {
@@ -61,8 +63,8 @@ public class GoToActionSymbolProvider extends GoToSymbolProvider {
     final List<Action> actions = strutsModel.findActionsByName(name, null);
     for (final Action action : actions) {
       final NavigationItem item = createNavigationItem(action.getXmlTag(),
-                                                       action.getName()
-                                                           .getStringValue() + " [" + action.getNamespace() + "]",
+                                                       action.getName().getStringValue() +
+                                                       " [" + action.getNamespace() + "]",
                                                        StrutsIcons.ACTION);
       result.add(item);
     }
