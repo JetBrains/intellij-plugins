@@ -51,7 +51,8 @@ class DescriptorUtil {
     return prefix.length() > 0 ? prefix + ":" + attrName : attrName;
   }
 
-  public static XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable Component component, @Nullable TapestryIdOrTypeAttributeDescriptor idAttrDescriptor) {
+  public static XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable Component component,
+                                                                 @Nullable TapestryIdOrTypeAttributeDescriptor idAttrDescriptor) {
     if (component == null) return XmlAttributeDescriptor.EMPTY;
     Collection<TapestryParameter> params = component.getParameters().values();
     XmlAttributeDescriptor[] descriptors = new XmlAttributeDescriptor[params.size() + (idAttrDescriptor != null ? 1 : 0)];
@@ -104,6 +105,12 @@ class DescriptorUtil {
     if (tmlDescriptor != null) return tmlDescriptor;
     XmlElementDescriptor htmlDescriptor = getHtmlTagDescriptor(tag, file);
     return htmlDescriptor != null ? new TapestryHtmlTagDescriptor(htmlDescriptor, TapestryUtils.getTypeOfTag(tag)) : null;
+  }
+
+  @Nullable
+  public static XmlElementDescriptor getHtmlTagDescriptorViaNsDescriptor(XmlTag tag) {
+    TmlFile file = getTmlFile(tag);
+    return file == null ? null : getHtmlTagDescriptor(tag, file);
   }
 
   @Nullable

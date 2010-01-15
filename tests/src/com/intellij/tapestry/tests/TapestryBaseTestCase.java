@@ -204,7 +204,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   private VirtualFile addElementToProject(String relativePath, String className, String ext) throws IOException {
     final int afterDotIndex = className.lastIndexOf('.');
     String fileText;
-    if (afterDotIndex != -1) {
+    if (afterDotIndex != -1) { // we want the element to be placed in the subpackage
       final String subpackage = className.substring(0, afterDotIndex);
       relativePath += subpackage.replace('.', '/') + '/';
       className = className.substring(afterDotIndex + 1);

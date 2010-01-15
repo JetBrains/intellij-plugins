@@ -53,6 +53,16 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     doTest(new TelReferencesInspection());
   }
 
+  public void testHtmlTagNameInHtmlParentTag() throws Throwable {
+    addComponentToProject("Count");
+    doTest();
+  }
+
+  public void testHtmlTagNameInHtmlParentTagError() throws Throwable {
+    addComponentToProject("Count");
+    doTest();
+  }
+
   protected void doTest(LocalInspectionTool... tools) throws Throwable {
     VirtualFile templateFile = initByComponent(true);
     myFixture.enableInspections(tools);

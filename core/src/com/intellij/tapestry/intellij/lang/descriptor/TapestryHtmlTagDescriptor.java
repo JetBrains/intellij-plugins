@@ -4,9 +4,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiWritableMetaData;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.TapestryConstants;
+import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
+import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -48,13 +49,18 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
 
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
     XmlElementDescriptor childDescriptor = myHtmlDelegate.getElementDescriptor(childTag, contextTag);
-    if (childDescriptor != null) return childDescriptor;
+    if (childDescriptor != null) {
+      return childDescriptor;
+    }
+    if (XmlUtil.XHTML_URI.equals(childTag.getNamespace()) && TapestryUtils.getIdentifyingAttribute(contextTag) != null) {
+      return DescriptorUtil.getHtmlTagDescriptorViaNsDescriptor(childTag);
+    }
     return DescriptorUtil.getTmlTagDescriptor(childTag);
   }
 
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
     XmlAttributeDescriptor[] tapestryAttrs =
-        context != null ? DescriptorUtil.getAttributeDescriptors(context) : DescriptorUtil.getAttributeDescriptors(myComponent, null);
+      context != null ? DescriptorUtil.getAttributeDescriptors(context) : DescriptorUtil.getAttributeDescriptors(myComponent, null);
     return ArrayUtil.mergeArrays(tapestryAttrs, myHtmlDelegate.getAttributesDescriptors(context), XmlAttributeDescriptor.class);
   }
 
