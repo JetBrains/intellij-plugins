@@ -50,6 +50,10 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
     private File workingDir;
     private File frameworkDir;
 
+    public boolean launchesOwnVM() {
+        return false;
+    }
+
     public void init(@NotNull final Project project, @NotNull final OsgiRunConfiguration runConfiguration) {
         this.project = project;
         this.runConfiguration = runConfiguration;
@@ -61,49 +65,41 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
     }
 
     @NotNull
-    public File getWorkingDir()
-    {
-      if (workingDir == null)
-      {
-        String path;
-        if( getRunConfiguration().getWorkingDir().length() == 0 ) {
-          path = PathManager.getSystemPath() + File.separator + "osmorc" + File.separator + "runtmp" + System.currentTimeMillis();
-        }
-        else {
-          path = getRunConfiguration().getWorkingDir();
-        }
+    public File getWorkingDir() {
+        if (workingDir == null) {
+            String path;
+            if (getRunConfiguration().getWorkingDir().length() == 0) {
+                path = PathManager.getSystemPath() + File.separator + "osmorc" + File.separator + "runtmp" +
+                        System.currentTimeMillis();
+            } else {
+                path = getRunConfiguration().getWorkingDir();
+            }
 
-        File dir = new File(path);
-        if (!dir.exists())
-        {
-          //noinspection ResultOfMethodCallIgnored
-          dir.mkdirs();
+            File dir = new File(path);
+            if (!dir.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                dir.mkdirs();
+            }
+            workingDir = dir;
         }
-        workingDir = dir;
-      }
-      return workingDir;
+        return workingDir;
     }
 
-    protected File getFrameworkDir()
-    {
-      if (frameworkDir == null)
-      {
-        if (getRunConfiguration().getFrameworkDir().length() > 0) {
-          String path = getRunConfiguration().getFrameworkDir();
-          File dir = new File(path);
-          if (!dir.exists())
-          {
-            //noinspection ResultOfMethodCallIgnored
-            dir.mkdirs();
-          }
-          frameworkDir = dir;
+    protected File getFrameworkDir() {
+        if (frameworkDir == null) {
+            if (getRunConfiguration().getFrameworkDir().length() > 0) {
+                String path = getRunConfiguration().getFrameworkDir();
+                File dir = new File(path);
+                if (!dir.exists()) {
+                    //noinspection ResultOfMethodCallIgnored
+                    dir.mkdirs();
+                }
+                frameworkDir = dir;
+            } else {
+                frameworkDir = getWorkingDir();
+            }
         }
-        else
-        {
-          frameworkDir = getWorkingDir();
-        }
-      }
-      return frameworkDir;
+        return frameworkDir;
     }
 
     protected String getFrameworkDirCanonicalPath() {

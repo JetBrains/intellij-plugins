@@ -30,6 +30,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
@@ -43,9 +44,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * This class works a kind of glue code between the old simple FramworkRunnr interface and the new interface that
- * gives a greater access to the whole framework running process. FrameworkRunners which do not need the added
- * functionality can subclass this abstract class to use the simpler interface.
+ * This class works a kind of glue code between the old simple FramworkRunnr interface and the new interface that gives
+ * a greater access to the whole framework running process. FrameworkRunners which do not need the added functionality
+ * can subclass this abstract class to use the simpler interface.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
@@ -59,7 +60,8 @@ public abstract class AbstractSimpleFrameworkRunner<P extends PropertiesWrapper>
         List<VirtualFile> result = new ArrayList<VirtualFile>();
 
         FrameworkInstanceDefinition definition = getRunConfiguration().getInstanceToUse();
-        FrameworkIntegratorRegistry registry = ServiceManager.getService(getProject(), FrameworkIntegratorRegistry.class);
+        FrameworkIntegratorRegistry registry =
+                ServiceManager.getService(getProject(), FrameworkIntegratorRegistry.class);
         FrameworkIntegrator integrator = registry.findIntegratorByInstanceDefinition(definition);
         FrameworkInstanceManager frameworkInstanceManager = integrator.getFrameworkInstanceManager();
 
@@ -76,33 +78,31 @@ public abstract class AbstractSimpleFrameworkRunner<P extends PropertiesWrapper>
     }
 
     /**
-     * A pattern tested against all framework bundle jars to collect all jars that need to be put into the classpath in order
-     * to start a framework.
+     * A pattern tested against all framework bundle jars to collect all jars that need to be put into the classpath in
+     * order to start a framework.
      *
      * @return The pattern matching all needed jars for running of a framework instance.
      */
     protected abstract Pattern getFrameworkStarterClasspathPattern();
 
-    @NotNull
-    public String[] getCommandlineParameters(@NotNull SelectedBundle[] bundlesToInstall) {
-        return getCommandlineParameters(bundlesToInstall, getAdditionalProperties());
-    }
 
     /**
      * Returns an array of command line parameters that can be used to install and run the specified bundles.
      *
-     * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be sorted
-     *                             in ascending order by their start level.
+     * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be
+     *                             sorted in ascending order by their start level.
      * @param additionalProperties additional runner properties
+     * @param vmParameters
      * @return a list of command line parameters
      */
     @NotNull
     protected abstract String[] getCommandlineParameters(@NotNull SelectedBundle[] bundlesToInstall,
-                                                         @NotNull P additionalProperties);
+                                                         @NotNull P additionalProperties, String vmParameters);
 
-    public void fillCommandLineParameters(ParametersList commandLineParameters,
-                                          @NotNull SelectedBundle[] bundlesToInstall) {
-        commandLineParameters.addAll(getCommandlineParameters(bundlesToInstall));
+    public void fillCommandLineParameters(@NotNull ParametersList commandLineParameters,
+                                          @NotNull SelectedBundle[] bundlesToInstall, @Nullable String vmParameters) {
+        commandLineParameters
+                .addAll(getCommandlineParameters(bundlesToInstall, getAdditionalProperties(), vmParameters));
     }
 
     @NotNull
@@ -113,8 +113,8 @@ public abstract class AbstractSimpleFrameworkRunner<P extends PropertiesWrapper>
     /**
      * Returns a map of system properties to be set in order to install and run the specified bundles.
      *
-     * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be sorted
-     *                             in ascending order by their start level.
+     * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be
+     *                             sorted in ascending order by their start level.
      * @param additionalProperties additonal runner properties
      * @return a map of system properties
      */
@@ -130,8 +130,8 @@ public abstract class AbstractSimpleFrameworkRunner<P extends PropertiesWrapper>
      * Instructs the FrameworkRunnner to run any custom installation steps that are required for installing the given
      * bundles.
      *
-     * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be sorted
-     *                             in ascending order by their start level.
+     * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be
+     *                             sorted in ascending order by their start level.
      * @param additionalProperties additional runner properties
      */
     protected abstract void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall,

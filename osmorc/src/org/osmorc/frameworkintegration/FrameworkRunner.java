@@ -30,6 +30,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
@@ -45,6 +46,14 @@ import java.util.Map;
  * @version $Id$
  */
 public interface FrameworkRunner extends Disposable {
+
+    /**
+     * Checks if this runnner will launch it's own VM. This is true for the pax runner.
+     *
+     * @return
+     */
+    public boolean launchesOwnVM();
+
     /**
      * Initializes the framework runner for the next execution
      *
@@ -54,16 +63,31 @@ public interface FrameworkRunner extends Disposable {
     void init(Project project, OsgiRunConfiguration runConfiguration);
 
     /**
-     * Returns the virtual files for all library jars and directories that need to be placed into the
-     * classpath in order to start the framework.
+     * Returns the virtual files for all library jars and directories that need to be placed into the classpath in order
+     * to start the framework.
      *
      * @return a list containing all needed library virtual files.
      */
     @NotNull
     List<VirtualFile> getFrameworkStarterLibraries();
 
-    void fillCommandLineParameters(ParametersList commandLineParameters, @NotNull SelectedBundle[] bundlesToInstall);
+    /**
+     * Fills the command line parameters into the given ParametersList.
+     *
+     * @param commandLineParameters the list where to fill the command line parameters in.
+     * @param bundlesToInstall      the list of bundles to install.
+     * @param vmParameters          optionally an list of VM parameters. This usually only makes sense if the runner
+     *                              will launch an own VM as indicated by the {@link #launchesOwnVM()} method.
+     */
+    void fillCommandLineParameters(@NotNull ParametersList commandLineParameters,
+                                   @NotNull SelectedBundle[] bundlesToInstall, @Nullable String vmParameters);
 
+    /**
+     * Returns a map with system properties that should be set on the launched java VM.
+     *
+     * @param bundlesToInstall the list of bundles to install.
+     * @return a map with system properties.
+     */
     @NotNull
     public Map<String, String> getSystemProperties(@NotNull SelectedBundle[] bundlesToInstall);
 

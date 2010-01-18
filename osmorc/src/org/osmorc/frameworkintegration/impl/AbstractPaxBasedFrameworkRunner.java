@@ -32,10 +32,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
-import org.osmorc.frameworkintegration.impl.felix.FelixRunProperties;
-import org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishRunProperties;
-import org.osmorc.frameworkintegration.util.PropertiesWrapper;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.util.ArrayList;
@@ -54,6 +52,12 @@ import java.util.regex.Pattern;
 public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties>
         extends AbstractSimpleFrameworkRunner<P> {
 
+
+    @Override
+    public boolean launchesOwnVM() {
+        return true;
+    }
+
     @NotNull
     @Override
     public final List<VirtualFile> getFrameworkStarterLibraries() {
@@ -68,10 +72,10 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
 
     @NotNull
     protected String[] getCommandlineParameters(@NotNull SelectedBundle[] bundlesToInstall,
-                                                @NotNull P runProperties) {
+                                                @NotNull P runProperties, @Nullable String vmParameters) {
         List<String> params = new ArrayList<String>();
 
-        params.add("--p="+getOsgiFrameworkName().toLowerCase());
+        params.add("--p=" + getOsgiFrameworkName().toLowerCase());
 
         for (SelectedBundle bundle : bundlesToInstall) {
             if (bundle.isStartAfterInstallation() &&
@@ -89,9 +93,8 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
         }
 
         String systemPackages = runProperties.getSystemPackages();
-        if ( systemPackages != null && !(systemPackages.trim().length() == 0)) {
-            params.add("--sp");
-            params.add(systemPackages);
+        if (systemPackages != null && !(systemPackages.trim().length() == 0)) {
+            params.add("--sp=" + systemPackages);
         }
 
         if (runProperties.isDebugMode()) {
@@ -100,10 +103,16 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
 
         if (runProperties.isStartConsole()) {
             params.add("--console");
-        }
-        else {
+        } else {
             params.add("--noConsole");
         }
+        if (vmParameters != null && vmParameters.length() > 0) {
+            params.add("--vmOptions=" + vmParameters);
+        }
+
+        params.add("--keepOriginalUrls");
+
+        params.add("--skipInvalidBundles");
 
         return ArrayUtil.toStringArray(params);
     }
@@ -129,7 +138,6 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     public final String getMainClass() {
         return "org.ops4j.pax.runner.Run";
     }
-
 
 
     protected final Pattern getFrameworkStarterClasspathPattern() {

@@ -24,9 +24,9 @@
  */
 package org.osmorc.run;
 
+import com.intellij.execution.CantRunException;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.CantRunException;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.ParametersList;
@@ -35,10 +35,8 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.compiler.DummyCompileContext;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -52,7 +50,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathsList;
-import com.intellij.util.messages.impl.Message;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
@@ -62,7 +59,6 @@ import org.osmorc.run.ui.SelectedBundle;
 
 import javax.swing.*;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -88,16 +84,14 @@ public class OsgiRunState extends JavaCommandLineState {
         this.runConfiguration = configuration;
         this.project = project;
 
-        if ( configuration.isUseAlternativeJre() ) {
+        if (configuration.isUseAlternativeJre()) {
             String path = configuration.getAlternativeJrePath();
-            if ( path == null || "".equals(path) || !JdkUtil.checkForJre(path)) {
+            if (path == null || "".equals(path) || !JdkUtil.checkForJre(path)) {
                 this.jdkForRun = null;
-            }
-            else {
+            } else {
                 this.jdkForRun = JavaSdk.getInstance().createJdk("", configuration.getAlternativeJrePath());
             }
-        }
-        else {
+        } else {
             this.jdkForRun = projectJdk;
         }
         setConsoleBuilder(new TextConsoleBuilderImpl(project));
@@ -109,7 +103,7 @@ public class OsgiRunState extends JavaCommandLineState {
     }
 
     protected JavaParameters createJavaParameters() throws ExecutionException {
-        if ( jdkForRun == null ) {
+        if (jdkForRun == null) {
             throw CantRunException.noJdkConfigured();
         }
         final JavaParameters params = new JavaParameters();
@@ -145,15 +139,17 @@ public class OsgiRunState extends JavaCommandLineState {
         // setup any integrator specific parameters:
         final ParametersList programParameters = params.getProgramParametersList();
         SelectedBundle[] bundles = getSelectedBundles();
-        if ( bundles == null ) {
-            throw new CantRunException("One or more modules seem to be missing their OSGi facets. Please re-add the OSGi facets and try again.");
+        if (bundles == null) {
+            throw new CantRunException(
+                    "One or more modules seem to be missing their OSGi facets. Please re-add the OSGi facets and try again.");
         }
-        runner.fillCommandLineParameters(programParameters, bundles);
+        runner.fillCommandLineParameters(programParameters, bundles, runConfiguration.getVmParameters());
         programParameters.addParametersString(runConfiguration.getProgramParameters());
 
-
-        // plus the vm params that the user entered
-        params.getVMParametersList().addParametersString(runConfiguration.getVmParameters());
+        if (!runner.launchesOwnVM()) {
+            // plus the vm params that the user entered
+            params.getVMParametersList().addParametersString(runConfiguration.getVmParameters());
+        }
 
         // and the system properties
         Map<String, String> systemProperties = runner.getSystemProperties(bundles);
@@ -188,12 +184,14 @@ public class OsgiRunState extends JavaCommandLineState {
                             // use the output jar name if it is a module
                             try {
                                 final Module module = moduleManager.findModuleByName(selectedBundle.getName());
-                                if ( !OsmorcFacet.hasOsmorcFacet(module) ) {
+                                if (!OsmorcFacet.hasOsmorcFacet(module)) {
                                     // actually this should not happen, but it seemed to happen once, so we check this here.
                                     try {
                                         SwingUtilities.invokeAndWait(new Runnable() {
                                             public void run() {
-                                                Messages.showErrorDialog("Module '" + selectedBundle.getName() + "' has no OSGi facet, but should have. Please re-add the OSGi facet to this module.", "Error");
+                                                Messages.showErrorDialog("Module '" + selectedBundle.getName() +
+                                                        "' has no OSGi facet, but should have. Please re-add the OSGi facet to this module.",
+                                                        "Error");
                                             }
                                         });
                                     } catch (Exception e) {
@@ -206,10 +204,11 @@ public class OsgiRunState extends JavaCommandLineState {
                                         module)).toString());
                                 // add all the dependencies of the bundle
                                 String[] depUrls = BundleCompiler.bundlifyLibraries(module, progressIndicator,
-                                    DummyCompileContext.getInstance());
+                                        DummyCompileContext.getInstance());
                                 for (String depUrl : depUrls) {
                                     SelectedBundle dependency =
-                                            new SelectedBundle("Dependency", depUrl, SelectedBundle.BundleType.PlainLibrary);
+                                            new SelectedBundle("Dependency", depUrl,
+                                                    SelectedBundle.BundleType.PlainLibrary);
                                     selectedBundles.add(dependency);
                                 }
                                 selectedBundles.add(selectedBundle);
@@ -239,7 +238,8 @@ public class OsgiRunState extends JavaCommandLineState {
                     }
 
                     Collection<SelectedBundle> selectedBundleCollection = finalList.values();
-                    _selectedBundles = selectedBundleCollection.toArray(new SelectedBundle[selectedBundleCollection.size()]);
+                    _selectedBundles =
+                            selectedBundleCollection.toArray(new SelectedBundle[selectedBundleCollection.size()]);
                     Arrays.sort(_selectedBundles, new StartLevelComparator());
                 }
             });

@@ -24,26 +24,11 @@
  */
 package org.osmorc.frameworkintegration.impl.equinox;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.ParametersList;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.osgi.framework.Version;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
-import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.FrameworkIntegrator;
-import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
-import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.AbstractPaxBasedFrameworkRunner;
 import org.osmorc.run.ui.SelectedBundle;
 
-import java.io.*;
-import java.util.*;
-import java.net.MalformedURLException;
+import java.util.Map;
 
 /**
  * Framework runner for the Equinox OSGi framework.
@@ -58,6 +43,25 @@ public class EquinoxFrameworkRunner extends AbstractPaxBasedFrameworkRunner<Equi
     @Override
     protected EquinoxRunProperties convertProperties(Map<String, String> properties) {
         return new EquinoxRunProperties(properties);
+    }
+
+    @NotNull
+    @Override
+    protected Map<String, String> getSystemProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
+                                                      @NotNull EquinoxRunProperties runProperties) {
+        Map<String, String> properties = super.getSystemProperties(urlsOfBundlesToInstall, runProperties);
+        String product = getAdditionalProperties().getEquinoxProduct();
+        if (product != null && product.length() > 0) {
+            properties.put("eclipse.product", product);
+        } else {
+            String application = getAdditionalProperties().getEquinoxApplication();
+            if (application != null && application.length() > 0) {
+                properties.put("eclipse.application", application);
+            } else {
+                properties.put("eclipse.ignoreApp", "true");
+            }
+        }
+        return properties;
     }
 
     @NotNull
