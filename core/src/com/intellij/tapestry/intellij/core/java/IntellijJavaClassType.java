@@ -94,22 +94,21 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   public Collection<IJavaMethod> getPublicMethods(boolean fromSuper) {
     Collection<IJavaMethod> foundMethods = new ArrayList<IJavaMethod>();
 
-    PsiMethod[] allMethods;
-    if (fromSuper) {
-      allMethods = getPsiClass().getAllMethods();
-    }
-    else {
-      allMethods = getPsiClass().getMethods();
-    }
-
-    for (PsiMethod method : allMethods) {
-      if (method.getModifierList().hasExplicitModifier(PsiModifier.PUBLIC) &&
-          (!method.getContainingClass().getQualifiedName().equals("java.lang.Object"))) {
+    for (PsiMethod method : getMethods(fromSuper)) {
+      if (method.getModifierList().hasExplicitModifier(PsiModifier.PUBLIC) && isNotMethodOfJavaLangObject(method)) {
         foundMethods.add(new IntellijJavaMethod(_module, method));
       }
     }
 
     return foundMethods;
+  }
+
+  private boolean isNotMethodOfJavaLangObject(PsiMethod method) {
+    return !method.getContainingClass().getQualifiedName().equals("java.lang.Object");
+  }
+
+  private PsiMethod[] getMethods(boolean fromSuper) {
+    return fromSuper ? getPsiClass().getAllMethods() : getPsiClass().getMethods();
   }
 
   /**
@@ -118,16 +117,8 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   public Collection<IJavaMethod> getAllMethods(boolean fromSuper) {
     Collection<IJavaMethod> foundMethods = new ArrayList<IJavaMethod>();
 
-    PsiMethod[] allMethods;
-    if (fromSuper) {
-      allMethods = getPsiClass().getAllMethods();
-    }
-    else {
-      allMethods = getPsiClass().getMethods();
-    }
-
-    for (PsiMethod method : allMethods) {
-      if (!method.getContainingClass().getQualifiedName().equals("java.lang.Object")) {
+    for (PsiMethod method : getMethods(fromSuper)) {
+      if (isNotMethodOfJavaLangObject(method)) {
         foundMethods.add(new IntellijJavaMethod(_module, method));
       }
     }
@@ -267,8 +258,13 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   }
 
   private void processPsiClassType() {
-    PsiFile psiFile = PsiManager.getInstance(_module.getProject()).findFile(VirtualFileManager.getInstance().findFileByUrl(_classFilePath));
+    final VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(_classFilePath);
+    if (file == null) {
+      _psiClassType = null;
+      return;
+    }
 
+    PsiFile psiFile = PsiManager.getInstance(_module.getProject()).findFile(file);
     if (psiFile instanceof PsiClassOwner) {
       PsiClass[] psiClasses = ((PsiClassOwner)psiFile).getClasses();
 

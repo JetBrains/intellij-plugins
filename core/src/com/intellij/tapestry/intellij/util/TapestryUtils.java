@@ -14,6 +14,7 @@ import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.InjectedElement;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.TemplateElement;
 import com.intellij.tapestry.core.util.PathUtils;
@@ -141,8 +142,9 @@ public class TapestryUtils {
     PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
     if (element == null) return Collections.emptyList();
     List<String> embeddedIds = new ArrayList<String>();
-    for (TemplateElement injectedElement : element.getEmbeddedComponents())
-        embeddedIds.add(injectedElement.getElement().getElementId());
+    for (TemplateElement injectedElement : element.getEmbeddedComponents()) {
+      embeddedIds.add(injectedElement.getElement().getElementId());
+    }
     return embeddedIds;
   }
 
@@ -258,7 +260,7 @@ public class TapestryUtils {
    * @throws IllegalStateException if the mixin file already existed and <code>replaceExistingFiles = false</code>
    */
   public static void createMixin(Module module, PsiDirectory classSourceDirectory, String mixinName, boolean replaceExistingFiles)
-      throws IllegalStateException {
+    throws IllegalStateException {
     String errorMsg = "";
     try {
       createClass(classSourceDirectory, TapestryModuleSupportLoader.getTapestryProject(module).getMixinsRootPackage(), mixinName,
@@ -290,14 +292,13 @@ public class TapestryUtils {
   }
 
   private static final PsiElementBasedCachedUserDataCache<Component, XmlTag> outTagToComponentMap =
-      new PsiElementBasedCachedUserDataCache<Component, XmlTag>("TapestryTagToComponentMap") {
-        @Nullable
-        protected Component computeValue(XmlTag tag) {
-          Module module = ModuleUtil.findModuleForPsiElement(tag);
-          if (module == null) return null;
-          return getTypeOfTag(module, tag);
-        }
-      };
+    new PsiElementBasedCachedUserDataCache<Component, XmlTag>("TapestryTagToComponentMap") {
+      @Nullable
+      protected Component computeValue(XmlTag tag) {
+        Module module = ModuleUtil.findModuleForPsiElement(tag);
+        return module == null ? null : getTypeOfTag(module, tag);
+      }
+    };
 
   /**
    * Builds the component object that corresponds to a HTML tag.
@@ -324,9 +325,8 @@ public class TapestryUtils {
         PresentationLibraryElement element = tapestryProject.findElementByTemplate(tag.getContainingFile());
         if (element != null) {
           for (TemplateElement embeddedComponent : element.getEmbeddedComponents()) {
-            if (embeddedComponent.getElement().getElementId().equals(attrValue)) {
-              return (Component)embeddedComponent.getElement().getElement();
-            }
+            final InjectedElement element1 = embeddedComponent.getElement();
+            if (attrValue.equals(element1.getElementId())) return (Component)element1.getElement();
           }
         }
       }
@@ -374,7 +374,7 @@ public class TapestryUtils {
                                   boolean replaceExistingFiles,
                                   String templateName) throws FileAlreadyExistsException, IncorrectOperationException {
     PsiDirectory classDirectory =
-        IdeaUtils.findOrCreateDirectoryForPackage(sourceDirectory, PathUtils.getFullComponentPackage(basePackage, pageName));
+      IdeaUtils.findOrCreateDirectoryForPackage(sourceDirectory, PathUtils.getFullComponentPackage(basePackage, pageName));
 
     String fileName = PathUtils.getComponentFileName(pageName);
     PsiFile file = classDirectory.findFile(fileName + ".java");
@@ -410,7 +410,7 @@ public class TapestryUtils {
     PsiDirectory templateDirectory;
     if (IdeaUtils.isWebRoot(module, sourceDirectory.getVirtualFile())) basePackage = "";
     templateDirectory =
-        IdeaUtils.findOrCreateDirectoryForPackage(sourceDirectory, PathUtils.getFullComponentPackage(basePackage, pageName));
+      IdeaUtils.findOrCreateDirectoryForPackage(sourceDirectory, PathUtils.getFullComponentPackage(basePackage, pageName));
 
     String fileName = PathUtils.getComponentFileName(pageName) + "." + TapestryConstants.TEMPLATE_FILE_EXTENSION;
     final PsiFile psiFile = templateDirectory.findFile(fileName);
@@ -420,7 +420,7 @@ public class TapestryUtils {
     }
 
     PsiFile pageTemplate = PsiFileFactory.getInstance(module.getProject())
-        .createFileFromText(fileName, FileTemplateManager.getInstance().getInternalTemplate(template).getText());
+      .createFileFromText(fileName, FileTemplateManager.getInstance().getInternalTemplate(template).getText());
     templateDirectory.add(pageTemplate);
   }
 
