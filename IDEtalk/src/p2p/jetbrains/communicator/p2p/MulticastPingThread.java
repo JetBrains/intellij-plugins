@@ -53,6 +53,9 @@ class MulticastPingThread extends Thread {
 
   MulticastPingThread(InetAddress address, IDEFacade ideFacade, UserMonitorClient userMonitorClient) {
     super(address.toString() + " IDEtalk Multicast Thread");
+    setDaemon(true); //Sometimes this thread lives forever, that's why idea.exe process never ends
+                     // see jetbrains.communicator.p2p.NetworkUtil.sendMessage(...) inside try/catch block
+                     //TODO: make it not a Daemon thread again and fix the problem somewhere else. Where...? 
     mySelfAddress = address;
     myIdeFacade = ideFacade;
     myUserMonitorClient = userMonitorClient;
