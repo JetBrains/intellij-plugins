@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,18 +18,15 @@ package com.intellij.struts2.facet.ui;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.projectView.PresentationData;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.openapi.wm.ex.StatusBarEx;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -56,7 +53,7 @@ import java.util.Set;
  *
  * @author Yann C&eacute;bron
  */
-public class FileSetConfigurationTab extends FacetEditorTab {
+public class FileSetConfigurationTab extends FacetEditorTab implements Disposable {
 
   // GUI components -----------------------
   private JPanel myPanel;
@@ -112,20 +109,17 @@ public class FileSetConfigurationTab extends FacetEditorTab {
     myBuilder = new SimpleTreeBuilder(myTree, (DefaultTreeModel) myTree.getModel(), structure, null);
     myBuilder.initRoot();
 
+    final DumbService dumbService = DumbService.getInstance(facetEditorContext.getProject());
     myTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
       public void valueChanged(final TreeSelectionEvent e) {
         final StrutsFileSet fileSet = getCurrentFileSet();
-        myEditButton.setEnabled(fileSet != null);
+        myEditButton.setEnabled(fileSet != null && !dumbService.isDumb());
         myRemoveButton.setEnabled(fileSet != null);
       }
     });
 
     myAddSetButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        if (isDumb()) {
-          return;
-        }
-
         final StrutsFileSet fileSet =
             new StrutsFileSet(StrutsFileSet.getUniqueId(myBuffer),
                               StrutsFileSet.getUniqueName(StrutsBundle.message("facet.fileset.myfileset"), myBuffer),
@@ -154,10 +148,6 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
     myEditButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        if (isDumb()) {
-          return;
-        }
-
         final StrutsFileSet fileSet = getCurrentFileSet();
         if (fileSet != null) {
           final FileSetEditor editor = new FileSetEditor(myPanel,
@@ -182,10 +172,6 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
     myRemoveButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        if (isDumb()) {
-          return;
-        }
-
         remove();
         myModified = true;
         myBuilder.updateFromRoot();
@@ -193,23 +179,8 @@ public class FileSetConfigurationTab extends FacetEditorTab {
       }
     });
 
-  }
-
-  /**
-   * Displays a warning balloon if dumb mode is active.
-   *
-   * @return {@code true} if dumb mode is active.
-   */
-  private boolean isDumb() {
-    final Project project = module.getProject();
-    if (!DumbService.getInstance(project).isDumb()) {
-      return false;
-    }
-    final StatusBarEx statusBar = (StatusBarEx) WindowManager.getInstance().getIdeFrame(project).getStatusBar();
-    statusBar.notifyProgressByBalloon(MessageType.WARNING,
-                                      "Editing File Sets is not available while IDEA performs background indexing.",
-                                      null, null);
-    return true;
+    dumbService.makeDumbAware(myAddSetButton, this);
+    dumbService.makeDumbAware(myEditButton, this);
   }
 
   @Nullable
@@ -325,8 +296,11 @@ public class FileSetConfigurationTab extends FacetEditorTab {
 
   public void disposeUIResources() {
     Disposer.dispose(myBuilder);
+    Disposer.dispose(this);
   }
 
+  public void dispose() {
+  }
 
   private static class FileSetNode extends SimpleNode {
 
