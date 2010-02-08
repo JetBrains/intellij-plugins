@@ -47,21 +47,21 @@ public class EquinoxFrameworkRunner extends AbstractPaxBasedFrameworkRunner<Equi
 
     @NotNull
     @Override
-    protected Map<String, String> getSystemProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
+    protected  String getAdditionalTargetVMProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
                                                       @NotNull EquinoxRunProperties runProperties) {
-        Map<String, String> properties = super.getSystemProperties(urlsOfBundlesToInstall, runProperties);
-        String product = getAdditionalProperties().getEquinoxProduct();
+      StringBuilder result = new StringBuilder();
+      String product = getAdditionalProperties().getEquinoxProduct();
         if (product != null && product.length() > 0) {
-            properties.put("eclipse.product", product);
+          result.append(" -Declipse.product=").append(product);
         } else {
             String application = getAdditionalProperties().getEquinoxApplication();
             if (application != null && application.length() > 0) {
-                properties.put("eclipse.application", application);
+              result.append(" -Declipse.application=").append(application);
             } else {
-                properties.put("eclipse.ignoreApp", "true");
+              result.append(" -Declipse.ignoreApp=true");
             }
         }
-        return properties;
+        return result.toString();
     }
 
     @NotNull

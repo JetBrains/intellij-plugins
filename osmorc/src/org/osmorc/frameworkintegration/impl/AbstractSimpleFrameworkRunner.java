@@ -24,7 +24,6 @@
  */
 package org.osmorc.frameworkintegration.impl;
 
-import com.intellij.execution.configurations.ParametersList;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
@@ -67,9 +66,10 @@ public abstract class AbstractSimpleFrameworkRunner<P extends PropertiesWrapper>
 
         List<Library> libs = frameworkInstanceManager.getLibraries(definition);
 
+      final Pattern starterClasspathPattern = getFrameworkStarterClasspathPattern();
         for (Library lib : libs) {
             for (VirtualFile virtualFile : lib.getFiles(OrderRootType.CLASSES_AND_OUTPUT)) {
-                if (getFrameworkStarterClasspathPattern().matcher(virtualFile.getName()).matches()) {
+              if (starterClasspathPattern == null || starterClasspathPattern.matcher(virtualFile.getName()).matches()) {
                     result.add(virtualFile);
                 }
             }
@@ -83,29 +83,11 @@ public abstract class AbstractSimpleFrameworkRunner<P extends PropertiesWrapper>
      *
      * @return The pattern matching all needed jars for running of a framework instance.
      */
+    @Nullable
     protected abstract Pattern getFrameworkStarterClasspathPattern();
 
 
-    /**
-     * Returns an array of command line parameters that can be used to install and run the specified bundles.
-     *
-     * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be
-     *                             sorted in ascending order by their start level.
-     * @param additionalProperties additional runner properties
-     * @param vmParameters
-     * @return a list of command line parameters
-     */
-    @NotNull
-    protected abstract String[] getCommandlineParameters(@NotNull SelectedBundle[] bundlesToInstall,
-                                                         @NotNull P additionalProperties, String vmParameters);
-
-    public void fillCommandLineParameters(@NotNull ParametersList commandLineParameters,
-                                          @NotNull SelectedBundle[] bundlesToInstall, @Nullable String vmParameters) {
-        commandLineParameters
-                .addAll(getCommandlineParameters(bundlesToInstall, getAdditionalProperties(), vmParameters));
-    }
-
-    @NotNull
+  @NotNull
     public Map<String, String> getSystemProperties(@NotNull SelectedBundle[] bundlesToInstall) {
         return getSystemProperties(bundlesToInstall, getAdditionalProperties());
     }

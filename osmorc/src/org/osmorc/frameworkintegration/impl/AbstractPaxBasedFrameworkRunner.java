@@ -25,6 +25,8 @@
 
 package org.osmorc.frameworkintegration.impl;
 
+import com.intellij.execution.configurations.ParametersList;
+import com.intellij.execution.configurations.RemoteConnection;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -34,8 +36,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
+import org.osmorc.run.ExternalVMFrameworkRunner;
 import org.osmorc.run.ui.SelectedBundle;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,13 +54,8 @@ import java.util.regex.Pattern;
  * @version $Id:$
  */
 public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties>
-        extends AbstractSimpleFrameworkRunner<P> {
+        extends AbstractSimpleFrameworkRunner<P> implements ExternalVMFrameworkRunner {
 
-
-    @Override
-    public boolean launchesOwnVM() {
-        return true;
-    }
 
     @NotNull
     @Override
@@ -66,12 +65,37 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
         @SuppressWarnings({"ConstantConditions"}) final String paxLib =
                 PluginManager.getPlugin(PluginId.getId("Osmorc")).getPath().getPath() + "/lib/pax-runner-1.3.0.jar";
         List<VirtualFile> libs = new ArrayList<VirtualFile>(1);
-        libs.add(LocalFileSystem.getInstance().findFileByPath(paxLib));
+      VirtualFile path = LocalFileSystem.getInstance().findFileByPath(paxLib);
+      if ( path == null ) {
+        // hmm not good... try get it from the classpath - this is a hack...
+        String []classpath = System.getProperty("java.class.path").split(File.pathSeparator);
+        for (String s : classpath) {
+          if ( s.contains("pax-runner-1.3.0.jar")) {
+            path = LocalFileSystem.getInstance().findFileByPath(s);
+            if (path != null) {
+              libs.add(path);
+              break;
+            }
+          }
+        }
+      }
+      else {
+      libs.add(path);
+      }
         return libs;
     }
 
+   /**
+   * Returns an array of command line parameters that can be used to install and run the specified bundles.
+   *
+   * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be
+   *                             sorted in ascending order by their start level.
+   * @param additionalProperties additional runner properties
+   * @param vmParameters
+   * @return a list of command line parameters
+   */
     @NotNull
-    protected String[] getCommandlineParameters(@NotNull SelectedBundle[] bundlesToInstall,
+    private String[] getCommandlineParameters(@NotNull SelectedBundle[] bundlesToInstall,
                                                 @NotNull P runProperties, @Nullable String vmParameters) {
         List<String> params = new ArrayList<String>();
 
@@ -106,9 +130,21 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
         } else {
             params.add("--noConsole");
         }
+
+
+     StringBuilder vmOptionsParam = new StringBuilder();
+     vmOptionsParam.append("--vmOptions=");
         if (vmParameters != null && vmParameters.length() > 0) {
-            params.add("--vmOptions=" + vmParameters);
+          vmOptionsParam.append(" ").append(vmParameters);
         }
+     String additionalVmOptions = getAdditionalTargetVMProperties(bundlesToInstall, runProperties);
+     if ( additionalVmOptions.length() > 0 ) {
+       vmOptionsParam.append(" ").append(additionalVmOptions);
+     }
+     // TODO: debug params is a hack  currently... and also it doesnt work in NON-debug stuff anymore... 
+     String debugParams = "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=n,suspend=n,address=39999";
+vmOptionsParam.append(" ").append(debugParams);
+        params.add(vmOptionsParam.toString());
 
         params.add("--keepOriginalUrls");
 
@@ -127,10 +163,24 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
 
 
     @NotNull
-    protected Map<String, String> getSystemProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
+    protected final Map<String, String> getSystemProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
                                                       @NotNull P runProperties) {
         return new HashMap<String, String>();
     }
+
+  /**
+   * Returns a list of additional VM parameters that should be given to the VM that is launched by PAX. For convencience this method
+   * will return the empty string in this base class, so overriding classes do not need to call super.
+   * 
+   * @param urlsOfBundlesToInstall the list of bundles to install
+   * @param runProperties the run properties
+   * @return a string with VM parameters.
+   */
+  @NotNull
+    protected String getAdditionalTargetVMProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall, @NotNull P runProperties) {
+      return "";
+    }
+
 
 
     @NotNull
@@ -148,4 +198,15 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
                                               @NotNull P additionalProperties) {
 
     }
+
+  public RemoteConnection getRemoteConnection() {
+    return new RemoteConnection(true, "127.0.0.1", "39999", true);
+  }
+
+  public void fillCommandLineParameters(@NotNull ParametersList commandLineParameters,
+                                        @NotNull SelectedBundle[] bundlesToInstall, @NotNull String vmParameters) {
+      commandLineParameters
+              .addAll(getCommandlineParameters(bundlesToInstall, getAdditionalProperties(), vmParameters));
+  }
+
 }

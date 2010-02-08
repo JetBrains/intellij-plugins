@@ -47,14 +47,7 @@ import java.util.Map;
  */
 public interface FrameworkRunner extends Disposable {
 
-    /**
-     * Checks if this runnner will launch it's own VM. This is true for the pax runner.
-     *
-     * @return
-     */
-    public boolean launchesOwnVM();
-
-    /**
+  /**
      * Initializes the framework runner for the next execution
      *
      * @param project          The project for which a run configuration is executed
@@ -71,33 +64,27 @@ public interface FrameworkRunner extends Disposable {
     @NotNull
     List<VirtualFile> getFrameworkStarterLibraries();
 
-    /**
-     * Fills the command line parameters into the given ParametersList.
-     *
-     * @param commandLineParameters the list where to fill the command line parameters in.
-     * @param bundlesToInstall      the list of bundles to install.
-     * @param vmParameters          optionally an list of VM parameters. This usually only makes sense if the runner
-     *                              will launch an own VM as indicated by the {@link #launchesOwnVM()} method.
-     */
-    void fillCommandLineParameters(@NotNull ParametersList commandLineParameters,
-                                   @NotNull SelectedBundle[] bundlesToInstall, @Nullable String vmParameters);
-
-    /**
+  /**
      * Returns a map with system properties that should be set on the launched java VM.
      *
      * @param bundlesToInstall the list of bundles to install.
      * @return a map with system properties.
      */
     @NotNull
-    public Map<String, String> getSystemProperties(@NotNull SelectedBundle[] bundlesToInstall);
+    Map<String, String> getSystemProperties(@NotNull SelectedBundle[] bundlesToInstall);
 
-    public void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall) throws ExecutionException;
+  /**
+   * Runs any custom installation steps (like preparing directories etc, prior to launching the framework).
+   * @param bundlesToInstall  the list of bundles to install
+   * @throws ExecutionException in case preparation fails.
+   */
+    void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall) throws ExecutionException;
 
     /**
      * @return the main class of the framework to run.
      */
     @NotNull
-    public String getMainClass();
+    String getMainClass();
 
     /**
      * Returns the directory that is used as the working directory for the process started to run the framework.

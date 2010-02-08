@@ -27,9 +27,7 @@ package org.osmorc.run;
 import com.intellij.execution.CantRunException;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.JavaCommandLineState;
-import com.intellij.execution.configurations.JavaParameters;
-import com.intellij.execution.configurations.ParametersList;
+import com.intellij.execution.configurations.*;
 import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
@@ -70,7 +68,7 @@ import java.util.*;
  * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id$
  */
-public class OsgiRunState extends JavaCommandLineState {
+public class OsgiRunState extends JavaCommandLineState implements RemoteState {
     private final OsgiRunConfiguration runConfiguration;
     private final Project project;
     private final Sdk jdkForRun;
@@ -101,6 +99,11 @@ public class OsgiRunState extends JavaCommandLineState {
         runner = integrator.createFrameworkRunner();
         runner.init(project, runConfiguration);
     }
+
+
+  public boolean requiresRemoteDebugger() {
+    return runner instanceof ExternalVMFrameworkRunner;
+  }
 
     protected JavaParameters createJavaParameters() throws ExecutionException {
         if (jdkForRun == null) {
@@ -143,10 +146,12 @@ public class OsgiRunState extends JavaCommandLineState {
             throw new CantRunException(
                     "One or more modules seem to be missing their OSGi facets. Please re-add the OSGi facets and try again.");
         }
-        runner.fillCommandLineParameters(programParameters, bundles, runConfiguration.getVmParameters());
+        if ( runner instanceof ExternalVMFrameworkRunner) {
+          ((ExternalVMFrameworkRunner)runner).fillCommandLineParameters(programParameters, bundles, runConfiguration.getVmParameters());
+        }
         programParameters.addParametersString(runConfiguration.getProgramParameters());
 
-        if (!runner.launchesOwnVM()) {
+        if (!(runner instanceof ExternalVMFrameworkRunner)) {
             // plus the vm params that the user entered
             params.getVMParametersList().addParametersString(runConfiguration.getVmParameters());
         }
@@ -262,7 +267,15 @@ public class OsgiRunState extends JavaCommandLineState {
         return handler;
     }
 
-    /**
+  public RemoteConnection getRemoteConnection() {
+    if ( runner instanceof ExternalVMFrameworkRunner ) {
+      return ((ExternalVMFrameworkRunner)runner).getRemoteConnection();
+    } else {
+      return null;
+    }
+  }
+
+  /**
      * Comparator for sorting bundles by their start level.
      *
      * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>

@@ -50,9 +50,6 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
     private File workingDir;
     private File frameworkDir;
 
-    public boolean launchesOwnVM() {
-        return false;
-    }
 
     public void init(@NotNull final Project project, @NotNull final OsgiRunConfiguration runConfiguration) {
         this.project = project;
@@ -127,5 +124,6 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
     protected OsgiRunConfiguration getRunConfiguration() {
         return runConfiguration;
     }
+
 
 }
