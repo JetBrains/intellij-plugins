@@ -35,8 +35,9 @@ public class IntellijJavaAnnotation implements IJavaAnnotation {
             if (value instanceof PsiArrayInitializerMemberValue) {
                 String[] values = new String[((PsiArrayInitializerMemberValue) value).getInitializers().length];
                 for (int i = 0; i < ((PsiArrayInitializerMemberValue) value).getInitializers().length; i++) {
-                    if (((PsiLiteralExpression) ((PsiArrayInitializerMemberValue) value).getInitializers()[i]).getValue() != null)
-                        values[i] = ((PsiLiteralExpression) ((PsiArrayInitializerMemberValue) value).getInitializers()[i]).getValue().toString();
+                  final PsiAnnotationMemberValue psiAnnotationMemberValue = ((PsiArrayInitializerMemberValue)value).getInitializers()[i];
+                  if (psiAnnotationMemberValue instanceof PsiLiteralExpression && ((PsiLiteralExpression)psiAnnotationMemberValue).getValue() != null)
+                        values[i] = String.valueOf(((PsiLiteralExpression)psiAnnotationMemberValue).getValue());
                 }
 
                 parameters.put(parameter.getName(), values);
