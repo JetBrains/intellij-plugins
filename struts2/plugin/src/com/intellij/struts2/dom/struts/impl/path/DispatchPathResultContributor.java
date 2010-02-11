@@ -50,6 +50,7 @@ public class DispatchPathResultContributor extends StrutsResultContributor {
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
+    
     final FileReferenceSet set = FileReferenceSet.createSet(psiElement, soft, false, true);
     if (set == null) {
       return true;
@@ -94,6 +95,7 @@ public class DispatchPathResultContributor extends StrutsResultContributor {
               }
             });
 
+    set.setEmptyPathAllowed(false);
     Collections.addAll(references, set.getAllReferences());
     return false;
   }

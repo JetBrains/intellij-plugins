@@ -195,19 +195,20 @@ TODO not needed so far ?!
    */
   @NotNull
   private static String getNamespace(final String fullActionPath) {
-    final int slashIndex = fullActionPath.lastIndexOf("/", fullActionPath.length());
 
+    final int lastSlash = fullActionPath.lastIndexOf('/');
     // no slash, use fake "root" for resolving "myAction.action"
-    if (slashIndex == -1) {
+    if (lastSlash == -1) {
       return "/";
     }
 
     // root-package
-    if (slashIndex == 0) {
+    if (lastSlash == 0) {
       return "/";
     }
 
-    return fullActionPath.substring(0, slashIndex);
+    int firstSlash = fullActionPath.indexOf('/');
+    return fullActionPath.substring(firstSlash, lastSlash);
   }
 
 
@@ -227,18 +228,18 @@ TODO not needed so far ?!
                                        final boolean soft,
                                        final StrutsModel strutsModel,
                                        final List<String> actionExtensions) {
-      super(element, new TextRange(offset, offset + text.length()), soft);
+      super(element, computeRange(offset, text), soft);
       this.actionExtensions = actionExtensions;
 
-      fullActionPath = PathReference.trimPath(getValue());
+      fullActionPath = PathReference.trimPath(text);
       namespace = getNamespace(fullActionPath);
 
-      final int firstSlash = StringUtil.indexOf(fullActionPath, '/');
-      if (firstSlash != -1) {
-        setRangeInElement(TextRange.from(offset + firstSlash, namespace.length()));
-      }
-
       allStrutsPackages = strutsModel.getStrutsPackages();
+    }
+
+    private static TextRange computeRange(int offset, String text) {
+      int lastSlash = text.lastIndexOf('/');
+      return new TextRange(offset, offset + (lastSlash == -1 ? text.length() : lastSlash));
     }
 
     public PsiElement resolve() {

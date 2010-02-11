@@ -9,10 +9,10 @@
 <a href="/actionLink/actionLink2.action"/>
 
 <%-- INVALID Action Links --%>
-<a href="<warning descr="Cannot resolve Struts 2 package '/INVALID_VALUE'">/INVALID_VALUE/</warning><warning></warning>"/>
-<a href="/actionLink/<warning>INVALID_VALUE.action</warning>"/>
-<a href="<warning>INVALID_VALUE.action</warning>"/>
-<a href="/<warning>INVALID_VALUE.action</warning>"/>
+<a href="<warning descr="Cannot resolve Struts 2 package '/INVALID_VALUE'">/INVALID_VALUE/</warning>"/>
+<a href="/actionLink/<warning descr="Cannot resolve file 'INVALID_VALUE.action'">INVALID_VALUE.action</warning>"/>
+<a href="<warning descr="Cannot resolve file 'INVALID_VALUE.action'">INVALID_VALUE.action</warning>"/>
+<a href="/<warning descr="Cannot resolve file 'INVALID_VALUE.action'">INVALID_VALUE.action</warning>"/>
 
 
 <%-- Action Links with dynamic context --%>
