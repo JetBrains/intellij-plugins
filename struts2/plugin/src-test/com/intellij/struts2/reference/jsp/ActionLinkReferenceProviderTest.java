@@ -45,8 +45,7 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
 
   public void testActionLinkHighlightingJsp() throws Throwable {
     createStrutsFileSet("struts-actionLink.xml");
-    myFixture.copyFileToProject("/WEB-INF/web.xml");
-    myFixture.testHighlighting(true, false, false, "/jsp/actionLink-highlighting.jsp", "/WEB-INF/web.xml");
+    myFixture.testHighlighting(true, false, false, "/jsp/actionLink-highlighting.jsp", "/WEB-INF/web.xml", "jsp/index.jsp");
   }
 
   // TODO no reference, no highlighting..
@@ -63,7 +62,6 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-namespace_given.jsp",
-                                     "/actionLink/",
                                      "actionLink1.action",
                                      "actionLink2.action");
   }
@@ -72,10 +70,8 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-no-namespace.jsp",
-                                     "/",
                                      "WEB-INF",
                                      "actionLink-completionvariants-no-namespace.jsp",
-                                     "/actionLink/",
                                      "rootActionLink.action"
     );
   }

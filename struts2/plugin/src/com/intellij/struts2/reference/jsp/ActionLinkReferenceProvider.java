@@ -243,14 +243,6 @@ TODO not needed so far ?!
     }
 
     public PsiElement resolve() {
-      final String validExtension = ContainerUtil.find(actionExtensions, new Condition<String>() {
-        public boolean value(final String s) {
-          return StringUtil.endsWith(fullActionPath, s);
-        }
-      });
-      if (validExtension == null) {
-        return null;
-      }
 
       for (final StrutsPackage strutsPackage : allStrutsPackages) {
         if (Comparing.equal(namespace, strutsPackage.searchNamespace())) {

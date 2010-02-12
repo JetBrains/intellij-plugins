@@ -1,6 +1,7 @@
 <%-- "normal" links --%>
 <a href="actionLink-highlighting.jsp"/>
 <a href="/"/>
+<a href="/index.jsp"></a>
 
 <%-- VALID Action Links --%>
 <a href="rootActionLink.action"/>
