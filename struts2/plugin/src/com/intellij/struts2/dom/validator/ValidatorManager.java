@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@ package com.intellij.struts2.dom.validator;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NotNullLazyKey;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
@@ -33,8 +34,11 @@ import java.util.List;
  */
 public abstract class ValidatorManager {
 
-  public static ValidatorManager getInstance(final Project project) {
-    return ServiceManager.getService(project, ValidatorManager.class);
+  private static final NotNullLazyKey<ValidatorManager, Project> INSTANCE_KEY =
+    ServiceManager.createLazyKey(ValidatorManager.class);
+
+  public static ValidatorManager getInstance(@NotNull final Project project) {
+    return INSTANCE_KEY.getValue(project);
   }
 
   /**

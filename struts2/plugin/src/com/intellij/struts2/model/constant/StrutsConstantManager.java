@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NotNullLazyKey;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.xml.Converter;
 import org.jetbrains.annotations.NotNull;
@@ -33,14 +34,17 @@ import java.util.List;
  */
 public abstract class StrutsConstantManager {
 
+  private static final NotNullLazyKey<StrutsConstantManager, Project> INSTANCE_KEY =
+    ServiceManager.createLazyKey(StrutsConstantManager.class);
+
   /**
    * EP for contributing plugin-specific {@link StrutsConstant}s.
    */
   public static final ExtensionPointName<StrutsConstantContributor> EP_NAME =
       new ExtensionPointName<StrutsConstantContributor>("com.intellij.struts2.constantContributor");
 
-  public static StrutsConstantManager getInstance(final Project project) {
-    return ServiceManager.getService(project, StrutsConstantManager.class);
+  public static StrutsConstantManager getInstance(@NotNull final Project project) {
+    return INSTANCE_KEY.getValue(project);
   }
 
   /**
