@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -69,7 +69,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
 
     if (StringUtil.indexOf(text, '/') != -1) {
       return new PsiReference[]{
-          new ActionLinkPackageReference((XmlElement) psiElement, offset, text, soft, strutsModel, actionExtensions),
+          new ActionLinkPackageReference((XmlElement) psiElement, offset, text, soft, strutsModel),
           new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel, actionExtensions)
       };
     } else {
@@ -207,7 +207,7 @@ TODO not needed so far ?!
       return "/";
     }
 
-    int firstSlash = fullActionPath.indexOf('/');
+    final int firstSlash = fullActionPath.indexOf('/');
     return fullActionPath.substring(firstSlash, lastSlash);
   }
 
@@ -220,16 +220,13 @@ TODO not needed so far ?!
     private final String namespace;
     private final List<StrutsPackage> allStrutsPackages;
     private final String fullActionPath;
-    private final List<String> actionExtensions;
 
     private ActionLinkPackageReference(final XmlElement element,
                                        final int offset,
                                        final String text,
                                        final boolean soft,
-                                       final StrutsModel strutsModel,
-                                       final List<String> actionExtensions) {
+                                       final StrutsModel strutsModel) {
       super(element, computeRange(offset, text), soft);
-      this.actionExtensions = actionExtensions;
 
       fullActionPath = PathReference.trimPath(text);
       namespace = getNamespace(fullActionPath);
@@ -237,13 +234,12 @@ TODO not needed so far ?!
       allStrutsPackages = strutsModel.getStrutsPackages();
     }
 
-    private static TextRange computeRange(int offset, String text) {
-      int lastSlash = text.lastIndexOf('/');
+    private static TextRange computeRange(final int offset, final String text) {
+      final int lastSlash = text.lastIndexOf('/');
       return new TextRange(offset, offset + (lastSlash == -1 ? text.length() : lastSlash));
     }
 
     public PsiElement resolve() {
-
       for (final StrutsPackage strutsPackage : allStrutsPackages) {
         if (Comparing.equal(namespace, strutsPackage.searchNamespace())) {
           return strutsPackage.getXmlTag();
