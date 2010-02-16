@@ -27,6 +27,7 @@ package org.osmorc.settings;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -200,7 +201,7 @@ public class FrameworkDefinitionsEditor implements Configurable, ApplicationSett
     private void refreshFrameworkInstanceList() {
         List<FrameworkInstanceDefinition> instanceDefinitions =
                 getApplicationSettingsWorkingCopy().getFrameworkInstanceDefinitions();
-        frameworkInstances.setListData(instanceDefinitions.toArray(new Object[instanceDefinitions.size()]));
+        frameworkInstances.setListData(ArrayUtil.toObjectArray(instanceDefinitions));
     }
 
     private void copySettings(ApplicationSettings from, ApplicationSettings to) {

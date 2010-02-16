@@ -16,6 +16,7 @@
 
 package jetbrains.communicator.util;
 
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.core.users.User;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,7 +77,7 @@ public class TreeUtils {
       path.addFirst(node.getParent());
       node = node.getParent();
     }
-    return new TreePath(path.toArray(new Object[path.size()]));
+    return new TreePath(ArrayUtil.toObjectArray(path));
   }
 
   public static void collapseAll(JTree jTree) {

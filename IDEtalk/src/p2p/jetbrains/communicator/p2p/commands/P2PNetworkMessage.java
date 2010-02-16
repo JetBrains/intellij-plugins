@@ -54,8 +54,7 @@ public class P2PNetworkMessage implements Message {
     List<String> parameters = new ArrayList<String>();
     parameters.add(StringUtil.toXMLSafeString(StringUtil.getMyUsername()));
     parameters.addAll(myCommandParameters);
-    setResponse(NetworkUtil.sendMessage(target, myCommandId, myCommand,
-        parameters.toArray(new Object[parameters.size()])));
+    setResponse(NetworkUtil.sendMessage(target, myCommandId, myCommand, ArrayUtil.toObjectArray(parameters)));
     return null != myResponse;
   }
 
