@@ -104,7 +104,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   }
 
   public Object[] getDependences() {
-    return new Object[0];
+    return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 
   public void setName(String name) throws IncorrectOperationException {

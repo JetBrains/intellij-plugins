@@ -23,6 +23,7 @@ import com.intellij.tapestry.core.util.ClassUtils;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
+import com.intellij.util.ArrayUtil;
 
 import java.util.*;
 
@@ -40,7 +41,7 @@ public class ParameterValueContextGetter implements ContextGetter {
     Module module = ModuleUtil.findModuleForPsiElement(psiElement);
 
     // if this isn't a Tapestry module don't do anything
-    if (!TapestryUtils.isTapestryModule(module)) return new Object[0];
+    if (!TapestryUtils.isTapestryModule(module)) return ArrayUtil.EMPTY_OBJECT_ARRAY;
 
     if (psiElement instanceof XmlToken && ((XmlToken)psiElement).getTokenType().toString().equals("XML_ATTRIBUTE_VALUE_TOKEN")) {
       // The selected attribute
@@ -50,27 +51,27 @@ public class ParameterValueContextGetter implements ContextGetter {
       XmlTag tag = PsiTreeUtil.getParentOfType(psiElement, XmlTag.class);
 
       if (attribute == null) {
-        return new Object[0];
+        return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
 
       // Completion of type and id attributes is handled by ComponentNameContextGetter
       if (attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE) &&
           (attribute.getLocalName().equals("type") || attribute.getLocalName().equals("id"))) {
-        return new Object[0];
+        return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
 
       // Try to match the tag to a component
       Component component = TapestryUtils.getTypeOfTag(tag);
-      if (component == null) return new Object[0];
+      if (component == null) return ArrayUtil.EMPTY_OBJECT_ARRAY;
 
       TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
-      if (tapestryProject == null) return new Object[0];
+      if (tapestryProject == null) return ArrayUtil.EMPTY_OBJECT_ARRAY;
 
       final PresentationLibraryElement element = tapestryProject.findElementByTemplate(completionContext.file);
-      if (element == null) return new Object[0];
+      if (element == null) return ArrayUtil.EMPTY_OBJECT_ARRAY;
 
       IntellijJavaClassType elementClass = (IntellijJavaClassType)element.getElementClass();
-      if (elementClass == null) return new Object[0];
+      if (elementClass == null) return ArrayUtil.EMPTY_OBJECT_ARRAY;
 
       for (TapestryParameter parameter : component.getParameters().values()) {
         String attributeValue = "";
@@ -119,7 +120,7 @@ public class ParameterValueContextGetter implements ContextGetter {
             catch (Exception ex) {
               _logger.error(ex);
 
-              return new Object[0];
+              return ArrayUtil.EMPTY_OBJECT_ARRAY;
             }
 
             if (resolvedValue != null && resolvedValue.getType() != null && resolvedValue.getType() instanceof IJavaClassType) {
@@ -153,9 +154,9 @@ public class ParameterValueContextGetter implements ContextGetter {
           return ClassUtils.getClassProperties(elementClass).keySet().toArray();
         }
 
-        return new Object[0];
+        return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
     }
-    return new Object[0];
+    return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 }

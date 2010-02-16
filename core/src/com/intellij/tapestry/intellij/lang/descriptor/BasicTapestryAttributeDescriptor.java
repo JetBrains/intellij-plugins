@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.lang.descriptor;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.util.ArrayUtil;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +16,7 @@ public abstract class BasicTapestryAttributeDescriptor extends BasicXmlAttribute
   }
 
   public Object[] getDependences() {
-    return new Object[0];
+    return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 
   public boolean isRequired() {
