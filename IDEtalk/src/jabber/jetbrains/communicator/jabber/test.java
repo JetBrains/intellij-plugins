@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.jabber;
 
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.util.StringUtil;
 import junit.framework.Assert;
@@ -44,7 +45,7 @@ public class test {
 
       Roster bobRoster = c.getRoster();
 
-      bobRoster.createEntry("alice@localhost", "Alice", new String[0]);
+      bobRoster.createEntry("alice@localhost", "Alice", ArrayUtil.EMPTY_STRING_ARRAY);
       RosterGroup someGroup = bobRoster.createGroup("someGroup");
       RosterEntry entry = bobRoster.getEntry("alice@localhost");
       Thread.sleep(500);
@@ -140,7 +141,7 @@ public class test {
 
     final Roster bobRoster = bob.getRoster();
 
-    bobRoster.createEntry("bob@localhost", "bob", new String[0]);
+    bobRoster.createEntry("bob@localhost", "bob", ArrayUtil.EMPTY_STRING_ARRAY);
     assert 1 == bobRoster.getEntryCount();
     Presence presence = bobRoster.getPresence("bob@localhost");
     System.out.println("presence = " + presence);
@@ -154,7 +155,7 @@ public class test {
 
     addAliceAutosubscriber(alice, bobRoster);
 
-    bobRoster.createEntry("alice@localhost", "Alice", new String[0]);
+    bobRoster.createEntry("alice@localhost", "Alice", ArrayUtil.EMPTY_STRING_ARRAY);
 
     Thread.sleep(400);
 

@@ -47,6 +47,7 @@ public class NullTransport implements Transport {
   }
 
   public String[] getProjects(User user) {
+    //noinspection SSBasedInspection
     return new String[0];
   }
 

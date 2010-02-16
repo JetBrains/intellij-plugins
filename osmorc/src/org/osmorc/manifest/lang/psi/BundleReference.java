@@ -28,6 +28,7 @@ import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.BundleManager;
 import org.osmorc.manifest.BundleManifest;
@@ -52,7 +53,7 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
     }
 
     public Object[] getVariants() {
-        return new Object[0];
+      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     public String getUnresolvedMessagePattern() {

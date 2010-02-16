@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.jabber.impl;
 
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher;
@@ -182,7 +183,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
   public String[] getProjects(User user) {
-    return new String[0];
+    return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
   @Nullable

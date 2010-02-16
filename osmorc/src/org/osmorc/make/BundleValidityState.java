@@ -38,6 +38,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.IOUtil;
 import gnu.trove.TObjectLongHashMap;
 import gnu.trove.TObjectLongProcedure;
@@ -82,7 +83,7 @@ public class BundleValidityState implements ValidityState
     {
       jarLastModificationTime = 0;
       fileTimestamps = new long[0];
-      fileUrls = new String[0];
+      fileUrls = ArrayUtil.EMPTY_STRING_ARRAY;
     }
     else
     {
