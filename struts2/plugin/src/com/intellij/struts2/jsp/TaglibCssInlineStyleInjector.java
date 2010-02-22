@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,10 +20,6 @@ import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.ElementPattern;
-import static com.intellij.patterns.PlatformPatterns.virtualFile;
-import static com.intellij.patterns.StandardPatterns.or;
-import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
-import static com.intellij.patterns.XmlPatterns.xmlTag;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.css.CssSupportLoader;
@@ -35,8 +31,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.intellij.patterns.PlatformPatterns.virtualFile;
+import static com.intellij.patterns.StandardPatterns.or;
+import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
+import static com.intellij.patterns.XmlPatterns.xmlTag;
+
 /**
- * Adds CSS inline support for UI tags attribute "cssStyle".
+ * Adds CSS inline support for UI/jQuery-plugin tags.
  *
  * @author Yann C&eacute;bron
  */
@@ -62,7 +63,8 @@ public class TaglibCssInlineStyleInjector implements MultiHostInjector {
                          DOUBLE_CSS_STYLE)
           .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
                             virtualFile().ofType(StdFileTypes.JSPX)))
-          .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI));
+          .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
+                                                     StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI));
 
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
     if (CSS_ELEMENT_PATTERN.accepts(context)) {

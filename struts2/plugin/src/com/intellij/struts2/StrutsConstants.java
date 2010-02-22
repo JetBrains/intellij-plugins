@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -126,5 +126,10 @@ public final class StrutsConstants {
    */
   @NonNls
   public static final String TAGLIB_STRUTS_UI_URI = "/struts-tags";
+
+  /**
+   * Struts jQuery-plugin taglib URI.
+   */
+  public static final String TAGLIB_JQUERY_PLUGIN_URI = "/struts-jquery-tags";
 
 }
