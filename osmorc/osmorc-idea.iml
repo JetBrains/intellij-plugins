@@ -54,19 +54,19 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="Mocks" level="project" />
+    <orderEntry type="module" module-name="testFramework-java" />
+    <orderEntry type="module" module-name="compiler-openapi" />
+    <orderEntry type="module" module-name="execution-openapi" />
+    <orderEntry type="module" module-name="execution-impl" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/bnd-0.0.337.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/bnd-0.0.384.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="testFramework-java" />
-    <orderEntry type="module" module-name="compiler-openapi" />
-    <orderEntry type="module" module-name="execution-openapi" />
-    <orderEntry type="module" module-name="execution-impl" />
   </component>
 </module>
 

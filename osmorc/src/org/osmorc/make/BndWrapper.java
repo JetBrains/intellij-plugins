@@ -36,7 +36,9 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
+import org.osmorc.StacktraceUtil;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ApplicationSettings;
@@ -71,10 +73,15 @@ public class BndWrapper {
      * @param outputPath     the path where to place the bundled library.
      * @return the URL to the bundled library.
      */
+    @Nullable
     public String wrapLibrary(@NotNull CompileContext compileContext, final String sourceJarUrl, String outputPath) {
         try {
             File targetDir = new File(outputPath);
             File sourceFile = new File(VfsUtil.urlToPath(sourceJarUrl));
+            if ( sourceFile.isDirectory() ) {
+                // ok it's an exploded directory, we cannot bundle it.
+                return null;  
+            }
 
             File targetFile = new File(targetDir.getPath() + File.separator + sourceFile.getName());
             Map<String, String> additionalProperties = new HashMap<String, String>();
@@ -116,7 +123,7 @@ public class BndWrapper {
             // but i think it's stil the better way.
             // IDEA-27101
             compileContext.addMessage(CompilerMessageCategory.ERROR,
-                    OsmorcBundle.getTranslation("bundlecompiler.bundlifying.problem.message", sourceJarUrl, e.toString()), null, 0, 0);
+                    OsmorcBundle.getTranslation("bundlecompiler.bundlifying.problem.message", sourceJarUrl, StacktraceUtil.stackTraceToString(e)), null, 0, 0);
 
         }
         return null;
@@ -231,7 +238,7 @@ public class BndWrapper {
 
     }
 
-    private boolean doBuild(@NotNull CompileContext compileContext, @NotNull File bndFile, @NotNull File classpath[],
+    private boolean doBuild(@NotNull CompileContext compileContext, @NotNull File bndFile, @NotNull File[] classpath,
                             @NotNull File output, @NotNull Properties additionalProperties)
             throws Exception {
         ReportingBuilder builder = new ReportingBuilder(compileContext, VfsUtil.pathToUrl(bndFile.getPath()));

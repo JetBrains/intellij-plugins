@@ -25,6 +25,7 @@
 
 package org.osmorc.impl;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
@@ -44,6 +45,8 @@ import java.util.List;
  */
 public class AdditionalJARContentsWatcherManagerImpl implements AdditionalJARContentsWatcherManager
 {
+  private final Logger logger = Logger.getInstance("#org.osmorc.impl.AdditionalJARContentsWatcherManagerImpl");
+  
   public AdditionalJARContentsWatcherManagerImpl(Module module, OsmorcFacetUtil osmorcFacetUtil, LocalFileSystem fileSystem)
   {
     _module = module;
@@ -95,7 +98,14 @@ public class AdditionalJARContentsWatcherManagerImpl implements AdditionalJARCon
       {
         if (!_additionalBundleJARContents.contains(newAdditionalJARContent))
         {
-          _watchRequests.add(_fileSystem.addRootToWatch(newAdditionalJARContent.getPath(), true));
+          final LocalFileSystem.WatchRequest watchRequest = _fileSystem.addRootToWatch(newAdditionalJARContent.getPath(), true);
+          // This Check should fix EA-18652, so no NULL-values are entered into the _watchRequests list.
+          if ( watchRequest != null ) {
+            _watchRequests.add(watchRequest);
+          }
+          else {
+            logger.warn("It seems like " + newAdditionalJARContent.getPath() + " doesn't belong to the file system or the file watcher is not operational.");
+          }
           _additionalBundleJARContents.add(newAdditionalJARContent);
         }
       }
