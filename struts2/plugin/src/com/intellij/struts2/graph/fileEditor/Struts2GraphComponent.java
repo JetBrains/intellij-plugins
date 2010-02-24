@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,6 +24,8 @@ import com.intellij.openapi.graph.builder.util.GraphViewUtil;
 import com.intellij.openapi.graph.view.Graph2D;
 import com.intellij.openapi.graph.view.Graph2DView;
 import com.intellij.openapi.graph.view.Overview;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
@@ -34,7 +36,6 @@ import com.intellij.struts2.graph.beans.BasicStrutsEdge;
 import com.intellij.struts2.graph.beans.BasicStrutsNode;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.DomElementNavigationProvider;
 import com.intellij.util.xml.DomEventAdapter;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.events.DomEvent;
@@ -53,19 +54,21 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
   @NonNls
   private static final String STRUTS2_DESIGNER_COMPONENT = "STRUTS2_DESIGNER_COMPONENT";
 
-  @NonNls
-  private final Struts2GraphNavigationProvider myNavigationProvider = new Struts2GraphNavigationProvider();
-
   private final GraphBuilder<BasicStrutsNode, BasicStrutsEdge> myBuilder;
 
   public Struts2GraphComponent(final XmlFile xmlFile) {
-    final Project project = xmlFile.getProject();
+    final ProgressIndicator progress = ProgressManager.getInstance().getProgressIndicator();
 
+    progress.setText("Initializing...");
+    final Project project = xmlFile.getProject();
     final Graph2D graph = GraphManager.getGraphManager().createGraph2D();
     final Graph2DView view = GraphManager.getGraphManager().createGraph2DView();
+
+    progress.setText("Building model...");
     final StrutsDataModel myDataModel = new StrutsDataModel(xmlFile);
     final StrutsPresentationModel presentationModel = new StrutsPresentationModel(graph);
 
+    progress.setText("Setup graph...");
     myBuilder = GraphBuilderFactory.getInstance(project).createGraphBuilder(graph,
                                                                             view,
                                                                             myDataModel,
@@ -148,28 +151,6 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
   }
 
   public void dispose() {
-  }
-
-  private class Struts2GraphNavigationProvider extends DomElementNavigationProvider {
-
-    @NonNls
-    private static final String STRUTS2_DESIGNER_NAVIGATION_PROVIDER_NAME = "STRUTS2_DESIGNER_NAVIGATION_PROVIDER_NAME";
-
-    public String getProviderName() {
-      return STRUTS2_DESIGNER_NAVIGATION_PROVIDER_NAME;
-    }
-
-    public void navigate(final DomElement domElement, final boolean requestFocus) {
-      setSelectedDomElement(domElement);
-    }
-
-    public boolean canNavigate(final DomElement domElement) {
-      return domElement.isValid();
-    }
-  }
-
-  public Struts2GraphNavigationProvider getNavigationProvider() {
-    return myNavigationProvider;
   }
 
   @Nullable
