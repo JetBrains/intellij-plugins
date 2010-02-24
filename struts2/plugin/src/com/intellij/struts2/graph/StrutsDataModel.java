@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,6 @@ import com.intellij.openapi.graph.view.NodeLabel;
 import com.intellij.openapi.graph.view.hierarchy.GroupNodeRealizer;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
@@ -179,8 +178,6 @@ public class StrutsDataModel extends GraphDataModel<BasicStrutsNode, BasicStruts
   }
 
   private void updateDataModel() {
-    PsiDocumentManager.getInstance(myProject).commitAllDocuments();
-
     final StrutsModel model = StrutsManager.getInstance(myProject).getModelByFile(myFile);
     if (model == null) {
       return;
