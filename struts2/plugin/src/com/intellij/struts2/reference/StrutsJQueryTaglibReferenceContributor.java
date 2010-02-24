@@ -17,6 +17,7 @@ package com.intellij.struts2.reference;
 
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.struts2.StrutsConstants;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,8 +31,12 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
 
   private static final String[] CSS__TAGS =
     new String[]{"a", "div", "submit",
-                 "tabbedpanel", "datepicker", "dialog", "accordion", "progressbar", "slider", "grid",
+                 "tabbedpanel", "datepicker", "dialog", "accordion", "progressbar", "slider", "grid", "tab",
                  "textfield", "textarea", "select"};
+
+  private static final String[] REQUIRED_TAGS =
+    new String[]{"a", "div", "div", "tabbedpanel", "datepicker", "dialog", "progressbar",
+                 "slider", "grid", "textfield", "textarea", "select"};
 
   @NotNull
   @Override
@@ -44,46 +49,67 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
     // common attributes -------------------------------------
 
     // CSS*
-    registerTags(CSS_CLASS_PROVIDER,
-                 "cssClass", registrar,
-                 CSS__TAGS);
-
-    registerTags(CSS_CLASS_PROVIDER,
-                 "cssErrorClass", registrar,
-                 CSS__TAGS);
+    registerTags(CSS_CLASS_PROVIDER, "cssClass", registrar, CSS__TAGS);
+    registerTags(CSS_CLASS_PROVIDER, "cssErrorClass", registrar, CSS__TAGS);
+    registerTags(CSS_CLASS_PROVIDER, "tooltipCssClass", registrar, CSS__TAGS);
 
     // "resizableXX"
-    final String[] RESIZABLE_TAGS = new String[]{"div", "textarea", "textfield", "select"};
+    final String[] RESIZABLE_TAGS = new String[]{"dialog", "div", "textarea", "textfield", "select"};
     registerBoolean("resizable", registrar, RESIZABLE_TAGS);
     registerBoolean("resizableAnimate", registrar, RESIZABLE_TAGS);
-    // TODO resizableAnimateEasing
     registerBoolean("resizableGhost", registrar, RESIZABLE_TAGS);
     registerBoolean("resizableAspectRatio", registrar, RESIZABLE_TAGS);
     registerBoolean("resizableAutoHide", registrar, RESIZABLE_TAGS);
     registerTags(new HtmlIdWithAdditionalVariantsReferenceProvider("document", "parent"),
-                 "resizableContainment", registrar,
-                 RESIZABLE_TAGS);
-    registerTags(CSS_CLASS_PROVIDER,
-                 "resizableHelper", registrar,
-                 RESIZABLE_TAGS);
+                 "resizableContainment", registrar, RESIZABLE_TAGS);
+    registerTags(CSS_CLASS_PROVIDER, "resizableHelper", registrar, RESIZABLE_TAGS);
 
+    // "indicator"
+    registerTags(HTML_ID_REFERENCE_PROVIDER, "indicator", registrar,
+                 "a", "dialog", "div", "grid", "submit", "textfield", "textarea", "select");
+
+    // "errorElementId"
+    registerTags(HTML_ID_REFERENCE_PROVIDER, "errorElementId", registrar,
+                 "a", "dialog", "grid", "select", "submit", "tab", "textfield");
+
+    // TODO "disabled"
+
+    // "required[position]"
+    registerBoolean("required", registrar, REQUIRED_TAGS);
+    registerTags(new StaticStringValuesReferenceProvider("left", "right"),
+                 "requiredposition", registrar, REQUIRED_TAGS);
+
+    // "labelposition"
+    registerTags(new StaticStringValuesReferenceProvider("top", "left"),
+                 "labelposition", registrar, ArrayUtil.mergeArrays(CSS__TAGS, REQUIRED_TAGS, String.class));
+
+    // specific tags --------------------------------------------------------------
 
     // <head>
     registerBoolean("ajaxcache", registrar, "head");
     registerBoolean("ajaxhistory", registrar, "head");
     registerBoolean("compressed", registrar, "head");
     registerTags(HTML_ID_REFERENCE_PROVIDER, "defaultIndicator", registrar, "head");
-    registerTags(new StaticStringValuesReferenceProvider(true,
-                                                         "cupertino",
+    registerTags(new StaticStringValuesReferenceProvider("cupertino",
                                                          "darkness",
                                                          "lightness",
                                                          "redmond",
                                                          "smothness"),
-                 "jquerytheme", registrar,
-                 "head");
+                 "jquerytheme", registrar, "head");
     registerBoolean("jqueryui", registrar, "head");
     registerBoolean("loadFromGoogle", registrar, "head");
     registerBoolean("useJqGridPlugin", registrar, "head");
+
+
+    // <submit>
+    registerBoolean("clearForm", registrar, "submit");
+    registerTags(RELATIVE_PATH_PROVIDER, "href", registrar, "submit");
+    registerBoolean("iframe", registrar, "submit");
+    registerBoolean("resetForm", registrar, "submit");
+    registerTags(new StaticStringValuesReferenceProvider("button", "input", "image"),
+                 "type", registrar, "submit");
+    registerTags(new StaticStringValuesReferenceProvider("true", "false", "only"),
+                 "validate", registrar, "submit");
   }
 
 }
