@@ -70,6 +70,14 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     createFacet();
   }
 
+  @Override
+  protected void tearDown() throws Exception {
+    myFixture.tearDown();
+    myFixture = null;
+    myModule = null;
+    super.tearDown();
+  }
+
   protected TapestryFacet createFacet() {
     final RunResult<TapestryFacet> runResult = new WriteCommandAction<TapestryFacet>(myFixture.getProject()) {
       protected void run(final Result<TapestryFacet> result) throws Throwable {
@@ -154,11 +162,11 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return result;
   }
 
+
   protected void checkResultByFile() throws Exception {
     String afterFileName = getElementName() + Util.AFTER + getTemplateExtension();
     myFixture.checkResultByFile(afterFileName);
   }
-
 
   protected File getFileByPath(@NonNls String filePath) {
     return new File(myFixture.getTestDataPath() + "/" + filePath);
@@ -245,14 +253,6 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     final PsiElement element = ref.resolve();
     Assert.assertNotNull("unresolved reference '" + ref.getCanonicalText() + "'", element);
     return element;
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    myFixture.tearDown();
-    myFixture = null;
-    myModule = null;
-    super.tearDown();
   }
 }
 
