@@ -120,6 +120,16 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     myFacet = createFacet();
   }
 
+  protected void tearDown() throws Exception {
+    myFixture.tearDown();
+    myFixture = null;
+    myModuleTestFixture = null;
+    myProject = null;
+    myModule = null;
+    myFacet = null;
+    super.tearDown();
+  }
+
   protected void configureModule(final T moduleBuilder) throws Exception {
     moduleBuilder.addContentRoot(myFixture.getTempDirPath());
     moduleBuilder.addContentRoot(getTestDataPath());
@@ -167,16 +177,6 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     }
 
     return runResult.getResultObject();
-  }
-
-  protected void tearDown() throws Exception {
-    myFixture.tearDown();
-    myFixture = null;
-    myModuleTestFixture = null;
-    myProject = null;
-    myModule = null;
-    myFacet = null;
-    super.tearDown();
   }
 
   private void addToFileSet(final StrutsFileSet fileSet, @NonNls final String path) {
