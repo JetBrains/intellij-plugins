@@ -4,13 +4,14 @@ import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.ui.treeStructure.SimpleTreeStructure;
 import com.intellij.tapestry.intellij.view.nodes.RootNode;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Defines the basic tree structure.
  */
 public class TapestryProjectTreeStructure extends SimpleTreeStructure {
 
-    private final static String EMPTY_DESCRIPTOR = "EMPTY_DESCRIPTOR";
+    private static final String EMPTY_DESCRIPTOR = "EMPTY_DESCRIPTOR";
     private final RootNode _rootNode;
 
     protected TapestryProjectTreeStructure(final RootNode rootNode) {
@@ -45,6 +46,7 @@ public class TapestryProjectTreeStructure extends SimpleTreeStructure {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     public NodeDescriptor createDescriptor(Object element, NodeDescriptor parentDescriptor) {
         if (element == null || !(element instanceof NodeDescriptor)) {
             return new SimpleNode() {
