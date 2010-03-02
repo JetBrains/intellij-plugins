@@ -43,7 +43,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -62,7 +61,6 @@ import org.osmorc.frameworkintegration.LibraryHandler;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.manifest.BundleManifest;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,51 +75,42 @@ import java.util.Map;
  * @version $Id$
  */
 public class BundleCompiler implements PackagingCompiler {
-    private static String getOutputPath(final Module m) {
-        VirtualFile moduleCompilerOutputPath =
-                CompilerModuleExtension.getInstance(m).getCompilerOutputPath();
+    private final Logger logger = Logger.getInstance("#org.osmorc.make.BundleCompiler");
 
-        // okay there is some strange thing going on here. The method getCompilerOutputPath() returns null
-        // but getCompilerOutputPathUrl() returns something. I assume that we cannot get a VirtualFile object for a non-existing
-        // path, so we need to make sure the compiler output path exists.
+    @Nullable
+    private static String getOutputPath(final Module m, CompileContext context) {
+        final CompilerModuleExtension extension = CompilerModuleExtension.getInstance(m);
+        VirtualFile moduleCompilerOutputPath = extension.getCompilerOutputPath();
 
+        String path;
         if (moduleCompilerOutputPath == null) {
             // get the url
-            String outputPathUrl = CompilerModuleExtension.getInstance(m).getCompilerOutputUrl();
+            String outputPathUrl = extension.getCompilerOutputUrl();
 
             // create the paths
             // FIX  	 IDEADEV-40112
             File f = new File(VfsUtil.urlToPath(outputPathUrl));
-            if (!f.mkdirs()) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        Messages.showErrorDialog(m.getProject(), OsmorcBundle.getTranslation("error"),
-                                OsmorcBundle.getTranslation("faceteditor.cannot.create.outputpath"));
-                    }
-                });
-                throw new IllegalStateException("Cannot create output path");
-
+            if (!f.exists() && !f.mkdirs()) {
+                context.addMessage(CompilerMessageCategory.ERROR, OsmorcBundle.getTranslation("faceteditor.cannot.create.outputpath"), null, 0,0);
+                return null;
             }
 
-            // now try again to get VirtualFile object for it
-            moduleCompilerOutputPath =
-                    CompilerModuleExtension.getInstance(m).getCompilerOutputPath();
-            if (moduleCompilerOutputPath == null) {
-                // this should not happen
-                throw new IllegalStateException("Cannot access compiler output path.");
-            }
+            path = f.getParentFile().getPath() + File.separator + "bundles";
+        }
+        else {
+            path = moduleCompilerOutputPath.getParent().getPath() + File.separator + "bundles";
         }
 
-
-        String path = moduleCompilerOutputPath.getParent().getPath() + File.separator + "bundles";
         File f = new File(path);
         if (!f.exists()) {
-            f.mkdirs();
+            if (!f.mkdirs()) {
+              context.addMessage(CompilerMessageCategory.ERROR, "Could not create output path: " + path + " Please check file permissions.", null, 0,0 );
+              return null;
+            }
         }
         return path;
     }
 
-    private final Logger logger = Logger.getInstance("#org.osmorc.make.BundleCompiler");
 
     /**
      * Deletes the jar file of a bundle when it is outdated.
@@ -161,12 +150,12 @@ public class BundleCompiler implements PackagingCompiler {
             public ProcessingItem[] compute() {
                 // find and add all dependent modules to the list of stuff to be compiled
                 CompileScope compilescope = compileContext.getCompileScope();
-                Module affectedModules[] = compilescope.getAffectedModules();
+                Module[] affectedModules = compilescope.getAffectedModules();
                 if (affectedModules.length == 0) {
                     return ProcessingItem.EMPTY_ARRAY;
                 }
                 Project project = affectedModules[0].getProject();
-                Module modules[] = ModuleManager.getInstance(project).getModules();
+                Module[] modules = ModuleManager.getInstance(project).getModules();
                 THashSet<Module> thashset = new THashSet<Module>();
 
                 for (Module module : modules) {
@@ -290,7 +279,11 @@ public class BundleCompiler implements PackagingCompiler {
                 }
             } else {
                 // fully osmorc controlled, no bnd file.
-                bndFileUrl = makeBndFile(module, configuration.asManifestString());
+                bndFileUrl = makeBndFile(module, configuration.asManifestString(), compileContext);
+              if ( bndFileUrl == null ) {
+                  // couldnt create bnd file.
+                  return;
+              }
             }
         } else {
             boolean manifestExists = false;
@@ -301,7 +294,7 @@ public class BundleCompiler implements PackagingCompiler {
                 if (manifestFile != null) {
                     String manifestFilePath = manifestFile.getVirtualFile().getPath();
                     if (manifestFilePath != null) {
-                        bndFileUrl = makeBndFile(module, "-manifest " + manifestFilePath + "\n");
+                        bndFileUrl = makeBndFile(module, "-manifest " + manifestFilePath + "\n", compileContext);
                         manifestExists = true;
                     }
                 }
@@ -360,8 +353,13 @@ public class BundleCompiler implements PackagingCompiler {
         }
     }
 
-    private static String makeBndFile(Module module, String contents) throws IOException {
-        File tmpFile = File.createTempFile("osmorc", ".bnd", new File(getOutputPath(module)));
+    @Nullable
+    private static String makeBndFile(Module module, String contents, CompileContext compileContext) throws IOException {
+      final String outputPath = getOutputPath(module, compileContext);
+      if ( outputPath == null ) {
+        return null;
+      }
+      File tmpFile = File.createTempFile("osmorc", ".bnd", new File(outputPath));
         // create one
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tmpFile));
         bos.write(contents.getBytes());
@@ -510,7 +508,12 @@ public class BundleCompiler implements PackagingCompiler {
                         indicator.setText("Bundling non-OSGi libraries for module: " + module.getName());
                         indicator.setText2(url);
                         // ok it is not a bundle, so we need to bundlify
-                        String bundledLocation = wrapper.wrapLibrary(compileContext, url, getOutputPath(module));
+                      final String outputPath = getOutputPath(module, compileContext);
+                      if ( outputPath == null ) {
+                         // couldnt create output path, abort here..
+                         break;
+                      }
+                      String bundledLocation = wrapper.wrapLibrary(compileContext, url, outputPath);
                         // if no bundle could (or should) be created, we exempt this library
                         if (bundledLocation != null) {
                             result.add(fixFileURL(bundledLocation));
