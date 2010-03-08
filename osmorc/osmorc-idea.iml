@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src_test" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/classes" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -67,7 +68,20 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="idea-tests" />
+    <orderEntry type="module" module-name="testFramework-java" />
+    <orderEntry type="module" module-name="compiler-openapi" />
+    <orderEntry type="module" module-name="execution-openapi" />
+    <orderEntry type="module" module-name="execution-impl" />
+    <orderEntry type="module-library" scope="RUNTIME">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pax-runner-1.3.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="debugger-impl" />
   </component>
 </module>
 
