@@ -24,19 +24,10 @@
  */
 package org.osmorc.frameworkintegration.impl.knopflerfish;
 
-import com.intellij.util.ArrayUtil;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractPaxBasedFrameworkRunner;
-import org.osmorc.frameworkintegration.impl.AbstractSimpleFrameworkRunner;
-import org.osmorc.run.ui.SelectedBundle;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Knopflerfish specific implementation of {@link org.osmorc.frameworkintegration.FrameworkRunner}.
@@ -46,9 +37,11 @@ import java.util.regex.Pattern;
  * @version $Id$
  */
 public class KnopflerfishFrameworkRunner extends AbstractPaxBasedFrameworkRunner<KnopflerfishRunProperties> {
+  protected KnopflerfishFrameworkRunner() {
+  }
 
 
-      @NotNull
+  @NotNull
     protected KnopflerfishRunProperties convertProperties(Map<String, String> properties) {
         return new KnopflerfishRunProperties(properties);
     }

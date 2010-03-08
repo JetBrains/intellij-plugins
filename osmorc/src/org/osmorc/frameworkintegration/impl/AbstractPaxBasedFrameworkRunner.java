@@ -25,25 +25,21 @@
 
 package org.osmorc.frameworkintegration.impl;
 
+import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.ParametersList;
-import com.intellij.execution.configurations.RemoteConnection;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.run.ExternalVMFrameworkRunner;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -53,160 +49,145 @@ import java.util.regex.Pattern;
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties>
-        extends AbstractSimpleFrameworkRunner<P> implements ExternalVMFrameworkRunner {
+public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties> extends AbstractFrameworkRunner<P> implements ExternalVMFrameworkRunner {
+  protected AbstractPaxBasedFrameworkRunner() {
+  }
 
 
-    @NotNull
-    @Override
-    public final List<VirtualFile> getFrameworkStarterLibraries() {
-        // pax does it's own magic, so the only lib we need, is the pax lib.
-        // XXX: ask anton if there is some better way to do this..
-        @SuppressWarnings({"ConstantConditions"}) final String paxLib =
-                PluginManager.getPlugin(PluginId.getId("Osmorc")).getPath().getPath() + "/lib/pax-runner-1.3.0.jar";
-        List<VirtualFile> libs = new ArrayList<VirtualFile>(1);
-      VirtualFile path = LocalFileSystem.getInstance().findFileByPath(paxLib);
-      if ( path == null ) {
-        // hmm not good... try get it from the classpath - this is a hack...
-        String []classpath = System.getProperty("java.class.path").split(File.pathSeparator);
-        for (String s : classpath) {
-          if ( s.contains("pax-runner-1.3.0.jar")) {
-            path = LocalFileSystem.getInstance().findFileByPath(s);
-            if (path != null) {
-              libs.add(path);
-              break;
-            }
+  @NotNull
+  @Override
+  public final List<VirtualFile> getFrameworkStarterLibraries() {
+    // pax does it's own magic, so the only lib we need, is the pax lib.
+    // XXX: ask anton if there is some better way to do this..
+    @SuppressWarnings({"ConstantConditions"}) final String paxLib =
+      PluginManager.getPlugin(PluginId.getId("Osmorc")).getPath().getPath() + "/lib/pax-runner-1.3.0.jar";
+    List<VirtualFile> libs = new ArrayList<VirtualFile>(1);
+    VirtualFile path = LocalFileSystem.getInstance().findFileByPath(paxLib);
+    if (path == null) {
+      // hmm not good... try get it from the classpath - this is a hack...
+      String[] classpath = System.getProperty("java.class.path").split(File.pathSeparator);
+      for (String s : classpath) {
+        if (s.contains("pax-runner-1.3.0.jar")) {
+          path = LocalFileSystem.getInstance().findFileByPath(s);
+          if (path != null) {
+            libs.add(path);
+            break;
           }
         }
       }
-      else {
+    }
+    else {
       libs.add(path);
+    }
+    return libs;
+  }
+
+
+  public void fillCommandLineParameters(@NotNull ParametersList commandLineParameters, @NotNull SelectedBundle[] bundlesToInstall) {
+    commandLineParameters.add("--p=" + getOsgiFrameworkName().toLowerCase());
+
+    for (SelectedBundle bundle : bundlesToInstall) {
+      if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
+        commandLineParameters.add(bundle.getBundleUrl() + "@" + bundle.getStartLevel());
       }
-        return libs;
+      else {
+        if ( CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
+          commandLineParameters.add(bundle.getBundleUrl() + "@nostart");
+        }
+        else{
+          commandLineParameters.add(bundle.getBundleUrl());
+        }
+      }
+    }
+    final P frameworkProperties = getFrameworkProperties();
+    String bootDelegation = frameworkProperties.getBootDelegation();
+    if (bootDelegation != null && !(bootDelegation.trim().length() == 0)) {
+      commandLineParameters.add("--bd="+bootDelegation);
     }
 
-   /**
-   * Returns an array of command line parameters that can be used to install and run the specified bundles.
+    String systemPackages = frameworkProperties.getSystemPackages();
+    if (systemPackages != null && !(systemPackages.trim().length() == 0)) {
+      commandLineParameters.add("--sp=" + systemPackages);
+    }
+
+    int startLevel = getFrameworkStartLevel(bundlesToInstall);
+    commandLineParameters.add("--sl="+startLevel);
+
+    if (frameworkProperties.isDebugMode()) {
+      commandLineParameters.add("--log=DEBUG");
+    }
+
+    if (frameworkProperties.isStartConsole()) {
+      commandLineParameters.add("--console");
+    }
+    else {
+      commandLineParameters.add("--noConsole");
+    }
+
+
+    StringBuilder vmOptionsParam = new StringBuilder();
+    vmOptionsParam.append("--vmOptions=");
+    String vmParameters = getRunConfiguration().getVmParameters();
+
+    if (vmParameters.length() > 0) {
+      vmOptionsParam.append(vmParameters);
+    }
+    String additionalVmOptions = getAdditionalTargetVMProperties(bundlesToInstall);
+    if (additionalVmOptions.length() > 0) {
+      vmOptionsParam.append(" ").append(additionalVmOptions);
+    }
+
+    if (isDebugRun()) {
+      String debugParams =
+        "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=n,suspend=n,address=" + getDebugPort();
+      vmOptionsParam.append(" ").append(debugParams);
+
+    }
+    commandLineParameters.add(vmOptionsParam.toString());
+    commandLineParameters.add("--keepOriginalUrls");
+    commandLineParameters.add("--skipInvalidBundles");
+  }
+
+  public void fillVmParameters(ParametersList vmParameters, @NotNull SelectedBundle[] bundlesToInstall) {
+    // nothing to do here..
+  }
+
+  public void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall) throws ExecutionException {
+    // nothing to do here either...
+  }
+
+  /**
+   * Needs to be implemented by subclasses.
    *
-   * @param bundlesToInstall     an array containing the URLs of the bundles to be installed. The bundles must be
-   *                             sorted in ascending order by their start level.
-   * @param additionalProperties additional runner properties
-   * @param vmParameters
-   * @return a list of command line parameters
+   * @return the name of the osgi framework that the PAX runner should run.
    */
-    @NotNull
-    private String[] getCommandlineParameters(@NotNull SelectedBundle[] bundlesToInstall,
-                                                @NotNull P runProperties, @Nullable String vmParameters) {
-        List<String> params = new ArrayList<String>();
+  @NotNull
+  protected abstract String getOsgiFrameworkName();
 
-        params.add("--p=" + getOsgiFrameworkName().toLowerCase());
-
-        for (SelectedBundle bundle : bundlesToInstall) {
-            if (bundle.isStartAfterInstallation() &&
-                    !CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
-                params.add(bundle.getBundleUrl() + "@" + bundle.getStartLevel());
-            } else {
-                params.add(bundle.getBundleUrl());
-            }
-        }
-
-        String bootDelegation = runProperties.getBootDelegation();
-        if (bootDelegation != null && !(bootDelegation.trim().length() == 0)) {
-            params.add("--bd");
-            params.add(bootDelegation);
-        }
-
-        String systemPackages = runProperties.getSystemPackages();
-        if (systemPackages != null && !(systemPackages.trim().length() == 0)) {
-            params.add("--sp=" + systemPackages);
-        }
-
-        if (runProperties.isDebugMode()) {
-            params.add("--log=DEBUG");
-        }
-
-        if (runProperties.isStartConsole()) {
-            params.add("--console");
-        } else {
-            params.add("--noConsole");
-        }
-
-
-     StringBuilder vmOptionsParam = new StringBuilder();
-     vmOptionsParam.append("--vmOptions=");
-        if (vmParameters != null && vmParameters.length() > 0) {
-          vmOptionsParam.append(" ").append(vmParameters);
-        }
-     String additionalVmOptions = getAdditionalTargetVMProperties(bundlesToInstall, runProperties);
-     if ( additionalVmOptions.length() > 0 ) {
-       vmOptionsParam.append(" ").append(additionalVmOptions);
-     }
-     // TODO: debug params is a hack  currently... and also it doesnt work in NON-debug stuff anymore... 
-     String debugParams = "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=n,suspend=n,address=39999";
-vmOptionsParam.append(" ").append(debugParams);
-        params.add(vmOptionsParam.toString());
-
-        params.add("--keepOriginalUrls");
-
-        params.add("--skipInvalidBundles");
-
-        return ArrayUtil.toStringArray(params);
-    }
-
-    /**
-     * Needs to be implemented by subclasses.
-     *
-     * @return the name of the osgi framework that the PAX runner should run.
-     */
-    @NotNull
-    protected abstract String getOsgiFrameworkName();
-
-
-    @NotNull
-    protected final Map<String, String> getSystemProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
-                                                      @NotNull P runProperties) {
-        return new HashMap<String, String>();
-    }
 
   /**
    * Returns a list of additional VM parameters that should be given to the VM that is launched by PAX. For convencience this method
    * will return the empty string in this base class, so overriding classes do not need to call super.
-   * 
+   *
    * @param urlsOfBundlesToInstall the list of bundles to install
-   * @param runProperties the run properties
    * @return a string with VM parameters.
    */
   @NotNull
-    protected String getAdditionalTargetVMProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall, @NotNull P runProperties) {
-      return "";
-    }
-
-
-
-    @NotNull
-    @NonNls
-    public final String getMainClass() {
-        return "org.ops4j.pax.runner.Run";
-    }
-
-
-    protected final Pattern getFrameworkStarterClasspathPattern() {
-        return null;
-    }
-
-    protected void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall,
-                                              @NotNull P additionalProperties) {
-
-    }
-
-  public RemoteConnection getRemoteConnection() {
-    return new RemoteConnection(true, "127.0.0.1", "39999", true);
+  protected String getAdditionalTargetVMProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall) {
+    return "";
   }
 
-  public void fillCommandLineParameters(@NotNull ParametersList commandLineParameters,
-                                        @NotNull SelectedBundle[] bundlesToInstall, @NotNull String vmParameters) {
-      commandLineParameters
-              .addAll(getCommandlineParameters(bundlesToInstall, getAdditionalProperties(), vmParameters));
+
+  @NotNull
+  @NonNls
+  public final String getMainClass() {
+    return "org.ops4j.pax.runner.Run";
   }
+
+
+  protected final Pattern getFrameworkStarterClasspathPattern() {
+    return null;
+  }
+
 
 }

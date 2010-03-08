@@ -62,153 +62,75 @@ import java.util.*;
  * @version $Id$
  */
 public class OsgiRunConfiguration extends RunConfigurationBase implements ModuleRunConfiguration {
+    @NonNls
+    private static final String BUNDLE_ELEMENT = "bundle";
+    @NonNls
+    private static final String NAME_ATTRIBUTE = "name";
+    @NonNls
+    private static final String VM_PARAMETERS_ATTRIBUTE = "vmParameters";
+    @NonNls
+    private static final String PROGRAM_PARAMETERS_ATTRIBUTE = "programParameters";
+    @NonNls
+    private static final String WORKING_DIR_ATTRIBUTE = "workingDir";
+    @NonNls
+    private static final String FRAMEWORK_DIR_ATTRIBUTE = "FrameworkDir";
+    @NonNls
+    private static final String FRAMEWORK_ELEMENT = "framework";
+    @NonNls
+    private static final String INSTANCE_ATTRIBUTE = "instance";
+    @NonNls
+    private static final String URL_ATTRIBUTE = "url";
+    @NonNls
+    private static final String ADDITIONAL_PROPERTIES_ELEMENT = "additinalProperties";
+    @NonNls
+    private static final String TYPE_ATTRIBUTE = "type";
+    @NonNls
+    private static final String START_AFTER_INSTALLATION_ATTRIBUTE = "startAfterInstallation";
+    @NonNls
+    private static final String START_LEVEL_ATTRIBUTE = "startLevel";
+    @NonNls
+    private static final String INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE = "includeAllBundlesInClassPath";
+    @NonNls
+    private static final String USE_ALTERNATIVE_JRE_ATTRIBUTE = "useAlternativeJre";
+    @NonNls
+    private static final String ALTERNATIVE_JRE_PATH = "alternativeJrePath";
+@NonNls
+  private static final String FRAMEWORK_START_LEVEL = "frameworkStartLevel";
+  @NonNls
+  private static final String AUTO_START_LEVEL = "autoStartLevel";
     @Nullable
     private OsgiRunConfigurationChecker checker;
     private LegacyOsgiRunConfigurationLoader legacyOsgiRunConfigurationLoader;
 
-    public OsgiRunConfiguration(final Project project, final ConfigurationFactory configurationFactory,
+    private List<SelectedBundle> bundlesToDeploy;
+    private int frameworkStartLevel = 1;
+  private boolean autoStartLevel;
+    private String programParameters;
+    private String vmParameters;
+    private String alternativeJrePath;
+    private boolean useAlternativeJre;
+    private FrameworkInstanceDefinition instanceToUse;
+    private Map<String, String> additionalProperties;
+    private boolean includeAllBundlesInClassPath;
+    private String workingDir;
+    private String frameworkDir;
+
+  public OsgiRunConfiguration(final Project project, final ConfigurationFactory configurationFactory,
                                    final String name) {
         super(project, configurationFactory, name);
         bundlesToDeploy = new ArrayList<SelectedBundle>();
         additionalProperties = new HashMap<String, String>();
     }
 
-    public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-        return new OsgiRunConfigurationEditor(getProject());
-    }
-
-
-    public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws
-            ExecutionException {
-        // prepare the state
-
-        return new OsgiRunState(executor, env, this,
-                getProject(), ProjectRootManager.getInstance(getProject()).getProjectJdk());
-    }
-
-    public void checkConfiguration() throws RuntimeConfigurationException {
-            if (legacyOsgiRunConfigurationLoader != null) {
-                legacyOsgiRunConfigurationLoader.finishAfterModulesAreAvailable(this);
-                legacyOsgiRunConfigurationLoader = null;
-            }
-        if (instanceToUse == null) {
-            throw new RuntimeConfigurationError(OsmorcBundle.getTranslation("runconfiguration.no.instance.selected"));
+    @Override
+    public RunConfiguration clone() {
+        OsgiRunConfiguration conf = (OsgiRunConfiguration) super.clone();
+        if (conf == null) {
+            return conf;
         }
-        if (isUseAlternativeJre()) {
-            final String jrePath = this.getAlternativeJrePath();
-            if (jrePath == null || jrePath.length() == 0 || !JavaSdkImpl.checkForJre(jrePath)) {
-                throw new RuntimeConfigurationWarning(ExecutionBundle.message("jre.not.valid.error.message", jrePath));
-            }
-        }
-        if (checker != null) {
-            checker.checkConfiguration(this);
-        }
-    }
-
-    public void setAdditionalChecker(@Nullable OsgiRunConfigurationChecker checker) {
-        this.checker = checker;
-    }
-
-    @NotNull
-    public Module[] getModules() {
-        List<Module> modules = new ArrayList<Module>();
-        for (SelectedBundle selectedBundle : getBundlesToDeploy()) {
-            if (selectedBundle.isModule()) {
-                modules.add(ModuleManager.getInstance(getProject()).findModuleByName(selectedBundle.getName()));
-            }
-        }
-        return modules.toArray(new Module[modules.size()]);
-    }
-
-    @NotNull
-    public List<SelectedBundle> getBundlesToDeploy() {
-        return bundlesToDeploy;
-    }
-
-    public void setBundlesToDeploy(final List<SelectedBundle> bundlesToDeploy) {
-        this.bundlesToDeploy = bundlesToDeploy;
-    }
-
-    @NotNull
-    public String getVmParameters() {
-        return vmParameters != null ? vmParameters : "";
-    }
-
-
-    public void setVmParameters(final String vmParameters) {
-        this.vmParameters = vmParameters;
-    }
-
-    @Nullable
-    public FrameworkInstanceDefinition getInstanceToUse() {
-        return instanceToUse;
-    }
-
-    public void setInstanceToUse(@NotNull final FrameworkInstanceDefinition instanceToUse) {
-        this.instanceToUse = instanceToUse;
-    }
-
-    public void putAdditionalProperties(@NotNull final Map<String, String> props) {
-        additionalProperties.putAll(props);
-    }
-
-    @NotNull
-    public Map<String, String> getAdditionalProperties() {
-        return Collections.unmodifiableMap(additionalProperties);
-    }
-
-    public boolean isIncludeAllBundlesInClassPath() {
-        return includeAllBundlesInClassPath;
-    }
-
-    public void setIncludeAllBundlesInClassPath(final boolean includeAllBundlesInClassPath) {
-        this.includeAllBundlesInClassPath = includeAllBundlesInClassPath;
-    }
-
-
-    public void setWorkingDir(final String workingDir) {
-        this.workingDir = workingDir;
-    }
-
-    public String getWorkingDir() {
-        return workingDir != null ? workingDir : "";
-    }
-
-    public void setFrameworkDir(final String frameworkDir) {
-        this.frameworkDir = frameworkDir;
-    }
-
-    public String getFrameworkDir() {
-        return frameworkDir != null ? frameworkDir : "";
-    }
-
-
-    public boolean isRuntimeDirsOsmorcControlled() {
-        return getFrameworkDir().length() == 0 && getWorkingDir().length() == 0;
-    }
-
-    public String getProgramParameters() {
-        return programParameters != null ? programParameters : "";
-    }
-
-    public void setProgramParameters(final String programParameters) {
-        this.programParameters = programParameters;
-    }
-
-    public String getAlternativeJrePath() {
-        return alternativeJrePath;
-    }
-
-    public void setAlternativeJrePath(String alternativeJrePath) {
-        this.alternativeJrePath = alternativeJrePath;
-    }
-
-    public boolean isUseAlternativeJre() {
-        return useAlternativeJre;
-    }
-
-    public void setUseAlternativeJre(boolean useAlternativeJre) {
-        this.useAlternativeJre = useAlternativeJre;
+        conf.bundlesToDeploy = new ArrayList<SelectedBundle>(bundlesToDeploy);
+        conf.additionalProperties = new HashMap<String, String>(additionalProperties);
+        return conf;
     }
 
     public void readExternal(final Element element) throws InvalidDataException {
@@ -220,6 +142,17 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
                     INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, "false"));
             useAlternativeJre = Boolean.valueOf(element.getAttributeValue(USE_ALTERNATIVE_JRE_ATTRIBUTE, "false"));
             alternativeJrePath = element.getAttributeValue(ALTERNATIVE_JRE_PATH, "");
+            autoStartLevel = Boolean.valueOf(element.getAttributeValue(AUTO_START_LEVEL));
+
+            String fwsl = element.getAttributeValue(FRAMEWORK_START_LEVEL);
+            if ( fwsl != null ) {
+              try {
+                frameworkStartLevel = Integer.parseInt(fwsl);
+              }
+              catch (NumberFormatException e) {
+                frameworkStartLevel = 1;
+              }
+            }
 
             // noinspection unchecked
             List<Element> children = element.getChildren(BUNDLE_ELEMENT);
@@ -299,6 +232,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
         element.setAttribute(FRAMEWORK_DIR_ATTRIBUTE, frameworkDir == null ? "" : frameworkDir);
         element.setAttribute(USE_ALTERNATIVE_JRE_ATTRIBUTE, String.valueOf(useAlternativeJre));
         element.setAttribute(ALTERNATIVE_JRE_PATH, alternativeJrePath != null ? alternativeJrePath : "");
+        element.setAttribute(FRAMEWORK_START_LEVEL, String.valueOf(frameworkStartLevel));
+      element.setAttribute(AUTO_START_LEVEL, String.valueOf(autoStartLevel));
 
         // all module's names
         for (SelectedBundle selectedBundle : bundlesToDeploy) {
@@ -331,6 +266,10 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
         super.writeExternal(element);
     }
 
+    public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+        return new OsgiRunConfigurationEditor(getProject());
+    }
+
     @SuppressWarnings({"deprecation"})
     public JDOMExternalizable createRunnerSettings(final ConfigurationInfoProvider configurationInfoProvider) {
         return null;
@@ -341,60 +280,149 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
         return null;
     }
 
-    @Override
-    public RunConfiguration clone() {
-        OsgiRunConfiguration conf = (OsgiRunConfiguration) super.clone();
-        if (conf == null) {
-            return conf;
-        }
-        conf.bundlesToDeploy = new ArrayList<SelectedBundle>(bundlesToDeploy);
-        conf.additionalProperties = new HashMap<String, String>(additionalProperties);
-        return conf;
+    public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws
+            ExecutionException {
+        // prepare the state
+
+        return new OsgiRunState(executor, env, this,
+                getProject(), ProjectRootManager.getInstance(getProject()).getProjectJdk());
     }
 
-    private List<SelectedBundle> bundlesToDeploy;
+    public void checkConfiguration() throws RuntimeConfigurationException {
+            if (legacyOsgiRunConfigurationLoader != null) {
+                legacyOsgiRunConfigurationLoader.finishAfterModulesAreAvailable(this);
+                legacyOsgiRunConfigurationLoader = null;
+            }
+        if (instanceToUse == null) {
+            throw new RuntimeConfigurationError(OsmorcBundle.getTranslation("runconfiguration.no.instance.selected"));
+        }
+        if (isUseAlternativeJre()) {
+            final String jrePath = this.getAlternativeJrePath();
+            if (jrePath == null || jrePath.length() == 0 || !JavaSdkImpl.checkForJre(jrePath)) {
+                throw new RuntimeConfigurationWarning(ExecutionBundle.message("jre.not.valid.error.message", jrePath));
+            }
+        }
+        if (checker != null) {
+            checker.checkConfiguration(this);
+        }
+    }
 
-    private String programParameters;
-    private String vmParameters;
-    private String alternativeJrePath;
-    private boolean useAlternativeJre;
-    private FrameworkInstanceDefinition instanceToUse;
-    private Map<String, String> additionalProperties;
-    private boolean includeAllBundlesInClassPath;
-    private String workingDir;
-    private String frameworkDir;
+    @NotNull
+    public Module[] getModules() {
+        List<Module> modules = new ArrayList<Module>();
+        for (SelectedBundle selectedBundle : getBundlesToDeploy()) {
+            if (selectedBundle.isModule()) {
+                modules.add(ModuleManager.getInstance(getProject()).findModuleByName(selectedBundle.getName()));
+            }
+        }
+        return modules.toArray(new Module[modules.size()]);
+    }
 
-    @NonNls
-    private static final String BUNDLE_ELEMENT = "bundle";
-    @NonNls
-    private static final String NAME_ATTRIBUTE = "name";
-    @NonNls
-    private static final String VM_PARAMETERS_ATTRIBUTE = "vmParameters";
-    @NonNls
-    private static final String PROGRAM_PARAMETERS_ATTRIBUTE = "programParameters";
-    @NonNls
-    private static final String WORKING_DIR_ATTRIBUTE = "workingDir";
-    @NonNls
-    private static final String FRAMEWORK_DIR_ATTRIBUTE = "FrameworkDir";
-    @NonNls
-    private static final String FRAMEWORK_ELEMENT = "framework";
-    @NonNls
-    private static final String INSTANCE_ATTRIBUTE = "instance";
-    @NonNls
-    private static final String URL_ATTRIBUTE = "url";
-    @NonNls
-    private static final String ADDITIONAL_PROPERTIES_ELEMENT = "additinalProperties";
-    @NonNls
-    private static final String TYPE_ATTRIBUTE = "type";
-    @NonNls
-    private static final String START_AFTER_INSTALLATION_ATTRIBUTE = "startAfterInstallation";
-    @NonNls
-    private static final String START_LEVEL_ATTRIBUTE = "startLevel";
-    @NonNls
-    private static final String INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE = "includeAllBundlesInClassPath";
-    @NonNls
-    private static final String USE_ALTERNATIVE_JRE_ATTRIBUTE = "useAlternativeJre";
-    @NonNls
-    private static final String ALTERNATIVE_JRE_PATH = "alternativeJrePath";
+    @NotNull
+    public Map<String, String> getAdditionalProperties() {
+        return Collections.unmodifiableMap(additionalProperties);
+    }
 
+    public String getAlternativeJrePath() {
+        return alternativeJrePath;
+    }
+
+    @NotNull
+    public List<SelectedBundle> getBundlesToDeploy() {
+        return bundlesToDeploy;
+    }
+
+    public String getFrameworkDir() {
+        return frameworkDir != null ? frameworkDir : "";
+    }
+  
+  public int getFrameworkStartLevel() {
+    return frameworkStartLevel;
+  }
+
+    @Nullable
+    public FrameworkInstanceDefinition getInstanceToUse() {
+        return instanceToUse;
+    }
+
+    public String getProgramParameters() {
+        return programParameters != null ? programParameters : "";
+    }
+
+    @NotNull
+    public String getVmParameters() {
+        return vmParameters != null ? vmParameters : "";
+    }
+
+    public String getWorkingDir() {
+        return workingDir != null ? workingDir : "";
+    }
+
+  public boolean isAutoStartLevel() {
+    return autoStartLevel;
+  }
+
+    public boolean isIncludeAllBundlesInClassPath() {
+        return includeAllBundlesInClassPath;
+    }
+
+    public boolean isRuntimeDirsOsmorcControlled() {
+        return getFrameworkDir().length() == 0 && getWorkingDir().length() == 0;
+    }
+
+    public boolean isUseAlternativeJre() {
+        return useAlternativeJre;
+    }
+
+    public void putAdditionalProperties(@NotNull final Map<String, String> props) {
+        additionalProperties.putAll(props);
+    }
+
+    public void setAdditionalChecker(@Nullable OsgiRunConfigurationChecker checker) {
+        this.checker = checker;
+    }
+
+    public void setAlternativeJrePath(String alternativeJrePath) {
+        this.alternativeJrePath = alternativeJrePath;
+    }
+
+  public void setAutoStartLevel(boolean autoStartLevel) {
+    this.autoStartLevel = autoStartLevel;
+  }
+
+    public void setBundlesToDeploy(final List<SelectedBundle> bundlesToDeploy) {
+        this.bundlesToDeploy = bundlesToDeploy;
+    }
+
+    public void setFrameworkDir(final String frameworkDir) {
+        this.frameworkDir = frameworkDir;
+    }
+
+  public void setFrameworkStartLevel(int frameworkStartLevel) {
+    this.frameworkStartLevel = frameworkStartLevel;
+  }
+
+    public void setIncludeAllBundlesInClassPath(final boolean includeAllBundlesInClassPath) {
+        this.includeAllBundlesInClassPath = includeAllBundlesInClassPath;
+    }
+
+    public void setInstanceToUse(@NotNull final FrameworkInstanceDefinition instanceToUse) {
+        this.instanceToUse = instanceToUse;
+    }
+
+    public void setProgramParameters(final String programParameters) {
+        this.programParameters = programParameters;
+    }
+
+    public void setUseAlternativeJre(boolean useAlternativeJre) {
+        this.useAlternativeJre = useAlternativeJre;
+    }
+
+    public void setVmParameters(final String vmParameters) {
+        this.vmParameters = vmParameters;
+    }
+
+    public void setWorkingDir(final String workingDir) {
+        this.workingDir = workingDir;
+    }
 }

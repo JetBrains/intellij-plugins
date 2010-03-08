@@ -124,6 +124,12 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         frameworkSpecificBundleSelectionActions =
                 new DefaultActionGroup("frameworkSpecificBundleSelectionActions", true);
 
+        myAutomaticStartLevel.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            myFrameworkStartLevel.setEnabled(!myAutomaticStartLevel.isSelected());
+          }
+        });
+
         frameworkSpecificButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JBPopupFactory.getInstance().createActionGroupPopup(
@@ -246,6 +252,9 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         }
         modulesList.getColumnModel().getColumn(1).setPreferredWidth(200);
 
+        myAutomaticStartLevel.setSelected(osgiRunConfiguration.isAutoStartLevel());
+      myFrameworkStartLevel.setValue(osgiRunConfiguration.getFrameworkStartLevel());
+      myFrameworkStartLevel.setEnabled(myAutomaticStartLevel.isSelected());
 
         boolean useUserDefinedFields = osgiRunConfiguration.getFrameworkDir().length() > 0 ||
                 osgiRunConfiguration.getWorkingDir().length() > 0;
@@ -269,6 +278,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         osgiRunConfiguration.setFrameworkDir(frameworkDirField.getText().replace('\\', '/'));
         osgiRunConfiguration.setUseAlternativeJre(alternativeJREPanel.isPathEnabled());
         osgiRunConfiguration.setAlternativeJrePath(alternativeJREPanel.getPath());
+        osgiRunConfiguration.setFrameworkStartLevel((Integer)myFrameworkStartLevel.getValue());
+      osgiRunConfiguration.setAutoStartLevel(myAutomaticStartLevel.isSelected());
         FrameworkInstanceDefinition frameworkInstanceDefinition =
                 (FrameworkInstanceDefinition) frameworkInstances.getSelectedItem();
         if (frameworkInstanceDefinition != null) {
@@ -278,6 +289,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         if (currentFrameworkRunPropertiesEditor != null) {
             currentFrameworkRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
         }
+
     }
 
     private List<SelectedBundle> getBundlesToRun() {
@@ -309,7 +321,9 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     private RawCommandLineEditor programParameters;
     private JButton frameworkSpecificButton;
     private AlternativeJREPanel alternativeJREPanel;
-    private final Project project;
+  private JSpinner myFrameworkStartLevel;
+  private JCheckBox myAutomaticStartLevel;
+  private final Project project;
     private FrameworkRunPropertiesEditor currentFrameworkRunPropertiesEditor;
 
 

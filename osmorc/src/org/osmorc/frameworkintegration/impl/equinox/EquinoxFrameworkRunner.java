@@ -38,8 +38,10 @@ import java.util.Map;
  * @version $Id$
  */
 public class EquinoxFrameworkRunner extends AbstractPaxBasedFrameworkRunner<EquinoxRunProperties> {
+  protected EquinoxFrameworkRunner() {
+  }
 
-    @NotNull
+  @NotNull
     @Override
     protected EquinoxRunProperties convertProperties(Map<String, String> properties) {
         return new EquinoxRunProperties(properties);
@@ -47,14 +49,13 @@ public class EquinoxFrameworkRunner extends AbstractPaxBasedFrameworkRunner<Equi
 
     @NotNull
     @Override
-    protected  String getAdditionalTargetVMProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
-                                                      @NotNull EquinoxRunProperties runProperties) {
+    protected  String getAdditionalTargetVMProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall) {
       StringBuilder result = new StringBuilder();
-      String product = getAdditionalProperties().getEquinoxProduct();
+      String product = getFrameworkProperties().getEquinoxProduct();
         if (product != null && product.length() > 0) {
           result.append(" -Declipse.product=").append(product);
         } else {
-            String application = getAdditionalProperties().getEquinoxApplication();
+            String application = getFrameworkProperties().getEquinoxApplication();
             if (application != null && application.length() > 0) {
               result.append(" -Declipse.application=").append(application);
             } else {

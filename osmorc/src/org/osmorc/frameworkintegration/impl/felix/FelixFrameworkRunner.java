@@ -25,19 +25,9 @@
 package org.osmorc.frameworkintegration.impl.felix;
 
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractPaxBasedFrameworkRunner;
-import org.osmorc.frameworkintegration.impl.AbstractSimpleFrameworkRunner;
-import org.osmorc.run.ui.SelectedBundle;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-import java.util.regex.Pattern;
 
 /**
  * Framework runner for the felix osgi container.
@@ -47,8 +37,10 @@ import java.util.regex.Pattern;
  * @version $Id$
  */
 public class FelixFrameworkRunner extends AbstractPaxBasedFrameworkRunner<FelixRunProperties> {
+  protected FelixFrameworkRunner() {
+  }
 
-    @NotNull
+  @NotNull
     protected FelixRunProperties convertProperties(Map<String, String> properties) {
         return new FelixRunProperties(properties);
     }

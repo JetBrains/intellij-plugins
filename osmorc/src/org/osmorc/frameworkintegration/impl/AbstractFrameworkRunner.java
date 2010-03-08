@@ -25,105 +25,184 @@
 
 package org.osmorc.frameworkintegration.impl;
 
+import com.intellij.execution.configurations.DebuggingRunnerData;
+import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.FrameworkRunner;
+import org.jetbrains.annotations.Nullable;
+import org.osmorc.frameworkintegration.*;
 import org.osmorc.frameworkintegration.util.PropertiesWrapper;
 import org.osmorc.run.OsgiRunConfiguration;
+import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * This class provides a default implementation for a part of the FrameworkRunner interface useful to any kind of
  * FrameworkRunner.
  *
  * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> implements FrameworkRunner {
-    private Project project;
-    private OsgiRunConfiguration runConfiguration;
-    private P additionalProperties;
-    private File workingDir;
-    private File frameworkDir;
+  private Project myProject;
+  private OsgiRunConfiguration myRunConfiguration;
+  private RunnerSettings myRunnerSettings;
+  private P myAdditionalProperties;
+  private File workingDir;
+  private File frameworkDir;
 
 
-    public void init(@NotNull final Project project, @NotNull final OsgiRunConfiguration runConfiguration) {
-        this.project = project;
-        this.runConfiguration = runConfiguration;
-        additionalProperties = convertProperties(this.runConfiguration.getAdditionalProperties());
+  public void init(@NotNull final Project project, @NotNull final OsgiRunConfiguration runConfiguration, RunnerSettings runnerSettings) {
+    this.myProject = project;
+    this.myRunConfiguration = runConfiguration;
+    myRunnerSettings = runnerSettings;
+    myAdditionalProperties = convertProperties(this.myRunConfiguration.getAdditionalProperties());
+  }
+
+  protected P getFrameworkProperties() {
+    return myAdditionalProperties;
+  }
+
+  /**
+   * Returns the start level of the framework. If the run configuration is set to automatic, this will determine the greatest start level
+   *  of the given bundles. Otherwise the start level from the run configuration is returned.
+   * @param bundlesToStart the list of bundles to be examined.
+   * @return the framework start level.
+   */
+  protected int getFrameworkStartLevel(SelectedBundle[] bundlesToStart) {
+    if ( myRunConfiguration.isAutoStartLevel() ) {
+      int sl = 0;
+      for (SelectedBundle selectedBundle : bundlesToStart) {
+        sl = Math.max(selectedBundle.getStartLevel(), sl);
+      }
+      return sl;
     }
-
-    protected P getAdditionalProperties() {
-        return additionalProperties;
+    else {
+      return myRunConfiguration.getFrameworkStartLevel();
     }
+  }
 
-    @NotNull
-    public File getWorkingDir() {
-        if (workingDir == null) {
-            String path;
-            if (getRunConfiguration().getWorkingDir().length() == 0) {
-                path = PathManager.getSystemPath() + File.separator + "osmorc" + File.separator + "runtmp" +
-                        System.currentTimeMillis();
-            } else {
-                path = getRunConfiguration().getWorkingDir();
-            }
+  /**
+   * @return true if this run is a debug run, false otherwise.
+   */
+  protected boolean isDebugRun() {
+    return myRunnerSettings.getData() instanceof DebuggingRunnerData;
+  }
 
-            File dir = new File(path);
-            if (!dir.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                dir.mkdirs();
-            }
-            workingDir = dir;
+  /**
+   * Returns the debug port. Use {@link #isDebugRun()} to check if this is a debug run.
+   * @return the debug port that is in use, or -1 if this is not a debug run.
+   */
+  @NotNull
+  protected String getDebugPort() {
+    if (!isDebugRun()) {
+      return "-1";
+    }
+    DebuggingRunnerData data = (DebuggingRunnerData)myRunnerSettings.getData();
+    return data.getDebugPort();
+  }
+
+  @NotNull
+  public File getWorkingDir() {
+    if (workingDir == null) {
+      String path;
+      if (getRunConfiguration().getWorkingDir().length() == 0) {
+        path = PathManager.getSystemPath() + File.separator + "osmorc" + File.separator + "runtmp" + System.currentTimeMillis();
+      }
+      else {
+        path = getRunConfiguration().getWorkingDir();
+      }
+
+      File dir = new File(path);
+      if (!dir.exists()) {
+        //noinspection ResultOfMethodCallIgnored
+        dir.mkdirs();
+      }
+      workingDir = dir;
+    }
+    return workingDir;
+  }
+
+  protected File getFrameworkDir() {
+    if (frameworkDir == null) {
+      if (getRunConfiguration().getFrameworkDir().length() > 0) {
+        String path = getRunConfiguration().getFrameworkDir();
+        File dir = new File(path);
+        if (!dir.exists()) {
+          //noinspection ResultOfMethodCallIgnored
+          dir.mkdirs();
         }
-        return workingDir;
+        frameworkDir = dir;
+      }
+      else {
+        frameworkDir = getWorkingDir();
+      }
     }
+    return frameworkDir;
+  }
 
-    protected File getFrameworkDir() {
-        if (frameworkDir == null) {
-            if (getRunConfiguration().getFrameworkDir().length() > 0) {
-                String path = getRunConfiguration().getFrameworkDir();
-                File dir = new File(path);
-                if (!dir.exists()) {
-                    //noinspection ResultOfMethodCallIgnored
-                    dir.mkdirs();
-                }
-                frameworkDir = dir;
-            } else {
-                frameworkDir = getWorkingDir();
-            }
+  public void dispose() {
+    if (getRunConfiguration().isRuntimeDirsOsmorcControlled()) {
+      FileUtil.asyncDelete(getWorkingDir());
+    }
+  }
+
+  @NotNull
+  protected abstract P convertProperties(final Map<String, String> properties);
+
+  protected Project getProject() {
+    return myProject;
+  }
+
+  protected OsgiRunConfiguration getRunConfiguration() {
+    return myRunConfiguration;
+  }
+
+
+  protected RunnerSettings getRunnerSettings() {
+    return myRunnerSettings;
+  }
+
+  @NotNull
+  public List<VirtualFile> getFrameworkStarterLibraries() {
+    List<VirtualFile> result = new ArrayList<VirtualFile>();
+
+    FrameworkInstanceDefinition definition = getRunConfiguration().getInstanceToUse();
+    FrameworkIntegratorRegistry registry = ServiceManager.getService(getProject(), FrameworkIntegratorRegistry.class);
+    FrameworkIntegrator integrator = registry.findIntegratorByInstanceDefinition(definition);
+    FrameworkInstanceManager frameworkInstanceManager = integrator.getFrameworkInstanceManager();
+
+    List<Library> libs = frameworkInstanceManager.getLibraries(definition);
+
+    final Pattern starterClasspathPattern = getFrameworkStarterClasspathPattern();
+    for (Library lib : libs) {
+      for (VirtualFile virtualFile : lib.getFiles(OrderRootType.CLASSES_AND_OUTPUT)) {
+        if (starterClasspathPattern == null || starterClasspathPattern.matcher(virtualFile.getName()).matches()) {
+          result.add(virtualFile);
         }
-        return frameworkDir;
+      }
     }
+    return result;
+  }
 
-    protected String getFrameworkDirCanonicalPath() {
-        try {
-            return getFrameworkDir().getCanonicalPath();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void dispose() {
-        if (getRunConfiguration().isRuntimeDirsOsmorcControlled()) {
-            FileUtil.asyncDelete(getWorkingDir());
-        }
-    }
-
-
-    @NotNull
-    protected abstract P convertProperties(final Map<String, String> properties);
-
-    protected Project getProject() {
-        return project;
-    }
-
-    protected OsgiRunConfiguration getRunConfiguration() {
-        return runConfiguration;
-    }
-
-
+  /**
+   * A pattern tested against all framework bundle jars to collect all jars that need to be put into the classpath in
+   * order to start a framework.
+   *
+   * @return The pattern matching all needed jars for running of a framework instance.
+   */
+  @Nullable
+  protected abstract Pattern getFrameworkStarterClasspathPattern();
 }

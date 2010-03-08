@@ -24,26 +24,22 @@
  */
 package org.osmorc.frameworkintegration.impl.concierge;
 
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractPaxBasedFrameworkRunner;
-import org.osmorc.frameworkintegration.impl.AbstractSimpleFrameworkRunner;
-import org.osmorc.run.ui.SelectedBundle;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
- * Concierge specific implementation of {@link org.osmorc.frameworkintegration.impl.AbstractSimpleFrameworkRunner}.
+ * Concierge specific implementation of {@link org.osmorc.frameworkintegration.impl.AbstractPaxBasedFrameworkRunner}.
  *
  * @author <a href="mailto:al@chilibi.org">Alain Greppin</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ConciergeFrameworkRunner extends AbstractPaxBasedFrameworkRunner<ConciergeRunProperties> {
+  protected ConciergeFrameworkRunner() {
+  }
 
-    @NotNull
+  @NotNull
     protected ConciergeRunProperties convertProperties(Map<String, String> properties) {
         return new ConciergeRunProperties(properties);
     }
