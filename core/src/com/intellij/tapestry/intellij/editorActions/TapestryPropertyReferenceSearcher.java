@@ -32,6 +32,9 @@ public class TapestryPropertyReferenceSearcher implements QueryExecutor<PsiRefer
     if (searchScope instanceof GlobalSearchScope) {
       searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)searchScope, TmlFileType.INSTANCE);
     }
+    else {
+      searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(refElement.getProject()), TmlFileType.INSTANCE).intersectWith(searchScope);
+    }
     final TextOccurenceProcessor processor = new TextOccurenceProcessor() {
       public boolean execute(PsiElement element, int offsetInElement) {
         ProgressManager.checkCanceled();
