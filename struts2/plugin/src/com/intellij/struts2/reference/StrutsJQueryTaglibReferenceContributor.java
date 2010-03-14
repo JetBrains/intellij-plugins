@@ -92,7 +92,8 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
     registerTags(new StaticStringValuesReferenceProvider(false, "inner", "outer", "both"),
                  "draggableSnapMode", registrar, DRAG_DROP_TAGS);
 
-    // droppable
+    // droppable*
+    registerTags(CSS_CLASS_PROVIDER, "droppableHoverClass", registrar, DRAG_DROP_TAGS);
     registerTags(new StaticStringValuesReferenceProvider(false, "fit", "intersect", "pointer", "touch"),
                  "droppableTolerance", registrar, DRAG_DROP_TAGS);
 
@@ -153,7 +154,7 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
 
     // "targets" TODO allow multiple comma-separated
     registerTags(HTML_ID_REFERENCE_PROVIDER, "targets", registrar,
-                 "dialog", "grid", "gridColumn", "select", "submit", "textarea", "textfield", "tab");
+                 "a", "dialog", "grid", "gridColumn", "select", "submit", "textarea", "textfield", "tab");
 
     // "labelposition"
     registerTags(new StaticStringValuesReferenceProvider(false, "top", "left"),
