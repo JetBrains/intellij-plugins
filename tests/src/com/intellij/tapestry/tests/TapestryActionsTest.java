@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.tapestry.intellij.actions.navigation.ClassTemplateNavigation;
+import com.intellij.testFramework.EditorTestUtil;
 
 /**
  * @author Alexey Chmutov
@@ -66,6 +67,18 @@ public class TapestryActionsTest extends TapestryBaseTestCase {
 
   public void testUncommentLine() throws Throwable {
     doTest(IdeActions.ACTION_COMMENT_LINE);
+  }
+  
+  public void testInsertPairingRBrace() throws Throwable {
+    initByComponent(true);
+    EditorTestUtil.performTypingAction(myFixture.getEditor(), '{');
+    checkResultByFile();
+  }
+  
+  public void testInsertPairingRBrace2() throws Throwable {
+    initByComponent(true);
+    EditorTestUtil.performTypingAction(myFixture.getEditor(), '{');
+    checkResultByFile();
   }
 
   private void doTest(final String actionId) throws Throwable {

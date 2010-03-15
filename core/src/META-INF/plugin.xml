@@ -21,6 +21,7 @@
     <colorSettingsPage implementation="com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage"/>
     
     <fileTypeFactory implementation="com.intellij.tapestry.lang.TmlFileTypeFactory"/>
+    <typedHandler implementation="com.intellij.tapestry.lang.TmlTypedHandler"/>
     <lang.fileViewProviderFactory language="TML" implementationClass="com.intellij.tapestry.lang.TmlFileViewProviderFactory"/>
     <syntaxHighlighter key="TML" implementationClass="com.intellij.tapestry.lang.TmlHighlighter"/>
     <lang.parserDefinition language="TML" implementationClass="com.intellij.tapestry.psi.TmlParserDefinition"/>

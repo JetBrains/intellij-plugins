@@ -43,7 +43,7 @@ public abstract class TelTokenTypes {
 
   static final IElementType TAP5_EL_CONTENT = new TelTokenType("TAP5_EL_CONTENT");
   static final Key<ASTNode> TAP5_CONTEXT_NODE_KEY = Key.create("TAP5_CONTEXT_NODE_KEY");
-  static final ILazyParseableElementType TAP5_EL_HOLDER =
+  public static final ILazyParseableElementType TAP5_EL_HOLDER =
       new ILazyParseableElementType("TAP5_EL_HOLDER", TelFileType.INSTANCE.getLanguage()) {
         @Override
         public ASTNode parseContents(ASTNode chameleon) {
