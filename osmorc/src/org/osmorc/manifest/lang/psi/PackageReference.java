@@ -35,6 +35,7 @@ import com.intellij.psi.PsiPackage;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -79,6 +80,7 @@ public class PackageReference extends PsiReferenceBase<PsiElement> implements Em
         return null;
     }
 
+    @NotNull
     public Object[] getVariants() {
         final PsiPackage psiPackage = getPsiPackage();
         if (psiPackage == null) {
