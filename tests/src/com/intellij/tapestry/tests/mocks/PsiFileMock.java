@@ -50,9 +50,9 @@ public class PsiFileMock implements PsiFile {
         return 0;
     }
 
-    @Nullable
+    @NotNull
     public PsiFile getOriginalFile() {
-        return null;
+        return this;
     }
 
     @NotNull
@@ -301,11 +301,11 @@ public class PsiFileMock implements PsiFile {
         return null;
     }
 
-    public <T> T getUserData(Key<T> key) {
+    public <T> T getUserData(@NotNull Key<T> key) {
         return null;
     }
 
-    public <T> void putUserData(Key<T> key, T value) {
+    public <T> void putUserData(@NotNull Key<T> key, T value) {
     }
 
     public Icon getIcon(int flags) {
