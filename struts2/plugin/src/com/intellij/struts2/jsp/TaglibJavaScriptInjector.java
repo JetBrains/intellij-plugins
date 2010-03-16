@@ -61,6 +61,10 @@ public class TaglibJavaScriptInjector implements MultiHostInjector {
   private static final ElementPattern<XmlAttributeValue> JS_JQUERY_PATTERN =
     xmlAttributeValue()
       .withLocalName("effectOptions",
+                     // dialog
+                     "buttons",    
+                     // datepicker
+                     "showOptions",
                      // grid
                      "filterOptions", "navigatorAddOptions", "navigatorDeleteOptions",
                      "navigatorEditOptions", "navigatorSearchOptions", "navigatorViewOptions",
