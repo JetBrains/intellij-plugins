@@ -254,7 +254,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
         myAutomaticStartLevel.setSelected(osgiRunConfiguration.isAutoStartLevel());
       myFrameworkStartLevel.setValue(osgiRunConfiguration.getFrameworkStartLevel());
-      myFrameworkStartLevel.setEnabled(myAutomaticStartLevel.isSelected());
+      myFrameworkStartLevel.setEnabled(!myAutomaticStartLevel.isSelected());
 
         boolean useUserDefinedFields = osgiRunConfiguration.getFrameworkDir().length() > 0 ||
                 osgiRunConfiguration.getWorkingDir().length() > 0;
