@@ -164,6 +164,10 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     public void disposeUIResources() {
     }
 
+   @Override
+  public String getHelpTopic() {
+    return "reference.settings.module.facet.osgi";
+  }
 
     private JPanel _root;
     private JTextField _bundleSymbolicName;

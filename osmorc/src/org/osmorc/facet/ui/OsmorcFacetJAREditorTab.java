@@ -385,6 +385,11 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
 
     }
 
+   @Override
+  public String getHelpTopic() {
+    return "reference.settings.module.facet.osgi";
+  }
+  
     private TextFieldWithBrowseButton _jarFileChooser;
     private JPanel _root;
     private JTable _additionalJARContentsTable;
