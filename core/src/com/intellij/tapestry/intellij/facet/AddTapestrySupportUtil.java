@@ -44,7 +44,7 @@ public class AddTapestrySupportUtil {
 
   private static void addSupport(final Module module,
                                  final TapestryFacetConfiguration configuration,
-                                 boolean generateStartupApplication,
+                                 boolean generateStartupApplication,  // TODO !!!!
                                  boolean generatePom) throws Exception {
 
     if (generatePom) {

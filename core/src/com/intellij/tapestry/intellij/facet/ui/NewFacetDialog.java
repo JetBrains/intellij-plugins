@@ -16,6 +16,7 @@ public class NewFacetDialog extends JDialog {
     setContentPane(_mainPanel);
     _filterName.setText(configuration.getFilterName());
     _applicationPackage.setText(configuration.getApplicationPackage());
+    _generateStartupApplication.setVisible(false); // TODO: till we have sample application generated
     setModal(true);
   }
 
