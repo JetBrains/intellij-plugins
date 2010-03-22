@@ -44,6 +44,8 @@ public class BndHeaderProviderRepository implements HeaderParserProviderReposito
     _headerProviders = new ArrayList<HeaderParserProvider>();
 
     _headerProviders.add(new HeaderParserProviderImpl("Private-Package", genericComplexHeaderParser));
+    _headerProviders.add(new HeaderParserProviderImpl("Tool", genericComplexHeaderParser));
+    _headerProviders.add(new HeaderParserProviderImpl("Bnd-LastModified", genericComplexHeaderParser));
     _headerProviders.add(new HeaderParserProviderImpl("Include-Resource", genericComplexHeaderParser));
   }
 

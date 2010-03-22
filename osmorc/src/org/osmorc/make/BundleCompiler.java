@@ -265,7 +265,7 @@ public class BundleCompiler implements PackagingCompiler {
         // build a bnd file or use a provided one.
         String bndFileUrl = "";
         Map<String, String> additionalProperties = new HashMap<String, String>();
-        if (configuration.isOsmorcControlsManifest()) {
+        if (configuration.isOsmorcControlsManifest() || configuration.isUseBndFile() ) {
             if (configuration.isUseBndFile()) {
                 File bndFile = findFileInModuleContentRoots(configuration.getBndFileLocation(), module);
                 if (bndFile == null || !bndFile.exists()) {
