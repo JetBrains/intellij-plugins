@@ -27,7 +27,7 @@ public abstract class TimeoutCachedValue <T> implements CachedValue<T> {
     myTimeout = timeout;
   }
 
-  public T getValue() {
+  public synchronized T getValue() {
     if (myTimeout <= System.currentTimeMillis() - myLastCalcTime) {
       myLastCalcTime = System.currentTimeMillis();
       myCache = calculate();
