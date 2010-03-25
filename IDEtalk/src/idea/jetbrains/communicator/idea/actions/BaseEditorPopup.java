@@ -57,6 +57,8 @@ public abstract class BaseEditorPopup extends ActionGroup {
     final Editor editor = getEditor(e);
     final VirtualFile file = getFile(e);
 
+    if (file == null || editor == null) return EMPTY_ARRAY;
+
 
     List<AnAction> result = new ArrayList<AnAction>();
     final UserModel userModel = getUserModel();
