@@ -603,7 +603,8 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     }
 
     private void acceptSubscription(final Presence presence, boolean subscribe) {
-
+      if (!isOnline()) return;
+      
       myFacade.changeSubscription(presence.getFrom(), subscribe);
 
       if (subscribe) {

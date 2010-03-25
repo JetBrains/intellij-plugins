@@ -89,12 +89,14 @@ public class RegistrationForm {
     }
 
     AccountInfo account = myFacade.getMyAccount();
-    setUsername(account.getUsername());
-    setServer(account.getServer());
-    setPort(account.getPort());
-    setPassword(account.getPassword());
-    setForceSSL(account.isForceSSL());
-    setRememberPassword(account.shouldRememberPassword());
+    if (account != null) {
+      setUsername(account.getUsername());
+      setServer(account.getServer());
+      setPort(account.getPort());
+      setPassword(account.getPassword());
+      setForceSSL(account.isForceSSL());
+      setRememberPassword(account.shouldRememberPassword());
+    }
   }
 
   private void setupFormActionsAndLF() {

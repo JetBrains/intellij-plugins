@@ -112,7 +112,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
   public String connect() {
     if (isConnectedAndAuthenticated()) return null;
     AccountInfo info = getMyAccount();
-    if (!info.isLoginAllowed()) return null;
+    if (info == null || !info.isLoginAllowed()) return null;
     return connect(info.getUsername(), info.getPassword(), info.getServer(), info.getPort(), info.isForceSSL());
   }
 
@@ -288,7 +288,8 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
   }
 
   public void addUsers(String group, List<String> list) {
-
+    if (!isConnectedAndAuthenticated()) return;
+    
     String self = getConnection().getUser();
     for (String id : list) {
       if (!self.startsWith(id)) {

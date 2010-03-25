@@ -197,13 +197,15 @@ class MulticastPingThread extends Thread {
     if (myDatagramSocket != null) {
       myDatagramSocket.close();
     }
-    myIsRunning = false;
-    try {
-      while (!myDisposed) {
-        Thread.sleep(100);
+    if (myIsRunning) {
+      myIsRunning = false;
+      try {
+        while (!myDisposed) {
+          Thread.sleep(100);
+        }
       }
-    }
-    catch (InterruptedException ignored) {
+      catch (InterruptedException ignored) {
+      }
     }
   }
 

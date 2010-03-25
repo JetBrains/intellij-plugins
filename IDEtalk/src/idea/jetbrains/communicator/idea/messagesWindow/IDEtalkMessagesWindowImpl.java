@@ -157,10 +157,12 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
   }
 
   public void projectClosed() {
-    myIconBlinker.stop();
-    myEventsProcessor.dispose();
+    if (myIconBlinker != null) {
+      myIconBlinker.stop();
+      myEventsProcessor.dispose();
 
-    UIUtil.removeListenersToPreventMemoryLeak(myPanel);
+      UIUtil.removeListenersToPreventMemoryLeak(myPanel);
+    }
 
     super.projectClosed();
   }

@@ -88,7 +88,7 @@ class EventsProcessor extends EventVisitor implements IDEtalkListener, Disposabl
       makeWindowBlinking();
     }
 
-    if (IdeaFlags.POPUP_ON_MESSAGE.isSet()) {
+    if (user != null && IdeaFlags.POPUP_ON_MESSAGE.isSet()) {
       showPopupNotification(user, event);
     }
 
