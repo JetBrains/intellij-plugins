@@ -50,28 +50,28 @@ public class EquinoxFrameworkRunner extends AbstractPaxBasedFrameworkRunner<Equi
 
   }
 
-
+  @NotNull
   @Override
-  public void fillVmParameters(ParametersList vmParameters, @NotNull SelectedBundle[] bundlesToInstall) {
-    super.fillVmParameters(vmParameters, bundlesToInstall);
+  protected String getAdditionalTargetVMProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall) {
+    StringBuilder result = new StringBuilder();
     String product = getFrameworkProperties().getEquinoxProduct();
     if (product != null && product.length() > 0) {
-      vmParameters.defineProperty("eclipse.product", product);
-      vmParameters.defineProperty("eclipse.ignoreApp", "false");
+      result.append(" -Declipse.product=").append(product);
+      result.append(" -Declipse.ignoreApp=").append("false");
     }
     else {
       String application = getFrameworkProperties().getEquinoxApplication();
       if (application != null && application.length() > 0) {
-        vmParameters.defineProperty("eclipse.application", application);
-        vmParameters.defineProperty("eclipse.ignoreApp", "false");
+        result.append(" -Declipse.application=").append(application);
+        result.append(" -Declipse.ignoreApp=").append("false");
 
       }
       else {
-        vmParameters.defineProperty("eclipse.ignoreApp", "true");
+        result.append(" -Declipse.ignoreApp=").append("false");
       }
     }
+    return result.toString();  
   }
-
 
   @NotNull
   @Override

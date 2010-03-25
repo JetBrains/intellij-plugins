@@ -42,7 +42,6 @@ import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +117,7 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
   public File getWorkingDir() {
     if (workingDir == null) {
       String path;
-      if (getRunConfiguration().getWorkingDir().length() == 0) {
+      if (getRunConfiguration().isGenerateWorkingDir()) {
         path = PathManager.getSystemPath() + File.separator + "osmorc" + File.separator + "runtmp" + System.currentTimeMillis();
       }
       else {
@@ -135,26 +134,8 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
     return workingDir;
   }
 
-  protected File getFrameworkDir() {
-    if (frameworkDir == null) {
-      if (getRunConfiguration().getFrameworkDir().length() > 0) {
-        String path = getRunConfiguration().getFrameworkDir();
-        File dir = new File(path);
-        if (!dir.exists()) {
-          //noinspection ResultOfMethodCallIgnored
-          dir.mkdirs();
-        }
-        frameworkDir = dir;
-      }
-      else {
-        frameworkDir = getWorkingDir();
-      }
-    }
-    return frameworkDir;
-  }
-
   public void dispose() {
-    if (getRunConfiguration().isRuntimeDirsOsmorcControlled()) {
+    if (getRunConfiguration().isGenerateWorkingDir()) {
       FileUtil.asyncDelete(getWorkingDir());
     }
   }

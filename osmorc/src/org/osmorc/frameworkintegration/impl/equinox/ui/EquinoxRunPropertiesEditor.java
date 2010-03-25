@@ -49,9 +49,7 @@ public class EquinoxRunPropertiesEditor implements FrameworkRunPropertiesEditor 
     private JTextField productTextField;
     private JTextField applicationTextField;
     private JRadioButton justTheBundlesRadioButton;
-    private JCheckBox cleanEquinoxCache;
-    private JCheckBox recreateConfigIniCheckBox;
-    private GenericRunPropertiesEditor _genericRunPropertiesEditor;
+  private GenericRunPropertiesEditor _genericRunPropertiesEditor;
     private PresentationModel<EquinoxRunProperties> presentationModel;
 
     public EquinoxRunPropertiesEditor() {
@@ -119,10 +117,6 @@ public class EquinoxRunPropertiesEditor implements FrameworkRunPropertiesEditor 
         final EquinoxRunProperties runProperties = new EquinoxRunProperties(new HashMap<String, String>());
         presentationModel = new PresentationModel<EquinoxRunProperties>(runProperties);
         _genericRunPropertiesEditor = new GenericRunPropertiesEditor<EquinoxRunProperties>(runProperties);
-        cleanEquinoxCache = BasicComponentFactory
-                .createCheckBox(presentationModel.getModel(EquinoxRunProperties.CLEAN_EQUINOX_CACHE), "");
-        recreateConfigIniCheckBox = BasicComponentFactory
-                .createCheckBox(presentationModel.getModel(EquinoxRunProperties.RECREATE_CONFIG_INI), "");
         productTextField =
                 BasicComponentFactory.createTextField(presentationModel.getModel(EquinoxRunProperties.EQUINOX_PRODUCT));
         applicationTextField =

@@ -91,7 +91,6 @@ public class EquinoxRunConfigurationConverter extends ProjectConverter {
                     OsgiRunConfiguration osgiRunConfiguration = new OsgiRunConfiguration(null, null, null);
 
                     osgiRunConfiguration.setWorkingDir(workingDir);
-                    osgiRunConfiguration.setFrameworkDir(configDir);
                     osgiRunConfiguration.setVmParameters(jvmArgs);
                     osgiRunConfiguration.setProgramParameters(additionalEquinoxArgs);
 
@@ -100,8 +99,6 @@ public class EquinoxRunConfigurationConverter extends ProjectConverter {
                     runProperties.setEquinoxProduct(product);
                     runProperties.setStartConsole(equinoxConsole);
                     runProperties.setDebugMode(equinoxDebug);
-                    runProperties.setCleanEquinoxCache(clean);
-                    runProperties.setRecreateEquinoxConfigIni(clean);
 
                     osgiRunConfiguration.putAdditionalProperties(runProperties.getProperties());
 
