@@ -50,6 +50,8 @@ import java.util.regex.Pattern;
  * @version $Id:$
  */
 public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties> extends AbstractFrameworkRunner<P> implements ExternalVMFrameworkRunner {
+  private static final String PaxRunnerLib = "pax-runner-1.5.0-SNAPSHOT.jar";
+
   protected AbstractPaxBasedFrameworkRunner() {
   }
 
@@ -60,14 +62,14 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     // pax does it's own magic, so the only lib we need, is the pax lib.
     // XXX: ask anton if there is some better way to do this..
     @SuppressWarnings({"ConstantConditions"}) final String paxLib =
-      PluginManager.getPlugin(PluginId.getId("Osmorc")).getPath().getPath() + "/lib/pax-runner-1.3.0.jar";
+      PluginManager.getPlugin(PluginId.getId("Osmorc")).getPath().getPath() + "/lib/" + PaxRunnerLib;
     List<VirtualFile> libs = new ArrayList<VirtualFile>(1);
     VirtualFile path = LocalFileSystem.getInstance().findFileByPath(paxLib);
     if (path == null) {
       // hmm not good... try get it from the classpath - this is a hack...
       String[] classpath = System.getProperty("java.class.path").split(File.pathSeparator);
       for (String s : classpath) {
-        if (s.contains("pax-runner-1.3.0.jar")) {
+        if (s.contains(PaxRunnerLib)) {
           path = LocalFileSystem.getInstance().findFileByPath(s);
           if (path != null) {
             libs.add(path);

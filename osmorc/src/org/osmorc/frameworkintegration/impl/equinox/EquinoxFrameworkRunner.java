@@ -24,6 +24,7 @@
  */
 package org.osmorc.frameworkintegration.impl.equinox;
 
+import com.intellij.execution.configurations.ParametersList;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.impl.AbstractPaxBasedFrameworkRunner;
 import org.osmorc.run.ui.SelectedBundle;
@@ -42,32 +43,39 @@ public class EquinoxFrameworkRunner extends AbstractPaxBasedFrameworkRunner<Equi
   }
 
   @NotNull
-    @Override
-    protected EquinoxRunProperties convertProperties(Map<String, String> properties) {
-        return new EquinoxRunProperties(properties);
-    }
+  @Override
+  protected EquinoxRunProperties convertProperties(Map<String, String> properties) {
+    return new EquinoxRunProperties(properties);
 
-    @NotNull
-    @Override
-    protected  String getAdditionalTargetVMProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall) {
-      StringBuilder result = new StringBuilder();
-      String product = getFrameworkProperties().getEquinoxProduct();
-        if (product != null && product.length() > 0) {
-          result.append(" -Declipse.product=").append(product);
-        } else {
-            String application = getFrameworkProperties().getEquinoxApplication();
-            if (application != null && application.length() > 0) {
-              result.append(" -Declipse.application=").append(application);
-            } else {
-              result.append(" -Declipse.ignoreApp=true");
-            }
-        }
-        return result.toString();
-    }
 
-    @NotNull
-    @Override
-    protected String getOsgiFrameworkName() {
-        return "Equinox";
+  }
+
+
+  @Override
+  public void fillVmParameters(ParametersList vmParameters, @NotNull SelectedBundle[] bundlesToInstall) {
+    super.fillVmParameters(vmParameters, bundlesToInstall);
+    String product = getFrameworkProperties().getEquinoxProduct();
+    if (product != null && product.length() > 0) {
+      vmParameters.defineProperty("eclipse.product", product);
+      vmParameters.defineProperty("eclipse.ignoreApp", "false");
     }
+    else {
+      String application = getFrameworkProperties().getEquinoxApplication();
+      if (application != null && application.length() > 0) {
+        vmParameters.defineProperty("eclipse.application", application);
+        vmParameters.defineProperty("eclipse.ignoreApp", "false");
+
+      }
+      else {
+        vmParameters.defineProperty("eclipse.ignoreApp", "true");
+      }
+    }
+  }
+
+
+  @NotNull
+  @Override
+  protected String getOsgiFrameworkName() {
+    return "Equinox";
+  }
 }

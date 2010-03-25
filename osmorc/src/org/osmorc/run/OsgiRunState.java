@@ -169,7 +169,7 @@ public class OsgiRunState extends JavaCommandLineState  {
   private SelectedBundle[] getSelectedBundles() {
 
     if (_selectedBundles == null) {
-      ProgressManager.getInstance().run(new Task.Modal(project, "Fooo", false) {
+      ProgressManager.getInstance().run(new Task.Modal(project, "Preparing bundles...", false) {
         @Override
         public void run(@NotNull ProgressIndicator progressIndicator) {
           progressIndicator.setIndeterminate(false);

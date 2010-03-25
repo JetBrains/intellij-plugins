@@ -72,16 +72,16 @@
     <orderEntry type="module" module-name="compiler-openapi" />
     <orderEntry type="module" module-name="execution-openapi" />
     <orderEntry type="module" module-name="execution-impl" />
-    <orderEntry type="module-library" scope="RUNTIME">
+    <orderEntry type="module" module-name="debugger-impl" />
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/pax-runner-1.3.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/pax-runner-1.5.0-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="debugger-impl" />
   </component>
 </module>
 

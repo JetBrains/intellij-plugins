@@ -44,7 +44,7 @@ import java.util.Arrays;
 public class EquinoxIntegrator extends AbstractFrameworkIntegrator implements OsgiRunConfigurationCheckerProvider {
     private final EquinoxOsgiRunConfigurationChecker checker;
     private static final BundleSelectionAction[] ACTIONS = new BundleSelectionAction[]{
-            new AdaptToRunWithUpdateConfiguratorAction(),
+            //new AdaptToRunWithUpdateConfiguratorAction(),
             new AdaptToRunWithoutUpdateConfigurator()};
 
     public EquinoxIntegrator(EquinoxFrameworkInstanceManager frameworkInstanceManager) {
