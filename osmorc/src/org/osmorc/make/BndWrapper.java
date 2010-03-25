@@ -182,31 +182,45 @@ public class BndWrapper {
         jar.write(f);
         jar.close();
         analyzer.close();
+
+      // IDEA-26817 delete the old bundle, so the renameTo later works...
+      if ( outputJar.exists() ) {
+        if ( !outputJar.delete() ) {
+          compileContext.addMessage(CompilerMessageCategory.ERROR,
+                  "Could not delete outdated generated bundle. Is " + outputJar.getPath() + " writable?", null, 0, 0);
+           return false;
+        }
+      }
+        // this should work in 99% of the cases
         if (!f.renameTo(outputJar)) {
+            // and this is for the remaining 1%.
             VirtualFile src = LocalFileSystem.getInstance().findFileByIoFile(f);
             if (src == null) {
                 compileContext.addMessage(CompilerMessageCategory.ERROR,
-                        "No jar file was created. This should not happen. Is " + f.getPath() + " writable?", null, 0,
-                        0);
-                return false;
+                        "No jar file was created. This should not happen. Is " + f.getPath() + " writable?", null, 0, 0);
+              return false;
+            }
+            // make sure the parent folder exists:
+            File parentFolder = outputJar.getParentFile();
+            if ( !parentFolder.exists() ) {
+              if (!parentFolder.mkdirs() ) {
+                compileContext.addMessage(CompilerMessageCategory.ERROR,
+                        "Cannot create output folder. Is " + parentFolder.getPath() + " writable?", null, 0, 0);
+              return false;
+              }
             }
 
-            if (!outputJar.exists()) {
-                // touch it so, it wil be there for the local file system to find
-                if (!outputJar.createNewFile()) {
-                    compileContext.addMessage(CompilerMessageCategory.ERROR,
-                            "Could not create output jar file. Is " + outputJar.getPath() + " writable?", null, 0, 0);
-                    return false;
-                }
-            }
-            VirtualFile target = LocalFileSystem.getInstance().findFileByIoFile(outputJar);
+            // now get the target folder
+            VirtualFile target = LocalFileSystem.getInstance().findFileByIoFile(parentFolder);
             if (target == null) {
                 // this actually should not happen but since we are bound by murphy's law, we check this as well
-                compileContext.addMessage(CompilerMessageCategory.ERROR, "Output jar file " + outputJar.getPath() +
+                compileContext.addMessage(CompilerMessageCategory.ERROR, "Output path " + parentFolder.getPath() +
                         " was created but cannot be found anymore. This should not happen.", null, 0, 0);
                 return false;
             }
-            VfsUtil.copyFile(this, src, target);
+            // IDEA-26817: target must be the dir, not the the file, so:
+            // and then put this in. This should produce the correct result.
+            VfsUtil.copyFile(this, src, target, outputJar.getName());
         }
         return true;
     }

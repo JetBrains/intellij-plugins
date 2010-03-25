@@ -56,11 +56,6 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.INSTANCE, "OSGi");
     }
 
-    public boolean isApplicable(MavenProject mavenProjectModel) {
-        MavenPlugin p = mavenProjectModel.findPlugin(myPluginGroupID, myPluginArtifactID);
-        return p != null;
-    }
-
     protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel) {
 
     }

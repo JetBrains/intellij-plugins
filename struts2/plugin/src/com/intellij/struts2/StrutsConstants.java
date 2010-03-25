@@ -128,8 +128,19 @@ public final class StrutsConstants {
   public static final String TAGLIB_STRUTS_UI_URI = "/struts-tags";
 
   /**
+   * Struts UI taglib default prefix.
+   */
+  @NonNls
+  public static final String TAGLIB_STRUTS_UI_PREFIX = "s";
+
+  /**
    * Struts jQuery-plugin taglib URI.
    */
   public static final String TAGLIB_JQUERY_PLUGIN_URI = "/struts-jquery-tags";
+
+  /**
+   * Struts jQuery-plugin taglib default prefix.
+   */
+  public static final String TAGLIB_JQUERY_PLUGIN_PREFIX = "sj";
 
 }

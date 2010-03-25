@@ -30,6 +30,7 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
 import com.intellij.facet.autodetecting.FacetDetector;
 import com.intellij.facet.autodetecting.FacetDetectorRegistry;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -59,6 +60,8 @@ import java.util.*;
 public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfiguration> {
     public static final FacetTypeId<OsmorcFacet> ID = new FacetTypeId<OsmorcFacet>("Osmorc");
     public static final OsmorcFacetType INSTANCE = new OsmorcFacetType();
+    private final Logger logger = Logger.getInstance("#org.osmorc.facet.OsmorcFacetType");
+
 
     protected OsmorcFacetType() {
         super(ID, "Osmorc", "OSGi");
@@ -139,7 +142,9 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                         }
                     }
                     catch (IOException e) {
-                        throw new RuntimeException(e);
+                        // this should fix   IDEA-17977 (EA reported exception).
+                        logger.warn("There was an unexpected exception when accessing " + file.getName() + " (" + e.getMessage() + ")");
+                        return false;
                     }
                     finally {
                         if (bufferedReader != null) {
@@ -147,7 +152,8 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                                 bufferedReader.close();
                             }
                             catch (IOException e) {
-                                throw new RuntimeException(e);
+                                logger.warn("There was an unexpected exception when closing stream to " + file.getName() + " (" + e.getMessage() + ")");
+                                return false;
                             }
                         }
                     }

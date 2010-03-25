@@ -364,7 +364,12 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
         }
     }
 
-    private static VirtualFile findFileInContentRoots(String fileName, Module module) {
+  @Override
+  public String getHelpTopic() {
+    return "reference.settings.module.facet.osgi";
+  }
+
+  private static VirtualFile findFileInContentRoots(String fileName, Module module) {
         VirtualFile[] roots = getContentRoots(module);
         VirtualFile currentFile = null;
         for (VirtualFile root : roots) {

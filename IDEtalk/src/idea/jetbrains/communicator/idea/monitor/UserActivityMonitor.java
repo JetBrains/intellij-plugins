@@ -87,7 +87,9 @@ public class UserActivityMonitor implements ApplicationComponent, Runnable {
     myProjectManager.addProjectManagerListener(new ProjectManagerAdapter() {
       public void projectOpened(Project project) {
         //noinspection HardCodedStringLiteral
-        new Thread(UserActivityMonitor.this, getComponentName() + " thread").start();
+        Thread t = new Thread(UserActivityMonitor.this, getComponentName() + " thread");
+        t.setDaemon(true);
+        t.start();
         myProjectManager.removeProjectManagerListener(this);
       }
     });

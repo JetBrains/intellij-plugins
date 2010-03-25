@@ -29,6 +29,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.util.ArrayUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.BundleManager;
 import org.osmorc.manifest.BundleManifest;
@@ -52,6 +53,7 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
         return text != null ? text.replaceAll("\n ", "").trim() : null;
     }
 
+    @NotNull
     public Object[] getVariants() {
       return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }

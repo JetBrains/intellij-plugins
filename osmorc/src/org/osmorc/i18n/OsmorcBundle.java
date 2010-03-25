@@ -61,7 +61,9 @@ public class OsmorcBundle {
      * @param key    the key to be used for translation
      * @param params the parameters for the translation
      * @return the translated message.
+     * @deprecated Translation isn't used consistently so this function is rather useless.
      */
+    @Deprecated
     public static String getTranslation(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
         return CommonBundle.message(getBundle(), key, params);
     }
@@ -84,7 +86,7 @@ public class OsmorcBundle {
         return bundle;
     }
 
-    private static Icon getCachedIcon(@PropertyKey(resourceBundle = OsmorcBundle.BUNDLE) String property) {
+    private static Icon getCachedIcon(@PropertyKey(resourceBundle = BUNDLE) String property) {
         Icon result = _iconCache.get(property);
         if (result == null) {
             result = IconLoader.getIcon(getTranslation(property));

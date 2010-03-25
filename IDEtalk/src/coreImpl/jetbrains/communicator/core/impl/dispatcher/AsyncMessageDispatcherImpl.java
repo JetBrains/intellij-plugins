@@ -54,7 +54,9 @@ public class AsyncMessageDispatcherImpl extends AbstractMessageDispatcher implem
 
   private void start() {
     assert !isRunning(): "Already started";
-    new Thread(this, "Network Message Dispatcher").start();
+    Thread t = new Thread(this, "Network Message Dispatcher");
+    t.setDaemon(true);
+    t.start();
   }
 
   public boolean isRunning() {
