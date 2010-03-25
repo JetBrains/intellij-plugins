@@ -1,9 +1,11 @@
 package com.intellij.tapestry.psi;
 
 import com.intellij.lang.StdLanguages;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.PsiImplUtil;
 import com.intellij.psi.impl.PsiSuperMethodImplUtil;
 import com.intellij.psi.impl.light.LightElement;
 import com.intellij.psi.impl.light.LightEmptyImplementsList;
@@ -26,6 +28,8 @@ import java.util.List;
  *         Time: 18:27:02
  */
 public class TapestryAccessorMethod extends LightElement implements PsiMethod {
+  private static final Logger LOG = Logger.getInstance("#com.intellij.tapestry.psi.TapestryAccessorMethod");
+
   private final PsiField myProperty;
 
   private final boolean myGetterNotSetter;
@@ -294,11 +298,8 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     }
 
     public int getParameterIndex(PsiParameter parameter) {
-      final PsiParameter[] parameters = getParameters();
-      for (int i = 0; i < parameters.length; i++) {
-        if (parameter.equals(parameters[i])) return i;
-      }
-      return -1;
+      LOG.assertTrue(parameter.getParent() == this);
+      return PsiImplUtil.getParameterIndex(parameter, this);
     }
 
     public int getParametersCount() {
