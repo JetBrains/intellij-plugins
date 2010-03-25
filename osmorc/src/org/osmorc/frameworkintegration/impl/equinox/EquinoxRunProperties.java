@@ -38,13 +38,6 @@ public class EquinoxRunProperties extends GenericRunProperties {
         super(additionalProperties);
     }
 
-    public boolean isStartEquinoxOSGIConsole() {
-        return getBooleanProperty(START_EQUINOX_OSGICONSOLE);
-    }
-
-    public void setStartEquinoxOSGIConsole(boolean startEquinoxConsole) {
-        putBooleanProperty(START_EQUINOX_OSGICONSOLE, startEquinoxConsole);
-    }
 
     public String getEquinoxProduct() {
         return getProperty(EQUINOX_PRODUCT);
@@ -78,7 +71,6 @@ public class EquinoxRunProperties extends GenericRunProperties {
         putBooleanProperty(RECREATE_CONFIG_INI, recreateConfigIni);
     }
 
-    public static final String START_EQUINOX_OSGICONSOLE = "startEquinoxOSGIConsole";
     public static final String EQUINOX_PRODUCT = "equinoxProduct";
     public static final String EQUINOX_APPLICATION = "equinoxApplication";
     public static final String CLEAN_EQUINOX_CACHE = "cleanEquinoxCache";

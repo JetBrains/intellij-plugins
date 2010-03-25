@@ -47,7 +47,7 @@ class AdaptToRunWithoutUpdateConfigurator  extends BundleSelectionAction {
     private static final String ORG_ECLIPSE_OSGI_URL = "org.eclipse.osgi_";
 
     public AdaptToRunWithoutUpdateConfigurator() {
-        super("Adapt to Run Without Update Configurator");
+        super("Start all plugins");
     }
 
     public void actionPerformed(AnActionEvent e) {

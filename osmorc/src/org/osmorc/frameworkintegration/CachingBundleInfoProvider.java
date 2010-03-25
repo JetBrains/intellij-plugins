@@ -26,6 +26,7 @@
 package org.osmorc.frameworkintegration;
 
 import com.intellij.openapi.vfs.VfsUtil;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
 
 import java.io.IOException;
@@ -48,7 +49,10 @@ import java.util.jar.Manifest;
 public class CachingBundleInfoProvider {
     private static final WeakHashMap<String, Manifest> _cache = new WeakHashMap<String, Manifest>();
 
-    /**
+    private CachingBundleInfoProvider() {
+    }
+
+  /**
      * Returns true if the file at the given url is a bundle, false otherwise.
      *
      * @param bundleUrl the url of the bundle
@@ -64,6 +68,7 @@ public class CachingBundleInfoProvider {
      * @param bundleUrl the url of the bundle
      * @return the symbolic name of the bundle or null if the file is no bundle.
      */
+    @Nullable
     public static String getBundleSymbolicName(String bundleUrl) {
         String symbolicName = getBundleAttribute(bundleUrl, Constants.BUNDLE_SYMBOLICNAME);
         return symbolicName != null ? symbolicName.split(";", 2)[0] : null; // Only take the name and leave the parameters
@@ -75,6 +80,7 @@ public class CachingBundleInfoProvider {
      * @param bundleUrl the url of the bundle to search
      * @return the version of the bundle or null if the file is no bundle
      */
+    @Nullable
     public static String getBundleVersions(String bundleUrl) {
         return getBundleAttribute(bundleUrl, Constants.BUNDLE_VERSION);
     }
@@ -99,6 +105,7 @@ public class CachingBundleInfoProvider {
      * @param attribute the attribute to resolve
      * @return the attribute's value or null if there is no such bundle or no such attribute
      */
+    @Nullable
     private synchronized static String getBundleAttribute(String bundleUrl, String attribute) {
         bundleUrl = normalize(bundleUrl);
         if (!_cache.containsKey(bundleUrl)) {

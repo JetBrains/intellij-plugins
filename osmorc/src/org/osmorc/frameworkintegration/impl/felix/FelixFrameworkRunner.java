@@ -25,18 +25,9 @@
 package org.osmorc.frameworkintegration.impl.felix;
 
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
-import org.osmorc.frameworkintegration.impl.AbstractSimpleFrameworkRunner;
-import org.osmorc.run.ui.SelectedBundle;
+import org.osmorc.frameworkintegration.impl.AbstractPaxBasedFrameworkRunner;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-import java.util.regex.Pattern;
 
 /**
  * Framework runner for the felix osgi container.
@@ -45,102 +36,20 @@ import java.util.regex.Pattern;
  * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id$
  */
-public class FelixFrameworkRunner extends AbstractSimpleFrameworkRunner<FelixRunProperties> {
+public class FelixFrameworkRunner extends AbstractPaxBasedFrameworkRunner<FelixRunProperties> {
+  protected FelixFrameworkRunner() {
+  }
 
-    @NotNull
-    protected String[] getCommandlineParameters(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
-                                                @NotNull FelixRunProperties runProperties) {
-        return new String[]{};
-    }
-
-    @NotNull
-    protected Map<String, String> getSystemProperties(@NotNull SelectedBundle[] urlsOfBundlesToInstall,
-                                                      @NotNull FelixRunProperties runProperties) {
-        Map<String, String> result = new HashMap<String, String>();
-
-        result.put("felix.cache.dir",getFrameworkDirCanonicalPath());
-        result.put("felix.cache.profile", "osmorcProfile");
-        result.put("felix.cache.rootdir",getFrameworkDirCanonicalPath());
-        try {
-            result.put("felix.config.properties", getPropertiesFile().toURI().toURL().toString());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-        return result;
-    }
-
-    private File getPropertiesFile() {
-        return new File(getFrameworkDir(), "osmorc_felix.properties");
-    }
-
-    protected void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall,
-                                              @NotNull FelixRunProperties runProperties) {
-        Properties props = new Properties();
-        try {
-            String resourceName = "/" + getClass().getPackage().getName().replace('.', '/') + "/config.properties";
-            props.load(getClass().getResourceAsStream(resourceName));
-            // enrich with bundles to install
-            int level = 0;
-            for (SelectedBundle bundle : bundlesToInstall) {
-                int startLevel = bundle.getStartLevel();
-                level = Math.max(level, startLevel);
-                // XXX: this is not exactly resource conserving...
-                String installBundles = (String) props.get("felix.auto.install." + startLevel);
-                String bundleUrl = bundle.getBundleUrl();
-                if (bundleUrl != null) {
-                    bundleUrl = bundleUrl.replaceAll(" ", "%20");
-                }
-                installBundles = installBundles != null ? installBundles + " " + bundleUrl : bundleUrl;
-
-                String startBundles = (String) props.get("felix.auto.start." + startLevel);
-                if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundleUrl)) {
-                    startBundles = startBundles != null ? startBundles + " " + bundleUrl : bundleUrl;
-                }
-
-                if (installBundles != null) {
-                    props.put("felix.auto.install." + startLevel, installBundles);
-                }
-                if (startBundles != null) {
-                    props.put("felix.auto.start." + startLevel, startBundles);
-                }
-            }
-            if (runProperties.isDebugMode()) {
-                props.put("felix.log.level", "4");
-            } else {
-                props.put("felix.log.level", "1");
-            }
-
-            String systemPackages = runProperties.getSystemPackages();
-            if (systemPackages != null && !(systemPackages.trim().length() == 0)) {
-                String pkg = props.getProperty("org.osgi.framework.system.packages") + "," + systemPackages;
-                props.setProperty("org.osgi.framework.system.packages", pkg);
-            }
-            String bootDelegation = runProperties.getBootDelegation();
-            if (bootDelegation != null && !(bootDelegation.trim().length() == 0)) {
-                props.setProperty("org.osgi.framework.bootdelegation", bootDelegation);
-            }
-
-            props.put("felix.startlevel.framework", String.valueOf(level));
-            props.store(new FileOutputStream(getPropertiesFile()), "");
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @NotNull
-    public String getMainClass() {
-        return "org.apache.felix.main.Main";
-    }
-
-    @NotNull
+  @NotNull
     protected FelixRunProperties convertProperties(Map<String, String> properties) {
         return new FelixRunProperties(properties);
     }
 
-    protected Pattern getFrameworkStarterClasspathPattern() {
-        return FRAMEWORK_STARTER_JAR_PATTERN;
+
+    @NotNull
+    @Override
+    protected String getOsgiFrameworkName() {
+        return "Felix";
     }
 
-    private static final Pattern FRAMEWORK_STARTER_JAR_PATTERN = Pattern.compile("^felix.jar");
 }

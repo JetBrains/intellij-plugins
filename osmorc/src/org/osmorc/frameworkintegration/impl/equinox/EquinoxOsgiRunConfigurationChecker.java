@@ -92,7 +92,7 @@ public class EquinoxOsgiRunConfigurationChecker implements OsgiRunConfigurationC
                         "Using the JVM option -XstartOnFirstThread for running SWT apps on Mac OS X is highly recommended.");
             }
 
-            if (runProperties.isStartEquinoxOSGIConsole()) {
+            if (runProperties.isStartConsole()) {
                 throw new RuntimeConfigurationWarning(OsmorcBundle.getTranslation("runconfiguration.equinox.runningWithConsole"));
             }
         }

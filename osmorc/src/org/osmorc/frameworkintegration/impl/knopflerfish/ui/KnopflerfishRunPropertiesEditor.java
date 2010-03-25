@@ -26,11 +26,10 @@
 package org.osmorc.frameworkintegration.impl.knopflerfish.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
-import com.jgoodies.binding.PresentationModel;
-import com.jgoodies.binding.adapter.BasicComponentFactory;
 import org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishRunProperties;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
+import org.osmorc.run.ui.GenericRunPropertiesEditor;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -38,45 +37,27 @@ import java.util.HashMap;
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class KnopflerfishRunPropertiesEditor implements FrameworkRunPropertiesEditor
-{
-  public KnopflerfishRunPropertiesEditor()
-  {
+public class KnopflerfishRunPropertiesEditor implements FrameworkRunPropertiesEditor {
+    private JPanel _mainPanel;
+    private GenericRunPropertiesEditor _genericRunPropertiesEditor;
 
-  }
+    public KnopflerfishRunPropertiesEditor() {
 
-  public JPanel getUI()
-  {
-    return _mainPanel;
-  }
+    }
 
-  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration)
-  {
-    _presentationModel.getBean().load(osgiRunConfiguration.getAdditionalProperties());
-  }
+    public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
+        _genericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
+    }
 
-  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException
-  {
-    osgiRunConfiguration.putAdditionalProperties(_presentationModel.getBean().getProperties());
-  }
+    public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
+        _genericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
+    }
 
-  private void createUIComponents()
-  {
-    _presentationModel = new PresentationModel<KnopflerfishRunProperties>(
-        new KnopflerfishRunProperties(new HashMap<String, String>()));
-    _debugCheckbox =
-        BasicComponentFactory.createCheckBox(_presentationModel.getModel(KnopflerfishRunProperties.DEBUG_MODE), "");
-    _systemPackages =
-        BasicComponentFactory.createTextField(_presentationModel.getModel(KnopflerfishRunProperties.SYSTEM_PACKAGES));
-    _bootDelegation =
-        BasicComponentFactory.createTextField(_presentationModel.getModel(KnopflerfishRunProperties.BOOT_DELEGATION));
+    public JPanel getUI() {
+        return _mainPanel;
+    }
 
-  }
-
-
-  private JPanel _mainPanel;
-  private JCheckBox _debugCheckbox;
-  private JTextField _systemPackages;
-  private JTextField _bootDelegation;
-  private PresentationModel<KnopflerfishRunProperties> _presentationModel;
+    private void createUIComponents() {
+        _genericRunPropertiesEditor = new GenericRunPropertiesEditor<KnopflerfishRunProperties>(new KnopflerfishRunProperties(new HashMap<String, String>()));
+    }
 }

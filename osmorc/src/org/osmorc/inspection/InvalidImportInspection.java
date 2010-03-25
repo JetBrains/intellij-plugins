@@ -205,8 +205,8 @@ public class InvalidImportInspection extends LocalInspectionTool {
             for (OrderEntry orderEntry : entriesForFile) {
                 Module orderEntryModule = orderEntry.getOwnerModule();
                 if (orderEntryModule == usingModule) {
-                    if (orderEntry instanceof LibraryOrderEntry &&
-                            libraryHandler.isFrameworkInstanceLibrary(((LibraryOrderEntry) orderEntry))) {
+                    if (orderEntry instanceof LibraryOrderEntry /* &&
+                            libraryHandler.isFrameworkInstanceLibrary(((LibraryOrderEntry) orderEntry))*/ ) {
                         final Library library = ((LibraryOrderEntry) orderEntry).getLibrary();
                         if (library != null) {
                             result = !isLibraryExportingPackageTo(library, folder, usingModule, bundleManager);

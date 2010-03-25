@@ -25,6 +25,7 @@
 
 package org.osmorc.run.ui;
 
+import com.intellij.execution.ui.AlternativeJREPanel;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.components.ServiceManager;
@@ -35,7 +36,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.RawCommandLineEditor;
-import com.intellij.execution.ui.AlternativeJREPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.BundleSelectionAction;
@@ -65,7 +65,8 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  * @version $Id$
  */
-public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfiguration> implements BundleSelectionAction.Context {
+public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfiguration>
+        implements BundleSelectionAction.Context {
     private final DefaultActionGroup frameworkSpecificBundleSelectionActions;
 
     public OsgiRunConfigurationEditor(final Project project) {
@@ -120,7 +121,14 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
                 FileChooserDescriptorFactory.createSingleFolderDescriptor());
         frameworkDirField.getTextField().setColumns(30);
 
-        frameworkSpecificBundleSelectionActions = new DefaultActionGroup("frameworkSpecificBundleSelectionActions", true);
+        frameworkSpecificBundleSelectionActions =
+                new DefaultActionGroup("frameworkSpecificBundleSelectionActions", true);
+
+        myAutomaticStartLevel.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            myFrameworkStartLevel.setEnabled(!myAutomaticStartLevel.isSelected());
+          }
+        });
 
         frameworkSpecificButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -242,17 +250,22 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         for (SelectedBundle module : modules) {
             model.addBundle(module);
         }
-        modulesList.getColumnModel().getColumn(1).setPreferredWidth(100);
+        modulesList.getColumnModel().getColumn(1).setPreferredWidth(200);
 
+        myAutomaticStartLevel.setSelected(osgiRunConfiguration.isAutoStartLevel());
+      myFrameworkStartLevel.setValue(osgiRunConfiguration.getFrameworkStartLevel());
+      myFrameworkStartLevel.setEnabled(!myAutomaticStartLevel.isSelected());
 
-        boolean useUserDefinedFields = osgiRunConfiguration.getFrameworkDir().length() > 0 || osgiRunConfiguration.getWorkingDir().length() > 0;
+        boolean useUserDefinedFields = osgiRunConfiguration.getFrameworkDir().length() > 0 ||
+                osgiRunConfiguration.getWorkingDir().length() > 0;
         workingDirField.setText(osgiRunConfiguration.getWorkingDir());
         workingDirField.setEnabled(useUserDefinedFields);
         frameworkDirField.setText(osgiRunConfiguration.getFrameworkDir());
         frameworkDirField.setEnabled(useUserDefinedFields);
         userDefinedRadioButton.setSelected(useUserDefinedFields);
         osmorcControlledRadioButton.setSelected(!useUserDefinedFields);
-        alternativeJREPanel.init(osgiRunConfiguration.getAlternativeJrePath(),osgiRunConfiguration.isUseAlternativeJre());
+        alternativeJREPanel
+                .init(osgiRunConfiguration.getAlternativeJrePath(), osgiRunConfiguration.isUseAlternativeJre());
     }
 
     protected void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
@@ -265,6 +278,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         osgiRunConfiguration.setFrameworkDir(frameworkDirField.getText().replace('\\', '/'));
         osgiRunConfiguration.setUseAlternativeJre(alternativeJREPanel.isPathEnabled());
         osgiRunConfiguration.setAlternativeJrePath(alternativeJREPanel.getPath());
+        osgiRunConfiguration.setFrameworkStartLevel((Integer)myFrameworkStartLevel.getValue());
+      osgiRunConfiguration.setAutoStartLevel(myAutomaticStartLevel.isSelected());
         FrameworkInstanceDefinition frameworkInstanceDefinition =
                 (FrameworkInstanceDefinition) frameworkInstances.getSelectedItem();
         if (frameworkInstanceDefinition != null) {
@@ -274,6 +289,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         if (currentFrameworkRunPropertiesEditor != null) {
             currentFrameworkRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
         }
+
     }
 
     private List<SelectedBundle> getBundlesToRun() {
@@ -305,7 +321,9 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     private RawCommandLineEditor programParameters;
     private JButton frameworkSpecificButton;
     private AlternativeJREPanel alternativeJREPanel;
-    private final Project project;
+  private JSpinner myFrameworkStartLevel;
+  private JCheckBox myAutomaticStartLevel;
+  private final Project project;
     private FrameworkRunPropertiesEditor currentFrameworkRunPropertiesEditor;
 
 
@@ -407,7 +425,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         }
 
         public void removeAllOfType(SelectedBundle.BundleType type) {
-            for (Iterator<SelectedBundle> selectedBundleIterator = selectedBundles.iterator(); selectedBundleIterator.hasNext();) {
+            for (Iterator<SelectedBundle> selectedBundleIterator = selectedBundles.iterator();
+                 selectedBundleIterator.hasNext();) {
                 SelectedBundle selectedBundle = selectedBundleIterator.next();
                 if (selectedBundle.getBundleType() == type) {
                     selectedBundleIterator.remove();

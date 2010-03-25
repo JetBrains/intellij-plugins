@@ -26,6 +26,7 @@ package org.osmorc.frameworkintegration;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.ParametersList;
+import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -45,40 +46,60 @@ import java.util.Map;
  * @version $Id$
  */
 public interface FrameworkRunner extends Disposable {
-    /**
-     * Initializes the framework runner for the next execution
-     *
-     * @param project          The project for which a run configuration is executed
-     * @param runConfiguration The configuration of the run configuration
-     */
-    void init(Project project, OsgiRunConfiguration runConfiguration);
 
-    /**
-     * Returns the virtual files for all library jars and directories that need to be placed into the
-     * classpath in order to start the framework.
-     *
-     * @return a list containing all needed library virtual files.
-     */
-    List<VirtualFile> getFrameworkStarterLibraries();
+  /**
+   * Initializes the framework runner for the next execution
+   *
+   * @param project          The project for which a run configuration is executed
+   * @param runConfiguration The configuration of the run configuration
+   * @param runnerSettings   the runner settings of the runner which is currently executing.
+   */
+  void init(Project project, OsgiRunConfiguration runConfiguration, RunnerSettings runnerSettings);
 
-    void fillCommandLineParameters(ParametersList commandLineParameters, @NotNull SelectedBundle[] bundlesToInstall);
+  /**
+   * Returns the virtual files for all library jars and directories that need to be placed into the classpath in order
+   * to start the framework.
+   *
+   * @return a list containing all needed library virtual files.
+   */
+  @NotNull
+  List<VirtualFile> getFrameworkStarterLibraries();
 
-    @NotNull
-    public Map<String, String> getSystemProperties(@NotNull SelectedBundle[] bundlesToInstall);
+  /**
+   * Fills a map with vm parameters that should be set on the launched java VM.
+   *
+   * @param vmParameters the list where to fill the vm parameters in.
+   * @param bundlesToInstall the list of bundles to install.
+   */
+  void fillVmParameters(ParametersList vmParameters, @NotNull SelectedBundle[] bundlesToInstall);
 
-    public void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall) throws ExecutionException;
+  /**
+   * Runs any custom installation steps (like preparing directories etc, prior to launching the framework).
+   *
+   * @param bundlesToInstall the list of bundles to install
+   * @throws ExecutionException in case preparation fails.
+   */
+  void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall) throws ExecutionException;
 
-    /**
-     * @return the main class of the framework to run.
-     */
-    @NotNull
-    public String getMainClass();
+  /**
+   * @return the main class of the framework to run.
+   */
+  @NotNull
+  String getMainClass();
 
-    /**
-     * Returns the directory that is used as the working directory for the process started to run the framework.
-     *
-     * @return the working directory
-     */
-    @NotNull
-    File getWorkingDir();
+  /**
+   * Returns the directory that is used as the working directory for the process started to run the framework.
+   *
+   * @return the working directory
+   */
+  @NotNull
+  File getWorkingDir();
+
+  /**
+   * Fills the command line parameters into the given ParametersList.
+   *
+   * @param commandLineParameters the list where to fill the command line parameters in.
+   * @param bundlesToInstall      the list of bundles to install.
+   */
+  void fillCommandLineParameters(@NotNull ParametersList commandLineParameters, @NotNull SelectedBundle[] bundlesToInstall);
 }

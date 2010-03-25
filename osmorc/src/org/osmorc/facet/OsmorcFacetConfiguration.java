@@ -68,10 +68,11 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
     setManifestLocation(element.getAttributeValue(MANIFEST_LOCATION));
 
       // IDEADEV-40357 backwards compatibility
-      if ( !"".equals(getManifestLocation()) && !getManifestLocation().contains("/") && !getManifestLocation().contains(".MF") ) {
-          // its an old directory setting.fix it by appending MANIFEST.MF
-          setManifestLocation(getManifestLocation()+"/MANIFEST.MF");
-      }
+      //if ( !"".equals(getManifestLocation()) && !getManifestLocation().contains("/") && !getManifestLocation().toUpperCase().contains(".MF") ) {
+      //     its an old directory setting.fix it by appending MANIFEST.MF
+          //setManifestLocation(getManifestLocation()+"/MANIFEST.MF");
+      //}
+    //This actually is not a good idea if someone is using a manifest named different than manifest.mf... so  i comment it out.
 
     setJarFileLocation(element.getAttributeValue(JARFILE_LOCATION));
     setBundleActivator(element.getAttributeValue(BUNDLE_ACTIVATOR));

@@ -26,56 +26,39 @@
 package org.osmorc.frameworkintegration.impl.concierge.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
-import com.jgoodies.binding.PresentationModel;
-import com.jgoodies.binding.adapter.BasicComponentFactory;
 import org.osmorc.frameworkintegration.impl.concierge.ConciergeRunProperties;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
+import org.osmorc.run.ui.GenericRunPropertiesEditor;
 
 import javax.swing.*;
 import java.util.HashMap;
 
 /**
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ConciergeRunPropertiesEditor implements FrameworkRunPropertiesEditor
-{
-  public ConciergeRunPropertiesEditor()
-  {
+public class ConciergeRunPropertiesEditor implements FrameworkRunPropertiesEditor {
+    private JPanel _mainPanel;
+    private GenericRunPropertiesEditor _genericRunPropertiesEditor;
 
-  }
+    public ConciergeRunPropertiesEditor() {
 
-  public JPanel getUI()
-  {
-    return _mainPanel;
-  }
+    }
 
-  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration)
-  {
-    _presentationModel.getBean().load(osgiRunConfiguration.getAdditionalProperties());
-  }
+    public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
+        _genericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
+    }
 
-  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException
-  {
-    osgiRunConfiguration.putAdditionalProperties(_presentationModel.getBean().getProperties());
-  }
+    public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
+        _genericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
+    }
 
-  private void createUIComponents()
-  {
-    _presentationModel = new PresentationModel<ConciergeRunProperties>(
-        new ConciergeRunProperties(new HashMap<String, String>()));
-    _debugCheckbox =
-        BasicComponentFactory.createCheckBox(_presentationModel.getModel(ConciergeRunProperties.DEBUG_MODE), "");
-    _systemPackages =
-        BasicComponentFactory.createTextField(_presentationModel.getModel(ConciergeRunProperties.SYSTEM_PACKAGES));
-    _bootDelegation =
-        BasicComponentFactory.createTextField(_presentationModel.getModel(ConciergeRunProperties.BOOT_DELEGATION));
-  }
+    public JPanel getUI() {
+        return _mainPanel;
+    }
 
-
-  private JPanel _mainPanel;
-  private JCheckBox _debugCheckbox;
-  private JTextField _systemPackages;
-  private JTextField _bootDelegation;
-  private PresentationModel<ConciergeRunProperties> _presentationModel;
+    private void createUIComponents() {
+        _genericRunPropertiesEditor = new GenericRunPropertiesEditor<ConciergeRunProperties>(new ConciergeRunProperties(new HashMap<String, String>()));
+    }
 }

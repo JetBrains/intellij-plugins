@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2009, Osmorc Development Team
+ * Copyright (c) 2007-2010, Osmorc Development Team
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -23,41 +23,56 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.osmorc.frameworkintegration.impl.felix.ui;
+package org.osmorc.run.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
-import org.osmorc.frameworkintegration.impl.felix.FelixRunProperties;
+import com.jgoodies.binding.PresentationModel;
+import com.jgoodies.binding.adapter.BasicComponentFactory;
+import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.OsgiRunConfiguration;
-import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
-import org.osmorc.run.ui.GenericRunPropertiesEditor;
 
 import javax.swing.*;
-import java.util.HashMap;
 
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class FelixRunPropertiesEditor implements FrameworkRunPropertiesEditor {
-    private JPanel _mainPanel;
-    private GenericRunPropertiesEditor _genericRunPropertiesEditor;
+public class GenericRunPropertiesEditor<T extends GenericRunProperties> implements FrameworkRunPropertiesEditor {
+    private T propertiesHolder;
 
-    public FelixRunPropertiesEditor() {
-
-    }
-
-    public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
-        _genericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
-    }
-
-    public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
-        _genericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
+    public GenericRunPropertiesEditor(T propertiesHolder) {
+        this.propertiesHolder = propertiesHolder;
     }
 
     public JPanel getUI() {
         return _mainPanel;
     }
 
-    private void createUIComponents() {
-        _genericRunPropertiesEditor = new GenericRunPropertiesEditor<FelixRunProperties>(new FelixRunProperties(new HashMap<String, String>()));
+    public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
+        _presentationModel.getBean().load(osgiRunConfiguration.getAdditionalProperties());
     }
+
+    public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
+        osgiRunConfiguration.putAdditionalProperties(_presentationModel.getBean().getProperties());
+    }
+
+    private void createUIComponents() {
+        _presentationModel = new PresentationModel<T>(propertiesHolder);
+        _debugCheckbox =
+                BasicComponentFactory.createCheckBox(_presentationModel.getModel(GenericRunProperties.DEBUG_MODE), "");
+        _startConsoleCheckbox =
+                BasicComponentFactory.createCheckBox(_presentationModel.getModel(GenericRunProperties.START_CONSOLE), "");
+        _systemPackages =
+                BasicComponentFactory.createTextField(_presentationModel.getModel(GenericRunProperties.SYSTEM_PACKAGES));
+        _bootDelegation =
+                BasicComponentFactory.createTextField(_presentationModel.getModel(GenericRunProperties.BOOT_DELEGATION));
+
+    }
+
+
+    private JPanel _mainPanel;
+    private JCheckBox _debugCheckbox;
+    private JTextField _systemPackages;
+    private JTextField _bootDelegation;
+    private JCheckBox _startConsoleCheckbox;
+    private PresentationModel<T> _presentationModel;
 }
