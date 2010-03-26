@@ -98,7 +98,14 @@ class MulticastPingThread extends Thread {
   @SuppressWarnings({"RefusedBequest"})
   public void run() {
     LOG.info(getName() + ": Start thread.");
-
+    Runtime.getRuntime().addShutdownHook(new Thread("IDETalk shutdown hook") {
+      @Override
+      public void run() {
+        MulticastPingThread.this.interrupt(); // Yes, MulticastPingThread is daemon, but it still keeps JVM running.
+                                              // Seems this is some troubles with native calls.
+                                              // see IDEA-52501
+      }
+    });
     myDatagramSocket = null;
     myIsRunning = true;
 
