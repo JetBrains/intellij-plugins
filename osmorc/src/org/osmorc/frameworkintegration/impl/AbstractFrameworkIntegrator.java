@@ -27,6 +27,8 @@ package org.osmorc.frameworkintegration.impl;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
+import org.osmorc.run.OsgiRunConfigurationChecker;
+import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 
 /**
@@ -35,28 +37,27 @@ import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id$
  */
-public abstract class AbstractFrameworkIntegrator implements FrameworkIntegrator
-{
-  protected AbstractFrameworkIntegrator(FrameworkInstanceManager frameworkInstanceManager)
-  {
+public abstract class AbstractFrameworkIntegrator implements FrameworkIntegrator, OsgiRunConfigurationCheckerProvider {
+  protected AbstractFrameworkIntegrator(FrameworkInstanceManager frameworkInstanceManager) {
     _frameworkInstanceManager = frameworkInstanceManager;
   }
 
   @NotNull
-  public FrameworkInstanceManager getFrameworkInstanceManager()
-  {
+  public FrameworkInstanceManager getFrameworkInstanceManager() {
     return _frameworkInstanceManager;
   }
 
 
-  public String toString()
-  {
+  public String toString() {
     return getDisplayName();
   }
 
-  public FrameworkRunPropertiesEditor createRunPropertiesEditor()
-  {
+  public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
     return null;
+  }
+
+  public OsgiRunConfigurationChecker getOsgiRunConfigurationChecker() {
+    return new DefaultOsgiRunConfigurationChecker();
   }
 
   protected final FrameworkInstanceManager _frameworkInstanceManager;

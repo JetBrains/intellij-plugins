@@ -63,7 +63,7 @@ public class MisspelledHeaderNameInspection extends LocalInspectionTool {
     @Nls
     @NotNull
     public String getDisplayName() {
-        return "Misspelled Header Name";
+        return "Unknown or Misspelled Header Name";
     }
 
     @NonNls
@@ -90,7 +90,7 @@ public class MisspelledHeaderNameInspection extends LocalInspectionTool {
                         }
 
                         if (quickFixes.size() > 0) {
-                            holder.registerProblem(header.getNameToken(), "Header name is spelled incorrectly",
+                            holder.registerProblem(header.getNameToken(), "Header name is unknown or spelled incorrectly",
                                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING, quickFixes.toArray(new HeaderNameSpellingQuickFix[quickFixes.size()]));
                         }
                     }

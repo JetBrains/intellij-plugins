@@ -107,33 +107,7 @@ public class EquinoxFrameworkInstanceManager implements FrameworkInstanceManager
         return null;
     }
 
-    @Nullable
-    public Version getEclipseVersion(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
-        Version result = null;
-        VirtualFile equinoxFolder = fileSystem.findFileByPath(frameworkInstanceDefinition.getBaseFolder());
-
-        if (equinoxFolder != null && equinoxFolder.exists() && equinoxFolder.isDirectory()) {
-            VirtualFile pluginsFolder = equinoxFolder.findChild("plugins");
-
-            if (pluginsFolder != null && pluginsFolder.exists() && pluginsFolder.isDirectory()) {
-                VirtualFile[] files = pluginsFolder.getChildren();
-                for (VirtualFile file : files) {
-                    String name = file.getName();
-                    if (name.startsWith(ECLIPSE_VERSIONCHECK_PREFIX) && name.endsWith(ECLIPSE_VERSIONCHECK_POSTFIX)) {
-                        String versionString = name.substring(ECLIPSE_VERSIONCHECK_PREFIX.length(), name.length() - ECLIPSE_VERSIONCHECK_POSTFIX.length());
-                        if (versionString != null) {
-                            result = Version.parseVersion(versionString);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
-    private final LibraryHandler libraryHandler;
+  private final LibraryHandler libraryHandler;
     private final VirtualFileSystem fileSystem;
     private Application application;
     private final EquinoxSourceFinder equinoxSourceFinder;
@@ -143,10 +117,8 @@ public class EquinoxFrameworkInstanceManager implements FrameworkInstanceManager
             "The folder  <strong>{0}</strong> does not contain a <strong>plugins</strong> folder or <strong>plugins</strong> is not a folder. The base folder needs to be " +
                     "the folder of your Equinox installation which contains a <strong>plugins</strong> folder containing all bundle" +
                     " JARs of your Equinox installation.";
-    private static final String ECLIPSE_VERSIONCHECK_PREFIX = "org.eclipse.osgi_";
-    private static final String ECLIPSE_VERSIONCHECK_POSTFIX = ".jar";
 
-    private static final Logger LOG =
+  private static final Logger LOG =
             Logger.getInstance("org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager");
 
 }

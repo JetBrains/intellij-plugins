@@ -25,76 +25,43 @@
 
 package org.osmorc.frameworkintegration.impl.equinox;
 
-import com.intellij.execution.configurations.RuntimeConfigurationError;
-import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.configurations.RuntimeConfigurationWarning;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.osgi.framework.Version;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.frameworkintegration.impl.DefaultOsgiRunConfigurationChecker;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.OsgiRunConfiguration;
-import org.osmorc.run.OsgiRunConfigurationChecker;
 
 /**
+ * Runconfiguration checker for the Equinox framework.
+ *
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxOsgiRunConfigurationChecker implements OsgiRunConfigurationChecker {
-    private static Version ECLIPSE_3_1_0 = Version.parseVersion("3.1.0");
-    private static Version ECLIPSE_3_3_0 = Version.parseVersion("3.3.0");
-    private EquinoxFrameworkInstanceManager instanceManager;
+public class EquinoxOsgiRunConfigurationChecker extends DefaultOsgiRunConfigurationChecker {
 
 
-    public EquinoxOsgiRunConfigurationChecker(@NotNull EquinoxFrameworkInstanceManager instanceManager) {
-        this.instanceManager = instanceManager;
+  public EquinoxOsgiRunConfigurationChecker() {
+  }
+
+
+  @Override
+  protected void checkFrameworkSpecifics(OsgiRunConfiguration runConfiguration) throws RuntimeConfigurationWarning {
+    FrameworkInstanceDefinition frameworkInstanceDefinition = runConfiguration.getInstanceToUse();
+    assert frameworkInstanceDefinition != null;
+
+    EquinoxRunProperties runProperties = new EquinoxRunProperties(runConfiguration.getAdditionalProperties());
+
+    if (runProperties.getEquinoxApplication() != null && runProperties.getEquinoxApplication().length() > 0 ||
+        runProperties.getEquinoxProduct() != null && runProperties.getEquinoxProduct().length() > 0) {
+      if (SystemInfo.isMac && !runConfiguration.getVmParameters().contains("-XstartOnFirstThread")) {
+        throw new RuntimeConfigurationWarning(
+          "Using the JVM option -XstartOnFirstThread for running SWT apps on Mac OS X is highly recommended.");
+      }
+
+      if (runProperties.isStartConsole()) {
+        throw new RuntimeConfigurationWarning(OsmorcBundle.getTranslation("runconfiguration.equinox.runningWithConsole"));
+      }
     }
-
-    public void checkConfiguration(OsgiRunConfiguration runConfiguration) throws RuntimeConfigurationException {
-        FrameworkInstanceDefinition frameworkInstanceDefinition = runConfiguration.getInstanceToUse();
-        assert frameworkInstanceDefinition != null;
-
-        Version eclipseVersion = instanceManager.getEclipseVersion(frameworkInstanceDefinition);
-
-        if (eclipseVersion == null) {
-            throw new RuntimeConfigurationError(
-                    OsmorcBundle.getTranslation("runconfiguration.equinox.instanceVersionNotFound"));
-        }
-
-        if (ECLIPSE_3_1_0.compareTo(eclipseVersion) > 0) {
-            throw new RuntimeConfigurationError(
-                    OsmorcBundle.getTranslation("runconfiguration.equinox.unsupportedInstanceVersion", eclipseVersion));
-        }
-
-        if (ECLIPSE_3_3_0.compareTo(eclipseVersion) > 0) {
-            VirtualFile frameworkInstallDir =
-                    LocalFileSystem.getInstance().findFileByPath(frameworkInstanceDefinition.getBaseFolder());
-            if (frameworkInstallDir == null || !frameworkInstallDir.exists() || !frameworkInstallDir.isDirectory()) {
-                throw new RuntimeConfigurationError(
-                        OsmorcBundle.getTranslation("runconfiguration.equinox.instanceInstallFolderDoesNotExist",
-                                frameworkInstanceDefinition.getBaseFolder()));
-            }
-            VirtualFile startup = frameworkInstallDir.findChild("startup.jar");
-            if (startup == null || !startup.exists() || startup.isDirectory()) {
-                throw new RuntimeConfigurationError(
-                        OsmorcBundle.getTranslation("runconfiguration.equinox.startupJARDoesNotExist",
-                                frameworkInstanceDefinition.getBaseFolder()));
-            }
-        }
-
-        EquinoxRunProperties runProperties = new EquinoxRunProperties(runConfiguration.getAdditionalProperties());
-
-        if (runProperties.getEquinoxApplication() != null && runProperties.getEquinoxApplication().length() > 0 ||
-                runProperties.getEquinoxProduct() != null && runProperties.getEquinoxProduct().length() > 0) {
-            if (SystemInfo.isMac && !runConfiguration.getVmParameters().contains("-XstartOnFirstThread")) {
-                throw new RuntimeConfigurationWarning(
-                        "Using the JVM option -XstartOnFirstThread for running SWT apps on Mac OS X is highly recommended.");
-            }
-
-            if (runProperties.isStartConsole()) {
-                throw new RuntimeConfigurationWarning(OsmorcBundle.getTranslation("runconfiguration.equinox.runningWithConsole"));
-            }
-        }
-    }
+  }
 }

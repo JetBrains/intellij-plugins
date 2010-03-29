@@ -41,7 +41,7 @@ import java.util.Arrays;
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxIntegrator extends AbstractFrameworkIntegrator implements OsgiRunConfigurationCheckerProvider {
+public class EquinoxIntegrator extends AbstractFrameworkIntegrator {
     private final EquinoxOsgiRunConfigurationChecker checker;
     private static final BundleSelectionAction[] ACTIONS = new BundleSelectionAction[]{
             //new AdaptToRunWithUpdateConfiguratorAction(),
@@ -49,7 +49,7 @@ public class EquinoxIntegrator extends AbstractFrameworkIntegrator implements Os
 
     public EquinoxIntegrator(EquinoxFrameworkInstanceManager frameworkInstanceManager) {
         super(frameworkInstanceManager);
-        checker = new EquinoxOsgiRunConfigurationChecker(frameworkInstanceManager);
+        checker = new EquinoxOsgiRunConfigurationChecker();
     }
 
 
