@@ -45,6 +45,13 @@ public class SpringDMHeaderProviderRepository implements HeaderParserProviderRep
     _headerProviders = new ArrayList<HeaderParserProvider>();
 
     _headerProviders.add(new HeaderParserProviderImpl("Spring-Context", genericComplexHeaderParser));
+    _headerProviders.add(new HeaderParserProviderImpl("Import-Library", genericComplexHeaderParser));
+    _headerProviders.add(new HeaderParserProviderImpl("Library-SymbolicName", genericComplexHeaderParser));
+    _headerProviders.add(new HeaderParserProviderImpl("Library-Version", genericComplexHeaderParser));
+    _headerProviders.add(new HeaderParserProviderImpl("Library-Name", genericComplexHeaderParser));
+    _headerProviders.add(new HeaderParserProviderImpl("Library-Description", genericComplexHeaderParser));
+    _headerProviders.add(new HeaderParserProviderImpl("Import-Bundle", genericComplexHeaderParser));
+    _headerProviders.add(new HeaderParserProviderImpl("Application-TraceLevels", genericComplexHeaderParser));
     _headerProviders.add(new HeaderParserProviderImpl("SpringExtender-Version", simpleHeaderParser));
     _headerProviders.add(new HeaderParserProviderImpl("Module-Type", simpleHeaderParser));
     _headerProviders.add(new HeaderParserProviderImpl("Web-ContextPath", simpleHeaderParser));
