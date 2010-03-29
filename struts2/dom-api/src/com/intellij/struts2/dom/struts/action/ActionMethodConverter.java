@@ -15,13 +15,13 @@
 
 package com.intellij.struts2.dom.struts.action;
 
+import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
@@ -124,26 +124,22 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
 
     public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
       try {
-        if (ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(
-                actionClass.getContainingFile().getVirtualFile()).hasReadonlyFiles()) {
-          return;
-        }
+        if (!CodeInsightUtilBase.preparePsiElementForWrite(actionClass.getContainingFile())) return;
 
         final PsiElementFactory elementFactory = JavaPsiFacade.getInstance(project).getElementFactory();
 
-        PsiMethod actionMethod = elementFactory.createMethodFromText(
-                "public java.lang.String " + methodName + "() throws java.lang.Exception { return \"success\"; }",
-                actionClass);
+        PsiMethod actionMethod = elementFactory.createMethodFromText("public java.lang.String " + methodName + "() throws java.lang.Exception { return \"success\"; }",
+                                                                     actionClass);
 
         final JavaCodeStyleManager javaCodeStyleManager = JavaCodeStyleManager.getInstance(project);
-        actionMethod = (PsiMethod) javaCodeStyleManager.shortenClassReferences(actionMethod);
+        actionMethod = (PsiMethod)javaCodeStyleManager.shortenClassReferences(actionMethod);
         final CodeStyleManager codestylemanager = CodeStyleManager.getInstance(project);
-        actionMethod = (PsiMethod) codestylemanager.reformat(actionMethod);
+        actionMethod = (PsiMethod)codestylemanager.reformat(actionMethod);
 
-        final PsiMethod element = (PsiMethod) actionClass.add(actionMethod);
+        final PsiMethod element = (PsiMethod)actionClass.add(actionMethod);
 
         //noinspection ConstantConditions
-        OpenSourceUtil.navigate(new Navigatable[]{(Navigatable) element.getBody().getNavigationElement()}, true);
+        OpenSourceUtil.navigate(new Navigatable[]{(Navigatable)element.getBody().getNavigationElement()}, true);
       } catch (IncorrectOperationException e) {
         LOG.error("creation of action-method failed", e);
       }
