@@ -31,19 +31,10 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.CollectionListModel;
 import com.intellij.util.net.HTTPProxySettingsDialog;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -59,215 +50,177 @@ import java.util.List;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public class ObrSearchPanel extends ProgressIndicatorBase
-{
-    public ObrSearchPanel(QueryType queryType)
-    {
-        _queryType = queryType;
-        _searchButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                search();
-            }
-        });
-        _cancelButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                cancel();
-            }
-        });
+public class ObrSearchPanel extends ProgressIndicatorBase {
+  public ObrSearchPanel(QueryType queryType) {
+    _queryType = queryType;
+    _searchButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        search();
+      }
+    });
+    _cancelButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        cancel();
+      }
+    });
 
-        _obrBox.setRenderer(new DefaultListCellRenderer()
-        {
-            @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                                                          boolean cellHasFocus)
-            {
-                JLabel result =
-                    (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                result.setText(((Obr) value).getDisplayName());
-                return result;
-            }
+    _obrBox.setRenderer(new DefaultListCellRenderer() {
+      @Override
+      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        JLabel result = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+        result.setText(((Obr)value).getDisplayName());
+        return result;
+      }
 
-        });
-        _resultList.addListSelectionListener(new ListSelectionListener()
-        {
-            public void valueChanged(ListSelectionEvent e)
-            {
-                firePropertyChangeEvent("hasResult", null, null);
-            }
-        });
-        updateObrs();
-        onRunningChange();
-        onProgressChange();
-    }
+    });
+    _resultList.addListSelectionListener(new ListSelectionListener() {
+      public void valueChanged(ListSelectionEvent e) {
+        firePropertyChangeEvent("hasResult", null, null);
+      }
+    });
+    updateObrs();
+    onRunningChange();
+    onProgressChange();
+  }
 
-    private void search()
-    {
-        Thread t = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                final Obr selectedObr = (Obr) _obrBox.getSelectedItem();
-                if (selectedObr != null)
-                {
-                    start();
-                    switch (_queryType)
-                    {
-                        case Maven:
-                            List result = null;
-                            try
-                            {
-                                result = Arrays.asList(
-                                    selectedObr.queryForMavenArtifact(_queryString.getText(), ObrSearchPanel.this));
-                                setResults(result);
-                            }
-                            catch (final IOException e1)
-                            {
-                                SwingUtilities.invokeLater(new Runnable()
-                                {
-                                    public void run()
-                                    {
-                                        // dialog must be run on the event dispatch thread
-                                        // TODO: icon
-                                        int dialogResult = Messages
-                                            .showDialog(_rootPanel,
-                                                "Could not connect to " + selectedObr.getDisplayName() + ".\n" +
-                                                    e1.getMessage() + ".",
-                                                "Connection error",
-                                                new String[]{"Retry", "Cancel", "Proxy Settings"}, 0, null);
-                                        switch (dialogResult)
-                                        {
-                                            case 2:
-                                                // show proxy settings
-                                                HTTPProxySettingsDialog dialog = new HTTPProxySettingsDialog();
-                                                dialog.show();
-                                                // fall through..
-                                            case 0:
-                                                search();
-                                                break;
-                                            default:
-                                                // cancel
-                                                break;
-                                        }
-                                    }
-                                });
-                            }
+  private void search() {
+    Thread t = new Thread(new Runnable() {
+      public void run() {
+        final Obr selectedObr = (Obr)_obrBox.getSelectedItem();
+        if (selectedObr != null) {
+          start();
+          switch (_queryType) {
+            case Maven:
+              List result = null;
+              try {
+                result = Arrays.asList(selectedObr.queryForMavenArtifact(_queryString.getText(), ObrSearchPanel.this));
+                setResults(result);
+              }
+              catch (final IOException e1) {
+                SwingUtilities.invokeLater(new Runnable() {
+                  public void run() {
+                    // dialog must be run on the event dispatch thread
+                    // TODO: icon
+                    int dialogResult = Messages
+                      .showDialog(_rootPanel, "Could not connect to " + selectedObr.getDisplayName() + ".\n" + e1.getMessage() + ".",
+                                  "Connection error", new String[]{"Retry", "Cancel", "Proxy Settings"}, 0, null);
+                    switch (dialogResult) {
+                      case 2:
+                        // show proxy settings
+                        HTTPProxySettingsDialog dialog = new HTTPProxySettingsDialog();
+                        dialog.show();
+                        // fall through..
+                      case 0:
+                        search();
+                        break;
+                      default:
+                        // cancel
+                        break;
                     }
-                    stop();
-                }
-            }
+                  }
+                });
+              }
+          }
+          stop();
+        }
+      }
 
-        });
-        t.start();
+    });
+    t.start();
 
-    }
+  }
 
-    public JPanel getRootPanel()
-    {
-        return _rootPanel;
-    }
+  public JPanel getRootPanel() {
+    return _rootPanel;
+  }
 
-    public void setQueryString(String queryString)
-    {
-        _queryString.setText(queryString);
-    }
+  public void setQueryString(String queryString) {
+    _queryString.setText(queryString);
+  }
 
-    private void setResults(List results)
-    {
-        _resultList.setModel(new CollectionListModel(results));
-    }
+  private void setResults(List results) {
+    _resultList.setModel(new CollectionListModel(results));
+  }
 
-    @Override
-    protected void onProgressChange()
-    {
-        _progressBar.setIndeterminate(isIndeterminate());
-        _progressBar.setValue((int) (100 * getFraction()));
-        _statusLabel.setText(getText());
+  @Override
+  protected void onProgressChange() {
+    _progressBar.setIndeterminate(isIndeterminate());
+    _progressBar.setValue((int)(100 * getFraction()));
+    _statusLabel.setText(getText());
     _cancelButton.setEnabled(isRunning() && isCancelable());
-    }
+  }
 
-    @Override
-    protected void onRunningChange()
-    {
+  @Override
+  protected void onRunningChange() {
+    // Fix it to run on the event dispatch thread.
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
         _progressBar.setEnabled(isRunning());
         _statusLabel.setEnabled(isRunning());
         _cancelButton.setEnabled(isRunning() && isCancelable());
         _searchButton.setEnabled(!isRunning());
+      }
+    });
+  }
+
+  private void updateObrs() {
+    ObrProvider provider = ServiceManager.getService(ObrProvider.class);
+    Obr[] obrs = provider.getAvailableObrs();
+    DefaultComboBoxModel model = new DefaultComboBoxModel();
+    for (Obr obr : obrs) {
+      switch (_queryType) {
+        case Maven:
+          if (obr.supportsMaven()) {
+            model.addElement(obr);
+          }
+      }
     }
-
-    private void updateObrs()
-    {
-        ObrProvider provider = ServiceManager.getService(ObrProvider.class);
-        Obr[] obrs = provider.getAvailableObrs();
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for (Obr obr : obrs)
-        {
-            switch (_queryType)
-            {
-                case Maven:
-                    if (obr.supportsMaven())
-                    {
-                        model.addElement(obr);
-                    }
-            }
-        }
-        _obrBox.setModel(model);
-        if (model.getSize() > 0)
-        {
-            _obrBox.setSelectedIndex(0);
-        }
+    _obrBox.setModel(model);
+    if (model.getSize() > 0) {
+      _obrBox.setSelectedIndex(0);
     }
+  }
 
-    public Object getResult()
-    {
-        // return new ObrMavenResult("foogroup", "fooartifact", "1.5", null, new SpringSourceObr());
-        return _resultList.getSelectedValue();
+  public Object getResult() {
+    // return new ObrMavenResult("foogroup", "fooartifact", "1.5", null, new SpringSourceObr());
+    return _resultList.getSelectedValue();
+  }
+
+  public boolean isHasResult() {
+    return _resultList.getSelectedValue() != null;
+  }
+
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+    propertyChangeListeners.add(listener);
+  }
+
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
+    propertyChangeListeners.remove(listener);
+  }
+
+
+  private void firePropertyChangeEvent(String property, Object oldValue, Object newValue) {
+    final PropertyChangeEvent event = new PropertyChangeEvent(this, property, oldValue, newValue);
+    for (PropertyChangeListener propertyChangeListener : propertyChangeListeners) {
+      propertyChangeListener.propertyChange(event);
     }
+  }
 
-    public boolean isHasResult()
-    {
-        return _resultList.getSelectedValue() != null;
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener)
-    {
-        propertyChangeListeners.add(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener)
-    {
-        propertyChangeListeners.remove(listener);
-    }
-
-
-    private void firePropertyChangeEvent(String property, Object oldValue, Object newValue)
-    {
-        final PropertyChangeEvent event = new PropertyChangeEvent(this, property, oldValue, newValue);
-        for (PropertyChangeListener propertyChangeListener : propertyChangeListeners)
-        {
-            propertyChangeListener.propertyChange(event);
-        }
-    }
-
-  public JButton getSearchButton()
-  {
+  public JButton getSearchButton() {
     return _searchButton;
   }
 
-    private JTextField _queryString;
-    private JList _resultList;
-    private JPanel _rootPanel;
-    private JProgressBar _progressBar;
+  private JTextField _queryString;
+  private JList _resultList;
+  private JPanel _rootPanel;
+  private JProgressBar _progressBar;
 
 
-    private JButton _searchButton;
-    private JButton _cancelButton;
-    private JLabel _statusLabel;
-    private JComboBox _obrBox;
-    private QueryType _queryType;
-    private List<PropertyChangeListener> propertyChangeListeners = new ArrayList<PropertyChangeListener>();
+  private JButton _searchButton;
+  private JButton _cancelButton;
+  private JLabel _statusLabel;
+  private JComboBox _obrBox;
+  private QueryType _queryType;
+  private List<PropertyChangeListener> propertyChangeListeners = new ArrayList<PropertyChangeListener>();
 
 }
