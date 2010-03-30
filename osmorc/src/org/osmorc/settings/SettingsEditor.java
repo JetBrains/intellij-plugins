@@ -27,6 +27,7 @@ package org.osmorc.settings;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +40,7 @@ import javax.swing.*;
  * @author Robert F. Beeger (robert@beeger.net)
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class SettingsEditor implements ProjectComponent, Configurable, Configurable.Composite, ApplicationSettingsProvider, ProjectSettingsProvider {
+public class SettingsEditor implements ProjectComponent, SearchableConfigurable, Configurable.Composite, ApplicationSettingsProvider, ProjectSettingsProvider {
 
     public SettingsEditor(ApplicationSettings applicationSettings, ProjectSettings projectSettings,
                           ProjectSettingsEditor projectSettingsEditor, IDESettingsEditor ideSettingsEditor) {
@@ -122,7 +123,15 @@ public class SettingsEditor implements ProjectComponent, Configurable, Configura
         return "reference.settings.project.osgi";
     }
 
-    public JComponent createComponent() {
+    public String getId() {
+      return getHelpTopic();
+    }
+
+    public Runnable enableSearch(String option) {
+      return null;
+    }
+
+  public JComponent createComponent() {
         editorPane1.setText(OsmorcBundle.getInfo());
         return mainPanel;
     }

@@ -27,6 +27,7 @@ package org.osmorc.settings;
 
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +37,7 @@ import javax.swing.*;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class IDESettingsEditor implements Configurable, Configurable.Composite, ProjectSettingsAwareEditor, ApplicationSettingsAwareEditor {
+public class IDESettingsEditor implements SearchableConfigurable, Configurable.Composite, ProjectSettingsAwareEditor, ApplicationSettingsAwareEditor {
     public IDESettingsEditor(FrameworkDefinitionsEditor frameworkDefinitionsEditor, LibraryBundlingEditor libraryBundlingEditor) {
         this.frameworkDefinitionsEditor = frameworkDefinitionsEditor;
         this.libraryBundlingEditor = libraryBundlingEditor;
@@ -53,6 +54,14 @@ public class IDESettingsEditor implements Configurable, Configurable.Composite, 
 
     public String getHelpTopic() {
         return null;
+    }
+
+    public String getId() {
+      return "osmorc.ide.settings";
+    }
+
+    public Runnable enableSearch(String option) {
+      return null;
     }
 
     public JComponent createComponent() {

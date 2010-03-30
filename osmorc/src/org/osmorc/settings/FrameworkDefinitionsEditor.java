@@ -25,8 +25,8 @@
 
 package org.osmorc.settings;
 
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.Nls;
@@ -46,7 +46,7 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class FrameworkDefinitionsEditor implements Configurable, ApplicationSettingsAwareEditor,
+public class FrameworkDefinitionsEditor implements SearchableConfigurable, ApplicationSettingsAwareEditor,
         ProjectSettingsAwareEditor {
 
     public FrameworkDefinitionsEditor(FrameworkIntegratorRegistry frameworkIntegratorRegistry,
@@ -226,6 +226,14 @@ public class FrameworkDefinitionsEditor implements Configurable, ApplicationSett
 
     public String getHelpTopic() {
         return "reference.settings.project.osgi.framework.definitions";
+    }
+
+    public String getId() {
+      return getHelpTopic();
+    }
+
+    public Runnable enableSearch(String option) {
+      return null;
     }
 
     public JComponent createComponent() {
