@@ -41,28 +41,42 @@ import java.util.List;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public interface BundleManager {
-    // TODO: not used outside, refactor it out
-    Object findBundle(String bundleSymbolicName);
 
-    BundleManifest getBundleManifest(String bundleSymbolicName);
+  BundleManifest getBundleManifest(String bundleSymbolicName);
 
-    @Nullable
-    BundleManifest getBundleManifest(@NotNull Object bundle);
+  @Nullable
+  BundleManifest getBundleManifest(@NotNull Object bundle);
 
-    void addOrUpdateBundle(@NotNull Object bundle);
+  void addOrUpdateBundle(@NotNull Object bundle);
 
-    @Nullable
-    BundleDescription getBundleDescription(Object bundle);
+  @Nullable
+  BundleDescription getBundleDescription(Object bundle);
 
-    Collection<Object> determineBundleDependencies(@NotNull Object bundle);
+  Collection<Object> determineBundleDependencies(@NotNull Object bundle);
 
-    boolean isReexported(@NotNull Object reexportCandidate, @NotNull Object exporter);
+  boolean isReexported(@NotNull Object reexportCandidate, @NotNull Object exporter);
 
-    boolean reloadFrameworkInstanceLibraries(boolean onlyIfFrameworkInstanceSelectionChanged);
+  boolean reloadFrameworkInstanceLibraries(boolean onlyIfFrameworkInstanceSelectionChanged);
 
-    Collection<Object> getHostBundles(@NotNull Object bundle);
+  /**
+   * Returns a list of bundles which are hosts of the given fragment bundle.
+   *
+   * @param bundle a fragement bundle
+   * @return
+   */
+  @NotNull
+  Collection<Object> getHostBundles(@NotNull Object bundle);
 
-    List<BundleDescription> getResolvedRequires(@NotNull Object bundle);
+  List<BundleDescription> getResolvedRequires(@NotNull Object bundle);
 
-    List<ExportPackageDescription> getResolvedImports(@NotNull Object bundle);
+  List<ExportPackageDescription> getResolvedImports(@NotNull Object bundle);
+
+  /**
+   * Returns a display name of the given bundle.
+   *
+   * @param bundle a bundle object. Might be a {@link com.intellij.openapi.roots.libraries.Library} or a {@link com.intellij.openapi.module.Module}
+   * @return the display name of the bundle.
+   */
+  @NotNull
+  String getDisplayName(@NotNull Object bundle);
 }

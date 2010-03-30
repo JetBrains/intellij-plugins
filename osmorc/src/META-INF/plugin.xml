@@ -126,8 +126,6 @@
                             serviceImplementation="org.osmorc.obrimport.ObrProvider"/>
 
         <!-- Module services -->
-        <moduleService serviceInterface="org.osmorc.ModuleDependencySynchronizer"
-                       serviceImplementation="org.osmorc.ModuleDependencySynchronizer"/>
         <moduleService serviceInterface="org.osmorc.manifest.ManifestHolder"
                        serviceImplementation="org.osmorc.manifest.impl.ModuleManifestHolderImpl"/>
         <moduleService serviceInterface="org.osmorc.AdditionalJARContentsWatcherManager"

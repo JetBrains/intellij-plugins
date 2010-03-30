@@ -28,7 +28,10 @@ package org.osmorc.impl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.vfs.VirtualFile;
+import org.eclipse.osgi.framework.internal.core.Constants;
 import org.eclipse.osgi.service.resolver.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -286,6 +289,7 @@ public class BundleManagerImpl implements BundleManager {
         return false;
     }
 
+    @NotNull
     public Collection<Object> getHostBundles(@NotNull Object bundle) {
         Collection<Object> result = new ArrayList<Object>();
         BundleDescription bundleDescription = getBundleDescription(bundle);
@@ -350,7 +354,7 @@ public class BundleManagerImpl implements BundleManager {
         return bundleDescription;
     }
 
-    private void createInitialState() {
+    private synchronized void createInitialState() {
         if (_state == null) {
             _state = StateObjectFactory.defaultFactory.createState(true);
             Module[] modules = moduleManager.getModules();
@@ -360,8 +364,7 @@ public class BundleManagerImpl implements BundleManager {
 
             loadFrameworkInstanceLibraryBundles();
             Properties platformProperties = new Properties();
-            platformProperties.put(org.eclipse.osgi.framework.internal.core.Constants.OSGI_RESOLVER_MODE,
-                    org.eclipse.osgi.framework.internal.core.Constants.DEVELOPMENT_MODE);
+            platformProperties.put(Constants.OSGI_RESOLVER_MODE, Constants.DEVELOPMENT_MODE);
             _state.setPlatformProperties(platformProperties);
             _state.resolve();
         }
@@ -396,7 +399,31 @@ public class BundleManagerImpl implements BundleManager {
         return manifestHolderRegistry.getManifestHolder(bundle);
     }
 
-    private final ModuleManager moduleManager;
+  @NotNull
+  public String getDisplayName(@NotNull Object bundle) {
+    if (bundle instanceof Module) {
+      return ((Module)bundle).getName();
+    }
+    if ( bundle instanceof Library ) {
+      final String libName = ((Library)bundle).getName();
+      if ( libName == null ) {
+        final VirtualFile[] files = ((Library)bundle).getFiles(OrderRootType.CLASSES);
+        if ( files.length > 0 ) {
+          final VirtualFile file = files[0];
+          if ( file != null) {
+            return file.getName();
+          }
+        }
+        return "unnamed library";
+      }
+      else {
+        return libName;
+      }
+    }
+    return bundle.toString();
+  }
+
+  private final ModuleManager moduleManager;
     private final ManifestHolderRegistry manifestHolderRegistry;
     private final FrameworkIntegratorRegistry frameworkIntegratorRegistry;
     private final ProjectSettings projectSettings;

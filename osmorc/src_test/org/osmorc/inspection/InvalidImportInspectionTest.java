@@ -125,7 +125,7 @@ public class InvalidImportInspectionTest {
       public List<ProblemDescriptor> compute() {
         PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), moduleName, filePathInSource);
 
-        return TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
+        return TestUtil.runInspection(new ClassUnavailableInspection(), psiFile, fixture.getProject());
       }
     });
   }

@@ -69,7 +69,7 @@ public class ImportProvidedByNonOsmorcModuleTest {
     public void testBug() {
         PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Importer.java");
 
-        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new ClassUnavailableInspection(), psiFile, fixture.getProject());
 
         assertThat(list, nullValue());
     }
