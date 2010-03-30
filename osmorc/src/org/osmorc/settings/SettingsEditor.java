@@ -132,6 +132,13 @@ public class SettingsEditor implements ProjectComponent, SearchableConfigurable,
     }
 
   public JComponent createComponent() {
+    try {
+      editorPane1.setContentType("text/html");
+    }
+    catch(Exception e) {
+      // on some systems this throws a NPE, i don't know why. this should fix it (exception report IDEA-18662)
+      // http://forums.sun.com/thread.jspa?threadID=447601
+    }
         editorPane1.setText(OsmorcBundle.getInfo());
         return mainPanel;
     }
