@@ -25,8 +25,8 @@
 
 package org.osmorc.settings;
 
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import org.jetbrains.annotations.Nls;
@@ -42,7 +42,7 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ProjectSettingsEditor implements Configurable, ProjectSettingsAwareEditor, ApplicationSettingsAwareEditor,
+public class ProjectSettingsEditor implements SearchableConfigurable, ProjectSettingsAwareEditor, ApplicationSettingsAwareEditor,
         ApplicationSettingsUpdateNotifier.Listener {
 
     public ProjectSettingsEditor(Project project, FrameworkInstanceUpdateNotifier updateNotifier,
@@ -116,6 +116,14 @@ public class ProjectSettingsEditor implements Configurable, ProjectSettingsAware
 
     public String getHelpTopic() {
         return "reference.settings.project.osgi.project.settings";
+    }
+
+    public String getId() {
+      return getHelpTopic();
+    }
+
+    public Runnable enableSearch(String option) {
+      return null;
     }
 
     public JComponent createComponent() {
