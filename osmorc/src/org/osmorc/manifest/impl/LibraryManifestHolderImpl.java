@@ -24,6 +24,8 @@
  */
 package org.osmorc.manifest.impl;
 
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.Result;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
@@ -63,10 +65,16 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl
 
         if (classDir != null)
         {
-          VirtualFile manifestFile = classDir.findFileByRelativePath("META-INF/MANIFEST.MF");
+          final VirtualFile manifestFile = classDir.findFileByRelativePath("META-INF/MANIFEST.MF");
           if (manifestFile != null)
           {
-            PsiFile psiFile = PsiManager.getInstance(_project).findFile(manifestFile);
+            PsiFile psiFile = new ReadAction<PsiFile>() {
+              @Override
+              protected void run(Result<PsiFile> psiFileResult) throws Throwable {
+                psiFileResult.setResult(PsiManager.getInstance(_project).findFile(manifestFile));
+              }
+
+            }.execute().getResultObject();
             _bundleManifest = new BundleManifestImpl(psiFile);
           }
         }

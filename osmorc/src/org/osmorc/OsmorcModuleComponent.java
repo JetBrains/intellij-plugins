@@ -29,9 +29,17 @@ import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.Result;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
-import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -43,94 +51,135 @@ import org.osmorc.frameworkintegration.FrameworkInstanceModuleManager;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsmorcModuleComponent implements ModuleComponent {
-    private MessageBusConnection connection;
+  private MessageBusConnection connection;
+  private final Module myModule;
+  private final BundleManager myBundleManager;
+  private FrameworkInstanceModuleManager myFrameworkInstanceModuleManager;
+  private final AdditionalJARContentsWatcherManager myAdditionalJARContentsWatcherManager;
+  private final Application myApplication;
+  private boolean disposed;
 
-    public OsmorcModuleComponent(Module module, ModuleDependencySynchronizer moduleDependencySynchronizer,
-                                 FrameworkInstanceModuleManager frameworkInstanceModuleManager,
-                                 AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager,
-                                 Application application) {
-        this.module = module;
-        this.moduleDependencySynchronizer = moduleDependencySynchronizer;
-        this.frameworkInstanceModuleManager = frameworkInstanceModuleManager;
-        this.additionalJARContentsWatcherManager = additionalJARContentsWatcherManager;
-        this.application = application;
-        disposed = false;
+  public OsmorcModuleComponent(Module module,
+                               BundleManager bundleManager,
+                               FrameworkInstanceModuleManager frameworkInstanceModuleManager,
+                               AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager,
+                               Application application) {
+    this.myModule = module;
+    myBundleManager = bundleManager;
+    this.myFrameworkInstanceModuleManager = frameworkInstanceModuleManager;
+    this.myAdditionalJARContentsWatcherManager = additionalJARContentsWatcherManager;
+    this.myApplication = application;
+    disposed = false;
+  }
+
+  @NonNls
+  @NotNull
+  public String getComponentName() {
+    return "OsmorcModuleComponent";
+  }
+
+  public void initComponent() {
+    disposed = false;
+    connection = myModule.getMessageBus().connect();
+    connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
+      public void facetAdded(@NotNull Facet facet) {
+        handleFacetChange(facet);
+      }
+
+      @Override
+      public void facetRemoved(@NotNull Facet facet) {
+        myFrameworkInstanceModuleManager.updateFrameworkInstanceModule();
+      }
+
+      public void facetConfigurationChanged(@NotNull Facet facet) {
+        handleFacetChange(facet);
+      }
+    });
+  }
+
+  public void disposeComponent() {
+    if (connection != null) {
+      connection.disconnect();
     }
+    disposed = true;
+  }
 
-    public void projectOpened() {
-        application.invokeLater(new Runnable() {
-            public void run() {
-                if (!disposed && OsmorcFacet.hasOsmorcFacet(module)) {
-                    moduleDependencySynchronizer.syncDependenciesFromManifest();
+  public void projectOpened() {
+    myApplication.invokeLater(new Runnable() {
+      public void run() {
+        if (!disposed && OsmorcFacet.hasOsmorcFacet(myModule)) {
+          buildManuallyEditedManifestIndex();
+          updateModuleDependencyIndex();
+        }
+      }
+    });
+  }
+
+  public void projectClosed() {
+    myAdditionalJARContentsWatcherManager.dispose();
+  }
+
+  public void moduleAdded() {
+  }
+
+  private void updateModuleDependencyIndex() {
+    Task.Backgroundable task =
+      new Task.Backgroundable(myModule.getProject(), "Updating OSGi dependency index for module '" + myModule.getName() + "'") {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          ModifiableRootModel model = new ReadAction<ModifiableRootModel>() {
+            protected void run(Result<ModifiableRootModel> result) throws Throwable {
+              ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+              result.setResult(model);
+            }
+          }.execute().getResultObject();
+
+          OrderEntry[] entries = model.getOrderEntries();
+          try {
+            for (int i = 0, entriesLength = entries.length; i < entriesLength; i++) {
+              indicator.setFraction(i/entriesLength);
+              OrderEntry entry = entries[i];
+              if (entry instanceof LibraryOrderEntry) {
+                final Library library = ((LibraryOrderEntry)entry).getLibrary();
+                if (library != null) {
+                  myBundleManager.addOrUpdateBundle(library);
                 }
+              }
             }
-        });
-    }
-
-    public void projectClosed() {
-        additionalJARContentsWatcherManager.dispose();
-    }
-
-    public void moduleAdded() {
-    }
-
-    @NonNls
-    @NotNull
-    public String getComponentName() {
-        return "OsmorcModuleComponent";
-    }
-
-    public void initComponent() {
-        disposed = false;
-        connection = module.getMessageBus().connect();
-        connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
-            public void facetAdded(@NotNull Facet facet) {
-                handleFacetChange(facet);
-            }
-
-            @Override
-            public void facetRemoved(@NotNull Facet facet) {
-                frameworkInstanceModuleManager.updateFrameworkInstanceModule();
-            }
-
-            public void facetConfigurationChanged(@NotNull Facet facet) {
-                handleFacetChange(facet);
-            }
-        });
-    }
-
-    private void handleFacetChange(Facet facet) {
-        if (!disposed && facet.getTypeId() == OsmorcFacetType.ID) {
-            if (facet.getModule().getProject().isInitialized()) {
-                moduleDependencySynchronizer.syncDependenciesFromManifest();
-                syncAllModuleDependencies();
-                frameworkInstanceModuleManager.updateFrameworkInstanceModule();
-            }
-            additionalJARContentsWatcherManager.updateWatcherSetup();
+          }
+          finally {
+            model.dispose();
+          }
         }
-    }
+      };
+    task.queue();
+  }
 
-    public void disposeComponent() {
-        if (connection != null) {
-            connection.disconnect();
+  /**
+   * Runs over the module which has a manually edited manifest and refreshes it's information in the bundle manager.
+   */
+  private void buildManuallyEditedManifestIndex() {
+    final OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
+    if (facet != null && facet.getConfiguration().isManifestManuallyEdited()) {
+      Task task = new Task.Backgroundable(myModule.getProject(), "Updating manifest indices", false) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          indicator.setIndeterminate(true);
+          indicator.setText("Updating manifest indices.");
+          myBundleManager.addOrUpdateBundle(myModule);
         }
-        disposed = true;
+      };
+      task.queue();
     }
+  }
 
-    private void syncAllModuleDependencies() {
-        Module[] modules = ModuleManager.getInstance(module.getProject()).getModules();
-        for (Module module : modules) {
-            if (OsmorcFacet.hasOsmorcFacet(module)) {
-                ModuleDependencySynchronizer.getInstance(module).syncDependenciesFromManifest();
-            }
-        }
+  private void handleFacetChange(Facet facet) {
+    if (!disposed && facet.getTypeId() == OsmorcFacetType.ID) {
+      if (facet.getModule().getProject().isInitialized()) {
+        myFrameworkInstanceModuleManager.updateFrameworkInstanceModule();
+        buildManuallyEditedManifestIndex();
+      }
+      myAdditionalJARContentsWatcherManager.updateWatcherSetup();
     }
-
-
-    private final Module module;
-    private final ModuleDependencySynchronizer moduleDependencySynchronizer;
-    private FrameworkInstanceModuleManager frameworkInstanceModuleManager;
-    private final AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager;
-    private final Application application;
-    private boolean disposed;
+  }
 }

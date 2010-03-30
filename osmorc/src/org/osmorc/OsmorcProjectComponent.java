@@ -28,7 +28,6 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -36,7 +35,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiTreeChangeAdapter;
 import com.intellij.psi.PsiTreeChangeEvent;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkInstanceModuleManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceUpdateNotifier;
@@ -47,118 +45,110 @@ import org.osmorc.settings.ProjectSettings;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsmorcProjectComponent implements ProjectComponent, FrameworkInstanceUpdateNotifier.Listener {
-    public OsmorcProjectComponent(BundleManager bundleManager,
-                                  FrameworkInstanceUpdateNotifier updateNotifier,
-                                  ProjectSettings projectSettings, Project project, Application application,
-                                  FrameworkInstanceModuleManager frameworkInstanceModuleManager) {
-        this.bundleManager = bundleManager;
-        this.updateNotifier = updateNotifier;
-        this.projectSettings = projectSettings;
-        this.project = project;
-        this.application = application;
-        this.frameworkInstanceModuleManager = frameworkInstanceModuleManager;
+  private final BundleManager bundleManager;
+  private final FrameworkInstanceUpdateNotifier updateNotifier;
+  private final ProjectSettings projectSettings;
+  private final Project project;
+  private final Application application;
+  private FrameworkInstanceModuleManager frameworkInstanceModuleManager;
+
+  public OsmorcProjectComponent(BundleManager bundleManager,
+                                FrameworkInstanceUpdateNotifier updateNotifier,
+                                ProjectSettings projectSettings,
+                                Project project,
+                                Application application,
+                                FrameworkInstanceModuleManager frameworkInstanceModuleManager) {
+    this.bundleManager = bundleManager;
+    this.updateNotifier = updateNotifier;
+    this.projectSettings = projectSettings;
+    this.project = project;
+    this.application = application;
+    this.frameworkInstanceModuleManager = frameworkInstanceModuleManager;
+  }
+
+  @NotNull
+  public String getComponentName() {
+    return "OsmorcProjectComponent";
+  }
+
+  public void initComponent() {
+    PsiManager.getInstance(project).addPsiTreeChangeListener(new PsiTreeChangeAdapter() {
+      public void childrenChanged(PsiTreeChangeEvent event) {
+        processChange(event);
+      }
+
+      public void childAdded(PsiTreeChangeEvent event) {
+        processChange(event);
+      }
+
+      public void childRemoved(PsiTreeChangeEvent event) {
+        processChange(event);
+      }
+
+      public void childReplaced(PsiTreeChangeEvent event) {
+        processChange(event);
+      }
+    });
+  }
+
+  public void disposeComponent() {
+  }
+
+  public void updateFrameworkInstance(@NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition,
+                                      @NotNull FrameworkInstanceUpdateNotifier.UpdateKind updateKind) {
+    if (frameworkInstanceDefinition.getName().equals(projectSettings.getFrameworkInstanceName())) {
+      runFrameworkInstanceUpdate(false);
     }
+  }
 
-    public void initComponent() {
-        PsiManager.getInstance(project).addPsiTreeChangeListener(new PsiTreeChangeAdapter() {
-            public void childrenChanged(PsiTreeChangeEvent event) {
-                processChange(event);
-            }
-
-            public void childAdded(PsiTreeChangeEvent event) {
-                processChange(event);
-            }
-
-            public void childRemoved(PsiTreeChangeEvent event) {
-                processChange(event);
-            }
-
-            public void childReplaced(PsiTreeChangeEvent event) {
-                processChange(event);
-            }
-        });
+  public void updateFrameworkInstanceSelection(@NotNull Project project) {
+    if (this.project == project) {
+      runFrameworkInstanceUpdate(true);
     }
+  }
 
-    private void processChange(final PsiTreeChangeEvent event) {
-        final PsiFile file = event.getFile();
-        if (!(file instanceof ManifestFile)) return;
+  public void frameworkInstanceModuleHandlingChanged(@NotNull Project project) {
+    if (this.project == project) {
+      frameworkInstanceModuleManager.updateFrameworkInstanceModule();
+    }
+  }
 
-        Runnable onChangeRunnable = new Runnable() {
-            public void run() {
-                // TODO: this should be better handled lazily
+  public void projectOpened() {
+    updateNotifier.addListener(this);
+    frameworkInstanceModuleManager.updateFrameworkInstanceModule();
+  }
 
-                Module moduleOfChangedManifest = ModuleUtil.findModuleForPsiElement(file);
-                if (moduleOfChangedManifest != null) {
-                    bundleManager.addOrUpdateBundle(moduleOfChangedManifest);
+  public void projectClosed() {
+    updateNotifier.removeListener(this);
+  }
 
-                    syncAllModuleDependencies();
-                }
-            }
-        };
 
-        if (ApplicationManager.getApplication().isCommandLine()) onChangeRunnable.run();
-        else {
-            application.invokeLater(onChangeRunnable);
+  private void processChange(final PsiTreeChangeEvent event) {
+    final PsiFile file = event.getFile();
+    if (!(file instanceof ManifestFile)) return;
+
+    Runnable onChangeRunnable = new Runnable() {
+      public void run() {
+        // TODO: this should be better handled lazily
+
+        Module moduleOfChangedManifest = ModuleUtil.findModuleForPsiElement(file);
+        if (moduleOfChangedManifest != null) {
+          bundleManager.addOrUpdateBundle(moduleOfChangedManifest);
         }
+      }
+    };
+
+    if (ApplicationManager.getApplication().isCommandLine()) {
+      onChangeRunnable.run();
     }
-
-    private void syncAllModuleDependencies() {
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules) {
-            if (OsmorcFacet.hasOsmorcFacet(module)) {
-                ModuleDependencySynchronizer.getInstance(module).syncDependenciesFromManifest();
-            }
-        }
+    else {
+      application.invokeLater(onChangeRunnable);
     }
+  }
 
-    public void updateFrameworkInstance(@NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition, @NotNull
-    FrameworkInstanceUpdateNotifier.UpdateKind updateKind) {
-        if (frameworkInstanceDefinition.getName().equals(projectSettings.getFrameworkInstanceName())) {
-            runFrameworkInstanceUpdate(false);
-        }
+  private void runFrameworkInstanceUpdate(final boolean onlyIfFrameworkInstanceSelectionChanged) {
+    if (bundleManager.reloadFrameworkInstanceLibraries(onlyIfFrameworkInstanceSelectionChanged)) {
+      frameworkInstanceModuleManager.updateFrameworkInstanceModule();
     }
-
-    public void updateFrameworkInstanceSelection(@NotNull Project project) {
-        if (this.project == project) {
-            runFrameworkInstanceUpdate(true);
-        }
-    }
-
-    public void frameworkInstanceModuleHandlingChanged(@NotNull Project project) {
-        if (this.project == project) {
-            frameworkInstanceModuleManager.updateFrameworkInstanceModule();
-        }
-    }
-
-    private void runFrameworkInstanceUpdate(final boolean onlyIfFrameworkInstanceSelectionChanged) {
-        if (bundleManager.reloadFrameworkInstanceLibraries(onlyIfFrameworkInstanceSelectionChanged)) {
-            syncAllModuleDependencies();
-            frameworkInstanceModuleManager.updateFrameworkInstanceModule();
-        }
-    }
-
-
-    public void disposeComponent() {
-    }
-
-    @NotNull
-    public String getComponentName() {
-        return "OsmorcProjectComponent";
-    }
-
-    public void projectOpened() {
-        updateNotifier.addListener(this);
-        frameworkInstanceModuleManager.updateFrameworkInstanceModule();
-    }
-
-    public void projectClosed() {
-        updateNotifier.removeListener(this);
-    }
-
-    private final BundleManager bundleManager;
-    private final FrameworkInstanceUpdateNotifier updateNotifier;
-    private final ProjectSettings projectSettings;
-    private final Project project;
-    private final Application application;
-    private FrameworkInstanceModuleManager frameworkInstanceModuleManager;
+  }
 }

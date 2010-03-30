@@ -36,7 +36,7 @@ import com.intellij.testFramework.fixtures.TempDirTestFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.osmorc.inspection.InvalidImportInspection;
+import org.osmorc.inspection.ClassUnavailableInspection;
 
 import java.util.Arrays;
 import java.util.List;
@@ -108,7 +108,7 @@ public class FragmentHandlingTest {
     public void testImportsOfFragmentClassesBehaveAsIfTheHostContainsThem() {
         PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Importer.java");
 
-        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new ClassUnavailableInspection(), psiFile, fixture.getProject());
 
         assertThat(list, notNullValue());
         assertThat(list.size(), equalTo(6));
@@ -138,7 +138,7 @@ public class FragmentHandlingTest {
     public void testImportsOfHostClassesInFragmentClassesAreValid() {
         PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t0.fragment", "t0/internal/NotExportedClass.java");
 
-        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new ClassUnavailableInspection(), psiFile, fixture.getProject());
 
         assertThat(list, nullValue());
     }
@@ -168,7 +168,7 @@ public class FragmentHandlingTest {
     public void testImportsOfClassesOfRequiredPackagesInFragmentClassesAreValid() {
         PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t3.fragment.2", "t3/Importer.java");
 
-        List<ProblemDescriptor> list = TestUtil.runInspection(new InvalidImportInspection(), psiFile, fixture.getProject());
+        List<ProblemDescriptor> list = TestUtil.runInspection(new ClassUnavailableInspection(), psiFile, fixture.getProject());
 
         assertThat(list, nullValue());
     }

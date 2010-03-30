@@ -33,7 +33,7 @@ import com.intellij.codeInspection.InspectionToolProvider;
 public class OsmorcInspectionToolProvider implements InspectionToolProvider {
   public Class[] getInspectionClasses() {
     return new Class[]{
-        InvalidImportInspection.class,
+        //ClassUnavailableInspection.class,   // this is currently too buggy for production use
         MisspelledHeaderNameInspection.class,
         UnregisteredActivatorInspection.class,
         MissingFinalNewlineInspection.class,
