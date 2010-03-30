@@ -33,8 +33,7 @@
           </grid>
         </constraints>
         <properties>
-          <contentType value="text/html"/>
-          <editable value="false"/>
+          <editable value="true"/>
         </properties>
       </component>
     </children>

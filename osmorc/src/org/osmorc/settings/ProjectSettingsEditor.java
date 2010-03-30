@@ -52,6 +52,21 @@ public class ProjectSettingsEditor implements SearchableConfigurable, ProjectSet
         this.updateNotifier = updateNotifier;
         this.projectSettingsUpdateNotifier = projectSettingsUpdateNotifier;
 
+      
+        frameworkInstance.setRenderer(new FrameworkInstanceCellRenderer() {
+          @Override
+          protected boolean isInstanceDefined(FrameworkInstanceDefinition instance) {
+             List<FrameworkInstanceDefinition> instanceDefinitions =
+                getApplicationSettingsWorkingCopy().getFrameworkInstanceDefinitions();
+            for (FrameworkInstanceDefinition instanceDefinition : instanceDefinitions) {
+              if ( instance.equals(instanceDefinition)) {
+                return true;
+              }
+            }
+            return false;
+          }
+        });
+
         frameworkInstance.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (!updatingFrameworkInstanceComboBox && frameworkInstance.getSelectedItem() != null) {
