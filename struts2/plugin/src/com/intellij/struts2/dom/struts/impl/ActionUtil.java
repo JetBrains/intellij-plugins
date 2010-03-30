@@ -28,6 +28,7 @@ import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -69,7 +70,9 @@ final class ActionUtil {
     final PsiElementFactory psiElementFactory = JavaPsiFacade.getInstance(project).getElementFactory();
 
     final Module module = ModuleUtil.findModuleForPsiElement(actionClass);
-    assert module != null : "could not find module for " + actionClass;
+    if (module == null) {
+      return Collections.emptyList();
+    }
     final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
 
     final PsiClassType stringType = psiElementFactory.createTypeByFQClassName(CommonClassNames.JAVA_LANG_STRING,
