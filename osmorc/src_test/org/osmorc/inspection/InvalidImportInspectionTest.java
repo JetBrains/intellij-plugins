@@ -52,13 +52,14 @@ import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
+ * @deprecated depends on the Buggy "InvalidImportInspection" which I currently removed.
  */
 public class InvalidImportInspectionTest {
     public InvalidImportInspectionTest() {
         fixture = TestUtil.createTestFixture();
     }
 
-    @Before
+    //@Before
     public void setUp() throws Exception {
         myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
         myTempDirFixture.setUp();
@@ -82,14 +83,14 @@ public class InvalidImportInspectionTest {
       }
     }
 
-    @After
+    //@After
     public void tearDown() throws Exception {
         fixture.tearDown();
         myTempDirFixture.tearDown();
     }
 
     @SuppressWarnings({"ConstantConditions"})
-    @Test
+    //@Test
     public void testImportPackageImport() {
 
         assertThat(ModuleRootManager.getInstance(t1).getDependencies().length, equalTo(1));
@@ -131,7 +132,7 @@ public class InvalidImportInspectionTest {
   }
 
   @SuppressWarnings({"ConstantConditions"})
-    @Test
+    //@Test
     public void testDirectRequireBundleImport() {
         assertThat(ModuleRootManager.getInstance(t2).getDependencies().length, equalTo(1));
         assertThat(Arrays.asList(ModuleRootManager.getInstance(t2).getDependencies()), hasItem(t0));
@@ -153,7 +154,7 @@ public class InvalidImportInspectionTest {
     }
 
     @SuppressWarnings({"ConstantConditions"})
-    @Test
+    //@Test
     public void testRecursiveRequireBundleWithReexportImport() {
         assertThat(ModuleRootManager.getInstance(t3).getDependencies().length, equalTo(1));
         assertThat(Arrays.asList(ModuleRootManager.getInstance(t3).getDependencies()), hasItem(t2));
@@ -175,7 +176,7 @@ public class InvalidImportInspectionTest {
     }
 
     @SuppressWarnings({"ConstantConditions"})
-    @Test
+    //@Test
     public void testRecursiveRequireBundleWithoutReexportImport() {
         assertThat(ModuleRootManager.getInstance(t4).getDependencies().length, equalTo(1));
         assertThat(Arrays.asList(ModuleRootManager.getInstance(t4).getDependencies()), hasItem(t3));
