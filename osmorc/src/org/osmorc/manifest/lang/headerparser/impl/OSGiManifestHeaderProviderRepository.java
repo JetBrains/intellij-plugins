@@ -64,7 +64,7 @@ public class OSGiManifestHeaderProviderRepository implements HeaderParserProvide
         headerProviders.add(new HeaderParserProviderImpl("Bundle-ActivationPolicy", simpleHeaderParser));
         headerProviders.add(new HeaderParserProviderImpl("Bundle-Activator", bundleActivatorParser));
         headerProviders.add(new HeaderParserProviderImpl("Bundle-Category", simpleHeaderParser));
-        headerProviders.add(new HeaderParserProviderImpl("Bundle-Classpath", simpleHeaderParser));
+        headerProviders.add(new HeaderParserProviderImpl("Bundle-ClassPath", simpleHeaderParser));
         headerProviders.add(new HeaderParserProviderImpl("Bundle-ContactAddress", simpleHeaderParser));
         headerProviders.add(new HeaderParserProviderImpl("Bundle-Copyright", simpleHeaderParser));
         headerProviders.add(new HeaderParserProviderImpl("Bundle-Description", simpleHeaderParser));
