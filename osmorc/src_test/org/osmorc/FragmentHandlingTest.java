@@ -46,13 +46,14 @@ import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
+ * @deprecated Depends on the removed ModuleDependencySynchronizer, needs to be replaced when a new mechanism is in there
  */
 public class FragmentHandlingTest {
     public FragmentHandlingTest() {
         fixture = TestUtil.createTestFixture();
     }
 
-    @Before
+    //@Before
     public void setUp() throws Exception {
         myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
         myTempDirFixture.setUp();
@@ -72,20 +73,20 @@ public class FragmentHandlingTest {
 
     }
 
-    @After
+    //@After
     public void tearDown() throws Exception {
         fixture.tearDown();
         myTempDirFixture.tearDown();
     }
 
-    @Test
+    //@Test
     public void testFragmentHasDependencyOnHost() {
         assertThat(ModuleRootManager.getInstance(t0Fragment).getDependencies().length, equalTo(1));
         assertThat(Arrays.asList(ModuleRootManager.getInstance(t0Fragment).getDependencies()), hasItem(t0));
         assertThat(TestUtil.getOrderEntry(t0, t0Fragment).isExported(), equalTo(false));
     }
 
-    @Test
+    //@Test
     public void testHostImporterHasDependencyOnFragment() {
         assertThat(ModuleRootManager.getInstance(t1).getDependencies().length, equalTo(2));
         assertThat(Arrays.asList(ModuleRootManager.getInstance(t1).getDependencies()), hasItem(t0));
@@ -94,7 +95,7 @@ public class FragmentHandlingTest {
         assertThat(TestUtil.getOrderEntry(t0Fragment, t1).isExported(), equalTo(false));
     }
 
-    @Test
+    //@Test
     public void testFragmentForRequiredExportedHostIsAlsoExported() {
         assertThat(ModuleRootManager.getInstance(t2).getDependencies().length, equalTo(2));
         assertThat(Arrays.asList(ModuleRootManager.getInstance(t2).getDependencies()), hasItem(t0));
@@ -104,7 +105,7 @@ public class FragmentHandlingTest {
     }
 
     @SuppressWarnings({"ConstantConditions"})
-    @Test
+    //@Test
     public void testImportsOfFragmentClassesBehaveAsIfTheHostContainsThem() {
         PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Importer.java");
 
@@ -134,7 +135,7 @@ public class FragmentHandlingTest {
     }
 
     @SuppressWarnings({"ConstantConditions"})
-    @Test
+    //@Test
     public void testImportsOfHostClassesInFragmentClassesAreValid() {
         PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t0.fragment", "t0/internal/NotExportedClass.java");
 
@@ -143,7 +144,7 @@ public class FragmentHandlingTest {
         assertThat(list, nullValue());
     }
 
-    @Test
+    //@Test
     public void testFragmentDependenciesAreMergedInTheHostAndAddedBackToFragmentDependencies() {
         assertThat(ModuleRootManager.getInstance(t3).getDependencies().length, equalTo(3));
         assertThat(Arrays.asList(ModuleRootManager.getInstance(t3).getDependencies()), hasItem(t0));
@@ -164,7 +165,7 @@ public class FragmentHandlingTest {
     }
 
     @SuppressWarnings({"ConstantConditions"})
-    @Test
+    //@Test
     public void testImportsOfClassesOfRequiredPackagesInFragmentClassesAreValid() {
         PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t3.fragment.2", "t3/Importer.java");
 
