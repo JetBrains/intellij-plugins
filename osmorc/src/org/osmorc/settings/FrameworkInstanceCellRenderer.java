@@ -1,7 +1,6 @@
 package org.osmorc.settings;
 
 import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 
@@ -14,7 +13,7 @@ import javax.swing.*;
 public abstract class FrameworkInstanceCellRenderer extends ColoredListCellRenderer {
   @Override
   protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-    final String str = value.toString();
+    final String str = value != null ? value.toString() : null;
     if (str != null) {
       if (!isInstanceDefined(((FrameworkInstanceDefinition)value))) {
         append(str + " [invalid]", SimpleTextAttributes.ERROR_ATTRIBUTES);
