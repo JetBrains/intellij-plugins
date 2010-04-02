@@ -131,9 +131,9 @@ public class AdditionalJARContentsWatcherManagerImpl implements AdditionalJARCon
     _additionalBundleJARContents.clear();
   }
 
-  private LocalFileSystem _fileSystem;
-  private List<VirtualFile> _additionalBundleJARContents;
-  private List<LocalFileSystem.WatchRequest> _watchRequests;
-  private Module _module;
-  private OsmorcFacetUtil _osmorcFacetUtil;
+  private final LocalFileSystem _fileSystem;
+  private final List<VirtualFile> _additionalBundleJARContents;
+  private final List<LocalFileSystem.WatchRequest> _watchRequests;
+  private final Module _module;
+  private final OsmorcFacetUtil _osmorcFacetUtil;
 }

@@ -64,7 +64,7 @@ public class BundleSelector extends JDialog {
     private List<SelectedBundle> hideBundles = new ArrayList<SelectedBundle>();
     private final Project project;
     private ArrayList<SelectedBundle> selectedBundles = new ArrayList<SelectedBundle>();
-    private ArrayList<SelectedBundle> allAvailableBundles = new ArrayList<SelectedBundle>();
+    private final ArrayList<SelectedBundle> allAvailableBundles = new ArrayList<SelectedBundle>();
 
     public BundleSelector(Project project) {
         this.project = project;

@@ -62,6 +62,6 @@ public class BundleRequiresItselfTest {
         TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private TempDirTestFixture myTempDirFixture;
 }

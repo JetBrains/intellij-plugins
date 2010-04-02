@@ -123,7 +123,7 @@ public class EquinoxFrameworkInstanceManagerTest {
         verify(fileSystem);
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private VirtualFile root;
     private EquinoxFrameworkInstanceManager testObject;
     private FrameworkInstanceDefinition instanceDefinition;

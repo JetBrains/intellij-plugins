@@ -66,5 +66,5 @@ public class ConciergeSourceFinder implements FrameworkInstanceLibrarySourceFind
   }
 
   @NonNls
-  private VirtualFile _sourceFolder;
+  private final VirtualFile _sourceFolder;
 }

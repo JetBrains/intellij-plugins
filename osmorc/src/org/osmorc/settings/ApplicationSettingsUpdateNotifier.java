@@ -61,5 +61,5 @@ public class ApplicationSettingsUpdateNotifier
     void applicationSettingsChanged();
   }
 
-  private List<Listener> _listeners;
+  private final List<Listener> _listeners;
 }

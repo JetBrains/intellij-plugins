@@ -116,7 +116,7 @@ public class EquinoxSourceFinderTest {
         assertThat(sources.get(0), sameInstance(root.findFileByRelativePath("some_source/src/somebundle_1.0.0/src.zip")));
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private VirtualFile root;
     private EquinoxSourceFinder testObject;
     private VirtualFile testBundle;

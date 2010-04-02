@@ -109,7 +109,7 @@ public class EquinoxFrameworkInstanceManager implements FrameworkInstanceManager
 
   private final LibraryHandler libraryHandler;
     private final VirtualFileSystem fileSystem;
-    private Application application;
+    private final Application application;
     private final EquinoxSourceFinder equinoxSourceFinder;
     protected static final String FOLDER_DOES_NOT_EXIST =
             "The folder <strong>{0}</strong> does not exist or is not a folder. The folder should be an existing folder containing a <strong>plugins</strong> folder which contains the bundles of your Equinox installation. ";

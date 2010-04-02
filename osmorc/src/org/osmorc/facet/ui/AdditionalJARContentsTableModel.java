@@ -129,5 +129,5 @@ class AdditionalJARContentsTableModel extends AbstractTableModel
     fireTableCellUpdated(rowIndex, columnIndex);
   }
 
-  private List<Pair<String, String>> _additionalContents;
+  private final List<Pair<String, String>> _additionalContents;
 }
