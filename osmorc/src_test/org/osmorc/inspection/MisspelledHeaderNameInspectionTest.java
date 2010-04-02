@@ -97,7 +97,7 @@ public class MisspelledHeaderNameInspectionTest {
         assertThat(fixes[0].getName(), containsString("Require-Bundle"));
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private TempDirTestFixture myTempDirFixture;
 
 }

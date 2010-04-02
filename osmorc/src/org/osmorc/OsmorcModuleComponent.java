@@ -54,7 +54,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
   private MessageBusConnection connection;
   private final Module myModule;
   private final BundleManager myBundleManager;
-  private FrameworkInstanceModuleManager myFrameworkInstanceModuleManager;
+  private final FrameworkInstanceModuleManager myFrameworkInstanceModuleManager;
   private final AdditionalJARContentsWatcherManager myAdditionalJARContentsWatcherManager;
   private final Application myApplication;
   private boolean disposed;

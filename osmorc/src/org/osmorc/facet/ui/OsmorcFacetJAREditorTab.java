@@ -393,7 +393,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     private TextFieldWithBrowseButton _jarFileChooser;
     private JPanel _root;
     private JTable _additionalJARContentsTable;
-    private EditorTextField _ignoreFilePatternTextField;
+    private final EditorTextField _ignoreFilePatternTextField;
     private JButton _addButton;
     private JButton _removeButton;
     private JButton _editButton;
@@ -404,6 +404,6 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     private JPanel _ignoreFilePatternPanel;
     private boolean _modified;
     private final FacetEditorContext _editorContext;
-    private AdditionalJARContentsTableModel _additionalJARContentsTableModel;
+    private final AdditionalJARContentsTableModel _additionalJARContentsTableModel;
 
 }

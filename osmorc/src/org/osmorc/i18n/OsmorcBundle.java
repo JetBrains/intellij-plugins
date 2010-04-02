@@ -47,7 +47,7 @@ public class OsmorcBundle {
 
     private static Reference<ResourceBundle> _ourBundle;
     private static String infoHtml;
-    private static Map<String, Icon> _iconCache = new WeakHashMap<String, Icon>();
+    private static final Map<String, Icon> _iconCache = new WeakHashMap<String, Icon>();
 
     @NonNls
     private static final String BUNDLE = "org.osmorc.i18n.OsmorcBundle";

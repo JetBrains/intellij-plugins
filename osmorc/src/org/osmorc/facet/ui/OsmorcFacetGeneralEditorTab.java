@@ -396,7 +396,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     private MyErrorText _errorText;
     private boolean _modified;
     private final FacetEditorContext _editorContext;
-    private Module _module;
+    private final Module _module;
     static final Key<Boolean> MANUAL_MANIFEST_EDITING_KEY = Key.create("MANUAL_MANIFEST_EDITING");
     static final Key<Boolean> BND_CREATION_KEY = Key.create("BND_CREATION");
 

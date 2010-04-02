@@ -220,7 +220,7 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
   private JButton _cancelButton;
   private JLabel _statusLabel;
   private JComboBox _obrBox;
-  private QueryType _queryType;
-  private List<PropertyChangeListener> propertyChangeListeners = new ArrayList<PropertyChangeListener>();
+  private final QueryType _queryType;
+  private final List<PropertyChangeListener> propertyChangeListeners = new ArrayList<PropertyChangeListener>();
 
 }

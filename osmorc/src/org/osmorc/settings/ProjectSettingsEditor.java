@@ -240,11 +240,11 @@ public class ProjectSettingsEditor implements SearchableConfigurable, ProjectSet
     private JComboBox frameworkInstance;
     private JCheckBox createFrameworkInstanceModule;
     private JComboBox defaultManifestFileLocation;
-    private Project project;
-    private FrameworkInstanceUpdateNotifier updateNotifier;
-    private ProjectSettingsUpdateNotifier projectSettingsUpdateNotifier;
+    private final Project project;
+    private final FrameworkInstanceUpdateNotifier updateNotifier;
+    private final ProjectSettingsUpdateNotifier projectSettingsUpdateNotifier;
     private boolean changed;
-    private ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;
+    private final ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;
     private boolean updatingFrameworkInstanceComboBox = false;
     private ProjectSettingsProvider projectSettingsProvider;
     private ApplicationSettingsProvider applicationSettingsProvider;

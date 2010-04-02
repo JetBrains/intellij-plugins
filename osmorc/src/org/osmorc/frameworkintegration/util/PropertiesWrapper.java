@@ -117,5 +117,5 @@ public class PropertiesWrapper extends Model
   {
   }
 
-  private Map<String, String> _properties;
+  private final Map<String, String> _properties;
 }

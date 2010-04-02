@@ -99,6 +99,6 @@ public class ObrSearchDialog extends DialogWrapper
         return _searchPanel.getRootPanel();
     }
 
-    private ObrSearchPanel _searchPanel;
+    private final ObrSearchPanel _searchPanel;
 
 }

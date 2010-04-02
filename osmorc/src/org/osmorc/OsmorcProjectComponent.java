@@ -50,7 +50,7 @@ public class OsmorcProjectComponent implements ProjectComponent, FrameworkInstan
   private final ProjectSettings projectSettings;
   private final Project project;
   private final Application application;
-  private FrameworkInstanceModuleManager frameworkInstanceModuleManager;
+  private final FrameworkInstanceModuleManager frameworkInstanceModuleManager;
 
   public OsmorcProjectComponent(BundleManager bundleManager,
                                 FrameworkInstanceUpdateNotifier updateNotifier,

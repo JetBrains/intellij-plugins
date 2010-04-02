@@ -176,7 +176,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     private JLabel _bundleActivatorLabel;
     private JTextField _bundleVersion;
     private JLabel _bundleVersionLabel;
-    private ManifestEditor _additionalProperties;
+    private final ManifestEditor _additionalProperties;
     private JLabel _additionalPropertiesLabel;
     private JPanel _editorPanel;
     private boolean _modified;

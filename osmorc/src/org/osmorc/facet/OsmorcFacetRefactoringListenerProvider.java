@@ -37,8 +37,8 @@ import org.jetbrains.annotations.Nullable;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsmorcFacetRefactoringListenerProvider implements RefactoringElementListenerProvider {
-    private OsmorcFacetUtil osmorcFacetUtil;
-    private Application application;
+    private final OsmorcFacetUtil osmorcFacetUtil;
+    private final Application application;
 
     public OsmorcFacetRefactoringListenerProvider(final OsmorcFacetUtil osmorcFacetUtil,
                                                   final Application application) {
@@ -64,8 +64,8 @@ public class OsmorcFacetRefactoringListenerProvider implements RefactoringElemen
     }
 
     private static final class ActivatorClassRefactoringListener implements RefactoringElementListener {
-        private OsmorcFacetConfiguration osmorcFacetConfiguration;
-        private Application application;
+        private final OsmorcFacetConfiguration osmorcFacetConfiguration;
+        private final Application application;
 
         private ActivatorClassRefactoringListener(final OsmorcFacetConfiguration osmorcFacetConfiguration,
                                                   final Application application) {

@@ -47,7 +47,7 @@ import org.osmorc.manifest.ManifestFileTypeFactory;
  * @version $Id:$
  */
 public class ManifestEditor extends EditorTextField implements Disposable {
-    private ManifestEditor.MyDocumentAdapter listener = new MyDocumentAdapter();
+    private final ManifestEditor.MyDocumentAdapter listener = new MyDocumentAdapter();
 
 
     public ManifestEditor(Project project, String text) {

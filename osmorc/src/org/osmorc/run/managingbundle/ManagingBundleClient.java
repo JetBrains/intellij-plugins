@@ -57,5 +57,5 @@ public class ManagingBundleClient implements ManagingBundle
     return _bundle.listInstalledBundles();
   }
 
-  private ManagingBundle _bundle;
+  private final ManagingBundle _bundle;
 }

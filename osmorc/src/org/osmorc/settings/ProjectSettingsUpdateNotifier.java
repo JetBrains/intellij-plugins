@@ -61,5 +61,5 @@ public class ProjectSettingsUpdateNotifier
     void projectSettingsChanged();
   }
 
-  private List<Listener> _listeners;
+  private final List<Listener> _listeners;
 }
