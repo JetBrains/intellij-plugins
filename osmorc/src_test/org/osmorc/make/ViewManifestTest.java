@@ -49,7 +49,7 @@ import static junit.framework.Assert.assertNotNull;
  */
 public class ViewManifestTest {
     private TempDirTestFixture myTempDirFixture;
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private TestDialog orgTestDialog;
     private String shownMessage;
     private int dialogResult;

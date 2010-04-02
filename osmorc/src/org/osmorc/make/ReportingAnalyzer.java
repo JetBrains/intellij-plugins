@@ -70,6 +70,6 @@ class ReportingAnalyzer extends Analyzer
 
   }
 
-  private CompileContext _context;
-  private String _sourceFileName;
+  private final CompileContext _context;
+  private final String _sourceFileName;
 }

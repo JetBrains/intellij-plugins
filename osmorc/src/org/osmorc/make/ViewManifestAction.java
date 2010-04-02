@@ -50,7 +50,7 @@ import org.jetbrains.annotations.Nullable;
  * @version $Id:$
  */
 public class ViewManifestAction extends AnAction implements DumbAware {
-    private String pathToJar;
+    private final String pathToJar;
 
     public ViewManifestAction(String title, String pathToJar) {
         this.pathToJar = pathToJar;

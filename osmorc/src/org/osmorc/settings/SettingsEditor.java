@@ -158,10 +158,10 @@ public class SettingsEditor implements ProjectComponent, SearchableConfigurable,
 
     private JPanel mainPanel;
     private JEditorPane editorPane1;
-    private ProjectSettingsEditor projectSettingsEditor;
-    private IDESettingsEditor ideSettingsEditor;
-    private ApplicationSettings applicationSettings;
-    private ProjectSettings projectSettings;
+    private final ProjectSettingsEditor projectSettingsEditor;
+    private final IDESettingsEditor ideSettingsEditor;
+    private final ApplicationSettings applicationSettings;
+    private final ProjectSettings projectSettings;
     private ApplicationSettings applicationSettingsWorkingCopy;
     private ProjectSettings projectSettingsWorkingCopy;
 }
