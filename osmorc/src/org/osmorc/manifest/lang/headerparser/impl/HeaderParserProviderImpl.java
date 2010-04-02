@@ -74,6 +74,6 @@ public class HeaderParserProviderImpl implements HeaderParserProvider
     return _headerName.hashCode();
   }
 
-  private String _headerName;
-  private HeaderParser _headerParser;
+  private final String _headerName;
+  private final HeaderParser _headerParser;
 }

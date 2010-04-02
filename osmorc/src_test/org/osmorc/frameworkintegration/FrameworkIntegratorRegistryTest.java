@@ -73,5 +73,5 @@ public class FrameworkIntegratorRegistryTest {
 
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
 }

@@ -147,7 +147,7 @@ public class FelixFrameworkInstanceManagerTest {
         verify(fileSystem);
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private VirtualFile root;
     private FelixFrameworkInstanceManager testObject;
     private FrameworkInstanceDefinition instanceDefinition;

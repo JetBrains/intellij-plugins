@@ -59,8 +59,8 @@ import static org.junit.Assert.assertThat;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class FacetDetectionTest {
-    private TempDirTestFixture myTempDirFixture;
-    private IdeaProjectTestFixture fixture;
+    private final TempDirTestFixture myTempDirFixture;
+    private final IdeaProjectTestFixture fixture;
     private TestDialog orgTestDialog;
 
     public FacetDetectionTest() {

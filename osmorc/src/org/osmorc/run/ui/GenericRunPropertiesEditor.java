@@ -37,7 +37,7 @@ import javax.swing.*;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class GenericRunPropertiesEditor<T extends GenericRunProperties> implements FrameworkRunPropertiesEditor {
-    private T propertiesHolder;
+    private final T propertiesHolder;
 
     public GenericRunPropertiesEditor(T propertiesHolder) {
         this.propertiesHolder = propertiesHolder;

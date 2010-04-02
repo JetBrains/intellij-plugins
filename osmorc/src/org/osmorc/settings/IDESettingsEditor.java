@@ -96,6 +96,6 @@ public class IDESettingsEditor implements SearchableConfigurable, Configurable.C
     }
 
     private JPanel mainPanel;
-    private FrameworkDefinitionsEditor frameworkDefinitionsEditor;
-    private LibraryBundlingEditor libraryBundlingEditor;
+    private final FrameworkDefinitionsEditor frameworkDefinitionsEditor;
+    private final LibraryBundlingEditor libraryBundlingEditor;
 }

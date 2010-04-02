@@ -35,22 +35,14 @@ package org.osmorc.run.ui;
  * IntegerEditor is used by TableFTFEditDemo.java.
  */
 
-import javax.swing.AbstractAction;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JFormattedTextField;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.Component;
-import java.awt.Toolkit;
-import java.text.NumberFormat;
-import java.text.ParseException;
+import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 /**
  * Implements a cell editor that uses a formatted text field
@@ -59,8 +51,9 @@ import javax.swing.text.NumberFormatter;
 public class IntegerEditor extends DefaultCellEditor {
     JFormattedTextField ftf;
     NumberFormat integerFormat;
-    private Integer minimum, maximum;
-    private boolean DEBUG = false;
+    private final Integer minimum;
+  private final Integer maximum;
+    private final boolean DEBUG = false;
 
     public IntegerEditor(int min, int max) {
         super(new JFormattedTextField());

@@ -98,7 +98,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
   /**
    * Resolves to directory in web base path(s).
    */
-  private static JamConverter<WebDirectoryElement> VALUE_CONVERTER = new JamSimpleReferenceConverter<WebDirectoryElement>() {
+  private static final JamConverter<WebDirectoryElement> VALUE_CONVERTER = new JamSimpleReferenceConverter<WebDirectoryElement>() {
 
     @Override
     public WebDirectoryElement fromString(@Nullable final String s,

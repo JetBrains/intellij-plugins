@@ -316,12 +316,12 @@ public class FrameworkDefinitionsEditor implements SearchableConfigurable, Appli
     private JLabel baseFolder;
     private JLabel frameworkInstanceName;
     private JButton editFramework;
-    private FrameworkIntegratorRegistry frameworkIntegratorRegistry;
-    private FrameworkInstanceUpdateNotifier updateNotifier;
-    private ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;
-    private List<FrameworkInstanceDefinition> addedFrameworkInstances;
-    private List<FrameworkInstanceDefinition> removedFrameworkInstances;
-    private List<FrameworkInstanceDefinition> reloadedFrameworkInstances;
+    private final FrameworkIntegratorRegistry frameworkIntegratorRegistry;
+    private final FrameworkInstanceUpdateNotifier updateNotifier;
+    private final ApplicationSettingsUpdateNotifier applicationSettingsUpdateNotifier;
+    private final List<FrameworkInstanceDefinition> addedFrameworkInstances;
+    private final List<FrameworkInstanceDefinition> removedFrameworkInstances;
+    private final List<FrameworkInstanceDefinition> reloadedFrameworkInstances;
     private FrameworkInstanceDefinition selectedFrameworkInstance;
     private boolean changed;
     private ApplicationSettingsProvider applicationSettingsProvider;

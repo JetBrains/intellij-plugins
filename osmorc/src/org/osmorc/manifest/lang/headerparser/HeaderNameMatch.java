@@ -80,6 +80,6 @@ public class HeaderNameMatch implements Comparable<HeaderNameMatch> {
         return result;
     }
 
-    private int _distance;
-    private HeaderParserProvider _provider;
+    private final int _distance;
+    private final HeaderParserProvider _provider;
 }

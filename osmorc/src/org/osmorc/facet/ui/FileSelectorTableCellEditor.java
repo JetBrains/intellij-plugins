@@ -47,7 +47,7 @@ import java.awt.event.ActionListener;
  */
 public class FileSelectorTableCellEditor extends AbstractTableCellEditor {
 
-    private TextFieldWithBrowseButton editor;
+    private final TextFieldWithBrowseButton editor;
 
     public FileSelectorTableCellEditor(final Project project, final Module module) {
         editor = new TextFieldWithBrowseButton(new ActionListener() {

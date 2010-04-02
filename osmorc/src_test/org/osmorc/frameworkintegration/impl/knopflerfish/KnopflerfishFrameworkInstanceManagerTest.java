@@ -167,7 +167,7 @@ public class KnopflerfishFrameworkInstanceManagerTest {
         verify(fileSystem);
     }
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private VirtualFile root;
     private KnopflerfishFrameworkInstanceManager testObject;
     private FrameworkInstanceDefinition instanceDefinition;

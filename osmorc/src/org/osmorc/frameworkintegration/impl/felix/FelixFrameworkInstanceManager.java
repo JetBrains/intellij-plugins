@@ -140,7 +140,7 @@ public class FelixFrameworkInstanceManager implements FrameworkInstanceManager
 
   private final LibraryHandler _libraryHandler;
   private final LocalFileSystem _fileSystem;
-  private Application _application;
+  private final Application _application;
   private final FelixSourceFinder _felixSourceFinder;
   protected static final String FOLDER_DOES_NOT_EXIST =
       "The folder <strong>{0}</strong> does not exist or is not a folder. Please choose an existing Felix installation folder. It should contain the folders \"bin\" and \"bundle\""

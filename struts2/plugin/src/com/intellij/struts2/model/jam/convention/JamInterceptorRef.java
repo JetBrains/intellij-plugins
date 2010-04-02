@@ -53,7 +53,7 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
   public static final String ANNOTATION_NAME = "org.apache.struts2.convention.annotation.InterceptorRef";
   public static final String ANNOTATION_NAME_LIST = "org.apache.struts2.convention.annotation.InterceptorRefs";
 
-  private static JamConverter<InterceptorOrStackBase> VALUE_CONVERTER =
+  private static final JamConverter<InterceptorOrStackBase> VALUE_CONVERTER =
     new JamSimpleReferenceConverter<InterceptorOrStackBase>() {
 
       @Override

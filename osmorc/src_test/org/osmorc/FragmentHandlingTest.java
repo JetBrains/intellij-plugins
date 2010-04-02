@@ -175,7 +175,7 @@ public class FragmentHandlingTest {
     }
 
 
-    private IdeaProjectTestFixture fixture;
+    private final IdeaProjectTestFixture fixture;
     private TempDirTestFixture myTempDirFixture;
     private Module t0;
     private Module t0Fragment;
