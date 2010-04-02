@@ -186,7 +186,7 @@ public class BundleManifestImpl implements BundleManifest {
     private static final String BUNDLE_ACTIVATION_POLICY = "Bundle-ActivationPolicy";
     private static final String BUNDLE_ACTIVATOR = "Bundle-Activator";
     private static final String BUNDLE_CATEGORY = "Bundle-Category";
-    private static final String BUNDLE_CLASSPATH = "Bundle-Classpath";
+    private static final String BUNDLE_CLASSPATH = "Bundle-ClassPath";
     private static final String BUNDLE_CONTACT_ADDRESS = "Bundle-ContactAddress";
     private static final String BUNDLE_COPYRIGHT = "Bundle-Copyright";
     private static final String BUNDLE_DESCRIPTION = "Bundle-Description";
