@@ -52,6 +52,7 @@ public class FindByJabberIdCommandTest extends BaseTestCase {
   }
 
   public void testNotEnteredId() throws Exception {
+    //noinspection SSBasedInspection
     myJabberUI.expects(once()).method("getFindByIdData").with(eq(Arrays.asList(new String[0])))
         .will(returnValue("someGroup:  "));
     setupConnection(true);

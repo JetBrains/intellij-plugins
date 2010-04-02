@@ -36,7 +36,6 @@ import org.jivesoftware.smack.*;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.RosterPacket;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.jmock.Mock;
 import org.jmock.core.Invocation;
 import org.jmock.core.stub.ReturnStub;
@@ -51,6 +50,7 @@ import java.util.Collections;
 /**
  * @author Kir
  */
+@SuppressWarnings({"SSBasedInspection"})
 public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
   private JabberFacadeImpl myFacade;
 
