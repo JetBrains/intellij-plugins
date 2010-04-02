@@ -15,7 +15,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 public class NavigateToUsageAction extends AnAction {
 
-    private JTree _tree;
+    private final JTree _tree;
 
     public NavigateToUsageAction(JTree tree) {
         super("Navigate to Usage", "Navigate to part of code where the selected element is used", Icons.REFERENCE);

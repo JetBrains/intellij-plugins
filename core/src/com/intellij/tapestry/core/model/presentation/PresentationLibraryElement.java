@@ -53,11 +53,11 @@ public abstract class PresentationLibraryElement implements ExternalizableToDocu
   private final IJavaClassType _class;
   private final TapestryProject _project;
   private String _name;
-  private Library _library;
+  private final Library _library;
   private String _documentationCache;
   private IResource[] _messageCatalogCache;
   private long _documentationTimestamp;
-  private ElementType _elementType;
+  private final ElementType _elementType;
 
   static final String PARAMETER_ANNOTATION = "org.apache.tapestry5.annotations.Parameter";
 

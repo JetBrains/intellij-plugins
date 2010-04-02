@@ -16,7 +16,7 @@ public class PresentationElementDocumentationWrapper {
 
     private Document _document;
     private String _description;
-    private Map<String, String> _parameterDescriptions = new HashMap<String, String>();
+    private final Map<String, String> _parameterDescriptions = new HashMap<String, String>();
     private String _examples;
     private String _notes;
 

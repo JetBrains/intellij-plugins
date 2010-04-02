@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ModuleManagerMock extends ModuleManager {
 
-    private List<Module> _modules = new ArrayList<Module>();
+    private final List<Module> _modules = new ArrayList<Module>();
 
     @NotNull
     public Module newModule(@NotNull String filePath) {

@@ -11,8 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class PsiAttributeValueReference implements PsiReference {
 
-  private XmlAttributeValue _attributeValue;
-  private PsiElement _bindElement;
+  private final XmlAttributeValue _attributeValue;
+  private final PsiElement _bindElement;
 
   public PsiAttributeValueReference(XmlAttributeValue attributeValue, PsiElement bindElement) {
     _attributeValue = attributeValue;

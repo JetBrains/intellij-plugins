@@ -7,15 +7,15 @@ import java.util.List;
  */
 public class MavenConfiguration {
 
-    private String _groupId;
-    private String _artifactId;
-    private String _version;
-    private String _artifactIdParentPom;
-    private String _groupIdParentPom;
-    private String _versionParentPom;
-    private boolean _createParentPom;
-    private boolean _addRemoteRepository;
-    private List<RemoteRepositoryDescription> _remoteRepository;
+    private final String _groupId;
+    private final String _artifactId;
+    private final String _version;
+    private final String _artifactIdParentPom;
+    private final String _groupIdParentPom;
+    private final String _versionParentPom;
+    private final boolean _createParentPom;
+    private final boolean _addRemoteRepository;
+    private final List<RemoteRepositoryDescription> _remoteRepository;
 
     public MavenConfiguration(
             boolean createParentPom,

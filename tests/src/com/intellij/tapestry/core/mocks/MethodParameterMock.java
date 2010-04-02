@@ -7,8 +7,8 @@ import com.intellij.tapestry.core.java.IMethodParameter;
  * Utility class for easy creation of IMethodParameter mocks.
  */
 public class MethodParameterMock implements IMethodParameter {
-    private String _name;
-    private IJavaType _type;
+    private final String _name;
+    private final IJavaType _type;
 
     public MethodParameterMock(String name, IJavaType type) {
         _name = name;

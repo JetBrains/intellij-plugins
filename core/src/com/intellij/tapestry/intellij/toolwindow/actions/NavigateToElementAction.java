@@ -12,7 +12,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 public class NavigateToElementAction extends AnAction {
 
-    private JTree _tree;
+    private final JTree _tree;
 
     public NavigateToElementAction(JTree tree) {
         super("Navigate to Element", "Navigate to the selected element class", Icons.NAVIGATE);

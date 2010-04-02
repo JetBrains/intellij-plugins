@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class Library implements Comparable {
 
-    private String _id;
+    private final String _id;
     private final String _basePackage;
     private final TapestryProject _project;
 
