@@ -11,8 +11,8 @@ import java.util.List;
  */
 public class TapestryEventsManager implements FileSystemListener, TapestryModelChangeListener {
 
-    private List<FileSystemListener> _fileSystemListeners = new ArrayList<FileSystemListener>();
-    private List<TapestryModelChangeListener> _tapestryModelChangeListeners = new ArrayList<TapestryModelChangeListener>();
+    private final List<FileSystemListener> _fileSystemListeners = new ArrayList<FileSystemListener>();
+    private final List<TapestryModelChangeListener> _tapestryModelChangeListeners = new ArrayList<TapestryModelChangeListener>();
 
     /**
      * Adds a Tapestry model listener.

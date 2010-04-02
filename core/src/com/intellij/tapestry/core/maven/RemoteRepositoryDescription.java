@@ -5,11 +5,11 @@ package com.intellij.tapestry.core.maven;
  */
 public class RemoteRepositoryDescription {
 
-    private String _name;
-    private String _url;
-    private String _id;
-    private boolean _createSnapshots;
-    private boolean _createReleases;
+    private final String _name;
+    private final String _url;
+    private final String _id;
+    private final boolean _createSnapshots;
+    private final boolean _createReleases;
 
     public RemoteRepositoryDescription(String url, String id, String name, boolean createSnapshots, boolean createReleases) {
         _name = name;

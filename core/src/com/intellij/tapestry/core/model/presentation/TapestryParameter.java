@@ -17,7 +17,7 @@ public class TapestryParameter implements Comparable {
 
     private static final String PARAMETER_NAME = "name";
 
-    private IJavaClassType _elementClass;
+    private final IJavaClassType _elementClass;
     private final IJavaField _parameterField;
 
     public TapestryParameter(IJavaClassType elementClass, IJavaField parameterField) {

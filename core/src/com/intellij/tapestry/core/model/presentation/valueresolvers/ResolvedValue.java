@@ -7,8 +7,8 @@ import com.intellij.tapestry.core.java.IJavaType;
  */
 public class ResolvedValue {
 
-    private IJavaType _type;
-    private Object _codeBind;
+    private final IJavaType _type;
+    private final Object _codeBind;
 
     public ResolvedValue(IJavaType type, Object codeBind) {
         _type = type;
