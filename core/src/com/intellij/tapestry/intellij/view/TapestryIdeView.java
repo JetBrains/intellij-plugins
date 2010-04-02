@@ -18,7 +18,7 @@ import java.util.List;
 
 public class TapestryIdeView implements IdeView {
 
-    private TapestryProjectViewPane _viewPane;
+    private final TapestryProjectViewPane _viewPane;
 
     protected TapestryIdeView(TapestryProjectViewPane viewPane) {
         _viewPane = viewPane;

@@ -30,7 +30,7 @@ import java.awt.event.MouseEvent;
 class ViewMouseListener extends MouseInputAdapter {
 
     private MouseEvent _firstMouseEvent = null;
-    private TapestryProjectViewPane _tapestryProjectViewPane;
+    private final TapestryProjectViewPane _tapestryProjectViewPane;
 
     public ViewMouseListener(TapestryProjectViewPane tapestryProjectViewPane) {
         _tapestryProjectViewPane = tapestryProjectViewPane;

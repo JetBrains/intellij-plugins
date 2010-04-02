@@ -75,13 +75,13 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
 
   private final ModuleListener myModuleListener;
-  private TapestryIdeView myIdeView;
+  private final TapestryIdeView myIdeView;
   private JScrollPane myComponent;
   private boolean myShown;
   private boolean myGroupElementFiles = true;
   private boolean myShowLibraries = true;
   private boolean myFromBasePackage;
-  private MessageBusConnection myMessageBusConnection;
+  private final MessageBusConnection myMessageBusConnection;
 
 
   public TapestryProjectViewPane(final Project project) {

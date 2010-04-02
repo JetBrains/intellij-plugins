@@ -20,13 +20,13 @@ public class TapestryToolWindow extends FileSystemListenerAdapter {
 
     private JPanel              _mainPanel;
     private JTabbedPane         _tabbedPane;
-    private DocumentationTab    _documentationTab;
-   private DependenciesTab _dependenciesTab;
+    private final DocumentationTab    _documentationTab;
+   private final DependenciesTab _dependenciesTab;
 
     private final List<IJavaClassType> _updateOnChangeFiles = new ArrayList<IJavaClassType>();
     private Module _module;
     private Object _element;
-    private Project _project;
+    private final Project _project;
 
     public TapestryToolWindow(final Project project) {
         _project = project;

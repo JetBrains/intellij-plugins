@@ -12,7 +12,7 @@ public class TapestryProjectSupportLoader implements ProjectComponent {
 
   private static final Logger LOGGER = LoggerFactory.getInstance().getLogger(TapestryProjectSupportLoader.class);
 
-  private Project myProject;
+  private final Project myProject;
   private TapestryToolWindow myTapestryToolwindow;
 
   public TapestryProjectSupportLoader(Project project) {

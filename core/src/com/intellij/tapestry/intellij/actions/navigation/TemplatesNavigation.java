@@ -26,7 +26,7 @@ public class TemplatesNavigation extends ActionGroup {
     private static final AnAction[] EMPTY_ACTION_ARRAY = new AnAction[0];
 
     private PresentationLibraryElement tapestryElement;
-    private ClassTemplateNavigation classTemplateNavigation = new ClassTemplateNavigation();
+    private final ClassTemplateNavigation classTemplateNavigation = new ClassTemplateNavigation();
 
     /**
      * {@inheritDoc}

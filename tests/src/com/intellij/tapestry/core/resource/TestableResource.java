@@ -6,8 +6,8 @@ import java.net.URL;
 
 public class TestableResource implements IResource {
 
-    private String _name;
-    private String _fileName;
+    private final String _name;
+    private final String _fileName;
 
     public TestableResource(String name, String fileName) {
         _name = name;

@@ -18,7 +18,7 @@ public class XmlTagMock implements XmlTag {
     private String _namespace;
     private String _localName;
     private String _text;
-    private List<XmlAttribute> _attributes = new ArrayList<XmlAttribute>();
+    private final List<XmlAttribute> _attributes = new ArrayList<XmlAttribute>();
 
     public XmlTagMock() {
     }

@@ -34,7 +34,7 @@ public class ViewTransferHandler extends TransferHandler {
     private static final long serialVersionUID = -6485912040308583746L;
     private static final Logger _logger = LoggerFactory.getInstance().getLogger(ViewTransferHandler.class);
 
-    private transient TapestryProjectViewPane _tapestryProjectViewPane;
+    private final transient TapestryProjectViewPane _tapestryProjectViewPane;
 
     public ViewTransferHandler(TapestryProjectViewPane tapestryProjectViewPane) {
         _tapestryProjectViewPane = tapestryProjectViewPane;

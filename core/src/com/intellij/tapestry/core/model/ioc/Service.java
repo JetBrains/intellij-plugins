@@ -9,9 +9,9 @@ import com.intellij.tapestry.core.java.IJavaClassType;
 public class Service {
 
     private final String _id;
-    private String _scope;
-    private boolean _eagerLoad;
-    private IJavaClassType _serviceClass;
+    private final String _scope;
+    private final boolean _eagerLoad;
+    private final IJavaClassType _serviceClass;
     private final String _description;
 
     public Service(ServiceBinding serviceBinding, IJavaClassType serviceClass) {
