@@ -148,6 +148,11 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     commandLineParameters.add(vmOptionsParam.toString());
     commandLineParameters.add("--keepOriginalUrls");
     commandLineParameters.add("--skipInvalidBundles");
+    final String additionalProgramParams = getRunConfiguration().getProgramParameters();
+    if ( additionalProgramParams != null && !"".equals(additionalProgramParams)) {
+      commandLineParameters.addParametersString(additionalProgramParams);
+    }
+
   }
 
   public void fillVmParameters(ParametersList vmParameters, @NotNull SelectedBundle[] bundlesToInstall) {
