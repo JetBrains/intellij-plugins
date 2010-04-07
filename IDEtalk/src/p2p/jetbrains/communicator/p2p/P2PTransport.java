@@ -92,17 +92,19 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
     startup(waitUserResponsesTimeout);
 
-    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-      public void run() {
+    Runtime.getRuntime().addShutdownHook(new IDETalkShutdownHook());
+  }
 
-        dispose();
-      }
-    }, "IDE Talk shutdown hook")
-    {
-      {
-        setDaemon(true);
-      }
-    });
+  class IDETalkShutdownHook extends Thread {
+    public IDETalkShutdownHook() {
+      super("IDE Talk shutdown hook");
+      setDaemon(true);
+    }
+
+    @Override
+    public void run() {
+      dispose();    
+    }
   }
 
   private void initializeXmlRpcPort() {
