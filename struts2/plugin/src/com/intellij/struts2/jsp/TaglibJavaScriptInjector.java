@@ -57,7 +57,7 @@ public class TaglibJavaScriptInjector implements MultiHostInjector {
       .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
                                                  StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI));
 
-  // 
+  // struts2-jQuery taglib "pseudo" JS-highlighting
   private static final ElementPattern<XmlAttributeValue> JS_JQUERY_PATTERN =
     xmlAttributeValue()
       .withLocalName("effectOptions",
