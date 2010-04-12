@@ -139,7 +139,7 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
         final PsiMethod element = (PsiMethod)actionClass.add(actionMethod);
 
         //noinspection ConstantConditions
-        OpenSourceUtil.navigate(new Navigatable[]{(Navigatable)element.getBody().getNavigationElement()}, true);
+        OpenSourceUtil.navigate((Navigatable)element.getBody().getNavigationElement());
       } catch (IncorrectOperationException e) {
         LOG.error("creation of action-method failed", e);
       }

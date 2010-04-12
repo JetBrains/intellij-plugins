@@ -62,7 +62,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
 
     final XmlElement xmlElement = node.getIdentifyingElement().getXmlElement();
     if (xmlElement != null && xmlElement instanceof Navigatable) {
-      OpenSourceUtil.navigate(new Navigatable[]{(Navigatable) xmlElement}, true);
+      OpenSourceUtil.navigate((Navigatable) xmlElement);
       return true;
     }
     return super.editNode(node);
@@ -75,7 +75,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
 
     final XmlElement xmlElement = edge.getSource().getIdentifyingElement().getXmlElement();
     if (xmlElement instanceof Navigatable) {
-      OpenSourceUtil.navigate(new Navigatable[]{(Navigatable) xmlElement}, true);
+      OpenSourceUtil.navigate((Navigatable) xmlElement);
       return true;
     }
     return super.editEdge(edge);
