@@ -64,6 +64,7 @@ public class UserMonitorThread extends Thread {
 
   UserMonitorThread(MulticastPingThread[] multicastPingThread, UserMonitorClient client, long waitUserResponsesTimeout) {
     super("User Monitor Thread");
+    setDaemon(true);
     assert multicastPingThread != null;
     myClient = client;
     myMulticastThreads = multicastPingThread;

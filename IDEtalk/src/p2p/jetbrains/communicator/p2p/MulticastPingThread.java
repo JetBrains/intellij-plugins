@@ -206,13 +206,13 @@ class MulticastPingThread extends Thread {
     }
     if (myIsRunning) {
       myIsRunning = false;
-      try {
-        while (!myDisposed) {
-          Thread.sleep(100);
-        }
-      }
-      catch (InterruptedException ignored) {
-      }
+      //try {
+      //  while (!myDisposed) {
+      //    Thread.sleep(100);
+      //  }
+      //}
+      //catch (InterruptedException ignored) {
+      //}
     }
   }
 
