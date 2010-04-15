@@ -31,6 +31,7 @@ import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
@@ -156,7 +157,16 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
   }
 
   public void fillVmParameters(ParametersList vmParameters, @NotNull SelectedBundle[] bundlesToInstall) {
-    // nothing to do here..
+    // fill proxy settings
+
+      HttpConfigurable httpConfigurable = HttpConfigurable.getInstance();
+      if (httpConfigurable.USE_HTTP_PROXY) {
+        vmParameters.defineProperty("proxySet", "true");
+        vmParameters.defineProperty("http.proxyHost", httpConfigurable.PROXY_HOST);
+        vmParameters.defineProperty("http.proxyPort", Integer.toString(httpConfigurable.PROXY_PORT));
+        vmParameters.defineProperty("https.proxyHost", httpConfigurable.PROXY_HOST);
+        vmParameters.defineProperty("https.proxyPort", Integer.toString(httpConfigurable.PROXY_PORT));
+      }
   }
 
   public void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall) throws ExecutionException {
