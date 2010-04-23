@@ -26,6 +26,12 @@ public class OsgiDebuggerRunner extends GenericDebuggerRunner {
     return executorId.equals(DefaultDebugExecutor.EXECUTOR_ID) && profile instanceof OsgiRunConfiguration;
   }
 
+  @NotNull
+  @Override
+  public String getRunnerId() {
+    return "OsgiDebugRunner";
+  }
+
   @Override
   protected RunContentDescriptor createContentDescriptor(Project project,
                                                          Executor executor,
