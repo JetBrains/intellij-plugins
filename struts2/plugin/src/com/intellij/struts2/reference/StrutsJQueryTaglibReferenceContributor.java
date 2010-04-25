@@ -29,26 +29,29 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenceContributorBase {
 
-  private static final String[] CSS__TAGS =
-    new String[]{"a", "div", "submit",
+  private static final String[] BUTTON_TAGS =
+    new String[]{"a", "submit"};
+
+  private static final String[] CSS_TAGS =
+    new String[]{"a", "accordionItem", "autocompleter", "checkboxlist", "div", "submit",
                  "tabbedpanel", "datepicker", "dialog", "accordion", "progressbar", "slider", "grid", "tab",
-                 "textfield", "textarea", "select"};
+                 "textfield", "textarea", "radio", "select"};
 
   private static final String[] REQUIRED_TAGS =
-    new String[]{"a", "accordion", "div", "tabbedpanel", "datepicker", "dialog", "progressbar",
-                 "slider", "grid", "gridColumn", "textfield", "textarea", "select"};
+    new String[]{"a", "accordionItem","autocompleter", "accordion", "checkboxlist", "div", "tabbedpanel", "datepicker", "dialog",
+                 "progressbar", "slider", "grid", "gridColumn", "radio", "textfield", "textarea", "select"};
 
   private static final String[] DRAG_DROP_TAGS =
-    new String[]{"div", "textfield", "textarea", "select"};
+    new String[]{"autocompleter", "checkboxlist", "div", "radio", "textfield", "textarea", "select"};
 
   private static final String[] SORTABLE_TAGS =
-    new String[]{"div", "select", "textfield"};
+    new String[]{"autocompleter", "checkboxlist", "div", "radio", "select", "textfield"};
 
   private static final String[] SELECTABLE_TAGS =
-    new String[]{"div", "select", "textfield"};
+    new String[]{"autocompleter", "checkboxlist", "div", "radio", "select", "textfield"};
 
   private static final String[] RESIZABLE_TAGS =
-    new String[]{"dialog", "div", "textarea", "textfield", "select"};
+    new String[]{"autocompleter", "checkboxlist", "dialog", "div", "radio", "textarea", "textfield", "select"};
 
   private static final StaticStringValuesReferenceProvider ALL_EFFECTS_PROVIDER =
     new StaticStringValuesReferenceProvider("slide", "scale", "blind", "clip", "puff", "explode", "fold", "drop");
@@ -64,13 +67,18 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
     // common attributes -------------------------------------
 
     // CSS*
-    registerTags(CSS_CLASS_PROVIDER, "cssClass", registrar, CSS__TAGS);
-    registerTags(CSS_CLASS_PROVIDER, "cssErrorClass", registrar, CSS__TAGS);
-    registerTags(CSS_CLASS_PROVIDER, "tooltipCssClass", registrar, CSS__TAGS);
+    registerTags(CSS_CLASS_PROVIDER, "cssClass", registrar, CSS_TAGS);
+    registerTags(CSS_CLASS_PROVIDER, "cssErrorClass", registrar, CSS_TAGS);
+    registerTags(CSS_CLASS_PROVIDER, "tooltipCssClass", registrar, CSS_TAGS);
+
+    // button
+    registerBoolean("button", registrar, BUTTON_TAGS);
+    registerTags(CSS_CLASS_PROVIDER, "buttonIcon", registrar, BUTTON_TAGS);
+    registerTags(CSS_CLASS_PROVIDER, "buttonIconSecondary", registrar, BUTTON_TAGS);
 
     // effect
     registerTags(new StaticStringValuesReferenceProvider("bounce", "highlight", "pulsate", "shake", "size", "transfer"),
-                 "effect", registrar, "a", "div", "gridColumn", "submit", "tab", "textfield", "textarea");
+                 "effect", registrar, "a", "div", "gridColumn", "radio", "submit", "tab", "textfield", "textarea");
 
     // draggable*
     registerBoolean("draggableAddClasses", registrar, DRAG_DROP_TAGS);
@@ -99,7 +107,8 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
 
     // "events"
     registerTags(new StaticStringValuesReferenceProvider(false, "click", "dblclick", "mouseover", "mouseenter", "mouseleave"),
-                 "events", registrar, "div", "select");
+                 "events", registrar,
+                 "autocompleter", "div", "select");
 
     // sortable**
     registerBoolean("sortable", registrar, SORTABLE_TAGS);
@@ -133,14 +142,15 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
 
     // "indicator"
     registerTags(HTML_ID_REFERENCE_PROVIDER, "indicator", registrar,
-                 "a", "dialog", "div", "grid", "gridColumn", "submit", "textfield", "textarea", "select");
+                 "a", "autocompleter", "checkboxlist", "dialog", "div", "grid", "gridColumn",
+                 "submit", "textfield", "textarea", "radio", "select");
 
     // "errorElementId"
     registerTags(HTML_ID_REFERENCE_PROVIDER, "errorElementId", registrar,
-                 "a", "dialog", "grid", "select", "submit", "tab", "textfield");
+                 "a", "autocompleter", "checkboxlist", "dialog", "grid", "radio", "select", "submit", "tab", "textfield");
 
     // "disabled"
-    registerBoolean("disabled", registrar, ArrayUtil.mergeArrays(CSS__TAGS, REQUIRED_TAGS, String.class));
+    registerBoolean("disabled", registrar, ArrayUtil.mergeArrays(CSS_TAGS, REQUIRED_TAGS, String.class));
 
     // "validate"
     registerTags(new StaticStringValuesReferenceProvider(false, "true", "false", "only"),
@@ -154,11 +164,12 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
 
     // "targets" TODO allow multiple comma-separated
     registerTags(HTML_ID_REFERENCE_PROVIDER, "targets", registrar,
-                 "a", "dialog", "grid", "gridColumn", "select", "submit", "textarea", "textfield", "tab");
+                 "a", "autocompleter", "checkboxlist", "dialog", "grid", "gridColumn", "select",
+                 "submit", "textarea", "textfield", "tab");
 
     // "labelposition"
     registerTags(new StaticStringValuesReferenceProvider(false, "top", "left"),
-                 "labelposition", registrar, ArrayUtil.mergeArrays(CSS__TAGS, REQUIRED_TAGS, String.class));
+                 "labelposition", registrar, ArrayUtil.mergeArrays(CSS_TAGS, REQUIRED_TAGS, String.class));
 
     // specific tags --------------------------------------------------------------
 
@@ -167,11 +178,12 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
     registerBoolean("ajaxhistory", registrar, "head");
     registerBoolean("compressed", registrar, "head");
     registerTags(HTML_ID_REFERENCE_PROVIDER, "defaultIndicator", registrar, "head");
-    registerTags(new StaticStringValuesReferenceProvider("cupertino",
-                                                         "darkness",
-                                                         "lightness",
-                                                         "redmond",
-                                                         "smothness"),
+    registerTags(new StaticStringValuesReferenceProvider("black-tie", "blitzer", "cupertino", "dot-luv",
+                                                         "eggplant", "excite-bike", "flick", "hot-sneaks",
+                                                         "humanity", "le-frog", "mint-choc", "overcast",
+                                                         "pepper-grinder", "redmond", "smoothness", "start",
+                                                         "sunny", "swanky-purse", "trontastic", "ui-darkness",
+                                                         "ui-lightness", "vader"),
                  "jquerytheme", registrar, "head");
     registerBoolean("jqueryui", registrar, "head");
     registerBoolean("loadFromGoogle", registrar, "head");
