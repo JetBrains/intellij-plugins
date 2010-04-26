@@ -49,6 +49,7 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     return myElement;
   }
 
+  @NotNull
   public String getCanonicalText() {
     return myElement.getText();
   }

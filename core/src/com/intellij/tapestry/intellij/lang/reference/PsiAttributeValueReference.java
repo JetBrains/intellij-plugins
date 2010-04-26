@@ -35,6 +35,7 @@ public class PsiAttributeValueReference implements PsiReference {
     return _bindElement;
   }
 
+  @NotNull
   public String getCanonicalText() {
     return _bindElement.getText();
   }
