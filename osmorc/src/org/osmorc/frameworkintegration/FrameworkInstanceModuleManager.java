@@ -32,11 +32,12 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.settings.ProjectSettings;
 import org.osmorc.facet.OsmorcFacetUtil;
+import org.osmorc.settings.ProjectSettings;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -128,6 +129,9 @@ public class FrameworkInstanceModuleManager {
                 }
 
                 for (Library newBundle : libraries) {
+                    if ( newBundle instanceof LibraryEx &&  ((LibraryEx)newBundle).isDisposed() ) {
+                      continue; // FIX  EA-20191
+                    }
                     model.addLibraryEntry(newBundle);
                     commitNeeded = true;
                 }
