@@ -58,10 +58,8 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
       withParent(domElement(ParamValue.class).
       withParent(domElement(Filter.class).
       withChild("filter-class", genericDomValue().withValue(
-      or(psiClass().inheritorOf(false,
-                                psiClass().withQualifiedName(StrutsConstants.STRUTS_2_0_FILTER_CLASS)),
-         psiClass().inheritorOf(false,
-                                psiClass().withQualifiedName(StrutsConstants.STRUTS_2_1_FILTER_CLASS))
+      or(psiClass().inheritorOf(false, StrutsConstants.STRUTS_2_0_FILTER_CLASS),
+         psiClass().inheritorOf(false, StrutsConstants.STRUTS_2_1_FILTER_CLASS)
 
       )))))
     );
