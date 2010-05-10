@@ -90,15 +90,16 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     commandLineParameters.add("--p=" + getOsgiFrameworkName().toLowerCase());
 
     for (SelectedBundle bundle : bundlesToInstall) {
+      String prefix = CachingBundleInfoProvider.isExploded(bundle.getBundleUrl()) ? "scan-bundle:" : "";
       if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
-        commandLineParameters.add(bundle.getBundleUrl() + "@" + bundle.getStartLevel());
+        commandLineParameters.add(prefix+bundle.getBundleUrl() + "@" + bundle.getStartLevel());
       }
       else {
         if ( CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
-          commandLineParameters.add(bundle.getBundleUrl() + "@nostart");
+          commandLineParameters.add(prefix+bundle.getBundleUrl() + "@nostart");
         }
         else{
-          commandLineParameters.add(bundle.getBundleUrl());
+          commandLineParameters.add(prefix+bundle.getBundleUrl());
         }
       }
     }
