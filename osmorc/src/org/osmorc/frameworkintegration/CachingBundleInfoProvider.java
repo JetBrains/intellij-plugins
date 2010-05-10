@@ -138,4 +138,10 @@ public class CachingBundleInfoProvider {
     private static String normalize(String bundleUrl) {
         return bundleUrl.replaceAll("file:/([^/]+)", "file:///$1");
     }
+
+    public static boolean isExploded(String bundleUrl) {
+      File bundleFile = new File(VfsUtil.urlToPath(bundleUrl));
+      return bundleFile.isDirectory();
+
+    }
 }
