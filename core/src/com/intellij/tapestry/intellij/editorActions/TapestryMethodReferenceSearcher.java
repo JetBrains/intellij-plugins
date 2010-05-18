@@ -4,10 +4,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.search.*;
 import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.tapestry.intellij.util.TapestryPropertyNamingUtil;
@@ -41,7 +38,7 @@ public class TapestryMethodReferenceSearcher implements QueryExecutor<PsiReferen
         ProgressManager.checkCanceled();
         final PsiReference[] refs = element.getReferences();
         for (PsiReference ref : refs) {
-          if (ref.getRangeInElement().contains(offsetInElement) && ref.isReferenceTo(method)) {
+          if (ReferenceRange.containsOffsetInElement(ref, offsetInElement) && ref.isReferenceTo(method)) {
             return consumer.process(ref);
           }
         }

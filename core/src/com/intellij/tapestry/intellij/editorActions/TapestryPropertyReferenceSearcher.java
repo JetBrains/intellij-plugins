@@ -1,10 +1,7 @@
 package com.intellij.tapestry.intellij.editorActions;
 
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.search.*;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.tapestry.lang.TmlFileType;
@@ -33,14 +30,16 @@ public class TapestryPropertyReferenceSearcher implements QueryExecutor<PsiRefer
       searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)searchScope, TmlFileType.INSTANCE);
     }
     else {
-      searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(refElement.getProject()), TmlFileType.INSTANCE).intersectWith(searchScope);
+      searchScope =
+        GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(refElement.getProject()), TmlFileType.INSTANCE)
+          .intersectWith(searchScope);
     }
     final TextOccurenceProcessor processor = new TextOccurenceProcessor() {
       public boolean execute(PsiElement element, int offsetInElement) {
         ProgressManager.checkCanceled();
         final PsiReference[] refs = element.getReferences();
         for (PsiReference ref : refs) {
-          if (ref.getRangeInElement().contains(offsetInElement) && ref.isReferenceTo(refElement)) {
+          if (ReferenceRange.containsOffsetInElement(ref, offsetInElement) && ref.isReferenceTo(refElement)) {
             return consumer.process(ref);
           }
         }
