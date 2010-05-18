@@ -27,7 +27,9 @@ package org.osmorc.run;
 import com.intellij.execution.CantRunException;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.*;
+import com.intellij.execution.configurations.JavaCommandLineState;
+import com.intellij.execution.configurations.JavaParameters;
+import com.intellij.execution.configurations.ParametersList;
 import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
@@ -170,7 +172,7 @@ public class OsgiRunState extends JavaCommandLineState  {
 
     if (_selectedBundles == null) {
       ProgressManager.getInstance().run(new Task.Modal(project, "Preparing bundles...", false) {
-        @Override
+        
         public void run(@NotNull ProgressIndicator progressIndicator) {
           progressIndicator.setIndeterminate(false);
           HashSet<SelectedBundle> selectedBundles = new HashSet<SelectedBundle>();

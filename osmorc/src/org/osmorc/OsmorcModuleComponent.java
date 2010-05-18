@@ -125,7 +125,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
   private void updateModuleDependencyIndex() {
     Task.Backgroundable task =
       new Task.Backgroundable(myModule.getProject(), "Updating OSGi dependency index for module '" + myModule.getName() + "'") {
-        @Override
+
         public void run(@NotNull ProgressIndicator indicator) {
           ModifiableRootModel model = new ReadAction<ModifiableRootModel>() {
             protected void run(Result<ModifiableRootModel> result) throws Throwable {
@@ -162,7 +162,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
     final OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
     if (facet != null && facet.getConfiguration().isManifestManuallyEdited()) {
       Task task = new Task.Backgroundable(myModule.getProject(), "Updating manifest indices", false) {
-        @Override
+        
         public void run(@NotNull ProgressIndicator indicator) {
           indicator.setIndeterminate(true);
           indicator.setText("Updating manifest indices.");
