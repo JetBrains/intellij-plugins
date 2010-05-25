@@ -123,6 +123,11 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                 List<String> headersToDetect = new ArrayList<String>(Arrays.asList(DETECTION_HEADERS));
 
                 if (file != null && file.exists() && !file.isDirectory()) {
+                    if ("template.mf".equals(file.getName())) {
+                      // don't create facets for bundlor's template files, let bundlor work and
+                      // grab the real manifest later on. This can change if we add native bundlor support later on.
+                      return false;
+                    }
                     BufferedReader bufferedReader = null;
                     try {
                         InputStream inputStream = file.getInputStream();
