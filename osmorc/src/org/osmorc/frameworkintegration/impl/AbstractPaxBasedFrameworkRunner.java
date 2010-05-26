@@ -117,6 +117,9 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     int startLevel = getFrameworkStartLevel(bundlesToInstall);
     commandLineParameters.add("--sl="+startLevel);
 
+    int defaultStartLevel = getRunConfiguration().getDefaultStartLevel();
+    commandLineParameters.add("--bsl="+defaultStartLevel);
+
     if (frameworkProperties.isDebugMode()) {
       commandLineParameters.add("--log=DEBUG");
     }
@@ -184,8 +187,7 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
 
 
   /**
-   * Returns a list of additional VM parameters that should be given to the VM that is launched by PAX. For convencience this method
-   * will return the empty string in this base class, so overriding classes do not need to call super.
+   * Returns a list of additional VM parameters that should be given to the VM that is launched by PAX. Subclasses must call super.
    *
    * @param urlsOfBundlesToInstall the list of bundles to install
    * @return a string with VM parameters.

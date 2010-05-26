@@ -95,6 +95,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   @NonNls
   private static final String FRAMEWORK_START_LEVEL = "frameworkStartLevel";
   @NonNls
+  private static final String DEFAULT_START_LEVEL = "defaultStartLevel";
+  @NonNls
   private static final String AUTO_START_LEVEL = "autoStartLevel";
   @NonNls
   public static final String GENERATE_WORKING_DIR_ATTRIBUTE = "generateWorkingDir";
@@ -104,6 +106,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
 
   private List<SelectedBundle> bundlesToDeploy;
   private int frameworkStartLevel = 1;
+  private int defaultStartLevel = 5;
   private boolean autoStartLevel;
   private String programParameters;
   private String vmParameters;
@@ -150,6 +153,16 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       }
       catch (NumberFormatException e) {
         frameworkStartLevel = 1;
+      }
+    }
+
+    String dfsl = element.getAttributeValue(DEFAULT_START_LEVEL);
+    if ( dfsl != null ) {
+      try {
+        defaultStartLevel = Integer.parseInt(dfsl);
+      }
+      catch( NumberFormatException e) {
+        defaultStartLevel = 5;
       }
     }
 
@@ -234,6 +247,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     element.setAttribute(USE_ALTERNATIVE_JRE_ATTRIBUTE, String.valueOf(useAlternativeJre));
     element.setAttribute(ALTERNATIVE_JRE_PATH, alternativeJrePath != null ? alternativeJrePath : "");
     element.setAttribute(FRAMEWORK_START_LEVEL, String.valueOf(frameworkStartLevel));
+    element.setAttribute(DEFAULT_START_LEVEL, String.valueOf(defaultStartLevel));
     element.setAttribute(AUTO_START_LEVEL, String.valueOf(autoStartLevel));
     element.setAttribute(GENERATE_WORKING_DIR_ATTRIBUTE, String.valueOf(generateWorkingDir));
 
@@ -411,6 +425,14 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
 
   public void setWorkingDir(final String workingDir) {
     this.workingDir = workingDir;
+  }
+
+  public int getDefaultStartLevel() {
+    return defaultStartLevel;
+  }
+
+  public void setDefaultStartLevel(int defaultStartLevel) {
+    this.defaultStartLevel = defaultStartLevel;
   }
 
   /**
