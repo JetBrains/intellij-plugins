@@ -70,7 +70,8 @@ class EventsProcessor extends EventVisitor implements IDEtalkListener, Disposabl
   public void beforeChange(IDEtalkEvent event) {
   }
 
-  @Override public void visitTransportEvent(TransportEvent event) {
+  @Override
+  public void visitTransportEvent(TransportEvent event) {
     if (IdeaFlags.SOUND_ON_MESSAGE.isSet()) {
       Applet.newAudioClip(getClass().getResource(INCOMING_MESSAGE_WAV)).play();
     }
@@ -108,8 +109,8 @@ class EventsProcessor extends EventVisitor implements IDEtalkListener, Disposabl
   private void showPopupNotification(final User from, TransportEvent event) {
     if (myMessageDispatcher.countPendingMessages() > 5) return;
 
-    IDEFacade ideFacade = ((IDEFacade) Pico.getInstance().getComponentInstanceOfType(IDEFacade.class));
-    final IdeaLocalMessage localMessage = (IdeaLocalMessage) ideFacade.createLocalMessageForIncomingEvent(event);
+    IDEFacade ideFacade = ((IDEFacade)Pico.getInstance().getComponentInstanceOfType(IDEFacade.class));
+    final IdeaLocalMessage localMessage = (IdeaLocalMessage)ideFacade.createLocalMessageForIncomingEvent(event);
     if (localMessage == null) return;
 
     UIUtil.invokeLater(new Runnable() {
@@ -118,9 +119,8 @@ class EventsProcessor extends EventVisitor implements IDEtalkListener, Disposabl
         Color backgroundColor = new Color(255, 255, 217);
         content.setOpaque(true);
         content.setBackground(backgroundColor);
-
         WindowManager.getInstance().getStatusBar(myProject).fireNotificationPopup(
-            content , backgroundColor);
+          content, backgroundColor);
       }
     });
   }
