@@ -64,7 +64,8 @@ public class TaglibCssInlineStyleInjector implements MultiHostInjector {
           .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
                             virtualFile().ofType(StdFileTypes.JSPX)))
           .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
-                                                     StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI));
+                                                     StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
+                                                     StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI));
 
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
     if (CSS_ELEMENT_PATTERN.accepts(context)) {

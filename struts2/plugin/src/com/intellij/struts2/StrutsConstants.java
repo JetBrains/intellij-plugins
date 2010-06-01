@@ -33,7 +33,9 @@ public final class StrutsConstants {
   @NonNls
   public static final String STRUTS_2_1_FILTER_CLASS = "org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter";
 
-  /** Spring object factory. */
+  /**
+   * Spring object factory.
+   */
   @NonNls
   public static final String SPRING_OBJECT_FACTORY_CLASS = "org.apache.struts2.spring.StrutsSpringObjectFactory";
 
@@ -136,11 +138,26 @@ public final class StrutsConstants {
   /**
    * Struts jQuery-plugin taglib URI.
    */
+  @NonNls
   public static final String TAGLIB_JQUERY_PLUGIN_URI = "/struts-jquery-tags";
 
   /**
    * Struts jQuery-plugin taglib default prefix.
    */
+  @NonNls
   public static final String TAGLIB_JQUERY_PLUGIN_PREFIX = "sj";
+
+  /**
+   * Struts jQuery-plugin richtext taglib URI.
+   */
+  @NonNls
+  public static final String TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI = "/struts-jquery-richtext-tags";
+
+  /**
+   * Struts jQuery-plugin richtext taglib default prefix.
+   */
+  @NonNls
+  public static final String TAGLIB_JQUERY_RICHTEXT_PLUGIN_PREFIX = "sjr";
+
 
 }

@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenceContributorBase {
+public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibReferenceContributorBase {
 
   private static final String[] BUTTON_TAGS =
     new String[]{"a", "submit"};
@@ -38,7 +38,7 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
                  "textfield", "textarea", "radio", "select"};
 
   private static final String[] REQUIRED_TAGS =
-    new String[]{"a", "accordionItem","autocompleter", "accordion", "checkboxlist", "div", "tabbedpanel", "datepicker", "dialog",
+    new String[]{"a", "accordionItem", "autocompleter", "accordion", "checkboxlist", "div", "tabbedpanel", "datepicker", "dialog",
                  "progressbar", "slider", "grid", "gridColumn", "radio", "textfield", "textarea", "select"};
 
   private static final String[] DRAG_DROP_TAGS =
@@ -67,9 +67,7 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
     // common attributes -------------------------------------
 
     // CSS*
-    registerTags(CSS_CLASS_PROVIDER, "cssClass", registrar, CSS_TAGS);
-    registerTags(CSS_CLASS_PROVIDER, "cssErrorClass", registrar, CSS_TAGS);
-    registerTags(CSS_CLASS_PROVIDER, "tooltipCssClass", registrar, CSS_TAGS);
+    installCSS(registrar, CSS_TAGS);
 
     // button
     registerBoolean("button", registrar, BUTTON_TAGS);
@@ -77,77 +75,32 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
     registerTags(CSS_CLASS_PROVIDER, "buttonIconSecondary", registrar, BUTTON_TAGS);
 
     // effect
-    registerTags(new StaticStringValuesReferenceProvider("bounce", "highlight", "pulsate", "shake", "size", "transfer"),
-                 "effect", registrar, "a", "div", "gridColumn", "radio", "submit", "tab", "textfield", "textarea");
+    installEffect(registrar, "a", "div", "gridColumn", "radio", "submit", "tab", "textfield", "textarea");
 
     // draggable*
-    registerBoolean("draggableAddClasses", registrar, DRAG_DROP_TAGS);
-    registerTags(new HtmlIdWithAdditionalVariantsReferenceProvider("parent"),
-                 "draggableAppendTo", registrar, DRAG_DROP_TAGS);
-    registerTags(new StaticStringValuesReferenceProvider(false, "x", "y"),
-                 "draggableAxis", registrar, DRAG_DROP_TAGS);
-    registerBoolean("draggableCancel", registrar, DRAG_DROP_TAGS);
-    registerTags(new StaticStringValuesReferenceProvider(false, "parent", "document", "window", "y1", "x2", "y2"),
-                 "draggableContainment", registrar, DRAG_DROP_TAGS);
-    registerTags(new StaticStringValuesReferenceProvider(false, "original", "clone"),
-                 "draggableHelper", registrar, DRAG_DROP_TAGS);
-    registerBoolean("draggableIframeFix", registrar, DRAG_DROP_TAGS);
-    registerBoolean("draggableRefreshPositions", registrar, DRAG_DROP_TAGS);
-    registerTags(new StaticStringValuesReferenceProvider(false, "true", "false", "valid", "invalid"),
-                 "draggableRevert", registrar, DRAG_DROP_TAGS);
-    registerBoolean("draggableScroll", registrar, DRAG_DROP_TAGS);
-    registerBoolean("draggableSnap", registrar, DRAG_DROP_TAGS);
-    registerTags(new StaticStringValuesReferenceProvider(false, "inner", "outer", "both"),
-                 "draggableSnapMode", registrar, DRAG_DROP_TAGS);
+    installDraggable(registrar, DRAG_DROP_TAGS);
 
     // droppable*
-    registerTags(CSS_CLASS_PROVIDER, "droppableHoverClass", registrar, DRAG_DROP_TAGS);
-    registerTags(new StaticStringValuesReferenceProvider(false, "fit", "intersect", "pointer", "touch"),
-                 "droppableTolerance", registrar, DRAG_DROP_TAGS);
+    installDroppable(registrar, DRAG_DROP_TAGS);
 
     // "events"
-    registerTags(new StaticStringValuesReferenceProvider(false, "click", "dblclick", "mouseover", "mouseenter", "mouseleave"),
-                 "events", registrar,
-                 "autocompleter", "div", "select");
+    installEvents(registrar, "autocompleter", "div", "select");
 
     // sortable**
-    registerBoolean("sortable", registrar, SORTABLE_TAGS);
-    registerTags(new HtmlIdWithAdditionalVariantsReferenceProvider("parent"),
-                 "sortableAppendTo", registrar, SORTABLE_TAGS);
-    registerTags(new StaticStringValuesReferenceProvider("x", "y"),
-                 "sortableAxis", registrar, SORTABLE_TAGS);
-    registerBoolean("sortableDropOnEmpty", registrar, SORTABLE_TAGS);
-    registerBoolean("sortableForceHelperSize", registrar, SORTABLE_TAGS);
-    registerBoolean("sortableForcePlaceholderSize", registrar, SORTABLE_TAGS);
-    registerTags(CSS_CLASS_PROVIDER, "sortablePlaceholder", registrar, SORTABLE_TAGS);
-    registerBoolean("sortableRevert", registrar, SORTABLE_TAGS);
-    registerBoolean("sortableScroll", registrar, SORTABLE_TAGS);
-    registerTags(new StaticStringValuesReferenceProvider(false, "intersect", "pointer"),
-                 "sortableTolerance", registrar, SORTABLE_TAGS);
+    installSortable(registrar, SORTABLE_TAGS);
 
     // "resizableXX"
-    registerBoolean("resizable", registrar, RESIZABLE_TAGS);
-    registerBoolean("resizableAnimate", registrar, RESIZABLE_TAGS);
-    registerBoolean("resizableGhost", registrar, RESIZABLE_TAGS);
-    registerBoolean("resizableAspectRatio", registrar, RESIZABLE_TAGS);
-    registerBoolean("resizableAutoHide", registrar, RESIZABLE_TAGS);
-    registerTags(new HtmlIdWithAdditionalVariantsReferenceProvider("document", "parent"),
-                 "resizableContainment", registrar, RESIZABLE_TAGS);
-    registerTags(CSS_CLASS_PROVIDER, "resizableHelper", registrar, RESIZABLE_TAGS);
+    installResizable(registrar, RESIZABLE_TAGS);
 
     // "selectable"
-    registerBoolean("selectable", registrar, SELECTABLE_TAGS);
-    registerTags(new StaticStringValuesReferenceProvider(false, "touch", "fit"),
-                 "selectableTolerance", registrar, SELECTABLE_TAGS);
+    installSelectable(registrar, SELECTABLE_TAGS);
 
     // "indicator"
-    registerTags(HTML_ID_REFERENCE_PROVIDER, "indicator", registrar,
-                 "a", "autocompleter", "checkboxlist", "dialog", "div", "grid", "gridColumn",
-                 "submit", "textfield", "textarea", "radio", "select");
+    installIndicator(registrar, "a", "autocompleter", "checkboxlist", "dialog", "div", "grid", "gridColumn",
+                     "submit", "textfield", "textarea", "radio", "select");
 
     // "errorElementId"
-    registerTags(HTML_ID_REFERENCE_PROVIDER, "errorElementId", registrar,
-                 "a", "autocompleter", "checkboxlist", "dialog", "grid", "radio", "select", "submit", "tab", "textfield");
+    installErrorElementId(registrar,"a", "autocompleter", "checkboxlist", "dialog", "grid", "radio", "select", "submit", "tab", "textfield");
 
     // "disabled"
     registerBoolean("disabled", registrar, ArrayUtil.mergeArrays(CSS_TAGS, REQUIRED_TAGS, String.class));
@@ -158,18 +111,14 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsTaglibReferenc
                  "a", "dialog", "grid", "gridColumn", "select", "submit", "tab", "textarea", "textfield");
 
     // "required[position]"
-    registerBoolean("required", registrar, REQUIRED_TAGS);
-    registerTags(new StaticStringValuesReferenceProvider(false, "left", "right"),
-                 "requiredposition", registrar, REQUIRED_TAGS);
+    installRequired(registrar, REQUIRED_TAGS);
 
-    // "targets" TODO allow multiple comma-separated
-    registerTags(HTML_ID_REFERENCE_PROVIDER, "targets", registrar,
-                 "a", "autocompleter", "checkboxlist", "dialog", "grid", "gridColumn", "select",
-                 "submit", "textarea", "textfield", "tab");
+    // "targets" 
+    installTargets(registrar, "a", "autocompleter", "checkboxlist", "dialog", "grid", "gridColumn", "select",
+                   "submit", "textarea", "textfield", "tab");
 
     // "labelposition"
-    registerTags(new StaticStringValuesReferenceProvider(false, "top", "left"),
-                 "labelposition", registrar, ArrayUtil.mergeArrays(CSS_TAGS, REQUIRED_TAGS, String.class));
+    installLabelposition(registrar, ArrayUtil.mergeArrays(CSS_TAGS, REQUIRED_TAGS, String.class));
 
     // specific tags --------------------------------------------------------------
 

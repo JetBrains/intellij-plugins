@@ -74,7 +74,8 @@ public class TaglibJavaScriptInjector implements MultiHostInjector {
                      "disabledTabs")
       .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
                         virtualFile().ofType(StdFileTypes.JSPX)))
-      .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI));
+      .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI));
 
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement host) {
     if (JS_ELEMENT_PATTERN.accepts(host)) {

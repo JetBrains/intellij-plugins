@@ -59,6 +59,7 @@
     <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsReferenceContributor"/>
     <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsUITaglibReferenceContributor"/>
     <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsJQueryTaglibReferenceContributor"/>
+    <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsJQueryRichtextTaglibReferenceContributor"/>
 
     <iconProvider implementation="com.intellij.struts2.Struts2IconProvider"/>
 
