@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.reference;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -66,7 +65,7 @@ public class StaticStringValuesReferenceProvider extends PsiReferenceProviderBas
       public PsiElement resolve() {
         final String myValue = myElement.getValue();
         if (allowOtherValues ||
-            StringUtil.startsWith(myValue, "%{")) {
+            TaglibUtil.isDynamicExpression(myValue)) {
           return myElement;
         }
 
