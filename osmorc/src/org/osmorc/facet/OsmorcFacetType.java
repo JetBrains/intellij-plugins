@@ -129,12 +129,12 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                         bufferedReader = new BufferedReader(inputStreamReader);
 
-                        while (bufferedReader.ready() && headersToDetect.size() > 0) {
-                            String line = bufferedReader.readLine();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null && headersToDetect.size() > 0) {
                             for (Iterator<String> headersToDetectIterator = headersToDetect.iterator();
                                  headersToDetectIterator.hasNext();) {
-                                String headertoDeteect = headersToDetectIterator.next();
-                                if (line.startsWith(headertoDeteect)) {
+                                String headerToDetect = headersToDetectIterator.next();
+                                if (line.startsWith(headerToDetect)) {
                                     headersToDetectIterator.remove();
                                     break;
                                 }
