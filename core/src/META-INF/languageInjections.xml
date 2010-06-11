@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="LanguageInjectionConfiguration">
+  <injection language="TEL" injector-id="xml">
+    <display-name>Bare Tapestry EL in attribute value</display-name>
+    <prefix>${</prefix>
+    <suffix>}</suffix>
+    <place><![CDATA[xmlAttribute().withLocalName(not(string().oneOf("id", "type"))).withText(string().matches("[^${}/\\]+")).inside(xmlTag().withNamespace(string().oneOf("http://tapestry.apache.org/schema/tapestry_5_1_0.xsd", "http://tapestry.apache.org/schema/tapestry_5_0_0.xsd")))]]></place>
+    <place><![CDATA[xmlAttribute().withLocalName(not(string().oneOf("id", "type"))).withText(string().matches("[^${}/\\]+")).withNamespace(string().oneOf("http://tapestry.apache.org/schema/tapestry_5_1_0.xsd", "http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"))]]></place>
+  </injection>
+</component>
