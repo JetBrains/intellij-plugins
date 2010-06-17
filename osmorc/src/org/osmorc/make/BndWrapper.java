@@ -29,13 +29,9 @@ import aQute.lib.osgi.Analyzer;
 import aQute.lib.osgi.Builder;
 import aQute.lib.osgi.Jar;
 import aQute.lib.osgi.Verifier;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -49,7 +45,6 @@ import org.osmorc.settings.ApplicationSettings;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -144,7 +139,7 @@ public class BndWrapper {
      * @return true if the bundling was successful, false otherwise.
      * @throws Exception in case something goes wrong.
      */
-    private boolean doWrap(@NotNull final CompileContext compileContext, @NotNull File inputJar, @NotNull final File outputJar,
+    private boolean doWrap(@NotNull CompileContext compileContext, @NotNull File inputJar, @NotNull File outputJar,
                            @NotNull Map<String, String> properties) throws Exception {
         String sourceFileUrl = VfsUtil.pathToUrl(inputJar.getPath());
         Analyzer analyzer = new ReportingAnalyzer(compileContext, sourceFileUrl);
@@ -183,7 +178,7 @@ public class BndWrapper {
         }
         Manifest mf = analyzer.calcManifest();
         Jar jar = analyzer.getJar();
-        final File f = File.createTempFile("tmpbnd", ".jar");
+        File f = File.createTempFile("tmpbnd", ".jar");
         jar.write(f);
         jar.close();
         analyzer.close();
@@ -196,60 +191,38 @@ public class BndWrapper {
            return false;
         }
       }
-
-      final Ref<Boolean> result = new Ref<Boolean>(false);
-      ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-        public void run() {
-          result.set(ApplicationManager.getApplication().runWriteAction(new Computable<Boolean>() {
-            public Boolean compute() {
-              // this should work in 99% of the cases
-              if (!f.renameTo(outputJar)) {
-                // and this is for the remaining 1%.
-                VirtualFile src = LocalFileSystem.getInstance().findFileByIoFile(f);
-                if (src == null) {
-                  compileContext.addMessage(CompilerMessageCategory.ERROR,
-                                            "No jar file was created. This should not happen. Is " + f.getPath() + " writable?", null, 0,
-                                            0);
-                  return false;
-                }
-                // make sure the parent folder exists:
-                File parentFolder = outputJar.getParentFile();
-                if (!parentFolder.exists()) {
-                  if (!parentFolder.mkdirs()) {
-                    compileContext
-                      .addMessage(CompilerMessageCategory.ERROR, "Cannot create output folder. Is " + parentFolder.getPath() + " writable?",
-                                  null, 0, 0);
-                    return false;
-                  }
-                }
-
-                // now get the target folder
-                VirtualFile target = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(parentFolder);
-                if (target == null) {
-                  // this actually should not happen but since we are bound by murphy's law, we check this as well
-                  // and believe it or not it DID happen.
-                  compileContext.addMessage(CompilerMessageCategory.ERROR, "Output path " +
-                                                                           parentFolder.getPath() +
-                                                                           " was created but cannot be found anymore. This should not happen.",
-                                            null, 0, 0);
-                  return false;
-                }
-                // IDEA-26817: target must be the dir, not the the file, so:
-                // and then put this in. This should produce the correct result.
-                try {
-                  VfsUtil.copyFile(this, src, target, outputJar.getName());
-                }
-                catch (IOException e) {
-                  compileContext.addMessage(CompilerMessageCategory.ERROR, "Could not copy " + src + " to " + target, null, 0, 0);
-                  return false;
-                }
-              }
-              return true;
+        // this should work in 99% of the cases
+        if (!f.renameTo(outputJar)) {
+            // and this is for the remaining 1%.
+            VirtualFile src = LocalFileSystem.getInstance().findFileByIoFile(f);
+            if (src == null) {
+                compileContext.addMessage(CompilerMessageCategory.ERROR,
+                        "No jar file was created. This should not happen. Is " + f.getPath() + " writable?", null, 0, 0);
+              return false;
             }
-          }));
+            // make sure the parent folder exists:
+            File parentFolder = outputJar.getParentFile();
+            if ( !parentFolder.exists() ) {
+              if (!parentFolder.mkdirs() ) {
+                compileContext.addMessage(CompilerMessageCategory.ERROR,
+                        "Cannot create output folder. Is " + parentFolder.getPath() + " writable?", null, 0, 0);
+              return false;
+              }
+            }
+
+            // now get the target folder
+            VirtualFile target = LocalFileSystem.getInstance().findFileByIoFile(parentFolder);
+            if (target == null) {
+                // this actually should not happen but since we are bound by murphy's law, we check this as well
+                compileContext.addMessage(CompilerMessageCategory.ERROR, "Output path " + parentFolder.getPath() +
+                        " was created but cannot be found anymore. This should not happen.", null, 0, 0);
+                return false;
+            }
+            // IDEA-26817: target must be the dir, not the the file, so:
+            // and then put this in. This should produce the correct result.
+            VfsUtil.copyFile(this, src, target, outputJar.getName());
         }
-      }, ModalityState.defaultModalityState());
-      return result.get();
+        return true;
     }
 
 
