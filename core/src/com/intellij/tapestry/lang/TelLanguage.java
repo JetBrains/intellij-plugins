@@ -29,7 +29,7 @@ public class TelLanguage extends Language implements InjectableLanguage {
   }
 
   @Override
-  public FileType getAssociatedFileType() {
+  public TelFileType getAssociatedFileType() {
     return TelFileType.INSTANCE;
   }
 }
