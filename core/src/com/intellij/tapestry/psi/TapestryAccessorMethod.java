@@ -138,24 +138,12 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     return PsiSuperMethodImplUtil.getHierarchicalMethodSignature(this);
   }
 
-  @NonNls
-  public String getText() {
-    return null;
-  }
-
   public PsiMethodReceiver getMethodReceiver() {
     return null;
   }
 
   public PsiType getReturnTypeNoResolve() {
     return getReturnType();
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-  }
-
-  public PsiElement copy() {
-    return null;
   }
 
   @Override
@@ -273,19 +261,10 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
       myParametersComputation = parametersComputation;
     }
 
-    @NonNls
-    public String getText() {
-      return null;
-    }
-
     public void accept(@NotNull PsiElementVisitor visitor) {
       if (visitor instanceof JavaElementVisitor) {
         ((JavaElementVisitor)visitor).visitParameterList(this);
       }
-    }
-
-    public PsiElement copy() {
-      return null;
     }
 
     @NotNull
