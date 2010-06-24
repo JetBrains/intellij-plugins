@@ -169,7 +169,7 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
 
     final Pattern starterClasspathPattern = getFrameworkStarterClasspathPattern();
     for (Library lib : libs) {
-      for (VirtualFile virtualFile : lib.getFiles(OrderRootType.CLASSES_AND_OUTPUT)) {
+      for (VirtualFile virtualFile : lib.getFiles(OrderRootType.CLASSES)) {
         if (starterClasspathPattern == null || starterClasspathPattern.matcher(virtualFile.getName()).matches()) {
           result.add(virtualFile);
         }
