@@ -21,7 +21,6 @@ import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.libraries.FacetLibrariesValidator;
 import com.intellij.facet.ui.libraries.LibraryInfo;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.facet.StrutsFacetLibrariesValidatorDescription;
 import com.intellij.ui.EnumComboBoxModel;
@@ -110,7 +109,7 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
     return false;
   }
 
-  public void apply() throws ConfigurationException {
+  public void apply() {
   }
 
   public void reset() {

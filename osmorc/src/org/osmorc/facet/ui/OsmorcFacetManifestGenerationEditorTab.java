@@ -28,14 +28,11 @@ package org.osmorc.facet.ui;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.util.TreeClassChooserDialog;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.EditorTextField;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.jetbrains.annotations.Nls;
@@ -136,7 +133,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
         return _modified;
     }
 
-    public void apply() throws ConfigurationException {
+    public void apply() {
         OsmorcFacetConfiguration configuration =
                 (OsmorcFacetConfiguration) _editorContext.getFacet().getConfiguration();
         configuration.setBundleActivator(_bundleActivator.getText());

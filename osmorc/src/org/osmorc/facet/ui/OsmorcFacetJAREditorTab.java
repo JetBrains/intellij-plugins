@@ -353,7 +353,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     return _modified;
   }
 
-  public void apply() throws ConfigurationException {
+  public void apply() {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)_editorContext.getFacet().getConfiguration();
     String fileLocation = _jarFileChooser.getText();
     fileLocation = fileLocation.replace('\\', '/');

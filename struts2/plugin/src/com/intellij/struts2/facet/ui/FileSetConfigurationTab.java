@@ -272,7 +272,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     return myModified;
   }
 
-  public void apply() throws ConfigurationException {
+  public void apply() {
     final Set<StrutsFileSet> fileSets = originalConfiguration.getFileSets();
     fileSets.clear();
     for (final StrutsFileSet fileSet : myBuffer) {

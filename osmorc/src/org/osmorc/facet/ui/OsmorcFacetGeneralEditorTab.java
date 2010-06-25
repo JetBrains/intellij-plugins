@@ -33,7 +33,6 @@ import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Key;
@@ -206,7 +205,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
         updateGui();
     }
 
-    public void apply() throws ConfigurationException {
+    public void apply() {
         OsmorcFacetConfiguration configuration =
                 (OsmorcFacetConfiguration) _editorContext.getFacet().getConfiguration();
         configuration.setOsmorcControlsManifest(_controlledByOsmorcRadioButton.isSelected());
