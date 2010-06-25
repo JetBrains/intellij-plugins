@@ -61,7 +61,7 @@ public class FacetEditor extends FacetEditorTab {
                 _configuration.getApplicationPackage() != _applicationPackage.getText();
     }
 
-    public void apply() throws ConfigurationException {
+    public void apply() {
         _configuration.setFilterName(_filterName.getText());
         _configuration.setApplicationPackage(_applicationPackage.getText());
     }
