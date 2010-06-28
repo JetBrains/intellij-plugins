@@ -28,8 +28,8 @@ public class VFileTest extends TestCase {
   }
 
   public void testSerializeDeserialize() throws Exception {
-    doSerializeTest("a path", "project", "содержание предыдущих серий", false, null);
-    doSerializeTest("a path", null, "содержание предыдущих серий", true, null);
+    doSerializeTest("a path", "project", "СЃРѕРґРµСЂР¶Р°РЅРёРµ РїСЂРµРґС‹РґСѓС‰РёС… СЃРµСЂРёР№", false, null);
+    doSerializeTest("a path", null, "СЃРѕРґРµСЂР¶Р°РЅРёРµ РїСЂРµРґС‹РґСѓС‰РёС… СЃРµСЂРёР№", true, null);
     doSerializeTest("a path", null, null, true, null);
     doSerializeTest("a path", "project", null, true, null);
 

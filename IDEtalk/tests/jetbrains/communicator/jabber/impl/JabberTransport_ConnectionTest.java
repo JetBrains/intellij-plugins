@@ -560,7 +560,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
 
   public void testSimpleJabberMessage() throws Throwable {
     Message message = new Message(mySelf.getName(), Message.Type.NORMAL);
-    String body = "some текст <>#$%^";
+    String body = "some С‚РµРєСЃС‚ <>#$%^";
     message.setThread("someThreadId");
     message.setBody(body);
 

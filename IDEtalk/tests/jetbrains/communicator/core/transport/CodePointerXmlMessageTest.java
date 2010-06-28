@@ -32,7 +32,7 @@ public class CodePointerXmlMessageTest extends TestCase {
 
   public void testComplexVFile() throws Throwable {
     VFile expected = VFile.create("foo/bar", "bar", false);
-    expected.setContents("#$@#@#$что-то такое");
+    expected.setContents("#$@#@#$С‡С‚Рѕ-С‚Рѕ С‚Р°РєРѕРµ");
     expected.setProjectName("project");
     expected.setFQName("some FQName");
     expected.setSourcePath("some source path");

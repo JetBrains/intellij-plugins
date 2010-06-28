@@ -25,7 +25,7 @@ public class StringUtilTest extends TestCase {
 
   public void testTwoDirection() throws Exception {
     assertEquals("Expect valid >< conversion",
-        "ÆaÆcÆ", StringUtil.fromXMLSafeString(StringUtil.toXMLSafeString("ÆaÆcÆ")));
+        "Ð–aÐ–cÐ–", StringUtil.fromXMLSafeString(StringUtil.toXMLSafeString("Ð–aÐ–cÐ–")));
   }
 
   public void testBigConversion() throws Exception {
@@ -33,7 +33,7 @@ public class StringUtilTest extends TestCase {
     WatchDog watchDog = new WatchDog("Xml String Convert");
     StringBuffer sb = new StringBuffer(BUFLENGTH);
     for (int i = 0; i < BUFLENGTH >> 1; i++) {
-      sb.append('Ë');
+      sb.append('Ð›');
       sb.append('i');
     }
 
