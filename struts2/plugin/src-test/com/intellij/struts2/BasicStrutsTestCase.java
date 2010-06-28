@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 /**
- * @author Yann Cébron
+ * @author Yann C&eacute;bron
  */
 public abstract class BasicStrutsTestCase extends UsefulTestCase {
 

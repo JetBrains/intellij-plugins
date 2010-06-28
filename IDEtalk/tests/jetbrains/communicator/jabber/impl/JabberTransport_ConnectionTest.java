@@ -560,7 +560,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
 
   public void testSimpleJabberMessage() throws Throwable {
     Message message = new Message(mySelf.getName(), Message.Type.NORMAL);
-    String body = "some текст <>#$%^";
+    String body = "some \u0442\u0435\u043a\u0441\u0442 <>#$%^";
     message.setThread("someThreadId");
     message.setBody(body);
 

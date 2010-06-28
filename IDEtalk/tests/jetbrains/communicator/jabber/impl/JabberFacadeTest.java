@@ -56,7 +56,7 @@ public class JabberFacadeTest extends BaseTestCase {
 
   public void testPersist_Settings() throws Exception {
     myFacade.getMyAccount().setUsername("user");
-    myFacade.getMyAccount().setPassword("привет тебе");
+    myFacade.getMyAccount().setPassword("\u043f\u0440\u0438\u0432\u0435\u0442 \u0442\u0435\u0431\u0435");
     myFacade.getMyAccount().setServer("jabber.ru");
     myFacade.getMyAccount().setPort(839);
 
@@ -65,9 +65,10 @@ public class JabberFacadeTest extends BaseTestCase {
     JabberFacadeImpl loaded = new JabberFacadeImpl(myIDEFacade);
 
     assertEquals("Should persist AccountInfo",
-        new AccountInfo("user", "привет тебе", "jabber.ru", 839).toString(),
+        new AccountInfo("user", "\u043f\u0440\u0438\u0432\u0435\u0442 \u0442\u0435\u0431\u0435", "jabber.ru", 839).toString(),
         loaded.getMyAccount().toString());
-    assertEquals("Password decoded incorrectly", "привет тебе", loaded.getMyAccount().getPassword());
+    assertEquals("Password decoded incorrectly",
+                 "\u043f\u0440\u0438\u0432\u0435\u0442 \u0442\u0435\u0431\u0435", loaded.getMyAccount().getPassword());
   }
 
   public void testNoPlainPassword() throws Exception {
@@ -89,7 +90,7 @@ public class JabberFacadeTest extends BaseTestCase {
     myFacade.saveSettings();
 
     JabberFacadeImpl loaded = new JabberFacadeImpl(myIDEFacade);
-    assertEquals("Should not memember password", "", loaded.getMyAccount().getPassword());
+    assertEquals("Should not remember password", "", loaded.getMyAccount().getPassword());
   }
 
   public void testGetServers() throws Exception {

@@ -28,8 +28,10 @@ public class VFileTest extends TestCase {
   }
 
   public void testSerializeDeserialize() throws Exception {
-    doSerializeTest("a path", "project", "содержание предыдущих серий", false, null);
-    doSerializeTest("a path", null, "содержание предыдущих серий", true, null);
+    doSerializeTest("a path", "project",
+                    "\u0441\u043e\u0434\u0435\u0440\u0436\u0430\u043d\u0438\u0435 \u043f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0438\u0445 \u0441\u0435\u0440\u0438\u0439", false, null);
+    doSerializeTest("a path", null,
+                    "\u0441\u043e\u0434\u0435\u0440\u0436\u0430\u043d\u0438\u0435 \u043f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0438\u0445 \u0441\u0435\u0440\u0438\u0439", true, null);
     doSerializeTest("a path", null, null, true, null);
     doSerializeTest("a path", "project", null, true, null);
 

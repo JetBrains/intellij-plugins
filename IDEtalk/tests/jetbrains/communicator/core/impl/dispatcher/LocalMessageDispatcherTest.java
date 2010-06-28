@@ -198,14 +198,15 @@ public class LocalMessageDispatcherTest extends BaseTestCase {
 
   public void testHistoryPersistence() throws Exception {
     // Test Saving history message:
-    MockMessage message = new MockMessage(new Date(), "some text РП ТХУУЛЙ");
+    MockMessage message = new MockMessage(new Date(), "some text \u0420\u041f \u0422\u0425\u0423\u0423\u041b\u0419");
     myDispatcher.sendNow(myUser, message);
 
     Thread.sleep(SAVE_WAIT_TIMEOUT);
 
     LocalMessageDispatcherImpl localMessageDispatcher = createLocalMessageDispatcher();
     assertEquals(1, localMessageDispatcher.getHistory(myUser, null).length);
-    assertEquals("some text РП ТХУУЛЙ", ((MockMessage) localMessageDispatcher.getHistory(myUser, null)[0]).getMessage());
+    assertEquals("some text \u0420\u041f \u0422\u0425\u0423\u0423\u041b\u0419",
+                 ((MockMessage) localMessageDispatcher.getHistory(myUser, null)[0]).getMessage());
   }
 
   public void testHistoryPersistence_SortLoadedHistory() throws Exception {
