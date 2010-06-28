@@ -21,6 +21,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.LayeredIcon;
+import com.intellij.ui.treeStructure.Tree;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.vfs.ProjectsData;
@@ -53,7 +54,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
 
   private final FileTypeManager myFileTypeManager;
   private final IDEFacade myIdeFacade;
-  private final JTree myTree;
+  private final Tree myTree;
 
   private ProjectsData myProjectsData;
   private User myUser;

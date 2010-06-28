@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.idea.toolWindow;
 
+import com.intellij.ui.treeStructure.Tree;
 import jetbrains.communicator.BaseTestCase;
 import jetbrains.communicator.core.TestFactory;
 import jetbrains.communicator.core.impl.dispatcher.LocalMessageDispatcherImpl;
@@ -42,7 +43,7 @@ public class UsersTreeModelTest extends BaseTestCase {
     super.setUp();
 
     myUserModel = TestFactory.createUserListWithUsers(this);
-    myTree = new JTree();
+    myTree = new Tree();
     myLocalMessageDispatcher = new LocalMessageDispatcherImpl(getBroadcaster(), new MockIDEFacade(getClass()), myUserModel);
     disposeOnTearDown(myLocalMessageDispatcher);
     myUsersTreeModel = new UsersTreeModel(myTree, myUserModel, myLocalMessageDispatcher);

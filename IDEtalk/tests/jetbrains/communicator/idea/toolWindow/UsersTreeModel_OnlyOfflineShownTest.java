@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.idea.toolWindow;
 
+import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.tree.TreeUtil;
 import jetbrains.communicator.BaseTestCase;
 import jetbrains.communicator.OptionFlag;
@@ -43,7 +44,7 @@ public class UsersTreeModel_OnlyOfflineShownTest extends BaseTestCase {
     super.setUp();
 
     myUserModel = TestFactory.createUserListWithUsers(this);
-    myTree = new JTree();
+    myTree = new Tree();
     myIDEFacade = new MockIDEFacade(getClass());
     myLocalMessageDispatcher = new LocalMessageDispatcherImpl(getBroadcaster(), myIDEFacade, myUserModel);
     disposeOnTearDown(myLocalMessageDispatcher);

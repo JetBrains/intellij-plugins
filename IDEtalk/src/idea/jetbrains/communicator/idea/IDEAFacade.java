@@ -377,7 +377,6 @@ public class IDEAFacade implements IDEFacade {
   }
 
   public static void installIdeaTreeActions(JTree t) {
-    TreeToolTipHandler.install(t);
     TreeUtil.installActions(t);
     new TreeSpeedSearch(t);
   }

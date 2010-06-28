@@ -16,6 +16,7 @@
 
 package jetbrains.communicator.util;
 
+import com.intellij.util.ui.Tree;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -30,7 +31,7 @@ import java.awt.event.MouseEvent;
 /**
  * @author Kir
  */
-public class KirTree extends JTree {
+public class KirTree extends Tree {
   private static final Logger LOG = Logger.getLogger(KirTree.class);
 
   public KirTree() {
