@@ -33,7 +33,7 @@ public class StringUtilTest extends TestCase {
     WatchDog watchDog = new WatchDog("Xml String Convert");
     StringBuffer sb = new StringBuffer(BUFLENGTH);
     for (int i = 0; i < BUFLENGTH >> 1; i++) {
-      sb.append('Л');
+      sb.append("Л");
       sb.append('i');
     }
 
