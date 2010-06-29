@@ -16,6 +16,8 @@
 
 package jetbrains.communicator.util;
 
+import com.intellij.ui.components.JBList;
+
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import javax.swing.plaf.basic.BasicListUI;
@@ -132,7 +134,7 @@ public class MultipleSelectionListUI extends BasicListUI {
   }
 
   public static void main(String[] args) {
-    final JList jList = new JList(new Object[] {"ffff", "ffffff","ffff", "ffffff","ffff", "ffffff", "sdfsdfsdf"});
+    final JList jList = new JBList(new Object[] {"ffff", "ffffff","ffff", "ffffff","ffff", "ffffff", "sdfsdfsdf"});
     jList.setUI(new MultipleSelectionListUI());
 
     UIUtil.run(jList);
