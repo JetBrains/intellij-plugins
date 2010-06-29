@@ -16,6 +16,7 @@
 
 package jetbrains.communicator.util;
 
+import com.intellij.ui.components.JBScrollPane;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.User;
@@ -32,7 +33,10 @@ import java.awt.event.*;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Kir
@@ -174,7 +178,7 @@ public class UIUtil {
 
       }
     });
-    run(new JScrollPane(jTextArea));
+    run(new JBScrollPane(jTextArea));
   }
 
   public static void setMnemonic(JLabel label, JComponent message, char mnemonic) {

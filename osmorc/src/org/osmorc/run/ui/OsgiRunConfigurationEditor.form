@@ -30,7 +30,7 @@
           <size top="4" left="4" bottom="4" right="4"/>
         </border>
         <children>
-          <scrollpane id="2054a">
+          <scrollpane class="com.intellij.ui.components.JBScrollPane" id="2054a">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false" defaultalign-vert="false"/>

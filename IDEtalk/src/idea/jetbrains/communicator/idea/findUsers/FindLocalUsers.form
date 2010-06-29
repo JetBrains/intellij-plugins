@@ -48,7 +48,7 @@
           </component>
         </children>
       </grid>
-      <scrollpane id="59f6a">
+      <scrollpane class="com.intellij.ui.components.JBScrollPane" id="59f6a">
         <constraints>
           <xy x="4" y="27" width="209" height="182"/>
           <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="3"/>
