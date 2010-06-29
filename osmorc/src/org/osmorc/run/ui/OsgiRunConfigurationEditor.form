@@ -38,7 +38,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="2afb6" class="javax.swing.JTable" binding="modulesList">
+              <component id="2afb6" class="com.intellij.ui.table.JBTable" binding="modulesList">
                 <constraints/>
                 <properties>
                   <showHorizontalLines value="true"/>

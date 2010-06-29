@@ -64,7 +64,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="9a8cd" class="javax.swing.JList" binding="bundlesList">
+              <component id="9a8cd" class="com.intellij.ui.components.JBList" binding="bundlesList">
                 <constraints/>
                 <properties/>
               </component>

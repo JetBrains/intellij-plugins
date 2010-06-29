@@ -106,7 +106,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="380d7" class="javax.swing.JList" binding="libraries" custom-create="true">
+              <component id="380d7" class="com.intellij.ui.components.JBList" binding="libraries" custom-create="true">
                 <constraints/>
                 <properties/>
               </component>

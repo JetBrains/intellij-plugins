@@ -31,7 +31,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="7624c" class="javax.swing.JList" binding="frameworkInstances">
+                  <component id="7624c" class="com.intellij.ui.components.JBList" binding="frameworkInstances">
                     <constraints/>
                     <properties>
                       <visibleRowCount value="6"/>
