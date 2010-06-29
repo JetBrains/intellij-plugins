@@ -26,9 +26,9 @@ import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.SeparatorComponent;
 import com.intellij.ui.SeparatorOrientation;
-import com.intellij.ui.components.JBScrollPane;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.ide.StatusToolbar;
@@ -156,7 +156,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     myTopPanel.add(toolbarPanel);
 
     myPanel.add(myTopPanel, BorderLayout.NORTH);
-    myPanel.add(new JBScrollPane(myUserListComponent.getComponent()));
+    myPanel.add(ScrollPaneFactory.createScrollPane(myUserListComponent.getComponent()));
 
     ActionGroup group = (ActionGroup)myActionManager.getAction("IDEtalkPopup");
     if (group != null) {

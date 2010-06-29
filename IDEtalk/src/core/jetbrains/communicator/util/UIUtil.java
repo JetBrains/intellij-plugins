@@ -16,7 +16,7 @@
 
 package jetbrains.communicator.util;
 
-import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.ScrollPaneFactory;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.User;
@@ -178,7 +178,7 @@ public class UIUtil {
 
       }
     });
-    run(new JBScrollPane(jTextArea));
+    run(ScrollPaneFactory.createScrollPane(jTextArea));
   }
 
   public static void setMnemonic(JLabel label, JComponent message, char mnemonic) {

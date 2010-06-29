@@ -21,7 +21,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.treeStructure.Tree;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
@@ -82,7 +82,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
       }
     };
     IDEAFacade.installIdeaTreeActions(myTree);
-    add(new JBScrollPane(myTree));
+    add(ScrollPaneFactory.createScrollPane(myTree));
     add(createActionsToolbar(actionManager), BorderLayout.NORTH);
 
     IDEAFacade.installPopupMenu(createActionGroup(), myTree, actionManager);
