@@ -64,7 +64,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="673e7" class="javax.swing.JTree" binding="_dependenciesTree">
+                  <component id="673e7" class="com.intellij.ui.treeStructure.Tree" binding="_dependenciesTree">
                     <constraints/>
                     <properties>
                       <showsRootHandles value="true"/>
