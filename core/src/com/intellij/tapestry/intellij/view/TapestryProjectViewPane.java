@@ -41,8 +41,8 @@ import com.intellij.tapestry.intellij.view.actions.ShowLibrariesTogleAction;
 import com.intellij.tapestry.intellij.view.actions.StartInBasePackageAction;
 import com.intellij.tapestry.intellij.view.nodes.*;
 import com.intellij.ui.PopupHandler;
+import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TreeSpeedSearch;
-import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.ui.treeStructure.SimpleTreeBuilder;
 import com.intellij.ui.treeStructure.actions.CollapseAllAction;
@@ -77,7 +77,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
   private final ModuleListener myModuleListener;
   private final TapestryIdeView myIdeView;
-  private JBScrollPane myComponent;
+  private JScrollPane myComponent;
   private boolean myShown;
   private boolean myGroupElementFiles = true;
   private boolean myShowLibraries = true;
@@ -425,7 +425,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
     myTreeStructure = getTreeBuilder().getTreeStructure();
 
-    myComponent = new JBScrollPane(myTree);
+    myComponent = ScrollPaneFactory.createScrollPane(myTree);
     myComponent.setBorder(BorderFactory.createEmptyBorder());
     installTreePopupHandler(ActionPlaces.PROJECT_VIEW_POPUP, IdeActions.GROUP_PROJECT_VIEW_POPUP);
   }
