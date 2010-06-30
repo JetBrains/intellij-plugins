@@ -154,9 +154,7 @@ public class BundleSelector extends JDialog {
             }
             // all the libraries that are bundles already (doesnt make much sense to start bundlified libs as they have no activator).
             for (Module module : modules) {
-                ModuleRootManager manager = ModuleRootManager.getInstance(module);
-                ModifiableRootModel model = manager.getModifiableModel();
-                OrderEntry[] entries = model.getOrderEntries();
+                OrderEntry[] entries = ModuleRootManager.getInstance(module).getOrderEntries();
                 for (OrderEntry entry : entries) {
                     if (entry instanceof JdkOrderEntry) {
                         continue; // no JDKs
@@ -182,11 +180,6 @@ public class BundleSelector extends JDialog {
                         }
                     }
                 }
-                // fix for IDEADEV-41180 - model should only be disposed when all information that was collected
-                // from the model is not needed anymore as the sub-components seem to get into disposed state
-                // as well, when disposing the model.
-                model.dispose();
-
             }
         }
         hs.removeAll(hideBundles);

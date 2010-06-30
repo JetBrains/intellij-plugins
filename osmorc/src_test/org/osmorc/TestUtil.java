@@ -36,7 +36,6 @@ import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.InvalidDataException;
@@ -237,9 +236,7 @@ public class TestUtil {
 
     public static ModuleOrderEntry getOrderEntry(Module forModule, Module inModule) {
         ModuleOrderEntry result = null;
-        ModifiableRootModel model = ModuleRootManager.getInstance(inModule).getModifiableModel();
-        OrderEntry[] orderEntries = model.getOrderEntries();
-        model.dispose();
+        OrderEntry[] orderEntries = ModuleRootManager.getInstance(inModule).getOrderEntries();
         for (OrderEntry orderEntry : orderEntries) {
             if (orderEntry instanceof ModuleOrderEntry && ((ModuleOrderEntry) orderEntry).getModule() == forModule) {
                 result = (ModuleOrderEntry) orderEntry;

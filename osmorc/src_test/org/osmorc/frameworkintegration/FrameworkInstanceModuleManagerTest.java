@@ -32,7 +32,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.libraries.Library;
@@ -40,12 +39,8 @@ import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
-import static org.easymock.EasyMock.*;
 import org.easymock.classextension.EasyMock;
-import static org.hamcrest.Matchers.*;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.osmorc.facet.OsmorcFacetUtil;
@@ -54,6 +49,11 @@ import org.osmorc.settings.ProjectSettings;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.easymock.EasyMock.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -118,16 +118,12 @@ public class FrameworkInstanceModuleManagerTest {
         testObject.updateFrameworkInstanceModule();
         Module module = ModuleManager.getInstance(project)
                 .findModuleByName(FrameworkInstanceModuleManager.FRAMEWORK_INSTANCE_MODULE_NAME);
-        ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-        OrderEntry[] orderEntries = model.getOrderEntries();
-        model.dispose();
+        OrderEntry[] orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
         assertContainsOnlyGivenLibraries(orderEntries, libraryA1, libraryA2);
 
         projectSettings.setFrameworkInstanceName("another Instance");
         testObject.updateFrameworkInstanceModule();
-        ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
-        orderEntries = rootModel.getOrderEntries();
-        rootModel.dispose();
+        orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
         assertContainsOnlyGivenLibraries(orderEntries, libraryB1, libraryB2, libraryB3);
 
         projectSettings.setCreateFrameworkInstanceModule(false);
