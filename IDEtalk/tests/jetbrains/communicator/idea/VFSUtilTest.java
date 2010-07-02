@@ -22,8 +22,6 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.IdeaTestCase;
 import jetbrains.communicator.core.vfs.VFile;
 import junit.framework.AssertionFailedError;
@@ -91,24 +89,6 @@ public class VFSUtilTest extends IdeaTestCase {
         }
       }
     });
-  }
-
-  // TODO: by FQName
-
-  public void _testFQName() throws Exception {
-
-    String path = "C:\\soft\\jdom\\jdom.jar";
-    String srcpath = "C:\\soft\\jdom\\src\\java";
-
-    addLibraryToRoots(LocalFileSystem.getInstance().findFileByIoFile(new File(path)), OrderRootType.CLASSES);
-    addLibraryToRoots(LocalFileSystem.getInstance().findFileByIoFile(new File(srcpath)), OrderRootType.SOURCES);
-
-    ModuleRootManager.getInstance(getModule()).getUrls(OrderRootType.CLASSES);
-
-    PsiClass aClass = getJavaFacade().findClass("org.jdom.Element", GlobalSearchScope.allScope(getProject()));
-    VirtualFile virtualFile = aClass.getContainingFile().getVirtualFile();
-    assertNotNull(virtualFile);
-    System.out.println("virtualFile = " + virtualFile);
   }
 
   public void testNoContentRoot() throws Exception {
