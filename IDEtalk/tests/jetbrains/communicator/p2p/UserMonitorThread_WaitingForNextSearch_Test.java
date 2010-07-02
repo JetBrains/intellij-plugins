@@ -75,7 +75,7 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
 
     myUserMonitorThread.triggerFindNow();
     new WaitFor() { protected boolean condition() { return started[0]; } };
-    myUserMonitorClientMock.expects(once()).method("setOnlineUsers").with(eq(Collections.EMPTY_SET));
+    myUserMonitorClientMock.expects(once()).method("setOnlineUsers").with(eq(Collections.emptySet()));
 
     new WaitFor(myUserMonitorThread.getWaitUserResponsesTimeout() + 100) {
       protected boolean condition() {

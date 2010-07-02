@@ -89,7 +89,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
 
   public void testFlushOnlineUsers_NoUsers() throws Exception {
     assert myUserMonitorThread.isFinding();
-    myUserMonitorClientMock.expects(once()).method("setOnlineUsers").with(eq(Collections.EMPTY_SET));
+    myUserMonitorClientMock.expects(once()).method("setOnlineUsers").with(eq(Collections.emptySet()));
     myUserMonitorThread.flushOnlineUsers();
     assertTrue("Explicit flushing user list should not interrupt find process", myUserMonitorThread.isFinding());
   }

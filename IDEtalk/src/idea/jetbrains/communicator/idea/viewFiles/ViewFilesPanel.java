@@ -270,7 +270,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
     }
 
     protected List getChildNodes() {
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
     }
 
     protected Component renderIn(JLabel label, boolean selected, boolean hasFocus) {
