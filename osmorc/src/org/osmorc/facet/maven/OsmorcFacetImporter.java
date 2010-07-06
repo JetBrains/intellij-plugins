@@ -58,14 +58,14 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.INSTANCE, "OSGi");
     }
 
-    // TODO: remove with next Release as it is handled in the super class now but removing it
-  // right now makes this plugin incompatible with 9.0.1
     public boolean isApplicable(MavenProject mavenProjectModel) {
         MavenPlugin p = mavenProjectModel.findPlugin(myPluginGroupID, myPluginArtifactID);
-        return p != null;
+        // fixes: IDEA-56021
+        String packaging = mavenProjectModel.getPackaging();
+        return p != null && packaging != null && "bundle".equals(packaging);
     }
 
-    protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel) {
+  protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel) {
 
     }
 
