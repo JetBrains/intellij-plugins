@@ -35,7 +35,7 @@
         <![CDATA[
                 ]]>
     </change-notes>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <vendor url="http://osmorc.org" email="info@osmorc.org">Osmorc Development Team</vendor>
     <idea-version since-build="90.10"/>
     <category>Framework integration</category>
