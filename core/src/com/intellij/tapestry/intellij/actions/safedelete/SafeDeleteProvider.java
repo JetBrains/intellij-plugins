@@ -18,6 +18,7 @@ import com.intellij.tapestry.intellij.view.TapestryProjectViewPane;
 import com.intellij.tapestry.intellij.view.nodes.LibrariesNode;
 import com.intellij.tapestry.intellij.view.nodes.PackageNode;
 import com.intellij.tapestry.intellij.view.nodes.TapestryNode;
+import com.intellij.util.containers.ContainerUtil;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -46,8 +47,8 @@ public class SafeDeleteProvider implements DeleteProvider {
 
             // The selected node is a file
             if (((TapestryNode) node.getUserObject()).getElement() instanceof PsiFile) {
-                elements = new PsiElement[]{(PsiFile) ((TapestryNode) node.getUserObject()).getElement()};
-                totalElementsToDelete.addAll(Arrays.asList(elements));
+              elements = new PsiElement[]{(PsiFile)((TapestryNode)node.getUserObject()).getElement()};
+              ContainerUtil.addAll(totalElementsToDelete, elements);
             }
 
             // The selected node is a presentation element
