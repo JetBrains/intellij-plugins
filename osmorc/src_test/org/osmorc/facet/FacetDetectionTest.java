@@ -40,6 +40,7 @@ import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
+import com.intellij.util.containers.ContainerUtil;
 import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.Before;
@@ -99,8 +100,8 @@ public class FacetDetectionTest {
         registry.registerUniversalDetector(same(ManifestFileTypeFactory.MANIFEST), (VirtualFileFilter) anyObject(), (FacetDetector) anyObject());
         expectLastCall().andAnswer(new IAnswer<Object>() {
             public Object answer() throws Throwable {
-                arguments.addAll(Arrays.asList(getCurrentArguments()));
-                return null;
+              ContainerUtil.addAll(arguments, getCurrentArguments());
+              return null;
             }
         });
 
@@ -141,8 +142,8 @@ public class FacetDetectionTest {
         registry.registerUniversalDetector(same(ManifestFileTypeFactory.MANIFEST), (VirtualFileFilter) anyObject(), (FacetDetector) anyObject());
         expectLastCall().andAnswer(new IAnswer<Object>() {
             public Object answer() throws Throwable {
-                arguments.addAll(Arrays.asList(getCurrentArguments()));
-                return null;
+              ContainerUtil.addAll(arguments, getCurrentArguments());
+              return null;
             }
         });
 

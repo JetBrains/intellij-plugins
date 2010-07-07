@@ -31,6 +31,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.eclipse.osgi.framework.internal.core.Constants;
 import org.eclipse.osgi.service.resolver.*;
 import org.jetbrains.annotations.NotNull;
@@ -177,13 +178,13 @@ public class BundleManagerImpl implements BundleManager {
         List<BundleDescription> result = new ArrayList<BundleDescription>();
         BundleDescription bundleDescription = getBundleDescription(bundle);
         if (bundleDescription != null) {
-            result.addAll(Arrays.asList(bundleDescription.getResolvedRequires()));
-            HostSpecification hostSpecification = bundleDescription.getHost();
-            if (hostSpecification != null && hostSpecification.getHosts() != null) {
-                for (BundleDescription hostBundleDescription : hostSpecification.getHosts()) {
-                    result.addAll(getResolvedRequires(hostBundleDescription.getUserObject()));
-                }
+          ContainerUtil.addAll(result, bundleDescription.getResolvedRequires());
+          HostSpecification hostSpecification = bundleDescription.getHost();
+          if (hostSpecification != null && hostSpecification.getHosts() != null) {
+            for (BundleDescription hostBundleDescription : hostSpecification.getHosts()) {
+              result.addAll(getResolvedRequires(hostBundleDescription.getUserObject()));
             }
+          }
         }
 
         return result;
@@ -193,13 +194,13 @@ public class BundleManagerImpl implements BundleManager {
         List<BundleSpecification> result = new ArrayList<BundleSpecification>();
         BundleDescription bundleDescription = getBundleDescription(bundle);
         if (bundleDescription != null) {
-            result.addAll(Arrays.asList(bundleDescription.getRequiredBundles()));
-            HostSpecification hostSpecification = bundleDescription.getHost();
-            if (hostSpecification != null && hostSpecification.getHosts() != null) {
-                for (BundleDescription hostBundleDescription : hostSpecification.getHosts()) {
-                    result.addAll(getRequiredBundles(hostBundleDescription.getUserObject()));
-                }
+          ContainerUtil.addAll(result, bundleDescription.getRequiredBundles());
+          HostSpecification hostSpecification = bundleDescription.getHost();
+          if (hostSpecification != null && hostSpecification.getHosts() != null) {
+            for (BundleDescription hostBundleDescription : hostSpecification.getHosts()) {
+              result.addAll(getRequiredBundles(hostBundleDescription.getUserObject()));
             }
+          }
         }
 
         return result;
@@ -209,13 +210,13 @@ public class BundleManagerImpl implements BundleManager {
         List<ExportPackageDescription> result = new ArrayList<ExportPackageDescription>();
         BundleDescription bundleDescription = getBundleDescription(bundle);
         if (bundleDescription != null) {
-            result.addAll(Arrays.asList(bundleDescription.getResolvedImports()));
-            HostSpecification hostSpecification = bundleDescription.getHost();
-            if (hostSpecification != null && hostSpecification.getHosts() != null) {
-                for (BundleDescription hostBundleDescription : hostSpecification.getHosts()) {
-                    result.addAll(getResolvedImports(hostBundleDescription.getUserObject()));
-                }
+          ContainerUtil.addAll(result, bundleDescription.getResolvedImports());
+          HostSpecification hostSpecification = bundleDescription.getHost();
+          if (hostSpecification != null && hostSpecification.getHosts() != null) {
+            for (BundleDescription hostBundleDescription : hostSpecification.getHosts()) {
+              result.addAll(getResolvedImports(hostBundleDescription.getUserObject()));
             }
+          }
         }
 
         return result;
