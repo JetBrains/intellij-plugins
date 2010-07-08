@@ -32,7 +32,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -125,12 +124,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   }
 
   protected void addFile(final SpringFileSet fileSet, @NonNls final String path) {
-    try {
-      myFixture.copyFileToProject(path);
-    }
-    catch (IOException e) {
-      throw new RuntimeException("error copying '" + path + "'", e);
-    }
+    myFixture.copyFileToProject(path);
 
     final VirtualFile file = myFixture.getTempDirFixture().getFile(path);
     assert file != null;

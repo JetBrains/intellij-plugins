@@ -37,7 +37,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -180,13 +179,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   }
 
   private void addToFileSet(final StrutsFileSet fileSet, @NonNls final String path) {
-    final VirtualFile file;
-    try {
-      file = myFixture.copyFileToProject(path);
-    }
-    catch (IOException e) {
-      throw new RuntimeException("error copying struts.xml from '" + path + "'", e);
-    }
+    final VirtualFile file = myFixture.copyFileToProject(path);
     assertNotNull("could not find file: '" + path + "'", file);
     fileSet.addFile(file);
   }
