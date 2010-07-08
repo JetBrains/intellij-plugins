@@ -153,32 +153,19 @@ public class BundleSelector extends JDialog {
                 }
             }
             // all the libraries that are bundles already (doesnt make much sense to start bundlified libs as they have no activator).
-            for (Module module : modules) {
-                OrderEntry[] entries = ModuleRootManager.getInstance(module).getOrderEntries();
-                for (OrderEntry entry : entries) {
-                    if (entry instanceof JdkOrderEntry) {
-                        continue; // no JDKs
-                    }
-
-                    if (entry instanceof LibraryOrderEntry &&
-                            libraryHandler.isFrameworkInstanceLibrary((LibraryOrderEntry) entry)) {
-                        continue; // we got the framework libs already so in this case we skip it.
-                    }
-
-                    String[] urls = entry.getUrls(OrderRootType.CLASSES);
-                    for (String url : urls) {
-                        url = BundleCompiler.convertJarUrlToFileUrl(url);
-                        url = BundleCompiler.fixFileURL(url);
+            final String[] urls = OrderEnumerator.orderEntries(project).withoutSdk().withoutModuleSourceEntries()
+              .satisfying(BundleCompiler.NOT_FRAMEWORK_LIBRARY_CONDITION).classes().getUrls();
+            for (String url : urls) {
+                url = BundleCompiler.convertJarUrlToFileUrl(url);
+                url = BundleCompiler.fixFileURL(url);
 
 
-                        String displayName = CachingBundleInfoProvider.getBundleSymbolicName(url);
-                        if (displayName != null) {
-                            // okay its a startable library
-                            SelectedBundle selectedBundle =
-                                    new SelectedBundle(displayName, url, SelectedBundle.BundleType.StartableLibrary);
-                            hs.add(selectedBundle);
-                        }
-                    }
+                String displayName = CachingBundleInfoProvider.getBundleSymbolicName(url);
+                if (displayName != null) {
+                    // okay its a startable library
+                    SelectedBundle selectedBundle =
+                            new SelectedBundle(displayName, url, SelectedBundle.BundleType.StartableLibrary);
+                    hs.add(selectedBundle);
                 }
             }
         }

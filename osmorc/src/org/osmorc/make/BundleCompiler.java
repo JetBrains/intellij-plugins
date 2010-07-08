@@ -44,6 +44,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -76,6 +77,12 @@ import java.util.Map;
  */
 public class BundleCompiler implements PackagingCompiler {
     private final Logger logger = Logger.getInstance("#org.osmorc.make.BundleCompiler");
+    public static final Condition<OrderEntry> NOT_FRAMEWORK_LIBRARY_CONDITION = new Condition<OrderEntry>() {
+        @Override
+        public boolean value(OrderEntry entry) {
+            return !(entry instanceof LibraryOrderEntry) || !ServiceManager.getService(LibraryHandler.class).isFrameworkInstanceLibrary((LibraryOrderEntry) entry);
+        }
+    };
 
     @Nullable
     private static String getOutputPath(final Module m, CompileContext context) {
@@ -473,43 +480,30 @@ public class BundleCompiler implements PackagingCompiler {
     public static String[] bundlifyLibraries(Module module, ProgressIndicator indicator,
                                              @NotNull CompileContext compileContext) {
         ArrayList<String> result = new ArrayList<String>();
-        final ModuleRootManager manager = ModuleRootManager.getInstance(module);
-        LibraryHandler libraryHandler = ServiceManager.getService(LibraryHandler.class);
 
-        OrderEntry[] entries = manager.getOrderEntries();
-        for (OrderEntry entry : entries) {
-            if (entry instanceof JdkOrderEntry) {
-                continue; // do not bundlify JDKs
-            }
+        final String[] urls = OrderEnumerator.orderEntries(module).withoutSdk().withoutModuleSourceEntries()
+          .satisfying(NOT_FRAMEWORK_LIBRARY_CONDITION).recursively().exportedOnly().classes().getUrls();
 
-            if (entry instanceof LibraryOrderEntry &&
-                    libraryHandler.isFrameworkInstanceLibrary((LibraryOrderEntry) entry)) {
-                continue; // do not bundlify framework instance libraries
-            }
+        BndWrapper wrapper = new BndWrapper();
+        for (String url : urls) {
+            url = convertJarUrlToFileUrl(url);
 
-            BndWrapper wrapper = new BndWrapper();
-            String[] urls = entry.getUrls(OrderRootType.CLASSES);
-            for (String url : urls) {
-                url = convertJarUrlToFileUrl(url);
-
-
-                if (!CachingBundleInfoProvider.isBundle(url)) {
-                    indicator.setText("Bundling non-OSGi libraries for module: " + module.getName());
-                    indicator.setText2(url);
-                    // ok it is not a bundle, so we need to bundlify
-                  final String outputPath = getOutputPath(module, compileContext);
-                  if ( outputPath == null ) {
-                     // couldnt create output path, abort here..
-                     break;
-                  }
-                  String bundledLocation = wrapper.wrapLibrary(compileContext, url, outputPath);
-                    // if no bundle could (or should) be created, we exempt this library
-                    if (bundledLocation != null) {
-                        result.add(fixFileURL(bundledLocation));
-                    }
-                } else {
-                    result.add(fixFileURL(url));
+            if (!CachingBundleInfoProvider.isBundle(url)) {
+                indicator.setText("Bundling non-OSGi libraries for module: " + module.getName());
+                indicator.setText2(url);
+                // ok it is not a bundle, so we need to bundlify
+              final String outputPath = getOutputPath(module, compileContext);
+              if ( outputPath == null ) {
+                 // couldnt create output path, abort here..
+                 break;
+              }
+              String bundledLocation = wrapper.wrapLibrary(compileContext, url, outputPath);
+                // if no bundle could (or should) be created, we exempt this library
+                if (bundledLocation != null) {
+                    result.add(fixFileURL(bundledLocation));
                 }
+            } else {
+                result.add(fixFileURL(url));
             }
         }
         return ArrayUtil.toStringArray(result);
