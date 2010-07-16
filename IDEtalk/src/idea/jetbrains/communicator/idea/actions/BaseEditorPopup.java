@@ -19,6 +19,7 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.vfs.VirtualFile;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * @author Kir
  */
-public abstract class BaseEditorPopup extends ActionGroup {
+public abstract class BaseEditorPopup extends ActionGroup implements DumbAware {
 
   protected BaseEditorPopup() {
     setPopup(true);
