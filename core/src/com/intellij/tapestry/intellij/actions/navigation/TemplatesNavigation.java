@@ -3,6 +3,7 @@ package com.intellij.tapestry.intellij.actions.navigation;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassOwner;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Allows navigation to all templates of the class
  */
-public class TemplatesNavigation extends ActionGroup {
+public class TemplatesNavigation extends ActionGroup implements DumbAware {
 
     private static final AnAction[] EMPTY_ACTION_ARRAY = new AnAction[0];
 
