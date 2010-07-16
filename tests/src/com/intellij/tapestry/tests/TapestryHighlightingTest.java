@@ -18,55 +18,55 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
 
   public void testTmlTagNameUsingSubpackage() throws Throwable {
     addComponentToProject("other.Count");
-    doTest();
+    doTest(true);
   }
 
   public void testTmlAttrName() throws Throwable {
     addComponentToProject("Count");
-    doTest();
+    doTest(true);
   }
 
   public void testTmlAttrNameInHtmlTag() throws Throwable {
-    doTest();
+    doTest(true);
   }
 
   public void testUnknownTypeOfTag() throws Throwable {
     addComponentToProject("Count");
-    doTest();
+    doTest(false);
   }
 
   public void testAttrNameWithUnknownPrefixInHtmlTag() throws Throwable {
     addComponentToProject("Count");
-    doTest();
+    doTest(true);
   }
 
   public void testTmlAttrNameWithPrefix() throws Throwable {
     addComponentToProject("Count");
-    doTest(new RequiredAttributesInspection());
+    doTest(true, new RequiredAttributesInspection());
   }
 
   public void testNonPropBindingPrefix() throws Throwable {
-    doTest();
+    doTest(true);
   }
 
   public void testTelPropertiesAndAccessors() throws Throwable {
-    doTest(new TelReferencesInspection());
+    doTest(true, new TelReferencesInspection());
   }
 
   public void testHtmlTagNameInHtmlParentTag() throws Throwable {
     addComponentToProject("Count");
-    doTest();
+    doTest(true);
   }
 
   public void testHtmlTagNameInHtmlParentTagError() throws Throwable {
     addComponentToProject("Count");
-    doTest();
+    doTest(true);
   }
 
-  protected void doTest(LocalInspectionTool... tools) throws Throwable {
+  protected void doTest(boolean checkInfos, LocalInspectionTool... tools) throws Throwable {
     VirtualFile templateFile = initByComponent(true);
     myFixture.enableInspections(tools);
-    myFixture.testHighlighting(true, true, true, templateFile);
+    myFixture.testHighlighting(true, checkInfos, true, templateFile);
   }
 
   protected void doWarningsOnlyTest(LocalInspectionTool... tools) throws Throwable {
