@@ -14,8 +14,6 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/commons-chain.jar!/" />
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
@@ -23,8 +21,6 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/maven-model.jar!/" />
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
@@ -32,8 +28,6 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/plexus-utils.jar!/" />
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="Velocity" level="project" />
