@@ -13,8 +13,6 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/smack.jar!/" />
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
@@ -22,8 +20,6 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/smackx.jar!/" />
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="util" />
