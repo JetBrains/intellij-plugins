@@ -18,14 +18,14 @@
     </orderEntry>
     <orderEntry type="module" module-name="lang-api" />
     <orderEntry type="module" module-name="openapi" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/binding-2.0.6.jar!/" />
         </CLASSES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/org.eclipse.osgi.jar!/" />
