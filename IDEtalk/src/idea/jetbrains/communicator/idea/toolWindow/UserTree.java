@@ -15,14 +15,15 @@
  */
 package jetbrains.communicator.idea.toolWindow;
 
+import com.intellij.openapi.util.SystemInfo;
 import jetbrains.communicator.commands.SendMessageCommand;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.commands.UserCommand;
 import jetbrains.communicator.core.dispatcher.LocalMessageDispatcher;
 import jetbrains.communicator.core.dispatcher.Message;
 import jetbrains.communicator.core.users.User;
-import jetbrains.communicator.idea.IdeaLocalMessage;
 import jetbrains.communicator.idea.IDEAFacade;
+import jetbrains.communicator.idea.IdeaLocalMessage;
 import jetbrains.communicator.idea.actions.BaseAction;
 import jetbrains.communicator.util.KirTree;
 import jetbrains.communicator.util.StringUtil;
@@ -40,6 +41,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import static com.intellij.util.ui.UIUtil.isUnderAquaLookAndFeel;
+
 /**
  * @author Kir
  */
@@ -47,7 +50,7 @@ public class UserTree extends KirTree {
   private final LocalMessageDispatcher myLocalMessageDispatcher;
   private boolean myDelivered;
 
-  private final MyTreeUI myUi = new MyTreeUI();
+  private final MyTreeUI myUi;
   private final TreeDragListener myDragListener;
 
   public UserTree(LocalMessageDispatcher localMessageDispatcher) {
@@ -61,7 +64,8 @@ public class UserTree extends KirTree {
 
     myDragListener = new TreeDragListener();
 
-    setUI(myUi);
+    myUi = createUI();
+    setUI((BasicTreeUI)myUi);
 
     if (Pico.isLocalTesting()) {
       addMouseListener(new MouseAdapter() {
@@ -73,6 +77,18 @@ public class UserTree extends KirTree {
         }
       });
     }
+  }
+
+  private MyTreeUI createUI() {
+    if (SystemInfo.isMac  && isUnderAquaLookAndFeel()) {
+      return new MyMacTreeUIImpl();
+    }
+    return new MyBasicTreeUIImpl();
+  }
+
+  @Override
+  protected boolean isCustomUI() {
+    return true;
   }
 
   public void addNotify() {
@@ -93,7 +109,7 @@ public class UserTree extends KirTree {
   public void updateUI() {
     super.updateUI();
     if (myUi != null) {
-      setUI(myUi);
+      setUI((BasicTreeUI)myUi);
     }
   }
 
@@ -186,7 +202,22 @@ public class UserTree extends KirTree {
     return objectPath;
   }
 
-  public static class MyTreeUI extends BasicTreeUI {
+  public interface MyTreeUI {
+    void invalidatePath(TreePath path);
+    Container getRendererPane();
+  }
+
+  public static class MyBasicTreeUIImpl extends BasicTreeUI implements MyTreeUI {
+    public void invalidatePath(TreePath path) {
+      treeState.invalidatePathBounds(path);
+    }
+
+    public Container getRendererPane() {
+      return rendererPane;
+    }
+  }
+
+  public static class MyMacTreeUIImpl extends com.intellij.util.ui.UIUtil.MacTreeUI implements MyTreeUI {
     public void invalidatePath(TreePath path) {
       treeState.invalidatePathBounds(path);
     }
