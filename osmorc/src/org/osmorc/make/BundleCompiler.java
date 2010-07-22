@@ -504,7 +504,7 @@ public class BundleCompiler implements PackagingCompiler {
                     url = convertJarUrlToFileUrl(url);
 
 
-                    if (!CachingBundleInfoProvider.isBundle(url)) {
+                    if (CachingBundleInfoProvider.canBeBundlified(url)) {
                         indicator.setText("Bundling non-OSGi libraries for module: " + module.getName());
                         indicator.setText2(url);
                         // ok it is not a bundle, so we need to bundlify
@@ -519,7 +519,9 @@ public class BundleCompiler implements PackagingCompiler {
                             result.add(fixFileURL(bundledLocation));
                         }
                     } else {
+                      if (CachingBundleInfoProvider.isBundle(url)) {
                         result.add(fixFileURL(url));
+                      }
                     }
                 }
             }
