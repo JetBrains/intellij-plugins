@@ -34,7 +34,7 @@ import com.intellij.openapi.application.Result;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -123,36 +123,39 @@ public class OsmorcModuleComponent implements ModuleComponent {
   }
 
   private void updateModuleDependencyIndex() {
-    Task.Backgroundable task =
-      new Task.Backgroundable(myModule.getProject(), "Updating OSGi dependency index for module '" + myModule.getName() + "'") {
+    myApplication.invokeLater(new Runnable() {
+      public void run() {
+        ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+        if (indicator != null) {
+          indicator.setText("Updating OSGi dependency index for module '" + myModule.getName() + "'");
+        }
+        ModifiableRootModel model = new ReadAction<ModifiableRootModel>() {
+          protected void run(Result<ModifiableRootModel> result) throws Throwable {
+            ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+            result.setResult(model);
+          }
+        }.execute().getResultObject();
 
-        public void run(@NotNull ProgressIndicator indicator) {
-          ModifiableRootModel model = new ReadAction<ModifiableRootModel>() {
-            protected void run(Result<ModifiableRootModel> result) throws Throwable {
-              ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
-              result.setResult(model);
+        OrderEntry[] entries = model.getOrderEntries();
+        try {
+          for (int i = 0, entriesLength = entries.length; i < entriesLength; i++) {
+            if (indicator != null) {
+              indicator.setFraction(i / entriesLength);
             }
-          }.execute().getResultObject();
-
-          OrderEntry[] entries = model.getOrderEntries();
-          try {
-            for (int i = 0, entriesLength = entries.length; i < entriesLength; i++) {
-              indicator.setFraction(i/entriesLength);
-              OrderEntry entry = entries[i];
-              if (entry instanceof LibraryOrderEntry) {
-                final Library library = ((LibraryOrderEntry)entry).getLibrary();
-                if (library != null) {
-                  myBundleManager.addOrUpdateBundle(library);
-                }
+            OrderEntry entry = entries[i];
+            if (entry instanceof LibraryOrderEntry) {
+              final Library library = ((LibraryOrderEntry)entry).getLibrary();
+              if (library != null) {
+                myBundleManager.addOrUpdateBundle(library);
               }
             }
           }
-          finally {
-            model.dispose();
-          }
         }
-      };
-    task.queue();
+        finally {
+          model.dispose();
+        }
+      }
+    });
   }
 
   /**
@@ -161,15 +164,16 @@ public class OsmorcModuleComponent implements ModuleComponent {
   private void buildManuallyEditedManifestIndex() {
     final OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
     if (facet != null && facet.getConfiguration().isManifestManuallyEdited()) {
-      Task task = new Task.Backgroundable(myModule.getProject(), "Updating manifest indices", false) {
-        
-        public void run(@NotNull ProgressIndicator indicator) {
+        myApplication.invokeLater(new Runnable() {
+        public void run() {
+          ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+          if ( indicator != null) {
           indicator.setIndeterminate(true);
           indicator.setText("Updating manifest indices.");
+          }
           myBundleManager.addOrUpdateBundle(myModule);
         }
-      };
-      task.queue();
+      });
     }
   }
 
