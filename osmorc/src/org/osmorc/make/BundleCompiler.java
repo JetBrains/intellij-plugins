@@ -488,7 +488,7 @@ public class BundleCompiler implements PackagingCompiler {
         for (String url : urls) {
             url = convertJarUrlToFileUrl(url);
 
-            if (!CachingBundleInfoProvider.isBundle(url)) {
+            if (CachingBundleInfoProvider.canBeBundlified(url)) { // Fixes IDEA-56666
                 indicator.setText("Bundling non-OSGi libraries for module: " + module.getName());
                 indicator.setText2(url);
                 // ok it is not a bundle, so we need to bundlify
@@ -503,7 +503,9 @@ public class BundleCompiler implements PackagingCompiler {
                     result.add(fixFileURL(bundledLocation));
                 }
             } else {
-                result.add(fixFileURL(url));
+                if ( CachingBundleInfoProvider.isBundle(url) ) { // Exclude non-bundles (IDEA-56666)
+                  result.add(fixFileURL(url));
+                }
             }
         }
         return ArrayUtil.toStringArray(result);

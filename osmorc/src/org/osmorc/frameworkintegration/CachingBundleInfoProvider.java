@@ -62,7 +62,26 @@ public class CachingBundleInfoProvider {
         return getBundleSymbolicName(bundleUrl) != null;
     }
 
-    /**
+  /**
+   * Returns true if the object at the given URI can be bundlified. This is only true for jar files which are not already bundles.
+   * @param bundleUrl the url to the object to be bundlified.
+   * @return true if the object can be bundlified, false otherwise.
+   */
+    public static boolean canBeBundlified(String bundleUrl) {
+      if (isBundle(bundleUrl)) return false;
+      File sourceFile = new File(VfsUtil.urlToPath(bundleUrl));
+      if (sourceFile.isDirectory()) {
+        // it's an exploded directory, we cannot bundle these.
+        return false;
+      }
+      if (!sourceFile.getName().endsWith(".jar")) {
+        // it's no jar, so we won't bundlify it either.
+        return false;
+      }
+      return true;
+    }
+
+  /**
      * Returns the symbolic name of the bundle at the given url. If the file at the given url is no bundle, returns null.
      *
      * @param bundleUrl the url of the bundle
