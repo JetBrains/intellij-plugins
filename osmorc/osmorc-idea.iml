@@ -14,8 +14,6 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/hamcrest-library-1.1.jar!/" />
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="lang-api" />
@@ -25,8 +23,6 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/binding-2.0.6.jar!/" />
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
@@ -34,7 +30,6 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/org.eclipse.osgi.jar!/" />
         </CLASSES>
-        <JAVADOC />
         <SOURCES>
           <root url="jar://$MODULE_DIR$/lib/org.eclipse.osgi_src.zip!/" />
         </SOURCES>
@@ -48,7 +43,6 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/commons-lang-2.4.jar!/" />
         </CLASSES>
-        <JAVADOC />
         <SOURCES>
           <root url="jar://$MODULE_DIR$/lib/commons-lang-2.4-sources.jar!/" />
         </SOURCES>
@@ -64,8 +58,6 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/bnd-0.0.384.jar!/" />
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="testFramework-java" />
@@ -78,8 +70,6 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/pax-runner-1.5.0-SNAPSHOT.jar!/" />
         </CLASSES>
-        <JAVADOC />
-        <SOURCES />
       </library>
     </orderEntry>
   </component>
