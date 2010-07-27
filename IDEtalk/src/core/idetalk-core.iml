@@ -11,6 +11,8 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/xstream.jar!/" />
         </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="inheritedJdk" />
@@ -25,6 +27,8 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/nanocontainer-1.0-SNAPSHOT.jar!/" />
         </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="openapi" />
@@ -33,6 +37,8 @@
         <CLASSES>
           <root url="file://$MODULE_DIR$/../../resources" />
         </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="xpp3-1.1.4-min" level="project" />
