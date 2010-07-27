@@ -20,6 +20,8 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../../community/plugins/testng/lib/testng-jdk15.jar!/" />
         </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
@@ -27,6 +29,8 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../RefactorX/lib/xmlunit-1.1.jar!/" />
         </CLASSES>
+        <JAVADOC />
+        <SOURCES />
       </library>
     </orderEntry>
   </component>
