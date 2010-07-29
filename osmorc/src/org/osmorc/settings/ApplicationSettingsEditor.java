@@ -29,23 +29,25 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
+import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 
 import javax.swing.*;
+import java.awt.*;
 
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class IDESettingsEditor implements SearchableConfigurable, Configurable.Composite, ProjectSettingsAwareEditor, ApplicationSettingsAwareEditor {
-    public IDESettingsEditor(FrameworkDefinitionsEditor frameworkDefinitionsEditor, LibraryBundlingEditor libraryBundlingEditor) {
-        this.frameworkDefinitionsEditor = frameworkDefinitionsEditor;
-        this.libraryBundlingEditor = libraryBundlingEditor;
+public class ApplicationSettingsEditor implements SearchableConfigurable, Configurable.Composite {
+    public ApplicationSettingsEditor(FrameworkIntegratorRegistry registry) {
+        this.frameworkDefinitionsEditor = new FrameworkDefinitionsEditor(registry);
+        this.libraryBundlingEditor = new LibraryBundlingEditor();
     }
 
     @Nls
     public String getDisplayName() {
-        return "IDE Settings";
+        return "OSGi";
     }
 
     public Icon getIcon() {
@@ -65,7 +67,9 @@ public class IDESettingsEditor implements SearchableConfigurable, Configurable.C
     }
 
     public JComponent createComponent() {
-        return mainPanel;
+      JPanel result = new JPanel(new BorderLayout());
+      result.add(new JLabel("Please select one of the options in the settings tree."), BorderLayout.CENTER);
+      return result;
     }
 
     public boolean isModified() {
@@ -82,20 +86,9 @@ public class IDESettingsEditor implements SearchableConfigurable, Configurable.C
     }
 
     public Configurable[] getConfigurables() {
-        return new Configurable[]{frameworkDefinitionsEditor, libraryBundlingEditor};
+        return new Configurable[]{frameworkDefinitionsEditor,libraryBundlingEditor};
     }
 
-    public void setProjectSettingsProvider(@NotNull ProjectSettingsProvider projectSettingsProvider) {
-        frameworkDefinitionsEditor.setProjectSettingsProvider(projectSettingsProvider);
-    }
-
-    public void setApplicationSettingsProvider(
-            @NotNull ApplicationSettingsProvider applicationSettingsProvider) {
-        frameworkDefinitionsEditor.setApplicationSettingsProvider(applicationSettingsProvider);
-        libraryBundlingEditor.setApplicationSettingsProvider(applicationSettingsProvider);
-    }
-
-    private JPanel mainPanel;
     private FrameworkDefinitionsEditor frameworkDefinitionsEditor;
     private LibraryBundlingEditor libraryBundlingEditor;
 }

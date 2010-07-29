@@ -26,15 +26,19 @@
 package org.osmorc.settings;
 
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.util.EventDispatcher;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.List;
 
 /**
@@ -44,57 +48,43 @@ import java.util.List;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 @State(
-    name = "Osmorc",
-    storages = {
-        @Storage(
-            id = "Osmorc",
-            file = "$APP_CONFIG$/osmorc.xml"
-        )}
-)
-public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings>
-{
+  name = "Osmorc",
+  storages = {@Storage(
+    id = "Osmorc",
+    file = "$APP_CONFIG$/osmorc.xml")})
+public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
+  private List<FrameworkInstanceDefinition> _frameworkInstanceDefinitions = new ArrayList<FrameworkInstanceDefinition>();
+  private List<LibraryBundlificationRule> _libraryBundlificationRules = new ArrayList<LibraryBundlificationRule>();
+  private EventDispatcher<ApplicationSettingsListener> dispatcher = EventDispatcher.create(ApplicationSettingsListener.class);
 
-  @AbstractCollection(elementTag = "frameworkDefinition")
-  public List<FrameworkInstanceDefinition> getFrameworkInstanceDefinitions()
-  {
-    return _frameworkInstanceDefinitions;
+
+  public static ApplicationSettings getInstance() {
+    return ServiceManager.getService(ApplicationSettings.class);
   }
 
-  public void setFrameworkInstanceDefinitions(List<FrameworkInstanceDefinition> frameworkInstanceDefinitions)
-  {
-    _frameworkInstanceDefinitions = frameworkInstanceDefinitions;
+  public ApplicationSettings() {
+    _libraryBundlificationRules.add(new LibraryBundlificationRule());
   }
 
-  public void addFrameworkInstanceDefinition(FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
+  public ApplicationSettings getState() {
+    return this;
+  }
+
+  public void loadState(ApplicationSettings state) {
+    XmlSerializerUtil.copyBean(state, this);
+  }
+
+  @TestOnly
+  public void addFrameworkInstanceDefinition(FrameworkInstanceDefinition frameworkInstanceDefinition) {
     _frameworkInstanceDefinitions.add(frameworkInstanceDefinition);
   }
 
-  public void removeFrameworkInstanceDefinition(FrameworkInstanceDefinition frameworkInstanceDefinition)
-  {
-    _frameworkInstanceDefinitions.remove(frameworkInstanceDefinition);
-  }
-
-  @AbstractCollection(elementTag = "libraryBundlificationRule")
-  public List<LibraryBundlificationRule> getLibraryBundlificationRules()
-  {
-    return _libraryBundlificationRules;
-  }
-
-  public void setLibraryBundlificationRules(List<LibraryBundlificationRule> libraryBundlificationRules)
-  {
-    _libraryBundlificationRules = libraryBundlificationRules;
-  }
-
-
-  public @Nullable FrameworkInstanceDefinition getFrameworkInstance(@Nullable String name)
-  {
-    if (name != null)
-    {
-      for (FrameworkInstanceDefinition frameworkInstanceDefinition : _frameworkInstanceDefinitions)
-      {
-        if (name.equals(frameworkInstanceDefinition.getName()))
-        {
+  public
+  @Nullable
+  FrameworkInstanceDefinition getFrameworkInstance(@Nullable String name) {
+    if (name != null) {
+      for (FrameworkInstanceDefinition frameworkInstanceDefinition : _frameworkInstanceDefinitions) {
+        if (name.equals(frameworkInstanceDefinition.getName())) {
           return frameworkInstanceDefinition;
         }
       }
@@ -102,48 +92,36 @@ public class ApplicationSettings implements PersistentStateComponent<Application
     return null;
   }
 
-  public ApplicationSettings getState()
-  {
-    return this;
+  @AbstractCollection(elementTag = "frameworkDefinition")
+  public List<FrameworkInstanceDefinition> getFrameworkInstanceDefinitions() {
+    return _frameworkInstanceDefinitions;
   }
 
-  public void loadState(ApplicationSettings state)
-  {
-    XmlSerializerUtil.copyBean(state, this);
+  @AbstractCollection(elementTag = "libraryBundlificationRule")
+  public List<LibraryBundlificationRule> getLibraryBundlificationRules() {
+    return _libraryBundlificationRules;
   }
 
-  public ApplicationSettings createCopy()
-  {
-    ApplicationSettings copy = new ApplicationSettings();
-    XmlSerializerUtil.copyBean(this, copy);
-
-    List<FrameworkInstanceDefinition> copiedDefinitions = new ArrayList<FrameworkInstanceDefinition>();
-    for (FrameworkInstanceDefinition definition : _frameworkInstanceDefinitions)
-    {
-      FrameworkInstanceDefinition copiedDefinition = new FrameworkInstanceDefinition();
-      XmlSerializerUtil.copyBean(definition, copiedDefinition);
-      copiedDefinitions.add(copiedDefinition);
-    }
-    copy.setFrameworkInstanceDefinitions(copiedDefinitions);
-
-
-    List<LibraryBundlificationRule> copiedRules = new ArrayList<LibraryBundlificationRule>();
-    for (LibraryBundlificationRule libraryBundlificationRule : _libraryBundlificationRules)
-    {
-      LibraryBundlificationRule copiedRule = new LibraryBundlificationRule();
-      XmlSerializerUtil.copyBean(libraryBundlificationRule, copiedRule);
-      copiedRules.add(copiedRule);
-    }
-    copy.setLibraryBundlificationRules(copiedRules);
-    return copy;
+  public void setFrameworkInstanceDefinitions(List<FrameworkInstanceDefinition> frameworkInstanceDefinitions) {
+    _frameworkInstanceDefinitions = frameworkInstanceDefinitions;
+    dispatcher.getMulticaster().frameworkInstancesChanged();
   }
 
-  public ApplicationSettings()
-  {
-    _libraryBundlificationRules.add(new LibraryBundlificationRule());
+  public void setLibraryBundlificationRules(List<LibraryBundlificationRule> libraryBundlificationRules) {
+    _libraryBundlificationRules = libraryBundlificationRules;
   }
 
-  private List<FrameworkInstanceDefinition> _frameworkInstanceDefinitions = new ArrayList<FrameworkInstanceDefinition>()
-      ;
-  private List<LibraryBundlificationRule> _libraryBundlificationRules = new ArrayList<LibraryBundlificationRule>();
+  public void addApplicationSettingsListener(ApplicationSettingsListener listener) {
+    dispatcher.addListener(listener);
+  }
+
+  public void removeApplicationSettingsListener(ApplicationSettingsListener listener) {
+    dispatcher.removeListener(listener);
+  }
+
+  public interface ApplicationSettingsListener extends EventListener {
+    void frameworkInstancesChanged();
+  }
+
+
 }

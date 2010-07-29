@@ -48,9 +48,6 @@
             <implementation-class>org.osmorc.OsmorcProjectComponent</implementation-class>
         </component>
         <component>
-            <implementation-class>org.osmorc.settings.SettingsEditor</implementation-class>
-        </component>
-        <component>
             <implementation-class>org.osmorc.ModuleChangeHandler</implementation-class>
         </component>
     </project-components>
@@ -76,16 +73,12 @@
         <!-- Applications settings and application settings editors -->
         <applicationService serviceInterface="org.osmorc.settings.ApplicationSettings"
                             serviceImplementation="org.osmorc.settings.ApplicationSettings"/>
-        <applicationService serviceInterface="org.osmorc.settings.ApplicationSettingsUpdateNotifier"
-                            serviceImplementation="org.osmorc.settings.ApplicationSettingsUpdateNotifier"/>
 
         <!-- Framework integration -->
         <applicationService serviceInterface="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"
                             serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
         <applicationService serviceInterface="org.osmorc.frameworkintegration.LibraryHandler"
                             serviceImplementation="org.osmorc.frameworkintegration.impl.LibraryHandlerImpl"/>
-        <applicationService serviceInterface="org.osmorc.frameworkintegration.FrameworkInstanceUpdateNotifier"
-                            serviceImplementation="org.osmorc.frameworkintegration.FrameworkInstanceUpdateNotifier"/>
         <applicationService
                 serviceInterface="org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager"
                 serviceImplementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager"/>
@@ -136,17 +129,6 @@
         <projectService serviceInterface="org.osmorc.settings.ProjectSettings"
                         serviceImplementation="org.osmorc.settings.ProjectSettings"/>
 
-        <projectService serviceInterface="org.osmorc.settings.ProjectSettingsEditor"
-                        serviceImplementation="org.osmorc.settings.ProjectSettingsEditor"/>
-        <projectService serviceInterface="org.osmorc.settings.ProjectSettingsUpdateNotifier"
-                        serviceImplementation="org.osmorc.settings.ProjectSettingsUpdateNotifier"/>
-        <projectService serviceInterface="org.osmorc.settings.IDESettingsEditor"
-                        serviceImplementation="org.osmorc.settings.IDESettingsEditor"/>
-        <projectService serviceInterface="org.osmorc.settings.FrameworkDefinitionsEditor"
-                        serviceImplementation="org.osmorc.settings.FrameworkDefinitionsEditor"/>
-        <projectService serviceInterface="org.osmorc.settings.LibraryBundlingEditor"
-                        serviceImplementation="org.osmorc.settings.LibraryBundlingEditor"/>
-
         <!-- Other project services -->
         <projectService serviceInterface="org.osmorc.BundleManager"
                         serviceImplementation="org.osmorc.impl.BundleManagerImpl"/>
@@ -180,6 +162,8 @@
         <compiler implementation="org.osmorc.make.BundleCompiler"/>
         <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
         <programRunner implementation="org.osmorc.run.OsgiDebuggerRunner"/>
+        <projectConfigurable implementation="org.osmorc.settings.ProjectSettingsEditor"/>
+      <applicationConfigurable implementation="org.osmorc.settings.ApplicationSettingsEditor"/>
     </extensions>
 
 

@@ -31,13 +31,11 @@ import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.impl.ProjectMacrosUtil;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.ui.EditorTextField;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestFileTypeFactory;
 
 /**
@@ -50,7 +48,7 @@ public class ManifestEditor extends EditorTextField implements Disposable {
     private ManifestEditor.MyDocumentAdapter listener = new MyDocumentAdapter();
 
 
-    public ManifestEditor(Project project, String text) {
+    public ManifestEditor(@NotNull Project project, String text) {
         super("", project, ManifestFileTypeFactory.MANIFEST);
         addDocumentListener(listener);
         setText(text);
