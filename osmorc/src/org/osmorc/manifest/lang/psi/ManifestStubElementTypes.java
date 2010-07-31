@@ -25,6 +25,7 @@
 
 package org.osmorc.manifest.lang.psi;
 
+import com.intellij.psi.tree.IFileElementType;
 import org.osmorc.manifest.lang.psi.elementtype.*;
 import org.osmorc.manifest.lang.ManifestLanguage;
 import com.intellij.psi.tree.IStubFileElementType;
@@ -39,7 +40,8 @@ public class ManifestStubElementTypes {
     public static final AttributeElementType ATTRIBUTE = new AttributeElementType();
     public static final DirectiveElementType DIRECTIVE = new DirectiveElementType();
     public static final ClauseElementType CLAUSE = new ClauseElementType();
+  public static final IFileElementType FILE = new IStubFileElementType("ManifestFile", ManifestLanguage.INSTANCE);
 
-    private ManifestStubElementTypes() {
+  private ManifestStubElementTypes() {
     }
 }

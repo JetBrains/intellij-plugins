@@ -40,6 +40,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
+import org.osmorc.manifest.lang.psi.ManifestStubElementTypes;
 
 
 /**
@@ -66,9 +67,9 @@ public class ManifestParserTest {
     public void testSimple() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Manifest-Version: 2\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -87,9 +88,9 @@ public class ManifestParserTest {
     public void testSimpleWithSpaceInHeaderAssignment() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Manifest-Version : 2\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -109,9 +110,9 @@ public class ManifestParserTest {
     public void testSimpleMissingSpaceAfterHeaderAssignment1() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Manifest-Version:2\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -127,9 +128,9 @@ public class ManifestParserTest {
     public void testSimpleMissingSpaceAfterHeaderAssignment2() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Bundle-Name:name\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -148,9 +149,9 @@ public class ManifestParserTest {
     public void testSimpleWithContinuation() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Bundle-Vendor: Acme\n Company\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -169,9 +170,9 @@ public class ManifestParserTest {
     public void testAttribute() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: com.acme;version=\"1.0.0\"\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -197,9 +198,9 @@ public class ManifestParserTest {
     public void testAttributeWithoutName() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: com.acme;=\"1.0.0\"\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -225,9 +226,9 @@ public class ManifestParserTest {
     public void testAttributeWithoutNameOutsideParameter() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: =\"1.0.0\"\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -251,9 +252,9 @@ public class ManifestParserTest {
     public void testParameterWithoutParametrized() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: ;version=\"1.0.0\"\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -279,9 +280,9 @@ public class ManifestParserTest {
     public void testDirective() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: com.acme;resolution:=optional\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -308,9 +309,9 @@ public class ManifestParserTest {
     public void testDirectiveWithoutName() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: com.acme;:=optional\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -337,9 +338,9 @@ public class ManifestParserTest {
     public void testDirectiveWithoutNameOutsideParameter() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: :=optional\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -364,9 +365,9 @@ public class ManifestParserTest {
     public void testDirectiveInvalidAssignmentTokens() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: com.acme;resolution: =optional\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -392,9 +393,9 @@ public class ManifestParserTest {
     public void testSplitDirectiveAtColon() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: com.acme;resolution:\n =optional\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -423,9 +424,9 @@ public class ManifestParserTest {
     public void testAttributeAndDirective() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: com.acme;version=\"1.0.0\";resolution:=optional\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -457,9 +458,9 @@ public class ManifestParserTest {
     public void testAttributeAndDirectiveWithContinuationBeforeSemicolon() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: com.acme;version=\"1.0.0\"\n ;resolution:=optional\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -491,9 +492,9 @@ public class ManifestParserTest {
     public void testAttributeAndDirectiveWithContinuationAfterSemicolon() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: com.acme;version=\"1.0.0\";\n resolution:=optional\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -525,9 +526,9 @@ public class ManifestParserTest {
     public void testAttributeAndDirectiveWithBadContinuationAfterAttributeName() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: com.acme;att\n=attvlue;dir:=dirvalue\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER, ManifestElementTypes.HEADER);
@@ -572,9 +573,9 @@ public class ManifestParserTest {
                         "Bundle-Activator: com.acme.Activator\n" +
                         "\n" +
                         "Name: otherSection\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION, ManifestTokenType.SECTION_END, ManifestElementTypes.SECTION);
         ASTNode fileNode = node;
         node = fileNode.getChildren(null)[0];
@@ -615,9 +616,9 @@ public class ManifestParserTest {
     public void testSimpleHeaderValueStartsWithQuote() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                         "Implementation-Vendor: \"Apache Software Foundation\"\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         ASTNode fileNode = node;
         node = fileNode.getChildren(null)[0];
@@ -637,9 +638,9 @@ public class ManifestParserTest {
     public void testSimpleHeaderValueStartsWithColon() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                         "simpleHeader: :value\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         ASTNode fileNode = node;
         node = fileNode.getChildren(null)[0];
@@ -659,9 +660,9 @@ public class ManifestParserTest {
     public void testSimpleHeaderValueStartsWithEquals() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                         "simpleHeader: =value\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         ASTNode fileNode = node;
         node = fileNode.getChildren(null)[0];
@@ -681,9 +682,9 @@ public class ManifestParserTest {
     public void testSimpleHeaderValueStartsWithSemicolon() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                         "simpleHeader: ;value\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         ASTNode fileNode = node;
         node = fileNode.getChildren(null)[0];
@@ -703,9 +704,9 @@ public class ManifestParserTest {
     public void testEmptyClause() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: ,com.acme\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
@@ -729,9 +730,9 @@ public class ManifestParserTest {
     public void testTwoClauses() {
         PsiBuilder builder = new PsiBuilderImpl(lexer, TokenSet.EMPTY, TokenSet.EMPTY,
                 "Import-Package: com.acme.p;a=b,com.acme\n");
-        ASTNode node = testObject.parse(ManifestParserDefinition.FILE, builder);
+        ASTNode node = testObject.parse(ManifestStubElementTypes.FILE, builder);
 
-        assertThat(node.getElementType(), sameInstance((IElementType) ManifestParserDefinition.FILE));
+        assertThat(node.getElementType(), sameInstance((IElementType) ManifestStubElementTypes.FILE));
         checkContainsNodes(node, ManifestElementTypes.SECTION);
         node = node.getChildren(null)[0];
         checkContainsNodes(node, ManifestElementTypes.HEADER);
