@@ -74,6 +74,12 @@
 
     <!-- struts.xml -->
     <dom.fileDescription implementation="com.intellij.struts2.dom.struts.Struts2DomFileDescription"/>
+
+    <typeIcon className="com.intellij.struts2.dom.struts.Bean" icon="/resources/icons/coffeebean.png"/>
+    <typeIcon className="com.intellij.struts2.dom.struts.constant.Constant" icon="/nodes/parameter.png"/>
+    <typeIcon className="com.intellij.struts2.dom.struts.Include" icon="/resources/icons/import1.png"/>
+    <typeIcon className="com.intellij.struts2.dom.struts.strutspackage.ResultType" icon="/resources/icons/presentation.png"/>
+
     <annotator language="XML" implementationClass="com.intellij.struts2.annotators.StrutsFileSetCheckingAnnotator"/>
     <compiler.inspectionValidator implementation="com.intellij.struts2.dom.inspection.Struts2ModelValidator"/>
 
@@ -114,6 +120,12 @@
 
     <!-- validation.xml/validator-config.xml -->
     <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorDomFileDescription"/>
+
+    <typeIcon className="com.intellij.struts2.dom.validator.Field" icon="/nodes/field.png"/>
+    <typeIcon className="com.intellij.struts2.dom.validator.FieldValidator" icon="/resources/icons/validation.png"/>
+    <typeIcon className="com.intellij.struts2.dom.validator.Message" icon="/resources/icons/message.png"/>
+    <typeIcon className="com.intellij.struts2.dom.validator.config.ValidatorConfig" icon="/resources/icons/validation.png"/>
+
     <compiler.inspectionValidator implementation="com.intellij.struts2.dom.inspection.ValidatorModelValidator"/>
 
     <projectService serviceInterface="com.intellij.struts2.dom.validator.ValidatorManager"

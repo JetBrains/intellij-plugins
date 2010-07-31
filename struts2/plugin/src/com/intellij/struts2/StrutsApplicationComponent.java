@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,9 +22,15 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.struts2.dom.params.Param;
-import com.intellij.struts2.dom.struts.*;
+import com.intellij.struts2.dom.struts.Include;
+import com.intellij.struts2.dom.struts.IncludeFileResolvingConverter;
+import com.intellij.struts2.dom.struts.StrutsRoot;
+import com.intellij.struts2.dom.struts.UnknownHandlerRefConverter;
 import com.intellij.struts2.dom.struts.action.*;
-import com.intellij.struts2.dom.struts.constant.*;
+import com.intellij.struts2.dom.struts.constant.ConstantNameConverter;
+import com.intellij.struts2.dom.struts.constant.ConstantNameConverterImpl;
+import com.intellij.struts2.dom.struts.constant.ConstantValueConverter;
+import com.intellij.struts2.dom.struts.constant.ConstantValueConverterImpl;
 import com.intellij.struts2.dom.struts.impl.*;
 import com.intellij.struts2.dom.struts.impl.path.StrutsPathReferenceConverterImpl;
 import com.intellij.struts2.dom.struts.strutspackage.*;
@@ -36,7 +42,6 @@ import com.intellij.struts2.dom.validator.config.ValidatorConfig;
 import com.intellij.struts2.dom.validator.config.ValidatorConfigResolveConverter;
 import com.intellij.struts2.dom.validator.impl.ValidatorConfigResolveConverterImpl;
 import com.intellij.struts2.facet.StrutsFacetType;
-import com.intellij.util.Icons;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NonNls;
@@ -198,7 +203,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     });
 
     // <include>
-    ElementPresentationManager.registerIcon(Include.class, StrutsIcons.INCLUDE);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<Include>(Include.class) {
       protected String getDisplayName(final Include include) {
         return include.getFile().getStringValue();
@@ -244,19 +248,14 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     ElementPresentationManager.registerNameProvider(nameProviderRegistry);
 
     ElementPresentationManager.registerIcon(Action.class, StrutsIcons.ACTION);
-    ElementPresentationManager.registerIcon(Bean.class, StrutsIcons.BEAN);
-    ElementPresentationManager.registerIcon(Constant.class, Icons.PARAMETER_ICON);
     ElementPresentationManager.registerIcon(Interceptor.class, StrutsIcons.INTERCEPTOR);
     ElementPresentationManager.registerIcon(InterceptorStack.class, StrutsIcons.INTERCEPTOR_STACK);
     ElementPresentationManager.registerIcon(Param.class, StrutsIcons.PARAM);
-    ElementPresentationManager.registerIcon(ResultType.class, StrutsIcons.RESULT_TYPE);
     ElementPresentationManager.registerIcon(StrutsPackage.class, StrutsIcons.PACKAGE);
   }
 
   private static void registerValidationDomPresentation() {
     final TypedNameProviderRegistry nameProviderRegistry = new TypedNameProviderRegistry();
-
-    ElementPresentationManager.registerIcon(ValidatorConfig.class, StrutsIcons.VALIDATOR);
 
     ElementPresentationManager.registerIcon(Validators.class, StrutsIcons.VALIDATION_CONFIG_FILE_ICON);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<Validators>(Validators.class) {
@@ -266,7 +265,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     });
 
     // <field>
-    ElementPresentationManager.registerIcon(Field.class, Icons.FIELD_ICON);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<Field>(Field.class) {
       protected String getDisplayName(final Field field) {
         return field.getName().getStringValue();
@@ -274,7 +272,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     });
 
     // <field-validator>
-    ElementPresentationManager.registerIcon(FieldValidator.class, StrutsIcons.VALIDATOR);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<FieldValidator>(FieldValidator.class) {
       protected String getDisplayName(final FieldValidator fieldValidator) {
         final ValidatorConfig validatorConfig = fieldValidator.getType().getValue();
@@ -283,7 +280,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     });
 
     // <message>
-    ElementPresentationManager.registerIcon(Message.class, StrutsIcons.MESSAGE);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<Message>(Message.class) {
       protected String getDisplayName(final Message message) {
         final String key = message.getKey().getStringValue();

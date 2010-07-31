@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -78,15 +78,12 @@ public final class StrutsIcons {
   // struts.xml
   public static final Icon ACTION = getIcon("action.png");
   public static final Icon ACTION_SMALL = getIcon("action_small.png");
-  public static final Icon BEAN = getIcon("coffeebean.png");
   public static final Icon EXCEPTION_MAPPING = Icons.EXCEPTION_CLASS_ICON;
-  public static final Icon INCLUDE = getIcon("import1.png");
   public static final Icon INTERCEPTOR = getIcon("funnel.png");
   public static final Icon INTERCEPTOR_STACK = getIcon("funnel_up.png");
   public static final Icon PACKAGE = getIcon("folder_gear.png");
   public static final Icon PARAM = getIcon("preferences.png");
   public static final Icon RESULT = getIcon("arrow_right_blue.png");
-  public static final Icon RESULT_TYPE = getIcon("presentation.png");
 
   public static final LayeredIcon GLOBAL_RESULT = new LayeredIcon(2);
   public static final LayeredIcon GLOBAL_EXCEPTION_MAPPING = new LayeredIcon(2);
@@ -96,10 +93,7 @@ public final class StrutsIcons {
   public static final LayeredIcon DEFAULT_INTERCEPTOR_REF = new LayeredIcon(2);
 
   // validation.xml
-  public static final Icon VALIDATOR = getIcon("validation.png");
   public static final Icon VALIDATOR_SMALL = getIcon("validation_small.png");
-
-  public static final Icon MESSAGE = getIcon("message.png");
 
   // generic reference providers
   public static final Icon THEME = getIcon("transform.png");
