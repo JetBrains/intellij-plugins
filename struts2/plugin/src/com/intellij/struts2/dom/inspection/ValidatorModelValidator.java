@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.inspection;
 
+import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.util.InspectionValidatorUtil;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -33,6 +34,7 @@ import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.containers.FactoryMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
@@ -49,8 +51,13 @@ public class ValidatorModelValidator extends ValidatorBase {
 
   public ValidatorModelValidator() {
     super(StrutsBundle.message("inspections.validator.model.validator"),
-          StrutsBundle.message("inspections.validator.model.validator.progress"),
-          ValidatorModelInspection.class, ValidatorConfigModelInspection.class);
+          StrutsBundle.message("inspections.validator.model.validator.progress"));
+  }
+
+  @NotNull
+  @Override
+  public Class<? extends LocalInspectionTool>[] getInspectionToolClasses(final CompileContext context) {
+    return new Class[]{ValidatorModelInspection.class, ValidatorConfigModelInspection.class};
   }
 
   public Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context) {
