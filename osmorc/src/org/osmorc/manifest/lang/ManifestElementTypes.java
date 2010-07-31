@@ -33,8 +33,7 @@ import org.osmorc.manifest.lang.psi.ManifestStubElementTypes;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestElementTypes {
-    public static final IFileElementType FILE = ManifestStubElementTypes.FILE;
-    public static final IElementType HEADER = ManifestStubElementTypes.HEADER;
+  public static final IElementType HEADER = ManifestStubElementTypes.HEADER;
 
     public static final IElementType SECTION = ManifestStubElementTypes.SECTION;
     public static final IElementType CLAUSE = ManifestStubElementTypes.CLAUSE;

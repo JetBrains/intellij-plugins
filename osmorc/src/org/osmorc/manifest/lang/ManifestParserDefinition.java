@@ -25,7 +25,6 @@
 package org.osmorc.manifest.lang;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.LanguageUtil;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
@@ -36,6 +35,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
+import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +48,9 @@ import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestParserDefinition implements ParserDefinition {
-    @NotNull
+  public static final IFileElementType FILE = new IStubFileElementType("ManifestFile", ManifestLanguage.INSTANCE);
+
+  @NotNull
     public Lexer createLexer(Project project) {
         return new ManifestLexer();
     }
@@ -58,7 +60,7 @@ public class ManifestParserDefinition implements ParserDefinition {
     }
 
     public IFileElementType getFileNodeType() {
-        return ManifestElementTypes.FILE;
+        return FILE;
     }
 
     @NotNull

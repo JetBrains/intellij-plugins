@@ -33,8 +33,7 @@ import com.intellij.psi.tree.IStubFileElementType;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestStubElementTypes {
-    public static final IStubFileElementType FILE = new IStubFileElementType("ManifestFile", ManifestLanguage.INSTANCE);
-    public static final HeaderElementType HEADER = new HeaderElementType();
+  public static final HeaderElementType HEADER = new HeaderElementType();
     public static final SectionElementType SECTION = new SectionElementType();
     public static final HeaderValuePartElementType HEADER_VALUE_PART = new HeaderValuePartElementType();
     public static final AttributeElementType ATTRIBUTE = new AttributeElementType();
