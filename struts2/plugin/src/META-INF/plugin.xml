@@ -75,6 +75,25 @@
     <!-- struts.xml -->
     <dom.fileDescription implementation="com.intellij.struts2.dom.struts.Struts2DomFileDescription"/>
 
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.action.Action"
+                        implementationClass="com.intellij.struts2.dom.struts.impl.ActionImpl"/>
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.constant.Constant"
+                        implementationClass="com.intellij.struts2.dom.struts.constant.ConstantImpl"/>
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.GlobalResult"
+                        implementationClass="com.intellij.struts2.dom.struts.impl.GlobalResultImpl"/>
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.Interceptor"
+                        implementationClass="com.intellij.struts2.dom.struts.impl.InterceptorImpl"/>
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.InterceptorRef"
+                        implementationClass="com.intellij.struts2.dom.struts.impl.InterceptorRefImpl"/>
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.InterceptorStack"
+                        implementationClass="com.intellij.struts2.dom.struts.impl.InterceptorStackImpl"/>
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.params.Param"
+                        implementationClass="com.intellij.struts2.dom.params.ParamImpl"/>
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.action.Result"
+                        implementationClass="com.intellij.struts2.dom.struts.impl.ResultImpl"/>
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.StrutsPackage"
+                        implementationClass="com.intellij.struts2.dom.struts.impl.StrutsPackageImpl"/>
+
     <typeIcon className="com.intellij.struts2.dom.struts.Bean" icon="/resources/icons/coffeebean.png"/>
     <typeIcon className="com.intellij.struts2.dom.struts.constant.Constant" icon="/nodes/parameter.png"/>
     <typeIcon className="com.intellij.struts2.dom.struts.Include" icon="/resources/icons/import1.png"/>
@@ -120,6 +139,11 @@
 
     <!-- validation.xml/validator-config.xml -->
     <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorDomFileDescription"/>
+
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.validator.FieldValidator"
+                        implementationClass="com.intellij.struts2.dom.validator.impl.FieldValidatorImpl"/>
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.validator.Validator"
+                        implementationClass="com.intellij.struts2.dom.validator.impl.ValidatorImpl"/>
 
     <typeIcon className="com.intellij.struts2.dom.validator.Field" icon="/nodes/field.png"/>
     <typeIcon className="com.intellij.struts2.dom.validator.FieldValidator" icon="/resources/icons/validation.png"/>

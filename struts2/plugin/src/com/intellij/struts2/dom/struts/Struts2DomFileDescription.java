@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,14 +17,6 @@ package com.intellij.struts2.dom.struts;
 
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.dom.StrutsDomConstants;
-import com.intellij.struts2.dom.params.Param;
-import com.intellij.struts2.dom.params.ParamImpl;
-import com.intellij.struts2.dom.struts.action.Action;
-import com.intellij.struts2.dom.struts.action.Result;
-import com.intellij.struts2.dom.struts.constant.Constant;
-import com.intellij.struts2.dom.struts.constant.ConstantImpl;
-import com.intellij.struts2.dom.struts.impl.*;
-import com.intellij.struts2.dom.struts.strutspackage.*;
 import com.intellij.util.xml.DomFileDescription;
 
 /**
@@ -41,16 +33,6 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
   protected void initializeFileDescription() {
     registerNamespacePolicy(StrutsDomConstants.STRUTS_NAMESPACE_KEY,
                             StrutsConstants.STRUTS_DTDS);
-
-    registerImplementation(Action.class, ActionImpl.class);
-    registerImplementation(Constant.class, ConstantImpl.class);
-    registerImplementation(GlobalResult.class, GlobalResultImpl.class);
-    registerImplementation(Interceptor.class, InterceptorImpl.class);
-    registerImplementation(InterceptorRef.class, InterceptorRefImpl.class);
-    registerImplementation(InterceptorStack.class, InterceptorStackImpl.class);
-    registerImplementation(Param.class, ParamImpl.class);
-    registerImplementation(Result.class, ResultImpl.class);
-    registerImplementation(StrutsPackage.class, StrutsPackageImpl.class);
   }
 
 }
