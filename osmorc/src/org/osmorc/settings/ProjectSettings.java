@@ -26,81 +26,89 @@
 package org.osmorc.settings;
 
 import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.EventDispatcher;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.EventListener;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 @State(
-    name = "Osmorc",
-    storages = {
-    @Storage(
-        id = "other",
-        file = "$PROJECT_FILE$"
-    )}
-)
-public class ProjectSettings implements PersistentStateComponent<ProjectSettings>
-{
+  name = "Osmorc",
+  storages = {@Storage(
+    id = "other",
+    file = "$PROJECT_FILE$")})
+public class ProjectSettings implements PersistentStateComponent<ProjectSettings> {
+
+  private EventDispatcher<ProjectSettingsListener> dispatcher = EventDispatcher.create(ProjectSettingsListener.class);
+
+  public static ProjectSettings getInstance(Project project) {
+    return ServiceManager.getService(project, ProjectSettings.class);
+  }
+
   @Nullable
-  public String getFrameworkInstanceName()
-  {
+  public String getFrameworkInstanceName() {
     return _frameworkInstanceName;
   }
 
-  public void setFrameworkInstanceName(@Nullable String frameworkInstanceName)
-  {
+  public void setFrameworkInstanceName(@Nullable String frameworkInstanceName) {
     _frameworkInstanceName = frameworkInstanceName;
+    dispatcher.getMulticaster().projectSettingsChanged();
   }
 
   @NotNull
-  public ProjectSettings getState()
-  {
+  public ProjectSettings getState() {
     return this;
   }
 
-  public void loadState(@NotNull ProjectSettings state)
-  {
+  public void loadState(@NotNull ProjectSettings state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 
-  @NotNull
-  public ProjectSettings createCopy()
-  {
-    ProjectSettings copy = new ProjectSettings();
-    XmlSerializerUtil.copyBean(this, copy);
-    return copy;
-  }
-
-  public void setCreateFrameworkInstanceModule(boolean selected)
-  {
+  public void setCreateFrameworkInstanceModule(boolean selected) {
     _createFrameworkInstanceModule = selected;
+    dispatcher.getMulticaster().projectSettingsChanged();
   }
 
-  public boolean isCreateFrameworkInstanceModule()
-  {
+  public boolean isCreateFrameworkInstanceModule() {
     return _createFrameworkInstanceModule;
   }
 
-  public void setDefaultManifestFileLocation(@NotNull String defaultManifestFileLocation)
-  {
+  public void setDefaultManifestFileLocation(@NotNull String defaultManifestFileLocation) {
     _defaultManifestFileLocation = defaultManifestFileLocation;
-      if ( _defaultManifestFileLocation.equals("META-INF") ) {
-          // we specify full names, so to work with older projects, we have to convert this
-          _defaultManifestFileLocation = "META-INF/MANIFEST.MF";
-      }
+    if (_defaultManifestFileLocation.equals("META-INF")) {
+      // we specify full names, so to work with older projects, we have to convert this
+      _defaultManifestFileLocation = "META-INF/MANIFEST.MF";
+    }
+    dispatcher.getMulticaster().projectSettingsChanged();
+  }
+
+  public void addProjectSettingsListener(ProjectSettingsListener listener) {
+    dispatcher.addListener(listener);
+  }
+
+  public void removeProjectSettingsListener(ProjectSettingsListener listener) {
+    dispatcher.removeListener(listener);
   }
 
   @NotNull
-  public String getDefaultManifestFileLocation()
-  {
+  public String getDefaultManifestFileLocation() {
     return _defaultManifestFileLocation;
   }
 
   private @Nullable String _frameworkInstanceName;
   private boolean _createFrameworkInstanceModule;
   private @NotNull String _defaultManifestFileLocation = "META-INF/MANIFEST.MF";
+
+
+  public  interface ProjectSettingsListener extends EventListener {
+    void projectSettingsChanged();
+  }
 }

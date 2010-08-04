@@ -27,6 +27,7 @@ package org.osmorc.frameworkintegration;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Author: Robert F. Beeger (robert@beeger.net)
@@ -46,6 +47,7 @@ public class FrameworkIntegratorRegistry
     return result;
   }
 
+  @Nullable
   public FrameworkIntegrator findIntegratorByName(@NotNull final String name)
   {
     FrameworkIntegrator result = null;
@@ -62,6 +64,7 @@ public class FrameworkIntegratorRegistry
     return result;
   }
 
+  @Nullable
   public FrameworkIntegrator findIntegratorByInstanceDefinition(
       @NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition)
   {

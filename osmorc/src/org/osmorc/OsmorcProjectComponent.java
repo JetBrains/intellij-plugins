@@ -35,31 +35,26 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiTreeChangeAdapter;
 import com.intellij.psi.PsiTreeChangeEvent;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkInstanceModuleManager;
-import org.osmorc.frameworkintegration.FrameworkInstanceUpdateNotifier;
 import org.osmorc.manifest.lang.psi.ManifestFile;
 import org.osmorc.settings.ProjectSettings;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcProjectComponent implements ProjectComponent, FrameworkInstanceUpdateNotifier.Listener {
+public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings.ProjectSettingsListener {
   private final BundleManager bundleManager;
-  private final FrameworkInstanceUpdateNotifier updateNotifier;
   private final ProjectSettings projectSettings;
   private final Project project;
   private final Application application;
   private final FrameworkInstanceModuleManager frameworkInstanceModuleManager;
 
   public OsmorcProjectComponent(BundleManager bundleManager,
-                                FrameworkInstanceUpdateNotifier updateNotifier,
                                 ProjectSettings projectSettings,
                                 Project project,
                                 Application application,
                                 FrameworkInstanceModuleManager frameworkInstanceModuleManager) {
     this.bundleManager = bundleManager;
-    this.updateNotifier = updateNotifier;
     this.projectSettings = projectSettings;
     this.project = project;
     this.application = application;
@@ -89,37 +84,19 @@ public class OsmorcProjectComponent implements ProjectComponent, FrameworkInstan
         processChange(event);
       }
     });
+    projectSettings.addProjectSettingsListener(this);
   }
 
   public void disposeComponent() {
-  }
-
-  public void updateFrameworkInstance(@NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition,
-                                      @NotNull FrameworkInstanceUpdateNotifier.UpdateKind updateKind) {
-    if (frameworkInstanceDefinition.getName().equals(projectSettings.getFrameworkInstanceName())) {
-      runFrameworkInstanceUpdate(false);
-    }
-  }
-
-  public void updateFrameworkInstanceSelection(@NotNull Project project) {
-    if (this.project == project) {
-      runFrameworkInstanceUpdate(true);
-    }
-  }
-
-  public void frameworkInstanceModuleHandlingChanged(@NotNull Project project) {
-    if (this.project == project) {
-      frameworkInstanceModuleManager.updateFrameworkInstanceModule();
-    }
+    projectSettings.removeProjectSettingsListener(this);
   }
 
   public void projectOpened() {
-    updateNotifier.addListener(this);
     frameworkInstanceModuleManager.updateFrameworkInstanceModule();
   }
 
   public void projectClosed() {
-    updateNotifier.removeListener(this);
+
   }
 
 
@@ -150,5 +127,9 @@ public class OsmorcProjectComponent implements ProjectComponent, FrameworkInstan
     if (bundleManager.reloadFrameworkInstanceLibraries(onlyIfFrameworkInstanceSelectionChanged)) {
       frameworkInstanceModuleManager.updateFrameworkInstanceModule();
     }
+  }
+
+  public void projectSettingsChanged() {
+  runFrameworkInstanceUpdate(true);
   }
 }

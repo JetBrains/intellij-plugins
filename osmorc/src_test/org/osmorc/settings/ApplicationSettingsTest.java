@@ -24,14 +24,12 @@
  */
 package org.osmorc.settings;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsSame.sameInstance;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 
-import java.util.List;
+import static org.hamcrest.core.IsSame.sameInstance;
+import static org.junit.Assert.assertThat;
 
 
 /**
@@ -48,21 +46,6 @@ public class ApplicationSettingsTest {
         testObject.addFrameworkInstanceDefinition(frameworkInstanceDefinition);
     }
 
-    @Test
-    public void testCreateCopy() {
-        ApplicationSettings copy = testObject.createCopy();
-
-        assertNotSame(copy, testObject);
-        assertNotSame(copy.getFrameworkInstanceDefinitions(), testObject.getFrameworkInstanceDefinitions());
-
-        List<FrameworkInstanceDefinition> orgDefinitions = testObject.getFrameworkInstanceDefinitions();
-        List<FrameworkInstanceDefinition> copiedDefinitions = copy.getFrameworkInstanceDefinitions();
-
-        assertThat(orgDefinitions.size(), equalTo(1));
-        assertThat(copiedDefinitions.size(), equalTo(1));
-        assertNotSame(orgDefinitions.get(0), copiedDefinitions.get(0));
-        assertEquals(orgDefinitions.get(0), copiedDefinitions.get(0));
-    }
 
     @Test
     public void testGetFrameworkInstance() {
