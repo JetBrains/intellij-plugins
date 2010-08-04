@@ -68,7 +68,7 @@ public class ApplicationSettingsEditor implements SearchableConfigurable, Config
 
     public JComponent createComponent() {
       JPanel result = new JPanel(new BorderLayout());
-      result.add(new JLabel("Please select one of the options in the settings tree."), BorderLayout.CENTER);
+      result.add(new JLabel("Please select one of the options in the settings tree.", JLabel.CENTER), BorderLayout.CENTER);
       return result;
     }
 
