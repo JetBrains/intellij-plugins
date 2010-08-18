@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +38,7 @@ import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.struts2.facet.ui.StrutsVersion;
+import com.intellij.util.text.VersionComparatorUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +68,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
   @NotNull
   public List<FrameworkVersion> getVersions() {
     final List<FrameworkVersion> result = new ArrayList<FrameworkVersion>();
-    for (StrutsVersion version : StrutsVersion.values()) {
+    for (final StrutsVersion version : StrutsVersion.values()) {
       final String name = version.toString();
       result.add(new FrameworkVersion(name, "struts2-" + name, version.getLibraryInfos()));
     }
@@ -85,11 +86,11 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
           if (directory != null &&
               directory.findFile(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME) == null) {
 
-            final boolean is2_1_X = version.getLibraryName().startsWith("2.1");
-            final FileTemplate strutsXmlTemplate = FileTemplateManager.getInstance()
-                .getJ2eeTemplate(is2_1_X ?
-                                 StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_1_XML :
-                                 StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_0_XML);
+            final boolean is2_1_X = VersionComparatorUtil.compare(version.getVersionName(), "2.1") > 0;
+            final FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance();
+            final FileTemplate strutsXmlTemplate = fileTemplateManager.getJ2eeTemplate(is2_1_X ?
+                               StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_1_XML :
+                               StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_0_XML);
 
             try {
               final StrutsFacetConfiguration strutsFacetConfiguration = strutsFacet.getConfiguration();
