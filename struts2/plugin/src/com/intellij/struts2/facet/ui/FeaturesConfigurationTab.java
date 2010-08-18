@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -67,11 +67,11 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
       return;
     }
     versionComboBox.setModel(new EnumComboBoxModel<StrutsVersion>(StrutsVersion.class));
-    versionComboBox.getModel().setSelectedItem(StrutsVersion.STRUTS_2_1_8);
+    versionComboBox.getModel().setSelectedItem(StrutsVersion.STRUTS_2_2_1);
 
     // TODO remove hard-coded version
     validator.setRequiredLibraries(getRequiredLibraries());
-    validator.setDescription(new StrutsFacetLibrariesValidatorDescription(StrutsVersion.STRUTS_2_1_8.getVersion()));
+    validator.setDescription(new StrutsFacetLibrariesValidatorDescription(StrutsVersion.STRUTS_2_2_1.getVersion()));
   }
 
 

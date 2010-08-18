@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 package com.intellij.struts2.facet.ui;
 
 import com.intellij.facet.ui.libraries.LibraryInfo;
+
 import static com.intellij.facet.ui.libraries.MavenLibraryUtil.createMavenJarInfo;
 import static com.intellij.facet.ui.libraries.MavenLibraryUtil.createSubMavenJarInfo;
 
@@ -35,8 +36,8 @@ public enum StrutsVersion {
           createSubMavenJarInfo("/opensymphony/", "ognl", "2.6.11", "ognl.Ognl")
   }),
 
-  STRUTS_2_1_8("2.1.8", new LibraryInfo[]{
-           createSubMavenJarInfo("/org/apache/struts", "struts2-core", "2.1.8", "org.apache.struts2.StrutsConstants"),
+  STRUTS_2_2_1("2.2.1", new LibraryInfo[]{
+           createSubMavenJarInfo("/org/apache/struts", "struts2-core", "2.2.1", "org.apache.struts2.StrutsConstants"),
            createMavenJarInfo("commons-fileupload", "1.2.1", "org.apache.commons.fileupload.FileUpload"),
            createMavenJarInfo("commons-io", "1.3.2", "org.apache.commons.io.FileUtils"),
            createMavenJarInfo("commons-logging", "1.1", "org.apache.commons.logging.Log"),
