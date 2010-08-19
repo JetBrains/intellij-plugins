@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.intellij.struts2.facet;
 
 import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
@@ -23,11 +24,16 @@ import com.intellij.javaee.model.xml.web.Filter;
 import com.intellij.javaee.model.xml.web.FilterMapping;
 import com.intellij.javaee.model.xml.web.WebApp;
 import com.intellij.javaee.web.facet.WebFacet;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -43,6 +49,7 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.event.HyperlinkEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -88,9 +95,10 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
 
             final boolean is2_1_X = VersionComparatorUtil.compare(version.getVersionName(), "2.1") > 0;
             final FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance();
-            final FileTemplate strutsXmlTemplate = fileTemplateManager.getJ2eeTemplate(is2_1_X ?
-                               StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_1_XML :
-                               StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_0_XML);
+            final FileTemplate strutsXmlTemplate =
+              fileTemplateManager.getJ2eeTemplate(is2_1_X ?
+                                                  StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_1_XML :
+                                                  StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_0_XML);
 
             try {
               final StrutsFacetConfiguration strutsFacetConfiguration = strutsFacet.getConfiguration();
@@ -130,6 +138,22 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
                   filterMapping.addUrlPattern().setStringValue("/*");
                 }
               }.execute();
+
+
+              final NotificationListener showFacetSettingsListener = new NotificationListener() {
+                public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+                  if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                    notification.expire();
+                    ModulesConfigurator.showFacetSettingsDialog(strutsFacet, null);
+                  }
+                }
+              };
+
+              Notifications.Bus.notify(new Notification("struts2", "Struts 2 Setup",
+                                                        "Struts 2 Facet has been created, please <a href=\"more\">setup fileset(s)</a>",
+                                                        NotificationType.INFORMATION, showFacetSettingsListener),
+                                       module.getProject());
+
             } catch (Exception e) {
               LOG.error("error creating struts.xml from template", e);
             }
