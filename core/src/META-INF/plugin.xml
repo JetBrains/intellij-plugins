@@ -8,6 +8,7 @@
 
   <depends>IntentionPowerPack</depends>
   <depends>com.intellij.javaee</depends>
+  <category>Web/JavaEE Technologies</category>
 
   <!--<helpset file="help.jar" path="/Help.hs"/>-->
 
