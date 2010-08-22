@@ -5,6 +5,7 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ConstantFunction;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomElement;
@@ -28,11 +29,7 @@ import java.util.List;
 class StructureViewTreeElement extends DomStructureTreeElement {
 
   private static final Function<DomElement, DomService.StructureViewMode> MY_STRUCTURE_VIEW_MODE_FUNCTION =
-          new Function<DomElement, DomService.StructureViewMode>() {
-            public DomService.StructureViewMode fun(final DomElement domElement) {
-              return DomService.StructureViewMode.SHOW;
-            }
-          };
+          new ConstantFunction<DomElement, DomService.StructureViewMode>(DomService.StructureViewMode.SHOW);
 
   StructureViewTreeElement(@NotNull final DomElement domElement) {
     super(domElement,

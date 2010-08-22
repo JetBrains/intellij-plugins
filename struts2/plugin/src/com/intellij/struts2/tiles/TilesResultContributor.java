@@ -34,12 +34,14 @@ import com.intellij.struts.TilesModel;
 import com.intellij.struts.dom.tiles.Definition;
 import com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ConstantFunction;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -79,7 +81,7 @@ public class TilesResultContributor extends StrutsResultContributor {
       return null;
     }
 
-    return new PathReference(path, new PathReference.ConstFunction(StrutsIcons.TILE_ICON)) {
+    return new PathReference(path, new ConstantFunction<PathReference, Icon>(StrutsIcons.TILE_ICON)) {
       @Override
       public PsiElement resolve() {
         for (final TilesModel tilesModel : getAllTilesModels(psiElement)) {

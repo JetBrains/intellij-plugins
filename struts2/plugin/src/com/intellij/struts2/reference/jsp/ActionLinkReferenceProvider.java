@@ -35,11 +35,13 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.model.constant.StrutsConstantHelper;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ConstantFunction;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +91,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
       return null;
     }
 
-    return new PathReference(path, new PathReference.ConstFunction(StrutsIcons.ACTION)); /*{
+    return new PathReference(path, new ConstantFunction<PathReference, Icon>(StrutsIcons.ACTION)); /*{
 TODO not needed so far ?!
    public PsiElement resolve() {
         return action.getXmlTag();

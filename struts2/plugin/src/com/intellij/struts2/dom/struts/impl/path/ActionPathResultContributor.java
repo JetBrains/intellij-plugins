@@ -31,10 +31,12 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.model.constant.StrutsConstantHelper;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ConstantFunction;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +104,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       return null;
     }
 
-    return new PathReference(path, new PathReference.ConstFunction(StrutsIcons.ACTION)) {
+    return new PathReference(path, new ConstantFunction<PathReference, Icon>(StrutsIcons.ACTION)) {
       @Override
       public PsiElement resolve() {
         return actionTag;
