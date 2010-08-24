@@ -66,7 +66,6 @@ public class FileSetEditor extends DialogWrapper {
                           final StrutsConfigsSearcher searcher) {
 
     super(parent, true);
-    mySetName.setUseTextFieldPreferredSize(true);
 
     setTitle(StrutsBundle.message("facet.fileseteditor.title"));
     myOriginalSet = fileSet;
