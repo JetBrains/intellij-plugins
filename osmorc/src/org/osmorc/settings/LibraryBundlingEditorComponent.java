@@ -29,6 +29,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.beans.BeanAdapter;
@@ -147,7 +148,10 @@ public class LibraryBundlingEditorComponent {
     // Am not sure if this is really a good idea. However using the default project produces some nice NPEs somehwere
     // deep inside the EnterHandler.
     final DataContext dataContext = DataManager.getInstance().getDataContext();
-    final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+    Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+    if (project == null) {
+      project = ProjectManager.getInstance().getDefaultProject();
+    }
     manifestEntries = new ManifestEditor(project, "");
     Bindings.bind(manifestEntries, "text", beanAdapter.getValueModel("additionalProperties"));
     _manifestEntriesHolder.add(manifestEntries, BorderLayout.CENTER);

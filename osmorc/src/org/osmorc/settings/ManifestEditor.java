@@ -26,16 +26,11 @@
 package org.osmorc.settings;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
 import com.intellij.ui.EditorTextField;
-import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestFileTypeFactory;
 
 /**
@@ -48,21 +43,18 @@ public class ManifestEditor extends EditorTextField implements Disposable {
     private final ManifestEditor.MyDocumentAdapter listener = new MyDocumentAdapter();
 
 
-    public ManifestEditor(@NotNull Project project, String text) {
+    public ManifestEditor(Project project, String text) {
         super("", project, ManifestFileTypeFactory.MANIFEST);
         addDocumentListener(listener);
         setText(text);
     }
 
-    public void setText(String text) {
-        if ( text == null ) {
-            text = "";
+  public void setText(String text) {
+        if (text == null) {
+          text = "";
         }
-        final PsiFile file = PsiFileFactory.getInstance(getProject())
-                .createFileFromText("*.MF", ManifestFileTypeFactory.MANIFEST, text, -1, true);
-        final Document document = PsiDocumentManager.getInstance(getProject()).getDocument(file);
-        setNewDocumentAndFileType(ManifestFileTypeFactory.MANIFEST, document);
-    }
+        super.setText(text);
+  }
 
     protected EditorEx createEditor() {
         EditorEx editor = super.createEditor();
