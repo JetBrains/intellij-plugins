@@ -14,6 +14,7 @@
  */
 package com.intellij.struts2.reference.jsp;
 
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownTargetInspection;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlTag;
@@ -44,6 +45,7 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
   }
 
   public void testActionLinkHighlightingJsp() throws Throwable {
+    myFixture.enableInspections(new HtmlUnknownTargetInspection());
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.testHighlighting(true, false, false, "/jsp/actionLink-highlighting.jsp", "/WEB-INF/web.xml", "jsp/index.jsp");
   }
