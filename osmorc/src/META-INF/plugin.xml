@@ -62,11 +62,11 @@
     -->
 
     <extensionPoints>
-        <extensionPoint name="frameworkIntegrator" beanClass="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
+        <extensionPoint name="frameworkIntegrator" interface="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
         <extensionPoint name="headerParserProviderRepository"
-                        beanClass="org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository"/>
-        <extensionPoint name="obr" beanClass="org.osmorc.obrimport.Obr"/>
-        <extensionPoint name="moduleChangeListener" beanClass="org.osmorc.ModuleChangeListener"/>
+                        interface="org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository"/>
+        <extensionPoint name="obr" interface="org.osmorc.obrimport.Obr"/>
+        <extensionPoint name="moduleChangeListener" interface="org.osmorc.ModuleChangeListener"/>
     </extensionPoints>
     <extensions defaultExtensionNs="com.intellij">
         <!-- ##### Application Services ##### -->
