@@ -163,7 +163,7 @@
         <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
         <programRunner implementation="org.osmorc.run.OsgiDebuggerRunner"/>
         <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor"/>
-      <applicationConfigurable implementation="org.osmorc.settings.ApplicationSettingsEditor"/>
+        <applicationConfigurable instance="org.osmorc.settings.ApplicationSettingsEditor"/>
     </extensions>
 
 
