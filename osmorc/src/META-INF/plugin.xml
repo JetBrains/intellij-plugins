@@ -162,7 +162,7 @@
         <compiler implementation="org.osmorc.make.BundleCompiler"/>
         <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
         <programRunner implementation="org.osmorc.run.OsgiDebuggerRunner"/>
-        <projectConfigurable implementation="org.osmorc.settings.ProjectSettingsEditor"/>
+        <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor"/>
       <applicationConfigurable implementation="org.osmorc.settings.ApplicationSettingsEditor"/>
     </extensions>
 
