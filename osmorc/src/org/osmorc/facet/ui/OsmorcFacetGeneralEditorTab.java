@@ -80,8 +80,13 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
         });
         _bndFile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                onBndFileSelect();
+              selectBuildFile(_bndFile);
             }
+        });
+        _bundlorFile.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+              selectBuildFile(_bundlorFile);
+          }
         });
 
         ChangeListener listener = new ChangeListener() {
@@ -91,6 +96,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
         };
         _manuallyEditedRadioButton.addChangeListener(listener);
         _useBndFileRadioButton.addChangeListener(listener);
+        _useBundlorFileRadioButton.addChangeListener(listener);
         _controlledByOsmorcRadioButton.addChangeListener(listener);
 
         UserActivityWatcher watcher = new UserActivityWatcher();
@@ -118,17 +124,21 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
 
     private void updateGui() {
         boolean isBnd = _useBndFileRadioButton.isSelected();
+        boolean isBundlor = _useBundlorFileRadioButton.isSelected();
         boolean isManuallyEdited = _manuallyEditedRadioButton.isSelected();
 
         _editorContext.putUserData(MANUAL_MANIFEST_EDITING_KEY, isManuallyEdited);
         _editorContext.putUserData(BND_CREATION_KEY, isBnd);
+        _editorContext.putUserData(BUNDLOR_CREATION_KEY, isBundlor);
 
         _bndPanel.setEnabled(isBnd);
+        _bundlorPanel.setEnabled(isBundlor);
         _manifestPanel.setEnabled(isManuallyEdited);
         _useProjectDefaultManifestFileLocation.setEnabled(isManuallyEdited);
         _useModuleSpecificManifestFileLocation.setEnabled(isManuallyEdited);
         _manifestFileChooser.setEnabled(isManuallyEdited && !_useProjectDefaultManifestFileLocation.isSelected());
         _bndFile.setEnabled(isBnd);
+        _bundlorFile.setEnabled(isBundlor);
         checkFileExisting();
     }
 
@@ -183,39 +193,44 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
         return _modified;
     }
 
-    private void onBndFileSelect() {
-        VirtualFile[] roots = getContentRoots(_module);
-        VirtualFile currentFile = findFileInContentRoots(_bndFile.getText(), _module);
+  private void selectBuildFile(TextFieldWithBrowseButton field) {
+    VirtualFile[] roots = getContentRoots(_module);
+    VirtualFile currentFile = findFileInContentRoots(field.getText(), _module);
 
-        VirtualFile[] result = FileChooser.chooseFiles(_editorContext.getProject(),
-                new FileChooserDescriptor(true, false, false, false, false, false), currentFile);
+    VirtualFile[] result = FileChooser.chooseFiles(_editorContext.getProject(),
+            new FileChooserDescriptor(true, false, false, false, false, false), currentFile);
 
 
-        if (result.length == 1) {
-            VirtualFile bndFileLocation = result[0];
-            for (VirtualFile root : roots) {
-                String relativePath = VfsUtil
-                        .getRelativePath(bndFileLocation, root, File.separatorChar);
-                if (relativePath != null) {
-                    _bndFile.setText(relativePath);
-                    break;
-                }
-
+    if (result.length == 1) {
+        VirtualFile fileLocation = result[0];
+        for (VirtualFile root : roots) {
+            String relativePath = VfsUtil
+                    .getRelativePath(fileLocation, root, File.separatorChar);
+            if (relativePath != null) {
+                field.setText(relativePath);
+                break;
             }
-        }
-        updateGui();
-    }
 
-    public void apply() throws ConfigurationException {
+        }
+    }
+    updateGui();
+  }
+
+  public void apply() throws ConfigurationException {
         OsmorcFacetConfiguration configuration =
                 (OsmorcFacetConfiguration) _editorContext.getFacet().getConfiguration();
         configuration.setOsmorcControlsManifest(_controlledByOsmorcRadioButton.isSelected());
         configuration.setManifestLocation(_manifestFileChooser.getText());
         configuration.setUseProjectDefaultManifestFileLocation(_useProjectDefaultManifestFileLocation.isSelected());
         configuration.setUseBndFile(_useBndFileRadioButton.isSelected());
+        configuration.setUseBundlorFile(_useBundlorFileRadioButton.isSelected());
         String bndFileLocation = _bndFile.getText();
         bndFileLocation = bndFileLocation.replace('\\', '/');
         configuration.setBndFileLocation(bndFileLocation);
+
+        String bundlorFileLocation = _bundlorFile.getText();
+        bundlorFileLocation = bundlorFileLocation.replace('\\', '/');
+        configuration.setBundlorFileLocation(bundlorFileLocation);
 
     }
 
@@ -224,6 +239,9 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
                 (OsmorcFacetConfiguration) _editorContext.getFacet().getConfiguration();
         if (configuration.isUseBndFile()) {
             _useBndFileRadioButton.setSelected(true);
+        }
+        else if (configuration.isUseBundlorFile()) {
+            _useBundlorFileRadioButton.setSelected(true);
         }
         else if (configuration.isOsmorcControlsManifest()) {
             _controlledByOsmorcRadioButton.setSelected(true);
@@ -240,6 +258,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
             _useModuleSpecificManifestFileLocation.setSelected(true);
         }
         _bndFile.setText(configuration.getBndFileLocation());
+        _bundlorFile.setText(configuration.getBundlorFileLocation());
         updateGui();
     }
 
@@ -254,7 +273,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     }
 
     private String getManifestLocation() {
-        if (_controlledByOsmorcRadioButton.isSelected() || _useBndFileRadioButton.isSelected()) {
+        if (_controlledByOsmorcRadioButton.isSelected() || _useBndFileRadioButton.isSelected() || _useBundlorFileRadioButton.isSelected()) {
             return null;
         }
         if (_useModuleSpecificManifestFileLocation.isSelected()) {
@@ -269,7 +288,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
 
     private void checkFileExisting() {
         boolean showWarning;
-        if (_controlledByOsmorcRadioButton.isSelected() || _useBndFileRadioButton.isSelected()) {
+        if (_controlledByOsmorcRadioButton.isSelected() || _useBndFileRadioButton.isSelected()|| _useBundlorFileRadioButton.isSelected() ) {
             showWarning = false;
         }
         else {
@@ -394,11 +413,15 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     private JPanel _warningPanel;
     private JButton _createButton;
     private MyErrorText _errorText;
-    private boolean _modified;
+  private JRadioButton _useBundlorFileRadioButton;
+  private TextFieldWithBrowseButton _bundlorFile;
+  private JPanel _bundlorPanel;
+  private boolean _modified;
     private final FacetEditorContext _editorContext;
     private Module _module;
     static final Key<Boolean> MANUAL_MANIFEST_EDITING_KEY = Key.create("MANUAL_MANIFEST_EDITING");
     static final Key<Boolean> BND_CREATION_KEY = Key.create("BND_CREATION");
+    static final Key<Boolean> BUNDLOR_CREATION_KEY = Key.create("BUNDLOR_CREATION");
 
 
 }

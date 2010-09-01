@@ -123,11 +123,6 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                 List<String> headersToDetect = new ArrayList<String>(Arrays.asList(DETECTION_HEADERS));
 
                 if (file != null && file.exists() && !file.isDirectory()) {
-                    if ("template.mf".equals(file.getName())) {
-                      // don't create facets for bundlor's template files, let bundlor work and
-                      // grab the real manifest later on. This can change if we add native bundlor support later on.
-                      return false;
-                    }
                     BufferedReader bufferedReader = null;
                     try {
                         InputStream inputStream = file.getInputStream();
@@ -191,7 +186,6 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                         OsmorcFacet osmorcFacet = (OsmorcFacet) facet;
                         OsmorcFacetConfiguration osmorcFacetConfiguration = osmorcFacet.getConfiguration();
                         VirtualFile manifestFile = LocalFileSystem.getInstance().findFileByPath(osmorcFacetConfiguration.getManifestLocation());
-
                         if (manifestFile != null) {
                             for (VirtualFile contentRoot : contentRoots) {
                                 if (VfsUtil.isAncestor(contentRoot, manifestFile, false)) {
@@ -204,6 +198,12 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                         else {
                             osmorcFacetConfiguration.setManifestLocation("");
                             osmorcFacetConfiguration.setUseProjectDefaultManifestFileLocation(true);
+                        }
+                        String manifestFileName = osmorcFacetConfiguration.getManifestLocation();
+                        if ( manifestFileName.endsWith("template.mf") ) { // this is a bundlor manifest template, so make the facet do bundlor
+                            osmorcFacetConfiguration.setManifestLocation("");
+                            osmorcFacetConfiguration.setBundlorFileLocation(manifestFileName);
+                            osmorcFacetConfiguration.setUseBundlorFile(true);
                         }
                     }
                 };

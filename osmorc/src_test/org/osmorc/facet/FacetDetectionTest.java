@@ -57,6 +57,7 @@ import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class FacetDetectionTest {
     private TempDirTestFixture myTempDirFixture;
@@ -133,6 +134,52 @@ public class FacetDetectionTest {
         verify(registry);
     }
 
+     @SuppressWarnings({"unchecked", "ConstantConditions"})
+    @Test
+    public void testDetectBundlorFacet() {
+        ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
+        final List<Object> arguments = new ArrayList<Object>();
+        Module t2 = moduleManager.findModuleByName("t2");
+        FacetDetectorRegistry registry = createMock(FacetDetectorRegistry.class);
+        registry.registerUniversalDetector(same(ManifestFileTypeFactory.MANIFEST), (VirtualFileFilter) anyObject(), (FacetDetector) anyObject());
+        expectLastCall().andAnswer(new IAnswer<Object>() {
+            public Object answer() throws Throwable {
+                arguments.addAll(Arrays.asList(getCurrentArguments()));
+                return null;
+            }
+        });
+
+        replay(registry);
+
+        OsmorcFacetType.INSTANCE.registerDetectors(registry);
+        VirtualFileFilter filter = (VirtualFileFilter) arguments.get(1);
+        FacetDetector<VirtualFile, OsmorcFacetConfiguration> detector = (FacetDetector<VirtualFile, OsmorcFacetConfiguration>) arguments.get(2);
+
+        VirtualFile manifestFile = myTempDirFixture.getFile("t2/src/META-INF/template.mf");
+
+        assertThat(filter.accept(manifestFile), equalTo(true));
+
+        OsmorcFacetConfiguration osmorcFacetConfiguration = detector.detectFacet(manifestFile, new ArrayList<OsmorcFacetConfiguration>());
+        assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
+        assertThat(osmorcFacetConfiguration.isUseProjectDefaultManifestFileLocation(), equalTo(false));
+
+        OsmorcFacet osmorcFacet = OsmorcFacetType.INSTANCE.createFacet(t2, "OSGi", osmorcFacetConfiguration, null);
+
+        ModifiableRootModel model = ModuleRootManager.getInstance(t2).getModifiableModel();
+        try {
+            detector.beforeFacetAdded(osmorcFacet, FacetManager.getInstance(t2), model);
+
+            assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(""));
+            assertThat(osmorcFacetConfiguration.getBundlorFileLocation(), equalTo("src/META-INF/template.mf"));
+            assertThat(osmorcFacetConfiguration.isUseBundlorFile(), equalTo(true));
+
+        }
+        finally {
+            model.dispose();
+        }
+
+        verify(registry);
+    }
     @SuppressWarnings({"unchecked"})
     @Test
     public void testDetectNoFacet() {

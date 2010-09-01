@@ -256,18 +256,19 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   }
 
   private void updateGui() {
-    Boolean data = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY);
-    boolean isBnd = data != null ? data : true;
-    _jarFileChooser.setEnabled(!isBnd);
-    _additionalJARContentsTable.setEnabled(!isBnd);
-    _ignoreFilePatternTextField.setEnabled(!isBnd);
-    _addButton.setEnabled(!isBnd);
-    _removeButton.setEnabled(!isBnd);
-    _editButton.setEnabled(!isBnd);
-    _alwaysRebuildBundleJARCheckBox.setEnabled(!isBnd);
-    _additionalJarContentsLabel.setEnabled(!isBnd);
-    _jarFileToCreateLabel.setEnabled(!isBnd);
-    _fileIgnorePatternLabel.setEnabled(!isBnd);
+    Boolean bnd = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY);
+    Boolean bundlor = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.BUNDLOR_CREATION_KEY);
+    boolean useExternalTool = (bnd != null && bnd) || (bundlor != null && bundlor);
+    _jarFileChooser.setEnabled(!useExternalTool);
+    _additionalJARContentsTable.setEnabled(!useExternalTool);
+    _ignoreFilePatternTextField.setEnabled(!useExternalTool);
+    _addButton.setEnabled(!useExternalTool);
+    _removeButton.setEnabled(!useExternalTool);
+    _editButton.setEnabled(!useExternalTool);
+    _alwaysRebuildBundleJARCheckBox.setEnabled(!useExternalTool);
+    _additionalJarContentsLabel.setEnabled(!useExternalTool);
+    _jarFileToCreateLabel.setEnabled(!useExternalTool);
+    _fileIgnorePatternLabel.setEnabled(!useExternalTool);
   }
 
   private void onJarFileSelect() {

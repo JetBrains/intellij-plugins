@@ -10,6 +10,12 @@
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="top:3dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:3dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:3dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:3dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
     <colspec value="fill:d:noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:max(d;4px):grow"/>
@@ -129,6 +135,7 @@
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
+                <properties/>
               </component>
               <component id="dc45a" class="javax.swing.JButton" binding="_createButton">
                 <constraints>
@@ -163,6 +170,36 @@
           </component>
         </children>
       </grid>
+      <component id="b9f29" class="javax.swing.JRadioButton" binding="_useBundlorFileRadioButton">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties>
+          <text value="Create using Bundlor and ignore facet configuration"/>
+        </properties>
+      </component>
+      <grid id="66303" binding="_bundlorPanel" layout-manager="FormLayout">
+        <rowspec value="center:d:grow"/>
+        <rowspec value="top:3dlu:noGrow"/>
+        <rowspec value="center:max(d;4px):noGrow"/>
+        <colspec value="fill:d:grow"/>
+        <constraints>
+          <grid row="12" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties/>
+        <border type="none" title="Bundlor file location"/>
+        <children>
+          <component id="f2475" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_bundlorFile">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties/>
+          </component>
+        </children>
+      </grid>
     </children>
   </grid>
   <buttonGroups>
@@ -172,6 +209,7 @@
       <member id="6837c"/>
       <member id="51bd0"/>
       <member id="9f11"/>
+      <member id="b9f29"/>
     </group>
     <group name="_manifestFile">
       <member id="ba183"/>
