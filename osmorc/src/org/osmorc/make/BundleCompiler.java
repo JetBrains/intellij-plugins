@@ -272,7 +272,7 @@ public class BundleCompiler implements PackagingCompiler {
         // build a bnd file or use a provided one.
         String bndFileUrl = "";
         Map<String, String> additionalProperties = new HashMap<String, String>();
-        if (configuration.isOsmorcControlsManifest() || configuration.isUseBndFile() ) {
+        if (configuration.isOsmorcControlsManifest() || configuration.isUseBndFile() || configuration.isUseBundlorFile() ) {
             if (configuration.isUseBndFile()) {
                 File bndFile = findFileInModuleContentRoots(configuration.getBndFileLocation(), module);
                 if (bndFile == null || !bndFile.exists()) {
@@ -284,6 +284,15 @@ public class BundleCompiler implements PackagingCompiler {
                 } else {
                     bndFileUrl = VfsUtil.pathToUrl(bndFile.getPath());
                 }
+            } else if ( configuration.isUseBundlorFile() ) {
+              // bundlor, in this case we use bnd for creating the jar only, and later run bundlor to
+              // do the manifest magic.
+              bndFileUrl = makeBndFile(module, "", compileContext);
+              if ( bndFileUrl == null ) {
+                  // couldnt create bnd file.
+                  return;
+              }
+
             } else {
                 // fully osmorc controlled, no bnd file.
                 bndFileUrl = makeBndFile(module, configuration.asManifestString(), compileContext);
@@ -315,7 +324,7 @@ public class BundleCompiler implements PackagingCompiler {
         }
 
         if (!configuration.isOsmorcControlsManifest() ||
-                (configuration.isOsmorcControlsManifest() && !configuration.isUseBndFile())) {
+                (configuration.isOsmorcControlsManifest() && !configuration.isUseBndFile() && !configuration.isUseBundlorFile())) {
             // in this case we manually add all the classpaths as resources
             StringBuilder pathBuilder = new StringBuilder();
             // add all the classpaths to include resources, so stuff from the project gets copied over.
@@ -352,9 +361,43 @@ public class BundleCompiler implements PackagingCompiler {
 
         }
 
-        wrapper.build(compileContext, bndFileUrl, ArrayUtil.toStringArray(classPaths), jarFile.getPath(), additionalProperties);
+        String outputPath = jarFile.getPath();
+        if ( configuration.isUseBundlorFile() ) {
+          // we create a temp jar file in this case.
+          outputPath += ".tmp.jar";
+        }
 
-        if (!configuration.isUseBndFile()) {
+        wrapper.build(compileContext, bndFileUrl, ArrayUtil.toStringArray(classPaths), outputPath, additionalProperties);
+
+        // if we use bundlor, let bundlor work on the generated file.
+        if ( configuration.isUseBundlorFile() ) {
+             File bundlorFile = findFileInModuleContentRoots(configuration.getBundlorFileLocation(), module);
+                if (bundlorFile == null || !bundlorFile.exists()) {
+                    compileContext.addMessage(CompilerMessageCategory.ERROR,
+                            String.format("The Bundlor file \"%s\" for module \"%s\" does not exist.",
+                                    configuration.getBundlorFileLocation(), module.getName()),
+                            configuration.getBundlorFileLocation(), 0, 0);
+                    return;
+                }
+           BundlorWrapper bw = new BundlorWrapper();
+           try {
+               if (!bw.wrapModule(compileContext, outputPath, jarFile.getPath(), bundlorFile.getPath())) {
+
+                   compileContext.addMessage(CompilerMessageCategory.ERROR, "Bundlifying the file " + jarFile.getPath() + " with Bundlor failed.", null, 0,0);
+                   return;
+               }
+           } finally {
+               // delete the tmp jar
+               File tempJar = new File(outputPath);
+               if ( tempJar.exists() ) {
+                 if (!tempJar.delete()) {
+                   compileContext.addMessage(CompilerMessageCategory.WARNING, "Could not delete temporary file: " + tempJar.getPath(), null, 0,0);
+                 }
+               }
+           }
+        }
+
+        if (!configuration.isUseBndFile() && !configuration.isUseBundlorFile()) {
             // finally bundlify all the libs for this one
             bundlifyLibraries(module, progressIndicator, compileContext);
         }

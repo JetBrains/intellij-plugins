@@ -73,6 +73,17 @@
         <pathelement location="${module.osmorc.basedir}/lib/org.eclipse.osgi.jar"/>
         <pathelement location="${module.osmorc.basedir}/lib/bnd-${bnd.version}.jar"/>
         <pathelement location="${module.osmorc.basedir}/lib/binding-2.0.6.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/com.springsource.bundlor.blint-1.0.0.RELEASE.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/com.springsource.org.apache.commons.cli-1.2.0.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/com.springsource.org.objectweb.asm-3.1.0.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/com.springsource.org.objectweb.asm.commons-3.1.0.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/com.springsource.org.objectweb.asm.tree-3.1.0.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/com.springsource.util.common-2.0.0.RELEASE.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/com.springsource.util.math-2.0.0.RELEASE.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/com.springsource.util.osgi-2.0.0.RELEASE.jar"/>
+        <pathelement location="${module.osmorc.basedir}/lib/com.springsource.util.parser.manifest-2.0.0.RELEASE.jar"/>
     </path>
 
     <path id="osmorc.module.sourcepath">
@@ -142,6 +153,18 @@
               tofile="${tmp.dir.osmorc}/lib/commons-lang-2.4.jar"/>
         <copy file="${module.osmorc.basedir}/lib/pax-runner-1.5.0-SNAPSHOT.jar"
               tofile="${tmp.dir.osmorc}/lib/pax-runner-1.5.0-SNAPSHOT.jar"/>
+      <copy file="${module.osmorc.basedir}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar"/>
+      <copy file="${module.osmorc.basedir}/lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar"/>
+      <copy file="${module.osmorc.basedir}/lib/com.springsource.bundlor.blint-1.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.bundlor.blint-1.0.0.RELEASE.jar"/>
+      <copy file="${module.osmorc.basedir}/lib/com.springsource.org.apache.commons.cli-1.2.0.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.org.apache.commons.cli-1.2.0.jar"/>
+      <copy file="${module.osmorc.basedir}/lib/com.springsource.org.objectweb.asm-3.1.0.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.org.objectweb.asm-3.1.0.jar"/>
+      <copy file="${module.osmorc.basedir}/lib/com.springsource.org.objectweb.asm.commons-3.1.0.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.org.objectweb.asm.commons-3.1.0.jar"/>
+      <copy file="${module.osmorc.basedir}/lib/com.springsource.org.objectweb.asm.tree-3.1.0.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.org.objectweb.asm.tree-3.1.0.jar"/>
+      <copy file="${module.osmorc.basedir}/lib/com.springsource.util.common-2.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.util.common-2.0.0.RELEASE.jar"/>
+      <copy file="${module.osmorc.basedir}/lib/com.springsource.util.math-2.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.util.math-2.0.0.RELEASE.jar"/>
+      <copy file="${module.osmorc.basedir}/lib/com.springsource.util.osgi-2.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.util.osgi-2.0.0.RELEASE.jar"/>
+      <copy file="${module.osmorc.basedir}/lib/com.springsource.util.parser.manifest-2.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.util.parser.manifest-2.0.0.RELEASE.jar"/>
+
         <copy todir="${tmp.dir.osmorc}">
             <fileset dir="${module.osmorc.basedir}">
                 <include name="license/**/*"/>

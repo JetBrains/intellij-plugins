@@ -183,7 +183,6 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                         OsmorcFacet osmorcFacet = (OsmorcFacet) facet;
                         OsmorcFacetConfiguration osmorcFacetConfiguration = osmorcFacet.getConfiguration();
                         VirtualFile manifestFile = LocalFileSystem.getInstance().findFileByPath(osmorcFacetConfiguration.getManifestLocation());
-
                         if (manifestFile != null) {
                             for (VirtualFile contentRoot : contentRoots) {
                                 if (VfsUtil.isAncestor(contentRoot, manifestFile, false)) {
@@ -196,6 +195,12 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
                         else {
                             osmorcFacetConfiguration.setManifestLocation("");
                             osmorcFacetConfiguration.setUseProjectDefaultManifestFileLocation(true);
+                        }
+                        String manifestFileName = osmorcFacetConfiguration.getManifestLocation();
+                        if ( manifestFileName.endsWith("template.mf") ) { // this is a bundlor manifest template, so make the facet do bundlor
+                            osmorcFacetConfiguration.setManifestLocation("");
+                            osmorcFacetConfiguration.setBundlorFileLocation(manifestFileName);
+                            osmorcFacetConfiguration.setUseBundlorFile(true);
                         }
                     }
                 };

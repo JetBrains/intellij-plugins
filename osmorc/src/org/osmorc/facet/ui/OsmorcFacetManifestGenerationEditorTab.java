@@ -84,19 +84,20 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     }
 
     private void updateGui() {
-        Boolean data = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.MANUAL_MANIFEST_EDITING_KEY);
-        boolean isManuallyEdited = data != null ? data : true;
-        data = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY);
-        boolean isBnd = data != null ? data : true;
+        Boolean manuallyEdited = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.MANUAL_MANIFEST_EDITING_KEY);
+        boolean isManuallyEdited = manuallyEdited != null ? manuallyEdited : true;
+        Boolean bnd = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.BND_CREATION_KEY);
+        Boolean bundlor = _editorContext.getUserData(OsmorcFacetGeneralEditorTab.BUNDLOR_CREATION_KEY);
+        boolean isUseExternalTool = (bnd != null && bnd) || (bundlor != null && bundlor);
 
-        _bundleActivatorLabel.setEnabled(!isManuallyEdited && !isBnd);
-        _bundleActivator.setEnabled(!isManuallyEdited && !isBnd);
-        _bundleSymbolicName.setEnabled(!isManuallyEdited && !isBnd);
-        _bundleSymbolicNameLabel.setEnabled(!isManuallyEdited && !isBnd);
-        _bundleVersionLabel.setEnabled(!isManuallyEdited && !isBnd);
-        _bundleVersion.setEnabled(!isManuallyEdited && !isBnd);
-        _additionalProperties.getComponent().setEnabled(!isManuallyEdited && !isBnd);
-        _additionalPropertiesLabel.setEnabled(!isManuallyEdited && !isBnd);
+        _bundleActivatorLabel.setEnabled(!isManuallyEdited && !isUseExternalTool);
+        _bundleActivator.setEnabled(!isManuallyEdited && !isUseExternalTool);
+        _bundleSymbolicName.setEnabled(!isManuallyEdited && !isUseExternalTool);
+        _bundleSymbolicNameLabel.setEnabled(!isManuallyEdited && !isUseExternalTool);
+        _bundleVersionLabel.setEnabled(!isManuallyEdited && !isUseExternalTool);
+        _bundleVersion.setEnabled(!isManuallyEdited && !isUseExternalTool);
+        _additionalProperties.getComponent().setEnabled(!isManuallyEdited && !isUseExternalTool);
+        _additionalPropertiesLabel.setEnabled(!isManuallyEdited && !isUseExternalTool);
 
 
     }

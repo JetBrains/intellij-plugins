@@ -65,6 +65,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
     setOsmorcControlsManifest(Boolean.parseBoolean(element.getAttributeValue(OSMORC_CONTROLS_MANIFEST, "true")));
     setUseBndFile(Boolean.parseBoolean(element.getAttributeValue(USE_BND_FILE, "false")));
     setBndFileLocation(element.getAttributeValue(BND_FILE_LOCATION));
+    setUseBundlorFile(Boolean.parseBoolean(element.getAttributeValue(USE_BUNDLOR_FILE, "false")));
+    setBundlorFileLocation(element.getAttributeValue(BUNDLOR_FILE_LOCATION));
     setManifestLocation(element.getAttributeValue(MANIFEST_LOCATION));
 
       // IDEADEV-40357 backwards compatibility
@@ -129,6 +131,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
     element.setAttribute(JARFILE_LOCATION, getJarFileLocation());
     element.setAttribute(USE_BND_FILE, String.valueOf(isUseBndFile()));
     element.setAttribute(BND_FILE_LOCATION, getBndFileLocation());
+    element.setAttribute(USE_BUNDLOR_FILE, String.valueOf(isUseBundlorFile()));
+    element.setAttribute(BUNDLOR_FILE_LOCATION, getBundlorFileLocation());
     element.setAttribute(BUNDLE_ACTIVATOR, getBundleActivator());
     element.setAttribute(BUNDLE_SYMBOLIC_NAME, getBundleSymbolicName());
     element.setAttribute(BUNDLE_VERSION, getBundleVersion());
@@ -370,6 +374,23 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
   }
 
 
+  public boolean isUseBundlorFile() {
+    return _useBundlorFile;
+  }
+
+  public void setUseBundlorFile(boolean _useBundlorFile) {
+    this._useBundlorFile = _useBundlorFile;
+  }
+
+  @NotNull
+  public String getBundlorFileLocation() {
+    return _bundlorFileLocation != null ? _bundlorFileLocation : "";
+  }
+
+  public void setBundlorFileLocation(String _bundlorFileLocation) {
+    this._bundlorFileLocation = _bundlorFileLocation;
+  }
+
   @NotNull
   public List<Pair<String, String>> getAdditionalJARContents()
   {
@@ -435,6 +456,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
   private boolean _useProjectDefaultManifestFileLocation = true;
   private boolean _useBndFile;
   private String _bndFileLocation;
+  private boolean _useBundlorFile;
+  private String _bundlorFileLocation;
   private String _ignoreFilePattern;
   private boolean _alwaysRebuildBundleJAR;
 
@@ -442,6 +465,8 @@ public class OsmorcFacetConfiguration implements FacetConfiguration
   private static final String OSMORC_CONTROLS_MANIFEST = "osmorcControlsManifest";
   private static final String USE_BND_FILE = "useBndFile";
   private static final String BND_FILE_LOCATION = "bndFileLocation";
+  private static final String USE_BUNDLOR_FILE = "useBundlorFile";
+  private static final String BUNDLOR_FILE_LOCATION = "bundlorFileLocation";
   private static final String MANIFEST_LOCATION = "manifestLocation";
   private static final String JARFILE_LOCATION = "jarfileLocation";
   private static final String BUNDLE_ACTIVATOR = "bundleActivator";
