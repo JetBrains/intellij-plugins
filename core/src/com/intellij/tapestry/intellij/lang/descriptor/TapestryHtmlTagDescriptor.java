@@ -83,6 +83,16 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
     return myHtmlDelegate.getNSDescriptor();
   }
 
+  @Override
+  public Integer getMinOccurs() {
+    return null;
+  }
+
+  @Override
+  public Integer getMaxOccurs() {
+    return null;
+  }
+
   public int getContentType() {
     return myHtmlDelegate.getContentType();
   }
