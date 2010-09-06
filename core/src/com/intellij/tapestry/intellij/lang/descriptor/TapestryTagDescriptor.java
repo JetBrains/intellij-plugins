@@ -40,6 +40,16 @@ public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
   }
 
   @Override
+  public Integer getMinOccurs() {
+    return null;
+  }
+
+  @Override
+  public Integer getMaxOccurs() {
+    return null;
+  }
+
+  @Override
   public PsiElement getDeclaration() {
     return ((IntellijJavaClassType)myComponent.getElementClass()).getPsiClass();
   }
