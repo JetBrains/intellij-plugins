@@ -53,6 +53,22 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
     return TapestryNamespaceDescriptor.INSTANCE;
   }
 
+  /**
+   * @return minimal occurrence constraint value (e.g. 0 or 1), on null if not applied
+   */
+  @Override
+  public Integer getMinOccurs() {
+    return null;
+  }
+
+  /**
+   * @return maximal occurrence constraint value (e.g. 1 or {@link Integer.MAX_VALUE}), on null if not applied
+   */
+  @Override
+  public Integer getMaxOccurs() {
+    return null;
+  }
+
   public int getContentType() {
     return CONTENT_TYPE_ANY;
   }
