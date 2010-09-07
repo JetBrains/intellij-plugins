@@ -27,14 +27,10 @@ package org.osmorc.make;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.ValidityState;
-import com.intellij.openapi.compiler.make.BuildInstructionVisitor;
-import com.intellij.openapi.compiler.make.BuildRecipe;
-import com.intellij.openapi.compiler.make.FileCopyInstruction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -91,28 +87,12 @@ public class BundleValidityState implements ValidityState
       final TObjectLongHashMap<String> url2Timestamps = new TObjectLongHashMap<String>();
 
       // note down the modification times of all files that will be copied by the Jar builder
-      ApplicationManager.getApplication().runReadAction(new Runnable()
-      {
-        public void run()
-        {
-          // get the compilers build recipe
-          BuildRecipe buildrecipe = BundleCompiler.getBuildRecipe(module);
-          buildrecipe.visitInstructions(new BuildInstructionVisitor()
-          {
-            // the recipe contains file copy instructions which point to the files that will be copied
-            // note down the timestamps of these files
-            public boolean visitFileCopyInstruction(FileCopyInstruction filecopyinstruction) throws Exception
-            {
-              File file = filecopyinstruction.getFile();
-              VirtualFile virtualfile =
-                  LocalFileSystem.getInstance().findFileByPath(FileUtil.toSystemIndependentName(file.getPath()));
-              if (virtualfile != null)
-              {
-                BundleValidityState.registerTimestamps(virtualfile, url2Timestamps);
-              }
-              return true;
-            }
-          }, false);
+      ApplicationManager.getApplication().runReadAction(new Runnable() {
+        public void run() {
+          VirtualFile moduleOutputDir = BundleCompiler.getModuleOutputUrl(module);
+          if (moduleOutputDir != null) {
+            registerTimestamps(moduleOutputDir, url2Timestamps);
+          }
         }
       }
       );

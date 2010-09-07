@@ -29,18 +29,11 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.compiler.*;
-import com.intellij.openapi.compiler.make.BuildInstruction;
-import com.intellij.openapi.compiler.make.BuildInstructionVisitor;
-import com.intellij.openapi.compiler.make.BuildRecipe;
-import com.intellij.openapi.compiler.make.FileCopyInstruction;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.deployment.DeploymentUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Computable;
@@ -227,49 +220,22 @@ public class BundleCompiler implements PackagingCompiler {
         }
         FileUtil.createParentDirs(jarFile);
 
-        // get the build recipe
-        final BuildRecipe buildrecipe = (new ReadAction<BuildRecipe>() {
-            protected void run(Result<BuildRecipe> result) {
-                result.setResult(getBuildRecipe(module));
+        final VirtualFile moduleOutputDir = new ReadAction<VirtualFile>() {
+            protected void run(Result<VirtualFile> result) {
+                result.setResult(getModuleOutputUrl(module));
             }
-        }).execute().getResultObject();
+        }.execute().getResultObject();
 
         final BndWrapper wrapper = new BndWrapper();
         final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(module).getConfiguration();
         final List<String> classPaths = new ArrayList<String>();
 
-        // get all the classpaths together
-        try {
-            buildrecipe.visitInstructionsWithExceptions(new BuildInstructionVisitor() {
-                public boolean visitInstruction(BuildInstruction buildinstruction)
-                        throws IOException {
-                    ProgressManager.checkCanceled();
-                    if (buildinstruction instanceof FileCopyInstruction) {
-                        FileCopyInstruction filecopyinstruction = (FileCopyInstruction) buildinstruction;
-                        File file2 = filecopyinstruction.getFile();
-                        if (file2 == null || !file2.exists()) {
-                            return true;
-                        }
-
-                        String s2 = FileUtil.toSystemDependentName(file2.getPath());
-                        classPaths.add(VfsUtil.pathToUrl(s2));
-                    }
-                    return true;
-                }
-            }, false);
-        }
-        catch (ProcessCanceledException e) {
-            // Fix for OSMORC-118
-            compileContext.addMessage(CompilerMessageCategory.INFORMATION, "Process canceled.", null, 0, 0);
-            return;
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-            // e.printStackTrace();
+        if (moduleOutputDir != null) {
+            classPaths.add(moduleOutputDir.getUrl());
         }
 
 
-        // build a bnd file or use a provided one.
+      // build a bnd file or use a provided one.
         String bndFileUrl = "";
         Map<String, String> additionalProperties = new HashMap<String, String>();
         if (configuration.isOsmorcControlsManifest() || configuration.isUseBndFile() || configuration.isUseBundlorFile() ) {
@@ -490,25 +456,13 @@ public class BundleCompiler implements PackagingCompiler {
         return new BundleValidityState(in);
     }
 
-    /**
-     * Creates a build recipe for the given module
-     *
-     * @param module the module
-     * @return the build recipe
-     */
-    static BuildRecipe getBuildRecipe(Module module) {
-        BuildRecipe buildrecipe = DeploymentUtil.getInstance().createBuildRecipe();
-
-        // okay this is some hacking. we try to re-use the settings for building jars here and emulate
-        // the jar settings dialog... YEEHA..
-
+    @Nullable
+    static VirtualFile getModuleOutputUrl(Module module) {
         final CompilerModuleExtension extension = CompilerModuleExtension.getInstance(module);
         if (extension != null) {
-            final String url = extension.getCompilerOutputUrl();
-            final File root = new File(FileUtil.toSystemDependentName(VfsUtil.urlToPath(url)));
-            buildrecipe.addFileCopyInstruction(root, true, "");
+            return extension.getCompilerOutputPath();
         }
-        return buildrecipe;
+        return null;
     }
 
     /**
