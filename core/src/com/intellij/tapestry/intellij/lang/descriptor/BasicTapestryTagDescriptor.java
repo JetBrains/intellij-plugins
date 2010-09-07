@@ -8,6 +8,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,15 +58,7 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
    * @return minimal occurrence constraint value (e.g. 0 or 1), on null if not applied
    */
   @Override
-  public Integer getMinOccurs() {
-    return null;
-  }
-
-  /**
-   * @return maximal occurrence constraint value (e.g. 1 or {@link Integer.MAX_VALUE}), on null if not applied
-   */
-  @Override
-  public Integer getMaxOccurs() {
+  public XmlElementsGroup getTopGroup() {
     return null;
   }
 

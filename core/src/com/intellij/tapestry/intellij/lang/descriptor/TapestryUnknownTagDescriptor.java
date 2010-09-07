@@ -30,12 +30,4 @@ public class TapestryUnknownTagDescriptor extends BasicTapestryTagDescriptor {
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls String attributeName, @Nullable XmlTag context) {
     return context != null ? DescriptorUtil.getAttributeDescriptor(attributeName, context) : null;
   }
-
-  public Integer getMinOccurs() {
-    return null;
-  }
-
-  public Integer getMaxOccurs() {
-    return null;
-  }
 }

@@ -12,6 +12,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NonNls;
@@ -84,12 +85,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   }
 
   @Override
-  public Integer getMinOccurs() {
-    return null;
-  }
-
-  @Override
-  public Integer getMaxOccurs() {
+  public XmlElementsGroup getTopGroup() {
     return null;
   }
 
