@@ -48,7 +48,7 @@ public abstract class TelTokenTypes {
         @Override
         public ASTNode parseContents(ASTNode chameleon) {
           final Project project = chameleon.getPsi().getProject();
-          final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, getLanguage(), chameleon.getText());
+          final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon);
           final PsiParser parser = LanguageParserDefinitions.INSTANCE.forLanguage(getLanguage()).createParser(project);
 
           builder.putUserData(TAP5_CONTEXT_NODE_KEY, chameleon.getTreeParent());
