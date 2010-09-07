@@ -28,9 +28,9 @@ import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TestDialog;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
@@ -39,11 +39,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -86,15 +81,11 @@ public class AddFacetTest {
                     VirtualFile[] files = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots();
                     VirtualFile childDirectory = files[0].createChildDirectory(this, "META-INF");
                     VirtualFile data = childDirectory.createChildData(this, "MANIFEST.MF");
-                    OutputStream outputStream = data.getOutputStream(this);
-                    PrintWriter writer = new PrintWriter(outputStream);
-                    writer.write("Manifest-Version: 1.0\n" +
+                  VfsUtil.saveText(data, "Manifest-Version: 1.0\n" +
                             "Bundle-ManifestVersion: 2\n" +
                             "Bundle-Name: Test\n" +
                             "Bundle-SymbolicName: test\n" +
                             "Bundle-Version: 1.0.0\n");
-                    writer.flush();
-                    writer.close();
                 }
                 catch (IOException e) {
                     throw new RuntimeException(e);

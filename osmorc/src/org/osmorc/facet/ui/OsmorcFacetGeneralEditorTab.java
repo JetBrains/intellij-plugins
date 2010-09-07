@@ -57,8 +57,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.jar.Attributes;
 
 /**
@@ -361,17 +359,14 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
 
 
                         VirtualFile manifest = parentFolder.createChildData(this, filename);
-                        OutputStream outputStream = manifest.getOutputStream(this);
-                        PrintWriter writer = new PrintWriter(outputStream);
-                        writer.write(Attributes.Name.MANIFEST_VERSION + ": 1.0.0\n" +
-                                Constants.BUNDLE_MANIFESTVERSION + ": 2\n" +
-                                Constants.BUNDLE_NAME + ": " + bundleName + "\n" +
-                                Constants.BUNDLE_SYMBOLICNAME + ": " + bundleName + "\n" +
-                                Constants.BUNDLE_VERSION + ": " +
-                                (bundleVersion != null ? bundleVersion.toString() : "1.0.0") +
-                                "\n");
-                        writer.flush();
-                        writer.close();
+                      String text = Attributes.Name.MANIFEST_VERSION + ": 1.0.0\n" +
+                                    Constants.BUNDLE_MANIFESTVERSION + ": 2\n" +
+                                    Constants.BUNDLE_NAME + ": " + bundleName + "\n" +
+                                    Constants.BUNDLE_SYMBOLICNAME + ": " + bundleName + "\n" +
+                                    Constants.BUNDLE_VERSION + ": " +
+                                    (bundleVersion != null ? bundleVersion.toString() : "1.0.0") +
+                                    "\n";
+                      VfsUtil.saveText(manifest, text);
                     }
                     catch (IOException e) {
                         throw new RuntimeException(e);
