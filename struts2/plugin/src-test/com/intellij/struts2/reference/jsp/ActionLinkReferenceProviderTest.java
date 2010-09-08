@@ -72,7 +72,6 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     createStrutsFileSet("struts-actionLink.xml");
     myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-no-namespace.jsp",
-                                     "WEB-INF",
                                      "actionLink-completionvariants-no-namespace.jsp",
                                      "rootActionLink.action"
     );
