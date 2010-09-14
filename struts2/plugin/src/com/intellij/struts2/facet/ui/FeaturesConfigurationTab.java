@@ -16,6 +16,8 @@
 package com.intellij.struts2.facet.ui;
 
 import com.intellij.facet.Facet;
+import com.intellij.facet.frameworks.LibrariesDownloadAssistant;
+import com.intellij.facet.frameworks.beans.Version;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.libraries.FacetLibrariesValidator;
@@ -23,7 +25,7 @@ import com.intellij.facet.ui.libraries.LibraryInfo;
 import com.intellij.openapi.module.Module;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.facet.StrutsFacetLibrariesValidatorDescription;
-import com.intellij.ui.EnumComboBoxModel;
+import com.intellij.struts2.facet.StrutsFrameworkSupportProvider;
 import com.intellij.util.Icons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -51,10 +53,10 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
 
     versionComboBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        final StrutsVersion version = getSelectedVersion();
+        final Version version = getSelectedVersion();
         if (version != null) {
           validator.setRequiredLibraries(getRequiredLibraries());
-          validator.setDescription(new StrutsFacetLibrariesValidatorDescription(version.getVersion()));
+          validator.setDescription(new StrutsFacetLibrariesValidatorDescription(version.getId()));
         }
       }
     });
@@ -66,25 +68,29 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
       versionComboBox.setEnabled(false);
       return;
     }
-    versionComboBox.setModel(new EnumComboBoxModel<StrutsVersion>(StrutsVersion.class));
-    versionComboBox.getModel().setSelectedItem(StrutsVersion.STRUTS_2_2_1);
 
-    // TODO remove hard-coded version
-    validator.setRequiredLibraries(getRequiredLibraries());
-    validator.setDescription(new StrutsFacetLibrariesValidatorDescription(StrutsVersion.STRUTS_2_2_1.getVersion()));
+    final Version[] versions = LibrariesDownloadAssistant.getVersions(StrutsFrameworkSupportProvider.getLibrariesUrl());
+    versionComboBox.setModel(new DefaultComboBoxModel(versions));
+    if (versions.length > 0) {
+      final Version item = versions[0];
+      versionComboBox.getModel().setSelectedItem(item);
+      validator.setRequiredLibraries(getRequiredLibraries());
+      validator.setDescription(new StrutsFacetLibrariesValidatorDescription(item.getId()));
+    }
   }
 
 
   @Nullable
-  private StrutsVersion getSelectedVersion() {
+  private Version getSelectedVersion() {
     final Object version = versionComboBox.getModel().getSelectedItem();
-    return version instanceof StrutsVersion ? (StrutsVersion) version : null;
+    return version instanceof Version ? (Version) version : null;
   }
 
   @Nullable
   private LibraryInfo[] getRequiredLibraries() {
-    final StrutsVersion version = getSelectedVersion();
-    return version == null ? null : version.getLibraryInfos();
+    final Version version = getSelectedVersion();
+
+    return version == null ? null : LibrariesDownloadAssistant.getLibraryInfos(version);
   }
 
   public void onFacetInitialized(@NotNull final Facet facet) {

@@ -15,6 +15,8 @@
 
 package com.intellij.struts2.facet;
 
+import com.intellij.facet.frameworks.LibrariesDownloadAssistant;
+import com.intellij.facet.frameworks.beans.Version;
 import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -43,13 +45,13 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
-import com.intellij.struts2.facet.ui.StrutsVersion;
 import com.intellij.util.text.VersionComparatorUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -75,9 +77,9 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
   @NotNull
   public List<FrameworkVersion> getVersions() {
     final List<FrameworkVersion> result = new ArrayList<FrameworkVersion>();
-    for (final StrutsVersion version : StrutsVersion.values()) {
-      final String name = version.toString();
-      result.add(new FrameworkVersion(name, "struts2-" + name, version.getLibraryInfos()));
+    for (final Version version : LibrariesDownloadAssistant.getVersions(getLibrariesUrl())) {
+      final String name = version.getId();
+      result.add(new FrameworkVersion(name, "struts2-" + name, LibrariesDownloadAssistant.getLibraryInfos(version)));
     }
     return result;
   }
@@ -169,4 +171,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
     });
   }
 
+  public static URL getLibrariesUrl() {
+    return StrutsFrameworkSupportProvider.class.getResource("struts2.xml");
+  }
 }
