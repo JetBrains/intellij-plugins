@@ -1,16 +1,22 @@
 package com.intellij.tapestry.intellij.facet;
 
 import com.intellij.facet.FacetConfiguration;
+import com.intellij.facet.frameworks.LibrariesDownloadAssistant;
+import com.intellij.facet.frameworks.beans.Version;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetEditorsFactory;
 import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.facet.ui.libraries.FacetLibrariesValidator;
+import com.intellij.facet.ui.libraries.LibraryInfo;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.tapestry.intellij.facet.ui.FacetEditor;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+
+import java.net.URL;
 
 public class TapestryFacetConfiguration implements FacetConfiguration {
 
@@ -20,12 +26,26 @@ public class TapestryFacetConfiguration implements FacetConfiguration {
 
   public FacetEditorTab[] createEditorTabs(FacetEditorContext editorContext, FacetValidatorsManager validatorsManager) {
     FacetLibrariesValidator validator = FacetEditorsFactory.getInstance()
-        .createLibrariesValidator(TapestryVersion.TAPESTRY_5_1_0_5.getJars(), new TapestryLibrariesValidatorDescription(), editorContext,
+        .createLibrariesValidator(getLibraryInfos(TapestryVersion.TAPESTRY_5_1_0_5.toString()), new TapestryLibrariesValidatorDescription(), editorContext,
                                   validatorsManager);
 
     validatorsManager.registerValidator(validator);
 
     return new FacetEditorTab[]{new FacetEditor((TapestryFacet)editorContext.getFacet(), this)};
+  }
+
+  @NotNull
+  public static LibraryInfo[] getLibraryInfos(@NotNull String versionId) {
+    final Version version = LibrariesDownloadAssistant.findVersion(versionId, getUrl());
+
+    if (version != null) {
+      return LibrariesDownloadAssistant.getLibraryInfos(version);
+    }
+    return LibraryInfo.EMPTY_ARRAY;
+  }
+
+  private static URL getUrl() {
+    return TapestryFacetConfiguration.class.getResource("libraries/tapestry.xml");
   }
 
   public void readExternal(Element element) throws InvalidDataException {
