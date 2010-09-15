@@ -45,7 +45,7 @@ public class TapestryFacetConfiguration implements FacetConfiguration {
   }
 
   private static URL getUrl() {
-    return TapestryFacetConfiguration.class.getResource("libraries/tapestry.xml");
+    return TapestryFacetConfiguration.class.getResource("/libraries/tapestry.xml");
   }
 
   public void readExternal(Element element) throws InvalidDataException {
