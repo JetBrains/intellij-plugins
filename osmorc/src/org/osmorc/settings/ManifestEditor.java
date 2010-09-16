@@ -58,12 +58,16 @@ public class ManifestEditor extends EditorTextField implements Disposable {
 
     protected EditorEx createEditor() {
         EditorEx editor = super.createEditor();
-        editor.setOneLineMode(false);
         editor.setVerticalScrollbarVisible(true);
         return editor;
     }
 
-    public void dispose() {
+    @Override
+    protected boolean isOneLineMode() {
+        return false;
+    }
+
+  public void dispose() {
         removeDocumentListener(listener);
     }
 
