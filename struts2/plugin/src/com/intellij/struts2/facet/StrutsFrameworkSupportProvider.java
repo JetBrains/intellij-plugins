@@ -84,6 +84,12 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
 
   protected void setupConfiguration(final StrutsFacet strutsFacet,
                                     final ModifiableRootModel modifiableRootModel, final FrameworkVersion version) {
+  }
+
+  @Override
+  protected void onFacetCreated(final StrutsFacet strutsFacet,
+                                final ModifiableRootModel modifiableRootModel,
+                                final FrameworkVersion version) {
     final Module module = strutsFacet.getModule();
     StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(new Runnable() {
       public void run() {
