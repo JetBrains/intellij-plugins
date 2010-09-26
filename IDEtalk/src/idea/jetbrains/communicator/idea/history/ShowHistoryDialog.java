@@ -24,6 +24,7 @@ import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.panels.NonOpaquePanel;
+import com.intellij.util.text.DateFormatUtil;
 import jetbrains.communicator.core.dispatcher.LocalMessage;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.idea.BaseLocalMessage;
@@ -37,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -90,7 +90,7 @@ public class ShowHistoryDialog extends IdeaDialog {
     final Date date = TimeUtil.getDay(message.getWhen());
 
     if (day == null || !day.equals(date) ) {
-      myConsole.print("------------ " + DateFormat.getDateInstance().format(date) + " ------------\n",
+      myConsole.print("------------ " + DateFormatUtil.formatDate(date) + " ------------\n",
           ConsoleViewContentType.NORMAL_OUTPUT);
       day = date;
     }
