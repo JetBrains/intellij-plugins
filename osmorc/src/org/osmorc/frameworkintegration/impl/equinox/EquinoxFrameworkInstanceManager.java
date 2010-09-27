@@ -33,7 +33,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osgi.framework.Version;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkInstanceManager;
 import org.osmorc.frameworkintegration.LibraryHandler;
@@ -89,6 +88,7 @@ public class EquinoxFrameworkInstanceManager implements FrameworkInstanceManager
         return libraryHandler.getLibraries(frameworkInstanceDefinition.getName());
     }
 
+    @Nullable
     public String checkValidity(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition) {
         if (frameworkInstanceDefinition.getName() == null || frameworkInstanceDefinition.getName().trim().length() == 0) {
             return "A name for the framework instance needs to be given.";

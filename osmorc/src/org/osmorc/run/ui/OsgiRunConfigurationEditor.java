@@ -33,8 +33,11 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.ui.RawCommandLineEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +92,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     modulesList.setColumnSelectionAllowed(false);
     modulesList.setDefaultEditor(Integer.class, new JSpinnerCellEditor());
     modulesList.setDefaultRenderer(Integer.class, new JSpinnerCellEditor());
-    
+
     addButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         onAddClick();
@@ -264,6 +267,16 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
     boolean useUserDefinedFields = !osgiRunConfiguration.isGenerateWorkingDir();
     workingDirField.setText(osgiRunConfiguration.getWorkingDir());
+    if (workingDirField.getText().length() == 0) {
+      final CompilerProjectExtension extension = CompilerProjectExtension.getInstance(project);
+      if (extension != null) {
+        final VirtualFilePointer outputDirPointer = extension.getCompilerOutputPointer();
+        if (outputDirPointer != null) {
+          workingDirField.setText(VfsUtil.urlToPath(outputDirPointer.getUrl() + "/run.osgi/"));
+        }
+      }
+    }
+
     workingDirField.setEnabled(useUserDefinedFields);
     userDefinedRadioButton.setSelected(useUserDefinedFields);
     osmorcControlledRadioButton.setSelected(!useUserDefinedFields);
