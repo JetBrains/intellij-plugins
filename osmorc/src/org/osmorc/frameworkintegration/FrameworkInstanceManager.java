@@ -26,6 +26,7 @@ package org.osmorc.frameworkintegration;
 
 import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -45,6 +46,7 @@ public interface FrameworkInstanceManager
 
   List<Library> getLibraries(final FrameworkInstanceDefinition frameworkInstanceDefinition);
 
+  @Nullable
   String checkValidity(@NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition);
 
 

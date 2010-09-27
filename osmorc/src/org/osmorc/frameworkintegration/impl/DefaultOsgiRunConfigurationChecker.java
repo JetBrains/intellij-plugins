@@ -2,7 +2,6 @@ package org.osmorc.frameworkintegration.impl;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
-import com.intellij.execution.configurations.RuntimeConfigurationWarning;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.OsgiRunConfigurationChecker;
 
@@ -20,11 +19,16 @@ public class DefaultOsgiRunConfigurationChecker implements OsgiRunConfigurationC
   public final void checkConfiguration(OsgiRunConfiguration runConfiguration) throws RuntimeConfigurationException {
     // make sure that if the user wants to re-use a runtime directory that it exists 
     if (!runConfiguration.isGenerateWorkingDir()) {
-      if (runConfiguration.getWorkingDir() == null ||
-          "".equals(runConfiguration.getWorkingDir()) ||
-          !new File(runConfiguration.getWorkingDir()).exists()) {
+      if (runConfiguration.getWorkingDir() == null || "".equals(runConfiguration.getWorkingDir())) {
         throw new RuntimeConfigurationError(
-          "The runtime directory is not specified or does not exist. Please set a runtime directory at the 'Parameters' tab or select 'Recreate each time'.");
+          "The runtime directory is not specified. Please set a runtime directory at the 'Parameters' tab or select 'Recreate each time'.");
+      }
+      final File dir = new File(runConfiguration.getWorkingDir());
+      if (!dir.exists()) {
+        // try to create it
+        if (!dir.mkdirs()) {
+          throw new RuntimeConfigurationError("The runtime directory could not be created. Please check the path at the 'Parameters' tab.");
+        }
       }
     }
 

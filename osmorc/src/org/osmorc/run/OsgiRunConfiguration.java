@@ -47,6 +47,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.ui.OsgiRunConfigurationEditor;
 import org.osmorc.run.ui.SelectedBundle;
@@ -122,6 +123,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     super(project, configurationFactory, name);
     bundlesToDeploy = new ArrayList<SelectedBundle>();
     additionalProperties = new HashMap<String, String>();
+    additionalProperties.put(GenericRunProperties.START_CONSOLE, String.valueOf(true));
   }
 
   @Override
