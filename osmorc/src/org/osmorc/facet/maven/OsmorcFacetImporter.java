@@ -131,5 +131,9 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         }
     }
 
-  
+   @Override
+  public boolean isSupportedDependency(MavenArtifact artifact) {
+    String t = artifact.getType();
+    return t.equalsIgnoreCase("bundle");
+  }
 }
