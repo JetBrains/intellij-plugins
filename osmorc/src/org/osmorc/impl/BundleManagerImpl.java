@@ -425,12 +425,12 @@ public class BundleManagerImpl implements BundleManager {
   }
 
   private final ModuleManager moduleManager;
-    private final ManifestHolderRegistry manifestHolderRegistry;
-    private final FrameworkIntegratorRegistry frameworkIntegratorRegistry;
-    private final ProjectSettings projectSettings;
-    private final ApplicationSettings applicationSettings;
-    private State _state;
+  private final ManifestHolderRegistry manifestHolderRegistry;
+  private final FrameworkIntegratorRegistry frameworkIntegratorRegistry;
+  private final ProjectSettings projectSettings;
+  private final ApplicationSettings applicationSettings;
+  private State _state;
 
-    private static final Logger LOG = Logger.getInstance("org.osmorc.BundleManagerImpl");
-    private String _currentFrameworkInstanceName;
+  private static final Logger LOG = Logger.getInstance("org.osmorc.BundleManagerImpl");
+  private String _currentFrameworkInstanceName;
 }

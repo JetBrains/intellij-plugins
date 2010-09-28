@@ -172,6 +172,7 @@ public class LibraryBundlingEditorComponent {
   public void dispose() {
     manifestEntries = null;
     _manifestEntriesHolder.removeAll();
+    beanAdapter.removeBeanPropertyChangeListener(beanPropertyChangeListener);
   }
 
   public JPanel getMainPanel() {
