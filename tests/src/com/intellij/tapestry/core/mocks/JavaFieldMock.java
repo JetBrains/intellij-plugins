@@ -29,6 +29,7 @@ public class JavaFieldMock implements IJavaField {
         _private = aPrivate;
     }
 
+    @Override
     public String getName() {
         return _name;
     }
@@ -39,6 +40,7 @@ public class JavaFieldMock implements IJavaField {
         return this;
     }
 
+    @Override
     public IJavaType getType() {
         return _type;
     }
@@ -49,6 +51,7 @@ public class JavaFieldMock implements IJavaField {
         return this;
     }
 
+    @Override
     public boolean isPrivate() {
         return _private;
     }
@@ -59,6 +62,7 @@ public class JavaFieldMock implements IJavaField {
         return this;
     }
 
+    @Override
     public Map<String, IJavaAnnotation> getAnnotations() {
         return _annotations;
     }
@@ -69,6 +73,7 @@ public class JavaFieldMock implements IJavaField {
         return this;
     }
 
+    @Override
     public String getDocumentation() {
         return _documentation;
     }
@@ -79,6 +84,7 @@ public class JavaFieldMock implements IJavaField {
         return this;
     }
 
+    @Override
     public String getStringRepresentation() {
         return _stringRepresentation;
     }
@@ -89,6 +95,7 @@ public class JavaFieldMock implements IJavaField {
         return this;
     }
 
+    @Override
     public boolean isValid() {
         return true;
     }

@@ -20,6 +20,7 @@ public class JavaAnnotationMock implements IJavaAnnotation {
         _fullyQualifiedName = fullyQualifiedName;
     }
 
+    @Override
     public String getFullyQualifiedName() {
         return _fullyQualifiedName;
     }
@@ -28,6 +29,7 @@ public class JavaAnnotationMock implements IJavaAnnotation {
         _fullyQualifiedName = fullyQualifiedName;
     }
 
+    @Override
     public Map<String, String[]> getParameters() {
         return _parameters;
     }

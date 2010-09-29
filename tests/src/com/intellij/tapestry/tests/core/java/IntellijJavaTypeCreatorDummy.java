@@ -23,6 +23,7 @@ public class IntellijJavaTypeCreatorDummy extends IntellijJavaTypeCreator {
         _controlMock = controlMock;
     }
 
+    @Override
     public void addImport(PsiImportList importList, PsiClass aClass) throws IncorrectOperationException {
         _controlMock.addImport(importList, aClass);
     }

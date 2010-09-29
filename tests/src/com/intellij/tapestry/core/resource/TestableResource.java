@@ -14,10 +14,12 @@ public class TestableResource implements IResource {
         _fileName = fileName;
     }
 
+    @Override
     public String getName() {
         return _name;
     }
 
+    @Override
     public File getFile() {
         try {
             URL url = TestableResource.class.getResource("/web/" + _fileName);
@@ -28,10 +30,12 @@ public class TestableResource implements IResource {
         }
     }
 
+    @Override
     public String getExtension() {
         return _fileName.substring(_fileName.lastIndexOf('.') + 1, _fileName.length() - 1);
     }
 
+    @Override
     public void accept(CoreXmlRecursiveElementVisitor visitor) {
     }
 }

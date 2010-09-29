@@ -34,10 +34,12 @@ public class JavaClassTypeMock implements IJavaClassType {
     _fullyQualifiedName = fullyQualifiedName;
   }
 
+  @Override
   public String getFullyQualifiedName() {
     return _fullyQualifiedName;
   }
 
+  @Override
   public String getName() {
     if (_fullyQualifiedName == null) {
       return null;
@@ -50,6 +52,7 @@ public class JavaClassTypeMock implements IJavaClassType {
     return _fullyQualifiedName.substring(_fullyQualifiedName.lastIndexOf('.') + 1);
   }
 
+  @Override
   public boolean isInterface() {
     return _interface;
   }
@@ -58,10 +61,12 @@ public class JavaClassTypeMock implements IJavaClassType {
     _interface = anInterface;
   }
 
+  @Override
   public boolean isPublic() {
     return _public;
   }
 
+  @Override
   public boolean isEnum() {
     return false;
   }
@@ -72,10 +77,12 @@ public class JavaClassTypeMock implements IJavaClassType {
     return this;
   }
 
+  @Override
   public boolean hasDefaultConstructor() {
     return _defaultConstructor;
   }
 
+  @Override
   public IJavaClassType getSuperClassType() {
     return _superClassType;
   }
@@ -90,10 +97,12 @@ public class JavaClassTypeMock implements IJavaClassType {
     return this;
   }
 
+  @Override
   public Collection<IJavaMethod> getPublicMethods(boolean fromSuper) {
     return _publicMethods;
   }
 
+  @Override
   public Collection<IJavaMethod> getAllMethods(boolean fromSuper) {
     return _allMethods;
   }
@@ -104,6 +113,7 @@ public class JavaClassTypeMock implements IJavaClassType {
     return this;
   }
 
+  @Override
   public Collection<IJavaMethod> findPublicMethods(String methodNameRegExp) {
     Pattern pattern = Pattern.compile(methodNameRegExp);
     Collection<IJavaMethod> foundMethods = new ArrayList<IJavaMethod>();
@@ -118,10 +128,12 @@ public class JavaClassTypeMock implements IJavaClassType {
     return foundMethods;
   }
 
+  @Override
   public Collection<IJavaAnnotation> getAnnotations() {
     return _annotations;
   }
 
+  @Override
   public Map<String, IJavaField> getFields(boolean fromSuper) {
     return _fields;
   }
@@ -132,6 +144,7 @@ public class JavaClassTypeMock implements IJavaClassType {
     return this;
   }
 
+  @Override
   public String getDocumentation() {
     return _documentation;
   }
@@ -140,6 +153,7 @@ public class JavaClassTypeMock implements IJavaClassType {
     _documentation = documentation;
   }
 
+  @Override
   public IResource getFile() {
     return _file;
   }
@@ -150,10 +164,12 @@ public class JavaClassTypeMock implements IJavaClassType {
     return this;
   }
 
+  @Override
   public boolean isAssignableFrom(IJavaType type) {
     return false;
   }
 
+  @Override
   @NotNull
   public Object getUnderlyingObject() {
     return _fullyQualifiedName;

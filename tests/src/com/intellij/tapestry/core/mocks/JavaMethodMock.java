@@ -31,14 +31,17 @@ public class JavaMethodMock implements IJavaMethod {
         _parameters = parameters;
     }
 
+    @Override
     public String getName() {
         return _name;
     }
 
+    @Override
     public IJavaType getReturnType() {
         return _returnType;
     }
 
+    @Override
     public Collection<IMethodParameter> getParameters() {
         return _parameters;
     }
@@ -49,6 +52,7 @@ public class JavaMethodMock implements IJavaMethod {
         return this;
     }
 
+    @Override
     public Collection<IJavaAnnotation> getAnnotations() {
         return _annotations;
     }
@@ -57,6 +61,7 @@ public class JavaMethodMock implements IJavaMethod {
         _annotations.add(annotation);
     }
 
+    @Override
     public IJavaAnnotation getAnnotation(String annotationQualifiedName) {
         for (IJavaAnnotation annotation : _annotations)
             if (annotation.getFullyQualifiedName().equals(annotationQualifiedName))
@@ -65,6 +70,7 @@ public class JavaMethodMock implements IJavaMethod {
         return null;
     }
 
+    @Override
     public IJavaClassType getContainingClass() {
         return _containingClass;
     }
@@ -73,6 +79,7 @@ public class JavaMethodMock implements IJavaMethod {
         _containingClass = containingClass;
     }
 
+    @Override
     public String getDocumentation() {
         return _documentation;
     }

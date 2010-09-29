@@ -14,6 +14,7 @@ import com.intellij.tapestry.intellij.TapestryApplicationSupportLoader;
 )
 public class TapestryApplicationSupportLoaderMock extends TapestryApplicationSupportLoader {
 
+    @Override
     public void initComponent() {
         System.out.printf("");
     }

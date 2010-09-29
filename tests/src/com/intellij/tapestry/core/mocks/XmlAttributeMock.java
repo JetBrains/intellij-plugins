@@ -23,6 +23,7 @@ public class XmlAttributeMock implements XmlAttribute {
         _value = value;
     }
 
+    @Override
     public String getName() {
         return _name;
     }
@@ -33,6 +34,7 @@ public class XmlAttributeMock implements XmlAttribute {
          return this;
     }
 
+    @Override
     public String getLocalName() {
         return _localName;
     }
@@ -43,6 +45,7 @@ public class XmlAttributeMock implements XmlAttribute {
          return this;
     }
 
+    @Override
     public String getNamespace() {
         return _namespace;
     }
@@ -53,6 +56,7 @@ public class XmlAttributeMock implements XmlAttribute {
          return this;
     }
 
+    @Override
     public String getValue() {
         return _value;
     }

@@ -41,6 +41,7 @@ public class TapestryParamInfoTest extends TapestryBaseTestCase {
 
     String joined = StringUtil.join(handler.getParametersForDocumentation(descriptor, createContext), new Function<Object, String>() {
 
+      @Override
       public String fun(Object o) {
         return ((XmlAttributeDescriptor)o).getName();
       }
@@ -49,6 +50,7 @@ public class TapestryParamInfoTest extends TapestryBaseTestCase {
 
   }
 
+  @Override
   protected String getBasePath() {
     return "parameterInfo/";
   }

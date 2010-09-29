@@ -14,14 +14,17 @@ public class JavaPrimitiveTypeMock implements IJavaPrimitiveType {
         _name = name;
     }
 
+    @Override
     public String getName() {
         return _name;
     }
 
+    @Override
     public boolean isAssignableFrom(IJavaType type) {
         return false;
     }
 
+    @Override
     @NotNull
     public Object getUnderlyingObject() {
         return _name;

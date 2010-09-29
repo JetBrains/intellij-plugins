@@ -15,10 +15,12 @@ public class MethodParameterMock implements IMethodParameter {
         _type = type;
     }
 
+    @Override
     public String getName() {
         return _name;
     }
 
+    @Override
     public IJavaType getType() {
         return _type;
     }

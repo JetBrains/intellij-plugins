@@ -19,6 +19,7 @@ public class PsiClassTypeMock extends PsiClassType {
 
   private PsiClass _resolve;
 
+    @Override
     @Nullable
     public PsiClass resolve() {
         return _resolve;
@@ -30,55 +31,67 @@ public class PsiClassTypeMock extends PsiClassType {
         return this;
     }
 
+    @Override
     public String getClassName() {
         return null;
     }
 
+    @Override
     @NotNull
     public PsiType[] getParameters() {
         return new PsiType[0];
     }
 
+    @Override
     @NotNull
     public ClassResolveResult resolveGenerics() {
         return null;
     }
 
+    @Override
     @NotNull
     public PsiClassType rawType() {
         return null;
     }
 
+    @Override
     @NotNull
     public GlobalSearchScope getResolveScope() {
         return null;
     }
 
+    @Override
     @NotNull
     public LanguageLevel getLanguageLevel() {
         return null;
     }
 
+    @Override
     public PsiClassType setLanguageLevel(final LanguageLevel languageLevel) {
         return null;
     }
 
+    @Override
     public String getPresentableText() {
         return null;
     }
 
+    @Override
     public String getCanonicalText() {
         return null;
     }
 
+    @Override
     public String getInternalCanonicalText() {
         return null;
     }
 
+    @Override
     public boolean isValid() {
         return false;
     }
 
+    @Override
     public boolean equalsToText(@NonNls String text) {
         return false;
     }

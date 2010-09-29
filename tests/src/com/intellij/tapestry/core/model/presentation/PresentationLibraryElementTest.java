@@ -243,14 +243,17 @@ class TestableParameterReceiverElement extends ParameterReceiverElement {
         super(library, elementClass, project);
     }
 
+    @Override
     public boolean allowsTemplate() {
         return false;
     }
 
+    @Override
     public IResource[] getTemplate() {
         return null;
     }
 
+    @Override
     public IResource[] getMessageCatalog() {
         return new IResource[0];
     }

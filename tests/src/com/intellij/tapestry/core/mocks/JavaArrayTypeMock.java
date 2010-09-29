@@ -14,19 +14,23 @@ public class JavaArrayTypeMock implements IJavaArrayType {
         _name = name;
     }
 
+    @Override
     public String getName() {
         return _name;
     }
 
+    @Override
     public boolean isAssignableFrom(IJavaType type) {
         return false;
     }
 
+    @Override
     @NotNull
     public Object getUnderlyingObject() {
         return _name;
     }
 
+    @Override
     public IJavaType getComponentType() {
         return null;
     }

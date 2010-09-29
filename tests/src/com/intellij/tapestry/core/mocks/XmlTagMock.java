@@ -27,6 +27,7 @@ public class XmlTagMock implements XmlTag {
         _localName = localName;
     }
 
+    @Override
     public String getName() {
         return _name;
     }
@@ -37,6 +38,7 @@ public class XmlTagMock implements XmlTag {
         return this;
     }
 
+    @Override
     public String getNamespace() {
         return _namespace;
     }
@@ -47,6 +49,7 @@ public class XmlTagMock implements XmlTag {
         return this;
     }
 
+    @Override
     public String getLocalName() {
         return _localName;
     }
@@ -57,6 +60,7 @@ public class XmlTagMock implements XmlTag {
         return this;
     }
 
+    @Override
     public String getText() {
         return _text;
     }
@@ -67,6 +71,7 @@ public class XmlTagMock implements XmlTag {
         return this;
     }
 
+    @Override
     public  XmlAttribute[] getAttributes() {
         return _attributes.toArray(new XmlAttribute[_attributes.size()]);
     }
@@ -77,6 +82,7 @@ public class XmlTagMock implements XmlTag {
         return this;
     }
 
+    @Override
     public XmlAttribute getAttribute(String name, String namespace) {
         return null;
     }
