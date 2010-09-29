@@ -41,6 +41,7 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
   private static final int WAIT_USER_RESPONSES_TIMEOUT = 100;
   private static final int SECS_BETWEEN_SCANS = 1;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -48,6 +49,7 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
 
     final boolean[] started = new boolean[1];
     myMulticastThread = new MulticastPingThread(InetAddress.getByName("localhost"), null, (UserMonitorClient) myUserMonitorClientMock.proxy()) {
+      @Override
       public void run() {
         myStarted = true;
         try {
@@ -56,6 +58,7 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
         }
       }
 
+      @Override
       public void sendMulticastPingRequest() throws IOException {
         started[0] = true;
       }
@@ -74,10 +77,12 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
 
 
     myUserMonitorThread.triggerFindNow();
-    new WaitFor() { protected boolean condition() { return started[0]; } };
+    new WaitFor() { @Override
+                    protected boolean condition() { return started[0]; } };
     myUserMonitorClientMock.expects(once()).method("setOnlineUsers").with(eq(Collections.emptySet()));
 
     new WaitFor(myUserMonitorThread.getWaitUserResponsesTimeout() + 100) {
+      @Override
       protected boolean condition() {
         return !myUserMonitorThread.isFinding();
       }
@@ -85,9 +90,11 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
     assertFalse("Sanity check", myUserMonitorThread.isFinding());
   }
 
+  @Override
   protected void tearDown() throws Exception {
     myUserMonitorThread.shutdown();
     new WaitFor(5000){
+      @Override
       protected boolean condition() {
         return !myUserMonitorThread._isAlive();
       }

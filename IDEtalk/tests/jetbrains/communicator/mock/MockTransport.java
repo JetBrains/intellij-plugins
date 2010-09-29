@@ -35,23 +35,28 @@ public class MockTransport extends NullTransport {
   private boolean myOnline = true;
   private UserPresence myPresence;
 
+  @Override
   public String getName() {
     return NAME;
   }
 
+  @Override
   public boolean isSelf(User user) {
     return user != null && user.getName().equals(mySelfUserName);
   }
 
+  @Override
   public String[] getProjects(User user) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public User[] findUsers(ProgressIndicator progressIndicator) {
     for(int  i = 0; i < 20; i ++) {
       progressIndicator.setText("ddd" + i);
       progressIndicator.setFraction(1.0 * (i + 1) / 20);
       new WaitFor(200){
+        @Override
         protected boolean condition() {
           return false;
         }
@@ -65,6 +70,7 @@ public class MockTransport extends NullTransport {
     return (User[]) result.toArray(new User[result.size()]);
   }
 
+  @Override
   public boolean isOnline() {
     return myOnline;
   }
@@ -74,6 +80,7 @@ public class MockTransport extends NullTransport {
     myOnline = online;
   }
 
+  @Override
   public UserPresence getUserPresence(User user) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
@@ -83,6 +90,7 @@ public class MockTransport extends NullTransport {
   }
 
 
+  @Override
   public void setOwnPresence(UserPresence userPresence) {
     myPresence = userPresence;
   }

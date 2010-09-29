@@ -34,6 +34,7 @@ public class ClearHistoryCommandTest extends LightTestCase {
   private Mock myDispatcherMock;
   private Mock myIdeMock;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -59,6 +60,7 @@ public class ClearHistoryCommandTest extends LightTestCase {
         eq(StringUtil.getMsg("ClearHistoryCommand.text"))
     ).will(returnValue(true));
     myIdeMock.expects(once()).method("runLongProcess").will(new CustomStub("runner") {
+      @Override
       public Object invoke(Invocation invocation) throws Throwable {
         ((IDEFacade.Process) invocation.parameterValues.get(1)).run(new NullProgressIndicator());
         return null;
@@ -66,6 +68,7 @@ public class ClearHistoryCommandTest extends LightTestCase {
     });
 
     myIdeMock.expects(once()).method("runOnPooledThread").will(new CustomStub("foo"){
+      @Override
       public Object invoke(Invocation invocation) throws Throwable {
         final FutureTask task = new FutureTask((Runnable) invocation.parameterValues.get(0), null);
         task.run();

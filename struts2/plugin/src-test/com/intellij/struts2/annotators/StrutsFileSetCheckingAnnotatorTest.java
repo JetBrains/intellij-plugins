@@ -29,6 +29,7 @@ import java.util.List;
  */
 public class StrutsFileSetCheckingAnnotatorTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlHighlighting";

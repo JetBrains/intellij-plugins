@@ -35,6 +35,7 @@ public class FileAccessProviderTest extends BaseTestCase {
   private MyProvider myProvider;
   private Mock myMock;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -92,10 +93,12 @@ public class FileAccessProviderTest extends BaseTestCase {
       super(ideFacade, userModel);
     }
 
+    @Override
     protected void doProcess(Element request, Element response) {
       myProcessed = true;
     }
 
+    @Override
     public String getTagName() {
       throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
     }

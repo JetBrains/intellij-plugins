@@ -38,6 +38,7 @@ public class UserModelImplTest extends BaseTestCase {
   private UserModel myUserModel;
   private MyIDEtalkListener myListener;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -46,6 +47,7 @@ public class UserModelImplTest extends BaseTestCase {
     getBroadcaster().addListener(myListener);
   }
 
+  @Override
   protected void tearDown() throws Exception {
     myListener.clear();
     getBroadcaster().removeListener(myListener);
@@ -252,11 +254,13 @@ public class UserModelImplTest extends BaseTestCase {
       return (IDEtalkEvent[]) myEvents.toArray(new IDEtalkEvent[myEvents.size()]);
     }
 
+    @Override
     public void beforeChange(IDEtalkEvent event) {
       myEvents.add(event);
       myLog += "Before";
     }
 
+    @Override
     public void afterChange(IDEtalkEvent event) {
       myLog += "After";
     }

@@ -44,6 +44,7 @@ public class LocalMessageDispatcherTest extends BaseTestCase {
   private UserModelImpl myUserModel;
   private static final long SAVE_WAIT_TIMEOUT = MessageHistory.SAVE_TIMEOUT + 200;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -55,6 +56,7 @@ public class LocalMessageDispatcherTest extends BaseTestCase {
     myUser = UserImpl.create("user", MockTransport.NAME);
   }
 
+  @Override
   protected void tearDown() throws Exception {
     myDispatcher.clearAll();
     myDispatcher.dispose();

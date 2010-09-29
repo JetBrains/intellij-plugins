@@ -27,6 +27,7 @@ public class P2PNetworkXmlMessageTest extends TestCase {
 
     final boolean[] processed = new boolean[1];
     MockXmlMessage xmlMessage = new MockXmlMessage(){
+      @Override
       public void processResponse(Element responseElement) {
         assertEquals("fee", responseElement.getName());
         processed[0] = true;

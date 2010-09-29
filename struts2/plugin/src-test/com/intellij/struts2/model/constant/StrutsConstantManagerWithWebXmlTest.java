@@ -41,6 +41,7 @@ public class StrutsConstantManagerWithWebXmlTest extends StrutsConstantManagerTe
     return WebModuleFixtureBuilder.class;
   }
 
+  @Override
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     addLibrary(moduleBuilder, "servlet-api", "servlet-api.jar");

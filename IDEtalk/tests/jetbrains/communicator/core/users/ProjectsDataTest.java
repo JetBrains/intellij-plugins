@@ -25,6 +25,7 @@ import jetbrains.communicator.core.vfs.VFile;
 public class ProjectsDataTest extends TestCase {
   ProjectsData myProjectsData;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     myProjectsData = new ProjectsData();

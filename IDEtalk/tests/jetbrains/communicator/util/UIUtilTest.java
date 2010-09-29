@@ -27,6 +27,7 @@ public class UIUtilTest extends BaseTestCase {
   private MockIDEFacade myIdeFacade;
   private MyProgressIndicator myIndicator;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     myIdeFacade = new MockIDEFacade();
@@ -38,6 +39,7 @@ public class UIUtilTest extends BaseTestCase {
 
     final long []start = new long[1];
     Runnable runnable = new Runnable() {
+      @Override
       public void run() {
         try {
           start[0] = System.currentTimeMillis();
@@ -60,6 +62,7 @@ public class UIUtilTest extends BaseTestCase {
   public void testQuickProcess() throws Exception {
     final boolean[] wasRun = new boolean[1];
     Runnable runnable = new Runnable() {
+      @Override
       public void run() {
         wasRun[0] = true;
       }
@@ -72,6 +75,7 @@ public class UIUtilTest extends BaseTestCase {
 
   public void testCancelProcess() throws Exception {
     Runnable runnable = new Runnable() {
+      @Override
       public void run() {
         myIndicator.setCancelled();
         try {
@@ -98,20 +102,24 @@ public class UIUtilTest extends BaseTestCase {
     private boolean myCancelled;
     private boolean myIndefinite;
 
+    @Override
     public void setIndefinite(boolean indefinite) {
       myIndefinite = indefinite;
     }
 
+    @Override
     public void setText(String text) {
       assertEquals("test text", text);
     }
 
+    @Override
     public void setFraction(double x) {
       assertTrue(x >= myLastFraction);
       myLastFraction = x;
       myCallCount ++;
     }
 
+    @Override
     public void checkCanceled() {
       if (myCancelled) throw new RuntimeException("Canceled");
     }

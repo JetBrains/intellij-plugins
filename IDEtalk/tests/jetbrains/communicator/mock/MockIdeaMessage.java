@@ -27,17 +27,21 @@ import javax.swing.*;
  */
 public class MockIdeaMessage extends MockMessage implements IdeaLocalMessage {
 
+  @Override
   public String getComment() {
     return "MockComment";
   }
 
+  @Override
   public String getTitle() {
     return "MockTitle";
   }
 
+  @Override
   public void customizeTreeNode(SimpleColoredComponent label, int refreshCounter) {
   }
 
+  @Override
   public JComponent getPopupComponent(User user, Project project) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }

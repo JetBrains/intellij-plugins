@@ -33,11 +33,13 @@ public class RegistrationFormTest extends BaseTestCase {
   private String myErrorText;
   private MockIDEFacade myIdeFacade;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
     myFacade = new MockJabberFacade();
     myTextAcceptor = new TextAcceptor() {
+      @Override
       public void setText(String text) {
         myErrorText = text;
       }

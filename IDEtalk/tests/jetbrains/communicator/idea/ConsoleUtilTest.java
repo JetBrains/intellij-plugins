@@ -28,6 +28,7 @@ import java.awt.*;
 public class ConsoleUtilTest extends BaseTestCase {
   private Mock myConsoleMock;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     myConsoleMock = mock(ConsoleView.class);

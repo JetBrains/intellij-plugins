@@ -36,6 +36,7 @@ public class UserActivityMonitorTest extends BaseTestCase {
     super(string);
   }
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     myTransport = new MockTransport();
@@ -94,12 +95,14 @@ public class UserActivityMonitorTest extends BaseTestCase {
   private void startThread() {
     myThread.start();
     new WaitFor(500) {
+      @Override
       protected boolean condition() {
         return myTransport.getPresence() != null;
       }
     };
   }
 
+  @Override
   protected void tearDown() throws Exception {
     myMonitor.disposeComponent();
     myThread.join();

@@ -31,6 +31,7 @@ public class JabberFacadeTest extends BaseTestCase {
   private JabberFacadeImpl myFacade;
   private MockIDEFacade myIDEFacade;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

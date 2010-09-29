@@ -30,6 +30,7 @@ public class ShowDiffCommandTest extends BaseTestCase {
   private final String myLog = "";
   private Mock myFacadeMock;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -56,6 +57,7 @@ public class ShowDiffCommandTest extends BaseTestCase {
   public void testExecute() throws Exception {
     final VFile vFile = VFile.create("a file");
     MockUser user = new MockUser() {
+      @Override
       public String getVFile(VFile file, IDEFacade ideFacade) {
         assertSame(vFile, file);
         return "something";
@@ -73,6 +75,7 @@ public class ShowDiffCommandTest extends BaseTestCase {
   public void testExecute_NoContent() throws Exception {
     final VFile vFile = VFile.create("a file");
     MockUser user = new MockUser() {
+      @Override
       public String getVFile(VFile file, IDEFacade ideFacade) {
         assertSame(vFile, file);
         return null;

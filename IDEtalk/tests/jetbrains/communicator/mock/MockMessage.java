@@ -45,10 +45,12 @@ public class MockMessage implements LocalMessage {
     myMessage = msg;
   }
 
+  @Override
   public boolean containsString(String searchString) {
     return myMessage.indexOf(searchString) >= 0;
   }
 
+  @Override
   public Icon getMessageIcon(int refreshCounter) {
     return new EmptyIcon(3,3);
   }
@@ -62,10 +64,12 @@ public class MockMessage implements LocalMessage {
     return myMessage;
   }
 
+  @Override
   public Date getWhen() {
     return myDate;
   }
 
+  @Override
   public boolean send(User user) {
     myLog = "sent to " + user + ":" + (mySendSuccessful ? "success" : "fail");
     return mySendSuccessful;

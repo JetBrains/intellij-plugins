@@ -78,6 +78,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     return testSuite;
   }
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -91,6 +92,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
 
     Thread.sleep(120);
     new WaitFor(500) {
+      @Override
       protected boolean condition() {
         return myEvents.size() > 0;
       }
@@ -98,6 +100,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
 
     myTransport.synchronizeRoster(true);
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return myUserModel.getAllUsers().length == 0;
       }
@@ -108,12 +111,14 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     mySelf = createSelf();
   }
 
+  @Override
   protected Transport createTransport() {
     myFacade = new JabberFacadeImpl(myIdeFacade);
     myUserFinder = new MockUserFinder();
 
     Mock mockUI = createJabberUIMock();
     myTransport = new JabberTransport((JabberUI) mockUI.proxy(), myFacade, myUserModel, myDispatcher, myUserFinder) {
+      @Override
       public void synchronizeRoster(boolean removeUsersNotInRoster) {
         super.synchronizeRoster(removeUsersNotInRoster);
         myUsersSynchronized = true;
@@ -130,6 +135,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
   private Mock createJabberUIMock() {
     Mock mockUI = mock(JabberUI.class);
     mockUI.stubs().method("connectAndLogin").will(new ReturnStub(Boolean.TRUE){
+      @Override
       public Object invoke(Invocation invocation) throws Throwable {
         myFacade.connect();
         return super.invoke(invocation);
@@ -138,6 +144,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     return mockUI;
   }
 
+  @Override
   protected void tearDown() throws Exception {
 //noinspection EmptyCatchBlock
     try {
@@ -189,6 +196,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertEquals("Wrong group", "aGroup", user.getGroup());
 
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return myFacade.getConnection().getRoster().getPresence(fred) != null;
       }
@@ -208,6 +216,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
 
   private void waitForEvent() {
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return myEvents.size() > 0;
       }
@@ -284,6 +293,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     // Change group:
     user.setGroup("someOtherGroup", myUserModel);
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return roster.getGroupCount() == 1 && roster.getGroup("someOtherGroup") != null;
       }
@@ -298,6 +308,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     // Change Display name:
     user.setDisplayName("Some new name", myUserModel);
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return "Some new name".equals(roster.getEntry(FRED).getName());
       }
@@ -307,6 +318,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     // Delete user:
     myUserModel.removeUser(user);
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return roster.getEntryCount() == 0;
       }
@@ -321,6 +333,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     myTransport.getFacade().addUsers("General", Arrays.asList(getUser(contact)));
     new WaitFor(TIMEOUT) {
 
+      @Override
       protected boolean condition() {
         return 1 == myUserModel.getAllUsers().length && myUserModel.getAllUsers()[0].isOnline();
       }
@@ -347,6 +360,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     myEvents.clear();
     roster.createEntry(jabberUser, "Bob", new String[0]);
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return myEvents.size() == 2;
       }
@@ -365,6 +379,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     contact.sendPacket(presence);
 
     new WaitFor(TIMEOUT){
+      @Override
       protected boolean condition() {
         return  myEvents.size() == 1;
       }
@@ -381,6 +396,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     conn.getRoster().createEntry(selfJabberId(), "name", new String[0]);
 
     new WaitFor(2000) {
+      @Override
       protected boolean condition() {
         return conn.getRoster().getEntry(selfJabberId()).getType() == RosterPacket.ItemType.BOTH;
       }
@@ -422,6 +438,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     // See JabberTransport:mySubscribeListener
     myFacade.connect();
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return  null != bob.getRoster().getPresence(selfName);
       }
@@ -434,6 +451,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
         presence.getType() );
 
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return myEvents.size() > 1;
       }
@@ -445,6 +463,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     assertEquals("We should get bob in our contact list as well", bobUserName, myUserModel.getAllUsers()[0].getName());
 
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return getBobEntry(bobUserName) != null && getBobEntry(bobUserName).getType() == RosterPacket.ItemType.BOTH;
       }
@@ -483,6 +502,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     myFacade.addUsers("General", Collections.singletonList(userName));
     final String userName1 = userName;
     new WaitFor(TIMEOUT){
+      @Override
       protected boolean condition() {
         return myTransport.isUserInMyContactListAndActive(userName1);
       }
@@ -505,6 +525,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
   public void testSendMessage2NonExistingUser() throws Throwable {
     myFacade.addUsers("grp", Arrays.asList(new String[]{"some@fake.user"}));
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return myUserModel.getAllUsers().length > 0;
       }
@@ -513,6 +534,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     myUserModel.getAllUsers()[0].sendMessage("some text", getBroadcaster());
     myEvents.clear();
     new WaitFor(TIMEOUT){
+      @Override
       protected boolean condition() {
         return myEvents.size() > 0;
       }
@@ -527,6 +549,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     addEventListener();
     mySelf.sendMessage("message", getBroadcaster());
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return myEvents.size() > 0;
       }
@@ -541,6 +564,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     conn.getRoster().createEntry(selfJabberId(), "name", new String[0]);
     addEventListener();
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return myEvents.size() > 1;
       }
@@ -551,6 +575,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
 
     conn.createChat(selfJabberId()).sendMessage("hello");
     new WaitFor(2000) {
+      @Override
       protected boolean condition() {
         return myEvents.size() > 0;
       }
@@ -568,6 +593,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     myFacade.getConnection().sendPacket(message);
 
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return myEvents.size() > 1;
       }
@@ -593,12 +619,14 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     addEventListener();
 
     myTransport.sendXmlMessage(mySelf, new TextXmlMessage("some text"){
+      @Override
       public String getTagNamespace() {
         return "some namespace";
       }
     });
 
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return myEvents.size() > 1;
       }
@@ -614,6 +642,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     myTransport.getFacade().getConnection().sendPacket(baseMessage);
 
     new WaitFor(TIMEOUT){
+      @Override
       protected boolean condition() {
         return myEvents.size() > 0;
       }
@@ -642,6 +671,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     myFacade.addUsers("grp", Arrays.asList(getUser(bob)));
 
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return null != bob.getRoster().getPresence(user);
       }
@@ -655,6 +685,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
 
     myTransport.setOwnPresence(presence);
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return Presence.Mode.away == bob.getRoster().getPresence(user).getMode();
       }
@@ -665,6 +696,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
 
     // Now, change bob's presence
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return myEvents.size() > 2;
       }
@@ -674,6 +706,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     final User bobUser = myUserModel.findUser(getUser(bob), myTransport.getName());
 
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return PresenceMode.DND == bobUser.getPresence().getPresenceMode();
       }
@@ -690,6 +723,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     bob.sendPacket(new Presence(Presence.Type.available, "some status", 0, Presence.Mode.xa));
 
     new WaitFor(TIMEOUT) {
+      @Override
       protected boolean condition() {
         return PresenceMode.EXTENDED_AWAY == bobUser.getPresence().getPresenceMode();
       }
@@ -718,6 +752,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
   }
 
 
+  @Override
   protected User createSelf() {
     if (myFacade.getConnection() != null) {
       return UserImpl.create(selfJabberId(), myTransport.getName());
@@ -729,6 +764,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     return getUser(myFacade.getConnection());
   }
 
+  @Override
   protected User createAnotherOnlineUser() throws Exception {
     String userName = "AnotherUser" + System.currentTimeMillis();
     final XMPPConnection bob = createLocalConnectionWithJabberUser(userName, null);
@@ -746,6 +782,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     Presence presence = new Presence(Presence.Type.available);
     conn.sendPacket(presence);
     disposeOnTearDown(new Disposable(){
+      @Override
       public void dispose() {
         try {
           if (conn.isConnected()) {
@@ -755,6 +792,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
           throw new RuntimeException(e);
         } finally{
           new Thread() {
+            @Override
             public void run() {
               conn.close();
             }
@@ -768,11 +806,13 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
   private class MockUserFinder implements JabberUserFinder {
     private String myLog = "";
 
+    @Override
     public User[] findUsers(ProgressIndicator progressIndicator) {
       myLog += "findUsers";
       return new User[0];
     }
 
+    @Override
     public void registerForProject(String jabberUserId) {
       myLog += "registerForProject" + jabberUserId;
     }

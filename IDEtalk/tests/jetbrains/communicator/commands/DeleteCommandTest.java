@@ -39,6 +39,7 @@ public class DeleteCommandTest extends BaseTestCase {
   private UserModelImpl myUserModel;
   private static final String GROUP_NAME = "aGroup";
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -48,6 +49,7 @@ public class DeleteCommandTest extends BaseTestCase {
     disposeOnTearDown(myUserModel);
     myCommand = new DeleteCommand(myUserModel,
         (UserListComponent)myUserListComponentMock.proxy(), (IDEFacade) myIDEFacade.proxy()){
+      @Override
       protected boolean isFocused() {
         return true;
       }

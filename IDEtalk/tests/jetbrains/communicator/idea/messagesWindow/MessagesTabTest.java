@@ -35,6 +35,7 @@ public class MessagesTabTest extends BaseTestCase {
   private MessagesTab myMessagesTab;
   private Mock myUserMock;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -49,6 +50,7 @@ public class MessagesTabTest extends BaseTestCase {
     myMessagesTab = new MessagesTab(null, myUser,
         localMessageDispatcher, true) {
 
+      @Override
       protected ConsoleView createConsoleView(Project project) {
         return (ConsoleView) consoleStub.proxy();
       }

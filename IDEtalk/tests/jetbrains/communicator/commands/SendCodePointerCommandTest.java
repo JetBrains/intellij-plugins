@@ -34,6 +34,7 @@ public class SendCodePointerCommandTest extends BaseTestCase {
   private SendCodePointerCommand myCommand;
   private Mock myFacadeMock;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -60,6 +61,7 @@ public class SendCodePointerCommandTest extends BaseTestCase {
 
     final boolean [] sent = new boolean[1];
     MockUser user = new MockUser() {
+      @Override
       public void sendCodeIntervalPointer(VFile file, CodePointer pointer, String comment, EventBroadcaster eventBroadcaster) {
         sent[0] = true;
         assertSame(fileToSend, file);
@@ -105,6 +107,7 @@ public class SendCodePointerCommandTest extends BaseTestCase {
 
     final boolean [] sent = new boolean[1];
     MockUser user = new MockUser() {
+      @Override
       public void sendCodeIntervalPointer(VFile file, CodePointer pointer, String comment, EventBroadcaster eventBroadcaster) {
         sent[0] = true;
       }

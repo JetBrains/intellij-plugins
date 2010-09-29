@@ -32,6 +32,7 @@ public class FindByJabberIdCommandTest extends BaseTestCase {
   private Mock myJabberUI;
   private UserModelImpl myUserModel;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

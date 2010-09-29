@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StrutsVersionDetectorTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlResult"; // fake

@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NonNls;
  */
 public abstract class BasicStrutsHighlightingTestCase<T extends JavaModuleFixtureBuilder> extends BasicHighlightingTestCase<T> {
 
+  @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
     return new LocalInspectionTool[]{new Struts2ModelInspection()};
   }

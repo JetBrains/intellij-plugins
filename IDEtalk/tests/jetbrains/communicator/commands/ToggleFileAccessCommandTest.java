@@ -36,6 +36,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
   private Mock myUserListComponent;
   private UserModelImpl myUserModel;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -43,6 +44,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
     myUserModel = new UserModelImpl(getBroadcaster());
     disposeOnTearDown(myUserModel);
     myCommand = new ToggleFileAccessCommand(myUserModel, (UserListComponent) myUserListComponent.proxy()) {
+      @Override
       protected boolean isFocused() {
         return true;
       }
@@ -144,6 +146,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
 
     Pico.getInstance().unregisterComponent(Pico.getInstance().getComponentInstanceOfType(Transport.class));
     MockTransport mockTransport = new MockTransport() {
+      @Override
       public UserPresence getUserPresence(User user) {
         return user == user1 ? new UserPresence(true) : new UserPresence(false);
       }

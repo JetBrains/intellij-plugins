@@ -40,21 +40,26 @@ public class MockXmlMessage implements XmlMessage {
     myNamespace = namespace;
   }
 
+  @Override
   public String getTagName() {
     return myTagName;
   }
 
+  @Override
   public String getTagNamespace() {
     return myNamespace;
   }
 
+  @Override
   public void fillRequest(Element element) {
   }
 
+  @Override
   public boolean needsResponse() {
     return myShouldWaitForResponse;
   }
 
+  @Override
   public void processResponse(Element responseElement) {
   }
 

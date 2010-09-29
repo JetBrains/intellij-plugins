@@ -40,11 +40,13 @@ public class VFSUtilTest extends IdeaTestCase {
   private ContentEntry myContentEntry;
   private final Set<File> myFilesToDelete = new HashSet<File>();
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
     final File dir = createTempDirectory();
     updateRoots(new Updater() {
+      @Override
       public void update(ModifiableRootModel modifiableModel) {
         myContentRoot = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir);
         try {
@@ -64,6 +66,7 @@ public class VFSUtilTest extends IdeaTestCase {
     VFSUtil._setProject(getProject());
   }
 
+  @Override
   protected void tearDown() throws Exception {
     try {
       for (File file : myFilesToDelete) {
@@ -75,8 +78,10 @@ public class VFSUtilTest extends IdeaTestCase {
     }
   }
 
+  @Override
   protected void runTest() throws Throwable {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
       public void run() {
         try {
           VFSUtilTest.super.runTest();
@@ -120,6 +125,7 @@ public class VFSUtilTest extends IdeaTestCase {
     // Change our source path:
     final VirtualFile newSrc = myContentRoot.createChildDirectory(this, "new_src");
     updateRoots(new Updater() {
+      @Override
       public void update(ModifiableRootModel modifiableModel) {
         myContentEntry = modifiableModel.getContentEntries()[0];
         myContentEntry.removeSourceFolder(myContentEntry.getSourceFolders()[0]);
@@ -135,6 +141,7 @@ public class VFSUtilTest extends IdeaTestCase {
 
   private void updateRoots(final Updater updater) {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
       public void run() {
         try {
           ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(getModule()).getModifiableModel();

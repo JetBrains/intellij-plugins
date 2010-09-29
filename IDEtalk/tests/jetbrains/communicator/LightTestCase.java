@@ -43,25 +43,30 @@ public abstract class LightTestCase extends MockObjectTestCase {
   }
 
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     ourShouldFail = false;
 
     Logger.getRootLogger().addAppender(new AppenderSkeleton() {
+      @Override
       protected void append(LoggingEvent loggingEvent) {
         if (loggingEvent.level.isGreaterOrEqual(Priority.ERROR) ) {
           ourShouldFail = true;
         }
       }
+      @Override
       public boolean requiresLayout() {
         return false;
       }
+      @Override
       public void close() {
       }
     });
 
   }
 
+  @Override
   protected void tearDown() throws Exception {
     while (!myDisposables.isEmpty()) {
       Disposable disposable = myDisposables.pop();

@@ -27,15 +27,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ActionReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "reference/jsp/action";
   }
 
+  @Override
   protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
     return WebModuleFixtureBuilder.class;
   }
 
+  @Override
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");

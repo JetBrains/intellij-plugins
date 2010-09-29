@@ -25,6 +25,7 @@ import java.net.InetAddress;
 public class MulticastPingThreadTest extends BaseTestCase {
   private MulticastPingThread myMulticastPingThread;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

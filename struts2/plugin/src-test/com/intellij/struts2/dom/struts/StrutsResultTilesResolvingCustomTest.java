@@ -26,15 +26,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StrutsResultTilesResolvingCustomTest extends BasicStrutsHighlightingTestCase<WebModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlResultTilesCustom";
   }
 
+  @Override
   protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
     return WebModuleFixtureBuilder.class;
   }
 
+  @Override
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     moduleBuilder.addSourceRoot(myFixture.getTempDirPath());

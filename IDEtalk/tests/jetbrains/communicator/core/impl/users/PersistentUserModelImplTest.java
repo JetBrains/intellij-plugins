@@ -36,6 +36,7 @@ public class PersistentUserModelImplTest extends BaseTestCase {
   private File myTempDir;
   private boolean mySaved;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -109,18 +110,21 @@ public class PersistentUserModelImplTest extends BaseTestCase {
 
   public void testConcurrentModifications() throws Exception {
     Runnable createUserCommand = new Runnable() {
+      @Override
       public void run() {
         User user = myUserModel.createUser("bob" + System.nanoTime(), MockTransport.NAME);
         myUserModel.addUser(user);
       }
     };
     Runnable createGroupCommand = new Runnable() {
+      @Override
       public void run() {
         myUserModel.addGroup("group" + System.nanoTime());
       }
     };
 
     Runnable removeUserCommand = new Runnable() {
+      @Override
       public void run() {
         User[] allUsers = myUserModel.getAllUsers();
         if (allUsers.length > 0) {
@@ -129,6 +133,7 @@ public class PersistentUserModelImplTest extends BaseTestCase {
       }
     };
     Runnable removeGroupCommand = new Runnable() {
+      @Override
       public void run() {
         String[] groups = myUserModel.getGroups();
         if (groups.length > 0) {
@@ -157,6 +162,7 @@ public class PersistentUserModelImplTest extends BaseTestCase {
 
   private Runnable createCycle(final Runnable r) {
     return new Runnable() {
+      @Override
       public void run() {
         for (int i = 0; i < 10; i ++) {
           try {

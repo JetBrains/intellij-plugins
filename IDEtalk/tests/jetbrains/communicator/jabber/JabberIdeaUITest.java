@@ -43,10 +43,12 @@ public class JabberIdeaUITest extends BaseTestCase implements StatusToolbar {
     assertEquals("Should register the command", JabberConnectionCommand.class.getName(), myLog.toString());
   }
 
+  @Override
   public void addToolbarCommand(Class<? extends NamedUserCommand> namedCommandClass) {
     myLog.append(namedCommandClass.getName());
   }
 
+  @Override
   public Component createComponent() {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }

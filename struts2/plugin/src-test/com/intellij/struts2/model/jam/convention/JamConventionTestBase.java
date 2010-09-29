@@ -51,6 +51,7 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
   protected void postConfigureModule(final T moduleBuilder) throws Exception {
   }
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "model/jam/convention/" + getTestDataFolder();

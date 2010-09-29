@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NonNls;
  */
 public abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFixtureBuilder> extends BasicHighlightingTestCase<T> {
 
+  @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
     return new LocalInspectionTool[]{new ValidatorModelInspection(), new ValidatorConfigModelInspection()};
   }

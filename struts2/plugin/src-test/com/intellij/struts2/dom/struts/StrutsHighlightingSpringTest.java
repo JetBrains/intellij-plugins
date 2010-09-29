@@ -44,6 +44,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   @NonNls
   private static final String SPRING_XML = "spring.xml";
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlHighlightingSpring";
@@ -54,6 +55,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     return true;
   }
 
+  @Override
   protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
 
@@ -105,6 +107,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
    */
   private List<String> filterSpringBeanCompletionVariants(final List<String> variants) {
     return ContainerUtil.findAll(variants, new Condition<String>() {
+      @Override
       public boolean value(final String s) {
         return !s.contains(".");
       }
@@ -137,6 +140,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
 
   protected SpringFacet createSpringFacet() {
     final RunResult<SpringFacet> runResult = new WriteCommandAction<SpringFacet>(myFixture.getProject()) {
+      @Override
       protected void run(final Result<SpringFacet> result) throws Throwable {
         final String name = SpringFacetType.INSTANCE.getPresentableName();
         final SpringFacet facet = FacetManager.getInstance(myModule).addFacet(SpringFacetType.INSTANCE, name, null);

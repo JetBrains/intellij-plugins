@@ -42,6 +42,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
   private static final int PORT = 12234;
   private static final int WAIT_USER_RESPONSES_TIMEOUT = 500;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -49,6 +50,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
 
     final boolean[] started = new boolean[1];
     myMulticastThread = new MulticastPingThread(InetAddress.getByName("localhost"), null, (UserMonitorClient) myUserMonitorClientMock.proxy()) {
+      @Override
       public void run() {
         myStarted = true;
         try {
@@ -58,6 +60,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
         }
       }
 
+      @Override
       public void sendMulticastPingRequest() throws IOException {
         started[0] = true;
       }
@@ -69,12 +72,15 @@ public class UserMonitorThreadTest extends BaseTestCase {
     myUserMonitorThread.start();
 
     triggerFind();
-    new WaitFor() { protected boolean condition() { return started[0]; } };
+    new WaitFor() { @Override
+                    protected boolean condition() { return started[0]; } };
   }
 
+  @Override
   protected void tearDown() throws Exception {
     myUserMonitorThread.shutdown();
     new WaitFor(5000) {
+      @Override
       protected boolean condition() {
         return !myUserMonitorThread._isAlive();
       }
@@ -108,6 +114,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
     Thread.sleep(myUserMonitorThread.getWaitUserResponsesTimeout());
 
     new WaitFor(1000) {
+      @Override
       protected boolean condition() {
         return !myUserMonitorThread.isFinding();
       }
@@ -131,6 +138,7 @@ public class UserMonitorThreadTest extends BaseTestCase {
     
     final double[] lastFraction = new double[]{-1};
     mockProgressIndicator.expects(atLeastOnce()).method("setFraction").with(new IsGreaterThan(new Comparable() {
+      @Override
       public int compareTo(Object o) {
         double v = ((Number) o).doubleValue();
         int result = (int) ((lastFraction[0] - v) * 100);

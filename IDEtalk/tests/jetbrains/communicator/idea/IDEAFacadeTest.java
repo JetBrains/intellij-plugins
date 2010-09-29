@@ -40,6 +40,7 @@ public class IDEAFacadeTest extends BaseTestCase {
   private MockTransport myTransport;
   private User myUser;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

@@ -34,6 +34,7 @@ import java.util.Set;
  */
 public class ActionJavaAnnotatorTest extends BasicStrutsHighlightingTestCase {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "/gutterJava/actionClass";

@@ -55,6 +55,7 @@ public class P2PTransportTest extends BaseTestCase {
     super(s);
   }
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     myUserModel = new UserModelImpl(getBroadcaster());
@@ -65,6 +66,7 @@ public class P2PTransportTest extends BaseTestCase {
     myDispatcher = new AsyncMessageDispatcherImpl(getBroadcaster(), myIdeFacade);
     disposeOnTearDown(myDispatcher);
     myTransport = new P2PTransport(myDispatcher, myUserModel, WAIT_USER_RESPONSES_TIMEOUT) {
+      @Override
       protected void sendUserAddedCallback(User user) {
         super.sendUserAddedCallback(user);
         myLog += "sendUserAddedCallback" + user;
@@ -76,6 +78,7 @@ public class P2PTransportTest extends BaseTestCase {
     myProjectLevelContainer = Pico.getInstance().makeChildContainer();
   }
 
+  @Override
   protected void tearDown() throws Exception {
     if (myTransport != null) {
       myTransport.dispose();
@@ -112,7 +115,8 @@ public class P2PTransportTest extends BaseTestCase {
     myUserModel.addUser(self);
 
     // Wait for next cycle of user finding
-    new WaitFor(1000) { protected boolean condition() { return !myTransport.getUserMonitorThread().isFinding(); } };
+    new WaitFor(1000) { @Override
+                        protected boolean condition() { return !myTransport.getUserMonitorThread().isFinding(); } };
 
     // make self away
     UserPresence presence = new UserPresence(PresenceMode.AWAY);
@@ -130,6 +134,7 @@ public class P2PTransportTest extends BaseTestCase {
 
     final User self1 = self;
     new WaitFor(200) {
+      @Override
       protected boolean condition() {
         return self1.getPresence().getPresenceMode() == PresenceMode.AVAILABLE;
       }

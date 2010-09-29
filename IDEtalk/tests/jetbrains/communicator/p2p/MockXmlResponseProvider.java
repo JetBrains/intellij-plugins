@@ -32,14 +32,17 @@ public class MockXmlResponseProvider extends XmlResponseProvider {
     myNamespace = namespace;
   }
 
+  @Override
   public String getTagName() {
     return myTag;
   }
 
+  @Override
   public String getTagNamespace() {
     return myNamespace;
   }
 
+  @Override
   public boolean processAndFillResponse(Element response, Element requestRoot, Transport transport, String remoteUser) {
     return true;
   }

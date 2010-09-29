@@ -32,6 +32,7 @@ public class ViewFilesTest extends BaseTestCase {
   private ViewFilesPanel myViewFilesPanel;
   private MockUser myUser;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

@@ -40,6 +40,7 @@ public class UsersTreeModel_OnlyOfflineShownTest extends BaseTestCase {
   private LocalMessageDispatcherImpl myLocalMessageDispatcher;
   private MockIDEFacade myIDEFacade;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

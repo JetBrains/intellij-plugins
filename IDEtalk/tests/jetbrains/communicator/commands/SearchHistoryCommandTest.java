@@ -40,6 +40,7 @@ public class SearchHistoryCommandTest extends LightTestCase {
   private Mock myIdeMock;
   private User myUser;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

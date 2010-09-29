@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ValidationHighlightingTest extends BasicValidationHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "validationXmlHighlighting";

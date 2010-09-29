@@ -95,6 +95,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     return false;
   }
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -119,6 +120,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     myFacet = createFacet();
   }
 
+  @Override
   protected void tearDown() throws Exception {
     myFixture.tearDown();
     myFixture = null;
@@ -163,6 +165,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
 
   protected final StrutsFacet createFacet() {
     final RunResult<StrutsFacet> runResult = new WriteCommandAction<StrutsFacet>(myProject) {
+      @Override
       protected void run(final Result<StrutsFacet> result) throws Throwable {
         final String name = StrutsFacetType.INSTANCE.getPresentableName();
         final WebFacet webFacet = JavaeeUtil.addFacet(myModule, WebFacetType.INSTANCE);

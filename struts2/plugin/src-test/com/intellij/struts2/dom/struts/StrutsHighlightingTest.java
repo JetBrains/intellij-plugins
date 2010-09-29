@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlHighlighting";

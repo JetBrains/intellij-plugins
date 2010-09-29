@@ -40,6 +40,7 @@ public class SendMessageCommandTest extends BaseTestCase {
   private MockUserListComponent myMockUserListComponent;
   private Mock myFacadeMock;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -94,6 +95,7 @@ public class SendMessageCommandTest extends BaseTestCase {
 
   private MockUser createUser() {
     final MockUser user = new MockUser("user", null) {
+      @Override
       public void sendMessage(String comment, EventBroadcaster eventBroadcaster) {
         myLog += toString() + ' ' + comment;
       }
@@ -116,6 +118,7 @@ public class SendMessageCommandTest extends BaseTestCase {
   private void doTest(final String message, final User[] users) throws UnknownHostException {
 
     MockIDEFacade ideFacade = new MockIDEFacade() {
+      @Override
       public void invokeSendMessage(User[] availableUsers, User[] defaultRecipients, String message1, SendMessageInvoker runOnOK) {
         runOnOK.doSendMessage(users, message);
       }

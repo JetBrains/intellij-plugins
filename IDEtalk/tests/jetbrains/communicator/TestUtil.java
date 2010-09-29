@@ -42,6 +42,7 @@ public class TestUtil extends Assert{
   public static void testSendCodePointer_Functional(BaseTestCase testCase, User self) {
     final String[] log = new String[]{""};
     testCase.getBroadcaster().addListener(new IDEtalkAdapter(){
+      @Override
       public void afterChange(IDEtalkEvent event) {
         event.accept(new EventVisitor(){
           @Override public void visitCodePointerEvent(CodePointerEvent event) {
@@ -63,6 +64,7 @@ public class TestUtil extends Assert{
     self.sendCodeIntervalPointer(file, pointer, "comment���< && 53", testCase.getBroadcaster());
 
     new WaitFor(2000) {
+      @Override
       protected boolean condition() {
         return log[0].length() > 0;
       }
@@ -75,6 +77,7 @@ public class TestUtil extends Assert{
     final String[] log = new String[]{""};
     final long[] whenSent = new long[1];
     testCase.getBroadcaster().addListener(new IDEtalkAdapter() {
+      @Override
       public void afterChange(IDEtalkEvent event) {
         event.accept(new EventVisitor() {
           @Override public void visitMessageEvent(MessageEvent event) {
@@ -99,6 +102,7 @@ public class TestUtil extends Assert{
     self.sendMessage(comment, testCase.getBroadcaster());
 
     new WaitFor(500) {
+      @Override
       protected boolean condition() {
         return log[0].length() > 0;
       }
@@ -114,20 +118,24 @@ public class TestUtil extends Assert{
 
     final String comment = "��� mes&&<>sage";
     MockXmlMessage message = new MockXmlMessage("tagName", "myNamespace") {
+      @Override
       public boolean needsResponse() {
         return checkResponse;
       }
 
+      @Override
       public void fillRequest(Element element) {
         element.setText(comment);
       }
 
+      @Override
       public void processResponse(Element responseElement) {
         log[0] += responseElement.getAttributeValue("foo");
       }
     };
 
     final MockXmlResponseProvider mockXmlResponseProvider = new MockXmlResponseProvider("tagName", "myNamespace", testCase.getBroadcaster()) {
+      @Override
       public boolean processAndFillResponse(Element response, Element request, Transport transport, String remoteUser) {
         log[0] += remoteUser + " " + request.getName() + " " + request.getText();
         assertEquals("root element expected", "tagName", request.getName());
@@ -137,6 +145,7 @@ public class TestUtil extends Assert{
     };
     Pico.getInstance().registerComponentInstance(mockXmlResponseProvider);
     testCase.disposeOnTearDown(new Disposable(){
+      @Override
       public void dispose() {
         Pico.getInstance().unregisterComponentByInstance(mockXmlResponseProvider);
       }
@@ -145,6 +154,7 @@ public class TestUtil extends Assert{
     self.sendXmlMessage(message);
 
     new WaitFor(500) {
+      @Override
       protected boolean condition() {
         if (checkResponse) {
           return log[0].endsWith("gar");

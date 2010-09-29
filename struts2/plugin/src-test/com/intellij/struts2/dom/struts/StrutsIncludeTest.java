@@ -26,11 +26,13 @@ import java.io.File;
  */
 public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlInclude";
   }
 
+  @Override
   protected void configureModule(final JavaModuleFixtureBuilder moduleBuilder) throws Exception {
     final String path = myFixture.getTempDirPath();
     moduleBuilder.addContentRoot(path);

@@ -39,6 +39,7 @@ public class FindUsersCommandTest extends BaseTestCase {
   private Mock myTransportMock1;
   private MockIDEFacade myIDEFacade;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

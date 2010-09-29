@@ -32,6 +32,7 @@ public class ViewFilesCommandTest extends BaseTestCase {
   private Mock myFacadeMock;
   private ViewFilesCommand myCommand;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     myMockUserListComponent = new MockUserListComponent();
@@ -67,6 +68,7 @@ public class ViewFilesCommandTest extends BaseTestCase {
   public void testExecute_NoInformation() throws Exception {
     final ProjectsData projectsData = new ProjectsData();
     MockUser mockUser = new MockUser("user", null) {
+      @Override
       public ProjectsData getProjectsData(IDEFacade ideFacade) {
         return projectsData;
       }
@@ -85,6 +87,7 @@ public class ViewFilesCommandTest extends BaseTestCase {
     projectsData.addNonProjectFile(VFile.create("a path"));
 
     MockUser mockUser = new MockUser("user", null) {
+      @Override
       public ProjectsData getProjectsData(IDEFacade ideFacade) {
         return projectsData;
       }

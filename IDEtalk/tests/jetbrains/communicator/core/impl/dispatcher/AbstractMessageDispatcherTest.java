@@ -31,6 +31,7 @@ public class AbstractMessageDispatcherTest extends BaseTestCase {
   private MockUser myUser;
   private MockIDEFacade myIdeFacade;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -46,12 +47,14 @@ public class AbstractMessageDispatcherTest extends BaseTestCase {
   private AbstractMessageDispatcher createDispatcher() {
     return new AbstractMessageDispatcher(getBroadcaster(), myIdeFacade.getCacheDir()) {
 
+      @Override
       protected String getEventsFileName() {
         return "test.xml";
       }
     };
   }
 
+  @Override
   protected void tearDown() throws Exception {
     myDispatcher.clearAll();
     myDispatcher.dispose();

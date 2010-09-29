@@ -28,15 +28,18 @@ import org.jetbrains.annotations.NotNull;
 
 public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "/reference/jsp/actionLink";
   }
 
+  @Override
   protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
     return WebModuleFixtureBuilder.class;
   }
 
+  @Override
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     addLibrary(moduleBuilder, "servlet-api", "servlet-api.jar");

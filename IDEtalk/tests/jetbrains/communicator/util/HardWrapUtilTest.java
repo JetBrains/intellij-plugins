@@ -29,6 +29,7 @@ public class HardWrapUtilTest extends TestCase {
   private JTextArea myTextArea;
   private HardWrapUtil myWrapper;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

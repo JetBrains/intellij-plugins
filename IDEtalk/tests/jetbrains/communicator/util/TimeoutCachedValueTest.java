@@ -25,6 +25,7 @@ public class TimeoutCachedValueTest extends TestCase {
     final int[] counter = new int[1];
 
     final TimeoutCachedValue<Integer> cachedValue = new TimeoutCachedValue<Integer>(0) {
+      @Override
       protected Integer calculate() {
         return counter[0] ++;
       }
@@ -39,6 +40,7 @@ public class TimeoutCachedValueTest extends TestCase {
     final int[] counter = new int[1];
 
     final TimeoutCachedValue<Integer> cachedValue = new TimeoutCachedValue<Integer>(50) {
+      @Override
       protected Integer calculate() {
         return counter[0] ++;
       }

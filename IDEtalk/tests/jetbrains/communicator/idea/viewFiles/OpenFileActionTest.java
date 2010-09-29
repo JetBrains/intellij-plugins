@@ -36,6 +36,7 @@ public class OpenFileActionTest extends BaseTestCase {
   private Mock myIdeFacadeMock;
   private VFile myVFile;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

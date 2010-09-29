@@ -31,11 +31,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "configsSearcher";
   }
 
+  @Override
   protected boolean hasJavaSources() {
     return true;
   }

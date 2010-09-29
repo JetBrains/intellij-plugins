@@ -32,12 +32,15 @@ public class MockUserListComponent implements UserListComponent {
     mySelectedNodes = selectedNodes;
   }
 
+  @Override
   public void startEditing() {
   }
 
+  @Override
   public void rebuild() {
   }
 
+  @Override
   public boolean isSingleItemSelected() {
     return false;
   }
@@ -46,14 +49,17 @@ public class MockUserListComponent implements UserListComponent {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public Container getComponent() {
     return null;
   }
 
+  @Override
   public Object[] getSelectedNodes() {
     return mySelectedNodes;
   }
 
+  @Override
   @Nullable
   public User getSelectedUser() {
     Object[] nodes = getSelectedNodes();

@@ -54,6 +54,7 @@ public class MockIDEFacade implements IDEFacade {
   private String myProjectName;
   private boolean myAnswer;
   private static final ExecutorService ourExecutorService = Executors.newCachedThreadPool(new ThreadFactory() {
+    @Override
     public Thread newThread(final Runnable r) {
       return new Thread(r, "IDETalk pooled thread");
     }
@@ -75,14 +76,17 @@ public class MockIDEFacade implements IDEFacade {
     myDataDir = dataDir;
   }
 
+  @Override
   public void invokeSendMessage(User[] allUsers, User[] defaultTargetUsers, String message, SendMessageInvoker sendMessageInvoker) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void showSearchHistoryResults(List<LocalMessage> foundMessages, User user) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public ProjectsData getProjectsData() {
     ProjectsData projectsData = new ProjectsData();
     for (String myProject : myProjects) {
@@ -91,26 +95,32 @@ public class MockIDEFacade implements IDEFacade {
     return projectsData;
   }
 
+  @Override
   public void showUserFiles(User user, ProjectsData data) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public boolean hasFile(VFile file) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void open(VFile file) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void fillFileContents(VFile vFile) {
     vFile.setContents(myFileText.get(vFile));
   }
 
+  @Override
   public void showDiffFor(User remoteUser, VFile vFile, String compareWith) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public Change[] getDiff(Object[] src, Object[] dest) {
     List<MyChangeAdapter> result = new ArrayList<MyChangeAdapter>();
     Diff.Change change = Diff.buildChanges(src, dest);
@@ -121,19 +131,23 @@ public class MockIDEFacade implements IDEFacade {
     return result.toArray(new Change[result.size()]);
   }
 
+  @Override
   public String[] getProjects() {
     return myProjects;
   }
 
+  @Override
   public FindUsersCommand.UsersInfo chooseUsersToBeAdded(List/*<User>*/ foundNewUsers, String[] availableGroups) {
     myLog += "chooseUsersToBeAdded";
     return myUsersInfo;
   }
 
+  @Override
   public String getMessageLine(String labelText, String titleText) {
     return myMessage;
   }
 
+  @Override
   public String getMessage(String labelText, String titleText, String optionalOKButtonText) {
     return myMessage;
   }
@@ -142,6 +156,7 @@ public class MockIDEFacade implements IDEFacade {
     myMessage = message;
   }
 
+  @Override
   public void showMessage(String title, String message) {
     if (Pico.isUnitTest()) {
       System.out.println(title + " : " + message);
@@ -149,20 +164,24 @@ public class MockIDEFacade implements IDEFacade {
     myLog += "showMessage" + message;
   }
 
+  @Override
   public boolean askQuestion(String title, String question) {
     return myAnswer;
   }
 
+  @Override
   public File getCacheDir() {
     if (myDataDir == null) throw new NullPointerException();
     return myDataDir;
   }
 
+  @Override
   public File getConfigDir() {
     if (myDataDir == null) throw new NullPointerException();
     return myDataDir;
   }
 
+  @Override
   public Future<?> runOnPooledThread(Runnable toRun) {
     return ourExecutorService.submit(toRun);
   }
@@ -172,6 +191,7 @@ public class MockIDEFacade implements IDEFacade {
   }
 
 
+  @Override
   public void runLongProcess(String processTitle, IDEFacade.Process process) throws CanceledException {
     try {
       process.run(myIndicator);
@@ -187,15 +207,18 @@ public class MockIDEFacade implements IDEFacade {
   }
 
 
+  @Override
   public LocalMessage createLocalMessageForIncomingEvent(TransportEvent event) {
     return myMessageToReturn;
   }
 
+  @Override
   @Nullable
   public LocalMessage createLocalMessageForOutgoingEvent(OwnMessageEvent event) {
     return myMessageToReturn;
   }
 
+  @Override
   public String getCurrentProjectId() {
     return myProjectId;
   }
@@ -242,18 +265,22 @@ public class MockIDEFacade implements IDEFacade {
       myChange1 = change1;
     }
 
+    @Override
     public int getInserted() {
       return myChange1.inserted;
     }
 
+    @Override
     public int getDeleted() {
       return myChange1.deleted;
     }
 
+    @Override
     public int getSrcLine() {
       return myChange1.line0;
     }
 
+    @Override
     public int getDestLine() {
       return myChange1.line1;
     }

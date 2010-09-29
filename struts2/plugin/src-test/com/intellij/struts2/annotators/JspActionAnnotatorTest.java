@@ -34,11 +34,13 @@ import java.util.Set;
  */
 public class JspActionAnnotatorTest extends BasicStrutsHighlightingTestCase<WebModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "/gutterJsp/actionClass";
   }
 
+  @Override
   protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
     return WebModuleFixtureBuilder.class;
   }
@@ -48,6 +50,7 @@ public class JspActionAnnotatorTest extends BasicStrutsHighlightingTestCase<WebM
     return true;
   }
 
+  @Override
   protected void configureModule(final WebModuleFixtureBuilder moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
     moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp/", "/");

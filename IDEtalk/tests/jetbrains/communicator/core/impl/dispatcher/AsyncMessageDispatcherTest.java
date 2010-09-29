@@ -35,6 +35,7 @@ public class AsyncMessageDispatcherTest extends BaseTestCase {
   private MockIDEFacade myIdeFacade;
   private String[] myLog;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -45,6 +46,7 @@ public class AsyncMessageDispatcherTest extends BaseTestCase {
     myDispatcher = new AsyncMessageDispatcherImpl(getBroadcaster(), myIdeFacade);
 
     new WaitFor(1000) {
+      @Override
       protected boolean condition() {
         return myDispatcher.isRunning();
       }
@@ -53,6 +55,7 @@ public class AsyncMessageDispatcherTest extends BaseTestCase {
     myLog = new String[]{""};
   }
 
+  @Override
   protected void tearDown() throws Exception {
     myDispatcher.clearAll();
     myDispatcher.dispose();
@@ -84,6 +87,7 @@ public class AsyncMessageDispatcherTest extends BaseTestCase {
   private void triggerMessageProcessing(final NotifyableMessage mockMessage) {
     mockMessage.triggerProcess();
     new WaitFor(10000) {
+      @Override
       protected boolean condition() {
         return !myDispatcher.isMessageDispatchInProgress();
       }
@@ -124,6 +128,7 @@ public class AsyncMessageDispatcherTest extends BaseTestCase {
     triggerMessageProcessing(mockMessage);
 
     new WaitFor(200) {
+      @Override
       protected boolean condition() {
         return myDispatcher.getUsersWithMessages().length == 0;
       }
@@ -144,12 +149,14 @@ public class AsyncMessageDispatcherTest extends BaseTestCase {
 
     public void waitUntilDispatchingStarted() {
       new WaitFor(10000) {
+        @Override
         protected boolean condition() {
           return myDispatchingStarted;
         }
       };
     }
 
+    @Override
     public synchronized boolean send(User user) {
       try {
         LOG.debug("AsyncMessageDispatcherTest$NotifyableMessage.StartProcessing");

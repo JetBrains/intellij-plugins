@@ -39,6 +39,7 @@ public class JabberTransportTest extends BaseTestCase {
   private MockIDEFacade myIDEFacade;
   private MutablePicoContainer myProjectContainer;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

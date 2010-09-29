@@ -32,6 +32,7 @@ public class UserTest extends BaseTestCase {
   private User myUser;
   private UserModel myUserModel;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -56,6 +57,7 @@ public class UserTest extends BaseTestCase {
     assertFalse(myUser.isOnline());
 
     final MockTransport mockTransport = new MockTransport() {
+      @Override
       public UserPresence getUserPresence(User user) {
         return new UserPresence(true);
       }

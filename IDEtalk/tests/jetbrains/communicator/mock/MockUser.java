@@ -53,22 +53,27 @@ public class MockUser extends BaseUserImpl {
     this(name, group, false);
   }
 
+  @Override
   public String getIconPath() {
     return null;
   }
 
+  @Override
   public String getTransportCode() {
     return MockTransport.NAME;
   }
 
+  @Override
   public UserPresence getPresence() {
     return new UserPresence(myOnline);
   }
 
+  @Override
   public boolean isOnline() {
     return myOnline;
   }
 
+  @Override
   public boolean isSelf() {
     return mySelf;
   }
@@ -77,10 +82,12 @@ public class MockUser extends BaseUserImpl {
     myOnline = online;
   }
 
+  @Override
   public String[] getProjects() {
     return myProjects;
   }
 
+  @Override
   public ProjectsData getProjectsData(IDEFacade ideFacade) {
     return Helper.doGetProjectsData(getTransport(), this, ideFacade);
   }
@@ -92,22 +99,27 @@ public class MockUser extends BaseUserImpl {
     return myTransport;
   }
 
+  @Override
   public void sendMessage(String message, EventBroadcaster eventBroadcaster) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void sendXmlMessage(XmlMessage message) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public void sendCodeIntervalPointer(VFile file, CodePointer pointer, String comment, EventBroadcaster eventBroadcaster) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public String getVFile(VFile vFile, IDEFacade ideFacade) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
 
+  @Override
   public boolean hasIDEtalkClient() {
     return myIDEtalkUser;
   }

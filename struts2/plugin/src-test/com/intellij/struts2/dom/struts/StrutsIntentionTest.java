@@ -28,6 +28,7 @@ import java.util.List;
  */
 public class StrutsIntentionTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlIntentions";

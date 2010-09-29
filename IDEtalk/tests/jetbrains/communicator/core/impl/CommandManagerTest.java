@@ -28,6 +28,7 @@ public class CommandManagerTest extends BaseTestCase {
   private CommandManagerImpl myCommandManager;
   private MutablePicoContainer myContainer;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -52,10 +53,12 @@ public class CommandManagerTest extends BaseTestCase {
 
   public static class MyTestCommand implements UserCommand {
 
+    @Override
     public boolean isEnabled() {
       return true;
     }
 
+    @Override
     public void execute() {
     }
   }

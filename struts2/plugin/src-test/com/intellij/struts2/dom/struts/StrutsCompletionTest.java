@@ -29,6 +29,7 @@ import java.util.List;
  */
 public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
 
+  @Override
   @NotNull
   protected String getTestDataLocation() {
     return "strutsXmlCompletion";
@@ -89,6 +90,7 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
     final StrutsCoreConstantContributor coreConstantContributor = new StrutsCoreConstantContributor();
     final List<StrutsConstant> constants = coreConstantContributor.getStrutsConstantDefinitions(myModule);
     final String[] variants = ContainerUtil.map2Array(constants, String.class, new Function<StrutsConstant, String>() {
+      @Override
       public String fun(final StrutsConstant strutsConstant) {
         return strutsConstant.getName();
       }

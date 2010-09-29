@@ -23,6 +23,7 @@ import java.util.Vector;
  * @author Kir
  */
 public class VFileTest extends TestCase {
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
   }

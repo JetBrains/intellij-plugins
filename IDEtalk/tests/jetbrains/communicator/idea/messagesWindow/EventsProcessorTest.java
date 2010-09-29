@@ -34,6 +34,7 @@ public class EventsProcessorTest extends BaseTestCase {
   private UserModelImpl myUserModel;
   private Mock myMock;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

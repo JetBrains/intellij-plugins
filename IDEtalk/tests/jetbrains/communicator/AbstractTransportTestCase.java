@@ -40,6 +40,7 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
   protected AsyncMessageDispatcherImpl myDispatcher;
   protected User mySelf;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -190,6 +191,7 @@ public abstract class AbstractTransportTestCase extends BaseTestCase {
     assertFalse("Should become offline", myTransport.isOnline());
 
     new WaitFor(1000) {
+      @Override
       protected boolean condition() {
         return !mySelf.isOnline();
       }

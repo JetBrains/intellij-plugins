@@ -57,6 +57,7 @@ public class EventFactoryTest extends TestCase {
       myData = data;
     }
 
+    @Override
     protected void runTest() throws Throwable {
       MessageEvent event = EventFactory.createMessageEvent(new MockTransport(), "user", myData[0]);
       assertEquals("Wrong message extracted", myData[1], event.getMessage());

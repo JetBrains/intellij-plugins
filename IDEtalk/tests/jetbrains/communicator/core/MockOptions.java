@@ -26,25 +26,30 @@ public class MockOptions implements IDEtalkOptions {
   private final Map<String, Boolean> myOptions = new HashMap<String, Boolean>();
   private final Map<String, Double> myNumbers = new HashMap<String, Double>();
 
+  @Override
   public boolean isSet(String option) {
     return isSet(option, false);
   }
 
+  @Override
   public boolean isSet(String option, boolean defaultValue) {
     Boolean val = myOptions.get(option);
     if (val == null) return defaultValue;
     return val;
   }
 
+  @Override
   public double getNumber(String option, double defaultValue) {
     Double aDouble = myNumbers.get(option);
     return aDouble == null ? defaultValue : aDouble;
   }
 
+  @Override
   public void setNumber(String option, double value) {
     myNumbers.put(option, value);
   }
 
+  @Override
   public void setOption(String option, boolean value) {
     myOptions.put(option, Boolean.valueOf(value));
   }

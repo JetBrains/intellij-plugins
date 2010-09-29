@@ -35,6 +35,7 @@ public class P2PTransport_SelfOnline_Test extends AbstractTransportTestCase {
   private P2PTransport myTransport;
   private User mySelf;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -42,16 +43,19 @@ public class P2PTransport_SelfOnline_Test extends AbstractTransportTestCase {
     myTransport.setOnlineUsers(Collections.singleton(mySelf));
   }
 
+  @Override
   protected Transport createTransport() throws IOException {
     myTransport = new P2PTransport(myDispatcher, myUserModel);
     Pico.getInstance().registerComponentInstance(myTransport);
     return myTransport;
   }
 
+  @Override
   protected User createSelf() throws UnknownHostException {
     return myTransport.createUser(StringUtil.getMyUsername(), new OnlineUserInfo(InetAddress.getLocalHost(), myTransport.getPort()));
   }
 
+  @Override
   protected User createAnotherOnlineUser() throws UnknownHostException {
     mySelf = createSelf();
     User user = myTransport.createUser("kir123@localhost", new OnlineUserInfo(InetAddress.getLocalHost(), myTransport.getPort()));
@@ -60,6 +64,7 @@ public class P2PTransport_SelfOnline_Test extends AbstractTransportTestCase {
   }
 
 
+  @Override
   protected void tearDown() throws Exception {
     if (myTransport != null) {
       myTransport.dispose();

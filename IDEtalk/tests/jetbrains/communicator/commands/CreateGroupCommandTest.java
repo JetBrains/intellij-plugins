@@ -28,6 +28,7 @@ public class CreateGroupCommandTest extends MockObjectTestCase {
   private Mock myUserListMock;
   private Mock myIDEFacade;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

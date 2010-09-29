@@ -58,6 +58,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
     return testSuite;
   }
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -67,6 +68,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
     myUser = USER + System.currentTimeMillis();
   }
 
+  @Override
   protected void tearDown() throws Exception {
 //noinspection EmptyCatchBlock
     try {
@@ -144,14 +146,17 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
     final boolean[] disconnected = new boolean[1];
     final boolean[] authenticated = new boolean[1];
     myFacade.addConnectionListener(new ConnectionListener() {
+      @Override
       public void connected(XMPPConnection connection) {
         connected[0] = true;
       }
 
+      @Override
       public void disconnected(boolean onError) {
         disconnected[0] = true;
       }
 
+      @Override
       public void authenticated() {
         authenticated[0] = true;
       }
@@ -200,6 +205,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
 
     final Roster roster = myFacade.getConnection().getRoster();
     new WaitFor(500) {
+      @Override
       protected boolean condition() {
         return roster.contains(bob);
       }
@@ -209,6 +215,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
     assertFalse("Self should not be added to the Roster", roster.contains(self));
 
     new WaitFor(200) {
+      @Override
       protected boolean condition() {
         return roster.getEntry(bob).getGroups().size() > 0;
       }
@@ -226,6 +233,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
 
     another.addUsers("group", Arrays.asList(me));
     new WaitFor(3000) {
+      @Override
       protected boolean condition() {
         return another.getConnection().getRoster().getPresence(me) != null;
       }

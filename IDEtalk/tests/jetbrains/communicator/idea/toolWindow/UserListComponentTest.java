@@ -39,6 +39,7 @@ public class UserListComponentTest extends BaseTestCase {
   private EventBroadcaster myBroadcaster;
   private LocalMessageDispatcherImpl myLocalMessageDispatcher;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

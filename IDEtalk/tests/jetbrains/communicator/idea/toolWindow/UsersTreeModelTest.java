@@ -39,6 +39,7 @@ public class UsersTreeModelTest extends BaseTestCase {
   private JTree myTree;
   private LocalMessageDispatcherImpl myLocalMessageDispatcher;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

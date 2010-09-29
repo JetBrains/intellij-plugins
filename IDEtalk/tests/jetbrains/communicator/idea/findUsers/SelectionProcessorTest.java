@@ -35,6 +35,7 @@ public class SelectionProcessorTest extends BaseTestCase {
   private JComboBox myGroupSelector;
   private SelectionProcessor mySelectionProcessor;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

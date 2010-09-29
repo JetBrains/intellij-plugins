@@ -26,6 +26,7 @@ public class WaitForTest extends TestCase {
     final long l = System.currentTimeMillis();
 
     new WaitFor() {
+      @Override
       protected boolean condition() {
         return System.currentTimeMillis() > l + 200;
       }
@@ -40,6 +41,7 @@ public class WaitForTest extends TestCase {
     final long l = System.currentTimeMillis();
 
     new WaitFor(500) {
+      @Override
       protected boolean condition() {
         return System.currentTimeMillis() > l + 2000;
       }

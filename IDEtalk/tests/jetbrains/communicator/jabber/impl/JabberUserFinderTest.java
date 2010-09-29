@@ -34,6 +34,7 @@ public class JabberUserFinderTest extends BaseTestCase {
   private JabberUserFinderImpl myUserFinder;
   private UserModelImpl myUserModel;
 
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     myFacade = new MockIDEFacade(getClass());
@@ -68,6 +69,7 @@ public class JabberUserFinderTest extends BaseTestCase {
 
     final String[] params = new String[2];
     myUserFinder = new JabberUserFinderImpl((IDEFacade) facadeMock.proxy(), myUserModel) {
+      @Override
       protected void doRegister(final String jabberUserId, final String currentProjectId) {
         params[0] = jabberUserId;
         params[1] = currentProjectId;
@@ -101,6 +103,7 @@ public class JabberUserFinderTest extends BaseTestCase {
 
     final String[] params = new String[2];
     myUserFinder = new JabberUserFinderImpl((IDEFacade) facadeMock.proxy(), myUserModel) {
+      @Override
       protected void doRegister(final String jabberUserId, final String currentProjectId) {
         params[0] = jabberUserId;
         params[1] = currentProjectId;
