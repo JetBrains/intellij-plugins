@@ -147,6 +147,7 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
     return myProject;
   }
 
+  @NotNull
   protected OsgiRunConfiguration getRunConfiguration() {
     return myRunConfiguration;
   }
