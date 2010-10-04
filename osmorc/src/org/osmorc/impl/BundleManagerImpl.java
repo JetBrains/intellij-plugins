@@ -32,6 +32,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.eclipse.osgi.framework.internal.core.Constants;
+import org.eclipse.osgi.internal.module.ResolverImpl;
 import org.eclipse.osgi.service.resolver.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +51,7 @@ import org.osmorc.settings.ProjectSettings;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -357,6 +359,28 @@ public class BundleManagerImpl implements BundleManager {
     private synchronized void createInitialState() {
         if (_state == null) {
             _state = StateObjectFactory.defaultFactory.createState(true);
+            Resolver resolver = _state.getResolver();
+            // ok we do some hack here... and reduce the time limits of the resolver
+           //  http://devnet.jetbrains.net/message/5273635#5273635
+            if ( resolver instanceof ResolverImpl ) {
+              try {
+                Field minTime = ResolverImpl.class.getDeclaredField("MAX_USES_TIME_BASE");
+                minTime.setAccessible(true); // it's private
+                minTime.set(null, 1000); // one second, instead of 30
+
+                Field maxTime = ResolverImpl.class.getDeclaredField("MAX_USES_TIME_LIMIT");
+                maxTime.setAccessible(true);
+                maxTime.set(null, 3000); // 3 seconds instead of 90
+
+              }
+              catch (NoSuchFieldException e) {
+                LOG.warn(e);
+              }
+              catch (IllegalAccessException e) {
+                LOG.warn(e);
+              }
+            }
+
             Module[] modules = moduleManager.getModules();
             for (Module module : modules) {
                 addOrUpdateBundleInternal(module);
