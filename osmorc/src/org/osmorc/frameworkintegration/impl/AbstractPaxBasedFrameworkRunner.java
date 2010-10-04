@@ -35,6 +35,7 @@ import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
+import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.run.ExternalVMFrameworkRunner;
 import org.osmorc.run.ui.SelectedBundle;
 
@@ -88,6 +89,13 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
 
   public void fillCommandLineParameters(@NotNull ParametersList commandLineParameters, @NotNull SelectedBundle[] bundlesToInstall) {
     commandLineParameters.add("--p=" + getOsgiFrameworkName().toLowerCase());
+
+    // Use the selected version if specified.
+    FrameworkInstanceDefinition definition = getRunConfiguration().getInstanceToUse();
+    String version = definition.getVersion();
+    if ( version != null && version.length() > 0) {
+      commandLineParameters.add("--v="+version);
+    }
 
     for (SelectedBundle bundle : bundlesToInstall) {
       String prefix = CachingBundleInfoProvider.isExploded(bundle.getBundleUrl()) ? "scan-bundle:" : "";

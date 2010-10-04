@@ -32,56 +32,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FrameworkInstanceDefinition
 {
+  private String myFrameworkIntegratorName;
+  private String myName;
+  private String myBaseFolder;
+  private boolean myDefined = true;
+  private String myVersion;
+  private boolean myDownloadedByPaxRunner;
+  
   public FrameworkInstanceDefinition()
   {
-  }
-
-  public String getFrameworkIntegratorName()
-  {
-    return _frameworkIntegratorName;
-  }
-
-  public void setFrameworkIntegratorName(@NotNull String frameworkIntegratorName)
-  {
-    _frameworkIntegratorName = frameworkIntegratorName;
-  }
-
-  public String getName()
-  {
-    return _name;
-  }
-
-  public void setName(@NotNull String name)
-  {
-    _name = name;
-  }
-
-  public String getBaseFolder()
-  {
-    return _baseFolder;
-  }
-
-  public void setBaseFolder(String baseFolder)
-  {
-    _baseFolder = baseFolder;
-  }
-
-  public String toString()
-  {
-    String descriptionPart = _name != null ? _name : "undefined";
-    String frameworkIntegratorNamePart = _frameworkIntegratorName != null ? _frameworkIntegratorName : "undefined";
-    return descriptionPart + "(" + frameworkIntegratorNamePart + ")";
-  }
-
-  @Transient
-  public boolean isDefined()
-  {
-    return _defined;
-  }
-
-  public void setDefined(boolean defined)
-  {
-    _defined = defined;
   }
 
   public boolean equals(Object o)
@@ -97,17 +56,76 @@ public class FrameworkInstanceDefinition
 
     FrameworkInstanceDefinition that = (FrameworkInstanceDefinition) o;
 
-    return _name.equals(that._name);
-
+    return myName.equals(that.myName);
   }
 
   public int hashCode()
   {
-    return _name.hashCode();
+    return myName.hashCode();
   }
 
-  private String _frameworkIntegratorName;
-  private String _name;
-  private String _baseFolder;
-  private boolean _defined = true;
+  public String toString()
+  {
+    String descriptionPart = myName != null ? myName : "undefined";
+    String frameworkIntegratorNamePart = myFrameworkIntegratorName != null ? myFrameworkIntegratorName : "undefined";
+    String versionPart = myVersion != null && myVersion.length() > 0? " [" + myVersion + "]" : " [latest]";
+    return descriptionPart+ " (" + frameworkIntegratorNamePart + ")" + versionPart;
+  }
+
+  public String getBaseFolder()
+  {
+    return myBaseFolder;
+  }
+
+  public void setBaseFolder(String baseFolder)
+  {
+    myBaseFolder = baseFolder;
+  }
+
+  public String getFrameworkIntegratorName()
+  {
+    return myFrameworkIntegratorName;
+  }
+
+  public void setFrameworkIntegratorName(@NotNull String frameworkIntegratorName)
+  {
+    myFrameworkIntegratorName = frameworkIntegratorName;
+  }
+
+  public String getName()
+  {
+    return myName;
+  }
+
+  public void setName(@NotNull String name)
+  {
+    myName = name;
+  }
+
+  public String getVersion() {
+    return myVersion;
+  }
+
+  public void setVersion(String version) {
+    myVersion = version;
+  }
+
+  @Transient
+  public boolean isDefined()
+  {
+    return myDefined;
+  }
+
+  public void setDefined(boolean defined)
+  {
+    myDefined = defined;
+  }
+
+  public boolean isDownloadedByPaxRunner() {
+    return myDownloadedByPaxRunner;
+  }
+
+  public void setDownloadedByPaxRunner(boolean downloadedByPaxRunner) {
+    myDownloadedByPaxRunner = downloadedByPaxRunner;
+  }
 }

@@ -53,6 +53,7 @@ public class FrameworkDefinitionsEditorComponent {
   private JLabel baseFolder;
   private JLabel frameworkInstanceName;
   private JButton editFramework;
+  private JLabel version;
   private FrameworkIntegratorRegistry frameworkIntegratorRegistry;
   private FrameworkInstanceDefinition selectedFrameworkInstance;
   private boolean myModified;
@@ -88,6 +89,8 @@ public class FrameworkDefinitionsEditorComponent {
         if (selectedFrameworkInstance != null) {
           frameworkIntegrator.setText(selectedFrameworkInstance.getFrameworkIntegratorName());
           baseFolder.setText(selectedFrameworkInstance.getBaseFolder());
+          final String theVersion = selectedFrameworkInstance.getVersion();
+          version.setText(theVersion != null && theVersion.length() > 0 ? theVersion : "latest");
           frameworkInstanceName.setText(selectedFrameworkInstance.getName());
         }
         editFramework.setEnabled(selectedFrameworkInstance != null);
@@ -124,7 +127,7 @@ public class FrameworkDefinitionsEditorComponent {
       instanceDefinition.setName(dialog.getName());
       instanceDefinition.setFrameworkIntegratorName(dialog.getIntegratorName());
       instanceDefinition.setBaseFolder(dialog.getBaseFolder());
-
+      instanceDefinition.setVersion(dialog.getVersion());
       myModel.addElement(instanceDefinition);
       myModified = true;
       frameworkInstances.setSelectedValue(instanceDefinition, true);
@@ -151,6 +154,7 @@ public class FrameworkDefinitionsEditorComponent {
       new CreateFrameworkInstanceDialog(frameworkIntegratorRegistry, frameworkInstanceDefinition.getName());
     dialog.setIntegratorName(frameworkInstanceDefinition.getFrameworkIntegratorName());
     dialog.setBaseFolder(frameworkInstanceDefinition.getBaseFolder());
+    dialog.setVersion(frameworkInstanceDefinition.getVersion());
     dialog.pack();
     dialog.show();
 
@@ -163,6 +167,7 @@ public class FrameworkDefinitionsEditorComponent {
       frameworkInstanceDefinition.setName(dialog.getName());
       frameworkInstanceDefinition.setFrameworkIntegratorName(dialog.getIntegratorName());
       frameworkInstanceDefinition.setBaseFolder(dialog.getBaseFolder());
+      frameworkInstanceDefinition.setVersion(dialog.getVersion());
       myModel.add(index, frameworkInstanceDefinition);
       // fire settings change.
       myModified = true;

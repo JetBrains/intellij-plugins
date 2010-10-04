@@ -119,6 +119,7 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
             definition.setName(getName());
             definition.setFrameworkIntegratorName(getIntegratorName());
             definition.setBaseFolder(getBaseFolder());
+            definition.setVersion(getVersion());
             String errorInfoText = integrator.getFrameworkInstanceManager().checkValidity(definition);
             ((MyErrorText) _errorText).setError(errorInfoText);
             isFrameworkDefinitionValid = (errorInfoText == null || errorInfoText.length() == 0);
@@ -133,6 +134,7 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
         return integrator != null ? integrator.getDisplayName() : "";
     }
 
+
     public void setIntegratorName(String value) {
         int count = _integratorComboBox.getItemCount();
         for (int i = 0; i < count; i++) {
@@ -144,6 +146,13 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
         }
     }
 
+  public String getVersion() {
+    return myVersionField.getText();
+  }
+
+    public void setVersion(String value) {
+      myVersionField.setText(value);
+    }
     public String getBaseFolder() {
         return _baseFolderChooser.getText();
     }
@@ -167,5 +176,6 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
     private JTextField _nameTextField;
     private TextFieldWithBrowseButton _baseFolderChooser;
     private JPanel _errorText;
+  private JTextField myVersionField;
 
 }
