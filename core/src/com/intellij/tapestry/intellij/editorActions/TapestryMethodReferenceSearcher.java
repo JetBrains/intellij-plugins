@@ -10,6 +10,7 @@ import com.intellij.psi.search.searches.MethodReferencesSearch;
 import com.intellij.tapestry.intellij.util.TapestryPropertyNamingUtil;
 import com.intellij.tapestry.lang.TmlFileType;
 import com.intellij.util.Processor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
@@ -21,7 +22,7 @@ public class TapestryMethodReferenceSearcher extends QueryExecutorBase<PsiRefere
   }
 
   @Override
-  public void processQuery(MethodReferencesSearch.SearchParameters parameters, Processor<PsiReference> consumer) {
+  public void processQuery(@NotNull MethodReferencesSearch.SearchParameters parameters, @NotNull Processor<PsiReference> consumer) {
     final PsiMethod method = parameters.getMethod();
     final String propName = TapestryPropertyNamingUtil.getPropertyNameFromAccessor(method);
 

@@ -10,6 +10,7 @@ import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.tapestry.lang.TmlFileType;
 import com.intellij.util.Processor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Alexey Chmutov
@@ -22,7 +23,7 @@ public class TapestryPropertyReferenceSearcher extends QueryExecutorBase<PsiRefe
   }
 
   @Override
-  public void processQuery(ReferencesSearch.SearchParameters queryParameters, Processor<PsiReference> consumer) {
+  public void processQuery(@NotNull ReferencesSearch.SearchParameters queryParameters, @NotNull Processor<PsiReference> consumer) {
     final PsiElement refElement = queryParameters.getElementToSearch();
     if (!(refElement instanceof PsiField)) return;
     final String name = ((PsiField)refElement).getName();
