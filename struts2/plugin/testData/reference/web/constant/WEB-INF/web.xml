@@ -30,7 +30,7 @@
 
     <!-- empty constant name -->
     <init-param>
-      <param-name></param-name>
+      <<error descr="Value must not be empty">param-name</error>></param-name>
       <param-value>something</param-value>
     </init-param>
 
