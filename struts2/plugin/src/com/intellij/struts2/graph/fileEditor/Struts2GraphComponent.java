@@ -37,6 +37,7 @@ import com.intellij.struts2.graph.beans.BasicStrutsNode;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomEventAdapter;
+import com.intellij.util.xml.DomEventListener;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.events.DomEvent;
 import org.jetbrains.annotations.NonNls;
@@ -83,7 +84,7 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
 
     myBuilder.initialize();
 
-    DomManager.getDomManager(myBuilder.getProject()).addDomEventListener(new DomEventAdapter() {
+    DomManager.getDomManager(myBuilder.getProject()).addDomEventListener(new DomEventListener() {
       public void eventOccured(final DomEvent event) {
         if (isShowing()) {
           myBuilder.queueUpdate();
