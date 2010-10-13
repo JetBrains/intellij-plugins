@@ -21,9 +21,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiModifier;
+import com.intellij.psi.*;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -55,9 +53,10 @@ abstract class ActionAnnotatorBase implements Annotator {
   @Nullable
   protected abstract PsiClass getActionPsiClass(@NotNull final PsiElement psiElement);
 
-  public final void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder annotationHolder) {
-    final PsiClass clazz = getActionPsiClass(psiElement);
-    if (clazz == null) {
+  public final void annotate(@NotNull final PsiElement element, @NotNull final AnnotationHolder annotationHolder) {
+    if (!(element instanceof PsiIdentifier)) return;
+    final PsiClass clazz = getActionPsiClass(element.getParent());
+    if (clazz == null || clazz.getNameIdentifier() != element) {
       return;
     }
 
@@ -76,7 +75,7 @@ abstract class ActionAnnotatorBase implements Annotator {
       return;
     }
 
-    final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
+    final StrutsManager strutsManager = StrutsManager.getInstance(element.getProject());
     final StrutsModel strutsModel = strutsManager.getCombinedModel(module);
     if (strutsModel == null) {
       return;
@@ -88,7 +87,7 @@ abstract class ActionAnnotatorBase implements Annotator {
           .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
           .setTargets(actions).setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip"))
           .setCellRenderer(getActionRenderer())
-          .install(annotationHolder, clazz.getNameIdentifier());
+          .install(annotationHolder, element);
     }
   }
 
