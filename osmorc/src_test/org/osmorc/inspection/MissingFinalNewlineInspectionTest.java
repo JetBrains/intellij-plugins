@@ -157,4 +157,33 @@ public class MissingFinalNewlineInspectionTest {
 
         assertThat(list, nullValue());
     }
+
+  /**
+   * Intended to test the empty file case, which caused an SIOOBE. http://ea.jetbrains.com/browser/ea_problems/22570
+   * @throws Exception
+   */
+    @Test
+    public void testOnEmptyFile() throws Exception {
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                 public void run() {
+                     try {
+                         VirtualFile[] files = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots();
+                         VirtualFile childDirectory = files[0].createChildDirectory(this, "META-INF");
+                         VirtualFile data = childDirectory.createChildData(this, "MANIFEST.MF");
+                         OutputStream outputStream = data.getOutputStream(this);
+                         PrintWriter writer = new PrintWriter(outputStream);
+                         writer.flush();
+                         writer.close();
+                     }
+                     catch (IOException e) {
+                         throw new RuntimeException(e);
+                     }
+                 }
+             });
+      PsiFile psiFile = TestUtil.loadPsiFileUnderContent(fixture.getProject(), fixture.getModule().getName(), "META-INF/MANIFEST.MF");
+      List<ProblemDescriptor> list = TestUtil.runInspection(new MissingFinalNewlineInspection(), psiFile, fixture.getProject());
+
+      assertThat(list, nullValue());
+
+    }
 }

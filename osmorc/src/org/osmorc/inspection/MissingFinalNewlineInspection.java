@@ -72,15 +72,18 @@ public class MissingFinalNewlineInspection extends LocalInspectionTool {
     public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
         if (file instanceof ManifestFile) {
             String text = file.getText();
-            if (text.charAt(text.length() - 1) != '\n') {
-                Section section = PsiTreeUtil.findElementOfClassAtOffset(file, text.length() - 1,
-                        Section.class, false);
-                if (section != null) {
-                    return new ProblemDescriptor[]{manager.createProblemDescriptor(section.getLastChild(),
-                            "Manifest file doesn't end with a final newline",
-                            new AddNewlineQuickFix(section), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly)};
-                }
+            // http://ea.jetbrains.com/browser/ea_problems/22570
+            if ( text != null && text.length() > 0) {
+                if (text.charAt(text.length() - 1) != '\n') {
+                    Section section = PsiTreeUtil.findElementOfClassAtOffset(file, text.length() - 1,
+                            Section.class, false);
+                    if (section != null) {
+                        return new ProblemDescriptor[]{manager.createProblemDescriptor(section.getLastChild(),
+                                "Manifest file doesn't end with a final newline",
+                                new AddNewlineQuickFix(section), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly)};
+                    }
 
+                }
             }
         }
         return new ProblemDescriptor[0];
