@@ -28,19 +28,17 @@ package org.osmorc.inspection;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.QuickFix;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
 import org.hamcrest.Matchers;
-import static org.hamcrest.Matchers.*;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.osmorc.TestUtil;
@@ -49,6 +47,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -164,5 +165,34 @@ public class MissingFinalNewlineInspectionTest {
         List<ProblemDescriptor> list = TestUtil.runInspection(new MissingFinalNewlineInspection(), psiFile, fixture.getProject());
 
         assertThat(list, nullValue());
+    }
+
+  /**
+   * Intended to test the empty file case, which caused an SIOOBE. http://ea.jetbrains.com/browser/ea_problems/22570
+   * @throws Exception
+   */
+    @Test
+    public void testOnEmptyFile() throws Exception {
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                 public void run() {
+                     try {
+                         VirtualFile[] files = ModuleRootManager.getInstance(fixture.getModule()).getContentRoots();
+                         VirtualFile childDirectory = files[0].createChildDirectory(this, "META-INF");
+                         VirtualFile data = childDirectory.createChildData(this, "MANIFEST.MF");
+                         OutputStream outputStream = data.getOutputStream(this);
+                         PrintWriter writer = new PrintWriter(outputStream);
+                         writer.flush();
+                         writer.close();
+                     }
+                     catch (IOException e) {
+                         throw new RuntimeException(e);
+                     }
+                 }
+             });
+      PsiFile psiFile = TestUtil.loadPsiFileUnderContent(fixture.getProject(), fixture.getModule().getName(), "META-INF/MANIFEST.MF");
+      List<ProblemDescriptor> list = TestUtil.runInspection(new MissingFinalNewlineInspection(), psiFile, fixture.getProject());
+
+      assertThat(list, nullValue());
+
     }
 }
