@@ -87,9 +87,9 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     modulesList.setModel(model);
     modulesList.setRowSelectionAllowed(true);
     modulesList.setColumnSelectionAllowed(false);
-    modulesList.setDefaultEditor(Integer.class, new StartLevelCellEditor());
-
-
+    modulesList.setDefaultEditor(Integer.class, new JSpinnerCellEditor());
+    modulesList.setDefaultRenderer(Integer.class, new JSpinnerCellEditor());
+    
     addButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         onAddClick();
@@ -260,6 +260,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     myAutomaticStartLevel.setSelected(osgiRunConfiguration.isAutoStartLevel());
     myFrameworkStartLevel.setValue(osgiRunConfiguration.getFrameworkStartLevel());
     myFrameworkStartLevel.setEnabled(!myAutomaticStartLevel.isSelected());
+    myDefaultStartLevel.setValue(osgiRunConfiguration.getDefaultStartLevel());
 
     boolean useUserDefinedFields = !osgiRunConfiguration.isGenerateWorkingDir();
     workingDirField.setText(osgiRunConfiguration.getWorkingDir());
@@ -279,6 +280,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     osgiRunConfiguration.setUseAlternativeJre(alternativeJREPanel.isPathEnabled());
     osgiRunConfiguration.setAlternativeJrePath(alternativeJREPanel.getPath());
     osgiRunConfiguration.setFrameworkStartLevel((Integer)myFrameworkStartLevel.getValue());
+    osgiRunConfiguration.setDefaultStartLevel((Integer)myDefaultStartLevel.getValue());
     osgiRunConfiguration.setAutoStartLevel(myAutomaticStartLevel.isSelected());
     osgiRunConfiguration.setGenerateWorkingDir(osmorcControlledRadioButton.isSelected());
     FrameworkInstanceDefinition frameworkInstanceDefinition = (FrameworkInstanceDefinition)frameworkInstances.getSelectedItem();
@@ -322,6 +324,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   private AlternativeJREPanel alternativeJREPanel;
   private JSpinner myFrameworkStartLevel;
   private JCheckBox myAutomaticStartLevel;
+  private JSpinner myDefaultStartLevel;
   private final Project project;
   private FrameworkRunPropertiesEditor currentFrameworkRunPropertiesEditor;
 
