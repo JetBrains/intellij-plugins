@@ -158,7 +158,7 @@ public class FrameworkInstanceModuleManager {
                     path = path + FRAMEWORK_INSTANCE_MODULE_NAME + ".iml";
                     final Module module = moduleManager.newModule(path, StdModuleTypes.JAVA);
                     ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-                    model.setSdk(ProjectRootManager.getInstance(project).getProjectJdk());
+                    model.setSdk(ProjectRootManager.getInstance(project).getProjectSdk());
                     model.commit();
                 }
             });

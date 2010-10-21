@@ -284,7 +284,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
     // prepare the state
 
-    return new OsgiRunState(executor, env, this, getProject(), ProjectRootManager.getInstance(getProject()).getProjectJdk());
+    return new OsgiRunState(executor, env, this, getProject(), ProjectRootManager.getInstance(getProject()).getProjectSdk());
   }
 
   public void checkConfiguration() throws RuntimeConfigurationException {
