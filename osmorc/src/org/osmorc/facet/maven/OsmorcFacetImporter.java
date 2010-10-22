@@ -40,6 +40,7 @@ import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,9 +134,8 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         }
     }
 
-   @Override
-  public boolean isSupportedDependency(MavenArtifact artifact) {
-    String t = artifact.getType();
-    return t.equalsIgnoreCase("bundle");
-  }
+    @Override
+    public void getSupportedDependencyTypes(Collection<String> result, SupportedRequestType type) {
+        result.add("bundle");
+    }
 }
