@@ -12,10 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.intellij.struts2.annotators;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.struts2.dom.struts.BasicStrutsHighlightingTestCase;
+import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsFileSetCheckingAnnotatorTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsFileSetCheckingAnnotatorTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
 
   @Override
   @NotNull
