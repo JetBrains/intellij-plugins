@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,25 +16,17 @@
 package com.intellij.struts2.facet.ui;
 
 import com.intellij.facet.ui.FacetEditorContext;
-import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
-import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.EditorTextField;
 import com.intellij.util.containers.MultiMap;
@@ -47,7 +39,6 @@ import javax.swing.*;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.Set;
 
@@ -154,68 +145,6 @@ public class FileSetEditor extends DialogWrapper {
     myFileSet.setName(mySetName.getText());
     myFilesTree.updateFileSet(myFileSet);
     getOKAction().setEnabled(isOKActionEnabled());
-  }
-
-  protected Action[] createLeftSideActions() {
-    final AbstractAction locateAction = new AbstractAction(StrutsBundle.message("facet.fileseteditor.button.locate.browse")) {
-      public void actionPerformed(final ActionEvent e) {
-        final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, false, false, false, true, true) {
-
-          /**
-           * Only show JARs, directories and valid struts.xml files.
-           *
-           * @param file File to check for visibility.
-           * @param showHiddenFiles Flag from dialog.
-           * @return true if above condition matches.
-           */
-          public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
-            if (file.isDirectory() || file.getFileType() == StdFileTypes.ARCHIVE) {
-              return true;
-            }
-
-            if (StdFileTypes.XML != file.getFileType()) {
-              return false;
-            }
-
-            final Project project = DataKeys.PROJECT.getData(DataManager.getInstance().getDataContext());
-            assert project != null;
-            final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-            return !(!(psiFile instanceof XmlFile) || !StrutsManager.getInstance(project).isStruts2ConfigFile((XmlFile) psiFile));
-          }
-
-          /**
-           * Check selected file(s) for validity.
-           *
-           * @param files Selected files
-           * @throws Exception If selected files contains at least one file which is not a valid struts.xml.
-           */
-          public void validateSelectedFiles(final VirtualFile[] files) throws Exception {
-            final Project project = DataKeys.PROJECT.getData(DataManager.getInstance().getDataContext());
-            assert project != null;
-            final PsiManager psiManager = PsiManager.getInstance(project);
-            for (final VirtualFile file : files) {
-              final PsiFile psiFile = psiManager.findFile(file);
-              if (!(psiFile instanceof XmlFile) || !StrutsManager.getInstance(project).isStruts2ConfigFile((XmlFile) psiFile)) {
-                throw new Exception(file.getPresentableUrl() + " is not a valid struts.xml file");
-              }
-            }
-          }
-        };
-        descriptor.setTitle(StrutsBundle.message("facet.fileseteditor.locate"));
-        descriptor.setDescription(StrutsBundle.message("facet.fileseteditor.choose.files"));
-
-        final VirtualFile[] files = FileChooser.chooseFiles(myMainPanel, descriptor);
-        if (files.length > 0) {
-          for (final VirtualFile file : files) {
-            myFilesTree.addFile(file);
-          }
-          updateFileSet();
-          TreeUtil.expandAll(myFilesTree);
-        }
-      }
-    };
-    locateAction.putValue(AbstractAction.SMALL_ICON, IconLoader.getIcon("/general/toolWindowFind.png"));
-    return new Action[]{locateAction};
   }
 
   public StrutsFileSet getEditedFileSet() {
