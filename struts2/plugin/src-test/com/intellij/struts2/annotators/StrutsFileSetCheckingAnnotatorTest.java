@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,10 +17,7 @@ package com.intellij.struts2.annotators;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.struts2.dom.struts.BasicStrutsHighlightingTestCase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
-import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Tests {@link StrutsFileSetCheckingAnnotator}.
@@ -36,21 +33,16 @@ public class StrutsFileSetCheckingAnnotatorTest extends BasicStrutsHighlightingT
   }
 
   public void testStrutsXmlNoFacetSetup() throws Throwable {
-    final List<IntentionAction> intentions = myFixture.getAvailableIntentions("struts-simple.xml");
-    final IntentionAction action =
-            CodeInsightTestUtil.findIntentionByText(intentions,
-                                                    "Edit Struts 2 facet settings");
-    assertNotNull(action);
+    final IntentionAction intention = myFixture.getAvailableIntention("Edit Struts 2 facet settings",
+                                                                      "struts-simple.xml");
+    assertNotNull(intention);
   }
 
   public void testStrutsXmlNotInFileSet() throws Throwable {
     createStrutsFileSet("struts-simple.xml");
-    final List<IntentionAction> intentions = myFixture.getAvailableIntentions("struts-default.xml");
-
-    final IntentionAction action =
-            CodeInsightTestUtil.findIntentionByText(intentions,
-                                                    "Add struts-default.xml to file set");
-    assertNotNull(action);
+    final IntentionAction intention = myFixture.getAvailableIntention("Add struts-default.xml to file set",
+                                                                      "struts-default.xml");
+    assertNotNull(intention);
   }
 
 }
