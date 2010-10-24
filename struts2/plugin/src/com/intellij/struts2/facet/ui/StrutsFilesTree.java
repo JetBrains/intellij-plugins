@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,12 +19,14 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
+import com.intellij.peer.PeerFactory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.CheckboxTreeBase;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.util.containers.Convertor;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.tree.TreeUtil;
 
@@ -32,6 +34,7 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import java.util.*;
 
 /**
@@ -92,6 +95,21 @@ public class StrutsFilesTree extends CheckboxTreeBase {
         }
       }
     }, null);
+
+     PeerFactory.getInstance().getUIHelper().installTreeSpeedSearch(this, new Convertor<TreePath, String>() {
+      public String convert(final TreePath treePath) {
+        final Object object = ((CheckedTreeNode)treePath.getLastPathComponent()).getUserObject();
+        if (object instanceof Module) {
+          return ((Module)object).getName();
+        } else if (object instanceof PsiFile) {
+          return ((PsiFile)object).getName();
+        } else if (object instanceof VirtualFile) {
+          return ((VirtualFile)object).getName();
+        } else {
+          return "";
+        }
+      }
+    });
   }
 
   public Set<PsiFile> buildModuleNodes(final MultiMap<Module,PsiFile> files,
