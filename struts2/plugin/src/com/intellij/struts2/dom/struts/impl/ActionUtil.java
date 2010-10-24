@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package com.intellij.struts2.dom.struts.impl;
@@ -43,7 +42,7 @@ final class ActionUtil {
   }
 
   /**
-   * Does the given path match the Action's path (including support for wild-cards).
+   * Does the given path match the Action's path (including support for wild-cards and bang notation).
    *
    * @param actionPath Path of Action.
    * @param checkPath  Path to check.
@@ -51,12 +50,16 @@ final class ActionUtil {
    */
   static boolean matchesPath(@NotNull @NonNls final String actionPath,
                              @NotNull @NonNls final String checkPath) {
+    // strip everything behind "!"
+    final int bangIdx = StringUtil.indexOf(checkPath, '!');
+    final String strippedCheckPath = bangIdx == -1 ? checkPath : checkPath.substring(0, bangIdx);
 
     // do we have any wildcard-markers in our path? no --> exact compare
     if (StringUtil.indexOf(actionPath, '*') == -1) {
-      return Comparing.equal(checkPath, actionPath);
+      return Comparing.equal(strippedCheckPath, actionPath);
     }
-    return Pattern.matches(StringUtil.replace(actionPath, "*", "[^/]*"), checkPath);
+
+    return Pattern.matches(StringUtil.replace(actionPath, "*", "[^/]*"), strippedCheckPath);
   }
 
   /**
