@@ -20,7 +20,6 @@ import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -317,6 +316,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
                                                      getErrorAttributes()));
       } else {
         presentationData.addText(new ColoredFragment(name, getPlainAttributes()));
+        presentationData.addText(new ColoredFragment(" (" + fileSet.getFiles().size() + ")",
+                                                     SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES));
       }
 
       if (fileSet.isAutodetected()) {
