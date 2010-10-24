@@ -91,7 +91,7 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
       and(
         xmlAttributeValue()
           .withLocalName("name")
-          .withSuperParent(2, xmlTag().withLocalName(string().oneOf("result"))),
+          .withSuperParent(2, xmlTag().withLocalName("result")),
         STRUTS_XML
       ),
       new StaticStringValuesReferenceProvider("error", "input", "login", "success"));
