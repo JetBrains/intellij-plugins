@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -65,7 +65,7 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
   @Override
   protected void configureModule(final T moduleBuilder) throws Exception {
     super.configureModule(moduleBuilder);
-    addLibrary(moduleBuilder, "struts2-convention-plugin", "struts2-convention-plugin-2.1.8.jar");
+    addLibrary(moduleBuilder, "struts2-convention-plugin", "struts2-convention-plugin-2.2.1.jar");
     postConfigureModule(moduleBuilder);
   }
 
