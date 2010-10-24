@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,7 @@ import java.io.File;
 public abstract class BasicStrutsTestCase extends UsefulTestCase {
 
   /**
-   * Return absolute full path to the test data. Not intended to be overrided.
+   * Return absolute full path to the test data. Not intended to be overridden.
    *
    * @return absolute path to the test data.
    */
@@ -39,7 +39,7 @@ public abstract class BasicStrutsTestCase extends UsefulTestCase {
   }
 
   /**
-   * Returns the base path for all testdata directories.
+   * Returns the base path for all test data directories.
    *
    * @return "./plugin/testData/"
    */
@@ -50,7 +50,7 @@ public abstract class BasicStrutsTestCase extends UsefulTestCase {
   }
 
   /**
-   * Sets the relative directory for testdata to use.
+   * Sets the relative directory for test data to use.
    *
    * @return relative directory location.
    */

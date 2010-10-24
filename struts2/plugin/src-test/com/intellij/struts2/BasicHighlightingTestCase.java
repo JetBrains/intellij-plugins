@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -67,9 +67,6 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
   protected static final String STRUTS_XML = "struts.xml";
 
   @NonNls
-  private static final String STRUTS2_CORE_JAR_FILENAME = "struts2-core-2.1.8.jar";
-
-  @NonNls
   protected static final String STRUTS2_SPRING_PLUGIN_JAR = "struts2-spring-plugin-2.1.8.jar";
 
   protected Class<T> getModuleFixtureBuilderClass() {
@@ -84,7 +81,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
    */
   protected LocalInspectionTool[] getHighlightingInspections() {
     return new LocalInspectionTool[0];
-  };
+  }
 
   /**
    * Return true if test uses JAVA sources.
@@ -102,8 +99,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     // little hack..
     testDataRootPath = new File(getTestDataBasePath()).getAbsolutePath();
 
-    final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder =
-        JavaTestFixtureFactory.createFixtureBuilder();
+    final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder = JavaTestFixtureFactory.createFixtureBuilder();
     final T moduleBuilder = projectBuilder.addModule(getModuleFixtureBuilderClass());
     myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
 
@@ -153,7 +149,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
    */
   protected final void addStrutsJars(final T moduleBuilder) throws Exception {
     addLibrary(moduleBuilder, "struts2",
-               STRUTS2_CORE_JAR_FILENAME,
+               "struts2-core-2.1.8.jar",
                "freemarker-2.3.15.jar",
                "ognl-2.7.3.jar",
                "xwork-core-2.1.6.jar");
