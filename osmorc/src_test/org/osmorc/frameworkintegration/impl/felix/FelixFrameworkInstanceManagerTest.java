@@ -32,13 +32,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
-import static org.easymock.classextension.EasyMock.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.osmorc.SwingRunner;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.impl.LibraryHandlerImpl;
 
@@ -46,9 +44,15 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 
+import static org.easymock.classextension.EasyMock.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
+
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
+@RunWith(SwingRunner.class)
 public class FelixFrameworkInstanceManagerTest {
     public FelixFrameworkInstanceManagerTest() {
         TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =

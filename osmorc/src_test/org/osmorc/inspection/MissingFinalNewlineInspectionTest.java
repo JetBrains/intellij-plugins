@@ -42,6 +42,8 @@ import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.osmorc.SwingRunner;
 import org.osmorc.TestUtil;
 
 import java.io.IOException;
@@ -55,6 +57,7 @@ import static org.junit.Assert.assertThat;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
+@RunWith(SwingRunner.class)
 public class MissingFinalNewlineInspectionTest {
     private TempDirTestFixture myTempDirFixture;
     private IdeaProjectTestFixture fixture;

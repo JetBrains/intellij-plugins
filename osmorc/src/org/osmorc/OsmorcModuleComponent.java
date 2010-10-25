@@ -166,10 +166,11 @@ public class OsmorcModuleComponent implements ModuleComponent {
     if (facet != null && facet.getConfiguration().isManifestManuallyEdited()) {
         myApplication.invokeLater(new Runnable() {
         public void run() {
+          if (myModule.isDisposed()) return;
           ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-          if ( indicator != null) {
-          indicator.setIndeterminate(true);
-          indicator.setText("Updating manifest indices.");
+          if (indicator != null) {
+            indicator.setIndeterminate(true);
+            indicator.setText("Updating manifest indices.");
           }
           myBundleManager.addOrUpdateBundle(myModule);
         }

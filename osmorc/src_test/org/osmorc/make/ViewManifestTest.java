@@ -37,6 +37,8 @@ import com.intellij.testFramework.fixtures.TempDirTestFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.osmorc.SwingRunner;
 import org.osmorc.TestUtil;
 
 import static junit.framework.Assert.assertEquals;
@@ -47,6 +49,7 @@ import static junit.framework.Assert.assertNotNull;
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
+@RunWith(SwingRunner.class)
 public class ViewManifestTest {
     private TempDirTestFixture myTempDirFixture;
     private final IdeaProjectTestFixture fixture;

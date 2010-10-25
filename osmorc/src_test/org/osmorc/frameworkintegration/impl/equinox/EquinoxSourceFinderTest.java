@@ -30,18 +30,22 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
-import static org.hamcrest.Matchers.*;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.osmorc.SwingRunner;
 
 import java.io.IOException;
 import java.util.List;
 
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
+@RunWith(SwingRunner.class)
 public class EquinoxSourceFinderTest {
     public EquinoxSourceFinderTest() {
         TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =

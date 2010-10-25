@@ -17,8 +17,10 @@ package jetbrains.communicator.idea;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -176,15 +178,4 @@ public class VFSUtilTest extends IdeaTestCase {
 
     return vFile;
   }
-
-  protected void addLibraryToRoots(final VirtualFile jarFile, OrderRootType rootType) {
-    final ModuleRootManager manager = ModuleRootManager.getInstance(getModule());
-    final ModifiableRootModel rootModel = manager.getModifiableModel();
-    final Library jarLibrary = rootModel.getModuleLibraryTable().createLibrary();
-    final Library.ModifiableModel libraryModel = jarLibrary.getModifiableModel();
-    libraryModel.addRoot(jarFile, rootType);
-    libraryModel.commit();
-    rootModel.commit();
-  }
-
 }

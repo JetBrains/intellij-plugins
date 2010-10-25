@@ -35,12 +35,15 @@ import org.junit.After;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.osmorc.SwingRunner;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.valueobject.Version;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
+@RunWith(SwingRunner.class)
 public class BundleVersionParserTest {
     public BundleVersionParserTest() {
         TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =

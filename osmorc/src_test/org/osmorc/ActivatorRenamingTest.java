@@ -42,6 +42,7 @@ import com.intellij.testFramework.fixtures.TempDirTestFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 
@@ -52,6 +53,7 @@ import static org.junit.Assert.assertThat;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
+@RunWith(SwingRunner.class)
 public class ActivatorRenamingTest {
     public ActivatorRenamingTest() {
     }

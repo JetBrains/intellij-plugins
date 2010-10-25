@@ -43,6 +43,8 @@ import org.easymock.classextension.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.osmorc.SwingRunner;
 import org.osmorc.facet.OsmorcFacetUtil;
 import org.osmorc.settings.ProjectSettings;
 
@@ -59,6 +61,7 @@ import static org.junit.Assert.assertTrue;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 @SuppressWarnings({"ConstantConditions"})
+@RunWith(SwingRunner.class)
 public class FrameworkInstanceModuleManagerTest {
     private Module module;
     private TempDirTestFixture myTempDirFixture;

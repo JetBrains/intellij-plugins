@@ -39,12 +39,15 @@ import org.junit.After;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.osmorc.SwingRunner;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
 import org.osmorc.manifest.lang.psi.ManifestStubElementTypes;
 
 
 /**
  */
+@RunWith(SwingRunner.class)
 public class ManifestParserTest {
     private ManifestParser testObject;
     private IdeaProjectTestFixture fixture;

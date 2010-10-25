@@ -45,6 +45,8 @@ import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.osmorc.SwingRunner;
 import org.osmorc.TestUtil;
 import org.osmorc.manifest.ManifestFileTypeFactory;
 
@@ -60,6 +62,7 @@ import static org.junit.Assert.assertThat;
  * @author Robert F. Beeger (robert@beeger.net)
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
+@RunWith(SwingRunner.class)
 public class FacetDetectionTest {
     private final TempDirTestFixture myTempDirFixture;
     private final IdeaProjectTestFixture fixture;
@@ -77,9 +80,9 @@ public class FacetDetectionTest {
 
         orgTestDialog = Messages.setTestDialog(new TestDialog() {
 
-            public int show(String message) {
-                return DialogWrapper.CANCEL_EXIT_CODE;
-            }
+          public int show(String message) {
+            return DialogWrapper.CANCEL_EXIT_CODE;
+          }
         });
         TestUtil.loadModules("FacetDetectionTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
     }

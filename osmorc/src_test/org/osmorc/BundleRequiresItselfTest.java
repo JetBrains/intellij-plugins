@@ -31,6 +31,7 @@ import com.intellij.testFramework.fixtures.TempDirTestFixture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * In 0.5.0 a bundle requiring itself produced  the exception reported in OSMORC-27 . Osmorc now ignores such
@@ -38,6 +39,7 @@ import org.junit.Test;
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
+@RunWith(SwingRunner.class)
 public class BundleRequiresItselfTest {
     public BundleRequiresItselfTest() throws Exception {
         fixture = TestUtil.createTestFixture();

@@ -29,18 +29,22 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
-import static org.easymock.EasyMock.*;
-import static org.hamcrest.Matchers.equalTo;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
-import org.osmorc.valueobject.Version;
+import org.junit.runner.RunWith;
+import org.osmorc.SwingRunner;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.osmorc.valueobject.Version;
+
+import static org.easymock.EasyMock.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
+@RunWith(SwingRunner.class)
 public class VersionParserTest {
     public VersionParserTest() {
         TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =

@@ -37,12 +37,15 @@ import com.intellij.testFramework.fixtures.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.osmorc.SwingRunner;
 
 import java.io.IOException;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
+@RunWith(SwingRunner.class)
 public class AddFacetTest {
     @Before
     public void setUp() throws Exception {
