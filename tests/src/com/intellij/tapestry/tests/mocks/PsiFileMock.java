@@ -1,6 +1,7 @@
 package com.intellij.tapestry.tests.mocks;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.FileASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageDialect;
 import com.intellij.navigation.ItemPresentation;
@@ -78,7 +79,7 @@ public class PsiFileMock implements PsiFile {
     }
 
     @Override
-    public ASTNode getNode() {
+    public FileASTNode getNode() {
         return null;
     }
 
