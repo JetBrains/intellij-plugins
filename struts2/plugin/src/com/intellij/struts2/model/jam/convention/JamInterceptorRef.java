@@ -19,6 +19,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.jam.*;
 import com.intellij.jam.annotations.JamPsiConnector;
+import com.intellij.jam.annotations.JamPsiValidity;
 import com.intellij.jam.reflect.*;
 import com.intellij.javaee.model.common.CommonModelElement;
 import com.intellij.openapi.util.Comparing;
@@ -121,6 +122,9 @@ public abstract class JamInterceptorRef extends CommonModelElement.PsiBase imple
 
   @JamPsiConnector
   public abstract PsiMember getOwner();
+
+  @JamPsiValidity
+  public abstract boolean isPsiValid();
 
   @NotNull
   @Override

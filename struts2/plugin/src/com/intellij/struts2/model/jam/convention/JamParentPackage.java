@@ -21,6 +21,7 @@ import com.intellij.jam.JamElement;
 import com.intellij.jam.JamSimpleReferenceConverter;
 import com.intellij.jam.JamStringAttributeElement;
 import com.intellij.jam.annotations.JamPsiConnector;
+import com.intellij.jam.annotations.JamPsiValidity;
 import com.intellij.jam.reflect.*;
 import com.intellij.javaee.model.common.CommonModelElement;
 import com.intellij.openapi.util.Comparing;
@@ -116,6 +117,9 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
 
   @JamPsiConnector
   public abstract PsiModifierListOwner getOwner();
+
+  @JamPsiValidity
+  public abstract boolean isPsiValid();
 
   @NotNull
   @Override

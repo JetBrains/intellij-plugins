@@ -19,6 +19,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.jam.*;
 import com.intellij.jam.annotations.JamPsiConnector;
+import com.intellij.jam.annotations.JamPsiValidity;
 import com.intellij.jam.reflect.*;
 import com.intellij.javaee.model.common.CommonModelElement;
 import com.intellij.javaee.web.WebUtil;
@@ -143,6 +144,9 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
 
   @JamPsiConnector
   public abstract PsiModifierListOwner getOwner();
+
+  @JamPsiValidity
+  public abstract boolean isPsiValid();
 
   @NotNull
   @Override
