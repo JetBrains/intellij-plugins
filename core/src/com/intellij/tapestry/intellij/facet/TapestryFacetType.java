@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.facet;
 
 import com.intellij.facet.Facet;
+import com.intellij.facet.FacetModel;
 import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
 import com.intellij.facet.autodetecting.FacetDetector;
@@ -8,14 +9,10 @@ import com.intellij.facet.autodetecting.FacetDetectorRegistry;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.intellij.util.Icons;
 import com.intellij.tapestry.lang.TmlFileType;
@@ -23,7 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetConfiguration> {
 
@@ -56,37 +56,46 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
 
   @Override
   public void registerDetectors(final FacetDetectorRegistry<TapestryFacetConfiguration> registry) {
-    VirtualFileFilter filter = new VirtualFileFilter() {
-      public boolean accept(VirtualFile virtualFile) {
-        return virtualFile.getFileType() instanceof TmlFileType;
-      }
-    };
-    final TapestryFacetDetector detector = new TapestryFacetDetector();
-    registry.registerOnTheFlyDetector(TmlFileType.INSTANCE, filter, Condition.TRUE, detector);
+    registry.registerUniversalDetector(TmlFileType.INSTANCE, VirtualFileFilter.ALL, new TapestryFacetDetector());
   }
 
-  private static class TapestryFacetDetector extends FacetDetector<PsiFile, TapestryFacetConfiguration> {
+  private static class TapestryFacetDetector extends FacetDetector<VirtualFile, TapestryFacetConfiguration> {
     public TapestryFacetDetector() {
       super("tapestry-detector");
     }
 
-    public TapestryFacetConfiguration detectFacet(final PsiFile source,
+    public TapestryFacetConfiguration detectFacet(final VirtualFile source,
                                                   final Collection<TapestryFacetConfiguration> existentFacetConfigurations) {
-      PsiDirectory sourceParent = source.getParent();
+      VirtualFile sourceParent = source.getParent();
       if (sourceParent == null || existentFacetConfigurations.size() > 0) return null;
+      return new TapestryFacetConfiguration();
+    }
 
-      Module module = ModuleUtil.findModuleForPsiElement(sourceParent);
-      String relativePath;
-      for (VirtualFile srcRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
-        relativePath = VfsUtil.getRelativePath(sourceParent.getVirtualFile(), srcRoot, '.');
-        if (relativePath == null) continue;
-        for (String packageName : TapestryConstants.ELEMENT_PACKAGES) {
-          final int i = indexOf(relativePath, packageName);
-          if (i < 0) continue;
-          final TapestryFacetConfiguration conf = new TapestryFacetConfiguration();
-          conf.setApplicationPackage(relativePath.substring(0, i));
-          TapestryFrameworkSupportProvider.setupConfiguration(conf, module, TapestryVersion.TAPESTRY_5_1_0_5);
-          return conf;
+    @Override
+    public void beforeFacetAdded(@NotNull Facet facet, FacetModel facetModel, @NotNull ModifiableRootModel modifiableRootModel) {
+      final TapestryFacetConfiguration configuration = (TapestryFacetConfiguration)facet.getConfiguration();
+      for (VirtualFile root : modifiableRootModel.getSourceRoots()) {
+        VirtualFile dir = findDirectoryByName(root, new HashSet<String>(Arrays.asList(TapestryConstants.ELEMENT_PACKAGES)), 2);
+        if (dir != null) {
+          String relativePath = VfsUtil.getRelativePath(dir.getParent(), root, '.');
+          configuration.setApplicationPackage(relativePath);
+          break;
+        }
+      }
+      TapestryFrameworkSupportProvider.setupConfiguration(configuration, facet.getModule(),
+                                                          TapestryVersion.TAPESTRY_5_1_0_5);
+    }
+
+    private VirtualFile findDirectoryByName(VirtualFile file, Set<String> names, int level) {
+      for (VirtualFile child : file.getChildren()) {
+        if (child.isDirectory()) {
+          if (names.contains(child.getName())) {
+            return child;
+          }
+          else if (level > 0) {
+            final VirtualFile result = findDirectoryByName(child, names, level - 1);
+            if (result != null) return result;
+          }
         }
       }
       return null;
