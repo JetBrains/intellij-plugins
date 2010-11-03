@@ -3,6 +3,7 @@ package org.osmorc.make;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.springsource.bundlor.ClassPath;
 import com.springsource.bundlor.ManifestGenerator;
 import com.springsource.bundlor.ManifestWriter;
 import com.springsource.bundlor.ant.internal.support.StandardManifestTemplateFactory;
@@ -10,6 +11,8 @@ import com.springsource.bundlor.blint.support.DefaultManifestValidatorContributo
 import com.springsource.bundlor.blint.support.StandardManifestValidator;
 import com.springsource.bundlor.support.DefaultManifestGeneratorContributorsFactory;
 import com.springsource.bundlor.support.StandardManifestGenerator;
+import com.springsource.bundlor.support.classpath.ClassPathFactory;
+import com.springsource.bundlor.support.classpath.StandardClassPathFactory;
 import com.springsource.bundlor.support.manifestwriter.StandardManifestWriterFactory;
 import com.springsource.util.parser.manifest.ManifestContents;
 import org.jetbrains.annotations.NotNull;
@@ -29,9 +32,13 @@ public class BundlorWrapper {
                             @NotNull String manifestTemplateFile) {
     ManifestWriter manifestWriter = new StandardManifestWriterFactory().create(inputJar, outputJar);
     ManifestGenerator manifestGenerator = new StandardManifestGenerator(DefaultManifestGeneratorContributorsFactory.create());
+    ClassPathFactory cpf = new StandardClassPathFactory();
+    ClassPath classPath = cpf.create(inputJar);
+
     StandardManifestValidator manifestValidator = new StandardManifestValidator(DefaultManifestValidatorContributorsFactory.create());
+
     ManifestContents manifest =
-      manifestGenerator.generate(new StandardManifestTemplateFactory().create(manifestTemplateFile, null, null, null));
+      manifestGenerator.generate(new StandardManifestTemplateFactory().create(manifestTemplateFile, null, null, null), classPath);
 
     try {
       manifestWriter.write(manifest);
