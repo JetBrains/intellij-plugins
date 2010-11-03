@@ -148,6 +148,9 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         startColumn.setPreferredWidth(otherWidth);
       }
     });
+    // avoid text fields growing the dialog when much text is entered.
+    vmParams.getTextField().setPreferredSize(new Dimension(100,20));
+    programParameters.getTextField().setPreferredSize(new Dimension(100,20));  
   }
 
   /**
