@@ -3,9 +3,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
  * http://www.apache.org/licenses/LICENSE-2.0
- *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +18,6 @@ import com.intellij.openapi.paths.PathReferenceManager;
 import com.intellij.patterns.XmlAttributeValuePattern;
 import com.intellij.psi.*;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
-import com.intellij.psi.impl.source.resolve.reference.PsiReferenceProviderBase;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.IdRefReference;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
@@ -50,7 +47,7 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
 
   protected static final ActionReferenceProvider ACTION_REFERENCE_PROVIDER = new ActionReferenceProvider();
 
-  protected static final PsiReferenceProvider RELATIVE_PATH_PROVIDER = new PsiReferenceProviderBase() {
+  protected static final PsiReferenceProvider RELATIVE_PATH_PROVIDER = new PsiReferenceProvider() {
     @NotNull
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                  @NotNull final ProcessingContext context) {
@@ -73,7 +70,7 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
   /**
    * Reference to HTML element's "id" with additional pseudo-IDs.
    */
-  protected static class HtmlIdWithAdditionalVariantsReferenceProvider extends PsiReferenceProviderBase {
+  protected static class HtmlIdWithAdditionalVariantsReferenceProvider extends PsiReferenceProvider {
 
     private final String[] additionalVariants;
 
