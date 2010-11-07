@@ -1,0 +1,57 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Unnamed" type="MavenRunConfiguration" factoryName="Maven">
+    <MavenSettings>
+      <option name="myGeneralSettings">
+        <MavenGeneralSettings>
+          <option name="checksumPolicy" value="FAIL" />
+          <option name="failureBehavior" value="FAST" />
+          <option name="mavenHome" value="" />
+          <option name="mavenSettingsFile" value="" />
+          <option name="nonRecursive" value="false" />
+          <option name="overridenLocalRepository" value="" />
+          <option name="pluginUpdatePolicy" value="DO_NOT_UPDATE" />
+          <option name="printErrorStackTraces" value="false" />
+          <option name="snapshotUpdatePolicy" value="ALWAYS_UPDATE" />
+          <option name="usePluginRegistry" value="false" />
+          <option name="workOffline" value="true" />
+        </MavenGeneralSettings>
+      </option>
+      <option name="myRunnerSettings">
+        <MavenRunnerSettings>
+          <option name="jreName" value="#JAVA_INTERNAL" />
+          <option name="mavenProperties">
+            <map />
+          </option>
+          <option name="runMavenInBackground" value="true" />
+          <option name="skipTests" value="false" />
+          <option name="vmOptions" value="" />
+        </MavenRunnerSettings>
+      </option>
+      <option name="myRunnerParameters">
+        <MavenRunnerParameters>
+          <option name="goals">
+            <list>
+              <option value="flexmojos:configurator" />
+              <option value="-e" />
+            </list>
+          </option>
+          <option name="profiles">
+            <set />
+          </option>
+          <option name="workingDirPath" value="$PROJECT_DIR$/../flex-ui-designer/designer" />
+        </MavenRunnerParameters>
+      </option>
+    </MavenSettings>
+    <RunnerSettings RunnerId="Debug">
+      <option name="DEBUG_PORT" value="63374" />
+      <option name="TRANSPORT" value="0" />
+      <option name="LOCAL" value="true" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Debug" />
+    <ConfigurationWrapper RunnerId="Run" />
+    <method>
+      <option name="Maven.BeforeRunTask" enabled="false" file="$PROJECT_DIR$/pom.xml" goal="install" />
+    </method>
+  </configuration>
+</component>
