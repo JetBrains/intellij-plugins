@@ -37,7 +37,7 @@
     </change-notes>
     <version>1.2.2</version>
     <vendor url="http://osmorc.org" email="info@osmorc.org">Osmorc Development Team</vendor>
-    <idea-version since-build="90.10"/>
+    <idea-version since-build="90.10" until-build="95.9999"/>
     <category>Framework integration</category>
 
 
