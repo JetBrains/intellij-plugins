@@ -34,12 +34,12 @@ public class UserTreeRenderer extends ColoredTreeCellRenderer {
 
   public UserTreeRenderer(JTree tree) {
     myTree = tree;
-    setFont(UIManager.getFont("Label.font"));
+    setFont(com.intellij.util.ui.UIUtil.getLabelFont());
   }
 
   public void updateUI() {
     super.updateUI();
-    setFont(UIManager.getFont("Label.font"));
+    setFont(com.intellij.util.ui.UIUtil.getLabelFont());
   }
 
   protected void paintComponent(final Graphics g) {
