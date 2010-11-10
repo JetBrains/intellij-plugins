@@ -36,6 +36,7 @@ import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -183,7 +184,7 @@ public class BndWrapper {
         }
         Manifest mf = analyzer.calcManifest();
         Jar jar = analyzer.getJar();
-        final File f = File.createTempFile("tmpbnd", ".jar");
+      final File f = FileUtil.createTempFile("tmpbnd", ".jar");
         jar.write(f);
         jar.close();
         analyzer.close();

@@ -67,7 +67,7 @@ public class TestFactory {
   }
 
   public static File createDir(String name) throws IOException {
-    File dir = File.createTempFile(name, "");
+    File dir = FileUtil.createTempFile(name, "");
     dir.delete();
     dir.mkdir();
     addFileToDelete(dir);
