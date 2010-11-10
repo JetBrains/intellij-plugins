@@ -56,7 +56,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     private final Logger logger = Logger.getInstance("#org.osmorc.facet.maven.OsmorcFacetImporter");
 
     public OsmorcFacetImporter() {
-        super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.INSTANCE, "OSGi");
+        super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.getInstance(), "OSGi");
     }
 
     public boolean isApplicable(MavenProject mavenProjectModel) {

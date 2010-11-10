@@ -59,9 +59,11 @@ import java.util.*;
  */
 public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfiguration> {
     public static final FacetTypeId<OsmorcFacet> ID = new FacetTypeId<OsmorcFacet>("Osmorc");
-    public static final OsmorcFacetType INSTANCE = new OsmorcFacetType();
     private final Logger logger = Logger.getInstance("#org.osmorc.facet.OsmorcFacetType");
 
+    public static OsmorcFacetType getInstance() {
+        return findInstance(OsmorcFacetType.class);
+    }
 
     protected OsmorcFacetType() {
         super(ID, "Osmorc", "OSGi");
