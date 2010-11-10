@@ -2,11 +2,10 @@ package com.intellij.flex.maven;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.annotations.Component;
 import org.sonatype.flexmojos.compiler.*;
 import org.sonatype.flexmojos.configurator.Configurator;
+import org.sonatype.flexmojos.configurator.ConfiguratorException;
 import org.sonatype.flexmojos.generator.iface.StringUtil;
-import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -16,13 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-@Component(role = Configurator.class)
 public class IdeaConfigurator implements Configurator {
   @SuppressWarnings({"FieldCanBeLocal"})
   private MavenProject project;
   private OutputStreamWriter out;
 
-  private static final Map<String, String> childTagNameMap = new HashMap<String, String>(5);
+  private static final Map<String, String> childTagNameMap = new HashMap<String, String>(9);
 
   static {
     childTagNameMap.put("keep-as3-metadata", "name");
@@ -30,38 +28,35 @@ public class IdeaConfigurator implements Configurator {
     childTagNameMap.put("include-classes", "class");
     childTagNameMap.put("locale", "locale-element");
     childTagNameMap.put("managers", "manager-class");
+    childTagNameMap.put("externs", "symbol");
+    childTagNameMap.put("includes", "symbol");
+    childTagNameMap.put("extensions", "extension");
+    childTagNameMap.put("include-resource-bundles", "bundle");
   }
 
-  // todo buildConfiguration/buildConfiguration — add throws MojoExecutionException, MojoFailureException (like org.apache.maven.plugin.Mojo.execute)?
-
   @Override
-  public void buildConfiguration(ICommandLineConfiguration configuration, Map<String, Object> parameters) {
+  public void buildConfiguration(ICommandLineConfiguration configuration, File sourceFile, Map<String, Object> parameters) throws ConfiguratorException {
     try {
       init(parameters);
       build(configuration, ICommandLineConfiguration.class, "\n\t");
 
-      out.append("\n\t<file-specs>\n\t\t<path-element>").append(getSourceFile().getAbsolutePath()).append("</path-element>\n\t</file-specs>");
+      out.append("\n\t<file-specs>\n\t\t<path-element>").append(sourceFile.getAbsolutePath()).append("</path-element>\n\t</file-specs>");
       close();
     }
     catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new ConfiguratorException(e.getMessage(), e);
     }
   }
 
-  // todo temp hack, how we can get source file for mxmlc mojo?
-  private File getSourceFile() {
-    return SourceFileResolver.resolveSourceFile(project.getCompileSourceRoots(), null, project.getGroupId(), project.getArtifactId());
-  }
-
   @Override
-  public void buildConfiguration(ICompcConfiguration configuration, Map<String, Object> parameters) {
+  public void buildConfiguration(ICompcConfiguration configuration, Map<String, Object> parameters) throws ConfiguratorException {
     try {
       init(parameters);
       build(configuration, ICompcConfiguration.class, "\n\t");
       close();
     }
     catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new ConfiguratorException(e.getMessage(), e);
     }
   }
 
@@ -69,18 +64,16 @@ public class IdeaConfigurator implements Configurator {
     project = (MavenProject) parameters.get("project");
 
     Build build = project.getBuild();
-    StringBuilder pathBuilder = new StringBuilder(build.getDirectory()).append(File.separatorChar);
-    pathBuilder.append(build.getFinalName());
-    // todo how I can get classifier param from flexmojos configuration?
-//    pathBuilder.append(classifierElement == null ? "" : "-" + classifierElement.getTextNormalize());
-    // todo suffix must be "-config-report.xml" (avoid conflict with flexmojos config report), but I use "-configs.xml" for compatibility with current flex idea plugin
-//    pathBuilder.append("-config-report.xml");
-    pathBuilder.append("-configs.xml");
-
+    StringBuilder pathBuilder = new StringBuilder(build.getDirectory()).append(File.separatorChar).append(build.getFinalName());
+    String classifier = (String) parameters.get("classifier");
+    if (classifier != null) {
+      pathBuilder.append('-').append(classifier);
+    }
+    pathBuilder.append("-config-report.xml");
 
     File configFile = new File(pathBuilder.toString());
     out = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(configFile)), "utf-8");
-    out.write("<flex-config>");
+    out.write("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
   }
 
   private void close() throws IOException {
@@ -115,10 +108,6 @@ public class IdeaConfigurator implements Configurator {
         out.append(indent).append("</").append(configurationName).append('>');
       }
       else if (configuration instanceof IASDocConfiguration && "footer".equals(name)) {
-        // todo
-        throw new UnsupportedOperationException();
-      }
-      else if (configuration instanceof IFontsConfiguration && "managers".equals(name)) {
         // todo
         throw new UnsupportedOperationException();
       }
@@ -246,7 +235,6 @@ public class IdeaConfigurator implements Configurator {
     out.append(indent).append("\t<").append(name).append(">").append(value).append("</").append(name).append('>');
   }
 
-  // todo may be share this?
   private static String parseName(String name) {
     String[] nodes = StringUtil.splitCamelCase(StringUtil.removePrefix(name));
 
