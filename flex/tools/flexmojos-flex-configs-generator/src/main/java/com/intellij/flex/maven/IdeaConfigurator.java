@@ -32,6 +32,7 @@ public class IdeaConfigurator implements Configurator {
     childTagNameMap.put("includes", "symbol");
     childTagNameMap.put("extensions", "extension");
     childTagNameMap.put("include-resource-bundles", "bundle");
+    childTagNameMap.put("theme", "filename");
   }
 
   @Override
