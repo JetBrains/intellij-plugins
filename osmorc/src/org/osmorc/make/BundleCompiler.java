@@ -371,11 +371,11 @@ public class BundleCompiler implements PackagingCompiler {
 
     @Nullable
     private static String makeBndFile(Module module, String contents, CompileContext compileContext) throws IOException {
-      final String outputPath = getOutputPath(module, compileContext);
-      if ( outputPath == null ) {
-        return null;
-      }
-      File tmpFile = File.createTempFile("osmorc", ".bnd", new File(outputPath));
+        final String outputPath = getOutputPath(module, compileContext);
+        if ( outputPath == null ) {
+          return null;
+        }
+        File tmpFile = FileUtil.createTempFile(new File(outputPath), "osmorc", ".bnd", true);
         // create one
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tmpFile));
         bos.write(contents.getBytes());
@@ -385,10 +385,8 @@ public class BundleCompiler implements PackagingCompiler {
 
     }
 
-
-    protected static
     @Nullable
-    File findFileInModuleContentRoots(String file, Module module) {
+    protected static File findFileInModuleContentRoots(String file, Module module) {
         ModuleRootManager manager = ModuleRootManager.getInstance(module);
         for (VirtualFile root : manager.getContentRoots()) {
             VirtualFile result = VfsUtil.findRelativeFile(file, root);

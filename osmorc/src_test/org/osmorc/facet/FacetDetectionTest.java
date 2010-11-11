@@ -111,7 +111,7 @@ public class FacetDetectionTest {
 
         replay(registry);
 
-        OsmorcFacetType.INSTANCE.registerDetectors(registry);
+        OsmorcFacetType.getInstance().registerDetectors(registry);
         VirtualFileFilter filter = (VirtualFileFilter) arguments.get(1);
         FacetDetector<VirtualFile, OsmorcFacetConfiguration> detector = (FacetDetector<VirtualFile, OsmorcFacetConfiguration>) arguments.get(2);
 
@@ -123,7 +123,7 @@ public class FacetDetectionTest {
         assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
         assertThat(osmorcFacetConfiguration.isUseProjectDefaultManifestFileLocation(), equalTo(false));
 
-        OsmorcFacet osmorcFacet = OsmorcFacetType.INSTANCE.createFacet(t0, "OSGi", osmorcFacetConfiguration, null);
+        OsmorcFacet osmorcFacet = OsmorcFacetType.getInstance().createFacet(t0, "OSGi", osmorcFacetConfiguration, null);
 
         ModifiableRootModel model = ModuleRootManager.getInstance(t0).getModifiableModel();
         try {
@@ -155,7 +155,7 @@ public class FacetDetectionTest {
 
         replay(registry);
 
-        OsmorcFacetType.INSTANCE.registerDetectors(registry);
+        OsmorcFacetType.getInstance().registerDetectors(registry);
         VirtualFileFilter filter = (VirtualFileFilter) arguments.get(1);
         FacetDetector<VirtualFile, OsmorcFacetConfiguration> detector = (FacetDetector<VirtualFile, OsmorcFacetConfiguration>) arguments.get(2);
 
@@ -167,7 +167,7 @@ public class FacetDetectionTest {
         assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
         assertThat(osmorcFacetConfiguration.isUseProjectDefaultManifestFileLocation(), equalTo(false));
 
-        OsmorcFacet osmorcFacet = OsmorcFacetType.INSTANCE.createFacet(t2, "OSGi", osmorcFacetConfiguration, null);
+        OsmorcFacet osmorcFacet = OsmorcFacetType.getInstance().createFacet(t2, "OSGi", osmorcFacetConfiguration, null);
 
         ModifiableRootModel model = ModuleRootManager.getInstance(t2).getModifiableModel();
         try {
@@ -199,7 +199,7 @@ public class FacetDetectionTest {
 
         replay(registry);
 
-        OsmorcFacetType.INSTANCE.registerDetectors(registry);
+        OsmorcFacetType.getInstance().registerDetectors(registry);
         VirtualFileFilter filter = (VirtualFileFilter) arguments.get(1);
         VirtualFile manifestFile = myTempDirFixture.getFile("t1/src/META-INF/MANIFEST.MF");
 
