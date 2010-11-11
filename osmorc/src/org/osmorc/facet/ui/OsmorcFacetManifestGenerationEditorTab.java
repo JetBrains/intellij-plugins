@@ -27,7 +27,7 @@ package org.osmorc.facet.ui;
 
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
-import com.intellij.ide.util.TreeClassChooserDialog;
+import com.intellij.ide.util.TreeJavaClassChooserDialog;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.psi.JavaPsiFacade;
@@ -108,13 +108,13 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
         // show a class selector for descendants of BundleActivator
         PsiClass psiClass = JavaPsiFacade.getInstance(project)
                 .findClass("org.osgi.framework.BundleActivator", GlobalSearchScope.allScope(project));
-        TreeClassChooserDialog dialog =
-                new TreeClassChooserDialog(OsmorcBundle.getTranslation("faceteditor.select.bundleactivator"),
-                        project, searchScope, new TreeClassChooserDialog.InheritanceClassFilterImpl(
+        TreeJavaClassChooserDialog dialog =
+                new TreeJavaClassChooserDialog(OsmorcBundle.getTranslation("faceteditor.select.bundleactivator"),
+                        project, searchScope, new TreeJavaClassChooserDialog.InheritanceJavaClassFilterImpl(
                                 psiClass, false, true,
                                 null), null);
         dialog.showDialog();
-        PsiClass clazz = dialog.getSelectedClass();
+        PsiClass clazz = dialog.getSelected();
         if (clazz != null) {
             _bundleActivator.setText(clazz.getQualifiedName());
         }
