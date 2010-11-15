@@ -125,6 +125,10 @@ public class OsmorcModuleComponent implements ModuleComponent {
   private void updateModuleDependencyIndex() {
     myApplication.invokeLater(new Runnable() {
       public void run() {
+        // Fix for EA-23251
+        if ( myModule.isDisposed() ) {
+          return;
+        }
         ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
         if (indicator != null) {
           indicator.setText("Updating OSGi dependency index for module '" + myModule.getName() + "'");
