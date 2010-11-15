@@ -67,7 +67,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
   private static final Logger LOG = Logger.getInstance("#com.intellij.struts2.facet.StrutsFrameworkSupportProvider");
 
   protected StrutsFrameworkSupportProvider() {
-    super(StrutsFacetType.INSTANCE);
+    super(StrutsFacetType.getInstance());
   }
 
   public String getTitle() {

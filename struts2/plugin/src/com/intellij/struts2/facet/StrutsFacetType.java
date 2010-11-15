@@ -44,11 +44,12 @@ import java.util.Iterator;
  * @author Yann C&eacute;bron
  */
 public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfiguration> {
-
-  public static final FacetType<StrutsFacet, StrutsFacetConfiguration> INSTANCE = new StrutsFacetType();
-
-  private StrutsFacetType() {
+  StrutsFacetType() {
     super(StrutsFacet.FACET_TYPE_ID, "Struts2", StrutsBundle.message("struts2"), WebFacet.ID);
+  }
+
+  public static FacetType<StrutsFacet, StrutsFacetConfiguration> getInstance() {
+    return findInstance(StrutsFacetType.class);
   }
 
   public StrutsFacetConfiguration createDefaultConfiguration() {

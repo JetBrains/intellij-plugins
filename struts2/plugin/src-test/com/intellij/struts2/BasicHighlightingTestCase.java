@@ -169,9 +169,9 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     final RunResult<StrutsFacet> runResult = new WriteCommandAction<StrutsFacet>(myProject) {
       @Override
       protected void run(final Result<StrutsFacet> result) throws Throwable {
-        final String name = StrutsFacetType.INSTANCE.getPresentableName();
-        final WebFacet webFacet = JavaeeUtil.addFacet(myModule, WebFacetType.INSTANCE);
-        final StrutsFacet facet = FacetManager.getInstance(myModule).addFacet(StrutsFacetType.INSTANCE, name, webFacet);
+        final String name = StrutsFacetType.getInstance().getPresentableName();
+        final WebFacet webFacet = JavaeeUtil.addFacet(myModule, WebFacetType.getInstance());
+        final StrutsFacet facet = FacetManager.getInstance(myModule).addFacet(StrutsFacetType.getInstance(), name, webFacet);
         result.setResult(facet);
       }
     }.execute();
