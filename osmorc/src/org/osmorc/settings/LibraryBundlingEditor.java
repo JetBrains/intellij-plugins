@@ -43,7 +43,8 @@ public class LibraryBundlingEditor implements SearchableConfigurable {
   }
 
   public boolean isModified() {
-    return myComponent.isModified();
+    // Fixes:    EA-23199. This probably occurs when isModified is called after disposing the UI. should not happen but does.. :(
+    return myComponent != null ? myComponent.isModified() : false;
   }
 
   public void apply() throws ConfigurationException {
