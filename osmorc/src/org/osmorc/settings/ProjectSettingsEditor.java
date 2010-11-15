@@ -52,7 +52,8 @@ public class ProjectSettingsEditor implements SearchableConfigurable {
   }
 
   public boolean isModified() {
-    return component.isModified();
+    // Fixes:    EA-23200. This probably occurs when isModified is called after disposing the UI. should not happen but does.. :(
+    return component != null ? component.isModified() : false;
   }
 
   public void apply() throws ConfigurationException {
