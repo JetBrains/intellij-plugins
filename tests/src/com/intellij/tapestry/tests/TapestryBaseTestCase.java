@@ -82,7 +82,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     final RunResult<TapestryFacet> runResult = new WriteCommandAction<TapestryFacet>(myFixture.getProject()) {
       @Override
       protected void run(final Result<TapestryFacet> result) throws Throwable {
-        final TapestryFacetType facetType = TapestryFacetType.INSTANCE;
+        final TapestryFacetType facetType = TapestryFacetType.getInstance();
         final FacetManager facetManager = FacetManager.getInstance(myModule);
         final TapestryFacet facet = facetManager.addFacet(facetType, facetType.getPresentableName(), null);
         facet.getConfiguration().setApplicationPackage(TEST_APPLICATION_PACKAGE);

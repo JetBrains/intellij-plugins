@@ -1,13 +1,11 @@
 package com.intellij.tapestry.intellij;
 
-import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.tapestry.core.log.LoggerFactory;
 import com.intellij.tapestry.intellij.core.log.IntellijLoggerFactory;
-import com.intellij.tapestry.intellij.facet.TapestryFacetType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,8 +37,6 @@ public class TapestryApplicationSupportLoader implements ApplicationComponent {
 
 
   public void initComponent() {
-    // Add Tapestry support for web modules.
-    FacetTypeRegistry.getInstance().registerFacetType(TapestryFacetType.INSTANCE);
   }
 
   public void disposeComponent() { /* do nothing */ }

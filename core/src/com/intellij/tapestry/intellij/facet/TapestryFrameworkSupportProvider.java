@@ -21,7 +21,7 @@ import java.util.List;
 public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupportProvider<TapestryFacet> {
 
   public TapestryFrameworkSupportProvider() {
-    super(TapestryFacetType.INSTANCE);
+    super(TapestryFacetType.getInstance());
   }
 
   protected void setupConfiguration(TapestryFacet tapestryFacet, ModifiableRootModel modifiableRootModel, FrameworkVersion version) {

@@ -28,10 +28,13 @@ import java.util.Set;
 public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetConfiguration> {
 
   public static final FacetTypeId<TapestryFacet> ID = new FacetTypeId<TapestryFacet>("tapestry");
-  public static final TapestryFacetType INSTANCE = new TapestryFacetType();
 
-  public TapestryFacetType() {
+  TapestryFacetType() {
     super(ID, "tapestry", "Tapestry");
+  }
+
+  public static TapestryFacetType getInstance() {
+    return findInstance(TapestryFacetType.class);
   }
 
   public TapestryFacetConfiguration createDefaultConfiguration() {

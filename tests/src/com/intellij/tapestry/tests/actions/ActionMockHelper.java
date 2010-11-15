@@ -102,7 +102,7 @@ public class ActionMockHelper {
 
     public void setModuleAsTapestryModule() {
         Collection<TapestryFacet> facet = new ArrayList<TapestryFacet>();
-        facet.add(new TapestryFacet(new TapestryFacetType(), _moduleMock, null, new TapestryFacetConfiguration(), null));
+        facet.add(new TapestryFacet(TapestryFacetType.getInstance(), _moduleMock, null, new TapestryFacetConfiguration(), null));
 
         org.easymock.classextension.EasyMock.expect(_facetManagerMock.getFacetsByType(TapestryFacetType.ID)).andReturn(facet).anyTimes();
     }
