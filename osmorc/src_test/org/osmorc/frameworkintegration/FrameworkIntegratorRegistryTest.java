@@ -28,50 +28,47 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.sameInstance;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class FrameworkIntegratorRegistryTest {
-    public FrameworkIntegratorRegistryTest() {
-        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
-                IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
-        fixture = fixtureBuilder.getFixture();
+  public FrameworkIntegratorRegistryTest() {
+    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder =
+      IdeaTestFixtureFactory.getFixtureFactory().createLightFixtureBuilder();
+    fixture = fixtureBuilder.getFixture();
+  }
+
+  @Before
+  public void setUp() throws Exception {
+    fixture.setUp();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    fixture.tearDown();
+  }
+
+  @Test
+  public void testRegistry() {
+    FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
+
+    FrameworkIntegrator[] integrators = registry.getFrameworkIntegrators();
+
+    for (int i = 0, integratorsLength = integrators.length; i < integratorsLength; i++) {
+      FrameworkIntegrator integrator = integrators[i];
+      assertThat(registry.findIntegratorByName(integrator.getDisplayName()), sameInstance(integrator));
     }
 
-    @Before
-    public void setUp() throws Exception {
-        fixture.setUp();
-    }
+    FrameworkInstanceDefinition instanceDefinition = new FrameworkInstanceDefinition();
+    instanceDefinition.setFrameworkIntegratorName(integrators[1].getDisplayName());
+    assertThat(registry.findIntegratorByInstanceDefinition(instanceDefinition), sameInstance(integrators[1]));
+  }
 
-    @After
-    public void tearDown() throws Exception {
-        fixture.tearDown();
-    }
-
-    @Test
-    public void testRegistry() {
-        FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
-
-        FrameworkIntegrator[] integrators = registry.getFrameworkIntegrators();
-
-        assertThat(integrators.length, equalTo(4));
-        assertThat(registry.findIntegratorByName(integrators[0].getDisplayName()), sameInstance(integrators[0]));
-        assertThat(registry.findIntegratorByName(integrators[1].getDisplayName()), sameInstance(integrators[1]));
-        assertThat(registry.findIntegratorByName(integrators[2].getDisplayName()), sameInstance(integrators[2]));
-        assertThat(registry.findIntegratorByName(integrators[3].getDisplayName()), sameInstance(integrators[3]));
-
-        FrameworkInstanceDefinition instanceDefinition = new FrameworkInstanceDefinition();
-        instanceDefinition.setFrameworkIntegratorName(integrators[1].getDisplayName());
-        assertThat(registry.findIntegratorByInstanceDefinition(instanceDefinition), sameInstance(integrators[1]));
-
-    }
-
-    private IdeaProjectTestFixture fixture;
+  private final IdeaProjectTestFixture fixture;
 }

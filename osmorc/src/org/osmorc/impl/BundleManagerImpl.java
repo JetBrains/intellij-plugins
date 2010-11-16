@@ -31,6 +31,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import org.eclipse.osgi.framework.internal.core.Constants;
 import org.eclipse.osgi.internal.module.ResolverImpl;
 import org.eclipse.osgi.service.resolver.*;
@@ -330,9 +331,14 @@ public class BundleManagerImpl implements BundleManager {
 
     private BundleDescription createBundleDescription(BundleManifest bundleManifest, long bundleID) throws IOException {
         BundleDescription bundleDescription = null;
+        PsiFile manifestFile = bundleManifest.getManifestFile();
+        if ( manifestFile == null ) {
+          // EA-23043 fix
+          return null;
+        }
         try {
-            InputStream inputStream =
-                    new ByteArrayInputStream((bundleManifest.getManifestFile().getText() + "\n").getBytes());
+          InputStream inputStream =
+                    new ByteArrayInputStream((manifestFile.getText() + "\n").getBytes());
             Manifest manifest = new Manifest(inputStream);
             Attributes mainAttributes = manifest.getMainAttributes();
             Properties properties = new Properties();
