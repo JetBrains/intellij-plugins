@@ -28,6 +28,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -50,6 +51,10 @@ public class LibraryManifestHolderImpl extends AbstractManifestHolderImpl
   {
     if (_bundleManifest == null)
     {
+      // FIX for EA-23586
+      if ( _library instanceof LibraryEx && ((LibraryEx)_library).isDisposed() ) {
+        return _bundleManifest;
+      }
       VirtualFile[] classRoots = _library.getFiles(OrderRootType.CLASSES);
       for (VirtualFile classRoot : classRoots)
       {
