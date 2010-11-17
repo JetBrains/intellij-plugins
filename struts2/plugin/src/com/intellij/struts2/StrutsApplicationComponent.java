@@ -15,7 +15,6 @@
 
 package com.intellij.struts2;
 
-import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.text.StringUtil;
@@ -41,7 +40,6 @@ import com.intellij.struts2.dom.validator.Validators;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
 import com.intellij.struts2.dom.validator.config.ValidatorConfigResolveConverter;
 import com.intellij.struts2.dom.validator.impl.ValidatorConfigResolveConverterImpl;
-import com.intellij.struts2.facet.StrutsFacetType;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NonNls;
@@ -96,8 +94,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
   }
 
   public void initComponent() {
-    FacetTypeRegistry.getInstance().registerFacetType(StrutsFacetType.INSTANCE);
-
     registerStrutsDomPresentation();
     registerValidationDomPresentation();
 

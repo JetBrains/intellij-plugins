@@ -142,8 +142,8 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     final RunResult<SpringFacet> runResult = new WriteCommandAction<SpringFacet>(myFixture.getProject()) {
       @Override
       protected void run(final Result<SpringFacet> result) throws Throwable {
-        final String name = SpringFacetType.INSTANCE.getPresentableName();
-        final SpringFacet facet = FacetManager.getInstance(myModule).addFacet(SpringFacetType.INSTANCE, name, null);
+        final String name = SpringFacetType.getInstance().getPresentableName();
+        final SpringFacet facet = FacetManager.getInstance(myModule).addFacet(SpringFacetType.getInstance(), name, null);
         result.setResult(facet);
       }
     }.execute();

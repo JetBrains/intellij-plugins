@@ -15,14 +15,14 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin url="http://www.jetbrains.net/confluence/display/CONTEST/Struts2Plugin" version="2">
+<idea-plugin url="http://confluence.jetbrains.net/display/CONTEST/Struts2Plugin" version="2">
   <id>com.intellij.struts2</id>
   <name>Struts 2</name>
   <description>Provides full integration of Apache Struts 2.</description>
 
   <change-notes>
     <![CDATA[
-  Please see <a href="http://www.jetbrains.net/confluence/display/CONTEST/Struts2PluginChangeNotes">Struts2PluginChangeNotes</a>.
+  Please see <a href="http://confluence.jetbrains.net/display/CONTEST/Struts2PluginChangeNotes">Struts2PluginChangeNotes</a>.
   ]]>
   </change-notes>
 
@@ -55,7 +55,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
-
+    <facetType implementation="com.intellij.struts2.facet.StrutsFacetType"/>
     <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsReferenceContributor"/>
     <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsUITaglibReferenceContributor"/>
     <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsJQueryTaglibReferenceContributor"/>
