@@ -25,6 +25,7 @@
 
 package org.osmorc.settings;
 
+import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkInstanceManager;
@@ -46,7 +47,7 @@ import java.util.List;
  */
 public class FrameworkDefinitionsEditorComponent {
   private JPanel mainPanel;
-  private JList frameworkInstances;
+  private JBList frameworkInstances;
   private JButton addFramework;
   private JButton removeFramework;
   private JLabel frameworkIntegrator;
@@ -63,6 +64,7 @@ public class FrameworkDefinitionsEditorComponent {
     this.frameworkIntegratorRegistry = frameworkIntegratorRegistry;
     this.myModel = new DefaultListModel();
     frameworkInstances.setModel(this.myModel);
+    frameworkInstances.getEmptyText().setText("No frameworks configured");
 
     addFramework.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
