@@ -26,6 +26,7 @@ public class IdeaConfigurator implements Configurator {
     childTagNameMap.put("keep-as3-metadata", "name");
     childTagNameMap.put("include-namespaces", "uri");
     childTagNameMap.put("include-classes", "class");
+    childTagNameMap.put("include-libraries", "library");
     childTagNameMap.put("locale", "locale-element");
     childTagNameMap.put("managers", "manager-class");
     childTagNameMap.put("externs", "symbol");
@@ -70,9 +71,12 @@ public class IdeaConfigurator implements Configurator {
     if (classifier != null) {
       pathBuilder.append('-').append(classifier);
     }
-    pathBuilder.append("-config-report.xml");
+//    pathBuilder.append("-config-report.xml");
+    pathBuilder.append("-configs.xml");
 
     File configFile = new File(pathBuilder.toString());
+    //noinspection ResultOfMethodCallIgnored
+    configFile.getParentFile().mkdirs();
     out = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(configFile)), "utf-8");
     out.write("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
   }

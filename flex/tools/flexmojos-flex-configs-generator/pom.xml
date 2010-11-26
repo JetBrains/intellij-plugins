@@ -10,7 +10,7 @@
 
   <groupId>com.intellij.flex.maven</groupId>
   <artifactId>flexmojos-idea-configurator</artifactId>
-  <!--<version>1.0.1</version>-->
+  <!--<version>1.0.2</version>-->
   <version>1.0-SNAPSHOT</version>
 
   <properties>
