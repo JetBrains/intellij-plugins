@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
+<!--
+  ~ Copyright 2010 The authors
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <!DOCTYPE struts PUBLIC
     "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
     "http://struts.apache.org/dtds/struts-2.0.dtd">
@@ -12,7 +27,7 @@
     </result-types>
 
     <global-results>
-      <result name="globalNonExistingAction" type="chain"><error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error></result>
+      <result name="globalNonExistingAction" type="chain"><error descr="Cannot resolve Action 'INVALID_VALUE'">INVALID_VALUE</error></result>
     </global-results>
 
     <action name="actionPath1">
@@ -22,8 +37,8 @@
 
       <result name="withParameters" type="chain">actionPath2?myParam=myValue</result>
 
-      <result name="nonExistingAction" type="chain"><error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error></result>
-      <result name="mustNotHaveExtension" type="chain"><error descr="Cannot resolve symbol 'actionPath2.action'">actionPath2.action</error></result>
+      <result name="nonExistingAction" type="chain"><error descr="Cannot resolve Action 'INVALID_VALUE'">INVALID_VALUE</error></result>
+      <result name="mustNotHaveExtension" type="chain"><error descr="Cannot resolve Action 'actionPath2.action'">actionPath2.action</error></result>
     </action>
 
     <action name="actionPath2"/>
@@ -44,7 +59,7 @@
       <result name="wildcard" type="chain">wildcardPath</result>
       <result name="wildcardTest" type="chain">wildcardPathAnything</result>
 
-      <result name="wildcardNotMatch" type="chain"><error>wildcardNotMatchPath</error></result>
+      <result name="wildcardNotMatch" type="chain"><error descr="Cannot resolve Action 'wildcardNotMatchPath'">wildcardNotMatchPath</error></result>
     </action>
 
     <action name="wild*BetweenPath">

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.struts.impl.path;
 
+import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.Comparing;
@@ -65,44 +66,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
       return false;
     }
 
-    final PsiReference chainReference = new PsiReferenceBase<PsiElement>(psiElement, soft) {
-
-      public PsiElement resolve() {
-        return resolveActionPath(psiElement, currentPackage, model);
-      }
-
-      @NotNull
-      public Object[] getVariants() {
-        final List<LookupItem<ActionLookupItem>> variants = new ArrayList<LookupItem<ActionLookupItem>>();
-
-        final List<Action> allActions = model.getActionsForNamespace(null);
-        for (final Action action : allActions) {
-          final String actionPath = action.getName().getStringValue();
-          if (actionPath != null) {
-            final boolean isInCurrentPackage = Comparing.equal(action.getNamespace(), currentPackage);
-            final ActionLookupItem actionItem = new ActionLookupItem(action, isInCurrentPackage);
-
-            // prepend package-name if not default ("/") or "current" package
-            final String actionNamespace = action.getNamespace();
-            final String fullPath;
-            if (!Comparing.equal(actionNamespace, StrutsPackage.DEFAULT_NAMESPACE) &&
-                !isInCurrentPackage) {
-              fullPath = actionNamespace + "/" + actionPath;
-            } else {
-              fullPath = actionPath;
-            }
-
-            final LookupItem<ActionLookupItem> item = new LookupItem<ActionLookupItem>(actionItem, fullPath);
-            item.putUserData(LookupItem.OVERWRITE_ON_AUTOCOMPLETE_ATTR, Boolean.TRUE);
-            variants.add(item);
-          }
-        }
-
-
-        return ArrayUtil.toObjectArray(variants);
-      }
-
-    };
+    final PsiReference chainReference = new ActionChainReference(psiElement, currentPackage, model);
 
     references.add(chainReference);
     return false;
@@ -158,6 +122,63 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
     }
 
     return null;
+  }
+
+
+  private static class ActionChainReference extends PsiReferenceBase<PsiElement> implements EmptyResolveMessageProvider {
+
+    private final PsiElement psiElement;
+    private final String currentPackage;
+    private final StrutsModel model;
+
+    private ActionChainReference(final PsiElement psiElement,
+                                 final String currentPackage,
+                                 final StrutsModel model) {
+      super(psiElement, true);
+      this.psiElement = psiElement;
+      this.currentPackage = currentPackage;
+      this.model = model;
+    }
+
+    public PsiElement resolve() {
+      return resolveActionPath(psiElement, currentPackage, model);
+    }
+
+    @NotNull
+    public Object[] getVariants() {
+      final List<LookupItem<ActionLookupItem>> variants = new ArrayList<LookupItem<ActionLookupItem>>();
+
+      final List<Action> allActions = model.getActionsForNamespace(null);
+      for (final Action action : allActions) {
+        final String actionPath = action.getName().getStringValue();
+        if (actionPath != null) {
+          final boolean isInCurrentPackage = Comparing.equal(action.getNamespace(), currentPackage);
+          final ActionLookupItem actionItem = new ActionLookupItem(action, isInCurrentPackage);
+
+          // prepend package-name if not default ("/") or "current" package
+          final String actionNamespace = action.getNamespace();
+          final String fullPath;
+          if (!Comparing.equal(actionNamespace, StrutsPackage.DEFAULT_NAMESPACE) &&
+              !isInCurrentPackage) {
+            fullPath = actionNamespace + "/" + actionPath;
+          } else {
+            fullPath = actionPath;
+          }
+
+          final LookupItem<ActionLookupItem> item = new LookupItem<ActionLookupItem>(actionItem, fullPath);
+          item.putUserData(LookupItem.OVERWRITE_ON_AUTOCOMPLETE_ATTR, Boolean.TRUE);
+          variants.add(item);
+        }
+      }
+
+      return ArrayUtil.toObjectArray(variants);
+    }
+
+    @Override
+    public String getUnresolvedMessagePattern() {
+          return "Cannot resolve Action ''" + getValue() + "''";
+    }
+
   }
 
 }

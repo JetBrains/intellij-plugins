@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,6 @@ import com.intellij.struts2.dom.struts.HasResultType;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * <code>result</code>.
@@ -49,11 +48,4 @@ public interface Result extends HasResultType, ParamsElement, GenericDomValue<Pa
   @Convert(ResultTypeResolvingConverter.class)
   GenericAttributeValue<ResultType> getType();
 
-  /**
-   * Determines the effective result type.
-   *
-   * @return local or parent's {@link com.intellij.struts2.dom.struts.strutspackage.StrutsPackage#searchDefaultResultType()}, {@code null} on errors.
-   */
-  @Nullable
-  ResultType getEffectiveResultType();
 }

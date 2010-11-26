@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@ import com.intellij.openapi.paths.PathReference;
 import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.struts.strutspackage.GlobalResult;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
+import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.structure.LocationPresentation;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +41,17 @@ public abstract class GlobalResultImpl implements GlobalResult, LocationPresenta
   public PsiClass getParamsClass() {
     final ResultType resultType = getType().getValue();
     return resultType != null ? resultType.getResultTypeClass().getValue() : null;
+  }
+
+  @Nullable
+  public ResultType getEffectiveResultType() {
+    final ResultType resultType = getType().getValue();
+    if (resultType != null) {
+      return resultType;
+    }
+
+    final StrutsPackage strutsPackage = getParentOfType(StrutsPackage.class, true);
+    return strutsPackage != null ? strutsPackage.searchDefaultResultType() : null;
   }
 
 }

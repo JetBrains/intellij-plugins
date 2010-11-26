@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -97,10 +97,7 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
   public void testCompletionVariantsChain() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-chain.xml",
                                  "/anotherActionPathTest/anotherActionPath1",
-                                 "2ndWebRoot",
-                                 "actionPath1",
-                                 "index.jsp",
-                                 "jsp2-index.jsp");
+                                 "actionPath1");
   }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,7 +49,8 @@ public class ActionPathResultContributor extends StrutsResultContributor {
 
   @Override
   public boolean matchesResultType(@NonNls @Nullable final String resultType) {
-    return !ResultTypeResolver.isChainOrRedirectType(resultType);
+  //  return !ResultTypeResolver.isChainOrRedirectType(resultType);
+    return "dispatcher".equals(resultType);
   }
 
   public boolean createReferences(@NotNull final PsiElement psiElement,

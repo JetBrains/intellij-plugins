@@ -56,12 +56,8 @@ public class StrutsResultTilesResolvingDefaultTest extends BasicStrutsHighlighti
     createStrutsFileSet("struts-tiles-completion.xml");
     myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("struts-tiles-completion.xml",
-                                     "WEB-INF",
                                      "definition1",
-                                     "definition2",
-                                     "struts-tiles.xml",
-                                     "struts-tiles-completion.xml",
-                                     "testTiles.action");
+                                     "definition2");
   }
 
 }

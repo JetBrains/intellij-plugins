@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package com.intellij.struts2.dom.struts.impl.path;
@@ -20,6 +19,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.paths.PathReferenceProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.struts2.dom.struts.HasResultType;
+import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomUtil;
@@ -76,7 +76,12 @@ public abstract class StrutsResultContributor implements PathReferenceProvider {
     assert resultElement instanceof HasResultType : "not instance of HasResultType: " + resultElement +
                                                     ", text: " + psiElement.getText();
 
-    final String resultType = ((HasResultType) resultElement).getType().getStringValue();
+    final ResultType effectiveResultType = ((HasResultType) resultElement).getEffectiveResultType();
+    if (effectiveResultType == null) {
+      return null;
+    }
+
+    final String resultType = effectiveResultType.getName().getStringValue();
     if (!matchesResultType(resultType)) {
       return null;
     }
