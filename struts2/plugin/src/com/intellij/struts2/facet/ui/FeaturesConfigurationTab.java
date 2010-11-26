@@ -24,6 +24,7 @@ import com.intellij.facet.ui.libraries.FacetLibrariesValidator;
 import com.intellij.facet.ui.libraries.LibraryInfo;
 import com.intellij.openapi.module.Module;
 import com.intellij.struts2.StrutsBundle;
+import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import com.intellij.struts2.facet.StrutsFacetLibrariesValidatorDescription;
 import com.intellij.struts2.facet.StrutsFrameworkSupportProvider;
 import com.intellij.util.Icons;
@@ -44,12 +45,18 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
 
   private JPanel myPanel;
   private JComboBox versionComboBox;
+  private JCheckBox disablePropertiesKeys;
 
+  private final StrutsFacetConfiguration originalConfiguration;
   private final FacetLibrariesValidator validator;
 
-  public FeaturesConfigurationTab(final FacetEditorContext editorContext,
+  public FeaturesConfigurationTab(final StrutsFacetConfiguration originalConfiguration,
+                                  final FacetEditorContext editorContext,
                                   final FacetLibrariesValidator validator) {
+    this.originalConfiguration = originalConfiguration;
     this.validator = validator;
+
+    disablePropertiesKeys.setSelected(originalConfiguration.isPropertiesKeysDisabled());
 
     versionComboBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
@@ -112,10 +119,13 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
   }
 
   public boolean isModified() {
-    return false;
+    return originalConfiguration.isPropertiesKeysDisabled() !=
+           disablePropertiesKeys.isSelected();
   }
 
   public void apply() {
+    originalConfiguration.setPropertiesKeysDisabled(disablePropertiesKeys.isSelected());
+    originalConfiguration.setModified();
   }
 
   public void reset() {

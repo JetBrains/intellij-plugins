@@ -179,6 +179,7 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
                  "submit");
 
     // <text>
+    registerTags(wrappedPropertiesProvider, "name",registrar, "text");
     registerBoolean("searchValueStack", registrar, "text");
 
     // <url>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -64,6 +64,12 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
 
   private long myModificationCount;
 
+  // Features - tab
+  private static final String PROPERTIES_KEYS = "propertiesKeys";
+  private static final String PROPERTIES_KEYS_DISABLED = "disabled";
+
+  private boolean myPropertiesKeysDisabled = false;
+
   /**
    * Gets the currently configured filesets.
    *
@@ -73,17 +79,25 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
     return myFileSets;
   }
 
+  public boolean isPropertiesKeysDisabled() {
+    return myPropertiesKeysDisabled;
+  }
+
+  public void setPropertiesKeysDisabled(final boolean myPropertiesKeysDisabled) {
+    this.myPropertiesKeysDisabled = myPropertiesKeysDisabled;
+  }
+
   public FacetEditorTab[] createEditorTabs(final FacetEditorContext editorContext,
                                            final FacetValidatorsManager validatorsManager) {
     final FacetLibrariesValidator validator =
-            FacetEditorsFactory.getInstance().createLibrariesValidator(LibraryInfo.EMPTY_ARRAY,
-                                                                       new StrutsFacetLibrariesValidatorDescription(),
-                                                                       editorContext,
-                                                                       validatorsManager);
+      FacetEditorsFactory.getInstance().createLibrariesValidator(LibraryInfo.EMPTY_ARRAY,
+                                                                 new StrutsFacetLibrariesValidatorDescription(),
+                                                                 editorContext,
+                                                                 validatorsManager);
     validatorsManager.registerValidator(validator);
 
     return new FacetEditorTab[]{new FileSetConfigurationTab(this, editorContext),
-                                new FeaturesConfigurationTab(editorContext, validator)};
+                                new FeaturesConfigurationTab(this, editorContext, validator)};
   }
 
   public void readExternal(final Element element) throws InvalidDataException {
@@ -103,6 +117,13 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
       }
     }
 
+    // new in X
+    final Element propertiesElement = element.getChild(PROPERTIES_KEYS);
+    if (propertiesElement != null) {
+      final String disabled = propertiesElement.getAttributeValue(PROPERTIES_KEYS_DISABLED);
+      myPropertiesKeysDisabled = Boolean.valueOf(disabled);
+    }
+
   }
 
   public void writeExternal(final Element element) throws WriteExternalException {
@@ -119,6 +140,10 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
         setElement.addContent(fileElement);
       }
     }
+
+    final Element propertiesElement = new Element(PROPERTIES_KEYS);
+    propertiesElement.setAttribute(PROPERTIES_KEYS_DISABLED, Boolean.toString(myPropertiesKeysDisabled));
+    element.addContent(propertiesElement);
   }
 
   public long getModificationCount() {

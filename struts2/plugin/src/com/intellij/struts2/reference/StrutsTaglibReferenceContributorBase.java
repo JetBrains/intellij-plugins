@@ -3,7 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +22,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.IdRefReference;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
@@ -66,6 +69,27 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
       return new PsiReference[]{new IdRefReference(element)};
     }
   };
+
+  /**
+   * Wrapped .properties key reference (disable in facet settings).
+   */
+  protected final PsiReferenceProvider wrappedPropertiesProvider;
+
+  protected StrutsTaglibReferenceContributorBase() {
+    final PsiReferenceProvider propertiesProvider =
+      CommonReferenceProviderTypes.PROPERTIES_FILE_KEY_PROVIDER.getProvider();
+    wrappedPropertiesProvider = new PsiReferenceProvider() {
+      @NotNull
+      @Override
+      public PsiReference[] getReferencesByElement(final @NotNull PsiElement psiElement,
+                                                   final @NotNull ProcessingContext processingContext) {
+        final StrutsFacet facet = StrutsFacet.getInstance(psiElement);
+        return facet != null && !facet.getConfiguration().isPropertiesKeysDisabled() ?
+               propertiesProvider.getReferencesByElement(psiElement, processingContext) : PsiReference.EMPTY_ARRAY;
+      }
+    };
+
+  }
 
   /**
    * Reference to HTML element's "id" with additional pseudo-IDs.
