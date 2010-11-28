@@ -1,0 +1,14 @@
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+	"http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="test">
+        <result-types>
+            <result-type name="freemarker" class="org.apache.struts2.views.freemarker.FreemarkerResult"/>
+        </result-types>
+
+        <action name="test" class="MyTestAction">
+            <result name="success" type="freemarker">StrutsActionToplevel.ftl</result>
+        </action>
+    </package>
+</struts>

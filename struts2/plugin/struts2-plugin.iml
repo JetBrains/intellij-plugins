@@ -38,6 +38,7 @@
     <orderEntry type="module" module-name="spring-web" scope="TEST" />
     <orderEntry type="module" module-name="IntelliLang-xml" scope="TEST" />
     <orderEntry type="module" module-name="IntelliLang-java" scope="TEST" />
+    <orderEntry type="module" module-name="freemarker-core" />
   </component>
   <component name="copyright">
     <Base>

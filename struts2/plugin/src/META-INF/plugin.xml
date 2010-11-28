@@ -34,6 +34,7 @@
 
   <!-- optional dependencies -->
   <depends optional="true">HtmlTools</depends>
+  <depends optional="true" config-file="struts2-freemarker.xml">com.intellij.freemarker</depends>
   <depends optional="true" config-file="struts2-javascript.xml">JavaScript</depends>
   <depends optional="true" config-file="struts2-spring.xml">com.intellij.spring</depends>
   <depends optional="true" config-file="struts2-groovy.xml">org.intellij.groovy</depends>

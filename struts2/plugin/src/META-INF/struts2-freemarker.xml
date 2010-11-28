@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<idea-plugin version="2">
+
+  <extensions xmlns="com.intellij">
+    <freemarker.globalVariableProvider implementation="com.intellij.struts2.freemarker.Struts2GlobalVariableProvider"/>
+    <struts2.resultContributor implementation="com.intellij.struts2.freemarker.FreeMarkerStrutsResultContributor"/>
+  </extensions>
+
+</idea-plugin>
