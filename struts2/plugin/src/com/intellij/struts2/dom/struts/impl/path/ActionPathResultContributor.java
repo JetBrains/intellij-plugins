@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.dom.struts.impl.path;
 
-import com.intellij.codeInsight.lookup.LookupItem;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
@@ -49,15 +49,14 @@ public class ActionPathResultContributor extends StrutsResultContributor {
 
   @Override
   public boolean matchesResultType(@NonNls @Nullable final String resultType) {
-  //  return !ResultTypeResolver.isChainOrRedirectType(resultType);
-    return "dispatcher".equals(resultType);
+    return ResultTypeResolver.isDispatchType(resultType);
   }
 
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
     final StrutsModel model = StrutsManager.getInstance(psiElement.getProject())
-        .getModelByFile((XmlFile) psiElement.getContainingFile());
+      .getModelByFile((XmlFile) psiElement.getContainingFile());
     if (model == null) {
       return false;
     }
@@ -73,7 +72,6 @@ public class ActionPathResultContributor extends StrutsResultContributor {
     }
 
     final PsiReference actionReference = new ActionPathReference(psiElement,
-                                                                 soft,
                                                                  currentPackage,
                                                                  model,
                                                                  actionExtensions);
@@ -85,7 +83,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
   @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
     final StrutsModel model = StrutsManager.getInstance(element.getProject())
-        .getModelByFile((XmlFile) element.getContainingFile());
+      .getModelByFile((XmlFile) element.getContainingFile());
     if (model == null) {
       return null;
     }
@@ -165,11 +163,10 @@ public class ActionPathResultContributor extends StrutsResultContributor {
     private final List<String> actionExtensions;
 
     private ActionPathReference(final PsiElement psiElement,
-                                final boolean soft,
                                 final String currentPackage,
                                 final StrutsModel model,
                                 @NotNull @NonNls final List<String> actionExtensions) {
-      super(psiElement, soft);
+      super(psiElement, true);
       this.psiElement = psiElement;
       this.currentPackage = currentPackage;
       this.model = model;
@@ -182,16 +179,14 @@ public class ActionPathResultContributor extends StrutsResultContributor {
 
     @NotNull
     public Object[] getVariants() {
-      final List<LookupItem<ActionLookupItem>> variants = new ArrayList<LookupItem<ActionLookupItem>>();
-
       final String firstExtension = actionExtensions.get(0);
 
       final List<Action> allActions = model.getActionsForNamespace(null);
+      final List<LookupElementBuilder> variants = new ArrayList<LookupElementBuilder>(allActions.size());
       for (final Action action : allActions) {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
           final boolean isInCurrentPackage = Comparing.equal(action.getNamespace(), currentPackage);
-          final ActionLookupItem actionItem = new ActionLookupItem(action, isInCurrentPackage);
 
           // prepend package-name if not default ("/") or "current" package
           final String actionNamespace = action.getNamespace();
@@ -203,9 +198,11 @@ public class ActionPathResultContributor extends StrutsResultContributor {
             fullPath = actionPath + firstExtension;
           }
 
-          final LookupItem<ActionLookupItem> item = new LookupItem<ActionLookupItem>(actionItem, fullPath);
-          item.putUserData(LookupItem.OVERWRITE_ON_AUTOCOMPLETE_ATTR, Boolean.TRUE);
-          variants.add(item);
+          final LookupElementBuilder builder = LookupElementBuilder.create(action.getXmlTag(), fullPath)
+            .setBold(isInCurrentPackage)
+            .setIcon(StrutsIcons.ACTION)
+            .setTypeText(action.getNamespace());
+          variants.add(builder);
         }
       }
 

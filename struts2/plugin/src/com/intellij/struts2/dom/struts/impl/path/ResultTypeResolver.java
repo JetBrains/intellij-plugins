@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,18 +20,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 
 /**
+ * Determines result-type "kind".
+ *
  * @author Yann C&eacute;bron
- * @deprecated will be removed
  */
 public class ResultTypeResolver {
 
   @NonNls
   private static final String[] RESULT_TYPES_CHAIN_REDIRECT = new String[]{"chain", "redirect-action", "redirectAction"};
 
+  @NonNls
+  private static final String[] RESULT_TYPES_DISPATCH = new String[]{"dispatcher", "plainText", "redirect"};
+
   /**
    * Is the given result type pointing to an action.
-   * <p/>
-   * TODO: hardcoded list.
    *
    * @param resultType Result tag's "type" attribute value.
    * @return true/false.
@@ -42,6 +44,20 @@ public class ResultTypeResolver {
     }
 
     return Arrays.binarySearch(RESULT_TYPES_CHAIN_REDIRECT, resultType) >= 0;
+  }
+
+  /**
+   * Is the given result type pointing to an "dispatch"-type result (web-resource).
+   *
+   * @param resultType Result tag's "type" attribute value.
+   * @return true/false.
+   */
+  public static boolean isDispatchType(@Nullable final String resultType) {
+    if (resultType == null) {
+      return false;
+    }
+
+    return Arrays.binarySearch(RESULT_TYPES_DISPATCH, resultType) >= 0;
   }
 
 }

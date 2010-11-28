@@ -50,7 +50,7 @@ public class DispatchPathResultContributor extends StrutsResultContributor {
 
   @Override
   protected boolean matchesResultType(@NonNls @Nullable final String resultType) {
-    return "dispatcher".equals(resultType);
+    return ResultTypeResolver.isDispatchType(resultType);
   }
 
   public boolean createReferences(@NotNull final PsiElement psiElement,

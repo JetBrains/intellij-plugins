@@ -25,6 +25,7 @@
 
     <result-types>
       <result-type name="dispatcher" class="org.apache.struts2.dispatcher.ServletDispatcherResult" default="true"/>
+      <result-type name="redirect" class="org.apache.struts2.dispatcher.ServletRedirectResult"/>
     </result-types>
 
     <global-results>
@@ -43,6 +44,10 @@
       <result name="invalidNonExistingAction"><error descr="Cannot resolve symbol 'INVALID_VALUE.action'">INVALID_VALUE.action</error></result>
       <result name="invalidActionExtension"><error descr="Cannot resolve symbol 'actionPath1.INVALID_VALUE'">actionPath1.INVALID_VALUE</error></result>
       <result name="invalidMustHaveExtension"><error descr="Cannot resolve symbol 'actionPath1'">actionPath1</error></result>
+
+      <!-- result-type "redirect" -->
+      <result name="RedirectLocalActionPathIncludingNamespacePrefix" type="redirect">/actionPathTest/actionPath1.action</result>
+
     </action>
 
   </package>
