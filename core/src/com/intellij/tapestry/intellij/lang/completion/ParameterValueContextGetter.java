@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.lang.completion;
 
 import com.intellij.codeInsight.completion.CompletionContext;
+import com.intellij.codeInsight.completion.CompletionInitializationContext;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
@@ -102,14 +103,14 @@ public class ParameterValueContextGetter implements ContextGetter {
 
             Set<String> properties;
 
-            if (attributeValue.contains(".IntellijIdeaRulezzz ")) {
+            if (attributeValue.contains("." + CompletionInitializationContext.DUMMY_IDENTIFIER)) {
               Scanner scan = new Scanner(attributeValue);
               String word = "", words = "";
-              while (scan.hasNext() && !word.contains("IntellijIdeaRulezzz")) {
+              while (scan.hasNext() && !word.contains(CompletionInitializationContext.DUMMY_IDENTIFIER_TRIMMED)) {
                 word = scan.next();
                 words = words + word;
               }
-              attributeValue = words.replaceFirst("IntellijIdeaRulezzz", "");
+              attributeValue = words.replaceFirst(CompletionInitializationContext.DUMMY_IDENTIFIER_TRIMMED, "");
             }
 
             ResolvedValue resolvedValue;
