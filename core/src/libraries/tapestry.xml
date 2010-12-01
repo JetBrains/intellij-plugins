@@ -1,48 +1,49 @@
-<versions>
-  <version id="5.1.0.5">
-    <jar name="tapestry-core.jar" version="5.1.0.5"
+<?xml version="1.0" encoding="UTF-8"?>
+<artifacts>
+  <artifact version="5.1.0.5">
+    <item name="tapestry-core.jar" version="5.1.0.5"
          url="http://repo1.maven.org/maven2/org/apache/tapestry/tapestry-core/5.1.0.5/tapestry-core-5.1.0.5.jar">
       <required-class fqn="org.apache.tapestry5.corelib.components.Loop"/>
-    </jar>
+    </item>
 
-    <jar name="tapestry-ioc.jar" version="5.1.0.5"
+    <item name="tapestry-ioc.jar" version="5.1.0.5"
          url="http://repo1.maven.org/maven2/org/apache/tapestry/tapestry-ioc/5.1.0.5/tapestry-ioc-5.1.0.5.jar">
       <required-class fqn="org.apache.tapestry5.ioc.Registry"/>
-    </jar>
-    <jar name="tapestry5-annotations.jar" version="5.1.0.5"
+    </item>
+    <item name="tapestry5-annotations.jar" version="5.1.0.5"
          url="http://repo1.maven.org/maven2/org/apache/tapestry/tapestry5-annotations/5.1.0.5/tapestry5-annotations-5.1.0.5.jar">
       <required-class fqn="org.apache.tapestry5.beaneditor.Validate"/>
-    </jar>
+    </item>
 
-    <jar name="commons-codec.jar" version="1.3" url="http://repo1.maven.org/maven2/commons-codec/commons-codec/1.3/commons-codec-1.3.jar"
+    <item name="commons-codec.jar" version="1.3" url="http://repo1.maven.org/maven2/commons-codec/commons-codec/1.3/commons-codec-1.3.jar"
         >
       <required-class fqn="org.apache.commons.codec.Decoder"/>
-    </jar>
+    </item>
 
-    <jar name="javassist.jar" version="3.7.ga" url="http://repo1.maven.org/maven2/jboss/javassist/3.7.ga/javassist-3.7.ga.jar">
+    <item name="javassist.jar" version="3.7.ga" url="http://repo1.maven.org/maven2/jboss/javassist/3.7.ga/javassist-3.7.ga.jar">
       <required-class fqn="javassist.ClassPath"/>
-    </jar>
+    </item>
 
-    <jar name="log4j.jar" version="1.2.14" url="http://repo1.maven.org/maven2/log4j/log4j/1.2.14/log4j-1.2.14.jar">
+    <item name="log4j.jar" version="1.2.14" url="http://repo1.maven.org/maven2/log4j/log4j/1.2.14/log4j-1.2.14.jar">
       <required-class fqn="org.apache.log4j.Logger"/>
-    </jar>
+    </item>
 
-    <jar name="slf4j-api.jar" version="1.4.3" url="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.4.3/slf4j-api-1.4.3.jar">
+    <item name="slf4j-api.jar" version="1.4.3" url="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.4.3/slf4j-api-1.4.3.jar">
       <required-class fqn="org.slf4j.Logger"/>
-    </jar>
+    </item>
 
 
-    <jar name="stax2.jar" version="2.1" url="http://repo1.maven.org/maven2/org/codehaus/staxmate/stax2/2.1/stax2-2.1.jar">
+    <item name="stax2.jar" version="2.1" url="http://repo1.maven.org/maven2/org/codehaus/staxmate/stax2/2.1/stax2-2.1.jar">
       <required-class fqn="org.codehaus.stax2.XMLInputFactory2"/>
-    </jar>
+    </item>
 
-    <jar name="wstx-asl.jar" version="3.2.7" url="http://repo1.maven.org/maven2/woodstox/wstx-asl/3.2.7/wstx-asl-3.2.7.jar">
+    <item name="wstx-asl.jar" version="3.2.7" url="http://repo1.maven.org/maven2/woodstox/wstx-asl/3.2.7/wstx-asl-3.2.7.jar">
       <required-class fqn="com.ctc.wstx.stax.WstxInputFactory"/>
-    </jar>
+    </item>
 
-    <jar name="antlr-runtime.jar" version="3.1.1" url="http://repo1.maven.org/maven2/org/antlr/antlr-runtime/3.1.1/antlr-runtime-3.1.1.jar"
+    <item name="antlr-runtime.jar" version="3.1.1" url="http://repo1.maven.org/maven2/org/antlr/antlr-runtime/3.1.1/antlr-runtime-3.1.1.jar"
         >
       <required-class fqn="org.antlr.runtime.Lexer"/>
-    </jar>
-  </version>
-</versions>
+    </item>
+  </artifact>
+</artifacts>

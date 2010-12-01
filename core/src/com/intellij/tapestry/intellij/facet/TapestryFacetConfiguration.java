@@ -2,7 +2,7 @@ package com.intellij.tapestry.intellij.facet;
 
 import com.intellij.facet.FacetConfiguration;
 import com.intellij.facet.frameworks.LibrariesDownloadAssistant;
-import com.intellij.facet.frameworks.beans.Version;
+import com.intellij.facet.frameworks.beans.Artifact;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetEditorsFactory;
@@ -36,7 +36,7 @@ public class TapestryFacetConfiguration implements FacetConfiguration {
 
   @NotNull
   public static LibraryInfo[] getLibraryInfos(@NotNull String versionId) {
-    final Version version = LibrariesDownloadAssistant.findVersion(versionId, getUrl());
+    final Artifact version = LibrariesDownloadAssistant.findVersion(versionId, getUrl());
 
     if (version != null) {
       return LibrariesDownloadAssistant.getLibraryInfos(version);
