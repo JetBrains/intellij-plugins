@@ -16,7 +16,7 @@
 package com.intellij.struts2.facet;
 
 import com.intellij.facet.frameworks.LibrariesDownloadAssistant;
-import com.intellij.facet.frameworks.beans.Version;
+import com.intellij.facet.frameworks.beans.Artifact;
 import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -77,8 +77,8 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
   @NotNull
   public List<FrameworkVersion> getVersions() {
     final List<FrameworkVersion> result = new ArrayList<FrameworkVersion>();
-    for (final Version version : LibrariesDownloadAssistant.getVersions(getLibrariesUrl())) {
-      final String name = version.getId();
+    for (final Artifact version : LibrariesDownloadAssistant.getVersions(getLibrariesUrl())) {
+      final String name = version.getVersion();
       result.add(new FrameworkVersion(name, "struts2-" + name, LibrariesDownloadAssistant.getLibraryInfos(version)));
     }
     return result;

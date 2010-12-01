@@ -17,7 +17,7 @@ package com.intellij.struts2.facet.ui;
 
 import com.intellij.facet.Facet;
 import com.intellij.facet.frameworks.LibrariesDownloadAssistant;
-import com.intellij.facet.frameworks.beans.Version;
+import com.intellij.facet.frameworks.beans.Artifact;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.libraries.FacetLibrariesValidator;
@@ -60,10 +60,10 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
 
     versionComboBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        final Version version = getSelectedVersion();
+        final Artifact version = getSelectedVersion();
         if (version != null) {
           validator.setRequiredLibraries(getRequiredLibraries());
-          validator.setDescription(new StrutsFacetLibrariesValidatorDescription(version.getId()));
+          validator.setDescription(new StrutsFacetLibrariesValidatorDescription(version.getVersion()));
         }
       }
     });
@@ -76,26 +76,26 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
       return;
     }
 
-    final Version[] versions = LibrariesDownloadAssistant.getVersions(StrutsFrameworkSupportProvider.getLibrariesUrl());
+    final Artifact[] versions = LibrariesDownloadAssistant.getVersions(StrutsFrameworkSupportProvider.getLibrariesUrl());
     versionComboBox.setModel(new DefaultComboBoxModel(versions));
     if (versions.length > 0) {
-      final Version item = versions[0];
+      final Artifact item = versions[0];
       versionComboBox.getModel().setSelectedItem(item);
       validator.setRequiredLibraries(getRequiredLibraries());
-      validator.setDescription(new StrutsFacetLibrariesValidatorDescription(item.getId()));
+      validator.setDescription(new StrutsFacetLibrariesValidatorDescription(item.getVersion()));
     }
   }
 
 
   @Nullable
-  private Version getSelectedVersion() {
+  private Artifact getSelectedVersion() {
     final Object version = versionComboBox.getModel().getSelectedItem();
-    return version instanceof Version ? (Version) version : null;
+    return version instanceof Artifact ? (Artifact) version : null;
   }
 
   @Nullable
   private LibraryInfo[] getRequiredLibraries() {
-    final Version version = getSelectedVersion();
+    final Artifact version = getSelectedVersion();
 
     return version == null ? null : LibrariesDownloadAssistant.getLibraryInfos(version);
   }
