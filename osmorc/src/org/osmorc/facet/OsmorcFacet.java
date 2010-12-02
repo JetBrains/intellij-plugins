@@ -52,6 +52,7 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
     public OsmorcFacet(@NotNull FacetType facetType, @NotNull Module module, @NotNull OsmorcFacetConfiguration configuration, Facet underlyingFacet,
                        final String name) {
         super(facetType, module, name, configuration, underlyingFacet);
+     configuration.setFacet(this);
     }
 
     /**
@@ -72,6 +73,7 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
      * @return the Osmorc facet of the module to which the element belongs or null if this module doesn't have an Osmorc
      *         facet or if the belonging module could not be determined.
      */
+    @Nullable
     public static OsmorcFacet getInstance(PsiElement element) {
         Module module = ModuleUtil.findModuleForPsiElement(element);
         return getInstance(module);

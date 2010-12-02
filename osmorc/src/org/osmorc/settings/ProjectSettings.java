@@ -49,6 +49,15 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
 
   private EventDispatcher<ProjectSettingsListener> dispatcher = EventDispatcher.create(ProjectSettingsListener.class);
 
+  @Nullable
+  public String getBundlesOutputPath() {
+    return _bundlesOutputPath;
+  }
+
+  public void setBundlesOutputPath(@Nullable String _bundlesOutputPath) {
+    this._bundlesOutputPath = _bundlesOutputPath;
+  }
+
   public static ProjectSettings getInstance(Project project) {
     return ServiceManager.getService(project, ProjectSettings.class);
   }
@@ -106,7 +115,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
   private @Nullable String _frameworkInstanceName;
   private boolean _createFrameworkInstanceModule;
   private @NotNull String _defaultManifestFileLocation = "META-INF/MANIFEST.MF";
-
+  private @Nullable String _bundlesOutputPath;
 
   public  interface ProjectSettingsListener extends EventListener {
     void projectSettingsChanged();

@@ -25,11 +25,19 @@
 
 package org.osmorc.settings;
 
+import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 /**
@@ -43,8 +51,11 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
   @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"}) private JComboBox frameworkInstance;
   private JCheckBox createFrameworkInstanceModule;
   private JComboBox defaultManifestFileLocation;
+  private TextFieldWithBrowseButton bundleOutputPath;
+  private Project myProject;
 
-  public ProjectSettingsEditorComponent() {
+  public ProjectSettingsEditorComponent(Project project) {
+    myProject = project;
     frameworkInstance.setRenderer(new FrameworkInstanceCellRenderer() {
       @Override
       protected boolean isInstanceDefined(FrameworkInstanceDefinition instance) {
@@ -68,7 +79,24 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     defaultManifestFileLocation.setEditable(true);
     defaultManifestFileLocation.addItem("META-INF");
 
+    bundleOutputPath.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        onOutputPathSelect();
+      }
+    });
     ApplicationSettings.getInstance().addApplicationSettingsListener(this);
+  }
+
+  private void onOutputPathSelect() {
+    VirtualFile preselect = LocalFileSystem.getInstance().findFileByPath(bundleOutputPath.getText());
+    if (preselect == null) {
+      preselect = myProject.getBaseDir();
+    }
+    VirtualFile[] virtualFiles =
+      FileChooser.chooseFiles(myProject, new FileChooserDescriptor(false, true, false, false, false, false), preselect);
+    if (virtualFiles.length > 0) {
+      bundleOutputPath.setText(virtualFiles[0].getPath());
+    }
   }
 
   public void applyTo(ProjectSettings settings) {
@@ -80,6 +108,13 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     final FrameworkInstanceDefinition instanceDefinition = (FrameworkInstanceDefinition)this.frameworkInstance.getSelectedItem();
     if (instanceDefinition != null) {
       settings.setFrameworkInstanceName(instanceDefinition.getName());
+    }
+
+    if (bundleOutputPath.getText() != null && !"".equals(bundleOutputPath.getText().trim())) {
+      settings.setBundlesOutputPath(bundleOutputPath.getText());
+    }
+    else {
+      settings.setBundlesOutputPath(null);
     }
   }
 
@@ -97,6 +132,13 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     refreshFrameworkInstanceCombobox();
     defaultManifestFileLocation.setSelectedItem(mySettings.getDefaultManifestFileLocation());
     createFrameworkInstanceModule.setSelected(mySettings.isCreateFrameworkInstanceModule());
+    String bundlesPath = mySettings.getBundlesOutputPath();
+    if (bundlesPath != null) {
+      bundleOutputPath.setText(bundlesPath);
+    }
+    else {
+      bundleOutputPath.setText("");
+    }
     myModified = false;
   }
 

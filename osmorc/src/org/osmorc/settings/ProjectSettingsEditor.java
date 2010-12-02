@@ -42,7 +42,7 @@ public class ProjectSettingsEditor implements SearchableConfigurable {
   }
 
   public JComponent createComponent() {
-    component = new ProjectSettingsEditorComponent();
+    component = new ProjectSettingsEditorComponent(myProject);
     return component.getMainPanel();
   }
 
