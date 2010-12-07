@@ -40,7 +40,7 @@ public class IdeaConfigurator implements Configurator {
   public void buildConfiguration(ICommandLineConfiguration configuration, File sourceFile, Map<String, Object> parameters) throws ConfiguratorException {
     try {
       init(parameters);
-      build(configuration, ICommandLineConfiguration.class, "\n\t");
+      build(configuration, ICommandLineConfiguration.class, "\n\t", null);
 
       out.append("\n\t<file-specs>\n\t\t<path-element>").append(sourceFile.getAbsolutePath()).append("</path-element>\n\t</file-specs>");
       close();
@@ -54,7 +54,7 @@ public class IdeaConfigurator implements Configurator {
   public void buildConfiguration(ICompcConfiguration configuration, Map<String, Object> parameters) throws ConfiguratorException {
     try {
       init(parameters);
-      build(configuration, ICompcConfiguration.class, "\n\t");
+      build(configuration, ICompcConfiguration.class, "\n\t", null);
       close();
     }
     catch (Exception e) {
@@ -87,7 +87,9 @@ public class IdeaConfigurator implements Configurator {
   }
 
   @SuppressWarnings({"ConstantConditions"})
-  private <E> void build(E configuration, Class<? extends E> configClass, String indent) throws Exception {
+  private <E> void build(E configuration, Class<? extends E> configClass, String indent, String configurationName) throws Exception {
+    boolean parentTagWritten = configurationName == null;
+
     for (Method method : configClass.getDeclaredMethods()) {
       if (method.getParameterTypes().length != 0 || !Modifier.isPublic(method.getModifiers())) {
         continue;
@@ -103,14 +105,20 @@ public class IdeaConfigurator implements Configurator {
         continue;
       }
 
+      if (methodName.equals("getFixedLiteralVector") && !((Boolean) value)) {
+        continue;
+      }
+
+      if (!parentTagWritten) {
+        parentTagWritten = true;
+        out.append(indent, 0, indent.length() - 1).append('<').append(configurationName).append('>');
+      }
+
       Class<?> returnType = method.getReturnType();
       String name = parseName(methodName);
 
       if (value instanceof IFlexConfiguration) {
-        String configurationName = name.substring(0, name.length() - 14);
-        out.append(indent).append('<').append(configurationName).append('>');
-        build(value, returnType, indent + "\t");
-        out.append(indent).append("</").append(configurationName).append('>');
+        build(value, returnType, indent + "\t", name.substring(0, name.length() - 14));
       }
       else if (configuration instanceof IASDocConfiguration && "footer".equals(name)) {
         // todo
@@ -128,28 +136,18 @@ public class IdeaConfigurator implements Configurator {
         }
 
         for (IRuntimeSharedLibraryPath arg : values) {
-          out.write("\n\t<");
-          out.write(name);
-          out.write(">\n\t\t<path-element>");
-          out.write(arg.pathElement());
-          out.write("</path-element>");
+          out.append("\n\t<").append(name).append(">\n\t\t<path-element>").append(arg.pathElement()).append("</path-element>");
 
           //noinspection unchecked
           for (Map.Entry<String, String> entry : (Set<Map.Entry<String, String>>) arg.rslUrl().entrySet()) {
-            out.write("\n\t\t<rsl-url>");
-            out.write(entry.getKey());
-            out.write("</rsl-url>");
+            out.append("\n\t\t<rsl-url>").append(entry.getKey()).append("</rsl-url>");
 
             if (entry.getValue() != null) {
-              out.write("\n\t\t<policy-file-url>");
-              out.write(entry.getValue());
-              out.write("</policy-file-url>");
+              out.append("\n\t\t<policy-file-url>").append(entry.getValue()).append("</policy-file-url>");
             }
           }
 
-          out.write("\n\t</");
-          out.write(name);
-          out.write('>');
+          out.append("\n\t</").append(name).append('>');
         }
       }
       else if (value instanceof IFlexArgument || value instanceof IFlexArgument[]) {
@@ -212,10 +210,10 @@ public class IdeaConfigurator implements Configurator {
 
         // fucking adobe, ability to compile pure AS3 project without fucking themes — node must be present, but empty (relevant only for "theme", but we are ready for adobe surprises)
         if (values.length == 0) {
-          out.write("/>");
+          out.append("/>");
         }
         else {
-          out.write('>');
+          out.append('>');
 
           String childTagName = childTagNameMap.get(name);
           if (childTagName == null) {
@@ -230,9 +228,13 @@ public class IdeaConfigurator implements Configurator {
       }
       else {
         out.append(indent).append('<').append(name).append('>');
-        out.write(value.toString());
+        out.append(value.toString());
         out.append("</").append(name).append('>');
       }
+    }
+
+    if (parentTagWritten && configurationName != null) {
+      out.append(indent, 0, indent.length() - 1).append("</").append(configurationName).append('>');
     }
   }
 

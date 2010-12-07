@@ -31,14 +31,14 @@
         <MavenRunnerParameters>
           <option name="goals">
             <list>
-              <option value="org.sonatype.flexmojos:flexmojos-maven-plugin:4.0-de1:configurator" />
+              <option value="org.sonatype.flexmojos:flexmojos-maven-plugin:4.0-de3:configurator" />
               <option value="-e" />
             </list>
           </option>
           <option name="profiles">
             <set />
           </option>
-          <option name="workingDirPath" value="$PROJECT_DIR$/../textLayout" />
+          <option name="workingDirPath" value="$PROJECT_DIR$/../flex-ui-designer/shared" />
         </MavenRunnerParameters>
       </option>
     </MavenSettings>

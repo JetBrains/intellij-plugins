@@ -5,16 +5,16 @@
   <parent>
     <groupId>org.flyti</groupId>
     <artifactId>java-forge</artifactId>
-    <version>2</version>
+    <version>3</version>
   </parent>
 
   <groupId>com.intellij.flex.maven</groupId>
   <artifactId>flexmojos-idea-configurator</artifactId>
   <!--<version>1.0.2</version>-->
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.1</version>
 
   <properties>
-    <maven.version>3.0</maven.version>
+    <maven.version>3.0.1</maven.version>
   </properties>
 
   <dependencies>
@@ -22,7 +22,7 @@
       <groupId>org.sonatype.flexmojos</groupId>
       <artifactId>flexmojos-configurator</artifactId>
       <!--<version>4.0-SNAPSHOT</version>-->
-      <version>4.0-de1</version>
+      <version>4.0-de3</version>
     </dependency>
 
     <dependency>
