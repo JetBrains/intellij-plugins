@@ -116,6 +116,7 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     else {
       settings.setBundlesOutputPath(null);
     }
+    myModified = false;
   }
 
   public void dispose() {

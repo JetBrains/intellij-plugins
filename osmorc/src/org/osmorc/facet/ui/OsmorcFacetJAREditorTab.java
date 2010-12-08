@@ -89,7 +89,6 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private JRadioButton myPlaceInProjectWideRadioButton;
   private JRadioButton myPlaceInThisPathRadioButton;
   private TextFieldWithBrowseButton myJarOutputPathChooser;
-  private JButton myUseForAllBundlesButton;
   private boolean myModified;
   private final FacetEditorContext myEditorContext;
   private final AdditionalJARContentsTableModel myAdditionalJARContentsTableModel;

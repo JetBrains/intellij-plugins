@@ -196,15 +196,6 @@
         </constraints>
         <properties/>
       </component>
-      <component id="ffb26" class="javax.swing.JButton" binding="myUseForAllBundlesButton">
-        <constraints>
-          <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms defaultalign-horz="false"/>
-        </constraints>
-        <properties>
-          <text value="Set for all bundles"/>
-        </properties>
-      </component>
     </children>
   </grid>
   <buttonGroups>

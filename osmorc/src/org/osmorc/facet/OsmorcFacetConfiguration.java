@@ -248,7 +248,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   @NotNull
   public String getJarFileLocation() {
     String nullSafeLocation = myJarFileLocation != null ? myJarFileLocation : "";
-    if ( myOutputPathType == null ) {
+    if ( myOutputPathType == null || myFacet == null) {
       // not initialized
       return nullSafeLocation;
     }
