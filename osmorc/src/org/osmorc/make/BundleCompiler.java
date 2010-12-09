@@ -159,7 +159,7 @@ public class BundleCompiler implements PackagingCompiler {
                 THashSet<Module> thashset = new THashSet<Module>();
 
                 for (Module module : modules) {
-                    if (!OsmorcFacet.hasOsmorcFacet(module)) {
+                    if (!OsmorcFacet.hasOsmorcFacet(module) || module.getModuleFile() == null) {
                         continue;
                     }
                     thashset.add(module);
@@ -167,12 +167,8 @@ public class BundleCompiler implements PackagingCompiler {
 
                 ProcessingItem[] result = new ProcessingItem[thashset.size()];
                 int i = 0;
-                for (Object aThashset : thashset) {
-                    Module module = (Module) aThashset;
-                    if (module.getModuleFile() != null) {
-                        result[i++] = new BundleProcessingItem(module);
-                    }
-
+                for (Module module : thashset) {
+                    result[i++] = new BundleProcessingItem(module);
                 }
                 return result;
             }
