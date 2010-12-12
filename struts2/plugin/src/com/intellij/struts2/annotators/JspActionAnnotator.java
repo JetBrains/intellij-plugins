@@ -78,50 +78,54 @@ public class JspActionAnnotator implements Annotator {
       return;
     }
 
-    // short exit when Struts 2 taglib not declared
     final XmlTag xmlTag = (XmlTag) psiElement;
-    final String uiTaglibPrefix = getUITaglibPrefix(xmlTag);
-    if (uiTaglibPrefix == null) {
+
+    // any of our tags?
+    final String tagName = xmlTag.getLocalName();
+    if (Arrays.binarySearch(TAGS_WITH_ACTION_ATTRIBUTE, tagName) < 0) {
       return;
     }
 
-    // match tag-prefix/name
-    if (Comparing.equal(xmlTag.getNamespacePrefix(), uiTaglibPrefix) &&
-        Arrays.binarySearch(TAGS_WITH_ACTION_ATTRIBUTE, xmlTag.getLocalName()) > -1) {
-
-      // special case for <action> 
-      final String actionPath = Comparing.equal(xmlTag.getLocalName(), ACTION_ATTRIBUTE_NAME) ?
-                                xmlTag.getAttributeValue("name") :
-                                xmlTag.getAttributeValue(ACTION_ATTRIBUTE_NAME);
-      if (actionPath == null) {
-        return;
-      }
-
-      final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject())
-          .getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
-      if (strutsModel == null) {
-        return;
-      }
-
-      final String namespace = xmlTag.getAttributeValue("namespace");
-      final List<Action> actions = strutsModel.findActionsByName(actionPath, namespace);
-      if (!actions.isEmpty()) {
-
-        // resolve to action method should be exactly 1
-        NavigationGutterIconBuilder.create(StrutsIcons.ACTION_CLASS_ICON).
-            setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
-            setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.notfound")).
-            setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {
-              @NotNull
-              protected Collection<PsiMethod> compute() {
-                return ContainerUtil.mapNotNull(actions, ACTION_METHOD_FUNCTION);
-              }
-            }).
-            install(annotationHolder, xmlTag);
-      }
+    // determine Struts 2 taglib prefix
+    final String uiTaglibPrefix = getUITaglibPrefix(xmlTag);
+    if (uiTaglibPrefix == null ||
+        !Comparing.equal(xmlTag.getNamespacePrefix(), uiTaglibPrefix)) {
+      return;
     }
+
+    // special case for <action>
+    final String actionPath = Comparing.equal(tagName, ACTION_ATTRIBUTE_NAME) ?
+                              xmlTag.getAttributeValue("name") :
+                              xmlTag.getAttributeValue(ACTION_ATTRIBUTE_NAME);
+    if (actionPath == null) {
+      return;
+    }
+
+    final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject())
+      .getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
+    if (strutsModel == null) {
+      return;
+    }
+
+    final String namespace = xmlTag.getAttributeValue("namespace");
+    final List<Action> actions = strutsModel.findActionsByName(actionPath, namespace);
+    if (actions.isEmpty()) {
+      return;
+    }
+
+    // resolve to action method should be exactly 1
+    NavigationGutterIconBuilder.create(StrutsIcons.ACTION_CLASS_ICON).
+      setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
+      setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.notfound")).
+      setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {
+        @NotNull
+        protected Collection<PsiMethod> compute() {
+          return ContainerUtil.mapNotNull(actions, ACTION_METHOD_FUNCTION);
+        }
+      }).install(annotationHolder, xmlTag);
   }
 
+  // TODO cache in JspFile's UserData?
   @Nullable
   private static String getUITaglibPrefix(final XmlTag xmlTag) {
     final PsiFile containingFile = xmlTag.getContainingFile();
