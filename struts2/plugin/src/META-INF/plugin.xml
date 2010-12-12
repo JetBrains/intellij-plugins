@@ -100,8 +100,7 @@
     <typeName className="com.intellij.struts2.dom.struts.strutspackage.InterceptorStack" name="Interceptor Stack"/>
     <typeName className="com.intellij.struts2.dom.struts.strutspackage.ResultType" name="Result Type"/>
     <typeName className="com.intellij.struts2.dom.struts.strutspackage.StrutsPackage" name="Struts Package"/>
-    <typeName className="com.intellij.struts2.dom.struts.strutspackage.GlobalResult" name="Global ResultXX"/>
-    <typeName className="com.intellij.struts2.dom.struts.impl.GlobalResultImpl" name="Global ResultYY"/>
+    <typeName className="com.intellij.struts2.dom.struts.impl.GlobalResultImpl" name="Global Result"/>
 
     <typeIcon className="com.intellij.struts2.dom.struts.Bean" icon="/resources/icons/coffeebean.png"/>
     <typeIcon className="com.intellij.struts2.dom.struts.constant.Constant" icon="/nodes/parameter.png"/>
