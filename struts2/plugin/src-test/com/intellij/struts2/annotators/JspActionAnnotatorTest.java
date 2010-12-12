@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.BasicHighlightingTestCase;
+import com.intellij.struts2.StrutsIcons;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +66,7 @@ public class JspActionAnnotatorTest extends BasicHighlightingTestCase<WebModuleF
   private static void checkGutterActionMethodTargetElements(final GutterIconRenderer gutterIconRenderer,
                                                             @NonNls final String... expectedActionNames) {
     assertNotNull(gutterIconRenderer);
-    assertEquals(JspActionAnnotator.ACTION_CLASS_ICON, gutterIconRenderer.getIcon());
+    assertEquals(StrutsIcons.ACTION_CLASS_ICON, gutterIconRenderer.getIcon());
 
     assertTrue(gutterIconRenderer instanceof NavigationGutterIconRenderer);
     final NavigationGutterIconRenderer gutter = (NavigationGutterIconRenderer) gutterIconRenderer;

@@ -31,20 +31,33 @@ import javax.swing.*;
 public final class StrutsIcons {
 
   /**
-   * Icon for struts.xml files in tree/structure view.
+   * Icon for struts.xml files.
    */
   public static final LayeredIcon STRUTS_CONFIG_FILE_ICON = new LayeredIcon(2);
 
   /**
-   * Icon for validation.xml files in tree/structure view.
+   * Icon for validation.xml files.
    */
   public static final LayeredIcon VALIDATION_CONFIG_FILE_ICON = new LayeredIcon(2);
+
+
+  public static final LayeredIcon ACTION_CLASS_ICON = new LayeredIcon(2);
 
   private StrutsIcons() {
   }
 
   @NonNls
   private static final String ICON_BASE_PATH = "/resources/icons/";
+
+  /**
+   * Vertical offset for small overlay icons.
+   */
+  static final int OVERLAY_Y_OFFSET = 6;
+
+  /**
+   * Horizontal offset for small overlay icons.
+   */
+  private static final int OVERLAY_X_OFFSET = 8;
 
   /**
    * Loads the icon with the given name from the default icon base path.
@@ -57,23 +70,14 @@ public final class StrutsIcons {
   }
 
   /**
-   * Vertical offset for small overlay icons.
-   */
-  public static final int SMALL_ICON_Y_OFFSET = 6;
-
-  /**
    * Overlay icon for "global" elements.
    */
   private static final Icon OVERLAY_GLOBAL = IconLoader.getIcon("/general/web.png");
-  private static final int OVERLAY_GLOBAL_Y_OFFSET = 8;
-  private static final int OVERLAY_GLOBAL_X_OFFSET = 8;
 
   /**
    * Overlay icon for "default" elements.
    */
   private static final Icon OVERLAY_DEFAULT = IconLoader.getIcon("/gutter/check.png");
-  private static final int OVERLAY_DEFAULT_Y_OFFSET = 6;
-  private static final int OVERLAY_DEFAULT_X_OFFSET = 8;
 
   // struts.xml
   public static final Icon ACTION = getIcon("action.png");
@@ -100,25 +104,30 @@ public final class StrutsIcons {
 
   static {
     STRUTS_CONFIG_FILE_ICON.setIcon(StdFileTypes.XML.getIcon(), 0);
-    STRUTS_CONFIG_FILE_ICON.setIcon(ACTION_SMALL, 1, 0, SMALL_ICON_Y_OFFSET);
+    STRUTS_CONFIG_FILE_ICON.setIcon(ACTION_SMALL, 1, 0, OVERLAY_Y_OFFSET);
 
     VALIDATION_CONFIG_FILE_ICON.setIcon(StdFileTypes.XML.getIcon(), 0);
-    VALIDATION_CONFIG_FILE_ICON.setIcon(VALIDATOR_SMALL, 1, 0, SMALL_ICON_Y_OFFSET);
+    VALIDATION_CONFIG_FILE_ICON.setIcon(VALIDATOR_SMALL, 1, 0, OVERLAY_Y_OFFSET);
 
-    GLOBAL_RESULT.setIcon(RESULT, 0);
-    GLOBAL_RESULT.setIcon(OVERLAY_GLOBAL, 1, OVERLAY_GLOBAL_X_OFFSET, OVERLAY_GLOBAL_Y_OFFSET);
+    ACTION_CLASS_ICON.setIcon(Icons.CLASS_ICON, 0);
+    ACTION_CLASS_ICON.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, StrutsIcons.OVERLAY_Y_OFFSET);
 
-    GLOBAL_EXCEPTION_MAPPING.setIcon(EXCEPTION_MAPPING, 0);
-    GLOBAL_EXCEPTION_MAPPING.setIcon(OVERLAY_GLOBAL, 1, OVERLAY_GLOBAL_X_OFFSET, OVERLAY_GLOBAL_Y_OFFSET);
+    createGlobalIcon(GLOBAL_RESULT, RESULT);
+    createGlobalIcon(GLOBAL_EXCEPTION_MAPPING, EXCEPTION_MAPPING);
 
-    DEFAULT_ACTION_REF.setIcon(ACTION, 0);
-    DEFAULT_ACTION_REF.setIcon(OVERLAY_DEFAULT, 1, OVERLAY_DEFAULT_X_OFFSET, OVERLAY_DEFAULT_Y_OFFSET);
+    createDefaultIcon(DEFAULT_ACTION_REF, ACTION);
+    createDefaultIcon(DEFAULT_CLASS_REF, Icons.CLASS_ICON);
+    createDefaultIcon(DEFAULT_INTERCEPTOR_REF, INTERCEPTOR);
+  }
 
-    DEFAULT_CLASS_REF.setIcon(Icons.CLASS_ICON, 0);
-    DEFAULT_CLASS_REF.setIcon(OVERLAY_DEFAULT, 1, OVERLAY_DEFAULT_X_OFFSET, OVERLAY_DEFAULT_Y_OFFSET);
+  private static void createGlobalIcon(final LayeredIcon icon, final Icon baseIcon) {
+    icon.setIcon(baseIcon, 0);
+    icon.setIcon(OVERLAY_GLOBAL, 1, OVERLAY_X_OFFSET, OVERLAY_Y_OFFSET);
+  }
 
-    DEFAULT_INTERCEPTOR_REF.setIcon(INTERCEPTOR, 0);
-    DEFAULT_INTERCEPTOR_REF.setIcon(OVERLAY_DEFAULT, 1, OVERLAY_DEFAULT_X_OFFSET, OVERLAY_DEFAULT_Y_OFFSET);
+  private static void createDefaultIcon(final LayeredIcon icon, final Icon baseIcon) {
+    icon.setIcon(baseIcon, 0);
+    icon.setIcon(OVERLAY_DEFAULT, 1, OVERLAY_X_OFFSET, OVERLAY_Y_OFFSET);
   }
 
 }

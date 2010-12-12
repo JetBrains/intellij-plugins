@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,7 +48,7 @@ import javax.swing.*;
  */
 public class Struts2IconProvider extends DomIconProvider implements DumbAware {
 
-  private boolean active;
+  private boolean computingLayeredIcon;
 
   public Icon getIcon(@NotNull final DomElement element, final int flags) {
     if (element instanceof InterceptorRef) {
@@ -66,8 +66,8 @@ public class Struts2IconProvider extends DomIconProvider implements DumbAware {
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, final int flags) {
 
-    // for getting the original icon from IDEA
-    if (active) {
+    // for getting original icon from IDEA
+    if (computingLayeredIcon) {
       return null;
     }
 
@@ -90,48 +90,46 @@ public class Struts2IconProvider extends DomIconProvider implements DumbAware {
       return null;
     }
 
-    active = true;
+    // handle XML files --> fixed icons
+    if (element instanceof XmlFile) {
+      final XmlFile xmlFile = (XmlFile) element;
+      final DomManager domManager = DomManager.getDomManager(xmlFile.getProject());
 
+      if (domManager.getFileElement(xmlFile, StrutsRoot.class) != null) {
+        return StrutsIcons.STRUTS_CONFIG_FILE_ICON;
+      }
+
+      if (domManager.getFileElement(xmlFile, Validators.class) != null) {
+        return StrutsIcons.VALIDATION_CONFIG_FILE_ICON;
+      }
+
+      if (domManager.getFileElement(xmlFile, ValidatorsConfig.class) != null) {
+        return StrutsIcons.VALIDATION_CONFIG_FILE_ICON;
+      }
+
+      return null;
+    }
+
+    // handle JAVA classes --> overlay icon
     try {
-      Icon strutsIcon = null;
+      computingLayeredIcon = true;
 
-      // handle XML files
-      if (element instanceof XmlFile) {
-        final XmlFile xmlFile = (XmlFile) element;
-        final DomManager domManager = DomManager.getDomManager(xmlFile.getProject());
-
-        if (domManager.getFileElement(xmlFile, StrutsRoot.class) != null) {
-          strutsIcon = StrutsIcons.ACTION_SMALL;
-        } else if (domManager.getFileElement(xmlFile, Validators.class) != null) {
-          strutsIcon = StrutsIcons.VALIDATOR_SMALL;
-        } else if (domManager.getFileElement(xmlFile, ValidatorsConfig.class) != null) {
-          strutsIcon = StrutsIcons.VALIDATOR_SMALL;
-        }
-      }
-      // handle JAVA classes
-      else {
-        final PsiClass psiClass = (PsiClass) element;
-        final Module module = ModuleUtil.findModuleForPsiElement(psiClass);
-        final StrutsModel strutsModel = StrutsManager.getInstance(psiClass.getProject()).getCombinedModel(module);
-        if (strutsModel != null &&
-            !strutsModel.findActionsByClass(psiClass).isEmpty()) {
-          strutsIcon = StrutsIcons.ACTION_SMALL;
-        }
-      }
-
-      if (strutsIcon == null) {
+      final PsiClass psiClass = (PsiClass) element;
+      final Module module = ModuleUtil.findModuleForPsiElement(psiClass);
+      final StrutsModel strutsModel = StrutsManager.getInstance(psiClass.getProject()).getCombinedModel(module);
+      if (strutsModel == null ||
+          strutsModel.findActionsByClass(psiClass).isEmpty()) {
         return null;
       }
 
-      // build & cache new layered icon
       final LayeredIcon layeredIcon = new LayeredIcon(2);
       final Icon original = element.getIcon(flags & ~Iconable.ICON_FLAG_VISIBILITY);
       layeredIcon.setIcon(original, 0);
-      layeredIcon.setIcon(strutsIcon, 1, 0, StrutsIcons.SMALL_ICON_Y_OFFSET);
+      layeredIcon.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, StrutsIcons.OVERLAY_Y_OFFSET);
 
       return layeredIcon;
     } finally {
-      active = false;
+      computingLayeredIcon = false;
     }
 
   }

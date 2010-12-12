@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,8 +37,6 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.ui.LayeredIcon;
-import com.intellij.util.Icons;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlNSDescriptor;
@@ -58,8 +56,6 @@ import java.util.Set;
  */
 public class JspActionAnnotator implements Annotator {
 
-  public static final LayeredIcon ACTION_CLASS_ICON = new LayeredIcon(2);
-
   @NonNls
   private static final String ACTION_ATTRIBUTE_NAME = "action";
 
@@ -71,11 +67,6 @@ public class JspActionAnnotator implements Annotator {
       return action.searchActionMethod();
     }
   };
-
-  static {
-    ACTION_CLASS_ICON.setIcon(Icons.CLASS_ICON, 0);
-    ACTION_CLASS_ICON.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, StrutsIcons.SMALL_ICON_Y_OFFSET);
-  }
 
   public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder annotationHolder) {
     if (!(psiElement instanceof XmlTag)) {
@@ -117,7 +108,7 @@ public class JspActionAnnotator implements Annotator {
       if (!actions.isEmpty()) {
 
         // resolve to action method should be exactly 1
-        NavigationGutterIconBuilder.create(ACTION_CLASS_ICON).
+        NavigationGutterIconBuilder.create(StrutsIcons.ACTION_CLASS_ICON).
             setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
             setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.notfound")).
             setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {
