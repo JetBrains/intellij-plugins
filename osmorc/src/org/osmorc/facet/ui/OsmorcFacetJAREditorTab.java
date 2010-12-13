@@ -380,6 +380,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     configuration.setAlwaysRebuildBundleJAR(myAlwaysRebuildBundleJARCheckBox.isSelected());
 
     configuration.setAdditionalJARContents(myAdditionalJARContentsTableModel.getAdditionalContents());
+    myModified = false;
   }
 
   public void reset() {
@@ -408,6 +409,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     myIgnoreFilePatternTextField.setText(configuration.getIgnoreFilePattern());
     myAlwaysRebuildBundleJARCheckBox.setSelected(configuration.isAlwaysRebuildBundleJAR());
     updateGui();
+    myModified = false;
   }
 
   @Override
