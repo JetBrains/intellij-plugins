@@ -166,7 +166,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   public void writeExternal(Element element) throws WriteExternalException {
     element.setAttribute(OSMORC_CONTROLS_MANIFEST, String.valueOf(isOsmorcControlsManifest()));
     element.setAttribute(MANIFEST_LOCATION, getManifestLocation());
-    element.setAttribute(JARFILE_LOCATION, getJarFileLocation());
+    element.setAttribute(JARFILE_LOCATION, myJarFileLocation != null ? myJarFileLocation : "");
     element.setAttribute(OUTPUT_PATH_TYPE, getOutputPathType().name());
     element.setAttribute(USE_BND_FILE, String.valueOf(isUseBndFile()));
     element.setAttribute(BND_FILE_LOCATION, getBndFileLocation());
