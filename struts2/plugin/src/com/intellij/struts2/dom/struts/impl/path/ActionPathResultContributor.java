@@ -43,6 +43,8 @@ import java.util.List;
 /**
  * Provides paths to "/XYZ.action".
  *
+ * TODO integrate in DispatchPathResultContributor
+ *
  * @author Yann C&eacute;bron
  */
 public class ActionPathResultContributor extends StrutsResultContributor {
