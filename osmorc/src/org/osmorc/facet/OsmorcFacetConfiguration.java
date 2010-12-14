@@ -263,7 +263,13 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
         }
       case OsgiOutputPath:
         ProjectSettings projectSettings = ModuleServiceManager.getService(myFacet.getModule(), ProjectSettings.class);
-        return projectSettings.getBundlesOutputPath() + "/" + nullSafeLocation;
+        String bundlesOutputPath = projectSettings.getBundlesOutputPath();
+        if (bundlesOutputPath != null && bundlesOutputPath.trim().length() != 0) {
+          return bundlesOutputPath + "/" + nullSafeLocation;
+        }
+        else {
+          return ProjectSettings.getDefaultBundlesOutputPath(myFacet.getModule().getProject()) + "/" + nullSafeLocation;
+        }
       case SpecificOutputPath:
       default:
         return nullSafeLocation;

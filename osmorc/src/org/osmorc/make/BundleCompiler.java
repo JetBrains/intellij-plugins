@@ -214,7 +214,10 @@ public class BundleCompiler implements PackagingCompiler {
         if (jarFile.exists()) { //noinspection ResultOfMethodCallIgnored
             jarFile.delete();
         }
-        FileUtil.createParentDirs(jarFile);
+        if (!FileUtil.createParentDirs(jarFile)) {
+          compileContext.addMessage(CompilerMessageCategory.ERROR, "Cannot create path to " + jarFile.getPath(),null, 0,0);
+          return;
+        }
 
         final VirtualFile moduleOutputDir = new ReadAction<VirtualFile>() {
             protected void run(Result<VirtualFile> result) {

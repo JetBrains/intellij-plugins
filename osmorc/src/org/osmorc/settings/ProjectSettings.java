@@ -30,6 +30,8 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.CompilerProjectExtension;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -56,6 +58,18 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
 
   public void setBundlesOutputPath(@Nullable String _bundlesOutputPath) {
     this._bundlesOutputPath = _bundlesOutputPath;
+  }
+
+  @NotNull
+  public static String getDefaultBundlesOutputPath(Project project) {
+    CompilerProjectExtension instance = CompilerProjectExtension.getInstance(project);
+    if ( instance != null ) {
+      return VfsUtil.urlToPath(instance.getCompilerOutputPointer().getUrl())+"/bundles";
+    }
+    else {
+      // this actually should never happen.
+      return "/tmp";
+    }
   }
 
   public static ProjectSettings getInstance(Project project) {
@@ -116,6 +130,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
   private boolean _createFrameworkInstanceModule;
   private @NotNull String _defaultManifestFileLocation = "META-INF/MANIFEST.MF";
   private @Nullable String _bundlesOutputPath;
+
 
   public  interface ProjectSettingsListener extends EventListener {
     void projectSettingsChanged();

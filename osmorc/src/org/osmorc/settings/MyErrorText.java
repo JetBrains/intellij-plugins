@@ -46,6 +46,7 @@ public class MyErrorText extends JPanel {
             myLabel.setText("");
             myLabel.setIcon(null);
             setBorder(null);
+            myPrefSize = null;
         }
         else {
             myLabel.setText((new StringBuilder()).append("<html><body><font color=red><left>").append(text)

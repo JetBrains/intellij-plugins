@@ -138,7 +138,7 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
       bundleOutputPath.setText(bundlesPath);
     }
     else {
-      bundleOutputPath.setText("");
+      bundleOutputPath.setText(ProjectSettings.getDefaultBundlesOutputPath(myProject));
     }
     myModified = false;
   }

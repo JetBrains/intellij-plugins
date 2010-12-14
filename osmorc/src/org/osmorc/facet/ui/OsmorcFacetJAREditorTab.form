@@ -13,6 +13,8 @@
     <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="top:3dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
+    <rowspec value="top:3dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
     <rowspec value="center:p:noGrow"/>
     <rowspec value="top:6dlu:noGrow"/>
     <rowspec value="center:p:noGrow"/>
@@ -32,9 +34,9 @@
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:max(p;4px):noGrow"/>
     <rowgroup>
-      <member index="17"/>
       <member index="19"/>
       <member index="21"/>
+      <member index="23"/>
     </rowgroup>
     <constraints>
       <xy x="20" y="20" width="825" height="447"/>
@@ -55,66 +57,13 @@
         <border type="none"/>
         <children/>
       </grid>
-      <component id="24db4" class="javax.swing.JLabel" binding="myAdditionalJarContentsLabel">
-        <constraints>
-          <grid row="14" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <labelFor value="5798f"/>
-          <text value="Additional JAR contents"/>
-        </properties>
-      </component>
-      <scrollpane id="5798f" class="com.intellij.ui.components.JBScrollPane">
-        <constraints>
-          <grid row="16" column="0" row-span="7" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <forms defaultalign-horz="false" defaultalign-vert="false"/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="f3fb4" class="com.intellij.ui.table.JBTable" binding="myAdditionalJARContentsTable">
-            <constraints/>
-            <properties>
-              <preferredScrollableViewportSize width="450" height="150"/>
-            </properties>
-          </component>
-        </children>
-      </scrollpane>
       <component id="98433" class="javax.swing.JLabel" binding="myFileIgnorePatternLabel">
         <constraints>
-          <grid row="24" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="26" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties>
           <text value="File Ignore Pattern (regex)"/>
-        </properties>
-      </component>
-      <component id="6ff8a" class="javax.swing.JButton" binding="myAddButton" default-binding="true">
-        <constraints>
-          <grid row="16" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <text value="Add..."/>
-        </properties>
-      </component>
-      <component id="904a" class="javax.swing.JButton" binding="myRemoveButton" default-binding="true">
-        <constraints>
-          <grid row="18" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <text value="Remove"/>
-        </properties>
-      </component>
-      <component id="ce595" class="javax.swing.JButton" binding="myEditButton" default-binding="true">
-        <constraints>
-          <grid row="20" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-          <forms/>
-        </constraints>
-        <properties>
-          <text value="Edit..."/>
         </properties>
       </component>
       <component id="78a8a" class="javax.swing.JLabel">
@@ -128,7 +77,7 @@
       </component>
       <component id="d6235" class="javax.swing.JCheckBox" binding="myAlwaysRebuildBundleJARCheckBox" default-binding="true">
         <constraints>
-          <grid row="12" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="14" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties>
@@ -137,7 +86,7 @@
       </component>
       <grid id="2e26f" binding="myIgnoreFilePatternPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
-          <grid row="24" column="2" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="26" column="2" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false"/>
         </constraints>
         <properties/>
@@ -146,7 +95,7 @@
       </grid>
       <component id="ca0f8" class="javax.swing.JTextField" binding="myJarFileTextField" default-binding="true">
         <constraints>
-          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="1" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
           <forms defaultalign-horz="false"/>
@@ -164,7 +113,7 @@
       </component>
       <component id="ad914" class="javax.swing.JRadioButton" binding="myPlaceInCompilerOutputPathRadioButton" default-binding="true">
         <constraints>
-          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties>
@@ -173,7 +122,7 @@
       </component>
       <component id="9016" class="javax.swing.JRadioButton" binding="myPlaceInProjectWideRadioButton" default-binding="true">
         <constraints>
-          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties>
@@ -182,7 +131,7 @@
       </component>
       <component id="f3f8" class="javax.swing.JRadioButton" binding="myPlaceInThisPathRadioButton" default-binding="true">
         <constraints>
-          <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>
         </constraints>
         <properties>
@@ -191,11 +140,83 @@
       </component>
       <component id="33cce" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myJarOutputPathChooser">
         <constraints>
-          <grid row="9" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
           <forms defaultalign-horz="false"/>
         </constraints>
         <properties/>
       </component>
+      <component id="d2943" class="org.osmorc.settings.MyErrorText" binding="myErrorText">
+        <constraints>
+          <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties/>
+      </component>
+      <grid id="17691" binding="myAdditionalJarContentsPanel" layout-manager="FormLayout">
+        <rowspec value="center:p:noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:p:noGrow"/>
+        <rowspec value="top:4dlu:noGrow"/>
+        <rowspec value="center:p:noGrow"/>
+        <rowspec value="top:5dlu:noGrow"/>
+        <rowspec value="center:d:grow"/>
+        <colspec value="fill:p:noGrow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:max(p;4px):grow"/>
+        <colspec value="left:4dlu:noGrow"/>
+        <colspec value="fill:max(p;4px):noGrow"/>
+        <constraints>
+          <grid row="16" column="0" row-span="9" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <forms/>
+        </constraints>
+        <properties/>
+        <border type="etched" title="Additional JAR Contents"/>
+        <children>
+          <scrollpane id="5798f" class="com.intellij.ui.components.JBScrollPane">
+            <constraints>
+              <grid row="0" column="0" row-span="7" col-span="3" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <forms defaultalign-horz="false" defaultalign-vert="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="f3fb4" class="com.intellij.ui.table.JBTable" binding="myAdditionalJARContentsTable">
+                <constraints/>
+                <properties>
+                  <preferredScrollableViewportSize width="450" height="150"/>
+                </properties>
+              </component>
+            </children>
+          </scrollpane>
+          <component id="6ff8a" class="javax.swing.JButton" binding="myAddButton" default-binding="true">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Add..."/>
+            </properties>
+          </component>
+          <component id="904a" class="javax.swing.JButton" binding="myRemoveButton" default-binding="true">
+            <constraints>
+              <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Remove"/>
+            </properties>
+          </component>
+          <component id="ce595" class="javax.swing.JButton" binding="myEditButton" default-binding="true">
+            <constraints>
+              <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <forms/>
+            </constraints>
+            <properties>
+              <text value="Edit..."/>
+            </properties>
+          </component>
+        </children>
+      </grid>
     </children>
   </grid>
   <buttonGroups>

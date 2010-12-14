@@ -148,7 +148,7 @@ public class OsgiRunState extends JavaCommandLineState  {
     // get the bundles to be run.
     SelectedBundle[] bundles = getSelectedBundles();
     if (bundles == null) {
-      throw new CantRunException("One or more modules seem to be missing their OSGi facets. Please re-add the OSGi facets and try again.");
+      throw new CantRunException("One or more modules seem to be missing their OSGi facets or you have modules in your run configuration that no longer exist. Please re-add the OSGi facets or clean the run configuration and try again.");
     }
 
     // setup the commandline parameters

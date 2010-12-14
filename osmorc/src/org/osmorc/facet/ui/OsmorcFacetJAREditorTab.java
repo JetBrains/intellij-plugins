@@ -55,6 +55,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.i18n.OsmorcBundle;
+import org.osmorc.settings.MyErrorText;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -81,7 +82,6 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private JButton myRemoveButton;
   private JButton myEditButton;
   private JCheckBox myAlwaysRebuildBundleJARCheckBox;
-  private JLabel myAdditionalJarContentsLabel;
   private JLabel myFileIgnorePatternLabel;
   private JPanel myIgnoreFilePatternPanel;
   private JTextField myJarFileTextField;
@@ -89,6 +89,8 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private JRadioButton myPlaceInProjectWideRadioButton;
   private JRadioButton myPlaceInThisPathRadioButton;
   private TextFieldWithBrowseButton myJarOutputPathChooser;
+  private MyErrorText myErrorText;
+  private JPanel myAdditionalJarContentsPanel;
   private boolean myModified;
   private final FacetEditorContext myEditorContext;
   private final AdditionalJARContentsTableModel myAdditionalJARContentsTableModel;
@@ -112,6 +114,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     watcher.addUserActivityListener(new UserActivityListener() {
       public void stateChanged() {
         myModified = true;
+        updateGui();
       }
     });
 
@@ -290,8 +293,14 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     myRemoveButton.setEnabled(!useExternalTool);
     myEditButton.setEnabled(!useExternalTool);
     myAlwaysRebuildBundleJARCheckBox.setEnabled(!useExternalTool);
-    myAdditionalJarContentsLabel.setEnabled(!useExternalTool);
+    myAdditionalJarContentsPanel.setEnabled(!useExternalTool);
     myFileIgnorePatternLabel.setEnabled(!useExternalTool);
+    if (myPlaceInThisPathRadioButton.isSelected() && myJarOutputPathChooser.getText().trim().length()==0) {
+     myErrorText.setError("Please select an output path");
+    }
+    else {
+      myErrorText.setError(null);
+    }
   }
 
   private void onOutputPathSelect() {
@@ -333,8 +342,8 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     if (virtualFiles.length == 1) {
       VirtualFile file = virtualFiles[0];
       if (VfsUtil.isAncestor(moduleCompilerOutputPath, file, false)) {
-        Messages.showErrorDialog(myEditorContext.getProject(), OsmorcBundle.getTranslation("error"),
-                                 OsmorcBundle.getTranslation("faceteditor.jar.cannot.be.in.output.path"));
+        Messages.showErrorDialog(myEditorContext.getProject(),
+                                 OsmorcBundle.getTranslation("faceteditor.jar.cannot.be.in.output.path"), OsmorcBundle.getTranslation("error"));
         myJarOutputPathChooser.setText("");
         return;
       }
