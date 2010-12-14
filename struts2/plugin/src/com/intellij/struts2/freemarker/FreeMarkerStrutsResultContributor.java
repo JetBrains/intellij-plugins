@@ -1,11 +1,22 @@
 /*
- * Copyright (c) 2000-2005 by JetBrains s.r.o. All Rights Reserved.
- * Use is subject to license terms.
+ * Copyright 2010 The authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.intellij.struts2.freemarker;
 
 import com.intellij.freemarker.FreeMarkerApplicationComponent;
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
@@ -26,25 +37,23 @@ import java.util.List;
 public class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
 
   @Override
-  protected boolean matchesResultType(@NonNls @Nullable String resultType) {
-    return "freemarker".equalsIgnoreCase(resultType);
+  protected boolean matchesResultType(@NonNls @Nullable final String resultType) {
+    return Comparing.equal(resultType, "freemarker");
   }
 
-  public boolean createReferences(@NotNull PsiElement psiElement, @NotNull List<PsiReference> references, boolean soft) {
-    final FileReferenceSet set = FileReferenceSet.createSet(psiElement, soft, false, true);
-    if (set == null) {
-      return false;
-    }
-
+  public boolean createReferences(@NotNull final PsiElement psiElement,
+                                  @NotNull final List<PsiReference> references,
+                                  final boolean soft) {
     if (getNamespace(psiElement) == null) {
       return false;
     }
 
+    final FileReferenceSet set = FileReferenceSet.createSet(psiElement, soft, false, true);
     ContainerUtil.addAll(references, set.getAllReferences());
     return true;
   }
 
-  public PathReference getPathReference(@NotNull String path, @NotNull PsiElement element) {
+  public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
     if (getNamespace(element) == null) {
       return null;
     }
