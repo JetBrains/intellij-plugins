@@ -40,7 +40,6 @@ import org.jetbrains.annotations.Nullable;
  * </pre>
  *
  * @author Yann C&eacute;bron
- * @deprecated will be removed for IDEA 9
  */
 public abstract class StrutsResultContributor implements PathReferenceProvider {
 
@@ -48,17 +47,15 @@ public abstract class StrutsResultContributor implements PathReferenceProvider {
    * Extension point name.
    */
   public static final ExtensionPointName<StrutsResultContributor> EP_NAME =
-      new ExtensionPointName<StrutsResultContributor>("com.intellij.struts2.resultContributor");
+    new ExtensionPointName<StrutsResultContributor>("com.intellij.struts2.resultContributor");
 
   /**
-   * Override to limit to certain known result-type names.
+   * Returns whether this ResultContributor handles the given result type..
    *
    * @param resultType Result type.
-   * @return true.
+   * @return {@code true} if yes.
    */
-  protected boolean matchesResultType(@NonNls @Nullable final String resultType) {
-    return true;
-  }
+  protected abstract boolean matchesResultType(@NonNls @Nullable final String resultType);
 
   /**
    * Gets the current namespace for the given element.
