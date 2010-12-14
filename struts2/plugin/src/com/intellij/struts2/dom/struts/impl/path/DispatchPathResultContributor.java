@@ -42,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Provides paths to static webresources.
+ * Provides paths to static web-resources.
  *
  * @author Yann C&eacute;bron
  */
@@ -57,22 +57,19 @@ public class DispatchPathResultContributor extends StrutsResultContributor {
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
     
-    final FileReferenceSet set = FileReferenceSet.createSet(psiElement, soft, false, true);
-    if (set == null) {
-      return true;
-    }
-    final WebFacet webFacet = WebUtil.getWebFacet(psiElement);
-    if (webFacet == null) {
-      return false; // setup error, web-facet must be present in current or dependent module
-    }
-
     final String packageNamespace = getNamespace(psiElement);
     if (packageNamespace == null) {
       return false; // XML error
     }
 
+    final WebFacet webFacet = WebUtil.getWebFacet(psiElement);
+    if (webFacet == null) {
+      return false; // setup error, web-facet must be present in current or dependent module
+    }
+
     final WebDirectoryUtil directoryUtil = WebDirectoryUtil.getWebDirectoryUtil(psiElement.getProject());
 
+    final FileReferenceSet set = FileReferenceSet.createSet(psiElement, soft, false, true);
     set.addCustomization(
             FileReferenceSet.DEFAULT_PATH_EVALUATOR_OPTION,
             new Function<PsiFile, Collection<PsiFileSystemItem>>() {
@@ -108,6 +105,11 @@ public class DispatchPathResultContributor extends StrutsResultContributor {
 
   @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
+    final String currentPackage = getNamespace(element);
+     if (currentPackage == null) {
+       return null;
+     }
+
     final WebFacet webFacet = WebUtil.getWebFacet(element);
     if (webFacet == null) {
       return null;
