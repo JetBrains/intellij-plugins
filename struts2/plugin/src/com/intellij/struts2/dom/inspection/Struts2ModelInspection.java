@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2010 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,7 @@ import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.struts2.dom.params.ParamNameNestedConverter;
 import com.intellij.struts2.dom.params.ParamsElement;
+import com.intellij.struts2.dom.struts.HasResultType;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter;
@@ -113,6 +114,16 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
       // nested <param>-tags are present
       if (!((ParamsElement) value).getParams().isEmpty()) {
         return false;
+      }
+
+      // unsupported result-type
+      final ResultType resultType = ((HasResultType) value).getEffectiveResultType();
+      if (resultType == null) {
+        return false;
+      }
+
+      if (!ResultTypeResolver.hasResultTypeContributor(resultType.getName().getStringValue())) {
+         return false;
       }
     }
 

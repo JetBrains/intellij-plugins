@@ -12,8 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.intellij.struts2.dom.struts.impl.path;
 
+import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.util.Condition;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,6 +62,33 @@ public class ResultTypeResolver {
     }
 
     return Arrays.binarySearch(RESULT_TYPES_DISPATCH, resultType) >= 0;
+  }
+
+  /**
+   * Is the given resultType handled by one of the builtin/contributed {@link StrutsResultContributor}s.
+   *
+   * @param resultType Result-Type.
+   * @return {@code true} if supported, {@code false} otherwise.
+   */
+  public static boolean hasResultTypeContributor(@Nullable final String resultType) {
+    if (resultType == null) {
+      return false;
+    }
+
+    // check "builtin"
+    if (isDispatchType(resultType) ||
+        isChainOrRedirectType(resultType)) {
+      return true;
+    }
+
+    // find extensions
+    final StrutsResultContributor[] contributors = Extensions.getExtensions(StrutsResultContributor.EP_NAME);
+    return ContainerUtil.find(contributors, new Condition<StrutsResultContributor>() {
+      @Override
+      public boolean value(final StrutsResultContributor strutsResultContributor) {
+        return strutsResultContributor.matchesResultType(resultType);
+      }
+    }) != null;
   }
 
 }

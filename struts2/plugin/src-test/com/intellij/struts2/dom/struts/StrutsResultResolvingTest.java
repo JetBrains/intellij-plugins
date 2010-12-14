@@ -85,6 +85,10 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
     performHighlightingTest("struts-actionRedirect.xml");
   }
 
+  public void testUnknownResultTypes() throws Throwable {
+    performHighlightingTest("struts-unknownResultType.xml");
+  }
+
   public void testCompletionVariantsDispatcherActionPath() throws Throwable {
     performCompletionVariantTest("struts-completionvariants.xml",
                                  "/anotherActionPathTest/anotherActionPath1.action",
