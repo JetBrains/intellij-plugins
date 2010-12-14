@@ -67,9 +67,8 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
     }
 
     final PsiReference chainReference = new ActionChainReference(psiElement, currentPackage, model);
-
     references.add(chainReference);
-    return false;
+    return true;
   }
 
   @Nullable
