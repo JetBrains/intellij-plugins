@@ -31,7 +31,9 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.CompilerProjectExtension;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -63,13 +65,14 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
   @NotNull
   public static String getDefaultBundlesOutputPath(Project project) {
     CompilerProjectExtension instance = CompilerProjectExtension.getInstance(project);
-    if ( instance != null ) {
-      return VfsUtil.urlToPath(instance.getCompilerOutputPointer().getUrl())+"/bundles";
+    if (instance != null) {
+      final VirtualFilePointer compilerOutput = instance.getCompilerOutputPointer();
+      if (compilerOutput != null) {
+        return VfsUtil.urlToPath(compilerOutput.getUrl())+"/bundles";
+      }
     }
-    else {
-      // this actually should never happen.
-      return "/tmp";
-    }
+    // this actually should never happen (only in tests)
+    return FileUtil.getTempDirectory();
   }
 
   public static ProjectSettings getInstance(Project project) {
