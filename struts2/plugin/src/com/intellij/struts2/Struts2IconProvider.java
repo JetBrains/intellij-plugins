@@ -12,14 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.intellij.struts2;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.jsp.JspFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
@@ -48,8 +49,6 @@ import javax.swing.*;
  */
 public class Struts2IconProvider extends DomIconProvider implements DumbAware {
 
-  private boolean computingLayeredIcon;
-
   public Icon getIcon(@NotNull final DomElement element, final int flags) {
     if (element instanceof InterceptorRef) {
       final InterceptorOrStackBase interceptorOrStackBase = ((InterceptorRef) element).getName().getValue();
@@ -65,11 +64,6 @@ public class Struts2IconProvider extends DomIconProvider implements DumbAware {
 
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, final int flags) {
-
-    // for getting original icon from IDEA
-    if (computingLayeredIcon) {
-      return null;
-    }
 
     if (element instanceof JspFile) {
       return null;
@@ -111,27 +105,19 @@ public class Struts2IconProvider extends DomIconProvider implements DumbAware {
     }
 
     // handle JAVA classes --> overlay icon
-    try {
-      computingLayeredIcon = true;
-
-      final PsiClass psiClass = (PsiClass) element;
-      final Module module = ModuleUtil.findModuleForPsiElement(psiClass);
-      final StrutsModel strutsModel = StrutsManager.getInstance(psiClass.getProject()).getCombinedModel(module);
-      if (strutsModel == null ||
-          strutsModel.findActionsByClass(psiClass).isEmpty()) {
-        return null;
-      }
-
-      final LayeredIcon layeredIcon = new LayeredIcon(2);
-      final Icon original = element.getIcon(flags & ~Iconable.ICON_FLAG_VISIBILITY);
-      layeredIcon.setIcon(original, 0);
-      layeredIcon.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, StrutsIcons.OVERLAY_Y_OFFSET);
-
-      return layeredIcon;
-    } finally {
-      computingLayeredIcon = false;
+    final PsiClass psiClass = (PsiClass) element;
+    final Module module = ModuleUtil.findModuleForPsiElement(psiClass);
+    final StrutsModel strutsModel = StrutsManager.getInstance(psiClass.getProject()).getCombinedModel(module);
+    if (strutsModel == null ||
+        strutsModel.findActionsByClass(psiClass).isEmpty()) {
+      return null;
     }
 
+    final LayeredIcon layeredIcon = new LayeredIcon(2);
+    final Icon original = PsiClassImplUtil.getClassIcon(flags, psiClass);
+    layeredIcon.setIcon(original, 0);
+    layeredIcon.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, StrutsIcons.OVERLAY_Y_OFFSET);
+    return layeredIcon;
   }
 
 }
