@@ -44,13 +44,11 @@ public class FreemarkerIntegrationTest extends BasicHighlightingTestCase<JavaMod
   }
 
   public void testMacroParametersResolveOnlyToParameters() throws Throwable {
-    myFixture.copyFileToProject("struts-tags.tld", "struts-tags.tld");
     myFixture.enableInspections(new FtlInspectionToolProvider());
     myFixture.testHighlighting(true, false, true, "MacroParametersResolveOnlyToParameters.ftl");
   }
 
   public void testStrutsCommonVariables() throws Throwable {
-    myFixture.copyFileToProject("struts-tags.tld", "struts-tags.tld");
     myFixture.testHighlighting(true, false, true, "StrutsCommonVariables.ftl");
   }
 
