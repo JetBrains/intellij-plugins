@@ -39,7 +39,6 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -58,7 +57,7 @@ public class TilesResultContributor extends StrutsResultContributor {
   private static final String TILES_RESULT_TYPE = "tiles";
 
   @Override
-  protected boolean matchesResultType(@NonNls @Nullable final String resultType) {
+  protected boolean matchesResultType(@NotNull @NonNls final String resultType) {
     return Comparing.equal(resultType, TILES_RESULT_TYPE);
   }
 

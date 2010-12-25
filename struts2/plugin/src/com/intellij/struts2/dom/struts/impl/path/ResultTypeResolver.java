@@ -19,6 +19,7 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.Condition;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -42,11 +43,7 @@ public class ResultTypeResolver {
    * @param resultType Result tag's "type" attribute value.
    * @return true/false.
    */
-  public static boolean isChainOrRedirectType(@Nullable final String resultType) {
-    if (resultType == null) {
-      return false;
-    }
-
+  public static boolean isChainOrRedirectType(@NotNull final String resultType) {
     return Arrays.binarySearch(RESULT_TYPES_CHAIN_REDIRECT, resultType) >= 0;
   }
 
@@ -56,16 +53,12 @@ public class ResultTypeResolver {
    * @param resultType Result tag's "type" attribute value.
    * @return true/false.
    */
-  public static boolean isDispatchType(@Nullable final String resultType) {
-    if (resultType == null) {
-      return false;
-    }
-
+  public static boolean isDispatchType(@NotNull final String resultType) {
     return Arrays.binarySearch(RESULT_TYPES_DISPATCH, resultType) >= 0;
   }
 
   /**
-   * Is the given resultType handled by one of the builtin/contributed {@link StrutsResultContributor}s.
+   * Is the given resultType handled by one of the built-in/contributed {@link StrutsResultContributor}s.
    *
    * @param resultType Result-Type.
    * @return {@code true} if supported, {@code false} otherwise.

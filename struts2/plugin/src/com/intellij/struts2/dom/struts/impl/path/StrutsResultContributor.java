@@ -50,12 +50,12 @@ public abstract class StrutsResultContributor implements PathReferenceProvider {
     new ExtensionPointName<StrutsResultContributor>("com.intellij.struts2.resultContributor");
 
   /**
-   * Returns whether this ResultContributor handles the given result type..
+   * Returns whether this ResultContributor handles the given result type.
    *
    * @param resultType Result type.
    * @return {@code true} if yes.
    */
-  protected abstract boolean matchesResultType(@NonNls @Nullable final String resultType);
+  protected abstract boolean matchesResultType(@NonNls @NotNull final String resultType);
 
   /**
    * Gets the current namespace for the given element.
@@ -79,7 +79,8 @@ public abstract class StrutsResultContributor implements PathReferenceProvider {
     }
 
     final String resultType = effectiveResultType.getName().getStringValue();
-    if (!matchesResultType(resultType)) {
+    if (resultType == null ||
+        !matchesResultType(resultType)) {
       return null;
     }
 

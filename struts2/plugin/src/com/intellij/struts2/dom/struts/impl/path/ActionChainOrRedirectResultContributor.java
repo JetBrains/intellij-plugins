@@ -48,7 +48,7 @@ import java.util.List;
 public class ActionChainOrRedirectResultContributor extends StrutsResultContributor {
 
   @Override
-  public boolean matchesResultType(@NonNls @Nullable final String resultType) {
+  public boolean matchesResultType(@NotNull @NonNls final String resultType) {
     return ResultTypeResolver.isChainOrRedirectType(resultType);
   }
 

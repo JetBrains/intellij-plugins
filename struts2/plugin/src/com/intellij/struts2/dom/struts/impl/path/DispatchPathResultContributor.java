@@ -49,7 +49,7 @@ import java.util.List;
 public class DispatchPathResultContributor extends StrutsResultContributor {
 
   @Override
-  protected boolean matchesResultType(@NonNls @Nullable final String resultType) {
+  protected boolean matchesResultType(@NotNull @NonNls final String resultType) {
     return ResultTypeResolver.isDispatchType(resultType);
   }
 

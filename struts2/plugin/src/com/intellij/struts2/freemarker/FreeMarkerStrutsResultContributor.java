@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.intellij.struts2.freemarker;
 
 import com.intellij.freemarker.FreeMarkerApplicationComponent;
@@ -25,7 +26,6 @@ import com.intellij.util.ConstantFunction;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ import java.util.List;
 public class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
 
   @Override
-  protected boolean matchesResultType(@NonNls @Nullable final String resultType) {
+  protected boolean matchesResultType(@NotNull @NonNls final String resultType) {
     return Comparing.equal(resultType, "freemarker");
   }
 
