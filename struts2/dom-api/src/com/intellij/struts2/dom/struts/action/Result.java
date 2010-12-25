@@ -41,7 +41,7 @@ public interface Result extends HasResultType, ParamsElement, GenericDomValue<Pa
   GenericAttributeValue<String> getName();
 
   /**
-   * Returns the local result type.
+   * Returns the <em>local</em> result type. Usually {@link #getEffectiveResultType()} is required.
    *
    * @return null if none defined.
    */
