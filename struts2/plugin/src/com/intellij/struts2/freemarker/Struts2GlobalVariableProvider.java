@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.intellij.struts2.freemarker;
 
 import com.intellij.freemarker.psi.FtlType;
@@ -29,6 +30,7 @@ import com.intellij.psi.impl.source.jsp.JspManager;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsConstants;
+import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -39,7 +41,9 @@ import com.intellij.util.Processor;
 import com.intellij.xml.XmlNSDescriptor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,15 +65,15 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
     }
 
     final List<FtlVariable> result = new ArrayList<FtlVariable>();
-    result.add(new FtlLightVariable("stack", file, (FtlType) null));
-    result.add(new FtlLightVariable("action", file, (FtlType) null));
-    result.add(new FtlLightVariable("response", file, "javax.servlet.http.HttpServletResponse"));
-    result.add(new FtlLightVariable("res", file, "javax.servlet.http.HttpServletResponse"));
-    result.add(new FtlLightVariable("request", file, "javax.servlet.http.HttpServletRequest"));
-    result.add(new FtlLightVariable("req", file, "javax.servlet.http.HttpServletRequest"));
-    result.add(new FtlLightVariable("session", file, "javax.servlet.http.HttpSession"));
-    result.add(new FtlLightVariable("application", file, "javax.servlet.ServletContext"));
-    result.add(new FtlLightVariable("base", file, CommonClassNames.JAVA_LANG_STRING));
+    result.add(new MyFtlLightVariable("stack", file, (FtlType) null));
+    result.add(new MyFtlLightVariable("action", file, (FtlType) null));
+    result.add(new MyFtlLightVariable("response", file, "javax.servlet.http.HttpServletResponse"));
+    result.add(new MyFtlLightVariable("res", file, "javax.servlet.http.HttpServletResponse"));
+    result.add(new MyFtlLightVariable("request", file, "javax.servlet.http.HttpServletRequest"));
+    result.add(new MyFtlLightVariable("req", file, "javax.servlet.http.HttpServletRequest"));
+    result.add(new MyFtlLightVariable("session", file, "javax.servlet.http.HttpSession"));
+    result.add(new MyFtlLightVariable("application", file, "javax.servlet.ServletContext"));
+    result.add(new MyFtlLightVariable("base", file, CommonClassNames.JAVA_LANG_STRING));
 
     installTaglibSupport(result, module,
                          StrutsConstants.TAGLIB_STRUTS_UI_URI, StrutsConstants.TAGLIB_STRUTS_UI_PREFIX);
@@ -94,7 +98,7 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
                    file.getManager().areElementsEquivalent(file.getOriginalFile(), target))) {
                 final PsiClassType actionType =
                   JavaPsiFacade.getInstance(actionClass.getProject()).getElementFactory().createType(actionClass);
-                result.add(new FtlLightVariable("", action.getXmlTag(), FtlPsiType.wrap(actionType)));
+                result.add(new MyFtlLightVariable("", action.getXmlTag(), FtlPsiType.wrap(actionType)));
                 return false; // stop after first match
               }
             }
@@ -135,7 +139,28 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
       declaration = xmlFile;
     }
 
-    result.add(new FtlLightVariable(taglibPrefix, declaration, new FtlXmlNamespaceType(descriptor)));
+    result.add(new MyFtlLightVariable(taglibPrefix, declaration, new FtlXmlNamespaceType(descriptor)));
+  }
+
+
+  private static class MyFtlLightVariable extends FtlLightVariable {
+
+    private MyFtlLightVariable(@NotNull @NonNls final String name,
+                               @NotNull final PsiElement parent,
+                               @Nullable final FtlType type) {
+      super(name, parent, type);
+    }
+
+    private MyFtlLightVariable(@NotNull @NonNls final String name,
+                               @NotNull final PsiElement parent,
+                               @NotNull @NonNls final String psiType) {
+      super(name, parent, psiType);
+    }
+
+    @Override
+    public Icon getIcon(final boolean open) {
+      return StrutsIcons.STRUTS_VARIABLE_ICON;
+    }
   }
 
 }
