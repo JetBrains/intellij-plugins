@@ -36,9 +36,11 @@ import java.util.List;
  */
 public class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
 
+  public static final String FREEMARKER = "freemarker";
+
   @Override
   protected boolean matchesResultType(@NotNull @NonNls final String resultType) {
-    return Comparing.equal(resultType, "freemarker");
+    return Comparing.equal(resultType, FREEMARKER);
   }
 
   public boolean createReferences(@NotNull final PsiElement psiElement,

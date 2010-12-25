@@ -22,11 +22,12 @@
 
   <package name="test">
     <result-types>
-      <result-type name="freemarker" class="org.apache.struts2.views.freemarker.FreemarkerResult"/>
+      <result-type name="freemarker" class="org.apache.struts2.views.freemarker.FreemarkerResult" default="true"/>
     </result-types>
 
     <action name="test" class="MyTestAction">
-      <result name="success" type="freemarker">StrutsActionToplevel.ftl</result>
+      <result name="success">StrutsActionToplevel.ftl</result>
+
 
       <result name="invalidPath" type="freemarker"><error descr="Cannot resolve file 'INVALID_VALUE'">INVALID_VALUE</error></result>
     </action>

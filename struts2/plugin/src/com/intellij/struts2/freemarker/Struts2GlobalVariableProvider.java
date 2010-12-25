@@ -1,6 +1,16 @@
 /*
- * Copyright (c) 2000-2005 by JetBrains s.r.o. All Rights Reserved.
- * Use is subject to license terms.
+ * Copyright 2010 The authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.intellij.struts2.freemarker;
 
@@ -23,8 +33,9 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
-import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.facet.StrutsFacet;
+import com.intellij.util.Processor;
 import com.intellij.xml.XmlNSDescriptor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -41,13 +52,17 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
   @NotNull
   public List<? extends FtlVariable> getGlobalVariables(final FtlFile file) {
     final Module module = ModuleUtil.findModuleForPsiElement(file);
-    if (module == null) return Collections.emptyList();
+    if (module == null) {
+      return Collections.emptyList();
+    }
 
-    if (StrutsFacet.getInstance(module) == null) return Collections.emptyList();
+    if (StrutsFacet.getInstance(module) == null) {
+      return Collections.emptyList();
+    }
 
-    List<FtlVariable> result = new ArrayList<FtlVariable>();
-    result.add(new FtlLightVariable("stack", file, (FtlType)null));
-    result.add(new FtlLightVariable("action", file, (FtlType)null));
+    final List<FtlVariable> result = new ArrayList<FtlVariable>();
+    result.add(new FtlLightVariable("stack", file, (FtlType) null));
+    result.add(new FtlLightVariable("action", file, (FtlType) null));
     result.add(new FtlLightVariable("response", file, "javax.servlet.http.HttpServletResponse"));
     result.add(new FtlLightVariable("res", file, "javax.servlet.http.HttpServletResponse"));
     result.add(new FtlLightVariable("request", file, "javax.servlet.http.HttpServletRequest"));
@@ -63,28 +78,35 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
     installTaglibSupport(result, module,
                          StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI, StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_PREFIX);
 
-    for (final StrutsModel model : StrutsManager.getInstance(file.getProject()).getAllModels(module)) {
-      for (final StrutsPackage strutsPackage : model.getStrutsPackages()) {
-        for (final Action action : strutsPackage.getActions()) {
-          final PsiClass actionClass = action.getActionClass().getValue();
-          if (actionClass != null) {
-            final PsiClassType actionType =
-              JavaPsiFacade.getInstance(actionClass.getProject()).getElementFactory().createType(actionClass);
-            for (final Result result1 : action.getResults()) {
-              if ("freemarker".equals(result1.getType().getStringValue())) {
-                final PathReference reference = result1.getValue();
-                final PsiElement target = reference == null ? null : reference.resolve();
-                if (target != null &&
-                    (file.getManager().areElementsEquivalent(file, target) ||
-                     file.getManager().areElementsEquivalent(file.getOriginalFile(), target))) {
-                  result.add(new FtlLightVariable("", action.getXmlTag(), FtlPsiType.wrap(actionType)));
-                  break;
-                }
+    final Processor<Action> processor = new Processor<Action>() {
+      @Override
+      public boolean process(final Action action) {
+        final PsiClass actionClass = action.getActionClass().getValue();
+        if (actionClass != null) {
+          for (final Result result1 : action.getResults()) {
+            final ResultType resultType = result1.getEffectiveResultType();
+            if (resultType != null &&
+                FreeMarkerStrutsResultContributor.FREEMARKER.equals(resultType.getName().getStringValue())) {
+              final PathReference reference = result1.getValue();
+              final PsiElement target = reference == null ? null : reference.resolve();
+              if (target != null &&
+                  (file.getManager().areElementsEquivalent(file, target) ||
+                   file.getManager().areElementsEquivalent(file.getOriginalFile(), target))) {
+                final PsiClassType actionType =
+                  JavaPsiFacade.getInstance(actionClass.getProject()).getElementFactory().createType(actionClass);
+                result.add(new FtlLightVariable("", action.getXmlTag(), FtlPsiType.wrap(actionType)));
+                return false; // stop after first match
               }
             }
           }
         }
+
+        return true;
       }
+    };
+
+    for (final StrutsModel model : StrutsManager.getInstance(file.getProject()).getAllModels(module)) {
+      model.processActions(processor);
     }
     return result;
   }
@@ -94,17 +116,26 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
                                            @NotNull @NonNls final String taglibUri,
                                            @NotNull @NonNls final String taglibPrefix) {
     final XmlFile xmlFile = JspManager.getInstance(module.getProject()).getTldFileByUri(taglibUri, module, null);
-    if (xmlFile != null) {
-      final XmlDocument document = xmlFile.getDocument();
-      if (document != null) {
-        final XmlNSDescriptor descriptor = (XmlNSDescriptor)document.getMetaData();
-        if (descriptor != null) {
-          PsiElement declaration = descriptor.getDeclaration();
-          if (declaration == null) declaration = xmlFile;
-          result.add(new FtlLightVariable(taglibPrefix, declaration, new FtlXmlNamespaceType(descriptor)));
-        }
-      }
+    if (xmlFile == null) {
+      return;
     }
+
+    final XmlDocument document = xmlFile.getDocument();
+    if (document == null) {
+      return;
+    }
+
+    final XmlNSDescriptor descriptor = (XmlNSDescriptor) document.getMetaData();
+    if (descriptor == null) {
+      return;
+    }
+
+    PsiElement declaration = descriptor.getDeclaration();
+    if (declaration == null) {
+      declaration = xmlFile;
+    }
+
+    result.add(new FtlLightVariable(taglibPrefix, declaration, new FtlXmlNamespaceType(descriptor)));
   }
 
 }
