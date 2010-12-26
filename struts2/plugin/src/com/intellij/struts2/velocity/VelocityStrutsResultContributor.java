@@ -13,44 +13,49 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.dom.struts.impl.path;
+package com.intellij.struts2.velocity;
 
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.paths.PathReference;
-import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.source.jsp.WebDirectoryUtil;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
-import com.intellij.util.Function;
+import com.intellij.struts2.dom.struts.impl.path.FileReferenceSetHelper;
+import com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor;
+import com.intellij.util.ConstantFunction;
+import com.intellij.velocity.Icons;
+import com.intellij.velocity.psi.files.VtlFileType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Provides paths to static web-resources.
+ * Provides path to {@code .vm}-files.
  *
+ * @author peter
  * @author Yann C&eacute;bron
  */
-public class DispatchPathResultContributor extends StrutsResultContributor {
+public class VelocityStrutsResultContributor extends StrutsResultContributor {
+
+  @NonNls
+  private static final String VELOCITY = "velocity";
 
   @Override
   protected boolean matchesResultType(@NotNull @NonNls final String resultType) {
-    return ResultTypeResolver.isDispatchType(resultType);
+    return VELOCITY.equals(resultType);
   }
 
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
-
-    final String packageNamespace = getNamespace(psiElement);
-    if (packageNamespace == null) {
-      return false; // XML error
+    final String namespace = getNamespace(psiElement);
+    if (namespace == null) {
+      return false;
     }
 
     final WebFacet webFacet = WebUtil.getWebFacet(psiElement);
@@ -58,40 +63,30 @@ public class DispatchPathResultContributor extends StrutsResultContributor {
       return false; // setup error, web-facet must be present in current or dependent module
     }
 
-    final FileReferenceSet fileReferenceSet = FileReferenceSet.createSet(psiElement, soft, false, true);
-    FileReferenceSetHelper.addWebDirectoryAndCurrentNamespaceAsRoots(psiElement, packageNamespace, webFacet, fileReferenceSet);
-    fileReferenceSet.setEmptyPathAllowed(false);
-    Collections.addAll(references, fileReferenceSet.getAllReferences());
-    return false;
+    final FileReferenceSet set = FileReferenceSetHelper.createRestrictedByFileType(psiElement, VtlFileType.INSTANCE);
+
+    FileReferenceSetHelper.addWebDirectoryAndCurrentNamespaceAsRoots(psiElement, namespace, webFacet, set);
+    set.setEmptyPathAllowed(false);
+    Collections.addAll(references, set.getAllReferences());
+    return true;
   }
 
-  @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
-    final String currentPackage = getNamespace(element);
-    if (currentPackage == null) {
+    if (getNamespace(element) == null) {
       return null;
     }
 
-    final WebFacet webFacet = WebUtil.getWebFacet(element);
-    if (webFacet == null) {
-      return null;
-    }
+    final ArrayList<PsiReference> list = new ArrayList<PsiReference>(5);
+    createReferences(element, list, true);
+    if (list.isEmpty()) return null;
 
-    final WebDirectoryUtil webDirectoryUtil = WebDirectoryUtil.getWebDirectoryUtil(element.getProject());
-    final PsiElement psiElement = webDirectoryUtil.findFileByPath(PathReference.trimPath(path), webFacet);
-    if (psiElement == null) {
-      return null;
-    }
+    final PsiElement target = list.get(list.size() - 1).resolve();
+    if (target == null) return null;
 
-    final Function<PathReference, Icon> iconFunction = new Function<PathReference, Icon>() {
-      public Icon fun(final PathReference webPath) {
-        return psiElement.getIcon(Iconable.ICON_FLAG_READ_STATUS);
-      }
-    };
-
-    return new PathReference(path, iconFunction) {
+    return new PathReference(path, new ConstantFunction<PathReference, Icon>(Icons.VTL_ICON)) {
+      @Override
       public PsiElement resolve() {
-        return psiElement;
+        return target;
       }
     };
   }

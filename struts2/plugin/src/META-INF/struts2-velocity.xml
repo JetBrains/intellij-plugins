@@ -20,6 +20,9 @@
   <extensions xmlns="com.intellij">
     <velocity.globalMacroProvider implementation="com.intellij.struts2.velocity.Struts2GlobalMacroProvider"/>
     <velocity.globalVariableProvider implementation="com.intellij.struts2.velocity.Struts2GlobalVariableProvider"/>
+
+    <struts2.resultContributor implementation="com.intellij.struts2.velocity.VelocityStrutsResultContributor"/>
+
   </extensions>
 
 </idea-plugin>

@@ -16,11 +16,13 @@
 package com.intellij.struts2.freemarker;
 
 import com.intellij.freemarker.FreeMarkerApplicationComponent;
+import com.intellij.freemarker.psi.files.FtlFileType;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
+import com.intellij.struts2.dom.struts.impl.path.FileReferenceSetHelper;
 import com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor;
 import com.intellij.util.ConstantFunction;
 import com.intellij.util.containers.ContainerUtil;
@@ -32,10 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Provides path to {@code .ftl}-files.
+ *
  * @author peter
  */
 public class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
 
+  @NonNls
   public static final String FREEMARKER = "freemarker";
 
   @Override
@@ -50,7 +55,7 @@ public class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
       return false;
     }
 
-    final FileReferenceSet set = FileReferenceSet.createSet(psiElement, soft, false, true);
+    final FileReferenceSet set = FileReferenceSetHelper.createRestrictedByFileType(psiElement, FtlFileType.INSTANCE);
     ContainerUtil.addAll(references, set.getAllReferences());
     return true;
   }
