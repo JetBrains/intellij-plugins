@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,12 +31,10 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ConstantFunction;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,54 +71,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
 
   @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
-    final StrutsModel model = StrutsManager.getInstance(element.getProject())
-      .getModelByFile((XmlFile) element.getContainingFile());
-    if (model == null) {
-      return null;
-    }
-
-    final String currentPackage = getNamespace(element);
-    if (currentPackage == null) {
-      return null;
-    }
-
-    final PsiElement actionTag = resolveActionPath(element, currentPackage, model);
-    if (actionTag == null) {
-      return null;
-    }
-
-    return new PathReference(path, new ConstantFunction<PathReference, Icon>(StrutsIcons.ACTION)) {
-      @Override
-      public PsiElement resolve() {
-        return actionTag;
-      }
-    };
-  }
-
-  @Nullable
-  private static PsiElement resolveActionPath(@NotNull final PsiElement psiElement,
-                                              @NotNull @NonNls final String currentPackage,
-                                              @NotNull final StrutsModel model) {
-    final XmlTagValue tagValue = ((XmlTag) psiElement).getValue();
-    final String path = PathReference.trimPath(tagValue.getText());
-
-    // use given namespace or current if none given
-    final int namespacePrefixIndex = path.lastIndexOf("/");
-    final String namespace;
-    if (namespacePrefixIndex != -1) {
-      namespace = path.substring(0, namespacePrefixIndex);
-    } else {
-      namespace = currentPackage;
-    }
-
-    final String strippedPath = path.substring(namespacePrefixIndex != -1 ? namespacePrefixIndex + 1 : 0);
-    final List<Action> actions = model.findActionsByName(strippedPath, namespace);
-    if (actions.size() == 1) {
-      final Action action = actions.get(0);
-      return action.getXmlTag();
-    }
-
-    return null;
+    return createDefaultPathReference(path, element, StrutsIcons.ACTION);
   }
 
 
@@ -140,7 +91,26 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
     }
 
     public PsiElement resolve() {
-      return resolveActionPath(psiElement, currentPackage, model);
+      final XmlTagValue tagValue = ((XmlTag) psiElement).getValue();
+      final String path = PathReference.trimPath(tagValue.getText());
+
+      // use given namespace or current if none given
+      final int namespacePrefixIndex = path.lastIndexOf("/");
+      final String namespace;
+      if (namespacePrefixIndex != -1) {
+        namespace = path.substring(0, namespacePrefixIndex);
+      } else {
+        namespace = currentPackage;
+      }
+
+      final String strippedPath = path.substring(namespacePrefixIndex != -1 ? namespacePrefixIndex + 1 : 0);
+      final List<Action> actions = model.findActionsByName(strippedPath, namespace);
+      if (actions.size() == 1) {
+        final Action action = actions.get(0);
+        return action.getXmlTag();
+      }
+
+      return null;
     }
 
     @NotNull

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,14 +23,11 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.struts2.dom.struts.impl.path.FileReferenceSetHelper;
 import com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor;
-import com.intellij.util.ConstantFunction;
 import com.intellij.velocity.Icons;
 import com.intellij.velocity.psi.files.VtlFileType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,23 +69,7 @@ public class VelocityStrutsResultContributor extends StrutsResultContributor {
   }
 
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
-    if (getNamespace(element) == null) {
-      return null;
-    }
-
-    final ArrayList<PsiReference> list = new ArrayList<PsiReference>(5);
-    createReferences(element, list, true);
-    if (list.isEmpty()) return null;
-
-    final PsiElement target = list.get(list.size() - 1).resolve();
-    if (target == null) return null;
-
-    return new PathReference(path, new ConstantFunction<PathReference, Icon>(Icons.VTL_ICON)) {
-      @Override
-      public PsiElement resolve() {
-        return target;
-      }
-    };
+    return createDefaultPathReference(path, element, Icons.VTL_ICON);
   }
 
 }

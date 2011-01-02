@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,16 +16,24 @@
 package com.intellij.struts2.dom.struts.impl.path;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.paths.PathReferenceProvider;
+import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.struts2.dom.struts.HasResultType;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.ConstantFunction;
+import com.intellij.util.Function;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
 
 /**
  * Provides references for {@code <result>/<global-result>}.
@@ -92,4 +100,44 @@ public abstract class StrutsResultContributor implements PathReferenceProvider {
     return strutsPackage.searchNamespace();
   }
 
+  /**
+   * Creates PathReference from resolve result.
+   *
+   * @param path       Path to resolve.
+   * @param element    Context element.
+   * @param staticIcon Static icon or {@code null} for resolve target's icon.
+   * @return PathReference or {@code null} if no references.
+   */
+  @Nullable
+  protected PathReference createDefaultPathReference(final String path,
+                                                     final PsiElement element,
+                                                     @Nullable final Icon staticIcon) {
+    final ArrayList<PsiReference> list = new ArrayList<PsiReference>(5);
+    createReferences(element, list, true);
+    if (list.isEmpty()) {
+      return null;
+    }
+
+    final PsiElement target = list.get(list.size() - 1).resolve();
+    if (target == null) {
+      return null;
+    }
+
+    final Function<PathReference, Icon> iconFunction;
+    if (staticIcon == null) {
+      iconFunction = new Function<PathReference, Icon>() {
+        public Icon fun(final PathReference webPath) {
+          return target.getIcon(Iconable.ICON_FLAG_READ_STATUS);
+        }
+      };
+    } else {
+      iconFunction = new ConstantFunction<PathReference, Icon>(staticIcon);
+    }
+
+    return new PathReference(path, iconFunction) {
+      public PsiElement resolve() {
+        return target;
+      }
+    };
+  }
 }

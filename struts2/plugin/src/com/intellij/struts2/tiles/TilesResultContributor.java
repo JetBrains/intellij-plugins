@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,13 +34,11 @@ import com.intellij.struts.TilesModel;
 import com.intellij.struts.dom.tiles.Definition;
 import com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ConstantFunction;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -75,24 +73,7 @@ public class TilesResultContributor extends StrutsResultContributor {
   }
 
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement psiElement) {
-    final String currentPackage = getNamespace(psiElement);
-    if (currentPackage == null) {
-      return null;
-    }
-
-    return new PathReference(path, new ConstantFunction<PathReference, Icon>(StrutsIcons.TILE_ICON)) {
-      @Override
-      public PsiElement resolve() {
-        for (final TilesModel tilesModel : getAllTilesModels(psiElement)) {
-          final XmlTag definition = tilesModel.getTileTag(path);
-          if (definition != null) {
-            return definition;
-          }
-        }
-
-        return null;
-      }
-    };
+    return createDefaultPathReference(path, psiElement, StrutsIcons.TILE_ICON);
   }
 
   private static List<TilesModel> getAllTilesModels(@NotNull final PsiElement psiElement) {
