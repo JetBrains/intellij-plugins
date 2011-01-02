@@ -16,7 +16,7 @@
 package com.intellij.struts2.tiles;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
-import com.intellij.codeInsight.lookup.LookupValueFactory;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
@@ -87,17 +87,17 @@ public class TilesResultContributor extends StrutsResultContributor {
   /**
    * Reference to a Tiles definition.
    */
-  private static class TilesDefinitionReference extends PsiReferenceBase<XmlElement> implements EmptyResolveMessageProvider {
+  private static class TilesDefinitionReference extends PsiReferenceBase<XmlTag> implements EmptyResolveMessageProvider {
 
     private final List<TilesModel> allTilesModels;
     private final String definitionName;
 
     private static final Function<TilesModel, Collection<? extends Definition>> DEFINITION_COLLECTOR =
-        new Function<TilesModel, Collection<? extends Definition>>() {
-          public Collection<? extends Definition> fun(final TilesModel tilesModel) {
-            return tilesModel.getDefinitions();
-          }
-        };
+      new Function<TilesModel, Collection<? extends Definition>>() {
+        public Collection<? extends Definition> fun(final TilesModel tilesModel) {
+          return tilesModel.getDefinitions();
+        }
+      };
 
     private TilesDefinitionReference(@NotNull final XmlTag xmlElement,
                                      @NotNull final List<TilesModel> allTilesModels) {
@@ -131,12 +131,14 @@ public class TilesResultContributor extends StrutsResultContributor {
         if (psiFile != null &&
             StringUtil.isNotEmpty(definitionName)) {
           //noinspection ConstantConditions
-          variants.add(LookupValueFactory.createLookupValueWithHint(definitionName,
-                                                                    StrutsIcons.TILE_ICON,
-                                                                    psiFile.getName()));
+          final LookupElementBuilder builder =
+            LookupElementBuilder.create(definition, definitionName)
+              .setIcon(StrutsIcons.TILE_ICON)
+              .setTypeText(psiFile.getName());
+          variants.add(builder);
         }
       }
-      
+
       return ArrayUtil.toObjectArray(variants);
     }
 
