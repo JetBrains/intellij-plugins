@@ -23,7 +23,6 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.xml.XmlTagValue;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -40,7 +39,7 @@ import java.util.List;
 
 /**
  * Provides paths to "/XYZ.action".
- *
+ * <p/>
  * TODO integrate in DispatchPathResultContributor
  *
  * @author Yann C&eacute;bron
@@ -71,7 +70,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       return false;
     }
 
-    final PsiReference actionReference = new ActionPathReference(psiElement,
+    final PsiReference actionReference = new ActionPathReference((XmlTag) psiElement,
                                                                  currentPackage,
                                                                  model,
                                                                  actionExtensions);
@@ -85,27 +84,24 @@ public class ActionPathResultContributor extends StrutsResultContributor {
     return createDefaultPathReference(path, element, StrutsIcons.ACTION);
   }
 
-  private static class ActionPathReference extends PsiReferenceBase<PsiElement> {
+  private static class ActionPathReference extends PsiReferenceBase<XmlTag> {
 
-    private final PsiElement psiElement;
     private final String currentPackage;
     private final StrutsModel model;
     private final List<String> actionExtensions;
 
-    private ActionPathReference(final PsiElement psiElement,
+    private ActionPathReference(final XmlTag psiElement,
                                 final String currentPackage,
                                 final StrutsModel model,
                                 @NotNull @NonNls final List<String> actionExtensions) {
       super(psiElement, true);
-      this.psiElement = psiElement;
       this.currentPackage = currentPackage;
       this.model = model;
       this.actionExtensions = actionExtensions;
     }
 
     public PsiElement resolve() {
-      final XmlTagValue tagValue = ((XmlTag) psiElement).getValue();
-      final String path = tagValue.getText();
+      final String path = getCanonicalText();
 
       int extensionIndex = -1;
       for (final String actionExtension : actionExtensions) {
