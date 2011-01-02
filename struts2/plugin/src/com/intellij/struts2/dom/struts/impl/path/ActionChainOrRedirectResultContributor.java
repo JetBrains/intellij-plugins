@@ -64,7 +64,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
       return false;
     }
 
-    final PsiReference chainReference = new ActionChainReference(psiElement, currentPackage, model);
+    final PsiReference chainReference = new ActionChainReference((XmlTag) psiElement, currentPackage, model);
     references.add(chainReference);
     return true;
   }
@@ -75,23 +75,21 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
   }
 
 
-  private static class ActionChainReference extends PsiReferenceBase<PsiElement> implements EmptyResolveMessageProvider {
+  private static class ActionChainReference extends PsiReferenceBase<XmlTag> implements EmptyResolveMessageProvider {
 
-    private final PsiElement psiElement;
     private final String currentPackage;
     private final StrutsModel model;
 
-    private ActionChainReference(final PsiElement psiElement,
+    private ActionChainReference(final XmlTag psiElement,
                                  final String currentPackage,
                                  final StrutsModel model) {
       super(psiElement, true);
-      this.psiElement = psiElement;
       this.currentPackage = currentPackage;
       this.model = model;
     }
 
     public PsiElement resolve() {
-      final XmlTagValue tagValue = ((XmlTag) psiElement).getValue();
+      final XmlTagValue tagValue = myElement.getValue();
       final String path = PathReference.trimPath(tagValue.getText());
 
       // use given namespace or current if none given
