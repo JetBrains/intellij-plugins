@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact version="2.2.1">
-    <item name="struts2-core.jar" version="2.2.1"
-         url="http://repo1.maven.org/maven2/org/apache/struts/struts2-core/2.2.1/struts2-core-2.2.1.jar">
+  <artifact version="2.2.1.1">
+    <item name="struts2-core.jar" version="2.2.1.1"
+         url="http://repo1.maven.org/maven2/org/apache/struts/struts2-core/2.2.1.1/struts2-core-2.2.1.1.jar">
       <required-class fqn="org.apache.struts2.StrutsConstants"/>
     </item>
     <item name="freemarker.jar" version="2.3.15" url="http://repo1.maven.org/maven2/org/freemarker/freemarker/2.3.15/freemarker-2.3.15.jar">
