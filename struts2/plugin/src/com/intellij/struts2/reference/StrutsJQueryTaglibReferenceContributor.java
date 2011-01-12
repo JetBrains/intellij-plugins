@@ -103,7 +103,7 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
     installErrorElementId(registrar,"a", "autocompleter", "checkboxlist", "dialog", "grid", "radio", "select", "submit", "tab", "textfield");
 
     // "disabled"
-    registerBoolean("disabled", registrar, ArrayUtil.mergeArrays(CSS_TAGS, REQUIRED_TAGS, String.class));
+    registerBoolean("disabled", registrar, ArrayUtil.mergeArrays(CSS_TAGS, REQUIRED_TAGS, ArrayUtil.STRING_ARRAY_FACTORY));
 
     // "validate"
     registerTags(new StaticStringValuesReferenceProvider(false, "true", "false", "only"),
@@ -118,7 +118,7 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
                    "submit", "textarea", "textfield", "tab");
 
     // "labelposition"
-    installLabelposition(registrar, ArrayUtil.mergeArrays(CSS_TAGS, REQUIRED_TAGS, String.class));
+    installLabelposition(registrar, ArrayUtil.mergeArrays(CSS_TAGS, REQUIRED_TAGS, ArrayUtil.STRING_ARRAY_FACTORY));
 
     // specific tags --------------------------------------------------------------
 
