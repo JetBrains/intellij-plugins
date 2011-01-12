@@ -55,7 +55,7 @@ public class ManifestHighlightingAnnotator implements Annotator {
     }
 
     private void annotate(PsiElement element, TextAttributesKey textAttributesKey, AnnotationHolder holder) {
-        holder.createInformationAnnotation(element, null).setTextAttributes(textAttributesKey);
+        holder.createWeakWarningAnnotation(element, null).setTextAttributes(textAttributesKey);
 
     }
 }
