@@ -239,7 +239,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   }
 
   protected static String[] mergeArrays(String[] array, @NonNls String... list) {
-    return ArrayUtil.mergeArrays(array, list, String.class);
+    return ArrayUtil.mergeArrays(array, list, ArrayUtil.STRING_ARRAY_FACTORY);
   }
 
   @Nullable
