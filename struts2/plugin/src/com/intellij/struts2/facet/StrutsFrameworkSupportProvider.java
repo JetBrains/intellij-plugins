@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,11 +40,14 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory;
+import com.intellij.struts2.facet.ui.StrutsConfigsSearcher;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
+import com.intellij.util.containers.MultiMap;
 import com.intellij.util.text.VersionComparatorUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
@@ -52,10 +55,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * "Add Framework" support.
@@ -111,7 +111,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
             try {
               final StrutsFacetConfiguration strutsFacetConfiguration = strutsFacet.getConfiguration();
 
-              // create empty struts.xml & fileset
+              // create empty struts.xml & fileset with all found struts-*.xml files (struts2.jar, plugins)
               final PsiElement psiElement = FileTemplateUtil.createFromTemplate(strutsXmlTemplate,
                                                                                 StrutsConstants.STRUTS_XML_DEFAULT_FILENAME,
                                                                                 null,
@@ -121,7 +121,18 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
                                                               StrutsFileSet.getUniqueName("Default File Set", empty),
                                                               strutsFacetConfiguration);
               fileSet.addFile(((XmlFile) psiElement).getVirtualFile());
+
+              final StrutsConfigsSearcher searcher = new StrutsConfigsSearcher(module);
+              searcher.search();
+              final MultiMap<VirtualFile,PsiFile> jarConfigFiles = searcher.getJars();
+              for (final VirtualFile virtualFile : jarConfigFiles.keySet()) {
+                final Collection<PsiFile> psiFiles = jarConfigFiles.get(virtualFile);
+                for (final PsiFile psiFile : psiFiles) {
+                  fileSet.addFile(psiFile.getVirtualFile());
+                }
+              }
               strutsFacetConfiguration.getFileSets().add(fileSet);
+
 
               // create filter & mapping in web.xml
               new WriteCommandAction.Simple(modifiableRootModel.getProject()) {
@@ -158,7 +169,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
               };
 
               Notifications.Bus.notify(new Notification("struts2", "Struts 2 Setup",
-                                                        "Struts 2 Facet has been created, please <a href=\"more\">setup fileset(s)</a>",
+                                                        "Struts 2 Facet has been created, please check <a href=\"more\">created fileset</a>",
                                                         NotificationType.INFORMATION, showFacetSettingsListener),
                                        module.getProject());
 
