@@ -16,6 +16,8 @@
 package jetbrains.communicator.p2p;
 
 import org.apache.log4j.Logger;
+import org.apache.xmlrpc.IdeaAwareWebServer;
+import org.apache.xmlrpc.IdeaAwareXmlRpcServer;
 import org.apache.xmlrpc.WebServer;
 
 import java.io.IOException;
@@ -35,9 +37,7 @@ public class P2PServer {
     try{
       // Trying to avoid dependency on IDEA code here:
       //noinspection UnnecessaryFullyQualifiedName
-      final com.intellij.peer.PeerFactory peerFactory = com.intellij.peer.PeerFactory.getInstance();
-      myWebServer = peerFactory.createWebServer(myXmlRpcPort, null,
-          peerFactory.createRpcServer());
+      myWebServer = new IdeaAwareWebServer(myXmlRpcPort, null, new IdeaAwareXmlRpcServer());
     }
     catch (Exception e) {
       LOG.debug(e.getMessage(), e);

@@ -5,7 +5,7 @@
   <p>
   <ul>
     <li>Exchange messages with your fellow developers right inside the IDE.
-    You can reach your collagues from your local network or use
+    You can reach your colleagues from your local network or use
     Jabber for distant communications.
     </li>
 
@@ -25,6 +25,7 @@
 
   <version>1.0</version>
   <vendor logo="/general/ijLogo.png" url="http://www.jetbrains.com">JetBrains</vendor>
+  <depends>com.intellij.modules.platform</depends>
 
   <extensions xmlns="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
