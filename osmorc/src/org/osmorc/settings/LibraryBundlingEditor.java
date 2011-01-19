@@ -3,6 +3,7 @@ package org.osmorc.settings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -29,6 +30,7 @@ public class LibraryBundlingEditor implements SearchableConfigurable {
     return "reference.settings.project.osgi.library.bundling";
   }
 
+  @NotNull
   public String getId() {
     return getHelpTopic();
   }

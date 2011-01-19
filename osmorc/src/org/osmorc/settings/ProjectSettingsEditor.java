@@ -4,6 +4,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -33,6 +34,7 @@ public class ProjectSettingsEditor implements SearchableConfigurable {
     return "reference.settings.project.osgi.project.settings";
   }
 
+  @NotNull
   public String getId() {
     return getHelpTopic();
   }
