@@ -27,7 +27,6 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
-import com.intellij.peer.PeerFactory;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.content.*;
@@ -93,7 +92,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
   }
 
   protected void createToolWindowComponent() {
-    myContentFactory = PeerFactory.getInstance().getContentFactory();
+    myContentFactory = ContentFactory.SERVICE.getInstance();
     TabbedPaneContentUI contentUI = new TabbedPaneContentUI(JTabbedPane.TOP);
     myContentManager = myContentFactory.createContentManager(contentUI, true, myProject);
     try {

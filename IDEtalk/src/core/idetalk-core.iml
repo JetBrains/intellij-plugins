@@ -31,7 +31,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="openapi" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -42,6 +41,8 @@
       </library>
     </orderEntry>
     <orderEntry type="library" exported="" name="xpp3-1.1.4-min" level="project" />
+    <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="platform-api" />
   </component>
 </module>
 
