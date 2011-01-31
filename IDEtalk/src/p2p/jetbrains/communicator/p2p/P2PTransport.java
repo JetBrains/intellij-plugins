@@ -153,8 +153,8 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   }
 
   public void dispose() {
-    myEventBroadcaster.removeListener(myUserAddedCallbackListener);
     try {
+      myEventBroadcaster.removeListener(myUserAddedCallbackListener);
       myUserMonitorThread.shutdown();
     }
     catch (Throwable e) {
