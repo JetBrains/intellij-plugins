@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.editorActions;
 
 import com.intellij.openapi.application.QueryExecutorBase;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -30,7 +31,7 @@ public class TapestryMethodReferenceSearcher extends QueryExecutorBase<PsiRefere
     if (searchScope instanceof GlobalSearchScope) {
       searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)searchScope, TmlFileType.INSTANCE);
     }
-    if (propName != null) {
+    if (!StringUtil.isEmpty(propName)) {
       parameters.getOptimizer().searchWord(propName, searchScope, UsageSearchContext.IN_FOREIGN_LANGUAGES, false, method);
     }
     parameters.getOptimizer().searchWord(method.getName(), searchScope, UsageSearchContext.IN_FOREIGN_LANGUAGES, false, method);
