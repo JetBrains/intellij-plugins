@@ -9,17 +9,9 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" exported="">
-      <library>
+      <library name="Smack">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/smack.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/smackx.jar!/" />
         </CLASSES>
         <JAVADOC />
