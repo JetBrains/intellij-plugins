@@ -16,7 +16,7 @@
     <orderEntry type="library" name="CGLIB" level="project" />
     <orderEntry type="module" module-name="testFramework-java" />
     <orderEntry type="library" name="TestNG" level="project" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../RefactorX/lib/xmlunit-1.1.jar!/" />
