@@ -149,8 +149,6 @@
               tofile="${tmp.dir.osmorc}/lib/org.eclipse.osgi.jar"/>
         <copy file="${module.osmorc.basedir}/lib/bnd-${bnd.version}.jar" tofile="${tmp.dir.osmorc}/lib/bnd-${bnd.version}.jar"/>
         <copy file="${module.osmorc.basedir}/lib/binding-2.0.6.jar" tofile="${tmp.dir.osmorc}/lib/binding-2.0.6.jar"/>
-        <copy file="${module.osmorc.basedir}/lib/commons-lang-2.4.jar"
-              tofile="${tmp.dir.osmorc}/lib/commons-lang-2.4.jar"/>
         <copy file="${module.osmorc.basedir}/lib/pax-runner-1.5.0-SNAPSHOT.jar"
               tofile="${tmp.dir.osmorc}/lib/pax-runner-1.5.0-SNAPSHOT.jar"/>
       <copy file="${module.osmorc.basedir}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar"/>

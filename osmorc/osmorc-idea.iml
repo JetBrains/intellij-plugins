@@ -9,7 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/hamcrest-library-1.1.jar!/" />
@@ -43,17 +43,7 @@
     <orderEntry type="module" module-name="dom-openapi" />
     <orderEntry type="module" module-name="maven" />
     <orderEntry type="module" module-name="idea" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/commons-lang-2.4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/commons-lang-2.4-sources.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="commons-lang" level="project" />
     <orderEntry type="library" name="Mocks" level="project" />
     <orderEntry type="module" module-name="testFramework-java" />
     <orderEntry type="module" module-name="compiler-openapi" />
@@ -83,34 +73,18 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library>
+      <library name="bundlor-1.0.0">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.ant-sources-1.0.0.RELEASE.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.blint-1.0.0.RELEASE.jar!/" />
           <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor-1.0.0.RELEASE.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.ant-sources-1.0.0.RELEASE.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.blint-sources-1.0.0.RELEASE.jar!/" />
           <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor-sources-1.0.0.RELEASE.jar!/" />
         </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor-sources-1.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
@@ -123,18 +97,11 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library>
+      <library name="springsource-asm-3.1.0">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/com.springsource.org.objectweb.asm-3.1.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/com.springsource.org.objectweb.asm.commons-3.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.org.objectweb.asm.tree-3.1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -144,15 +111,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/com.springsource.util.parser.manifest-2.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.org.objectweb.asm.tree-3.1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -183,26 +141,6 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.ant-sources-1.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.blint-1.0.0.RELEASE.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.blint-sources-1.0.0.RELEASE.jar!/" />
-        </SOURCES>
       </library>
     </orderEntry>
   </component>
