@@ -38,4 +38,6 @@ public interface ManifestHolderRegistry {
     List<Long> getLibraryBundleIDs();
 
     void clearLibraryManifestHolders();
+
+  boolean isEmpty();
 }

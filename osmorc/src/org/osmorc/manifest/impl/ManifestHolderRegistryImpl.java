@@ -84,7 +84,12 @@ public final class ManifestHolderRegistryImpl implements ManifestHolderRegistry 
         libraryManifestHolders.clear();
     }
 
+  @Override
+  public boolean isEmpty() {
+    return libraryManifestHolders.isEmpty();
+  }
 
-    private final Project project;
+
+  private final Project project;
     private final Map<Library, ManifestHolder> libraryManifestHolders;
 }
