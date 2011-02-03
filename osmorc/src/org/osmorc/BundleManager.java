@@ -25,14 +25,9 @@
 
 package org.osmorc;
 
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.BundleManifest;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * The bundle manager allows for queries over the bundles which are known in the current project.
@@ -42,6 +37,7 @@ import java.util.List;
  */
 public interface BundleManager {
 
+  @Nullable
   BundleManifest getBundleManifest(String bundleSymbolicName);
 
   @Nullable
@@ -49,34 +45,5 @@ public interface BundleManager {
 
   void addOrUpdateBundle(@NotNull Object bundle);
 
-  @Nullable
-  BundleDescription getBundleDescription(Object bundle);
-
-  Collection<Object> determineBundleDependencies(@NotNull Object bundle);
-
-  boolean isReexported(@NotNull Object reexportCandidate, @NotNull Object exporter);
-
   boolean reloadFrameworkInstanceLibraries(boolean onlyIfFrameworkInstanceSelectionChanged);
-
-  /**
-   * Returns a list of bundles which are hosts of the given fragment bundle.
-   *
-   * @param bundle a fragement bundle
-   * @return
-   */
-  @NotNull
-  Collection<Object> getHostBundles(@NotNull Object bundle);
-
-  List<BundleDescription> getResolvedRequires(@NotNull Object bundle);
-
-  List<ExportPackageDescription> getResolvedImports(@NotNull Object bundle);
-
-  /**
-   * Returns a display name of the given bundle.
-   *
-   * @param bundle a bundle object. Might be a {@link com.intellij.openapi.roots.libraries.Library} or a {@link com.intellij.openapi.module.Module}
-   * @return the display name of the bundle.
-   */
-  @NotNull
-  String getDisplayName(@NotNull Object bundle);
 }
