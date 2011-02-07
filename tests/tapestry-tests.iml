@@ -12,7 +12,7 @@
     <orderEntry type="module" module-name="tapestry-core" />
     <orderEntry type="library" name="Velocity" level="project" />
     <orderEntry type="library" name="JUnit3" level="project" />
-    <orderEntry type="library" name="Mocks" level="project" />
+    <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
     <orderEntry type="library" name="CGLIB" level="project" />
     <orderEntry type="module" module-name="testFramework-java" />
     <orderEntry type="library" name="TestNG" level="project" />
