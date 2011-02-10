@@ -45,7 +45,6 @@
     <orderEntry type="module" module-name="idea" />
     <orderEntry type="library" name="commons-lang" level="project" />
     <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
-    <orderEntry type="module" module-name="testFramework-java" />
     <orderEntry type="module" module-name="compiler-openapi" />
     <orderEntry type="module" module-name="execution-openapi" />
     <orderEntry type="module" module-name="execution-impl" />
@@ -58,7 +57,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="testFramework-java" />
+    <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
     <orderEntry type="module" module-name="compiler-openapi" />
     <orderEntry type="module" module-name="execution-openapi" />
     <orderEntry type="module" module-name="execution-impl" />
