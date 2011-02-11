@@ -403,14 +403,21 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     // split into name and path
     completeOutputPath = completeOutputPath.replace('\\', '/');
     int idx = completeOutputPath.lastIndexOf('/');
-    String path = completeOutputPath.substring(0, idx);
-    String name = completeOutputPath.substring(idx + 1);
-    if (outputPathType == SpecificOutputPath) {
-      myJarOutputPathChooser.setText(path);
-      myJarFileTextField.setText(name);
+    String path;
+    String name;
+    if (idx != -1) {
+      path = completeOutputPath.substring(0, idx);
+      name = completeOutputPath.substring(idx + 1);
     }
     else {
-      myJarFileTextField.setText(name);
+      path = "";
+      name = completeOutputPath;
+    }
+    myJarFileTextField.setText(name);
+    if (outputPathType == SpecificOutputPath) {
+      myJarOutputPathChooser.setText(path);
+    }
+    else {
       myJarOutputPathChooser.setText("");
     }
 
