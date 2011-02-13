@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,9 +16,12 @@
 package com.intellij.struts2.dom.validator;
 
 import com.intellij.struts2.StrutsConstants;
+import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.validator.config.ValidatorsConfig;
 import com.intellij.util.xml.DomFileDescription;
+
+import javax.swing.*;
 
 /**
  * <code>validators.xml</code> DOM-Model files.
@@ -35,6 +38,11 @@ public class ValidatorConfigDomFileDescription extends DomFileDescription<Valida
     registerNamespacePolicy(StrutsDomConstants.VALIDATOR_CONFIG_NAMESPACE_KEY,
                             StrutsConstants.VALIDATOR_CONFIG_DTD_URI,
                             StrutsConstants.VALIDATOR_CONFIG_DTD_ID);
+  }
+
+  @Override
+  public Icon getFileIcon(final int flags) {
+    return StrutsIcons.VALIDATION_CONFIG_FILE_ICON;
   }
 
 }

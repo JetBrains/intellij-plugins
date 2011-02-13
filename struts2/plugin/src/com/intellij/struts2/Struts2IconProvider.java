@@ -22,23 +22,17 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.PsiClassImplUtil;
-import com.intellij.psi.jsp.JspFile;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
-import com.intellij.struts2.dom.validator.Validators;
-import com.intellij.struts2.dom.validator.config.ValidatorsConfig;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.util.xml.DomManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 /**
- * Provides icons for Struts-related files. <br/>Original code posted by Sascha Weinreuter.
+ * Provides icons for Struts-related code. <br/>Original code posted by Sascha Weinreuter.
  *
  * @author Yann C&eacute;bron
  */
@@ -47,10 +41,7 @@ public class Struts2IconProvider extends IconProvider implements DumbAware {
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, final int flags) {
 
-    if (element instanceof JspFile) {
-      return null;
-    }
-    if (!(element instanceof PsiClass || element instanceof XmlFile)) {
+    if (!(element instanceof PsiClass)) {
       return null;
     }
 
@@ -63,26 +54,6 @@ public class Struts2IconProvider extends IconProvider implements DumbAware {
     // no icons when no facet present
     final StrutsFacet strutsFacet = StrutsFacet.getInstance(element);
     if (strutsFacet == null) {
-      return null;
-    }
-
-    // handle XML files --> fixed icons
-    if (element instanceof XmlFile) {
-      final XmlFile xmlFile = (XmlFile) element;
-      final DomManager domManager = DomManager.getDomManager(xmlFile.getProject());
-
-      if (domManager.getFileElement(xmlFile, StrutsRoot.class) != null) {
-        return StrutsIcons.STRUTS_CONFIG_FILE_ICON;
-      }
-
-      if (domManager.getFileElement(xmlFile, Validators.class) != null) {
-        return StrutsIcons.VALIDATION_CONFIG_FILE_ICON;
-      }
-
-      if (domManager.getFileElement(xmlFile, ValidatorsConfig.class) != null) {
-        return StrutsIcons.VALIDATION_CONFIG_FILE_ICON;
-      }
-
       return null;
     }
 

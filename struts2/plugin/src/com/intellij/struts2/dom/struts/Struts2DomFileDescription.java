@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,11 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.struts2.StrutsConstants;
+import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.util.xml.DomFileDescription;
+
+import javax.swing.*;
 
 /**
  * <code>struts.xml</code> DOM-Model files.
@@ -33,6 +36,11 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
   protected void initializeFileDescription() {
     registerNamespacePolicy(StrutsDomConstants.STRUTS_NAMESPACE_KEY,
                             StrutsConstants.STRUTS_DTDS);
+  }
+
+  @Override
+  public Icon getFileIcon(final int flags) {
+    return StrutsIcons.STRUTS_CONFIG_FILE_ICON;
   }
 
 }
