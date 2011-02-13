@@ -1,9 +1,11 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,7 +16,7 @@
 package com.intellij.struts2.reference.jsp;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
-import com.intellij.codeInsight.lookup.LookupValueFactory;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
@@ -164,10 +166,9 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
       for (final Action action : actionList) {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
-          final Object variant =
-              LookupValueFactory.createLookupValueWithHint(actionPath, StrutsIcons.ACTION,
-                                                           action.getNamespace());
-          variants.add(variant);
+          variants.add(LookupElementBuilder.create(actionPath)
+                         .setIcon(StrutsIcons.ACTION)
+                         .setTypeText(action.getNamespace()));
         }
       }
       return ArrayUtil.toObjectArray(variants);

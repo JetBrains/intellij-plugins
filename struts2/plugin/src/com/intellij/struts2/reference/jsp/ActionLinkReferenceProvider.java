@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,7 @@
 package com.intellij.struts2.reference.jsp;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
-import com.intellij.codeInsight.lookup.LookupValueFactory;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.javaee.web.CustomServletReferenceAdapter;
 import com.intellij.javaee.web.ServletMappingInfo;
 import com.intellij.openapi.module.ModuleUtil;
@@ -166,10 +166,9 @@ TODO not needed so far ?!
       for (final Action action : actionList) {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
-          final Object variant = LookupValueFactory.createLookupValueWithHint(actionPath + firstExtension,
-                                                                              StrutsIcons.ACTION,
-                                                                              action.getNamespace());
-          variants.add(variant);
+          variants.add(LookupElementBuilder.create(actionPath + firstExtension)
+            .setIcon(StrutsIcons.ACTION)
+            .setTypeText(action.getNamespace()));
         }
       }
       return ArrayUtil.toObjectArray(variants);
@@ -256,9 +255,9 @@ TODO not needed so far ?!
       return ContainerUtil.map2Array(allStrutsPackages, Object.class, new Function<StrutsPackage, Object>() {
         public Object fun(final StrutsPackage strutsPackage) {
           final String packageNamespace = strutsPackage.searchNamespace();
-          return LookupValueFactory.createLookupValueWithHint(
-              packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace,
-              StrutsIcons.PACKAGE, strutsPackage.getName().getStringValue());
+          return LookupElementBuilder.create(packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace)
+            .setIcon(StrutsIcons.PACKAGE)
+            .setTypeText(strutsPackage.getName().getStringValue());
         }
       });
     }

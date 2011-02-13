@@ -1,9 +1,11 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,7 +15,7 @@
 
 package com.intellij.struts2.reference.jsp;
 
-import com.intellij.codeInsight.lookup.LookupValueFactory;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -35,9 +37,9 @@ public class ThemeReferenceProvider extends PsiReferenceProvider {
 
   @NonNls
   private static final Object[] DEFAULT_THEMES = new Object[]{
-    LookupValueFactory.createLookupValue("simple", StrutsIcons.THEME),
-    LookupValueFactory.createLookupValue("xhtml", StrutsIcons.THEME),
-    LookupValueFactory.createLookupValue("ajax", StrutsIcons.THEME)
+    LookupElementBuilder.create("simple").setIcon(StrutsIcons.THEME),
+    LookupElementBuilder.create("xhtml").setIcon(StrutsIcons.THEME),
+    LookupElementBuilder.create("ajax").setIcon(StrutsIcons.THEME)
   };
 
   @NotNull

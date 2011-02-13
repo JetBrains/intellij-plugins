@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 package com.intellij.struts2.dom.params;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
-import com.intellij.codeInsight.lookup.LookupValueFactory;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.openapi.util.Iconable;
@@ -82,9 +82,10 @@ class ParamNameReference extends PsiReferenceBase<PsiElement>
       final PsiType propertyType = PropertyUtil.getPropertyType(member);
       assert propertyType != null;
 
-      final Object variant = LookupValueFactory.createLookupValueWithHint(propertyName,
-                                                                          member.getIcon(Iconable.ICON_FLAG_OPEN),
-                                                                          propertyType.getPresentableText());
+      final LookupElementBuilder variant =
+        LookupElementBuilder.create(propertyName)
+          .setIcon(member.getIcon(Iconable.ICON_FLAG_OPEN))
+          .setTypeText(propertyType.getPresentableText());
       variants[i++] = variant;
     }
 
