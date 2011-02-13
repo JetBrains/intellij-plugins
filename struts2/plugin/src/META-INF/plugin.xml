@@ -118,16 +118,6 @@
                    implementationClass="com.intellij.struts2.dom.struts.impl.UnknownHandlerRefConverterImpl"/>
 
     <typeName className="com.intellij.struts2.dom.struts.action.Action" name="Struts Action"/>
-    <typeName className="com.intellij.struts2.dom.struts.strutspackage.Interceptor" name="Interceptor"/>
-    <typeName className="com.intellij.struts2.dom.struts.strutspackage.InterceptorStack" name="Interceptor Stack"/>
-    <typeName className="com.intellij.struts2.dom.struts.strutspackage.ResultType" name="Result Type"/>
-    <typeName className="com.intellij.struts2.dom.struts.strutspackage.StrutsPackage" name="Struts Package"/>
-    <typeName className="com.intellij.struts2.dom.struts.impl.GlobalResultImpl" name="Global Result"/>
-
-    <typeIcon className="com.intellij.struts2.dom.struts.Bean" icon="/resources/icons/coffeebean.png"/>
-    <typeIcon className="com.intellij.struts2.dom.struts.constant.Constant" icon="/nodes/parameter.png"/>
-    <typeIcon className="com.intellij.struts2.dom.struts.Include" icon="/resources/icons/import1.png"/>
-    <typeIcon className="com.intellij.struts2.dom.struts.strutspackage.ResultType" icon="/resources/icons/presentation.png"/>
 
     <annotator language="XML" implementationClass="com.intellij.struts2.annotators.StrutsFileSetCheckingAnnotator"/>
     <compiler.inspectionValidator implementation="com.intellij.struts2.dom.inspection.Struts2ModelValidator"/>
@@ -178,13 +168,6 @@
 
     <dom.converter interfaceClass="com.intellij.struts2.dom.validator.config.ValidatorConfigResolveConverter"
                    implementationClass="com.intellij.struts2.dom.validator.impl.ValidatorConfigResolveConverterImpl"/>
-
-    <typeName className="com.intellij.struts2.dom.validator.config.ValidatorConfig" name="Validator"/>
-
-    <typeIcon className="com.intellij.struts2.dom.validator.Field" icon="/nodes/field.png"/>
-    <typeIcon className="com.intellij.struts2.dom.validator.FieldValidator" icon="/resources/icons/validation.png"/>
-    <typeIcon className="com.intellij.struts2.dom.validator.Message" icon="/resources/icons/message.png"/>
-    <typeIcon className="com.intellij.struts2.dom.validator.config.ValidatorConfig" icon="/resources/icons/validation.png"/>
 
     <compiler.inspectionValidator implementation="com.intellij.struts2.dom.inspection.ValidatorModelValidator"/>
 

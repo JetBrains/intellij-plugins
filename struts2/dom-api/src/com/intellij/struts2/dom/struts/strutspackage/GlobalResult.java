@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.openapi.paths.PathReference;
+import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.struts2.dom.struts.HasResultType;
 import com.intellij.struts2.dom.struts.action.ResultTypeResolvingConverter;
@@ -28,6 +29,7 @@ import com.intellij.util.xml.*;
  * @author Yann C&eacute;bron
  */
 @Convert(StrutsPathReferenceConverter.class)
+@Presentation(typeName = "Global Result", iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
 public interface GlobalResult extends HasResultType, ParamsElement, GenericDomValue<PathReference> {
 
   @NameValue

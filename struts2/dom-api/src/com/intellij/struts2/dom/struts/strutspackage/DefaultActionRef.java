@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,17 +15,16 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
+import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.struts.action.Action;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.Required;
-import com.intellij.util.xml.Scope;
+import com.intellij.util.xml.*;
 
 /**
  * <code>default-action-ref</code>
  *
  * @author Yann C&eacute;bron
  */
+@Presentation(typeName = "Default Action Reference", iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
 public interface DefaultActionRef extends DomElement {
 
   // only within current package

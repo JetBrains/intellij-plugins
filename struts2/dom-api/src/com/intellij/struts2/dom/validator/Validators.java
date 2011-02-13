@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@ package com.intellij.struts2.dom.validator;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.Namespace;
+import com.intellij.util.xml.Presentation;
 import com.intellij.util.xml.SubTagList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
+@Presentation(iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
 public interface Validators extends DomElement {
 
   @NonNls

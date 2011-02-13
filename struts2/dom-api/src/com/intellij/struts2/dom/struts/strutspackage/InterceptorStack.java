@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,8 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
+import com.intellij.struts2.dom.StrutsDomConstants;
+import com.intellij.util.xml.Presentation;
 import com.intellij.util.xml.SubTagList;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +27,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@Presentation(typeName = "Interceptor Stack", iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
 public interface InterceptorStack extends InterceptorOrStackBase {
 
   @SubTagList(value = "interceptor-ref")

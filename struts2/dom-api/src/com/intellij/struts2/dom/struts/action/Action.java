@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,7 @@ package com.intellij.struts2.dom.struts.action;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.dom.ExtendableClassConverter;
+import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorRef;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
@@ -33,6 +34,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@Presentation(typeName = "Struts Action", iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
 public interface Action extends ParamsElement {
 
   /**

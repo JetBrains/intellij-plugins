@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,5 +44,11 @@ public final class StrutsDomConstants {
    */
   @NonNls
   public static final String VALIDATOR_CONFIG_NAMESPACE_KEY = "validator config namespace";
+
+  /**
+   * Class for {@link com.intellij.util.xml.Presentation#iconProviderClass()}.
+   */
+  @NonNls
+  public static final String DOM_ICON_PROVIDER_CLASS = "com.intellij.struts2.Struts2DomIconProvider";
 
 }

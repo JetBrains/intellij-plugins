@@ -19,7 +19,6 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
-import com.intellij.struts2.dom.params.Param;
 import com.intellij.struts2.dom.struts.Include;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -35,7 +34,6 @@ import com.intellij.util.NullableFunction;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomUtil;
 import com.intellij.util.xml.ElementPresentationManager;
-import com.intellij.util.xml.TypeNameManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,7 +119,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     final TypedNameProviderRegistry nameProviderRegistry = new TypedNameProviderRegistry();
 
     // <struts>
-    ElementPresentationManager.registerIcon(StrutsRoot.class, StrutsIcons.STRUTS_CONFIG_FILE_ICON);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<StrutsRoot>(StrutsRoot.class) {
       protected String getDisplayName(final StrutsRoot strutsRoot) {
         return DomUtil.getFile(strutsRoot).getName();
@@ -130,7 +127,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
 
 
     // <exception-mapping>
-    ElementPresentationManager.registerIcon(ExceptionMapping.class, StrutsIcons.EXCEPTION_MAPPING);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<ExceptionMapping>(ExceptionMapping.class) {
       protected String getDisplayName(final ExceptionMapping exceptionMapping) {
         final PsiClass exceptionClass = exceptionMapping.getExceptionClass().getValue();
@@ -142,7 +138,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     });
 
     // global <exception-mapping>
-    ElementPresentationManager.registerIcon(GlobalExceptionMapping.class, StrutsIcons.GLOBAL_EXCEPTION_MAPPING);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<GlobalExceptionMapping>(GlobalExceptionMapping.class) {
       protected String getDisplayName(final GlobalExceptionMapping globalExceptionMapping) {
         final PsiClass exceptionClass = globalExceptionMapping.getExceptionClass().getValue();
@@ -159,7 +154,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
       }
     });
 
-    ElementPresentationManager.registerIcon(DefaultInterceptorRef.class, StrutsIcons.DEFAULT_INTERCEPTOR_REF);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<DefaultInterceptorRef>(DefaultInterceptorRef.class) {
       protected String getDisplayName(final DefaultInterceptorRef defaultInterceptorRef) {
         return defaultInterceptorRef.getName().getStringValue();
@@ -174,7 +168,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     });
 
     // <result>
-    ElementPresentationManager.registerIcon(Result.class, StrutsIcons.RESULT);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<Result>(Result.class) {
       protected String getDisplayName(final Result result) {
         final String resultName = result.getName().getStringValue();
@@ -183,8 +176,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     });
 
     // <global-result>
-    ElementPresentationManager.registerIcon(GlobalResult.class, StrutsIcons.GLOBAL_RESULT);
-    TypeNameManager.registerTypeName(GlobalResult.class, "global result");
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<GlobalResult>(GlobalResult.class) {
       protected String getDisplayName(final GlobalResult globalResult) {
         final String globalResultName = globalResult.getName().getStringValue();
@@ -193,7 +184,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     });
 
     // <default-action-ref>
-    ElementPresentationManager.registerIcon(DefaultActionRef.class, StrutsIcons.DEFAULT_ACTION_REF);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<DefaultActionRef>(DefaultActionRef.class) {
       protected String getDisplayName(final DefaultActionRef defaultActionRef) {
         return defaultActionRef.getName().getStringValue();
@@ -201,7 +191,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
     });
 
     // <default-class-ref>
-    ElementPresentationManager.registerIcon(DefaultClassRef.class, StrutsIcons.DEFAULT_CLASS_REF);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<DefaultClassRef>(DefaultClassRef.class) {
       protected String getDisplayName(final DefaultClassRef defaultClassRef) {
         return defaultClassRef.getDefaultClass().getStringValue();
@@ -210,18 +199,11 @@ public class StrutsApplicationComponent implements ApplicationComponent {
 
     // register central name provider
     ElementPresentationManager.registerNameProvider(nameProviderRegistry);
-
-    ElementPresentationManager.registerIcon(Action.class, StrutsIcons.ACTION);
-    ElementPresentationManager.registerIcon(Interceptor.class, StrutsIcons.INTERCEPTOR);
-    ElementPresentationManager.registerIcon(InterceptorStack.class, StrutsIcons.INTERCEPTOR_STACK);
-    ElementPresentationManager.registerIcon(Param.class, StrutsIcons.PARAM);
-    ElementPresentationManager.registerIcon(StrutsPackage.class, StrutsIcons.PACKAGE);
   }
 
   private static void registerValidationDomPresentation() {
     final TypedNameProviderRegistry nameProviderRegistry = new TypedNameProviderRegistry();
 
-    ElementPresentationManager.registerIcon(Validators.class, StrutsIcons.VALIDATION_CONFIG_FILE_ICON);
     nameProviderRegistry.addTypedNameProvider(new TypedNameProvider<Validators>(Validators.class) {
       protected String getDisplayName(final Validators validators) {
         return DomUtil.getFile(validators).getName();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,14 +15,13 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
-import com.intellij.util.xml.Convert;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.Required;
+import com.intellij.struts2.dom.StrutsDomConstants;
+import com.intellij.util.xml.*;
 
 /**
  * @author Yann C&eacute;bron
  */
+@Presentation(typeName = "Default Interceptor Reference", iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
 public interface DefaultInterceptorRef extends DomElement {
 
   @Required

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,16 +16,14 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.psi.PsiFile;
-import com.intellij.util.xml.Convert;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.Required;
+import com.intellij.util.xml.*;
 
 /**
  * <code>include</code>
  *
  * @author Yann C&eacute;bron
  */
+@Presentation(typeName = "Include", icon = "/resources/icons/import1.png")
 public interface Include extends DomElement {
 
   @Convert(IncludeFileResolvingConverter.class)
