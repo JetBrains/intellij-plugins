@@ -43,11 +43,6 @@ import java.util.Map;
 
 /**
  * Application-level support.
- * <p/>
- * <ul>
- * <li>StrutsFacet</li>
- * <li>DOM Icons/Presentation/Converters</li>
- * </ul>
  *
  * @author Yann C&eacute;bron
  */
