@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,29 +19,23 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
-import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.struts2.dom.params.Param;
 import com.intellij.struts2.dom.struts.Include;
-import com.intellij.struts2.dom.struts.IncludeFileResolvingConverter;
 import com.intellij.struts2.dom.struts.StrutsRoot;
-import com.intellij.struts2.dom.struts.UnknownHandlerRefConverter;
-import com.intellij.struts2.dom.struts.action.*;
-import com.intellij.struts2.dom.struts.constant.ConstantNameConverter;
-import com.intellij.struts2.dom.struts.constant.ConstantNameConverterImpl;
-import com.intellij.struts2.dom.struts.constant.ConstantValueConverter;
-import com.intellij.struts2.dom.struts.constant.ConstantValueConverterImpl;
-import com.intellij.struts2.dom.struts.impl.*;
-import com.intellij.struts2.dom.struts.impl.path.StrutsPathReferenceConverterImpl;
+import com.intellij.struts2.dom.struts.action.Action;
+import com.intellij.struts2.dom.struts.action.ExceptionMapping;
+import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.strutspackage.*;
 import com.intellij.struts2.dom.validator.Field;
 import com.intellij.struts2.dom.validator.FieldValidator;
 import com.intellij.struts2.dom.validator.Message;
 import com.intellij.struts2.dom.validator.Validators;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
-import com.intellij.struts2.dom.validator.config.ValidatorConfigResolveConverter;
-import com.intellij.struts2.dom.validator.impl.ValidatorConfigResolveConverterImpl;
 import com.intellij.util.NullableFunction;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.DomUtil;
+import com.intellij.util.xml.ElementPresentationManager;
+import com.intellij.util.xml.TypeNameManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,32 +59,6 @@ public class StrutsApplicationComponent implements ApplicationComponent {
   @NotNull
   public String getComponentName() {
     return "Struts2ApplicationComponent";
-  }
-
-  public StrutsApplicationComponent(final ConverterManager converterManager) {
-    converterManager.registerConverterImplementation(ConstantNameConverter.class,
-                                                     new ConstantNameConverterImpl());
-    converterManager.registerConverterImplementation(ConstantValueConverter.class,
-                                                     new ConstantValueConverterImpl());
-    converterManager.registerConverterImplementation(ExtendableClassConverter.class,
-                                                     new ExtendableClassConverterImpl());
-    converterManager.registerConverterImplementation(StrutsPackageExtendsResolveConverter.class,
-                                                     new StrutsPackageExtendsResolveConverterImpl());
-    converterManager.registerConverterImplementation(IncludeFileResolvingConverter.class,
-                                                     new IncludeFileResolvingConverterImpl());
-    converterManager.registerConverterImplementation(ResultTypeResolvingConverter.class,
-                                                     new ResultTypeResolvingConverterImpl());
-    converterManager.registerConverterImplementation(InterceptorRefResolveConverter.class,
-                                                     new InterceptorRefResolveConverterImpl());
-    converterManager.registerConverterImplementation(DefaultInterceptorRefResolveConverter.class,
-                                                     new DefaultInterceptorRefResolveConverterImpl());
-    converterManager.registerConverterImplementation(StrutsPathReferenceConverter.class,
-                                                     new StrutsPathReferenceConverterImpl());
-    converterManager.registerConverterImplementation(UnknownHandlerRefConverter.class,
-                                                     new UnknownHandlerRefConverterImpl());
-
-    converterManager.registerConverterImplementation(ValidatorConfigResolveConverter.class,
-                                                     new ValidatorConfigResolveConverterImpl());
   }
 
   public void initComponent() {

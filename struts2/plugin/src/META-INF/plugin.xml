@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ Copyright 2010 The authors
+  ~ Copyright 2011 The authors
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
@@ -96,6 +96,27 @@
     <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.StrutsPackage"
                         implementationClass="com.intellij.struts2.dom.struts.impl.StrutsPackageImpl"/>
 
+    <dom.converter interfaceClass="com.intellij.struts2.dom.struts.constant.ConstantNameConverter"
+                   implementationClass="com.intellij.struts2.dom.struts.constant.ConstantNameConverterImpl"/>
+    <dom.converter interfaceClass="com.intellij.struts2.dom.struts.constant.ConstantValueConverter"
+                   implementationClass="com.intellij.struts2.dom.struts.constant.ConstantValueConverterImpl"/>
+    <dom.converter interfaceClass="com.intellij.struts2.dom.ExtendableClassConverter"
+                   implementationClass="com.intellij.struts2.dom.struts.impl.ExtendableClassConverterImpl"/>
+    <dom.converter interfaceClass="com.intellij.struts2.dom.struts.strutspackage.StrutsPackageExtendsResolveConverter"
+                   implementationClass="com.intellij.struts2.dom.struts.impl.StrutsPackageExtendsResolveConverterImpl"/>
+    <dom.converter interfaceClass="com.intellij.struts2.dom.struts.IncludeFileResolvingConverter"
+                   implementationClass="com.intellij.struts2.dom.struts.impl.IncludeFileResolvingConverterImpl"/>
+    <dom.converter interfaceClass="com.intellij.struts2.dom.struts.action.ResultTypeResolvingConverter"
+                   implementationClass="com.intellij.struts2.dom.struts.impl.ResultTypeResolvingConverterImpl"/>
+    <dom.converter interfaceClass="com.intellij.struts2.dom.struts.strutspackage.InterceptorRefResolveConverter"
+                   implementationClass="com.intellij.struts2.dom.struts.impl.InterceptorRefResolveConverterImpl"/>
+    <dom.converter interfaceClass="com.intellij.struts2.dom.struts.strutspackage.DefaultInterceptorRefResolveConverter"
+                   implementationClass="com.intellij.struts2.dom.struts.impl.DefaultInterceptorRefResolveConverterImpl"/>
+    <dom.converter interfaceClass="com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter"
+                   implementationClass="com.intellij.struts2.dom.struts.impl.path.StrutsPathReferenceConverterImpl"/>
+    <dom.converter interfaceClass="com.intellij.struts2.dom.struts.UnknownHandlerRefConverter"
+                   implementationClass="com.intellij.struts2.dom.struts.impl.UnknownHandlerRefConverterImpl"/>
+
     <typeName className="com.intellij.struts2.dom.struts.action.Action" name="Struts Action"/>
     <typeName className="com.intellij.struts2.dom.struts.strutspackage.Interceptor" name="Interceptor"/>
     <typeName className="com.intellij.struts2.dom.struts.strutspackage.InterceptorStack" name="Interceptor Stack"/>
@@ -146,6 +167,7 @@
     <!-- Struts-JAM -->
     <semContributor implementation="com.intellij.struts2.model.jam.StrutsSemContributor"/>
 
+
     <!-- validation.xml/validator-config.xml -->
     <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorDomFileDescription"/>
 
@@ -153,6 +175,9 @@
                         implementationClass="com.intellij.struts2.dom.validator.impl.FieldValidatorImpl"/>
     <dom.implementation interfaceClass="com.intellij.struts2.dom.validator.Validator"
                         implementationClass="com.intellij.struts2.dom.validator.impl.ValidatorImpl"/>
+
+    <dom.converter interfaceClass="com.intellij.struts2.dom.validator.config.ValidatorConfigResolveConverter"
+                   implementationClass="com.intellij.struts2.dom.validator.impl.ValidatorConfigResolveConverterImpl"/>
 
     <typeName className="com.intellij.struts2.dom.validator.config.ValidatorConfig" name="Validator"/>
 
