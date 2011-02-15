@@ -168,7 +168,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
                 }
               };
 
-              Notifications.Bus.notify(new Notification("struts2", "Struts 2 Setup",
+              Notifications.Bus.notify(new Notification("Struts 2", "Struts 2 Setup",
                                                         "Struts 2 Facet has been created, please check <a href=\"more\">created fileset</a>",
                                                         NotificationType.INFORMATION, showFacetSettingsListener),
                                        module.getProject());
