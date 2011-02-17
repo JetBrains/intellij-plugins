@@ -4,6 +4,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.*;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.graph.Graph;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NonNls;
@@ -112,6 +113,6 @@ public class ModuleManagerMock extends ModuleManager {
     @Override
     @Nullable
     public String[] getModuleGroupPath(@NotNull Module module) {
-        return new String[0];
+      return ArrayUtil.EMPTY_STRING_ARRAY;
     }
 }
