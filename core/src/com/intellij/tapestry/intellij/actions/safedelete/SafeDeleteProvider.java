@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.newvfs.impl.VirtualFileImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.refactoring.RefactoringFactory;
 import com.intellij.refactoring.SafeDeleteRefactoring;
 import com.intellij.tapestry.core.TapestryProject;
@@ -97,7 +98,8 @@ public class SafeDeleteProvider implements DeleteProvider {
                 }
             }
         }
-        safeDeleteRefactoring = RefactoringFactory.getInstance(project).createSafeDelete(totalElementsToDelete.toArray(new PsiElement[0]));
+        safeDeleteRefactoring = RefactoringFactory.getInstance(project).createSafeDelete(
+          PsiUtilBase.toPsiElementArray(totalElementsToDelete));
         safeDeleteRefactoring.setPreviewUsages(true);
         safeDeleteRefactoring.run();
     }
