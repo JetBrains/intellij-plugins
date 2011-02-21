@@ -104,9 +104,7 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
           }
 
           String jarFileName = module.getName();
-          jarFileName = jarFileName.replaceAll("[\\s]", "_");
-          String jarFilePath = new File(jarFileName + ".jar")
-            .getAbsolutePath().replace('\\', '/');
+          jarFileName = jarFileName.replaceAll("[\\s]", "_") + ".jar";
           // by default put stuff into the compiler output path.
           OsmorcFacetConfiguration.OutputPathType outputPathType = OsmorcFacetConfiguration.OutputPathType.CompilerOutputPath;
           final ProjectSettings projectSettings = ModuleServiceManager.getService(module, ProjectSettings.class);
@@ -116,7 +114,7 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
               outputPathType = OsmorcFacetConfiguration.OutputPathType.OsgiOutputPath;
             }
           }
-          configuration.setJarFileLocation(jarFilePath, outputPathType);
+          configuration.setJarFileLocation(jarFileName, outputPathType);
         }
       });
     }
