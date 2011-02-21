@@ -53,89 +53,91 @@ import java.util.Map;
  */
 public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType> {
 
-    private final Logger logger = Logger.getInstance("#org.osmorc.facet.maven.OsmorcFacetImporter");
+  private final Logger logger = Logger.getInstance("#org.osmorc.facet.maven.OsmorcFacetImporter");
 
-    public OsmorcFacetImporter() {
-        super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.getInstance(), "OSGi");
-    }
+  public OsmorcFacetImporter() {
+    super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.getInstance(), "OSGi");
+  }
 
-    public boolean isApplicable(MavenProject mavenProjectModel) {
-        MavenPlugin p = mavenProjectModel.findPlugin(myPluginGroupID, myPluginArtifactID);
-        // fixes: IDEA-56021
-        String packaging = mavenProjectModel.getPackaging();
-        return p != null && packaging != null && "bundle".equals(packaging);
-    }
+  public boolean isApplicable(MavenProject mavenProjectModel) {
+    MavenPlugin p = mavenProjectModel.findPlugin(myPluginGroupID, myPluginArtifactID);
+    // fixes: IDEA-56021
+    String packaging = mavenProjectModel.getPackaging();
+    return p != null && packaging != null && "bundle".equals(packaging);
+  }
 
   protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel) {
 
-    }
+  }
 
-    protected void reimportFacet(MavenModifiableModelsProvider modelsProvider, Module module,
-                                 MavenRootModelAdapter mavenRootModelAdapter, OsmorcFacet osmorcFacet,
-                                 MavenProjectsTree mavenProjectsTree, MavenProject mavenProject,
-                                 MavenProjectChanges changes, Map<MavenProject, String> mavenProjectStringMap,
-                                 List<MavenProjectsProcessorTask> mavenProjectsProcessorPostConfigurationTasks) {
+  protected void reimportFacet(MavenModifiableModelsProvider modelsProvider, Module module,
+                               MavenRootModelAdapter mavenRootModelAdapter, OsmorcFacet osmorcFacet,
+                               MavenProjectsTree mavenProjectsTree, MavenProject mavenProject,
+                               MavenProjectChanges changes, Map<MavenProject, String> mavenProjectStringMap,
+                               List<MavenProjectsProcessorTask> mavenProjectsProcessorPostConfigurationTasks) {
 
-        OsmorcFacetConfiguration conf = osmorcFacet.getConfiguration();
-        MavenPlugin p = mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID);
-        // TODO: check if there is a manifest, in which case use this manifest!
+    OsmorcFacetConfiguration conf = osmorcFacet.getConfiguration();
+    MavenPlugin p = mavenProject.findPlugin(myPluginGroupID, myPluginArtifactID);
+    // TODO: check if there is a manifest, in which case use this manifest!
 
-        // first off, we get the defaults, that is
-        // Symbolic name == groupId + "." + artifactId
-        // TODO: we should use DefaultMaven2OsgiConverter to do this, so we get the same results as the plugin would get
-        MavenId id = mavenProject.getMavenId();
-        conf.setBundleSymbolicName(id.getGroupId() + "." + id.getArtifactId());
-        // version == project version
-        conf.setBundleVersion(id.getVersion());
+    // first off, we get the defaults, that is
+    // Symbolic name == groupId + "." + artifactId
+    // TODO: we should use DefaultMaven2OsgiConverter to do this, so we get the same results as the plugin would get
+    MavenId id = mavenProject.getMavenId();
+    conf.setBundleSymbolicName(id.getGroupId() + "." + id.getArtifactId());
+    // version == project version
+    conf.setBundleVersion(id.getVersion());
 
-        if (p != null) {
-            logger.debug("Plugin found.");
+    if (p != null) {
+      logger.debug("Plugin found.");
 
-            // Check if there are any overrides set up in the maven plugin settings
-            setConfigProperty(mavenProject, conf, "bundleSymbolicName",
-                    "instructions." + Constants.BUNDLE_SYMBOLICNAME);
-            setConfigProperty(mavenProject, conf, "bundleVersion", "instructions." + Constants.BUNDLE_VERSION);
-            setConfigProperty(mavenProject, conf, "bundleActivator", "instructions." + Constants.BUNDLE_ACTIVATOR);
+      // Check if there are any overrides set up in the maven plugin settings
+      setConfigProperty(mavenProject, conf, "bundleSymbolicName",
+                        "instructions." + Constants.BUNDLE_SYMBOLICNAME);
+      setConfigProperty(mavenProject, conf, "bundleVersion", "instructions." + Constants.BUNDLE_VERSION);
+      setConfigProperty(mavenProject, conf, "bundleActivator", "instructions." + Constants.BUNDLE_ACTIVATOR);
 
-            // now find any additional properties that might have been set up:
-            Element instructionsNode = getConfig(mavenProject, "instructions");
-            // Fix for IDEADEV-38685, NPE when the element is not set.
-            if (instructionsNode != null) {
-                Map<String, String> props = new HashMap<String, String>();
-                @SuppressWarnings({"unchecked"})
-                List<Element> children = instructionsNode.getChildren();
-                for (Element child : children) {
-                    String name = child.getName();
-                    String value = child.getValue();
-                    if (value != null && !"".equals(value) && !Constants.BUNDLE_SYMBOLICNAME.equals(name) &&
-                            !Constants.BUNDLE_VERSION.equals(name) && !Constants.BUNDLE_ACTIVATOR.equals(name)) {
-                        // ok its an additional setting:
-                        props.put(name, value);
-                    }
-                }
-
-                // merge it with the existing settings
-                conf.importAdditionalProperties(props, false);
-            }
+      // now find any additional properties that might have been set up:
+      Element instructionsNode = getConfig(mavenProject, "instructions");
+      // Fix for IDEADEV-38685, NPE when the element is not set.
+      if (instructionsNode != null) {
+        Map<String, String> props = new HashMap<String, String>();
+        @SuppressWarnings({"unchecked"})
+        List<Element> children = instructionsNode.getChildren();
+        for (Element child : children) {
+          String name = child.getName();
+          String value = child.getValue();
+          if (value != null && !"".equals(value) && !Constants.BUNDLE_SYMBOLICNAME.equals(name) &&
+              !Constants.BUNDLE_VERSION.equals(name) && !Constants.BUNDLE_ACTIVATOR.equals(name)) {
+            // ok its an additional setting:
+            props.put(name, value);
+          }
         }
-    }
 
-    private void setConfigProperty(MavenProject mavenProjectModel, OsmorcFacetConfiguration conf,
-                                   String confProperty, String mavenConfProperty) {
-        String value = findConfigValue(mavenProjectModel, mavenConfProperty);
-        if (value != null && !"".equals(value)) {
-            try {
-                BeanUtils.setValue(conf, BeanUtils.getPropertyDescriptor(OsmorcFacetConfiguration.class, confProperty),
-                        value);
-            }
-            catch (Exception e) {
-                logger.error("Problem when setting property", e);
-            }
-        }
+        // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
+        conf.importAdditionalProperties(props, true);
+      }
     }
+  }
 
-    @Override
-    public void getSupportedDependencyTypes(Collection<String> result, SupportedRequestType type) {
-        result.add("bundle");
+  private void setConfigProperty(MavenProject mavenProjectModel, OsmorcFacetConfiguration conf,
+                                 String confProperty, String mavenConfProperty) {
+    String value = findConfigValue(mavenProjectModel, mavenConfProperty);
+    // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
+    if (value == null) {
+      value = "";
     }
+    try {
+      BeanUtils.setValue(conf, BeanUtils.getPropertyDescriptor(OsmorcFacetConfiguration.class, confProperty),
+                         value);
+    }
+    catch (Exception e) {
+      logger.error("Problem when setting property", e);
+    }
+  }
+
+  @Override
+  public void getSupportedDependencyTypes(Collection<String> result, SupportedRequestType type) {
+    result.add("bundle");
+  }
 }
