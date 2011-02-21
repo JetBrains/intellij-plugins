@@ -101,7 +101,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   public FacetEditorTab[] createEditorTabs(final FacetEditorContext editorContext,
                                            final FacetValidatorsManager validatorsManager) {
     return new FacetEditorTab[]{new OsmorcFacetGeneralEditorTab(editorContext),
-      new OsmorcFacetJAREditorTab(editorContext), new OsmorcFacetManifestGenerationEditorTab(editorContext)};
+      new OsmorcFacetJAREditorTab(editorContext, validatorsManager), new OsmorcFacetManifestGenerationEditorTab(editorContext)};
   }
 
   public void readExternal(Element element) throws InvalidDataException {
