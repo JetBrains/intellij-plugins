@@ -27,6 +27,7 @@ package org.osmorc.facet.ui;
 
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
+import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
@@ -93,10 +94,12 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private JPanel myAdditionalJarContentsPanel;
   private boolean myModified;
   private final FacetEditorContext myEditorContext;
+  private FacetValidatorsManager myValidatorsManager;
   private final AdditionalJARContentsTableModel myAdditionalJARContentsTableModel;
 
-  public OsmorcFacetJAREditorTab(FacetEditorContext editorContext) {
+  public OsmorcFacetJAREditorTab(FacetEditorContext editorContext, FacetValidatorsManager validatorsManager) {
     myEditorContext = editorContext;
+    myValidatorsManager = validatorsManager;
     final Project project = editorContext.getProject();
 
     myIgnoreFilePatternTextField = new EditorTextField("", project, FileTypes.PLAIN_TEXT);
@@ -196,6 +199,8 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
 
     myEditButton.setEnabled(false);
     myRemoveButton.setEnabled(false);
+
+    myValidatorsManager.registerValidator(new OsmorcFacetJarEditorValidator(myEditorContext, this));
   }
 
   private void onEditAdditionalJARContent() {
@@ -295,6 +300,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     myAlwaysRebuildBundleJARCheckBox.setEnabled(!useExternalTool);
     myAdditionalJarContentsPanel.setEnabled(!useExternalTool);
     myFileIgnorePatternLabel.setEnabled(!useExternalTool);
+    myValidatorsManager.validate();
     if (myPlaceInThisPathRadioButton.isSelected() && myJarOutputPathChooser.getText().trim().length()==0) {
      myErrorText.setError("Please select an output path");
     }
@@ -303,8 +309,9 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     }
   }
 
-  private void onOutputPathSelect() {
-    String currentFile = myJarOutputPathChooser.getText();
+
+  void onOutputPathSelect() {
+    String currentFile = getSelectedOutputPath();
     VirtualFile moduleCompilerOutputPath = CompilerModuleExtension.getInstance(myEditorContext.getModule()).getCompilerOutputPath();
 
     // okay there is some strange thing going on here. The method getCompilerOutputPath() returns null
@@ -364,18 +371,15 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     return myModified;
   }
 
+
   public void apply() {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
-    String fileLocation = myJarOutputPathChooser.getText();
+    String fileLocation = getSelectedOutputPath();
     fileLocation = fileLocation.replace('\\', '/');
     String jarFileName = myJarFileTextField.getText();
 
 
-    OsmorcFacetConfiguration.OutputPathType pathType = myPlaceInProjectWideRadioButton.isSelected()
-                                                       ? OsgiOutputPath
-                                                       : myPlaceInCompilerOutputPathRadioButton.isSelected()
-                                                         ? CompilerOutputPath
-                                                         : SpecificOutputPath;
+    OsmorcFacetConfiguration.OutputPathType pathType = getSelectedOutputPathType();
     // Build a complete path if the user wants to put the file into some specific path.
     if (pathType == SpecificOutputPath) {
       String completeOutputPath = fileLocation + "/" + jarFileName;
@@ -390,6 +394,18 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
 
     configuration.setAdditionalJARContents(myAdditionalJARContentsTableModel.getAdditionalContents());
     myModified = false;
+  }
+
+  String getSelectedOutputPath() {
+    return myJarOutputPathChooser.getText();
+  }
+
+  OsmorcFacetConfiguration.OutputPathType getSelectedOutputPathType() {
+    return myPlaceInProjectWideRadioButton.isSelected()
+                                                       ? OsgiOutputPath
+                                                       : myPlaceInCompilerOutputPathRadioButton.isSelected()
+                                                         ? CompilerOutputPath
+                                                         : SpecificOutputPath;
   }
 
   public void reset() {
@@ -425,6 +441,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   public void onTabEntering() {
     super.onTabEntering();
     updateGui();
+    myValidatorsManager.validate();
   }
 
   public void disposeUIResources() {
