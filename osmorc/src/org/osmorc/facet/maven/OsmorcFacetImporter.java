@@ -114,10 +114,34 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
           }
         }
 
+        // check if bundle name exists, if not compute it (IDEA-63244)
+        if ( !props.containsKey(Constants.BUNDLE_NAME)) {
+          props.put(Constants.BUNDLE_NAME, computeBundleName(mavenProject));
+        }
+
         // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
         conf.importAdditionalProperties(props, true);
       }
     }
+  }
+
+  /**
+   * Computes the Bundle-Name value from the data given in the maven project.
+   * @param mavenProject the maven project
+   * @return the bundle's human-readable name
+   */
+  @NotNull
+  private String computeBundleName(MavenProject mavenProject) {
+    String bundleName = findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_NAME);
+    if ( bundleName == null || bundleName.length() == 0) {
+      String mavenProjectName = mavenProject.getName();
+      if ( mavenProjectName != null ) {
+        return  mavenProjectName;
+      }
+      // when no name is set, use the symbolic name
+      return computeSymbolicName(mavenProject);
+    }
+    return bundleName;
   }
 
   /**
