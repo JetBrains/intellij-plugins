@@ -29,6 +29,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.jgoodies.binding.beans.BeanUtils;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.importing.FacetImporter;
 import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
@@ -92,8 +93,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
       logger.debug("Plugin found.");
 
       // Check if there are any overrides set up in the maven plugin settings
-      setConfigProperty(mavenProject, conf, "bundleSymbolicName",
-                        "instructions." + Constants.BUNDLE_SYMBOLICNAME);
+      conf.setBundleSymbolicName(computeSymbolicName(mavenProject)); // IDEA-63243
       setConfigProperty(mavenProject, conf, "bundleVersion", "instructions." + Constants.BUNDLE_VERSION);
       setConfigProperty(mavenProject, conf, "bundleActivator", "instructions." + Constants.BUNDLE_ACTIVATOR);
 
@@ -117,6 +117,45 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
         conf.importAdditionalProperties(props, true);
       }
+    }
+  }
+
+  /**
+   * Computes the Bundle-SymbolicName value from the data given in the maven project.
+   * @param mavenProject the maven project
+   * @return the bundle symbolic name.
+   */
+  @NotNull
+  private String computeSymbolicName(MavenProject mavenProject) {
+
+    String bundleSymbolicName = findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_SYMBOLICNAME);
+    // if it's not set compute it
+    if (bundleSymbolicName == null || bundleSymbolicName.length() == 0) {
+      // Get the symbolic name as groupId + "." + artifactId, with the following exceptions:
+
+      MavenId mavenId = mavenProject.getMavenId();
+      String groupId = mavenId.getGroupId();
+      String artifactId = mavenId.getArtifactId();
+      if (groupId == null || artifactId == null) {
+        return "";
+      }
+
+      String lastSectionOfGroupId = groupId.substring(groupId.lastIndexOf(".") + 1);
+      // if artifactId is equal to last section of groupId then groupId is returned. eg. org.apache.maven:maven -> org.apache.maven
+      if (lastSectionOfGroupId.endsWith(artifactId)) {
+        return groupId;
+      }
+
+      // if artifactId starts with last section of groupId that portion is removed. eg. org.apache.maven:maven-core -> org.apache.maven.core "
+      String doubledNamePart = lastSectionOfGroupId + "-";
+      if (artifactId.startsWith(doubledNamePart) && artifactId.length() > doubledNamePart.length()) {
+        return groupId + "." + artifactId.substring(doubledNamePart.length());
+      }
+
+      return groupId + "." + artifactId;
+    }
+    else {
+      return bundleSymbolicName;
     }
   }
 
