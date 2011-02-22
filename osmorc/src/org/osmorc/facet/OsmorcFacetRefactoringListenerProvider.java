@@ -28,6 +28,7 @@ package org.osmorc.facet;
 import com.intellij.openapi.application.Application;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.listeners.RefactoringElementListenerProvider;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +64,7 @@ public class OsmorcFacetRefactoringListenerProvider implements RefactoringElemen
         return null;
     }
 
-    private static final class ActivatorClassRefactoringListener implements RefactoringElementListener {
+    private static final class ActivatorClassRefactoringListener extends RefactoringElementAdapter {
         private final OsmorcFacetConfiguration osmorcFacetConfiguration;
         private final Application application;
 
@@ -73,21 +74,12 @@ public class OsmorcFacetRefactoringListenerProvider implements RefactoringElemen
             this.application = application;
         }
 
-        public void elementMoved(@NotNull final PsiElement newElement) {
-            updateActivatorName(newElement);
-        }
-
-        public void elementRenamed(@NotNull final PsiElement newElement) {
-            updateActivatorName(newElement);
-        }
-
-        private void updateActivatorName(@NotNull final PsiElement newElement) {
+        public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
             application.runWriteAction(new Runnable() {
                 public void run() {
-                    osmorcFacetConfiguration.setBundleActivator(((PsiClass) newElement).getQualifiedName());
+                    osmorcFacetConfiguration.setBundleActivator(((PsiClass)newElement).getQualifiedName());
                 }
             });
         }
-
     }
 }
