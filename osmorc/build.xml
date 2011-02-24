@@ -24,7 +24,7 @@
    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<project name="Osmorc" default="buildSourceZIP" basedir=".">
+<project name="Osmorc" default="plugin.build.jar.osmorc" basedir=".">
 
     <property file="build.properties"/>
     <property  name="bnd.version" value="0.0.384"/>

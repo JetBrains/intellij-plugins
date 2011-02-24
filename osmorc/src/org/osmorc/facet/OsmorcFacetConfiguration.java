@@ -101,7 +101,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   public FacetEditorTab[] createEditorTabs(final FacetEditorContext editorContext,
                                            final FacetValidatorsManager validatorsManager) {
     return new FacetEditorTab[]{new OsmorcFacetGeneralEditorTab(editorContext),
-      new OsmorcFacetJAREditorTab(editorContext), new OsmorcFacetManifestGenerationEditorTab(editorContext)};
+      new OsmorcFacetJAREditorTab(editorContext, validatorsManager), new OsmorcFacetManifestGenerationEditorTab(editorContext)};
   }
 
   public void readExternal(Element element) throws InvalidDataException {
@@ -248,7 +248,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   @NotNull
   public String getJarFileLocation() {
     String nullSafeLocation = myJarFileLocation != null ? myJarFileLocation : "";
-    if ( myOutputPathType == null || myFacet == null) {
+    if (myOutputPathType == null || myFacet == null) {
       // not initialized
       return nullSafeLocation;
     }
@@ -276,6 +276,13 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     }
   }
 
+  /**
+   * Sethes the location of the jar file
+   *
+   * @param jarFileLocation the path to the jar file. If the output path type is {@link OutputPathType#SpecificOutputPath} this needs to
+   *                        be a full path otherwise it needs to be just the jar's name.
+   * @param outputPathType  the path type
+   */
   public void setJarFileLocation(String jarFileLocation, OutputPathType outputPathType) {
     myJarFileLocation = jarFileLocation;
     myOutputPathType = outputPathType;
