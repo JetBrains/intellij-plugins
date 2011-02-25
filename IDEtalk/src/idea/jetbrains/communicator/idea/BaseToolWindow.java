@@ -68,7 +68,7 @@ public abstract class BaseToolWindow implements ProjectComponent {
     myPanel.setBackground(Color.white);
 
     createToolWindowComponent();
-    myToolWindow = myToolWindowManager.registerToolWindow(getToolWindowId(), myPanel, getAnchor(), myProject, true, false);
+    myToolWindow = myToolWindowManager.registerToolWindow(getToolWindowId(), myPanel, getAnchor(), myProject, true);
     myToolWindow.setIcon(WORKER_ICON);
   }
 
