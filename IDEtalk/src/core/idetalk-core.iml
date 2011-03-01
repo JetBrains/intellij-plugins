@@ -9,7 +9,6 @@
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="library" exported="" name="XStream" level="project" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="picocontainer" level="project" />
@@ -29,6 +28,7 @@
     <orderEntry type="library" exported="" name="xpp3-1.1.4-min" level="project" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="platform-api" />
+    <orderEntry type="library" exported="" name="XStream" level="project" />
   </component>
 </module>
 
