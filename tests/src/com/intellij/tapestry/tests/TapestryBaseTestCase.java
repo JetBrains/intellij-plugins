@@ -18,7 +18,6 @@ import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.*;
-import com.intellij.util.ArrayUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -236,10 +235,6 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     Assert.assertNotNull(virtualFile);
     myFixture.allowTreeAccessForFile(virtualFile);
     return virtualFile;
-  }
-
-  protected static String[] mergeArrays(String[] array, @NonNls String... list) {
-    return ArrayUtil.mergeArrays(array, list, ArrayUtil.STRING_ARRAY_FACTORY);
   }
 
   @Nullable

@@ -10,6 +10,8 @@ import com.intellij.testFramework.UsefulTestCase;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
 
+import static com.intellij.util.ArrayUtil.mergeArrays;
+
 /**
  * @author Alexey Chmutov
  */
