@@ -86,7 +86,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
    * @return Inspection tools, default = none.
    */
   protected LocalInspectionTool[] getHighlightingInspections() {
-    return new LocalInspectionTool[0];
+    return LocalInspectionTool.EMPTY_ARRAY;
   }
 
   /**
