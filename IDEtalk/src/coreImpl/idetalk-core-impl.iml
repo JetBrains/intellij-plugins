@@ -6,8 +6,8 @@
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="module" module-name="idetalk-core" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="idetalk-core" />
   </component>
 </module>
 

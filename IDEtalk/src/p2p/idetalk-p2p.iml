@@ -5,9 +5,9 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
     </content>
-    <orderEntry type="module" module-name="idetalk-core" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="idetalk-core" />
     <orderEntry type="library" name="XmlRPC" level="project" />
     <orderEntry type="module" module-name="platform-impl" />
   </component>
