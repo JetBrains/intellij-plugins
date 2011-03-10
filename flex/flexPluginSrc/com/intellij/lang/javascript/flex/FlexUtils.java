@@ -551,7 +551,7 @@ public class FlexUtils {
   }
 
   public static String getPathToBundledJar(String filename) {
-    final URL url = FlexUtils.class.getResource(".");
+    final URL url = FlexUtils.class.getResource("");
     String folder;
     if ("jar".equals(url.getProtocol())) {
       // running from build
