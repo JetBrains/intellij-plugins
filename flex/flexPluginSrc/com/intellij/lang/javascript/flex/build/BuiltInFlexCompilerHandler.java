@@ -85,11 +85,11 @@ public class BuiltInFlexCompilerHandler {
         StringUtil.compareVersionNumbers(sdkVersion, "3.2") >= 0 &&
         StringUtil.compareVersionNumbers(sdkVersion, "4") < 0) {
 
-      classpath.append(FileUtil.toSystemDependentName(PathManager.getHomePath() + "/plugins/flex/lib/idea-flex-compiler-fix.jar"));
+      classpath.append(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
       classpath.append(File.pathSeparatorChar);
     }
 
-    classpath.append(FileUtil.toSystemDependentName(PathManager.getHomePath() + "/plugins/flex/lib/flex-compiler.jar"));
+    classpath.append(FlexUtils.getPathToBundledJar("flex-compiler.jar"));
 
     if (!(flexSdk.getSdkType() instanceof FlexmojosSdkType)) {
       classpath.append(File.pathSeparator).append(FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/flex-compiler-oem.jar"));

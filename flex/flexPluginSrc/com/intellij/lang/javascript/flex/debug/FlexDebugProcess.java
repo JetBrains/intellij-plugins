@@ -227,7 +227,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
     final List<String> fdbLaunchCommand;
     if (isDebuggerFromSdk3()) {
-      String classpath = FileUtil.toSystemDependentName(PathManager.getHomePath() + "/plugins/flex/lib/idea-fdb-3-fix.jar");
+      String classpath = FlexUtils.getPathToBundledJar("idea-fdb-3-fix.jar");
       if (!(debuggerSdk.getSdkType() instanceof FlexmojosSdkType)) {
         classpath += File.pathSeparator + FileUtil.toSystemDependentName(debuggerSdk.getHomePath() + "/lib/fdb.jar");
       }
@@ -236,7 +236,7 @@ public class FlexDebugProcess extends XDebugProcess {
         FlexSdkUtils.getCommandLineForSdkTool(session.getProject(), debuggerSdk, classpath, "flex.tools.debugger.cli.DebugCLI", null);
     }
     else if (isDebuggerFromSdk4() && (myDebuggerVersion.contains("14159") || myDebuggerVersion.contains("16076"))) {
-      String classpath = FileUtil.toSystemDependentName(PathManager.getHomePath() + "/plugins/flex/lib/idea-fdb-4.0.0.14159-fix.jar");
+      String classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.0.0.14159-fix.jar");
       if (!(debuggerSdk.getSdkType() instanceof FlexmojosSdkType)) {
         classpath += File.pathSeparator + FileUtil.toSystemDependentName(debuggerSdk.getHomePath() + "/lib/fdb.jar");
       }

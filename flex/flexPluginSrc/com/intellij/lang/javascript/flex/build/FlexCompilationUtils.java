@@ -181,8 +181,7 @@ public class FlexCompilationUtils {
         StringUtil.compareVersionNumbers(sdkVersion, "3.2") >= 0 &&
         StringUtil.compareVersionNumbers(sdkVersion, "4") < 0) {
 
-      String additionalClasspath =
-        FileUtil.toSystemDependentName(PathManager.getHomePath() + "/plugins/flex/lib/idea-flex-compiler-fix.jar");
+      String additionalClasspath = FileUtil.toSystemDependentName(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
       if (!(flexSdk.getSdkType() instanceof FlexmojosSdkType)) {
         additionalClasspath += File.pathSeparator + FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/compc.jar");
       }

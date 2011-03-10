@@ -489,7 +489,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
   private void launchFcshIfNeeded(final CompileContext context, final Sdk flexSdk) throws IOException {
     if (!processIsAlive() || myRequestedQuit) {
-      String classpath = FileUtil.toSystemDependentName(PathManager.getHomePath() + "/plugins/flex/lib/idea-fcsh-fix.jar");
+      String classpath = FlexUtils.getPathToBundledJar("idea-fcsh-fix.jar");
       if (!(flexSdk.getSdkType() instanceof FlexmojosSdkType)) {
         classpath += File.pathSeparator + FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/fcsh.jar");
       }

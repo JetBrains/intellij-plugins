@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -48,6 +49,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -547,4 +549,19 @@ public class FlexUtils {
 
     return builder.toString();
   }
+
+  public static String getPathToBundledJar(String filename) {
+    final URL url = FlexUtils.class.getResource(".");
+    String folder;
+    if ("jar".equals(url.getProtocol())) {
+      // running from build
+      folder = "/plugins/flex/lib/";
+    }
+    else {
+      // running from sources
+      folder = "/flex/lib/";
+    }
+    return FileUtil.toSystemDependentName(PathManager.getHomePath() + folder + filename);
+  }
+
 }
