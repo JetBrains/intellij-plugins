@@ -1,0 +1,76 @@
+package com.intellij.flex.uiDesigner.flex {
+import cocoa.AbstractComponent;
+import cocoa.ClassFactory;
+import cocoa.pane.PaneItem;
+import cocoa.resources.ResourceMetadata;
+import cocoa.sidebar.Sidebar;
+import cocoa.tabView.TabView;
+import cocoa.ui;
+
+import com.intellij.flex.uiDesigner.Document;
+
+import flash.utils.Dictionary;
+
+import org.flyti.util.ArrayList;
+import org.flyti.util.List;
+
+use namespace ui;
+
+[ResourceBundle("Designer")]
+public class ProjectView extends AbstractComponent {
+  private static const _skinParts:Dictionary = new Dictionary();
+  _skinParts.editorTabView = 0;
+  _skinParts.sidebar = 0;
+
+  ui var sidebar:Sidebar;
+  ui var editorTabView:TabView;
+
+  private const editorPanes:List = new ArrayList();
+
+  override protected function get skinParts():Dictionary {
+    return _skinParts;
+  }
+
+  ui function sidebarAdded():void {
+    // todo move
+    sidebar.items = new ArrayList(new <Object>[
+      new PaneItem(new ResourceMetadata("style", "Designer"), new ClassFactory(StylePane))
+    ]);
+    sidebar.selectedIndices = new <int>[0];
+  }
+
+  ui function editorTabViewAdded():void {
+    editorTabView.items = editorPanes;
+  }
+
+  override protected function get primaryLaFKey():String {
+    return "ProjectView";
+  }
+
+  public function addDocument(document:Document):void {
+    var paneItem:DocumentPaneItem = new DocumentPaneItem(document);
+    paneItem.localizedTitle = document.file.name.substring(0, document.file.name.lastIndexOf("."));
+
+    document.tabIndex = editorPanes.size;
+    editorPanes.addItem(paneItem);
+  }
+}
+}
+
+import cocoa.pane.PaneItem;
+
+import com.intellij.flex.uiDesigner.Document;
+
+class DocumentPaneItem extends PaneItem {
+  private var _document:Document;
+  public function get document():Document {
+    return _document;
+  }
+  
+  public function DocumentPaneItem(document:Document) {
+    _document = document;
+    view = document.container;
+    
+    super(null, null);
+  }
+}

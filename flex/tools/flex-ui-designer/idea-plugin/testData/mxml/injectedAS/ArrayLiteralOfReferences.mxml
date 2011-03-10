@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <mouseDownEffect>
+    <Fade targets="{[p1,p2,p3]}" alphaFrom="1" alphaTo="0" repeatCount="2" repeatBehavior="reverse"/>
+  </mouseDownEffect>
+  
+  <layout>
+    <VerticalLayout verticalAlign="middle" horizontalAlign="center"/>
+  </layout>
+
+  <Label id="p1" text="1"/>
+  <Label id="p2" text="2"/>
+  <Label id="p3" text="3"/>
+</Application>

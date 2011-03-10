@@ -1,0 +1,216 @@
+<idea-plugin version="2">
+  <name>Flex Support</name>
+  <description>Provides support for developing Adobe Flex applications</description>
+  <id>com.intellij.flex</id>
+  <version>1.0</version>
+  <category>HTML/JavaScript Development</category>
+  <vendor logo="/general/ijLogo.png">JetBrains</vendor>
+  <depends optional="false">JavaScript</depends>
+  <depends optional="false">com.intellij.css</depends>
+  <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="uml-support.xml">com.intellij.diagram</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+    <compiler implementation="com.intellij.lang.javascript.flex.build.FlexCompiler"/>
+    <programRunner implementation="com.intellij.lang.javascript.flex.debug.FlexDebugRunner"/>
+    <programRunner implementation="com.intellij.lang.javascript.flex.run.FlexRunner"/>
+    <xdebugger.breakpointType implementation="com.intellij.lang.javascript.flex.debug.FlexBreakpointType"/>
+    <configurationType implementation="com.intellij.lang.javascript.flex.run.FlexRunConfigurationType"/>
+    <configurationType implementation="com.intellij.lang.javascript.flex.run.AirRunConfigurationType"/>
+    <configurationType implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType"/>
+    <moduleType id="Flex" implementationClass="com.intellij.lang.javascript.flex.FlexModuleType"/>
+    <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
+    <xmlStructureViewBuilderProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexStructureViewProvider" />
+    <referenceImporter implementation="com.intellij.lang.javascript.flex.FlexReferenceImporter"/>
+    <frameworkSupport implementation="com.intellij.javascript.flex.FlexSupportProvider"/>
+    <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexSdkType"/>
+    <sdkType implementation="com.intellij.lang.javascript.flex.sdk.AirSdkType"/>
+    <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType"/>
+    <facetType implementation="com.intellij.lang.javascript.flex.FlexFacetType"/>
+    <library.type implementation="com.intellij.lang.javascript.flex.library.FlexLibraryType"/>
+    <xml.schemaProvider implementation="com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler"/>
+    <xml.xmlExtension implementation="com.intellij.javascript.flex.mxml.schema.FlexXmlExtension"/>
+    <renamePsiElementProcessor implementation="com.intellij.javascript.flex.FlexRenameHandler"/>
+    <updateAddedFileProcessor implementation="com.intellij.javascript.flex.FlexUpdateAddedFileHandler"/>
+    <moveFileHandler implementation="com.intellij.javascript.flex.FlexMoveFileHandler"/>
+    <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactoringHandler" order="before moveFileOrDir, before moveJavaFileOrDir"/>
+    <fileTypeFactory implementation="com.intellij.javascript.flex.FlexApplicationComponent" />
+    <standardResourceProvider implementation="com.intellij.javascript.flex.FlexApplicationComponent$ResourceProvider"/>
+
+    <fileBasedIndex implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSuperClassesIndex"/>
+    <fileBasedIndex implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedImplementedInterfacesIndex"/>
+    <fileBasedIndex implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedMembersIndex"/>
+    <fileBasedIndex implementation="com.intellij.javascript.flex.css.FlexStyleIndex"/>
+
+    <fileType.fileViewProviderFactory filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileViewProviderFactory"/>
+    <filetype.decompiler filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileDecompiler"/>
+    <filetype.stubBuilder filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileStubBuilder"/>
+    <syntaxHighlighter key="SWF" factoryClass="com.intellij.javascript.flex.compiled.SwfSyntaxHighlighterProvider"/>
+    <codeInsight.lineMarkerProvider language="Decompiled SWF" implementationClass="com.intellij.javascript.flex.compiled.DecompiledSwfLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="XML" implementationClass="com.intellij.javascript.flex.mxml.XmlBackedClassLineMarkerProvider"/>
+    <lang.parserDefinition language="Decompiled SWF" implementationClass="com.intellij.javascript.flex.compiled.DecompiledSwfParserDefinition"/>
+    <lang.documentationProvider language="JavaScript" implementationClass="com.intellij.javascript.flex.FlexDocumentationProvider"/>
+    <structureViewBuilder key="SWF" factoryClass="com.intellij.javascript.flex.compiled.SwfStructureViewBuilderProvider"/>
+
+    <testSrcLocator implementation="com.intellij.lang.javascript.flex.flexunit.FlexQualifiedNameLocationProvider"/>
+    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.FlexRuntimeConfigurationProducer"/>
+    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.AirRuntimeConfigurationProducer"/>
+    <configurationProducer implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRuntimeConfigurationProducer"/>
+    <psi.referenceContributor implementation="com.intellij.javascript.flex.FlexReferenceContributor"/>
+    <lookup.charFilter implementation="com.intellij.lang.javascript.flex.ActionScriptCharFilter"/>
+    <inspectionToolProvider implementation="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitInspectionToolProvider"/>
+    <codeInsight.overrideMethod language="JavaScript" implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
+    <codeInsight.overrideMethod language="XML" implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
+    <codeInsight.implementMethod language="JavaScript" implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
+    <codeInsight.implementMethod language="XML" implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
+    <codeInsight.delegateMethods language="JavaScript" implementationClass="com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler"/>
+    <codeInsight.delegateMethods language="XML" implementationClass="com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler"/>
+    <projectImportBuilder implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImporter"/>
+    <projectImportProvider implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImportProvider"/>
+    <projectOpenProcessor id="FlashBuilderOpenProcessor" implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderOpenProcessor" order="before EclipseProjectOpenProcessor"/>
+    <standardResourceProvider implementation="com.intellij.lang.javascript.flex.InternalResourceProvider"/>
+
+    <css.elementDescriptorProvider implementation="com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider"/>
+    <css.classOrIdUsagesProvider implementation="com.intellij.javascript.flex.css.FlexClassOrIdUsagesProvider"/>
+    <compilerSettingsFactory implementation="com.intellij.lang.javascript.flex.build.FlexCompilerProjectSettingsFactory"/>
+    <importFilteringRule implementation="com.intellij.lang.javascript.flex.ImportFilteringRule"/>
+    <enterHandlerDelegate implementation="com.intellij.lang.javascript.flex.MxmlEnterHandler"/>
+    <iconProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexIconProvider"/>
+    <treeStructureProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexTreeStructureProvider"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration"
+                    serviceImplementation="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParameters"
+                    serviceImplementation="com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParameters"/>
+    <consoleFilterProvider implementation="com.intellij.lang.javascript.flex.FlexStackTraceFilterProvider"/>
+    <gotoSymbolContributor implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSymbolContributor"/>
+    <annotator language="XML" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
+
+    <internalFileTemplate name="Mxml Component (Flex 3)"/>
+    <internalFileTemplate name="Mxml Component (Flex 4)"/>
+    <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>
+    <defaultLiveTemplatesProvider implementation="com.intellij.lang.javascript.ActionScriptLiveTemplatesProvider"/>
+    <lang.refactoringSupport language="XML" implementationClass="com.intellij.lang.javascript.flex.MxmlRefactoringSupportProvider"/>
+    <lang.refactoringSupport language="JavaScript" implementationClass="com.intellij.lang.javascript.flex.ActionScriptRefactoringSupportProvider" order="before JavascriptRefactoringSupportProvider"/>
+    <implicitUsageProvider implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider"/>
+    <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider"/>
+    <langCodeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptLanguageCodeStyleSettingsProvider"/>
+
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.CreateJSSubclassIntention</className>
+      <category>ActionScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.CreateEventHandlerIntention</className>
+      <category>ActionScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.CreateGetterIntention</className>
+      <category>ActionScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.CreateSetterIntention</className>
+      <category>ActionScript</category>
+    </intentionAction>
+    <intentionAction>
+      <className>com.intellij.lang.javascript.intentions.CreateGetterAndSetterIntention</className>
+      <category>ActionScript</category>
+    </intentionAction>
+  </extensions>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <resolveHelper implementation="com.intellij.javascript.flex.FlexResolveHelper"/>
+    <classInheritorsProvider implementation="com.intellij.javascript.flex.mxml.XmlBackedClassInheritorsProvider"/>
+    <conditionalCompilationDefinitionsProvider implementation="com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl"/>
+  </extensions>
+
+  <application-components>
+    <component>
+      <implementation-class>com.intellij.javascript.flex.FlexApplicationComponent</implementation-class>
+    </component>
+  </application-components>
+
+  <project-components>
+    <component>
+      <implementation-class>com.intellij.lang.javascript.flex.build.FlexCompilerHandler</implementation-class>
+    </component>
+    <component>
+      <implementation-class>com.intellij.javascript.flex.mxml.schema.CodeContextHolder</implementation-class>
+    </component>
+    <component>
+      <implementation-class>com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory</implementation-class>
+      <skipForDefaultProject/>
+    </component>
+  </project-components>
+
+  <module-components>
+    <component>
+      <implementation-class>com.intellij.lang.javascript.flex.build.FlexBuildConfiguration</implementation-class>
+      <!--<option name="type" value="PLUGIN_MODULE"/>-->
+    </component>
+  </module-components>
+
+  <actions>
+    <action id="TalkToFdb.Flex.Debug" class="com.intellij.lang.javascript.flex.debug.SendCommandToDebuggerAction" text="Send Commands To Flex Debugger">
+      <add-to-group anchor="last" group-id="RunMenu"/>
+    </action>
+
+    <group id="FlexActionsGroup" popup="true" text="Flex" icon="/com/intellij/lang/javascript/flex/actions/flex_actions_group.png">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </group>
+
+    <action id="Flex.Create.HTML.Wrapper"
+            class="com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperAction"
+            text="Create HTML Wrapper"
+            icon="/com/intellij/lang/javascript/flex/actions/htmlwrapper/html_wrapper_action.png">
+      <add-to-group anchor="last" group-id="FlexActionsGroup"/>
+    </action>
+
+    <action id="Flex.Create.AIR.Descriptor"
+            class="com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction"
+            text="Create AIR Application Descriptor"
+            icon="/com/intellij/lang/javascript/flex/actions/airdescriptor/air_descriptor_action.png">
+      <add-to-group anchor="last" group-id="FlexActionsGroup"/>
+    </action>
+
+    <action id="Flex.Package.AIR.Installer"
+            class="com.intellij.lang.javascript.flex.actions.airinstaller.PackageAirInstallerAction"
+            text="Package AIR Installation File"
+            icon="/com/intellij/lang/javascript/flex/actions/airdescriptor/air_descriptor_action.png">
+      <add-to-group anchor="last" group-id="FlexActionsGroup"/>
+    </action>
+
+    <action id="Generate.Constructor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateConstructorAction"
+            text="Constructor">
+      <add-to-group anchor="first" group-id="GenerateGroup"/>
+    </action>
+    <action id="Generate.GetAccessor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateGetAccessorAction"
+            text="Getter">
+      <add-to-group anchor="after" relative-to-action="Generate.Constructor.Actionscript" group-id="GenerateGroup"/>
+    </action>
+    <action id="Generate.SetAccessor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateSetAccessorAction"
+            text="Setter">
+      <add-to-group anchor="after" relative-to-action="Generate.GetAccessor.Actionscript" group-id="GenerateGroup"/>
+    </action>
+    <action id="Generate.GetSetAccessor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateGetSetAccessorAction"
+            text="Getter and Setter">
+      <add-to-group anchor="after" relative-to-action="Generate.SetAccessor.Actionscript" group-id="GenerateGroup"/>
+    </action>
+    <action id="Generate.EventHandler.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateEventHandlerAction"
+            text="Event Handler">
+      <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.Actionscript" group-id="GenerateGroup"/>
+    </action>
+    <action id="Generate.ToString.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateToStringAction"
+            text="toString()">
+      <add-to-group anchor="after" relative-to-action="Generate.Delegate.Actionscript" group-id="GenerateGroup"/>
+    </action>
+    <action id="Flex.NewActionScriptClass" class="com.intellij.lang.javascript.flex.actions.newfile.NewActionScriptClassAction"
+            text="ActionScript Class" description="Create new ActionScript class">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
+    </action>
+    <action id="Flex.NewFlexComponent" class="com.intellij.lang.javascript.flex.actions.newfile.NewFlexComponentAction"
+            text="Flex Component" description="Create new Flex component">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="Flex.NewActionScriptClass"/>
+    </action>
+  </actions>
+</idea-plugin>

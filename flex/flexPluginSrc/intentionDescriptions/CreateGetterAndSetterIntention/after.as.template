@@ -1,0 +1,13 @@
+package {
+public class Validator {
+    <spot>private</spot> var <spot>_strict</spot>:Boolean;
+
+<spot>    public function get strict():Boolean {
+        return _strict;
+    }
+
+    public function set strict(value:Boolean):void {
+        _strict = value;
+    }
+</spot>}
+}

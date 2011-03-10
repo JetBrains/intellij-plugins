@@ -1,0 +1,413 @@
+package com.intellij.javascript.flex.mxml.schema;
+
+import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.daemon.Validator;
+import com.intellij.codeInsight.daemon.XmlErrorMessages;
+import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.javascript.flex.FlexPredefinedTagNames;
+import com.intellij.javascript.flex.FlexStateElementNames;
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JSLanguageInjector;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.xml.XmlAttributeImpl;
+import com.intellij.psi.xml.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.IncorrectOperationException;
+import com.intellij.xml.XmlExtension;
+import com.intellij.xml.util.XmlTagUtil;
+import com.intellij.xml.util.XmlUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.Set;
+
+import static com.intellij.lang.javascript.JavaScriptSupportLoader.*;
+
+public class MxmlLanguageTagsUtil {
+
+  static final String NAME_ATTRIBUTE = "name";
+
+  private static final String[] LANGUAGE_TAGS_ALLOWED_UNDER_ROOT_TAG = {
+    FlexPredefinedTagNames.BINDING,
+    FlexPredefinedTagNames.DECLARATIONS,
+    FlexPredefinedTagNames.LIBRARY,
+    FlexPredefinedTagNames.METADATA,
+    JSLanguageInjector.PRIVATE_TAG_NAME,
+    FlexPredefinedTagNames.SCRIPT,
+    FlexPredefinedTagNames.STYLE
+  };
+
+  private static final String[] LANGUAGE_TAGS_ALLOWED_UNDER_INLINE_COMPONENT_ROOT_TAG = {
+    FlexPredefinedTagNames.BINDING,
+    FlexPredefinedTagNames.DECLARATIONS,
+    FlexPredefinedTagNames.METADATA,
+    FlexPredefinedTagNames.SCRIPT,
+    FlexPredefinedTagNames.STYLE
+  };
+
+  private MxmlLanguageTagsUtil() {
+  }
+
+  static boolean isComponentTag(final XmlTag tag) {
+    return tag != null && XmlBackedJSClassImpl.isComponentTag(tag);
+  }
+
+  static boolean isFxPrivateTag(final XmlTag tag) {
+    return JSLanguageInjector.isFxPrivateTag(tag);
+  }
+
+  static boolean isXmlOrXmlListTag(final XmlTag tag) {
+    return tag != null &&
+           (XmlBackedJSClassImpl.XML_TAG_NAME.equals(tag.getLocalName()) ||
+            XmlBackedJSClassImpl.XMLLIST_TAG_NAME.equals(tag.getLocalName())) &&
+           (isLanguageNamespace(tag.getNamespace()));
+  }
+
+  static boolean isFxLibraryTag(final XmlTag tag) {
+    return tag != null && FlexPredefinedTagNames.LIBRARY.equals(tag.getLocalName()) && MXML_URI3.equals(tag.getNamespace());
+  }
+
+  static boolean isFxDefinitionTag(final XmlTag tag) {
+    return tag != null && CodeContext.DEFINITION_TAG_NAME.equals(tag.getLocalName()) && MXML_URI3.equals(tag.getNamespace());
+  }
+
+  static boolean isFxDeclarationsTag(final XmlTag tag) {
+    return tag != null && FlexPredefinedTagNames.DECLARATIONS.equals(tag.getLocalName()) && MXML_URI3.equals(tag.getNamespace());
+  }
+
+  public static boolean isFxReparentTag(final XmlTag tag) {
+    return tag != null && CodeContext.REPARENT_TAG_NAME.equals(tag.getLocalName()) && MXML_URI3.equals(tag.getNamespace());
+  }
+
+  public static boolean isScriptTag(final XmlTag tag) {
+    return tag != null && FlexPredefinedTagNames.SCRIPT.equals(tag.getLocalName()) && isLanguageNamespace(tag.getNamespace());
+  }
+
+  public static boolean isLanguageTagAllowedUnderRootTag(final XmlTag tag) {
+    return tag != null &&
+           (MXML_URI3.equals(tag.getNamespace()) || MXML_URI.equals(tag.getNamespace())) &&
+           ArrayUtil.contains(tag.getLocalName(), LANGUAGE_TAGS_ALLOWED_UNDER_ROOT_TAG);
+  }
+
+  public static boolean isLanguageTagAllowedUnderInlineComponentRootTag(final XmlTag tag) {
+    return tag != null &&
+           (MXML_URI3.equals(tag.getNamespace()) || MXML_URI.equals(tag.getNamespace())) &&
+           ArrayUtil.contains(tag.getLocalName(), LANGUAGE_TAGS_ALLOWED_UNDER_INLINE_COMPONENT_ROOT_TAG);
+  }
+
+  static void validateFxPrivateTag(final XmlTag tag, final Validator.ValidationHost host) {
+    final XmlTag parentTag = tag.getParentTag();
+    if (parentTag == null ||
+        !(parentTag.getParent() instanceof XmlDocument) ||
+        tag != parentTag.getSubTags()[parentTag.getSubTags().length - 1]) {
+      addErrorMessage(tag, JSBundle.message("javascript.validation.tag.must.be.last.child.of.root.tag", tag.getName()), host);
+      //return;
+    }
+  }
+
+  static void validateFxLibraryTag(final XmlTag tag, final Validator.ValidationHost host) {
+    final XmlTag parentTag = tag.getParentTag();
+    if (parentTag == null || !(parentTag.getParent() instanceof XmlDocument) || tag != parentTag.getSubTags()[0]) {
+      addErrorMessage(tag, JSBundle.message("javascript.validation.tag.must.be.first.child.of.root.tag", tag.getName()), host);
+      return;
+    }
+
+    for (XmlAttribute attribute : tag.getAttributes()) {
+      addErrorMessage(attribute, XmlErrorMessages.message("attribute.is.not.allowed.here", attribute.getName()), host);
+    }
+
+    for (XmlTag subTag : tag.getSubTags()) {
+      if (!isFxDefinitionTag(subTag)) {
+        final String prefix = tag.getNamespacePrefix();
+        final String fxDefinitionTag =
+          StringUtil.isEmpty(prefix) ? CodeContext.DEFINITION_TAG_NAME : (prefix + ":" + CodeContext.DEFINITION_TAG_NAME);
+        addErrorMessage(subTag, JSBundle.message("javascript.validation.only.this.tag.is.allowed.here", fxDefinitionTag), host);
+      }
+    }
+  }
+
+  static void validateFxDefinitionTag(final XmlTag tag, final Validator.ValidationHost host) {
+    final XmlTag parentTag = tag.getParentTag();
+    if (!isFxLibraryTag(parentTag)) {
+      final String prefix = tag.getNamespacePrefix();
+      final String fxLibraryTag = StringUtil.isEmpty(prefix) ? FlexPredefinedTagNames.LIBRARY
+                                                             : (prefix + ":" + FlexPredefinedTagNames.LIBRARY);
+      addErrorMessage(tag,
+                      JSBundle.message("javascript.validation.tag.must.be.direct.child.of.fx.library.tag", tag.getName(), fxLibraryTag),
+                      host);
+      return;
+    }
+
+    if (tag.getAttribute(NAME_ATTRIBUTE) == null) {
+      addErrorMessage(tag, XmlErrorMessages.message("element.doesnt.have.required.attribute", tag.getName(), NAME_ATTRIBUTE), host);
+      return;
+    }
+
+    if (tag.getSubTags().length != 1) {
+      addErrorMessage(tag, JSBundle.message("javascript.validation.tag.must.have.exactly.one.child.tag", tag.getName()), host);
+      //return;
+    }
+  }
+
+  static void validateFxReparentTag(final XmlTag tag, final Validator.ValidationHost host) {
+    if (tag.getAttribute(CodeContext.TARGET_ATTR_NAME) == null) {
+      addErrorMessage(tag, XmlErrorMessages.message("element.doesnt.have.required.attribute", tag.getName(), CodeContext.TARGET_ATTR_NAME),
+                      host);
+      return;
+    }
+
+    if (tag.getAttribute(FlexStateElementNames.INCLUDE_IN) == null &&
+        tag.getAttribute(FlexStateElementNames.EXCLUDE_FROM) == null) {
+      addErrorMessage(tag, JSBundle.message("javascript.validation.tag.must.have.attribute.includein.or.excludefrom", tag.getName()), host);
+      //return;
+    }
+  }
+
+  public static void checkFlex4Attributes(@NotNull final XmlTag tag,
+                                          @NotNull final Validator.ValidationHost host,
+                                          final boolean checkStateSpecificAttrs) {
+    XmlAttribute flex3NamespaceDeclaration = null;
+    XmlAttribute flex4NamespaceDeclaration = null;
+    XmlAttribute itemCreationPolicyAttr = null;
+    XmlAttribute itemDestructionPolicyAttr = null;
+    boolean includeInOrExcludeFromAttrPresent = false;
+
+    for (final XmlAttribute attribute : tag.getAttributes()) {
+      final String name = attribute.getName();
+
+      if (attribute.isNamespaceDeclaration()) {
+        final String namespace = attribute.getValue();
+        if (MXML_URI.equals(namespace)) {
+          flex3NamespaceDeclaration = attribute;
+        }
+        else if (MXML_URI3.equals(namespace)) {
+          flex4NamespaceDeclaration = attribute;
+        }
+      }
+      else if (checkStateSpecificAttrs) {
+        if (FlexStateElementNames.INCLUDE_IN.equals(name) ||
+                 FlexStateElementNames.EXCLUDE_FROM.equals(name)) {
+          includeInOrExcludeFromAttrPresent = true;
+        }
+        else if (FlexStateElementNames.ITEM_CREATION_POLICY.equals(name)) {
+          itemCreationPolicyAttr = attribute;
+        }
+        else if (FlexStateElementNames.ITEM_DESTRUCTION_POLICY.equals(name)) {
+          itemDestructionPolicyAttr = attribute;
+        }
+      }
+    }
+
+    if (tag.getParent() instanceof XmlDocument) {
+      if (flex3NamespaceDeclaration == null && flex4NamespaceDeclaration == null) {
+        final String[] knownNamespaces = tag.knownNamespaces();
+
+        boolean suggestFlex3Namespace = true;
+        for (final String flex4Namespace : FLEX_4_NAMESPACES) {
+          if (ArrayUtil.contains(flex4Namespace, knownNamespaces)) {
+            suggestFlex3Namespace = false;
+            break;
+          }
+        }
+
+        final DeclareNamespaceIntention flex4Intention = new DeclareNamespaceIntention(tag, "fx", MXML_URI3);
+
+        final IntentionAction[] intentions = suggestFlex3Namespace ? new IntentionAction[]{flex4Intention,
+          new DeclareNamespaceIntention(tag, "mx", MXML_URI)} : new IntentionAction[]{flex4Intention};
+
+        addErrorMessage(tag, FlexBundle.message("root.tag.must.contain.language.namespace"), host, intentions);
+      }
+      else if (flex3NamespaceDeclaration != null && flex4NamespaceDeclaration != null) {
+        addErrorMessage(flex3NamespaceDeclaration.getValueElement(), FlexBundle.message("different.language.namespaces"), host,
+                        new RemoveNamespaceDeclarationIntention(flex3NamespaceDeclaration));
+        addErrorMessage(flex4NamespaceDeclaration.getValueElement(), FlexBundle.message("different.language.namespaces"), host,
+                        new RemoveNamespaceDeclarationIntention(flex4NamespaceDeclaration));
+      }
+    }
+    else {
+      final String[] knownNamespaces = tag.knownNamespaces();
+      if (flex3NamespaceDeclaration != null && ArrayUtil.contains(MXML_URI3, knownNamespaces)) {
+        addErrorMessage(flex3NamespaceDeclaration.getValueElement(), FlexBundle.message("different.language.namespaces"), host,
+                        new RemoveNamespaceDeclarationIntention(flex3NamespaceDeclaration));
+      }
+      if (flex4NamespaceDeclaration != null && ArrayUtil.contains(MXML_URI, knownNamespaces)) {
+        addErrorMessage(flex4NamespaceDeclaration.getValueElement(), FlexBundle.message("different.language.namespaces"), host,
+                        new RemoveNamespaceDeclarationIntention(flex4NamespaceDeclaration));
+      }
+    }
+
+    if (checkStateSpecificAttrs && !includeInOrExcludeFromAttrPresent) {
+      if (itemCreationPolicyAttr != null) {
+        addErrorMessage(itemCreationPolicyAttr,
+                        FlexBundle.message("must.accompany.includein.or.excludefrom.attribute", itemCreationPolicyAttr.getName()), host);
+      }
+      if (itemDestructionPolicyAttr != null) {
+        addErrorMessage(itemDestructionPolicyAttr,
+                        FlexBundle.message("must.accompany.includein.or.excludefrom.attribute", itemDestructionPolicyAttr.getName()), host);
+      }
+    }
+  }
+
+  private static void addErrorMessage(final XmlElement element,
+                                      final String message,
+                                      final Validator.ValidationHost host,
+                                      final IntentionAction... intentionActions) {
+    if (element instanceof XmlAttributeValue) {
+      final ASTNode node = element.getNode();
+      final ASTNode value = node == null ? null : XmlChildRole.ATTRIBUTE_VALUE_VALUE_FINDER.findChild(node);
+      if (value instanceof PsiElement) {
+        host.addMessage((PsiElement)value, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
+      }
+      else {
+        host.addMessage(element, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
+      }
+    }
+    else if (element instanceof XmlAttributeImpl) {
+      host.addMessage(((XmlAttributeImpl)element).getNameElement(), message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
+    }
+    else if (element instanceof XmlTag) {
+      final XmlToken startingTag = XmlTagUtil.getStartTagNameElement((XmlTag)element);
+      if (startingTag != null) {
+        host.addMessage(startingTag, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
+      }
+      final XmlToken closingTag = XmlTagUtil.getEndTagNameElement((XmlTag)element);
+      if (closingTag != null) {
+        host.addMessage(closingTag, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
+      }
+    }
+    else {
+      host.addMessage(element, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
+    }
+  }
+
+  public static class RemoveNamespaceDeclarationIntention implements IntentionAction {
+    private final XmlAttribute myAttribute;
+
+    public RemoveNamespaceDeclarationIntention(final @NotNull XmlAttribute attribute) {
+      myAttribute = attribute;
+    }
+
+    @NotNull
+    public String getText() {
+      return FlexBundle.message("remove.namespace.declaration");
+    }
+
+    @NotNull
+    public String getFamilyName() {
+      return XmlErrorMessages.message("remove.attribute.quickfix.family");
+    }
+
+    public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
+      return myAttribute.isValid();
+    }
+
+    public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+      if (!CodeInsightUtilBase.prepareFileForWrite(file)) return;
+      final int offset = removeXmlAttribute(myAttribute);
+      if (offset != -1) {
+        editor.getCaretModel().moveToOffset(offset);
+      }
+    }
+
+    /**
+     * @return offset to move caret to; can be -1
+     */
+    public static int removeXmlAttribute(final XmlAttribute attribute) {
+      final XmlTag tag = attribute.getParent();
+
+      final XmlAttribute nextAttribute = deleteWhiteSpaceTillNextAttribute(attribute);
+      if (nextAttribute == null) {
+        deletePreviousWhiteSpaces(attribute);
+      }
+
+      attribute.delete();
+
+      XmlUtil.reformatTagStart(tag);
+      if (nextAttribute != null) {
+        return nextAttribute.getTextRange().getStartOffset();
+      }
+
+      return -1;
+    }
+
+    @Nullable
+    private static XmlAttribute deleteWhiteSpaceTillNextAttribute(final XmlAttribute attribute) {
+      PsiElement nextSibling = attribute.getNextSibling();
+      while (nextSibling instanceof PsiWhiteSpace) {
+        final PsiElement whiteSpace = nextSibling;
+        nextSibling = nextSibling.getNextSibling();
+        whiteSpace.delete();
+      }
+      return nextSibling instanceof XmlAttribute ? (XmlAttribute)nextSibling : null;
+    }
+
+    @Nullable
+    private static PsiElement deletePreviousWhiteSpaces(final XmlAttribute attribute) {
+      PsiElement prevSibling = attribute.getPrevSibling();
+      while (prevSibling instanceof PsiWhiteSpace) {
+        final PsiElement whiteSpace = prevSibling;
+        prevSibling = prevSibling.getPrevSibling();
+        whiteSpace.delete();
+      }
+
+      return prevSibling;
+    }
+
+    public boolean startInWriteAction() {
+      return true;
+    }
+  }
+
+  private static class DeclareNamespaceIntention implements IntentionAction {
+    private final XmlTag myRootTag;
+    private final String myDefaultPrefix;
+    private final String myNamespace;
+
+    private DeclareNamespaceIntention(final XmlTag rootTag, final String defaultPrefix, final String namespace) {
+      myRootTag = rootTag;
+      myDefaultPrefix = defaultPrefix;
+      myNamespace = namespace;
+    }
+
+    @NotNull
+    public String getText() {
+      return FlexBundle.message("declare.namespace", myNamespace);
+    }
+
+    @NotNull
+    public String getFamilyName() {
+      return "Declare namespace";
+    }
+
+    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+      return myRootTag.isValid();
+    }
+
+    public boolean startInWriteAction() {
+      return true;
+    }
+
+    public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+      if (!myRootTag.isValid() || !CodeInsightUtilBase.prepareFileForWrite(file)) return;
+
+      final Set<String> usedPrefixes = myRootTag.getLocalNamespaceDeclarations().keySet();
+      int postfix = 1;
+      String nsPrefix = myDefaultPrefix;
+
+      while (usedPrefixes.contains(nsPrefix)) {
+        nsPrefix = myDefaultPrefix + postfix++;
+      }
+
+      XmlExtension.getExtension(file).insertNamespaceDeclaration((XmlFile)file, editor, Collections.singleton(myNamespace), nsPrefix, null);
+    }
+  }
+}

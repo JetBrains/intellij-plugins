@@ -1,0 +1,39 @@
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <RichText>AAA
+    <span>in</span>
+    UUU
+  </RichText>
+  <RichText>UUU
+    <span>in</span>
+    AAA
+  </RichText>
+  <RichText>
+    <span>in</span>
+    UUU
+  </RichText>
+
+  <RichText>
+
+    UUU
+    <!--<span>in</span>-->
+
+    <blendMode>difference</blendMode>
+    <whiteSpaceCollapse>preserve</whiteSpaceCollapse>
+  </RichText>
+  
+  <Label>
+    <fx:String>TRAMUU&amp;</fx:String>
+  </Label>
+  <Label>
+    <fx:String>12</fx:String>
+    <buttonMode>true</buttonMode>
+  </Label>
+  <Label>
+    34
+    <buttonMode>true</buttonMode>
+  </Label>
+  <Label>
+    <buttonMode>true</buttonMode>
+    34
+  </Label>
+</Group>

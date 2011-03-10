@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/../../../abc-builder-maven-module/target/classes" />
+    <output-test url="file://$MODULE_DIR$/../../../abc-builder-maven-module/target/test-classes" />
+    <content url="file://$MODULE_DIR$/../../../abc-builder-maven-module">
+      <sourceFolder url="file://$MODULE_DIR$/../../../abc-builder-maven-module/src/main/java" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../abc-builder-maven-module/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-core:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-model:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:2.0.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-settings:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-settings-builder:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-interpolation:1.14" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-component-annotations:1.5.5" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.plexus:plexus-sec-dispatcher:1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.plexus:plexus-cipher:1.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-repository-metadata:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-artifact:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-plugin-api:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.sisu:sisu-inject-plexus:1.4.3.1" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-classworlds:2.4" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.sisu:sisu-inject-bean:1.4.3.1" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.sisu:sisu-guice:noaop:2.9.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-model-builder:3.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.maven:maven-aether-provider:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.aether:aether-api:1.9" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.aether:aether-spi:1.9" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.aether:aether-util:1.9" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.aether:aether-impl:1.9" level="project" />
+    <orderEntry type="library" name="Maven: com.intellij.flex.uiDesigner:idea-plugin:1.0-SNAPSHOT" level="project" />
+  </component>
+</module>
+

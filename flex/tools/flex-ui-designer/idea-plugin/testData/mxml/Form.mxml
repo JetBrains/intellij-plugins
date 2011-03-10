@@ -1,0 +1,237 @@
+<?xml version="1.0"?>
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx">
+  <depth>2</depth>
+  <nestLevel>0</nestLevel>
+  <alpha>
+    1.0 </alpha>
+  <visible> true </visible>
+  <layout>
+    <VerticalLayout/>
+  </layout>
+
+  <Button label="Sefsdfnd"/>
+  <Button label="Go">
+    <fontSize>30</fontSize>
+  </Button>
+  <ToggleButton label="Toggle me"/>
+
+  <CheckBox label="Check me"/>
+
+  <ComboBox/>
+
+  <ComboBox>
+    <ArrayCollection>
+      <fx:String>Flash</fx:String>
+      <fx:String>Director</fx:String>
+      <fx:String>Dreamweaver</fx:String>
+      <fx:String>ColdFusion</fx:String>
+      <fx:Number>23424</fx:Number>
+      <fx:Boolean>false</fx:Boolean>
+    </ArrayCollection>
+  </ComboBox>
+
+  <ButtonBar>
+    <ArrayCollection>
+      <fx:String>Flash</fx:String>
+      <fx:String>Director</fx:String>
+      <fx:String>Dreamweaver</fx:String>
+      <fx:String>ColdFusion</fx:String>
+      <fx:Number>23424</fx:Number>
+      <fx:Boolean>false</fx:Boolean>
+    </ArrayCollection>
+  </ButtonBar>
+
+  <HGroup>
+    <Label text="Label 1" fontSize="20"/>
+    <TextInput width="100"/>
+  </HGroup>
+  <Group width="100%">
+    <Label text="Label 2"/>
+    <TextInput width="100" right="0"/>
+  </Group>
+  
+  <HGroup>
+    <Label text="Label 3" color="#ccaacc"/>
+    <TextInput width="100"/>
+  </HGroup>
+  <HGroup>
+    <Label text="Label 4" color="0x999900"/>
+    <TextInput width="100"/>
+  </HGroup>
+  <HGroup>
+    <Label text="Label 5" color="0xaa00ee"/>
+    <TextInput width="89%"/>
+  </HGroup>
+
+  <DataGroup itemRenderer="spark.components.ButtonBarButton">
+    <ArrayCollection>
+      <fx:String>Flash</fx:String>
+      <fx:String>Director</fx:String>
+      <fx:String>Dreamweaver</fx:String>
+      <fx:String>ColdFusion</fx:String>
+    </ArrayCollection>
+    <layout>
+      <ButtonBarHorizontalLayout/>
+    </layout>
+  </DataGroup>
+
+  <Group width="100%">
+    <Rect width="100%" height="100%">
+      <fill>
+        <RadialGradient>
+          <GradientEntry color="0xcccccc" ratio="0.00" alpha="0.5"/>
+          <GradientEntry color="0x999999" ratio="0.33" alpha="0.5"/>
+          <GradientEntry color="0x666666" ratio="0.66" alpha="0.5"/>
+        </RadialGradient>
+      </fill>
+      <stroke>
+        <LinearGradientStroke weight="4">
+          <GradientEntry color="0xc5c551" ratio="0.00" alpha="0.5"/>
+          <GradientEntry color="0xfefe24" ratio="0.33" alpha="0.5"/>
+          <GradientEntry color="0xecec21" ratio="0.66" alpha="0.5"/>
+        </LinearGradientStroke>
+      </stroke>
+    </Rect>
+
+    <HGroup>
+      <VGroup>
+        <DropDownList width="140">
+          <ArrayCollection>
+            <fx:String>Alabama</fx:String>
+            <fx:String>Alaska</fx:String>
+            <fx:String>Arizona</fx:String>
+            <fx:String>Arkansas</fx:String>
+            <fx:String>California</fx:String>
+          </ArrayCollection>
+        </DropDownList>
+        <NumericStepper id="nstepper1" value="6" stepSize="2" maximum="100"/>
+      </VGroup>
+      <List>
+        <ArrayCollection>
+          <fx:String>Flash</fx:String>
+          <fx:String>Director</fx:String>
+          <fx:String>Dreamweaver</fx:String>
+          <fx:String>ColdFusion</fx:String>
+        </ArrayCollection>
+      </List>
+    </HGroup>
+    <BorderContainer borderColor="blue" borderWeight="2" borderStyle="inset" borderVisible="true" cornerRadius="4" dropShadowVisible="true" borderAlpha="0.5" backgroundColor="#6666ff" horizontalCenter="0"/>
+  </Group>
+
+  <HGroup gap="20">
+    <mx:TabNavigator width="200" height="200">
+      <NavigatorContent label="Tab 1">
+        <layout>
+          <BasicLayout/>
+        </layout>
+        <Rect width="20" height="20" top="0" left="0">
+          <stroke>
+            <SolidColorStroke weight="1" color="0x880000"/>
+          </stroke>
+          <fill>
+            <SolidColor alpha="1" color="0x008800"/>
+          </fill>
+        </Rect>
+        <Button label="Button" top="0" right="0"/>
+        <CheckBox label="CheckBox" bottom="0" left="0"/>
+        <TextInput text="TextInput" bottom="0" right="0" width="60"/>
+      </NavigatorContent>
+      <NavigatorContent label="Tab 2">
+        <layout>
+          <VerticalLayout/>
+        </layout>
+        <Rect width="20" height="20" top="0" left="0">
+          <stroke>
+            <SolidColorStroke weight="1" color="0x880000"/>
+          </stroke>
+          <fill>
+            <SolidColor alpha="1" color="0x008800"/>
+          </fill>
+        </Rect>
+        <Button label="Button" top="0" right="0"/>
+        <CheckBox label="CheckBox" bottom="0" left="0"/>
+        <TextInput text="TextInput" bottom="0" right="0" width="60"/>
+      </NavigatorContent>
+      <NavigatorContent label="Tab 3">
+        <Scroller width="100%" height="100%">
+          <Group>
+            <layout>
+              <HorizontalLayout/>
+            </layout>
+
+            <Rect width="20" height="20" top="0" left="0">
+              <stroke>
+                <SolidColorStroke weight="1" color="0x880000"/>
+              </stroke>
+              <fill>
+                <SolidColor alpha="1" color="0x008800"/>
+              </fill>
+            </Rect>
+            <Button label="Button" top="0" right="0"/>
+            <CheckBox label="CheckBox" bottom="0" left="0"/>
+            <TextInput text="TextInput" bottom="0" right="0" width="60"/>
+          </Group>
+        </Scroller>
+      </NavigatorContent>
+    </mx:TabNavigator>
+
+    <Group>
+      <layout>
+        <HorizontalLayout paddingTop="10" paddingLeft="10"/>
+      </layout>
+      <HSlider id="horizontalBar" snapInterval=".25"/>
+      <VSlider id="volumeBar" showDataTip="false" toolTip="Volume"/>
+    </Group>
+  </HGroup>
+
+
+  <HGroup>
+    <HGroup gap="10">
+    <VGroup>
+      <RadioButton groupName="cardtype" id="americanExpress" label="American Express" width="150"/>
+      <RadioButton groupName="cardtype" id="masterCard" label="MasterCard" width="150"/>
+      <RadioButton groupName="cardtype" id="visa" label="Visa" width="150"/>
+    </VGroup>
+
+    <RichEditableText height="100" width="80">
+      <text>
+        Hello World!
+      </text>
+    </RichEditableText>
+  </HGroup>
+    
+    <VGroup>
+      <TabBar dataProvider="{myViewStack}"/>
+      <mx:ViewStack id="myViewStack" borderStyle="solid">
+        <NavigatorContent id="search" label="Search">
+          <Label text="Search Screen"/>
+        </NavigatorContent>
+
+        <NavigatorContent id="custInfo" label="Customer Info">
+          <Label text="Customer Info"/>
+        </NavigatorContent>
+
+        <NavigatorContent id="accountInfo" label="Account Info">
+          <Label text="Account Info"/>
+        </NavigatorContent>
+      </mx:ViewStack>
+    </VGroup>
+
+    <TileGroup horizontalGap="1" verticalGap="1">
+      <Button label="1" width="50" height="50"/>
+      <Button label="2" width="50" height="50"/>
+      <Button label="3" width="50" height="50"/>
+      <Button label="4" width="50" height="50"/>
+      <Button label="5" width="50" height="50"/>
+      <Button label="6" width="50" height="50"/>
+      <Button label="7" width="50" height="50"/>
+      <Button label="8" width="50" height="50"/>
+      <Button label="9" width="50" height="50"/>
+    </TileGroup>
+  </HGroup>
+
+  <!--<VideoPlayer source="rtmp://fmsexamples.adobe.com/vod/mp4:_cs4promo_1000.f4v" width="350" height="250" loop="false" autoPlay="false"/>-->
+
+  <!-- explicit content after contiguous child elements serving as the default property value -->
+  <name>Test Group</name>
+</Group>

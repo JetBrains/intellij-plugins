@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="cocoa" minWidth="25">
+  <fx:Metadata>
+    [HostComponent("cocoa.sidebar.Sidebar")]
+  </fx:Metadata>
+  <fx:Script><![CDATA[
+    import cocoa.plaf.basic.SegmentedControlController;
+
+    override protected function createChildren():void {
+      super.createChildren();
+
+      segmentedControl.laf = _laf;
+      SegmentedControlController(laf.getFactory(component.lafKey + ".segmentedControlController").newInstance()).register(segmentedControl);
+    }
+    ]]></fx:Script>
+
+  <SidebarPaneLabelBar id="segmentedControl" width="20" right="2" top="0" bottom="0" lafSubkey="Sidebar">
+    <layout>
+      <SegmentedControlVerticalLayout/>
+    </layout>
+  </SidebarPaneLabelBar>
+
+  <!--<Container id="paneGroup" left="22" width="212" top="0" bottom="0">-->
+  <Container id="paneGroup" left="-1" right="25" width="492" top="0" bottom="0">
+    <layout>
+      <SidebarLayout/>
+    </layout>
+  </Container>
+</Skin>

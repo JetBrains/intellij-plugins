@@ -1,0 +1,11 @@
+*.iws
+target
+overlays
+workspace.xml
+.DS_Store
+.idea/libraries
+
+out
+
+idea-plugin/testData/states/*.swf
+idea-plugin/testData/states/generated

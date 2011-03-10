@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <TabBar id="viewMenu" x="10" y="40" width="320">
+    <dataProvider>
+      <ArrayCollection source="['Appetizers', 'Entrees', 'Desserts']"/>
+    </dataProvider>
+  </TabBar>
+</Group>

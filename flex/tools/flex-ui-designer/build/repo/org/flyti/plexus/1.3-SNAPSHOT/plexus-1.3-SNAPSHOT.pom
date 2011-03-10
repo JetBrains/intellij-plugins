@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.flyti</groupId>
+    <artifactId>plexusAggregator</artifactId>
+    <version>1.3-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>plexus</artifactId>
+  <packaging>swc</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>playerglobal</artifactId>
+      <type>swc</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.flyti</groupId>
+      <artifactId>collections</artifactId>
+      <version>1.3.4</version>
+      <type>swc</type>
+    </dependency>
+    <dependency>
+      <groupId>org.flyti</groupId>
+      <artifactId>foundation</artifactId>
+      <version>1.2.1</version>
+      <type>swc</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <configuration>
+          <manifests>
+            <manifest>
+              <uri>plexus</uri>
+              <includes>
+                <class>**.EventMap</class>
+                <class>**.LocalEventMap</class>
+                <class>**.Properties</class>
+                <class>**.Property</class>
+
+                <class>org.flyti.plexus.actionLists.EventHandlers</class>
+                <class>org.flyti.plexus.actionLists.Injectors</class>
+
+                <class>**.ComponentDescriptor</class>
+                <class>**.ComponentRequirement</class>
+                <class>**.ComponentDescriptorSet</class>
+
+                <class>org.flyti.plexus.actions.DataCopier</class>
+                <class>org.flyti.plexus.actions.StopHandlers</class>
+                <class>org.flyti.plexus.actions.InlineInvoker</class>
+                <class>org.flyti.plexus.actions.PropertyInjector</class>
+                <class>org.flyti.plexus.actions.ListenerInjector</class>
+                <class>org.flyti.plexus.actions.CallBack</class>
+                <class>org.flyti.plexus.actions.builders.ObjectBuilder</class>
+                <class>org.flyti.plexus.actions.builders.*Announcer</class>
+                <class>org.flyti.plexus.actions.builders.PropertySetter</class>
+                <class>org.flyti.plexus.actions.builders.*Invoker</class>
+
+                <class>org.flyti.plexus.debug.Debugger</class>
+              </includes>
+              <names>
+                <class>
+                  <name>ComponentDescriptor</name>
+                  <id>Component</id>
+                </class>
+                <class>
+                  <name>ComponentRequirement</name>
+                  <id>Requirement</id>
+                </class>
+                <class>
+                  <name>ComponentDescriptorSet</name>
+                  <id>ComponentSet</id>
+                </class>
+              </names>
+            </manifest>
+          </manifests>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

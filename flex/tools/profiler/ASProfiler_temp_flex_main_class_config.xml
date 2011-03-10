@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <target-player>10.0.0</target-player>
+  <compiler>
+    <source-path>
+      <path-element>src</path-element>
+    </source-path>
+  </compiler>
+  <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
+  <compiler>
+    <debug>true</debug>
+    <source-path>
+      <path-element>src</path-element>
+    </source-path>
+  </compiler>
+  <file-specs>
+    <path-element>src/ProfilerAgent.as</path-element>
+  </file-specs>
+  <output>C:/Projects/ASProfiler/out/production/ASProfiler/_ProfilerAgent.swf</output>
+</flex-config>
+

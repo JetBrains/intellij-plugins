@@ -1,0 +1,5 @@
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+mx|Window {
+  titleBarBackgroundSkin: ClassReference("mx.skins.halo.ApplicationTitleBarBackgroundSkin");
+}

@@ -1,0 +1,18 @@
+<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns="library://ns.adobe.com/flex/spark">
+  <states>
+    <State name="default"/>
+    <State name="Register"/>
+  </states>
+
+  <Panel title="Login">
+    <layout>
+      <VerticalLayout/>
+    </layout>
+
+    <mx:Form id="loginForm">
+      <mx:FormItem label="Password:" includeIn="Register">
+        <TextInput/>
+      </mx:FormItem>
+    </mx:Form>
+  </Panel>
+</Application>

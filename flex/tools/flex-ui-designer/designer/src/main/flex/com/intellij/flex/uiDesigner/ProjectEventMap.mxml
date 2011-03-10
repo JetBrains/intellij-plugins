@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<LocalEventMap xmlns="plexus" xmlns:fx="http://ns.adobe.com/mxml/2009">
+  <fx:Script><![CDATA[
+import cocoa.SegmentedControl;
+import cocoa.tabView.TabView;
+
+import com.intellij.flex.uiDesigner.flex.DocumentReader;
+import com.intellij.flex.uiDesigner.flex.StylePane;
+import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.CssRulesetPrinter;
+import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.Interactor;
+import com.intellij.flex.uiDesigner.flex.tools.ElementToolContainer;
+import com.intellij.flex.uiDesigner.flex.tools.ElementToolManager;
+]]></fx:Script>
+
+  <components>
+    <Component role="{ElementManager}"/>
+    <Component role="{ElementToolManager}"/>
+    <Component role="{DocumentManager}" implementation="{DocumentManagerImpl}">
+      <Requirement role="{LibraryManager}"/>
+      <Requirement role="{SocketManager}"/>
+      <Requirement role="{DocumentReader}"/>
+    </Component>
+    <Component role="{StatesBarManager}"/>
+    <Component role="{Interactor}">
+      <Requirement role="{ElementManager}"/>
+      <Requirement role="{SocketManager}"/>
+    </Component>
+    <Component role="{CssRulesetPrinter}">
+      <Requirement role="{Interactor}"/>
+    </Component>
+  </components>
+
+  <injectors>
+    <Injectors target="{StylePane}">
+      <PropertyInjector source="{CssRulesetPrinter}" targetKey="rulesetPrinter"/>
+      <PropertyInjector source="{ElementManager}" sourceKey="element"/>
+      <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
+      <PropertyInjector targetKey="pane" target="{Interactor}"/>
+    </Injectors>
+    
+    <Injectors target="{TabView}" targetId="editorTabView">
+      <PropertyInjector source="{DocumentManager}" sourceKey="document.tabIndex" targetKey="selectedIndex"/>
+      <PropertyInjector sourceKey="selectedItem.document" target="{DocumentManager}"/>
+    </Injectors>
+    
+    <Injectors target="{ElementToolContainer}">
+      <PropertySetter role="{ElementToolManager}" targetKey="toolContainer"/>
+    </Injectors>
+    <Injectors target="{ElementToolManager}">
+      <PropertyInjector source="{ElementManager}" sourceKey="element"/>
+      <!--<PropertyInjector source="{DocumentManager}" sourceKey="document" targetKey="document"/>-->
+    </Injectors>
+    
+    <Injectors target="{ElementManager}">
+      <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
+    </Injectors>
+    
+    <Injectors target="{SegmentedControl}" targetId="statesBar">
+      <PropertySetter role="{StatesBarManager}" targetKey="presentation"/>
+    </Injectors>
+    <Injectors target="{StatesBarManager}">
+      <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
+    </Injectors>
+  </injectors>
+</LocalEventMap>

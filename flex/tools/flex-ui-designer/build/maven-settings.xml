@@ -1,0 +1,52 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <profiles>
+    <profile>
+      <id>flyti</id>
+      <repositories>
+        <repository>
+          <id>flyti</id>
+          <url>http://repository.flyti.org/</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>flyti</id>
+          <url>http://repository.flyti.org/</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+
+    <profile>
+      <id>flex-mojos</id>
+      <repositories>
+        <repository>
+          <id>flex-mojos-repository</id>
+          <url>http://repository.sonatype.org/content/groups/flexgroup/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>flex-mojos-plugin-repository</id>
+          <url>http://repository.sonatype.org/content/groups/flexgroup/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+
+  <activeProfiles>
+    <activeProfile>flyti</activeProfile>
+    <activeProfile>flex-mojos</activeProfile>
+  </activeProfiles>
+</settings>

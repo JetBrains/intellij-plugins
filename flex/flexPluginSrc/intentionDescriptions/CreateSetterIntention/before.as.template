@@ -1,0 +1,6 @@
+package {
+public class Car {
+    <spot>public var color:String;</spot>
+
+}
+}

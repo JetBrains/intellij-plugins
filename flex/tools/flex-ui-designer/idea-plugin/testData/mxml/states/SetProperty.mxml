@@ -1,0 +1,13 @@
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <states>
+    <State name="default"/>
+    <State name="A"/>
+  </states>
+
+  <layout>
+    <VerticalLayout gap="1" gap.A="20"/>
+  </layout>
+
+  <Label id="f" text="mm"/>
+  <Label text="uuuuu" width="50%" width.A="100%"/>
+</Group>

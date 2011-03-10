@@ -1,0 +1,282 @@
+<!ELEMENT AccessibilityClass EMPTY><!ELEMENT AccessibilityClass EMPTY>
+<!ATTLIST AccessibilityClass implementation CDATA #REQUIRED>
+<!ELEMENT Alternative EMPTY>
+<!ATTLIST Alternative
+  replacement CDATA #IMPLIED
+  since CDATA #IMPLIED
+>
+<!ELEMENT ArrayElementType EMPTY>
+<!ATTLIST ArrayElementType
+  _DEFAULT_ CDATA "Object"
+>
+<!ELEMENT Bindable EMPTY>
+<!ATTLIST Bindable
+  event CDATA #IMPLIED
+  style CDATA #IMPLIED
+>
+<!ELEMENT DataBindingInfo EMPTY>
+<!ELEMENT RequiresDataBinding EMPTY>
+<!ELEMENT DefaultTriggerEvent EMPTY>
+<!ELEMENT DefaultBindingProperty EMPTY>
+<!ATTLIST DefaultBindingProperty
+   source CDATA #IMPLIED
+   destination CDATA #IMPLIED
+>
+<!ELEMENT DefaultProperty EMPTY>
+<!ELEMENT Deprecated EMPTY>
+<!ATTLIST Deprecated since CDATA #REQUIRED replacement CDATA #REQUIRED message CDATA #IMPLIED>
+
+<!ELEMENT Effect EMPTY>
+<!ATTLIST Effect
+  name CDATA #REQUIRED
+  event CDATA #REQUIRED
+  deprecatedMessage CDATA #IMPLIED
+  deprecatedReplacement CDATA #IMPLIED
+  deprecatedSince CDATA #IMPLIED
+>
+
+<!ELEMENT Embed EMPTY>
+<!ATTLIST Embed 
+  source CDATA #REQUIRED 
+  mimeType CDATA #IMPLIED 
+  smoothing (true|false) #IMPLIED
+  compression (true|false) #IMPLIED
+  quality CDATA #IMPLIED
+  scaleGridTop CDATA #IMPLIED
+  scaleGridLeft CDATA #IMPLIED 
+  scaleGridRight CDATA #IMPLIED 
+  scaleGridBottom CDATA #IMPLIED 
+  symbol CDATA #IMPLIED
+   --fonts--
+  fontFamily CDATA #IMPLIED
+  fontName CDATA #IMPLIED
+  systemFont CDATA #IMPLIED
+  fontStyle CDATA #IMPLIED 
+  fontWeight CDATA #IMPLIED 
+  advancedAntiAliasing CDATA #IMPLIED 
+  embedAsCFF CDATA #IMPLIED 
+  unicodeRange CDATA #IMPLIED 
+  >
+  
+<!ELEMENT Event EMPTY>
+<!ATTLIST Event
+  name CDATA #REQUIRED
+  type CDATA "flash.events.Event"
+  deprecatedMessage CDATA #IMPLIED
+  deprecatedReplacement CDATA #IMPLIED
+  deprecatedSince CDATA #IMPLIED
+>
+<!ELEMENT Exclude EMPTY>
+<!ATTLIST Exclude
+  name CDATA #REQUIRED
+  kind CDATA #REQUIRED
+>
+<!ELEMENT ExcludeClass EMPTY>
+<!ELEMENT Frame EMPTY>
+<!ATTLIST Frame
+  factoryClass CDATA #REQUIRED
+>
+<!ELEMENT HostComponent EMPTY>
+<!ATTLIST HostComponent
+  _DEFAULT_ CDATA "spark.components.supportClasses.SkinnableComponent"
+>
+<!ELEMENT IconFile EMPTY>
+<!ELEMENT Inspectable EMPTY>
+<!ATTLIST Inspectable
+  arrayType CDATA "Object"
+  category CDATA #REQUIRED
+  defaultValue CDATA #IMPLIED
+  enumeration CDATA #IMPLIED
+  environment CDATA #REQUIRED
+  format CDATA #IMPLIED
+  listOffset CDATA #IMPLIED
+  maxValue CDATA #IMPLIED
+  minValue CDATA #IMPLIED
+  name CDATA #IMPLIED
+  type CDATA #IMPLIED
+  variable CDATA #IMPLIED
+  verbose CDATA #IMPLIED
+>
+
+<!ELEMENT InstanceType EMPTY>
+<!ELEMENT NonCommittingChangeEvent EMPTY>
+<!ELEMENT PercentProxy EMPTY>
+<!ELEMENT RemoteClass EMPTY>
+<!ATTLIST RemoteClass
+  alias CDATA #REQUIRED
+>
+<!ELEMENT ResourceBundle EMPTY>
+<!ELEMENT Resource EMPTY>
+<!ATTLIST Resource
+  bundle CDATA #IMPLIED
+  key CDATA #REQUIRED
+>
+<!ELEMENT RichTextContent EMPTY>
+<!ELEMENT CollapseWhiteSpace EMPTY>
+<!ELEMENT SkinPart EMPTY>
+<!ATTLIST SkinPart
+  required (true|false) #IMPLIED
+  type CDATA "Object"
+>
+<!ELEMENT SkinState EMPTY>
+<!ELEMENT Style EMPTY>
+<!ATTLIST Style
+  name CDATA #REQUIRED
+  type CDATA "Object"
+  inherit CDATA #REQUIRED
+  format CDATA #IMPLIED
+  arrayType CDATA "Object"
+  enumeration CDATA #IMPLIED
+  states CDATA #IMPLIED
+  theme CDATA #IMPLIED
+  deprecatedMessage CDATA #IMPLIED
+  deprecatedReplacement CDATA #IMPLIED
+  deprecatedSince CDATA #IMPLIED
+  minValue CDATA #IMPLIED
+  maxValue CDATA #IMPLIED
+>
+
+<!ELEMENT SWF EMPTY>
+<!ATTLIST SWF
+  width CDATA #IMPLIED
+  height CDATA #IMPLIED
+  backgroundColor CDATA #IMPLIED
+  frameRate CDATA #IMPLIED
+  widthPercent CDATA #IMPLIED
+  heightPercent CDATA #IMPLIED
+  scriptRecursionLimit CDATA #IMPLIED
+  scriptTimeLimit CDATA #IMPLIED
+  pageTitle CDATA #IMPLIED
+>
+<!ELEMENT Transient EMPTY>
+<!ELEMENT Mixin EMPTY>
+
+<!ELEMENT Inject EMPTY>
+<!ATTLIST Inject
+  source CDATA #IMPLIED
+  destination CDATA #IMPLIED
+  twoWay (true|false) #IMPLIED
+>
+
+<!ATTLIST Inject name CDATA #IMPLIED> <!--Robotlegs-->
+<!ATTLIST Inject id CDATA #IMPLIED> <!--Parsley-->
+
+<!ELEMENT Autowire EMPTY>
+<!ATTLIST Autowire
+  bean CDATA #IMPLIED
+>
+<!ELEMENT Mediate EMPTY>
+<!ATTLIST Mediate
+  event CDATA #IMPLIED
+  properties CDATA #IMPLIED
+  useCapture (true|false) #IMPLIED
+  priority CDATA #IMPLIED
+  stopPropagation (true|false) #IMPLIED
+  stopImmediatePropagation (true|false) #IMPLIED
+>
+<!ELEMENT Dispatcher EMPTY>
+<!ELEMENT PostConstruct EMPTY>
+<!ELEMENT PreDestroy EMPTY>
+
+<!--Spring ActionScript-->
+<!ELEMENT Autowired EMPTY>
+<!ATTLIST Autowired
+  externalProperty CDATA #IMPLIED
+  mode CDATA #IMPLIED
+  name CDATA #IMPLIED
+  property CDATA #IMPLIED
+>
+
+<!ELEMENT EventHandler EMPTY>
+<!ATTLIST EventHandler
+  name CDATA #IMPLIED
+  properties CDATA #IMPLIED
+  clazz CDATA #IMPLIED
+>
+
+<!ELEMENT Required EMPTY>
+
+<!ELEMENT RouteEvents EMPTY>
+<!ATTLIST RouteEvents
+  events CDATA #IMPLIED
+>
+
+<!-- FlexUnit -->
+<!ELEMENT BeforeClass EMPTY>
+<!ATTLIST BeforeClass
+  order CDATA #IMPLIED
+  description CDATA #IMPLIED
+  timeout CDATA #IMPLIED
+  async CDATA #IMPLIED
+  ui CDATA #IMPLIED
+>
+<!ELEMENT AfterClass EMPTY>
+<!ATTLIST AfterClass
+  order CDATA #IMPLIED
+  description CDATA #IMPLIED
+  timeout CDATA #IMPLIED
+  async CDATA #IMPLIED
+  ui CDATA #IMPLIED
+>
+<!ELEMENT Before EMPTY>
+<!ATTLIST Before
+  order CDATA #IMPLIED
+  description CDATA #IMPLIED
+  timeout CDATA #IMPLIED
+  async CDATA #IMPLIED
+  ui CDATA #IMPLIED
+>
+<!ELEMENT After EMPTY>
+<!ATTLIST After
+  order CDATA #IMPLIED
+  description CDATA #IMPLIED
+  timeout CDATA #IMPLIED
+  async CDATA #IMPLIED
+  ui CDATA #IMPLIED
+>
+<!ELEMENT Rule EMPTY>
+<!ATTLIST Rule
+  order CDATA #IMPLIED
+>
+<!ELEMENT Suite EMPTY>
+<!ATTLIST Suite
+  order CDATA #IMPLIED
+  description CDATA #IMPLIED
+>
+<!ELEMENT RunWith EMPTY>
+<!ATTLIST RunWith
+  _DEFAULT_ CDATA "org.flexunit.runner.IRunner"
+>
+<!ELEMENT Ignore EMPTY>
+<!ATTLIST Ignore
+  description CDATA #IMPLIED
+>
+<!ELEMENT Test EMPTY>
+<!ATTLIST Test
+  expects CDATA "Error"
+  order CDATA #IMPLIED
+  description CDATA #IMPLIED
+  timeout CDATA #IMPLIED
+  async CDATA #IMPLIED
+  ui CDATA #IMPLIED
+  dataProvider CDATA #IMPLIED
+>
+<!ELEMENT DataPoint EMPTY>
+<!ATTLIST DataPoint
+  description CDATA #IMPLIED
+  loader CDATA #IMPLIED
+>
+<!ELEMENT DataPoints EMPTY>
+<!ATTLIST DataPoints
+  description CDATA #IMPLIED
+  loader CDATA #IMPLIED
+>
+<!ELEMENT Parameters EMPTY>
+<!ATTLIST Parameters
+  description CDATA #IMPLIED
+  loader CDATA #IMPLIED
+>
+<!ELEMENT Theory EMPTY>
+<!ATTLIST Theory
+  description CDATA #IMPLIED
+>

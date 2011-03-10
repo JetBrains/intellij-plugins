@@ -1,0 +1,5 @@
+package pack {
+<spot>public interface SomeInterface</spot> {
+    function foo():void;
+}
+}

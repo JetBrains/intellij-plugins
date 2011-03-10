@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderSdkDialog">
+  <grid id="27dc6" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="506" height="201"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="bb6c0" class="javax.swing.JRadioButton" binding="myImportSdkSettingsRadioButton" default-binding="true">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="import.sdk.settings.from.flash.builder"/>
+        </properties>
+      </component>
+      <component id="827d5" class="com.intellij.openapi.ui.LabeledComponent" binding="myWorkspaceDirectoryComponent">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="3" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
+          <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="flash.builder.workspace.folder"/>
+        </properties>
+      </component>
+      <vspacer id="5f275">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+      <component id="3333b" class="javax.swing.JRadioButton" binding="myUseIdeaSdkRadioButton" default-binding="true">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="use.already.configured.sdk"/>
+        </properties>
+      </component>
+      <component id="9a290" class="com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton" binding="myFlexSdkComboWithBrowse" default-binding="true">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="1" indent="3" use-parent-layout="false"/>
+        </constraints>
+      </component>
+      <component id="f0ea8" class="com.intellij.openapi.ui.LabeledComponent" binding="myInstallationDirComponent">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="3" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
+          <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="flash.builder.installation.dir"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+  <buttonGroups>
+    <group name="buttonGroup1">
+      <member id="bb6c0"/>
+      <member id="3333b"/>
+    </group>
+  </buttonGroups>
+</form>

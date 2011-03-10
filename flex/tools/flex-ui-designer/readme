@@ -1,0 +1,10 @@
+ln -sf $DEV_IDEA_HOME/plugins/flex/tools/flex-ui-designer/app-loader/target/app-loader-1.0-SNAPSHOT.swf ~/Library/Caches/IntelliJIdea10/plugins-sandbox/system/flexUIDesigner/designer.swf
+
+ln -sf $DEV_IDEA_HOME/plugins/flex/tools/flex-ui-designer/app-loader/target/app-loader-1.0-SNAPSHOT.swf ~/Library/Caches/IntelliJIdea10/plugins-sandbox/test/testAppRoot/designer.swf
+
+ln -sf $DEV_IDEA_HOME/plugins/flex/tools/flex-ui-designer/designer/src/main/resources/descriptor.xml ~/Library/Caches/IntelliJIdea10/plugins-sandbox/system/flexUIDesigner/descriptor.xml
+
+mvn org.sonatype.flexmojos:flexmojos-maven-plugin:4.0-de4:configurator
+mvn org.sonatype.flexmojos:flexmojos-maven-plugin:4.0-de4:configurator -s build/maven-settings.xml
+
+mvn dependency:copy-dependencies && find $DEV_IDEA_HOME/plugins/flex/tools/flex-ui-designer \( -name maven-metadata-local.xml -o -name _maven.repositories \) -delete

@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<!-- transitions/DefiningTrans.mxml -->
+<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" width="400">
+
+  <!-- Define the two view states, in addition to the base state.-->
+  <states>
+    <State name="default"/>
+    <State name="One"/>
+    <State name="Two"/>
+  </states>
+
+  <!-- Define Transition array with one Transition object.-->
+  <transitions>
+    <!-- A transition for changing from any state to any state. -->
+    <Transition id="myTransition" fromState="*" toState="*">
+      <!-- Define a Parallel effect as the top-level effect.-->
+      <Parallel id="t1" targets="{[p1,p2,p3]}">
+        <!-- Define a Move and Resize effect.-->
+        <Move duration="400"/>
+        <Resize duration="400"/>
+      </Parallel>
+    </Transition>
+  </transitions>
+
+  <!-- Define the container holding the three Panel containers.-->
+  <Group id="pm" width="100%" height="100%">
+    <Panel id="p1" title="One"
+             x="0" y="0"
+             x.One="110" y.One="0"
+             x.Two="0" y.Two="0"
+             width="100" height="100"
+             width.One="200" height.One="210"
+             width.Two="100" height.Two="100"
+             click="currentState='One'">
+      <Label fontSize="24" text="One"/>
+    </Panel>
+
+    <Panel id="p2" title="Two"
+             x="0" y="110"
+             x.One="0" y.One="0"
+             x.Two="110" y.Two="0"
+             width="100" height="100"
+             width.One="100" height.One="100"
+             width.Two="200" height.Two="210"
+             click="currentState='Two'">
+      <Label fontSize="24" text="Two"/>
+    </Panel>
+
+    <Panel id="p3" title="Three"
+             x="110" y="0"  
+             x.One="0" y.One="110"
+             x.Two="0" y.Two="110"
+             width="200" height="210"
+             width.One="100" height.One="100"
+             width.Two="100" height.Two="100"
+             click="currentState='default'">
+      <Label fontSize="24" text="Three"/>
+    </Panel>
+  </Group>
+</Application>

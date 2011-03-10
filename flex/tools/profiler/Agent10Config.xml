@@ -1,0 +1,14 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+  <target-player>10.0.0</target-player>
+  <compiler>
+    <debug>true</debug>
+    <source-path>
+      <path-element>src</path-element>
+    </source-path>
+  </compiler>
+  <static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
+  <file-specs>
+    <path-element>src/ProfilerAgent.as</path-element>
+  </file-specs>
+  <output>out/production/ASProfiler/profiler_agent_4.swf</output>
+</flex-config>

@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+    <fx:Script><![CDATA[
+        <spot>private</spot> var <spot>_title</spot>:String;
+
+<spot>        public function get title():String {
+            return _title;
+        }
+</spot>        ]]></fx:Script>
+</s:Application>

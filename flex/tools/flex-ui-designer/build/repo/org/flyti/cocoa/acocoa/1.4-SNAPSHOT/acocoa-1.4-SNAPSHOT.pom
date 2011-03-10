@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.flyti.cocoa</groupId>
+    <artifactId>cocoaAggregator</artifactId>
+    <version>1.4-SNAPSHOT</version>
+  </parent>
+
+  <name>Cocoa AIR</name>
+  <artifactId>acocoa</artifactId>
+  <packaging>swc</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>air-framework</artifactId>
+      <type>pom</type>
+      <exclusions>
+        <exclusion>
+          <groupId>com.adobe.flex.framework</groupId>
+          <artifactId>playerglobal</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.flyti.cocoa</groupId>
+      <artifactId>cocoa</artifactId>
+      <version>1.4-SNAPSHOT</version>
+      <type>swc</type>
+      <exclusions>
+        <exclusion>
+          <groupId>com.adobe.flex.framework</groupId>
+          <artifactId>playerglobal</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <configuration>
+          <manifests>
+            <manifest>
+              <uri>acocoa</uri>
+              <includes>
+                <class>**.*WindowedApplication</class>
+                <class>**.DocumentWindow</class>
+              </includes>
+              <names>
+                <class>
+                  <name>DocumentWindow</name>
+                  <id>Window</id>
+                </class>
+              </names>
+            </manifest>
+          </manifests>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

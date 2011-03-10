@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" alpha.disabled="0.5">
+
+  <fx:Metadata>
+    <![CDATA[
+       /**
+        * @copy spark.skins.spark.ApplicationSkin#hostComponent
+        */
+       [HostComponent("spark.components.ButtonBar")]
+    ]]>
+  </fx:Metadata>
+
+  <states>
+    <State name="normal"/>
+    <State name="disabled"/>
+  </states>
+
+  <fx:Declarations>
+    <!---
+     @copy spark.components.ButtonBar#firstButton
+     @default spark.skins.spark.ButtonBarFirstButtonSkin
+     @see spark.skins.spark.ButtonBarFirstButtonSkin
+    -->
+    <fx:Component id="firstButton">
+      <ButtonBarButton skinClass="spark.skins.spark.ButtonBarFirstButtonSkin"/>
+    </fx:Component>
+
+    <!---
+     @copy spark.components.ButtonBar#middleButton
+     @default spark.skins.spark.ButtonBarMiddleButtonSkin
+     @see spark.skins.spark.ButtonBarMiddleButtonSkin
+    -->
+    <fx:Component id="middleButton">
+      <ButtonBarButton skinClass="spark.skins.spark.ButtonBarMiddleButtonSkin"/>
+    </fx:Component>
+
+    <!---
+     @copy spark.components.ButtonBar#lastButton
+     @default spark.skins.spark.ButtonBarLastButtonSkin
+     @see spark.skins.spark.ButtonBarLastButtonSkin
+    -->
+    <fx:Component id="lastButton">
+      <ButtonBarButton>
+        <skinClass>spark.skins.spark.ButtonBarLastButtonSkin</skinClass>
+      </ButtonBarButton>
+    </fx:Component>
+
+  </fx:Declarations>
+
+  <!--- @copy spark.components.SkinnableDataContainer#dataGroup -->
+  <DataGroup id="dataGroup" width="100%" height="100%">
+    <layout>
+      <ButtonBarHorizontalLayout gap="-1"/>
+    </layout>
+  </DataGroup>
+
+  <Button horizontalCenter="0" verticalCenter="1" left="10" right="10"/>
+  <Button id="labelDisplay" horizontalCenter="0" verticalCenter="1" left="10" right="10" top="4" bottom="2"/>
+</Skin>

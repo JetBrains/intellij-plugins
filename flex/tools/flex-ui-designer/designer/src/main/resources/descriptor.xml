@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<application xmlns="http://ns.adobe.com/air/application/2.0">
+  <id>com.intellij.flex.uiDesigner.designer</id>
+  <!--<versionNumber>1.0.0</versionNumber>-->
+  <version>0.4</version>
+  <name>Flex UI Designer</name>
+  <filename>FlexUIDesigner</filename>
+  <description>Provides visual editing support for Flex UI</description>
+  <copyright>Copyright (c) 2000-2011 JetBrains s.r.o.</copyright>
+  <initialWindow>
+    <content>designer.swf</content>
+  </initialWindow>
+</application>

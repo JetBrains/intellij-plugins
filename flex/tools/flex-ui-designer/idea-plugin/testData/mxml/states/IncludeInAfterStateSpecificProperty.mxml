@@ -1,0 +1,9 @@
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <states>
+    <State name="default"/>
+    <State name="A"/>
+    <State name="B"/>
+  </states>
+
+  <Label text="B" text.A="A" includeIn="A, B"/>
+</Group>

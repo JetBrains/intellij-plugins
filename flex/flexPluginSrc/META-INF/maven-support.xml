@@ -1,0 +1,9 @@
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
+<idea-plugin url="http://www.jetbrains.com/idea">
+  <extensions xmlns="org.jetbrains.idea.maven">
+    <importer implementation="com.intellij.javascript.flex.maven.FlexIsrafilFacetImporter"/>
+    <importer implementation="com.intellij.javascript.flex.maven.FlexMojos1FacetImporter"/>
+    <importer implementation="com.intellij.javascript.flex.maven.FlexMojos2FacetImporter"/>
+    <importer implementation="com.intellij.javascript.flex.maven.FlexMojos3FacetImporter"/>
+  </extensions>
+</idea-plugin>

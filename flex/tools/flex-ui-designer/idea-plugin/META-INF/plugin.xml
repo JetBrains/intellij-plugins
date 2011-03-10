@@ -1,0 +1,30 @@
+<idea-plugin version="2">
+  <name>Flex UI Designer</name>
+  <description>Provides editing support for Flex UI</description>
+  <version>0.4.4</version>
+  <vendor logo="/general/ijLogo.png">JetBrains</vendor>
+  <idea-version since-build="106.149"/>
+
+  <resource-bundle>messages.FlexUIDesignerBundle</resource-bundle>
+
+  <depends optional="false">com.intellij.flex</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager" serviceImplementation="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.SocketInputHandler" serviceImplementation="com.intellij.flex.uiDesigner.SocketInputHandlerImpl"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.io.StringRegistry" serviceImplementation="com.intellij.flex.uiDesigner.io.StringRegistry"/>
+  </extensions>
+
+  <actions>
+    <group id="FlexUIDesigner.MainToolbarActions">
+      <separator/>
+      <action id="FlexUIDesigner.RunDesignView" class="com.intellij.flex.uiDesigner.actions.RunDesignViewAction" icon="/actions/preview.png">
+        <keyboard-shortcut first-keystroke="meta i" keymap="$default"/>
+      </action>
+      <action id="FlexUIDesigner.DebugDesignView" class="com.intellij.flex.uiDesigner.actions.DebugDesignViewAction" icon="/preview-debug.png">
+        <keyboard-shortcut first-keystroke="meta shift i" keymap="$default"/>
+      </action>
+      <add-to-group anchor="before" group-id="MainToolBar" relative-to-action="HelpTopics"/>
+    </group>
+  </actions>
+</idea-plugin>

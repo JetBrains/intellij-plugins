@@ -1,0 +1,4 @@
+borders:
+- key: GroupItemRenderer
+  type: Scale1
+  contentInsets: {left: 5, right: 5, bottom: 6}

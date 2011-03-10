@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.flyti.superPOMs</groupId>
+    <artifactId>common</artifactId>
+    <version>26</version>
+  </parent>
+
+  <name>Flyti Forge for Flash</name>
+  <groupId>org.flyti</groupId>
+  <artifactId>flash-forge</artifactId>
+  <version>21</version>
+  <packaging>pom</packaging>
+
+  <developers>
+    <developer>
+      <id>develar</id>
+      <name>Vladimir Krivosheev</name>
+      <email>develar@gmail.com</email>
+      <timezone>+3</timezone>
+    </developer>
+  </developers>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>flashx</groupId>
+        <artifactId>textLayout</artifactId>
+        <version>2.0.189-de1</version>
+        <type>swc</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <configuration>
+          <fixedLiteralVector>true</fixedLiteralVector>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.1.2</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <distributionManagement>
+    <repository>
+      <id>flyti-releases</id>
+      <url>http://flyti.org:8081/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>flyti-snapshots</id>
+      <url>http://flyti.org:8081/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+</project>

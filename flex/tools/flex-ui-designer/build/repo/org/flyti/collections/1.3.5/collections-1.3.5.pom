@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.flyti</groupId>
+    <artifactId>flash-forge</artifactId>
+    <version>22</version>
+  </parent>
+
+  <artifactId>collections</artifactId>
+  <version>1.3.5</version>
+  <packaging>swc</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>framework</artifactId>
+      <type>swc</type>
+    </dependency>
+    <dependency>
+      <groupId>com.adobe.flex.framework</groupId>
+      <artifactId>playerglobal</artifactId>
+      <type>swc</type>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <configuration>
+          <manifests>
+            <manifest>
+              <uri>http://flyti.org/collections</uri>
+              <includes>
+                <class>org.flyti.util.MapEntry</class>
+                <class>org.flyti.util.HashMap</class>
+                <class>org.flyti.util.ArrayList</class>
+              </includes>
+            </manifest>
+          </manifests>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

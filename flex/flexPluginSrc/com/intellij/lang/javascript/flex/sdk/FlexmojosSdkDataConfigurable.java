@@ -1,0 +1,144 @@
+package com.intellij.lang.javascript.flex.sdk;
+
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.projectRoots.AdditionalDataConfigurable;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.openapi.ui.TextComponentAccessor;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.Function;
+
+import javax.swing.*;
+import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
+
+public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable {
+  private Sdk mySdk;
+  private final FlexmojosSdkForm myFlexmojosSdkForm;
+
+  public FlexmojosSdkDataConfigurable() {
+    myFlexmojosSdkForm = new FlexmojosSdkForm();
+  }
+
+  public void setSdk(final Sdk sdk) {
+    mySdk = sdk;
+  }
+
+  public JComponent createComponent() {
+    return myFlexmojosSdkForm.getMainPanel();
+  }
+
+  public boolean isModified() {
+    final FlexmojosSdkAdditionalData data = (FlexmojosSdkAdditionalData)mySdk.getSdkAdditionalData();
+    if (data != null) {
+      if (!myFlexmojosSdkForm.getAdlPath().equals(data.getAdlPath())) return true;
+      if (!myFlexmojosSdkForm.getAirRuntimePath().equals(data.getAirRuntimePath())) return true;
+    }
+    return false;
+  }
+
+  public void apply() throws ConfigurationException {
+    final FlexmojosSdkAdditionalData data = (FlexmojosSdkAdditionalData)mySdk.getSdkAdditionalData();
+    if (data != null) {
+      data.setAdlPath(myFlexmojosSdkForm.getAdlPath());
+      data.setAirRuntimePath(myFlexmojosSdkForm.getAirRuntimePath());
+    }
+  }
+
+  public void reset() {
+    final FlexmojosSdkAdditionalData data = (FlexmojosSdkAdditionalData)mySdk.getSdkAdditionalData();
+    myFlexmojosSdkForm.setFlexCompilerClasspath(data == null ? Collections.<String>emptyList() : data.getFlexCompilerClasspath());
+    myFlexmojosSdkForm.setAdlPath(data == null ? "" : data.getAdlPath());
+    myFlexmojosSdkForm.setAirRuntimePath(data == null ? "" : data.getAirRuntimePath());
+  }
+
+  public void disposeUIResources() {
+  }
+
+  private static class FlexmojosSdkForm {
+    private JComponent myMainPanel;
+    private JTextArea myClasspathTextArea;
+    private LabeledComponent<TextFieldWithBrowseButton> myAdlComponent;
+    private LabeledComponent<TextFieldWithBrowseButton> myAirRuntimeComponent;
+
+    private FlexmojosSdkForm() {
+      initAdlChooser();
+      initAirRuntimeChooser();
+    }
+
+    private void initAdlChooser() {
+      final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, false, false, false, false, false) {
+        public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
+          return super.isFileVisible(file, showHiddenFiles) &&
+                 (file.isDirectory() || (file.getName().startsWith("adl") && isExecutableExtension(file.getExtension())));
+        }
+
+        private boolean isExecutableExtension(final String extension) {
+          return SystemInfo.isWindows ? "exe".equalsIgnoreCase(extension) : extension == null || "uexe".equalsIgnoreCase(extension);
+        }
+      };
+
+      myAdlComponent.getComponent()
+        .addBrowseFolderListener("Select ADL executable file", null, null, descriptor, new TextComponentAccessor<JTextField>() {
+          public void setText(final JTextField component, final String text) {
+            component.setText(text);
+            final String adlPath = FileUtil.toSystemDependentName(text);
+            if (adlPath.endsWith(FlexSdkUtils.ADL_RELATIVE_PATH)) {
+              final String runtimePath =
+                adlPath.substring(0, adlPath.length() - FlexSdkUtils.ADL_RELATIVE_PATH.length()) + FlexSdkUtils.AIR_RUNTIME_RELATIVE_PATH;
+              myAirRuntimeComponent.getComponent().setText(runtimePath);
+            }
+          }
+
+          public String getText(final JTextField component) {
+            return component.getText();
+          }
+        });
+    }
+
+    private void initAirRuntimeChooser() {
+      final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, false, false, false) {
+        public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
+          return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || ("zip".equalsIgnoreCase(file.getExtension())));
+        }
+      };
+      myAirRuntimeComponent.getComponent().addBrowseFolderListener("Select AIR Runtime",
+                                                                   "Select AIR Runtime as a directory like <Flex SDK>/runtimes/AIR/win/ or as a .zip file",
+                                                                   null, descriptor);
+    }
+
+    JComponent getMainPanel() {
+      return myMainPanel;
+    }
+
+    void setFlexCompilerClasspath(final Collection<String> classpathEntries) {
+      myClasspathTextArea.setText(StringUtil.join(classpathEntries, new Function<String, String>() {
+        public String fun(final String s) {
+          return s.replace('/', File.separatorChar);
+        }
+      }, "\n"));
+    }
+
+    void setAdlPath(final String adlPath) {
+      myAdlComponent.getComponent().setText(adlPath);
+    }
+
+    String getAdlPath() {
+      return myAdlComponent.getComponent().getText();
+    }
+
+    void setAirRuntimePath(final String airRuntimePath) {
+      myAirRuntimeComponent.getComponent().setText(airRuntimePath);
+    }
+
+    String getAirRuntimePath() {
+      return myAirRuntimeComponent.getComponent().getText();
+    }
+  }
+}

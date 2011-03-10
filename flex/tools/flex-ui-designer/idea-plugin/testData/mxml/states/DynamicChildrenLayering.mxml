@@ -1,0 +1,15 @@
+<VGroup name="root" xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <states>
+    <State name="default"/>
+    <State name="A"/>
+    <State name="B"/>
+  </states>
+
+  <!-- test case "after back sibling", case "destionation first" tested in ItemDestructionPolicyMergeItems -->
+  <Label text="0"/>
+  <Label text="1" includeIn="A"/>
+  <Label text="2" includeIn="A, B" text.B="dd"/>
+  <Label text="3" includeIn="A" itemDestructionPolicy="auto"/>
+  <Label text="4" includeIn="A"/>
+  <Label text="5" includeIn="A"/>
+</VGroup>

@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!-- states\LoginExample.mxml -->
+<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns="library://ns.adobe.com/flex/spark">
+
+  <!-- The Application class states property defines the view states.-->
+  <states>
+    <State name="default"/>
+    <State name="Register"/>
+  </states>
+  
+  <mouseDownEffect>
+    <Fade targets="{loginPanel}" alphaFrom="1" alphaTo="0" repeatCount="2" repeatBehavior="reverse"/>
+  </mouseDownEffect>
+  <mouseDownEffect.Register>
+    <Scale3D id="atScale" target="{loginPanel}" scaleXBy="-.25" repeatBehavior="reverse" repeatCount="2"/>
+  </mouseDownEffect.Register>
+  <rollOutEffect.Register>
+    <Scale3D target="{loginPanel}" scaleXBy="+.50" repeatBehavior="reverse" repeatCount="2"/>
+  </rollOutEffect.Register>
+
+  <!-- Set title of the Panel container based on the view state.-->
+  <Panel id="loginPanel" title="Login" title.Register="Register">
+    <layout>
+      <VerticalLayout/>
+    </layout>
+
+    <mx:Form id="loginForm">
+      <mx:FormItem label="Username:">
+        <TextInput/>
+      </mx:FormItem>
+
+      <mx:FormItem label="Password:">
+        <TextInput/>
+      </mx:FormItem>
+
+      <mx:FormItem id="confirm" label="Confirm:" includeIn="Register">
+        <!-- Add a TextInput control to the form for the Register view state. -->
+        <TextInput/>
+      </mx:FormItem>
+
+      <mx:FormItem direction="horizontal">
+        <!-- Use the LinkButton to change view state.-->
+        <mx:Spacer width="100%" id="spacer1"/>
+        <!-- Set label of the control based on the view state.-->
+        <mx:LinkButton id="registerLink"
+                       label="Need to Register?"
+                       label.Register="Return to Login"
+                       click="currentState='Register'"
+                       click.Register="currentState=''"/>
+        <Button id="loginButton"
+                  label="Login" label.Register="Register"/>
+      </mx:FormItem>
+    </mx:Form>
+  </Panel>
+  <fx:Script><![CDATA[
+    import spark.filters.DropShadowFilter;
+    ]]></fx:Script>
+</Application>

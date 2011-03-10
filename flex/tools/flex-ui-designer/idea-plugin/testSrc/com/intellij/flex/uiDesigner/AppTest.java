@@ -1,0 +1,77 @@
+package com.intellij.flex.uiDesigner;
+
+import com.intellij.flex.uiDesigner.io.AmfOutputStream;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.psi.xml.XmlFile;
+import js.JSTestOption;
+import js.JSTestOptions;
+import org.picocontainer.MutablePicoContainer;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+public class AppTest extends AppTestBase {
+  private static CountDownLatch lock = new CountDownLatch(1);
+
+  @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexSdk})
+  @Flex(version="4.5")
+  public void testCloseAndOpenProject() throws Exception {
+    ((MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer()).unregisterComponent(SocketInputHandler.class.getName());
+    ((MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer()).registerComponentImplementation(SocketInputHandler.class.getName(), MySocketInputHandler.class);
+            
+    configureByFiles(null, LocalFileSystem.getInstance().findFileByPath(getTestMxmlPath() + "/injectedAS/Transitions.mxml"));
+    ApplicationManager.getApplication().getMessageBus().connect().subscribe(FlexUIDesignerApplicationManager.MESSAGE_TOPIC, new FlexUIDesignerApplicationListener() {
+      @Override
+      public void initialDocumentOpened() {
+        lock.countDown();
+      }
+    });
+
+    copySwfAndDescriptor(new File(PathManager.getSystemPath(), "flexUIDesigner"));
+    FlexUIDesignerApplicationManager designerAppManager = FlexUIDesignerApplicationManager.getInstance();
+    designerAppManager.openDocument(myProject, myModule, (XmlFile) myFile, false);
+    assertTrue(lock.await(10, TimeUnit.SECONDS));
+    
+    designerAppManager.myProjectManagerListener.projectClosed(myProject);
+
+    lock = new CountDownLatch(1);
+    AmfOutputStream out = designerAppManager.getClient().getOutput();
+    out.write(1);
+    out.writeAmfUTF("close", false);
+    out.write(3);
+    designerAppManager.getClient().flush();
+    
+    assertTrue(lock.await(10, TimeUnit.SECONDS));
+  }
+  
+  @Override
+  protected void tearDown() throws Exception {
+    FlexUIDesignerApplicationManager.getInstance().dispose();
+    
+    super.tearDown();
+  }
+  
+  private static class MySocketInputHandler extends SocketInputHandlerImpl {
+    @Override
+    public void read(InputStream inputStream) throws IOException {
+      try {
+        createReader(inputStream);
+        boolean result = reader.readBoolean();
+        if (result) {
+          System.out.print("App passed");
+        }
+        else {
+          fail(reader.readUTF());
+        }
+      }
+      finally {
+        lock.countDown();
+      }
+    }
+  }
+}
