@@ -186,7 +186,7 @@ public class AbcFilter {
                 }
               }
               else {
-                final FileChannel injection = new FileInputStream(new File("/Users/develar/workspace/idea/plugins/flex/tools/flex-ui-designer/flex-injection/target/" + injectionFileName)).getChannel();
+                final FileChannel injection = new FileInputStream(new File(DebugPathManager.getFudHome() + "/flex-injection/target/" + injectionFileName)).getChannel();
                 try {
                   injection.transferTo(0, injection.size(), outputFileChannel);
                 }

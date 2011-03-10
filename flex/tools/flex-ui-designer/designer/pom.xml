@@ -19,11 +19,11 @@
         <version>2.0.192-de1</version>
         <type>swc</type>
         <exclusions>
-        <exclusion>
-          <groupId>com.adobe.flex.framework</groupId>
-          <artifactId>playerglobal</artifactId>
-        </exclusion>
-      </exclusions>
+          <exclusion>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -47,8 +47,8 @@
       </exclusions>
     </dependency>
     <dependency>
-			<groupId>org.flyti.cocoa</groupId>
-			<artifactId>cocoa</artifactId>
+      <groupId>org.flyti.cocoa</groupId>
+      <artifactId>cocoa</artifactId>
       <type>rb.swc</type>
       <classifier>en_US</classifier>
     </dependency>
@@ -71,6 +71,18 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.flyti</groupId>
+        <artifactId>asset-builder-maven-plugin</artifactId>
+        <version>1.4-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
@@ -82,11 +94,6 @@
           </compilerWarnings>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.flyti</groupId>
-        <artifactId>asset-builder-maven-plugin</artifactId>
-        <version>1.4-SNAPSHOT</version>
-      </plugin>      
     </plugins>
   </build>
 </project>

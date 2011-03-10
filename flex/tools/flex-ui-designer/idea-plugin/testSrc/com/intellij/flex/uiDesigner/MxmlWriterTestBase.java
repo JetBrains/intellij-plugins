@@ -35,7 +35,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   protected List<OriginalLibrary> getLibraries(Consumer<OriginalLibrary> initializer) {
     List<OriginalLibrary> libraries = new ArrayList<OriginalLibrary>(libs.size());
     for (Pair<VirtualFile, VirtualFile> pair : libs) {
-      libraries.add(LibraryCollector.createOriginalLibrary(pair.getFirst(), pair.getSecond(), initializer, pair.getSecond().getUserData(IS_USER_LIB)));
+      libraries.add(LibraryCollector.createOriginalLibrary(pair.getFirst(), pair.getSecond(), initializer, pair.getSecond().getUserData(IS_USER_LIB) == null));
     }
     
     return libraries;

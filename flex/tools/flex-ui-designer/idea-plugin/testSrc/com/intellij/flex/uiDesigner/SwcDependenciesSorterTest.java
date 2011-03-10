@@ -47,7 +47,7 @@ public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
     
     if (appRootDir != null && appRootDir.exists()) {
       for (File file : appRootDir.listFiles()) {
-        if (!file.isHidden() && file.getPath().endsWith(".swf")) {
+        if (!file.isHidden() && file.getPath().endsWith(".swf") && !file.getPath().endsWith("/designer.swf")) {
           //noinspection ResultOfMethodCallIgnored
           file.delete(); 
         }

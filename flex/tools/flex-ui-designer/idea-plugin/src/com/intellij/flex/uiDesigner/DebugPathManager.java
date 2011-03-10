@@ -22,7 +22,7 @@ final class DebugPathManager {
       Application app = ApplicationManager.getApplication();
       if (app == null || app.isUnitTestMode()) {
         ideaHome = getRootByClass(PathManager.class);
-        fudHome = ideaHome + "/plugins/flex/tools/flex-ui-designer";
+        fudHome = ideaHome + "/flex/tools/flex-ui-designer";
       }
       else {
         fudHome = System.getProperty("fud.home");
