@@ -8,7 +8,7 @@ class TestClient extends Client {
     super(output);
   }
 
-  public void assertStates(String filename, String parentFilename) throws IOException {
+  public void test(String filename, String parentFilename) throws IOException {
     out.write(1);
     out.writeAmfUTF(filename, false);
     char c = parentFilename.charAt(0);

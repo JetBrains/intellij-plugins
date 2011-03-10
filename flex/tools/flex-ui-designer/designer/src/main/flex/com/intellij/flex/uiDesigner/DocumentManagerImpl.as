@@ -15,8 +15,6 @@ import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
 import flash.utils.IDataInput;
 
-import org.flyti.plexus.LocalEventMap;
-
 public class DocumentManagerImpl extends EventDispatcher implements DocumentManager {
   private const pathMap:Dictionary = new Dictionary();
 
@@ -132,15 +130,12 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var window:DocumentWindow = project.window;
     var projectView:ProjectView;
     if (window == null) {
-      window = new DocumentWindow();
-      window.maps = new <LocalEventMap>[module.project.map];
+      window = new DocumentWindow(new ProjectView(), module.project.map);
       window.title = project.name;
-      window.contentView = projectView = new ProjectView();
       project.window = window;
     }
-    else {
-      projectView = ProjectView(window.contentView);
-    }
+    
+    projectView = ProjectView(window.contentView);
 
     var flexModuleFactoryClass:Class = module.getClass("com.intellij.flex.uiDesigner.flex.FlexModuleFactory");
     var systemManagerClass:Class = module.getClass("com.intellij.flex.uiDesigner.flex.SystemManager");

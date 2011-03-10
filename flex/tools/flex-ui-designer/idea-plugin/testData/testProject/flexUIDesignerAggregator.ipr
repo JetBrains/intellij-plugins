@@ -871,7 +871,7 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/tinytlf/as3-gestures/0.1/as3-gestures-0.1-sources.jar!/" />
-        <root url="file://$PROJECT_DIR$/../../../../../../../../as3-gestures/src" />
+        <root url="file://$USER_HOME$/as3-gestures/src" />
       </SOURCES>
     </library>
     <library name="Maven: org.tinytlf:core:swc:1.1-SNAPSHOT">

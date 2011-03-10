@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 abstract class MxmlWriterTestBase extends AppTestBase {
-  private TestClient client;
+  protected TestClient client;
   private Socket socket;
   private DataInputStream reader;
 
@@ -113,9 +113,33 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     client.registerModule(myProject, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
   }
   
-  protected void testFiles(VirtualFile[] originalVFiles) throws IOException {
+  protected void testFiles(final VirtualFile... originalVFiles) throws IOException {
+    testFiles(new MyTester(), originalVFiles);
+  }
+  
+  protected void testFile(String originalVFilePath) throws IOException {
+    testFile(originalVFilePath, new MyTester());
+  }
+  
+  protected void testFile(String originalVFilePath, Tester tester) throws IOException {
+    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(getTestMxmlPath() + "/" + originalVFilePath);
+    assert virtualFile != null;
+    testFiles(tester, virtualFile);
+  }
+  
+  protected void testFiles(Tester tester, VirtualFile... originalVFiles) throws IOException {
     VirtualFile[] testVFiles = configureByFiles(null, originalVFiles).getChildren();
-    
+    collectLocalStyleHolders();
+
+    for (int i = 0, childrenLength = testVFiles.length; i < childrenLength; i++) {
+      VirtualFile file = testVFiles[i];
+      XmlFile xmlFile = (XmlFile) myPsiManager.findFile(file);
+      assert xmlFile != null;
+      tester.test(file, xmlFile, originalVFiles[childrenLength - i - 1]);
+    }
+  }
+
+  private void collectLocalStyleHolders() throws IOException {
     if (isRequireLocalStyleHolder()) {
       ModuleInfo moduleInfo = new ModuleInfo(myModule);
       final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(ServiceManager.getService(StringRegistry.class));
@@ -123,26 +147,6 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, getFlexVersion(), stringWriter);
       registerModule(moduleInfo, stringWriter);
     }
-    
-    for (int i = 0, childrenLength = testVFiles.length; i < childrenLength; i++) {
-      VirtualFile file = testVFiles[i];
-      XmlFile xmlFile = (XmlFile) myPsiManager.findFile(file);
-      assert xmlFile != null;
-      String filename = file.getNameWithoutExtension();
-      System.out.print(filename);
-      long start = System.currentTimeMillis();
-      client.openDocument(myModule, xmlFile);
-      long time = System.currentTimeMillis() - start;
-
-      client.assertStates(filename, originalVFiles[childrenLength - i - 1].getParent().getName());
-      assertResult(filename, time);
-    }
-  }
-  
-  protected void testFile(String originalVFilePath) throws IOException {
-    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(getTestMxmlPath() + "/" + originalVFilePath);
-    assert virtualFile != null;
-    testFiles(new VirtualFile[]{virtualFile});
   }
   
   private void assertResult(String documentName, long time) throws IOException {
@@ -169,4 +173,22 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     
     super.tearDown();
   }
+
+  private class MyTester implements Tester {
+    @Override
+    public void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws IOException {
+      String filename = file.getNameWithoutExtension();
+      System.out.print(filename);
+      long start = System.currentTimeMillis();
+      client.openDocument(myModule, xmlFile);
+      long time = System.currentTimeMillis() - start;
+
+      client.test(filename, originalFile.getParent().getName());
+      assertResult(filename, time);
+    }
+  }
+}
+
+interface Tester {
+  void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws IOException;
 }
