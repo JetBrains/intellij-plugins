@@ -13,14 +13,14 @@ public class JSUmlDndProvider implements DiagramDnDProvider<Object> {
 
   public boolean isAcceptedForDnD(Object o, Project project) {
     if (o instanceof PsiFile || o instanceof PsiDirectory) {
-      return JSElementManager.isAcceptableAsNodeStatic(o);
+      return com.intellij.lang.javascript.uml.JSElementManager.isAcceptableAsNodeStatic(o);
     }
     return false;
   }
 
   public Object wrapToModelObject(Object o, Project project) {
     if (o instanceof PsiDirectory) {
-      return JSVfsResolver.getQualifiedNameStatic(o);
+      return com.intellij.lang.javascript.uml.JSVfsResolver.getQualifiedNameStatic(o);
     }
     else if (o instanceof JSFile) {
       return JSPsiImplUtils.findQualifiedElement((JSFile)o);

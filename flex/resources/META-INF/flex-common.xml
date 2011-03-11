@@ -1,15 +1,20 @@
-<idea-plugin version="2">
-  <name>Flex Support</name>
-  <description>Provides support for developing Adobe Flex applications</description>
-  <id>com.intellij.flex</id>
-  <version>1.0</version>
-  <category>HTML/JavaScript Development</category>
-  <vendor logo="/general/ijLogo.png">JetBrains</vendor>
-  <depends optional="false">JavaScript</depends>
-  <depends optional="false">com.intellij.css</depends>
-  <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
-  <depends optional="true" config-file="uml-support.xml">com.intellij.diagram</depends>
+<!--
+  ~ Copyright 2000-2011 JetBrains s.r.o.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 
+<idea-plugin version="2">
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <compiler implementation="com.intellij.lang.javascript.flex.build.FlexCompiler"/>
@@ -21,7 +26,7 @@
     <configurationType implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType"/>
     <moduleType id="Flex" implementationClass="com.intellij.lang.javascript.flex.FlexModuleType"/>
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
-    <xmlStructureViewBuilderProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexStructureViewProvider" />
+    <xmlStructureViewBuilderProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexStructureViewProvider"/>
     <referenceImporter implementation="com.intellij.lang.javascript.flex.FlexReferenceImporter"/>
     <frameworkSupport implementation="com.intellij.javascript.flex.FlexSupportProvider"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexSdkType"/>
@@ -34,8 +39,9 @@
     <renamePsiElementProcessor implementation="com.intellij.javascript.flex.FlexRenameHandler"/>
     <updateAddedFileProcessor implementation="com.intellij.javascript.flex.FlexUpdateAddedFileHandler"/>
     <moveFileHandler implementation="com.intellij.javascript.flex.FlexMoveFileHandler"/>
-    <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactoringHandler" order="before moveFileOrDir, before moveJavaFileOrDir"/>
-    <fileTypeFactory implementation="com.intellij.javascript.flex.FlexApplicationComponent" />
+    <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactoringHandler"
+                             order="before moveFileOrDir, before moveJavaFileOrDir"/>
+    <fileTypeFactory implementation="com.intellij.javascript.flex.FlexApplicationComponent"/>
     <standardResourceProvider implementation="com.intellij.javascript.flex.FlexApplicationComponent$ResourceProvider"/>
 
     <fileBasedIndex implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSuperClassesIndex"/>
@@ -43,13 +49,17 @@
     <fileBasedIndex implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedMembersIndex"/>
     <fileBasedIndex implementation="com.intellij.javascript.flex.css.FlexStyleIndex"/>
 
-    <fileType.fileViewProviderFactory filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileViewProviderFactory"/>
+    <fileType.fileViewProviderFactory filetype="SWF"
+                                      implementationClass="com.intellij.javascript.flex.compiled.SwfFileViewProviderFactory"/>
     <filetype.decompiler filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileDecompiler"/>
     <filetype.stubBuilder filetype="SWF" implementationClass="com.intellij.javascript.flex.compiled.SwfFileStubBuilder"/>
     <syntaxHighlighter key="SWF" factoryClass="com.intellij.javascript.flex.compiled.SwfSyntaxHighlighterProvider"/>
-    <codeInsight.lineMarkerProvider language="Decompiled SWF" implementationClass="com.intellij.javascript.flex.compiled.DecompiledSwfLineMarkerProvider"/>
-    <codeInsight.lineMarkerProvider language="XML" implementationClass="com.intellij.javascript.flex.mxml.XmlBackedClassLineMarkerProvider"/>
-    <lang.parserDefinition language="Decompiled SWF" implementationClass="com.intellij.javascript.flex.compiled.DecompiledSwfParserDefinition"/>
+    <codeInsight.lineMarkerProvider language="Decompiled SWF"
+                                    implementationClass="com.intellij.javascript.flex.compiled.DecompiledSwfLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="XML"
+                                    implementationClass="com.intellij.javascript.flex.mxml.XmlBackedClassLineMarkerProvider"/>
+    <lang.parserDefinition language="Decompiled SWF"
+                           implementationClass="com.intellij.javascript.flex.compiled.DecompiledSwfParserDefinition"/>
     <lang.documentationProvider language="JavaScript" implementationClass="com.intellij.javascript.flex.FlexDocumentationProvider"/>
     <structureViewBuilder key="SWF" factoryClass="com.intellij.javascript.flex.compiled.SwfStructureViewBuilderProvider"/>
 
@@ -60,15 +70,23 @@
     <psi.referenceContributor implementation="com.intellij.javascript.flex.FlexReferenceContributor"/>
     <lookup.charFilter implementation="com.intellij.lang.javascript.flex.ActionScriptCharFilter"/>
     <inspectionToolProvider implementation="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitInspectionToolProvider"/>
-    <codeInsight.overrideMethod language="JavaScript" implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
-    <codeInsight.overrideMethod language="XML" implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
-    <codeInsight.implementMethod language="JavaScript" implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
-    <codeInsight.implementMethod language="XML" implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
-    <codeInsight.delegateMethods language="JavaScript" implementationClass="com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler"/>
-    <codeInsight.delegateMethods language="XML" implementationClass="com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler"/>
+    <codeInsight.overrideMethod language="JavaScript"
+                                implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
+    <codeInsight.overrideMethod language="XML"
+                                implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
+    <codeInsight.implementMethod language="JavaScript"
+                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
+    <codeInsight.implementMethod language="XML"
+                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
+    <codeInsight.delegateMethods language="JavaScript"
+                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler"/>
+    <codeInsight.delegateMethods language="XML"
+                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler"/>
     <projectImportBuilder implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImporter"/>
     <projectImportProvider implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImportProvider"/>
-    <projectOpenProcessor id="FlashBuilderOpenProcessor" implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderOpenProcessor" order="before EclipseProjectOpenProcessor"/>
+    <projectOpenProcessor id="FlashBuilderOpenProcessor"
+                          implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderOpenProcessor"
+                          order="before EclipseProjectOpenProcessor"/>
     <standardResourceProvider implementation="com.intellij.lang.javascript.flex.InternalResourceProvider"/>
 
     <css.elementDescriptorProvider implementation="com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider"/>
@@ -91,7 +109,9 @@
     <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>
     <defaultLiveTemplatesProvider implementation="com.intellij.lang.javascript.ActionScriptLiveTemplatesProvider"/>
     <lang.refactoringSupport language="XML" implementationClass="com.intellij.lang.javascript.flex.MxmlRefactoringSupportProvider"/>
-    <lang.refactoringSupport language="JavaScript" implementationClass="com.intellij.lang.javascript.flex.ActionScriptRefactoringSupportProvider" order="before JavascriptRefactoringSupportProvider"/>
+    <lang.refactoringSupport language="JavaScript"
+                             implementationClass="com.intellij.lang.javascript.flex.ActionScriptRefactoringSupportProvider"
+                             order="before JavascriptRefactoringSupportProvider"/>
     <implicitUsageProvider implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider"/>
     <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider"/>
     <langCodeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptLanguageCodeStyleSettingsProvider"/>
@@ -121,7 +141,8 @@
   <extensions defaultExtensionNs="JavaScript">
     <resolveHelper implementation="com.intellij.javascript.flex.FlexResolveHelper"/>
     <classInheritorsProvider implementation="com.intellij.javascript.flex.mxml.XmlBackedClassInheritorsProvider"/>
-    <conditionalCompilationDefinitionsProvider implementation="com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl"/>
+    <conditionalCompilationDefinitionsProvider
+        implementation="com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl"/>
   </extensions>
 
   <application-components>
@@ -151,7 +172,8 @@
   </module-components>
 
   <actions>
-    <action id="TalkToFdb.Flex.Debug" class="com.intellij.lang.javascript.flex.debug.SendCommandToDebuggerAction" text="Send Commands To Flex Debugger">
+    <action id="TalkToFdb.Flex.Debug" class="com.intellij.lang.javascript.flex.debug.SendCommandToDebuggerAction"
+            text="Send Commands To Flex Debugger">
       <add-to-group anchor="last" group-id="RunMenu"/>
     </action>
 

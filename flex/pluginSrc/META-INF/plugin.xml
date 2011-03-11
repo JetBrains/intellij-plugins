@@ -1,0 +1,14 @@
+<idea-plugin version="2" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <name>Flex Support</name>
+  <description>Provides support for developing Adobe Flex applications</description>
+  <id>com.intellij.flex</id>
+  <version>1.0</version>
+  <category>HTML/JavaScript Development</category>
+  <vendor logo="/general/ijLogo.png">JetBrains</vendor>
+  <depends optional="false">JavaScript</depends>
+  <depends optional="false">com.intellij.css</depends>
+  <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
+  <depends optional="true" config-file="uml-support.xml">com.intellij.diagram</depends>
+
+  <xi:include href="/META-INF/flex-common.xml" xpointer="xpointer(/idea-plugin/*)"/>
+</idea-plugin>
