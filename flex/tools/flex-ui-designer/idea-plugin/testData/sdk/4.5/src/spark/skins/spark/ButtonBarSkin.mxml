@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    ADOBE SYSTEMS INCORPORATED
+    Copyright 2008 Adobe Systems Incorporated
+    All Rights Reserved.
+
+    NOTICE: Adobe permits you to use, modify, and distribute this file
+    in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<!--- The default skin class for the Spark ButtonBar component. The buttons on the ButtonBar component
+    use the ButtonBarLastButtonSkin, ButtonBarFirstButtonSkin and ButtonBarMiddleButtonSkin classes.  
+    
+      @see spark.components.ButtonBar
+      @see spark.components.ButtonBarButton    
+        
+      @langversion 3.0
+      @playerversion Flash 10
+      @playerversion AIR 1.5
+      @productversion Flex 4
+-->
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" 
+        alpha.disabled="0.5">
+
+    <fx:Metadata>
+    <![CDATA[ 
+       /** 
+         * @copy spark.skins.spark.ApplicationSkin#hostComponent
+         */
+        [HostComponent("spark.components.ButtonBar")]
+    ]]>
+    </fx:Metadata> 
+
+    <s:states>
+        <s:State name="normal" />
+        <s:State name="disabled" />
+    </s:states>
+    
+    <fx:Declarations>
+        <!--- 
+            @copy spark.components.ButtonBar#firstButton
+            @default spark.skins.spark.ButtonBarFirstButtonSkin
+            @see spark.skins.spark.ButtonBarFirstButtonSkin
+        -->
+        <fx:Component id="firstButton">
+            <s:ButtonBarButton skinClass="spark.skins.spark.ButtonBarFirstButtonSkin" />
+        </fx:Component>
+
+        <!--- 
+            @copy spark.components.ButtonBar#middleButton
+            @default spark.skins.spark.ButtonBarMiddleButtonSkin
+            @see spark.skins.spark.ButtonBarMiddleButtonSkin
+        -->
+        <fx:Component id="middleButton" >
+            <s:ButtonBarButton skinClass="spark.skins.spark.ButtonBarMiddleButtonSkin" />
+        </fx:Component>
+
+        <!--- 
+            @copy spark.components.ButtonBar#lastButton
+            @default spark.skins.spark.ButtonBarLastButtonSkin
+            @see spark.skins.spark.ButtonBarLastButtonSkin
+        -->
+        <fx:Component id="lastButton" >
+            <s:ButtonBarButton skinClass="spark.skins.spark.ButtonBarLastButtonSkin" />
+        </fx:Component>
+
+    </fx:Declarations>
+
+    <!--- @copy spark.components.SkinnableDataContainer#dataGroup -->
+    <s:DataGroup id="dataGroup" width="100%" height="100%">
+        <s:layout>
+            <s:ButtonBarHorizontalLayout gap="-1"/>
+        </s:layout>
+    </s:DataGroup>
+
+</s:Skin>

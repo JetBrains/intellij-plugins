@@ -22,7 +22,13 @@
       <pattern testClass="com.intellij.flex.uiDesigner.StyleTest" />
       <pattern testClass="com.intellij.flex.uiDesigner.UITest" />
     </patterns>
+    <RunnerSettings RunnerId="Debug">
+      <option name="DEBUG_PORT" value="55229" />
+      <option name="TRANSPORT" value="0" />
+      <option name="LOCAL" value="true" />
+    </RunnerSettings>
     <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Debug" />
     <ConfigurationWrapper RunnerId="Run" />
     <method />
   </configuration>

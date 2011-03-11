@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.ProjectManager;
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
+import flash.net.Socket;
 
 [Abstract]
 internal class BaseTestCase implements TestCase {
@@ -15,9 +16,11 @@ internal class BaseTestCase implements TestCase {
     _asyncSuccessHandler = value;
   }
   
-  public function setUp(projectManager:ProjectManager):void {
+  public function init(projectManager:ProjectManager, socket:Socket):void {
     this.projectManager = projectManager;
-    
+  }
+  
+  public function setUp():void {
     documentManager = DocumentManager(projectManager.project.plexusContainer.lookup(DocumentManager));
     _app = documentManager.document.uiComponent;
   }

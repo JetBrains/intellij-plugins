@@ -23,7 +23,7 @@ import java.util.List;
 abstract class MxmlWriterTestBase extends AppTestBase {
   protected TestClient client;
   private Socket socket;
-  private DataInputStream reader;
+  protected DataInputStream reader;
 
   private Process adlProcess;
   
@@ -113,21 +113,21 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     client.registerModule(myProject, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
   }
   
-  protected void testFiles(final VirtualFile... originalVFiles) throws IOException {
+  protected void testFiles(final VirtualFile... originalVFiles) throws Exception {
     testFiles(new MyTester(), originalVFiles);
   }
   
-  protected void testFile(String originalVFilePath) throws IOException {
+  protected void testFile(String originalVFilePath) throws Exception {
     testFile(originalVFilePath, new MyTester());
   }
   
-  protected void testFile(String originalVFilePath, Tester tester) throws IOException {
+  protected void testFile(String originalVFilePath, Tester tester) throws Exception {
     VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(getTestMxmlPath() + "/" + originalVFilePath);
     assert virtualFile != null;
     testFiles(tester, virtualFile);
   }
   
-  protected void testFiles(Tester tester, VirtualFile... originalVFiles) throws IOException {
+  protected void testFiles(Tester tester, VirtualFile... originalVFiles) throws Exception {
     VirtualFile[] testVFiles = configureByFiles(null, originalVFiles).getChildren();
     collectLocalStyleHolders();
 
@@ -149,12 +149,14 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     }
   }
   
-  private void assertResult(String documentName, long time) throws IOException {
+  protected void assertResult(String documentName, long time) throws IOException {
     boolean result = reader.readBoolean();
     if (result) {
-      System.out.print(" passed (" + time + ")\n");
-      passedCounter++;
-      LOG.info(documentName + " passed");
+      if (time != -1) {
+        System.out.print(" passed (" + time + ")\n");
+        passedCounter++;
+        LOG.info(documentName + " passed");
+      }
     }
     else {
       fail(documentName + "\n" + reader.readUTF());
@@ -176,7 +178,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
 
   private class MyTester implements Tester {
     @Override
-    public void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws IOException {
+    public void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
       String filename = file.getNameWithoutExtension();
       System.out.print(filename);
       long start = System.currentTimeMillis();
@@ -190,5 +192,5 @@ abstract class MxmlWriterTestBase extends AppTestBase {
 }
 
 interface Tester {
-  void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws IOException;
+  void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception;
 }

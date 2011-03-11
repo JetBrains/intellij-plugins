@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
@@ -14,6 +15,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import js.JSTestUtils;
 import junit.framework.AssertionFailedError;
+import org.picocontainer.MutablePicoContainer;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +41,12 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   
   private String getPlayerGlobalRootPath() {
     return getTestDataPath() + "/sdk/playerglobal";
+  }
+  
+  protected void changeServiceImplementation(Class key, Class implementation) {
+    MutablePicoContainer picoContainer = (MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer();
+    picoContainer.unregisterComponent(key.getName());
+    picoContainer.registerComponentImplementation(key.getName(), implementation);
   }
 
   @Override

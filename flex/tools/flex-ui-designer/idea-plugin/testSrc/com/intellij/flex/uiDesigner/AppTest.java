@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.psi.xml.XmlFile;
 import js.JSTestOption;
 import js.JSTestOptions;
-import org.picocontainer.MutablePicoContainer;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,8 +20,7 @@ public class AppTest extends AppTestBase {
   @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexSdk})
   @Flex(version="4.5")
   public void testCloseAndOpenProject() throws Exception {
-    ((MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer()).unregisterComponent(SocketInputHandler.class.getName());
-    ((MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer()).registerComponentImplementation(SocketInputHandler.class.getName(), MySocketInputHandler.class);
+    changeServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
             
     configureByFiles(null, LocalFileSystem.getInstance().findFileByPath(getTestMxmlPath() + "/injectedAS/Transitions.mxml"));
     ApplicationManager.getApplication().getMessageBus().connect().subscribe(FlexUIDesignerApplicationManager.MESSAGE_TOPIC, new FlexUIDesignerApplicationListener() {

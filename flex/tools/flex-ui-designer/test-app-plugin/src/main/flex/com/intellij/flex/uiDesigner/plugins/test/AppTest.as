@@ -1,10 +1,6 @@
 package com.intellij.flex.uiDesigner.plugins.test {
-import com.intellij.flex.uiDesigner.ProjectManager;
-
 import flash.desktop.NativeApplication;
-
 import flash.display.NativeWindow;
-
 import flash.events.Event;
 
 import org.hamcrest.assertThat;
@@ -12,17 +8,12 @@ import org.hamcrest.collection.arrayWithSize;
 import org.hamcrest.object.nullValue;
 
 public class AppTest extends BaseTestCase {
-
   public function AppTest() {
     // disable unused inspection
     //noinspection ConstantIfStatementJS
     if (false) {
       close();
     }
-  }
-
-  override public function setUp(projectManager:ProjectManager):void {
-    this.projectManager = projectManager;
   }
   
   [Test(async)]

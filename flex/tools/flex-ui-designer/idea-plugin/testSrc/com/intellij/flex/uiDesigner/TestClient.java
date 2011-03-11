@@ -9,11 +9,15 @@ class TestClient extends Client {
   }
 
   public void test(String filename, String parentFilename) throws IOException {
+    char c = parentFilename.charAt(0);
+    test(filename, c == 's' ? 1 : c == 'i' ? 2 : (c == 'c' ? 4 : 0));
+  }
+  
+  public void test(String filename, int c) throws IOException {
     out.write(1);
     out.writeAmfUTF(filename, false);
-    char c = parentFilename.charAt(0);
-    out.write(c == 's' ? 1 : c == 'i' ? 2 : (c == 'c' ? 4 : 0));
-
+    out.write(c);
+    
     flush();
   }
 }

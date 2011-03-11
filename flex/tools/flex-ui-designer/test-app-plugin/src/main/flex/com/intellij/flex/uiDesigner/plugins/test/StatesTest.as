@@ -1,5 +1,4 @@
 package com.intellij.flex.uiDesigner.plugins.test {
-import com.intellij.flex.uiDesigner.ProjectManager;
 import com.intellij.flex.uiDesigner.StatesBarManager;
 
 import flash.errors.IllegalOperationError;
@@ -87,8 +86,9 @@ public class StatesTest extends BaseTestCase {
     return _states;
   }
   
-  override public function setUp(projectManager:ProjectManager):void {
-    super.setUp(projectManager);
+  override public function setUp():void {
+    super.setUp();
+    
     stateManager = StatesBarManager(projectManager.project.plexusContainer.lookup(StatesBarManager));
   }
   

@@ -21,7 +21,7 @@ import flash.utils.getQualifiedClassName;
 public class TestSocketDataHandler implements SocketDataHandler {
   public static const CLASS:int = 1;
   
-  private static const c:Vector.<Class> = new <Class>[MxmlTest, StatesTest, InjectedASTest, AppTest, StyleTest];
+  private static const c:Vector.<Class> = new <Class>[MxmlTest, StatesTest, InjectedASTest, AppTest, StyleTest, UITest];
   private const describeCache:Dictionary = new Dictionary();
 
   private var projectManager:ProjectManager;
@@ -80,7 +80,8 @@ public class TestSocketDataHandler implements SocketDataHandler {
     }
     
     var test:TestCase = new clazz();
-    test.setUp(projectManager);
+    test.init(projectManager, _socket);
+    test.setUp();
     
     var testAnnotation:TestAnnotation = methodInfo[method];
     if (testAnnotation != null) {

@@ -1,0 +1,7 @@
+move 439 284
+down
+up
+move 810 56
+down
+up
+assert

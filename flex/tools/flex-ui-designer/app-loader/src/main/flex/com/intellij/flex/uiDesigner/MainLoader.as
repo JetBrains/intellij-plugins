@@ -8,6 +8,8 @@ import flash.events.Event;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
+import org.flyti.roboflest.roboflest;
+
 public class MainLoader extends Sprite {
   [Embed(source="../../../../../../../../designer/target/designer-1.0-SNAPSHOT.swf", mimeType="application/octet-stream")]
   private static var appClass:Class;
@@ -24,6 +26,8 @@ public class MainLoader extends Sprite {
   public function MainLoader() {
     NativeApplication.nativeApplication.autoExit = false;
     NativeApplication.nativeApplication.icon.bitmaps = [Bitmap(new icon128()).bitmapData, Bitmap(new icon256()).bitmapData, Bitmap(new icon32()).bitmapData];
+    
+    roboflest();
 
     var loader:Loader = new Loader();
     loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadCompleteHandler);
