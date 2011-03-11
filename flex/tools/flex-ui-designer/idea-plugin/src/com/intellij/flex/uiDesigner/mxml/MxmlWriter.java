@@ -41,7 +41,6 @@ public class MxmlWriter {
   
   private boolean hasStates;
   private final PropertyProcessor propertyProcessor = new PropertyProcessor(injectedASWriter);
-  private LocalStyleWriter localStyleWriter;
 
   public void setOutput(PrimitiveAmfOutputStream out) {
     this.out = out;
@@ -92,7 +91,6 @@ public class MxmlWriter {
     xmlAttributeValueProvider.setAttribute(null);
     xmlTextValueProvider = null;
     xmlTagValueProvider = null;
-    localStyleWriter = null;
   }
 
   private XmlElementValueProvider createValueProvider(XmlText xmlText) {

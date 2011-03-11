@@ -17,4 +17,10 @@ public class StyleTest extends MxmlWriterTestBase {
   public void testStyleTag() throws Exception {
     testFile("css/StyleTag.mxml");
   }
+  
+  @JSTestOptions({WithGumboSdk, WithFlexSdk})
+  @Flex(version="4.5", requireLocalStyleHolder=true)
+  public void testStyleTagWithSource() throws Exception {
+    testFile("css/StyleTagWithSource.mxml", "css/externalCss.css");
+  }
 }

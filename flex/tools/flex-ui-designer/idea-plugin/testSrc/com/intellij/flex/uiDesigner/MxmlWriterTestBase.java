@@ -117,14 +117,19 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     testFiles(new MyTester(), originalVFiles);
   }
   
-  protected void testFile(String originalVFilePath) throws Exception {
-    testFile(originalVFilePath, new MyTester());
+  protected void testFile(String... originalVFilePath) throws Exception {
+    testFile(new MyTester(), originalVFilePath);
   }
   
-  protected void testFile(String originalVFilePath, Tester tester) throws Exception {
-    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(getTestMxmlPath() + "/" + originalVFilePath);
-    assert virtualFile != null;
-    testFiles(tester, virtualFile);
+  protected void testFile(Tester tester, String... originalPaths) throws Exception {
+    VirtualFile[] originalVFiles = new VirtualFile[originalPaths.length];
+    for (int i = 0, originalPathsLength = originalPaths.length; i < originalPathsLength; i++) {
+      VirtualFile originalVFile = LocalFileSystem.getInstance().findFileByPath(getTestMxmlPath() + "/" + originalPaths[i]);
+      assert originalVFile != null;
+      originalVFiles[i] = originalVFile;
+    }
+    
+    testFiles(tester, originalVFiles);
   }
   
   protected void testFiles(Tester tester, VirtualFile... originalVFiles) throws Exception {
@@ -133,6 +138,10 @@ abstract class MxmlWriterTestBase extends AppTestBase {
 
     for (int i = 0, childrenLength = testVFiles.length; i < childrenLength; i++) {
       VirtualFile file = testVFiles[i];
+      if (!file.getPath().endsWith(".mxml")) {
+        continue; // may be auxiliary files, e.g. css files
+      }
+      
       XmlFile xmlFile = (XmlFile) myPsiManager.findFile(file);
       assert xmlFile != null;
       tester.test(file, xmlFile, originalVFiles[childrenLength - i - 1]);

@@ -6,10 +6,8 @@ import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.pom.Navigatable;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
-import com.sun.deploy.xml.XMLAttribute;
 import js.JSTestOptions;
 import org.flyti.roboflest.Roboflest;
 import org.flyti.roboflest.Roboflest.Assert;
@@ -34,7 +32,7 @@ public class UITest extends MxmlWriterTestBase {
   @JSTestOptions({WithGumboSdk, WithFlexSdk})
   @Flex(version="4.5")
   public void testStyleNavigation() throws Exception {
-    testFile("Form.mxml", new Tester() {
+    testFile(new Tester() {
       @Override
       public void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
         client.openDocument(myModule, xmlFile);
@@ -57,7 +55,7 @@ public class UITest extends MxmlWriterTestBase {
           }
         });
       }
-    });
+    }, "Form.mxml");
   }
 
   private void interact(final Assert... asserts) throws Exception {

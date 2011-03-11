@@ -21,6 +21,7 @@ public class StyleTest extends BaseTestCase {
     if (false) {
       empty();
       StyleTag();
+      StyleTagWithSource();
     }
   }
 
@@ -79,6 +80,10 @@ public class StyleTest extends BaseTestCase {
         allOf({styleName: "bbb"}, [mouseDown({label: "id pseudo class ancestor", id: "ddd", styleName: "aa", fontSize: 28, fontStyle: FontPosture.NORMAL, fontFamily: "_typewriter", fontThickness: 200, color: 0x8b4513}, {color: 0x0000ff})])
       ]
     ]);
+  }
+  
+  public function StyleTagWithSource():void {
+    assertThat(appContent, [{fontStyle: FontPosture.ITALIC}]);
   }
 }
 }

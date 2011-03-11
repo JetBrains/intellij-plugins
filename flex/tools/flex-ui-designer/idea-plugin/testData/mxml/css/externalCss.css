@@ -1,5 +1,5 @@
-@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace s "library://ns.adobe.com/flex/spark";
 
-mx|Window {
-  titleBarBackgroundSkin: ClassReference("mx.skins.halo.ApplicationTitleBarBackgroundSkin");
+s|Button {
+  fontStyle: italic;
 }

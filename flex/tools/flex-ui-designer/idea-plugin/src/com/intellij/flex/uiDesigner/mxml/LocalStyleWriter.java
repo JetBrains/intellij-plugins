@@ -6,8 +6,11 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.CssFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,19 +31,35 @@ public class LocalStyleWriter {
           
   public boolean write(XmlTag tag, Module module) {
     data = null;
-    
-    PsiElement host = XmlTagValueProvider.getInjectedHost(tag);
-    if (host == null) {
-      return false;
-    }
-    
-    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host);
-    InjectedLanguageUtil.enumerate(host, visitor);
-    if (visitor.getCssFile() == null) {
-      return false;
-    }
 
-    data = cssWriter.write(visitor.getCssFile(), module);
+    CssFile cssFile = null;
+    XmlAttribute source = tag.getAttribute("source");
+    if (source != null) {
+      XmlAttributeValue valueElement = source.getValueElement();
+      if (valueElement != null) {
+        PsiReference reference = valueElement.getReference();
+        if (reference != null) {
+          PsiElement element = reference.resolve();
+          if (element != null && element instanceof CssFile) {
+            cssFile = (CssFile) element;
+          }
+        }
+      }
+    }
+    else {
+      PsiElement host = XmlTagValueProvider.getInjectedHost(tag);
+      if (host != null) {
+        InjectedPsiVisitor visitor = new InjectedPsiVisitor(host);
+        InjectedLanguageUtil.enumerate(host, visitor);
+        cssFile = visitor.getCssFile();
+      }
+    }
+    
+    if (cssFile == null) {
+      return false;
+    }
+  
+    data = cssWriter.write(cssFile, module);
     return true;
   }
 

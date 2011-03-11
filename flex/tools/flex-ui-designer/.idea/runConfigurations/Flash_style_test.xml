@@ -5,7 +5,7 @@
     <option name="ALTERNATIVE_JRE_PATH" value="" />
     <option name="PACKAGE_NAME" value="com.intellij.flex.uiDesigner" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.StyleTest" />
-    <option name="METHOD_NAME" value="testStyleTag" />
+    <option name="METHOD_NAME" value="testStyleTagWithSource" />
     <option name="TEST_OBJECT" value="method" />
     <option name="VM_PARAMETERS" value="-Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.debug=true -Dfud.test.debug=true -Dfud.adl=$ADL$ -Dfud.air=$AIR$" />
     <option name="PARAMETERS" value="" />
