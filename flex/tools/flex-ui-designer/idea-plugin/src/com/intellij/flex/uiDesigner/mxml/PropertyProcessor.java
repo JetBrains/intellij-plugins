@@ -143,6 +143,9 @@ class PropertyProcessor {
       else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
         writeUntypedPropertyValue(valueProvider, descriptor);
       }
+      else if (type.equals("Class")) {
+        writeClass(valueProvider);
+      }
       else {
         out.write(Amf3Types.OBJECT);
         if (type.equals("mx.core.IFactory")) {
@@ -208,9 +211,13 @@ class PropertyProcessor {
       writer.writeObjectHeader("mx.core.ClassFactory");
       writer.write("generator");
       writer.getOut().write(PropertyClassifier.PROPERTY);
+      writeClass(valueProvider);
+      writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
+    }
+
+    private void writeClass(XmlElementValueProvider valueProvider) {
       writer.getOut().write(AmfExtendedTypes.CLASS_MARKER);
       writer.write(valueProvider.getTrimmed());
-      writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
     }
   }
   

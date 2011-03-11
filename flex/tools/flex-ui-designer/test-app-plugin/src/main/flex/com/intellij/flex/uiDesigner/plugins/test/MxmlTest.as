@@ -10,6 +10,7 @@ public class MxmlTest extends BaseTestCase {
     if (false) {
       Form();
       UntypedProperty();
+      ClassProperty();
       ItemRendererAndMixDefaultExplicitContent();
       WindowedApplication();
       PropertyAsTagWithArrayType();
@@ -25,6 +26,10 @@ public class MxmlTest extends BaseTestCase {
   
   public function UntypedProperty():void {
     assertThat(app, {left: allOf(isA(int), strictlyEqualTo(0)), right: strictlyEqualTo("c22:12"), top: strictlyEqualTo(0.4), bottom: allOf(isA(int), strictlyEqualTo(-30))});
+  }
+  
+  public function ClassProperty():void {
+    assertThat(app, {skinClass: getClass("spark.skins.spark.ApplicationSkin")});
   }
   
   public function ItemRendererAndMixDefaultExplicitContent():void {
