@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
 import flash.errors.IllegalOperationError;
 import flash.utils.ByteArray;
 
+[Abstract]
 public class DeferredInstanceFromBytesBase {
   private var bytes:ByteArray;
   private var objectTable:Vector.<Object>;

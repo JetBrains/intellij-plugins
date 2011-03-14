@@ -114,7 +114,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   }
   
   protected void testFiles(final VirtualFile... originalVFiles) throws Exception {
-    testFiles(new MyTester(), originalVFiles);
+    testFiles(new MyTester(), false, originalVFiles);
   }
   
   protected void testFile(String... originalVFilePath) throws Exception {
@@ -124,24 +124,20 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   protected void testFile(Tester tester, String... originalPaths) throws Exception {
     VirtualFile[] originalVFiles = new VirtualFile[originalPaths.length];
     for (int i = 0, originalPathsLength = originalPaths.length; i < originalPathsLength; i++) {
-      VirtualFile originalVFile = LocalFileSystem.getInstance().findFileByPath(getTestMxmlPath() + "/" + originalPaths[i]);
+      VirtualFile originalVFile = LocalFileSystem.getInstance().findFileByPath(getTestPath() + "/" + originalPaths[i]);
       assert originalVFile != null;
       originalVFiles[i] = originalVFile;
     }
     
-    testFiles(tester, originalVFiles);
+    testFiles(tester, true, originalVFiles);
   }
   
-  protected void testFiles(Tester tester, VirtualFile... originalVFiles) throws Exception {
+  protected void testFiles(Tester tester, boolean onlyFirst, VirtualFile... originalVFiles) throws Exception {
     VirtualFile[] testVFiles = configureByFiles(null, originalVFiles).getChildren();
     collectLocalStyleHolders();
 
-    for (int i = 0, childrenLength = testVFiles.length; i < childrenLength; i++) {
-      VirtualFile file = testVFiles[i];
-      if (!file.getPath().endsWith(".mxml")) {
-        continue; // may be auxiliary files, e.g. css files
-      }
-      
+    for (int childrenLength = testVFiles.length, i = onlyFirst ? (childrenLength - 1) : 0; i < childrenLength; i++) {
+      VirtualFile file = testVFiles[i];      
       XmlFile xmlFile = (XmlFile) myPsiManager.findFile(file);
       assert xmlFile != null;
       tester.test(file, xmlFile, originalVFiles[childrenLength - i - 1]);

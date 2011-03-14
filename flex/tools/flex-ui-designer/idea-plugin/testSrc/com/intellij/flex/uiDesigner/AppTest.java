@@ -22,7 +22,7 @@ public class AppTest extends AppTestBase {
   public void testCloseAndOpenProject() throws Exception {
     changeServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
             
-    configureByFiles(null, LocalFileSystem.getInstance().findFileByPath(getTestMxmlPath() + "/injectedAS/Transitions.mxml"));
+    configureByFiles(null, LocalFileSystem.getInstance().findFileByPath(getTestPath() + "/injectedAS/Transitions.mxml"));
     ApplicationManager.getApplication().getMessageBus().connect().subscribe(FlexUIDesignerApplicationManager.MESSAGE_TOPIC, new FlexUIDesignerApplicationListener() {
       @Override
       public void initialDocumentOpened() {

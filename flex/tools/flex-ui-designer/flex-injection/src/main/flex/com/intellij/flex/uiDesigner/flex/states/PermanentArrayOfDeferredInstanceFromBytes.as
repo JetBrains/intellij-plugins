@@ -6,9 +6,14 @@ import flash.errors.IllegalOperationError;
 import mx.core.ITransientDeferredInstance;
 
 public final class PermanentArrayOfDeferredInstanceFromBytes implements ITransientDeferredInstance {
-  public var array:Array;
+  private var array:Array;
   private var processed:Boolean;
-  public var context:DeferredInstanceFromBytesContext;
+  private var context:DeferredInstanceFromBytesContext;
+  
+  public function PermanentArrayOfDeferredInstanceFromBytes(array:Array, context:DeferredInstanceFromBytesContext) {
+    this.array = array;
+    this.context = context;
+  }
 
   public function getInstance():Object {
     if (!processed) {
@@ -23,6 +28,10 @@ public final class PermanentArrayOfDeferredInstanceFromBytes implements ITransie
 
   public function reset():void {
     throw new IllegalOperationError();
+  }
+
+  public function get __array():Array {
+    return array;
   }
 }
 }

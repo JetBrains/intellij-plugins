@@ -162,11 +162,6 @@ public final class BaseWriter {
     out.writeAmfUTF(value, false);
   }
   
-  @SuppressWarnings({"UnusedDeclaration"})
-  public void writeStringReference(String propertyName, int reference) {
-    writeStringReference(getNameReference(propertyName), reference);
-  }
-  
   public void writeStringReference(String propertyName, String reference) {
     writeStringReference(getNameReference(propertyName), getNameReference(reference));
   }
@@ -194,17 +189,20 @@ public final class BaseWriter {
   
   public void writeObjectReference(String propertyName, int reference) {
     write(propertyName);
-    out.write(PropertyClassifier.OBJECT_REFERENCE);
+    writeObjectReference(reference);
+  }
+  
+  private void writeObjectReference(int reference) {
+    out.write(PropertyClassifier.PROPERTY);
+    out.write(AmfExtendedTypes.OBJECT_REFERENCE);
     out.writeUInt29(reference);
   }
   
   public void writeObjectReference(int propertyName, int reference) {
     out.writeUInt29(propertyName);
-    out.write(PropertyClassifier.OBJECT_REFERENCE);
-    out.writeUInt29(reference);
+    writeObjectReference(reference);
   }
   
-  @SuppressWarnings({"UnusedDeclaration"})
   public void writeObjectReference(int propertyName, Context context) {
     writeObjectReference(propertyName, getObjectId(context));
   }
@@ -214,30 +212,11 @@ public final class BaseWriter {
     out.write(PropertyClassifier.PROPERTY);
     out.write(Amf3Types.ARRAY);
   }
-  
-  @SuppressWarnings({"UnusedDeclaration"})
-  public void writeVector(String type, int length) {
-    out.write(PropertyClassifier.VECTOR);
-    write(type);
-    out.writeShort(length);
-  }
 
   public void writeFixedArrayHeader(int propertyName, int size) {
     out.writeUInt29(propertyName);
     out.write(PropertyClassifier.FIXED_ARRAY);
     out.write(size);
-  }
-  
-  @SuppressWarnings({"UnusedDeclaration"})
-  public void writeFixedHArrayHeader(String propertyName, int size) {
-    out.writeUInt29(getNameReference(propertyName));
-    out.write(PropertyClassifier.FIXED_HETEROGENEOUS_ARRAY);
-    out.writeUInt29(size);
-  }
-  
-  @SuppressWarnings({"UnusedDeclaration"})
-  public void writeObjectHeader(String propertyName, String className) {
-    writeObjectHeader(getNameReference(propertyName), className);
   }
   
   public void writeObjectHeader(int propertyName, String className) {
@@ -257,13 +236,9 @@ public final class BaseWriter {
     writeObjectHeader(getNameReference(className));
   }
   
-  @SuppressWarnings({"UnusedDeclaration"})
-  public void writeObjectHeader(String propertyName, String className, int reference) {
-    out.writeUInt29(getNameReference(propertyName));
-    out.write(PropertyClassifier.PROPERTY);
-    out.write(Amf3Types.OBJECT);
-    out.writeUInt29(getNameReference(className));
-    out.writeShort(reference);
+  public void writeObjectHeader(String className, int reference) {
+    write(className);
+    out.writeShort(reference + 1);
   }
   
   public void writeObjectHeader(int className) {

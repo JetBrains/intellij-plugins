@@ -22,6 +22,7 @@ public class StyleTest extends BaseTestCase {
       empty();
       StyleTag();
       StyleTagWithSource();
+      ComponentWithCustomSkin();
     }
   }
 
@@ -84,6 +85,10 @@ public class StyleTest extends BaseTestCase {
   
   public function StyleTagWithSource():void {
     assertThat(appContent, [{fontStyle: FontPosture.ITALIC}]);
+  }
+  
+  public function ComponentWithCustomSkin():void {
+//    assertThat(appContent, [{fontStyle: FontPosture.ITALIC}]);
   }
 }
 }

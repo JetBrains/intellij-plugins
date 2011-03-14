@@ -7,7 +7,7 @@
     <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.MxmlWriterTest" />
     <option name="METHOD_NAME" value="test45" />
     <option name="TEST_OBJECT" value="method" />
-    <option name="VM_PARAMETERS" value="-DtestFile=Form  -Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.debug=true -Dfud.test.debug=true -Dfud.adl=$ADL$ -Dfud.air=$AIR$" />
+    <option name="VM_PARAMETERS" value="-DtestFile=ItemRendererAndMixDefaultExplicitContent  -Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.debug=true -Dfud.test.debug=true -Dfud.adl=$ADL$ -Dfud.air=$AIR$" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ENV_VARIABLES" />

@@ -69,9 +69,7 @@ public class MxmlWriter {
     }
     
     injectedASWriter.write();
-
     writer.endMessage();
-
     resetAfterMessage();
   }
 
@@ -91,6 +89,8 @@ public class MxmlWriter {
     xmlAttributeValueProvider.setAttribute(null);
     xmlTextValueProvider = null;
     xmlTagValueProvider = null;
+    
+    propertyProcessor.reset();
   }
 
   private XmlElementValueProvider createValueProvider(XmlText xmlText) {
@@ -208,7 +208,6 @@ public class MxmlWriter {
     processSubTags(parent, context, parentContext, cssDeclarationSourceDefined);
     
     // initializeReference must be after process all elements — after sub tag also, due to <RadioButton id="visa" label="Visa" width="150"><group>{cardtype} !!id (for binding target, RadioButton id="visa") allocation here!!</group></RadioButton>
-    
     if (dataPosition != -1) {
       out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
       if (dataRange != null) {

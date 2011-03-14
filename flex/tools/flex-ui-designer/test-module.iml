@@ -8,6 +8,9 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <content url="file://$MODULE_DIR$/idea-plugin/testData/css">
+      <sourceFolder url="file://$MODULE_DIR$/idea-plugin/testData/css" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/idea-plugin/testData/locales">
       <sourceFolder url="file://$MODULE_DIR$/idea-plugin/testData/locales/en_US" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/idea-plugin/testData/locales/ru_RU" isTestSource="false" />

@@ -248,12 +248,12 @@ public class StatesTest extends BaseTestCase {
     var m:Object = l(9);
     var m4:Object = l(13);
     // test itemCreationPolicy
-    var bDeferredInstances:Array = states[2].overrides[1].itemsFactory.array;
+    var bDeferredInstances:Array = states[2].overrides[1].itemsFactory.__array;
     //noinspection ReservedWordAsName
     assertThat(bDeferredInstances[0].getInstance, throws(allOf(instanceOf(IllegalOperationError), hasProperty("message", containsString("must be created before this moment")))));
 
     assertThat(bDeferredInstances[2].getInstance(), m);
-    assertThat(states[1].overrides[2].itemsFactory.array[3].getInstance(), m4);
+    assertThat(states[1].overrides[2].itemsFactory.__array[3].getInstance(), m4);
     
     setState(A);
     var m0:Object = l(0);
@@ -275,8 +275,8 @@ public class StatesTest extends BaseTestCase {
   }
   
   public function DynamicChildrenLayering():void {
-    var m:Object = {destructionPolicy: "never", itemsFactory: {array: arrayWithSize(2)}};
-    assertThat(states[1].overrides, [m, {destructionPolicy: "auto", itemsFactory: {deferredInstances: arrayWithSize(1)}}, m]);
+    var m:Object = {destructionPolicy: "never", itemsFactory: {__array: arrayWithSize(2)}};
+    assertThat(states[1].overrides, [m, {destructionPolicy: "auto", itemsFactory: {__deferredInstances: arrayWithSize(1)}}, m]);
     assertThat(app, [l(0)]);
     
     setState(A);
@@ -294,7 +294,7 @@ public class StatesTest extends BaseTestCase {
   }
   
   public function ItemDestructionPolicyMergeItems():void {
-    assertThat(states[1].overrides, [{destructionPolicy: "never", itemsFactory: {array: arrayWithSize(2)}}, {destructionPolicy: "auto", itemsFactory: {deferredInstances: arrayWithSize(2)}}]);
+    assertThat(states[1].overrides, [{destructionPolicy: "never", itemsFactory: {__array: arrayWithSize(2)}}, {destructionPolicy: "auto", itemsFactory: {__deferredInstances: arrayWithSize(2)}}]);
     
     setState(A);
     assertThat(app, [l(0), l(1), l(2), l(3)]);
@@ -307,8 +307,8 @@ public class StatesTest extends BaseTestCase {
   }
   
   public function ItemDestructionPolicyMergeItems2():void {
-    var m:Object = {destructionPolicy: "never", itemsFactory: {array: arrayWithSize(2)}};
-    assertThat(states[1].overrides, [m, {destructionPolicy: "auto", itemsFactory: {deferredInstances: arrayWithSize(2)}}, m]);
+    var m:Object = {destructionPolicy: "never", itemsFactory: {__array: arrayWithSize(2)}};
+    assertThat(states[1].overrides, [m, {destructionPolicy: "auto", itemsFactory: {__deferredInstances: arrayWithSize(2)}}, m]);
   }
   
   public function FirstPendingSetPropertyAndStateGroup():void {

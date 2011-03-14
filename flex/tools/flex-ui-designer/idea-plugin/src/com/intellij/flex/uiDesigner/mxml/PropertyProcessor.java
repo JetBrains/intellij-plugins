@@ -1,17 +1,24 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.io.Amf3Types;
+import com.intellij.flex.uiDesigner.io.ObjectIntHashMap;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.Nullable;
 
 class PropertyProcessor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.flex.uiDesigner.mxml.MxmlWriter");
+  private static final Logger LOG = Logger.getInstance(PropertyProcessor.class.getName());
   
   static final int ARRAY = -1;
   private static final int COMPLEX = 0;
@@ -24,6 +31,8 @@ class PropertyProcessor {
   
   private String name;
   private boolean isStyle;
+  
+  private final ObjectIntHashMap<String> classFactoryMap = new ObjectIntHashMap<String>();
 
   PropertyProcessor(InjectedASWriter injectedASWriter) {
     this.injectedASWriter = injectedASWriter;
@@ -84,8 +93,12 @@ class PropertyProcessor {
       return processPercentable(valueProvider, descriptor);
     }
     else {
-      return new ValueWriterImpl(valueProvider, descriptor, writer);
+      return new ValueWriterImpl(valueProvider, descriptor, writer, classFactoryMap);
     }
+  }
+
+  public void reset() {
+    classFactoryMap.clear();
   }
 
   interface ValueWriter {
@@ -96,11 +109,13 @@ class PropertyProcessor {
     private final XmlElementValueProvider valueProvider;
     private final AnnotationBackedDescriptor descriptor;
     private final BaseWriter writer;
+    private final ObjectIntHashMap<String> classFactoryMap;
 
-    public ValueWriterImpl(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, BaseWriter writer) {
+    public ValueWriterImpl(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, BaseWriter writer, ObjectIntHashMap<String> classFactoryMap) {
       this.valueProvider = valueProvider;
       this.descriptor = descriptor;
       this.writer = writer;
+      this.classFactoryMap = classFactoryMap;
     }
 
     @Override
@@ -147,11 +162,11 @@ class PropertyProcessor {
         writeClass(valueProvider);
       }
       else {
-        out.write(Amf3Types.OBJECT);
         if (type.equals("mx.core.IFactory")) {
           writeClassFactory(valueProvider);
         }
         else {
+          out.write(Amf3Types.OBJECT);
           return isStyle ? COMPLEX_STYLE : COMPLEX;
         }
       }
@@ -206,18 +221,53 @@ class PropertyProcessor {
         }
       }
     }
-
-    private void writeClassFactory(XmlElementValueProvider valueProvider) {
-      writer.writeObjectHeader("mx.core.ClassFactory");
-      writer.write("generator");
-      writer.getOut().write(PropertyClassifier.PROPERTY);
-      writeClass(valueProvider);
-      writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
+    
+    private void writeClass(XmlElementValueProvider valueProvider) {
+      String className = valueProvider.getTrimmed();
+      XmlElement injectedHost = valueProvider.getInjectedHost();
+      if (injectedHost != null) {
+        PsiReference reference = injectedHost.getReference();
+        if (reference instanceof JSClass) {
+          PsiFile containingFile = ((JSClass) reference).getContainingFile();
+          VirtualFile virtualFile = containingFile.getVirtualFile();
+          assert virtualFile != null;
+          boolean inSourceContent = ProjectRootManager.getInstance(containingFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
+          if (containingFile instanceof XmlFile) {
+            if (inSourceContent) {
+//              writer.writeObjectHeader("com.intellij.flex.uiDesigner.flex.ByteFactory", reference);
+//              return;
+            }
+          }
+          else if (inSourceContent) {
+            LOG.error("support only mxml-based skin: " + className);
+          }
+        }
+      }
+      
+      writeClass(className);
     }
 
-    private void writeClass(XmlElementValueProvider valueProvider) {
+    private void writeClassFactory(XmlElementValueProvider valueProvider) {
+      String className = valueProvider.getTrimmed();
+      int reference = classFactoryMap.get(className);
+      if (reference == -1) {
+        reference = writer.getRootScope().referenceCounter++;
+        classFactoryMap.put(className, reference);
+                
+        writer.getOut().write(Amf3Types.OBJECT);
+        writer.writeObjectHeader("mx.core.ClassFactory", reference);
+        writer.write("1");
+        writeClass(className);
+      }
+      else {
+        writer.getOut().write(AmfExtendedTypes.OBJECT_REFERENCE);
+        writer.getOut().writeUInt29(reference);
+      }
+    }
+
+    private void writeClass(String className) {
       writer.getOut().write(AmfExtendedTypes.CLASS_MARKER);
-      writer.write(valueProvider.getTrimmed());
+      writer.write(className);
     }
   }
   

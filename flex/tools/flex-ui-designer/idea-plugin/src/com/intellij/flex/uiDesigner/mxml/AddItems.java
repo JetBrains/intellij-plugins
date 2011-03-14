@@ -25,12 +25,12 @@ class AddItems extends OverrideBase {
       writer.writeStringReference("destructionPolicy", "auto");
       
       writer.writeObjectHeader(stateWriter.ITEMS_FACTORY, "com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes");
-      writer.write("deferredInstances");
+      writer.write("1");
       writer.getOut().write(PropertyClassifier.VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES);
     }
     else {
       writer.writeObjectHeader(stateWriter.ITEMS_FACTORY, "com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes");
-      writer.getOut().writeUInt29(writer.ARRAY);
+      writer.write("1");
       writer.getOut().write(PropertyClassifier.ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES);
     }
     
@@ -38,7 +38,6 @@ class AddItems extends OverrideBase {
     for (DynamicObjectContext itemDeferredInstance : itemDeferredInstances) {
       stateWriter.writeDeferredInstance(itemDeferredInstance);
     }
-    writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
   }
 
   public List<DynamicObjectContext> getItemDeferredInstances() {

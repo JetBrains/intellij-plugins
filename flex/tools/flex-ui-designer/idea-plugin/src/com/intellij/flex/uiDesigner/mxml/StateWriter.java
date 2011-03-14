@@ -347,7 +347,7 @@ class StateWriter {
   void writeDeferredInstance(DynamicObjectContext instance) {
     PrimitiveAmfOutputStream out = writer.getOut();
     if (instance.isWritten()) {
-      writeDeferredInstanceKind(PropertyClassifier.OBJECT_REFERENCE, instance);
+      writeDeferredInstanceKind(AmfExtendedTypes.OBJECT_REFERENCE, instance);
       out.writeUInt29(instance.id);
     }
     else {

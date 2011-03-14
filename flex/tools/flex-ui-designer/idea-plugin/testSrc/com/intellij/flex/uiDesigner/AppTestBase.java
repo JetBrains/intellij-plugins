@@ -35,7 +35,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     return BASE_PATH;
   }
   
-  protected String getTestMxmlPath() {
+  protected String getTestPath() {
     return getTestDataPath() + getBasePath();
   }
   

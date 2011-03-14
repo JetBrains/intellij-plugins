@@ -16,7 +16,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
   @Flex(version="4.5")
   public void test45() throws Exception {
     String testFile = System.getProperty("testFile");
-    String[] files = testFile == null ? getTestFiles() : new String[]{getTestMxmlPath() + "/" + testFile + ".mxml"};
+    String[] files = testFile == null ? getTestFiles() : new String[]{getTestPath() + "/" + testFile + ".mxml"};
 
     final VirtualFile[] vFiles = new VirtualFile[files.length];
     for (int i = 0; i < files.length; i++) {
@@ -36,7 +36,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
 
   private String[] getTestFiles() {
     ArrayList<String> files = new ArrayList<String>(20);
-    collectMxmlFiles(files, new File(getTestMxmlPath()));
+    collectMxmlFiles(files, new File(getTestPath()));
     String[] list = files.toArray(new String[files.size()]);
     Arrays.sort(list);
     return list;
@@ -50,11 +50,9 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
       else if (name.endsWith(".mxml")) {
         files.add(parent.getPath() + "/" + name);
       }
-      else if (!name.equals("css")) {
-        File file = new File(parent, name);
-        if (file.isDirectory()) {
-          collectMxmlFiles(files, file);
-        }
+      File file = new File(parent, name);
+      if (file.isDirectory()) {
+        collectMxmlFiles(files, file);
       }
     }
   }

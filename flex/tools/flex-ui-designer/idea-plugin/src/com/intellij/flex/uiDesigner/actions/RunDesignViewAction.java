@@ -72,7 +72,7 @@ public class RunDesignViewAction extends AnAction {
     }
     else {
       final VirtualFile file = psiFile.getVirtualFile();
-      if (file == null || !file.getName().endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT) || !ProjectRootManager.getInstance(project).getFileIndex().isInContent(file)) {
+      if (file == null || !file.getName().endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT) || !ProjectRootManager.getInstance(project).getFileIndex().isInSourceContent(file)) {
         return false;
       }
 

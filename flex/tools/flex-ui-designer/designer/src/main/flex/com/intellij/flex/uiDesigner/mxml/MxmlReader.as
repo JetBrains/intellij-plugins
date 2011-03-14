@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml {
 import com.intellij.flex.uiDesigner.ModuleContext;
-import com.intellij.flex.uiDesigner.Reader;
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.VirtualFile;
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
@@ -130,12 +129,39 @@ public final class MxmlReader implements DocumentReader {
 
     return o;
   }
+  
+  private function readConstructor(objectClass:Class):Object {
+    switch (_input.readByte()) {
+      case CLASS_MARKER:
+        return new objectClass(context.applicationDomain.getDefinition(stringRegistry.read(_input)));
+      
+      case PropertyClassifier.VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES:
+          initDeferredInstanceContext();
+          return new objectClass(stateReader.readVectorOfDeferredInstanceFromBytes(this, _input), stateReader.deferredInstanceContext);
+      
+      case PropertyClassifier.ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:
+          initDeferredInstanceContext();
+          return new objectClass(stateReader.readArrayOfDeferredInstanceFromBytes(this, _input), stateReader.deferredInstanceContext);
+      
+      default:
+          throw new ArgumentError("unknown property classifier");
+    }
+    
+  }
 
   internal function readObject(className:String):Object {
-    var objectClass:Class = Class(context.applicationDomain.getDefinition(className));
-    var object:Object = new objectClass();
-    
+    var clazz:Class = Class(context.applicationDomain.getDefinition(className));
     var reference:int = _input.readUnsignedShort();
+    var propertyName:String = stringRegistry.read(_input);
+    var object:Object;
+    if (propertyName == "1") {
+      object = readConstructor(clazz);
+      propertyName = null;
+    }
+    else {
+      object = new clazz();
+    }
+
     if (reference != 0) {
       if (objectTable[reference - 1] != null) {
         throw new ArgumentError("must be null");
@@ -147,23 +173,7 @@ public final class MxmlReader implements DocumentReader {
     var inlineCssDeclarationSource:CssRuleset;
     var cssPropertyDescriptor:CssDeclaration;
     var o:Object;
-    var clazz:Class;
-    while (true) {
-      var propertyName:String = stringRegistry.read(_input);
-      if (propertyName == null) {
-        if (inlineCssDeclarationSource != null) {
-          clazz = context.inlineCssStyleDeclarationClass;
-          object.styleDeclaration = new clazz(inlineCssDeclarationSource, styleManager);
-        }
-
-        return object;
-      }
-      
-      if (object is Reader) {
-        Reader(object).readExternal(_input, this);
-        return object;
-      }
-
+    for (; propertyName != null; propertyName = stringRegistry.read(_input)) {      
       switch (_input.readByte()) {
         case PropertyClassifier.PROPERTY:
           break;
@@ -188,38 +198,12 @@ public final class MxmlReader implements DocumentReader {
           propertyHolder.id = _input.readUTFBytes(AmfUtil.readUInt29(_input));
           continue;
         
-        case PropertyClassifier.OBJECT_REFERENCE:
-          if ((o = objectTable[AmfUtil.readUInt29(_input)]) == null) {
-            throw new ArgumentError("must be not null");
-          }
-          
-          propertyHolder[propertyName] = o;
-          continue;
-
         case PropertyClassifier.MX_CONTAINER_CHILDREN:
           readChildrenMxContainer(DisplayObjectContainer(propertyHolder));
           continue;
 
-        case PropertyClassifier.ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:
-          propertyHolder.context = initDeferredInstanceContext();
-          propertyHolder[propertyName] = stateReader.readArrayOfDeferredInstanceFromBytes(this, _input);
-          continue;
-        
-        case PropertyClassifier.VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES:
-          propertyHolder.context = initDeferredInstanceContext();
-          propertyHolder[propertyName] = stateReader.readVectorOfDeferredInstanceFromBytes(this, _input);
-          continue;
-
-        case PropertyClassifier.DEFERRED_INSTANCE_FROM_BYTES:
-          propertyHolder[propertyName] = stateReader.readDeferredInstanceFromBytes(this, _input);
-          continue;
-
         case PropertyClassifier.FIXED_ARRAY:
           propertyHolder[propertyName] = readFixedArray();
-          continue;
-        
-        case PropertyClassifier.FIXED_HETEROGENEOUS_ARRAY:
-          propertyHolder[propertyName] = readFixedHArray();
           continue;
 
         default:
@@ -287,8 +271,11 @@ public final class MxmlReader implements DocumentReader {
           }
           break;
 
-        case CLASS_MARKER:
-          propertyHolder[propertyName] = context.applicationDomain.getDefinition(stringRegistry.read(_input));
+        case Amf3Types.OBJECT_REFERENCE:
+          if ((o = objectTable[AmfUtil.readUInt29(_input)]) == null) {
+            throw new ArgumentError("must be not null");
+          }
+          propertyHolder[propertyName] = o;
           break;
 
         case Amf3Types.BYTE_ARRAY:
@@ -297,6 +284,10 @@ public final class MxmlReader implements DocumentReader {
         
         case STRING_REFERENCE:
           propertyHolder[propertyName] = stringRegistry.read(_input);
+          break;
+        
+        case CLASS_MARKER:
+          propertyHolder[propertyName] = context.applicationDomain.getDefinition(stringRegistry.read(_input));
           break;
 
         default:
@@ -309,18 +300,19 @@ public final class MxmlReader implements DocumentReader {
       }
     }
 
-    // *** Adobe
-    //noinspection UnreachableCodeJS
-    throw new ArgumentError();
+    if (inlineCssDeclarationSource != null) {
+      clazz = context.inlineCssStyleDeclarationClass;
+      object.styleDeclaration = new clazz(inlineCssDeclarationSource, styleManager);
+    }
+
+    return object;
   }
 
-  private function initDeferredInstanceContext():DeferredInstanceFromBytesContext {
+  private function initDeferredInstanceContext():void {
     if (stateReader.deferredInstanceFromBytesClass == null) {
       stateReader.deferredInstanceFromBytesClass = getClass(StateReader.DIFB_CLASS_NAME);
       stateReader.deferredInstanceContext = new DeferredInstanceFromBytesContext(documentFile, this, styleManager, context);
     }
-    
-    return stateReader.deferredInstanceContext;
   }
 
   internal function readBytes():ByteArray {
@@ -429,19 +421,8 @@ public final class MxmlReader implements DocumentReader {
 
     return array;
   }
-  
-  private function readFixedHArray():Array {
-    var n:int = AmfUtil.readUInt29(_input);
-    var array:Array = new Array(n);
-    for (var i:int = 0; i < n; i++) {
-      var ref:int = AmfUtil.readUInt29(_input);
-      array[i] = ref == 0 ? _input.readUTFBytes(AmfUtil.readUInt29(_input)) : readObject(stringRegistry.get(ref - 1));
-    }
 
-    return array;
-  }
-  
-   internal function readClassOrPropertyName():String {
+  internal function readClassOrPropertyName():String {
     return stringRegistry.read(_input);
   }
 }
@@ -453,14 +434,11 @@ class PropertyClassifier {
   public static const STYLE:int = 1;
 
   public static const ID:int = 2;
-  public static const OBJECT_REFERENCE:int = 3;
 
   public static const MX_CONTAINER_CHILDREN:int = 4;
 
-  public static const DEFERRED_INSTANCE_FROM_BYTES:int = 5;
   public static const ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:int = 6;
   public static const VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES:int = 7;
 
   public static const FIXED_ARRAY:int = 8;
-  public static const FIXED_HETEROGENEOUS_ARRAY:int = 9;
 }
