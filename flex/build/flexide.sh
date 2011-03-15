@@ -19,7 +19,7 @@ if [ -z "$FLEXIDE_JDK" ]; then
     JAVA_BIN_PATH=`which java`
     if [ -n "$JAVA_BIN_PATH" ]; then
       JAVA_LOCATION=`readlink -f $JAVA_BIN_PATH | xargs dirname | xargs dirname | xargs dirname`
-      if [ -x "$JAVA_LOCATION/bin/java" ]; then
+      if [ -x "$JAVA_LOCATION/bin/java" -a -e "$JAVA_LOCATION/lib/tools.jar" ]; then
         FLEXIDE_JDK=$JAVA_LOCATION
       fi
     fi
@@ -101,6 +101,7 @@ CLASSPATH=$CLASSPATH:../lib/jdom.jar
 CLASSPATH=$CLASSPATH:../lib/log4j.jar
 CLASSPATH=$CLASSPATH:../lib/extensions.jar
 CLASSPATH=$CLASSPATH:../lib/trove4j.jar
+CLASSPATH=$CLASSPATH:$FLEXIDE_JDK/lib/tools.jar
 CLASSPATH=$CLASSPATH:$FLEXIDE_CLASSPATH
 
 export CLASSPATH
