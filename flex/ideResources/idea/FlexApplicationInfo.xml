@@ -7,7 +7,7 @@
   <about url="/artwork/flexide_about.png"/>
   <icon size32="/artwork/flexide.png" size16="/artwork/flexide16.png" size32opaque="/artwork/flexide_wbg.png" size12="/artwork/flexide12.png"/>
   <package code="__PACKAGE_CODE__"/>
-  <names product="FlexIde" fullname="JetBrains Flex IDE"/>
+  <names product="Flex IDE" fullname="JetBrains Flex IDE"/>
 
   <welcome-screen caption-url="/artwork/flexideWelcomeCaption.png" slogan-url="/artwork/flexideDevelopSlogan.png"/>
  
