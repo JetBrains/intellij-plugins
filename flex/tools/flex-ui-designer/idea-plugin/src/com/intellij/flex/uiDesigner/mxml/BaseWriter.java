@@ -3,7 +3,6 @@ package com.intellij.flex.uiDesigner.mxml;
 import com.intellij.flex.uiDesigner.CssPropertyType;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.xml.util.ColorSampleLookupValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +12,7 @@ import java.io.IOException;
 public final class BaseWriter {
   int ARRAY = -1;
   
-  private final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(ServiceManager.getService(StringRegistry.class));
+  private final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
 
   private int startPosition;
   
@@ -88,7 +87,7 @@ public final class BaseWriter {
     ARRAY = getNameReference("array");
   }
   
-  private void resetAfterMessage() {
+  public void resetAfterMessage() {
     stringWriter.finishChange();
   }
   
@@ -120,6 +119,11 @@ public final class BaseWriter {
   }
 
   public void endMessage() throws IOException {
+//    List<XmlFile> unregistered = DocumentFileManager.getInstance().getUnregistered();
+//    if (unregistered.isEmpty()) {
+//      
+//    }
+//
     int stringTableSize = stringWriter.size();
     blockOut.beginWritePrepended(stringTableSize + (rootScope.referenceCounter < 0x80 ? 1 : 2), startPosition);
     blockOut.writePrepended(stringWriter.getCounter(), stringWriter.getByteArrayOut());
@@ -127,7 +131,6 @@ public final class BaseWriter {
     blockOut.endWritePrepended(startPosition);
     
     rootScope.referenceCounter = 0;
-    resetAfterMessage();
   }
   
   public int getNameReference(String classOrPropertyName) {

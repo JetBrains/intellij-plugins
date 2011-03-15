@@ -40,7 +40,7 @@ public class MxmlWriter {
   private final XmlAttributeValueProvider xmlAttributeValueProvider = new XmlAttributeValueProvider();
   
   private boolean hasStates;
-  private final PropertyProcessor propertyProcessor = new PropertyProcessor(injectedASWriter);
+  private final PropertyProcessor propertyProcessor = new PropertyProcessor(injectedASWriter, writer);
 
   public void setOutput(PrimitiveAmfOutputStream out) {
     this.out = out;
@@ -90,6 +90,7 @@ public class MxmlWriter {
     xmlTextValueProvider = null;
     xmlTagValueProvider = null;
     
+    writer.resetAfterMessage();
     propertyProcessor.reset();
   }
 
@@ -426,7 +427,7 @@ public class MxmlWriter {
   }
 
   private int writeProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, boolean cssDeclarationSourceDefined, Context context) {
-    PropertyProcessor.ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context, writer);
+    PropertyProcessor.ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
     if (valueWriter == null) {
       return PropertyProcessor.IGNORE;
     }

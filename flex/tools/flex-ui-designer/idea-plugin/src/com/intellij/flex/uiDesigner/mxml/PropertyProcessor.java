@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.flex.uiDesigner.DocumentFileManager;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ObjectIntHashMap;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
@@ -17,6 +18,9 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class PropertyProcessor {
   private static final Logger LOG = Logger.getInstance(PropertyProcessor.class.getName());
   
@@ -28,14 +32,17 @@ class PropertyProcessor {
   static final int IGNORE = 4;
  
   private final InjectedASWriter injectedASWriter;
+  private final BaseWriter writer;
   
   private String name;
   private boolean isStyle;
   
   private final ObjectIntHashMap<String> classFactoryMap = new ObjectIntHashMap<String>();
+  private final List<XmlFile> unregisteredDocumentFactories = new ArrayList<XmlFile>();
 
-  PropertyProcessor(InjectedASWriter injectedASWriter) {
+  PropertyProcessor(InjectedASWriter injectedASWriter, BaseWriter writer) {
     this.injectedASWriter = injectedASWriter;
+    this.writer = writer;
   }
   
   public String getName() {
@@ -59,7 +66,7 @@ class PropertyProcessor {
     return new PercentableValueWriter(value);
   }
   
-  public ValueWriter process(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, Context context, BaseWriter writer) {
+  public ValueWriter process(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, Context context) {
     if (descriptor.isPredefined()) {
       LOG.error("unknown language element " + descriptor.getName());
       return null;
@@ -93,7 +100,7 @@ class PropertyProcessor {
       return processPercentable(valueProvider, descriptor);
     }
     else {
-      return new ValueWriterImpl(valueProvider, descriptor, writer, classFactoryMap);
+      return new ValueWriterImpl(valueProvider, descriptor);
     }
   }
 
@@ -105,17 +112,13 @@ class PropertyProcessor {
     int write(PrimitiveAmfOutputStream out, boolean isStyle);
   }
   
-  private static class ValueWriterImpl implements ValueWriter {
+  private class ValueWriterImpl implements ValueWriter {
     private final XmlElementValueProvider valueProvider;
     private final AnnotationBackedDescriptor descriptor;
-    private final BaseWriter writer;
-    private final ObjectIntHashMap<String> classFactoryMap;
 
-    public ValueWriterImpl(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, BaseWriter writer, ObjectIntHashMap<String> classFactoryMap) {
+    public ValueWriterImpl(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
       this.valueProvider = valueProvider;
       this.descriptor = descriptor;
-      this.writer = writer;
-      this.classFactoryMap = classFactoryMap;
     }
 
     @Override
@@ -159,16 +162,14 @@ class PropertyProcessor {
         writeUntypedPropertyValue(valueProvider, descriptor);
       }
       else if (type.equals("Class")) {
-        writeClass(valueProvider);
+        writeClass(valueProvider, isStyle);
+      }
+      else  if (type.equals("mx.core.IFactory")) {
+        writeClassFactory(valueProvider);
       }
       else {
-        if (type.equals("mx.core.IFactory")) {
-          writeClassFactory(valueProvider);
-        }
-        else {
-          out.write(Amf3Types.OBJECT);
-          return isStyle ? COMPLEX_STYLE : COMPLEX;
-        }
+        out.write(Amf3Types.OBJECT);
+        return isStyle ? COMPLEX_STYLE : COMPLEX;
       }
       
       return isStyle ? PRIMITIVE_STYLE : PRIMITIVE;
@@ -222,24 +223,34 @@ class PropertyProcessor {
       }
     }
     
-    private void writeClass(XmlElementValueProvider valueProvider) {
+    private void writeClass(XmlElementValueProvider valueProvider, boolean isStyle) {
       String className = valueProvider.getTrimmed();
-      XmlElement injectedHost = valueProvider.getInjectedHost();
-      if (injectedHost != null) {
-        PsiReference reference = injectedHost.getReference();
-        if (reference instanceof JSClass) {
-          PsiFile containingFile = ((JSClass) reference).getContainingFile();
-          VirtualFile virtualFile = containingFile.getVirtualFile();
-          assert virtualFile != null;
-          boolean inSourceContent = ProjectRootManager.getInstance(containingFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
-          if (containingFile instanceof XmlFile) {
-            if (inSourceContent) {
-//              writer.writeObjectHeader("com.intellij.flex.uiDesigner.flex.ByteFactory", reference);
-//              return;
+      if (isStyle) {
+        int factoryReference = classFactoryMap.get(className);
+        if (factoryReference != -1) {
+          writer.getOut().write(AmfExtendedTypes.OBJECT_REFERENCE);
+          writer.getOut().writeUInt29(factoryReference);
+          return;
+        }
+        
+        XmlElement injectedHost = valueProvider.getInjectedHost();
+        if (injectedHost != null) {
+          PsiReference reference = injectedHost.getReference();
+          if (reference instanceof JSClass) {
+            PsiFile psiFile = ((JSClass) reference).getContainingFile();
+            VirtualFile virtualFile = psiFile.getVirtualFile();
+            assert virtualFile != null;
+            boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
+            if (psiFile instanceof XmlFile) {
+              if (inSourceContent) {
+                writer.getOut().write(AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE);
+                writer.getOut().writeUInt29(DocumentFileManager.getInstance().getId(virtualFile, (XmlFile) psiFile, unregisteredDocumentFactories));
+                return;
+              }
             }
-          }
-          else if (inSourceContent) {
-            LOG.error("support only mxml-based skin: " + className);
+            else if (inSourceContent) {
+              LOG.error("support only mxml-based skin: " + className);
+            }
           }
         }
       }

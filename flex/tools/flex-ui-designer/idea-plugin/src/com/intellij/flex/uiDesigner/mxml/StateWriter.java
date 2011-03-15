@@ -195,7 +195,7 @@ class StateWriter {
       return false;
     }
 
-    PropertyProcessor.ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context, writer);
+    PropertyProcessor.ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
     if (valueWriter == null) {
       // binding is not yet supported for state specific
       return true;

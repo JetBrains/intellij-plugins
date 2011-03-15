@@ -2,6 +2,8 @@ resolve definition conflict (duplicate) via modification time
 
 Critical: resource manager, need for *Formatter (see Form.mxml HSlider dataTip)
 
+defaults.css в lib project
+
 editor tab view
 - close button
 - tab label color (vcs — added, unversioned, etc.)

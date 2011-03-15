@@ -16,5 +16,11 @@ public interface ModuleContext {
   function getClass(fqn:String):Class;
 
   function getDefinition(name:String):Object;
+
+  function getDocumentFactory(id:int):Object;
+
+  function putDocumentFactory(id:int, documentFactory:Object):void;
+
+  function get documentFactoryClass():Class;
 }
 }

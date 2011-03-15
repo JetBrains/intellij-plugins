@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -60,7 +59,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   protected void setUp() throws Exception {
     super.setUp();
     
-    final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(ServiceManager.getService(StringRegistry.class));
+    final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
     final LibraryStyleInfoCollector styleInfoCollector = new LibraryStyleInfoCollector(myProject, myModule, stringWriter);
     stringWriter.startChange();
 
@@ -147,7 +146,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   private void collectLocalStyleHolders() throws IOException {
     if (isRequireLocalStyleHolder()) {
       ModuleInfo moduleInfo = new ModuleInfo(myModule);
-      final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(ServiceManager.getService(StringRegistry.class));
+      final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
       stringWriter.startChange();
       ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, getFlexVersion(), stringWriter);
       registerModule(moduleInfo, stringWriter);

@@ -1,15 +1,17 @@
 package com.intellij.flex.uiDesigner.io;
 
+import com.intellij.openapi.components.ServiceManager;
 import gnu.trove.TObjectIntIterator;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class StringRegistry {
   private final ObjectIntHashMap<String> table = new ObjectIntHashMap<String>(1024);
 //  private final Map<String, Integer> table = new LinkedHashMap<String, Integer>();
   private StringWriter activeWriter;
+
+  public static StringRegistry getInstance() {
+    return ServiceManager.getService(StringRegistry.class);
+  }
 
   public void reset() {
     table.clear();
@@ -52,6 +54,14 @@ public class StringRegistry {
 
     public StringWriter(StringRegistry stringRegistry) {
       this(stringRegistry, 1024);
+    }
+    
+    public StringWriter() {
+      this(StringRegistry.getInstance());
+    }
+    
+    public StringWriter(int size) {
+      this(StringRegistry.getInstance(), size);
     }
 
     public StringWriter(StringRegistry stringRegistry, int size) {

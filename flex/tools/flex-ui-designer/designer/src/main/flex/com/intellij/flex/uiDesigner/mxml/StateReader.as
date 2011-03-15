@@ -11,7 +11,6 @@ internal final class StateReader {
   internal static const DIFB_VECTOR_CLASS_NAME:String = "__AS3__.vec::Vector.<" + DIFB_CLASS_NAME + ">";
   
   internal var deferredInstanceFromBytesClass:Class;
-  internal var deferredInstanceContext:DeferredInstanceFromBytesContext;
   
   private var deferredInstancesForImmediateCreation:Vector.<DeferredInstanceFromBytesBase>;
   
@@ -24,7 +23,7 @@ internal final class StateReader {
     var states:Array = new Array(size);
     for (var i:int = 0; i < size; i++) {
       var state:Object = reader.readObject("com.intellij.flex.uiDesigner.flex.states.State");
-      state.context = deferredInstanceContext;
+      state.context = reader.byteFactoryContext;
       states[i] = state;
     }
     object.states = states;
@@ -41,7 +40,7 @@ internal final class StateReader {
   }
   
   public function readVectorOfDeferredInstanceFromBytes(reader:MxmlReader, data:IDataInput):Object {
-    var vClass:Class = deferredInstanceContext.moduleContext.getClass(DIFB_VECTOR_CLASS_NAME);
+    var vClass:Class = reader.byteFactoryContext.moduleContext.getClass(DIFB_VECTOR_CLASS_NAME);
     var n:int = data.readUnsignedByte();
     var v:Object = new vClass(n, true);
     for (var i:int = 0; i < n; i++) {
@@ -79,17 +78,14 @@ internal final class StateReader {
   }
   
   public function get cleared():Boolean {
-    return deferredInstanceFromBytesClass == null && deferredInstanceContext == null;
+    return deferredInstanceFromBytesClass == null;
   }
 
-  public function reset():void {
-    deferredInstanceFromBytesClass = null;
-    var t:DeferredInstanceFromBytesContext = deferredInstanceContext;
-    deferredInstanceContext = null;
-    
+  public function reset(byteFactoryContext:DeferredInstanceFromBytesContext):void {
+    deferredInstanceFromBytesClass = null;    
     if (deferredInstancesForImmediateCreation != null && deferredInstancesForImmediateCreation.length != 0) {
       for each (var deferredInstanceFromBytesBase:DeferredInstanceFromBytesBase in deferredInstancesForImmediateCreation) {
-        deferredInstanceFromBytesBase.create(t);
+        deferredInstanceFromBytesBase.create(byteFactoryContext);
       }
       
       deferredInstancesForImmediateCreation.length = 0;

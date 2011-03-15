@@ -11,6 +11,7 @@
   <Component role="{StringRegistry}"/>
   <Component role="{DocumentReader}" implementation="{MxmlReader}">
     <Requirement role="{StringRegistry}"/>
+    <Requirement role="{DocumentFactoryManager}"/>
   </Component>
 	<Component role="{SocketManager}" implementation="{SocketManagerImpl}"/>
   <Component role="{DefaultSocketDataHandler}">

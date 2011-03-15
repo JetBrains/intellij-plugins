@@ -4,8 +4,26 @@ import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import flash.system.ApplicationDomain;
 
 public final class ModuleContextImpl implements ModuleContextEx {
+  private var documentFactories:Vector.<Object>; /* FlexDocumentFactory */
+  
   public function ModuleContextImpl(librarySets:Vector.<LibrarySet>) {
     _librarySets = librarySets;
+  }
+
+  public function getDocumentFactory(id:int):Object {
+    return documentFactories != null && documentFactories.length > id ? documentFactories[id] : null;
+  }
+
+  public function putDocumentFactory(id:int, documentFactory:Object):void {
+    var requiredLength:int = id + 1;
+    if (documentFactories == null) {
+      documentFactories = new Vector.<Object>(requiredLength);
+    }
+    else if (documentFactories.length < requiredLength) {
+      documentFactories.length = requiredLength;
+    }
+
+    documentFactories[id] = documentFactory;
   }
 
   private var _styleManager:StyleManagerEx;
@@ -35,6 +53,15 @@ public final class ModuleContextImpl implements ModuleContextEx {
     return _inlineCssStyleDeclarationClass;
   }
   
+  private var _documentFactoryClass:Class;
+  public function get documentFactoryClass():Class {
+    if (_documentFactoryClass == null) {
+      _documentFactoryClass = getClass("com.intellij.flex.uiDesigner.FlexDocumentFactory");
+    }
+
+    return _documentFactoryClass;
+  }
+
   private var _effectManagerClass:Class;
   public function get effectManagerClass():Class {
     if (_effectManagerClass == null) {

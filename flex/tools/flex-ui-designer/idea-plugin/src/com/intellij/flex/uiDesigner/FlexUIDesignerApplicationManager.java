@@ -194,7 +194,7 @@ public class  FlexUIDesignerApplicationManager implements Disposable {
 
   private void initLibrarySets(@NotNull final Project project, @NotNull final Module module) throws IOException {
     final LibraryCollector libraryCollector = new LibraryCollector();
-    final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(ServiceManager.getService(StringRegistry.class), 16384);
+    final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
     stringWriter.startChange();
     
     ApplicationManager.getApplication().runReadAction(new Runnable() {

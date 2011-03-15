@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml {
+import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.ModuleContext;
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.VirtualFile;
@@ -28,6 +29,7 @@ public final class MxmlReader implements DocumentReader {
   private static const STRING_REFERENCE:int = 44;
   
   private var stringRegistry:StringRegistry;
+  private var documentFactoryManager:DocumentFactoryManager;
 
   private const stateReader:StateReader = new StateReader();
   private const injectedASReader:InjectedASReader = new InjectedASReader();
@@ -38,9 +40,12 @@ public final class MxmlReader implements DocumentReader {
 
   private var deferredMxContainers:Vector.<DisplayObjectContainer>;
   internal var objectTable:Vector.<Object>;
+  
+  internal var byteFactoryContext:DeferredInstanceFromBytesContext;
 
-  public function MxmlReader(stringRegistry:StringRegistry) {
+  public function MxmlReader(stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager) {
     this.stringRegistry = stringRegistry;
+    this.documentFactoryManager = documentFactoryManager;
   }
   
   private var _input:IDataInput;
@@ -63,7 +68,7 @@ public final class MxmlReader implements DocumentReader {
     var object:Object = readObject(stringRegistry.read(_input));
     _input = oldInput;
 
-    assert(stateReader.cleared && objectTableSize == (objectTable == null ? 0 : objectTable.length));
+    assert(stateReader.cleared && byteFactoryContext == null && objectTableSize == (objectTable == null ? 0 : objectTable.length));
 
     this.context = null;
     this.styleManager = null;
@@ -116,7 +121,9 @@ public final class MxmlReader implements DocumentReader {
       objectTable.length = 0;
     }
 
-    stateReader.reset();
+    var t:DeferredInstanceFromBytesContext = byteFactoryContext;
+    byteFactoryContext = null;
+    stateReader.reset(t);
 
     return object;
   }
@@ -134,19 +141,22 @@ public final class MxmlReader implements DocumentReader {
     switch (_input.readByte()) {
       case CLASS_MARKER:
         return new objectClass(context.applicationDomain.getDefinition(stringRegistry.read(_input)));
-      
+
       case PropertyClassifier.VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES:
-          initDeferredInstanceContext();
-          return new objectClass(stateReader.readVectorOfDeferredInstanceFromBytes(this, _input), stateReader.deferredInstanceContext);
-      
+        initByteFactoryContext();
+        return new objectClass(stateReader.readVectorOfDeferredInstanceFromBytes(this, _input), byteFactoryContext);
+
       case PropertyClassifier.ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:
-          initDeferredInstanceContext();
-          return new objectClass(stateReader.readArrayOfDeferredInstanceFromBytes(this, _input), stateReader.deferredInstanceContext);
-      
+        initByteFactoryContext();
+        return new objectClass(stateReader.readArrayOfDeferredInstanceFromBytes(this, _input), byteFactoryContext);
+
+      case Amf3Types.BYTE_ARRAY:
+        initByteFactoryContext();
+        return new objectClass(readBytes(), byteFactoryContext);
+
       default:
-          throw new ArgumentError("unknown property classifier");
+        throw new ArgumentError("unknown property classifier");
     }
-    
   }
 
   internal function readObject(className:String):Object {
@@ -277,9 +287,9 @@ public final class MxmlReader implements DocumentReader {
           }
           propertyHolder[propertyName] = o;
           break;
-
-        case Amf3Types.BYTE_ARRAY:
-          propertyHolder[propertyName] = readBytes();
+        
+        case Amf3Types.DOCUMENT_FACTORY_REFERENCE:
+          propertyHolder[propertyName] = readDocumentFactory();
           break;
         
         case STRING_REFERENCE:
@@ -307,11 +317,23 @@ public final class MxmlReader implements DocumentReader {
 
     return object;
   }
+  
+  private function readDocumentFactory():Object {
+    var id:int = AmfUtil.readUInt29(_input);
+    var factory:Object = context.getDocumentFactory(id);
+    if (factory == null) {
+      initByteFactoryContext();
+      factory = new context.documentFactoryClass(documentFactoryManager.get(id), byteFactoryContext);
+      context.putDocumentFactory(id, factory);
+    }
+    
+    return factory;
+  }
 
-  private function initDeferredInstanceContext():void {
+  private function initByteFactoryContext():void {
     if (stateReader.deferredInstanceFromBytesClass == null) {
       stateReader.deferredInstanceFromBytesClass = getClass(StateReader.DIFB_CLASS_NAME);
-      stateReader.deferredInstanceContext = new DeferredInstanceFromBytesContext(documentFile, this, styleManager, context);
+      byteFactoryContext = new DeferredInstanceFromBytesContext(documentFile, this, styleManager, context);
     }
   }
 
