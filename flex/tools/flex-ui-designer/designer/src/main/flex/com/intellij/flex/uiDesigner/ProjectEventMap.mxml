@@ -17,7 +17,6 @@ import com.intellij.flex.uiDesigner.flex.tools.ElementToolManager;
     <Component role="{ElementToolManager}"/>
     <Component role="{DocumentManager}" implementation="{DocumentManagerImpl}">
       <Requirement role="{LibraryManager}"/>
-      <Requirement role="{SocketManager}"/>
       <Requirement role="{DocumentReader}"/>
     </Component>
     <Component role="{StatesBarManager}"/>

@@ -19,6 +19,7 @@
 		<Requirement role="{ProjectManager}"/>
 		<Requirement role="{ModuleManager}"/>
 		<Requirement role="{StringRegistry}"/>
+    <Requirement role="{DocumentFactoryManager}"/>
 	</Component>
   <Component role="{UncaughtErrorManager}">
 		<Requirement role="{SocketManager}"/>

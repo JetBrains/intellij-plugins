@@ -1,20 +1,20 @@
 package com.intellij.flex.uiDesigner.flex {
-import com.intellij.flex.uiDesigner.DocumentFactory;
+import com.intellij.flex.uiDesigner.SerializedDocumentDataProvider;
 
 import mx.core.IFactory;
 
 public final class FlexDocumentFactory implements IFactory {
-  private var source:DocumentFactory;
+  private var source:SerializedDocumentDataProvider;
   private var context:DeferredInstanceFromBytesContext;
   
-  public function FlexDocumentFactory(factory:DocumentFactory, context:DeferredInstanceFromBytesContext) {
-    this.source = factory;
+  public function FlexDocumentFactory(source:SerializedDocumentDataProvider, context:DeferredInstanceFromBytesContext) {
+    this.source = source;
     this.context = context;
   }
 
   public function newInstance():* {
-    var object:Object = context.documentReader.read2(source.bytes, context);
-    source.bytes.position = 0;
+    var object:Object = context.documentReader.read2(source.data, context);
+    source.data.position = 0;
     return object;
   }
 }

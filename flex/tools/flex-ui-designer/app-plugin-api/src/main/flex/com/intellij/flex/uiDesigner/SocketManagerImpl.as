@@ -4,7 +4,6 @@ import com.intellij.flex.uiDesigner.css.CssDeclaration;
 import flash.events.ProgressEvent;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
-import flash.system.Capabilities;
 import flash.utils.Dictionary;
 import flash.utils.getQualifiedClassName;
 
@@ -17,6 +16,17 @@ public class SocketManagerImpl implements SocketManager {
   private var unreadSocketRemainder:int;
 
   private const socketDataHandlers:Dictionary = new Dictionary();
+  
+  // for debug only
+  private var totalBytes:int;
+  //noinspection JSUnusedGlobalSymbols
+  public final function geTotalBytesExceptLast(event:ProgressEvent):int {
+    return totalBytes - event.bytesLoaded;
+  }
+  //noinspection JSUnusedGlobalSymbols
+  public final function get currentPosition():int {
+    return totalBytes - socket.bytesAvailable  - 1;
+  }
 
   public function addSocketDataHandler(classId:int, handler:SocketDataHandler):void {
     assert(!(classId in socketDataHandlers));
@@ -36,18 +46,10 @@ public class SocketManagerImpl implements SocketManager {
     }
   }
 
-  public function checkData():void {
-    socketDataHandler(null);
-    if (socket.bytesAvailable > 0 && Capabilities.isDebugger) {
-      trace("WARNING! Unread document data, at least " + socket.bytesAvailable);
-//      var bytes:ByteArray = new ByteArray();
-//      socket.readBytes(bytes, 0, socket.bytesAvailable);
-//      FileUtil.writeBytes("/Users/develar/r", bytes);
-    }
-  }
-
   private function socketDataHandler(event:ProgressEvent):void {
     if (event != null) {
+      totalBytes += event.bytesLoaded;
+      
       trace("socket data handler: bytesLoaded " + event.bytesLoaded + " socket bytesAvailable " + socket.bytesAvailable + " last unread " + (socket.bytesAvailable - event.bytesLoaded));
     }
     
@@ -85,14 +87,14 @@ public class SocketManagerImpl implements SocketManager {
       if (handler != null) {
         var position:int = socket.bytesAvailable + 1 /* method class size */;
         const method:int = socket.readByte();
-        handler.handleSockedData(method, socket);
+        handler.handleSockedData(messageSize - 2, method, socket);
         if (messageSize != (position - socket.bytesAvailable)) {
           if (handler.pendingReadIsAllowable(method)) {
             unreadSocketRemainder = socket.bytesAvailable;
             trace("allowed unread socket remainder: " + unreadSocketRemainder + " for method " + method);
           }
           else {
-            trace("prohibited unread socket remainder: " + unreadSocketRemainder + " for method " + method);
+            throw new Error("prohibited unread socket remainder: " + socket.bytesAvailable + " for method " + method + " with message size " + messageSize + " at position " + position);
           }
           return;
         }

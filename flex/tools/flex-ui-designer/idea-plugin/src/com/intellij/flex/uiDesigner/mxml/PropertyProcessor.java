@@ -44,6 +44,10 @@ class PropertyProcessor {
     this.injectedASWriter = injectedASWriter;
     this.writer = writer;
   }
+
+  public List<XmlFile> getUnregisteredDocumentFactories() {
+    return unregisteredDocumentFactories;
+  }
   
   public String getName() {
     return name;

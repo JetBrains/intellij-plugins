@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
@@ -18,6 +19,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 abstract class MxmlWriterTestBase extends AppTestBase {
   protected TestClient client;
@@ -131,15 +134,22 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     testFiles(tester, true, originalVFiles);
   }
   
-  protected void testFiles(Tester tester, boolean onlyFirst, VirtualFile... originalVFiles) throws Exception {
+  protected void testFiles(final Tester tester, boolean onlyFirst, final VirtualFile... originalVFiles) throws Exception {
     VirtualFile[] testVFiles = configureByFiles(null, originalVFiles).getChildren();
     collectLocalStyleHolders();
 
     for (int childrenLength = testVFiles.length, i = onlyFirst ? (childrenLength - 1) : 0; i < childrenLength; i++) {
-      VirtualFile file = testVFiles[i];      
-      XmlFile xmlFile = (XmlFile) myPsiManager.findFile(file);
+      final VirtualFile file = testVFiles[i];      
+      final VirtualFile originalVFile = originalVFiles[childrenLength - i - 1];
+      final XmlFile xmlFile = (XmlFile) myPsiManager.findFile(file);
       assert xmlFile != null;
-      tester.test(file, xmlFile, originalVFiles[childrenLength - i - 1]);
+      ApplicationManager.getApplication().executeOnPooledThread(new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
+          tester.test(file, xmlFile, originalVFile);
+          return null;
+        }
+      }).get(8, TimeUnit.SECONDS);
     }
   }
 
@@ -186,9 +196,9 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       String filename = file.getNameWithoutExtension();
       System.out.print(filename);
       long start = System.currentTimeMillis();
+      assert !DocumentFileManager.getInstance().isRegistered(file);
       client.openDocument(myModule, xmlFile);
       long time = System.currentTimeMillis() - start;
-
       client.test(filename, originalFile.getParent().getName());
       assertResult(filename, time);
     }

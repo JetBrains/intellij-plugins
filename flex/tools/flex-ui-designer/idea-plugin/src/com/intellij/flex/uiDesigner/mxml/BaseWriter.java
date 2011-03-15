@@ -119,11 +119,6 @@ public final class BaseWriter {
   }
 
   public void endMessage() throws IOException {
-//    List<XmlFile> unregistered = DocumentFileManager.getInstance().getUnregistered();
-//    if (unregistered.isEmpty()) {
-//      
-//    }
-//
     int stringTableSize = stringWriter.size();
     blockOut.beginWritePrepended(stringTableSize + (rootScope.referenceCounter < 0x80 ? 1 : 2), startPosition);
     blockOut.writePrepended(stringWriter.getCounter(), stringWriter.getByteArrayOut());

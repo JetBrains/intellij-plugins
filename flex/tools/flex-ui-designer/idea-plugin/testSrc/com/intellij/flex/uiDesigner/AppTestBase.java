@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -26,6 +25,8 @@ import java.util.List;
 abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   protected static final Key<Boolean> IS_USER_LIB = Key.create("FUD_IS_USER_LIB");
   private static final String BASE_PATH = "/mxml";
+  
+  private static int sessionId;
   
   protected String flexSdkRootPath;
   protected List<Pair<VirtualFile, VirtualFile>> libs;
@@ -99,7 +100,8 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    ServiceManager.getService(StringRegistry.class).reset();
+    StringRegistry.getInstance().reset();
+    DocumentFileManager.getInstance().reset(++sessionId);
 
     for (Pair<VirtualFile, VirtualFile> lib : libs) {
       LibraryCollector.clearCache(lib.getSecond());

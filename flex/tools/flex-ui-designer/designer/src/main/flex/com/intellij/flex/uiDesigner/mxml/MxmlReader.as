@@ -102,7 +102,6 @@ public final class MxmlReader implements DocumentReader {
   }
 
   public function read(documentFile:VirtualFile, styleManager:Object, context:ModuleContext):Object {
-    stringRegistry.readStringTable(_input);
     const objectTableSize:int = readObjectTableSize();
 
     this.context = context;

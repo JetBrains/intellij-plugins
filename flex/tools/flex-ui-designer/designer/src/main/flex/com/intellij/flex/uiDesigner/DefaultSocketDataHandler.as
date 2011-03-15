@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.net.Socket;
 import flash.net.registerClassAlias;
+import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 
 registerClassAlias("lsh", LocalStyleHolder);
@@ -13,18 +14,21 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   private var libraryManager:LibraryManager;
   private var moduleManager:ModuleManager;
   private var stringRegistry:StringRegistry;
+  
+  private var documentFactoryManager:DocumentFactoryManager;
 
-  public function DefaultSocketDataHandler(libraryManager:LibraryManager, projectManager:ProjectManager, moduleManager:ModuleManager, stringRegistry:StringRegistry) {
+  public function DefaultSocketDataHandler(libraryManager:LibraryManager, projectManager:ProjectManager, moduleManager:ModuleManager, stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager) {
     this.libraryManager = libraryManager;
     this.projectManager = projectManager;
     this.moduleManager = moduleManager;
     this.stringRegistry = stringRegistry;
+    this.documentFactoryManager = documentFactoryManager;
   }
   
   public function set socket(socket:Socket):void {
   }
 
-  public function handleSockedData(method:int, data:IDataInput):void {
+  public function handleSockedData(messageSize:int, method:int, data:IDataInput):void {
     trace("default socket handler: method " + method);
     switch (method) {
       case ClientMethod.openProject:
@@ -41,6 +45,10 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
 
       case ClientMethod.registerModule:
         registerModule(data);
+        break;
+      
+      case ClientMethod.registerDocumentFactory:
+        registerDocumentFactory(data, messageSize);
         break;
 
       case ClientMethod.openDocument:
@@ -59,17 +67,27 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
       libraryManager.remove(module.librarySets);
     }
   }
-
-  private function openDocument(data:IDataInput):void {
-    var module:Module = moduleManager.getById(data.readInt());
-    projectManager.project = module.project;
-    var documentManager:DocumentManager = DocumentManager(module.project.plexusContainer.lookup(DocumentManager));
-    documentManager.open(module, data);
-  }
-
+  
   private function registerModule(data:IDataInput):void {
     stringRegistry.readStringTable(data);
     moduleManager.register(new Module(data.readInt(), projectManager.getById(data.readInt()), libraryManager.idsToInstancesAndMarkAsUsed(data.readObject()), data.readObject()));
+  }
+  
+  private function registerDocumentFactory(data:IDataInput, messageSize:int):void {
+    var bytes:ByteArray = new ByteArray();
+    var prevBytesAvailable:int = data.bytesAvailable;
+    var documentFactory:DocumentFactory = new DocumentFactory(bytes, VirtualFileImpl.create(data), moduleManager.getById(data.readInt()));
+    documentFactoryManager.register(data.readShort(), documentFactory);
+    
+    stringRegistry.readStringTable(data);
+    
+    data.readBytes(bytes, 0, messageSize - (prevBytesAvailable - data.bytesAvailable));
+  }
+
+  private function openDocument(data:IDataInput):void {
+    var documentFactory:DocumentFactory = documentFactoryManager.get(data.readUnsignedShort());
+    projectManager.project = documentFactory.module.project;
+    DocumentManager(documentFactory.module.project.plexusContainer.lookup(DocumentManager)).open(documentFactory);
   }
 
   private function registerLibrarySet(data:IDataInput):void {
@@ -82,7 +100,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   public function pendingReadIsAllowable(method:int):Boolean {
-    return method == ClientMethod.openDocument;
+    return false; // ранее такое было для openDocument, но сейчас (после реализации концепции factory) оно читается сразу
   }
 }
 }
@@ -93,9 +111,10 @@ final class ClientMethod {
   
   public static const registerLibrarySet:int = 2;
   public static const registerModule:int = 3;
-  public static const openDocument:int = 4;
+  public static const registerDocumentFactory:int = 4;
+  public static const openDocument:int = 5;
 
   //noinspection JSUnusedGlobalSymbols
-  public static const qualifyExternalInlineStyleSource:int = 5;
-  public static const initStringRegistry:int = 6;
+  public static const qualifyExternalInlineStyleSource:int = 6;
+  public static const initStringRegistry:int = 7;
 }

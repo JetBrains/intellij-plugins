@@ -13,19 +13,16 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
-import flash.utils.IDataInput;
 
 public class DocumentManagerImpl extends EventDispatcher implements DocumentManager {
   private const pathMap:Dictionary = new Dictionary();
 
   private var libraryManager:LibraryManager;
-  private var socketManager:SocketManager;
 
   private var documentReader:DocumentReader;
 
-  public function DocumentManagerImpl(libraryManager:LibraryManager, socketManager:SocketManager, documentReader:DocumentReader) {
+  public function DocumentManagerImpl(libraryManager:LibraryManager, documentReader:DocumentReader) {
     this.libraryManager = libraryManager;
-    this.socketManager = socketManager;
     this.documentReader = documentReader;
   }
 
@@ -42,13 +39,12 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  public function open(module:Module, input:IDataInput):void {
-    var file:VirtualFile = VirtualFileImpl.create(input);
+  public function open(documentFactory:DocumentFactory):void {
+    var file:VirtualFile = documentFactory.file;
     var document:Document = pathMap[file];
     if (document == null) {
-      documentReader.input = input;
-      
-      libraryManager.resolve(module.librarySets, doOpenAfterResolveLibraries, module, file);
+      documentReader.input = documentFactory.data;
+      libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory.module, file);
     }
     else {
       doOpen(document);
@@ -72,7 +68,6 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
     documentReader.createDeferredMxContainersChildren(document.module.context.applicationDomain);
     this.document = document;
-    socketManager.checkData();
   }
 
   private function createStyleManager(module:Module):void {

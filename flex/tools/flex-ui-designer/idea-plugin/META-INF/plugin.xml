@@ -13,6 +13,7 @@
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager" serviceImplementation="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.SocketInputHandler" serviceImplementation="com.intellij.flex.uiDesigner.SocketInputHandlerImpl"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.io.StringRegistry" serviceImplementation="com.intellij.flex.uiDesigner.io.StringRegistry"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentFileManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentFileManager"/>
   </extensions>
 
   <actions>

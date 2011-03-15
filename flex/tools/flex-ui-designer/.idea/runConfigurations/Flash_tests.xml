@@ -7,7 +7,7 @@
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="pattern" />
-    <option name="VM_PARAMETERS" value="-Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.debug=true -Dfud.test.debug=true -Dfud.adl=$ADL$ -Dfud.air=$AIR$" />
+    <option name="VM_PARAMETERS" value="-Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.debug=true -Dfud.test.debug=true -Dfud.adl=$ADL$ -Dfud.air=$AIR$  -Dfud.socket.dump=$USER_HOME$/d.bi" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ENV_VARIABLES" />

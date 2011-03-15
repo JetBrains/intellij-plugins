@@ -23,6 +23,7 @@ import com.sun.istack.internal.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.List;
 
 public class MxmlWriter {
   private static final Logger LOG = Logger.getInstance(MxmlWriter.class.getName());
@@ -47,7 +48,7 @@ public class MxmlWriter {
     writer.setOutput(this.out);
   }
 
-  public void write(@NotNull XmlFile psiFile) throws IOException {
+  public XmlFile[] write(@NotNull XmlFile psiFile) throws IOException {
     writer.beginMessage();
     XmlTag rootTag = psiFile.getRootTag();
     assert rootTag != null;
@@ -69,8 +70,18 @@ public class MxmlWriter {
     }
     
     injectedASWriter.write();
+    List<XmlFile> unregisteredDocumentFactories = propertyProcessor.getUnregisteredDocumentFactories();
     writer.endMessage();
     resetAfterMessage();
+    
+    if (unregisteredDocumentFactories.isEmpty()) {
+      return null;
+    }
+    else {
+      XmlFile[] documents = unregisteredDocumentFactories.toArray(new XmlFile[unregisteredDocumentFactories.size()]);
+      unregisteredDocumentFactories.clear();
+      return documents;
+    }
   }
 
   public void reset() {

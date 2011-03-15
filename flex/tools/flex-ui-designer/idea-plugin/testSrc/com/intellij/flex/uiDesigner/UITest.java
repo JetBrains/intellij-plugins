@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.OrderRootType;
@@ -13,8 +12,6 @@ import org.flyti.roboflest.Roboflest;
 import org.flyti.roboflest.Roboflest.Assert;
 
 import java.io.File;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import static js.JSTestOption.WithFlexSdk;
 import static js.JSTestOption.WithGumboSdk;
@@ -59,12 +56,6 @@ public class UITest extends MxmlWriterTestBase {
   }
 
   private void interact(final Assert... asserts) throws Exception {
-    ApplicationManager.getApplication().executeOnPooledThread(new Callable<Void>() {
-      @Override
-      public Void call() throws Exception {
-        roboflest.test(new File(getTestDataPath() + "/roboflest/" + getTestName(true) + ".txt"), asserts);
-        return null;
-      }
-    }).get(10, TimeUnit.SECONDS);
+    roboflest.test(new File(getTestDataPath() + "/roboflest/" + getTestName(true) + ".txt"), asserts);
   }
 }

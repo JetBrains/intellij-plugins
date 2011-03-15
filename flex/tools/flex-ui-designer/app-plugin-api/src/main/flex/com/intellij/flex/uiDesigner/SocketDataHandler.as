@@ -3,7 +3,10 @@ import flash.net.Socket;
 import flash.utils.IDataInput;
 
 public interface SocketDataHandler {
-  function handleSockedData(method:int, data:IDataInput):void;
+  /**
+   * messageSize — logical (i.e. without 2 bytes for clientMethodClass (1) and clentMethod (1))
+   */
+  function handleSockedData(messageSize:int, method:int, data:IDataInput):void;
 
   function set socket(socket:Socket):void;
 

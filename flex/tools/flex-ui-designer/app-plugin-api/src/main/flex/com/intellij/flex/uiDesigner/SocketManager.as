@@ -12,8 +12,6 @@ public interface SocketManager {
   function resolveExternalInlineStyleDeclarationSource(module:Module, parentFQN:String, elementFQN:String, targetStyleName:String, declarations:Vector.<CssDeclaration>):void;
 
   function addSocketDataHandler(classId:int, handler:SocketDataHandler):void;
-
-  function checkData():void;
   
   function getSocket():Socket;
 }

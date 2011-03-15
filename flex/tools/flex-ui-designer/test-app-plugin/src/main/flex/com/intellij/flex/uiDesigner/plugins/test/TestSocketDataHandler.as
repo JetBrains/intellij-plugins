@@ -69,7 +69,7 @@ public class TestSocketDataHandler implements SocketDataHandler {
     return methodInfo;
   }
 
-  public function handleSockedData(methodNameSize:int, data:IDataInput):void {
+  public function handleSockedData(messageSize:int, methodNameSize:int, data:IDataInput):void {
     var method:String = data.readUTFBytes(methodNameSize);
     var clazz:Class = c[data.readByte()];
     

@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.io;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,10 +10,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   private static final int SERVICE_DATA_SIZE = 4;
 
   private int lastBlockBegin;
-
-  private final DebugOutput debugOut;
-  private OutputStream out;
-  
+  private final OutputStream out;
   private final List<Marker> markers = new ArrayList<Marker>();
 
   public BlockDataOutputStream(@NotNull OutputStream out) {
@@ -26,6 +22,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     count = SERVICE_DATA_SIZE;
     
     String debugFilename = System.getProperty("fud.socket.dump");
+    DebugOutput debugOut;
     if (debugFilename != null) {
       File debugFile = new File(debugFilename);
       try {
@@ -38,16 +35,11 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       this.out = debugOut;
     }
     else {
-      debugOut = null;
       this.out = out;
     }
   }
 
   private void writeHeader() throws IOException {
-    if (debugOut != null) {
-      debugOut.reset();
-    }
-    
     int length = count - lastBlockBegin - SERVICE_DATA_SIZE;
     buffer[lastBlockBegin] = (byte) ((length >>> 24) & 0xFF);
     buffer[lastBlockBegin + 1] = (byte) ((length >>> 16) & 0xFF);
@@ -98,10 +90,6 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     else {
       throw new IllegalArgumentException("Integer out of range: " + counter);
     }
-  }
-  
-  public void writePrepended(byte[] additionalData) throws IOException {
-    out.write(additionalData);
   }
 
   public void endWritePrepended(int insertPosition) throws IOException {
@@ -248,12 +236,11 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
 
   private static class DebugOutput extends OutputStream {
     private final OutputStream out;
-    private FileOutputStream fileOut;
-    private File file;
+    private final FileOutputStream fileOut;
 
     private DebugOutput(OutputStream out, File file) throws FileNotFoundException {
-      this.file = file;
       this.out = out;
+      fileOut = new FileOutputStream(file);
     }
 
     @Override
@@ -276,27 +263,14 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
 
     @Override
     public void flush() throws IOException {
+      fileOut.flush();
       out.flush();
-      if (fileOut != null) {
-        fileOut.flush();
-      }
     }
 
     @Override
     public void close() throws IOException {
-      if (fileOut != null) {
-        fileOut.close();
-      }
-      
+      fileOut.close();
       out.close();
-    }
-
-    public void reset() throws IOException {
-      if (fileOut != null) {
-        fileOut.close();
-      }
-
-      fileOut = new FileOutputStream(file);
     }
   }
 }
