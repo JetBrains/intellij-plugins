@@ -1,0 +1,21 @@
+<idea-plugin version="2" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <application-components>
+    <component>
+      <implementation-class>com.intellij.ultimate.UltimateVerifier</implementation-class>
+    </component>
+  </application-components>
+
+  <xi:include href="/META-INF/FlexPlatform.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/ultimate.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <!--<xi:include href="/META-INF/XmlPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
+  <!--<xi:include href="/META-INF/RegExpPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
+  <!--<xi:include href="/META-INF/ImagesPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
+
+  <resource-bundle>messages.FlexIdeBundle</resource-bundle>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!--<applicationService serviceInterface="com.intellij.openapi.module.ModuleTypeManager"-->
+                      <!--serviceImplementation="com.intellij.flexIde.FlexModuleTypeManager"/>-->
+  </extensions>
+</idea-plugin>

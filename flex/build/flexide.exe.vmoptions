@@ -1,0 +1,6 @@
+-Xms32m
+-Xmx512m
+-XX:MaxPermSize=150m
+-ea
+-agentlib:yjpagent=disablej2ee,disablecounts,disablealloc,sessionname=flexide
+-Didea.platform.prefix=Flex
