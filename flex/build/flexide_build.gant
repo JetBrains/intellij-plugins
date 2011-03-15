@@ -8,10 +8,9 @@ includeTargets << new File("${guessHome(this)}/build/scripts/libLicenses.gant")
 includeTool << Jps
 
 def product = "FlexIDE"
-def productCode = "FI"
 
 requireProperty("buildNumber", requireProperty("build.number", "106.SNAPSHOT"))
-setProperty("buildName", "${productCode}-${buildNumber}")
+setProperty("buildName", "${product}-${buildNumber}")
 setProperty("product", "${product}")
 
 setProperty("ch", "$home/community")
@@ -95,13 +94,11 @@ class Paths {
     ideaSystem = "$sandbox/system"
     ideaConfig = "$sandbox/config"
 
-    artifacts = "$home/out/flex-ide/artifacts"
+    artifacts = "$sandbox/artifacts"
   }
 }
 
 setProperty("paths", new Paths(home))
-
-def sandbox = "$home/out/flex-ide";
 
 target('default': "Build artifacts") {
 
@@ -111,12 +108,13 @@ target('default': "Build artifacts") {
 
   loadProject()
 
-  project.stage("Cleaning up sandbox folder")
-
-  project.targetFolder = "$sandbox/classes"
+  project.targetFolder = "$paths.sandbox/classes"
   project.dryRun = dryRun
 
   if (!dryRun && !dontClean) {
+    project.stage("cleanup")
+
+    def sandbox = paths.sandbox
     ant.delete(dir: sandbox)
     ant.mkdir(dir: sandbox)
   }
@@ -148,7 +146,9 @@ target('default': "Build artifacts") {
     exclude(name: "tips")
   }
 
-  // zipSources()
+  if (!dryRun) {
+    zipSources()
+  }
 
   def usedJars = new HashSet();
 
@@ -192,7 +192,7 @@ target('default': "Build artifacts") {
   LayoutInfo layoutInfo = layoutFull(paths.distAll, usedJars)
   checkLibLicensesAndGenerateTable("$paths.artifacts/third-party-libraries.txt", layoutInfo.usedModules);
 
-  // TODO let's turn scrambing off for now
+  // TODO let's turn scrambling off for now
   //scramble()
 
   layoutWin(paths.distWin)
@@ -201,7 +201,7 @@ target('default': "Build artifacts") {
             system_selector: "FlexIde10",
             paths.distMac)
 
-  ant.echo(message: buildName, file: "$sandbox/layout/build.txt")
+  ant.echo(message: buildName, file: "$paths.sandbox/layout/build.txt")
 
   buildSit()
   buildDmg()
@@ -216,9 +216,9 @@ target('default': "Build artifacts") {
 }
 
 def zipSources() {
-  def sources = "$paths.artifacts/sources.zip"
-  project.stage("zip sources to $sources")
+  project.stage("zip sources")
 
+  def sources = "$paths.artifacts/sources.zip"
   ant.mkdir(dir: paths.artifacts)
   ant.delete(file: sources)
   ant.zip(destfile: sources) {
@@ -229,21 +229,22 @@ def zipSources() {
       exclude(name: "**/testData/**")
     }
   }
+  reportArtifact("sources.zip")
 }
 
 private def buildWinZip() {
-  ant.zip(zipfile: "${paths.artifacts}/flexide${buildName}.zip") {
+  ant.zip(zipfile: "$paths.artifacts/${buildName}.zip") {
     fileset(dir: paths.distAll)
     fileset(dir: paths.distWin)
   }
-  reportArtifact("${product}*.zip")
+  reportArtifact("${buildName}.zip")
 }
 
 private def buildSit() {
-  project.stage("${product}: Mac .sit")
-  def root = isEap() ? "${product}-${buildNumber}.app" : "${product} ${p("component.version.major")}.${p("component.version.minor")}.app"
+  project.stage("sit")
+  def root = isEap() ? "${buildName}.app" : "${product}-${p("component.version.major")}.${p("component.version.minor")}.app"
 
-  ant.zip(zipfile: "${paths.artifacts}/flexide${buildName}.sit") {
+  ant.zip(zipfile: "${paths.artifacts}/${buildName}.sit") {
     tarfileset(dir: paths.distAll, prefix: root)
     tarfileset(dir: paths.distMac, prefix: root) {
       exclude(name: "bin/*.sh")
@@ -254,34 +255,31 @@ private def buildSit() {
       include(name: "Contents/MacOS/idea")
     }
   }
-  reportArtifact("${product}*.sit")
+  reportArtifact("${buildName}.sit")
 }
 
 private def buildDmg() {
-  project.stage("${product}: Mac .dmg")
-  executeExternalAnt("file.name": "flexide", "dmg.image.name": "$home/flex/ideResources/artwork/fiDmgBg.png",
-                     "$home/build/buildDmg.xml")
+  project.stage("dmg")
+  ant.move(file: "${paths.artifacts}/${buildName}.sit", tofile: "${paths.artifacts}/${product}${buildNumber}.sit") // to comply with buildDmg.xml naming
+  executeExternalAnt("file.name": "${product}", "dmg.image.name": "$home/flex/ideResources/artwork/fiDmgBg.png", "$home/build/buildDmg.xml")
 
-  //let's fix files names created by buildDmg.xml script
-  ant.move(file: "${paths.artifacts}/flexide${buildName}.sit", tofile: "${paths.artifacts}/${product}-${buildNumber}.sit")
-  ant.move(file: "${paths.artifacts}/flexide${buildName}.dmg", tofile: "${paths.artifacts}/${product}-${buildNumber}.dmg")
-
-  // force TC to publish artifacts
-  reportArtifact("${product}*.dmg")
+  ant.move(file: "${paths.artifacts}/${product}${buildNumber}.sit", tofile: "${paths.artifacts}/${buildName}.sit")
+  ant.move(file: "${paths.artifacts}/${product}${buildNumber}.dmg", tofile: "${paths.artifacts}/${buildName}.dmg")
+  reportArtifact("${buildName}.dmg")
 }
 
 
 private def buildNsis() {
   if (!isMac()) {
-    project.stage("${product}: NSIS")
+    project.stage("nsis")
     def installer = includeFile("$home/build/scripts/nsis_installer.gant")
     installer.nsis_installer([paths.distAll, paths.distWin],
                              "$home/flex/build/strings.nsi",
                              "$home/flex/build/paths.nsi",
                              "${product}-", false)
-    ant.available(file: "${paths.artifacts}/${product}-${buildNumber}.exe", property: "nsis.exists");
-    ant.fail(unless: "nsis.exists", message: "${product} NSIS EXE was not built. File ${paths.artifacts}/${product}-${buildNumber}.exe wasn't found.")
-    reportArtifact("${product}*.exe")
+    ant.available(file: "${paths.artifacts}/${buildName}.exe", property: "nsis.exists");
+    ant.fail(unless: "nsis.exists", message: "${buildName} NSIS EXE was not built. File ${paths.artifacts}/${buildName}.exe wasn't found.")
+    reportArtifact("${buildName}.exe")
   }
   else {
     project.warning("Building nsis .exe distribution skipped")
@@ -290,7 +288,7 @@ private def buildNsis() {
 
 def buildSearchableOptions() {
   def dest_dir = "${project["platform-resources"].output}/search"
-  project.stage("Building searchable options")
+  project.stage("searchable options")
   ant.mkdir(dir: "${dest_dir}/search")
   ant.copy(file: "$home/build/idea.license", todir: paths.ideaSystem)
   //ant.copy(file: "$home/build/rubymine.license", todir: paths.ideaSystem)
@@ -388,9 +386,9 @@ def layoutLinux(String target) {
 }
 
 def buildTarGz() {
-  project.stage("${product}: tar.gz")
-  def tarRoot = isEap() ? "${product}-$buildNumber" : "${product}-${p("component.version.major")}.${p("component.version.minor")}"
-  def tarPath = "$paths.artifacts/${product}-${buildNumber}.tar"
+  project.stage("tar.gz")
+  def tarRoot = isEap() ? "${buildName}" : "${product}-${p("component.version.major")}.${p("component.version.minor")}"
+  def tarPath = "$paths.artifacts/${buildName}.tar"
   ant.tar(tarfile: tarPath) {
     tarfileset(dir: paths.distAll, prefix: tarRoot) {
       exclude(name: "**/*.dll")
@@ -421,7 +419,7 @@ def buildTarGz() {
 
   ant.gzip(src: tarPath, zipfile: "${tarPath}.gz")
   ant.delete(file: tarPath)
-  reportArtifact("${product}*.gz")
+  reportArtifact("${buildName}.tar.gz")
 }
 
 def layoutFull(String target, Set usedJars) {
@@ -535,7 +533,7 @@ def layoutMac(Map args, String target) {
     }
   }
 
-  args.buildNumber = buildName
+  args["buildNumber"] = buildNumber
   args["executable"] = "flexide"
   args["icns"] = "$home/flex/ideResources/artwork/flexide.icns"
   args["bundle_name"] = "FlexIde"
@@ -574,7 +572,7 @@ def set(Map args, String key, Object value) {
 }
 
 def executeExternalAnt(Map args, String file) {
-  set(args, "build.number", buildName)
+  set(args, "build.number", buildNumber)
   set(args, "project.home", home)
   set(args, "artifacts.path", paths.artifacts)
   set(args, "dist.win", paths.distWin)
@@ -582,7 +580,7 @@ def executeExternalAnt(Map args, String file) {
 
   //set(args, "dist.all.15", paths.distAll15)
   //set(args, "dist.all.16", paths.distAll16)
-  set(args, "sandbox.path", "$home/out/flex-ide/sandbox")
+  set(args, "sandbox.path", "$paths.sandbox/sandbox")
   set(args, "component.version.major", getProperty("component.version.major"))
   set(args, "component.version.minor", "\"" + getProperty("component.version.minor") + "\"")
 
