@@ -187,9 +187,11 @@ target('default': "Build artifacts") {
 
   // TODO searchable options should be build with all-modules classpath
   //buildSearchableOptions()
+
   wireBuildDate(buildNumber)
   LayoutInfo layoutInfo = layoutFull(paths.distAll, usedJars)
   checkLibLicensesAndGenerateTable("$paths.artifacts/third-party-libraries.txt", layoutInfo.usedModules);
+
   // TODO let's turn scrambing off for now
   //scramble()
 
@@ -201,17 +203,16 @@ target('default': "Build artifacts") {
 
   ant.echo(message: buildName, file: "$sandbox/layout/build.txt")
 
-  //buildSit()
-  //buildDmg()
+  buildSit()
+  buildDmg()
 
-  // Linux dist
-  //layoutLinux(paths.distLinux)
-  //buildTarGz()
+  layoutLinux(paths.distLinux)
+  buildTarGz()
 
   buildExe()
   buildWinZip()
 
-  //buildNsis()
+  buildNsis()
 }
 
 def zipSources() {
@@ -235,6 +236,7 @@ private def buildWinZip() {
     fileset(dir: paths.distAll)
     fileset(dir: paths.distWin)
   }
+  reportArtifact("${product}*.zip")
 }
 
 private def buildSit() {
