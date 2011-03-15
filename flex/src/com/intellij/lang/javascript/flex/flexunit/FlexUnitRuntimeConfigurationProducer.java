@@ -5,8 +5,10 @@ import com.intellij.execution.PsiLocation;
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfiguration;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
+import com.intellij.execution.testframework.TestsUIUtil;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -191,8 +193,8 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
   protected RunnerAndConfigurationSettings cloneTemplateConfiguration(Project project, ConfigurationContext context) {
     if (context != null) {
       final RuntimeConfiguration original = context.getOriginalConfiguration(getConfigurationFactory().getType());
-      if (original instanceof FlexUnitConsoleProperties.FlexUnitDelegatingRuntimeConfiguration) {
-        FlexUnitRunConfiguration c = ((FlexUnitConsoleProperties.FlexUnitDelegatingRuntimeConfiguration)original).getPeer().clone();
+      if (original instanceof TestsUIUtil.DelegatingRuntimeConfiguration) {
+        RunConfiguration c = ((TestsUIUtil.DelegatingRuntimeConfiguration)original).getPeer().clone();
         return RunManagerEx.getInstanceEx(project).createConfiguration(c, getConfigurationFactory());
       }
     }
