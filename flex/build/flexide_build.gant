@@ -15,9 +15,9 @@ setProperty("buildName", "${productCode}-${buildNumber}")
 setProperty("product", "${product}")
 
 setProperty("ch", "$home/community")
-setProperty("dryRun", true)
+setProperty("dryRun", false)
 setProperty("jdk16", guessJdk())
-setProperty("dontClean", true)
+setProperty("dontClean", false)
 
 setProperty("pluginFilter", [
             "htmltools",
