@@ -1,15 +1,14 @@
 package com.intellij.flex.uiDesigner.io;
 
 public class ByteRangeMarker implements Marker {
-  private int position;
-  private ByteRange dataRange;
+  private final int position;
+  private final ByteRange dataRange;
   
   public ByteRangeMarker(int position, ByteRange dataRange) {
     this.position = position;
     this.dataRange = dataRange;
   }
   
-  @Override
   public ByteRange getDataRange() {
     return dataRange;
   }
@@ -23,5 +22,4 @@ public class ByteRangeMarker implements Marker {
   public int getEnd() {
     return position;
   }
-
 }

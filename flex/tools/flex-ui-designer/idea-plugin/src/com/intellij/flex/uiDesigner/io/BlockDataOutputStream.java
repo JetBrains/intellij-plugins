@@ -123,9 +123,8 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
           out.write(buffer, lastEnd, length);
         }
 
-        ByteRange dataRange = marker.getDataRange();
-        if (dataRange != null) {
-          writeDataRange(dataRange);
+        if (marker instanceof ByteRangeMarker) {
+          writeDataRange(((ByteRangeMarker) marker).getDataRange());
         }
         
         lastEnd = marker.getEnd();

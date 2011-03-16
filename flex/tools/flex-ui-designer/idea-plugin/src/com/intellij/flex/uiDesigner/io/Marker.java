@@ -4,6 +4,4 @@ public interface Marker {
   int getStart();
 
   int getEnd();
-
-  ByteRange getDataRange();
 }
