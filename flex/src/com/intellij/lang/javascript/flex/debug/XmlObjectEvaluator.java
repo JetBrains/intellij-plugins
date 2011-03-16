@@ -52,21 +52,23 @@ public class XmlObjectEvaluator {
 
     @Override
     public void addChildren(@NotNull XValueChildrenList children, boolean last) {
-    }
-
-    public void addChildren(List<? extends XValue> children, boolean last) {
       if (getRootNode().myCallback.isObsolete()) {
         return;
       }
 
-      for (XValue child : children) {
-        final FakeCompositeNode node = new FakeCompositeNode(child, this);
+      for (int i = 0; i < children.size(); i++) {
+        final XValue value = children.getValue(i);
+        final FakeCompositeNode node = new FakeCompositeNode(value, this);
         myChildren.add(node);
-        child.computeChildren(node);
+        value.computeChildren(node);
       }
 
       final FakeCompositeNode rootNode = getRootNode();
       rootNode.myCallback.evaluated(rootNode.toPresentableSting(0), MONOSPACED_FONT);
+    }
+
+    public void addChildren(List<? extends XValue> children, boolean last) {
+      assert false;
     }
 
     private FakeCompositeNode getRootNode() {
