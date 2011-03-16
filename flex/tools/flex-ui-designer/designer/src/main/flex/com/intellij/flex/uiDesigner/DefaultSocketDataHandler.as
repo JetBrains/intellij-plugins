@@ -29,7 +29,6 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   public function handleSockedData(messageSize:int, method:int, data:IDataInput):void {
-    trace("default socket handler: method " + method);
     switch (method) {
       case ClientMethod.openProject:
         projectManager.open(data.readInt(), new Project(data.readUTFBytes(AmfUtil.readUInt29(data)), new ProjectEventMap()));
@@ -80,9 +79,12 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     documentFactoryManager.register(data.readShort(), documentFactory);
     
     stringRegistry.readStringTable(data);
-    
+ 
+    i++;
     data.readBytes(bytes, 0, messageSize - (prevBytesAvailable - data.bytesAvailable));
   }
+  
+  private static var i:int;
 
   private function openDocument(data:IDataInput):void {
     var documentFactory:DocumentFactory = documentFactoryManager.get(data.readUnsignedShort());

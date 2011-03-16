@@ -121,7 +121,7 @@ class StateWriter {
     }
     
     for (State state : states) {
-      state.applyItemAutoDestruction(context, parentContext);
+      state.applyItemAutoDestruction(context, parentContext, writer);
     }
   }
 

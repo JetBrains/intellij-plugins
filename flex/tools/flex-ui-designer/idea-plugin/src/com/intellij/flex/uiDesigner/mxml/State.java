@@ -4,13 +4,13 @@ import gnu.trove.TLinkedList;
 import org.jetbrains.annotations.Nullable;
 
 class State {
-  private int index;
+  private final int index;
   
   String name;
 //  String[] groups;
 
-  TLinkedList<OverrideBase> overrides = new TLinkedList<OverrideBase>();
-  private StateWriter stateWriter;
+  final TLinkedList<OverrideBase> overrides = new TLinkedList<OverrideBase>();
+  private final StateWriter stateWriter;
 
   State(StateWriter stateWriter, int index) {
     this.stateWriter = stateWriter;
@@ -52,7 +52,7 @@ class State {
     setActiveAddItems(override, parentContext);
   }
 
-  public void applyItemAutoDestruction(Context context, Context parentContext) {
+  public void applyItemAutoDestruction(Context context, Context parentContext, BaseWriter writer) {
     AddItems override = getActiveAddItems(parentContext);
     if (override == null) {
       return;
@@ -66,6 +66,7 @@ class State {
         AddItems next = (AddItems) override.getNext();
         if (next != null && next.isAutoDestruction()) {
           next.getItemDeferredInstances().add(override.getItemDeferredInstances().get(0));
+          writer.getBlockOut().removeLastMarkerAndAssert(override.dataRange);
           overrides.remove(override);
           setActiveAddItems(next, parentContext);
         }

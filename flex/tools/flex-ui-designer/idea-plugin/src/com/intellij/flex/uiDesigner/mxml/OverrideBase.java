@@ -3,10 +3,8 @@ package com.intellij.flex.uiDesigner.mxml;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import gnu.trove.TLinkable;
 
-import java.io.IOException;
-
 abstract class OverrideBase implements TLinkable {
-  protected ByteRange dataRange;
+  protected final ByteRange dataRange;
   
   OverrideBase next;
   OverrideBase previous;

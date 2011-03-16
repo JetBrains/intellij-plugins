@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.io;
 
+import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
@@ -34,12 +35,15 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       
       this.out = debugOut;
     }
+    else if (ApplicationManager.getApplication().isUnitTestMode()) {
+      this.out = new AuditorOutput(out);
+    }
     else {
       this.out = out;
     }
   }
 
-  private void writeHeader() throws IOException {
+  private void writeHeader() {
     int length = count - lastBlockBegin - SERVICE_DATA_SIZE;
     buffer[lastBlockBegin] = (byte) ((length >>> 24) & 0xFF);
     buffer[lastBlockBegin + 1] = (byte) ((length >>> 16) & 0xFF);
@@ -51,6 +55,10 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     out.write(buffer, 0, count);
     lastBlockBegin = 0;
     count = SERVICE_DATA_SIZE;
+  }
+  
+  public void assertStart() {
+    assert count - lastBlockBegin == 4;
   }
 
   // WARNING: you can't call flush after this, you must or end, or flush.
@@ -98,6 +106,12 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       out.write(buffer, insertPosition, count - insertPosition);
     }
     else {
+      AuditorOutput auditorOutput = null;
+      if (out instanceof AuditorOutput) {
+        auditorOutput = (AuditorOutput) out;
+        auditorOutput.watchCount = 0;
+      }
+      
       for (Marker marker : markers) {
         if (marker.getEnd() < lastEnd) {
           // nested
@@ -121,6 +135,11 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       int tailLength = count - lastEnd;
       if (tailLength > 0) {
         out.write(buffer, lastEnd, tailLength);
+      }
+      
+      if (auditorOutput != null) {
+        assert auditorOutput.watchCount == (count - insertPosition);
+        auditorOutput.watchCount = -1;
       }
     }
 
@@ -222,6 +241,11 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     return byteRange;
   }
   
+  public void removeLastMarkerAndAssert(ByteRange dataRange) {
+    Marker removed = markers.remove(markers.size() - 1);
+    assert removed == dataRange;
+  }
+  
   public void endRange(ByteRange range) {
     range.setEnd(count);
   }
@@ -234,42 +258,87 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     count = position;
   }
 
-  private static class DebugOutput extends OutputStream {
-    private final OutputStream out;
+  private static class DebugOutput extends AuditorOutput {
     private final FileOutputStream fileOut;
 
     private DebugOutput(OutputStream out, File file) throws FileNotFoundException {
-      this.out = out;
+      super(out);
       fileOut = new FileOutputStream(file);
     }
 
     @Override
     public void write(int b) throws IOException {
       fileOut.write(b);
-      out.write(b);
+      super.write(b);
     }
 
     @Override
     public void write(byte[] b) throws IOException {
       fileOut.write(b);
-      out.write(b);
+      super.write(b);
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
       fileOut.write(b, off, len);
-      out.write(b, off, len);
+      super.write(b, off, len);
     }
 
     @Override
     public void flush() throws IOException {
       fileOut.flush();
-      out.flush();
+      super.flush();
     }
 
     @Override
     public void close() throws IOException {
       fileOut.close();
+      super.close();
+    }
+  }
+  
+  private static class AuditorOutput extends OutputStream {
+    private final OutputStream out;
+    private int watchCount = -1;
+
+    private AuditorOutput(OutputStream out) {
+      this.out = out;
+    }
+
+    @Override
+    public void write(int b) throws IOException {
+      if (watchCount != -1) {
+        watchCount++;
+      }
+      
+      out.write(b);
+    }
+
+    @Override
+    public void write(byte[] b) throws IOException {
+      if (watchCount != -1) {
+        watchCount += b.length;
+      }
+      
+      out.write(b);
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+      if (watchCount != -1) {
+        watchCount += len;
+      }
+      
+      out.write(b, off, len);
+    }
+
+    @Override
+    public void flush() throws IOException {
+      out.flush();
+    }
+
+    @Override
+    public void close() throws IOException {
       out.close();
     }
   }

@@ -76,24 +76,27 @@ public class Client {
   }
 
   public void openProject(Project project) throws IOException {
-    out.write(ClientMethod.METHOD_CLASS);
-    out.write(ClientMethod.openProject);
+    beginMessage(ClientMethod.openProject);
     out.writeInt(project.hashCode());
     out.writeAmfUtf(project.getName());
 
     blockOut.end();
   }
   
-  public void closeProject(Project project) throws IOException {
+  private void beginMessage(ClientMethod method) {
+    blockOut.assertStart();
     out.write(ClientMethod.METHOD_CLASS);
-    out.write(ClientMethod.closeProject);
+    out.write(method);
+  }
+  
+  public void closeProject(Project project) throws IOException {
+    beginMessage(ClientMethod.closeProject);
     out.writeInt(project.hashCode());
     out.flush();
   }
 
   public void registerLibrarySet(LibrarySet librarySet, StringRegistry.StringWriter stringWriter) throws IOException {
-    out.write(ClientMethod.METHOD_CLASS);
-    out.write(ClientMethod.registerLibrarySet);
+    beginMessage(ClientMethod.registerLibrarySet);
     out.writeAmfUtf(librarySet.getId());
     out.writeInt(-1); // todo parent
     
@@ -156,8 +159,7 @@ public class Client {
     final int id = moduleInfo.getModule().hashCode();
     registeredModules.put(id, moduleInfo);
 
-    out.write(ClientMethod.METHOD_CLASS);
-    out.write(ClientMethod.registerModule);
+    beginMessage(ClientMethod.registerModule);
     
     stringWriter.writeTo(out);
     
@@ -171,8 +173,7 @@ public class Client {
 
   public void openDocument(Module module, XmlFile psiFile) throws IOException {
     int factoryId = registerDocumentFactoryIfNeed(module, psiFile);
-    out.write(ClientMethod.METHOD_CLASS);
-    out.write(ClientMethod.openDocument);
+    beginMessage(ClientMethod.openDocument);
     out.writeShort(factoryId);
     
     out.flush();
@@ -185,8 +186,7 @@ public class Client {
     final boolean registered = documentFileManager.isRegistered(virtualFile);
     final int factoryId = documentFileManager.getId(virtualFile, psiFile, null);
     if (!registered) {
-      out.write(ClientMethod.METHOD_CLASS);
-      out.write(ClientMethod.registerDocumentFactory);
+      beginMessage(ClientMethod.registerDocumentFactory);
       writeVirtualFile(virtualFile, out);
       out.writeInt(module.hashCode());
       out.writeShort(factoryId);
@@ -209,8 +209,7 @@ public class Client {
 
 
   public void qualifyExternalInlineStyleSource() {
-    out.write(ClientMethod.METHOD_CLASS);
-    out.write(ClientMethod.qualifyExternalInlineStyleSource);
+    beginMessage(ClientMethod.qualifyExternalInlineStyleSource);
   }
 
   @SuppressWarnings({"UnusedDeclaration"})
@@ -231,8 +230,7 @@ public class Client {
       return;
     }
     
-    out.write(ClientMethod.METHOD_CLASS);
-    out.write(ClientMethod.initStringRegistry);
+    beginMessage(ClientMethod.initStringRegistry);
     
     int size = stringRegistry.getSize();
     TObjectIntIterator<String> iterator = stringRegistry.getIterator(); 

@@ -25,7 +25,7 @@ public class SocketManagerImpl implements SocketManager {
   }
   //noinspection JSUnusedGlobalSymbols
   public final function get currentPosition():int {
-    return totalBytes - socket.bytesAvailable  - 1;
+    return totalBytes - socket.bytesAvailable;
   }
 
   public function addSocketDataHandler(classId:int, handler:SocketDataHandler):void {
@@ -87,6 +87,7 @@ public class SocketManagerImpl implements SocketManager {
       if (handler != null) {
         var position:int = socket.bytesAvailable + 1 /* method class size */;
         const method:int = socket.readByte();
+        trace(clientMethodClass + ":" + method);
         handler.handleSockedData(messageSize - 2, method, socket);
         if (messageSize != (position - socket.bytesAvailable)) {
           if (handler.pendingReadIsAllowable(method)) {

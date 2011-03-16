@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.io.ByteRange;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 

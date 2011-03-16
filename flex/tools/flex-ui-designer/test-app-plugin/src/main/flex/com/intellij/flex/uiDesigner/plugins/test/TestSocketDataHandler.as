@@ -7,10 +7,13 @@ import avmplus.INCLUDE_TRAITS;
 import avmplus.USE_ITRAITS;
 import avmplus.describe;
 
+import com.intellij.flex.uiDesigner.DocumentManager;
+
 import com.intellij.flex.uiDesigner.ProjectManager;
 import com.intellij.flex.uiDesigner.SocketDataHandler;
 
 import flash.events.Event;
+import flash.events.IEventDispatcher;
 import flash.events.TimerEvent;
 import flash.net.Socket;
 import flash.utils.Dictionary;
@@ -72,7 +75,21 @@ public class TestSocketDataHandler implements SocketDataHandler {
   public function handleSockedData(messageSize:int, methodNameSize:int, data:IDataInput):void {
     var method:String = data.readUTFBytes(methodNameSize);
     var clazz:Class = c[data.readByte()];
-    
+    var documentManager:DocumentManager = DocumentManager(projectManager.project.plexusContainer.lookup(DocumentManager));
+    if (documentManager.document == null) {
+      trace("wait document");
+      IEventDispatcher(documentManager).addEventListener("documentChanged", function(event:Event):void {
+        IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
+        test(clazz, method);
+      });
+    }
+    else {
+      test(clazz, method);
+    }
+  }
+  
+  private function test(clazz:Class, method:String):void {
+    trace("execute test " + method);
     var methodInfo:Dictionary = describeCache[clazz];
     if (methodInfo == null) {
       methodInfo = collectTestAnnotation(clazz);
