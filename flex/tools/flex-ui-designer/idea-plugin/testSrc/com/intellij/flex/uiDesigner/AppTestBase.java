@@ -29,7 +29,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   private static int sessionId;
   
   protected String flexSdkRootPath;
-  protected List<Pair<VirtualFile, VirtualFile>> libs;
+  protected final List<Pair<VirtualFile, VirtualFile>> libs = new ArrayList<Pair<VirtualFile, VirtualFile>>();
   
   @Override
   protected String getBasePath() {
@@ -70,7 +70,6 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     sdkModificator.removeRoot(sdk.getHomeDirectory(), OrderRootType.CLASSES);
     sdkModificator.removeRoot(sdk.getHomeDirectory(), OrderRootType.SOURCES);
     
-    libs = new ArrayList<Pair<VirtualFile, VirtualFile>>();
     String[] list = new File(flexSdkRootPath).list();
     Arrays.sort(list);
     for (String name : list) {

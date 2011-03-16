@@ -57,6 +57,7 @@ public class LibraryCollector {
   private static boolean isAutomationOrUselessLibrary(String libFileName) {
     return libFileName.startsWith("qtp") || libFileName.startsWith("automation") || libFileName.equals("flex.swc") 
             || libFileName.equals("servicemonitor.swc")  /* aircore contains all classes */
+            || libFileName.equals("utilities.swc")  /* flex sdk 4.1 */
             || libFileName.equals("core.swc") /* hero (4.5) aggregation library */;
   }
 

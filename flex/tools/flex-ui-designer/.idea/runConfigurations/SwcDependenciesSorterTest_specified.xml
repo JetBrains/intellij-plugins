@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="SwcDependenciesSorterTest.testResolveToClassWithBiggestTimestamp" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="SwcDependenciesSorterTest specified" type="JUnit" factoryName="JUnit">
     <module name="idea-plugin" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
     <option name="PACKAGE_NAME" value="com.intellij.flex.uiDesigner" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.SwcDependenciesSorterTest" />
-    <option name="METHOD_NAME" value="testResolveToClassWithBiggestTimestamp" />
+    <option name="METHOD_NAME" value="testDelete" />
     <option name="TEST_OBJECT" value="method" />
     <option name="VM_PARAMETERS" value="-Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.debug=true -Dfud.test.debug=true -Dfud.adl=$ADL$ -Dfud.air=$AIR$" />
     <option name="PARAMETERS" value="" />

@@ -69,8 +69,6 @@ public class SwcDependenciesSorter {
     }
 
     analyzeDefinitions();
-    Definition posssibleFrameworkDefition = definitionMap.get("mx.core:IUIComponent");
-    FilteredLibrary posssibleFrameworkLibrary = posssibleFrameworkDefition == null ? null : posssibleFrameworkDefition.getLibrary();
     definitionMap = null;
 
     TLinkedList<FilteredLibrary> queue = new TLinkedList<FilteredLibrary>();
@@ -81,18 +79,24 @@ public class SwcDependenciesSorter {
       }
       
       boolean abcModified = false;
-      if (library.getOrigin().defaultsStyle != null && (library.inDegree == 0 || !library.hasUnresolvedDefinitions())) {
+      if (library.getOrigin().isFromSdk()) {
         String path = library.getOrigin().getPath();
-        if (path.startsWith("framework") && posssibleFrameworkLibrary == library) {
+        if (path.startsWith("framework")) {
           abcModified = true;
-          injectFrameworkSwc(library.getOrigin(), flexSdkVersion, injectionLastModified);
+          injectFrameworkSwc(flexSdkVersion, library, injectionLastModified);
         }
         else if (path.startsWith("airspark")) {
-          abcModified = true;
-          removeBadClassesFromLibrary(library.getOrigin(), getBadAirsparkClasses(), false);
+          if (library.hasUnresolvedDefinitions()) {
+            library.getUnresolvedDefinitions().addAll(getBadAirsparkClasses());
+          }
+          else {
+            abcModified = true;
+            removeBadClassesFromLibrary(library.getOrigin(), getBadAirsparkClasses(), false);
+          }
         }
       }
-      else if (library.mxCoreFlexModuleFactoryClassName != null && !library.hasUnresolvedDefinitions()) {
+      
+      if (library.mxCoreFlexModuleFactoryClassName != null && !library.hasUnresolvedDefinitions()) {
         Collection<CharSequence> classes = new ArrayList<CharSequence>(1);
         classes.add(library.mxCoreFlexModuleFactoryClassName);
         abcModified = true;
@@ -107,7 +111,7 @@ public class SwcDependenciesSorter {
           queue.add(library);
         }
       }
-      else if (!library.getUnresolvedDefinitions().isEmpty()) {
+      else if (!abcModified && !library.getUnresolvedDefinitions().isEmpty()) {
         if (filter == null) {
           filter = new AbcFilter();
         }
@@ -116,10 +120,7 @@ public class SwcDependenciesSorter {
           printCollection(library.getUnresolvedDefinitions(), new FileWriter(new File(rootPath, library.getOrigin().getPath() + "_unresolvedDefinitions.txt"))); 
         }
 
-        if (library.getOrigin().getPath().startsWith("airspark")) {
-          library.getUnresolvedDefinitions().addAll(getBadAirsparkClasses());
-        }
-        else if (library.mxCoreFlexModuleFactoryClassName != null) {
+        if (library.mxCoreFlexModuleFactoryClassName != null) {
           library.getUnresolvedDefinitions().add(library.mxCoreFlexModuleFactoryClassName);
         }
 
@@ -199,12 +200,12 @@ public class SwcDependenciesSorter {
     }
   }
 
-  private void injectFrameworkSwc(OriginalLibrary library, String flexSdkVersion, long injectionLastModified) throws IOException {
-    VirtualFile swfFile = library.getSwfFile();
-    File modifiedSwf = createSwfOutFile(library);
+  private void injectFrameworkSwc(String flexSdkVersion, FilteredLibrary filteredLibrary, long injectionLastModified) throws IOException {
+    VirtualFile swfFile = filteredLibrary.getOrigin().getSwfFile();
+    File modifiedSwf = createSwfOutFile(filteredLibrary.getOrigin());
     final long timeStamp = swfFile.getTimeStamp();
-    if (((timeStamp > injectionLastModified ? timeStamp : injectionLastModified) - modifiedSwf.lastModified()) > 2000) {
-      THashSet<CharSequence> definitions = new THashSet<CharSequence>(5);
+    if (filteredLibrary.hasUnresolvedDefinitions() || ((timeStamp > injectionLastModified ? timeStamp : injectionLastModified) - modifiedSwf.lastModified()) > 2000) {
+      Set<CharSequence> definitions = filteredLibrary.hasUnresolvedDefinitions() ? filteredLibrary.getUnresolvedDefinitions() : new THashSet<CharSequence>(5);
       definitions.add("FrameworkClasses");
       definitions.add("mx.managers.systemClasses:MarshallingSupport");
       definitions.add("mx.managers:SystemManagerProxy");

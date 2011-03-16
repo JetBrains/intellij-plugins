@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.css {
 import flash.errors.IllegalOperationError;
 
+import mx.core.FlexVersion;
+
 import mx.core.mx_internal;
 import mx.styles.IAdvancedStyleClient;
 
@@ -57,7 +59,10 @@ public class MergedCssStyleDeclaration extends AbstractCssStyleDeclaration imple
   }
 
   override public function setStyle(styleProp:String, newValue:*):void {
-    throw new IllegalOperationError();
+    // see mx.controls.ButtonBar line 528 in flex sdk 4.1
+    if (!(FlexVersion.compatibilityVersion == 0x04000000 && styleProp == "borderSkin" && mySelector.subject == "mx.controls.ButtonBar" && mySelector.conditions == null && mySelector.ancestor == null)) {
+      throw new IllegalOperationError();
+    }
   }
 
   override mx_internal function getPseudoCondition():String {
