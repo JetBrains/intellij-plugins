@@ -22,5 +22,9 @@ public interface ModuleContext {
   function putDocumentFactory(id:int, documentFactory:Object):void;
 
   function get documentFactoryClass():Class;
+
+  function get deferredInstanceFromBytesClass():Class;
+
+  function get deferredInstanceFromBytesVectorClass():Class;
 }
 }

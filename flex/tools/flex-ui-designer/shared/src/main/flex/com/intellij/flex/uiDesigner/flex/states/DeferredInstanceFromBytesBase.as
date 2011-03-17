@@ -17,8 +17,8 @@ public class DeferredInstanceFromBytesBase {
 
   public function create(context:DeferredInstanceFromBytesContext):Object {
     if (instance == null) {
-      instance = context.documentReader.read2(bytes, context);
-      objectTable = context.documentReader.getLocalObjectTable();
+      instance = context.reader.read2(bytes, context, false);
+      objectTable = context.reader.getLocalObjectTable();
     }
 
     return instance;
@@ -35,7 +35,6 @@ public class DeferredInstanceFromBytesBase {
   public function reset():void {
     instance = null;
     objectTable = null;
-    bytes.position = 0;
   }
   
   internal function getReferredChild(reference:int):Object {

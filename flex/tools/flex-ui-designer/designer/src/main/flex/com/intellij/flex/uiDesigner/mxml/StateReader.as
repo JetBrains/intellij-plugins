@@ -7,14 +7,9 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 import flash.utils.IDataInput;
 
 internal final class StateReader {
-  internal static const DIFB_CLASS_NAME:String = "com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytes";
-  internal static const DIFB_VECTOR_CLASS_NAME:String = "__AS3__.vec::Vector.<" + DIFB_CLASS_NAME + ">";
-  
-  internal var deferredInstanceFromBytesClass:Class;
-  
   private var deferredInstancesForImmediateCreation:Vector.<DeferredInstanceFromBytesBase>;
   
-  public function read(reader:MxmlReader, data:IDataInput, object:Object):void {
+  public function read(reader:MxmlReader, data:IDataInput, object:Object, byteFactoryContext:DeferredInstanceFromBytesContext):void {
     const size:int = data.readByte();
     if (size == 0) {
       return;
@@ -23,7 +18,7 @@ internal final class StateReader {
     var states:Array = new Array(size);
     for (var i:int = 0; i < size; i++) {
       var state:Object = reader.readObject("com.intellij.flex.uiDesigner.flex.states.State");
-      state.context = reader.byteFactoryContext;
+      state.context = byteFactoryContext;
       states[i] = state;
     }
     object.states = states;
@@ -40,7 +35,7 @@ internal final class StateReader {
   }
   
   public function readVectorOfDeferredInstanceFromBytes(reader:MxmlReader, data:IDataInput):Object {
-    var vClass:Class = reader.byteFactoryContext.moduleContext.getClass(DIFB_VECTOR_CLASS_NAME);
+    var vClass:Class = reader.context.moduleContext.deferredInstanceFromBytesVectorClass;
     var n:int = data.readUnsignedByte();
     var v:Object = new vClass(n, true);
     for (var i:int = 0; i < n; i++) {
@@ -58,7 +53,7 @@ internal final class StateReader {
       return DeferredInstanceFromBytesBase(reader.readObjectReference());
     }
     else {
-      var o:DeferredInstanceFromBytesBase = new deferredInstanceFromBytesClass(reader.readBytes());
+      var o:DeferredInstanceFromBytesBase = new reader.context.moduleContext.deferredInstanceFromBytesClass(reader.readBytes());
       if (kind == 1) {
         var id:int = AmfUtil.readUInt29(data);
         if (reader.objectTable[id] != null) {
@@ -76,13 +71,8 @@ internal final class StateReader {
       return o;
     }
   }
-  
-  public function get cleared():Boolean {
-    return deferredInstanceFromBytesClass == null;
-  }
 
   public function reset(byteFactoryContext:DeferredInstanceFromBytesContext):void {
-    deferredInstanceFromBytesClass = null;    
     if (deferredInstancesForImmediateCreation != null && deferredInstancesForImmediateCreation.length != 0) {
       for each (var deferredInstanceFromBytesBase:DeferredInstanceFromBytesBase in deferredInstancesForImmediateCreation) {
         deferredInstanceFromBytesBase.create(byteFactoryContext);

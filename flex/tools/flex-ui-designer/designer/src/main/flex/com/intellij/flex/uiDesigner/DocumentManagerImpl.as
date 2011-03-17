@@ -61,7 +61,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   private function doOpen(documentFactory:DocumentFactory, document:Document):void {
-    var object:Object = documentReader.read(documentFactory.data, document.file, document.styleManager, document.module.context);
+    var object:Object = documentReader.read(documentFactory.data, documentFactory, document.styleManager);
     document.uiComponent = object;
     document.systemManager.setUserDocument(DisplayObject(object));
 

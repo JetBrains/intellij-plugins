@@ -1,28 +1,21 @@
 package com.intellij.flex.uiDesigner.flex {
-import com.intellij.flex.uiDesigner.ModuleContext;
-import com.intellij.flex.uiDesigner.VirtualFile;
+import com.intellij.flex.uiDesigner.DocumentReaderContext;
 
 public final class DeferredInstanceFromBytesContext {
-  public function DeferredInstanceFromBytesContext(documentFile:VirtualFile, mxmlReader:DocumentReader, styleManager:Object, moduleContext:ModuleContext) {
-    _documentFile = documentFile;
-    _documentReader = mxmlReader;
-    _moduleContext = moduleContext;
+  public function DeferredInstanceFromBytesContext(readerContext:DocumentReaderContext, reader:DocumentReader, styleManager:Object) {
+    _readerContext = readerContext;
+    _reader = reader;
     _styleManager = styleManager;
   }
 
-  private var _moduleContext:ModuleContext;
-  public function get moduleContext():ModuleContext {
-    return _moduleContext;
+  private var _readerContext:DocumentReaderContext;
+  public function get readerContext():DocumentReaderContext {
+    return _readerContext;
   }
 
-  private var _documentFile:VirtualFile;
-  public function get documentFile():VirtualFile {
-    return _documentFile;
-  }
-
-  private var _documentReader:DocumentReader;
-  public function get documentReader():DocumentReader {
-    return _documentReader;
+  private var _reader:DocumentReader;
+  public function get reader():DocumentReader {
+    return _reader;
   }
   
   private var _styleManager:Object;

@@ -12,7 +12,7 @@ public final class State extends mx.states.State {
   mx_internal override function dispatchEnterState():void {
     // null if no ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES in this state
     if (context != null) {
-      context.documentReader.createDeferredMxContainersChildren(context.moduleContext.applicationDomain);
+      context.reader.createDeferredMxContainersChildren(context.readerContext.moduleContext.applicationDomain);
     }
     
     super.dispatchEnterState();

@@ -1,8 +1,9 @@
 package com.intellij.flex.uiDesigner.mxml {
+import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
+import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.ModuleContext;
 import com.intellij.flex.uiDesigner.StringRegistry;
-import com.intellij.flex.uiDesigner.VirtualFile;
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
@@ -36,14 +37,14 @@ public final class MxmlReader implements DocumentReader {
   private const stateReader:StateReader = new StateReader();
   private const injectedASReader:InjectedASReader = new InjectedASReader();
 
-  private var context:ModuleContext;
-  private var documentFile:VirtualFile;
+  private var moduleContext:ModuleContext;
+  internal var context:DocumentReaderContext;
   private var styleManager:Object;
 
   private var deferredMxContainers:Vector.<DisplayObjectContainer>;
   internal var objectTable:Vector.<Object>;
   
-  internal var byteFactoryContext:DeferredInstanceFromBytesContext;
+  private var factoryContext:DeferredInstanceFromBytesContext;
 
   public function MxmlReader(stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager) {
     this.stringRegistry = stringRegistry;
@@ -51,23 +52,29 @@ public final class MxmlReader implements DocumentReader {
   }
 
   internal function getClass(name:String):Class {
-    return Class(context.applicationDomain.getDefinition(name));
+    return Class(moduleContext.applicationDomain.getDefinition(name));
   }
 
-  public function read2(input:IDataInput, context:DeferredInstanceFromBytesContext):Object {
+  public function read2(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext, readStates:Boolean):Object {
     this.input = input;
     
     var objectTableSize:int = readObjectTableSize();
 
-    this.context = context.moduleContext;
-    this.styleManager = context.styleManager;
-    this.documentFile = context.documentFile;
+    this.moduleContext = factoryContext.readerContext.moduleContext;
+    this.styleManager = factoryContext.styleManager;
+    this.context = factoryContext.readerContext;
     var object:Object = readObject(stringRegistry.read(input));
-    assert(stateReader.cleared && byteFactoryContext == null && objectTableSize == (objectTable == null ? 0 : objectTable.length));
+    assert(factoryContext == null && objectTableSize == (objectTable == null ? 0 : objectTable.length));
 
-    this.context = null;
+    this.moduleContext = null;
     this.styleManager = null;
+    this.context = null;
     this.input = null;
+    
+    if (input is ByteArray) {
+      assert(input.bytesAvailable == 0);
+      ByteArray(input).position = 0;
+    }
     return object;
   }
 
@@ -97,29 +104,29 @@ public final class MxmlReader implements DocumentReader {
     return objectTableSize;
   }
 
-  public function read(input:IDataInput, documentFile:VirtualFile, styleManager:Object, context:ModuleContext):Object {
+  public function read(input:IDataInput, documentReaderContext:DocumentReaderContext, styleManager:Object):Object {
     this.input = input;
     
     const objectTableSize:int = readObjectTableSize();
 
-    this.context = context;
+    this.moduleContext = documentReaderContext.moduleContext;
     this.styleManager = styleManager;
-    this.documentFile = documentFile;
+    this.context = documentReaderContext;
     var object:Object = readObject(stringRegistry.read(input));
-    stateReader.read(this, input, object);
+    stateReader.read(this, input, object, factoryContext);
     injectedASReader.read(input, this);
 
-    this.context = null;
+    this.moduleContext = null;
     this.styleManager = null;
-    this.documentFile = null;
+    this.context = null;
 
     if (objectTableSize != 0) {
       objectTable.fixed = false;
       objectTable.length = 0;
     }
 
-    var t:DeferredInstanceFromBytesContext = byteFactoryContext;
-    byteFactoryContext = null;
+    var t:DeferredInstanceFromBytesContext = factoryContext;
+    factoryContext = null;
     stateReader.reset(t);
 
     this.input = null;
@@ -138,19 +145,16 @@ public final class MxmlReader implements DocumentReader {
   private function readConstructor(objectClass:Class):Object {
     switch (input.readByte()) {
       case CLASS_MARKER:
-        return new objectClass(context.applicationDomain.getDefinition(stringRegistry.read(input)));
+        return new objectClass(moduleContext.applicationDomain.getDefinition(stringRegistry.read(input)));
 
       case PropertyClassifier.VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES:
-        initByteFactoryContext();
-        return new objectClass(stateReader.readVectorOfDeferredInstanceFromBytes(this, input), byteFactoryContext);
+        return new objectClass(stateReader.readVectorOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
 
       case PropertyClassifier.ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:
-        initByteFactoryContext();
-        return new objectClass(stateReader.readArrayOfDeferredInstanceFromBytes(this, input), byteFactoryContext);
+        return new objectClass(stateReader.readArrayOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
 
       case Amf3Types.BYTE_ARRAY:
-        initByteFactoryContext();
-        return new objectClass(readBytes(), byteFactoryContext);
+        return new objectClass(readBytes(), getOrCreateFactoryContext());
       
       case Amf3Types.ARRAY:
         return new objectClass(readArray([]));
@@ -161,7 +165,7 @@ public final class MxmlReader implements DocumentReader {
   }
 
   internal function readObject(className:String):Object {
-    var clazz:Class = Class(context.applicationDomain.getDefinition(className));
+    var clazz:Class = Class(moduleContext.applicationDomain.getDefinition(className));
     var reference:int = input.readUnsignedShort();
     var propertyName:String = stringRegistry.read(input);
     var object:Object;
@@ -191,7 +195,7 @@ public final class MxmlReader implements DocumentReader {
 
         case PropertyClassifier.STYLE:
           if (inlineCssDeclarationSource == null) {
-            inlineCssDeclarationSource = InlineCssRuleset.createInline(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input), documentFile);
+            inlineCssDeclarationSource = InlineCssRuleset.createInline(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input), context.file);
           }
           cssPropertyDescriptor = new CssDeclaration();
           cssPropertyDescriptor.name = propertyName;
@@ -201,7 +205,7 @@ public final class MxmlReader implements DocumentReader {
           propertyName = "value";
 
           if (input.readBoolean()) {
-            context.effectManagerClass[new QName(getMxNs(), "setStyle")](cssPropertyDescriptor.name, object);
+            moduleContext.effectManagerClass[new QName(getMxNs(), "setStyle")](cssPropertyDescriptor.name, object);
           }
           break;
 
@@ -298,7 +302,7 @@ public final class MxmlReader implements DocumentReader {
           break;
         
         case CLASS_MARKER:
-          propertyHolder[propertyName] = context.applicationDomain.getDefinition(stringRegistry.read(input));
+          propertyHolder[propertyName] = moduleContext.applicationDomain.getDefinition(stringRegistry.read(input));
           break;
 
         default:
@@ -312,7 +316,7 @@ public final class MxmlReader implements DocumentReader {
     }
 
     if (inlineCssDeclarationSource != null) {
-      clazz = context.inlineCssStyleDeclarationClass;
+      clazz = moduleContext.inlineCssStyleDeclarationClass;
       object.styleDeclaration = new clazz(inlineCssDeclarationSource, styleManager);
     }
 
@@ -321,21 +325,22 @@ public final class MxmlReader implements DocumentReader {
   
   private function readDocumentFactory():Object {
     var id:int = AmfUtil.readUInt29(input);
-    var factory:Object = context.getDocumentFactory(id);
+    var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {
-      initByteFactoryContext();
-      factory = new context.documentFactoryClass(documentFactoryManager.get(id), byteFactoryContext);
-      context.putDocumentFactory(id, factory);
+      var documentFactory:DocumentFactory = documentFactoryManager.get(id);
+      factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContext(documentFactory, this, styleManager));
+      moduleContext.putDocumentFactory(id, factory);
     }
     
     return factory;
   }
 
-  private function initByteFactoryContext():void {
-    if (stateReader.deferredInstanceFromBytesClass == null) {
-      stateReader.deferredInstanceFromBytesClass = getClass(StateReader.DIFB_CLASS_NAME);
-      byteFactoryContext = new DeferredInstanceFromBytesContext(documentFile, this, styleManager, context);
+  private function getOrCreateFactoryContext():DeferredInstanceFromBytesContext {
+    if (factoryContext == null) {
+      factoryContext = new DeferredInstanceFromBytesContext(context, this, styleManager);
     }
+    
+    return factoryContext;
   }
 
   internal function readBytes():ByteArray {
@@ -345,7 +350,7 @@ public final class MxmlReader implements DocumentReader {
   }
   
   private function getMxNs():Namespace {
-    return Namespace(context.applicationDomain.getDefinition("mx.core.mx_internal"));
+    return Namespace(moduleContext.applicationDomain.getDefinition("mx.core.mx_internal"));
   }
 
   private function readChildrenMxContainer(container:DisplayObjectContainer):void {

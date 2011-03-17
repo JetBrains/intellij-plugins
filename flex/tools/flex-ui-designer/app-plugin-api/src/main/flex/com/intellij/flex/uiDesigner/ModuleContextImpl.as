@@ -61,6 +61,24 @@ public final class ModuleContextImpl implements ModuleContextEx {
 
     return _documentFactoryClass;
   }
+  
+  private var _deferredInstanceFromBytesClass:Class;
+  public function get deferredInstanceFromBytesClass():Class {
+    if (_deferredInstanceFromBytesClass == null) {
+      _deferredInstanceFromBytesClass = getClass("com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytes");
+    }
+
+    return _deferredInstanceFromBytesClass;
+  }
+  
+  private var _deferredInstanceFromBytesVectorClass:Class;
+  public function get deferredInstanceFromBytesVectorClass():Class {
+    if (_deferredInstanceFromBytesVectorClass == null) {
+      _deferredInstanceFromBytesVectorClass = getClass("__AS3__.vec::Vector.<com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytes>");
+    }
+
+    return _deferredInstanceFromBytesVectorClass;
+  }
 
   private var _effectManagerClass:Class;
   public function get effectManagerClass():Class {

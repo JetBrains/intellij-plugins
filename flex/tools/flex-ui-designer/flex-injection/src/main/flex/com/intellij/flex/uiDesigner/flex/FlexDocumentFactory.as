@@ -13,9 +13,7 @@ public final class FlexDocumentFactory implements IFactory {
   }
 
   public function newInstance():* {
-    var object:Object = context.documentReader.read2(source.data, context);
-    source.data.position = 0;
-    return object;
+    return context.reader.read2(source.data, context, true);
   }
 }
 }
