@@ -152,6 +152,9 @@ public final class MxmlReader implements DocumentReader {
       case Amf3Types.BYTE_ARRAY:
         initByteFactoryContext();
         return new objectClass(readBytes(), byteFactoryContext);
+      
+      case Amf3Types.ARRAY:
+        return new objectClass(readArray([]));
 
       default:
         throw new ArgumentError("unknown property classifier");

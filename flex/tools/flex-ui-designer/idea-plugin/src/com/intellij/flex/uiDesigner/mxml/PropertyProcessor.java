@@ -232,8 +232,7 @@ class PropertyProcessor {
       if (isStyle) {
         int factoryReference = classFactoryMap.get(className);
         if (factoryReference != -1) {
-          writer.getOut().write(AmfExtendedTypes.OBJECT_REFERENCE);
-          writer.getOut().writeUInt29(factoryReference);
+          writer.writeDocumentFactoryReference(factoryReference);
           return;
         }
         
@@ -247,8 +246,7 @@ class PropertyProcessor {
             boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
             if (psiFile instanceof XmlFile) {
               if (inSourceContent) {
-                writer.getOut().write(AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE);
-                writer.getOut().writeUInt29(DocumentFileManager.getInstance().getId(virtualFile, (XmlFile) psiFile, unregisteredDocumentFactories));
+                writer.writeDocumentFactoryReference(DocumentFileManager.getInstance().getId(virtualFile, (XmlFile) psiFile, unregisteredDocumentFactories));
                 return;
               }
             }
@@ -259,7 +257,7 @@ class PropertyProcessor {
         }
       }
       
-      writeClass(className);
+      writer.writeClass(className);
     }
 
     private void writeClassFactory(XmlElementValueProvider valueProvider) {
@@ -269,20 +267,12 @@ class PropertyProcessor {
         reference = writer.getRootScope().referenceCounter++;
         classFactoryMap.put(className, reference);
                 
-        writer.getOut().write(Amf3Types.OBJECT);
-        writer.writeObjectHeader("mx.core.ClassFactory", reference);
-        writer.write("1");
-        writeClass(className);
+        writer.writeConstructorHeader("mx.core.ClassFactory", reference);
+        writer.writeClass(className);
       }
       else {
-        writer.getOut().write(AmfExtendedTypes.OBJECT_REFERENCE);
-        writer.getOut().writeUInt29(reference);
+        writer.writeObjectReference(reference);
       }
-    }
-
-    private void writeClass(String className) {
-      writer.getOut().write(AmfExtendedTypes.CLASS_MARKER);
-      writer.write(className);
     }
   }
   

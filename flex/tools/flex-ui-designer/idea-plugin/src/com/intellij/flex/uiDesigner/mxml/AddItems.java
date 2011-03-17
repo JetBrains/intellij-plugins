@@ -22,15 +22,10 @@ class AddItems extends OverrideBase {
 
     if (autoDestruction) {
       writer.writeStringReference("destructionPolicy", "auto");
-      
-      writer.writeObjectHeader(stateWriter.ITEMS_FACTORY, "com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes");
-      writer.write("1");
-      writer.getOut().write(PropertyClassifier.VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES);
+      writer.writeConstructorHeader(stateWriter.ITEMS_FACTORY, "com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes", PropertyClassifier.VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES);
     }
     else {
-      writer.writeObjectHeader(stateWriter.ITEMS_FACTORY, "com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes");
-      writer.write("1");
-      writer.getOut().write(PropertyClassifier.ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES);
+      writer.writeConstructorHeader(stateWriter.ITEMS_FACTORY, "com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes", PropertyClassifier.ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES);
     }
     
     writer.getOut().write(itemDeferredInstances.size());

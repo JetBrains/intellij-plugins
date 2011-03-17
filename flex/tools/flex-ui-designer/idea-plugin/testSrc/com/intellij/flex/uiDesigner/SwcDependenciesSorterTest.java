@@ -58,14 +58,14 @@ public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
   protected void tearDown() throws Exception {
     super.tearDown();
     
-//    if (appRootDir != null && appRootDir.exists()) {
-//      for (File file : appRootDir.listFiles()) {
-//        if (!file.isHidden() && file.getPath().endsWith(".swf") && !file.getPath().endsWith("/designer.swf")) {
-//          //noinspection ResultOfMethodCallIgnored
-//          file.delete(); 
-//        }
-//      }
-//    }
+    if (appRootDir != null && appRootDir.exists()) {
+      for (File file : appRootDir.listFiles()) {
+        if (!file.isHidden() && file.getPath().endsWith(".swf") && !file.getPath().endsWith("/designer.swf")) {
+          //noinspection ResultOfMethodCallIgnored
+          file.delete(); 
+        }
+      }
+    }
   }
 
   @JSTestOptions({WithGumboSdk, WithFlexSdk})

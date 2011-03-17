@@ -186,18 +186,17 @@ public final class BaseWriter {
   }
   
   public void writeObjectReference(String propertyName, int reference) {
-    write(propertyName);
-    writeObjectReference(reference);
+    writeObjectReference(getNameReference(propertyName), reference);
   }
   
-  private void writeObjectReference(int reference) {
-    out.write(PropertyClassifier.PROPERTY);
+  public void writeObjectReference(int reference) {
     out.write(AmfExtendedTypes.OBJECT_REFERENCE);
     out.writeUInt29(reference);
   }
   
   public void writeObjectReference(int propertyName, int reference) {
     out.writeUInt29(propertyName);
+    out.write(PropertyClassifier.PROPERTY);
     writeObjectReference(reference);
   }
   
@@ -217,6 +216,7 @@ public final class BaseWriter {
     out.write(size);
   }
   
+  @SuppressWarnings({"UnusedDeclaration"})
   public void writeObjectHeader(int propertyName, String className) {
     writeObjectHeader(propertyName, getNameReference(className));
   }
@@ -225,9 +225,7 @@ public final class BaseWriter {
     out.writeUInt29(propertyName);
     out.write(PropertyClassifier.PROPERTY);
     out.write(Amf3Types.OBJECT);
-    
-    out.writeUInt29(className);
-    out.getByteOut().allocate(2);
+    writeObjectHeader(className);
   }
   
   public void writeObjectHeader(String className) {
@@ -242,6 +240,16 @@ public final class BaseWriter {
   public void writeObjectHeader(int className) {
     out.writeUInt29(className);
     out.getByteOut().allocate(2);
+  }
+  
+  public void writeDocumentFactoryReference(int reference) {
+    out.write(AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE);
+    out.writeUInt29(reference);
+  }
+  
+  public void writeClass(String className) {
+    out.write(AmfExtendedTypes.CLASS);
+    write(className);
   }
 
   public void writeColor(String value, boolean isPrimitiveStyle) {
@@ -270,9 +278,27 @@ public final class BaseWriter {
     out.writeAmfUInt(Integer.parseInt(value, 16));
   }
 
-  void writeDeferredInstanceFromArray() {
+  public void writeDeferredInstanceFromArray() {
+    writeConstructorHeader("com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray");
+    out.write(Amf3Types.ARRAY);
+  }
+  
+  public void writeConstructorHeader(String className) {
     out.write(Amf3Types.OBJECT);
-    writeObjectHeader("com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray");
-    writeArrayHeader(ARRAY);
+    writeObjectHeader(className);
+    write("1");
+  }
+  
+  public void writeConstructorHeader(String className, int reference) {
+    out.write(Amf3Types.OBJECT);
+    writeObjectHeader(className, reference);
+    write("1");
+  }
+  
+  public void writeConstructorHeader(int propertyName, String className, int constructorArgType) {
+    out.writeUInt29(propertyName);
+    out.write(PropertyClassifier.PROPERTY);
+    writeConstructorHeader(className);
+    out.write(constructorArgType);
   }
 }

@@ -353,7 +353,7 @@ public class MxmlWriter {
       out.write(PropertyClassifier.PROPERTY);
       if (defaultDescriptor.isDeferredInstance()) {
         writer.writeDeferredInstanceFromArray();
-        return 2;
+        return 1;
       }
       else {
         String type = defaultDescriptor.getType();
