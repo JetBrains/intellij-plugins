@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.compiler.options.CompilerUIConfigurable;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
@@ -12,6 +13,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleConfigurationEditor;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.ui.Messages;
@@ -89,6 +91,7 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
   private ServerTechnologyForm myServerTechnologyForm;
   private JTextField myAdditionalCompilerOptionsTextField;
   private JCheckBox myIncludeResourceFilesInSwcCheckBox;
+  private JButton myConfigureResourcePatternsButton;
   private TextFieldWithBrowseButton.NoPathCompletion myConditionalCompilationDefinitionsTextWithBrowse;
   private MultiLineLabel myIdeBuilderOffLabel;
   private List<FlexBuildConfiguration.ConditionalCompilationDefinition> myConditionalCompilationDefinitionList;
@@ -186,6 +189,12 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
     myModuleSpecificOutputPathForTestsTextField
       .addBrowseFolderListener(FlexBundle.message("flex.choose.test.output.directory"), null, myModule.getProject(),
                                new FileChooserDescriptor(false, true, false, false, false, false));
+
+    myConfigureResourcePatternsButton.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), new CompilerUIConfigurable(module.getProject()));
+      }
+    });
 
     myConditionalCompilationDefinitionsTextWithBrowse.getTextField().setEditable(false);
     myConditionalCompilationDefinitionsTextWithBrowse.addActionListener(new ActionListener() {
@@ -318,6 +327,7 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
   private void updateResourceFilesSpecificControls() {
     if (!myUseCustomConfigFileCheckBox.isSelected()) {
       myIncludeResourceFilesInSwcCheckBox.setEnabled(myLibraryOutputTypeRadioButton.isSelected());
+      myConfigureResourcePatternsButton.setEnabled(myLibraryOutputTypeRadioButton.isSelected());
     }
   }
 
