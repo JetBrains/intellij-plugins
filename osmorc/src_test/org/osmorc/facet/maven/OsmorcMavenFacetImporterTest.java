@@ -28,7 +28,7 @@ public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFa
 
   @Test
   public void testSimpleImport() throws IOException {
-    importProject(pomContents("simple", ""));
+    importProject(pomContents("simple", "", ""));
     assertModules("simple");
     OsmorcFacet simple = getFacet("simple");
     OsmorcFacetConfiguration configuration = simple.getConfiguration();
@@ -39,7 +39,7 @@ public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFa
 
  @Test
   public void testSymbolicNameInference() throws IOException {
-    importProject(pomContents("osmorc-simple", ""));
+    importProject(pomContents("osmorc-simple", "", ""));
     assertModules("osmorc-simple");
     OsmorcFacet simple = getFacet("osmorc-simple");
     OsmorcFacetConfiguration configuration = simple.getConfiguration();
@@ -55,7 +55,7 @@ public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFa
      "<instructions>"+
     "<_include>${project.basedir}/foo/Manifest.MF</_include>"+
     "</instructions>"+
-    "</configuration>"));
+    "</configuration>", ""));
     assertModules("simple");
     OsmorcFacet simple = getFacet("simple");
     OsmorcFacetConfiguration configuration = simple.getConfiguration();
@@ -63,24 +63,47 @@ public class OsmorcMavenFacetImporterTest extends FacetImporterTestCase<OsmorcFa
     assertEquals("org.osmorc.simple", configuration.getBundleSymbolicName());
     assertFalse(configuration.isOsmorcControlsManifest());
     assertFalse(configuration.isUseProjectDefaultManifestFileLocation());
-    assertTrue( configuration.getManifestLocation().contains("foo/Manifest.MF"));
+    assertTrue(configuration.getManifestLocation().contains("foo/Manifest.MF"));
   }
 
+  @Test
+    public void testDefaultOutputPath() throws IOException {
+      importProject(pomContents("simple","", ""));
+      assertModules("simple");
+      OsmorcFacet simple = getFacet("simple");
+      OsmorcFacetConfiguration configuration = simple.getConfiguration();
+      assertNotNull(configuration);
+      assertTrue(configuration.getJarFileLocation().endsWith("simple-1.0.1.jar"));
+    }
+
+  @Test
+    public void testSpecificOutputPath() throws IOException {
+      importProject(pomContents("simple","", "<finalName>${artifactId}-special-${version}</finalName>"));
+      assertModules("simple");
+      OsmorcFacet simple = getFacet("simple");
+      OsmorcFacetConfiguration configuration = simple.getConfiguration();
+      assertNotNull(configuration);
+      assertTrue(configuration.getJarFileLocation().endsWith("simple-special-1.0.1.jar"));
+    }
 
 
 
 
-  private String pomContents(@NotNull String artifactId, @NotNull String instructions) {
+
+
+
+  private String pomContents(@NotNull String artifactId, @NotNull String pluginInstructions, @NotNull String buildInstructions) {
     return "<groupId>org.osmorc</groupId>" +
                   "<artifactId>"+artifactId+"</artifactId>" +
-                  "<version>1</version>" +
+                  "<version>1.0.1</version>" +
                   "<packaging>bundle</packaging>"+
 
                   "<build>" +
+                  buildInstructions+
                   "  <plugins>" +
                   "    <plugin>" +
                   pluginCoordinates() +
-                  instructions+
+                  pluginInstructions+
                   "    </plugin>" +
                   "  </plugins>" +
                   "</build>";

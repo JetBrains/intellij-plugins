@@ -106,6 +106,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         Map<String, String> props = new HashMap<String, String>();
         @SuppressWarnings({"unchecked"})
         List<Element> children = instructionsNode.getChildren();
+        boolean useExistingManifest = false;
         for (Element child : children) {
           String name = child.getName();
           String value = child.getValue();
@@ -121,7 +122,16 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
             conf.setUseBndFile(false);
             conf.setUseBundlorFile(false);
             conf.setUseProjectDefaultManifestFileLocation(false);
+            useExistingManifest = true;
           }
+        }
+
+        if ( !useExistingManifest ) {
+          conf.setManifestLocation("");
+          conf.setOsmorcControlsManifest(true);
+          conf.setUseBndFile(false);
+          conf.setUseBundlorFile(false);
+          conf.setUseProjectDefaultManifestFileLocation(true);
         }
 
         // check if bundle name exists, if not compute it (IDEA-63244)
@@ -132,6 +142,10 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
         conf.importAdditionalProperties(props, true);
       }
+
+        // Fix for IDEA-66235 - inherit jar filename from maven
+        String jarFileName = mavenProject.getFinalName() + ".jar";
+        conf.setJarFileLocation(jarFileName, OsmorcFacetConfiguration.OutputPathType.CompilerOutputPath );
     }
   }
 
