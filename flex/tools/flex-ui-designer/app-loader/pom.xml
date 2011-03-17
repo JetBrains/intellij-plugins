@@ -32,4 +32,16 @@
       <scope>internal</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <configuration>
+          <additionalSourcePath>../designer/target</additionalSourcePath>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

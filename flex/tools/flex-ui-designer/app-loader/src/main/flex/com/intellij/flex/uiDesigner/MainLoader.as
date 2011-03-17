@@ -11,7 +11,7 @@ import flash.system.LoaderContext;
 import org.flyti.roboflest.roboflest;
 
 public class MainLoader extends Sprite {
-  [Embed(source="../../../../../../../../designer/target/designer-1.0-SNAPSHOT.swf", mimeType="application/octet-stream")]
+  [Embed(source="/designer-1.0-SNAPSHOT.swf", mimeType="application/octet-stream")]
   private static var appClass:Class;
 
   [Embed(source="/icon256x256.png")]

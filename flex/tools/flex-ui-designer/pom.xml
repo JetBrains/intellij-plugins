@@ -7,6 +7,10 @@
     <artifactId>common</artifactId>
     <version>27</version>
   </parent>
+  
+  <properties>
+    <flexMojos.version>4.0-de5</flexMojos.version>
+  </properties>
 
   <name>Flex UI Designer Aggregator</name>
   <groupId>com.intellij.flex.uiDesigner</groupId>

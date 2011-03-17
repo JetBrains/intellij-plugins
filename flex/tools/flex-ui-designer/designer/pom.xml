@@ -92,6 +92,7 @@
           <compilerWarnings>
             <show-binding-warnings>false</show-binding-warnings>
           </compilerWarnings>
+          <additionalSourcePath>../flex-injection/target</additionalSourcePath>
         </configuration>
       </plugin>
     </plugins>

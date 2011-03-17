@@ -18,18 +18,18 @@ public class QueueLoader {
   private var currentIndex:int;
 
   //noinspection JSUnusedLocalSymbols
-  [Embed(source="/../../../../flex-injection/target/complement-flex4.1.swf", mimeType="application/octet-stream")]
+  [Embed(source="/complement-flex4.1.swf", mimeType="application/octet-stream")]
   private static const flex41ComplementClass:Class;
   //noinspection JSUnusedLocalSymbols
   private static var flex41ComplementBytes:ByteArray;
   
   //noinspection JSUnusedLocalSymbols
-  [Embed(source="/../../../../flex-injection/target/complement-flex4.5.swf", mimeType="application/octet-stream")]
+  [Embed(source="/complement-flex4.5.swf", mimeType="application/octet-stream")]
   private static const flex45ComplementClass:Class;
   //noinspection JSUnusedLocalSymbols
   private static var flex45ComplementBytes:ByteArray;
 
-  [Embed(source="/../../../../flex-injection/target/complement-air4.swf", mimeType="application/octet-stream")]
+  [Embed(source="/complement-air4.swf", mimeType="application/octet-stream")]
   //noinspection JSUnusedLocalSymbols
   private static const air4ComplementClass:Class;
   //noinspection JSUnusedLocalSymbols
