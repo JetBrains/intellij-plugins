@@ -5,22 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 
 public class ComplementSwfBuilder {
   public static void build(File source, File abcInjection, String rootPath, String flexVersion) throws IOException {
-    // use java HashSet instead of Trove due to maven classpath
-    final Collection<CharSequence> sparkDefinitions = new HashSet<CharSequence>(5);
-    sparkDefinitions.add("com.intellij.flex.uiDesigner.flex:SparkApplication");
-    sparkDefinitions.add("com.intellij.flex.uiDesigner.flex:DeferredInstanceFromArray");
-    sparkDefinitions.add("com.intellij.flex.uiDesigner.flex:HistoryManagerImpl");
-    sparkDefinitions.add("com.intellij.flex.uiDesigner.flex:BrowserManagerImpl");
-    sparkDefinitions.add("com.intellij.flex.uiDesigner.flex:SystemManager");
-    sparkDefinitions.add("com.intellij.flex.uiDesigner.flex:StyleManagerImpl");
-    sparkDefinitions.add("com.intellij.flex.uiDesigner.flex:FlexModuleFactory");
-
-    final AbcNameFilter sparkInclusionNameFilter = new AbcNameFilterByNameSetAndStartsWith(sparkDefinitions, new String[]{"com.intellij.flex.uiDesigner.flex.states:"}, true);
-
+    final AbcNameFilter sparkInclusionNameFilter = new AbcNameFilterStartsWith("com.intellij.flex.uiDesigner.flex", true);
     final Collection<String> airsparkDefinitions = new ArrayList<String>(1);
     airsparkDefinitions.add("spark.components:WindowedApplication");
 

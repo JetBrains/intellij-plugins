@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
@@ -239,19 +240,22 @@ class PropertyProcessor {
         XmlElement injectedHost = valueProvider.getInjectedHost();
         if (injectedHost != null) {
           PsiReference reference = injectedHost.getReference();
-          if (reference instanceof JSClass) {
-            PsiFile psiFile = ((JSClass) reference).getContainingFile();
-            VirtualFile virtualFile = psiFile.getVirtualFile();
-            assert virtualFile != null;
-            boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
-            if (psiFile instanceof XmlFile) {
-              if (inSourceContent) {
-                writer.writeDocumentFactoryReference(DocumentFileManager.getInstance().getId(virtualFile, (XmlFile) psiFile, unregisteredDocumentFactories));
-                return;
+          if (reference != null) {
+            PsiElement element = reference.resolve();
+            if (element instanceof JSClass) {
+              PsiFile psiFile = element.getContainingFile();
+              VirtualFile virtualFile = psiFile.getVirtualFile();
+              assert virtualFile != null;
+              boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
+              if (psiFile instanceof XmlFile) {
+                if (inSourceContent) {
+                  writer.writeDocumentFactoryReference(DocumentFileManager.getInstance().getId(virtualFile, (XmlFile) psiFile, unregisteredDocumentFactories));
+                  return;
+                }
               }
-            }
-            else if (inSourceContent) {
-              LOG.error("support only mxml-based skin: " + className);
+              else if (inSourceContent) {
+                LOG.error("support only mxml-based skin: " + className);
+              }
             }
           }
         }

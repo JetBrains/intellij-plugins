@@ -170,18 +170,18 @@ public class Client {
   }
 
   public void openDocument(Module module, XmlFile psiFile) throws IOException {
-    int factoryId = registerDocumentFactoryIfNeed(module, psiFile);
+    int factoryId = registerDocumentFactoryIfNeed(module, psiFile, false);
     beginMessage(ClientMethod.openDocument);
     out.writeShort(factoryId);
     
     out.flush();
   }
 
-  private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile) throws IOException {
+  private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, boolean force) throws IOException {
     VirtualFile virtualFile = psiFile.getVirtualFile();
     assert virtualFile != null;
     DocumentFileManager documentFileManager = DocumentFileManager.getInstance();
-    final boolean registered = documentFileManager.isRegistered(virtualFile);
+    final boolean registered = !force && documentFileManager.isRegistered(virtualFile);
     final int factoryId = documentFileManager.getId(virtualFile, psiFile, null);
     if (!registered) {
       beginMessage(ClientMethod.registerDocumentFactory);
@@ -197,14 +197,13 @@ public class Client {
             FlexUIDesignerApplicationManager.LOG.error("Currently, support subdocument only from current module");
           }
           
-          registerDocumentFactoryIfNeed(module, subDocument);
+          registerDocumentFactoryIfNeed(module, subDocument, true);
         }
       }
     }
     
     return factoryId;
   }
-
 
   public void qualifyExternalInlineStyleSource() {
     beginMessage(ClientMethod.qualifyExternalInlineStyleSource);

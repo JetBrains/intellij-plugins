@@ -56,7 +56,7 @@ public final class ModuleContextImpl implements ModuleContextEx {
   private var _documentFactoryClass:Class;
   public function get documentFactoryClass():Class {
     if (_documentFactoryClass == null) {
-      _documentFactoryClass = getClass("com.intellij.flex.uiDesigner.FlexDocumentFactory");
+      _documentFactoryClass = getClass("com.intellij.flex.uiDesigner.flex.FlexDocumentFactory");
     }
 
     return _documentFactoryClass;

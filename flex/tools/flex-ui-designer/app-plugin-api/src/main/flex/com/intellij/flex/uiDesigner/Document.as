@@ -4,17 +4,24 @@ import cocoa.View;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 
 public class Document {
-  public var file:VirtualFile;
+  private var documentFactory:DocumentFactory;
+  
   public var uiComponent:Object;
   public var systemManager:SystemManagerSB;
   public var container:View;
-  public var module:Module;
   
   public var tabIndex:int;
 
-  public function Document(file:VirtualFile, module:Module) {
-    this.file = file;
-    this.module = module;
+  public function Document(documentFactory:DocumentFactory) {
+    this.documentFactory = documentFactory;
+  }
+  
+  public function get file():VirtualFile {
+    return documentFactory.file;
+  }
+  
+  public function get module():Module {
+    return documentFactory.module;
   }
  
   private var _styleManager:Object;

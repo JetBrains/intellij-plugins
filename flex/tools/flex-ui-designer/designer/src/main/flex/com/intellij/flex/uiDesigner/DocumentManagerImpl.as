@@ -44,7 +44,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var document:Document = pathMap[file];
     if (document == null) {
       documentReader.input = documentFactory.data;
-      libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory.module, file);
+      libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory);
     }
     else {
       doOpen(document);
@@ -52,11 +52,11 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  private function doOpenAfterResolveLibraries(module:Module, file:VirtualFile):void {
-    var document:Document = new Document(file, module);
-    createStyleManager(module);
-    createSystemManager(document, module);
-    pathMap[file] = document;
+  private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory):void {
+    var document:Document = new Document(documentFactory);
+    createStyleManager(documentFactory.module);
+    createSystemManager(document, documentFactory.module);
+    pathMap[documentFactory.file] = document;
 
     doOpen(document);
   }
