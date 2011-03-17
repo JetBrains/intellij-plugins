@@ -105,6 +105,10 @@ class PropertyProcessor {
       return processPercentable(valueProvider, descriptor);
     }
     else {
+      if (isStyle && name.equals("skinClass") && "Class".equals(descriptor.getType())) {
+        name = "skinFactory";
+      }
+      
       return new ValueWriterImpl(valueProvider, descriptor);
     }
   }

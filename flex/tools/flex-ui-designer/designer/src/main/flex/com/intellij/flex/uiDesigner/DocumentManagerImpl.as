@@ -43,11 +43,10 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var file:VirtualFile = documentFactory.file;
     var document:Document = pathMap[file];
     if (document == null) {
-      documentReader.input = documentFactory.data;
       libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory);
     }
     else {
-      doOpen(document);
+      doOpen(documentFactory, document);
       document.container.invalidateDisplayList();
     }
   }
@@ -58,11 +57,11 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     createSystemManager(document, documentFactory.module);
     pathMap[documentFactory.file] = document;
 
-    doOpen(document);
+    doOpen(documentFactory, document);
   }
 
-  private function doOpen(document:Document):void {
-    var object:Object = documentReader.read(document.file, document.styleManager, document.module.context);
+  private function doOpen(documentFactory:DocumentFactory, document:Document):void {
+    var object:Object = documentReader.read(documentFactory.data, document.file, document.styleManager, document.module.context);
     document.uiComponent = object;
     document.systemManager.setUserDocument(DisplayObject(object));
 

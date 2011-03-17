@@ -27,6 +27,8 @@ public final class MxmlReader implements DocumentReader {
   private static const CLASS_MARKER:int = 43;
   private static const COLOR_STYLE_MARKER:int = 42;
   private static const STRING_REFERENCE:int = 44;
+ 
+  private var input:IDataInput;
   
   private var stringRegistry:StringRegistry;
   private var documentFactoryManager:DocumentFactoryManager;
@@ -47,31 +49,25 @@ public final class MxmlReader implements DocumentReader {
     this.stringRegistry = stringRegistry;
     this.documentFactoryManager = documentFactoryManager;
   }
-  
-  private var _input:IDataInput;
-  public function set input(value:IDataInput):void {
-    _input = value;
-  }
 
   internal function getClass(name:String):Class {
     return Class(context.applicationDomain.getDefinition(name));
   }
 
-  public function read2(bytes:ByteArray, context:DeferredInstanceFromBytesContext):Object {
-    var oldInput:IDataInput = _input;
-    _input = bytes;
+  public function read2(input:IDataInput, context:DeferredInstanceFromBytesContext):Object {
+    this.input = input;
+    
     var objectTableSize:int = readObjectTableSize();
 
     this.context = context.moduleContext;
     this.styleManager = context.styleManager;
     this.documentFile = context.documentFile;
-    var object:Object = readObject(stringRegistry.read(_input));
-    _input = oldInput;
-
+    var object:Object = readObject(stringRegistry.read(input));
     assert(stateReader.cleared && byteFactoryContext == null && objectTableSize == (objectTable == null ? 0 : objectTable.length));
 
     this.context = null;
     this.styleManager = null;
+    this.input = null;
     return object;
   }
 
@@ -87,7 +83,7 @@ public final class MxmlReader implements DocumentReader {
   }
 
   private function readObjectTableSize():int {
-    var objectTableSize:int = AmfUtil.readUInt29(_input);
+    var objectTableSize:int = AmfUtil.readUInt29(input);
     if (objectTableSize != 0) {
       if (objectTable == null) {
         objectTable = new Vector.<Object>(objectTableSize, true);
@@ -101,15 +97,17 @@ public final class MxmlReader implements DocumentReader {
     return objectTableSize;
   }
 
-  public function read(documentFile:VirtualFile, styleManager:Object, context:ModuleContext):Object {
+  public function read(input:IDataInput, documentFile:VirtualFile, styleManager:Object, context:ModuleContext):Object {
+    this.input = input;
+    
     const objectTableSize:int = readObjectTableSize();
 
     this.context = context;
     this.styleManager = styleManager;
     this.documentFile = documentFile;
-    var object:Object = readObject(stringRegistry.read(_input));
-    stateReader.read(this, _input, object);
-    injectedASReader.read(_input, this);
+    var object:Object = readObject(stringRegistry.read(input));
+    stateReader.read(this, input, object);
+    injectedASReader.read(input, this);
 
     this.context = null;
     this.styleManager = null;
@@ -124,12 +122,13 @@ public final class MxmlReader implements DocumentReader {
     byteFactoryContext = null;
     stateReader.reset(t);
 
+    this.input = null;
     return object;
   }
   
   internal function readObjectReference():Object {
     var o:Object;
-    if ((o = objectTable[AmfUtil.readUInt29(_input)]) == null) {
+    if ((o = objectTable[AmfUtil.readUInt29(input)]) == null) {
       throw new ArgumentError("must be not null");
     }
 
@@ -137,17 +136,17 @@ public final class MxmlReader implements DocumentReader {
   }
   
   private function readConstructor(objectClass:Class):Object {
-    switch (_input.readByte()) {
+    switch (input.readByte()) {
       case CLASS_MARKER:
-        return new objectClass(context.applicationDomain.getDefinition(stringRegistry.read(_input)));
+        return new objectClass(context.applicationDomain.getDefinition(stringRegistry.read(input)));
 
       case PropertyClassifier.VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES:
         initByteFactoryContext();
-        return new objectClass(stateReader.readVectorOfDeferredInstanceFromBytes(this, _input), byteFactoryContext);
+        return new objectClass(stateReader.readVectorOfDeferredInstanceFromBytes(this, input), byteFactoryContext);
 
       case PropertyClassifier.ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:
         initByteFactoryContext();
-        return new objectClass(stateReader.readArrayOfDeferredInstanceFromBytes(this, _input), byteFactoryContext);
+        return new objectClass(stateReader.readArrayOfDeferredInstanceFromBytes(this, input), byteFactoryContext);
 
       case Amf3Types.BYTE_ARRAY:
         initByteFactoryContext();
@@ -163,8 +162,8 @@ public final class MxmlReader implements DocumentReader {
 
   internal function readObject(className:String):Object {
     var clazz:Class = Class(context.applicationDomain.getDefinition(className));
-    var reference:int = _input.readUnsignedShort();
-    var propertyName:String = stringRegistry.read(_input);
+    var reference:int = input.readUnsignedShort();
+    var propertyName:String = stringRegistry.read(input);
     var object:Object;
     if (propertyName == "1") {
       object = readConstructor(clazz);
@@ -185,29 +184,29 @@ public final class MxmlReader implements DocumentReader {
     var inlineCssDeclarationSource:CssRuleset;
     var cssPropertyDescriptor:CssDeclaration;
     var o:Object;
-    for (; propertyName != null; propertyName = stringRegistry.read(_input)) {      
-      switch (_input.readByte()) {
+    for (; propertyName != null; propertyName = stringRegistry.read(input)) {      
+      switch (input.readByte()) {
         case PropertyClassifier.PROPERTY:
           break;
 
         case PropertyClassifier.STYLE:
           if (inlineCssDeclarationSource == null) {
-            inlineCssDeclarationSource = InlineCssRuleset.createInline(AmfUtil.readUInt29(_input), AmfUtil.readUInt29(_input), documentFile);
+            inlineCssDeclarationSource = InlineCssRuleset.createInline(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input), documentFile);
           }
           cssPropertyDescriptor = new CssDeclaration();
           cssPropertyDescriptor.name = propertyName;
-          cssPropertyDescriptor.textOffset = AmfUtil.readUInt29(_input);
+          cssPropertyDescriptor.textOffset = AmfUtil.readUInt29(input);
           inlineCssDeclarationSource.declarations.push(cssPropertyDescriptor);
           propertyHolder = cssPropertyDescriptor;
           propertyName = "value";
 
-          if (_input.readBoolean()) {
+          if (input.readBoolean()) {
             context.effectManagerClass[new QName(getMxNs(), "setStyle")](cssPropertyDescriptor.name, object);
           }
           break;
 
         case PropertyClassifier.ID:
-          propertyHolder.id = _input.readUTFBytes(AmfUtil.readUInt29(_input));
+          propertyHolder.id = input.readUTFBytes(AmfUtil.readUInt29(input));
           continue;
         
         case PropertyClassifier.MX_CONTAINER_CHILDREN:
@@ -222,23 +221,23 @@ public final class MxmlReader implements DocumentReader {
           throw new ArgumentError("unknown property classifier");
       }
 
-      switch (_input.readByte()) {
+      switch (input.readByte()) {
         case Amf3Types.STRING:
-          propertyHolder[propertyName] = _input.readUTFBytes(AmfUtil.readUInt29(_input));
+          propertyHolder[propertyName] = input.readUTFBytes(AmfUtil.readUInt29(input));
           if (cssPropertyDescriptor != null) {
             cssPropertyDescriptor.type = CssPropertyType.STRING;
           }
           break;
 
         case Amf3Types.DOUBLE:
-          propertyHolder[propertyName] = _input.readDouble();
+          propertyHolder[propertyName] = input.readDouble();
           if (cssPropertyDescriptor != null) {
             cssPropertyDescriptor.type = CssPropertyType.NUMBER;
           }
           break;
 
         case Amf3Types.INTEGER:
-          propertyHolder[propertyName] = (AmfUtil.readUInt29(_input) << 3) >> 3;
+          propertyHolder[propertyName] = (AmfUtil.readUInt29(input) << 3) >> 3;
           if (cssPropertyDescriptor != null) {
             cssPropertyDescriptor.type = CssPropertyType.NUMBER;
           }
@@ -259,7 +258,7 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case Amf3Types.OBJECT:
-          propertyHolder[propertyName] = readObject(stringRegistry.read(_input));
+          propertyHolder[propertyName] = readObject(stringRegistry.read(input));
           if (cssPropertyDescriptor != null) {
             cssPropertyDescriptor.type = CssPropertyType.EFFECT;
           }
@@ -272,19 +271,19 @@ public final class MxmlReader implements DocumentReader {
         case COLOR_STYLE_MARKER:
           if (cssPropertyDescriptor == null) {
             // todo property inspector
-            propertyHolder[propertyName] = _input.readObject();
+            propertyHolder[propertyName] = input.readObject();
           }
           else {
-            cssPropertyDescriptor.type = _input.readByte();
+            cssPropertyDescriptor.type = input.readByte();
             if (cssPropertyDescriptor.type == CssPropertyType.COLOR_STRING) {
-              cssPropertyDescriptor.colorName = stringRegistry.read(_input);
+              cssPropertyDescriptor.colorName = stringRegistry.read(input);
             }
-            cssPropertyDescriptor.value = _input.readObject();
+            cssPropertyDescriptor.value = input.readObject();
           }
           break;
 
         case Amf3Types.OBJECT_REFERENCE:
-          if ((o = objectTable[AmfUtil.readUInt29(_input)]) == null) {
+          if ((o = objectTable[AmfUtil.readUInt29(input)]) == null) {
             throw new ArgumentError("must be not null");
           }
           propertyHolder[propertyName] = o;
@@ -295,11 +294,11 @@ public final class MxmlReader implements DocumentReader {
           break;
         
         case STRING_REFERENCE:
-          propertyHolder[propertyName] = stringRegistry.read(_input);
+          propertyHolder[propertyName] = stringRegistry.read(input);
           break;
         
         case CLASS_MARKER:
-          propertyHolder[propertyName] = context.applicationDomain.getDefinition(stringRegistry.read(_input));
+          propertyHolder[propertyName] = context.applicationDomain.getDefinition(stringRegistry.read(input));
           break;
 
         default:
@@ -321,7 +320,7 @@ public final class MxmlReader implements DocumentReader {
   }
   
   private function readDocumentFactory():Object {
-    var id:int = AmfUtil.readUInt29(_input);
+    var id:int = AmfUtil.readUInt29(input);
     var factory:Object = context.getDocumentFactory(id);
     if (factory == null) {
       initByteFactoryContext();
@@ -341,7 +340,7 @@ public final class MxmlReader implements DocumentReader {
 
   internal function readBytes():ByteArray {
     var bytes:ByteArray = new ByteArray();
-    _input.readBytes(bytes, 0, AmfUtil.readUInt29(_input));
+    input.readBytes(bytes, 0, AmfUtil.readUInt29(input));
     return bytes;
   }
   
@@ -406,22 +405,22 @@ public final class MxmlReader implements DocumentReader {
   internal function readArray(array:Array):Array {
     var count:int = 0;
     while (true) {
-      var className:String = stringRegistry.read(_input);
+      var className:String = stringRegistry.read(input);
       if (className == null) {
         return array;
       }
       else {
         switch (className) {
           case "String":
-            array[count++] = _input.readUTFBytes(AmfUtil.readUInt29(_input));
+            array[count++] = input.readUTFBytes(AmfUtil.readUInt29(input));
             break;
 
           case "Number":
-            array[count++] = _input.readDouble();
+            array[count++] = input.readDouble();
             break;
 
           case "Boolean":
-            array[count++] = _input.readBoolean();
+            array[count++] = input.readBoolean();
             break;
 
           default:
@@ -437,17 +436,17 @@ public final class MxmlReader implements DocumentReader {
   }
 
   private function readFixedArray():Array {
-    var n:int = _input.readUnsignedByte();
+    var n:int = input.readUnsignedByte();
     var array:Array = new Array(n);
     for (var i:int = 0; i < n; i++) {
-      array[i] = readObject(stringRegistry.read(_input));
+      array[i] = readObject(stringRegistry.read(input));
     }
 
     return array;
   }
 
   internal function readClassOrPropertyName():String {
-    return stringRegistry.read(_input);
+    return stringRegistry.read(input);
   }
 }
 }
