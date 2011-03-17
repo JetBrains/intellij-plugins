@@ -55,6 +55,8 @@ import java.util.Map;
 public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType> {
 
   private final Logger logger = Logger.getInstance("#org.osmorc.facet.maven.OsmorcFacetImporter");
+  private static final String IncludeExistingManifest = "_include";
+
 
   public OsmorcFacetImporter() {
     super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.getInstance(), "OSGi");
@@ -108,9 +110,17 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
           String name = child.getName();
           String value = child.getValue();
           if (value != null && !"".equals(value) && !Constants.BUNDLE_SYMBOLICNAME.equals(name) &&
-              !Constants.BUNDLE_VERSION.equals(name) && !Constants.BUNDLE_ACTIVATOR.equals(name)) {
+              !Constants.BUNDLE_VERSION.equals(name) && !Constants.BUNDLE_ACTIVATOR.equals(name) && !IncludeExistingManifest.equals(name)) {
             // ok its an additional setting:
             props.put(name, value);
+          }
+
+          if ( IncludeExistingManifest.equals(name)) {
+            conf.setManifestLocation(value);
+            conf.setOsmorcControlsManifest(false);
+            conf.setUseBndFile(false);
+            conf.setUseBundlorFile(false);
+            conf.setUseProjectDefaultManifestFileLocation(false);
           }
         }
 
