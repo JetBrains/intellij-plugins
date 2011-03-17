@@ -4,7 +4,6 @@ import com.intellij.psi.PsiElement;
 import gnu.trove.THashMap;
 import js.JSTestOption;
 import js.JSTestOptions;
-import org.junit.Test;
 
 import java.util.Map;
 
