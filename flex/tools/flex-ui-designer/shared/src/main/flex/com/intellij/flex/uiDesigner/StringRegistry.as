@@ -56,8 +56,8 @@ public final class StringRegistry {
     return ref == 0 ? null : table[ref - 1];
   }
   
-  public function get(reference:int):String {
-    return table[reference];
+  public function getTable():Vector.<String> {
+    return table;
   }
 }
 }

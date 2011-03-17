@@ -129,7 +129,14 @@ public class Client {
         originalLibrary.sessionId = sessionId;
         out.writeAmfUtf(originalLibrary.getPath());
         writeVirtualFile(originalLibrary.getFile(), out);
-        writeNullableByteArray(originalLibrary.inheritingStyles);
+        
+        if (originalLibrary.inheritingStyles == null) {
+          out.writeShort(0);
+        }
+        else {
+          out.write(originalLibrary.inheritingStyles);
+        }
+        
         if (originalLibrary.defaultsStyle == null) {
           out.write(0);
         }
@@ -144,15 +151,6 @@ public class Client {
     }
 
     blockOut.end();
-  }
-
-  private void writeNullableByteArray(byte[] bytes) throws IOException {
-    if (bytes == null) {
-      out.write(Amf3Types.NULL);
-    }
-    else {
-      out.write(bytes);
-    }
   }
 
   public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter) throws IOException {

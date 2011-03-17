@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.DictionaryWriter;
+import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
+import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.javascript.flex.css.FlexStyleIndex;
 import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
@@ -25,25 +26,27 @@ public class LibraryStyleInfoCollector {
   private final PsiDocumentManager psiDocumentManager;
   private final Module module;
 
-  private final DictionaryWriter inheritedDictionaryWriter = new DictionaryWriter();
+  private final PrimitiveAmfOutputStream bytes = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(128));
   private final CssWriter cssWriter;
+  private final StringRegistry.StringWriter stringWriter;
 
   public LibraryStyleInfoCollector(Project project, Module module, StringRegistry.StringWriter stringWriter) {
     this.project = project;
     this.psiDocumentManager = PsiDocumentManager.getInstance(project);
     this.module = module;
-    cssWriter = new CssWriter(stringWriter);
+    this.stringWriter = stringWriter;
+    cssWriter = new CssWriter(this.stringWriter);
   }
 
   private byte[] collectInherited(final VirtualFile jarFile) {
-    inheritedDictionaryWriter.prepareIteration();
+    bytes.getByteArrayOut().allocate(2);
     
     final VirtualFile libraryFile = jarFile.findChild("library.swf");
     assert libraryFile != null;
     
     final FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
     final GlobalSearchScope searchScope = GlobalSearchScope.fileScope(project, libraryFile);
-    final Set<String> uniqueGuard = new THashSet<String>();
+    final THashSet<String> uniqueGuard = new THashSet<String>();
     fileBasedIndex.processAllKeys(FlexStyleIndex.INDEX_ID, new Processor<String>() {
       @Override
       public boolean process(String dataKey) {
@@ -52,7 +55,7 @@ public class LibraryStyleInfoCollector {
           public boolean process(VirtualFile file, Set<FlexStyleIndexInfo> value) {
             final FlexStyleIndexInfo firstInfo = value.iterator().next();
             if (firstInfo.getInherit().charAt(0) == 'y' && uniqueGuard.add(firstInfo.getAttributeName())) {
-              inheritedDictionaryWriter.writeTrue(firstInfo.getAttributeName());
+              bytes.writeUInt29(stringWriter.getReference(firstInfo.getAttributeName()) - 1);
             }
             
             // Если в библиотеке определено свойство — то мы его считаем уникальным для всей библиотеки — мы делаем допущение, что не может быть у одного класса stylePName быть inherited, а у другого класса этой же библиотеки not inherited
@@ -64,8 +67,16 @@ public class LibraryStyleInfoCollector {
       }
     }, project);
     
-    assert inheritedDictionaryWriter.getCounter() == uniqueGuard.size();
-    return inheritedDictionaryWriter.getCounter() == 0 ? null : inheritedDictionaryWriter.get();
+    if (uniqueGuard.size() == 0) {
+      bytes.reset();
+      return null;
+    }
+    else {
+      bytes.putShort(uniqueGuard.size(), 0);
+      byte[] result = bytes.getByteArrayOut().toByteArray();
+      bytes.reset();
+      return result;
+    }
   }
 
   public void collect(final @NotNull OriginalLibrary library) {

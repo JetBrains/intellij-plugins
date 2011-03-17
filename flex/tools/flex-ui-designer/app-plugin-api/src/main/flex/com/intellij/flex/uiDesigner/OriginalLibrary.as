@@ -35,7 +35,14 @@ public class OriginalLibrary implements IExternalizable, Library {
     _path = input.readUTFBytes(AmfUtil.readUInt29(input));
     _file = VirtualFileImpl.create(input);
 
-    _inheritingStyles = input.readObject();
+    var n:int = input.readUnsignedShort();
+    if (n > 0) {
+      var stringTable:Vector.<String> = StringRegistry.instance.getTable();
+      _inheritingStyles = new Dictionary();
+      while (n-- > 0) {
+        _inheritingStyles[stringTable[AmfUtil.readUInt29(input)]] = true;
+      }
+    }  
 
     if (input.readBoolean()) {
       _defaultsStyle = new Stylesheet();

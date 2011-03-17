@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 public final class ByteArrayOutputStreamEx extends AbstractByteArrayOutputStream {
   public ByteArrayOutputStreamEx(int size) {
@@ -26,5 +27,9 @@ public final class ByteArrayOutputStreamEx extends AbstractByteArrayOutputStream
   
   public void reset() {
     count = 0;
+  }
+
+  public byte[] toByteArray() {
+    return Arrays.copyOf(buffer, count);
   }
 }
