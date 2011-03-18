@@ -88,7 +88,7 @@ public class StyleTest extends BaseTestCase {
   }
   
   public function ComponentWithCustomSkin():void {
-//    assertThat(appContent, [{fontStyle: FontPosture.ITALIC}]);
+    assertThat(app.skin, [{fill: {color: 0x3366ff}}, {id: "contentGroup", left: -181}]);
   }
 }
 }

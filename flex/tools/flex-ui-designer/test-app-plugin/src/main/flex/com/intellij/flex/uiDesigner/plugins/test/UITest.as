@@ -11,7 +11,8 @@ public class UITest extends BaseTestCase {
     // disable unused inspection
     //noinspection ConstantIfStatementJS
     if (false) {
-      styleNavigation();
+      styleNavigationToExternal();
+      styleNavigationToSkinClass();
     }
   }
   
@@ -31,7 +32,10 @@ public class UITest extends BaseTestCase {
     nativeWindow.bounds = bounds;
   }
   
-  public function styleNavigation():void {
-  }  
+  public function styleNavigationToExternal():void {
+  }
+  
+  public function styleNavigationToSkinClass():void {
+  }
 }
 }
