@@ -102,7 +102,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   private static final String CONTAINER_CLASS_NAME_2 = "mx.core.IVisualElementContainer";
   @NonNls
   static final String IFACTORY_SHORT_CLASS_NAME = "IFactory";
-  private static final String UI_COMPONENT_BASE_INTERFACE = "mx.core.IUIComponent";
+  public static final String UI_COMPONENT_BASE_INTERFACE = "mx.core.IUIComponent";
 
   ClassBackedElementDescriptor(String name, String _classname, CodeContext _context, Project _project) {
     this(name, _classname,_context,_project, false, null);

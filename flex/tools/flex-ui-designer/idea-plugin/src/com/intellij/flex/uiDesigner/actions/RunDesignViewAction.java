@@ -1,11 +1,12 @@
 package com.intellij.flex.uiDesigner.actions;
 
 import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager;
+import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -13,6 +14,8 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,7 +23,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 
-public class RunDesignViewAction extends AnAction {
+public class RunDesignViewAction extends DumbAwareAction {
   @Override
   public void actionPerformed(final AnActionEvent event) {
     final DataContext dataContext = event.getDataContext();
@@ -33,7 +36,7 @@ public class RunDesignViewAction extends AnAction {
       assert editor != null;
     }
 
-    final XmlFile psiFile = (XmlFile) PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+    final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
     assert psiFile != null;
     final VirtualFile file = psiFile.getVirtualFile();
     assert file != null;
@@ -48,12 +51,18 @@ public class RunDesignViewAction extends AnAction {
   }
 
   public void update(final AnActionEvent event) {
-    event.getPresentation().setEnabled(isEnabled(event.getDataContext()));
+    final boolean enabled = isEnabled(event.getDataContext());
+    if (ActionPlaces.isPopupPlace(event.getPlace())) {
+      event.getPresentation().setVisible(enabled);
+    }
+    else {
+      event.getPresentation().setEnabled(enabled);
+    }
   }
 
-  private boolean isEnabled(final DataContext dataContext) {
+  private static boolean isEnabled(final DataContext dataContext) {
     final Project project = LangDataKeys.PROJECT.getData(dataContext);
-    if (project == null) {
+    if (project == null || DumbService.isDumb(project)) {
       return false;
     }
 
@@ -66,18 +75,16 @@ public class RunDesignViewAction extends AnAction {
     }
 
     final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-    // todo icon enabled only for valid MXML — psiFile.isValid is not enough
-    if (!(psiFile instanceof XmlFile) || !psiFile.isValid()) {
+    // TODO check MXML is valid
+    if (psiFile == null || !JavaScriptSupportLoader.isFlexMxmFile(psiFile)) {
       return false;
     }
-    else {
-      final VirtualFile file = psiFile.getVirtualFile();
-      if (file == null || !file.getName().endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT) || !ProjectRootManager.getInstance(project).getFileIndex().isInSourceContent(file)) {
-        return false;
-      }
-
-      JSClass jsClass = (JSClass) JSResolveUtil.unwrapProxy(XmlBackedJSClassImpl.getXmlBackedClass((XmlFile) psiFile));
-      return jsClass != null && JSResolveUtil.isAssignableType("mx.core.IUIComponent", jsClass.getQualifiedName(), jsClass);
+    final VirtualFile file = psiFile.getVirtualFile();
+    if (file == null || !ProjectRootManager.getInstance(project).getFileIndex().isInSourceContent(file)) {
+      return false;
     }
+
+    JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)psiFile);
+    return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, ClassBackedElementDescriptor.UI_COMPONENT_BASE_INTERFACE);
   }
 }
