@@ -243,14 +243,7 @@ public class CssWriter {
     propertyOut.writeAmfUInt(color.getRGB());
   }
 
-  /**
-   * Если для свойства нет дескриптора (FlexCssPropertyDescriptor), то это означает:
-   * 1) свойство устарело, но его забыли убрать из CSS файла
-   * 2) разработчик компонента поленился писать аннотацию свойства
-   * 3) проблемы IDEA
-   * Третий вариант не рассматриваем, отличить первый от второго мы не можем.
-   * Проигнорировать свойство нельзя — поэтому мы на основе общего механизма CssTerm пытаемся понять, какой тип имеет свойство
-   */
+  // 5
   private void writeUndefinedPropertyValue(CssTermList value) {
     CssTerm[] terms = PsiTreeUtil.getChildrenOfType(value, CssTerm.class);
     assert terms != null && terms.length > 0;

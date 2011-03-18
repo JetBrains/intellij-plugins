@@ -45,9 +45,7 @@ public class InjectedASTest extends BaseTestCase {
     assertThat(getClass("mx.core.FlexGlobals").topLevelApplication, app);
     
     
-    // при проигрывании эффекта получается так, что приложение начинает изменять свои размеры — как бы расползается. Это происходит так как spark Application подвешивается на stage resize. 
-    // Во избежание этого, мы устанавливаем размер для документа не как setActualSize, а как explicit size (в этом случае Application не подвешивается). 
-    // Исправить саму реализацию Application мы можем, так как для этого нужно инжектировать байт-код — проще так сделать.
+    // 9
     LayoutManager.getInstance().validateNow();
     
     var view:Sprite = Sprite(app);

@@ -43,9 +43,7 @@ public final class BaseWriter {
     return preallocatedId;
   }
 
-  /* мы не можем знать, есть ли у объекта атрибуты includeIn/excludeFrom, поэтому мы для первого (1: title.A="dd" 2: title.B="dfsdfsdf") ничего не ставим, а для второго и последующих
-  аллоцируем reference от рута — если это static object в root scope, то он и возьмет этот id, а если это static object в dynamic object scope — то мы этот id используем для DeferredInstanceFromObjectReference,
-  id которого всегда в root scope */
+  // 4
   private int preallocateIdIfNeed() {
     if (!isIdPreallocated()) {
       preallocatedId = rootScope.referenceCounter++;

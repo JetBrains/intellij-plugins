@@ -156,7 +156,7 @@ public class ResolveExternalInlineStyleSourceAction implements Runnable {
     Navigatable target = null;
     for (XmlAttribute attribute : parent.getAttributes()) {
       XmlAttributeDescriptor descriptor = attribute.getDescriptor();
-      //  AnchorStyles также как свойства в UICOmponent, то есть их descriptor.getTypeName() будет не FlexAnnotationNames.STYLE, а Function
+      // 8
       if (descriptor instanceof AnnotationBackedDescriptor) {
         String ourValue = properties.get(descriptor.getName());
         if (ourValue != null) {

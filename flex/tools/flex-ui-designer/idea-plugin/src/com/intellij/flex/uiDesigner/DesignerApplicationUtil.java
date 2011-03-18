@@ -179,7 +179,7 @@ final class DesignerApplicationUtil {
       command.add(runConfiguration.runtime);
     }   
     if (!runConfiguration.debug) {
-      // todo кажется, оно не умеет отдавать stacktrace в таком случае, необходимо проверить
+      // todo 6
 //      command.add("-nodebug");
     }
     

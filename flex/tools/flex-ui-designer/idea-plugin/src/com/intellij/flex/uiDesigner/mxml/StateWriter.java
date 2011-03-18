@@ -258,8 +258,7 @@ class StateWriter {
   }
 
   private void finalizeStateSpecificAttributes(@NotNull StaticObjectContext context, @Nullable Context parentContext, InjectedASWriter injectedASWriter) {
-    // если родитель динамический, то значит аллоцированный id относительно не root scope (в котором будет осущеcтвляться чтение на клиенте), поэтому мы должны создать DeferredInstanceFromObjectReference
-    // (то есть в root scope по аллоцированному id будет находиться не сам объект, а объект-ссылка (DeferredInstanceFromObjectReference это mx.core.ITransientDeferredInstance) на него)
+    // 1
     if (!writer.isIdPreallocated()) {
       assert pendingFirstSetProperty == null;
       return;
@@ -274,11 +273,7 @@ class StateWriter {
     final int deferredParentInstance = writer.getObjectId(parentContext.getScope().getOwner());
     final int referenceInstance = writer.getPreallocatedId();
 
-    // pendingFirstSetProperty нужен только и только на момент чтения атрибутов — то есть его значение актуально только на момент чтения атрибутов объекта
-    // и не может существовать в один момент времени несколько его значений — мы можем спокойно иметь его как поле объекта, а не в контексте.
-    // Необходимость его вызвана тем, что на момент чтения атрибута вида gap.B="3" мы еще не знаем, динамический или статический объект (так как атрибуты includeIn/excludeFrom могут быть определены после),
-    // если объект в итоге динамический — то соответствующий AddItems осуществляет writeDeferredInstanceFromObjectReference (для pendingFirstSetProperty аллоцирован id — мы должны записать помимо собственно ссылки, сам объект), иначе же мы тут проверяем,
-    // должны ли мы для этого аллоцированного id создавать deferredInstanceFromObjectReference — если родитель объекта является динамическим, то да, должны.
+    // 2
     if (pendingFirstSetProperty != null) {
       ByteRange byteRange = writer.getBlockOut().startRange();
       writeDeferredInstanceFromObjectReference(TARGET, objectInstance, deferredParentInstance, referenceInstance);
@@ -289,9 +284,7 @@ class StateWriter {
       pendingFirstSetProperty = null;
     }
     else {
-      // если контекст статический (а это так, раз вызван этот метод) и pendingFirstSetProperty равен null
-      // (то есть не было вообще никаких state specific attributes (раз контекст статический, значит pendingFirstSetProperty не обнулялось в includeIn)),
-      // то значит аллоцирование id было вызвано выражением биндинга в каком-либо атрибуте 
+      // 3
       DeferredInstanceFromObjectReference deferredInstanceFromObjectReference = new DeferredInstanceFromObjectReference(objectInstance, deferredParentInstance);
       injectedASWriter.setDeferredReferenceForObjectWithExplicitId(deferredInstanceFromObjectReference, referenceInstance);
 

@@ -164,8 +164,7 @@ public class AbcFilter {
               byteBuffer.position(oldPosition);
             }
 
-            // для flex 4.5 мы можем размещать наши классы сразу после StyleProtoChain, но для 4.1 (из него еще не вынесли mx.swc) не можем — CSSStyleDeclaration определяется позже, поэтому мы размещаем как раз после него
-            // в то же время располагать после CSSStyleDeclaration для 4.5 мы не можем, поэтому место инжектирования зависит от версии flex sdk
+            // 4
             if (isStyleProtoChain ? flexSdkVersion.equals("4.5") : (flexSdkVersion.equals("4.1") && name.equals("mx.styles:CSSStyleDeclaration"))) {
               flexInjected = true;
 

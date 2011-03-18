@@ -137,11 +137,7 @@ public class LibraryCollector {
     }
   }
 
-  /**
-   * not legal case for flex
-   * А вообще нельзя такое иметь. Нельзя. Потому что CodeContext, собирающий манифесты, при ModuleOrderEntry берет из такого модуля только и только манифесты во flex-config, но не смотрит на exportable lib
-   * А во Flex SDK есть такая вот порнография — http://juick.com/develar/1217004 — Поэтому это может быть причиной мистических ошибок (ComboBase не будет квалифицирован, то есть как и что будет в runtime, непредсказуемо).
-   */
+  // 7
   private void collectLibrariesFromModuleDependency(Module module) {
     for (OrderEntry o : ModuleRootManager.getInstance(module).getOrderEntries()) {
       if (!(o instanceof ExportableOrderEntry) || !((ExportableOrderEntry) o).isExported()) {
