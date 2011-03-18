@@ -4,7 +4,7 @@
 import cocoa.SegmentedControl;
 import cocoa.tabView.TabView;
 
-import com.intellij.flex.uiDesigner.flex.DocumentReader;
+import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.flex.StylePane;
 import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.CssRulesetPrinter;
 import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.Interactor;

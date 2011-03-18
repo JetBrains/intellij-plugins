@@ -180,12 +180,13 @@ public class Client {
     assert virtualFile != null;
     DocumentFileManager documentFileManager = DocumentFileManager.getInstance();
     final boolean registered = !force && documentFileManager.isRegistered(virtualFile);
-    final int factoryId = documentFileManager.getId(virtualFile, psiFile, null);
+    final DocumentFileManager.DocumentInfo factoryInfo = documentFileManager.getId(virtualFile, psiFile, null);
     if (!registered) {
       beginMessage(ClientMethod.registerDocumentFactory);
       writeVirtualFile(virtualFile, out);
+      out.writeAmfUtf(factoryInfo.getClassName());
       out.writeInt(module.hashCode());
-      out.writeShort(factoryId);
+      out.writeShort(factoryInfo.getId());
 
       XmlFile[] subDocuments = mxmlWriter.write(psiFile);
       if (subDocuments != null) {
@@ -200,7 +201,7 @@ public class Client {
       }
     }
     
-    return factoryId;
+    return factoryInfo.getId();
   }
 
   public void qualifyExternalInlineStyleSource() {

@@ -84,10 +84,10 @@ public class PrimitiveAmfOutputStream extends OutputStream {
   }
   
   public void writeAmfUtf(String s) {
-    writeAmfUTF(s, false);
+    writeAmfUtf(s, false);
   }
 
-  public final void writeAmfUTF(CharSequence s, boolean shiftLength) {
+  public final void writeAmfUtf(CharSequence s, boolean shiftLength) {
     final int strlen = s.length();
     int utflen = 0;
     int c;
@@ -241,7 +241,7 @@ public class PrimitiveAmfOutputStream extends OutputStream {
       write(0);
     }
     else {
-      writeAmfUTF(s, false);
+      writeAmfUtf(s, false);
     }
   }
 

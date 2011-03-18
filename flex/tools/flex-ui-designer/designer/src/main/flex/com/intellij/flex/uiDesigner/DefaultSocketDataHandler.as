@@ -75,16 +75,13 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   private function registerDocumentFactory(data:IDataInput, messageSize:int):void {
     var bytes:ByteArray = new ByteArray();
     var prevBytesAvailable:int = data.bytesAvailable;
-    var documentFactory:DocumentFactory = new DocumentFactory(bytes, VirtualFileImpl.create(data), moduleManager.getById(data.readInt()));
+    var documentFactory:DocumentFactory = new DocumentFactory(bytes, VirtualFileImpl.create(data), data.readUTFBytes(AmfUtil.readUInt29(data)), moduleManager.getById(data.readInt()));
     documentFactoryManager.register(data.readShort(), documentFactory);
     
     stringRegistry.readStringTable(data);
  
-    i++;
     data.readBytes(bytes, 0, messageSize - (prevBytesAvailable - data.bytesAvailable));
   }
-  
-  private static var i:int;
 
   private function openDocument(data:IDataInput):void {
     var documentFactory:DocumentFactory = documentFactoryManager.get(data.readUnsignedShort());

@@ -51,7 +51,7 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
     write(STRING_ALIAS);
     for (String s : array) {
       write(Amf3Types.STRING);
-      writeAmfUTF(s, true);
+      writeAmfUtf(s, true);
     }
   }
   
@@ -63,7 +63,7 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
     write(STRING_ALIAS);
     for (String s : collection) {
       write(Amf3Types.STRING);
-      writeAmfUTF(s, true);
+      writeAmfUtf(s, true);
     }
   }
   
@@ -130,7 +130,7 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
       write(1);
     }
     else if (!byReference(s)) {
-      writeAmfUTF(s, true);
+      writeAmfUtf(s, true);
     }
   }
 

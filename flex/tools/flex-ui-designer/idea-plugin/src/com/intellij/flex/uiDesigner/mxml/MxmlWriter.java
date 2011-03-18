@@ -247,7 +247,7 @@ public class MxmlWriter {
           }
           
           writer.write(JSCommonTypeNames.STRING_CLASS_NAME);
-          out.writeAmfUTF(((XmlText) child).getValue(), false);
+          out.writeAmfUtf(((XmlText) child).getValue(), false);
         }
       }
       else if (child instanceof XmlTag) {
@@ -396,7 +396,7 @@ public class MxmlWriter {
       CharSequence v = XmlTagValueProvider.getDisplay(tag);
       if (isArray) {
         writer.write(JSCommonTypeNames.STRING_CLASS_NAME);
-        out.writeAmfUTF(v, false);
+        out.writeAmfUtf(v, false);
       }
       else {
         writeSubstitutedString(v);
@@ -449,6 +449,8 @@ public class MxmlWriter {
       if (!cssDeclarationSourceDefined) {
         defineInlineCssDeclaration(element.getParent());
       }
+      
+      writer.writeNullable(propertyProcessor.getNameForStyle());
       out.writeUInt29(element.getTextOffset());
     }
     else {

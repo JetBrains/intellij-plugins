@@ -16,7 +16,7 @@ public class DictionaryWriter extends CollectionWriter {
   public void writeTrue(String key) {
     // string reference table not used
     out.write(Amf3Types.STRING);
-    out.writeAmfUTF(key, true);
+    out.writeAmfUtf(key, true);
 
     out.write(Amf3Types.TRUE);
     counter++;

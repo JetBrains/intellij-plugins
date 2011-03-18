@@ -36,6 +36,7 @@ class PropertyProcessor {
   private final BaseWriter writer;
   
   private String name;
+  private String nameForStyle;
   private boolean isStyle;
   
   private final ObjectIntHashMap<String> classFactoryMap = new ObjectIntHashMap<String>();
@@ -52,6 +53,10 @@ class PropertyProcessor {
   
   public String getName() {
     return name;
+  }
+  
+  public String getNameForStyle() {
+    return nameForStyle;
   }
   
   public boolean isStyle() {
@@ -106,6 +111,7 @@ class PropertyProcessor {
     }
     else {
       if (isStyle && name.equals("skinClass") && "Class".equals(descriptor.getType())) {
+        nameForStyle = name;
         name = "skinFactory";
       }
       
@@ -115,6 +121,7 @@ class PropertyProcessor {
 
   public void reset() {
     classFactoryMap.clear();
+    nameForStyle = null;
   }
 
   interface ValueWriter {
@@ -253,7 +260,7 @@ class PropertyProcessor {
               boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
               if (psiFile instanceof XmlFile) {
                 if (inSourceContent) {
-                  writer.writeDocumentFactoryReference(DocumentFileManager.getInstance().getId(virtualFile, (XmlFile) psiFile, unregisteredDocumentFactories));
+                  writer.writeDocumentFactoryReference(DocumentFileManager.getInstance().getId(virtualFile, (XmlFile) psiFile, unregisteredDocumentFactories).getId());
                   return;
                 }
               }

@@ -1,4 +1,5 @@
-package com.intellij.flex.uiDesigner.flex {
+package com.intellij.flex.uiDesigner {
+import com.intellij.flex.uiDesigner.flex.*;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 

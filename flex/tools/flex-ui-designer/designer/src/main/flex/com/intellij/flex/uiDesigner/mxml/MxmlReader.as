@@ -11,7 +11,7 @@ import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.StyleDeclarationProxy;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
-import com.intellij.flex.uiDesigner.flex.DocumentReader;
+import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
@@ -199,15 +199,14 @@ public final class MxmlReader implements DocumentReader {
             inlineCssDeclarationSource = InlineCssRuleset.createInline(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input), context.file);
           }
           cssPropertyDescriptor = new CssDeclaration();
-          cssPropertyDescriptor.name = propertyName;
+          cssPropertyDescriptor.name = stringRegistry.read(input) || propertyName;
           cssPropertyDescriptor.textOffset = AmfUtil.readUInt29(input);
           inlineCssDeclarationSource.declarations.push(cssPropertyDescriptor);
           propertyHolder = cssPropertyDescriptor;
-          propertyName = "value";
-
           if (input.readBoolean()) {
-            moduleContext.effectManagerClass[new QName(getMxNs(), "setStyle")](cssPropertyDescriptor.name, object);
+            moduleContext.effectManagerClass[new QName(getMxNs(), "setStyle")](propertyName, object);
           }
+          propertyName = "value";
           break;
 
         case PropertyClassifier.ID:
@@ -296,6 +295,9 @@ public final class MxmlReader implements DocumentReader {
         
         case Amf3Types.DOCUMENT_FACTORY_REFERENCE:
           propertyHolder[propertyName] = readDocumentFactory();
+          if (cssPropertyDescriptor != null) {
+            cssPropertyDescriptor.type = CssPropertyType.CLASS_REFERENCE;
+          }
           break;
         
         case STRING_REFERENCE:

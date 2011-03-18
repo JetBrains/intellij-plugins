@@ -31,7 +31,7 @@ public class StyleTest extends MxmlWriterTestBase {
   
   @JSTestOptions({WithGumboSdk, WithFlexSdk})
   @Flex(version="4.5")
-  public void _testComponentWithCustomSkin() throws Exception {
+  public void testComponentWithCustomSkin() throws Exception {
     testFile("ComponentWithCustomSkin.mxml", "CustomSkin.mxml");
   }
 }

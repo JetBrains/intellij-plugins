@@ -40,7 +40,7 @@ public class AppTest extends AppTestBase {
     lock = new CountDownLatch(1);
     AmfOutputStream out = designerAppManager.getClient().getOutput();
     out.write(1);
-    out.writeAmfUTF("close", false);
+    out.writeAmfUtf("close", false);
     out.write(3);
     designerAppManager.getClient().flush();
     

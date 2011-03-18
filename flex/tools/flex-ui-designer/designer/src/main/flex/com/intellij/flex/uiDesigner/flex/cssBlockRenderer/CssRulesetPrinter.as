@@ -52,7 +52,6 @@ public class CssRulesetPrinter {
   public function createTextBlock(ruleset:CssRuleset, index:int):TextBlock {
     var block:TextBlock;
     var content:ContentElement;
-    var lp:LayoutProperties;
     // inline
     if (ruleset.inline) {
       if (index < ruleset.declarations.length) {

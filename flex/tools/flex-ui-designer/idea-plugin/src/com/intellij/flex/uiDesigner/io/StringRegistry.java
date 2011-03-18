@@ -40,7 +40,7 @@ public class StringRegistry {
       reference = table.size() + 1;
       table.put(string, reference);
       writer.counter++;
-      writer.out.writeAmfUTF(string, false);
+      writer.out.writeAmfUtf(string, false);
     }
     
     return reference;
@@ -85,7 +85,11 @@ public class StringRegistry {
       return stringRegistry.getNameReference(string, this);
     }
     
-    public void writeReference(@Nullable String string, PrimitiveAmfOutputStream out) {
+    public void write(String string, PrimitiveAmfOutputStream out) {
+      out.writeUInt29(getReference(string));
+    }
+    
+    public void writeNullable(@Nullable String string, PrimitiveAmfOutputStream out) {
       if (string == null) {
         out.write(0);
       }

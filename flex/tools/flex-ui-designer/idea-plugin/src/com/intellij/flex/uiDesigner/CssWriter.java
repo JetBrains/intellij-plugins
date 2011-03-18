@@ -69,7 +69,7 @@ public class CssWriter {
         CssTermList value = declaration.getValue();
 
         propertyOut = declarationVectorWriter.getOutputForIteration();
-        stringWriter.writeReference(declaration.getPropertyName(), propertyOut);
+        stringWriter.writeNullable(declaration.getPropertyName(), propertyOut);
         
         textOffset = declaration.getTextOffset();
         propertyOut.writeUInt29(documentWindow == null ? textOffset : documentWindow.injectedToHost(textOffset));
@@ -91,8 +91,8 @@ public class CssWriter {
     outputForCustomData.write(namespaces.length);
     if (namespaces.length > 0) {
       for (CssNamespace cssNamespace : namespaces) {
-        stringWriter.writeReference(cssNamespace.getPrefix(), outputForCustomData);
-        stringWriter.writeReference(cssNamespace.getUri(), outputForCustomData);
+        stringWriter.writeNullable(cssNamespace.getPrefix(), outputForCustomData);
+        stringWriter.writeNullable(cssNamespace.getUri(), outputForCustomData);
       }
     }
 
@@ -122,13 +122,13 @@ public class CssWriter {
             if (!subject.equals("global")) {
               LOG.warn("unqualified type selector " + simpleSelector.getText());
             }
-            stringWriter.writeReference(subject, out);
+            stringWriter.writeNullable(subject, out);
             out.write(0);
           }
           else {
-            stringWriter.writeReference(typeSelectorDescriptor.getQualifiedName(), out);
-            stringWriter.writeReference(subject, out);
-            stringWriter.writeReference(simpleSelector.getNamespaceName(), out);
+            stringWriter.writeNullable(typeSelectorDescriptor.getQualifiedName(), out);
+            stringWriter.writeNullable(subject, out);
+            stringWriter.writeNullable(simpleSelector.getNamespaceName(), out);
           }
         }
 
@@ -149,7 +149,7 @@ public class CssWriter {
             LOG.error("unknown selector suffix " + selectorSuffix.getText());
           }
           
-          stringWriter.writeReference(selectorSuffix.getName(), out);
+          stringWriter.writeNullable(selectorSuffix.getName(), out);
         }
       }
     }
@@ -233,7 +233,7 @@ public class CssWriter {
     else {
       propertyOut.write(CssPropertyType.CLASS_REFERENCE);
       declarationVectorWriter.writeObjectValueHeader("c");
-      stringWriter.writeReference(StringUtil.stripQuotesAroundValue(className), propertyOut);
+      stringWriter.writeNullable(StringUtil.stripQuotesAroundValue(className), propertyOut);
     }
   }
 

@@ -5,14 +5,17 @@ import flash.utils.IDataInput;
 import flash.utils.IDataOutput;
 import flash.utils.IExternalizable;
 
-public class ClassReference implements IExternalizable {
-  public var className:String;
+public class ClassReferenceImpl implements IExternalizable, ClassReference {
+  private var _className:String;
+   public function get className():String {
+    return _className;
+  }
 
   public function writeExternal(output:IDataOutput):void {
   }
 
   public function readExternal(input:IDataInput):void {
-    className = StringRegistry.instance.read(input);
+    _className = StringRegistry.instance.read(input);
   }
 }
 }

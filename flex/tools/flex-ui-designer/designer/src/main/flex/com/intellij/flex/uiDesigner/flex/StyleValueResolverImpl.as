@@ -13,7 +13,7 @@ public class StyleValueResolverImpl implements StyleValueResolver {
   }
 
   public function resolve(propertyDescriptor:CssDeclaration):* {
-    if (propertyDescriptor.type == CssPropertyType.CLASS_REFERENCE) {
+    if (propertyDescriptor.value is ClassReferenceImpl) {
       return applicationDomain.getDefinition(ClassReference(propertyDescriptor.value).className);
     }
     else if (propertyDescriptor.type == CssPropertyType.EMBED) {

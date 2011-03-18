@@ -5,10 +5,16 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
   private var _data:ByteArray;
   public var module:Module;
   
-  public function DocumentFactory(data:ByteArray, file:VirtualFile, module:Module) {
+  public function DocumentFactory(data:ByteArray, file:VirtualFile, className:String, module:Module) {
     _data = data;
     _file = file;
+    _className = className;
     this.module = module;
+  }
+  
+  private var _className:String;
+  public function get className():String {
+    return _className;
   }
 
   public function get data():ByteArray {

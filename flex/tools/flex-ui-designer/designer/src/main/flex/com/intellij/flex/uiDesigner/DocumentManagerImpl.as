@@ -4,7 +4,7 @@ import cocoa.DocumentWindow;
 import com.intellij.flex.uiDesigner.css.CssReader;
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.flex.DocumentContainer;
-import com.intellij.flex.uiDesigner.flex.DocumentReader;
+import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.flex.ProjectView;
 import com.intellij.flex.uiDesigner.flex.StyleValueResolverImpl;
 

@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
-import com.intellij.flex.uiDesigner.flex.ClassReference;
+import com.intellij.flex.uiDesigner.flex.ClassReferenceImpl;
 import com.intellij.flex.uiDesigner.flex.Embed;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
@@ -12,7 +12,7 @@ import flash.utils.IDataInput;
 registerClassAlias("d", CssRuleset);
 registerClassAlias("p", CssDeclaration);
 registerClassAlias("f", VirtualFileImpl);
-registerClassAlias("c", ClassReference);
+registerClassAlias("c", ClassReferenceImpl);
 registerClassAlias("e", Embed);
 
 public final class LibrarySet {

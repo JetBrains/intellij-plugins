@@ -133,7 +133,11 @@ public final class BaseWriter {
   }
 
   public void write(String classOrPropertyName) {
-    out.writeUInt29(getNameReference(classOrPropertyName));
+    stringWriter.write(classOrPropertyName, out);
+  }
+  
+  public void writeNullable(String classOrPropertyName) {
+    stringWriter.writeNullable(classOrPropertyName, out);
   }
 
   @SuppressWarnings({"UnusedDeclaration"})
@@ -145,11 +149,11 @@ public final class BaseWriter {
     out.writeUInt29(propertyNameReference);
     out.write(PropertyClassifier.PROPERTY);
     out.write(Amf3Types.STRING);
-    out.writeAmfUTF(value, false);
+    out.writeAmfUtf(value, false);
   }
   
   public void writeProperty(String propertyName, int value) {
-    stringWriter.writeReference(propertyName, out);
+    stringWriter.writeNullable(propertyName, out);
     out.write(PropertyClassifier.PROPERTY);
     out.writeAmfInt(value);
   }
@@ -157,7 +161,7 @@ public final class BaseWriter {
   public void writeIdProperty(String value) {
     write(FlexMxmlLanguageAttributeNames.ID);
     out.write(PropertyClassifier.ID);
-    out.writeAmfUTF(value, false);
+    out.writeAmfUtf(value, false);
   }
   
   public void writeStringReference(String propertyName, String reference) {
@@ -177,12 +181,12 @@ public final class BaseWriter {
   
   public void writeStringReference(String reference) {
     out.write(AmfExtendedTypes.STRING_REFERENCE);
-    out.writeUInt29(getNameReference(reference));
+    stringWriter.write(reference, out);
   }
   
   public void writeString(CharSequence value) {
     out.write(Amf3Types.STRING);
-    out.writeAmfUTF(value, false);
+    out.writeAmfUtf(value, false);
   }
   
   public void writeObjectReference(String propertyName, int reference) {
@@ -204,6 +208,7 @@ public final class BaseWriter {
     writeObjectReference(propertyName, getObjectId(context));
   }
 
+  @SuppressWarnings({"UnusedDeclaration"})
   public void writeArrayHeader(int propertyName) {
     out.writeUInt29(propertyName);
     out.write(PropertyClassifier.PROPERTY);
@@ -270,7 +275,7 @@ public final class BaseWriter {
       final String colorName = value.toLowerCase();
       if (isPrimitiveStyle) {
         out.write(CssPropertyType.COLOR_STRING);
-        stringWriter.writeReference(colorName, out);
+        stringWriter.writeNullable(colorName, out);
       }
       value = ColorSampleLookupValue.getHexCodeForColorName(colorName).substring(1);
     }

@@ -19,7 +19,7 @@ class TestClient extends Client {
     blockOut.end();
     
     out.write(1);
-    out.writeAmfUTF(filename, false);
+    out.writeAmfUtf(filename, false);
     out.write(c);
     
     flush();
