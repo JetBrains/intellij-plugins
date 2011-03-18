@@ -7,9 +7,11 @@ import flash.text.engine.FontWeight;
 // todo grab from server
 public class CssElementFormat {
   private static const FONT_DESCRIPTION:FontDescription = new FontDescription("Monaco, Consolas");
-  private static const FONT_BOLD_ESCRIPTION:FontDescription = new FontDescription("Monaco, Consolas", FontWeight.BOLD);
+//  private static const FONT_BOLD_ESCRIPTION:FontDescription = new FontDescription("Monaco, Consolas", FontWeight.BOLD);
+  
+  private static const LUCIDA_FONT_BOLD_ESCRIPTION:FontDescription = new FontDescription("Lucida Grande, Segoe UI, Sans", FontWeight.BOLD);
 
-  public static const fileLinkHover:ElementFormat = new ElementFormat(FONT_BOLD_ESCRIPTION, 11, 0x0000ff);
+  public static const fileLinkHover:ElementFormat = new ElementFormat(LUCIDA_FONT_BOLD_ESCRIPTION, 11, 0x0000ff);
   
   public static const linkHover:ElementFormat = new ElementFormat(FONT_DESCRIPTION, 12, 0x0000ff);
   linkHover.breakOpportunity = BreakOpportunity.ANY;

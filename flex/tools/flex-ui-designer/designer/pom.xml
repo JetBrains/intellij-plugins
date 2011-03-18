@@ -81,6 +81,10 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <!-- we don't want add additionalSourcePath another path -->
+          <output>../flex-injection/target/assets</output>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.sonatype.flexmojos</groupId>

@@ -184,7 +184,7 @@ class TextDecoration implements ITextDecor {
     var i:int = 2;
     var n:int = _textEngine.blockFactory.numBlocks - 1 /* close brace */;
     if (ruleset.inline) {
-      i = 0;
+      i = 1;
       n++;
     }
 

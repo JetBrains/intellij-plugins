@@ -35,9 +35,9 @@
     <output url="file://$MODULE_DIR$/../../../designer/target/classes" />
     <output-test url="file://$MODULE_DIR$/../../../designer/target/test-classes" />
     <content url="file://$MODULE_DIR$/../../../designer">
-      <sourceFolder url="file://$MODULE_DIR$/../../../designer/src/main/flex" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../../designer/src/main/resources" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../../designer/src/main/locales/en_US" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../designer/src/main/flex" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/../../../designer/target" />
     </content>
     <orderEntry type="inheritedJdk" />

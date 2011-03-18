@@ -39,7 +39,7 @@ public class TextBlockFactory implements ITextBlockFactory {
   }
   
   public function get numBlocks():int {
-    return ruleset.inline ? ruleset.declarations.length : (ruleset.declarations.length + 2 /* selector + close brace */ + 1 /* file source */);
+    return ruleset.inline ? (ruleset.declarations.length + 1) : (ruleset.declarations.length + 2 /* selector + close brace */ + 1 /* file source */);
   }
 
   private var _engine:ITextEngine;

@@ -12,6 +12,8 @@ import com.intellij.flex.uiDesigner.css.CssSelector;
 import com.intellij.flex.uiDesigner.flex.ClassReference;
 import com.intellij.flex.uiDesigner.flex.CssElementFormat;
 
+import flash.filesystem.File;
+
 import flash.text.engine.ContentElement;
 import flash.text.engine.GroupElement;
 import flash.text.engine.TextBlock;
@@ -51,17 +53,18 @@ public class CssRulesetPrinter {
   public var availableWidth:Number;
 
   public function createTextBlock(ruleset:CssRuleset, index:int):TextBlock {
+    if (index == 0) {
+      return printFileSource(ruleset);
+    }
+    
     var block:TextBlock;
     var content:ContentElement;
     // inline
     if (ruleset.inline) {
-      if (index < ruleset.declarations.length) {
-        content = printEntry(ruleset.declarations[index], ruleset);
+      if ((index - 1) < ruleset.declarations.length) {
+        content = printEntry(ruleset.declarations[index - 1], ruleset);
       }
-    }
-    else if (index == 0) {
-      return printFileSource(ruleset);
-    }
+    } 
     else if (index == 1) {
       content = createSelector(ruleset);
     }
@@ -99,7 +102,7 @@ public class CssRulesetPrinter {
       var url:String = ruleset.file.url;
       if (StringUtil.startsWith(url, "jar://")) {
         var end:int = url.length - 14;
-        name = url.substring(url.lastIndexOf("/", end - 5) + 1, end);
+        name = url.substring(url.lastIndexOf(File.separator, end - 5) + 1, end);
       }
     }
     
