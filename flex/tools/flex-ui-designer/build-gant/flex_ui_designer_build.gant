@@ -1,13 +1,35 @@
 // this script should be executed *after* project compiled, as it uses classes of 'flex-ui-designer' module
-def execute(targetFolder) {
+
+// this is called to build artifacts to be used when running from sources
+target('default': "Build Flex UI Designer artifacts") {
+  home = guessHome(this)
+  home = "$home/../../.."; // IDEA\flex\tools\flex-ui-designer is detected
+  doExecute("$home", "$home/out", "$home/out/classes/production/flex-ui-designer")
+}
+
+def guessHome(Script script) {
+  File home = new File(script["gant.file"].substring("file:".length()))
+
+  while (home != null) {
+    if (home.isDirectory()) {
+      if (new File(home, ".idea").exists()) return home.getCanonicalPath()
+    }
+    home = home.getParentFile()
+  }
+  return null
+}
+
+def execute(home, sandbox, targetFolder) {
   if (isDefined("pluginFilter")) {
     if (!pluginFilter.contains("flex-ui-designer")) return
   }
-
   project.stage("building Flex library for flex-ui-designer plugin")
+  doExecute(home, sandbox, targetFolder)
+}
 
+private def doExecute(home, sandbox, targetFolder) {
   flexBuildHome = "$home/flex/tools/flex-ui-designer/build-gant";
-  flexSandbox = "$paths.sandbox/ui-designer"
+  flexSandbox = "$sandbox/ui-designer"
 
   ant.delete(dir: "$flexSandbox")
   ant.mkdir(dir: "$flexSandbox")
@@ -22,9 +44,9 @@ def execute(targetFolder) {
   buildFlex("flex-injection-4.1", "flex-injection", flexBuildHome, flexSandbox, false)
   buildFlex("flex-injection-4.5", "flex-injection", flexBuildHome, flexSandbox, false)
 
-  compileAbcBuilder()
-  invokeAbcBuilder("4.1")
-  invokeAbcBuilder("4.5")
+  compileAbcBuilder(sandbox)
+  invokeAbcBuilder(sandbox, "4.1")
+  invokeAbcBuilder(sandbox, "4.5")
 
   buildFlex("app-plugin-api", flexBuildHome, flexSandbox, true)
 
@@ -55,21 +77,21 @@ private def buildAssets() {
   }
 }
 
-private def compileAbcBuilder() {
+private def compileAbcBuilder(sandbox) {
   ant.javac(srcdir: "$flexBuildHome/../abc-builder-maven-module/src/main/java", destdir: "$flexSandbox", fork: "yes") {
     classpath {
-      pathelement(path: "$paths.sandbox/classes/production/flex-ui-designer")
+      pathelement(path: "$sandbox/classes/production/flex-ui-designer")
       pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
     }
   }
 }
 
-private def invokeAbcBuilder(flexVersion) {
+private def invokeAbcBuilder(sandbox, flexVersion) {
   ant.java(className: "com.intellij.flex.uiDesigner.AbcBuilderMojo", fork: "true", failOnError: "true") {
     classpath {
       pathelement(path: "$flexSandbox")
-      pathelement(path: "$paths.sandbox/classes/production/flex-ui-designer")
-      pathelement(path: "$paths.distAll/lib/util.jar")
+      pathelement(path: "$sandbox/classes/production/flex-ui-designer")
+      pathelement(path: "$sandbox/classes/production/util")
       pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
     }
     arg(value: "$flexSandbox") // folder

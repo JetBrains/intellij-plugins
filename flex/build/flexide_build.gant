@@ -185,7 +185,7 @@ target('default': "Build artifacts") {
 
   // script will do nothing if 'flex-ui-designer' plugin is not part of pluginFilter
   def flex_ui_designer_build_script = includeFile("$home/flex/tools/flex-ui-designer/build-gant/flex_ui_designer_build.gant")
-  flex_ui_designer_build_script.execute("$home/out/flex-ide/classes/production/flex-ui-designer")
+  flex_ui_designer_build_script.execute("$home", "$paths.sandbox", "$home/out/flex-ide/classes/production/flex-ui-designer")
 
   usedJars.add("$home/community/lib/looks-2.2.2.jar")
 
