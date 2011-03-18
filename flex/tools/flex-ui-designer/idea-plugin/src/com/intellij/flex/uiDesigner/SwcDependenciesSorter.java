@@ -39,13 +39,13 @@ public class SwcDependenciesSorter {
 
   private static long createInjectionAbc(String flexSdkVersion, boolean force) throws IOException {
     final String rootPath = DebugPathManager.getFudHome() + "/flex-injection/target";
-    File abcSource = new File(rootPath + "/flex-injection-" + flexSdkVersion + "-1.0-SNAPSHOT.swf");
-    File abc = new File(rootPath + "/flex-injection-" + flexSdkVersion + ".abc");
+    File abcSource = ComplementSwfBuilder.getSourceFile(rootPath, flexSdkVersion);
+    File abc = ComplementSwfBuilder.getAbcFile(rootPath, flexSdkVersion);
     if (!force && abcSource.lastModified() < abc.lastModified()) {
       return abc.lastModified();
     }
 
-    ComplementSwfBuilder.build(abcSource, abc, rootPath, flexSdkVersion);
+    ComplementSwfBuilder.build(rootPath, flexSdkVersion);
     return abc.lastModified();
   }
 

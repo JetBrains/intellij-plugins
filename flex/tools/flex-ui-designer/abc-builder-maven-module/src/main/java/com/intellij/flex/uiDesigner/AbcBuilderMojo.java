@@ -7,6 +7,9 @@ import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.IllegalArgumentException;
+import java.lang.RuntimeException;
+import java.lang.String;
 
 /**
  * @goal generate
@@ -32,7 +35,7 @@ public class AbcBuilderMojo extends AbstractMojo {
   public void execute() throws MojoExecutionException, MojoFailureException {
     try {
       String rootPath = project.getBuild().getDirectory();
-      ComplementSwfBuilder.build(new File(rootPath + "/flex-injection-" + flexVersion + "-1.0-SNAPSHOT.swf"), null, rootPath, flexVersion);
+      ComplementSwfBuilder.build(rootPath, flexVersion);
     }
     catch (IOException e) {
       throw new MojoFailureException("", e);
