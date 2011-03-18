@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.View;
 
+import com.intellij.flex.uiDesigner.css.StyleManagerEx;
+
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 
 public class Document {
@@ -24,8 +26,8 @@ public class Document {
     return documentFactory.module;
   }
  
-  private var _styleManager:Object;
-  public function get styleManager():Object {
+  private var _styleManager:StyleManagerEx;
+  public function get styleManager():StyleManagerEx {
     return _styleManager == null ? module.styleManager : _styleManager;
   }
 }

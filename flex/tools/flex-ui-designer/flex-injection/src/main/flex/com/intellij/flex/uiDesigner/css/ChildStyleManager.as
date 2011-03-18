@@ -29,7 +29,7 @@ public class ChildStyleManager extends AbstractStyleManager implements IStyleMan
   }
 
   public function registerInheritingStyle(styleName:String):void {
-    // если что-то в документе регистрируется как InheritingStyle – значит оно для всего модуля (в реальном-то приложении на документ нет отдельного StyleManager)
+    // If something in a document is registered as InheritingStyle - means it is for the whole module (there is no separate StyleManager for the document in real application)
     _parent.registerInheritingStyle(styleName);
   }
   

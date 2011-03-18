@@ -9,6 +9,7 @@ import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.StyleDeclarationProxy;
+import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
 import com.intellij.flex.uiDesigner.flex.DocumentReader;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
@@ -39,12 +40,12 @@ public final class MxmlReader implements DocumentReader {
 
   private var moduleContext:ModuleContext;
   internal var context:DocumentReaderContext;
-  private var styleManager:Object;
+  private var styleManager:StyleManagerEx;
 
   private var deferredMxContainers:Vector.<DisplayObjectContainer>;
   internal var objectTable:Vector.<Object>;
   
-  private var factoryContext:DeferredInstanceFromBytesContext;
+  internal var factoryContext:DeferredInstanceFromBytesContext;
 
   public function MxmlReader(stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager) {
     this.stringRegistry = stringRegistry;
@@ -55,7 +56,7 @@ public final class MxmlReader implements DocumentReader {
     return Class(moduleContext.applicationDomain.getDefinition(name));
   }
 
-  public function read2(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext, readStates:Boolean):Object {
+  public function read2(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object {
     this.input = input;
     
     var objectTableSize:int = readObjectTableSize();
@@ -64,7 +65,7 @@ public final class MxmlReader implements DocumentReader {
     this.styleManager = factoryContext.styleManager;
     this.context = factoryContext.readerContext;
     var object:Object = readObject(stringRegistry.read(input));
-    assert(factoryContext == null && objectTableSize == (objectTable == null ? 0 : objectTable.length));
+    assert(this.factoryContext == null && objectTableSize == (objectTable == null ? 0 : objectTable.length));
 
     this.moduleContext = null;
     this.styleManager = null;
@@ -104,7 +105,7 @@ public final class MxmlReader implements DocumentReader {
     return objectTableSize;
   }
 
-  public function read(input:IDataInput, documentReaderContext:DocumentReaderContext, styleManager:Object):Object {
+  public function read(input:IDataInput, documentReaderContext:DocumentReaderContext, styleManager:StyleManagerEx):Object {
     this.input = input;
     
     const objectTableSize:int = readObjectTableSize();
@@ -113,7 +114,7 @@ public final class MxmlReader implements DocumentReader {
     this.styleManager = styleManager;
     this.context = documentReaderContext;
     var object:Object = readObject(stringRegistry.read(input));
-    stateReader.read(this, input, object, factoryContext);
+    stateReader.read(this, input, object);
     injectedASReader.read(input, this);
 
     this.moduleContext = null;

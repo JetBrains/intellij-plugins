@@ -13,7 +13,7 @@ public final class FlexDocumentFactory implements IFactory {
   }
 
   public function newInstance():* {
-    return context.reader.read2(source.data, context, true);
+    return context.reader.read(source.data, context.readerContext, context.styleManager);
   }
 }
 }

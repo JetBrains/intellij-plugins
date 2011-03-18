@@ -36,13 +36,13 @@ class State {
   }
   
   public void addAddItems(AddItems override, Context parentContext, @Nullable SetPropertyOrStyle pendingFirstSetProperty) {
-    // Если все дети включены в некое состояние, то position их first, а в overrides они в обратном порядке, — мы сортируем для правильного layering
+    // if all children included in some state, then position is first, and in overrides are exists in reverse order, — we sort for correct layering
     AddItems activeAddItems = getActiveAddItems(parentContext);
     if (activeAddItems != null) {
       assert overrides.size() > 0;
       overrides.addBefore(activeAddItems, override);
     }
-    else if (pendingFirstSetProperty != null && overrides.contains(pendingFirstSetProperty) /* todo refactor, depends on — поддержка set property в нескольких состояниях — text.groupName="A" where groupName is A and B states */) {
+    else if (pendingFirstSetProperty != null && overrides.contains(pendingFirstSetProperty) /* todo refactor, depends on — support setProperty in several states — text.groupName="A" where groupName is A and B states */) {
       overrides.addBefore(pendingFirstSetProperty, override);
     }
     else {

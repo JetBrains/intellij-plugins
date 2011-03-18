@@ -17,7 +17,7 @@ import org.flyti.plexus.PlexusManager;
 
 public class Main extends MainWindowedApplication {
   private var invoked:Boolean;
-  // нельзя подключаться пока не будут загружены все плагины — так как плагин может переопределить некий компонент, используемый для.
+  // can not load until all plugins are loaded —  as a plugin can override a component used to.
   private var loadedPluginCounter:int;
 
   private var port:int;

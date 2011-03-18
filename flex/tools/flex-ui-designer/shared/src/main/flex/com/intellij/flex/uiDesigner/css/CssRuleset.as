@@ -64,7 +64,7 @@ public class CssRuleset implements IExternalizable {
       propertyDescriptor.fromAs = true;
       propertyDescriptor.value = value;
       if (_declarations.fixed) {
-        // we don't restore fixed after — раз уж в силу чего-то ему таки стали put, значит оно явно уже не fixed
+        // we don't restore fixed after — if anybody put, so, it is never fixed
         _declarations.fixed = false;
       }
       _declarations[_declarations.length] = propertyDescriptor;

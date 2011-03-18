@@ -21,7 +21,7 @@ public class AppTest extends BaseTestCase {
     assertThat(projectManager.project, nullValue());
     
     var openedWindows:Array = NativeApplication.nativeApplication.openedWindows;
-    // может не успеть закрыться
+    // it can not have time to be closed
     if (openedWindows.length == 1) {
       assertThat(NativeApplication.nativeApplication.activeWindow, nullValue());
       _asyncSuccessHandler();

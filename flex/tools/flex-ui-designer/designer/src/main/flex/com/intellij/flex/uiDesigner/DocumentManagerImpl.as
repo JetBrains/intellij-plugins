@@ -85,8 +85,8 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var cssReaderClass:Class = context.getClass("com.intellij.flex.uiDesigner.css.CssReaderImpl");
     var cssReader:CssReader = new cssReaderClass();
     cssReader.styleManager = context.styleManager; 
-    // FakeObjectProxy/FakeBooleanSetProxy/MergedCssStyleDeclaration ищут в списке от 0 к концу, поэтому мы добавляем в список в обратном порядке
-    // (потому что библиотека с индексом 4 переопределяет значение библиотеки с индексом 2)
+    // FakeObjectProxy/FakeBooleanSetProxy/MergedCssStyleDeclaration  fin d in list from 0 to end, then we add in list in reverce order
+    // (because the library with index 4 overrides the library with index 2)
     var librarySets:Vector.<LibrarySet> = context.librarySets;
     for (var i:int = librarySets.length - 1; i > -1; i--) {
       var libraries:Vector.<Library> = librarySets[i].libraries;

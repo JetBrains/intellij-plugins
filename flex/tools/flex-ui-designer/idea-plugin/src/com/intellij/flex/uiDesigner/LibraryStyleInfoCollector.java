@@ -58,7 +58,7 @@ public class LibraryStyleInfoCollector {
               bytes.writeUInt29(stringWriter.getReference(firstInfo.getAttributeName()) - 1);
             }
             
-            // Если в библиотеке определено свойство — то мы его считаем уникальным для всей библиотеки — мы делаем допущение, что не может быть у одного класса stylePName быть inherited, а у другого класса этой же библиотеки not inherited
+            // If the property is defined in the library — we it consider that unique for all library — we make an assumption that may not be in a class stylePName be inherited, and another class of the same library not inherited
             return false;
           }
         }, searchScope);

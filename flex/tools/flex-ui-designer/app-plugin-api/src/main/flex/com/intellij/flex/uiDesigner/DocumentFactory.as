@@ -17,7 +17,7 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
 
   private var _file:VirtualFile;
   public function get file():VirtualFile {
-    return null;
+    return _file;
   }
 
   public function get moduleContext():ModuleContext {

@@ -28,8 +28,8 @@ public dynamic class StyleDeclarationProxy extends ImmutableFakeObjectProxy {
   }
   
   /**
-   * в отличии от rulesets в MergedCssStyleDeclaration и mapList, declaration добавляются в обратном порядке — то есть последний имеет больший приоритет, чем первый
-   * (такая разница и нарушение конвенции связано с тем, что мы не можем изменить поведение StyleProtoChain)
+   * In difference from rulesets in MergedCssStyleDeclaration and mapList, declaration are added in reverse order — that is last has greater priority, than the first
+   * (such difference and convention violation due to the fact: we can not change the behavior of StyleProtoChain)
    */
   public function addDeclaration(declaration:CssStyleDeclaration):void {
     _declarations.fixed = false;

@@ -9,7 +9,7 @@ import flash.utils.IDataInput;
 internal final class StateReader {
   private var deferredInstancesForImmediateCreation:Vector.<DeferredInstanceFromBytesBase>;
   
-  public function read(reader:MxmlReader, data:IDataInput, object:Object, byteFactoryContext:DeferredInstanceFromBytesContext):void {
+  public function read(reader:MxmlReader, data:IDataInput, object:Object):void {
     const size:int = data.readByte();
     if (size == 0) {
       return;
@@ -18,7 +18,7 @@ internal final class StateReader {
     var states:Array = new Array(size);
     for (var i:int = 0; i < size; i++) {
       var state:Object = reader.readObject("com.intellij.flex.uiDesigner.flex.states.State");
-      state.context = byteFactoryContext;
+      state.context = reader.factoryContext;
       states[i] = state;
     }
     object.states = states;

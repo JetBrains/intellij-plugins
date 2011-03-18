@@ -330,8 +330,8 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     }
     
     _document = object;
-    // мы не можем оставлять FlexGlobals.topLevelApplication пустым, тот же VideoPlayer при открытии использует FlexGlobals.topLevelApplication как parent при открытии fullscreen
-    // но мы не можем и установить его в SystemManager, так как оно хочет UIComponent (для стилей)
+    // We can not leave empty FlexGlobals.topLevelApplication, as example, VideoPlayer uses FlexGlobals.topLevelApplication as parent when opening fullscreen
+    // but we can not set it in SystemManager, because it wants UIComponent (for style)
     FlexGlobals.topLevelApplication = object;
 
     if (object is IUIComponent) {
@@ -350,7 +350,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   }
 
   public function setActualDocumentSize(w:Number, h:Number):void {
-    // первоначально устанавливалось посредством setLayoutBoundsSize, но Application без explicit size вешается на Stage и слушает resize — изменить это поведение без инжектирования байт-кода мы не можем 
+    // originally set by setLayoutBoundsSize, but the Application without explicit size hangs on Stage and listen to resize - we can not change this behavior without the injection of the byte-code
     _document.width = w;
     _document.height = h;
   }

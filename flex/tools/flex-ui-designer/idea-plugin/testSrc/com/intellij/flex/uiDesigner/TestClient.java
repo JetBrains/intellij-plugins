@@ -14,9 +14,9 @@ class TestClient extends Client {
   }
   
   public void test(String filename, int c) throws IOException {
-    // метод только и только после openDocument и никаких вызовов между ними быть не должно
-    // не в тестах такое же соглашение, только там сразу после openDocument должен быть flush.
-//    blockOut.end();
+    // method only and only after openDocument and shouldn't be any calls between 
+    // in non-tests the same agreement, except must be flush after openDocument always
+    blockOut.end();
     
     out.write(1);
     out.writeAmfUTF(filename, false);

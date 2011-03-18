@@ -173,8 +173,6 @@ public class Client {
     int factoryId = registerDocumentFactoryIfNeed(module, psiFile, false);
     beginMessage(ClientMethod.openDocument);
     out.writeShort(factoryId);
-    
-    out.flush();
   }
 
   private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, boolean force) throws IOException {

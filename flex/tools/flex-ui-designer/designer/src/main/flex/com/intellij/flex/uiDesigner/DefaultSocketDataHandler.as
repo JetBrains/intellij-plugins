@@ -102,7 +102,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   public function pendingReadIsAllowable(method:int):Boolean {
-    return false; // ранее такое было для openDocument, но сейчас (после реализации концепции factory) оно читается сразу
+    return false; // was for openDocument, but now (after implement factory concept) it is read immediately (sync read)
   }
 }
 }
