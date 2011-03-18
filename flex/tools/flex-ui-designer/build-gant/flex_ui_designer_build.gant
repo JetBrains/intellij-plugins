@@ -1,0 +1,113 @@
+// this script should be executed *after* project compiled, as it uses classes of 'flex-ui-designer' module
+def execute(targetFolder) {
+  if (isDefined("pluginFilter")) {
+    if (!pluginFilter.contains("flex-ui-designer")) return
+  }
+
+  project.stage("building Flex library for flex-ui-designer plugin")
+
+  flexBuildHome = "$home/flex/tools/flex-ui-designer/build-gant";
+  flexSandbox = "$paths.sandbox/ui-designer"
+
+  ant.delete(dir: "$flexSandbox")
+  ant.mkdir(dir: "$flexSandbox")
+
+  ant.copy(toDir: "$flexSandbox/repo", overwrite: "true") {
+    fileset(dir: "$flexBuildHome/../build/repo")
+  }
+
+  stripSwcName("airglobal") // compiler needs airglobal.swc to have exactly such name
+
+  buildFlex("shared", flexBuildHome, flexSandbox, true)
+  buildFlex("flex-injection-4.1", "flex-injection", flexBuildHome, flexSandbox, false)
+  buildFlex("flex-injection-4.5", "flex-injection", flexBuildHome, flexSandbox, false)
+
+  compileAbcBuilder()
+  invokeAbcBuilder("4.1")
+  invokeAbcBuilder("4.5")
+
+  buildFlex("app-plugin-api", flexBuildHome, flexSandbox, true)
+
+  buildAssets()
+
+  buildFlex("designer", flexBuildHome, flexSandbox, false)
+  buildFlex("app-loader", flexBuildHome, flexSandbox, false)
+
+  ant.copy(file: "$flexSandbox/app-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
+  ant.copy(file: "$flexBuildHome/../designer/src/main/resources/descriptor.xml", todir: "$targetFolder")
+  ant.copy(file: "$flexSandbox/flex-injection-4.1.abc", todir: "$targetFolder")
+  ant.copy(file: "$flexSandbox/flex-injection-4.5.abc", todir: "$targetFolder")
+}
+
+private def buildAssets() {
+  ant.java(className: "org.flyti.assetBuilder.AssetBuilderMojo", fork: "true", failOnError: "true") {
+    classpath {
+      pathelement(path: "$flexBuildHome/libs/asset-builder-maven-plugin-1.4-SNAPSHOT.jar")
+      pathelement(path: "$flexBuildHome/libs/snakeyaml-1.8-s2.jar")
+      pathelement(path: "$flexBuildHome/libs/plexus-utils-2.0.6.jar")
+      pathelement(path: "$flexBuildHome/libs/jai-core-1.1.3.jar")
+      pathelement(path: "$flexBuildHome/libs/jai-codec-1.1.3.jar")
+      pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
+    }
+    arg(value: "$flexBuildHome/../designer/src/main/resources/assets.yml") // descriptor
+    arg(value: "$flexSandbox/assets") // output file
+    arg(value: "$flexBuildHome/../designer/src/main/resources") // sources
+  }
+}
+
+private def compileAbcBuilder() {
+  ant.javac(srcdir: "$flexBuildHome/../abc-builder-maven-module/src/main/java", destdir: "$flexSandbox", fork: "yes") {
+    classpath {
+      pathelement(path: "$paths.sandbox/classes/production/flex-ui-designer")
+      pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
+    }
+  }
+}
+
+private def invokeAbcBuilder(flexVersion) {
+  ant.java(className: "com.intellij.flex.uiDesigner.AbcBuilderMojo", fork: "true", failOnError: "true") {
+    classpath {
+      pathelement(path: "$flexSandbox")
+      pathelement(path: "$paths.sandbox/classes/production/flex-ui-designer")
+      pathelement(path: "$paths.distAll/lib/util.jar")
+      pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
+    }
+    arg(value: "$flexSandbox") // folder
+    arg(value: "$flexVersion") // flex version
+  }
+}
+
+def stripSwcName(name) {
+  ant.move(todir: "$flexSandbox/repo") {
+    fileset(dir: "$flexSandbox/repo")
+    regexpmapper(from: "^(.*)$name.*\\.swc\$", to: "\\1${name}.swc")
+  }
+}
+
+def buildFlex(appName, flexBuildHome, flexSandbox, isSwc) {
+  buildFlex(appName, appName, flexBuildHome, flexSandbox, isSwc)
+}
+
+def buildFlex(appName, srcFolderName, flexBuildHome, flexSandbox, isSwc) {
+  ant.copy(file: "$flexBuildHome/flex-configs/${appName}.xml", toDir: "$flexSandbox", overwrite: "true")
+
+  ant.replace(file: "$flexSandbox/${appName}.xml") {
+    replacefilter(token: "@@target@@", value: "$flexSandbox")
+    replacefilter(token: "@@source@@", value: "$flexBuildHome/../$srcFolderName/src/main")
+    replacefilter(token: "@@libs@@", value: "$flexBuildHome/libs")
+    replacefilter(token: "@@repo@@", value: "$flexSandbox/repo")
+  }
+
+  ant.java(className: "${isSwc ? "flex2.tools.Compc" : "flex2.tools.Mxmlc"}", fork: "true", failOnError: "true") {
+    jvmarg(value: "-Dsun.io.useCanonCaches=false")
+    jvmarg(value: "-Duser.language=en")
+    jvmarg(value: "-Duser.region=en")
+    classpath {
+      fileset(dir: "$flexBuildHome/libs") {
+        include(name: "*-4.5.0.18365.jar")
+      }
+    }
+    arg(value: "-load-config=$flexSandbox/${appName}.xml")
+  }
+
+}

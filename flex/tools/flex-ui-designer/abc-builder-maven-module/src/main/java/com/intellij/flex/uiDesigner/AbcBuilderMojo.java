@@ -41,4 +41,16 @@ public class AbcBuilderMojo extends AbstractMojo {
       throw new MojoFailureException("", e);
     }
   }
+
+  public static void main(String[] args) {
+    if (args.length != 2) {
+      throw new IllegalArgumentException("Usage: AbcBuilderMojo <folder> <flexVersion>");
+    }
+    try {
+      ComplementSwfBuilder.build(args[0], args[1]);
+    }
+    catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 }

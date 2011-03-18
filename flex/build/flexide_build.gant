@@ -3,7 +3,7 @@ import org.jetbrains.jps.LayoutInfo
 import org.jetbrains.jps.Module
 import static org.jetbrains.jps.idea.IdeaProjectLoader.guessHome
 
-includeTargets << new File("${guessHome(this as Script)}/community/build/scripts/utils.gant")
+includeTargets << new File("${guessHome(this)}/community/build/scripts/utils.gant")
 includeTargets << new File("${guessHome(this)}/build/scripts/libLicenses.gant")
 includeTool << Jps
 
@@ -33,7 +33,7 @@ setProperty("pluginFilter", [
             "less", "sass",
             "tasks", "tasks-core", "tasks-api", "jira-connector",
             "JavaScriptDebugger", "FirefoxConnector", "ChromeConnector",
-            "flex-plugin"
+            "flex-plugin", "flex-ui-designer"
             ])
 
 private List platformImplementationModules() {
@@ -183,9 +183,13 @@ target('default': "Build artifacts") {
     }
   }
 
+  // script will do nothing if 'flex-ui-designer' plugin is not part of pluginFilter
+  def flex_ui_designer_build_script = includeFile("$home/flex/tools/flex-ui-designer/build-gant/flex_ui_designer_build.gant")
+  flex_ui_designer_build_script.execute("$home/out/flex-ide/classes/production/flex-ui-designer")
+
   usedJars.add("$home/community/lib/looks-2.2.2.jar")
 
-  // TODO searchable options should be build with all-modules classpath
+  // TODO searchable options should be built with all-modules classpath
   //buildSearchableOptions()
 
   wireBuildDate(buildNumber)
