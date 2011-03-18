@@ -5,7 +5,8 @@ import cocoa.util.TextLineUtil;
 import com.intellij.flex.uiDesigner.Module;
 import com.intellij.flex.uiDesigner.css.CssCondition;
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
-import com.intellij.flex.uiDesigner.css.CssPropertyType;
+import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
+import com.intellij.flex.uiDesigner.css.CssDeclarationType;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.css.CssSelector;
 import com.intellij.flex.uiDesigner.flex.ClassReference;
@@ -175,25 +176,25 @@ public class CssRulesetPrinter {
 
   private function determinateTypeForExternalInlineStyle(value:*):int {
     if (value === null) {
-      return CssPropertyType.NULL;
+      return CssDeclarationType.NULL;
     }
     else if (value is Boolean) {
-      return CssPropertyType.BOOL;
+      return CssDeclarationType.BOOL;
     }
     else if (value is String) {
-      return CssPropertyType.STRING;
+      return CssDeclarationType.STRING;
     }
     else if (value is Number) {
-      return CssPropertyType.NUMBER;
+      return CssDeclarationType.NUMBER;
     }
     else if (value is Array) {
-      return CssPropertyType.ARRAY_OF_NUMBER;
+      return CssDeclarationType.ARRAY_OF_NUMBER;
     }
     else if (value is _module.getClass("mx.effects.IEffect")) {
-      return CssPropertyType.EFFECT;
+      return CssDeclarationType.EFFECT;
     }
     else if (value === undefined) {
-      return CssPropertyType.CLEARED;
+      return CssDeclarationType.CLEARED;
     }
     else {
       return -1;
@@ -209,7 +210,7 @@ public class CssRulesetPrinter {
 
     // lazy set type for external inline style
     if (descriptor.type == -1) {
-      descriptor.type = determinateTypeForExternalInlineStyle(descriptor.value);
+      CssDeclarationImpl(descriptor).type = determinateTypeForExternalInlineStyle(descriptor.value);
     }
 
     var linkableStyle:Boolean = !descriptor.fromAs;
@@ -224,37 +225,37 @@ public class CssRulesetPrinter {
         contentIndex = -1;
         break;
 
-      case CssPropertyType.STRING:
+      case CssDeclarationType.STRING:
         content = new Vector.<ContentElement>(4, true);
         content[contentIndex++] = new TextElement('"' + descriptor.value + '"', CssElementFormat.string);
         break;
 
-      case CssPropertyType.COLOR_INT:
+      case CssDeclarationType.COLOR_INT:
         content = new Vector.<ContentElement>(4, true);
         content[contentIndex++] = new TextElement(intColorToHex(uint(descriptor.value)), CssElementFormat.func);
         break;
 
-      case CssPropertyType.COLOR_STRING:
+      case CssDeclarationType.COLOR_STRING:
         content = new Vector.<ContentElement>(4, true);
         content[contentIndex++] = new TextElement(descriptor.colorName, CssElementFormat.string);
         break;
 
-      case CssPropertyType.BOOL:
+      case CssDeclarationType.BOOL:
         content = new Vector.<ContentElement>(4, true);
         content[contentIndex++] = new TextElement(descriptor.value ? "true" : "false", CssElementFormat.func);
         break;
 
-      case CssPropertyType.NUMBER:
+      case CssDeclarationType.NUMBER:
         content = new Vector.<ContentElement>(4, true);
         content[contentIndex++] = new TextElement(descriptor.value.toString(), CssElementFormat.number);
         break;
 
-      case CssPropertyType.CLASS_REFERENCE:
+      case CssDeclarationType.CLASS_REFERENCE:
         content = printClassReference(contentIndex, ClassReference(descriptor.value).className);
         contentIndex = -1;
         break;
 
-      case CssPropertyType.NULL:
+      case CssDeclarationType.NULL:
         content = new Vector.<ContentElement>(contentIndex + 4, true);
         content[contentIndex++] = new TextElement("ClassReference", CssElementFormat.func);
         content[contentIndex++] = new TextElement("(", CssElementFormat.defaultText);
@@ -263,7 +264,7 @@ public class CssRulesetPrinter {
         contentIndex = -1;
         break;
 
-      case CssPropertyType.ARRAY_OF_COLOR:
+      case CssDeclarationType.ARRAY_OF_COLOR:
         array = descriptor.value as Array;
         maxI = array.length - 1;
         content = new Vector.<ContentElement>(array.length + maxI + 3, true);
@@ -278,7 +279,7 @@ public class CssRulesetPrinter {
         }
         break;
 
-      case CssPropertyType.ARRAY_OF_NUMBER:
+      case CssDeclarationType.ARRAY_OF_NUMBER:
         array = descriptor.value as Array;
         maxI = array.length - 1;
         content = new Vector.<ContentElement>(array.length + maxI + 3, true);
@@ -293,19 +294,19 @@ public class CssRulesetPrinter {
         }
         break;
 
-      case CssPropertyType.EMBED:
+      case CssDeclarationType.EMBED:
         content = new Vector.<ContentElement>(4, true);
         content[contentIndex++] = new TextElement('"UNSUPPORTED"', CssElementFormat.string);
         break;
       
-      case CssPropertyType.EFFECT:
+      case CssDeclarationType.EFFECT:
         content = new Vector.<ContentElement>(4, true);
         // todo more usefull effect representation
         var effectClassName:String = getQualifiedClassName(descriptor.value);
         content[contentIndex++] = new TextElement(effectClassName.substr(effectClassName.lastIndexOf(":") + 1), CssElementFormat.string);
         break;
       
-      case CssPropertyType.CLEARED:
+      case CssDeclarationType.CLEARED:
         content = new Vector.<ContentElement>(contentIndex + 1, true);
         content[contentIndex++] = new TextElement("cleared", CssElementFormat.func);
         contentIndex = -1;
@@ -317,7 +318,7 @@ public class CssRulesetPrinter {
         throw new ArgumentError("unknown type of value: " + descriptor.type);
     }
 
-    var textElement:TextElement = new TextElement(descriptor.name, CssElementFormat.propertyName);
+    var textElement:TextElement = new TextElement(descriptor.presentableName, CssElementFormat.propertyName);
     if (linkableStyle) {
       textElement.userData = ruleset;
     }

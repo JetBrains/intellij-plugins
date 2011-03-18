@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.flex {
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
-import com.intellij.flex.uiDesigner.css.CssPropertyType;
+import com.intellij.flex.uiDesigner.css.CssDeclarationType;
 import com.intellij.flex.uiDesigner.css.StyleValueResolver;
 
 import flash.system.ApplicationDomain;
@@ -16,7 +16,7 @@ public class StyleValueResolverImpl implements StyleValueResolver {
     if (propertyDescriptor.value is ClassReferenceImpl) {
       return applicationDomain.getDefinition(ClassReference(propertyDescriptor.value).className);
     }
-    else if (propertyDescriptor.type == CssPropertyType.EMBED) {
+    else if (propertyDescriptor.type == CssDeclarationType.EMBED) {
       return null;
     }
     else {

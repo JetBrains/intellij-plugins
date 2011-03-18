@@ -1,16 +1,27 @@
 package com.intellij.flex.uiDesigner.io;
 
 public class VectorWriter extends CollectionWriter {
-  private String elementClassName;
+  private final String elementClassName;
+  private final String vectorClassName;
 
   public VectorWriter(String elementClassName) {
-    this(elementClassName, null);
+    this(elementClassName, (String)null);
+  }
+  
+  public VectorWriter(String elementClassName, String vectorClassName) {
+    this(elementClassName, vectorClassName, null);
   }
 
+  @SuppressWarnings({"UnusedDeclaration"})
   public VectorWriter(String elementClassName, CollectionWriter sharedReferenceTablesOwner) {
+    this(elementClassName, null, sharedReferenceTablesOwner);
+  }
+  
+  public VectorWriter(String elementClassName, String vectorClassName, CollectionWriter sharedReferenceTablesOwner) {
     super(1 + 3 + 1, 1024 * 8, sharedReferenceTablesOwner);
 
     this.elementClassName = elementClassName;
+    this.vectorClassName = vectorClassName == null ? elementClassName : vectorClassName;
   }
 
   public AmfOutputStream getOutputForIteration() {
@@ -30,7 +41,7 @@ public class VectorWriter extends CollectionWriter {
   public void prepareIteration() {
     super.prepareIteration();
 
-    out.writeStringWithoutType(elementClassName);
+    out.writeStringWithoutType(vectorClassName);
   }
 
   @Override

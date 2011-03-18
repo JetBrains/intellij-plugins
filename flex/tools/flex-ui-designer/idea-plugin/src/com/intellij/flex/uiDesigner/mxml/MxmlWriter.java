@@ -450,7 +450,7 @@ public class MxmlWriter {
         defineInlineCssDeclaration(element.getParent());
       }
       
-      writer.writeNullable(propertyProcessor.getNameForStyle());
+      out.write(propertyProcessor.isSkinProjectClass());
       out.writeUInt29(element.getTextOffset());
     }
     else {

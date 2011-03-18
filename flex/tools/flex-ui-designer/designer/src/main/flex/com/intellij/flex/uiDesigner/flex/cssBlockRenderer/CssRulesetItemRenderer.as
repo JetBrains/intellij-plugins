@@ -112,7 +112,7 @@ public class CssRulesetItemRenderer extends AbstractView implements IDataRendere
 }
 }
 
-import com.intellij.flex.uiDesigner.css.CssDeclaration;
+import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.flex.CssElementFormat;
 import com.intellij.flex.uiDesigner.flex.StylePaneContext;

@@ -1,5 +1,5 @@
 package com.intellij.flex.uiDesigner.css {
-public final class CssPropertyType {
+public final class CssDeclarationType {
   public static const COLOR_INT:int = 0;
   public static const COLOR_STRING:int = 1;
 

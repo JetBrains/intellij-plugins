@@ -4,9 +4,10 @@ import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.ModuleContext;
 import com.intellij.flex.uiDesigner.StringRegistry;
-import com.intellij.flex.uiDesigner.css.CssDeclaration;
-import com.intellij.flex.uiDesigner.css.CssPropertyType;
+import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
+import com.intellij.flex.uiDesigner.css.CssDeclarationType;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
+import com.intellij.flex.uiDesigner.css.CssSkinClassDeclaration;
 import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.StyleDeclarationProxy;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
@@ -187,7 +188,7 @@ public final class MxmlReader implements DocumentReader {
     
     var propertyHolder:Object = object;
     var inlineCssDeclarationSource:CssRuleset;
-    var cssPropertyDescriptor:CssDeclaration;
+    var cssPropertyDescriptor:CssDeclarationImpl;
     var o:Object;
     for (; propertyName != null; propertyName = stringRegistry.read(input)) {      
       switch (input.readByte()) {
@@ -198,11 +199,16 @@ public final class MxmlReader implements DocumentReader {
           if (inlineCssDeclarationSource == null) {
             inlineCssDeclarationSource = InlineCssRuleset.createInline(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input), context.file);
           }
-          cssPropertyDescriptor = new CssDeclaration();
-          cssPropertyDescriptor.name = stringRegistry.read(input) || propertyName;
-          cssPropertyDescriptor.textOffset = AmfUtil.readUInt29(input);
+
+          if (input.readBoolean()) {
+            readSkinFactory(inlineCssDeclarationSource);
+            continue;
+          }
+
+          cssPropertyDescriptor = CssDeclarationImpl.create(propertyName, AmfUtil.readUInt29(input));
           inlineCssDeclarationSource.declarations.push(cssPropertyDescriptor);
           propertyHolder = cssPropertyDescriptor;
+
           if (input.readBoolean()) {
             moduleContext.effectManagerClass[new QName(getMxNs(), "setStyle")](propertyName, object);
           }
@@ -229,42 +235,42 @@ public final class MxmlReader implements DocumentReader {
         case Amf3Types.STRING:
           propertyHolder[propertyName] = input.readUTFBytes(AmfUtil.readUInt29(input));
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssPropertyType.STRING;
+            cssPropertyDescriptor.type = CssDeclarationType.STRING;
           }
           break;
 
         case Amf3Types.DOUBLE:
           propertyHolder[propertyName] = input.readDouble();
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssPropertyType.NUMBER;
+            cssPropertyDescriptor.type = CssDeclarationType.NUMBER;
           }
           break;
 
         case Amf3Types.INTEGER:
           propertyHolder[propertyName] = (AmfUtil.readUInt29(input) << 3) >> 3;
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssPropertyType.NUMBER;
+            cssPropertyDescriptor.type = CssDeclarationType.NUMBER;
           }
           break;
 
         case Amf3Types.TRUE:
           propertyHolder[propertyName] = true;
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssPropertyType.BOOL;
+            cssPropertyDescriptor.type = CssDeclarationType.BOOL;
           }
           break;
 
         case Amf3Types.FALSE:
           propertyHolder[propertyName] = false;
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssPropertyType.BOOL;
+            cssPropertyDescriptor.type = CssDeclarationType.BOOL;
           }
           break;
 
         case Amf3Types.OBJECT:
           propertyHolder[propertyName] = readObject(stringRegistry.read(input));
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssPropertyType.EFFECT;
+            cssPropertyDescriptor.type = CssDeclarationType.EFFECT;
           }
           break;
 
@@ -279,7 +285,7 @@ public final class MxmlReader implements DocumentReader {
           }
           else {
             cssPropertyDescriptor.type = input.readByte();
-            if (cssPropertyDescriptor.type == CssPropertyType.COLOR_STRING) {
+            if (cssPropertyDescriptor.type == CssDeclarationType.COLOR_STRING) {
               cssPropertyDescriptor.colorName = stringRegistry.read(input);
             }
             cssPropertyDescriptor.value = input.readObject();
@@ -295,9 +301,6 @@ public final class MxmlReader implements DocumentReader {
         
         case Amf3Types.DOCUMENT_FACTORY_REFERENCE:
           propertyHolder[propertyName] = readDocumentFactory();
-          if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssPropertyType.CLASS_REFERENCE;
-          }
           break;
         
         case STRING_REFERENCE:
@@ -325,7 +328,14 @@ public final class MxmlReader implements DocumentReader {
 
     return object;
   }
-  
+
+  private function readSkinFactory(inlineCssDeclarationSource:CssRuleset):void {
+    var textOffset:int = AmfUtil.readUInt29(input);
+    input.readShort();
+    var declaration:CssSkinClassDeclaration = new CssSkinClassDeclaration(readDocumentFactory(), textOffset);
+    inlineCssDeclarationSource.declarations.push(declaration);
+  }
+
   private function readDocumentFactory():Object {
     var id:int = AmfUtil.readUInt29(input);
     var factory:Object = moduleContext.getDocumentFactory(id);

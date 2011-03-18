@@ -51,18 +51,15 @@ public class CssRuleset implements IExternalizable {
     return _line;
   }
 
-  protected var _textOffset:int;
+  protected var _textOffset:int = -1;
   public function get textOffset():int {
     return _textOffset;
   }
 
   public function put(name:String, value:*):void {
-    var propertyDescriptor:CssDeclaration = _declarationMap == null ? null : _declarationMap[name];
+    var propertyDescriptor:CssDeclarationImpl = _declarationMap == null ? null : _declarationMap[name];
     if (propertyDescriptor == null) {
-      propertyDescriptor = new CssDeclaration();
-      propertyDescriptor.name = name;
-      propertyDescriptor.fromAs = true;
-      propertyDescriptor.value = value;
+      propertyDescriptor = CssDeclarationImpl.createRuntime(name, value, true);
       if (_declarations.fixed) {
         // we don't restore fixed after — if anybody put, so, it is never fixed
         _declarations.fixed = false;

@@ -29,7 +29,7 @@ public class CssWriter {
   
   private AmfOutputStream propertyOut;
   private final VectorWriter rulesetVectorWriter = new VectorWriter("d");
-  private final VectorWriter declarationVectorWriter = new VectorWriter("p", rulesetVectorWriter);
+  private final VectorWriter declarationVectorWriter = new VectorWriter("p", "pi", rulesetVectorWriter);
   
   private final StringRegistry.StringWriter stringWriter;
   

@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
+import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
 
 import flash.events.ProgressEvent;
 import flash.net.Socket;

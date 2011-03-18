@@ -36,7 +36,7 @@ class PropertyProcessor {
   private final BaseWriter writer;
   
   private String name;
-  private String nameForStyle;
+  private boolean isSkinProjectClass;
   private boolean isStyle;
   
   private final ObjectIntHashMap<String> classFactoryMap = new ObjectIntHashMap<String>();
@@ -55,8 +55,8 @@ class PropertyProcessor {
     return name;
   }
   
-  public String getNameForStyle() {
-    return nameForStyle;
+  public boolean isSkinProjectClass() {
+    return isSkinProjectClass;
   }
   
   public boolean isStyle() {
@@ -111,7 +111,7 @@ class PropertyProcessor {
     }
     else {
       if (isStyle && name.equals("skinClass") && "Class".equals(descriptor.getType())) {
-        nameForStyle = name;
+        isSkinProjectClass = true;
         name = "skinFactory";
       }
       
@@ -121,7 +121,7 @@ class PropertyProcessor {
 
   public void reset() {
     classFactoryMap.clear();
-    nameForStyle = null;
+    isSkinProjectClass = false;
   }
 
   interface ValueWriter {

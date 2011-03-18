@@ -29,11 +29,9 @@ public class InlineCssRuleset extends CssRuleset {
     var map:Dictionary = new Dictionary();
     var list:Vector.<CssDeclaration> = ruleset.declarations;
     ruleset._declarationMap = map;
-    var declaration:CssDeclaration;
+    var declaration:CssDeclarationImpl;
     for (var key:String in data) {
-      declaration = new CssDeclaration();
-      declaration.name = key;
-      declaration.value = data[key];
+      declaration = CssDeclarationImpl.createRuntime(key, data[key], false);
       map[key] = declaration;
 
       list[list.length] = declaration;

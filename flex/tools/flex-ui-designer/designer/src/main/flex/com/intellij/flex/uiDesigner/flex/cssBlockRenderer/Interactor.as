@@ -154,7 +154,7 @@ public class Interactor {
   }
   
   private function propertyReferenceClickHandler(ruleset:CssRuleset):void {
-    if (ruleset.textOffset == 0) {
+     if (ruleset.textOffset == -1) {
       // case: ButtonBarSkin, middleButton element
       var uiComponent:Object = elementManager.element;
       var documentFQN:String = getQualifiedClassName(uiComponent.document).replace("::", ".");
@@ -168,7 +168,12 @@ public class Interactor {
       server.resolveExternalInlineStyleDeclarationSource(_module, documentFQN,  elementFqn, element.text, ruleset.declarations);
     }
     else {
-      server.openFile(_module, ruleset.file.url, CssDeclaration(ruleset.declarationMap[element.text]).textOffset);
+       var name:String = element.text;
+       var declaration:CssDeclaration = CssDeclaration(ruleset.declarationMap[name]);
+       if (declaration == null && name == "skinClass") {
+         declaration = CssDeclaration(ruleset.declarationMap.skinFactory);
+       }
+       server.openFile(_module, ruleset.file.url, declaration.textOffset);
     }
   }
   
