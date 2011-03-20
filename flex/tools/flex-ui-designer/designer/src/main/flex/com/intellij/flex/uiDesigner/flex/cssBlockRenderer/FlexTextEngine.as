@@ -7,11 +7,9 @@ import mx.managers.LayoutManager;
 import org.tinytlf.TextEngine;
 
 public class FlexTextEngine extends TextEngine implements ILayoutManagerClient {
-  private var scrollHandler:Function;
   private var invalid:Boolean;
 
-  public function FlexTextEngine(scrollHandler:Function) {
-    this.scrollHandler = scrollHandler;
+  public function FlexTextEngine() {
   }
 
   private var _handValidation:Boolean;
@@ -93,10 +91,6 @@ public class FlexTextEngine extends TextEngine implements ILayoutManagerClient {
 
   public function willTrigger(type:String):Boolean {
     return false;
-  }
-
-  override public function set scrollPosition(value:Number):void {
-    scrollHandler(value);
   }
 }
 }

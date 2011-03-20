@@ -111,12 +111,42 @@ class PropertyProcessor {
     }
     else {
       if (isStyle && name.equals("skinClass") && "Class".equals(descriptor.getType())) {
-        isSkinProjectClass = true;
-        name = "skinFactory";
+        int skinProjectClassDocumentFactoryId = getSkinProjectClassDocumentFactoryId(valueProvider);
+        if (skinProjectClassDocumentFactoryId != -1) {
+          isSkinProjectClass = true;
+          name = "skinFactory";
+          return new SkinProjectClassValueWriter(skinProjectClassDocumentFactoryId, writer);
+        }
       }
       
       return new ValueWriterImpl(valueProvider, descriptor);
     }
+  }
+  
+  private int getSkinProjectClassDocumentFactoryId(XmlElementValueProvider valueProvider) {
+    XmlElement injectedHost = valueProvider.getInjectedHost();
+    if (injectedHost != null) {
+      PsiReference reference = injectedHost.getReference();
+      if (reference != null) {
+        PsiElement element = reference.resolve();
+        if (element instanceof JSClass) {
+          PsiFile psiFile = element.getContainingFile();
+          VirtualFile virtualFile = psiFile.getVirtualFile();
+          assert virtualFile != null;
+          boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
+          if (psiFile instanceof XmlFile) {
+            if (inSourceContent) {
+              return DocumentFileManager.getInstance().getId(virtualFile, (XmlFile) psiFile, unregisteredDocumentFactories).getId();
+            }
+          }
+          else if (inSourceContent) {
+            LOG.error("support only mxml-based skin: " + valueProvider.getTrimmed());
+          }
+        }
+      }
+    }
+
+    return -1;
   }
 
   public void reset() {
@@ -128,6 +158,27 @@ class PropertyProcessor {
     int write(PrimitiveAmfOutputStream out, boolean isStyle);
   }
   
+  private static class SkinProjectClassValueWriter implements ValueWriter {
+    private final int reference;
+    private final BaseWriter writer;
+
+    public SkinProjectClassValueWriter(int reference, BaseWriter writer) {
+      this.reference = reference;
+      this.writer = writer;
+    }
+
+    @Override
+    public int write(PrimitiveAmfOutputStream out, boolean isStyle) {
+      if (isStyle) {
+        out.write(0);
+      }
+      
+      writer.writeDocumentFactoryReference(reference);
+      
+      return isStyle ? PRIMITIVE_STYLE : PRIMITIVE;
+    }
+  }
+
   private class ValueWriterImpl implements ValueWriter {
     private final XmlElementValueProvider valueProvider;
     private final AnnotationBackedDescriptor descriptor;
@@ -178,16 +229,16 @@ class PropertyProcessor {
         writeUntypedPropertyValue(valueProvider, descriptor);
       }
       else if (type.equals("Class")) {
-        writeClass(valueProvider, isStyle);
+        writer.writeClass(valueProvider.getTrimmed());
       }
-      else  if (type.equals("mx.core.IFactory")) {
+      else if (type.equals("mx.core.IFactory")) {
         writeClassFactory(valueProvider);
       }
       else {
         out.write(Amf3Types.OBJECT);
         return isStyle ? COMPLEX_STYLE : COMPLEX;
       }
-      
+
       return isStyle ? PRIMITIVE_STYLE : PRIMITIVE;
     }
 
@@ -238,42 +289,6 @@ class PropertyProcessor {
         }
       }
     }
-    
-    private void writeClass(XmlElementValueProvider valueProvider, boolean isStyle) {
-      String className = valueProvider.getTrimmed();
-      if (isStyle) {
-        int factoryReference = classFactoryMap.get(className);
-        if (factoryReference != -1) {
-          writer.writeDocumentFactoryReference(factoryReference);
-          return;
-        }
-        
-        XmlElement injectedHost = valueProvider.getInjectedHost();
-        if (injectedHost != null) {
-          PsiReference reference = injectedHost.getReference();
-          if (reference != null) {
-            PsiElement element = reference.resolve();
-            if (element instanceof JSClass) {
-              PsiFile psiFile = element.getContainingFile();
-              VirtualFile virtualFile = psiFile.getVirtualFile();
-              assert virtualFile != null;
-              boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
-              if (psiFile instanceof XmlFile) {
-                if (inSourceContent) {
-                  writer.writeDocumentFactoryReference(DocumentFileManager.getInstance().getId(virtualFile, (XmlFile) psiFile, unregisteredDocumentFactories).getId());
-                  return;
-                }
-              }
-              else if (inSourceContent) {
-                LOG.error("support only mxml-based skin: " + className);
-              }
-            }
-          }
-        }
-      }
-      
-      writer.writeClass(className);
-    }
 
     private void writeClassFactory(XmlElementValueProvider valueProvider) {
       String className = valueProvider.getTrimmed();
@@ -281,7 +296,7 @@ class PropertyProcessor {
       if (reference == -1) {
         reference = writer.getRootScope().referenceCounter++;
         classFactoryMap.put(className, reference);
-                
+
         writer.writeConstructorHeader("mx.core.ClassFactory", reference);
         writer.writeClass(className);
       }
@@ -290,7 +305,7 @@ class PropertyProcessor {
       }
     }
   }
-  
+
   private static class PercentableValueWriter implements ValueWriter {
     private final String value;
     

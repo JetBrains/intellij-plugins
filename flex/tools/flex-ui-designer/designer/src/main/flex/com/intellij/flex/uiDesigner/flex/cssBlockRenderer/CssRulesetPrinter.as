@@ -53,7 +53,7 @@ public class CssRulesetPrinter {
   public var availableWidth:Number;
 
   public function createTextBlock(ruleset:CssRuleset, index:int):TextBlock {
-    if (index == 0) {
+    if (index == 0 && ruleset.file != null) {
       return printFileSource(ruleset);
     }
     
@@ -61,8 +61,9 @@ public class CssRulesetPrinter {
     var content:ContentElement;
     // inline
     if (ruleset.inline) {
-      if ((index - 1) < ruleset.declarations.length) {
-        content = printEntry(ruleset.declarations[index - 1], ruleset);
+      var dataIndex:int = ruleset.file == null ? index : index - 1;
+      if (dataIndex < ruleset.declarations.length) {
+        content = printEntry(ruleset.declarations[dataIndex], ruleset);
       }
     } 
     else if (index == 1) {

@@ -1,7 +1,5 @@
 package com.intellij.flex.uiDesigner.flex.cssBlockRenderer {
 import cocoa.AbstractView;
-import cocoa.plaf.LookAndFeel;
-import cocoa.plaf.LookAndFeelProvider;
 
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.flex.StylePaneContext;
@@ -10,28 +8,20 @@ import mx.core.IDataRenderer;
 
 import org.tinytlf.layout.TinytlfSprite;
 
-import spark.components.DataGroup;
-
-public class CssRulesetItemRenderer extends AbstractView implements IDataRenderer, LookAndFeelProvider {
+public class TextBlockRenderer extends AbstractView implements IDataRenderer {
   private static const TEXT_TOP:Number = 5;
   
   private var textEngine:FlexTextEngine;
   private var displayContainer:TinytlfSprite;
   private var textContainer:TextContainer;
-
-  private var _laf:LookAndFeel;
-  public function get laf():LookAndFeel {
-    return _laf;
-  }
-  public function set laf(value:LookAndFeel):void {
-    if (_laf == value) {
-      return;
-    }
-
-    _laf = value;
+  
+  private var _blockFactory:Class;
+  //noinspection JSUnusedGlobalSymbols
+  public function set blockFactory(value:Class):void {
+    _blockFactory = value;
   }
 
-  private var _data:CssRuleset;
+  private var _data:Object;
   public function get data():Object {
     return _data;
   }
@@ -42,12 +32,14 @@ public class CssRulesetItemRenderer extends AbstractView implements IDataRendere
       return;
     }
 
-    _data = CssRuleset(value);
+    _data = value;
     
     var rulesetPrinter:CssRulesetPrinter = StylePaneContext(document).rulesetPrinter;
     if (textEngine == null) {
-      init(rulesetPrinter.availableWidth - 10, scrollHandler, nestLevel + 1);
-      TextBlockFactory(textEngine.blockFactory).declarationPrinter = rulesetPrinter;
+      init(rulesetPrinter.availableWidth - 10, nestLevel + 1);
+      if (_blockFactory ==  CssRulesetTextBlockFactory) {
+        CssRulesetTextBlockFactory(textEngine.blockFactory).declarationPrinter = rulesetPrinter;
+      }
 
       displayContainer.y = TEXT_TOP;
       displayContainer.x = 5;
@@ -64,8 +56,12 @@ public class CssRulesetItemRenderer extends AbstractView implements IDataRendere
     invalidateDisplayList();
   }
   
-  private function init(width:Number, scrollHandler:Function, nestLevel:int):void {
-    textEngine = new FlexTextEngine(scrollHandler);
+  private function get textTotalHeight():Number {
+    return Math.ceil(textContainer.measuredHeight) + TEXT_TOP;
+  }
+  
+  private function init(width:Number, nestLevel:int):void {
+    textEngine = new FlexTextEngine();
     textEngine.handValidation = true;
     textEngine.nestLevel = nestLevel;
     displayContainer = new TinytlfSprite(textEngine);
@@ -73,22 +69,20 @@ public class CssRulesetItemRenderer extends AbstractView implements IDataRendere
     textEngine.layout.addContainer(textContainer);
     textContainer.scrollable = false;
     
-    textEngine.blockFactory = new TextBlockFactory();
-    textEngine.decor = new TextDecoration(textContainer.foregroundShape, StylePaneContext(document));
+    textEngine.blockFactory = new _blockFactory();
+    if (data is CssRuleset) {
+      textEngine.decor = new TextDecoration(textContainer.foregroundShape, StylePaneContext(document));
+    }
 
     StylePaneContext(document).rulesetPrinter.interactor.configureTextEngine(textEngine);
   }
-
+  
   override protected function measure():void {
     textEngine.handValidation = false;
     measuredWidth = textContainer.explicitWidth;
     measuredHeight = textTotalHeight;
   }
-
-  private function get textTotalHeight():Number {
-    return Math.ceil(textContainer.measuredHeight) + TEXT_TOP;
-  }
-
+  
   override protected function updateDisplayList(w:Number, h:Number):void {
     if (w == 0) {
       return;
@@ -104,21 +98,14 @@ public class CssRulesetItemRenderer extends AbstractView implements IDataRendere
       }
     }
   }
-
-  // todo scroll must work for select text up to end (must autoscroll)
-  private function scrollHandler(value:Number):void {
-    DataGroup(parent).verticalScrollPosition += value;
-  }
 }
 }
 
-import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.flex.CssElementFormat;
 import com.intellij.flex.uiDesigner.flex.StylePaneContext;
 
 import flash.display.Graphics;
-
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.errors.IllegalOperationError;
@@ -184,7 +171,7 @@ class TextDecoration implements ITextDecor {
     var i:int = 2;
     var n:int = _textEngine.blockFactory.numBlocks - 1 /* close brace */;
     if (ruleset.inline) {
-      i = 1;
+      i = ruleset.file == null ? 0 : 1;
       n++;
     }
 

@@ -1,7 +1,7 @@
 move 439 284
 down
 up
-move 810 56
+move 798 75
 down
 up
 assert

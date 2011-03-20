@@ -143,13 +143,13 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       final VirtualFile originalVFile = originalVFiles[childrenLength - i - 1];
       final XmlFile xmlFile = (XmlFile) myPsiManager.findFile(file);
       assert xmlFile != null;
-//      ApplicationManager.getApplication().executeOnPooledThread(new Callable<Void>() {
-//        @Override
-//        public Void call() throws Exception {
+      ApplicationManager.getApplication().executeOnPooledThread(new Callable<Void>() {
+        @Override
+        public Void call() throws Exception {
           tester.test(file, xmlFile, originalVFile);
-//          return null;
-//        }
-//      }).get(8, TimeUnit.SECONDS);
+          return null;
+        }
+      }).get(8, TimeUnit.SECONDS);
     }
   }
 

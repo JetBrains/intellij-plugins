@@ -9,23 +9,30 @@
     import com.intellij.flex.uiDesigner.css.MergedCssStyleDeclarationEx;
     import com.intellij.flex.uiDesigner.css.NonSharedStyleDeclarationProxy;
     import com.intellij.flex.uiDesigner.css.StyleManagerEx;
-    import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.CssRulesetItemRenderer;
     import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.CssRulesetPrinter;
+    import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.CssRulesetTextBlockFactory;
     import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.GroupItemRenderer;
+    import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.NamespaceListTextBlockFactory;
     import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.NamespaceUnificator;
     import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.StyleDeclarationGroupItem;
+    import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.TextBlockRenderer;
     import com.intellij.flex.uiDesigner.plaf.PanelSkin;
     import com.intellij.flex.uiDesigner.util.ImmutableFakeObjectProxy;
 
     import org.flyti.util.ArrayList;
 
-    private const source:Vector.<Object> = new Vector.<Object>;
+    private const source:Vector.<Object> = new Vector.<Object>(1);
     private var sourceItemCounter:int = 0;
     private const sourceList:ArrayList = new ArrayList(source);
 
-    private var namespaceUnificator:NamespaceUnificator = new NamespaceUnificator();
+    private const namespaceUnificator:NamespaceUnificator = new NamespaceUnificator();
 
-    private static const cssDeclarationItemRendererFactory:ClassFactory = new ClassFactory(CssRulesetItemRenderer);
+    private static const cssDeclarationItemRendererFactory:ClassFactory = new ClassFactory(TextBlockRenderer);
+    cssDeclarationItemRendererFactory.properties = {blockFactory: CssRulesetTextBlockFactory};
+    
+    private static const namespaceListRendererFactory:ClassFactory = new ClassFactory(TextBlockRenderer);
+    namespaceListRendererFactory.properties = {blockFactory: NamespaceListTextBlockFactory};
+
     private static const groupItemRendererFactory:ClassFactory = new ClassFactory(GroupItemRenderer);
 
     private var _rulesetPrinter:CssRulesetPrinter;
@@ -69,7 +76,7 @@
     }
 
     private function updateData(element:Object):void {
-      sourceItemCounter = 0;
+      sourceItemCounter = 1;
       if (element == null) {
         _styleManager = null;
         return;
@@ -81,8 +88,15 @@
       var collected:Dictionary = new Dictionary();
       collect(element.inheritingStyles, collected, false);
 
+      source[0] = namespaceUnificator;
       source.length = sourceItemCounter;
-      sourceList.refresh();
+      
+      if (list.dataProvider == null) {
+        list.dataProvider = sourceList;
+      }
+      else {
+        sourceList.refresh();
+      }  
     }
 
     private function collect(styleDeclarationProxy:ImmutableFakeObjectProxy, collected:Dictionary, onlyRulesetWithInheritedStyles:Boolean):void {
@@ -101,8 +115,8 @@
           collected[declaration] = true;
           if (declaration is MergedCssStyleDeclarationEx) {
             for each (var ruleset:CssRuleset in MergedCssStyleDeclarationEx(declaration).rulesets) {
-              namespaceUnificator.process(ruleset);
               if (!onlyRulesetWithInheritedStyles || containsInheritStyle(ruleset)) {
+                namespaceUnificator.process(ruleset);
                 source[sourceItemCounter++] = ruleset;
               }
             }
@@ -150,7 +164,7 @@
     }
 
     private function itemRendererFunction(item:Object):IFactory {
-      return item is StyleDeclarationGroupItem ? groupItemRendererFactory : cssDeclarationItemRendererFactory;
+      return item is StyleDeclarationGroupItem ? groupItemRendererFactory : (item is NamespaceUnificator ? namespaceListRendererFactory : cssDeclarationItemRendererFactory);
     }
 
     public function get rulesets():Vector.<Object> {
@@ -159,6 +173,6 @@
     ]]></fx:Script>
 
   <ScrollView horizontalScrollPolicy="{ScrollPolicy.OFF}">
-    <DataGroup id="list" dataProvider="{sourceList}" itemRendererFunction="itemRendererFunction"/>
+    <DataGroup id="list" itemRendererFunction="itemRendererFunction"/>
   </ScrollView>
 </Panel>
