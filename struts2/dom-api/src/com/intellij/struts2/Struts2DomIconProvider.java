@@ -15,6 +15,7 @@
 
 package com.intellij.struts2;
 
+import com.intellij.ide.presentation.PresentationIconProvider;
 import com.intellij.struts2.dom.params.Param;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -22,8 +23,6 @@ import com.intellij.struts2.dom.struts.action.ExceptionMapping;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.strutspackage.*;
 import com.intellij.struts2.dom.validator.Validators;
-import com.intellij.util.NullableFunction;
-import com.intellij.util.xml.DomElement;
 
 import javax.swing.*;
 
@@ -33,10 +32,10 @@ import javax.swing.*;
  * @author Yann C&eacute;bron
  */
 @SuppressWarnings({"UnusedDeclaration"})
-public class Struts2DomIconProvider implements NullableFunction<DomElement, Icon> {
+public class Struts2DomIconProvider implements PresentationIconProvider {
 
   @Override
-  public Icon fun(final DomElement domElement) {
+  public Icon getIcon(final Object domElement, int flags) {
     if (domElement instanceof Param) {
       return StrutsIcons.PARAM;
     }

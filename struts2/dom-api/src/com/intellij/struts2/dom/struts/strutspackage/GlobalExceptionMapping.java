@@ -15,9 +15,10 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
+import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiClass;
-import com.intellij.struts2.dom.StrutsDomConstants;
+import com.intellij.struts2.Struts2DomIconProvider;
 import com.intellij.util.xml.*;
 
 /**
@@ -25,7 +26,7 @@ import com.intellij.util.xml.*;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Global Exception Mapping", iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
+@Presentation(typeName = "Global Exception Mapping", iconProviderClass = Struts2DomIconProvider.class)
 public interface GlobalExceptionMapping extends DomElement /* ParamsElement TODO ??! */ {
 
  // @NameValue() TODO ??

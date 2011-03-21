@@ -15,7 +15,8 @@
 
 package com.intellij.struts2.dom.params;
 
-import com.intellij.struts2.dom.StrutsDomConstants;
+import com.intellij.ide.presentation.Presentation;
+import com.intellij.struts2.Struts2DomIconProvider;
 import com.intellij.util.xml.*;
 
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Parameter", iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
+@Presentation(typeName = "Parameter", iconProviderClass = Struts2DomIconProvider.class)
 public interface Param extends DomElement {
 
   @Attribute(value = "name")

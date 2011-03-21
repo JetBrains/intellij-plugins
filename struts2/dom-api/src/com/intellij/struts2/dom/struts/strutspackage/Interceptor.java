@@ -15,15 +15,16 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
+import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.PsiClass;
+import com.intellij.struts2.Struts2DomIconProvider;
 import com.intellij.struts2.dom.ExtendableClassConverter;
-import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.util.xml.*;
 
 /**
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Interceptor", iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
+@Presentation(typeName = "Interceptor", iconProviderClass = Struts2DomIconProvider.class)
 public interface Interceptor extends InterceptorOrStackBase {
 
   @Attribute(value = "class")

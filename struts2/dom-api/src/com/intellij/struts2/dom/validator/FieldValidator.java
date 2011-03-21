@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.validator;
 
+import com.intellij.ide.presentation.Presentation;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;

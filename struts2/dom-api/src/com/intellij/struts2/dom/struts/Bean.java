@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.struts;
 
+import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.xml.*;

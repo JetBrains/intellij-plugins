@@ -15,7 +15,9 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
+import com.intellij.ide.presentation.Presentation;
 import com.intellij.javaee.model.xml.CommonDomModelElement;
+import com.intellij.struts2.Struts2DomIconProvider;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.util.xml.*;
@@ -30,7 +32,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
-@Presentation(typeName = "Struts Package", iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
+@Presentation(typeName = "Struts Package", iconProviderClass = Struts2DomIconProvider.class)
 public interface StrutsPackage extends CommonDomModelElement {
 
   String DEFAULT_NAMESPACE = "/";

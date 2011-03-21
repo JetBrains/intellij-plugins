@@ -15,10 +15,11 @@
 
 package com.intellij.struts2.dom.validator;
 
+import com.intellij.struts2.Struts2DomIconProvider;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.Namespace;
-import com.intellij.util.xml.Presentation;
+import com.intellij.ide.presentation.Presentation;
 import com.intellij.util.xml.SubTagList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
-@Presentation(iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
+@Presentation(iconProviderClass = Struts2DomIconProvider.class)
 public interface Validators extends DomElement {
 
   @NonNls

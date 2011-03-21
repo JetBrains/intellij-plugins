@@ -15,8 +15,8 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
-import com.intellij.struts2.dom.StrutsDomConstants;
-import com.intellij.util.xml.Presentation;
+import com.intellij.ide.presentation.Presentation;
+import com.intellij.struts2.Struts2DomIconProvider;
 import com.intellij.util.xml.SubTagList;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Interceptor Stack", iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
+@Presentation(typeName = "Interceptor Stack", iconProviderClass = Struts2DomIconProvider.class)
 public interface InterceptorStack extends InterceptorOrStackBase {
 
   @SubTagList(value = "interceptor-ref")

@@ -44,11 +44,4 @@ public final class StrutsDomConstants {
    */
   @NonNls
   public static final String VALIDATOR_CONFIG_NAMESPACE_KEY = "validator config namespace";
-
-  /**
-   * Class for {@link com.intellij.util.xml.Presentation#iconProviderClass()}.
-   */
-  @NonNls
-  public static final String DOM_ICON_PROVIDER_CLASS = "com.intellij.struts2.Struts2DomIconProvider";
-
 }

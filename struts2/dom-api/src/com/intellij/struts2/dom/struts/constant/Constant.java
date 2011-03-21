@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.struts.constant;
 
+import com.intellij.ide.presentation.Presentation;
 import com.intellij.util.xml.*;
 
 /**

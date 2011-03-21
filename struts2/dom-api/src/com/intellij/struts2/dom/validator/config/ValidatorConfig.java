@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.validator.config;
 
+import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.util.xml.*;

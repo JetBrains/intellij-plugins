@@ -15,13 +15,14 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
-import com.intellij.struts2.dom.StrutsDomConstants;
+import com.intellij.ide.presentation.Presentation;
+import com.intellij.struts2.Struts2DomIconProvider;
 import com.intellij.util.xml.*;
 
 /**
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Default Interceptor Reference", iconProviderClass = StrutsDomConstants.DOM_ICON_PROVIDER_CLASS)
+@Presentation(typeName = "Default Interceptor Reference", iconProviderClass = Struts2DomIconProvider.class)
 public interface DefaultInterceptorRef extends DomElement {
 
   @Required
