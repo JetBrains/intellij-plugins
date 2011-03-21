@@ -57,6 +57,7 @@ public class CodeContext {
   @NonNls public static final String TARGET_ATTR_NAME = "target";
   public static final String AS3_VEC_VECTOR_QUALIFIED_NAME = "__AS3__.vec.Vector";
   static final String FORMAT_ATTR_NAME = "format";
+  static final String TWO_WAY_ATTR_NAME = "twoWay";
   private static final String XML_CLASS = "XML";
   private static final String XMLNODE_CLASS = "flash.xml.XMLNode";
 
@@ -496,6 +497,12 @@ public class CodeContext {
       new AnnotationBackedDescriptorImpl(FlexReferenceContributor.SOURCE_ATTR_NAME, bindingDescriptor, true, null, null, null));
     bindingDescriptor.addPredefinedMemberDescriptor(
       new AnnotationBackedDescriptorImpl(FlexReferenceContributor.DESTINATION_ATTR_NAME, bindingDescriptor, true, null, null, null));
+
+    if (JavaScriptSupportLoader.isFlex4Namespace(codeContext.namespace)) {
+      bindingDescriptor.addPredefinedMemberDescriptor(
+      new AnnotationBackedDescriptorImpl(TWO_WAY_ATTR_NAME, bindingDescriptor, true, null, null, null));
+    }
+
     codeContext.putDescriptor(FlexPredefinedTagNames.BINDING, bindingDescriptor, false);
 
     // not predefined!

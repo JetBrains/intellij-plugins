@@ -3,6 +3,7 @@ package com.intellij.javascript.flex.mxml.schema;
 import com.intellij.codeInsight.daemon.Validator;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
+import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.lang.LanguageNamesValidation;
@@ -129,6 +130,11 @@ public class AnnotationBackedDescriptorImpl
       else if (CodeContext.FORMAT_ATTR_NAME.equals(name) && XmlBackedJSClassImpl.XML_TAG_NAME.equals(parentDescriptor.getName())) {
         myEnumerated = true;
         myEnumeratedValues = new String[]{"e4x", "xml"};
+        myEnumeratedValuesCaseSensitive = false;
+      }
+      else if (CodeContext.TWO_WAY_ATTR_NAME.equals(name) && FlexPredefinedTagNames.BINDING.equals(parentDescriptor.getName())) {
+        myEnumerated = true;
+        myEnumeratedValues = new String[]{"true", "false"};
         myEnumeratedValuesCaseSensitive = false;
       }
     }
