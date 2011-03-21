@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
@@ -18,6 +18,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.text.StringTokenizer;
@@ -240,25 +241,36 @@ public class FlexCompilationUtils {
     return !failureDetected;
   }
 
-  public static String getOutputSwfFilePathForCssFile(final String cssFilePath, final FlexBuildConfiguration config) {
+  private static String getOutputSwfFileNameForCssFile(final Project project, final String cssFilePath) {
     final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssFilePath);
     final VirtualFile sourceRoot = cssFile == null
                                    ? null
-                                   : ProjectRootManager.getInstance(config.getModule().getProject()).getFileIndex()
-                                     .getSourceRootForFile(cssFile);
+                                   : ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(cssFile);
     final String relativePath = sourceRoot == null ? null : VfsUtil.getRelativePath(cssFile, sourceRoot, '/');
     final String cssFileName = cssFilePath.substring(FileUtil.toSystemIndependentName(cssFilePath).lastIndexOf("/") + 1);
     final String relativeFolder = relativePath == null ? "" : relativePath.substring(0, relativePath.lastIndexOf('/') + 1);
-    return config.getCompileOutputPath() + "/" + relativeFolder + FileUtil.getNameWithoutExtension(cssFileName) + ".swf";
+    return relativeFolder + FileUtil.getNameWithoutExtension(cssFileName) + ".swf";
   }
 
-  static FlexBuildConfiguration createCssConfig(final FlexBuildConfiguration config) {
+  static FlexBuildConfiguration createCssConfig(final FlexBuildConfiguration config, final String cssFilePath) {
     final FlexBuildConfiguration cssConfig = config.clone();
     cssConfig.setType(FlexBuildConfiguration.Type.Default);
+    cssConfig.OUTPUT_FILE_NAME = getOutputSwfFileNameForCssFile(config.getModule().getProject(), cssFilePath);
     cssConfig.OUTPUT_TYPE = FlexBuildConfiguration.APPLICATION;
     cssConfig.CSS_FILES_LIST.clear();
     cssConfig.PATH_TO_SERVICES_CONFIG_XML = "";
     cssConfig.CONTEXT_ROOT = "";
     return cssConfig;
+  }
+
+  public static void ensureOutputFileWritable(final Project project, final String filePath) {
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
+    if (file != null && !file.isWritable()) {
+      ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+          public void run() {
+            ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(file);
+          }
+        }, ModalityState.defaultModalityState());
+    }
   }
 }

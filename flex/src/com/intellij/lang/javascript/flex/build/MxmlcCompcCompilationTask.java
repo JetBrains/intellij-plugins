@@ -140,7 +140,7 @@ public class MxmlcCompcCompilationTask implements FlexCompilationTask {
                                         final @Nullable FlexFacet flexFacet,
                                         final FlexBuildConfiguration config,
                                         final String cssFilePath) {
-      super(module, flexFacet, FlexCompilationUtils.createCssConfig(config));
+      super(module, flexFacet, FlexCompilationUtils.createCssConfig(config, cssFilePath));
       myCssFilePath = FileUtil.toSystemIndependentName(cssFilePath);
     }
 

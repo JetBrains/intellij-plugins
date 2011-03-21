@@ -266,6 +266,11 @@ public class FlexCompilationManager {
           myFinishedTasks.add(taskToStart);
         }
         else {
+          final FlexBuildConfiguration config = taskToStart.getConfig();
+          if (!config.USE_CUSTOM_CONFIG_FILE) {
+            FlexCompilationUtils.ensureOutputFileWritable(myCompileContext.getProject(), config.getOutputFileFullPath());
+          }
+
           taskToStart.start(this);
           myInProgressTasks.add(taskToStart);
         }

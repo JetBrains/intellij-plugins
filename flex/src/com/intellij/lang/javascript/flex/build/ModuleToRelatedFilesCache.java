@@ -139,7 +139,7 @@ public class ModuleToRelatedFilesCache {
             dependencies.add(cssFile);
           }
 
-          final String swfFilePath = FlexCompilationUtils.getOutputSwfFilePathForCssFile(cssFilePath, config);
+          final String swfFilePath = FlexCompilationUtils.createCssConfig(config, cssFilePath).getOutputFileFullPath();
           VirtualFile swfFile = localFileSystem.findFileByPath(swfFilePath);
           if (swfFile == null) {
             swfFile = FlexCompilationManager.refreshAndFindFileInWriteAction(module.getProject(), swfFilePath);

@@ -348,9 +348,11 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
     for (final String _cssFilePath : config.CSS_FILES_LIST) {
       final String cssFilePath = FileUtil.toSystemIndependentName(_cssFilePath);
-      final FlexBuildConfiguration cssConfig = FlexCompilationUtils.createCssConfig(config);
+      final FlexBuildConfiguration cssConfig = FlexCompilationUtils.createCssConfig(config, cssFilePath);
       final List<VirtualFile> cssConfigFiles = FlexCompilationUtils.getConfigFiles(cssConfig, module, flexFacet, cssFilePath);
-      final String cssCommand = buildCommand(cssConfigFiles, config, flexSdk);
+      final String cssCommand = buildCommand(cssConfigFiles, cssConfig, flexSdk);
+
+      FlexCompilationUtils.ensureOutputFileWritable(myProject, cssConfig.getOutputFileFullPath());
       compilationSuccessful &= sendCompilationCommand(context, flexSdk, cssCommand);
 
       // no need in incrementality for css files compilation, it's better to release a piece of fcsh heap
@@ -363,6 +365,10 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     final String command = buildCommand(configFiles, config, flexSdk);
     final String s = compileCache.moduleOrFacetToCommand.get(moduleOrFacet);
     final int previousCommandId = commandToIdMap.get(command);
+
+    if (!config.USE_CUSTOM_CONFIG_FILE) {
+      FlexCompilationUtils.ensureOutputFileWritable(myProject, config.getOutputFileFullPath());
+    }
 
     if (s == null || !s.equals(command)) {
       if (s != null) {
@@ -861,7 +867,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       }
     }
 
-    final String outputFilePath = cssFilePath != null ? FlexCompilationUtils.getOutputSwfFilePathForCssFile(cssFilePath, config)
+    final String outputFilePath = cssFilePath != null ? config.getOutputFileFullPath()
                                                       : config.getType() == FlexBuildConfiguration.Type.FlexUnit
                                                         ? config.getCompileOutputPathForTests() + "/" + config.OUTPUT_FILE_NAME
                                                         : config.getOutputFileFullPath();
