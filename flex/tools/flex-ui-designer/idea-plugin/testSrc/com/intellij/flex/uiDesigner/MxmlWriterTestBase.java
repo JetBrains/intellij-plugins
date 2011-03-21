@@ -139,7 +139,11 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     collectLocalStyleHolders();
 
     for (int childrenLength = testVFiles.length, i = onlyFirst ? (childrenLength - 1) : 0; i < childrenLength; i++) {
-      final VirtualFile file = testVFiles[i];      
+      final VirtualFile file = testVFiles[i];
+      if (!file.getName().endsWith(".mxml")) {
+        continue;
+      }
+      
       final VirtualFile originalVFile = originalVFiles[childrenLength - i - 1];
       final XmlFile xmlFile = (XmlFile) myPsiManager.findFile(file);
       assert xmlFile != null;

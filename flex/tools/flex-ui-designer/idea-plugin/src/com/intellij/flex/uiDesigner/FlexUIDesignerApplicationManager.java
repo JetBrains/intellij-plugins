@@ -30,7 +30,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class  FlexUIDesignerApplicationManager implements Disposable {
+public class FlexUIDesignerApplicationManager implements Disposable {
   public static final Topic<FlexUIDesignerApplicationListener> MESSAGE_TOPIC = new Topic<FlexUIDesignerApplicationListener>("Flex UI Designer Application open and close events", FlexUIDesignerApplicationListener.class);
   
   private static final Key<ProjectInfo> PROJECT_INFO = Key.create("FUD_PROJECT_INFO");

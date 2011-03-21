@@ -29,7 +29,7 @@ class PropertyProcessor {
   private static final int COMPLEX = 0;
   private static final int COMPLEX_STYLE = 1;
   static final int PRIMITIVE = 2;
-  private static final int PRIMITIVE_STYLE = 3;
+  static final int PRIMITIVE_STYLE = 3;
   static final int IGNORE = 4;
  
   private final InjectedASWriter injectedASWriter;
@@ -37,6 +37,7 @@ class PropertyProcessor {
   
   private String name;
   private boolean isSkinProjectClass;
+  private boolean isEffect;
   private boolean isStyle;
   
   private final ObjectIntHashMap<String> classFactoryMap = new ObjectIntHashMap<String>();
@@ -55,12 +56,12 @@ class PropertyProcessor {
     return name;
   }
   
-  public boolean isSkinProjectClass() {
-    return isSkinProjectClass;
-  }
-  
   public boolean isStyle() {
     return isStyle;
+  }
+  
+  public boolean isEffect() {
+    return isEffect;
   }
   
   private ValueWriter processPercentable(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) { 
@@ -90,6 +91,7 @@ class PropertyProcessor {
     if (type == null) {
       if (typeName.equals(FlexAnnotationNames.EFFECT)) {
         isStyle = true;
+        isEffect = true;
       }
       else {
         if (!typeName.equals(FlexAnnotationNames.BINDABLE)) { // skip binding
@@ -102,8 +104,12 @@ class PropertyProcessor {
       return null;
     }
     
-    if (injectedASWriter.processProperty(valueProvider, name, type, isStyle, context)) {
+    ValueWriter valueWriter = injectedASWriter.processProperty(valueProvider, name, type, isStyle, context);
+    if (valueWriter == InjectedASWriter.BINDING) {
       return null;
+    }
+    else if (valueWriter != null) {
+      return valueWriter;
     }
     
     if (descriptor.isAllowsPercentage()) {
@@ -152,36 +158,15 @@ class PropertyProcessor {
   public void reset() {
     classFactoryMap.clear();
     isSkinProjectClass = false;
-  }
-
-  interface ValueWriter {
-    int write(PrimitiveAmfOutputStream out, boolean isStyle);
-  }
-  
-  private static class SkinProjectClassValueWriter implements ValueWriter {
-    private final int reference;
-    private final BaseWriter writer;
-
-    public SkinProjectClassValueWriter(int reference, BaseWriter writer) {
-      this.reference = reference;
-      this.writer = writer;
-    }
-
-    @Override
-    public int write(PrimitiveAmfOutputStream out, boolean isStyle) {
-      if (isStyle) {
-        out.write(0);
-      }
-      
-      writer.writeDocumentFactoryReference(reference);
-      
-      return isStyle ? PRIMITIVE_STYLE : PRIMITIVE;
-    }
+    isEffect = false;
   }
 
   private class ValueWriterImpl implements ValueWriter {
     private final XmlElementValueProvider valueProvider;
     private final AnnotationBackedDescriptor descriptor;
+    
+    private static final int SKIN_INT_PROJECT = 1;
+    private static final int EFFECT = 1 << 1;
 
     public ValueWriterImpl(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
       this.valueProvider = valueProvider;
@@ -192,14 +177,15 @@ class PropertyProcessor {
     public int write(PrimitiveAmfOutputStream out, boolean isStyle) {
       final String type = descriptor.getType();
       if (isStyle) {
-        // effect
-        if (type == null) {
-          out.write(1);
+        int flags = isSkinProjectClass ? SKIN_INT_PROJECT : 0;
+        if (isEffect()) {
+          flags |= EFFECT;
+          out.write(flags);
           out.write(Amf3Types.OBJECT);
           return COMPLEX_STYLE;
         }
         else {
-          out.write(0);
+          out.write(flags);
         }
       }
 
@@ -303,20 +289,6 @@ class PropertyProcessor {
       else {
         writer.writeObjectReference(reference);
       }
-    }
-  }
-
-  private static class PercentableValueWriter implements ValueWriter {
-    private final String value;
-    
-    public PercentableValueWriter(String value) {
-      this.value = value;
-    }
-
-    @Override
-    public int write(PrimitiveAmfOutputStream out, boolean isStyle) {
-      out.writeAmfDouble(value);
-      return PRIMITIVE;
     }
   }
 }

@@ -18,12 +18,15 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     String testFile = System.getProperty("testFile");
     String[] files = testFile == null ? getTestFiles() : new String[]{getTestPath() + "/" + testFile + ".mxml"};
 
-    final VirtualFile[] vFiles = new VirtualFile[files.length];
+    final VirtualFile[] vFiles = new VirtualFile[files.length + 1];
     for (int i = 0; i < files.length; i++) {
       VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(files[i]);
       assert vFile != null;
       vFiles[i] = vFile;
     }
+    
+    vFiles[files.length] = LocalFileSystem.getInstance().findFileByPath(getTestPath() + "/background.jpg");
+    assert vFiles[files.length] != null;
 
     testFiles(vFiles);
   }

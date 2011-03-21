@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml {
 import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
+import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.ModuleContext;
 import com.intellij.flex.uiDesigner.StringRegistry;
@@ -12,7 +13,6 @@ import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.StyleDeclarationProxy;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
-import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
@@ -200,16 +200,18 @@ public final class MxmlReader implements DocumentReader {
             inlineCssDeclarationSource = InlineCssRuleset.createInline(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input), context.file);
           }
 
-          if (input.readBoolean()) {
-            readSkinFactory(inlineCssDeclarationSource);
+          var textOffset:int = AmfUtil.readUInt29(input);
+          var flags:int = input.readUnsignedByte();
+          if ((flags & 1) != 0) {
+            readSkinFactory(inlineCssDeclarationSource, textOffset);
             continue;
           }
 
-          cssPropertyDescriptor = CssDeclarationImpl.create(propertyName, AmfUtil.readUInt29(input));
+          cssPropertyDescriptor = CssDeclarationImpl.create(propertyName, textOffset);
           inlineCssDeclarationSource.declarations.push(cssPropertyDescriptor);
           propertyHolder = cssPropertyDescriptor;
 
-          if (input.readBoolean()) {
+          if ((flags & 2) != 0) {
             moduleContext.effectManagerClass[new QName(getMxNs(), "setStyle")](propertyName, object);
           }
           propertyName = "value";
@@ -329,9 +331,8 @@ public final class MxmlReader implements DocumentReader {
     return object;
   }
 
-  private function readSkinFactory(inlineCssDeclarationSource:CssRuleset):void {
-    var textOffset:int = AmfUtil.readUInt29(input);
-    input.readShort();
+  private function readSkinFactory(inlineCssDeclarationSource:CssRuleset, textOffset:int):void {
+    input.readBoolean();
     var declaration:CssSkinClassDeclaration = new CssSkinClassDeclaration(readDocumentFactory(), textOffset);
     inlineCssDeclarationSource.declarations.push(declaration);
   }

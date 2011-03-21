@@ -2,11 +2,14 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
+import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlTag;
 import gnu.trove.THashMap;
@@ -25,28 +28,35 @@ class InjectedASWriter {
   private ObjectReference lastObjectReference;
   
   private ByteRange declarationsRange;
+  
+  final static ValueWriter BINDING = new ValueWriter() {
+    @Override
+    public int write(PrimitiveAmfOutputStream out, boolean isStyle) {
+      throw new UnsupportedOperationException();
+    }
+  }; 
 
   public InjectedASWriter(BaseWriter writer) {
     this.writer = writer;
   }
   
-  public boolean processProperty(XmlElementValueProvider valueProvider, String name, @Nullable String type, boolean isStyle, @Nullable Context context) {
+  public ValueWriter processProperty(XmlElementValueProvider valueProvider, String name, @Nullable String type, boolean isStyle, @Nullable Context context) {
     PsiElement host = valueProvider.getInjectedHost();
     if (host == null) {
-      return false;
+      return null;
     }
     
     if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type)) {
-      if (checkArray(host, name, isStyle, context)) {
-        return true;
+      if (checkArray(host, name, isStyle, context) == BINDING) {
+        return BINDING;
       }
       else if (valueProvider instanceof XmlAttributeValueProvider) {
         // http://youtrack.jetbrains.net/issue/IDEA-64721
         LOG.warn("unsupported injected AS: " + host.getText());
-        return true;
+        return BINDING;
       }
       else {
-        return false;
+        return null;
       }
     }
     else {
@@ -54,25 +64,28 @@ class InjectedASWriter {
     }
   }
 
-  private boolean checkArray(PsiElement host, String name, boolean isStyle, @Nullable Context context) {
+  private ValueWriter checkArray(PsiElement host, String name, boolean isStyle, @Nullable Context context) {
     InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, InjectedPsiVisitor.ExpectedType.ARRAY);
     InjectedLanguageUtil.enumerate(host, visitor);
     if (visitor.values != null) {
       bindingItems.add(new ArrayBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values, isStyle));
-      return true;
+      return BINDING;
     }
     else {
       return visitor.isUnsupported();
     }
   }
   
-  private boolean checkObject(PsiElement host, String name, boolean isStyle, @Nullable Context context) {
+  private ValueWriter checkObject(PsiElement host, String name, boolean isStyle, @Nullable Context context) {
     InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, InjectedPsiVisitor.ExpectedType.OBJECT);
     InjectedLanguageUtil.enumerate(host, visitor);
-    
     if (visitor.values != null) {
       bindingItems.add(new ObjectBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values[0], isStyle));
-      return true;
+      return BINDING;
+    }
+    else if (visitor.valueWriter != null) {
+      return BINDING;
+      //return visitor.valueWriter;
     }
     else {
       return visitor.isUnsupported();
@@ -153,6 +166,7 @@ class InjectedASWriter {
 
     private boolean unsupported;
     private String[] values;
+    private ValueWriter valueWriter;
     
     enum ExpectedType {
       OBJECT, ARRAY
@@ -163,8 +177,8 @@ class InjectedASWriter {
       this.expectedType = expectedType;
     }
     
-    public boolean isUnsupported() {
-      return unsupported;
+    public ValueWriter isUnsupported() {
+      return unsupported ? BINDING : null;
     }
 
     public void visit(@NotNull PsiFile injectedPsi, @NotNull List<PsiLanguageInjectionHost.Shred> places) {
@@ -173,7 +187,14 @@ class InjectedASWriter {
 
       assert places.size() == 1;
       assert places.get(0).host == host;
-      JSSourceElement[] statements = ((JSFile) injectedPsi).getStatements();
+      JSFile jsFile = (JSFile) injectedPsi;
+      JSSourceElement[] statements = jsFile.getStatements();
+      if (statements.length == 0) {
+        if (checkEmbed(jsFile)) {
+          return;
+        }
+      }
+      
       assert statements.length == 1;
       JSCallExpression expression = (JSCallExpression) ((JSExpressionStatement) statements[0]).getExpression();
       JSExpression[] arguments = expression.getArgumentList().getArguments();
@@ -211,6 +232,25 @@ class InjectedASWriter {
       }
     }
 
+    private boolean checkEmbed(JSFile jsFile) {
+      PsiElement firstChild = jsFile.getFirstChild();
+      if (firstChild instanceof LeafPsiElement && ((LeafPsiElement) firstChild).getElementType() == JSTokenTypes.AT) {
+        JSAttribute attribute = (JSAttribute) firstChild.getNextSibling();
+        assert attribute != null;
+        PsiReference[] references = attribute.getValues()[0].getReferences();
+        assert references.length == 1;
+        JSFileReference fileReference = (JSFileReference) references[0];
+        PsiFileSystemItem file = fileReference.resolve();
+        assert file != null && !file.isDirectory();
+        VirtualFile virtualFile = file.getVirtualFile();
+        assert virtualFile != null;
+        valueWriter = new BitmapValueWriter(virtualFile, null);  
+        return true;
+      }
+      
+      return false;
+    }
+   
     private boolean isUnexpected(ExpectedType actualType) {
       if (expectedType == actualType) {
         return false;

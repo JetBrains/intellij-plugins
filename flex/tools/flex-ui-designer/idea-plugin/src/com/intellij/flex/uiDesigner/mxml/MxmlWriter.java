@@ -438,7 +438,7 @@ public class MxmlWriter {
   }
 
   private int writeProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, boolean cssDeclarationSourceDefined, Context context) {
-    PropertyProcessor.ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
+    ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
     if (valueWriter == null) {
       return PropertyProcessor.IGNORE;
     }
@@ -450,7 +450,6 @@ public class MxmlWriter {
         defineInlineCssDeclaration(element.getParent());
       }
       
-      out.write(propertyProcessor.isSkinProjectClass());
       out.writeUInt29(element.getTextOffset());
     }
     else {

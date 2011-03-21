@@ -9,6 +9,7 @@ public class MxmlTest extends BaseTestCase {
     //noinspection ConstantIfStatementJS
     if (false) {
       Form();
+      Embed();
       UntypedProperty();
       ClassProperty();
       ItemRendererAndMixDefaultExplicitContent();
@@ -21,6 +22,10 @@ public class MxmlTest extends BaseTestCase {
   }
   
   public function Form():void {
+    assertThat(app, {document: app});
+  }
+  
+  public function Embed():void {
     assertThat(app, {document: app});
   }
   
