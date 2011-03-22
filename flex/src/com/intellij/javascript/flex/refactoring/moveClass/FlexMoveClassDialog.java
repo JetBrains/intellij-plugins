@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
@@ -27,12 +28,14 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.ui.RefactoringDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.NonFocusableCheckBox;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ThreeState;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import java.util.Collection;
 
 public class FlexMoveClassDialog extends RefactoringDialog {
@@ -109,6 +112,45 @@ public class FlexMoveClassDialog extends RefactoringDialog {
       myCbMoveToAnotherSourceFolder.setEnabled(false);
       myCbMoveToAnotherSourceFolder.setSelected(false);
     }
+
+    myClassNameField.getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
+      protected void textChanged(DocumentEvent e) {
+        validateButtons();
+      }
+    });
+
+    myTargetPackageField.addDocumentListener(new com.intellij.openapi.editor.event.DocumentAdapter() {
+      @Override
+      public void documentChanged(com.intellij.openapi.editor.event.DocumentEvent e) {
+        validateButtons();
+      }
+    });
+  }
+
+  @Override
+  protected void canRun() throws ConfigurationException {
+    final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage());
+
+    if (myFileLocal) {
+      final String className = myClassNameField.getText();
+      if (StringUtil.isEmpty(className)) {
+        throw new ConfigurationException(FlexBundle.message("element.name.empty",
+                                                            JSBundle.message(
+                                                              JSNamedElementKind.kind(myElements.iterator().next()).humanReadableKey())));
+      }
+      if (!namesValidator.isIdentifier(className, myProject)) {
+        throw new ConfigurationException(FlexBundle.message("invalid.element.name", StringUtil
+          .decapitalize(JSBundle.message(JSNamedElementKind.kind(myElements.iterator().next()).humanReadableKey())), className));
+      }
+    }
+
+    final String packageName = myTargetPackageField.getText();
+    for (final String s : StringUtil.split(packageName, ".")) {
+      if (!namesValidator.isIdentifier(s, myProject)) {
+        throw new ConfigurationException(FlexBundle.message("invalid.package", packageName));
+      }
+    }
   }
 
   private void createUIComponents() {
@@ -153,29 +195,6 @@ public class FlexMoveClassDialog extends RefactoringDialog {
 
   @Override
   protected void doAction() {
-    final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage());
-
-    if (myFileLocal) {
-      final String className = myClassNameField.getText();
-      if (StringUtil.isEmpty(className)) {
-        setErrorText(FlexBundle.message("element.name.empty",
-                                        JSBundle.message(JSNamedElementKind.kind(myElements.iterator().next()).humanReadableKey())));
-        return;
-      }
-      if (!namesValidator.isIdentifier(className, myProject)) {
-        setErrorText(FlexBundle.message("invalid.element.name", StringUtil
-          .decapitalize(JSBundle.message(JSNamedElementKind.kind(myElements.iterator().next()).humanReadableKey())), className));
-        return;
-      }
-    }
-
-    final String packageName = myTargetPackageField.getText();
-    for (final String s : StringUtil.split(packageName, ".")) {
-      if (!namesValidator.isIdentifier(s, myProject)) {
-        setErrorText(FlexBundle.message("invalid.package", packageName));
-        return;
-      }
-    }
     myTargetPackageField.updateRecents();
 
     PsiElement firstElement = myElements.iterator().next();
@@ -190,7 +209,7 @@ public class FlexMoveClassDialog extends RefactoringDialog {
     String nameToCheck = myFileLocal ? myClassNameField.getText() : null;
     PsiDirectory targetDirectory =
       JSRefactoringUtil.chooseOrCreateDirectoryForClass(myProject, ModuleUtil.findModuleForPsiElement(firstElement),
-                                                        GlobalSearchScope.projectScope(myProject), packageName,
+                                                        GlobalSearchScope.projectScope(myProject), myTargetPackageField.getText(),
                                                         nameToCheck, baseDir,
                                                         myCbMoveToAnotherSourceFolder.isSelected() ? ThreeState.YES : ThreeState.NO);
     if (targetDirectory == null) {
