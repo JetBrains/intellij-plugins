@@ -5,6 +5,7 @@ import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -236,14 +237,18 @@ class InjectedASWriter {
       if (firstChild instanceof LeafPsiElement && ((LeafPsiElement) firstChild).getElementType() == JSTokenTypes.AT) {
         JSAttribute attribute = (JSAttribute) firstChild.getNextSibling();
         assert attribute != null;
-        PsiReference[] references = attribute.getValues()[0].getReferences();
-        assert references.length == 1;
-        JSFileReference fileReference = (JSFileReference) references[0];
-        PsiFileSystemItem file = fileReference.resolve();
-        assert file != null && !file.isDirectory();
-        VirtualFile virtualFile = file.getVirtualFile();
-        assert virtualFile != null;
-        valueWriter = new BitmapValueWriter(virtualFile, null);  
+        VirtualFile source = null;
+        for (JSAttributeNameValuePair p : attribute.getValues()) {
+          final String name = p.getName();
+          if (name == null || name.equals("source")) {
+            PsiFileSystemItem psiFile = ((JSFileReference)p.getReferences()[0]).resolve();
+            assert psiFile != null && !psiFile.isDirectory();
+            source = psiFile.getVirtualFile();
+          }
+        }
+
+        assert source != null;
+        valueWriter = new BitmapValueWriter(source, null);  
         return true;
       }
       
