@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.BinaryFileManager;
 import com.intellij.flex.uiDesigner.io.AbstractMarker;
 import com.intellij.flex.uiDesigner.io.DirectMarker;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +21,8 @@ import java.util.Iterator;
 public class BitmapValueWriter extends AbstractPrimitiveValueWriter {
   private final VirtualFile virtualFile;
   private final String mimeType;
+  
+  private static final Logger LOG = Logger.getInstance(BitmapValueWriter.class.getName());
 
   public BitmapValueWriter(@NotNull VirtualFile virtualFile, @Nullable String mimeType) {
     this.virtualFile = virtualFile;
@@ -46,7 +49,9 @@ public class BitmapValueWriter extends AbstractPrimitiveValueWriter {
       image = getImage();
     }
     catch (IOException e) {
-      throw new RuntimeException(e);
+      LOG.error(e);
+      // todo write special error image 
+      return;
     }
     
     out.getBlockOut().addDirectMarker(2 + 2 + 1 + (image.getWidth() * image.getHeight() * 4),
@@ -66,7 +71,7 @@ public class BitmapValueWriter extends AbstractPrimitiveValueWriter {
         image = ImageIO.read(inputStream);
       }
       else {
-        Iterator iter = ImageIO.getImageReaders(mimeType);
+        Iterator iter = ImageIO.getImageReadersByMIMEType(mimeType);
         ImageReader reader = (ImageReader)iter.next();
         ImageInputStream imageInputStream = ImageIO.createImageInputStream(inputStream);
         reader.setInput(imageInputStream, true, true);

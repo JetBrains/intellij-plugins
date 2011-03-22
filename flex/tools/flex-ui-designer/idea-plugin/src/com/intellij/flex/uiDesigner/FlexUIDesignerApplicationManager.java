@@ -31,47 +31,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlexUIDesignerApplicationManager implements Disposable {
-  public static final Topic<FlexUIDesignerApplicationListener> MESSAGE_TOPIC = new Topic<FlexUIDesignerApplicationListener>("Flex UI Designer Application open and close events", FlexUIDesignerApplicationListener.class);
-  
+  public static final Topic<FlexUIDesignerApplicationListener> MESSAGE_TOPIC =
+    new Topic<FlexUIDesignerApplicationListener>("Flex UI Designer Application open and close events",
+                                                 FlexUIDesignerApplicationListener.class);
+
   private static final Key<ProjectInfo> PROJECT_INFO = Key.create("FUD_PROJECT_INFO");
-  
+
   static final Logger LOG = Logger.getInstance(FlexUIDesignerApplicationManager.class.getName());
-  
+
   private static final long ABC_INJECTION_LAST_MODIFIED = 1299598064L * 1000L;
   private static final long APP_LAST_MODIFIED = 1299598064L * 1000L;
 
   private Client client;
   private Process adlProcess;
   private Server server;
-  
+
   ProjectManagerListener myProjectManagerListener;
-  
+
   private File appDir;
 
   public FlexUIDesignerApplicationManager() {
     appDir = new File(PathManager.getSystemPath(), "flexUIDesigner");
-    
+
     File designerAppFile = new File(appDir, "designer.swf");
     if (System.getProperty("fud.debug") == null && designerAppFile.lastModified() < APP_LAST_MODIFIED) {
       //noinspection ResultOfMethodCallIgnored
       designerAppFile.getParentFile().mkdirs();
       try {
-        FileUtil.copy(getClass().getClassLoader().getResourceAsStream("descriptor.xml"), new FileOutputStream(new File(appDir, "descriptor.xml")));
+        FileUtil.copy(getClass().getClassLoader().getResourceAsStream("descriptor.xml"),
+                      new FileOutputStream(new File(appDir, "descriptor.xml")));
         FileUtil.copy(getClass().getClassLoader().getResourceAsStream("designer.swf"), new FileOutputStream(designerAppFile));
       }
       catch (IOException e) {
         LOG.error(e);
       }
     }
-    
+
     myProjectManagerListener = new MyProjectManagerListener();
     ProjectManager.getInstance().addProjectManagerListener(myProjectManagerListener);
-  } 
+  }
 
   public static FlexUIDesignerApplicationManager getInstance() {
     return ServiceManager.getService(FlexUIDesignerApplicationManager.class);
   }
-  
+
   public Client getClient() {
     return client;
   }
@@ -94,7 +97,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       }
     }
   }
-  
+
   public void serverClosed() throws IOException {
     client.close();
     for (Project project : ProjectManager.getInstance().getOpenProjects()) {
@@ -125,7 +128,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   private void run(@NotNull final Project project, @NotNull final Module module, @NotNull XmlFile psiFile, boolean debug) {
     DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk();
     if (adlRunConfiguration == null) {
-      Messages.showMessageDialog(project, FlexUIDesignerBundle.message("error.suitable.fdk.not.found", SystemInfo.isLinux ? FlexUIDesignerBundle.message("error.suitable.fdk.not.found.linux") : ""), CommonBundle.getErrorTitle(), Messages.getErrorIcon());
+      Messages.showMessageDialog(project, FlexUIDesignerBundle.message("error.suitable.fdk.not.found",
+                                                                       SystemInfo.isLinux ? FlexUIDesignerBundle
+                                                                         .message("error.suitable.fdk.not.found.linux") : ""),
+                                 CommonBundle.getErrorTitle(), Messages.getErrorIcon());
       final ProjectJdksEditor editor = new ProjectJdksEditor(null, project, WindowManager.getInstance().suggestParentWindow(project));
       editor.show();
       if (editor.isOK()) {
@@ -147,25 +153,26 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       arguments.add("-cdd");
       arguments.add(fudHome + "/flex-injection/target");
     }
-    
+
     if (!arguments.isEmpty()) {
       adlRunConfiguration.arguments = arguments;
     }
-    
+
     server = new Server(new PendingOpenDocumentTask(project, module, psiFile), this);
     DesignerApplicationUtil.AdlRunTask task = new DesignerApplicationUtil.AdlRunTask(adlRunConfiguration) {
       @Override
       public void run() {
         try {
-          adlProcess = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/descriptor.xml", server.listen(), new Consumer<Integer>() {
-            @Override
-            public void consume(Integer integer) {
-              adlProcess = null;
-              if (onAdlExit != null) {
-                ApplicationManager.getApplication().invokeLater(onAdlExit);
+          adlProcess = DesignerApplicationUtil
+            .runAdl(runConfiguration, appDir.getPath() + "/descriptor.xml", server.listen(), new Consumer<Integer>() {
+              @Override
+              public void consume(Integer integer) {
+                adlProcess = null;
+                if (onAdlExit != null) {
+                  ApplicationManager.getApplication().invokeLater(onAdlExit);
+                }
               }
-            }
-          });
+            });
         }
         catch (IOException e) {
           LOG.error(e);
@@ -196,7 +203,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     final LibraryCollector libraryCollector = new LibraryCollector();
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
     stringWriter.startChange();
-    
+
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       @Override
       public void run() {
@@ -214,7 +221,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     ProjectInfo projectInfo = project.getUserData(PROJECT_INFO);
     if (projectInfo == null) {
       String librarySetId = project.getLocationHash();
-      externalLibrarySet = new LibrarySet(librarySetId, ApplicationDomainCreationPolicy.ONE, new SwcDependenciesSorter(appDir).sort(libraryCollector.getExternalLibraries(), librarySetId, libraryCollector.getFlexSdkVersion(), ABC_INJECTION_LAST_MODIFIED));
+      externalLibrarySet = new LibrarySet(librarySetId, ApplicationDomainCreationPolicy.ONE, new SwcDependenciesSorter(appDir)
+        .sort(libraryCollector.getExternalLibraries(), librarySetId, libraryCollector.getFlexSdkVersion(), ABC_INJECTION_LAST_MODIFIED));
       projectInfo = new ProjectInfo(externalLibrarySet);
       project.putUserData(PROJECT_INFO, projectInfo);
 
@@ -224,7 +232,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     else {
       //noinspection UnusedAssignment
       externalLibrarySet = projectInfo.getLibrarySet();
-      // todo merge existing libraries and new. create new custom external library set for myModule, if we have different version of the artifact
+      // todo merge existing libraries and new. create new custom external library set for myModule, 
+      // if we have different version of the artifact
     }
 
     ModuleInfo moduleInfo = new ModuleInfo(module);
@@ -243,7 +252,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       myModule = module;
       myPsiFile = psiFile;
     }
-    
+
     public void setOutput(OutputStream outputStream) {
       if (client == null) {
         client = new Client(outputStream);
@@ -275,7 +284,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       }
     }
   }
-  
+
   private class MyProjectManagerListener implements ProjectManagerListener {
     @Override
     public void projectOpened(Project project) {
@@ -306,7 +315,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
     @Override
     public void projectClosing(Project project) {
-      
+
     }
   }
 }
