@@ -15,18 +15,21 @@ public class BinaryFileManager extends AbstractFileManager<AbstractFileManager.F
     return isRegistered(virtualFile.getUserData(INFO));
   }
   
-  public FileInfo getId(VirtualFile virtualFile) {
+  public int getId(VirtualFile virtualFile) {
     FileInfo info = virtualFile.getUserData(INFO);
-    if (!isRegistered(info)) {
-      if (info == null) {
-        info = new FileInfo();
-      }
+    //noinspection ConstantConditions
+    return isRegistered(info) ? info.getId() : -1;
+  }
 
-      initInfo(info);
-
-      virtualFile.putUserData(INFO, info);
+  public int add(VirtualFile virtualFile) {
+    FileInfo info = virtualFile.getUserData(INFO);
+    if (info == null) {
+      info = new FileInfo();
     }
+    
+    initInfo(info);
+    virtualFile.putUserData(INFO, info);
 
-    return info;
+    return info.getId();
   }
 }

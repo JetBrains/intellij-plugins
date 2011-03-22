@@ -84,8 +84,7 @@ class InjectedASWriter {
       return BINDING;
     }
     else if (visitor.valueWriter != null) {
-      return BINDING;
-      //return visitor.valueWriter;
+      return visitor.valueWriter;
     }
     else {
       return visitor.isUnsupported();

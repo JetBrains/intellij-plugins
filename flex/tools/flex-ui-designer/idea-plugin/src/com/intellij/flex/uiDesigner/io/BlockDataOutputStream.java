@@ -9,10 +9,14 @@ import java.util.List;
 
 public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   private static final int SERVICE_DATA_SIZE = 4;
+  
+  private int directCount;
 
   private int lastBlockBegin;
   private final OutputStream out;
   private final List<Marker> markers = new ArrayList<Marker>();
+  
+  private DataOutputStream directOut;
 
   public BlockDataOutputStream(@NotNull OutputStream out) {
     this(out, 64 * 1024);
@@ -74,9 +78,10 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   }
 
   public void beginWritePrepended(int additionalSize, int insertPosition) throws IOException {
-    count += additionalSize;
+    int extra = additionalSize + directCount;
+    count += extra;
     writeHeader();
-    count -= additionalSize;
+    count -= extra;
     out.write(buffer, 0, insertPosition);
   }
 
@@ -126,6 +131,13 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
         if (marker instanceof ByteRangeMarker) {
           writeDataRange(((ByteRangeMarker) marker).getDataRange());
         }
+        else if (marker instanceof DirectMarker) {
+          if (directOut == null) {
+            directOut = new DataOutputStream(new BufferedOutputStreamEx(out));
+          }
+          ((DirectMarker)marker).write(directOut);
+          directOut.flush();
+        }
         
         lastEnd = marker.getEnd();
       }
@@ -137,11 +149,12 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       }
       
       if (auditorOutput != null) {
-        assert auditorOutput.watchCount == (count - insertPosition);
+        assert auditorOutput.watchCount == directCount + (count - insertPosition);
         auditorOutput.watchCount = -1;
       }
     }
 
+    directCount = 0;
     lastBlockBegin = 0;
     count = SERVICE_DATA_SIZE;
   }
@@ -252,6 +265,11 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   public void addMarker(Marker marker) {
     markers.add(marker);
   }
+  
+  public void addDirectMarker(int size, DirectMarker marker) {
+    markers.add(marker);
+    directCount += size;
+  }
 
   public void setPosition(int position) {
     count = position;
@@ -339,6 +357,23 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     @Override
     public void close() throws IOException {
       out.close();
+    }
+  }
+
+  /**
+   * flush only buffer
+   */
+  private static class BufferedOutputStreamEx extends BufferedOutputStream {
+    public BufferedOutputStreamEx(OutputStream out) {
+      super(out);
+    }
+
+    @Override
+    public void flush() throws IOException {
+      if (count > 0) {
+        out.write(buf, 0, count);
+        count = 0;
+      }
     }
   }
 }

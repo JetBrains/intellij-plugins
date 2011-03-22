@@ -20,6 +20,10 @@ public class PrimitiveAmfOutputStream extends OutputStream {
     flush();
     out.close();
   }
+  
+  public void closeWithoutFlush() throws IOException {
+    out.close();
+  }
 
   public void reset() {
     resetSizeAndPosition();

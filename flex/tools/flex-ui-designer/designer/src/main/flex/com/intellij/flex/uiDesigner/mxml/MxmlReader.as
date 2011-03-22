@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml {
+import com.intellij.flex.uiDesigner.BitmapDataManager;
 import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.DocumentReader;
@@ -16,6 +17,8 @@ import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
+
+import flash.display.BitmapData;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -35,6 +38,7 @@ public final class MxmlReader implements DocumentReader {
   
   private var stringRegistry:StringRegistry;
   private var documentFactoryManager:DocumentFactoryManager;
+  private var bitmapDataManager:BitmapDataManager;
 
   private const stateReader:StateReader = new StateReader();
   private const injectedASReader:InjectedASReader = new InjectedASReader();
@@ -48,9 +52,10 @@ public final class MxmlReader implements DocumentReader {
   
   internal var factoryContext:DeferredInstanceFromBytesContext;
 
-  public function MxmlReader(stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager) {
+  public function MxmlReader(stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager, bitmapDataManager:BitmapDataManager) {
     this.stringRegistry = stringRegistry;
     this.documentFactoryManager = documentFactoryManager;
+    this.bitmapDataManager = bitmapDataManager;
   }
 
   internal function getClass(name:String):Class {
@@ -301,8 +306,8 @@ public final class MxmlReader implements DocumentReader {
           propertyHolder[propertyName] = o;
           break;
         
-        case Amf3Types.DOCUMENT_FACTORY_REFERENCE:
-          propertyHolder[propertyName] = readDocumentFactory();
+        case Amf3Types.BINARY_FILE:
+          propertyHolder[propertyName] = readBitmapData();
           break;
         
         case STRING_REFERENCE:
@@ -347,6 +352,23 @@ public final class MxmlReader implements DocumentReader {
     }
     
     return factory;
+  }
+  
+  private function readBitmapData():BitmapData {
+    var id:int = input.readByte();
+    var registered:Boolean = (id & 1) != 0;
+    id = id >> 1;
+    if (registered) {
+      return bitmapDataManager.get(id);
+    }
+    else {
+      var bitmapData:BitmapData = new BitmapData(input.readShort(), input.readShort(), input.readBoolean(), 0);
+      // our input always ByteArray, in any case, we cannot change BitmapData API
+      bitmapData.setPixels(bitmapData.rect, ByteArray(input));
+      
+      bitmapDataManager.register(id, bitmapData);
+      return bitmapData;
+    }
   }
 
   private function getOrCreateFactoryContext():DeferredInstanceFromBytesContext {

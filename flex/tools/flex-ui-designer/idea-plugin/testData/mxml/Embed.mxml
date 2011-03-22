@@ -1,4 +1,5 @@
 <Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx">
   <!--<BitmapImage source="@Embed('/Users/develar/workspace/XpressPages/client/themes/animals/d101/src/main/resources/catTracks_241x89.swf')" left="0" right="0" top="0" bottom="0"/>-->
-  <!--<mx:SWFLoader source="@Embed('/Users/develar/Downloads/CustomPreloader/preload/welcome.swf.swf', symbol='Sprite 5')" left="0" right="0" top="0" bottom="0"/>-->
+  <!--<mx:SWFLoader source="@Embed('/Users/develar/Downloads/Test/assets/anim.swf', symbol='myMC')" left="0" right="0" top="0" bottom="0"/>-->
+  <Image source="@Embed('background.jpg')"/>
 </Application>

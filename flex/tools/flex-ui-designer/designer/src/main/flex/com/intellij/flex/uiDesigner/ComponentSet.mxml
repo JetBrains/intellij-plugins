@@ -12,6 +12,7 @@
   <Component role="{DocumentReader}" implementation="{MxmlReader}">
     <Requirement role="{StringRegistry}"/>
     <Requirement role="{DocumentFactoryManager}"/>
+    <Requirement role="{BitmapDataManager}"/>
   </Component>
 	<Component role="{SocketManager}" implementation="{SocketManagerImpl}"/>
   <Component role="{DefaultSocketDataHandler}">

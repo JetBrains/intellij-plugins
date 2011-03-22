@@ -61,9 +61,6 @@ public class Client {
     if (out == null) {
       return;
     }
-    
-    out.close();
-    out = null;
     blockOut = null;
     registeredLibraryCounter = 0;
     sessionId++;
@@ -73,6 +70,10 @@ public class Client {
     mxmlWriter.reset();
     
     DocumentFileManager.getInstance().reset(sessionId);
+    BinaryFileManager.getInstance().reset(sessionId);
+    
+    out.closeWithoutFlush();
+    out = null;
   }
 
   public void openProject(Project project) throws IOException {
