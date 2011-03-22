@@ -35,11 +35,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 
 public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
 
   private final Collection<JSQualifiedNamedElement> myElements;
-  private final PsiDirectory myTargetDirectory;
   private final String myTargetPackage;
 
   public FlexMoveClassProcessor(Collection<JSQualifiedNamedElement> elements,
@@ -57,7 +57,6 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
           }),
           targetDirectory, true, searchInComments, searchForTextOccurencies, callback, null);
     myElements = elements;
-    myTargetDirectory = targetDirectory;
     myTargetPackage = targetPackage;
   }
 
@@ -161,6 +160,20 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
     // TODO module conflicts
     //JSRefactoringConflictsUtil.analyzeModuleConflicts(myProject, myElements, usages, myTargetDirectory, conflicts);
     return conflicts;
+  }
+
+  @Override
+  protected void retargetUsages(UsageInfo[] usages, Map<PsiElement, PsiElement> oldToNewMap) {
+    super.retargetUsages(usages, oldToNewMap);
+    for (UsageInfo usage : usages) {
+      if (usage instanceof JSRefactoringUtil.ConstructorUsageInfo) {
+        final JSRefactoringUtil.ConstructorUsageInfo constuctorUsage = (JSRefactoringUtil.ConstructorUsageInfo)usage;
+        final JSReferenceExpression ref = constuctorUsage.getElement();
+        if (ref != null && constuctorUsage.getSubject().isValid()) {
+          ref.bindToElement(constuctorUsage.getSubject().getContainingFile());
+        }
+      }
+    }
   }
 
   private class FlexMoveClassUsageViewDescriptor extends BaseUsageViewDescriptor {
