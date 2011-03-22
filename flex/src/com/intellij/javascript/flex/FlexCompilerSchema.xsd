@@ -34,6 +34,11 @@
                   <xs:documentation>use the ActionScript 3 class based object model for greater performance and better error reporting. In the class based object model most built-in functions are implemented as fixed methods of classes. (advanced)</xs:documentation>
                 </xs:annotation>
               </xs:element>
+              <xs:element type="xs:boolean" name="compress">
+                <xs:annotation>
+                  <xs:documentation></xs:documentation>
+                </xs:annotation>
+              </xs:element>
               <xs:element type="xs:string" name="context-root">
                 <xs:annotation>
                   <xs:documentation>path to replace {context.root} tokens for service channel endpoints</xs:documentation>
@@ -253,6 +258,11 @@
                   <xs:documentation></xs:documentation>
                 </xs:annotation>
               </xs:element>
+              <xs:element type="xs:boolean" name="mobile">
+                <xs:annotation>
+                  <xs:documentation>specifies the target runtime is a mobile device</xs:documentation>
+                </xs:annotation>
+              </xs:element>
               <xs:element name="mxml">
                 <xs:complexType>
                   <xs:sequence>
@@ -302,9 +312,19 @@
                   <xs:documentation>Enable post-link SWF optimization</xs:documentation>
                 </xs:annotation>
               </xs:element>
+              <xs:element type="xs:string" name="preloader">
+                <xs:annotation>
+                  <xs:documentation>specifies the default value for the Application's preloader attribute. If not specified, the default preloader value will be mx.preloaders.SparkDownloadProgressBar with -compatibility-version &gt;= 4.0 and it will be mx.preloader.DownloadProgressBar with -compatibility-version &lt; 4.0.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
               <xs:element type="xs:boolean" name="report-invalid-styles-as-warnings">
                 <xs:annotation>
                   <xs:documentation>enables reporting of invalid styles as warnings</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element type="xs:boolean" name="report-missing-required-skin-parts-as-warnings">
+                <xs:annotation>
+                  <xs:documentation>Use this option to generate a warning instead of an error when a missing required skin part is detected. (advanced)</xs:documentation>
                 </xs:annotation>
               </xs:element>
               <xs:element type="xs:string" name="services">
@@ -682,6 +702,11 @@
             <xs:attribute type="xs:boolean" name="append"/>
           </xs:complexType>
         </xs:element>
+        <xs:element type="xs:boolean" name="include-inheritance-dependencies-only">
+          <xs:annotation>
+            <xs:documentation>only include inheritance dependencies of classes specified with include-classes  (advanced)</xs:documentation>
+          </xs:annotation>
+        </xs:element>
         <xs:element name="include-resource-bundles">
           <xs:annotation>
             <xs:documentation>a list of resource bundles to include in the output SWC</xs:documentation>
@@ -748,11 +773,6 @@
         <xs:element type="xs:string" name="link-report">
           <xs:annotation>
             <xs:documentation>Output a XML-formatted report of all definitions linked into the application. (advanced)</xs:documentation>
-          </xs:annotation>
-        </xs:element>
-        <xs:element type="xs:string" name="size-report">
-          <xs:annotation>
-            <xs:documentation>Output an XML-formatted report detailing the size of all code and data linked into the application. (advanced)</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element name="load-config">
@@ -882,6 +902,11 @@
             <xs:documentation>XML text to store in the SWF metadata (overrides metadata.* configuration) (advanced)</xs:documentation>
           </xs:annotation>
         </xs:element>
+        <xs:element type="xs:boolean" name="remove-unused-rsls">
+          <xs:annotation>
+            <xs:documentation>remove RSLs that are not being used by the application (advanced)</xs:documentation>
+          </xs:annotation>
+        </xs:element>
         <xs:element type="xs:string" name="resource-bundle-list">
           <xs:annotation>
             <xs:documentation>prints a list of resource bundles to a file for input to the compccompiler to create a resource bundle SWC file. (advanced)</xs:documentation>
@@ -899,6 +924,9 @@
           </xs:complexType>
         </xs:element>
         <xs:element name="runtime-shared-library-path">
+          <xs:annotation>
+            <xs:documentation>specifies a SWC to link against, an RSL URL to load, with an optional policy file URL and optional failover URLs</xs:documentation>
+          </xs:annotation>
           <xs:complexType>
             <xs:choice maxOccurs="unbounded" minOccurs="0">
               <xs:element type="xs:string" name="path-element"/>
@@ -908,9 +936,48 @@
             <xs:attribute type="xs:boolean" name="append"/>
           </xs:complexType>
         </xs:element>
+        <xs:element name="runtime-shared-library-settings">
+          <xs:complexType>
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
+              <xs:element name="application-domain">
+                <xs:annotation>
+                  <xs:documentation>override the application domain an RSL is loaded into. The supported values are 'current', 'default', 'parent', or 'top-level'. (advanced)</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:choice maxOccurs="unbounded" minOccurs="0">
+                    <xs:element type="xs:string" name="path-element"/>
+                    <xs:element type="xs:string" name="application-domain-target"/>
+                  </xs:choice>
+                  <xs:attribute type="xs:boolean" name="append"/>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="force-rsls">
+                <xs:annotation>
+                  <xs:documentation>force an RSL to be loaded, overriding the removal caused by using the remove-unused-rsls option (advanced)</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="xs:string" name="path-element" maxOccurs="unbounded" minOccurs="0"/>
+                  </xs:sequence>
+                  <xs:attribute type="xs:boolean" name="append"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+        <xs:element type="xs:string" name="size-report">
+          <xs:annotation>
+            <xs:documentation>Output an XML-formatted report detailing the size of all code and data linked into the application. (advanced)</xs:documentation>
+          </xs:annotation>
+        </xs:element>
         <xs:element type="xs:boolean" name="static-link-runtime-shared-libraries">
           <xs:annotation>
             <xs:documentation>statically link the libraries specified by the -runtime-shared-libraries-path option.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element type="xs:int" name="swf-version">
+          <xs:annotation>
+            <xs:documentation>specifies the version of the compiled SWF file.</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element type="xs:string" name="target-player">
@@ -921,6 +988,16 @@
         <xs:element type="xs:string" name="tools-locale">
           <xs:annotation>
             <xs:documentation>specifies the locale used by the compiler when reporting errors and warnings.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element type="xs:boolean" name="use-direct-blit">
+          <xs:annotation>
+            <xs:documentation>Use hardware acceleration to blit graphics to the screen, where such acceleration is available.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element type="xs:boolean" name="use-gpu">
+          <xs:annotation>
+            <xs:documentation>Use GPU compositing features when drawing graphics, where such acceleration is available.</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element type="xs:boolean" name="use-network">
@@ -952,23 +1029,6 @@
             <xs:sequence>
               <xs:element type="xs:string" name="path-element" maxOccurs="1" minOccurs="0"/>
             </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-
-        <xs:element name="runtime-shared-library-settings">
-          <xs:complexType>
-            <xs:choice maxOccurs="unbounded" minOccurs="0">
-              <xs:element name="force-rsls">
-                <xs:annotation>
-                  <xs:documentation>force an RSL to be loaded, overriding the removal caused by using the remove-unused-rsls option</xs:documentation>
-                </xs:annotation>
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element type="xs:string" name="path-element" maxOccurs="unbounded" minOccurs="0"/>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-            </xs:choice>
           </xs:complexType>
         </xs:element>
       </xs:choice>
