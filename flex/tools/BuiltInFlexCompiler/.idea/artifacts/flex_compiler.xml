@@ -6,6 +6,7 @@
       <element id="module-output" name="Common" />
       <element id="module-output" name="Flex3Compiler" />
       <element id="module-output" name="Flex4Compiler" />
+      <element id="module-output" name="Flex45Compiler" />
     </root>
   </artifact>
 </component>

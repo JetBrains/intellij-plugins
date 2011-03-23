@@ -4,6 +4,8 @@ import com.intellij.flex.compiler.flex3.Flex3CompcHandler;
 import com.intellij.flex.compiler.flex3.Flex3MxmlcHandler;
 import com.intellij.flex.compiler.flex4.Flex4CompcHandler;
 import com.intellij.flex.compiler.flex4.Flex4MxmlcHandler;
+import com.intellij.flex.compiler.flex45.Flex45CompcHandler;
+import com.intellij.flex.compiler.flex45.Flex45MxmlcHandler;
 import flex2.tools.VersionInfo;
 
 import java.io.DataInputStream;
@@ -150,7 +152,8 @@ public class FlexCompiler implements MessageSender {
     final SdkSpecificHandler sdkSpecificHandler = getSdkSpecificHandler(mxmlc);
     if (sdkSpecificHandler == null) {
       logger.log(
-        "Error: Flex SDK version " + SDK_MAJOR_VERSION + '.' + SDK_MINOR_VERSION + '.' + SDK_REVISION_VERSION + " is not supported by this compiler");
+        "Error: Flex SDK " + SDK_MAJOR_VERSION + '.' + SDK_MINOR_VERSION + '.' + SDK_REVISION_VERSION
+        + " is not supported by built-in compiler shell. Please change compiler at File | Settings | Compiler | Flex Compiler.");
       logger.log(COMPILATION_FINISHED);
       return;
     }
@@ -167,7 +170,12 @@ public class FlexCompiler implements MessageSender {
       return mxmlc ? new Flex3MxmlcHandler() : new Flex3CompcHandler();
     }
     else if ("4".equals(SDK_MAJOR_VERSION)) {
-      return mxmlc ? new Flex4MxmlcHandler() : new Flex4CompcHandler();
+      if ("0".equals(SDK_MINOR_VERSION) || "1".equals(SDK_MINOR_VERSION)) {
+        return mxmlc ? new Flex4MxmlcHandler() : new Flex4CompcHandler();
+      }
+      else if ("5".equals(SDK_MINOR_VERSION)) {
+        return mxmlc ? new Flex45MxmlcHandler() : new Flex45CompcHandler();
+      }
     }
 
     return null;

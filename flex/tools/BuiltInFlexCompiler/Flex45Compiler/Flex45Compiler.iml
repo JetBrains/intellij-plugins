@@ -8,10 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Common" />
-    <orderEntry type="module" module-name="Flex3Compiler" />
-    <orderEntry type="module" module-name="Flex4Compiler" />
-    <orderEntry type="module" module-name="Flex45Compiler" />
-    <orderEntry type="library" name="Flex SDK 3.5" level="project" />
+    <orderEntry type="library" name="Flex SDK 4.5.0.19786" level="project" />
   </component>
 </module>
 
