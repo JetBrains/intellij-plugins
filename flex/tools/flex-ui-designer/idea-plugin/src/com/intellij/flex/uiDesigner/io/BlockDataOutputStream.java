@@ -131,12 +131,15 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
         if (marker instanceof ByteRangeMarker) {
           writeDataRange(((ByteRangeMarker) marker).getDataRange());
         }
-        else if (marker instanceof DirectMarker) {
+        else if (marker instanceof DirectDataMarker) {
           if (directOut == null) {
             directOut = new DataOutputStream(new BufferedOutputStreamEx(out));
           }
-          ((DirectMarker)marker).write(directOut);
+          ((DirectDataMarker)marker).write(directOut);
           directOut.flush();
+        }
+        else if (marker instanceof DirectMarker) {
+          ((DirectMarker)marker).write(out);
         }
         
         lastEnd = marker.getEnd();
@@ -266,7 +269,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     markers.add(marker);
   }
   
-  public void addDirectMarker(int size, DirectMarker marker) {
+  public void addDirectMarker(int size, Marker marker) {
     markers.add(marker);
     directCount += size;
   }

@@ -6,6 +6,3 @@ workspace.xml
 .idea/libraries
 
 out
-
-idea-plugin/testData/states/*.swf
-idea-plugin/testData/states/generated

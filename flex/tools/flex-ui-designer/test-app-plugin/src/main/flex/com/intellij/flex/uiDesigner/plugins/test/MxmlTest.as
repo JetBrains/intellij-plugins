@@ -34,7 +34,7 @@ public class MxmlTest extends BaseTestCase {
   public function Embed():void {
     var bitmapData:BitmapData = app.getElementAt(0).source;
     var m:Matcher = allOf(equalTo(bitmapData), {transparent: false, width: 240, height: 180});
-    assertThat(app, [{source: m}, {source: m}, {source: {transparent: true, width: 240, height: 180}}]);
+    assertThat(app, [{source: m}, {source: m}, {source: {transparent: true, width: 240, height: 180}}, {}]);
   }
   
   public function UntypedProperty():void {

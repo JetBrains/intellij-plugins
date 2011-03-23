@@ -21,7 +21,7 @@ public class DocumentFileManager extends AbstractFileManager<DocumentFileManager
     return isRegistered(virtualFile.getUserData(INFO));
   }
 
-  public DocumentInfo getId(VirtualFile virtualFile, XmlFile psiFile, @Nullable List<XmlFile> unregisteredDocumentFactories) {
+  public DocumentInfo getInfo(VirtualFile virtualFile, XmlFile psiFile, @Nullable List<XmlFile> unregisteredDocumentFactories) {
     DocumentInfo info = virtualFile.getUserData(INFO);
     if (!isRegistered(info)) {
       if (info == null) {

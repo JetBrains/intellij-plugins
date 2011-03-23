@@ -13,6 +13,7 @@
     <Requirement role="{StringRegistry}"/>
     <Requirement role="{DocumentFactoryManager}"/>
     <Requirement role="{BitmapDataManager}"/>
+    <Requirement role="{SwfDataManager}"/>
   </Component>
 	<Component role="{SocketManager}" implementation="{SocketManagerImpl}"/>
   <Component role="{DefaultSocketDataHandler}">

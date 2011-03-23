@@ -191,7 +191,7 @@ class InjectedASWriter {
       JSFile jsFile = (JSFile)injectedPsi;
       JSSourceElement[] statements = jsFile.getStatements();
       if (statements.length == 0) {
-        if (checkEmbed(jsFile)) {
+        if ((valueWriter = checkEmbed(jsFile)) != null) {
           return;
         }
       }
@@ -233,13 +233,14 @@ class InjectedASWriter {
       }
     }
 
-    private boolean checkEmbed(JSFile jsFile) {
+    private ValueWriter checkEmbed(JSFile jsFile) {
       PsiElement firstChild = jsFile.getFirstChild();
       if (firstChild instanceof LeafPsiElement && ((LeafPsiElement)firstChild).getElementType() == JSTokenTypes.AT) {
         JSAttribute attribute = (JSAttribute)firstChild.getNextSibling();
         assert attribute != null;
         VirtualFile source = null;
         String mimeType = null;
+        String symbol = null;
         for (JSAttributeNameValuePair p : attribute.getValues()) {
           final String name = p.getName();
           if (name == null || name.equals("source")) {
@@ -250,14 +251,22 @@ class InjectedASWriter {
           else if (name.equals("mimeType")) {
             mimeType = p.getSimpleValue();
           }
+          else if (name.equals("symbol")) {
+            symbol = p.getSimpleValue();
+          }
         }
 
         assert source != null;
-        valueWriter = new BitmapValueWriter(source, mimeType);
-        return true;
+        if ("application/x-shockwave-flash".equals(mimeType) || source.getName().endsWith(".swf")) {
+          return new SwfValueWriter(source);
+        }
+        else {
+          assert symbol == null;
+          return new BitmapValueWriter(source, mimeType);
+        }
       }
 
-      return false;
+      return null;
     }
 
     private boolean isUnexpected(ExpectedType actualType) {

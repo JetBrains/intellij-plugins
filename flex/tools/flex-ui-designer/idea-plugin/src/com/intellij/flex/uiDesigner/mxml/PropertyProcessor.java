@@ -142,7 +142,7 @@ class PropertyProcessor {
           boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
           if (psiFile instanceof XmlFile) {
             if (inSourceContent) {
-              return DocumentFileManager.getInstance().getId(virtualFile, (XmlFile) psiFile, unregisteredDocumentFactories).getId();
+              return DocumentFileManager.getInstance().getInfo(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories).getId();
             }
           }
           else if (inSourceContent) {
