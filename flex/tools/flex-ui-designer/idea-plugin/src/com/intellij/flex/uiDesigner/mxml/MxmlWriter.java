@@ -10,10 +10,12 @@ import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ToolWindowId;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.*;
@@ -26,8 +28,6 @@ import java.io.IOException;
 import java.util.List;
 
 public class MxmlWriter {
-  private static final Logger LOG = Logger.getInstance(MxmlWriter.class.getName());
-
   static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
 
   private PrimitiveAmfOutputStream out;
@@ -199,7 +199,8 @@ public class MxmlWriter {
           }
           if (type < PropertyProcessor.PRIMITIVE) {
             writer.getBlockOut().setPosition(beforePosition);
-            LOG.error("unknown attribute value type: " + descriptor.getType());
+            ToolWindowManager.getInstance(attribute.getProject()).notifyByBalloon(ToolWindowId.MESSAGES_WINDOW, MessageType.ERROR,
+                                                                                  "Unknown attribute value type: " + descriptor.getType());
           }
         }
       }
@@ -219,7 +220,8 @@ public class MxmlWriter {
 
     processSubTags(parent, context, parentContext, cssDeclarationSourceDefined);
     
-    // initializeReference must be after process all elements — after sub tag also, due to <RadioButton id="visa" label="Visa" width="150"><group>{cardtype} !!id (for binding target, RadioButton id="visa") allocation here!!</group></RadioButton>
+    // initializeReference must be after process all elements — after sub tag also, due to <RadioButton id="visa" label="Visa" 
+    // width="150"><group>{cardtype} !!id (for binding target, RadioButton id="visa") allocation here!!</group></RadioButton>
     if (dataPosition != -1) {
       out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
       if (dataRange != null) {

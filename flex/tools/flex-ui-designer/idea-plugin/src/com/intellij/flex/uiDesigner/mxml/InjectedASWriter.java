@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.lang.javascript.JSTokenTypes;
@@ -7,9 +8,18 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlTag;
@@ -17,6 +27,8 @@ import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -244,9 +256,20 @@ class InjectedASWriter {
         for (JSAttributeNameValuePair p : attribute.getValues()) {
           final String name = p.getName();
           if (name == null || name.equals("source")) {
-            PsiFileSystemItem psiFile = ((JSFileReference)p.getReferences()[0]).resolve();
-            assert psiFile != null && !psiFile.isDirectory();
-            source = psiFile.getVirtualFile();
+            JSFileReference fileReference = (JSFileReference)p.getReferences()[0];
+            PsiFileSystemItem psiFile = fileReference.resolve();
+            if (psiFile == null) {
+              reportProblem(FlexUIDesignerBundle.message("error.embed.source.not.resolved", fileReference.getText()));
+            }
+            else if (psiFile.isDirectory()) {
+              reportProblem(FlexUIDesignerBundle.message("error.embed.source.is.directory", fileReference.getText()));
+            }
+            else {
+              source = psiFile.getVirtualFile();
+              continue;
+            }
+
+            return BINDING;
           }
           else if (name.equals("mimeType")) {
             mimeType = p.getSimpleValue();
@@ -255,8 +278,12 @@ class InjectedASWriter {
             symbol = p.getSimpleValue();
           }
         }
+        
+        if (source == null) {
+          reportProblem(FlexUIDesignerBundle.message("error.embed.source.not.specified"));
+          return BINDING;
+        }
 
-        assert source != null;
         if ("application/x-shockwave-flash".equals(mimeType) || source.getName().endsWith(".swf")) {
           return new SwfValueWriter(source);
         }
@@ -268,6 +295,34 @@ class InjectedASWriter {
 
       return null;
     }
+
+    private void reportProblem(String message) {
+      final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, MessageType.ERROR, null).setShowCallout(false)
+        .setHideOnAction(false).createBalloon();
+
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          Window window = WindowManager.getInstance().getFrame(host.getProject());
+          if (window == null) {
+            window = JOptionPane.getRootFrame();
+          }
+          if (window instanceof IdeFrameImpl) {
+            ((IdeFrameImpl)window).getBalloonLayout().add(balloon);
+          }
+        }
+      });
+    }
+    
+    //private void error(final String message) {
+    //  final ToolWindowManager manager = ToolWindowManager.getInstance(host.getProject());
+    //  manager.invokeLater(new Runnable() {
+    //    @Override
+    //    public void run() {
+    //      manager.notifyByBalloon(ToolWindowId.PROJECT_VIEW, MessageType.ERROR, message);
+    //    }
+    //  });
+    //}
 
     private boolean isUnexpected(ExpectedType actualType) {
       if (expectedType == actualType) {
