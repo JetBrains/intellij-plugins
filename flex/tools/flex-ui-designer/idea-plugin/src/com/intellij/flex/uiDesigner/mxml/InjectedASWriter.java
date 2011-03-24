@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager;
 import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
@@ -8,14 +9,8 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
@@ -27,8 +22,6 @@ import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -259,7 +252,7 @@ class InjectedASWriter {
             JSFileReference fileReference = (JSFileReference)p.getReferences()[0];
             PsiFileSystemItem psiFile = fileReference.resolve();
             if (psiFile == null) {
-              reportProblem(FlexUIDesignerBundle.message("error.embed.source.not.resolved", fileReference.getText()));
+              reportProblem(fileReference.getUnresolvedMessagePattern());
             }
             else if (psiFile.isDirectory()) {
               reportProblem(FlexUIDesignerBundle.message("error.embed.source.is.directory", fileReference.getText()));
@@ -297,32 +290,8 @@ class InjectedASWriter {
     }
 
     private void reportProblem(String message) {
-      final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, MessageType.ERROR, null).setShowCallout(false)
-        .setHideOnAction(false).createBalloon();
-
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          Window window = WindowManager.getInstance().getFrame(host.getProject());
-          if (window == null) {
-            window = JOptionPane.getRootFrame();
-          }
-          if (window instanceof IdeFrameImpl) {
-            ((IdeFrameImpl)window).getBalloonLayout().add(balloon);
-          }
-        }
-      });
+      FlexUIDesignerApplicationManager.getInstance().reportProblem(host.getProject(), message);
     }
-    
-    //private void error(final String message) {
-    //  final ToolWindowManager manager = ToolWindowManager.getInstance(host.getProject());
-    //  manager.invokeLater(new Runnable() {
-    //    @Override
-    //    public void run() {
-    //      manager.notifyByBalloon(ToolWindowId.PROJECT_VIEW, MessageType.ERROR, message);
-    //    }
-    //  });
-    //}
 
     private boolean isUnexpected(ExpectedType actualType) {
       if (expectedType == actualType) {

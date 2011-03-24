@@ -13,16 +13,22 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -283,6 +289,23 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         LOG.error(e);
       }
     }
+  }
+
+  public void reportProblem(final Project project, String message) {
+    final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, MessageType.ERROR, null).setShowCallout(false)
+      .setHideOnAction(false).createBalloon();
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        Window window = WindowManager.getInstance().getFrame(project);
+        if (window == null) {
+          window = JOptionPane.getRootFrame();
+        }
+        if (window instanceof IdeFrameImpl) {
+          ((IdeFrameImpl)window).getBalloonLayout().add(balloon);
+        }
+      }
+    });
   }
 
   private class MyProjectManagerListener implements ProjectManagerListener {

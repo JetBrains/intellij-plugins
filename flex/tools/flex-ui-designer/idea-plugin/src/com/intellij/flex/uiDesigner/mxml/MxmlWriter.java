@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager;
+import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
@@ -12,10 +14,7 @@ import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.ToolWindowId;
-import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.*;
@@ -134,12 +133,17 @@ public class MxmlWriter {
     return ns.length() == 0 || ns.equals(JavaScriptSupportLoader.MXML_URI3);
   }
 
-  private void processElements(final XmlTag parent, final @Nullable Context parentContext, final boolean allowIncludeInExludeFrom, final int dataPosition, final int referencePosition) {
+  private void processElements(final XmlTag parent,
+                               final @Nullable Context parentContext,
+                               final boolean allowIncludeInExludeFrom,
+                               final int dataPosition,
+                               final int referencePosition) {
     boolean cssDeclarationSourceDefined = false;
 
     Context context = null;
     ByteRange dataRange = null;
-    // if state specific property before includeIn, state override data range wil be added before object data range, so, we keep current index and insert at the specified position
+    // if state specific property before includeIn, state override data range wil be added before object data range, so, 
+    // we keep current index and insert at the specified position
     final int dataRangeIndex = out.getBlockOut().getNextMarkerIndex();
     
     for (final XmlAttribute attribute : parent.getAttributes()) {
@@ -185,10 +189,13 @@ public class MxmlWriter {
           writer.writeIdProperty(explicitId);
           injectedASWriter.processObjectWithExplicitId(explicitId, context);
         }
-        else if (descriptor.getTypeName().equals(FlexAnnotationNames.EVENT) || descriptor.getTypeName().equals(FlexAnnotationNames.BINDABLE)) {
+        else if (descriptor.getTypeName().equals(FlexAnnotationNames.EVENT) || 
+                 descriptor.getTypeName().equals(FlexAnnotationNames.BINDABLE)) {
           // skip
         }
-        else if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, attribute, createValueProvider(attribute), descriptor, context, parentContext)) {
+        else if (hasStates && stateWriter.checkStateSpecificPropertyValue(this, propertyProcessor, attribute, 
+                                                                          createValueProvider(attribute), 
+                                                                          descriptor, context, parentContext)) {
           // skip
         }
         else {
@@ -199,8 +206,10 @@ public class MxmlWriter {
           }
           if (type < PropertyProcessor.PRIMITIVE) {
             writer.getBlockOut().setPosition(beforePosition);
-            ToolWindowManager.getInstance(attribute.getProject()).notifyByBalloon(ToolWindowId.MESSAGES_WINDOW, MessageType.ERROR,
-                                                                                  "Unknown attribute value type: " + descriptor.getType());
+            FlexUIDesignerApplicationManager.getInstance().reportProblem(attribute.getProject(),
+                                                                         FlexUIDesignerBundle.message("error.unknown.attribute.value" +
+                                                                                                      ".type",
+                                                                                                      descriptor.getType()));
           }
         }
       }
@@ -208,7 +217,9 @@ public class MxmlWriter {
     
     if (hasStates) {
       if (context == null) {
-        context = stateWriter.createContextForStaticBackSiblingAndFinalizeStateSpecificAttributes(allowIncludeInExludeFrom, referencePosition, parentContext, injectedASWriter);
+        context = stateWriter.createContextForStaticBackSiblingAndFinalizeStateSpecificAttributes(allowIncludeInExludeFrom,
+                                                                                                  referencePosition, parentContext,
+                                                                                                  injectedASWriter);
       }
     }
     else {
