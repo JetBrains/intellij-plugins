@@ -71,8 +71,11 @@ public class CreateAirDescriptorAction extends AnAction {
     final VirtualFile file = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
       public VirtualFile compute() {
         try {
-          final String template =
-            StringUtil.compareVersionNumbers(parameters.getAirVersion(), "2.5") >= 0 ? "air-2.5.xml.ft" : "air-1.0.xml.ft";
+          final String template = StringUtil.compareVersionNumbers(parameters.getAirVersion(), "2.6") >= 0
+                                  ? "air-2.6.xml.ft"
+                                  : StringUtil.compareVersionNumbers(parameters.getAirVersion(), "2.5") >= 0
+                                    ? "air-2.5.xml.ft"
+                                    : "air-1.0.xml.ft";
           final InputStream stream = CreateAirDescriptorAction.class.getResourceAsStream(template);
           assert stream != null;
           // noinspection IOResourceOpenedButNotSafelyClosed
