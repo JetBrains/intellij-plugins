@@ -40,6 +40,8 @@
     <orderEntry type="module" module-name="IntelliLang-java" />
     <orderEntry type="module" module-name="JSInspections" />
     <orderEntry type="module" module-name="moduledeps" />
+    <orderEntry type="module" module-name="git4idea" />
+    <orderEntry type="module" module-name="lang-impl" />
   </component>
 </module>
 
