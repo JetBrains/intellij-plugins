@@ -170,7 +170,13 @@ public class FlexCompiler implements MessageSender {
       return mxmlc ? new Flex3MxmlcHandler() : new Flex3CompcHandler();
     }
     else if ("4".equals(SDK_MAJOR_VERSION)) {
-      if ("0".equals(SDK_MINOR_VERSION) || "1".equals(SDK_MINOR_VERSION)) {
+      int buildVersion = 0;
+      try {
+        buildVersion = Integer.parseInt(VersionInfo.getBuild());
+      }
+      catch (NumberFormatException e) {/*ignore*/}
+
+      if ("0".equals(SDK_MINOR_VERSION) || "1".equals(SDK_MINOR_VERSION) || ("5".equals(SDK_MINOR_VERSION) && buildVersion < 19786)) {
         return mxmlc ? new Flex4MxmlcHandler() : new Flex4CompcHandler();
       }
       else if ("5".equals(SDK_MINOR_VERSION)) {
