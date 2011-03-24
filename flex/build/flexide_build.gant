@@ -65,7 +65,8 @@ private List platformImplementationModules() {
           "debugger-impl",
           "execution-impl",
           "dom-impl",
-          "idea-ui"
+          "idea-ui",
+          "jsp-spi"
   ]
 }
 
