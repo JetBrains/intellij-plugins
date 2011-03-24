@@ -42,6 +42,10 @@
     <orderEntry type="module" module-name="moduledeps" />
     <orderEntry type="module" module-name="git4idea" />
     <orderEntry type="module" module-name="lang-impl" />
+    <orderEntry type="module" module-name="maven" />
+    <orderEntry type="module" module-name="maven-server-api" />
+    <orderEntry type="module" module-name="maven2-server-impl" />
+    <orderEntry type="module" module-name="maven3-server-impl" />
   </component>
 </module>
 
