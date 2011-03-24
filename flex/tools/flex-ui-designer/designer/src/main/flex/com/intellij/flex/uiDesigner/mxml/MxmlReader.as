@@ -139,6 +139,10 @@ public final class MxmlReader implements DocumentReader {
     factoryContext = null;
     stateReader.reset(t);
 
+    if (input is ByteArray) {
+      assert(input.bytesAvailable == 0);
+      ByteArray(input).position = 0;
+    }
     this.input = null;
     return object;
   }

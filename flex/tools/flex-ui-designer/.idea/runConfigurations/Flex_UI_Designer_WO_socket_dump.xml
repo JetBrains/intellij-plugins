@@ -1,21 +1,18 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Flex UI Designer" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+  <configuration default="false" name="Flex UI Designer WO socket dump" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
     <module name="idea-plugin" />
-    <option name="VM_PARAMETERS" value="-Xms128m -Xmx512m -XX:MaxPermSize=256m -Dapple.awt.graphics.UseQuartz=true -ea -Dfud.debug=true -Dfud.socket.dump=/Users/develar/d.bi -Dfud.home=/Users/develar/workspace/idea/flex/tools/flex-ui-designer  -agentlib:yjpagent" />
+    <option name="VM_PARAMETERS" value="-Xms128m -Xmx512m -XX:MaxPermSize=256m -Dapple.awt.graphics.UseQuartz=true -ea -Dfud.debug=true -Dfud.home=/Users/develar/workspace/idea/flex/tools/flex-ui-designer  -agentlib:yjpagent" />
     <option name="PROGRAM_PARAMETERS" value="" />
     <log_file path="$USER_HOME$/Library/Caches/IntelliJIdea10/plugins-sandbox/system/log/idea.log" checked="false" skipped="true" show_all="false" alias="IDEA LOG" />
     <RunnerSettings RunnerId="Debug">
-      <option name="DEBUG_PORT" value="52304" />
+      <option name="DEBUG_PORT" value="51648" />
       <option name="TRANSPORT" value="0" />
       <option name="LOCAL" value="true" />
     </RunnerSettings>
     <RunnerSettings RunnerId="Profile ">
       <option name="myExternalizedOptions" value="&#10;additional-options2=onexit\=snapshot&#10;" />
     </RunnerSettings>
-    <RunnerSettings RunnerId="Run" />
     <ConfigurationWrapper RunnerId="Debug" />
-    <ConfigurationWrapper RunnerId="Profile " />
-    <ConfigurationWrapper RunnerId="Run" />
     <method />
   </configuration>
 </component>

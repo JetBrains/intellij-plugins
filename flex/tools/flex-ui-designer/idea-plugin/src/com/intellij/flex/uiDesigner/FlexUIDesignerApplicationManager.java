@@ -6,6 +6,8 @@ import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.application.ex.ApplicationEx;
+import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -117,17 +119,22 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       run(project, module, psiFile, debug);
     }
     else {
-      try {
-        if (!client.isModuleRegistered(module)) {
-          initLibrarySets(project, module);
-        }
+      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            if (!client.isModuleRegistered(module)) {
+              initLibrarySets(project, module);
+            }
 
-        client.openDocument(module, psiFile);
-        client.flush();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
+            client.openDocument(module, psiFile);
+            client.flush();
+          }
+          catch (IOException e) {
+            LOG.error(e);
+          }
+        }
+      });
     }
   }
 
@@ -169,8 +176,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       @Override
       public void run() {
         try {
-          adlProcess = DesignerApplicationUtil
-            .runAdl(runConfiguration, appDir.getPath() + "/descriptor.xml", server.listen(), new Consumer<Integer>() {
+          adlProcess = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/descriptor.xml", 
+                                                      server.listen(), new Consumer<Integer>() {
               @Override
               public void consume(Integer integer) {
                 adlProcess = null;
@@ -242,9 +249,15 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       // if we have different version of the artifact
     }
 
-    ModuleInfo moduleInfo = new ModuleInfo(module);
+    final ModuleInfo moduleInfo = new ModuleInfo(module);
     stringWriter.startChange();
-    ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter);
+    ApplicationManager.getApplication().runReadAction(new Runnable() {
+      @Override
+      public void run() {
+        ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter);
+      }
+    });
+    
     client.registerModule(project, moduleInfo, new String[]{externalLibrarySet.getId()}, stringWriter);
   }
 
@@ -270,13 +283,16 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
     @Override
     public void run() {
+      ApplicationEx application = ApplicationManagerEx.getApplicationEx();
+      application.assertTimeConsuming();
+      
       try {
         client.initStringRegistry();
         initLibrarySets(myProject, myModule);
         client.openDocument(myModule, myPsiFile);
         client.flush();
 
-        ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).initialDocumentOpened();
+        application.getMessageBus().syncPublisher(MESSAGE_TOPIC).initialDocumentOpened();
       }
       catch (IOException e) {
         try {

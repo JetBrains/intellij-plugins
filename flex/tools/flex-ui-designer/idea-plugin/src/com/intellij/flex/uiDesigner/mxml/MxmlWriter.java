@@ -12,6 +12,7 @@ import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -47,17 +48,23 @@ public class MxmlWriter {
     writer.setOutput(this.out);
   }
 
-  public XmlFile[] write(@NotNull XmlFile psiFile) throws IOException {
+  public XmlFile[] write(@NotNull final XmlFile psiFile) throws IOException {
     writer.beginMessage();
-    XmlTag rootTag = psiFile.getRootTag();
-    assert rootTag != null;
 
-    ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor) rootTag.getDescriptor();
-    assert rootTagDescriptor != null;
-    final String fqn = rootTagDescriptor.getQualifiedName();
-    writer.writeObjectHeader(fqn.equals("spark.components.Application") ? "com.intellij.flex.uiDesigner.flex.SparkApplication" : fqn);
-
-    processElements(rootTag, null, false, -1, out.size() - 2);
+    ApplicationManager.getApplication().runReadAction(new Runnable() {
+      @Override
+      public void run() {
+        XmlTag rootTag = psiFile.getRootTag();
+        assert rootTag != null;
+        ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor)rootTag.getDescriptor();
+        assert rootTagDescriptor != null;
+        final String fqn = rootTagDescriptor.getQualifiedName();
+        writer.writeObjectHeader(fqn.equals("spark.components.Application") ? 
+                                 "com.intellij.flex.uiDesigner.flex.SparkApplication" : fqn);
+        processElements(rootTag, null, false, -1, out.size() - 2);
+      }
+    });
+    
     out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
     
     if (stateWriter != null) {
@@ -241,9 +248,9 @@ public class MxmlWriter {
     }
   }
   
-  private boolean containsOnlyWhitespace(XmlTagChild child) {
-    PsiElement[] children = child.getChildren();
-    return children.length == 1 && children[0] instanceof PsiWhiteSpace;
+  private static boolean containsOnlyWhitespace(XmlTagChild child) {
+    PsiElement firstChild = child.getFirstChild();
+    return firstChild == child.getLastChild() && firstChild != null && firstChild instanceof PsiWhiteSpace;
   }
 
   private void processSubTags(final XmlTag parent, final @Nullable Context context, final @Nullable Context parentContext, boolean cssDeclarationSourceDefined) {

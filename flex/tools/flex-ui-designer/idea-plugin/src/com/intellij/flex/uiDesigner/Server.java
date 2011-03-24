@@ -6,6 +6,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -35,30 +36,53 @@ class Server implements Runnable {
   }
 
   public void run() {
+    final OutputStream socketOutputStream;
     try {
       socket = serverSocket.accept();
       serverSocket.close();
-      
-      myPendingTask.setOutput(socket.getOutputStream());
-      ApplicationManager.getApplication().runReadAction(myPendingTask);
-      myPendingTask = null;
-
-      ServiceManager.getService(SocketInputHandler.class).read(socket.getInputStream());
+      socketOutputStream = socket.getOutputStream();
     }
     catch (IOException e) {
-      if (!(e instanceof SocketException && socket.isClosed())) {
-        LOG.error(e);
+      LOG.error(e);
+
+      if (socket != null) {
+        try {
+          socket.close();
+        }
+        catch (IOException inner) {
+          LOG.error(inner);
+        }
       }
+      
+      return;
     }
-    finally {
-      try {
-        close();
-        applicationManager.serverClosed();
+
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          ServiceManager.getService(SocketInputHandler.class).read(socket.getInputStream());
+        }
+        catch (IOException e) {
+          //if (!(e instanceof SocketException && socket.isClosed())) {
+            LOG.error(e);
+          //}
+        }
+        finally {
+          try {
+            close();
+            applicationManager.serverClosed();
+          }
+          catch (IOException e) {
+            LOG.error(e);
+          }
+        }
       }
-      catch (IOException e) {
-        LOG.error(e);
-      }
-    }
+    });
+
+    myPendingTask.setOutput(socketOutputStream);
+    myPendingTask.run();
+    myPendingTask = null;
   }
 
   public void close() throws IOException {
