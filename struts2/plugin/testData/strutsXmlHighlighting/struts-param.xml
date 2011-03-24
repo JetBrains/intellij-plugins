@@ -20,8 +20,8 @@
     </action>
 
     <action name="testDuplicateParams" class="MyClass">
-      <param name="<error descr="Param with such name already exists">param1</error>">someValue</param>
-      <param name="<error descr="Param with such name already exists">param1</error>">someValue2</param>
+      <param name="<error descr="Parameter with such name already exists">param1</error>">someValue</param>
+      <param name="<error descr="Parameter with such name already exists">param1</error>">someValue2</param>
     </action>
 
   </package>
