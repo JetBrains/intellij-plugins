@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSIncludeDirective;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,26 +42,22 @@ public class FlexCssUtil {
 
   public static void collectAllIncludes(PsiElement element, Set<String> result) {
     if (element instanceof JSClass) {
-      PsiElement e = element.getPrevSibling();
-      while (e != null) {
-        if (e instanceof JSIncludeDirective) {
-          String text = ((JSIncludeDirective)e).getIncludeText();
-          if (text != null) {
-            result.add(text);
-          }
+      for (PsiElement elt : JSResolveUtil.getStubbedChildren(element.getParent())) {
+        if (elt == element) break;
+        if (elt instanceof JSIncludeDirective) {
+          String text = ((JSIncludeDirective)elt).getIncludeText();
+          if (text != null) result.add(text);
         }
-        e = e.getPrevSibling();
       }
     }
-    for (PsiElement child : element.getChildren()) {
-      if (child instanceof JSIncludeDirective) {
-        String text = ((JSIncludeDirective)child).getIncludeText();
-        if (text != null) {
-          result.add(text);
-        }
+
+    for (PsiElement elt : JSResolveUtil.getStubbedChildren(element)) {
+      if (elt instanceof JSIncludeDirective) {
+        String text = ((JSIncludeDirective)elt).getIncludeText();
+        if (text != null) result.add(text);
       }
-      else if (child instanceof JSAttributeList || child instanceof JSAttributeListOwner) {
-        collectAllIncludes(child, result);
+      else if (elt instanceof JSAttributeList || elt instanceof JSAttributeListOwner) {
+        collectAllIncludes(elt, result);
       }
     }
   }

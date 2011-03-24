@@ -18,17 +18,22 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     String testFile = System.getProperty("testFile");
     String[] files = testFile == null ? getTestFiles() : new String[]{getTestPath() + "/" + testFile + ".mxml"};
 
-    final VirtualFile[] vFiles = new VirtualFile[files.length + 1];
+    final VirtualFile[] vFiles = new VirtualFile[files.length + 3];
     for (int i = 0; i < files.length; i++) {
-      VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(files[i]);
-      assert vFile != null;
-      vFiles[i] = vFile;
+      vFiles[i] = getVFile(files[i]);
     }
     
-    vFiles[files.length] = LocalFileSystem.getInstance().findFileByPath(getTestPath() + "/background.jpg");
-    assert vFiles[files.length] != null;
+    vFiles[files.length] = getVFile(getTestPath() + "/background.jpg");
+    vFiles[files.length + 1] = getVFile(getTestPath() + "/background.p-n-g");
+    vFiles[files.length + 2] = getVFile(getTestPath() + "/anim.swf");
 
     testFiles(vFiles);
+  }
+
+  private VirtualFile getVFile(String file) {
+    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(file);
+    assert vFile != null;
+    return vFile;
   }
 
   @JSTestOptions({WithGumboSdk, WithFlexSdk})
@@ -50,7 +55,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
       if (name.charAt(0) == '.') {
         // skip
       }
-      else if (name.endsWith(".mxml")) {
+      else if (name.endsWith(".mxml") && !name.startsWith("TestApp.")) {
         files.add(parent.getPath() + "/" + name);
       }
       File file = new File(parent, name);

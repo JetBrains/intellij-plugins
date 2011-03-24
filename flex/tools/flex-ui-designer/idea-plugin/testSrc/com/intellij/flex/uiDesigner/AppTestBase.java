@@ -100,7 +100,10 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   @Override
   protected void tearDown() throws Exception {
     StringRegistry.getInstance().reset();
-    DocumentFileManager.getInstance().reset(++sessionId);
+    
+    sessionId++;
+    DocumentFileManager.getInstance().reset(sessionId);
+    BinaryFileManager.getInstance().reset(sessionId);
 
     for (Pair<VirtualFile, VirtualFile> lib : libs) {
       LibraryCollector.clearCache(lib.getSecond());

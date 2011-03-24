@@ -6,6 +6,7 @@ import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.ModuleContext;
 import com.intellij.flex.uiDesigner.StringRegistry;
+import com.intellij.flex.uiDesigner.SwfDataManager;
 import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
 import com.intellij.flex.uiDesigner.css.CssDeclarationType;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
@@ -39,6 +40,7 @@ public final class MxmlReader implements DocumentReader {
   private var stringRegistry:StringRegistry;
   private var documentFactoryManager:DocumentFactoryManager;
   private var bitmapDataManager:BitmapDataManager;
+  private var swfData:SwfDataManager;
 
   private const stateReader:StateReader = new StateReader();
   private const injectedASReader:InjectedASReader = new InjectedASReader();
@@ -52,10 +54,11 @@ public final class MxmlReader implements DocumentReader {
   
   internal var factoryContext:DeferredInstanceFromBytesContext;
 
-  public function MxmlReader(stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager, bitmapDataManager:BitmapDataManager) {
+  public function MxmlReader(stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager, bitmapDataManager:BitmapDataManager, swfData:SwfDataManager) {
     this.stringRegistry = stringRegistry;
     this.documentFactoryManager = documentFactoryManager;
     this.bitmapDataManager = bitmapDataManager;
+    this.swfData = swfData;
   }
 
   internal function getClass(name:String):Class {
@@ -306,8 +309,16 @@ public final class MxmlReader implements DocumentReader {
           propertyHolder[propertyName] = o;
           break;
         
-        case Amf3Types.BINARY_FILE:
+        case Amf3Types.DOCUMENT_FACTORY_REFERENCE:
+          propertyHolder[propertyName] = readDocumentFactory();
+          break;
+        
+        case Amf3Types.BITMAP:
           propertyHolder[propertyName] = readBitmapData();
+          break;
+        
+        case Amf3Types.SWF:
+          readSwfData();
           break;
         
         case STRING_REFERENCE:
@@ -368,6 +379,22 @@ public final class MxmlReader implements DocumentReader {
       
       bitmapDataManager.register(id, bitmapData);
       return bitmapData;
+    }
+  }
+
+  /**
+   * DisplayObjectContainer or Class
+   */
+  private function readSwfData():void {
+    var id:int = input.readByte();
+    var registered:Boolean = (id & 1) != 0;
+    id = id >> 1;
+    if (registered) {
+      //return bitmapDataManager.get(id);
+    }
+    else {
+      //noinspection JSUnusedLocalSymbols
+      var bytes:ByteArray = readBytes();
     }
   }
 

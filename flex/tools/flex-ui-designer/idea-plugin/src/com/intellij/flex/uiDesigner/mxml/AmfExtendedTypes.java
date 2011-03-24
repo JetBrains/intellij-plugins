@@ -6,5 +6,7 @@ final class AmfExtendedTypes {
   static final int STRING_REFERENCE = 44;
   static final int OBJECT_REFERENCE = 45;
   static final int DOCUMENT_FACTORY_REFERENCE = 46;
-  static final int BINARY_FILE = 47;
+  
+  static final int BITMAP = 47;
+  static final int SWF = 48;
 }

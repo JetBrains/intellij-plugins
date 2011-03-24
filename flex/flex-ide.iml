@@ -11,8 +11,37 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="util" />
-    <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="flex" />
+    <orderEntry type="module" module-name="bootstrap" />
+    <orderEntry type="module" module-name="platform-resources" />
+    <orderEntry type="module" module-name="RegExpSupport" />
+    <orderEntry type="module" module-name="images" />
+    <orderEntry type="module" module-name="testFramework" scope="TEST" />
+    <orderEntry type="module" module-name="platform-ultimate" />
+    <orderEntry type="module" module-name="license_common" />
+    <orderEntry type="module" module-name="vcs-impl" />
+    <orderEntry type="module" module-name="testRunner" />
+    <orderEntry type="module" module-name="smRunner" />
+    <orderEntry type="module" module-name="xdebugger-impl" />
+    <orderEntry type="module" module-name="lvcs-impl" />
+    <orderEntry type="module" module-name="lvcs-api" />
+    <orderEntry type="module" module-name="vcs-api" />
+    <orderEntry type="module" module-name="usageView" />
+    <orderEntry type="module" module-name="xdebugger-api" />
+    <orderEntry type="module" module-name="dom-openapi" />
+    <orderEntry type="module" module-name="dom-impl" />
+    <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="IntelliLang" />
+    <orderEntry type="module" module-name="IntelliLang-js" />
+    <orderEntry type="module" module-name="CSS" />
+    <orderEntry type="module" module-name="JavaScriptLanguage" />
+    <orderEntry type="module" module-name="flex-plugin" />
+    <orderEntry type="module" module-name="flex-ui-designer" />
+    <orderEntry type="module" module-name="IntelliLang-java" />
+    <orderEntry type="module" module-name="JSInspections" />
+    <orderEntry type="module" module-name="moduledeps" />
+    <orderEntry type="module" module-name="git4idea" />
+    <orderEntry type="module" module-name="lang-impl" />
   </component>
 </module>
 

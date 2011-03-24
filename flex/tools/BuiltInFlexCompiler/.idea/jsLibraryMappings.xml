@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="PROJECT" libraries="{AJAX, DHTML, DOM Core, DOM Events, DOM Traversal And Range, DOM XPath, EcmaScript, EcmaScript 4, EcmaScript Additional, EcmaScript L5, HTML 5}" />
+    <predefinedLibrary name="AJAX" />
+    <predefinedLibrary name="DHTML" />
+    <predefinedLibrary name="DOM Core" />
+    <predefinedLibrary name="DOM Events" />
+    <predefinedLibrary name="DOM Traversal And Range" />
+    <predefinedLibrary name="DOM XPath" />
+    <predefinedLibrary name="EcmaScript" />
+    <predefinedLibrary name="EcmaScript 4" />
+    <predefinedLibrary name="EcmaScript Additional" />
+    <predefinedLibrary name="EcmaScript L5" />
+    <predefinedLibrary name="HTML 5" />
+  </component>
+</project>
+

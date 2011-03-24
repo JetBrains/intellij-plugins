@@ -29,30 +29,30 @@ class StateWriter {
   private int POSITION;
   private int FIRST;
   private int AFTER;
-  
+
   int VALUE;
   private int OVERRIDES;
-  
+
   int NAME;
   int TARGET;
-  
+
   private int DEFERRED_INSTANCE_FROM_OBJECT_REFERENCE;
   private int ADD_ITEMS;
 
   private final List<State> states = new ArrayList<State>();
   private final Map<String, List<State>> nameToState = new THashMap<String, List<State>>();
   private BaseWriter writer;
-  
+
   private SetPropertyOrStyle pendingFirstSetProperty;
-  
+
   private boolean autoItemDestruction;
-  
+
   private boolean namesInitialized;
 
   public StateWriter(BaseWriter writer) {
     this.writer = writer;
   }
-  
+
   int statesSize() {
     return states.size();
   }
@@ -65,23 +65,24 @@ class StateWriter {
       POSITION = writer.getNameReference("position");
       FIRST = writer.getNameReference("first");
       AFTER = writer.getNameReference("after");
-      
+
       NAME = writer.getNameReference("name");
       TARGET = writer.getNameReference("target");
-      
+
       VALUE = writer.getNameReference("value");
       OVERRIDES = writer.getNameReference("overrides");
-      
-      DEFERRED_INSTANCE_FROM_OBJECT_REFERENCE = writer.getNameReference("com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromObjectReference");
+
+      DEFERRED_INSTANCE_FROM_OBJECT_REFERENCE =
+        writer.getNameReference("com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromObjectReference");
       ADD_ITEMS = writer.getNameReference("com.intellij.flex.uiDesigner.flex.states.AddItems");
-      
+
       namesInitialized = true;
     }
   }
 
   public void readDeclaration(XmlTag parentTag) {
     initNames();
-    
+
     XmlTag[] tags = parentTag.getSubTags();
     for (XmlTag tag : tags) {
       State state = new State(this, states.size());
@@ -101,7 +102,7 @@ class StateWriter {
       }
     }
   }
-  
+
   private void addNameToStateMap(String name, State state) {
     List<State> states = nameToState.get(name);
     if (states == null) {
@@ -113,19 +114,19 @@ class StateWriter {
       states.add(state);
     }
   }
-  
+
   public void applyItemAutoDestruction(@Nullable Context context, Context parentContext) {
     if (context == null) {
       autoItemDestruction = true;
       return;
     }
-    
+
     for (State state : states) {
       state.applyItemAutoDestruction(context, parentContext, writer);
     }
   }
 
-  public void includeIn(XmlAttributeValue xmlAttributeValue, Context parentContext, DynamicObjectContext context) {    
+  public void includeIn(XmlAttributeValue xmlAttributeValue, Context parentContext, DynamicObjectContext context) {
     for (PsiReference reference : xmlAttributeValue.getReferences()) {
       // currently, all references in includeIn/exludeFrom attribute value are StateReference, so, we skip instanceof StateReference
       for (State state : nameToState.get(reference.getCanonicalText())) {
@@ -170,17 +171,23 @@ class StateWriter {
       }
     }
     writer.writeStringReference(POSITION, position);
-    
+
     writer.getBlockOut().endRange(override.dataRange);
     return override;
   }
 
-  public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter, PropertyProcessor propertyProcessor, XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, @Nullable Context context, @Nullable Context parentContext) {
+  public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter,
+                                                 PropertyProcessor propertyProcessor,
+                                                 XmlElement element,
+                                                 XmlElementValueProvider valueProvider,
+                                                 AnnotationBackedDescriptor descriptor,
+                                                 @Nullable Context context,
+                                                 @Nullable Context parentContext) {
     PsiReference[] references = element.getReferences();
     if (references.length < 2) {
       return false;
     }
-    
+
     List<State> states = null;
     for (int i = references.length - 1; i > -1; i--) {
       PsiReference psiReference = references[i];
@@ -190,7 +197,7 @@ class StateWriter {
         break;
       }
     }
-    
+
     if (states == null) {
       return false;
     }
@@ -200,40 +207,45 @@ class StateWriter {
       // binding is not yet supported for state specific
       return true;
     }
-    
+
     SetPropertyOrStyle override = new SetPropertyOrStyle(writer.getBlockOut().startRange());
-    writer.writeObjectHeader(propertyProcessor.isStyle() ? "com.intellij.flex.uiDesigner.flex.states.SetStyle" : "com.intellij.flex.uiDesigner.flex.states.SetProperty");
+    writer.writeObjectHeader(propertyProcessor.isStyle()
+                             ? "com.intellij.flex.uiDesigner.flex.states.SetStyle"
+                             : "com.intellij.flex.uiDesigner.flex.states.SetProperty");
     writer.writeStringReference(NAME, propertyProcessor.getName());
-    
+
     writer.getOut().writeUInt29(VALUE);
     writer.getOut().write(PropertyClassifier.PROPERTY);
-    
+
     int type = valueWriter.write(writer.getOut(), false);
     if (type < PropertyProcessor.PRIMITIVE) {
       assert context != null;
-      mxmlWriter.processPropertyTagValue((XmlTag) element, context, type == PropertyProcessor.ARRAY);
+      mxmlWriter.processPropertyTagValue((XmlTag)element, context, type == PropertyProcessor.ARRAY);
     }
-    
+
     override.targetId = writer.getObjectOrFactoryId(context);
     if (pendingFirstSetProperty == null) {
       pendingFirstSetProperty = override;
     }
-    
+
     if (context == null && parentContext != null && parentContext.ownerIsDynamic() && pendingFirstSetProperty == null) {
       pendingFirstSetProperty = override;
     }
-    
+
     writer.getBlockOut().endRange(override.dataRange);
     for (State state : states) {
       state.overrides.add(override);
     }
-    
+
     return true;
   }
-  
-  public Context createContextForStaticBackSiblingAndFinalizeStateSpecificAttributes(boolean allowIncludeInExludeFrom, int referencePosition, @Nullable Context parentContext, InjectedASWriter injectedASWriter) {
+
+  public Context createContextForStaticBackSiblingAndFinalizeStateSpecificAttributes(boolean allowIncludeInExludeFrom,
+                                                                                     int referencePosition,
+                                                                                     @Nullable Context parentContext,
+                                                                                     InjectedASWriter injectedASWriter) {
     assert referencePosition != -1;
-    
+
     final StaticObjectContext context;
     if (allowIncludeInExludeFrom) {
       assert parentContext != null;
@@ -241,7 +253,8 @@ class StateWriter {
       // reset due to new backsibling
       resetActiveAddItems(parentContext.activeAddItems);
       if (parentContext.getBackSibling() == null) {
-        parentContext.setBackSibling(new StaticObjectContext(referencePosition, writer.getOut(), backSiblingId, parentContext.getScope()));
+        parentContext.setBackSibling(new StaticObjectContext(referencePosition, writer.getOut(), backSiblingId, 
+                                                             parentContext.getScope()));
       }
       else {
         parentContext.getBackSibling().reinitialize(referencePosition, backSiblingId);
@@ -257,13 +270,15 @@ class StateWriter {
     return context;
   }
 
-  private void finalizeStateSpecificAttributes(@NotNull StaticObjectContext context, @Nullable Context parentContext, InjectedASWriter injectedASWriter) {
+  private void finalizeStateSpecificAttributes(@NotNull StaticObjectContext context,
+                                               @Nullable Context parentContext,
+                                               InjectedASWriter injectedASWriter) {
     // 1
     if (!writer.isIdPreallocated()) {
       assert pendingFirstSetProperty == null;
       return;
     }
-    
+
     if (parentContext == null || !parentContext.ownerIsDynamic()) {
       pendingFirstSetProperty = null;
       return;
@@ -285,7 +300,8 @@ class StateWriter {
     }
     else {
       // 3
-      DeferredInstanceFromObjectReference deferredInstanceFromObjectReference = new DeferredInstanceFromObjectReference(objectInstance, deferredParentInstance);
+      DeferredInstanceFromObjectReference deferredInstanceFromObjectReference =
+        new DeferredInstanceFromObjectReference(objectInstance, deferredParentInstance);
       injectedASWriter.setDeferredReferenceForObjectWithExplicitId(deferredInstanceFromObjectReference, referenceInstance);
 
       context.setDeferredInstanceFromObjectReference(deferredInstanceFromObjectReference);
@@ -310,10 +326,11 @@ class StateWriter {
       int objectInstanceReference = parentContext.getScope().referenceCounter++;
       context.setId(objectInstanceReference);
       context.referenceInitialized();
-      referenceInstanceReference = writer.getRootScope().referenceCounter++; 
+      referenceInstanceReference = writer.getRootScope().referenceCounter++;
       context.setId(referenceInstanceReference);
-      
-      writeDeferredInstanceFromObjectReference(propertyName, objectInstanceReference, writer.getObjectId(parentContext.getScope().getOwner()), referenceInstanceReference);
+
+      writeDeferredInstanceFromObjectReference(propertyName, objectInstanceReference,
+                                               writer.getObjectId(parentContext.getScope().getOwner()), referenceInstanceReference);
     }
     else {
       DeferredInstanceFromObjectReference reference = context.getDeferredInstanceFromObjectReference();
@@ -321,17 +338,21 @@ class StateWriter {
         writer.writeObjectReference(propertyName, referenceInstanceReference);
       }
       else {
-        writeDeferredInstanceFromObjectReference(propertyName, reference.getObjectInstance(), reference.getDeferredParentInstance(), referenceInstanceReference);
+        writeDeferredInstanceFromObjectReference(propertyName, reference.getObjectInstance(), reference.getDeferredParentInstance(),
+                                                 referenceInstanceReference);
         reference.markAsWritten();
         context.setDeferredInstanceFromObjectReference(null);
       }
     }
   }
-  
-  private void writeDeferredInstanceFromObjectReference(int propertyName, int objectInstanceReference, int deferredParentInstance, int referenceInstanceReference) {
+
+  private void writeDeferredInstanceFromObjectReference(int propertyName,
+                                                        int objectInstanceReference,
+                                                        int deferredParentInstance,
+                                                        int referenceInstanceReference) {
     writer.writeObjectHeader(propertyName, DEFERRED_INSTANCE_FROM_OBJECT_REFERENCE);
     StaticObjectContext.initializeReference(referenceInstanceReference, writer.getOut(), writer.getOut().size() - 2);
-    
+
     writer.writeProperty("reference", objectInstanceReference);
     writer.writeObjectReference("deferredParentInstance", deferredParentInstance);
     writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
@@ -356,7 +377,7 @@ class StateWriter {
       out.writeUInt29(out.getBlockOut().getDataRangeOwnLength(instance.getDataRange()) + (referredObjectsCount < 0x80 ? 1 : 2));
       out.writeUInt29(referredObjectsCount);
       out.getBlockOut().addMarker(new ByteRangeMarker(out.size(), instance.getDataRange()));
-      
+
       if (instance.id != -1) {
         out.writeUInt29(instance.id);
       }
@@ -372,7 +393,7 @@ class StateWriter {
     if (states.isEmpty()) {
       return;
     }
-  
+
     for (State state : states) {
       writer.getBlockOut().allocate(2); // reference
       writer.writeProperty(NAME, state.name);
@@ -384,7 +405,8 @@ class StateWriter {
           override.write(writer, this);
           // object Override footer
           writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
-        } while ((override = override.next) != null);
+        }
+        while ((override = override.next) != null);
       }
 
       // object State footer
@@ -393,7 +415,7 @@ class StateWriter {
 
     reset();
   }
-  
+
   public void reset() {
     states.clear();
     nameToState.clear();

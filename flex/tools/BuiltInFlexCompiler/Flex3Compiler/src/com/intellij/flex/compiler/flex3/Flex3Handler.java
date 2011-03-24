@@ -43,7 +43,10 @@ public abstract class Flex3Handler extends SdkSpecificHandler {
   static void setupConfiguration(final Builder builder, final Configuration configuration) {
     final flex2.tools.oem.Configuration oemConfig = builder.getDefaultConfiguration();
     populateDefaults(oemConfig, (ToolsConfiguration)configuration);
-    ((OEMConfiguration)oemConfig).setConfiguration(new String[]{"-load-config="}); // "-load-config=" MUST BE THE LAST option passed via oemConfig.setConfiguration()
+    final String[] extras = {
+      "-load-config=" // "-load-config=" MUST BE THE LAST option passed via oemConfig.setConfiguration()
+    };
+    ((OEMConfiguration)oemConfig).setConfiguration(extras);
     builder.setConfiguration(oemConfig);
   }
 

@@ -1,4 +1,4 @@
-package com.intellij.flex.compiler.flex4;
+package com.intellij.flex.compiler.flex45;
 
 import com.intellij.flex.compiler.SdkSpecificHandler;
 import flash.localization.LocalizationManager;
@@ -21,7 +21,7 @@ import macromedia.asc.util.ObjectList;
 import java.io.File;
 import java.util.*;
 
-public abstract class Flex4Handler extends SdkSpecificHandler {
+public abstract class Flex45Handler extends SdkSpecificHandler {
 
   public void initThreadLocals(final Logger logger) {
     CompilerAPI.useAS3();
@@ -61,6 +61,7 @@ public abstract class Flex4Handler extends SdkSpecificHandler {
     populateDefaults(oemConfig, (ToolsConfiguration)configuration);
     final String[] extras = {
       "-omit-trace-statements=" + configuration.getCompilerConfiguration().omitTraceStatements(),
+      "-swf-version=" + configuration.getSwfVersion(),
       "-load-config=" // "-load-config=" MUST BE THE LAST option passed via oemConfig.setConfiguration()
     };
     oemConfig.setConfiguration(extras);
@@ -78,6 +79,7 @@ public abstract class Flex4Handler extends SdkSpecificHandler {
     oemConfig.setTargetPlayer(c.getTargetPlayerMajorVersion(), c.getTargetPlayerMinorVersion(),
                               c.getTargetPlayerRevision());
     oemConfig.enableDigestVerification(c.getVerifyDigests());
+    oemConfig.removeUnusedRuntimeSharedLibraryPaths(c.getRemoveUnusedRsls());
 
     List rslList = c.getRslPathInfo();
     boolean first = true;
@@ -111,6 +113,7 @@ public abstract class Flex4Handler extends SdkSpecificHandler {
     populateDefaults(oemConfig, c, c.getCompilerConfiguration());
     populateDefaults(oemConfig, c.getFramesConfiguration());
     populateDefaults(oemConfig, c.getLicensesConfiguration());
+    populateDefaults(oemConfig, c.getRuntimeSharedLibrarySettingsConfiguration());
   }
 
   private static void populateDefaults(final flex2.tools.oem.Configuration oemConfig,
@@ -250,6 +253,26 @@ public abstract class Flex4Handler extends SdkSpecificHandler {
       for (Iterator i = licenseMap.keySet().iterator(); i.hasNext();) {
         String name = (String)i.next();
         oemConfig.setLicense(name, (String)licenseMap.get(name));
+      }
+    }
+  }
+
+  private static void populateDefaults(final flex2.tools.oem.Configuration oemConfig,
+                                       final RuntimeSharedLibrarySettingsConfiguration rslConfig) {
+    oemConfig.setForceRuntimeSharedLibraryPaths(toFiles(rslConfig.getForceRsls()));
+
+    Map<VirtualFile, String> adMap = rslConfig.getApplicationDomains();
+    boolean first = true;
+
+    for (Map.Entry entry : adMap.entrySet()) {
+      File file = toFile((VirtualFile)entry.getKey());
+      if (first) {
+        oemConfig.setApplicationDomainForRuntimeSharedLibraryPath(file, (String)entry.getValue());
+
+        first = false;
+      }
+      else {
+        oemConfig.addApplicationDomainForRuntimeSharedLibraryPath(file, (String)entry.getValue());
       }
     }
   }

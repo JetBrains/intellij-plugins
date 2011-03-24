@@ -181,7 +181,7 @@ public class Client {
     assert virtualFile != null;
     DocumentFileManager documentFileManager = DocumentFileManager.getInstance();
     final boolean registered = !force && documentFileManager.isRegistered(virtualFile);
-    final DocumentFileManager.DocumentInfo factoryInfo = documentFileManager.getId(virtualFile, psiFile, null);
+    final DocumentFileManager.DocumentInfo factoryInfo = documentFileManager.getInfo(virtualFile, psiFile, null);
     if (!registered) {
       beginMessage(ClientMethod.registerDocumentFactory);
       writeVirtualFile(virtualFile, out);
