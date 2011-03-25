@@ -4,7 +4,7 @@ import com.intellij.flex.uiDesigner.AbstractFileManager.FileInfo;
 import gnu.trove.TIntArrayList;
 
 abstract class AbstractFileManager<I extends FileInfo> {
-  private TIntArrayList freeIndices = new TIntArrayList();
+  private final TIntArrayList freeIndices = new TIntArrayList();
   private int counter;
   private int sessionId;
 
@@ -32,5 +32,3 @@ abstract class AbstractFileManager<I extends FileInfo> {
     }
   }
 }
-
- 

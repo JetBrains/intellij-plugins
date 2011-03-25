@@ -167,6 +167,8 @@ public class Client {
     out.write(librarySetIds);
     out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
     
+    out.reset();
+    
     blockOut.end();
   }
 
