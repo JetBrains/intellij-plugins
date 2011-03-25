@@ -39,8 +39,8 @@ public class EventFactoryTest extends TestCase {
 
     File[] files = parent.listFiles();
     for (int i = 0; i < files.length; i++) {
-      char[] contents = FileUtil.loadFileText(files[i]);
-      String []data = new String(contents).split("==[^=]*==\r?\n");
+      String s = FileUtil.loadFile(files[i]);
+      String []data = s.split("==[^=]*==\r?\n");
       result.addTest(new MessageEventTst(files[i].getName(), data));
     }
 

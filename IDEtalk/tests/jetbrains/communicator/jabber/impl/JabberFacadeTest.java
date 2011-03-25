@@ -77,7 +77,7 @@ public class JabberFacadeTest extends BaseTestCase {
     myFacade.saveSettings();
 
     File file = new File(myIDEFacade.getConfigDir(), JabberFacadeImpl.FILE_NAME);
-    String fileText = new String(FileUtil.loadFileText(file));
+    String fileText = FileUtil.loadFile(file);
 
     assertEquals("toString Should not contain plain password: " + myFacade.getMyAccount().toString(), -1,
         myFacade.getMyAccount().toString().indexOf("pwd822"));

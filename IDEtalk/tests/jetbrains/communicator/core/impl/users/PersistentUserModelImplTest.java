@@ -55,7 +55,7 @@ public class PersistentUserModelImplTest extends BaseTestCase {
     myUserModel.saveAll();
 
     File file = new File(myTempDir, PersistentUserModelImpl.FILE_NAME);
-    String fileText = new String(FileUtil.loadFileText(file));
+    String fileText = FileUtil.loadFile(file);
     assertEquals("Invalid file template",
         "<users>\n" +
         "  <myUsers class=\"set\"/>\n" +
