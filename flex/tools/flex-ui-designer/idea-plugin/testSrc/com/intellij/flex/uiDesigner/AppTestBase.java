@@ -1,7 +1,10 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -60,6 +63,11 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     SdkModificator sdkModificator = sdk.getSdkModificator();
     modifySdk(sdk, sdkModificator);
     sdkModificator.commitChanges();
+  }
+  
+  @Override
+  protected ModuleType getModuleType() {
+    return FlexModuleType.getInstance();
   }
   
   protected void modifySdk(Sdk sdk, SdkModificator sdkModificator) {

@@ -11,8 +11,10 @@ import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.*;
@@ -35,6 +37,12 @@ public class CssWriter {
   
   public CssWriter(StringRegistry.StringWriter stringWriter) {
     this.stringWriter = stringWriter;
+  }
+  
+  public byte[] write(VirtualFile file, Module module) {
+    Document document = FileDocumentManager.getInstance().getDocument(file);
+    CssFile cssFile = (CssFile) PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document);
+    return write(cssFile, document, module);
   }
   
   public byte[] write(CssFile cssFile, Module module) {

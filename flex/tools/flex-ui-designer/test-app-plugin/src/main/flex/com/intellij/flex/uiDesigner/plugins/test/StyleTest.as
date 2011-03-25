@@ -23,6 +23,7 @@ public class StyleTest extends BaseTestCase {
       StyleTag();
       StyleTagWithSource();
       ComponentWithCustomSkin();
+      LibraryWithDefaultsCss();
     }
   }
 
@@ -89,6 +90,10 @@ public class StyleTest extends BaseTestCase {
   
   public function ComponentWithCustomSkin():void {
     assertThat(app.skin, [{fill: {color: 0x3366ff}}, {id: "contentGroup", left: -181}]);
+  }
+  
+  public function LibraryWithDefaultsCss():void {
+    assertThat(app, [{color: 0xff0000}]);
   }
 }
 }

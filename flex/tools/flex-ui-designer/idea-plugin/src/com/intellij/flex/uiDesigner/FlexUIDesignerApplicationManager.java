@@ -251,12 +251,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
     final ModuleInfo moduleInfo = new ModuleInfo(module);
     stringWriter.startChange();
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter);
-      }
-    });
+    ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter);
     
     client.registerModule(project, moduleInfo, new String[]{externalLibrarySet.getId()}, stringWriter);
   }

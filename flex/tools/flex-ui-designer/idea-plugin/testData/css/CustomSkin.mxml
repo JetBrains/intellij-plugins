@@ -2,7 +2,7 @@
   <states>
     <State name="normal"/>
   </states>
-  
+
   <Rect left="0" right="0" top="0" bottom="0">
     <fill>
       <SolidColor color="0x3366ff"/>

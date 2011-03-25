@@ -1,15 +1,15 @@
 <Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
-	<fx:Style>
-		@namespace s "library://ns.adobe.com/flex/spark";
+  <fx:Style>
+    @namespace s "library://ns.adobe.com/flex/spark";
 
     .myFontStyle {
       fontSize: 15;
       color: #9933FF;
     }
-		
-		s|Button {
-		  fontStyle: italic;
-		}
+
+    s|Button {
+      fontStyle: italic;
+    }
 
     s|Button.className:down {
       color: red;
@@ -39,35 +39,35 @@
     }
 
     s|VGroup .bbb:normal .aa#ddd:down {
-			color: blue;
-			fontStyle: normal;
-		}
-    
+      color: blue;
+      fontStyle: normal;
+    }
+
     s|VGroup .bbb:normal s|Button.aa#ddd {
-			color: #8b4513;
-			fontStyle: normal;
+      color: #8b4513;
+      fontStyle: normal;
       fontSize: 28;
       fontFamily: "_typewriter";
       fontThickness: 200;
-		}
-		
-	</fx:Style>
-	
-	<layout>
-		<VerticalLayout/>
-	</layout>
-	
-	<Button label="myFontStyle" id="myButton" styleName="myFontStyle"/>
-	<Button label="emphasized" emphasized="true"/>
-	<Button label="className and pseudo" styleName="className"/>
-	<CheckBox label="AAA" styleName="className"/>
-	
-	<VGroup>
-		<Button label="ancestor"/>
-		<Button label="disabled (pseudo) ancestor" enabled="false"/>
-		<Button label="pseudo class ancestor" styleName="aa"/>
-		<BorderContainer styleName="bbb">
-			<Button label="id pseudo class ancestor" id="ddd" styleName="aa"/>
-		</BorderContainer>
-	</VGroup>
+    }
+
+  </fx:Style>
+
+  <layout>
+    <VerticalLayout/>
+  </layout>
+
+  <Button label="myFontStyle" id="myButton" styleName="myFontStyle"/>
+  <Button label="emphasized" emphasized="true"/>
+  <Button label="className and pseudo" styleName="className"/>
+  <CheckBox label="AAA" styleName="className"/>
+
+  <VGroup>
+    <Button label="ancestor"/>
+    <Button label="disabled (pseudo) ancestor" enabled="false"/>
+    <Button label="pseudo class ancestor" styleName="aa"/>
+    <BorderContainer styleName="bbb">
+      <Button label="id pseudo class ancestor" id="ddd" styleName="aa"/>
+    </BorderContainer>
+  </VGroup>
 </Application>

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class OriginalLibrary implements Library {
-  private static final String DEFAULTS_CSS = "defaults.css";
+  public static final String DEFAULTS_CSS = "defaults.css";
   private static final String CATALOG = "catalog.xml";
   private static final String SWF = "library.swf";
   
