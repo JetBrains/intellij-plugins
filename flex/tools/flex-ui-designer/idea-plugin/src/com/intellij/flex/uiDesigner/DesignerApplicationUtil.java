@@ -57,7 +57,8 @@ final class DesignerApplicationUtil {
       
       String version = sdk.getVersionString();
       // at least 4.1
-      if (version == null || !(version.length() >= 3 && (version.charAt(0) > '4' || (version.charAt(0) == '4' && version.charAt(2) >= '1')))) {
+      if (version == null || !(version.length() >= 3 &&
+                               (version.charAt(0) > '4' || (version.charAt(0) == '4' && version.charAt(2) >= '1')))) {
         continue;
       }
       
@@ -92,10 +93,17 @@ final class DesignerApplicationUtil {
       runTask.setEnabled(false);
     }
 
-    // we need SILENTLY_DETACH_ON_CLOSE, but RunContentManagerImpl provides only ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, so, we override destroyProcess as detachProcess
+    // we need SILENTLY_DETACH_ON_CLOSE, but RunContentManagerImpl provides only ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, so, 
+    // we override destroyProcess as detachProcess
     final FlexBaseRunner runner = new FlexBaseRunner() {
       @Override
-      protected RunContentDescriptor doLaunch(final Project project, final Executor executor, RunProfileState state, RunContentDescriptor contentToReuse, final ExecutionEnvironment env, final Sdk flexSdk, final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
+      protected RunContentDescriptor doLaunch(final Project project,
+                                              final Executor executor,
+                                              RunProfileState state,
+                                              RunContentDescriptor contentToReuse,
+                                              final ExecutionEnvironment env,
+                                              final Sdk flexSdk,
+                                              final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
         return XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
           @NotNull
           public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
@@ -164,12 +172,19 @@ final class DesignerApplicationUtil {
       }
     });
   }
-  
-  public static Process runAdl(AdlRunConfiguration adlRunConfiguration, String descriptor, int port, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
+
+  public static Process runAdl(AdlRunConfiguration adlRunConfiguration,
+                               String descriptor,
+                               int port,
+                               final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     return runAdl(adlRunConfiguration, descriptor, port, null, adlExitHandler);
   }
-  
-  public static Process runAdl(AdlRunConfiguration runConfiguration, String descriptor, int port, @Nullable String root, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
+
+  public static Process runAdl(AdlRunConfiguration runConfiguration,
+                               String descriptor,
+                               int port,
+                               @Nullable String root,
+                               final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     ensureExecutable(runConfiguration.adlPath);
     
     List<String> command = new ArrayList<String>();
@@ -178,10 +193,11 @@ final class DesignerApplicationUtil {
       command.add("-runtime");
       command.add(runConfiguration.runtime);
     }   
-    if (!runConfiguration.debug) {
-      // todo 6
-//      command.add("-nodebug");
-    }
+    
+    // see http://confluence.jetbrains.net/display/IDEA/Flex+UI+Designer about nodebug
+    //if (!runConfiguration.debug) {
+    //  command.add("-nodebug");
+    //}
     
     command.add(descriptor);
     if (root != null) {

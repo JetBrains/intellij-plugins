@@ -2,8 +2,10 @@ package com.intellij.flex.uiDesigner {
 import cocoa.util.StringUtil;
 
 import flash.display.Sprite;
+import flash.events.ErrorEvent;
 import flash.events.UncaughtErrorEvent;
 import flash.net.Socket;
+import flash.system.Capabilities;
 
 public class UncaughtErrorManager {
   protected var socket:Socket;
@@ -18,20 +20,28 @@ public class UncaughtErrorManager {
   }
 
   private function uncaughtErrorHandler(event:UncaughtErrorEvent):void {
-    var error:Error = event.error;
+    var message:String;
+    var error:Object = event.error;
+    if (error is Error) {
+      message = Capabilities.isDebugger ? buildErrorMessage(Error(error)) : Error(error).message;
+    }
+    else {
+      message = error is ErrorEvent ? ErrorEvent(error).text : error.toString();
+    }
+    
     event.preventDefault();
     event.stopImmediatePropagation();
 
-    sendMessage(buildErrorMessage(error));
+    sendMessage(message);
   }
 
   protected function buildErrorMessage(error:Error):String {
-    var stackText:String = error.getStackTrace();
-    if (StringUtil.startsWith(stackText, "Error: assert failed")) {
-      return stackText.substr(stackText.indexOf("\n", 22) + 1);
+    var message:String = error.getStackTrace();
+    if (StringUtil.startsWith(message, "Error: assert failed")) {
+      return message.substr(message.indexOf("\n", 22) + 1);
     }
     else {
-      return stackText;
+      return message;
     }
   }
 
