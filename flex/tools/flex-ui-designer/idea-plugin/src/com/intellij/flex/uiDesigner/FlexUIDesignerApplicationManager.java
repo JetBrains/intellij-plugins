@@ -6,8 +6,6 @@ import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.application.ex.ApplicationEx;
-import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -57,6 +55,11 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   ProjectManagerListener myProjectManagerListener;
 
   private File appDir;
+  
+  private boolean documentOpening;
+  public boolean isDocumentOpening() {
+    return documentOpening;
+  }
 
   public FlexUIDesignerApplicationManager() {
     appDir = new File(PathManager.getSystemPath(), "flexUIDesigner");
@@ -107,13 +110,19 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   }
 
   public void serverClosed() throws IOException {
-    client.close();
-    for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-      project.putUserData(PROJECT_INFO, null);
+    documentOpening = false;
+    if (client != null) {
+      client.close();
+      for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+        project.putUserData(PROJECT_INFO, null);
+      }
     }
   }
 
   public void openDocument(@NotNull final Project project, @NotNull final Module module, @NotNull final XmlFile psiFile, boolean debug) {
+    assert !documentOpening;
+    documentOpening = true;
+    
     if (server == null || server.isClosed()) {
       assert project.getUserData(PROJECT_INFO) == null;
       run(project, module, psiFile, debug);
@@ -129,6 +138,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
             client.openDocument(module, psiFile);
             client.flush();
+            
+            assert documentOpening;
+            documentOpening = false;
           }
           catch (IOException e) {
             LOG.error(e);
@@ -278,16 +290,13 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
     @Override
     public void run() {
-      ApplicationEx application = ApplicationManagerEx.getApplicationEx();
-      application.assertTimeConsuming();
-      
       try {
         client.initStringRegistry();
         initLibrarySets(myProject, myModule);
         client.openDocument(myModule, myPsiFile);
         client.flush();
 
-        application.getMessageBus().syncPublisher(MESSAGE_TOPIC).initialDocumentOpened();
+        ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).initialDocumentOpened();
       }
       catch (IOException e) {
         try {
@@ -298,6 +307,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           LOG.error(innerError);
         }
         LOG.error(e);
+      }
+      finally {
+        documentOpening = false;
       }
     }
   }

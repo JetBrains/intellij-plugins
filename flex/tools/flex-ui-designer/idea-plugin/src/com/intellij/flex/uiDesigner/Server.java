@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 
 class Server implements Runnable {
   private static final Logger LOG = Logger.getInstance(Server.class.getName());
@@ -48,6 +47,7 @@ class Server implements Runnable {
       if (socket != null) {
         try {
           socket.close();
+          applicationManager.serverClosed();
         }
         catch (IOException inner) {
           LOG.error(inner);

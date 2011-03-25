@@ -25,8 +25,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 
 public class RunDesignViewAction extends DumbAwareAction {
-  private boolean opening;
-  
   @Override
   public void actionPerformed(final AnActionEvent event) {
     final DataContext dataContext = event.getDataContext();
@@ -46,14 +44,7 @@ public class RunDesignViewAction extends DumbAwareAction {
     final Module module = ModuleUtil.findModuleForFile(file, project);
     assert module != null;
 
-    //ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-    //  @Override
-    //  public void run() {
-    //    opening = true;
-        FlexUIDesignerApplicationManager.getInstance().openDocument(project, module, psiFile, isDebug());
-        //opening = false;
-      //}
-    //});
+    FlexUIDesignerApplicationManager.getInstance().openDocument(project, module, psiFile, isDebug());
   }
 
   protected boolean isDebug() {
@@ -61,7 +52,7 @@ public class RunDesignViewAction extends DumbAwareAction {
   }
 
   public void update(final AnActionEvent event) {
-    final boolean enabled = !opening && isEnabled(event.getDataContext());
+    final boolean enabled = !FlexUIDesignerApplicationManager.getInstance().isDocumentOpening() && isEnabled(event.getDataContext());
     if (ActionPlaces.isPopupPlace(event.getPlace())) {
       event.getPresentation().setVisible(enabled);
     }
