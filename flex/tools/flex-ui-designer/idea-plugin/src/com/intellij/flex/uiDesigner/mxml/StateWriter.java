@@ -217,7 +217,7 @@ class StateWriter {
     writer.getOut().writeUInt29(VALUE);
     writer.getOut().write(PropertyClassifier.PROPERTY);
 
-    int type = valueWriter.write(writer.getOut(), false);
+    int type = valueWriter.write(writer.getOut(), writer, false);
     if (type < PropertyProcessor.PRIMITIVE) {
       assert context != null;
       mxmlWriter.processPropertyTagValue((XmlTag)element, context, type == PropertyProcessor.ARRAY);

@@ -65,9 +65,7 @@ public class SocketManagerImpl implements SocketManager {
     }
 
     var messageSize:int;
-    var i:int = 0;
     while (socket.bytesAvailable > 0) {
-      trace("c " + i);
       if (deferredMessageSize == 0) {
         messageSize = socket.readInt();
         if (messageSize > socket.bytesAvailable) {

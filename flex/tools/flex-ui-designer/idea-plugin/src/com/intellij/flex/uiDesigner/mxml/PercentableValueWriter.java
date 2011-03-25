@@ -10,7 +10,7 @@ class PercentableValueWriter implements ValueWriter {
   }
 
   @Override
-  public int write(PrimitiveAmfOutputStream out, boolean isStyle) {
+  public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
     out.writeAmfDouble(value);
     return PropertyProcessor.PRIMITIVE;
   }

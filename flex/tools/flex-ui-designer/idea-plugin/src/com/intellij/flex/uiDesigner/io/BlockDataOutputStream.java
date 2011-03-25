@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,15 +10,11 @@ import java.util.List;
 
 public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   private static final int SERVICE_DATA_SIZE = 4;
-  
-  private int directCount;
 
   private int lastBlockBegin;
   private final OutputStream out;
   private final List<Marker> markers = new ArrayList<Marker>();
   
-  private DataOutputStream directOut;
-
   public BlockDataOutputStream(@NotNull OutputStream out) {
     this(out, 64 * 1024);
   }
@@ -78,10 +75,9 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   }
 
   public void beginWritePrepended(int additionalSize, int insertPosition) throws IOException {
-    int extra = additionalSize + directCount;
-    count += extra;
+    count += additionalSize;
     writeHeader();
-    count -= extra;
+    count -= additionalSize;
     out.write(buffer, 0, insertPosition);
   }
 
@@ -102,6 +98,18 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     }
     else {
       throw new IllegalArgumentException("Integer out of range: " + counter);
+    }
+  }
+  
+  public void writePrepended(@Nullable List<DirectWriter> directWriters) throws IOException {
+    if (directWriters == null) {
+      out.write(0);
+      return;
+    }
+    
+    writePrepended(directWriters.size());
+    for (DirectWriter directWriter : directWriters) {
+      directWriter.write(out);
     }
   }
 
@@ -131,16 +139,6 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
         if (marker instanceof ByteRangeMarker) {
           writeDataRange(((ByteRangeMarker) marker).getDataRange());
         }
-        else if (marker instanceof DirectDataMarker) {
-          if (directOut == null) {
-            directOut = new DataOutputStream(new BufferedOutputStreamEx(out));
-          }
-          ((DirectDataMarker)marker).write(directOut);
-          directOut.flush();
-        }
-        else if (marker instanceof DirectMarker) {
-          ((DirectMarker)marker).write(out);
-        }
         
         lastEnd = marker.getEnd();
       }
@@ -152,12 +150,11 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       }
       
       if (auditorOutput != null) {
-        assert auditorOutput.watchCount == directCount + (count - insertPosition);
+        assert auditorOutput.watchCount == (count - insertPosition);
         auditorOutput.watchCount = -1;
       }
     }
 
-    directCount = 0;
     lastBlockBegin = 0;
     count = SERVICE_DATA_SIZE;
   }
@@ -268,11 +265,6 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   public void addMarker(Marker marker) {
     markers.add(marker);
   }
-  
-  public void addDirectMarker(int size, Marker marker) {
-    markers.add(marker);
-    directCount += size;
-  }
 
   public void setPosition(int position) {
     count = position;
@@ -360,23 +352,6 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     @Override
     public void close() throws IOException {
       out.close();
-    }
-  }
-
-  /**
-   * flush only buffer
-   */
-  private static class BufferedOutputStreamEx extends BufferedOutputStream {
-    public BufferedOutputStreamEx(OutputStream out) {
-      super(out);
-    }
-
-    @Override
-    public void flush() throws IOException {
-      if (count > 0) {
-        out.write(buf, 0, count);
-        count = 0;
-      }
     }
   }
 }

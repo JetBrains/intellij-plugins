@@ -2,10 +2,15 @@ package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
+import flash.display.BitmapData;
+import flash.errors.IllegalOperationError;
+
 import flash.net.Socket;
 import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
+
+import org.flyti.plexus.PlexusManager;
 
 registerClassAlias("lsh", LocalStyleHolder);
 
@@ -16,6 +21,10 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   private var stringRegistry:StringRegistry;
   
   private var documentFactoryManager:DocumentFactoryManager;
+  
+  private var bitmapDataManager:BitmapDataManager;
+  //noinspection JSUnusedLocalSymbols
+  private var swfDataManager:SwfDataManager;
 
   public function DefaultSocketDataHandler(libraryManager:LibraryManager, projectManager:ProjectManager, moduleManager:ModuleManager, stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager) {
     this.libraryManager = libraryManager;
@@ -72,15 +81,43 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     moduleManager.register(new Module(data.readInt(), projectManager.getById(data.readInt()), libraryManager.idsToInstancesAndMarkAsUsed(data.readObject()), data.readObject()));
   }
   
-  private function registerDocumentFactory(data:IDataInput, messageSize:int):void {
+  private var bitmapWorkaroundByteArray:ByteArray;
+  
+  private function registerDocumentFactory(input:IDataInput, messageSize:int):void {
     var bytes:ByteArray = new ByteArray();
-    var prevBytesAvailable:int = data.bytesAvailable;
-    var documentFactory:DocumentFactory = new DocumentFactory(bytes, VirtualFileImpl.create(data), data.readUTFBytes(AmfUtil.readUInt29(data)), moduleManager.getById(data.readInt()));
-    documentFactoryManager.register(data.readShort(), documentFactory);
+    var prevBytesAvailable:int = input.bytesAvailable;
+    var documentFactory:DocumentFactory = new DocumentFactory(bytes, VirtualFileImpl.create(input), input.readUTFBytes(AmfUtil.readUInt29(input)), moduleManager.getById(input.readInt()));
+    documentFactoryManager.register(input.readShort(), documentFactory);
     
-    stringRegistry.readStringTable(data);
+    stringRegistry.readStringTable(input);
+    
+    var n:int = AmfUtil.readUInt29(input);
+    while (n-- > 0) {
+      var id:int = input.readShort();
+      var bitmap:Boolean = (id & 1) != 0;
+      id = id >> 1;
+      if (bitmap) {
+        var bitmapData:BitmapData = new BitmapData(input.readShort(), input.readShort(), input.readBoolean(), 0);
+        // we cannot change BitmapData API
+        if (bitmapWorkaroundByteArray == null) {
+          bitmapWorkaroundByteArray = new ByteArray();
+        }
+        input.readBytes(bitmapWorkaroundByteArray, 0, bitmapData.width * bitmapData.height * 4);
+        bitmapData.setPixels(bitmapData.rect, bitmapWorkaroundByteArray);
+        bitmapWorkaroundByteArray.clear();
+        
+        if (bitmapDataManager == null) {
+          bitmapDataManager = BitmapDataManager(PlexusManager.instance.container.lookup(BitmapDataManager));
+        }
+        
+        bitmapDataManager.register(id, bitmapData);
+      }
+      else {
+        throw new IllegalOperationError("dd");
+      }
+    }
  
-    data.readBytes(bytes, 0, messageSize - (prevBytesAvailable - data.bytesAvailable));
+    input.readBytes(bytes, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
   }
 
   private function openDocument(data:IDataInput):void {

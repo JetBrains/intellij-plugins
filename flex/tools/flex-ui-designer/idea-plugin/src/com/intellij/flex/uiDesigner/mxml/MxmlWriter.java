@@ -476,6 +476,6 @@ public class MxmlWriter {
       out.write(PropertyClassifier.PROPERTY);
     }
     
-    return valueWriter.write(out, propertyProcessor.isStyle());
+    return valueWriter.write(out, writer, propertyProcessor.isStyle());
   }
 }

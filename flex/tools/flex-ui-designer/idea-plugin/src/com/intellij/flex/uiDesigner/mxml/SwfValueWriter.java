@@ -1,7 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.io.AbstractMarker;
-import com.intellij.flex.uiDesigner.io.DirectMarker;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,7 +18,7 @@ class SwfValueWriter extends BinaryValueWriter {
   }
 
   @Override
-  protected void write(PrimitiveAmfOutputStream out) {
+  protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) {
     out.write(AmfExtendedTypes.SWF);
     
     if (symbol == null) {
@@ -30,25 +28,28 @@ class SwfValueWriter extends BinaryValueWriter {
       out.writeAmfUtf(symbol);
     }
     
-    if (checkRegistered(out)) {
+    int id;
+    if ((id = checkRegistered(out)) == -1) {
       return;
     }
     
     int length = (int)virtualFile.getLength();
     out.writeUInt29(length);
-    out.getBlockOut().addDirectMarker(length, new MyDirectWriter(virtualFile, out.size()));
+    writer.addDirectWriter(length, new MyDirectWriter(id, virtualFile));
   }
   
-  private static class MyDirectWriter extends AbstractMarker implements DirectMarker {
+  private static class MyDirectWriter extends AbstractDirectWriter {
     private final VirtualFile virtualFile;
     
-    public MyDirectWriter(VirtualFile virtualFile, int position) {
-      super(position);
+    public MyDirectWriter(int id, VirtualFile virtualFile) {
+      super(id << 1);
       this.virtualFile = virtualFile;
     }
 
     @Override
     public void write(OutputStream out) throws IOException {
+      writeId(out);
+        
       InputStream inputStream = virtualFile.getInputStream();
       try {
         FileUtil.copy(inputStream, out);

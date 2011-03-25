@@ -369,20 +369,7 @@ public final class MxmlReader implements DocumentReader {
   }
   
   private function readBitmapData():BitmapData {
-    var id:int = input.readByte();
-    var registered:Boolean = (id & 1) != 0;
-    id = id >> 1;
-    if (registered) {
-      return bitmapDataManager.get(id);
-    }
-    else {
-      var bitmapData:BitmapData = new BitmapData(input.readShort(), input.readShort(), input.readBoolean(), 0);
-      // our input always ByteArray, in any case, we cannot change BitmapData API
-      bitmapData.setPixels(bitmapData.rect, ByteArray(input));
-      
-      bitmapDataManager.register(id, bitmapData);
-      return bitmapData;
-    }
+    return bitmapDataManager.get(AmfUtil.readUInt29(input));
   }
 
   /**

@@ -38,7 +38,7 @@ class InjectedASWriter {
 
   final static ValueWriter BINDING = new ValueWriter() {
     @Override
-    public int write(PrimitiveAmfOutputStream out, boolean isStyle) {
+    public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
       throw new UnsupportedOperationException();
     }
   };
@@ -278,7 +278,7 @@ class InjectedASWriter {
           return BINDING;
         }
 
-        if ("application/x-shockwave-flash".equals(mimeType) || source.getName().endsWith(".swf")) {
+        if (mimeType == null ? source.getName().endsWith(".swf") : mimeType.equals("application/x-shockwave-flash")) {
           return new SwfValueWriter(source, symbol);
         }
         else {

@@ -1,9 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.BinaryFileManager;
-import com.intellij.flex.uiDesigner.io.AbstractMarker;
-import com.intellij.flex.uiDesigner.io.DirectDataMarker;
-import com.intellij.flex.uiDesigner.io.DirectMarker;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,9 +10,9 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Iterator;
 
 class BitmapValueWriter extends BinaryValueWriter {
@@ -30,9 +26,10 @@ class BitmapValueWriter extends BinaryValueWriter {
   }
 
   @Override
-  protected void write(PrimitiveAmfOutputStream out) {
+  protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) {
     out.write(AmfExtendedTypes.BITMAP);
-    if (checkRegistered(out)) {
+    int id;
+    if ((id = checkRegistered(out)) == -1) {
       return;
     }
     
@@ -46,10 +43,10 @@ class BitmapValueWriter extends BinaryValueWriter {
       return;
     }
     
-    out.getBlockOut().addDirectMarker(2 + 2 + 1 + (image.getWidth() * image.getHeight() * 4),
-                                      new MyDirectWriter(out.size(), image, mimeType == null
-                                                                            ? virtualFile.getName().endsWith(".png")
-                                                                            : mimeType.equals("image/png")));
+    writer.addDirectWriter(2 + 2 + 1 + (image.getWidth() * image.getHeight() * 4),
+                           new MyDirectWriter(id, image, mimeType == null
+                                                     ? virtualFile.getName().endsWith(".png")
+                                                     : mimeType.equals("image/png")));
   }
 
   /**
@@ -83,24 +80,36 @@ class BitmapValueWriter extends BinaryValueWriter {
     return image;
   }
 
-  private static class MyDirectWriter extends AbstractMarker implements DirectDataMarker {
+  private static class MyDirectWriter extends AbstractDirectWriter {
     private final BufferedImage image;
     private final boolean transparent;
     
-    public MyDirectWriter(int position, BufferedImage image, boolean transparent) {
-      super(position);
+    public MyDirectWriter(int id, BufferedImage image, boolean transparent) {
+      super((id << 1) | 1);
       this.image = image;
       this.transparent = transparent;
     }
 
-    public void write(DataOutputStream out) throws IOException {
-      out.writeShort(image.getWidth());
-      out.writeShort(image.getHeight());
+    public void write(OutputStream out) throws IOException {
+      writeId(out);
+      
+      final int width = image.getWidth();
+      final int height = image.getHeight();
+
+      out.write((width >>> 8) & 0xFF);
+      out.write((width) & 0xFF);
+
+      out.write((height >>> 8) & 0xFF);
+      out.write((height) & 0xFF);
+      
       // http://juick.com/develar/1274330 flex compiler determine BitmapData.transparent by file type, 
       // but not actual pixels (i.e. BufferedImage.getTransparency()), so, for png always true, false for others (gif and jpg)
-      out.writeBoolean(transparent);
-      for (int pixel : image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth())) {
-        out.writeInt(pixel);
+      out.write(transparent ? 1 : 0);
+      for (int pixel : image.getRGB(0, 0, width, height, null, 0, width)) {
+        out.write((pixel >>> 24) & 0xFF);
+        out.write((pixel >>> 16) & 0xFF);
+        out.write((pixel >>>  8) & 0xFF);
+        out.write((pixel) & 0xFF);
       }
     }
   }

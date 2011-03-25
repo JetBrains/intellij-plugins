@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class BaseWriter {
   int ARRAY = -1;
@@ -21,6 +23,9 @@ public final class BaseWriter {
   
   private final Scope rootScope = new Scope();
   private int preallocatedId = -1;
+  
+  private List<DirectWriter> directWriters;
+  private int directCount;
   
   public Scope getRootScope() {
     return rootScope;
@@ -86,7 +91,12 @@ public final class BaseWriter {
   }
   
   public void resetAfterMessage() {
+    rootScope.referenceCounter = 0;
     stringWriter.finishChange();
+    if (directWriters != null) {
+      directCount = 0;
+      directWriters.clear();
+    }
   }
   
   public void addMarker(ByteRange dataRange) {
@@ -118,14 +128,16 @@ public final class BaseWriter {
 
   public void endMessage() throws IOException {
     int stringTableSize = stringWriter.size();
-    blockOut.beginWritePrepended(stringTableSize + (rootScope.referenceCounter < 0x80 ? 1 : 2), startPosition);
+    blockOut.beginWritePrepended(directCount + stringTableSize + sizeOf(rootScope.referenceCounter) + (directWriters == null ? 1 : sizeOf(directWriters.size())), startPosition);
     blockOut.writePrepended(stringWriter.getCounter(), stringWriter.getByteArrayOut());
-    blockOut.writePrepended(rootScope.referenceCounter);
+    blockOut.writePrepended(directWriters);
     blockOut.endWritePrepended(startPosition);
-    
-    rootScope.referenceCounter = 0;
   }
-  
+
+  private int sizeOf(int counter) {
+    return counter < 0x80 ? 1 : 2;
+  }
+
   public int getNameReference(String classOrPropertyName) {
     return stringWriter.getReference(classOrPropertyName);
   }
@@ -134,6 +146,7 @@ public final class BaseWriter {
     stringWriter.write(classOrPropertyName, out);
   }
   
+  @SuppressWarnings({"UnusedDeclaration"})
   public void writeNullable(String classOrPropertyName) {
     stringWriter.writeNullable(classOrPropertyName, out);
   }
@@ -303,5 +316,14 @@ public final class BaseWriter {
     out.write(PropertyClassifier.PROPERTY);
     writeConstructorHeader(className);
     out.write(constructorArgType);
+  }
+
+  public void addDirectWriter(int size, DirectWriter directWriter) {
+    if (directWriters == null) {
+      directWriters = new ArrayList<DirectWriter>();
+    }
+    
+    directCount += size;
+    directWriters.add(directWriter);
   }
 }

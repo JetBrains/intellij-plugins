@@ -8,15 +8,15 @@ abstract class AbstractPrimitiveValueWriter implements ValueWriter {
   }
   
   @Override
-  public int write(PrimitiveAmfOutputStream out, boolean isStyle) {
+  public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
     if (isStyle) {
       out.write(getStyleFlags());
     }
     
-    write(out);
+    write(out, writer);
     
     return isStyle ? PropertyProcessor.PRIMITIVE_STYLE : PropertyProcessor.PRIMITIVE;
   }
 
-  protected abstract void write(PrimitiveAmfOutputStream out);
+  protected abstract void write(PrimitiveAmfOutputStream out, BaseWriter writer);
 }
