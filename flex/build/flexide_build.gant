@@ -33,7 +33,7 @@ setProperty("pluginFilter", [
             "less", "sass",
             "tasks", "tasks-core", "tasks-api", "jira-connector",
             "JavaScriptDebugger", "FirefoxConnector", "ChromeConnector",
-            "flex-plugin", "flex-ui-designer"
+            "flex-plugin", "flex-ui-designer", "flex-profiler"
             ])
 
 private List platformImplementationModules() {
@@ -187,6 +187,10 @@ target('default': "Build artifacts") {
   // script will do nothing if 'flex-ui-designer' plugin is not part of pluginFilter
   def flex_ui_designer_build_script = includeFile("$home/flex/tools/flex-ui-designer/build-gant/flex_ui_designer_build.gant")
   flex_ui_designer_build_script.execute("$home", "$paths.sandbox", "$home/out/flex-ide/classes/production/flex-ui-designer")
+
+  // script will do nothing if 'flex-profiler' plugin is not part of pluginFilter
+  def flex_profiler_build_script = includeFile("$home/flex/build/flex_profiler_build.gant")
+  flex_profiler_build_script.execute("$home", "$paths.sandbox", "$home/out/flex-ide/classes/production/flex-profiler")
 
   usedJars.add("$home/community/lib/looks-2.2.2.jar")
 

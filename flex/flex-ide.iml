@@ -46,6 +46,7 @@
     <orderEntry type="module" module-name="maven-server-api" />
     <orderEntry type="module" module-name="maven2-server-impl" />
     <orderEntry type="module" module-name="maven3-server-impl" />
+    <orderEntry type="module" module-name="flex-profiler" />
   </component>
 </module>
 
