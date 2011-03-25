@@ -37,8 +37,7 @@ public class Util {
 
   static String getFileText(final String filePath) {
     try {
-      final FileReader reader = new FileReader(filePath);
-      return FileUtil.loadTextAndClose(reader);
+      return FileUtil.loadFile(new File(filePath));
     }
     catch (IOException e) {
       throw new RuntimeException(e);
