@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -273,15 +274,19 @@ class InjectedASWriter {
         }
         
         if (source == null) {
-          reportProblem(FlexUIDesignerBundle.message("error.embed.source.not.specified"));
+          reportProblem(FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
           return BINDING;
         }
 
         if ("application/x-shockwave-flash".equals(mimeType) || source.getName().endsWith(".swf")) {
-          return new SwfValueWriter(source);
+          return new SwfValueWriter(source, symbol);
         }
         else {
-          assert symbol == null;
+          if (symbol != null) {
+            FlexUIDesignerApplicationManager.getInstance().reportProblem(host.getProject(), FlexUIDesignerBundle
+              .message("error.embed.symbol.unneeded", host.getText()), MessageType.WARNING);
+          }
+          
           return new BitmapValueWriter(source, mimeType);
         }
       }

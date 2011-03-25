@@ -17,6 +17,9 @@ public class BitmapDataManager {
     else if (id >= data.length) {
       data.length += 8;
     }
+    else {
+      assert(data[id] == null);
+    }
 
     data[id] = bitmapData;
   }

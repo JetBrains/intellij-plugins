@@ -315,7 +315,11 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   }
 
   public void reportProblem(final Project project, String message) {
-    final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, MessageType.ERROR, null).setShowCallout(false)
+    reportProblem(project, message, MessageType.ERROR);
+  }
+  
+  public void reportProblem(final Project project, String message, MessageType messageType) {
+    final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, messageType, null).setShowCallout(false)
       .setHideOnAction(false).createBalloon();
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override

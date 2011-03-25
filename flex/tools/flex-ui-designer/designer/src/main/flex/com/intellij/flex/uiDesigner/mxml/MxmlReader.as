@@ -20,7 +20,6 @@ import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.display.BitmapData;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.events.Event;
@@ -40,7 +39,7 @@ public final class MxmlReader implements DocumentReader {
   private var stringRegistry:StringRegistry;
   private var documentFactoryManager:DocumentFactoryManager;
   private var bitmapDataManager:BitmapDataManager;
-  private var swfData:SwfDataManager;
+  private var swfDataManager:SwfDataManager;
 
   private const stateReader:StateReader = new StateReader();
   private const injectedASReader:InjectedASReader = new InjectedASReader();
@@ -54,11 +53,11 @@ public final class MxmlReader implements DocumentReader {
   
   internal var factoryContext:DeferredInstanceFromBytesContext;
 
-  public function MxmlReader(stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager, bitmapDataManager:BitmapDataManager, swfData:SwfDataManager) {
+  public function MxmlReader(stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager, bitmapDataManager:BitmapDataManager, swfDataManager:SwfDataManager) {
     this.stringRegistry = stringRegistry;
     this.documentFactoryManager = documentFactoryManager;
     this.bitmapDataManager = bitmapDataManager;
-    this.swfData = swfData;
+    this.swfDataManager = swfDataManager;
   }
 
   internal function getClass(name:String):Class {
@@ -322,7 +321,7 @@ public final class MxmlReader implements DocumentReader {
           break;
         
         case Amf3Types.SWF:
-          readSwfData();
+          readSwfData(propertyHolder, propertyName);
           break;
         
         case STRING_REFERENCE:
@@ -389,16 +388,18 @@ public final class MxmlReader implements DocumentReader {
   /**
    * DisplayObjectContainer or Class
    */
-  private function readSwfData():void {
+  private function readSwfData(propertyHolder:Object, propertyName:String):void {
+    const symbolLength:int = AmfUtil.readUInt29(input);
+    var symbol:String = symbolLength == 0 ? null : input.readUTFBytes(symbolLength);
+    
     var id:int = input.readByte();
     var registered:Boolean = (id & 1) != 0;
     id = id >> 1;
     if (registered) {
-      //return bitmapDataManager.get(id);
+      propertyHolder[propertyName] = swfDataManager.get(id, symbol);
     }
     else {
-      //noinspection JSUnusedLocalSymbols
-      var bytes:ByteArray = readBytes();
+      swfDataManager.load(id, readBytes(), symbol, propertyHolder, propertyName);
     }
   }
 
