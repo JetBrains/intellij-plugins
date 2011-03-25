@@ -1,6 +1,7 @@
 // this is called to build artifacts to be used when running from sources
 target('default': "Build Flex Profiler artifacts") {
   home = guessHome(this)
+  home = "$home/../../.."; // IDEA\flex\tools\profiler is detected
   doExecute("$home", "$home/out", "$home/out/classes/production/flex-profiler")
 }
 
@@ -37,23 +38,16 @@ private def doExecute(home, sandbox, targetFolder) {
 
   stripSwcName("airglobal") // compiler needs airglobal.swc to have exactly such name
 
-  ant.copy(file: "$flexBuildHome/base.xml", toDir: "$flexSandbox")
+  ant.copy(file: "$flexBuildHome/build-gant/base.xml", toDir: "$flexSandbox")
   ant.replace(file: "$flexSandbox/base.xml") {
     replacefilter(token: "@@repo@@", value: "$flexSandbox/repo")
   }
 
-  ant.delete(file: "$flexBuildHome/out")
-  buildFlex("Agent9Config")
-  buildFlex("Agent10Config")
-
-  ant.move(todir: "$targetFolder", flatten: "true") {
-    fileset(dir: "$flexBuildHome/out") {
-      include(name: "**/*.swf")
-    }
-  }
+  buildFlex("Agent9Config", "$targetFolder/profiler_agent_3.swf")
+  buildFlex("Agent10Config", "$targetFolder/profiler_agent_4.swf")
 }
 
-def buildFlex(configName) {
+def buildFlex(configName, target) {
   ant.java(className: "flex2.tools.Mxmlc", fork: "true", failOnError: "true", dir: "$flexBuildHome") {
     jvmarg(value: "-Dsun.io.useCanonCaches=false")
     jvmarg(value: "-Duser.language=en")
@@ -65,6 +59,7 @@ def buildFlex(configName) {
     }
     arg(value: "-load-config=$flexSandbox/base.xml")
     arg(value: "-load-config=$flexBuildHome/${configName}.xml")
+    arg(value: "-output=$target")
   }
 }
 
