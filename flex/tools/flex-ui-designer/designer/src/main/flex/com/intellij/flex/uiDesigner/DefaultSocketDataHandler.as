@@ -3,8 +3,6 @@ import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.display.BitmapData;
-import flash.errors.IllegalOperationError;
-
 import flash.net.Socket;
 import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
@@ -63,6 +61,14 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
         openDocument(data);
         break;
       
+      case ClientMethod.registerBitmap:
+        registerBitmap(data);
+        break;
+      
+      case ClientMethod.registerSwf:
+        registerSwf(data);
+        break;
+      
       case ClientMethod.initStringRegistry:
         stringRegistry.initStringTable(data);
         break;
@@ -90,34 +96,44 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     documentFactoryManager.register(input.readShort(), documentFactory);
     
     stringRegistry.readStringTable(input);
-    
-    var n:int = AmfUtil.readUInt29(input);
-    while (n-- > 0) {
-      var id:int = input.readShort();
-      var bitmap:Boolean = (id & 1) != 0;
-      id = id >> 1;
-      if (bitmap) {
-        var bitmapData:BitmapData = new BitmapData(input.readShort(), input.readShort(), input.readBoolean(), 0);
-        // we cannot change BitmapData API
-        if (bitmapWorkaroundByteArray == null) {
-          bitmapWorkaroundByteArray = new ByteArray();
-        }
-        input.readBytes(bitmapWorkaroundByteArray, 0, bitmapData.width * bitmapData.height * 4);
-        bitmapData.setPixels(bitmapData.rect, bitmapWorkaroundByteArray);
-        bitmapWorkaroundByteArray.clear();
-        
-        if (bitmapDataManager == null) {
-          bitmapDataManager = BitmapDataManager(PlexusManager.instance.container.lookup(BitmapDataManager));
-        }
-        
-        bitmapDataManager.register(id, bitmapData);
-      }
-      else {
-        throw new IllegalOperationError("dd");
-      }
-    }
  
     input.readBytes(bytes, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
+  }
+
+  private function registerBitmap(input:IDataInput):void {
+    var id:int = input.readShort();
+    var bitmapData:BitmapData = new BitmapData(input.readShort(), input.readShort(), input.readBoolean(), 0);
+    // we cannot change BitmapData API
+    if (bitmapWorkaroundByteArray == null) {
+      bitmapWorkaroundByteArray = new ByteArray();
+    }
+    input.readBytes(bitmapWorkaroundByteArray, 0, bitmapData.width * bitmapData.height * 4);
+    bitmapData.setPixels(bitmapData.rect, bitmapWorkaroundByteArray);
+    bitmapWorkaroundByteArray.clear();
+
+    if (bitmapDataManager == null) {
+      bitmapDataManager = BitmapDataManager(PlexusManager.instance.container.lookup(BitmapDataManager));
+    }
+
+    bitmapDataManager.register(id, bitmapData);
+  }
+  
+  private function registerSwf(input:IDataInput):void {
+    var id:int = input.readShort();
+    // we cannot change Loader API
+    if (bitmapWorkaroundByteArray == null) {
+      bitmapWorkaroundByteArray = new ByteArray();
+    }
+
+    var length:int = input.readInt();
+    input.readBytes(bitmapWorkaroundByteArray, 0, length);
+    
+    if (swfDataManager == null) {
+      swfDataManager = SwfDataManager(PlexusManager.instance.container.lookup(SwfDataManager));
+    }
+    
+    swfDataManager.load(id, bitmapWorkaroundByteArray);
+    bitmapWorkaroundByteArray.clear();
   }
 
   private function openDocument(data:IDataInput):void {
@@ -153,4 +169,7 @@ final class ClientMethod {
   //noinspection JSUnusedGlobalSymbols
   public static const qualifyExternalInlineStyleSource:int = 6;
   public static const initStringRegistry:int = 7;
+  
+  public static const registerBitmap:int = 8;
+  public static const registerSwf:int = 9;
 }

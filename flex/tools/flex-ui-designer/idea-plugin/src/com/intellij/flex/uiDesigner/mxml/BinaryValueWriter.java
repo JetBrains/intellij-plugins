@@ -3,12 +3,15 @@ package com.intellij.flex.uiDesigner.mxml;
 import com.intellij.flex.uiDesigner.BinaryFileManager;
 import com.intellij.flex.uiDesigner.io.DirectWriter;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 abstract class BinaryValueWriter extends AbstractPrimitiveValueWriter {
+  protected static final Logger LOG = Logger.getInstance(BinaryValueWriter.class.getName());
+  
   protected final VirtualFile virtualFile;
 
   public BinaryValueWriter(VirtualFile virtualFile) {
@@ -28,16 +31,8 @@ abstract class BinaryValueWriter extends AbstractPrimitiveValueWriter {
     }
   }
 
-  protected abstract static class AbstractDirectWriter implements DirectWriter {
-    private final int id;
-
-    protected AbstractDirectWriter(int id) {
-      this.id = id;
-    }
-
-    protected void writeId(OutputStream out) throws IOException {
-      out.write((id >>> 8) & 0xFF);
-      out.write((id) & 0xFF);
-    }
+  protected void writeId(int id, OutputStream out) throws IOException {
+    out.write((id >>> 8) & 0xFF);
+    out.write((id) & 0xFF);
   }
 }

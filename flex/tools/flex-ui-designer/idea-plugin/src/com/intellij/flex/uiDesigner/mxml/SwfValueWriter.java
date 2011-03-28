@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.flex.uiDesigner.Client;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,31 +33,31 @@ class SwfValueWriter extends BinaryValueWriter {
     if ((id = checkRegistered(out)) == -1) {
       return;
     }
-
-    int length = (int)virtualFile.getLength();
-    out.writeUInt29(length);
-    writer.addDirectWriter(2 + length, new MyDirectWriter(id, virtualFile));
-  }
-
-  private static class MyDirectWriter extends AbstractDirectWriter {
-    private final VirtualFile virtualFile;
-
-    public MyDirectWriter(int id, VirtualFile virtualFile) {
-      super(id << 1);
-      this.virtualFile = virtualFile;
-    }
-
-    @Override
-    public void write(OutputStream out) throws IOException {
-      writeId(out);
-
+    
+    try {
+      final int length = (int)virtualFile.getLength();
+      
+      final OutputStream output = writer.getBlockOut().writeUnbufferedHeader(2 + 2 + 4 + length);
+      output.write(Client.ClientMethod.METHOD_CLASS);
+      output.write(Client.ClientMethod.registerSwf.ordinal());
+      
+      writeId(id, output);
+      
+      output.write((length >>> 24) & 0xFF);
+      output.write((length >>> 16) & 0xFF);
+      output.write((length >>> 8) & 0xFF);
+      output.write(length & 0xFF);
+      
       InputStream inputStream = virtualFile.getInputStream();
       try {
-        FileUtil.copy(inputStream, out);
+        FileUtil.copy(inputStream, output);
       }
       finally {
         inputStream.close();
       }
+    }
+    catch (IOException e) {
+      LOG.error(e);
     }
   }
 }

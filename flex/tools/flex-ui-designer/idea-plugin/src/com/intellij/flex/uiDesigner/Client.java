@@ -245,9 +245,11 @@ public class Client {
     blockOut.end();
   }
 
-  private enum ClientMethod {
+  public static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, openDocument, 
-    qualifyExternalInlineStyleSource, initStringRegistry;
-    private static final int METHOD_CLASS = 0;
+    qualifyExternalInlineStyleSource, initStringRegistry,
+    registerBitmap, registerSwf;
+    
+    public static final int METHOD_CLASS = 0;
   }
 }

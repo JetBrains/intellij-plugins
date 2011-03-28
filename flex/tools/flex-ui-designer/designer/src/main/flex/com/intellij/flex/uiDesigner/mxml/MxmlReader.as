@@ -372,22 +372,10 @@ public final class MxmlReader implements DocumentReader {
     return bitmapDataManager.get(AmfUtil.readUInt29(input));
   }
 
-  /**
-   * DisplayObjectContainer or Class
-   */
   private function readSwfData(propertyHolder:Object, propertyName:String):void {
     const symbolLength:int = AmfUtil.readUInt29(input);
     var symbol:String = symbolLength == 0 ? null : input.readUTFBytes(symbolLength);
-    
-    var id:int = input.readByte();
-    var registered:Boolean = (id & 1) != 0;
-    id = id >> 1;
-    if (registered) {
-      propertyHolder[propertyName] = swfDataManager.get(id, symbol);
-    }
-    else {
-      swfDataManager.load(id, readBytes(), symbol, propertyHolder, propertyName);
-    }
+    swfDataManager.assign(AmfUtil.readUInt29(input), symbol, propertyHolder, propertyName);
   }
 
   private function getOrCreateFactoryContext():DeferredInstanceFromBytesContext {

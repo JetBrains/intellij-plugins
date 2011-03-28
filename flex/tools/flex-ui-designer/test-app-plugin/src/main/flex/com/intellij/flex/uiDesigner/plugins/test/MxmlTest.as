@@ -4,9 +4,7 @@ import flash.display.BitmapData;
 import org.hamcrest.Matcher;
 import org.hamcrest.assertThat;
 import org.hamcrest.core.allOf;
-
 import org.hamcrest.core.isA;
-
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.strictlyEqualTo;
 

@@ -3,7 +3,7 @@
   <Image source="@Embed(source='background.jpg')"/>
   <BitmapImage source="@Embed(source='background.p-n-g', mimeType='image/png')"/>
   
-  <!--<mx:SWFLoader source="@Embed('anim.swf', symbol='myMC')" left="0" right="0"/>-->
+  <mx:SWFLoader source="@Embed('anim.swf', symbol='myMC')" left="0" right="0"/>
   <!--<mx:SWFLoader source="@Embed('/Users/develar/Downloads/Test/assets/anim.swf', symbol='myMC')" left="0" right="0" top="0" bottom="0"/>-->
   <!--<Image source="@Embed('/Users/develar/Downloads/Test/assets/anim.swf', symbol='myMC')"/>-->
 </VGroup>

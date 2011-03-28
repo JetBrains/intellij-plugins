@@ -10,12 +10,26 @@ public class SwfDataManager {
   private var data:Vector.<SwfCache>;
   private var contentParent:ContentParent;
   
-  public function get(id:int, symbol:String):Class {
+  public function assign(id:int, symbol:String, propertyHolder:Object, propertyName:String):void {
     var swfCache:SwfCache = data[id];
-    return symbol == null ? swfCache.rootClass : Class(swfCache.applicationDomain.getDefinition(symbol));
+    if (swfCache.rootClass == null) {
+      var pendingClient:PendingClient = new PendingClient(propertyHolder, propertyName, symbol);
+      if (swfCache.pendingClient == null) {
+        swfCache.pendingClient = pendingClient;
+      }
+      else {
+        swfCache.pendingClients = new Vector.<PendingClient>(2);
+        swfCache.pendingClients[0] = swfCache.pendingClient;
+        swfCache.pendingClient = null;
+        swfCache.pendingClients[1] = pendingClient;
+      }
+    }
+    else {
+      propertyHolder[propertyName] = symbol == null ? swfCache.rootClass : Class(swfCache.applicationDomain.getDefinition(symbol));
+    }
   }
   
-  public function load(id:int, bytes:ByteArray, symbol:String, propertyHolder:Object, propertyName:String):void {
+  public function load(id:int, bytes:ByteArray):void {
     if (data == null) {
       data = new Vector.<SwfCache>(id + 8);
     }
@@ -29,7 +43,7 @@ public class SwfDataManager {
     var swfCache:SwfCache = new SwfCache(id);
     data[id] = swfCache;
     
-    var loader:Loader = new MyLoader(swfCache, propertyHolder, propertyName, symbol);
+    var loader:Loader = new MyLoader(swfCache);
     loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadCompleteHandler);
     loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
     var loaderContext:LoaderContext = new LoaderContext(false, swfCache.applicationDomain);
@@ -72,34 +86,54 @@ import flash.display.Loader;
 import flash.display.Sprite;
 import flash.system.ApplicationDomain;
 
-class SwfCache {
+final class SwfCache {
   public var applicationDomain:ApplicationDomain = new ApplicationDomain();
   public var rootClass:Class;
   
   public var id:int;
+  
+  public var pendingClients:Vector.<PendingClient>;
+  public var pendingClient:PendingClient;
 
   public function SwfCache(id:int) {
     this.id = id;
   }
 }
 
-class MyLoader extends Loader {
-  public var swfCache:SwfCache;
-  
+final class PendingClient {
   private var propertyHolder:Object;
   private var propertyName:String;
   private var symbol:String;
-  
-  public function MyLoader(swfCache:SwfCache, propertyHolder:Object, propertyName:String, symbol:String) {
-    this.swfCache = swfCache;
+
+  public function PendingClient(propertyHolder:Object, propertyName:String, symbol:String) {
     this.propertyHolder = propertyHolder;
     this.propertyName = propertyName;
     this.symbol = symbol;
   }
   
+  public function assign(content:DisplayObject, swfCache:SwfCache):void {
+    propertyHolder[propertyName] = symbol == null ? content : swfCache.applicationDomain.getDefinition(symbol);
+  }
+}
+
+final class MyLoader extends Loader {
+  public var swfCache:SwfCache;
+  
+  public function MyLoader(swfCache:SwfCache) {
+    this.swfCache = swfCache;
+  }
+  
   public function assign():void {
     swfCache.rootClass = DisplayObjectContainer(content).getChildAt(0)["constructor"];
-    propertyHolder[propertyName] = symbol == null ? content : swfCache.applicationDomain.getDefinition(symbol);
+    if (swfCache.pendingClient != null) {
+      swfCache.pendingClient.assign(content, swfCache);
+      swfCache.pendingClient = null;
+    }
+    else if (swfCache.pendingClients != null) {
+      for each (var pendingClient:PendingClient in swfCache.pendingClients) {
+        pendingClient.assign(content, swfCache);
+      }
+    }
     
     unload();
   }

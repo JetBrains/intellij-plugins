@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -42,6 +41,15 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     else {
       this.out = out;
     }
+  }
+  
+  public OutputStream writeUnbufferedHeader(int size) throws IOException {
+    out.write((size >>> 24) & 0xFF);
+    out.write((size >>> 16) & 0xFF);
+    out.write((size >>> 8) & 0xFF);
+    out.write(size & 0xFF);
+    
+    return out;
   }
 
   private void writeHeader() {
@@ -98,30 +106,6 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     }
     else {
       throw new IllegalArgumentException("Integer out of range: " + counter);
-    }
-  }
-
-  public void writePrepended(@Nullable List<DirectWriter> directWriters, int directCount) throws IOException {
-    if (directWriters == null) {
-      out.write(0);
-      return;
-    }
-
-    writePrepended(directWriters.size());
-
-    AuditorOutput auditorOutput = null;
-    if (out instanceof AuditorOutput) {
-      auditorOutput = (AuditorOutput)out;
-      auditorOutput.watchCount = 0;
-    }
-
-    for (DirectWriter directWriter : directWriters) {
-      directWriter.write(out);
-    }
-
-    if (auditorOutput != null) {
-      assert auditorOutput.watchCount == directCount;
-      auditorOutput.watchCount = -1;
     }
   }
 
