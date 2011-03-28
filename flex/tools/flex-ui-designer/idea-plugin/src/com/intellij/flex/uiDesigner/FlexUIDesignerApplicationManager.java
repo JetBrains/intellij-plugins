@@ -166,7 +166,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       @Override
       public void run() {
         try {
-        copyAppFiles();
+          copyAppFiles();
         
           adlProcess = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/" + DESCRIPTOR_XML,
                                                       server.listen(), new Consumer<Integer>() {
@@ -176,6 +176,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
                 if (onAdlExit != null) {
                   ApplicationManager.getApplication().invokeLater(onAdlExit);
                 }
+                
+                documentOpening = false;
               }
             });
         }
@@ -186,6 +188,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
           catch (IOException ignored) {
           }
+        }
+        finally {
+          documentOpening = false;
         }
       }
     };

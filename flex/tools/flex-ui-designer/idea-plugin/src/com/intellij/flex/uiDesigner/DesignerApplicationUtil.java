@@ -32,6 +32,7 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -40,11 +41,15 @@ import java.util.Set;
 
 final class DesignerApplicationUtil {
   private static final Logger LOG = Logger.getInstance(DesignerApplicationUtil.class.getName());
+  
+  // todo move to FlexSdkUtils
+  private static final String AIR_RUNTIME_RELATIVE_PATH = File.separatorChar + "runtimes" + File.separatorChar + "air" +
+                                                          File.separatorChar +
+                                                          (SystemInfo.isWindows ? "win" : (SystemInfo.isLinux ? "linux" : "mac"));
 
   public static @Nullable AdlRunConfiguration findSuitableFlexSdk() {
     String adlPath;
-    String runtime = null;
-
+    
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return new AdlRunConfiguration(System.getProperty("fud.adl"), System.getProperty("fud.air"));
     }
@@ -63,14 +68,21 @@ final class DesignerApplicationUtil {
       }
 
       adlPath = FlexSdkUtils.getAdlPath(sdk);
-      if (StringUtil.isEmpty(adlPath)) {
+      if (StringUtil.isEmpty(adlPath) || !new File(adlPath).exists()) {
         continue;
       }
 
+      final String runtime;
       if (sdkType instanceof FlexmojosSdkType) {
         runtime = FlexSdkUtils.getAirRuntimePathForFlexmojosSdk(sdk);
-        if (StringUtil.isEmpty(runtime)) {
+        if (StringUtil.isEmpty(runtime) || !new File(runtime).isDirectory()) {
           // for Flex SDK empty runtime is legal, but not for flexmojos SDK
+          continue;
+        }
+      }
+      else {
+        runtime = null;
+        if (!new File(sdk.getHomePath() + AIR_RUNTIME_RELATIVE_PATH).exists()) {
           continue;
         }
       }
