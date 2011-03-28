@@ -35,7 +35,7 @@ public class AppTest extends AppTestBase {
     designerAppManager.openDocument(myProject, myModule, (XmlFile) myFile, false);
     assertTrue(lock.await(10, TimeUnit.SECONDS));
     
-    designerAppManager.myProjectManagerListener.projectClosed(myProject);
+    designerAppManager.projectManagerListener.projectClosed(myProject);
 
     lock = new CountDownLatch(1);
     AmfOutputStream out = designerAppManager.getClient().getOutput();

@@ -11,6 +11,13 @@ import java.io.File;
 final class DebugPathManager {
   private static String ideaHome;
   private static String fudHome;
+  
+  public final static boolean IS_DEV = System.getProperty("fud.dev") != null || isUnitTestMode();
+  
+  private static boolean isUnitTestMode() {
+    Application app = ApplicationManager.getApplication();
+    return app == null || app.isUnitTestMode();
+  }
 
   public static String getIdeaHome() {
     getFudHome();
@@ -19,8 +26,7 @@ final class DebugPathManager {
 
   static String getFudHome() {
     if (fudHome == null) {
-      Application app = ApplicationManager.getApplication();
-      if (app == null || app.isUnitTestMode()) {
+      if (isUnitTestMode()) {
         ideaHome = getRootByClass(PathManager.class);
         fudHome = ideaHome + "/flex/tools/flex-ui-designer";
       }

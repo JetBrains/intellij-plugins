@@ -72,7 +72,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       public void consume(OriginalLibrary originalLibrary) {
         styleInfoCollector.collect(originalLibrary);
       }
-    }), myProject.getLocationHash(), getFlexVersion(), 0);
+    }), myProject.getLocationHash(), getFlexVersion());
 
     final ServerSocket serverSocket = new ServerSocket(0, 1);
     

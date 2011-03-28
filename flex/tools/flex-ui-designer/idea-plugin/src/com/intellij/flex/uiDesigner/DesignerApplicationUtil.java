@@ -41,9 +41,7 @@ import java.util.Set;
 final class DesignerApplicationUtil {
   private static final Logger LOG = Logger.getInstance(DesignerApplicationUtil.class.getName());
 
-  public static
-  @Nullable
-  AdlRunConfiguration findSuitableFlexSdk() {
+  public static @Nullable AdlRunConfiguration findSuitableFlexSdk() {
     String adlPath;
     String runtime = null;
 
@@ -101,12 +99,8 @@ final class DesignerApplicationUtil {
     // we override destroyProcess as detachProcess
     final FlexBaseRunner runner = new FlexBaseRunner() {
       @Override
-      protected RunContentDescriptor doLaunch(final Project project,
-                                              final Executor executor,
-                                              RunProfileState state,
-                                              RunContentDescriptor contentToReuse,
-                                              final ExecutionEnvironment env,
-                                              final Sdk flexSdk,
+      protected RunContentDescriptor doLaunch(final Project project, final Executor executor, RunProfileState state,
+                                              RunContentDescriptor contentToReuse, final ExecutionEnvironment env, final Sdk flexSdk,
                                               final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
         return XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
           @NotNull
@@ -115,7 +109,7 @@ final class DesignerApplicationUtil {
               return new FlexDebugProcess(session, flexSdk, flexRunnerParameters) {
                 @Override
                 public void stop() {
-                  if (Boolean.valueOf(System.getProperty("fud.debug"))) {
+                  if (DebugPathManager.IS_DEV) {
                     super.stop();
                   }
                 }
@@ -125,7 +119,7 @@ final class DesignerApplicationUtil {
                   return new DefaultDebugProcessHandler() {
                     @Override
                     public void destroyProcess() {
-                      if (Boolean.valueOf(System.getProperty("fud.debug"))) {
+                      if (DebugPathManager.IS_DEV) {
                         super.destroyProcess();
                       }
                       else {
@@ -178,17 +172,12 @@ final class DesignerApplicationUtil {
     });
   }
 
-  public static Process runAdl(AdlRunConfiguration adlRunConfiguration,
-                               String descriptor,
-                               int port,
+  public static Process runAdl(AdlRunConfiguration adlRunConfiguration, String descriptor, int port,
                                final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     return runAdl(adlRunConfiguration, descriptor, port, null, adlExitHandler);
   }
 
-  public static Process runAdl(AdlRunConfiguration runConfiguration,
-                               String descriptor,
-                               int port,
-                               @Nullable String root,
+  public static Process runAdl(AdlRunConfiguration runConfiguration, String descriptor, int port, @Nullable String root,
                                final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     ensureExecutable(runConfiguration.adlPath);
 

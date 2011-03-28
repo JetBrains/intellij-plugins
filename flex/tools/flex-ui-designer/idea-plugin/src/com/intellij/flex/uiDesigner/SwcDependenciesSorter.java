@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
 import java.util.zip.DataFormatException;
 
@@ -49,15 +51,7 @@ public class SwcDependenciesSorter {
     return abc.lastModified();
   }
 
-  public List<Library> sort(final List<OriginalLibrary> libraries,
-                            final String postfix,
-                            final String flexSdkVersion,
-                            long injectionLastModified) throws IOException {
-    final boolean debug = System.getProperty("fud.debug") != null;
-    if (debug) {
-      injectionLastModified = createInjectionAbc(flexSdkVersion, false);
-    }
-
+  public List<Library> sort(final List<OriginalLibrary> libraries, final String postfix, final String flexSdkVersion) throws IOException {
     List<FilteredLibrary> filteredLibraries = new ArrayList<FilteredLibrary>(libraries.size());
     definitionMap = new THashMap<CharSequence, Definition>();
 
@@ -86,7 +80,7 @@ public class SwcDependenciesSorter {
         String path = library.getOrigin().getPath();
         if (path.startsWith("framework")) {
           abcModified = true;
-          injectFrameworkSwc(flexSdkVersion, library, injectionLastModified);
+          injectFrameworkSwc(flexSdkVersion, library);
         }
         else if (path.startsWith("airspark")) {
           if (library.hasUnresolvedDefinitions()) {
@@ -119,7 +113,7 @@ public class SwcDependenciesSorter {
           filter = new AbcFilter();
         }
         library.filtered = true;
-        if (debug) {
+        if (DebugPathManager.IS_DEV) {
           printCollection(library.getUnresolvedDefinitions(),
                           new FileWriter(new File(rootPath, library.getOrigin().getPath() + "_unresolvedDefinitions.txt")));
         }
@@ -205,22 +199,35 @@ public class SwcDependenciesSorter {
     }
   }
 
-  private void injectFrameworkSwc(String flexSdkVersion, FilteredLibrary filteredLibrary, long injectionLastModified) throws IOException 
-  {
+  private void injectFrameworkSwc(String flexSdkVersion, FilteredLibrary filteredLibrary) throws IOException {
     VirtualFile swfFile = filteredLibrary.getOrigin().getSwfFile();
     File modifiedSwf = createSwfOutFile(filteredLibrary.getOrigin());
     final long timeStamp = swfFile.getTimeStamp();
+    
+    final long injectionLastModified;
+    final URLConnection injectionUrlConnection;
+    if (DebugPathManager.IS_DEV) {
+      injectionLastModified = createInjectionAbc(flexSdkVersion, false);
+      injectionUrlConnection = null;
+    }
+    else {
+      URL url = getClass().getClassLoader().getResource(ComplementSwfBuilder.generateInjectionName(flexSdkVersion));
+      injectionUrlConnection = url.openConnection();
+      injectionLastModified = injectionUrlConnection.getLastModified();
+    }
+
     if (filteredLibrary.hasUnresolvedDefinitions() ||
         ((timeStamp > injectionLastModified ? timeStamp : injectionLastModified) - modifiedSwf.lastModified()) > 2000) {
-      Set<CharSequence> definitions =
-        filteredLibrary.hasUnresolvedDefinitions() ? filteredLibrary.getUnresolvedDefinitions() : new THashSet<CharSequence>(5);
+      Set<CharSequence> definitions = filteredLibrary.hasUnresolvedDefinitions()
+                                      ? filteredLibrary.getUnresolvedDefinitions()
+                                      : new THashSet<CharSequence>(5);
       definitions.add("FrameworkClasses");
       definitions.add("mx.managers.systemClasses:MarshallingSupport");
       definitions.add("mx.managers:SystemManagerProxy");
 
       definitions.add("mx.styles:StyleManager");
       definitions.add("mx.styles:StyleManagerImpl");
-      new AbcFilter().inject(swfFile, modifiedSwf, flexSdkVersion,
+      new FlexSdkAbcInjector(injectionUrlConnection).inject(swfFile, modifiedSwf, flexSdkVersion,
                              new AbcNameFilterByNameSetAndStartsWith(definitions, new String[]{"mx.managers.marshalClasses:"}));
       //noinspection ResultOfMethodCallIgnored
       modifiedSwf.setLastModified(timeStamp);

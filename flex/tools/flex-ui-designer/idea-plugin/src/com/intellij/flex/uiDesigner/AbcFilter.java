@@ -16,26 +16,19 @@ import java.util.zip.ZipException;
  name='org/flyti/plexus/events/DispatcherEvent'>)
  * Optimized SWF (merged DoABC2) is not supported.
  */
-public class AbcFilter {
+class AbcFilter {
   private static final int PARTIAL_HEADER_LENGTH = 8;
 
   private static final int endTag = 0;
   private static final int stagDoABC2 = 82;
   private static final int symbolClass = 76;
 
-  private ByteBuffer byteBuffer;
+  protected ByteBuffer byteBuffer;
   private final char[] abcNameBuffer = new char[256];
   private final byte[] partialHeader = new byte[PARTIAL_HEADER_LENGTH];
 
-  private String flexSdkVersion;
-  private boolean flexInjected;
-
   public boolean replaceMainClass;
-
-  public void inject(VirtualFile inputFile, File out, String flexSdkVersion, AbcNameFilter abcNameFilter) throws IOException {
-    this.flexSdkVersion = flexSdkVersion;
-    filter(inputFile, out, abcNameFilter);
-  }
+  protected int lastWrittenPosition;
 
   public void filter(File inputFile, File out, AbcNameFilter abcNameFilter) throws IOException {
     filter(new FileInputStream(inputFile), inputFile.length(), out, abcNameFilter);
@@ -117,7 +110,7 @@ public class AbcFilter {
   }
 
   private void filterTags(FileChannel outputFileChannel, AbcNameFilter abcNameFilter) throws IOException {
-    int lastWrittenPosition = 0;
+    lastWrittenPosition = 0;
 
     while (byteBuffer.position() < byteBuffer.limit()) {
       int tagCodeAndLength = byteBuffer.getShort();
@@ -155,55 +148,8 @@ public class AbcFilter {
             byteBuffer.position(lastWrittenPosition);
             continue;
           }
-          else if (flexSdkVersion != null && !flexInjected) {
-            boolean isStyleProtoChain = name.equals("mx.styles:StyleProtoChain");
-            if (isStyleProtoChain) {
-              final int oldPosition = byteBuffer.position();
-              byteBuffer.position(byteBuffer.position() + 4 + name.length() + 1 /* null-terminated string */);
-              parseCPoolAndRenameStyleProtoChain();
-
-              // modify abcname
-              byteBuffer.position(oldPosition + 4 + 10);
-              byteBuffer.put((byte)'F');
-              byteBuffer.position(oldPosition);
-            }
-
-            // 4
-            if (isStyleProtoChain
-                ? flexSdkVersion.equals("4.5")
-                : (flexSdkVersion.equals("4.1") && name.equals("mx.styles:CSSStyleDeclaration"))) {
-              flexInjected = true;
-
-              byteBuffer.limit(byteBuffer.position() + length);
-              byteBuffer.position(lastWrittenPosition);
-              outputFileChannel.write(byteBuffer);
-              lastWrittenPosition = byteBuffer.limit();
-              byteBuffer.limit(byteBuffer.capacity());
-
-              final String injectionFileName = "flex-injection-" + flexSdkVersion + ".abc";
-              if (System.getProperty("fud.debug") == null) {
-                InputStream inputStream = getClass().getClassLoader().getResourceAsStream(injectionFileName);
-                try {
-                  outputFileChannel.write(ByteBuffer.wrap(FileUtil.loadBytes(inputStream)));
-                }
-                finally {
-                  inputStream.close();
-                }
-              }
-              else {
-                final FileChannel injection =
-                  new FileInputStream(new File(DebugPathManager.getFudHome() + "/flex-injection/target/" + injectionFileName)).getChannel
-                  ();
-                try {
-                  injection.transferTo(0, injection.size(), outputFileChannel);
-                }
-                finally {
-                  injection.close();
-                }
-              }
-
-              continue;
-            }
+          else if (doAbc2(length, name, outputFileChannel)) {
+            continue;
           }
           // through
 
@@ -212,6 +158,10 @@ public class AbcFilter {
           break;
       }
     }
+  }
+  
+  protected boolean doAbc2(int length, String name, FileChannel outputFileChannel) throws IOException {
+    return false;
   }
 
   private void filterAbcTags(FileChannel outputFileChannel, AbcNameFilter abcNameFilter) throws IOException {
@@ -243,34 +193,7 @@ public class AbcFilter {
       }
     }
   }
-
-  private void parseCPoolAndRenameStyleProtoChain() throws IOException {
-    byteBuffer.position(byteBuffer.position() + 4);
-
-    int n = readU32();
-    while (n-- > 1) {
-      readU32();
-    }
-
-    n = readU32();
-    while (n-- > 1) {
-      readU32();
-    }
-
-    n = readU32();
-    if (n != 0) {
-      byteBuffer.position(byteBuffer.position() + ((n - 1) * 8));
-    }
-
-    n = readU32();
-    while (n-- > 1) {
-      int l = readU32();
-      String name = readUTFBytes(l).replace("StyleProtoChain", "FtyleProtoChain");
-      byteBuffer.position(byteBuffer.position() - l);
-      writeUTF(name, l);
-    }
-  }
-
+  
   private int parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(int lastWrittenPosition,
                                                                           FileChannel outputFileChannel,
                                                                           int tagLength) throws IOException {
@@ -329,42 +252,11 @@ public class AbcFilter {
     byteBuffer.put((byte)(c >> 24));
   }
 
-  private void writeUTF(String str, int utflen) throws IOException {
-    int strlen = str.length();
-    int c, count = 0;
-
-    byte[] bytearr = new byte[utflen];
-
-    int i;
-    for (i = 0; i < strlen; i++) {
-      c = str.charAt(i);
-      if (!((c >= 0x0001) && (c <= 0x007F))) break;
-      bytearr[count++] = (byte)c;
-    }
-
-    for (; i < strlen; i++) {
-      c = str.charAt(i);
-      if ((c >= 0x0001) && (c <= 0x007F)) {
-        bytearr[count++] = (byte)c;
-      }
-      else if (c > 0x07FF) {
-        bytearr[count++] = (byte)(0xE0 | ((c >> 12) & 0x0F));
-        bytearr[count++] = (byte)(0x80 | ((c >> 6) & 0x3F));
-        bytearr[count++] = (byte)(0x80 | ((c) & 0x3F));
-      }
-      else {
-        bytearr[count++] = (byte)(0xC0 | ((c >> 6) & 0x1F));
-        bytearr[count++] = (byte)(0x80 | ((c) & 0x3F));
-      }
-    }
-    byteBuffer.put(bytearr);
-  }
-
   private int readUnsignedByte() {
     return byteBuffer.get() & 0xFF;
   }
 
-  private int readU32() {
+  protected int readU32() {
     int result = readUnsignedByte();
     if ((result & 0x80) == 0) return result;
     result = result & 0x7F | readUnsignedByte() << 7;
@@ -375,21 +267,7 @@ public class AbcFilter {
     if ((result & 0x10000000) == 0) return result;
     return result & 0xFFFFFFF | readUnsignedByte() << 28;
   }
-
-  private String readUTFBytes(int i) {
-    try {
-      byte[] buf = new byte[i];
-      while (i > 0) {
-        buf[(buf.length - i)] = byteBuffer.get();
-        --i;
-      }
-      return new String(buf, "utf-8");
-    }
-    catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
+  
   private String readAbcName(final int start) {
     int end = start;
     byte[] array = byteBuffer.array();

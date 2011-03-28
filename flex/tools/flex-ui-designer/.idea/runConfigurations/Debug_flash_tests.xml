@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Debug flash tests" type="FlexRunConfigurationType" factoryName="Flex" browser_family="FIREFOX" debugger_sdk="flex_sdk_4.5" html_or_swf_file_path="" launcher_type="OSDefault" main_class_name="" module_name="test-app-plugin" player_path="/Applications/Flash Player.app/Contents/MacOS/Flash Player" run_mode="ConnectToRunningFlashPlayer" run_trusted="false" url_to_launch="http://">
     <RunnerSettings RunnerId="FlexDebugRunner" />
+    <RunnerSettings RunnerId="Profile" />
     <ConfigurationWrapper RunnerId="FlexDebugRunner" />
     <method>
       <option name="Make" enabled="false" />

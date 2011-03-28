@@ -10,7 +10,6 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
@@ -51,7 +50,7 @@ public class RunDesignViewAction extends DumbAwareAction {
     return false;
   }
 
-  public void update(final AnActionEvent event) {
+  public void update(final AnActionEvent event) {    
     final boolean enabled = isEnabled(event.getDataContext()) &&!FlexUIDesignerApplicationManager.getInstance().isDocumentOpening();
     if (ActionPlaces.isPopupPlace(event.getPlace())) {
       event.getPresentation().setVisible(enabled);

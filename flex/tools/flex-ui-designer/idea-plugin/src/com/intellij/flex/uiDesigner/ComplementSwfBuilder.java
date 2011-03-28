@@ -38,6 +38,10 @@ public class ComplementSwfBuilder {
   }
 
   public static File getAbcFile(String folder, String flexVersion) {
-    return new File(folder, "flex-injection-" + flexVersion + ".abc");
+    return new File(folder, generateInjectionName(flexVersion));
+  }
+  
+  public static String generateInjectionName(String flexSdkVersion) {
+    return "flex-injection-" + flexSdkVersion + ".abc";
   }
 }
