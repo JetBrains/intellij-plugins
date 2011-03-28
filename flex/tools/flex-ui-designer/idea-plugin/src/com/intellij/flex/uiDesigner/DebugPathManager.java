@@ -11,12 +11,12 @@ import java.io.File;
 final class DebugPathManager {
   private static String ideaHome;
   private static String fudHome;
-  
+
   public static String getIdeaHome() {
     getFudHome();
     return ideaHome;
   }
-  
+
   static String getFudHome() {
     if (fudHome == null) {
       Application app = ApplicationManager.getApplication();
@@ -29,11 +29,13 @@ final class DebugPathManager {
         assert fudHome != null;
       }
     }
-    
+
     return fudHome;
   }
 
-  private static @NotNull String getRootByClass(Class aClass) {
+  private static
+  @NotNull
+  String getRootByClass(Class aClass) {
     String rootPath = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
     File root = new File(rootPath).getAbsoluteFile();
     do {
@@ -47,6 +49,6 @@ final class DebugPathManager {
 
   private static boolean isIdeaHome(final File root) {
     return new File(root, FileUtil.toSystemDependentName("bin/idea.properties")).exists() ||
-            new File(root, FileUtil.toSystemDependentName("community/bin/idea.properties")).exists();
+           new File(root, FileUtil.toSystemDependentName("community/bin/idea.properties")).exists();
   }
 }

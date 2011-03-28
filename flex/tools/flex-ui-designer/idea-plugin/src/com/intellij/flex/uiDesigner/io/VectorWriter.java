@@ -7,7 +7,7 @@ public class VectorWriter extends CollectionWriter {
   public VectorWriter(String elementClassName) {
     this(elementClassName, (String)null);
   }
-  
+
   public VectorWriter(String elementClassName, String vectorClassName) {
     this(elementClassName, vectorClassName, null);
   }
@@ -16,7 +16,7 @@ public class VectorWriter extends CollectionWriter {
   public VectorWriter(String elementClassName, CollectionWriter sharedReferenceTablesOwner) {
     this(elementClassName, null, sharedReferenceTablesOwner);
   }
-  
+
   public VectorWriter(String elementClassName, String vectorClassName, CollectionWriter sharedReferenceTablesOwner) {
     super(1 + 3 + 1, 1024 * 8, sharedReferenceTablesOwner);
 
@@ -32,7 +32,7 @@ public class VectorWriter extends CollectionWriter {
 
     return out;
   }
-  
+
   public AmfOutputStream getOutputForCustomData() {
     return out;
   }
@@ -62,13 +62,13 @@ public class VectorWriter extends CollectionWriter {
 
   public byte[] get(StringRegistry.StringWriter stringWriter) {
     writeHeader(headerOutput);
-    
+
     int stringWriterSize = stringWriter.size();
     byte[] bytes = new byte[stringWriterSize + headerOutput.size() + out.size()];
     stringWriter.writeTo(bytes);
     headerByteOutput.writeTo(bytes, stringWriterSize);
     byteOutput.writeTo(bytes, stringWriterSize + headerOutput.size());
-    
+
     stringWriter.finishChange();
     return bytes;
   }

@@ -4,7 +4,7 @@ public class DictionaryWriter extends CollectionWriter {
   public DictionaryWriter() {
     this(null);
   }
-  
+
   public int getCounter() {
     return counter;
   }

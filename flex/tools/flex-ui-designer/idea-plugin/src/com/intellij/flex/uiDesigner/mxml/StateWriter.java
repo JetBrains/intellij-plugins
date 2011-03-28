@@ -253,7 +253,7 @@ class StateWriter {
       // reset due to new backsibling
       resetActiveAddItems(parentContext.activeAddItems);
       if (parentContext.getBackSibling() == null) {
-        parentContext.setBackSibling(new StaticObjectContext(referencePosition, writer.getOut(), backSiblingId, 
+        parentContext.setBackSibling(new StaticObjectContext(referencePosition, writer.getOut(), backSiblingId,
                                                              parentContext.getScope()));
       }
       else {

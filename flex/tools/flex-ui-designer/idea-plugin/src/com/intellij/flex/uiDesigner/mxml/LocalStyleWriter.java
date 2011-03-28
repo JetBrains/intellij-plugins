@@ -25,10 +25,12 @@ public class LocalStyleWriter {
     cssWriter = new CssWriter(stringWriter);
   }
 
-  public @NotNull byte[] getData() {
+  public
+  @NotNull
+  byte[] getData() {
     return data;
   }
-          
+
   public boolean write(XmlTag tag, Module module) {
     data = null;
 
@@ -41,7 +43,7 @@ public class LocalStyleWriter {
         if (reference != null) {
           PsiElement element = reference.resolve();
           if (element != null && element instanceof CssFile) {
-            cssFile = (CssFile) element;
+            cssFile = (CssFile)element;
           }
         }
       }
@@ -54,11 +56,11 @@ public class LocalStyleWriter {
         cssFile = visitor.getCssFile();
       }
     }
-    
+
     if (cssFile == null) {
       return false;
     }
-  
+
     data = cssWriter.write(cssFile, module);
     return true;
   }
@@ -73,7 +75,9 @@ public class LocalStyleWriter {
       this.host = host;
     }
 
-    public @Nullable CssFile getCssFile() {
+    public
+    @Nullable
+    CssFile getCssFile() {
       return cssFile;
     }
 
@@ -83,7 +87,7 @@ public class LocalStyleWriter {
 
       assert places.size() == 1;
       assert places.get(0).host == host;
-      cssFile = (CssFile) injectedPsi;
+      cssFile = (CssFile)injectedPsi;
     }
   }
 }

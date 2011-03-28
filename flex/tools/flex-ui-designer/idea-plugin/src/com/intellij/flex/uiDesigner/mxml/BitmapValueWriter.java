@@ -17,7 +17,7 @@ import java.util.Iterator;
 
 class BitmapValueWriter extends BinaryValueWriter {
   private static final Logger LOG = Logger.getInstance(BitmapValueWriter.class.getName());
-  
+
   private final String mimeType;
 
   public BitmapValueWriter(@NotNull VirtualFile virtualFile, @Nullable String mimeType) {
@@ -32,7 +32,7 @@ class BitmapValueWriter extends BinaryValueWriter {
     if ((id = checkRegistered(out)) == -1) {
       return;
     }
-    
+
     final BufferedImage image;
     try {
       image = getImage();
@@ -42,11 +42,11 @@ class BitmapValueWriter extends BinaryValueWriter {
       // todo write special error image 
       return;
     }
-    
-    writer.addDirectWriter(2 + 2 + 1 + (image.getWidth() * image.getHeight() * 4),
+
+    writer.addDirectWriter(2 + 2 + 2 + 1 + (image.getWidth() * image.getHeight() * 4),
                            new MyDirectWriter(id, image, mimeType == null
-                                                     ? virtualFile.getName().endsWith(".png")
-                                                     : mimeType.equals("image/png")));
+                                                         ? virtualFile.getName().endsWith(".png")
+                                                         : mimeType.equals("image/png")));
   }
 
   /**
@@ -76,14 +76,14 @@ class BitmapValueWriter extends BinaryValueWriter {
     finally {
       inputStream.close();
     }
-    
+
     return image;
   }
 
   private static class MyDirectWriter extends AbstractDirectWriter {
     private final BufferedImage image;
     private final boolean transparent;
-    
+
     public MyDirectWriter(int id, BufferedImage image, boolean transparent) {
       super((id << 1) | 1);
       this.image = image;
@@ -92,7 +92,7 @@ class BitmapValueWriter extends BinaryValueWriter {
 
     public void write(OutputStream out) throws IOException {
       writeId(out);
-      
+
       final int width = image.getWidth();
       final int height = image.getHeight();
 
@@ -101,14 +101,14 @@ class BitmapValueWriter extends BinaryValueWriter {
 
       out.write((height >>> 8) & 0xFF);
       out.write((height) & 0xFF);
-      
+
       // http://juick.com/develar/1274330 flex compiler determine BitmapData.transparent by file type, 
       // but not actual pixels (i.e. BufferedImage.getTransparency()), so, for png always true, false for others (gif and jpg)
       out.write(transparent ? 1 : 0);
       for (int pixel : image.getRGB(0, 0, width, height, null, 0, width)) {
         out.write((pixel >>> 24) & 0xFF);
         out.write((pixel >>> 16) & 0xFF);
-        out.write((pixel >>>  8) & 0xFF);
+        out.write((pixel >>> 8) & 0xFF);
         out.write((pixel) & 0xFF);
       }
     }

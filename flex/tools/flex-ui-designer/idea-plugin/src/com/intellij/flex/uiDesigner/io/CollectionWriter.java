@@ -23,7 +23,8 @@ abstract class CollectionWriter {
     isReferenceTablesShared = sharedReferenceTablesOwner != null;
     if (isReferenceTablesShared) {
       if (sharedReferenceTablesOwner.headerOutput.stringTable == null) {
-        sharedReferenceTablesOwner.headerOutput.stringTable = sharedReferenceTablesOwner.out.stringTable = new ObjectIntHashMap<String>();
+        sharedReferenceTablesOwner.headerOutput.stringTable = sharedReferenceTablesOwner.out.stringTable = new ObjectIntHashMap<String>()
+        ;
       }
       if (sharedReferenceTablesOwner.headerOutput.traitsTable == null) {
         sharedReferenceTablesOwner.headerOutput.traitsTable = sharedReferenceTablesOwner.out.traitsTable = new ObjectIntHashMap<String>();

@@ -46,8 +46,9 @@ class InjectedASWriter {
   public InjectedASWriter(BaseWriter writer) {
     this.writer = writer;
   }
-  
-  public ValueWriter processProperty(XmlElementValueProvider valueProvider, String name, @Nullable String type, boolean isStyle, @Nullable Context context) {
+
+  public ValueWriter processProperty(XmlElementValueProvider valueProvider, String name, @Nullable String type, boolean isStyle,
+                                     @Nullable Context context) {
     PsiElement host = valueProvider.getInjectedHost();
     if (host == null) {
       return null;
@@ -87,7 +88,7 @@ class InjectedASWriter {
     InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, InjectedPsiVisitor.ExpectedType.OBJECT);
     InjectedLanguageUtil.enumerate(host, visitor);
     if (visitor.values != null) {
-      bindingItems.add(new ObjectBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values[0], 
+      bindingItems.add(new ObjectBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values[0],
                                          isStyle));
       return BINDING;
     }
@@ -220,7 +221,8 @@ class InjectedASWriter {
               values[i] = ((JSReferenceExpression)itemExpression).getReferencedName();
             }
             else {
-              LOG.warn("unsupported injected AS: " + itemExpression.getText() + " in outer expression " + expression.getText() + " (mxml: " + host.getText() + ")");
+              LOG.warn("unsupported injected AS: " + itemExpression.getText() + " in outer expression " + expression.getText() +
+                       " (mxml: " + host.getText() + ")");
               values = null;
               unsupported = true;
               return;
@@ -272,7 +274,7 @@ class InjectedASWriter {
             symbol = p.getSimpleValue();
           }
         }
-        
+
         if (source == null) {
           reportProblem(FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
           return BINDING;
@@ -286,7 +288,7 @@ class InjectedASWriter {
             FlexUIDesignerApplicationManager.getInstance().reportProblem(host.getProject(), FlexUIDesignerBundle
               .message("error.embed.symbol.unneeded", host.getText()), MessageType.WARNING);
           }
-          
+
           return new BitmapValueWriter(source, mimeType);
         }
       }

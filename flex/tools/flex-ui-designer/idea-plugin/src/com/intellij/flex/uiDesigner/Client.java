@@ -24,7 +24,7 @@ public class Client {
 
   private int registeredLibraryCounter;
   protected int sessionId;
-  
+
   private final MxmlWriter mxmlWriter = new MxmlWriter();
 
   private final TIntObjectHashMap<ModuleInfo> registeredModules = new TIntObjectHashMap<ModuleInfo>();
@@ -40,7 +40,7 @@ public class Client {
   public void setOutput(OutputStream out) {
     blockOut = new BlockDataOutputStream(out);
     this.out = new AmfOutputStream(blockOut);
-    
+
     mxmlWriter.setOutput(this.out);
   }
 
@@ -66,12 +66,12 @@ public class Client {
     sessionId++;
 
     registeredModules.clear();
-    
+
     mxmlWriter.reset();
-    
+
     DocumentFileManager.getInstance().reset(sessionId);
     BinaryFileManager.getInstance().reset(sessionId);
-    
+
     out.closeWithoutFlush();
     out = null;
   }
@@ -83,13 +83,13 @@ public class Client {
 
     blockOut.end();
   }
-  
+
   private void beginMessage(ClientMethod method) {
     blockOut.assertStart();
     out.write(ClientMethod.METHOD_CLASS);
     out.write(method);
   }
-  
+
   public void closeProject(Project project) throws IOException {
     beginMessage(ClientMethod.closeProject);
     out.writeInt(project.hashCode());
@@ -100,7 +100,7 @@ public class Client {
     beginMessage(ClientMethod.registerLibrarySet);
     out.writeAmfUtf(librarySet.getId());
     out.writeInt(-1); // todo parent
-    
+
     stringWriter.writeTo(out);
 
     out.write(librarySet.getApplicationDomainCreationPolicy());
@@ -109,19 +109,19 @@ public class Client {
       final OriginalLibrary originalLibrary;
       final boolean unregisteredLibrary;
       if (library instanceof OriginalLibrary) {
-        originalLibrary = (OriginalLibrary) library;
+        originalLibrary = (OriginalLibrary)library;
         unregisteredLibrary = originalLibrary.sessionId != sessionId;
         out.write(unregisteredLibrary ? 0 : 1);
       }
       else if (library instanceof FilteredLibrary) {
-        FilteredLibrary filteredLibrary = (FilteredLibrary) library;
+        FilteredLibrary filteredLibrary = (FilteredLibrary)library;
         originalLibrary = filteredLibrary.getOrigin();
         unregisteredLibrary = originalLibrary.sessionId != sessionId;
         out.write(unregisteredLibrary ? 2 : 3);
       }
       else {
         out.write(4);
-        out.writeNotEmptyString(((EmbedLibrary) library).getPath());
+        out.writeNotEmptyString(((EmbedLibrary)library).getPath());
         continue;
       }
 
@@ -130,14 +130,14 @@ public class Client {
         originalLibrary.sessionId = sessionId;
         out.writeAmfUtf(originalLibrary.getPath());
         writeVirtualFile(originalLibrary.getFile(), out);
-        
+
         if (originalLibrary.inheritingStyles == null) {
           out.writeShort(0);
         }
         else {
           out.write(originalLibrary.inheritingStyles);
         }
-        
+
         if (originalLibrary.defaultsStyle == null) {
           out.write(0);
         }
@@ -154,21 +154,22 @@ public class Client {
     blockOut.end();
   }
 
-  public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter) throws IOException {
+  public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter)
+    throws IOException {
     final int id = moduleInfo.getModule().hashCode();
     registeredModules.put(id, moduleInfo);
 
     beginMessage(ClientMethod.registerModule);
-    
+
     stringWriter.writeTo(out);
-    
+
     out.writeInt(id);
     out.writeInt(project.hashCode());
     out.write(librarySetIds);
     out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
-    
+
     out.reset();
-    
+
     blockOut.end();
   }
 
@@ -198,12 +199,12 @@ public class Client {
           if (module != moduleForFile) {
             FlexUIDesignerApplicationManager.LOG.error("Currently, support subdocument only from current module");
           }
-          
+
           registerDocumentFactoryIfNeed(module, subDocument, true);
         }
       }
     }
-    
+
     return factoryInfo.getId();
   }
 
@@ -228,24 +229,25 @@ public class Client {
     if (stringRegistry.isEmpty()) {
       return;
     }
-    
+
     beginMessage(ClientMethod.initStringRegistry);
-    
+
     int size = stringRegistry.getSize();
-    TObjectIntIterator<String> iterator = stringRegistry.getIterator(); 
+    TObjectIntIterator<String> iterator = stringRegistry.getIterator();
     String[] strings = new String[size];
-    for (int i = size; i-- > 0;) {
+    for (int i = size; i-- > 0; ) {
       iterator.advance();
       strings[iterator.value() - 1] = iterator.key();
     }
-    
+
     out.write(strings);
-    
+
     blockOut.end();
   }
 
   private enum ClientMethod {
-    openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, openDocument, qualifyExternalInlineStyleSource, initStringRegistry;
+    openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, openDocument, 
+    qualifyExternalInlineStyleSource, initStringRegistry;
     private static final int METHOD_CLASS = 0;
   }
 }

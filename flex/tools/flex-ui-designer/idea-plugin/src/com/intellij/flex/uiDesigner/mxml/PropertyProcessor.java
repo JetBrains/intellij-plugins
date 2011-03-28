@@ -24,22 +24,22 @@ import java.util.List;
 
 class PropertyProcessor {
   private static final Logger LOG = Logger.getInstance(PropertyProcessor.class.getName());
-  
+
   static final int ARRAY = -1;
   private static final int COMPLEX = 0;
   private static final int COMPLEX_STYLE = 1;
   static final int PRIMITIVE = 2;
   static final int PRIMITIVE_STYLE = 3;
   static final int IGNORE = 4;
- 
+
   private final InjectedASWriter injectedASWriter;
   private final BaseWriter writer;
-  
+
   private String name;
   private boolean isSkinProjectClass;
   private boolean isEffect;
   private boolean isStyle;
-  
+
   private final ObjectIntHashMap<String> classFactoryMap = new ObjectIntHashMap<String>();
   private final List<XmlFile> unregisteredDocumentFactories = new ArrayList<XmlFile>();
 
@@ -51,20 +51,20 @@ class PropertyProcessor {
   public List<XmlFile> getUnregisteredDocumentFactories() {
     return unregisteredDocumentFactories;
   }
-  
+
   public String getName() {
     return name;
   }
-  
+
   public boolean isStyle() {
     return isStyle;
   }
-  
+
   public boolean isEffect() {
     return isEffect;
   }
-  
-  private ValueWriter processPercentable(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) { 
+
+  private ValueWriter processPercentable(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
     String value = valueProvider.getTrimmed();
     if (value.endsWith("%")) {
       name = descriptor.getPercentProxy();
@@ -73,18 +73,21 @@ class PropertyProcessor {
     else {
       name = descriptor.getName();
     }
-    
+
     return new PercentableValueWriter(value);
   }
-  
-  public ValueWriter process(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, Context context) {
+
+  public ValueWriter process(XmlElement element,
+                             XmlElementValueProvider valueProvider,
+                             AnnotationBackedDescriptor descriptor,
+                             Context context) {
     if (descriptor.isPredefined()) {
       LOG.error("unknown language element " + descriptor.getName());
       return null;
     }
-    
+
     name = descriptor.getName();
-    
+
     isStyle = descriptor.isStyle();
     final @Nullable String type = descriptor.getType();
     final String typeName = descriptor.getTypeName();
@@ -103,7 +106,7 @@ class PropertyProcessor {
     else if (typeName.equals(FlexAnnotationNames.EVENT) /* skip event handlers */) {
       return null;
     }
-    
+
     ValueWriter valueWriter = injectedASWriter.processProperty(valueProvider, name, type, isStyle, context);
     if (valueWriter == InjectedASWriter.BINDING) {
       return null;
@@ -111,7 +114,7 @@ class PropertyProcessor {
     else if (valueWriter != null) {
       return valueWriter;
     }
-    
+
     if (descriptor.isAllowsPercentage()) {
       return processPercentable(valueProvider, descriptor);
     }
@@ -124,11 +127,11 @@ class PropertyProcessor {
           return new SkinProjectClassValueWriter(skinProjectClassDocumentFactoryId, writer);
         }
       }
-      
+
       return new ValueWriterImpl(valueProvider, descriptor);
     }
   }
-  
+
   private int getSkinProjectClassDocumentFactoryId(XmlElementValueProvider valueProvider) {
     XmlElement injectedHost = valueProvider.getInjectedHost();
     if (injectedHost != null) {
@@ -164,7 +167,7 @@ class PropertyProcessor {
   private class ValueWriterImpl implements ValueWriter {
     private final XmlElementValueProvider valueProvider;
     private final AnnotationBackedDescriptor descriptor;
-    
+
     private static final int SKIN_INT_PROJECT = 1;
     private static final int EFFECT = 1 << 1;
 

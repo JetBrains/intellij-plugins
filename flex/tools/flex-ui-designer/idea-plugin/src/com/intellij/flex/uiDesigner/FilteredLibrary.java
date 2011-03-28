@@ -30,11 +30,11 @@ public class FilteredLibrary extends TLinkableAdaptor implements Library {
   public Set<CharSequence> getUnresolvedDefinitions() {
     return unresolvedDefinitions;
   }
-  
+
   public boolean hasUnresolvedDefinitions() {
     return !unresolvedDefinitions.isEmpty();
   }
-  
+
   public boolean hasDefinitions() {
     return definitionCounter > 0;
   }

@@ -25,7 +25,9 @@ import com.intellij.util.Processor;
 import java.util.Collection;
 
 public class ModuleInfoUtil {
-  public static void collectLocalStyleHolders(final ModuleInfo moduleInfo, final String flexSdkVersion, final StringRegistry.StringWriter stringWriter) {
+  public static void collectLocalStyleHolders(final ModuleInfo moduleInfo,
+                                              final String flexSdkVersion,
+                                              final StringRegistry.StringWriter stringWriter) {
     final Module module = moduleInfo.getModule();
 
     final FlexBuildConfiguration flexBuildConfiguration;
@@ -37,34 +39,40 @@ public class ModuleInfoUtil {
       assert !flexFacets.isEmpty();
       flexBuildConfiguration = FlexBuildConfiguration.getInstance(flexFacets.iterator().next());
     }
-    
-    ApplicationManager.getApplication().runReadAction(FlexBuildConfiguration.APPLICATION.equals(flexBuildConfiguration.OUTPUT_TYPE) ? 
+
+    ApplicationManager.getApplication().runReadAction(FlexBuildConfiguration.APPLICATION.equals(flexBuildConfiguration.OUTPUT_TYPE) ?
                                                       new ApplicationLocalStyleFinder(stringWriter, moduleInfo, flexSdkVersion) :
-    new Runnable() {
-      @Override
-      public void run() {
-        VirtualFile defaultsCss = null;
-        for (VirtualFile sourceRoot : ModuleRootManager.getInstance(moduleInfo.getModule()).getSourceRoots(false)) {
-          if ((defaultsCss = sourceRoot.findChild(OriginalLibrary.DEFAULTS_CSS)) != null) {
-            break;
-          }
-        }
-        
-        if (defaultsCss != null) {
-          moduleInfo.addLocalStyleHolder(new LocalStyleHolder(defaultsCss, new CssWriter(stringWriter).write(defaultsCss, module)));
-        }
-      }
-    });
+                                                      new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                          VirtualFile defaultsCss = null;
+                                                          for (VirtualFile sourceRoot : ModuleRootManager
+                                                            .getInstance(moduleInfo.getModule()).getSourceRoots(false)) {
+                                                            if ((defaultsCss = sourceRoot.findChild(OriginalLibrary.DEFAULTS_CSS)) !=
+                                                                null) {
+                                                              break;
+                                                            }
+                                                          }
+
+                                                          if (defaultsCss != null) {
+                                                            moduleInfo.addLocalStyleHolder(new LocalStyleHolder(defaultsCss,
+                                                                                                                new CssWriter
+                                                                                                                (stringWriter)
+                                                                                                                  .write(defaultsCss,
+                                                                                                                         module)));
+                                                          }
+                                                        }
+                                                      });
   }
-  
+
   private static class ApplicationLocalStyleFinder implements Runnable {
     private final Processor<JSClass> processor;
     private LocalStyleWriter localStyleWriter;
-    
+
     private final StringRegistry.StringWriter stringWriter;
     private final ModuleInfo moduleInfo;
     private final String flexSdkVersion;
-      
+
     private LocalStyleWriter getStyleWriter() {
       if (localStyleWriter == null) {
         localStyleWriter = new LocalStyleWriter(stringWriter);
@@ -85,7 +93,7 @@ public class ModuleInfoUtil {
             XmlTag rootTag = ((XmlFile)containingFile).getRootTag();
             if (rootTag != null) {
               for (final XmlTag subTag : rootTag.getSubTags()) {
-                if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) && 
+                if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
                     subTag.getLocalName().equals(FlexPredefinedTagNames.STYLE)) {
                   if (getStyleWriter().write(subTag, moduleInfo.getModule())) {
                     moduleInfo.addLocalStyleHolder(new LocalStyleHolder(containingFile.getVirtualFile(), getStyleWriter().getData()));
@@ -115,7 +123,7 @@ public class ModuleInfoUtil {
         }
       }
 
-      JSClass mxApplicationClass = ((JSClass)JSResolveUtil.findClassByQName("mx.core.Application", 
+      JSClass mxApplicationClass = ((JSClass)JSResolveUtil.findClassByQName("mx.core.Application",
                                                                             moduleWithDependenciesAndLibrariesScope));
       // if null, mx.swc is not added to module dependencies
       if (mxApplicationClass != null) {

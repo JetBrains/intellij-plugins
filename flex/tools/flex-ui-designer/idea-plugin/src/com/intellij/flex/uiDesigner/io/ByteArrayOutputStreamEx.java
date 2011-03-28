@@ -20,11 +20,11 @@ public final class ByteArrayOutputStreamEx extends AbstractByteArrayOutputStream
   public void writeTo(OutputStream out) throws IOException {
     out.write(buffer, 0, count);
   }
-  
+
   public void writeTo(PrimitiveAmfOutputStream out) {
     out.write(buffer, 0, count);
   }
-  
+
   public void reset() {
     count = 0;
   }

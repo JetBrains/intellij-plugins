@@ -28,34 +28,34 @@ import java.awt.*;
 
 public class CssWriter {
   private static final Logger LOG = Logger.getInstance(CssWriter.class.getName());
-  
+
   private AmfOutputStream propertyOut;
   private final VectorWriter rulesetVectorWriter = new VectorWriter("d");
   private final VectorWriter declarationVectorWriter = new VectorWriter("p", "pi", rulesetVectorWriter);
-  
+
   private final StringRegistry.StringWriter stringWriter;
-  
+
   public CssWriter(StringRegistry.StringWriter stringWriter) {
     this.stringWriter = stringWriter;
   }
-  
+
   public byte[] write(VirtualFile file, Module module) {
     Document document = FileDocumentManager.getInstance().getDocument(file);
-    CssFile cssFile = (CssFile) PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document);
+    CssFile cssFile = (CssFile)PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document);
     return write(cssFile, document, module);
   }
-  
+
   public byte[] write(CssFile cssFile, Module module) {
     return write(cssFile, PsiDocumentManager.getInstance(module.getProject()).getDocument(cssFile), module);
   }
 
-  public byte[] write(CssFile cssFile, Document document, Module module)  {
+  public byte[] write(CssFile cssFile, Document document, Module module) {
     rulesetVectorWriter.prepareIteration();
-    
+
     CssStylesheet stylesheet = cssFile.getStylesheet();
     CssRuleset[] rulesets = stylesheet.getRulesets();
-    
-    final DocumentWindow documentWindow = document instanceof DocumentWindow ? (DocumentWindow) document : null;
+
+    final DocumentWindow documentWindow = document instanceof DocumentWindow ? (DocumentWindow)document : null;
     for (CssRuleset ruleset : rulesets) {
       AmfOutputStream rulesetOut = rulesetVectorWriter.getOutputForIteration();
 
@@ -78,15 +78,15 @@ public class CssWriter {
 
         propertyOut = declarationVectorWriter.getOutputForIteration();
         stringWriter.writeNullable(declaration.getPropertyName(), propertyOut);
-        
+
         textOffset = declaration.getTextOffset();
         propertyOut.writeUInt29(documentWindow == null ? textOffset : documentWindow.injectedToHost(textOffset));
-        
+
         if (propertyDescriptor == null || !(propertyDescriptor instanceof FlexCssPropertyDescriptor)) {
           writeUndefinedPropertyValue(value);
         }
         else {
-          writePropertyValue(value, ((FlexCssPropertyDescriptor) propertyDescriptor).getStyleInfo());
+          writePropertyValue(value, ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo());
         }
       }
 
@@ -94,7 +94,7 @@ public class CssWriter {
     }
 
     AmfOutputStream outputForCustomData = rulesetVectorWriter.getOutputForCustomData();
-    
+
     CssNamespace[] namespaces = stylesheet.getNamespaces();
     outputForCustomData.write(namespaces.length);
     if (namespaces.length > 0) {
@@ -116,14 +116,15 @@ public class CssWriter {
       out.write(simpleSelectors.length);
 
       for (int i = 0, simpleSelectorsLength = simpleSelectors.length; i < simpleSelectorsLength; i++) {
-        CssSimpleSelector simpleSelector = (CssSimpleSelector) simpleSelectors[i];
-        
+        CssSimpleSelector simpleSelector = (CssSimpleSelector)simpleSelectors[i];
+
         // subject
         if (simpleSelector.isUniversalSelector()) {
           out.write(0);
         }
         else {
-          XmlElementDescriptor typeSelectorDescriptor = FlexCssElementDescriptorProvider.getTypeSelectorDescriptor(simpleSelector, module);
+          XmlElementDescriptor typeSelectorDescriptor = FlexCssElementDescriptorProvider.getTypeSelectorDescriptor(simpleSelector, 
+          module);
           final String subject = simpleSelector.getElementName();
           assert subject != null;
           if (typeSelectorDescriptor == null) {
@@ -156,14 +157,14 @@ public class CssWriter {
           else {
             LOG.error("unknown selector suffix " + selectorSuffix.getText());
           }
-          
+
           stringWriter.writeNullable(selectorSuffix.getName(), out);
         }
       }
     }
   }
 
-  private void writePropertyValue(CssTermList value, FlexStyleIndexInfo info)  {
+  private void writePropertyValue(CssTermList value, FlexStyleIndexInfo info) {
     switch (info.getType().charAt(0)) {
       case 'u':
         if (info.getFormat().equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
@@ -219,12 +220,12 @@ public class CssWriter {
         break;
 
 //      case 'A': // Array
-        // todo support as for writeUndefinedPropertyValue
+      // todo support as for writeUndefinedPropertyValue
 //        break;
 
       default:
 //        throw new IllegalArgumentException("unknown property type: " + info.getType() + " and format: " + info.getFormat());
-      // todo support custom type: mx.graphics.IFill, fill: #000000
+        // todo support custom type: mx.graphics.IFill, fill: #000000
         propertyOut.write(CssPropertyType.NUMBER);
         propertyOut.writeAmfInt(0);
         break;
@@ -274,7 +275,7 @@ public class CssWriter {
     else if (termType == CssTermTypes.IDENT) {
       ASTNode node = value.getFirstChild().getFirstChild().getNode();
       if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
-        writeFunctionValueForUndefinedProperty((CssFunction) node);
+        writeFunctionValueForUndefinedProperty((CssFunction)node);
       }
       else {
         assert terms.length == 1;
@@ -323,13 +324,13 @@ public class CssWriter {
         writeClassReference(cssFunction);
         break;
 
-     case 'E':
-       propertyOut.write(CssPropertyType.EMBED);
-       declarationVectorWriter.writeObjectValueHeader("e");
-       break;
+      case 'E':
+        propertyOut.write(CssPropertyType.EMBED);
+        declarationVectorWriter.writeObjectValueHeader("e");
+        break;
 
-     default:
-       throw new IllegalArgumentException("unknown function: " + functionName);
+      default:
+        throw new IllegalArgumentException("unknown function: " + functionName);
     }
   }
 

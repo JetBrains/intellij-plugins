@@ -6,15 +6,15 @@ abstract class AbstractPrimitiveValueWriter implements ValueWriter {
   protected int getStyleFlags() {
     return 0;
   }
-  
+
   @Override
   public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
     if (isStyle) {
       out.write(getStyleFlags());
     }
-    
+
     write(out, writer);
-    
+
     return isStyle ? PropertyProcessor.PRIMITIVE_STYLE : PropertyProcessor.PRIMITIVE;
   }
 

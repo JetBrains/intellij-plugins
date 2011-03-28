@@ -33,7 +33,7 @@ class XmlTagValueProvider implements XmlElementValueProvider {
 
     XmlElementDescriptor descriptor = tag.getDescriptor();
     // may be ClassBackedElementDescriptor for fx:String: <TextArea><text><fx:String>sfsdsd</fx:String></text></TextArea>
-    if (descriptor instanceof AnnotationBackedDescriptor && ((AnnotationBackedDescriptor) descriptor).isCollapseWhiteSpace()) {
+    if (descriptor instanceof AnnotationBackedDescriptor && ((AnnotationBackedDescriptor)descriptor).isCollapseWhiteSpace()) {
       return CharMatcher.WHITESPACE.trimAndCollapseFrom(v, ' ');
     }
     else {
@@ -45,8 +45,10 @@ class XmlTagValueProvider implements XmlElementValueProvider {
   public XmlElement getInjectedHost() {
     return getInjectedHost(tag);
   }
-  
-  public static @Nullable XmlElement getInjectedHost(XmlTag tag) {
+
+  public static
+  @Nullable
+  XmlElement getInjectedHost(XmlTag tag) {
     // support <tag>{v}...</tag> or <tag>__PsiWhiteSpace__{v}...</tag>
     // <tag><span>ssss</span> {v}...</tag> is not supported
     for (XmlTagChild child : tag.getValue().getChildren()) {
@@ -68,7 +70,7 @@ class XmlTagValueProvider implements XmlElementValueProvider {
   private static CharSequence getDisplay(XmlTagChild[] children) {
     if (children.length == 1) {
       if (children[0] instanceof XmlText) {
-        return ((XmlText) children[0]).getValue();
+        return ((XmlText)children[0]).getValue();
       }
       else {
         return EMPTY;
@@ -78,7 +80,7 @@ class XmlTagValueProvider implements XmlElementValueProvider {
       final StringBuilder consolidatedText = StringBuilderSpinAllocator.alloc();
       try {
         for (final XmlTagChild element : children) {
-          consolidatedText.append(element instanceof XmlText ? ((XmlText) element).getValue() : element.getText());
+          consolidatedText.append(element instanceof XmlText ? ((XmlText)element).getValue() : element.getText());
         }
         return consolidatedText.length() == 0 ? EMPTY : consolidatedText;
       }

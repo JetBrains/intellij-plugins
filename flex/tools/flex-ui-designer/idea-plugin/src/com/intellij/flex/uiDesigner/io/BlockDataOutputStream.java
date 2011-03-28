@@ -14,7 +14,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   private int lastBlockBegin;
   private final OutputStream out;
   private final List<Marker> markers = new ArrayList<Marker>();
-  
+
   public BlockDataOutputStream(@NotNull OutputStream out) {
     this(out, 64 * 1024);
   }
@@ -22,7 +22,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   public BlockDataOutputStream(@NotNull OutputStream out, int size) {
     super(size);
     count = SERVICE_DATA_SIZE;
-    
+
     String debugFilename = System.getProperty("fud.socket.dump");
     DebugOutput debugOut;
     if (debugFilename != null) {
@@ -33,7 +33,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       catch (FileNotFoundException e) {
         throw new RuntimeException(e);
       }
-      
+
       this.out = debugOut;
     }
     else if (ApplicationManager.getApplication().isUnitTestMode()) {
@@ -46,10 +46,10 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
 
   private void writeHeader() {
     int length = count - lastBlockBegin - SERVICE_DATA_SIZE;
-    buffer[lastBlockBegin] = (byte) ((length >>> 24) & 0xFF);
-    buffer[lastBlockBegin + 1] = (byte) ((length >>> 16) & 0xFF);
-    buffer[lastBlockBegin + 2] = (byte) ((length >>> 8) & 0xFF);
-    buffer[lastBlockBegin + 3] = (byte) (length & 0xFF);
+    buffer[lastBlockBegin] = (byte)((length >>> 24) & 0xFF);
+    buffer[lastBlockBegin + 1] = (byte)((length >>> 16) & 0xFF);
+    buffer[lastBlockBegin + 2] = (byte)((length >>> 8) & 0xFF);
+    buffer[lastBlockBegin + 3] = (byte)(length & 0xFF);
   }
 
   private void flushBuffer() throws IOException {
@@ -57,7 +57,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     lastBlockBegin = 0;
     count = SERVICE_DATA_SIZE;
   }
-  
+
   public void assertStart() {
     assert count - lastBlockBegin == 4;
   }
@@ -87,7 +87,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       byteArrayOutput.writeTo(out);
     }
   }
-  
+
   public void writePrepended(int counter) throws IOException {
     if (counter < 0x80) {
       out.write(counter);
@@ -100,16 +100,28 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       throw new IllegalArgumentException("Integer out of range: " + counter);
     }
   }
-  
-  public void writePrepended(@Nullable List<DirectWriter> directWriters) throws IOException {
+
+  public void writePrepended(@Nullable List<DirectWriter> directWriters, int directCount) throws IOException {
     if (directWriters == null) {
       out.write(0);
       return;
     }
-    
+
     writePrepended(directWriters.size());
+
+    AuditorOutput auditorOutput = null;
+    if (out instanceof AuditorOutput) {
+      auditorOutput = (AuditorOutput)out;
+      auditorOutput.watchCount = 0;
+    }
+
     for (DirectWriter directWriter : directWriters) {
       directWriter.write(out);
+    }
+
+    if (auditorOutput != null) {
+      assert auditorOutput.watchCount == directCount;
+      auditorOutput.watchCount = -1;
     }
   }
 
@@ -121,10 +133,10 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     else {
       AuditorOutput auditorOutput = null;
       if (out instanceof AuditorOutput) {
-        auditorOutput = (AuditorOutput) out;
+        auditorOutput = (AuditorOutput)out;
         auditorOutput.watchCount = 0;
       }
-      
+
       for (Marker marker : markers) {
         if (marker.getEnd() < lastEnd) {
           // nested
@@ -137,9 +149,9 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
         }
 
         if (marker instanceof ByteRangeMarker) {
-          writeDataRange(((ByteRangeMarker) marker).getDataRange());
+          writeDataRange(((ByteRangeMarker)marker).getDataRange());
         }
-        
+
         lastEnd = marker.getEnd();
       }
 
@@ -148,7 +160,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       if (tailLength > 0) {
         out.write(buffer, lastEnd, tailLength);
       }
-      
+
       if (auditorOutput != null) {
         assert auditorOutput.watchCount == (count - insertPosition);
         auditorOutput.watchCount = -1;
@@ -158,7 +170,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     lastBlockBegin = 0;
     count = SERVICE_DATA_SIZE;
   }
-  
+
   private void writeDataRange(ByteRange dataRange) throws IOException {
     int childIndex = dataRange.getIndex() + 1;
     int start = dataRange.getStart();
@@ -181,24 +193,25 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       }
     }
   }
-  
+
   public int getDataRangeOwnLength(ByteRange dataRange) {
     if (dataRange.getOwnLength() != -1) {
       return dataRange.getOwnLength();
     }
-    
+
     int childIndex = dataRange.getIndex() + 1;
     int start = dataRange.getStart();
     final int ownEnd = dataRange.getEnd();
     int ownLength = 0;
-    
+
     while (true) {
-      // this check is not needed for writeDataRange, because writeDataRange call only after build message – opposite to getDataRangeOwnLength
+      // this check is not needed for writeDataRange, because writeDataRange call only after build message – opposite to 
+      // getDataRangeOwnLength
       if (childIndex == markers.size()) {
         ownLength += ownEnd - start;
         break;
       }
-      
+
       Marker possibleChild = markers.get(childIndex++);
       int childEnd = possibleChild.getEnd();
       if (childEnd < ownEnd) {
@@ -213,7 +226,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
         break;
       }
     }
-    
+
     dataRange.setOwnLength(ownLength);
     return ownLength;
   }
@@ -232,15 +245,15 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   public void close() throws IOException {
     out.close();
   }
-  
+
   public ByteRange startRange() {
     return startRange(count);
   }
-  
+
   public int getNextMarkerIndex() {
     return markers.size();
   }
-  
+
   public ByteRange startRange(int start) {
     ByteRange byteRange = new ByteRange(start, markers.size());
     markers.add(byteRange);
@@ -252,16 +265,16 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     markers.add(index, byteRange);
     return byteRange;
   }
-  
+
   public void removeLastMarkerAndAssert(ByteRange dataRange) {
     Marker removed = markers.remove(markers.size() - 1);
     assert removed == dataRange;
   }
-  
+
   public void endRange(ByteRange range) {
     range.setEnd(count);
   }
-  
+
   public void addMarker(Marker marker) {
     markers.add(marker);
   }
@@ -308,7 +321,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       super.close();
     }
   }
-  
+
   private static class AuditorOutput extends OutputStream {
     private final OutputStream out;
     private int watchCount = -1;
@@ -322,7 +335,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       if (watchCount != -1) {
         watchCount++;
       }
-      
+
       out.write(b);
     }
 
@@ -331,7 +344,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       if (watchCount != -1) {
         watchCount += b.length;
       }
-      
+
       out.write(b);
     }
 
@@ -340,7 +353,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       if (watchCount != -1) {
         watchCount += len;
       }
-      
+
       out.write(b, off, len);
     }
 

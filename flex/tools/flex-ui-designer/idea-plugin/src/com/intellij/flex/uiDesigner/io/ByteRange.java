@@ -3,7 +3,7 @@ package com.intellij.flex.uiDesigner.io;
 public class ByteRange implements Marker {
   private final int start;
   private int end;
-  
+
   private final int index;
   private int ownLength = -1;
 
@@ -11,17 +11,17 @@ public class ByteRange implements Marker {
     this.start = start;
     this.index = index;
   }
-  
+
   @Override
   public int getStart() {
     return start;
   }
-  
+
   @Override
   public int getEnd() {
     return end;
   }
-  
+
   public void setEnd(int end) {
     this.end = end;
   }

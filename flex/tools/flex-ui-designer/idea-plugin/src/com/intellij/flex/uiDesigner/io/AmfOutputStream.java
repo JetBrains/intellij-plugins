@@ -9,11 +9,11 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
 
   ObjectIntHashMap<String> stringTable;
   ObjectIntHashMap<String> traitsTable;
-  
+
   public AmfOutputStream(OutputStream out) {
     super(out);
   }
-  
+
   @Override
   public void reset() {
     if (stringTable != null) {
@@ -25,7 +25,7 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
 
     super.reset();
   }
-  
+
   /**
    * Write array as fixed flash Vector.<int>
    *
@@ -40,7 +40,7 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
       writeInt(i);
     }
   }
-  
+
   /**
    * Write array as fixed flash Vector.<String>
    */
@@ -54,7 +54,7 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
       writeAmfUtf(s, true);
     }
   }
-  
+
   @SuppressWarnings({"UnusedDeclaration"})
   public void writeStringCollection(Collection<String> collection) {
     write(Amf3Types.VECTOR_OBJECT);
@@ -66,11 +66,11 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
       writeAmfUtf(s, true);
     }
   }
-  
+
   public void write(Collection collection, Class elementType) {
     write(collection, elementType.getName(), false);
   }
-  
+
   public void write(Collection collection, String elementTypeName, boolean homogeneous) {
     if (collection == null) {
       write(Amf3Types.NULL);
@@ -89,19 +89,19 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
       writeStringWithoutType(s);
     }
   }
-  
+
   public void writeAmfByteArray(byte[] bytes) {
     writeUInt29(bytes.length);
     write(bytes);
   }
-  
+
   private void writeVector(Collection collection, boolean fixed, String elementTypeName, boolean homogeneous) {
     write(Amf3Types.VECTOR_OBJECT);
 
     final int n = collection.size();
     writeUInt29((n << 1) | 1);
     write(fixed);
-    
+
     if (elementTypeName.equals("java.lang.Object")) {
       writeUInt29(1);
     }
@@ -124,7 +124,7 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
       }
     }
   }
-  
+
   void writeStringWithoutType(String s) {
     if (s.isEmpty()) {
       write(1);

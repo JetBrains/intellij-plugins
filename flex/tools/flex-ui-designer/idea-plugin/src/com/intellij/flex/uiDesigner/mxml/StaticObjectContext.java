@@ -24,7 +24,7 @@ class StaticObjectContext extends Context {
   void referenceInitialized() {
     initializeReference(id, out, referencePosition);
   }
-  
+
   @Override
   Scope getParentScope() {
     return parentScope;
@@ -34,7 +34,7 @@ class StaticObjectContext extends Context {
   Scope getScope() {
     return parentScope;
   }
-  
+
   static void initializeReference(int id, PrimitiveAmfOutputStream out, int referencePosition) {
     out.putShort(id + 1, referencePosition);
   }
@@ -46,7 +46,7 @@ class StaticObjectContext extends Context {
     if (id != -1) {
       referenceInitialized();
     }
-    
+
     return this;
   }
 }

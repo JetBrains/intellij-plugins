@@ -5,11 +5,11 @@ import com.intellij.psi.xml.XmlText;
 
 class XmlTextValueProvider implements XmlElementValueProvider {
   private XmlText xmlText;
-  
+
   public void setXmlText(XmlText xmlText) {
     this.xmlText = xmlText;
   }
-  
+
   @Override
   public String getTrimmed() {
     return xmlText.getText();

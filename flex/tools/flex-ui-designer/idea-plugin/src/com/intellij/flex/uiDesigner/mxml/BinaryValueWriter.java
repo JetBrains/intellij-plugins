@@ -14,7 +14,7 @@ abstract class BinaryValueWriter extends AbstractPrimitiveValueWriter {
   public BinaryValueWriter(VirtualFile virtualFile) {
     this.virtualFile = virtualFile;
   }
- 
+
   protected int checkRegistered(PrimitiveAmfOutputStream out) {
     int id = BinaryFileManager.getInstance().getId(virtualFile);
     if (id == -1) {
@@ -27,14 +27,14 @@ abstract class BinaryValueWriter extends AbstractPrimitiveValueWriter {
       return -1;
     }
   }
-  
+
   protected abstract static class AbstractDirectWriter implements DirectWriter {
     private final int id;
 
     protected AbstractDirectWriter(int id) {
       this.id = id;
     }
-    
+
     protected void writeId(OutputStream out) throws IOException {
       out.write((id >>> 8) & 0xFF);
       out.write((id) & 0xFF);

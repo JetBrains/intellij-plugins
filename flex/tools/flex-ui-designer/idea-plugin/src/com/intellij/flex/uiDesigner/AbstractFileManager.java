@@ -17,16 +17,16 @@ abstract class AbstractFileManager<I extends FileInfo> {
     freeIndices.resetQuick();
     this.sessionId = sessionId;
   }
-  
+
   protected void initInfo(I info) {
     info.id = freeIndices.isEmpty() ? counter++ : freeIndices.remove(freeIndices.size() - 1);
     info.sessionId = sessionId;
   }
-  
+
   protected static class FileInfo {
     private int id;
     private int sessionId;
-    
+
     public int getId() {
       return id;
     }

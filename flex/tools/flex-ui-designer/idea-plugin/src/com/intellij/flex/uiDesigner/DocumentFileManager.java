@@ -12,11 +12,11 @@ import java.util.List;
 
 public class DocumentFileManager extends AbstractFileManager<DocumentFileManager.DocumentInfo> {
   private static final Key<DocumentInfo> INFO = Key.create("FUD_DOCUMENT_FILE_INFO");
-  
+
   public static DocumentFileManager getInstance() {
     return ServiceManager.getService(DocumentFileManager.class);
   }
-  
+
   public boolean isRegistered(VirtualFile virtualFile) {
     return isRegistered(virtualFile.getUserData(INFO));
   }

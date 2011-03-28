@@ -12,7 +12,8 @@ import java.util.zip.Inflater;
 import java.util.zip.ZipException;
 
 /**
- * Filter SWF for unresolved definitions. Support only SWF from SWC, i.e. DoABC2 for each script (<DoABC2 name='org/flyti/plexus/events/DispatcherEvent'>)
+ * Filter SWF for unresolved definitions. Support only SWF from SWC, i.e. DoABC2 for each script (<DoABC2 
+ name='org/flyti/plexus/events/DispatcherEvent'>)
  * Optimized SWF (merged DoABC2) is not supported.
  */
 public class AbcFilter {
@@ -35,11 +36,11 @@ public class AbcFilter {
     this.flexSdkVersion = flexSdkVersion;
     filter(inputFile, out, abcNameFilter);
   }
-  
+
   public void filter(File inputFile, File out, AbcNameFilter abcNameFilter) throws IOException {
     filter(new FileInputStream(inputFile), inputFile.length(), out, abcNameFilter);
   }
-  
+
   public void filter(VirtualFile inputFile, File out, AbcNameFilter abcNameFilter) throws IOException {
     filter(inputFile.getInputStream(), inputFile.getLength(), out, abcNameFilter);
   }
@@ -52,9 +53,11 @@ public class AbcFilter {
     try {
       int n = inputStream.read(partialHeader);
       assert n == PARTIAL_HEADER_LENGTH;
-      uncompressedBodyLength = (partialHeader[4] & 0xFF | (partialHeader[5] & 0xFF) << 8 | (partialHeader[6] & 0xFF) << 16 | partialHeader[7] << 24) - PARTIAL_HEADER_LENGTH;
+      uncompressedBodyLength =
+        (partialHeader[4] & 0xFF | (partialHeader[5] & 0xFF) << 8 | (partialHeader[6] & 0xFF) << 16 | partialHeader[7] << 24) -
+        PARTIAL_HEADER_LENGTH;
       compressed = partialHeader[0] == 0x43;
-      data = FileUtil.loadBytes(inputStream, compressed ? ((int) inputLength - PARTIAL_HEADER_LENGTH) : uncompressedBodyLength);
+      data = FileUtil.loadBytes(inputStream, compressed ? ((int)inputLength - PARTIAL_HEADER_LENGTH) : uncompressedBodyLength);
     }
     finally {
       inputStream.close();
@@ -78,7 +81,7 @@ public class AbcFilter {
     byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
     // skip rect, FrameRate, FrameCount
-    byteBuffer.position((int) Math.ceil((float) (5 + ((data[0] & 0xFF) >> -(5 - 8)) * 4) / 8) + 2 + 2);
+    byteBuffer.position((int)Math.ceil((float)(5 + ((data[0] & 0xFF) >> -(5 - 8)) * 4) / 8) + 2 + 2);
 
     FileOutputStream outputStream = new FileOutputStream(out);
     FileChannel outputFileChannel = outputStream.getChannel();
@@ -102,10 +105,10 @@ public class AbcFilter {
   }
 
   private void writeHeader(FileChannel outputFileChannel) throws IOException {
-    int length = (int) outputFileChannel.position();
+    int length = (int)outputFileChannel.position();
     outputFileChannel.position(0);
     byteBuffer.clear();
-    byteBuffer.put((byte) 0x46); // write as uncompressed
+    byteBuffer.put((byte)0x46); // write as uncompressed
     byteBuffer.put(partialHeader, 1, 3);
     byteBuffer.putInt(length);
 
@@ -133,7 +136,8 @@ public class AbcFilter {
         case symbolClass: {
           final int tagStartPosition = byteBuffer.position();
           if (replaceMainClass) {
-            lastWrittenPosition = parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(lastWrittenPosition, outputFileChannel, length);
+            lastWrittenPosition =
+              parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(lastWrittenPosition, outputFileChannel, length);
           }
           byteBuffer.position(tagStartPosition + length);
         }
@@ -160,12 +164,14 @@ public class AbcFilter {
 
               // modify abcname
               byteBuffer.position(oldPosition + 4 + 10);
-              byteBuffer.put((byte) 'F');
+              byteBuffer.put((byte)'F');
               byteBuffer.position(oldPosition);
             }
 
             // 4
-            if (isStyleProtoChain ? flexSdkVersion.equals("4.5") : (flexSdkVersion.equals("4.1") && name.equals("mx.styles:CSSStyleDeclaration"))) {
+            if (isStyleProtoChain
+                ? flexSdkVersion.equals("4.5")
+                : (flexSdkVersion.equals("4.1") && name.equals("mx.styles:CSSStyleDeclaration"))) {
               flexInjected = true;
 
               byteBuffer.limit(byteBuffer.position() + length);
@@ -185,7 +191,9 @@ public class AbcFilter {
                 }
               }
               else {
-                final FileChannel injection = new FileInputStream(new File(DebugPathManager.getFudHome() + "/flex-injection/target/" + injectionFileName)).getChannel();
+                final FileChannel injection =
+                  new FileInputStream(new File(DebugPathManager.getFudHome() + "/flex-injection/target/" + injectionFileName)).getChannel
+                  ();
                 try {
                   injection.transferTo(0, injection.size(), outputFileChannel);
                 }
@@ -263,7 +271,9 @@ public class AbcFilter {
     }
   }
 
-  private int parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(int lastWrittenPosition, FileChannel outputFileChannel, int tagLength) throws IOException {
+  private int parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(int lastWrittenPosition,
+                                                                          FileChannel outputFileChannel,
+                                                                          int tagLength) throws IOException {
     final int startTagPosition = byteBuffer.position() - (tagLength >= 63 ? 6 : 2);
     int numSymbols = byteBuffer.getShort();
     for (int i = 0; i < numSymbols; i++) {
@@ -273,7 +283,7 @@ public class AbcFilter {
       if (id == 0) {
         byte[] nb = "com.intellij.flex.uiDesigner.Main".getBytes();
         byteBuffer.put(nb);
-        byteBuffer.put((byte) 0);
+        byteBuffer.put((byte)0);
 
         byteBuffer.position(startTagPosition);
         encodeTagHeader(symbolClass, tagLength - (name.length() - nb.length));
@@ -295,11 +305,11 @@ public class AbcFilter {
 
   private void encodeTagHeader(int code, int length) {
     if (length >= 63) {
-      writeUI16((short) ((code << 6) | 63));
+      writeUI16((short)((code << 6) | 63));
       write32(length);
     }
     else {
-      writeUI16((short) ((code << 6) | length));
+      writeUI16((short)((code << 6) | length));
     }
   }
 
@@ -308,15 +318,15 @@ public class AbcFilter {
       c = 65535;
     }
 
-    byteBuffer.put((byte) c);
-    byteBuffer.put((byte) (c >> 8));
+    byteBuffer.put((byte)c);
+    byteBuffer.put((byte)(c >> 8));
   }
 
   private void write32(int c) {
-    byteBuffer.put((byte) c);
-    byteBuffer.put((byte) (c >> 8));
-    byteBuffer.put((byte) (c >> 16));
-    byteBuffer.put((byte) (c >> 24));
+    byteBuffer.put((byte)c);
+    byteBuffer.put((byte)(c >> 8));
+    byteBuffer.put((byte)(c >> 16));
+    byteBuffer.put((byte)(c >> 24));
   }
 
   private void writeUTF(String str, int utflen) throws IOException {
@@ -329,23 +339,22 @@ public class AbcFilter {
     for (i = 0; i < strlen; i++) {
       c = str.charAt(i);
       if (!((c >= 0x0001) && (c <= 0x007F))) break;
-      bytearr[count++] = (byte) c;
+      bytearr[count++] = (byte)c;
     }
 
     for (; i < strlen; i++) {
       c = str.charAt(i);
       if ((c >= 0x0001) && (c <= 0x007F)) {
-        bytearr[count++] = (byte) c;
-
+        bytearr[count++] = (byte)c;
       }
       else if (c > 0x07FF) {
-        bytearr[count++] = (byte) (0xE0 | ((c >> 12) & 0x0F));
-        bytearr[count++] = (byte) (0x80 | ((c >> 6) & 0x3F));
-        bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
+        bytearr[count++] = (byte)(0xE0 | ((c >> 12) & 0x0F));
+        bytearr[count++] = (byte)(0x80 | ((c >> 6) & 0x3F));
+        bytearr[count++] = (byte)(0x80 | ((c) & 0x3F));
       }
       else {
-        bytearr[count++] = (byte) (0xC0 | ((c >> 6) & 0x1F));
-        bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
+        bytearr[count++] = (byte)(0xC0 | ((c >> 6) & 0x1F));
+        bytearr[count++] = (byte)(0x80 | ((c) & 0x3F));
       }
     }
     byteBuffer.put(bytearr);
@@ -395,7 +404,7 @@ public class AbcFilter {
           break;
 
         default:
-          abcNameBuffer[index] = (char) c;
+          abcNameBuffer[index] = (char)c;
       }
 
       index++;

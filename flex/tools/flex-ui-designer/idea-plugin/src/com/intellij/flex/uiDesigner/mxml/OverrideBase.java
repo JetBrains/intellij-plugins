@@ -5,7 +5,7 @@ import gnu.trove.TLinkable;
 
 abstract class OverrideBase implements TLinkable {
   protected final ByteRange dataRange;
-  
+
   OverrideBase next;
   OverrideBase previous;
 
@@ -27,11 +27,11 @@ abstract class OverrideBase implements TLinkable {
 
   @Override
   public void setNext(TLinkable value) {
-    next = (OverrideBase) value;
+    next = (OverrideBase)value;
   }
 
   @Override
   public void setPrevious(TLinkable value) {
-    previous = (OverrideBase) value;
+    previous = (OverrideBase)value;
   }
 }

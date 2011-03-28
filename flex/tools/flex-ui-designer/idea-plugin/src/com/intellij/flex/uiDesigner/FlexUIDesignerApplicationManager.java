@@ -55,8 +55,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   ProjectManagerListener myProjectManagerListener;
 
   private File appDir;
-  
+
   private boolean documentOpening;
+
   public boolean isDocumentOpening() {
     return documentOpening;
   }
@@ -122,7 +123,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public void openDocument(@NotNull final Project project, @NotNull final Module module, @NotNull final XmlFile psiFile, boolean debug) {
     assert !documentOpening;
     documentOpening = true;
-    
+
     if (server == null || server.isClosed()) {
       assert project.getUserData(PROJECT_INFO) == null;
       run(project, module, psiFile, debug);
@@ -138,7 +139,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
             client.openDocument(module, psiFile);
             client.flush();
-            
+
             assert documentOpening;
             documentOpening = false;
           }
@@ -188,7 +189,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       @Override
       public void run() {
         try {
-          adlProcess = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/descriptor.xml", 
+          adlProcess = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/descriptor.xml",
                                                       server.listen(), new Consumer<Integer>() {
               @Override
               public void consume(Integer integer) {
@@ -264,7 +265,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     final ModuleInfo moduleInfo = new ModuleInfo(module);
     stringWriter.startChange();
     ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter);
-    
+
     client.registerModule(project, moduleInfo, new String[]{externalLibrarySet.getId()}, stringWriter);
   }
 
@@ -317,7 +318,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public void reportProblem(final Project project, String message) {
     reportProblem(project, message, MessageType.ERROR);
   }
-  
+
   public void reportProblem(final Project project, String message, MessageType messageType) {
     final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, messageType, null).setShowCallout(false)
       .setHideOnAction(false).createBalloon();

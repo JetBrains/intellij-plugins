@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 interface XmlElementValueProvider {
   String EMPTY = "";
-  
+
   String getTrimmed();
 
   /**
@@ -13,7 +13,7 @@ interface XmlElementValueProvider {
    * @see com.intellij.psi.xml.XmlAttribute#getDisplayValue()
    */
   CharSequence getSubstituted();
-  
+
   @Nullable
   XmlElement getInjectedHost();
 }

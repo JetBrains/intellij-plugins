@@ -11,7 +11,7 @@ import java.io.OutputStream;
 
 class SwfValueWriter extends BinaryValueWriter {
   private final String symbol;
-  
+
   public SwfValueWriter(VirtualFile virtualFile, @Nullable String symbol) {
     super(virtualFile);
     this.symbol = symbol;
@@ -20,27 +20,27 @@ class SwfValueWriter extends BinaryValueWriter {
   @Override
   protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) {
     out.write(AmfExtendedTypes.SWF);
-    
+
     if (symbol == null) {
       out.write(0);
     }
     else {
       out.writeAmfUtf(symbol);
     }
-    
+
     int id;
     if ((id = checkRegistered(out)) == -1) {
       return;
     }
-    
+
     int length = (int)virtualFile.getLength();
     out.writeUInt29(length);
-    writer.addDirectWriter(length, new MyDirectWriter(id, virtualFile));
+    writer.addDirectWriter(2 + length, new MyDirectWriter(id, virtualFile));
   }
-  
+
   private static class MyDirectWriter extends AbstractDirectWriter {
     private final VirtualFile virtualFile;
-    
+
     public MyDirectWriter(int id, VirtualFile virtualFile) {
       super(id << 1);
       this.virtualFile = virtualFile;
@@ -49,7 +49,7 @@ class SwfValueWriter extends BinaryValueWriter {
     @Override
     public void write(OutputStream out) throws IOException {
       writeId(out);
-        
+
       InputStream inputStream = virtualFile.getInputStream();
       try {
         FileUtil.copy(inputStream, out);

@@ -12,22 +12,23 @@ import java.net.Socket;
 
 class Server implements Runnable {
   private static final Logger LOG = Logger.getInstance(Server.class.getName());
-  
+
   private ServerSocket serverSocket;
   private FlexUIDesignerApplicationManager.PendingOpenDocumentTask myPendingTask;
-  
+
   private Socket socket;
-  
+
   private FlexUIDesignerApplicationManager applicationManager;
 
-  public Server(@NotNull final FlexUIDesignerApplicationManager.PendingOpenDocumentTask pendingTask, FlexUIDesignerApplicationManager applicationManager) {
+  public Server(@NotNull final FlexUIDesignerApplicationManager.PendingOpenDocumentTask pendingTask,
+                FlexUIDesignerApplicationManager applicationManager) {
     myPendingTask = pendingTask;
     this.applicationManager = applicationManager;
   }
-  
+
   public int listen() throws IOException {
     serverSocket = new ServerSocket(0, 1);
-    
+
     ApplicationManager.getApplication().executeOnPooledThread(this);
     int port = serverSocket.getLocalPort();
     assert port != -1;
@@ -53,7 +54,7 @@ class Server implements Runnable {
           LOG.error(inner);
         }
       }
-      
+
       return;
     }
 
@@ -65,7 +66,7 @@ class Server implements Runnable {
         }
         catch (IOException e) {
           //if (!(e instanceof SocketException && socket.isClosed())) {
-            LOG.error(e);
+          LOG.error(e);
           //}
         }
         finally {

@@ -6,6 +6,7 @@ class SetPropertyOrStyle extends OverrideBase {
   int targetId;
 
   private ByteRange targetRange;
+
   public void setTargetRange(ByteRange targetRange) {
     this.targetRange = targetRange;
   }
@@ -17,7 +18,7 @@ class SetPropertyOrStyle extends OverrideBase {
   @Override
   void write(BaseWriter writer, StateWriter stateWriter) {
     writer.addMarker(dataRange);
-    
+
     if (targetRange == null) {
       writer.writeObjectReference(stateWriter.TARGET, targetId);
     }
