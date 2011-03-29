@@ -183,7 +183,7 @@ public class Client {
     VirtualFile virtualFile = psiFile.getVirtualFile();
     assert virtualFile != null;
     DocumentFileManager documentFileManager = DocumentFileManager.getInstance();
-    final boolean registered = !force && documentFileManager.isRegistered(virtualFile);
+    final boolean registered = !force && documentFileManager.isActual(virtualFile);
     final DocumentFileManager.DocumentInfo factoryInfo = documentFileManager.getInfo(virtualFile, psiFile, null);
     if (!registered) {
       beginMessage(ClientMethod.registerDocumentFactory);

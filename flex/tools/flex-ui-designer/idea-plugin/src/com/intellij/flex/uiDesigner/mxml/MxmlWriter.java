@@ -204,16 +204,27 @@ public class MxmlWriter {
         }
         else {
           int beforePosition = out.size();
-          int type = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined, context);
-          if (propertyProcessor.isStyle()) {
-            cssDeclarationSourceDefined = true;
+          String error = null;
+          try {
+            int type = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined, context);
+            if (propertyProcessor.isStyle()) {
+              cssDeclarationSourceDefined = true;
+            }
+            if (type < PropertyProcessor.PRIMITIVE) {
+              error = FlexUIDesignerBundle.message("error.unknown.attribute.value.type", descriptor.getType());
+            }
           }
-          if (type < PropertyProcessor.PRIMITIVE) {
+          catch (InvalidProperty e) {
+            error = e.getMessage();
+          }
+          catch (RuntimeException e) {
             writer.getBlockOut().setPosition(beforePosition);
-            FlexUIDesignerApplicationManager.getInstance().reportProblem(attribute.getProject(),
-                                                                         FlexUIDesignerBundle.message("error.unknown.attribute.value" +
-                                                                                                      ".type",
-                                                                                                      descriptor.getType()));
+            throw e;
+          }
+          
+          if (error != null) {
+            writer.getBlockOut().setPosition(beforePosition);
+            FlexUIDesignerApplicationManager.getInstance().reportProblem(attribute.getProject(), error);
           }
         }
       }
@@ -321,9 +332,22 @@ public class MxmlWriter {
             // skip
           }
           else {
-            int type = writeProperty(tag, createValueProvider(tag), annotationBackedDescriptor, cssDeclarationSourceDefined, context);
-            if (propertyProcessor.isStyle()) {
-              cssDeclarationSourceDefined = true;
+            int beforePosition = out.size();
+            int type;
+            try {
+              type = writeProperty(tag, createValueProvider(tag), annotationBackedDescriptor, cssDeclarationSourceDefined, context);
+              if (propertyProcessor.isStyle()) {
+                cssDeclarationSourceDefined = true;
+              }
+            }
+            catch (InvalidProperty e) {
+              writer.getBlockOut().setPosition(beforePosition);
+              FlexUIDesignerApplicationManager.getInstance().reportProblem(tag.getProject(), e.getMessage());
+              continue;
+            }
+            catch (RuntimeException e) {
+              writer.getBlockOut().setPosition(beforePosition);
+              throw e;
             }
 
             if (type < PropertyProcessor.PRIMITIVE) {
@@ -341,9 +365,7 @@ public class MxmlWriter {
     }
   }
 
-  private void processClassBackedSubTag(XmlTag tag,
-                                        ClassBackedElementDescriptor descriptor,
-                                        @Nullable Context parentContext,
+  private void processClassBackedSubTag(XmlTag tag, ClassBackedElementDescriptor descriptor, @Nullable Context parentContext,
                                         boolean isArray) {
     if (!writeIfPrimitive(tag, descriptor, isArray)) {
       int childDataPosition = out.size();
@@ -461,11 +483,8 @@ public class MxmlWriter {
     out.writeUInt29(document.getLineNumber(textOffset));
   }
 
-  private int writeProperty(XmlElement element,
-                            XmlElementValueProvider valueProvider,
-                            AnnotationBackedDescriptor descriptor,
-                            boolean cssDeclarationSourceDefined,
-                            Context context) {
+  private int writeProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
+                            boolean cssDeclarationSourceDefined, Context context) throws InvalidProperty {
     ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
     if (valueWriter == null) {
       return PropertyProcessor.IGNORE;

@@ -7,7 +7,7 @@ public class DocumentFactoryManager {
   }
 
   public function register(id:int, documentFactory:DocumentFactory):void {
-    assert(id == factories.length || (id < factories.length && factories[id] == null));
+    //assert(id == factories.length || (id < factories.length && factories[id] == null));
     assert(id == 0 || factories[id - 1] != null);
     
     factories[id] = documentFactory;

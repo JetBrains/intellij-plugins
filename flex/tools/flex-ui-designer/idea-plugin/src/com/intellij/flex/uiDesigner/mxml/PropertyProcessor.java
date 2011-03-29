@@ -177,7 +177,7 @@ class PropertyProcessor {
     }
 
     @Override
-    public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
+    public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidProperty {
       final String type = descriptor.getType();
       if (isStyle) {
         int flags = isSkinProjectClass ? SKIN_INT_PROJECT : 0;
@@ -204,7 +204,7 @@ class PropertyProcessor {
       else if (type.equals("int") || type.equals("uint")) {
         String format = descriptor.getFormat();
         if (format != null && format.equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
-          PropertyProcessor.this.writer.writeColor(valueProvider.getTrimmed(), isStyle);
+          writer.writeColor(valueProvider.getTrimmed(), isStyle);
         }
         else {
           out.writeAmfInt(valueProvider.getTrimmed());
@@ -218,7 +218,7 @@ class PropertyProcessor {
         writeUntypedPropertyValue(valueProvider, descriptor);
       }
       else if (type.equals("Class")) {
-        PropertyProcessor.this.writer.writeClass(valueProvider.getTrimmed());
+        writer.writeClass(valueProvider.getTrimmed());
       }
       else if (type.equals("mx.core.IFactory")) {
         writeClassFactory(valueProvider);

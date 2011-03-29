@@ -259,7 +259,7 @@ public final class BaseWriter {
     write(className);
   }
 
-  public void writeColor(String value, boolean isPrimitiveStyle) {
+  public void writeColor(String value, boolean isPrimitiveStyle) throws InvalidProperty {
     out.write(AmfExtendedTypes.COLOR_STYLE_MARKER);
     if (value.charAt(0) == '#') {
       if (isPrimitiveStyle) {
@@ -279,7 +279,13 @@ public final class BaseWriter {
         out.write(CssPropertyType.COLOR_STRING);
         stringWriter.writeNullable(colorName, out);
       }
-      value = ColorSampleLookupValue.getHexCodeForColorName(colorName).substring(1);
+      final String hexCodeForColorName = ColorSampleLookupValue.getHexCodeForColorName(colorName);
+      if (hexCodeForColorName == null) {
+        throw new InvalidProperty("error.invalid.color.name", colorName);
+      }
+      else {
+        value = hexCodeForColorName.substring(1);
+      }
     }
 
     out.writeAmfUInt(Integer.parseInt(value, 16));
