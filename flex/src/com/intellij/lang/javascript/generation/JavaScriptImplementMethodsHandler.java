@@ -3,6 +3,7 @@
  */
 package com.intellij.lang.javascript.generation;
 
+import com.intellij.featureStatistics.ProductivityFeatureNames;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -29,5 +30,10 @@ public class JavaScriptImplementMethodsHandler extends BaseJSGenerateHandler {
 
   protected BaseCreateMethodsFix createFix(final JSClass clazz) {
     return new ImplementMethodsFix(clazz);
+  }
+
+  @Override
+  protected String getProductivityFeatureId() {
+    return ProductivityFeatureNames.CODEASSISTS_OVERRIDE_IMPLEMENT;
   }
 }

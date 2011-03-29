@@ -4,6 +4,7 @@
 package com.intellij.lang.javascript.generation;
 
 import com.intellij.codeInsight.hint.HintManager;
+import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.lang.LanguageCodeInsightActionHandler;
 import com.intellij.lang.javascript.JSBundle;
@@ -53,6 +54,10 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
     mySkipMemberChooserDialog = skipMemberChooserDialog;
   }
 
+  protected @Nullable String getProductivityFeatureId() {
+    return null;
+  }
+
   public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
     final JSClass jsClass = findClass(file, editor);
     if (jsClass == null) return;
@@ -98,6 +103,8 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
       selectedElements = Collections.emptyList();
     }
 
+    final String featureId = getProductivityFeatureId();
+    if (featureId != null) FeatureUsageTracker.getInstance().triggerFeatureUsed(featureId);
     final BaseCreateMethodsFix createMethodsFix = createFix(jsClass);
     doInvoke(project, editor, file, selectedElements, createMethodsFix);
   }
