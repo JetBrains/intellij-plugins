@@ -22,6 +22,7 @@ public class MxmlTest extends BaseTestCase {
       RichTextAndCollapseWhitespace();
       MixedTextAndSubTags();
       InlineArrayAsAttributeValue();
+      InvalidColorName();
     }
   }
   
@@ -84,6 +85,10 @@ public class MxmlTest extends BaseTestCase {
   
   public function InlineArrayAsAttributeValue():void {
    // http://youtrack.jetbrains.net/issue/IDEA-64721 
+  }
+  
+  public function InvalidColorName():void {
+    assertThat(app, [{color: 0}]);
   }
 }
 }
