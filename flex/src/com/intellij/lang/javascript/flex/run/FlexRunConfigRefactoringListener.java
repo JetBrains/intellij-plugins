@@ -43,13 +43,12 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       }
       else {
         final String oldFqn = ((FlexUnitRunnerParameters)params).getClassName();
-        ((FlexUnitRunnerParameters)params).setClassName(
-          newPackage + (StringUtil.isEmpty(newPackage) ? "" : ".") + StringUtil.getShortName(oldFqn));
+        ((FlexUnitRunnerParameters)params).setClassName(StringUtil.getQualifiedName(newPackage, StringUtil.getShortName(oldFqn)));
       }
     }
     else {
       final String oldFqn = params.getMainClassName();
-      params.setMainClassName(newPackage + (StringUtil.isEmpty(newPackage) ? "" : ".") + StringUtil.getShortName(oldFqn));
+      params.setMainClassName(StringUtil.getQualifiedName(newPackage, StringUtil.getShortName(oldFqn)));
     }
   }
 
@@ -75,6 +74,18 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
         }
       }
     }
+
+    @Override
+    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+      final FlexRunnerParameters params = myRunConfiguration.getRunnerParameters();
+      final boolean isFlexUnit = params instanceof FlexUnitRunnerParameters;
+      if (isFlexUnit) {
+        ((FlexUnitRunnerParameters)params).setClassName(oldQualifiedName);
+      }
+      else {
+        params.setMainClassName(oldQualifiedName);
+      }
+    }
   }
 
   public static class PsiDirectoryRefactoringListener extends FlexRunConfigRefactoringListener {
@@ -87,6 +98,11 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       if (!(newElement instanceof PsiDirectory)) return;
       updatePackage(myRunConfiguration,
                     DirectoryIndex.getInstance(newElement.getProject()).getPackageName(((PsiDirectory)newElement).getVirtualFile()));
+    }
+
+    @Override
+    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+      updatePackage(myRunConfiguration, oldQualifiedName);
     }
   }
 
@@ -101,6 +117,14 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       final String newName = ((JSFunction)newElement).getName();
       if (newName != null && StringUtil.isNotEmpty(newName)) {
         ((FlexUnitRunConfiguration)myRunConfiguration).getRunnerParameters().setMethodName(newName);
+      }
+    }
+
+    @Override
+    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+      final int methodIdx = oldQualifiedName.indexOf("#") + 1;
+      if (methodIdx > 0 && methodIdx < oldQualifiedName.length()) {
+        ((FlexUnitRunConfiguration)myRunConfiguration).getRunnerParameters().setMethodName(oldQualifiedName.substring(methodIdx));
       }
     }
   }
@@ -118,6 +142,11 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       else if (newElement instanceof JSPackage || newElement instanceof JSPackageStatement) {
         updatePackage(myRunConfiguration, ((JSQualifiedNamedElement)newElement).getQualifiedName());
       }
+    }
+
+    @Override
+    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+      updatePackage(myRunConfiguration, oldQualifiedName);
     }
   }
 }

@@ -92,6 +92,10 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
       if (StringUtil.isEmpty(myOldPackageName)) return;
 
       final String newPackageName = getPackageName(newElement);
+      updatePackageName(newElement, newPackageName);
+    }
+
+    private void updatePackageName(PsiElement newElement, String newPackageName) {
       if (myModule == null) {
         for (final Module module : ModuleManager.getInstance(newElement.getProject()).getModules()) {
           updateForModule(module, myOldPackageName, newPackageName);
@@ -100,6 +104,11 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
       else {
         updateForModule(myModule, myOldPackageName, newPackageName);
       }
+    }
+
+    @Override
+    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+      updatePackageName(newElement, oldQualifiedName);
     }
 
     private static void updateForModule(final @NotNull Module module, final String oldPackageName, final String newPackageName) {
@@ -132,6 +141,15 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
         }
       }
     }
+
+    @Override
+    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+      for (final FlexBuildConfiguration config : FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(myModule)) {
+        if (config.MAIN_CLASS.equals(myOldClassName)) {
+          config.MAIN_CLASS = oldQualifiedName;
+        }
+      }
+    }
   }
 
   private static abstract class FileRefactoringListener extends RefactoringElementAdapter {
@@ -148,6 +166,11 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
       if (file != null) {
         filePathChanged(file.getPath());
       }
+    }
+
+    @Override
+    public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+      filePathChanged(oldQualifiedName);
     }
 
     protected abstract void filePathChanged(final String newFilePath);
