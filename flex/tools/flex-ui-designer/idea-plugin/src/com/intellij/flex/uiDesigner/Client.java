@@ -5,6 +5,8 @@ import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.flex.uiDesigner.io.BlockDataOutputStream;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -18,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class Client {
+public class Client implements Closable {
   protected AmfOutputStream out;
   protected BlockDataOutputStream blockOut;
 
@@ -57,6 +59,7 @@ public class Client {
     out.flush();
   }
 
+  @Override
   public void close() throws IOException {
     if (out == null) {
       return;
@@ -66,14 +69,17 @@ public class Client {
     sessionId++;
 
     registeredModules.clear();
-
+    
     mxmlWriter.reset();
 
-    DocumentFileManager.getInstance().reset(sessionId);
     BinaryFileManager.getInstance().reset(sessionId);
 
-    out.closeWithoutFlush();
-    out = null;
+    try {
+      out.closeWithoutFlush();
+    }
+    finally {
+      out = null;
+    }
   }
 
   public void openProject(Project project) throws IOException {
@@ -176,36 +182,57 @@ public class Client {
   public void openDocument(Module module, XmlFile psiFile) throws IOException {
     int factoryId = registerDocumentFactoryIfNeed(module, psiFile, false);
     beginMessage(ClientMethod.openDocument);
+    out.writeInt(module.hashCode());
+    out.writeShort(factoryId);
+  }
+  
+  public void updateDocumentFactory(int factoryId, Module module, XmlFile psiFile) throws IOException {
+    beginMessage(ClientMethod.updateDocumentFactory);
+    final int moduleId = module.hashCode();
+    out.writeInt(moduleId);
+    out.writeShort(factoryId);
+    mxmlWriter.write(psiFile);
+    writeDocumentFactory(module, psiFile, psiFile.getVirtualFile());
+    
+    beginMessage(ClientMethod.updateDocuments);
+    out.writeInt(moduleId);
     out.writeShort(factoryId);
   }
 
   private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, boolean force) throws IOException {
     VirtualFile virtualFile = psiFile.getVirtualFile();
     assert virtualFile != null;
-    DocumentFileManager documentFileManager = DocumentFileManager.getInstance();
-    final boolean registered = !force && documentFileManager.isActual(virtualFile);
-    final DocumentFileManager.DocumentInfo factoryInfo = documentFileManager.getInfo(virtualFile, psiFile, null);
+    DocumentFactoryManager documentFileManager = psiFile.getProject().getComponent(DocumentFactoryManager.class);
+    final boolean registered = !force && documentFileManager.isRegistered(virtualFile);
+    final int id = documentFileManager.getId(virtualFile);
     if (!registered) {
       beginMessage(ClientMethod.registerDocumentFactory);
-      writeVirtualFile(virtualFile, out);
-      out.writeAmfUtf(factoryInfo.getClassName());
       out.writeInt(module.hashCode());
-      out.writeShort(factoryInfo.getId());
+      writeVirtualFile(virtualFile, out);
+      
+      JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
+      assert jsClass != null;
+      out.writeAmfUtf(jsClass.getName());
+      out.writeShort(id);
 
-      XmlFile[] subDocuments = mxmlWriter.write(psiFile);
-      if (subDocuments != null) {
-        for (XmlFile subDocument : subDocuments) {
-          Module moduleForFile = ModuleUtil.findModuleForFile(virtualFile, psiFile.getProject());
-          if (module != moduleForFile) {
-            FlexUIDesignerApplicationManager.LOG.error("Currently, support subdocument only from current module");
-          }
-
-          registerDocumentFactoryIfNeed(module, subDocument, true);
-        }
-      }
+      writeDocumentFactory(module, psiFile, virtualFile);
     }
 
-    return factoryInfo.getId();
+    return id;
+  }
+  
+  private void writeDocumentFactory(Module module, XmlFile psiFile, VirtualFile virtualFile) throws IOException {
+    XmlFile[] subDocuments = mxmlWriter.write(psiFile);
+    if (subDocuments != null) {
+      for (XmlFile subDocument : subDocuments) {
+        Module moduleForFile = ModuleUtil.findModuleForFile(virtualFile, psiFile.getProject());
+        if (module != moduleForFile) {
+          FlexUIDesignerApplicationManager.LOG.error("Currently, support subdocument only from current module");
+        }
+
+        registerDocumentFactoryIfNeed(module, subDocument, true);
+      }
+    }
   }
 
   public void qualifyExternalInlineStyleSource() {
@@ -246,7 +273,7 @@ public class Client {
   }
 
   public static enum ClientMethod {
-    openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, openDocument, 
+    openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, openDocument, updateDocuments,
     qualifyExternalInlineStyleSource, initStringRegistry,
     registerBitmap, registerSwf;
     

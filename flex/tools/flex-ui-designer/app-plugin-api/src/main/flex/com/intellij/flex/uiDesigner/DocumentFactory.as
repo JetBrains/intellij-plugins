@@ -5,11 +5,27 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
   private var _data:ByteArray;
   public var module:Module;
   
+  // not subdocument, only Document as tab in our UI
+  public var document:Document;
+  
   public function DocumentFactory(data:ByteArray, file:VirtualFile, className:String, module:Module) {
     _data = data;
     _file = file;
     _className = className;
     this.module = module;
+  }
+  
+  private var _users:Vector.<DocumentFactory>;
+  public function get users():Vector.<DocumentFactory> {
+    return _users;
+  }
+  
+  public function addUser(user:DocumentFactory):void {
+    if (_users == null) {
+      _users = new Vector.<DocumentFactory>();
+    }
+    
+    _users[_users.length] = user;
   }
   
   private var _className:String;

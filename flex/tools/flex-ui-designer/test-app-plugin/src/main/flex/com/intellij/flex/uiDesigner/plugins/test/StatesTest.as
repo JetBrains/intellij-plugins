@@ -89,7 +89,7 @@ public class StatesTest extends BaseTestCase {
   override public function setUp():void {
     super.setUp();
     
-    stateManager = StatesBarManager(projectManager.project.plexusContainer.lookup(StatesBarManager));
+    stateManager = StatesBarManager(projectManager.project.getComponent(StatesBarManager));
   }
   
   public function RootChildrenAndSetProperty():void {

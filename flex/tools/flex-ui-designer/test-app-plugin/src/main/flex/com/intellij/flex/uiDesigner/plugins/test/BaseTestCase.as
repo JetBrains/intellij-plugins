@@ -21,7 +21,7 @@ internal class BaseTestCase implements TestCase {
   }
   
   public function setUp():void {
-    documentManager = DocumentManager(projectManager.project.plexusContainer.lookup(DocumentManager));
+    documentManager = DocumentManager(projectManager.project.getComponent(DocumentManager));
     _app = documentManager.document.uiComponent;
   }
   

@@ -14,8 +14,6 @@ import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
 
 public class DocumentManagerImpl extends EventDispatcher implements DocumentManager {
-  private const pathMap:Dictionary = new Dictionary();
-
   private var libraryManager:LibraryManager;
 
   private var documentReader:DocumentReader;
@@ -39,13 +37,11 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   public function open(documentFactory:DocumentFactory):void {
-    var file:VirtualFile = documentFactory.file;
-    var document:Document = pathMap[file];
-    if (document == null) {
+    if (documentFactory.document == null) {
       libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory);
     }
     else {
-      doOpen(documentFactory, document);
+      doOpen(documentFactory, documentFactory.document);
       document.container.invalidateDisplayList();
     }
   }
@@ -54,7 +50,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var document:Document = new Document(documentFactory);
     createStyleManager(documentFactory.module, documentFactory);
     createSystemManager(document, documentFactory.module);
-    pathMap[documentFactory.file] = document;
+    documentFactory.document = document;
 
     doOpen(documentFactory, document);
   }
@@ -64,7 +60,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     document.uiComponent = object;
     document.systemManager.setUserDocument(DisplayObject(object));
 
-    documentReader.createDeferredMxContainersChildren(document.module.context.applicationDomain);
+    documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
     this.document = document;
   }
 

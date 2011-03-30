@@ -1,10 +1,10 @@
 package com.intellij.flex.uiDesigner.mxml {
 import com.intellij.flex.uiDesigner.BitmapDataManager;
 import com.intellij.flex.uiDesigner.DocumentFactory;
-import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.ModuleContext;
+import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.SwfDataManager;
 import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
@@ -37,7 +37,6 @@ public final class MxmlReader implements DocumentReader {
   private var input:IDataInput;
   
   private var stringRegistry:StringRegistry;
-  private var documentFactoryManager:DocumentFactoryManager;
   private var bitmapDataManager:BitmapDataManager;
   private var swfDataManager:SwfDataManager;
 
@@ -53,9 +52,8 @@ public final class MxmlReader implements DocumentReader {
   
   internal var factoryContext:DeferredInstanceFromBytesContext;
 
-  public function MxmlReader(stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager, bitmapDataManager:BitmapDataManager, swfDataManager:SwfDataManager) {
+  public function MxmlReader(stringRegistry:StringRegistry, bitmapDataManager:BitmapDataManager, swfDataManager:SwfDataManager) {
     this.stringRegistry = stringRegistry;
-    this.documentFactoryManager = documentFactoryManager;
     this.bitmapDataManager = bitmapDataManager;
     this.swfDataManager = swfDataManager;
   }
@@ -360,7 +358,7 @@ public final class MxmlReader implements DocumentReader {
     var id:int = AmfUtil.readUInt29(input);
     var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {
-      var documentFactory:DocumentFactory = documentFactoryManager.get(id);
+      var documentFactory:DocumentFactory = ModuleContextEx(moduleContext).documentFactoryManager.get2(id, DocumentFactory(context));
       factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContext(documentFactory, this, styleManager));
       moduleContext.putDocumentFactory(id, factory);
     }

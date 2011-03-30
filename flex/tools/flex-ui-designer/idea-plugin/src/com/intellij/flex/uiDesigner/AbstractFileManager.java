@@ -2,13 +2,14 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.AbstractFileManager.FileInfo;
 import gnu.trove.TIntArrayList;
+import org.jetbrains.annotations.Nullable;
 
 abstract class AbstractFileManager<I extends FileInfo> {
   private final TIntArrayList freeIndices = new TIntArrayList();
   private int counter;
   private int sessionId;
 
-  protected boolean isRegistered(I info) {
+  protected boolean isRegistered(@Nullable I info) {
     return info != null && info.sessionId == sessionId;
   }
 

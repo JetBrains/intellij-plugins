@@ -70,30 +70,33 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   @Override
   public void dispose() {
-    if (server != null) {
-      try {
-        if (client != null) {
-          client.close();
-        }
-        server.close();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
+    closeClosable(client);
+    closeClosable(server);
 
-      if (adlProcess != null) {
-        adlProcess.destroy();
+    if (adlProcess != null) {
+      adlProcess.destroy();
+    }
+  }
+  
+  private void closeClosable(Closable closable) {
+    try {
+      if (closable != null) {
+        closable.close();
       }
+    }
+    catch (IOException e) {
+      LOG.error(e);
     }
   }
 
-  public void serverClosed() throws IOException {
+  public void serverClosed() {
     documentOpening = false;
+    ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).applicationClosed();
     if (client != null) {
-      client.close();
       for (Project project : ProjectManager.getInstance().getOpenProjects()) {
         project.putUserData(PROJECT_INFO, null);
       }
+      closeClosable(client);
     }
   }
 
@@ -116,16 +119,45 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
             client.openDocument(module, psiFile);
             client.flush();
-
-            assert documentOpening;
-            documentOpening = false;
           }
           catch (IOException e) {
             LOG.error(e);
           }
+          finally {
+            documentOpening = false;
+          }
         }
       });
     }
+  }
+  
+  public void updateDocumentFactory(final int factoryId, @NotNull final Module module, @NotNull final XmlFile psiFile) {
+    assert !documentOpening;
+    documentOpening = true;
+    if (server == null || server.isClosed()) {
+      return;
+    }
+    
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          assert client.isModuleRegistered(module);
+          client.updateDocumentFactory(factoryId, module, psiFile);
+          client.flush();
+
+          assert documentOpening;
+          documentOpening = false;
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
+        finally {
+          documentOpening = false;
+        }
+      }
+    });
+    
   }
 
   private void run(@NotNull final Project project, @NotNull final Module module, @NotNull XmlFile psiFile, boolean debug) {
@@ -319,10 +351,12 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       catch (IOException e) {
         try {
           server.close();
-          serverClosed();
         }
         catch (IOException innerError) {
           LOG.error(innerError);
+        }
+        finally {
+          serverClosed();
         }
         LOG.error(e);
       }

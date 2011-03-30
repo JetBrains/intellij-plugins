@@ -12,7 +12,6 @@
   <Component role="{StringRegistry}"/>
   <Component role="{DocumentReader}" implementation="{MxmlReader}">
     <Requirement role="{StringRegistry}"/>
-    <Requirement role="{DocumentFactoryManager}"/>
     <Requirement role="{BitmapDataManager}"/>
     <Requirement role="{SwfDataManager}"/>
   </Component>
@@ -22,7 +21,6 @@
 		<Requirement role="{ProjectManager}"/>
 		<Requirement role="{ModuleManager}"/>
 		<Requirement role="{StringRegistry}"/>
-    <Requirement role="{DocumentFactoryManager}"/>
 	</Component>
   <Component role="{UncaughtErrorManager}">
 		<Requirement role="{SocketManager}"/>

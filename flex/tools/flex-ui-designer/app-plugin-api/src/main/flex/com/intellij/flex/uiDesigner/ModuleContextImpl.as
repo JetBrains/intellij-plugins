@@ -4,10 +4,15 @@ import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import flash.system.ApplicationDomain;
 
 public final class ModuleContextImpl implements ModuleContextEx {
-  private var documentFactories:Vector.<Object>; /* FlexDocumentFactory */
+  private var documentFactories:Vector.<Object>/* FlexDocumentFactory */;
   
-  public function ModuleContextImpl(librarySets:Vector.<LibrarySet>) {
+  public function ModuleContextImpl(librarySets:Vector.<LibrarySet>, project:Project) {
     _librarySets = librarySets;
+    _project = project;
+  }
+
+  public function get documentFactoryManager():DocumentFactoryManager {
+    return DocumentFactoryManager(project.getComponent(DocumentFactoryManager));
   }
 
   public function getDocumentFactory(id:int):Object {
@@ -24,6 +29,11 @@ public final class ModuleContextImpl implements ModuleContextEx {
     }
 
     documentFactories[id] = documentFactory;
+  }
+  
+  private var _project:Project;
+  public function get project():Project {
+    return _project;
   }
 
   private var _styleManager:StyleManagerEx;

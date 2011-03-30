@@ -76,18 +76,14 @@ public class MxmlWriter {
     }
 
     injectedASWriter.write();
-    List<XmlFile> unregisteredDocumentFactories = propertyProcessor.getUnregisteredDocumentFactories();
     writer.endMessage();
-    resetAfterMessage();
 
-    if (unregisteredDocumentFactories.isEmpty()) {
-      return null;
-    }
-    else {
-      XmlFile[] documents = unregisteredDocumentFactories.toArray(new XmlFile[unregisteredDocumentFactories.size()]);
-      unregisteredDocumentFactories.clear();
-      return documents;
-    }
+    List<XmlFile> unregisteredDocumentFactories = propertyProcessor.getUnregisteredDocumentFactories();
+    final XmlFile[] documents = unregisteredDocumentFactories.isEmpty()
+                                ? null
+                                : unregisteredDocumentFactories.toArray(new XmlFile[unregisteredDocumentFactories.size()]);
+    resetAfterMessage();
+    return documents;
   }
 
   public void reset() {

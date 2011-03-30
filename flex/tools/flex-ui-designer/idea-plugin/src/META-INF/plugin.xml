@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <name>Flex UI Designer</name>
   <description>Provides editing support for Flex UI</description>
-  <version>0.4.5</version>
+  <version>0.4.6</version>
   <vendor logo="/general/ijLogo.png">JetBrains</vendor>
   <idea-version since-build="106.149"/>
 
@@ -13,11 +13,17 @@
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager" serviceImplementation="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.SocketInputHandler" serviceImplementation="com.intellij.flex.uiDesigner.SocketInputHandlerImpl"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.io.StringRegistry" serviceImplementation="com.intellij.flex.uiDesigner.io.StringRegistry"/>
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentFileManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentFileManager"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentFactoryManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentFactoryManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.BinaryFileManager" serviceImplementation="com.intellij.flex.uiDesigner.BinaryFileManager"/>
 
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>
+  
+  <project-components>
+    <component>
+      <implementation-class>com.intellij.flex.uiDesigner.DocumentFactoryManager</implementation-class>
+    </component>
+  </project-components>
 
   <actions>
     <group id="FlexUIDesigner.MainToolbarActions">

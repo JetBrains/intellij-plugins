@@ -28,6 +28,10 @@ public class AppTest extends AppTestBase {
       public void initialDocumentOpened() {
         lock.countDown();
       }
+
+      @Override
+      public void applicationClosed() {
+      }
     });
 
     copySwfAndDescriptor(new File(PathManager.getSystemPath(), "flexUIDesigner"));

@@ -200,7 +200,6 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       String filename = file.getNameWithoutExtension();
       System.out.print(filename);
       long start = System.currentTimeMillis();
-      assert !DocumentFileManager.getInstance().isRegistered(file);
       client.openDocument(myModule, xmlFile);
       long time = System.currentTimeMillis() - start;
       client.test(filename, originalFile.getParent().getName());

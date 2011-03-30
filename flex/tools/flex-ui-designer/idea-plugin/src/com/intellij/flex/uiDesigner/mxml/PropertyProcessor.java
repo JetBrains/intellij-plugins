@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.DocumentFileManager;
+import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ObjectIntHashMap;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
@@ -145,7 +145,7 @@ class PropertyProcessor {
           boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
           if (psiFile instanceof XmlFile) {
             if (inSourceContent) {
-              return DocumentFileManager.getInstance().getInfo(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories).getId();
+              return psiFile.getProject().getComponent(DocumentFactoryManager.class).getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
             }
           }
           else if (inSourceContent) {
@@ -160,6 +160,9 @@ class PropertyProcessor {
 
   public void reset() {
     classFactoryMap.clear();
+    if (unregisteredDocumentFactories != null && !unregisteredDocumentFactories.isEmpty()) {
+      unregisteredDocumentFactories.clear();
+    }
     isSkinProjectClass = false;
     isEffect = false;
   }

@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-class Server implements Runnable {
+class Server implements Runnable, Closable {
   private static final Logger LOG = Logger.getInstance(Server.class.getName());
 
   private ServerSocket serverSocket;
@@ -48,10 +48,12 @@ class Server implements Runnable {
       if (socket != null) {
         try {
           socket.close();
-          applicationManager.serverClosed();
         }
         catch (IOException inner) {
           LOG.error(inner);
+        }
+        finally {
+          applicationManager.serverClosed();
         }
       }
 
@@ -72,10 +74,12 @@ class Server implements Runnable {
         finally {
           try {
             close();
-            applicationManager.serverClosed();
           }
           catch (IOException e) {
             LOG.error(e);
+          }
+          finally {
+            applicationManager.serverClosed();
           }
         }
       }

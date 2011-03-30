@@ -5,8 +5,7 @@ import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 public final class Module {
   public function Module(id:int, project:Project, librarySets:Vector.<LibrarySet>, localStyleHolders:Vector.<LocalStyleHolder>) {
     _localStyleHolders = localStyleHolders;
-    _project = project;
-    _context = new ModuleContextImpl(librarySets);
+    _context = new ModuleContextImpl(librarySets, project);
 
     _id = id;
   }
@@ -16,11 +15,9 @@ public final class Module {
     return _id;
   }
 
-  private var _project:Project;
   public function get project():Project {
-    return _project;
+    return _context.project;
   }
-  
   
   private var _context:ModuleContextImpl;
   public function get context():ModuleContextEx {
