@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -18,7 +19,6 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.psi.xml.XmlFile;
@@ -145,9 +145,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           assert client.isModuleRegistered(module);
           client.updateDocumentFactory(factoryId, module, psiFile);
           client.flush();
-
-          assert documentOpening;
-          documentOpening = false;
         }
         catch (IOException e) {
           LOG.error(e);
@@ -267,8 +264,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
     //noinspection ResultOfMethodCallIgnored
     appDir.mkdirs();
-    saveStream(classLoader.getResourceAsStream(DESCRIPTOR_XML), new File(appDir, DESCRIPTOR_XML));
-    saveStream(appUrlConnection.getInputStream(), appFile);
+    IOUtil.saveStream(classLoader.getResourceAsStream(DESCRIPTOR_XML), new File(appDir, DESCRIPTOR_XML));
+    IOUtil.saveStream(appUrlConnection.getInputStream(), appFile);
 
     //noinspection ResultOfMethodCallIgnored
     appFile.setLastModified(lastModified);
@@ -418,17 +415,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
     @Override
     public void projectClosing(Project project) {
-
-    }
-  }
-
-  private static void saveStream(InputStream input, File output) throws IOException {
-    FileOutputStream os = new FileOutputStream(output);
-    try {
-      FileUtil.copy(input, os);
-    }
-    finally {
-      os.close();
     }
   }
 }

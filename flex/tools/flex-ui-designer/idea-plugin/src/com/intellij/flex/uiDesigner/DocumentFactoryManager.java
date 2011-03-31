@@ -15,6 +15,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.TIntArrayList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -29,6 +30,10 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
 
   public DocumentFactoryManager(Project project) {
     super(project);
+  }
+  
+  public static DocumentFactoryManager getInstance(@NotNull Project project) {
+    return project.getComponent(DocumentFactoryManager.class);
   }
 
   @Override

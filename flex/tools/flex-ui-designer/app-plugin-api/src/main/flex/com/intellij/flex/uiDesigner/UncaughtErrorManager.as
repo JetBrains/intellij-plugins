@@ -23,7 +23,7 @@ public class UncaughtErrorManager {
     var message:String;
     var error:Object = event.error;
     if (error is Error) {
-      message = Capabilities.isDebugger ? buildErrorMessage(Error(error)) : Error(error).message;
+      message = Capabilities.isDebugger ? buildErrorMessage(event.error) : Error(error).message;
     }
     else {
       message = error is ErrorEvent ? ErrorEvent(error).text : error.toString();

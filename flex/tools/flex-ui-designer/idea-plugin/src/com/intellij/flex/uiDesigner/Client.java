@@ -8,11 +8,13 @@ import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.ArrayUtil;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectIntIterator;
 import org.jetbrains.annotations.NotNull;
@@ -180,7 +182,16 @@ public class Client implements Closable {
   }
 
   public void openDocument(Module module, XmlFile psiFile) throws IOException {
-    int factoryId = registerDocumentFactoryIfNeed(module, psiFile, false);
+    DocumentFactoryManager documentFileManager = DocumentFactoryManager.getInstance(module.getProject());
+    VirtualFile virtualFile = psiFile.getVirtualFile();
+    FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+    if (documentFileManager.isRegistered(virtualFile) && ArrayUtil.indexOf(fileDocumentManager.getUnsavedDocuments(),
+                                                                           fileDocumentManager.getDocument(virtualFile)) != -1) {
+      updateDocumentFactory(documentFileManager.getId(virtualFile), module, psiFile);
+      return;
+    }
+
+    int factoryId = registerDocumentFactoryIfNeed(module, psiFile, documentFileManager, false);
     beginMessage(ClientMethod.openDocument);
     out.writeInt(module.hashCode());
     out.writeShort(factoryId);
@@ -191,18 +202,17 @@ public class Client implements Closable {
     final int moduleId = module.hashCode();
     out.writeInt(moduleId);
     out.writeShort(factoryId);
-    mxmlWriter.write(psiFile);
-    writeDocumentFactory(module, psiFile, psiFile.getVirtualFile());
-    
+    writeDocumentFactory(module, psiFile, psiFile.getVirtualFile(), DocumentFactoryManager.getInstance(module.getProject()));
+
     beginMessage(ClientMethod.updateDocuments);
     out.writeInt(moduleId);
     out.writeShort(factoryId);
   }
 
-  private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, boolean force) throws IOException {
+  private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, DocumentFactoryManager documentFileManager, boolean force)
+    throws IOException {
     VirtualFile virtualFile = psiFile.getVirtualFile();
     assert virtualFile != null;
-    DocumentFactoryManager documentFileManager = psiFile.getProject().getComponent(DocumentFactoryManager.class);
     final boolean registered = !force && documentFileManager.isRegistered(virtualFile);
     final int id = documentFileManager.getId(virtualFile);
     if (!registered) {
@@ -215,13 +225,14 @@ public class Client implements Closable {
       out.writeAmfUtf(jsClass.getName());
       out.writeShort(id);
 
-      writeDocumentFactory(module, psiFile, virtualFile);
+      writeDocumentFactory(module, psiFile, virtualFile, documentFileManager);
     }
 
     return id;
   }
   
-  private void writeDocumentFactory(Module module, XmlFile psiFile, VirtualFile virtualFile) throws IOException {
+  private void writeDocumentFactory(Module module, XmlFile psiFile, VirtualFile virtualFile, DocumentFactoryManager documentFileManager)
+    throws IOException {
     XmlFile[] subDocuments = mxmlWriter.write(psiFile);
     if (subDocuments != null) {
       for (XmlFile subDocument : subDocuments) {
@@ -230,7 +241,8 @@ public class Client implements Closable {
           FlexUIDesignerApplicationManager.LOG.error("Currently, support subdocument only from current module");
         }
 
-        registerDocumentFactoryIfNeed(module, subDocument, true);
+        // force register, subDocuments from unregisteredDocumentFactories, so, it is registered (id allocated) only on server side
+        registerDocumentFactoryIfNeed(module, subDocument, documentFileManager, true);
       }
     }
   }

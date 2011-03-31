@@ -94,7 +94,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   private var bitmapWorkaroundByteArray:ByteArray;
   
   private function registerDocumentFactory(input:IDataInput, messageSize:int):void {
-    var prevBytesAvailable:int = input.bytesAvailable;
+    const prevBytesAvailable:int = input.bytesAvailable;
     var module:Module = moduleManager.getById(input.readInt());
     var bytes:ByteArray = new ByteArray();
     var documentFactory:DocumentFactory = new DocumentFactory(bytes, VirtualFileImpl.create(input), input.readUTFBytes(AmfUtil.readUInt29(input)), module);
@@ -106,8 +106,8 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   }
   
   private function updateDocumentFactory(input:IDataInput, messageSize:int):void {
+    const prevBytesAvailable:int = input.bytesAvailable;
     var module:Module = moduleManager.getById(input.readInt());
-    var prevBytesAvailable:int = input.bytesAvailable;
     var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
     
     stringRegistry.readStringTable(input);

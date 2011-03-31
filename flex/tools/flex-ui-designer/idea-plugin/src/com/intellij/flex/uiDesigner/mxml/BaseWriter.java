@@ -119,14 +119,10 @@ public final class BaseWriter {
 
   public void endMessage() throws IOException {
     int stringTableSize = stringWriter.size();
-    blockOut.beginWritePrepended(stringTableSize + sizeOf(rootScope.referenceCounter), startPosition);
+    blockOut.beginWritePrepended(stringTableSize + IOUtil.sizeOf(rootScope.referenceCounter), startPosition);
     blockOut.writePrepended(stringWriter.getCounter(), stringWriter.getByteArrayOut());
     blockOut.writePrepended(rootScope.referenceCounter);
     blockOut.endWritePrepended(startPosition);
-  }
-
-  private int sizeOf(int counter) {
-    return counter < 0x80 ? 1 : 2;
   }
 
   public int getNameReference(String classOrPropertyName) {

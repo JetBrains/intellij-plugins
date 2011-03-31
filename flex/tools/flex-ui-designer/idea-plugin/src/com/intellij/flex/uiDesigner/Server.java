@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 class Server implements Runnable, Closable {
   private static final Logger LOG = Logger.getInstance(Server.class.getName());
@@ -67,9 +68,9 @@ class Server implements Runnable, Closable {
           ServiceManager.getService(SocketInputHandler.class).read(socket.getInputStream());
         }
         catch (IOException e) {
-          //if (!(e instanceof SocketException && socket.isClosed())) {
-          LOG.error(e);
-          //}
+          if (!(e instanceof SocketException && socket.isClosed())) {
+            LOG.error(e);
+          }
         }
         finally {
           try {
