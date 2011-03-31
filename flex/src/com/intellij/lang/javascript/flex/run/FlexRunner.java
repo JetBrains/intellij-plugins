@@ -161,7 +161,6 @@ public class FlexRunner extends FlexBaseRunner {
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultRunExecutor.EXECUTOR_ID.equals(executorId) &&
            profile instanceof FlexRunConfiguration &&
-           ((FlexRunConfiguration)profile).getRunnerParameters() != null &&
            ((FlexRunConfiguration)profile).getRunnerParameters().getRunMode() != FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer;
   }
 

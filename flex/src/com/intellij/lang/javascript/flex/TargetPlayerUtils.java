@@ -124,8 +124,9 @@ public class TargetPlayerUtils {
     if (sdkRoot == null || !sdkRoot.isValid()) {
       return null;
     }
-    final String configFileRelativePath = sdkType instanceof AirSdkType ? "frameworks/air-config.xml" : "frameworks/flex-config.xml";
-    final VirtualFile configXmlFile = VfsUtil.findRelativeFile(configFileRelativePath, sdkRoot);
+    final String configFileRelPath =
+      sdkType instanceof IFlexSdkType ? FlexSdkUtils.getBaseConfigFileRelPath((IFlexSdkType)sdkType) : null;
+    final VirtualFile configXmlFile = configFileRelPath == null ? null : VfsUtil.findRelativeFile(configFileRelPath, sdkRoot);
     if (configXmlFile != null) {
       try {
         return FlexUtils.findXMLElement(configXmlFile.getInputStream(), FlexSdkUtils.TARGET_PLAYER_ELEMENT);

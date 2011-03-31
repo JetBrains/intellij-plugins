@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
+import com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters;
 import com.intellij.lang.javascript.flex.run.AirRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
@@ -24,7 +25,6 @@ import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -336,6 +336,29 @@ public class FlexDebugProcess extends XDebugProcess {
     else {
       needToRemoveAirRuntimeDir = false;
       airRuntimeDirForFlexmojosSdk = null;
+    }
+
+    if (airRunnerParameters instanceof AirMobileRunnerParameters) {
+      final AirMobileRunnerParameters p = (AirMobileRunnerParameters)airRunnerParameters;
+      switch (p.getAirMobileRunTarget()) {
+        case Emulator:
+          airLaunchCommand.add("-profile");
+          airLaunchCommand.add("mobileDevice");
+
+          airLaunchCommand.add("-screensize");
+          final String adlAlias = p.getEmulator().adlAlias;
+          if (adlAlias != null) {
+            airLaunchCommand.add(adlAlias);
+          }
+          else {
+            airLaunchCommand.add(
+              p.getScreenWidth() + "x" + p.getScreenHeight() + ":" + p.getFullScreenWidth() + "x" + p.getFullScreenHeight());
+          }
+          break;
+        case AndroidDevice:
+          // todo
+          break;
+      }
     }
 
     final String adlOptions = airRunnerParameters.getAdlOptions();

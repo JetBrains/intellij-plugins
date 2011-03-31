@@ -130,6 +130,10 @@ public class RunMainClassPrecompileTask implements CompileTask {
     if (runConfiguration instanceof FlexUnitRunConfiguration) {
       return false;
     }
+    else if (runConfiguration instanceof AirMobileRunConfiguration) {
+      return ((AirMobileRunConfiguration)runConfiguration).getRunnerParameters().getAirMobileRunMode() ==
+             AirMobileRunnerParameters.AirMobileRunMode.MainClass;
+    }
     else if (runConfiguration instanceof AirRunConfiguration) {
       return ((AirRunConfiguration)runConfiguration).getRunnerParameters().getAirRunMode() == AirRunnerParameters.AirRunMode.MainClass;
     }

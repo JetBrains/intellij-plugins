@@ -99,7 +99,7 @@ public class FlexUnitRunConfiguration extends AirRunConfiguration {
         assert false : "Unknown scope: " + params.getScope();
     }
 
-    checkDebuggerSdk();
+    checkDebuggerSdk(params);
   }
 
   private static JSClass getClassToTest(String className,
