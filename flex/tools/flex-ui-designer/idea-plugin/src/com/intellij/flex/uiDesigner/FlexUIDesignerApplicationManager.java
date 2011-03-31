@@ -173,6 +173,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
       if (adlRunConfiguration == null) {
         // TODO discuss: show error balloon saying 'Cannot find suitable SDK...'?
+        documentOpening = false;
         return;
       }
     }

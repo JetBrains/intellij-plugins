@@ -101,11 +101,11 @@ public class CssRulesetPrinter {
     var url:String = ruleset.file.url;
     var name:String = ruleset.file.name;
     if (StringUtil.startsWith(url, "jar://")) {
-      var end:int = url.lastIndexOf(File.separator) - 1;
-      name = "[" + url.substring(url.lastIndexOf(File.separator, end - 4) + 1, end) + "] " + name;
+      var end:int = url.lastIndexOf("!/");
+      name = "[" + url.substring(url.lastIndexOf("/", end - 4) + 1, end) + "] " + name;
     }
     
-    var textElement:TextElement = new TextElement(name + " (line " + ruleset.line + ")", CssElementFormat.fileLinkHover);
+    var textElement:TextElement = new TextElement(name + ":" + ruleset.line, CssElementFormat.fileLinkHover);
     textElement.userData = ruleset;
     block.content = textElement;
     return block;
