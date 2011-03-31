@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
@@ -27,7 +28,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   private Socket socket;
   protected DataInputStream reader;
 
-  private Process adlProcess;
+  private ProcessHandler adlProcessHandler;
   
   private int passedCounter;
   protected List<Library> libraries;
@@ -53,7 +54,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     }
     else {
       appRootDir = createTempDir("fud");
-      FileUtil.copy(new File(getFudHome() + "/app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(appRootDir, "designer.swf"));
+      FileUtil.copy(new File(getFudHome() + "/app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(appRootDir, FlexUIDesignerApplicationManager.DESIGNER_SWF));
     }
     return appRootDir;
   }
@@ -84,7 +85,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     adlRunConfiguration.arguments.add("-cdd");
     adlRunConfiguration.arguments.add(getFudHome() + "/flex-injection/target");
 
-    adlProcess = DesignerApplicationUtil.runAdl(adlRunConfiguration, getFudHome() + "/designer/src/main/resources/descriptor.xml", serverSocket.getLocalPort(), appRootDir.getPath(), new Consumer<Integer>() {
+    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, getFudHome() + "/designer/src/main/resources/descriptor.xml", serverSocket.getLocalPort(), appRootDir.getPath(), new Consumer<Integer>() {
       @Override
       public void consume(Integer exitCode) {
         if (exitCode != 0) {
@@ -189,7 +190,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     reader.close();
     socket.close();
 
-    adlProcess.destroy();
+    adlProcessHandler.destroyProcess();
     
     super.tearDown();
   }

@@ -37,10 +37,13 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
   }
 
   @Override
-  public void projectClosed() {
+  public void disposeComponent() {
     if (flexUIDesignerApplicationManagerConnection != null) {
       flexUIDesignerApplicationManagerConnection.disconnect();
-      fileDocumentManagerListener.unsubscribe();
+      // unsubscribed in applicationClosed
+      if (fileDocumentManagerListener.connection != null) {
+        fileDocumentManagerListener.unsubscribe();
+      }
     }
   }
 

@@ -46,6 +46,12 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     return getTestDataPath() + "/sdk/playerglobal";
   }
   
+  protected VirtualFile getVFile(String file) {
+    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(file);
+    assert vFile != null;
+    return vFile;
+  }
+  
   protected void changeServiceImplementation(Class key, Class implementation) {
     MutablePicoContainer picoContainer = (MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer();
     picoContainer.unregisterComponent(key.getName());
@@ -91,8 +97,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   }
 
   protected void addLibrary(SdkModificator sdkModificator, String path, boolean fromSdk) {
-    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(path);
-    assert virtualFile != null;
+    VirtualFile virtualFile = getVFile(path);
     VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
     assert jarFile != null;
     
@@ -136,15 +141,10 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     }
   }
 
-  protected void copySwfAndDescriptor(final File rootDir) {
+  protected void copySwfAndDescriptor(final File rootDir) throws IOException {
     //noinspection ResultOfMethodCallIgnored
     rootDir.mkdirs();
-    try {
-      FileUtil.copy(new File(getFudHome(), "app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(rootDir, "designer.swf"));
-      FileUtil.copy(new File(getFudHome(), "designer/src/main/resources/descriptor.xml"), new File(rootDir, "descriptor.xml"));
-    }
-    catch (IOException e) {
-      LOG.error(e);
-    }
+    FileUtil.copy(new File(getFudHome(), "app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(rootDir, FlexUIDesignerApplicationManager.DESIGNER_SWF));
+    FileUtil.copy(new File(getFudHome(), "designer/src/main/resources/descriptor.xml"), new File(rootDir, FlexUIDesignerApplicationManager.DESCRIPTOR_XML));
   }
 }

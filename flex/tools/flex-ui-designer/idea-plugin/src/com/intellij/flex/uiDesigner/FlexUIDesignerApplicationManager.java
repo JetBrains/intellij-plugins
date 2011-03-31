@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.Disposable;
@@ -47,7 +48,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public static final String DESCRIPTOR_XML = "descriptor.xml";
 
   private Client client;
-  private Process adlProcess;
+  public ProcessHandler adlProcessHandler;
   private Server server;
 
   ProjectManagerListener projectManagerListener;
@@ -73,8 +74,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     closeClosable(client);
     closeClosable(server);
 
-    if (adlProcess != null) {
-      adlProcess.destroy();
+    if (adlProcessHandler != null) {
+      adlProcessHandler.destroyProcess();
     }
   }
   
@@ -197,11 +198,11 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         try {
           copyAppFiles();
         
-          adlProcess = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/" + DESCRIPTOR_XML,
+          adlProcessHandler = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/" + DESCRIPTOR_XML,
                                                       server.listen(), new Consumer<Integer>() {
               @Override
               public void consume(Integer integer) {
-                adlProcess = null;
+                adlProcessHandler = null;
                 if (onAdlExit != null) {
                   ApplicationManager.getApplication().invokeLater(onAdlExit);
                 }

@@ -39,12 +39,6 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     assertEquals(problems.get(0), "Invalid color name: invalidcolorname");
   }
 
-  private VirtualFile getVFile(String file) {
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(file);
-    assert vFile != null;
-    return vFile;
-  }
-
   @JSTestOptions({WithGumboSdk, WithFlexSdk})
   @Flex(version="4.1")
   public void test41() throws Exception {

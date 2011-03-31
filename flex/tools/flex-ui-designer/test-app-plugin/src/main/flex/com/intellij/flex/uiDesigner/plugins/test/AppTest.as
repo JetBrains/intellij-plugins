@@ -36,5 +36,12 @@ public class AppTest extends BaseTestCase {
     });
     }
   }
+  
+  public function wait():void {
+  }
+  
+  public function UpdateDocumentOnIdeaAutoSave():void {
+    assertThat(app.getElementAt(0), {text: "mmA"});
+  }
 }
 }

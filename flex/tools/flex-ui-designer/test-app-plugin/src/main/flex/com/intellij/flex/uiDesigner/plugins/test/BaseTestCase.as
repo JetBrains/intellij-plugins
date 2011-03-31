@@ -21,8 +21,10 @@ internal class BaseTestCase implements TestCase {
   }
   
   public function setUp():void {
-    documentManager = DocumentManager(projectManager.project.getComponent(DocumentManager));
-    _app = documentManager.document.uiComponent;
+    if (projectManager.project != null) {
+      documentManager = DocumentManager(projectManager.project.getComponent(DocumentManager));
+      _app = documentManager.document.uiComponent;
+    }
   }
   
   private var _app:Object;
