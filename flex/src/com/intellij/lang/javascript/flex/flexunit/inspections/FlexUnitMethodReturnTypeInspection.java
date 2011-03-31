@@ -43,7 +43,7 @@ public class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspection
       final ASTNode nameIdentifier = method.findNameIdentifier();
       if (nameIdentifier != null) {
 
-        LocalQuickFix[] fix = canFix(method) ? new LocalQuickFix[]{new SetMethodReturnTypeFix(method, "void")} : LocalQuickFix.EMPTY_ARRAY;
+        LocalQuickFix[] fix = canFix(method) ? new LocalQuickFix[]{new SetMethodReturnTypeFix("void", method.getName())} : LocalQuickFix.EMPTY_ARRAY;
         holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testmethodreturntype.message"),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fix);
       }
