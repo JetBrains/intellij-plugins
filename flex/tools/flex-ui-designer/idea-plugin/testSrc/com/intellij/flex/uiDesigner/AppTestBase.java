@@ -1,7 +1,9 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -62,6 +64,11 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     sdkModificator.commitChanges();
   }
   
+  @Override
+  protected ModuleType getModuleType() {
+    return FlexModuleType.getInstance();
+  }
+  
   protected void modifySdk(Sdk sdk, SdkModificator sdkModificator) {
     sdkModificator.setVersionString(getFlexVersion() + ".0");
     
@@ -102,7 +109,6 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     StringRegistry.getInstance().reset();
     
     sessionId++;
-    DocumentFileManager.getInstance().reset(sessionId);
     BinaryFileManager.getInstance().reset(sessionId);
 
     for (Pair<VirtualFile, VirtualFile> lib : libs) {

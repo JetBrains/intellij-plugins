@@ -75,7 +75,7 @@ public class TestSocketDataHandler implements SocketDataHandler {
   public function handleSockedData(messageSize:int, methodNameSize:int, data:IDataInput):void {
     var method:String = data.readUTFBytes(methodNameSize);
     var clazz:Class = c[data.readByte()];
-    var documentManager:DocumentManager = DocumentManager(projectManager.project.plexusContainer.lookup(DocumentManager));
+    var documentManager:DocumentManager = DocumentManager(projectManager.project.getComponent(DocumentManager));
     if (documentManager.document == null) {
       trace("wait document");
       IEventDispatcher(documentManager).addEventListener("documentChanged", function(event:Event):void {

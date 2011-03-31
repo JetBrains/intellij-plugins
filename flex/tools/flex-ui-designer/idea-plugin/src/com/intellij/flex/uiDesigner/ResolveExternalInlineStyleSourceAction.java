@@ -71,7 +71,11 @@ public class ResolveExternalInlineStyleSourceAction implements Runnable {
     assert properties.size() > 0;
   }
 
-  public ResolveExternalInlineStyleSourceAction(String parentFqn, String elementFqn, String targetStyleName, Map<String, String> properties, Module module) {
+  public ResolveExternalInlineStyleSourceAction(String parentFqn,
+                                                String elementFqn,
+                                                String targetStyleName,
+                                                Map<String, String> properties,
+                                                Module module) {
     this.parentFqn = parentFqn;
     this.elementFqn = elementFqn;
     this.targetStyleName = targetStyleName;
@@ -100,11 +104,10 @@ public class ResolveExternalInlineStyleSourceAction implements Runnable {
         client.qualifyExternalInlineStyleSource();
         AmfOutputStream out = client.getOutput();
 
-        PsiElement psiElement = (PsiElement) target;
+        PsiElement psiElement = (PsiElement)target;
 //        ClientFileManager clientFileManager = FlexUIDesignerApplicationManager.getInstance().getClientFileManager();
         //noinspection ConstantConditions
 //        out.writeInt(clientFileManager.add(psiElement.getContainingFile().getVirtualFile()));
-
 
 
         out.flush();
@@ -116,10 +119,10 @@ public class ResolveExternalInlineStyleSourceAction implements Runnable {
   }
 
   public Navigatable find() {
-    JSClass classElement = ((JSClass) JSResolveUtil.findClassByQName(parentFqn, scope));
+    JSClass classElement = ((JSClass)JSResolveUtil.findClassByQName(parentFqn, scope));
     assert classElement != null;
 
-    XmlTag rootTag = ((XmlFile) classElement.getNavigationElement().getContainingFile()).getRootTag();
+    XmlTag rootTag = ((XmlFile)classElement.getNavigationElement().getContainingFile()).getRootTag();
     assert rootTag != null && rootTag.getDescriptor() != null && rootTag.getDescriptor() instanceof ClassBackedElementDescriptor;
     return find(rootTag, true);
   }
@@ -163,7 +166,7 @@ public class ResolveExternalInlineStyleSourceAction implements Runnable {
           if (attribute.getDisplayValue().equals(ourValue)) {
             foundCount++;
             if (descriptor.getName().equals(targetStyleName)) {
-              target = (Navigatable) attribute;
+              target = (Navigatable)attribute;
             }
 
             if (foundCount == properties.size()) {
@@ -176,13 +179,14 @@ public class ResolveExternalInlineStyleSourceAction implements Runnable {
 
     for (XmlTag tag : parent.getSubTags()) {
       XmlElementDescriptor descriptor = tag.getDescriptor();
-      if (descriptor instanceof AnnotationBackedDescriptor && ((PsiPresentableMetaData) descriptor).getTypeName().equals(FlexAnnotationNames.STYLE)) {
+      if (descriptor instanceof AnnotationBackedDescriptor &&
+          ((PsiPresentableMetaData)descriptor).getTypeName().equals(FlexAnnotationNames.STYLE)) {
         String ourValue = properties.get(descriptor.getName());
         if (ourValue != null) {
           if (tag.getSubTags().length == 0 && tag.getValue().getTrimmedText().equals(ourValue)) {
             foundCount++;
             if (descriptor.getName().equals(targetStyleName)) {
-              target = (Navigatable) tag;
+              target = (Navigatable)tag;
             }
 
             if (foundCount == properties.size()) {

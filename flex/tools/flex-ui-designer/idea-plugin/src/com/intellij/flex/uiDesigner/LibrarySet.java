@@ -21,7 +21,7 @@ public class LibrarySet {
 
   public LibrarySet(String id, ApplicationDomainCreationPolicy applicationDomainCreationPolicy, List<Library> libraries) {
     this.id = id;
-    
+
     this.applicationDomainCreationPolicy = applicationDomainCreationPolicy;
     this.libraries = libraries;
   }

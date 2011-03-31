@@ -1,0 +1,72 @@
+// this is called to build artifacts to be used when running from sources
+target('default': "Build Flex Profiler artifacts") {
+  home = guessHome(this)
+  home = "$home/../../.."; // IDEA\flex\tools\profiler is detected
+  doExecute("$home", "$home/out", "$home/out/classes/production/flex-profiler")
+}
+
+def guessHome(Script script) {
+  File home = new File(script["gant.file"].substring("file:".length()))
+
+  while (home != null) {
+    if (home.isDirectory()) {
+      if (new File(home, ".idea").exists()) return home.getCanonicalPath()
+    }
+    home = home.getParentFile()
+  }
+  return null
+}
+
+def execute(home, sandbox, targetFolder) {
+  if (isDefined("pluginFilter")) {
+    if (!pluginFilter.contains("flex-profiler")) return
+  }
+  project.stage("building Flex library for flex-profiler plugin")
+  doExecute(home, sandbox, targetFolder)
+}
+
+private def doExecute(home, sandbox, targetFolder) {
+  flexBuildHome = "$home/flex/tools/profiler";
+  flexSandbox = "$sandbox/profiler"
+
+  ant.delete(dir: "$flexSandbox")
+  ant.mkdir(dir: "$flexSandbox")
+
+  ant.copy(toDir: "$flexSandbox/repo", overwrite: "true") {
+    fileset(dir: "$flexBuildHome/../flex-ui-designer/build/repo")
+  }
+
+  stripSwcName("airglobal") // compiler needs airglobal.swc to have exactly such name
+
+  ant.copy(file: "$flexBuildHome/build-gant/base.xml", toDir: "$flexSandbox")
+  ant.replace(file: "$flexSandbox/base.xml") {
+    replacefilter(token: "@@repo@@", value: "$flexSandbox/repo")
+  }
+
+  buildFlex("Agent9Config", "$targetFolder/profiler_agent_3.swf")
+  buildFlex("Agent10Config", "$targetFolder/profiler_agent_4.swf")
+}
+
+def buildFlex(configName, target) {
+  ant.java(className: "flex2.tools.Mxmlc", fork: "true", failOnError: "true", dir: "$flexBuildHome") {
+    jvmarg(value: "-Dsun.io.useCanonCaches=false")
+    jvmarg(value: "-Duser.language=en")
+    jvmarg(value: "-Duser.region=en")
+    classpath {
+      fileset(dir: "$flexBuildHome/../flex-ui-designer/build-gant/libs") {
+        include(name: "*-4.5.0.18365.jar")
+      }
+    }
+    arg(value: "-load-config=$flexSandbox/base.xml")
+    arg(value: "-load-config=$flexBuildHome/${configName}.xml")
+    arg(value: "-output=$target")
+  }
+}
+
+def stripSwcName(name) {
+  ant.move(todir: "$flexSandbox/repo") {
+    fileset(dir: "$flexSandbox/repo")
+    regexpmapper(from: "^(.*)$name.*\\.swc\$", to: "\\1${name}.swc")
+  }
+}
+

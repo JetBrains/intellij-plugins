@@ -17,17 +17,18 @@ import java.io.InputStream;
 
 public class SocketInputHandlerImpl implements SocketInputHandler {
   protected Reader reader;
-  
+
   protected void createReader(InputStream inputStream) {
     reader = new Reader(new BufferedInputStream(inputStream));
   }
-  
+
   @Override
   public void read(InputStream inputStream) throws IOException {
     createReader(inputStream);
     final FlexUIDesignerApplicationManager designerAppManager = FlexUIDesignerApplicationManager.getInstance();
-    
-    readProcess: while (true) {
+
+    readProcess:
+    while (true) {
       final int command = reader.read();
       switch (command) {
         case -1:
@@ -39,7 +40,8 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
           ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-              JSClass classElement = ((JSClass) JSResolveUtil.findClassByQName(className, module.getModuleWithDependenciesAndLibrariesScope(false)));
+              JSClass classElement =
+                ((JSClass)JSResolveUtil.findClassByQName(className, module.getModuleWithDependenciesAndLibrariesScope(false)));
               classElement.navigate(true);
               ProjectUtil.focusProjectWindow(classElement.getProject(), true);
             }
@@ -59,9 +61,10 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
           break;
 
         case ServerMethod.resolveExternalInlineStyleDeclarationSource:
-          ApplicationManager.getApplication().invokeLater(new ResolveExternalInlineStyleSourceAction(reader, designerAppManager.getClient().getModule(reader.readInt())));
+          ApplicationManager.getApplication()
+            .invokeLater(new ResolveExternalInlineStyleSourceAction(reader, designerAppManager.getClient().getModule(reader.readInt())));
           break;
-          
+
         case ServerMethod.showError:
           FlexUIDesignerApplicationManager.LOG.error(reader.readUTF());
           break;
@@ -78,19 +81,19 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
       reader.close();
     }
   }
-  
+
   protected static class Reader extends DataInputStream {
     private Reader(InputStream in) {
       super(in);
     }
-    
+
     public VirtualFile readFile() throws IOException {
       String url = readUTF();
       VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(url);
       if (file == null) {
         FlexUIDesignerApplicationManager.LOG.error("can't find file " + url);
       }
-      
+
       return file;
     }
   }

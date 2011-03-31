@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
 <ComponentSet xmlns="plexus" xmlns:fx="http://ns.adobe.com/mxml/2009">
   <fx:Script><![CDATA[
-    import com.intellij.flex.uiDesigner.DocumentReader;
     import com.intellij.flex.uiDesigner.mxml.MxmlReader;
     ]]></fx:Script>
   
   <Component role="{LibraryManager}"/>
+  <Component role="{BitmapDataManager}"/>
+  <Component role="{SwfDataManager}"/>
   <Component role="{ProjectManager}"/>
   <Component role="{ModuleManager}"/>
   <Component role="{StringRegistry}"/>
   <Component role="{DocumentReader}" implementation="{MxmlReader}">
     <Requirement role="{StringRegistry}"/>
-    <Requirement role="{DocumentFactoryManager}"/>
     <Requirement role="{BitmapDataManager}"/>
     <Requirement role="{SwfDataManager}"/>
   </Component>
@@ -21,7 +21,6 @@
 		<Requirement role="{ProjectManager}"/>
 		<Requirement role="{ModuleManager}"/>
 		<Requirement role="{StringRegistry}"/>
-    <Requirement role="{DocumentFactoryManager}"/>
 	</Component>
   <Component role="{UncaughtErrorManager}">
 		<Requirement role="{SocketManager}"/>

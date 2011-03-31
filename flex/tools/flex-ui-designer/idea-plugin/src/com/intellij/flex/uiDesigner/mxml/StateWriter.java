@@ -176,13 +176,10 @@ class StateWriter {
     return override;
   }
 
-  public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter,
-                                                 PropertyProcessor propertyProcessor,
-                                                 XmlElement element,
-                                                 XmlElementValueProvider valueProvider,
+  public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter, PropertyProcessor propertyProcessor,
+                                                 XmlElement element, XmlElementValueProvider valueProvider,
                                                  AnnotationBackedDescriptor descriptor,
-                                                 @Nullable Context context,
-                                                 @Nullable Context parentContext) {
+                                                 @Nullable Context context, @Nullable Context parentContext) {
     PsiReference[] references = element.getReferences();
     if (references.length < 2) {
       return false;
@@ -217,7 +214,14 @@ class StateWriter {
     writer.getOut().writeUInt29(VALUE);
     writer.getOut().write(PropertyClassifier.PROPERTY);
 
-    int type = valueWriter.write(writer.getOut(), false);
+    int type = 0;
+    try {
+      type = valueWriter.write(writer.getOut(), writer, false);
+    }
+    catch (InvalidProperty invalidProperty) {
+      // todo handle invalidProperty for state
+      throw new UnsupportedOperationException("");
+    }
     if (type < PropertyProcessor.PRIMITIVE) {
       assert context != null;
       mxmlWriter.processPropertyTagValue((XmlTag)element, context, type == PropertyProcessor.ARRAY);
@@ -253,7 +257,7 @@ class StateWriter {
       // reset due to new backsibling
       resetActiveAddItems(parentContext.activeAddItems);
       if (parentContext.getBackSibling() == null) {
-        parentContext.setBackSibling(new StaticObjectContext(referencePosition, writer.getOut(), backSiblingId, 
+        parentContext.setBackSibling(new StaticObjectContext(referencePosition, writer.getOut(), backSiblingId,
                                                              parentContext.getScope()));
       }
       else {

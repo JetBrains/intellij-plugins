@@ -6,7 +6,7 @@ public class EmbedLibrary implements Library {
   public EmbedLibrary(String path) {
     this.path = path;
   }
-  
+
   public String getPath() {
     return path;
   }

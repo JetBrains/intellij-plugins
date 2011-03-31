@@ -3,23 +3,24 @@ package com.intellij.flex.uiDesigner.mxml;
 abstract class Context {
   protected StaticObjectContext backSibling;
   protected Scope parentScope;
-  
+
   protected DeferredInstanceFromObjectReference deferredInstanceFromObjectReference;
-  
+
   protected int id = -1;
-  
+
   // state index => AddItems
   AddItems[] activeAddItems;
-  
+
   abstract Scope getParentScope();
-  
+
   abstract void referenceInitialized();
+
   abstract Scope getScope();
-  
+
   final boolean ownerIsDynamic() {
     return getScope().getOwner() != null;
   }
-  
+
   int getId() {
     return id;
   }

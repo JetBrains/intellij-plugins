@@ -9,7 +9,7 @@
     <VerticalLayout/>
   </layout>
 
-  <Button label="Sefsdfnd"/>
+  <Button label="Hello"/>
   <Button label="Go">
     <fontSize>30</fontSize>
   </Button>

@@ -116,7 +116,6 @@ def buildFlex(appName, srcFolderName, flexBuildHome, flexSandbox, isSwc) {
   ant.replace(file: "$flexSandbox/${appName}.xml") {
     replacefilter(token: "@@target@@", value: "$flexSandbox")
     replacefilter(token: "@@source@@", value: "$flexBuildHome/../$srcFolderName/src/main")
-    replacefilter(token: "@@libs@@", value: "$flexBuildHome/libs")
     replacefilter(token: "@@repo@@", value: "$flexSandbox/repo")
   }
 

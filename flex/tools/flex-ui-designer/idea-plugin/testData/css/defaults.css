@@ -1,0 +1,5 @@
+@namespace s "library://ns.adobe.com/flex/spark";
+
+s|Button {
+  color: red;
+}

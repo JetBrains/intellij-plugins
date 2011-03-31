@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AntConfiguration">
+    <defaultAnt bundledAnt="true" />
+  </component>
   <component name="BuildServerSettings">
     <option name="LOGIN" value="" />
     <option name="SERVER_URL" value="http://buildserver" />
@@ -24,18 +27,44 @@
     <option name="SHOW_CLOSE_PROMPT" value="true" />
     <option name="TOOL_WINDOW_SELECTED_CONTENT_INDEX" value="0" />
   </component>
-  <component name="CCaseConfig">
-    <option name="checkoutReserved" value="false" />
-    <option name="markExternalChangeAsUpToDate" value="true" />
-    <option name="checkInUseHijack" value="true" />
-    <option name="useUcmModel" value="true" />
-    <option name="synchOutside" value="false" />
-    <option name="isHistoryResticted" value="true" />
-    <option name="useIdenticalSwitch" value="true" />
-    <option name="synchActivitiesOnRefresh" value="true" />
-    <option name="lastScr" value="" />
-    <option name="scrTextFileName" value="" />
-    <option name="historyRevisionsNumber" value="4" />
+  <component name="ClearCaseSharedConfig">
+    <option name="myUseUcmModel" value="true" />
+  </component>
+  <component name="CodeStyleSettingsManager">
+    <option name="PER_PROJECT_SETTINGS">
+      <value>
+        <ADDITIONAL_INDENT_OPTIONS fileType="java">
+          <option name="INDENT_SIZE" value="4" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          <option name="TAB_SIZE" value="4" />
+          <option name="USE_TAB_CHARACTER" value="false" />
+          <option name="SMART_TABS" value="false" />
+          <option name="LABEL_INDENT_SIZE" value="0" />
+          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
+        </ADDITIONAL_INDENT_OPTIONS>
+        <ADDITIONAL_INDENT_OPTIONS fileType="jsp">
+          <option name="INDENT_SIZE" value="4" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          <option name="TAB_SIZE" value="4" />
+          <option name="USE_TAB_CHARACTER" value="false" />
+          <option name="SMART_TABS" value="false" />
+          <option name="LABEL_INDENT_SIZE" value="0" />
+          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
+        </ADDITIONAL_INDENT_OPTIONS>
+        <ADDITIONAL_INDENT_OPTIONS fileType="xml">
+          <option name="INDENT_SIZE" value="4" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          <option name="TAB_SIZE" value="4" />
+          <option name="USE_TAB_CHARACTER" value="false" />
+          <option name="SMART_TABS" value="false" />
+          <option name="LABEL_INDENT_SIZE" value="0" />
+          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+          <option name="USE_RELATIVE_INDENTS" value="false" />
+        </ADDITIONAL_INDENT_OPTIONS>
+      </value>
+    </option>
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
@@ -99,20 +128,6 @@
     <option name="PROJECT_PROFILE" value="Project Default" />
     <option name="USE_PROJECT_PROFILE" value="true" />
     <version value="1.0" />
-  </component>
-  <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{AJAX, DHTML, DOM Core, DOM Events, DOM Traversal And Range, DOM XPath, EcmaScript, EcmaScript 4, EcmaScript Additional, EcmaScript L5, HTML 5}" />
-    <predefinedLibrary name="AJAX" />
-    <predefinedLibrary name="DHTML" />
-    <predefinedLibrary name="DOM Core" />
-    <predefinedLibrary name="DOM Events" />
-    <predefinedLibrary name="DOM Traversal And Range" />
-    <predefinedLibrary name="DOM XPath" />
-    <predefinedLibrary name="EcmaScript" />
-    <predefinedLibrary name="EcmaScript 4" />
-    <predefinedLibrary name="EcmaScript Additional" />
-    <predefinedLibrary name="EcmaScript L5" />
-    <predefinedLibrary name="HTML 5" />
   </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
@@ -280,58 +295,10 @@
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
-  <component name="SvnConfiguration" maxAnnotateRevisions="500">
-    <option name="USER" value="" />
-    <option name="PASSWORD" value="" />
-    <option name="LAST_MERGED_REVISION" />
-    <option name="UPDATE_RUN_STATUS" value="false" />
-    <option name="MERGE_DRY_RUN" value="false" />
-    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
-    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
-    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
-    <option name="DETECT_NESTED_COPIES" value="true" />
-    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
-    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
-    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
-    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
-  </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="" />
   </component>
-  <component name="VssConfiguration">
-    <option name="CLIENT_PATH" value="" />
-    <option name="SRCSAFEINI_PATH" value="" />
-    <option name="USER_NAME" value="" />
-    <option name="PWD" value="" />
-    <CheckoutOptions>
-      <option name="COMMENT" value="" />
-      <option name="DO_NOT_GET_LATEST_VERSION" value="false" />
-      <option name="REPLACE_WRITABLE" value="false" />
-      <option name="RECURSIVE" value="false" />
-    </CheckoutOptions>
-    <CheckinOptions>
-      <option name="COMMENT" value="" />
-      <option name="KEEP_CHECKED_OUT" value="false" />
-      <option name="RECURSIVE" value="false" />
-    </CheckinOptions>
-    <AddOptions>
-      <option name="STORE_ONLY_LATEST_VERSION" value="false" />
-      <option name="CHECK_OUT_IMMEDIATELY" value="false" />
-    </AddOptions>
-    <UndocheckoutOptions>
-      <option name="MAKE_WRITABLE" value="false" />
-      <option name="REPLACE_LOCAL_COPY" value="2" />
-      <option name="RECURSIVE" value="false" />
-    </UndocheckoutOptions>
-    <GetOptions>
-      <option name="REPLACE_WRITABLE" value="0" />
-      <option name="MAKE_WRITABLE" value="false" />
-      <option name="ANSWER_NEGATIVELY" value="false" />
-      <option name="ANSWER_POSITIVELY" value="false" />
-      <option name="RECURSIVE" value="false" />
-      <option name="VERSION" />
-    </GetOptions>
-  </component>
+  <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
     <library name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.0.18365">
       <CLASSES>

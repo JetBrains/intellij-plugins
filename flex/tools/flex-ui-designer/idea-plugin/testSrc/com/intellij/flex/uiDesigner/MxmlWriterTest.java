@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import js.JSTestOptions;
@@ -7,6 +9,7 @@ import js.JSTestOptions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static js.JSTestOption.WithFlexSdk;
 import static js.JSTestOption.WithGumboSdk;
@@ -15,6 +18,8 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
   @JSTestOptions({WithGumboSdk, WithFlexSdk})
   @Flex(version="4.5")
   public void test45() throws Exception {
+    changeServiceImplementation(FlexUIDesignerApplicationManager.class, MyFlexUIDesignerApplicationManager.class);
+    
     String testFile = System.getProperty("testFile");
     String[] files = testFile == null ? getTestFiles() : new String[]{getTestPath() + "/" + testFile + ".mxml"};
 
@@ -28,6 +33,10 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     vFiles[files.length + 2] = getVFile(getTestPath() + "/anim.swf");
 
     testFiles(vFiles);
+
+    final List<String> problems = ((MyFlexUIDesignerApplicationManager)FlexUIDesignerApplicationManager.getInstance()).problems;
+    assertEquals(problems.size(), 1);
+    assertEquals(problems.get(0), "Invalid color name: invalidcolorname");
   }
 
   private VirtualFile getVFile(String file) {
@@ -62,6 +71,15 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
       if (file.isDirectory()) {
         collectMxmlFiles(files, file);
       }
+    }
+  }
+
+  private static class MyFlexUIDesignerApplicationManager extends FlexUIDesignerApplicationManager {
+    private final List<String> problems = new ArrayList<String>();
+    
+    @Override
+    public void reportProblem(Project project, String message, MessageType messageType) {
+      problems.add(message);
     }
   }
 }

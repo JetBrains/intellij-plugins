@@ -514,7 +514,10 @@ public class AnnotationBackedDescriptorImpl
       try {
         boolean startWithSharp = false;
         if (value != null && ((startWithSharp = value.startsWith("#")) || value.startsWith("0x"))) {
-          Integer.parseInt(value.substring(startWithSharp ? 1 : 2), 16);
+          final long l = Long.parseLong(value.substring(startWithSharp ? 1 : 2), 16);
+          if (l < 0 || l > 0xFFFFFFFFL) {
+            throw new NumberFormatException("value out of range");
+          }
         }
         else if (!"Color".equals(format) || (value != null && value.length() > 0 && !Character.isLetter(value.charAt(0)))) {
           Integer.parseInt(value);

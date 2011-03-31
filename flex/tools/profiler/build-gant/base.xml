@@ -1,0 +1,16 @@
+<flex-config xmlns="http://www.adobe.com/2006/flex-config">
+	<compiler>
+		<external-library-path>
+			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/4.5.0.18365/airglobal.swc</path-element>
+		</external-library-path>
+		<fonts>
+			<local-fonts-snapshot></local-fonts-snapshot>
+		</fonts>
+		<accessible>false</accessible>
+		<headless-server>false</headless-server>
+		<warn-no-constructor>false</warn-no-constructor>
+		<debug>true</debug>
+		<locale/>
+		<theme/>
+	</compiler>
+</flex-config>

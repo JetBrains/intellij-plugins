@@ -5,15 +5,15 @@ import com.intellij.flex.uiDesigner.io.ByteRange;
 class DynamicObjectContext extends Context {
   private ByteRange dataRange;
   private Scope scope;
-  
+
   private boolean written;
   private boolean immediateCreation;
-  
+
   DynamicObjectContext(int id, Scope parentScope) {
     this.parentScope = parentScope;
     this.id = id;
   }
-  
+
   @Override
   Scope getParentScope() {
     return parentScope;
@@ -28,10 +28,10 @@ class DynamicObjectContext extends Context {
     if (scope == null) {
       scope = new Scope(this);
     }
-    
+
     return scope;
   }
-  
+
   int getReferredObjectsCount() {
     return scope == null ? 0 : scope.referenceCounter;
   }

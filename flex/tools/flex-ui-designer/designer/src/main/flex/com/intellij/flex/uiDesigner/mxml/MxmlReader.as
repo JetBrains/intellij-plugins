@@ -1,10 +1,10 @@
 package com.intellij.flex.uiDesigner.mxml {
 import com.intellij.flex.uiDesigner.BitmapDataManager;
 import com.intellij.flex.uiDesigner.DocumentFactory;
-import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.ModuleContext;
+import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.SwfDataManager;
 import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
@@ -20,7 +20,6 @@ import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.display.BitmapData;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.events.Event;
@@ -38,9 +37,8 @@ public final class MxmlReader implements DocumentReader {
   private var input:IDataInput;
   
   private var stringRegistry:StringRegistry;
-  private var documentFactoryManager:DocumentFactoryManager;
   private var bitmapDataManager:BitmapDataManager;
-  private var swfData:SwfDataManager;
+  private var swfDataManager:SwfDataManager;
 
   private const stateReader:StateReader = new StateReader();
   private const injectedASReader:InjectedASReader = new InjectedASReader();
@@ -54,11 +52,10 @@ public final class MxmlReader implements DocumentReader {
   
   internal var factoryContext:DeferredInstanceFromBytesContext;
 
-  public function MxmlReader(stringRegistry:StringRegistry, documentFactoryManager:DocumentFactoryManager, bitmapDataManager:BitmapDataManager, swfData:SwfDataManager) {
+  public function MxmlReader(stringRegistry:StringRegistry, bitmapDataManager:BitmapDataManager, swfDataManager:SwfDataManager) {
     this.stringRegistry = stringRegistry;
-    this.documentFactoryManager = documentFactoryManager;
     this.bitmapDataManager = bitmapDataManager;
-    this.swfData = swfData;
+    this.swfDataManager = swfDataManager;
   }
 
   internal function getClass(name:String):Class {
@@ -139,6 +136,10 @@ public final class MxmlReader implements DocumentReader {
     factoryContext = null;
     stateReader.reset(t);
 
+    if (input is ByteArray) {
+      assert(input.bytesAvailable == 0);
+      ByteArray(input).position = 0;
+    }
     this.input = null;
     return object;
   }
@@ -318,7 +319,7 @@ public final class MxmlReader implements DocumentReader {
           break;
         
         case Amf3Types.SWF:
-          readSwfData();
+          readSwfData(propertyHolder, propertyName);
           break;
         
         case STRING_REFERENCE:
@@ -357,7 +358,7 @@ public final class MxmlReader implements DocumentReader {
     var id:int = AmfUtil.readUInt29(input);
     var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {
-      var documentFactory:DocumentFactory = documentFactoryManager.get(id);
+      var documentFactory:DocumentFactory = ModuleContextEx(moduleContext).documentFactoryManager.get2(id, DocumentFactory(context));
       factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContext(documentFactory, this, styleManager));
       moduleContext.putDocumentFactory(id, factory);
     }
@@ -366,36 +367,13 @@ public final class MxmlReader implements DocumentReader {
   }
   
   private function readBitmapData():BitmapData {
-    var id:int = input.readByte();
-    var registered:Boolean = (id & 1) != 0;
-    id = id >> 1;
-    if (registered) {
-      return bitmapDataManager.get(id);
-    }
-    else {
-      var bitmapData:BitmapData = new BitmapData(input.readShort(), input.readShort(), input.readBoolean(), 0);
-      // our input always ByteArray, in any case, we cannot change BitmapData API
-      bitmapData.setPixels(bitmapData.rect, ByteArray(input));
-      
-      bitmapDataManager.register(id, bitmapData);
-      return bitmapData;
-    }
+    return bitmapDataManager.get(AmfUtil.readUInt29(input));
   }
 
-  /**
-   * DisplayObjectContainer or Class
-   */
-  private function readSwfData():void {
-    var id:int = input.readByte();
-    var registered:Boolean = (id & 1) != 0;
-    id = id >> 1;
-    if (registered) {
-      //return bitmapDataManager.get(id);
-    }
-    else {
-      //noinspection JSUnusedLocalSymbols
-      var bytes:ByteArray = readBytes();
-    }
+  private function readSwfData(propertyHolder:Object, propertyName:String):void {
+    const symbolLength:int = AmfUtil.readUInt29(input);
+    var symbol:String = symbolLength == 0 ? null : input.readUTFBytes(symbolLength);
+    swfDataManager.assign(AmfUtil.readUInt29(input), symbol, propertyHolder, propertyName);
   }
 
   private function getOrCreateFactoryContext():DeferredInstanceFromBytesContext {

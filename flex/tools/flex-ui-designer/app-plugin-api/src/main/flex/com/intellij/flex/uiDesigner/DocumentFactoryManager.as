@@ -5,6 +5,12 @@ public class DocumentFactoryManager {
   public function get(id:int):DocumentFactory {
     return factories[id];
   }
+  
+  public function get2(id:int, requestor:DocumentFactory):DocumentFactory {
+    var documentFactory:DocumentFactory = factories[id];
+    documentFactory.addUser(requestor);
+    return documentFactory;
+  }
 
   public function register(id:int, documentFactory:DocumentFactory):void {
     assert(id == factories.length || (id < factories.length && factories[id] == null));

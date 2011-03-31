@@ -72,7 +72,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       public void consume(OriginalLibrary originalLibrary) {
         styleInfoCollector.collect(originalLibrary);
       }
-    }), myProject.getLocationHash(), getFlexVersion(), 0);
+    }), myProject.getLocationHash(), getFlexVersion());
 
     final ServerSocket serverSocket = new ServerSocket(0, 1);
     
@@ -200,7 +200,6 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       String filename = file.getNameWithoutExtension();
       System.out.print(filename);
       long start = System.currentTimeMillis();
-      assert !DocumentFileManager.getInstance().isRegistered(file);
       client.openDocument(myModule, xmlFile);
       long time = System.currentTimeMillis() - start;
       client.test(filename, originalFile.getParent().getName());

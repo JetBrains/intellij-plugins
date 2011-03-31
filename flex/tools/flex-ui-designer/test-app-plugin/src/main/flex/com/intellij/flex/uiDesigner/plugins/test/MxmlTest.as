@@ -4,9 +4,7 @@ import flash.display.BitmapData;
 import org.hamcrest.Matcher;
 import org.hamcrest.assertThat;
 import org.hamcrest.core.allOf;
-
 import org.hamcrest.core.isA;
-
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.strictlyEqualTo;
 
@@ -24,6 +22,7 @@ public class MxmlTest extends BaseTestCase {
       RichTextAndCollapseWhitespace();
       MixedTextAndSubTags();
       InlineArrayAsAttributeValue();
+      InvalidColorName();
     }
   }
   
@@ -86,6 +85,10 @@ public class MxmlTest extends BaseTestCase {
   
   public function InlineArrayAsAttributeValue():void {
    // http://youtrack.jetbrains.net/issue/IDEA-64721 
+  }
+  
+  public function InvalidColorName():void {
+    assertThat(app, [{color: 0}]);
   }
 }
 }

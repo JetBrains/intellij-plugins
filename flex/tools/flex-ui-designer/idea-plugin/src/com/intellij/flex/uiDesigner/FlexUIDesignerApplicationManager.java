@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.CommonBundle;
 import com.intellij.execution.ExecutionException;
+import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -19,7 +19,6 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.psi.xml.XmlFile;
@@ -29,10 +28,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,37 +42,22 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   private static final Key<ProjectInfo> PROJECT_INFO = Key.create("FUD_PROJECT_INFO");
 
   static final Logger LOG = Logger.getInstance(FlexUIDesignerApplicationManager.class.getName());
-
-  private static final long ABC_INJECTION_LAST_MODIFIED = 1299598064L * 1000L;
-  private static final long APP_LAST_MODIFIED = 1299598064L * 1000L;
+  
+  public static final String DESIGNER_SWF = "designer.swf";
+  public static final String DESCRIPTOR_XML = "descriptor.xml";
 
   private Client client;
   private Process adlProcess;
   private Server server;
 
-  ProjectManagerListener myProjectManagerListener;
+  ProjectManagerListener projectManagerListener;
 
   private File appDir;
 
-  public FlexUIDesignerApplicationManager() {
-    appDir = new File(PathManager.getSystemPath(), "flexUIDesigner");
+  private boolean documentOpening;
 
-    File designerAppFile = new File(appDir, "designer.swf");
-    if (System.getProperty("fud.debug") == null && designerAppFile.lastModified() < APP_LAST_MODIFIED) {
-      //noinspection ResultOfMethodCallIgnored
-      designerAppFile.getParentFile().mkdirs();
-      try {
-        FileUtil.copy(getClass().getClassLoader().getResourceAsStream("descriptor.xml"),
-                      new FileOutputStream(new File(appDir, "descriptor.xml")));
-        FileUtil.copy(getClass().getClassLoader().getResourceAsStream("designer.swf"), new FileOutputStream(designerAppFile));
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
-    }
-
-    myProjectManagerListener = new MyProjectManagerListener();
-    ProjectManager.getInstance().addProjectManagerListener(myProjectManagerListener);
+  public boolean isDocumentOpening() {
+    return documentOpening;
   }
 
   public static FlexUIDesignerApplicationManager getInstance() {
@@ -87,57 +70,100 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   @Override
   public void dispose() {
-    if (server != null) {
-      try {
-        if (client != null) {
-          client.close();
-        }
-        server.close();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
+    closeClosable(client);
+    closeClosable(server);
 
-      if (adlProcess != null) {
-        adlProcess.destroy();
+    if (adlProcess != null) {
+      adlProcess.destroy();
+    }
+  }
+  
+  private void closeClosable(Closable closable) {
+    try {
+      if (closable != null) {
+        closable.close();
       }
+    }
+    catch (IOException e) {
+      LOG.error(e);
     }
   }
 
-  public void serverClosed() throws IOException {
-    client.close();
-    for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-      project.putUserData(PROJECT_INFO, null);
+  public void serverClosed() {
+    documentOpening = false;
+    ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).applicationClosed();
+    if (client != null) {
+      for (Project project : ProjectManager.getInstance().getOpenProjects()) {
+        project.putUserData(PROJECT_INFO, null);
+      }
+      closeClosable(client);
     }
   }
 
   public void openDocument(@NotNull final Project project, @NotNull final Module module, @NotNull final XmlFile psiFile, boolean debug) {
+    assert !documentOpening;
+    documentOpening = true;
+
     if (server == null || server.isClosed()) {
-      assert project.getUserData(PROJECT_INFO) == null;
+      LOG.assertTrue(project.getUserData(PROJECT_INFO) == null);
       run(project, module, psiFile, debug);
     }
     else {
-      try {
-        if (!client.isModuleRegistered(module)) {
-          initLibrarySets(project, module);
-        }
+      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            if (!client.isModuleRegistered(module)) {
+              initLibrarySets(project, module);
+            }
 
-        client.openDocument(module, psiFile);
-        client.flush();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
+            client.openDocument(module, psiFile);
+            client.flush();
+          }
+          catch (IOException e) {
+            LOG.error(e);
+          }
+          finally {
+            documentOpening = false;
+          }
+        }
+      });
     }
+  }
+  
+  public void updateDocumentFactory(final int factoryId, @NotNull final Module module, @NotNull final XmlFile psiFile) {
+    assert !documentOpening;
+    documentOpening = true;
+    if (server == null || server.isClosed()) {
+      return;
+    }
+    
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          assert client.isModuleRegistered(module);
+          client.updateDocumentFactory(factoryId, module, psiFile);
+          client.flush();
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
+        finally {
+          documentOpening = false;
+        }
+      }
+    });
+    
   }
 
   private void run(@NotNull final Project project, @NotNull final Module module, @NotNull XmlFile psiFile, boolean debug) {
     DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk();
     if (adlRunConfiguration == null) {
-      Messages.showMessageDialog(project, FlexUIDesignerBundle.message("error.suitable.fdk.not.found",
-                                                                       SystemInfo.isLinux ? FlexUIDesignerBundle
-                                                                         .message("error.suitable.fdk.not.found.linux") : ""),
-                                 CommonBundle.getErrorTitle(), Messages.getErrorIcon());
+      final String message = FlexUIDesignerBundle.message("error.suitable.fdk.not.found", SystemInfo.isLinux ? FlexUIDesignerBundle
+        .message("error.suitable.fdk.not.found.linux") : "");
+      Messages.showErrorDialog(project, message, FlexUIDesignerBundle.message(
+        debug ? "action.FlexUIDesigner.RunDesignView.text" : "action.FlexUIDesigner.DebugDesignView.text"));
       final ProjectJdksEditor editor = new ProjectJdksEditor(null, project, WindowManager.getInstance().suggestParentWindow(project));
       editor.show();
       if (editor.isOK()) {
@@ -145,22 +171,22 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       }
 
       if (adlRunConfiguration == null) {
+        // TODO discuss: show error balloon saying 'Cannot find suitable SDK...'?
         return;
       }
     }
 
-    final List<String> arguments = new ArrayList<String>();
-    final String fudHome = DebugPathManager.getFudHome();
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      arguments.add("-p");
-      arguments.add(fudHome + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
-    }
-    if (Boolean.valueOf(System.getProperty("fud.debug"))) {
+    if (DebugPathManager.IS_DEV) {
+      final String fudHome = DebugPathManager.getFudHome();
+      final List<String> arguments = new ArrayList<String>();
+      if (ApplicationManager.getApplication().isUnitTestMode()) {
+        arguments.add("-p");
+        arguments.add(fudHome + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
+      }
+      
       arguments.add("-cdd");
       arguments.add(fudHome + "/flex-injection/target");
-    }
-
-    if (!arguments.isEmpty()) {
+      
       adlRunConfiguration.arguments = arguments;
     }
 
@@ -169,14 +195,18 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       @Override
       public void run() {
         try {
-          adlProcess = DesignerApplicationUtil
-            .runAdl(runConfiguration, appDir.getPath() + "/descriptor.xml", server.listen(), new Consumer<Integer>() {
+          copyAppFiles();
+        
+          adlProcess = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/" + DESCRIPTOR_XML,
+                                                      server.listen(), new Consumer<Integer>() {
               @Override
               public void consume(Integer integer) {
                 adlProcess = null;
                 if (onAdlExit != null) {
                   ApplicationManager.getApplication().invokeLater(onAdlExit);
                 }
+                
+                documentOpening = false;
               }
             });
         }
@@ -187,6 +217,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
           catch (IOException ignored) {
           }
+        }
+        finally {
+          documentOpening = false;
         }
       }
     };
@@ -203,6 +236,39 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     else {
       task.run();
     }
+  }
+  
+  private void copyAppFiles() throws IOException {
+    if (projectManagerListener == null) {
+      projectManagerListener = new MyProjectManagerListener();
+      ProjectManager.getInstance().addProjectManagerListener(projectManagerListener);
+    }
+    
+    if (appDir == null) {
+      appDir = new File(PathManager.getSystemPath(), "flexUIDesigner");
+    }
+    
+    if (DebugPathManager.IS_DEV) {
+      return;
+    }
+
+    final ClassLoader classLoader = getClass().getClassLoader();
+    final URL appUrl = classLoader.getResource(DESIGNER_SWF);
+    LOG.assertTrue(appUrl != null);
+    final URLConnection appUrlConnection = appUrl.openConnection();
+    final long lastModified = appUrlConnection.getLastModified();
+    final File appFile = new File(appDir, DESIGNER_SWF);
+    if (appFile.lastModified() >= lastModified) {
+      return;
+    }
+
+    //noinspection ResultOfMethodCallIgnored
+    appDir.mkdirs();
+    IOUtil.saveStream(classLoader.getResourceAsStream(DESCRIPTOR_XML), new File(appDir, DESCRIPTOR_XML));
+    IOUtil.saveStream(appUrlConnection.getInputStream(), appFile);
+
+    //noinspection ResultOfMethodCallIgnored
+    appFile.setLastModified(lastModified);
   }
 
   private void initLibrarySets(@NotNull final Project project, @NotNull final Module module) throws IOException {
@@ -228,7 +294,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     if (projectInfo == null) {
       String librarySetId = project.getLocationHash();
       externalLibrarySet = new LibrarySet(librarySetId, ApplicationDomainCreationPolicy.ONE, new SwcDependenciesSorter(appDir)
-        .sort(libraryCollector.getExternalLibraries(), librarySetId, libraryCollector.getFlexSdkVersion(), ABC_INJECTION_LAST_MODIFIED));
+        .sort(libraryCollector.getExternalLibraries(), librarySetId, libraryCollector.getFlexSdkVersion()));
       projectInfo = new ProjectInfo(externalLibrarySet);
       project.putUserData(PROJECT_INFO, projectInfo);
 
@@ -242,9 +308,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       // if we have different version of the artifact
     }
 
-    ModuleInfo moduleInfo = new ModuleInfo(module);
+    final ModuleInfo moduleInfo = new ModuleInfo(module);
     stringWriter.startChange();
     ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter);
+
     client.registerModule(project, moduleInfo, new String[]{externalLibrarySet.getId()}, stringWriter);
   }
 
@@ -281,18 +348,28 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       catch (IOException e) {
         try {
           server.close();
-          serverClosed();
         }
         catch (IOException innerError) {
           LOG.error(innerError);
         }
+        finally {
+          serverClosed();
+        }
         LOG.error(e);
+      }
+      finally {
+        documentOpening = false;
       }
     }
   }
 
   public void reportProblem(final Project project, String message) {
-    final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, MessageType.ERROR, null).setShowCallout(false)
+    reportProblem(project, message, MessageType.ERROR);
+  }
+
+  @SuppressWarnings({"MethodMayBeStatic"})
+  public void reportProblem(final Project project, String message, MessageType messageType) {
+    final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, messageType, null).setShowCallout(false)
       .setHideOnAction(false).createBalloon();
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
@@ -338,7 +415,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
     @Override
     public void projectClosing(Project project) {
-
     }
   }
 }

@@ -4,7 +4,6 @@ import cocoa.DocumentWindow;
 import com.intellij.flex.uiDesigner.css.CssReader;
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.flex.DocumentContainer;
-import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.flex.ProjectView;
 import com.intellij.flex.uiDesigner.flex.StyleValueResolverImpl;
 
@@ -15,8 +14,6 @@ import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
 
 public class DocumentManagerImpl extends EventDispatcher implements DocumentManager {
-  private const pathMap:Dictionary = new Dictionary();
-
   private var libraryManager:LibraryManager;
 
   private var documentReader:DocumentReader;
@@ -40,22 +37,20 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   public function open(documentFactory:DocumentFactory):void {
-    var file:VirtualFile = documentFactory.file;
-    var document:Document = pathMap[file];
-    if (document == null) {
+    if (documentFactory.document == null) {
       libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory);
     }
     else {
-      doOpen(documentFactory, document);
+      doOpen(documentFactory, documentFactory.document);
       document.container.invalidateDisplayList();
     }
   }
 
   private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory):void {
     var document:Document = new Document(documentFactory);
-    createStyleManager(documentFactory.module);
+    createStyleManager(documentFactory.module, documentFactory);
     createSystemManager(document, documentFactory.module);
-    pathMap[documentFactory.file] = document;
+    documentFactory.document = document;
 
     doOpen(documentFactory, document);
   }
@@ -65,16 +60,16 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     document.uiComponent = object;
     document.systemManager.setUserDocument(DisplayObject(object));
 
-    documentReader.createDeferredMxContainersChildren(document.module.context.applicationDomain);
+    documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
     this.document = document;
   }
 
-  private function createStyleManager(module:Module):void {
+  private function createStyleManager(module:Module, documentFactory:DocumentFactory):void {
     if (module.context.styleManager == null) {
       createStyleManagerForContext(module.context);
     }
     if (!module.hasOwnStyleManager && module.localStyleHolders != null) {
-      createStyleManagerForModule(module);
+      createStyleManagerForModule(module, documentFactory);
     }
   }
   
@@ -108,14 +103,22 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     inheritingStyleMapList.fixed = true;
   }
   
-  private function createStyleManagerForModule(module:Module):void {
+  private function createStyleManagerForModule(module:Module, documentFactory:DocumentFactory):void {
     var styleManagerClass:Class = module.getClass("com.intellij.flex.uiDesigner.css.ChildStyleManager");
     module.styleManager = new styleManagerClass(module.context.styleManager);
     var cssReaderClass:Class = module.getClass("com.intellij.flex.uiDesigner.css.CssReaderImpl");
     var cssReader:CssReader = new cssReaderClass();
     cssReader.styleManager = module.styleManager;
-    var localStyleHolder:LocalStyleHolder = module.localStyleHolders[0];
-    cssReader.read(localStyleHolder.stylesheet.rulesets, localStyleHolder.file);
+    
+    var suitableLocalStyleHolder:LocalStyleHolder = module.localStyleHolders[0];
+    for each (var localStyleHolder:LocalStyleHolder in module.localStyleHolders) {
+      if (localStyleHolder.file.url == documentFactory.file.url) {
+        suitableLocalStyleHolder = localStyleHolder;
+        break;
+      }
+    }
+    
+    cssReader.read(suitableLocalStyleHolder.stylesheet.rulesets, suitableLocalStyleHolder.file);
     cssReader.finalizeRead();
   }
 

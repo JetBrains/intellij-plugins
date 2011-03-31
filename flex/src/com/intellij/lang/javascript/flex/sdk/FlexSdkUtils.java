@@ -53,7 +53,8 @@ public class FlexSdkUtils {
   static final String LOCALE_TOKEN = "{locale}";
   static final String ADL_RELATIVE_PATH = File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfo.isWindows ? ".exe" : "");
   static final String AIR_RUNTIME_RELATIVE_PATH =
-    File.separatorChar + "runtimes" + File.separatorChar + "air" + File.separatorChar + (SystemInfo.isWindows ? "win" : "mac");
+    File.separatorChar + "runtimes" + File.separatorChar + "air" + File.separatorChar +
+    (SystemInfo.isWindows ? "win" : (SystemInfo.isLinux ? "linux" : "mac"));
 
   private static final Pattern XMX_PATTERN = Pattern.compile("(.* )?-Xmx([0-9]+)[mM]( .*)?");
 
@@ -385,6 +386,20 @@ public class FlexSdkUtils {
       }
     }
     return sdk.getHomePath() + AIR_RUNTIME_RELATIVE_PATH;
+  }
+  
+  public static @Nullable String getAirRuntimePath(final @NotNull Sdk sdk) {
+    if (sdk.getSdkType() instanceof FlexmojosSdkType) {
+      final SdkAdditionalData data = sdk.getSdkAdditionalData();
+      if (data instanceof FlexmojosSdkAdditionalData) {
+        return ((FlexmojosSdkAdditionalData)data).getAirRuntimePath();
+      }
+    }
+    else {
+      return sdk.getHomePath() + AIR_RUNTIME_RELATIVE_PATH;
+    }
+    
+    return null;
   }
 
   /**

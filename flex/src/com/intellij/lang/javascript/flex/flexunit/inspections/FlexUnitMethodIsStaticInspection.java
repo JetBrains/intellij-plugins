@@ -34,7 +34,7 @@ public class FlexUnitMethodIsStaticInspection extends FlexUnitMethodInspectionBa
         final ASTNode node = method.getAttributeList().getNode().findChildByType(JSTokenTypes.STATIC_KEYWORD);
         assert node != null;
         holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testmethodisstatic.message"), ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                               new RemoveASTNodeFix(null, node) {
+                               new RemoveASTNodeFix("0.is.not.a.legal.name", node) {
                                  @NotNull
                                  @Override
                                  public String getText() {

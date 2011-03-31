@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="All tests" type="JUnit" factoryName="JUnit">
+    <extension name="coverage" enabled="false" merge="false" />
     <module name="idea-plugin" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -7,7 +8,7 @@
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="package" />
-    <option name="VM_PARAMETERS" value="-Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.debug=true -Dfud.test.debug=true -Dfud.complement=$PROJECT_DIR$/flex-injection/target -Dfud.adl=$ADL$ -Dfud.air=$AIR$" />
+    <option name="VM_PARAMETERS" value="-Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.test.debug=true -Dfud.complement=$PROJECT_DIR$/flex-injection/target -Dfud.adl=$ADL$ -Dfud.air=$AIR$" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ENV_VARIABLES" />
@@ -26,6 +27,9 @@
       <option name="DEBUG_PORT" value="62696" />
       <option name="TRANSPORT" value="0" />
       <option name="LOCAL" value="true" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="Profile ">
+      <option name="myExternalizedOptions" value="&#10;additional-options2=onexit\=snapshot&#10;" />
     </RunnerSettings>
     <RunnerSettings RunnerId="Run" />
     <ConfigurationWrapper RunnerId="Debug" />

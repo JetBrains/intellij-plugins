@@ -12,7 +12,7 @@ public final class FlexUIDesignerBundle {
   private static Reference<ResourceBundle> ourBundle;
 
   @NonNls
-  private static final String BUNDLE = "messages.FlexUIDesignerBundle";
+  public static final String BUNDLE = "messages.FlexUIDesignerBundle";
 
   private FlexUIDesignerBundle() {
   }

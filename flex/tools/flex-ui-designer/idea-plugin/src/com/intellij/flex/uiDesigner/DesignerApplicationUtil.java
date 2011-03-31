@@ -32,6 +32,7 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -41,61 +42,78 @@ import java.util.Set;
 final class DesignerApplicationUtil {
   private static final Logger LOG = Logger.getInstance(DesignerApplicationUtil.class.getName());
   
+  // todo move to FlexSdkUtils
+  private static final String AIR_RUNTIME_RELATIVE_PATH = File.separatorChar + "runtimes" + File.separatorChar + "air" +
+                                                          File.separatorChar +
+                                                          (SystemInfo.isWindows ? "win" : (SystemInfo.isLinux ? "linux" : "mac"));
+
   public static @Nullable AdlRunConfiguration findSuitableFlexSdk() {
     String adlPath;
-    String runtime = null;
     
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return new AdlRunConfiguration(System.getProperty("fud.adl"), System.getProperty("fud.air"));
     }
-    
+
     for (Sdk sdk : ProjectJdkTable.getInstance().getAllJdks()) {
       SdkType sdkType = sdk.getSdkType();
       if (!(sdkType instanceof IFlexSdkType)) {
         continue;
       }
-      
+
       String version = sdk.getVersionString();
       // at least 4.1
-      if (version == null || !(version.length() >= 3 && (version.charAt(0) > '4' || (version.charAt(0) == '4' && version.charAt(2) >= '1')))) {
+      if (version == null || !(version.length() >= 3 &&
+                               (version.charAt(0) > '4' || (version.charAt(0) == '4' && version.charAt(2) >= '1')))) {
         continue;
       }
-      
+
       adlPath = FlexSdkUtils.getAdlPath(sdk);
-      if (StringUtil.isEmpty(adlPath)) {
+      if (StringUtil.isEmpty(adlPath) || !new File(adlPath).exists()) {
         continue;
       }
-      
+
+      final String runtime;
       if (sdkType instanceof FlexmojosSdkType) {
         runtime = FlexSdkUtils.getAirRuntimePathForFlexmojosSdk(sdk);
-        if (StringUtil.isEmpty(runtime)) {
+        if (StringUtil.isEmpty(runtime) || !new File(runtime).isDirectory()) {
           // for Flex SDK empty runtime is legal, but not for flexmojos SDK
           continue;
         }
       }
-      
+      else {
+        runtime = null;
+        if (!new File(sdk.getHomePath() + AIR_RUNTIME_RELATIVE_PATH).exists()) {
+          continue;
+        }
+      }
+
       return new AdlRunConfiguration(adlPath, runtime);
     }
-    
+
     return null;
   }
-  
-  public static void runDebugger(final Module module, final AdlRunTask task) throws ExecutionException { 
+
+  public static void runDebugger(final Module module, final AdlRunTask task) throws ExecutionException {
     RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
-    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("FlexUIDesigner", FlexRunConfigurationType.getFactory());
-    final FlexRunnerParameters runnerParameters = ((FlexRunConfiguration) settings.getConfiguration()).getRunnerParameters();
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("FlexUIDesigner", 
+    FlexRunConfigurationType.getFactory());
+    final FlexRunnerParameters runnerParameters = ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters();
     runnerParameters.setRunMode(FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer);
     runnerParameters.setModuleName(module.getName());
-    
-    final CompileStepBeforeRun.MakeBeforeRunTask runTask = runManager.getBeforeRunTask(settings.getConfiguration(), CompileStepBeforeRun.ID);
+
+    final CompileStepBeforeRun.MakeBeforeRunTask runTask =
+      runManager.getBeforeRunTask(settings.getConfiguration(), CompileStepBeforeRun.ID);
     if (runTask != null) {
       runTask.setEnabled(false);
     }
 
-    // we need SILENTLY_DETACH_ON_CLOSE, but RunContentManagerImpl provides only ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, so, we override destroyProcess as detachProcess
+    // we need SILENTLY_DETACH_ON_CLOSE, but RunContentManagerImpl provides only ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, so, 
+    // we override destroyProcess as detachProcess
     final FlexBaseRunner runner = new FlexBaseRunner() {
       @Override
-      protected RunContentDescriptor doLaunch(final Project project, final Executor executor, RunProfileState state, RunContentDescriptor contentToReuse, final ExecutionEnvironment env, final Sdk flexSdk, final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
+      protected RunContentDescriptor doLaunch(final Project project, final Executor executor, RunProfileState state,
+                                              RunContentDescriptor contentToReuse, final ExecutionEnvironment env, final Sdk flexSdk,
+                                              final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
         return XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
           @NotNull
           public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
@@ -103,7 +121,7 @@ final class DesignerApplicationUtil {
               return new FlexDebugProcess(session, flexSdk, flexRunnerParameters) {
                 @Override
                 public void stop() {
-                  if (Boolean.valueOf(System.getProperty("fud.debug"))) {
+                  if (DebugPathManager.IS_DEV) {
                     super.stop();
                   }
                 }
@@ -113,7 +131,7 @@ final class DesignerApplicationUtil {
                   return new DefaultDebugProcessHandler() {
                     @Override
                     public void destroyProcess() {
-                      if (Boolean.valueOf(System.getProperty("fud.debug"))) {
+                      if (DebugPathManager.IS_DEV) {
                         super.destroyProcess();
                       }
                       else {
@@ -130,9 +148,10 @@ final class DesignerApplicationUtil {
           }
         }).getRunContentDescriptor();
       }
-      
+
       @Override
-      @NotNull public String getRunnerId() {
+      @NotNull
+      public String getRunnerId() {
         return "FlexDebugRunnerForDesignView";
       }
 
@@ -141,7 +160,7 @@ final class DesignerApplicationUtil {
         return true;
       }
     };
-    
+
     final DefaultDebugExecutor executor = new DefaultDebugExecutor();
     runner.execute(executor, new ExecutionEnvironment(runner, settings, module.getProject()), new ProgramRunner.Callback() {
       @Override
@@ -164,30 +183,33 @@ final class DesignerApplicationUtil {
       }
     });
   }
-  
-  public static Process runAdl(AdlRunConfiguration adlRunConfiguration, String descriptor, int port, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
+
+  public static Process runAdl(AdlRunConfiguration adlRunConfiguration, String descriptor, int port,
+                               final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     return runAdl(adlRunConfiguration, descriptor, port, null, adlExitHandler);
   }
-  
-  public static Process runAdl(AdlRunConfiguration runConfiguration, String descriptor, int port, @Nullable String root, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
+
+  public static Process runAdl(AdlRunConfiguration runConfiguration, String descriptor, int port, @Nullable String root,
+                               final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     ensureExecutable(runConfiguration.adlPath);
-    
+
     List<String> command = new ArrayList<String>();
     command.add(runConfiguration.adlPath);
     if (runConfiguration.runtime != null) {
       command.add("-runtime");
       command.add(runConfiguration.runtime);
-    }   
-    if (!runConfiguration.debug) {
-      // todo 6
-//      command.add("-nodebug");
     }
-    
+
+    // see http://confluence.jetbrains.net/display/IDEA/Flex+UI+Designer about nodebug
+    //if (!runConfiguration.debug) {
+    //  command.add("-nodebug");
+    //}
+
     command.add(descriptor);
     if (root != null) {
       command.add(root);
     }
-    
+
     command.add("--");
     command.add(String.valueOf(port));
     if (runConfiguration.arguments != null) {
@@ -211,8 +233,9 @@ final class DesignerApplicationUtil {
           try {
             exitCode = process.waitFor();
           }
-          catch (InterruptedException ignored) {}
-          
+          catch (InterruptedException ignored) {
+          }
+
           switch (exitCode) {
             case 0:
               break;
@@ -231,7 +254,7 @@ final class DesignerApplicationUtil {
           if (adlExitHandler != null) {
             adlExitHandler.consume(exitCode);
           }
-          
+
           try {
             reader.close();
           }
@@ -259,7 +282,8 @@ final class DesignerApplicationUtil {
           try {
             reader.close();
           }
-          catch (IOException ignored) {}
+          catch (IOException ignored) {
+          }
         }
       }
     });
@@ -268,6 +292,7 @@ final class DesignerApplicationUtil {
   }
 
   private static final Set<String> ourAlreadyMadeExecutable = new THashSet<String>();
+
   private static synchronized void ensureExecutable(String path) throws IOException {
     if (!SystemInfo.isWindows && !ourAlreadyMadeExecutable.contains(path)) {
       ourAlreadyMadeExecutable.add(path);
@@ -278,7 +303,7 @@ final class DesignerApplicationUtil {
   public static class AdlRunConfiguration {
     private final String adlPath;
     private final @Nullable String runtime;
-    
+
     public boolean debug;
     public @Nullable List<String> arguments;
 
@@ -287,7 +312,7 @@ final class DesignerApplicationUtil {
       this.runtime = runtime;
     }
   }
-  
+
   public static abstract class AdlRunTask implements Runnable {
     protected Runnable onAdlExit;
     protected final DesignerApplicationUtil.AdlRunConfiguration runConfiguration;
@@ -299,5 +324,5 @@ final class DesignerApplicationUtil {
     public void onAdlExit(Runnable runnable) {
       onAdlExit = runnable;
     }
-  }  
+  }
 }

@@ -17,7 +17,7 @@ class SkinProjectClassValueWriter extends AbstractPrimitiveValueWriter {
   }
 
   @Override
-  protected void write(PrimitiveAmfOutputStream out) {
-    writer.writeDocumentFactoryReference(reference);
+  protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) {
+    this.writer.writeDocumentFactoryReference(reference);
   }
 }

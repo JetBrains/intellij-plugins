@@ -33,7 +33,7 @@ setProperty("pluginFilter", [
             "less", "sass",
             "tasks", "tasks-core", "tasks-api", "jira-connector",
             "JavaScriptDebugger", "FirefoxConnector", "ChromeConnector",
-            "flex-plugin", "flex-ui-designer"
+            "flex-plugin", "flex-ui-designer", "flex-profiler"
             ])
 
 private List platformImplementationModules() {
@@ -188,6 +188,10 @@ target('default': "Build artifacts") {
   def flex_ui_designer_build_script = includeFile("$home/flex/tools/flex-ui-designer/build-gant/flex_ui_designer_build.gant")
   flex_ui_designer_build_script.execute("$home", "$paths.sandbox", "$home/out/flex-ide/classes/production/flex-ui-designer")
 
+  // script will do nothing if 'flex-profiler' plugin is not part of pluginFilter
+  def flex_profiler_build_script = includeFile("$home/flex/tools/profiler/build-gant/flex_profiler_build.gant")
+  flex_profiler_build_script.execute("$home", "$paths.sandbox", "$home/out/flex-ide/classes/production/flex-profiler")
+
   usedJars.add("$home/community/lib/looks-2.2.2.jar")
 
   // TODO searchable options should be built with all-modules classpath
@@ -195,7 +199,7 @@ target('default': "Build artifacts") {
 
   wireBuildDate(buildNumber)
   LayoutInfo layoutInfo = layoutFull(paths.distAll, usedJars)
-  checkLibLicensesAndGenerateTable("$paths.artifacts/third-party-libraries.txt", layoutInfo.usedModules);
+  generateLicensesTable("$paths.artifacts/third-party-libraries.txt", layoutInfo.usedModules);
 
   // TODO let's turn scrambling off for now
   //scramble()

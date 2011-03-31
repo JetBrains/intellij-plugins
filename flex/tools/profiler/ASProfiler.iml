@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="PLUGIN_MODULE" version="4">
-  <component name="DevKit.ModuleBuildProperties" url="file://$MODULE_DIR$/META-INF/plugin.xml" />
+  <component name="DevKit.ModuleBuildProperties" url="file://$MODULE_DIR$/src/META-INF/plugin.xml" />
   <component name="FacetManager">
     <facet type="flex" name="Profile_Agent_Flash_Player_9">
       <configuration flex_sdk="Flex SDK 4 (player 10.0)">

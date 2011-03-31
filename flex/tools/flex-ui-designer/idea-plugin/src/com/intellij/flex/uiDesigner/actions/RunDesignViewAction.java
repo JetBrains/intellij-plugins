@@ -50,8 +50,8 @@ public class RunDesignViewAction extends DumbAwareAction {
     return false;
   }
 
-  public void update(final AnActionEvent event) {
-    final boolean enabled = isEnabled(event.getDataContext());
+  public void update(final AnActionEvent event) {    
+    final boolean enabled = isEnabled(event.getDataContext()) &&!FlexUIDesignerApplicationManager.getInstance().isDocumentOpening();
     if (ActionPlaces.isPopupPlace(event.getPlace())) {
       event.getPresentation().setVisible(enabled);
     }

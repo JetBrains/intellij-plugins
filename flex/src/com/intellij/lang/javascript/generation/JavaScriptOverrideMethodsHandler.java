@@ -3,6 +3,7 @@
  */
 package com.intellij.lang.javascript.generation;
 
+import com.intellij.featureStatistics.ProductivityFeatureNames;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -28,5 +29,10 @@ public class JavaScriptOverrideMethodsHandler extends BaseJSGenerateHandler {
     for(JSFunction function:JSInheritanceUtil.collectFunctionsToOverride(clazz)) {
       candidates.add(new JSNamedElementNode(function));
     }
+  }
+
+  @Override
+  protected String getProductivityFeatureId() {
+    return ProductivityFeatureNames.CODEASSISTS_OVERRIDE_IMPLEMENT;
   }
 }

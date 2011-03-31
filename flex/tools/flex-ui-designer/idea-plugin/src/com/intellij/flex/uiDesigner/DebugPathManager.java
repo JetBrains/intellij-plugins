@@ -12,15 +12,21 @@ final class DebugPathManager {
   private static String ideaHome;
   private static String fudHome;
   
+  public final static boolean IS_DEV = System.getProperty("fud.dev") != null || isUnitTestMode();
+  
+  private static boolean isUnitTestMode() {
+    Application app = ApplicationManager.getApplication();
+    return app == null || app.isUnitTestMode();
+  }
+
   public static String getIdeaHome() {
     getFudHome();
     return ideaHome;
   }
-  
+
   static String getFudHome() {
     if (fudHome == null) {
-      Application app = ApplicationManager.getApplication();
-      if (app == null || app.isUnitTestMode()) {
+      if (isUnitTestMode()) {
         ideaHome = getRootByClass(PathManager.class);
         fudHome = ideaHome + "/flex/tools/flex-ui-designer";
       }
@@ -29,11 +35,13 @@ final class DebugPathManager {
         assert fudHome != null;
       }
     }
-    
+
     return fudHome;
   }
 
-  private static @NotNull String getRootByClass(Class aClass) {
+  private static
+  @NotNull
+  String getRootByClass(Class aClass) {
     String rootPath = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
     File root = new File(rootPath).getAbsoluteFile();
     do {
@@ -47,6 +55,6 @@ final class DebugPathManager {
 
   private static boolean isIdeaHome(final File root) {
     return new File(root, FileUtil.toSystemDependentName("bin/idea.properties")).exists() ||
-            new File(root, FileUtil.toSystemDependentName("community/bin/idea.properties")).exists();
+           new File(root, FileUtil.toSystemDependentName("community/bin/idea.properties")).exists();
   }
 }
