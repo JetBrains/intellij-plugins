@@ -27,6 +27,13 @@ public class StyleTest extends MxmlWriterTestBase {
   }
   
   @JSTestOptions({WithGumboSdk, WithFlexSdk})
+  @Flex(version="4.1", requireLocalStyleHolder=true)
+  // see mx.controls.ButtonBar line 528 in flex sdk 4.1
+  public void testMxButtonBar41WithLocalStyleHolder() throws Exception {
+    testFile("../mxml/Form.mxml", "StyleTag.mxml");
+  }
+  
+  @JSTestOptions({WithGumboSdk, WithFlexSdk})
   @Flex(version="4.5", requireLocalStyleHolder=true)
   public void testStyleTagWithSource() throws Exception {
     testFile("StyleTagWithSource.mxml", "externalCss.css");

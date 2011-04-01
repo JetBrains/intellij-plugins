@@ -5,6 +5,8 @@ import flash.system.ApplicationDomain;
 import flash.system.SecurityDomain;
 import flash.utils.Dictionary;
 
+import mx.core.FlexVersion;
+
 import mx.core.mx_internal;
 import mx.styles.CSSStyleDeclaration;
 import mx.styles.IStyleManager2;
@@ -253,6 +255,11 @@ public class AbstractStyleManager {
 
   //noinspection JSUnusedGlobalSymbols
   public function setStyleDeclaration(selector:String, styleDeclaration:CSSStyleDeclaration, update:Boolean):void {
+    // see StyleTest#testMxButtonBar41WithLocalStyleHolder
+    if (FlexVersion.compatibilityVersion == 0x04000000 && selector == "mx.controls.ButtonBar" && !(styleDeclaration is AbstractCssStyleDeclaration)) {
+      return;
+    }
+    
     _selectors[selector] = styleDeclaration;
 
     // We also index by subject to help match advanced selectors

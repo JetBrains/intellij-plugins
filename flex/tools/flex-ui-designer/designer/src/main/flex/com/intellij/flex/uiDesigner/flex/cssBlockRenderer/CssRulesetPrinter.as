@@ -12,8 +12,6 @@ import com.intellij.flex.uiDesigner.css.CssSelector;
 import com.intellij.flex.uiDesigner.flex.ClassReference;
 import com.intellij.flex.uiDesigner.flex.CssElementFormat;
 
-import flash.filesystem.File;
-
 import flash.text.engine.ContentElement;
 import flash.text.engine.GroupElement;
 import flash.text.engine.TextBlock;
