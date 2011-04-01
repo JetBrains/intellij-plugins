@@ -135,9 +135,9 @@ class PropertyProcessor {
   private int getSkinProjectClassDocumentFactoryId(XmlElementValueProvider valueProvider) {
     XmlElement injectedHost = valueProvider.getInjectedHost();
     if (injectedHost != null) {
-      PsiReference reference = injectedHost.getReference();
-      if (reference != null) {
-        PsiElement element = reference.resolve();
+      PsiReference[] references = injectedHost.getReferences();
+      if (references.length > 0) {
+        PsiElement element = references[references.length - 1].resolve();
         if (element instanceof JSClass) {
           PsiFile psiFile = element.getContainingFile();
           VirtualFile virtualFile = psiFile.getVirtualFile();

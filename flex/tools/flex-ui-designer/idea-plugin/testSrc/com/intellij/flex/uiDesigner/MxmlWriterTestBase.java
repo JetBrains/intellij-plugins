@@ -1,9 +1,12 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.codeInsight.EditorInfo;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -34,6 +37,14 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   protected List<Library> libraries;
   private LibrarySet librarySet;
   protected File appRootDir;
+  
+  protected String getRawProjectRoot() {
+    return useRawProjectRoot() ? getTestPath() : null;
+  }
+  
+  protected boolean useRawProjectRoot() {
+    return false;
+  }
 
   protected List<OriginalLibrary> getLibraries(Consumer<OriginalLibrary> initializer) {
     List<OriginalLibrary> libraries = new ArrayList<OriginalLibrary>(libs.size());
@@ -134,9 +145,53 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     
     testFiles(tester, true, originalVFiles);
   }
+
+  /**
+   * standard impl in CodeInsightestCase is not suitable for us — in case of not null rawProjectRoot (we need test file in package), 
+   * we don't need "FileUtil.copyDir(projectRoot, toDirIO);"
+   * also, skip openEditorsAndActivateLast
+   */
+  protected VirtualFile configureByFiles(final VirtualFile rawProjectRoot, final VirtualFile... vFiles) throws IOException {
+    myFile = null;
+    myEditor = null;
+
+    final File toDirIO = createTempDirectory();
+    final VirtualFile toDir = getVirtualFile(toDirIO);
+
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      public void run() {
+        try {
+          final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
+          final ModifiableRootModel rootModel = rootManager.getModifiableModel();
+          
+          boolean rootSpecified = rawProjectRoot != null;
+          int rawRootPathLength = rootSpecified ? rawProjectRoot.getPath().length() : -1;
+          // auxiliary files should be copied first
+          for (int i = vFiles.length - 1; i >= 0; i--) {
+            VirtualFile vFile = vFiles[i];
+            if (rootSpecified) {
+              copyFilesFillingEditorInfos(rawProjectRoot, toDir, vFile.getPath().substring(rawRootPathLength));
+            }
+            else {
+              copyFilesFillingEditorInfos(vFile.getParent(), toDir, vFile.getName());
+            }
+          }
+
+          rootModel.addContentEntry(toDir).addSourceFolder(toDir, false);
+          doCommitModel(rootModel);
+          sourceRootAdded(toDir);
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
+      }
+    });
+    
+    return toDir;
+  }
   
   protected void testFiles(final Tester tester, boolean onlyFirst, final VirtualFile... originalVFiles) throws Exception {
-    VirtualFile[] testVFiles = configureByFiles(null, originalVFiles).getChildren();
+    VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles).getChildren();
     collectLocalStyleHolders();
 
     for (int childrenLength = testVFiles.length, i = onlyFirst ? (childrenLength - 1) : 0; i < childrenLength; i++) {

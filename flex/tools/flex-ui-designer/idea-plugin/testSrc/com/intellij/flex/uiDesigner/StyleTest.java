@@ -14,6 +14,10 @@ public class StyleTest extends MxmlWriterTestBase {
     return "/css";
   }
   
+  protected boolean useRawProjectRoot() {
+    return getName().equals("testComponentWithCustomSkinInPackage");
+  }
+  
   @JSTestOptions({WithGumboSdk, WithFlexSdk})
   @Flex(version="4.5")
   public void testLibraryCssDefaults() throws Exception {
@@ -43,6 +47,12 @@ public class StyleTest extends MxmlWriterTestBase {
   @Flex(version="4.5")
   public void testComponentWithCustomSkin() throws Exception {
     testFile("ComponentWithCustomSkin.mxml", "CustomSkin.mxml");
+  }
+  
+  @JSTestOptions({WithGumboSdk, WithFlexSdk})
+  @Flex(version="4.5")
+  public void testComponentWithCustomSkinInPackage() throws Exception {
+    testFile("ComponentWithCustomSkinInPackage.mxml", "testPackage/CustomSkinInPackage.mxml");
   }
   
   @JSTestOptions({WithGumboSdk, WithFlexSdk})
