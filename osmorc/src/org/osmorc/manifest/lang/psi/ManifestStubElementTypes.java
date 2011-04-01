@@ -34,14 +34,20 @@ import com.intellij.psi.tree.IStubFileElementType;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestStubElementTypes {
-  public static final HeaderElementType HEADER = new HeaderElementType();
+    public static final HeaderElementType HEADER = new HeaderElementType();
     public static final SectionElementType SECTION = new SectionElementType();
     public static final HeaderValuePartElementType HEADER_VALUE_PART = new HeaderValuePartElementType();
     public static final AttributeElementType ATTRIBUTE = new AttributeElementType();
     public static final DirectiveElementType DIRECTIVE = new DirectiveElementType();
     public static final ClauseElementType CLAUSE = new ClauseElementType();
-  public static final IFileElementType FILE = new IStubFileElementType("ManifestFile", ManifestLanguage.INSTANCE);
 
-  private ManifestStubElementTypes() {
+    public static final IFileElementType FILE = new IStubFileElementType("ManifestFile", ManifestLanguage.INSTANCE) {
+        @Override
+        public int getStubVersion() {
+            return 1;
+        }
+    };
+
+    private ManifestStubElementTypes() {
     }
 }

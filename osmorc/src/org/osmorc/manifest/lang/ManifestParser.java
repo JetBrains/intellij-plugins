@@ -27,8 +27,8 @@ package org.osmorc.manifest.lang;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.TokenType;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.HeaderParser;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
@@ -44,31 +44,40 @@ class ManifestParser implements PsiParser {
 
     @NotNull
     public ASTNode parse(IElementType root, PsiBuilder builder) {
-        builder.setDebugMode(DEBUG_MODE);
+        builder.setDebugMode(DEBUG_MODE /*|| ApplicationManager.getApplication().isUnitTestMode()*/);
         final PsiBuilder.Marker rootMarker = builder.mark();
 
         while (!builder.eof()) {
             parse(builder);
         }
+        closeAll();
 
+        rootMarker.done(root);
+        return builder.getTreeBuilt();
+    }
+
+    private void closeAll() {
+        closeHeaderValuePart();
         closeAssignmentMarker();
         closeClause();
         closeHeader();
         closeSection();
-        rootMarker.done(root);
-        return builder.getTreeBuilt();
     }
 
     protected void parse(PsiBuilder builder) {
         if (sectionMarker == null) {
             sectionMarker = builder.mark();
         }
-        if (builder.getTokenType() == ManifestTokenType.HEADER_NAME) {
+
+        final IElementType tokenType = builder.getTokenType();
+        if (tokenType == ManifestTokenType.HEADER_NAME) {
             parseHeaderName(builder);
-        } else if (builder.getTokenType() == ManifestTokenType.SECTION_END) {
-            closeSection();
+        } else if (tokenType == ManifestTokenType.SECTION_END) {
+            closeAll();
             builder.advanceLexer();
-        } else if (builder.getTokenType() == ManifestTokenType.SIGNIFICANT_SPACE || builder.getTokenType() == TokenType.BAD_CHARACTER || builder.getTokenType() == ManifestTokenType.NEWLINE) {
+        } else if (tokenType == ManifestTokenType.SIGNIFICANT_SPACE ||
+                   tokenType == TokenType.BAD_CHARACTER ||
+                   tokenType == ManifestTokenType.NEWLINE) {
             builder.advanceLexer();
         } else if (currentHeaderIsSimpleHeader) {
             parseSimpleHeaderValue(builder);
@@ -246,5 +255,6 @@ class ManifestParser implements PsiParser {
     private PsiBuilder.Marker clauseMarker;
     private PsiBuilder.Marker assignmentMarker;
     private IElementType assignmentMarkerType;
+
     private static final boolean DEBUG_MODE = Boolean.getBoolean("Osmorc.debug");
 }
