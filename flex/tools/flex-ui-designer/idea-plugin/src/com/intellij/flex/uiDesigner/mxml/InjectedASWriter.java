@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.MessageType;
@@ -68,12 +69,12 @@ class InjectedASWriter {
       }
     }
     else {
-      return checkObject(host, name, isStyle, context);
+      return checkObject(host, name, isStyle, context, type);
     }
   }
 
   private ValueWriter checkArray(PsiElement host, String name, boolean isStyle, @Nullable Context context) {
-    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, InjectedPsiVisitor.ExpectedType.ARRAY);
+    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, JSCommonTypeNames.ARRAY_CLASS_NAME);
     InjectedLanguageUtil.enumerate(host, visitor);
     if (visitor.values != null) {
       bindingItems.add(new ArrayBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values, isStyle));
@@ -84,8 +85,8 @@ class InjectedASWriter {
     }
   }
 
-  private ValueWriter checkObject(PsiElement host, String name, boolean isStyle, @Nullable Context context) {
-    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, InjectedPsiVisitor.ExpectedType.OBJECT);
+  private ValueWriter checkObject(PsiElement host, String name, boolean isStyle, @Nullable Context context, @Nullable String type) {
+    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, type);
     InjectedLanguageUtil.enumerate(host, visitor);
     if (visitor.values != null) {
       bindingItems.add(new ObjectBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values[0],
@@ -168,7 +169,8 @@ class InjectedASWriter {
 
   private static class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor {
     private final PsiElement host;
-    private final ExpectedType expectedType;
+    
+    private final @Nullable String expectedType;
 
     private boolean visited;
 
@@ -176,11 +178,7 @@ class InjectedASWriter {
     private String[] values;
     private ValueWriter valueWriter;
 
-    enum ExpectedType {
-      OBJECT, ARRAY
-    }
-
-    public InjectedPsiVisitor(PsiElement host, ExpectedType expectedType) {
+    public InjectedPsiVisitor(PsiElement host, String expectedType) {
       this.host = host;
       this.expectedType = expectedType;
     }
@@ -208,7 +206,7 @@ class InjectedASWriter {
       JSExpression[] arguments = expression.getArgumentList().getArguments();
       if (arguments.length == 1) {
         if (arguments[0] instanceof JSArrayLiteralExpression) {
-          if (isUnexpected(ExpectedType.ARRAY)) {
+          if (isUnexpected(JSCommonTypeNames.ARRAY_CLASS_NAME)) {
             return;
           }
 
@@ -230,7 +228,17 @@ class InjectedASWriter {
           }
         }
         else if (arguments[0] instanceof JSReferenceExpression && arguments[0].getChildren().length == 0) {
-          values = new String[]{((JSReferenceExpression)arguments[0]).getReferencedName()};
+          // if propertyName="{CustomSkin}", so, write class, otherwise, it is binding
+          JSReferenceExpression referenceExpression = (JSReferenceExpression)arguments[0];
+          if (isExpectedObjectOrAnyType() || AsCommonTypeNames.CLASS.equals(expectedType)) {
+            PsiElement element = referenceExpression.resolve();
+            if (element instanceof JSClass) {
+              valueWriter = new ClassValueWriter(((JSClass)element));
+              return;
+            }
+          }
+
+          values = new String[]{referenceExpression.getReferencedName()};
         }
         else {
           logUnsupported();
@@ -255,10 +263,10 @@ class InjectedASWriter {
             JSFileReference fileReference = (JSFileReference)p.getReferences()[0];
             PsiFileSystemItem psiFile = fileReference.resolve();
             if (psiFile == null) {
-              reportProblem(fileReference.getUnresolvedMessagePattern());
+              reportError(fileReference.getUnresolvedMessagePattern());
             }
             else if (psiFile.isDirectory()) {
-              reportProblem(FlexUIDesignerBundle.message("error.embed.source.is.directory", fileReference.getText()));
+              reportError(FlexUIDesignerBundle.message("error.embed.source.is.directory", fileReference.getText()));
             }
             else {
               source = psiFile.getVirtualFile();
@@ -276,7 +284,7 @@ class InjectedASWriter {
         }
 
         if (source == null) {
-          reportProblem(FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
+          reportError(FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
           return BINDING;
         }
 
@@ -285,8 +293,7 @@ class InjectedASWriter {
         }
         else {
           if (symbol != null) {
-            FlexUIDesignerApplicationManager.getInstance().reportProblem(host.getProject(), FlexUIDesignerBundle
-              .message("error.embed.symbol.unneeded", host.getText()), MessageType.WARNING);
+            reportWarning(FlexUIDesignerBundle.message("error.embed.symbol.unneeded", host.getText()));
           }
 
           return new BitmapValueWriter(source, mimeType);
@@ -295,20 +302,28 @@ class InjectedASWriter {
 
       return null;
     }
+    
+    private void reportWarning(String message) {
+      FlexUIDesignerApplicationManager.getInstance().reportProblem(host.getProject(), message, MessageType.WARNING);
+    }
 
-    private void reportProblem(String message) {
+    private void reportError(String message) {
       FlexUIDesignerApplicationManager.getInstance().reportProblem(host.getProject(), message);
     }
 
-    private boolean isUnexpected(ExpectedType actualType) {
-      if (expectedType == actualType) {
+    private boolean isUnexpected(String actualType) {
+      if (actualType.equals(expectedType) || expectedType == null || isExpectedObjectOrAnyType()) {
         return false;
       }
       else {
-        LOG.error("Expected " + expectedType + ", but got " + host.getText());
+        reportError("Expected " + expectedType + ", but got " + host.getText());
         unsupported = true;
         return true;
       }
+    }
+
+    private boolean isExpectedObjectOrAnyType() {
+      return JSCommonTypeNames.OBJECT_CLASS_NAME.equals(expectedType) || JSCommonTypeNames.ANY_TYPE.equals(expectedType);
     }
 
     private void logUnsupported() {

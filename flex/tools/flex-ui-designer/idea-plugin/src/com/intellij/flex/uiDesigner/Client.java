@@ -222,7 +222,7 @@ public class Client implements Closable {
       
       JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
       assert jsClass != null;
-      out.writeAmfUtf(jsClass.getName());
+      out.writeAmfUtf(jsClass.getQualifiedName());
       out.writeShort(id);
 
       writeDocumentFactory(module, psiFile, virtualFile, documentFileManager);

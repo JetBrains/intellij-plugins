@@ -15,7 +15,7 @@ public class StyleTest extends MxmlWriterTestBase {
   }
   
   protected boolean useRawProjectRoot() {
-    return getName().equals("testComponentWithCustomSkinInPackage");
+    return getName().equals("testComponentWithCustomSkinInPackage") || getName().equals("testComponentWithCustomSkinAsBinding");
   }
   
   @JSTestOptions({WithGumboSdk, WithFlexSdk})
@@ -53,6 +53,12 @@ public class StyleTest extends MxmlWriterTestBase {
   @Flex(version="4.5")
   public void testComponentWithCustomSkinInPackage() throws Exception {
     testFile("ComponentWithCustomSkinInPackage.mxml", "testPackage/CustomSkinInPackage.mxml");
+  }
+  
+  @JSTestOptions({WithGumboSdk, WithFlexSdk})
+  @Flex(version="4.5")
+  public void testComponentWithCustomSkinAsBinding() throws Exception {
+    testFile("ComponentWithCustomSkinAsBinding.mxml", "testPackage/CustomSkinInPackage.mxml");
   }
   
   @JSTestOptions({WithGumboSdk, WithFlexSdk})

@@ -369,7 +369,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     reportProblem(project, message, MessageType.ERROR);
   }
 
-  @SuppressWarnings({"MethodMayBeStatic"})
   public void reportProblem(final Project project, String message, MessageType messageType) {
     final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, messageType, null).setShowCallout(false)
       .setHideOnAction(false).createBalloon();
