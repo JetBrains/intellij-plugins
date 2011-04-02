@@ -181,7 +181,7 @@
 
 
     <!-- JAVA -->
-    <annotator language="JAVA" implementationClass="com.intellij.struts2.annotators.ActionJavaAnnotator"/>
+    <codeInsight.lineMarkerProvider language="JAVA" implementationClass="com.intellij.struts2.annotators.ActionJavaAnnotator"/>
 
 
     <!-- JSP -->

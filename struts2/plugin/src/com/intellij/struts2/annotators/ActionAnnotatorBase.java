@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,23 +15,28 @@
 
 package com.intellij.struts2.annotators;
 
+import com.intellij.codeInsight.daemon.LineMarkerInfo;
+import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.ide.util.PsiElementListCellRenderer;
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiIdentifier;
+import com.intellij.psi.PsiModifier;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
+import com.intellij.util.xml.DomElement;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -40,7 +45,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-abstract class ActionAnnotatorBase implements Annotator {
+abstract class ActionAnnotatorBase implements LineMarkerProvider {
 
   private static DomElementListCellRenderer ACTION_RENDERER;
 
@@ -53,7 +58,24 @@ abstract class ActionAnnotatorBase implements Annotator {
   @Nullable
   protected abstract PsiClass getActionPsiClass(@NotNull final PsiElement psiElement);
 
-  public final void annotate(@NotNull final PsiElement element, @NotNull final AnnotationHolder annotationHolder) {
+  @Override
+  public LineMarkerInfo getLineMarkerInfo(final PsiElement psiElement) {
+    return null;
+  }
+
+  @Override
+  public void collectSlowLineMarkers(final List<PsiElement> psiElements,
+                                     final Collection<LineMarkerInfo> lineMarkerInfos) {
+    if (psiElements.isEmpty()) {
+      return;
+    }
+
+    for (final PsiElement element : psiElements) {
+      annotate(element, lineMarkerInfos);
+    }
+  }
+
+  private void annotate(@NotNull final PsiElement element, @NotNull final Collection<LineMarkerInfo> lineMarkerInfos) {
     if (!(element instanceof PsiIdentifier)) return;
     final PsiClass clazz = getActionPsiClass(element.getParent());
     if (clazz == null || clazz.getNameIdentifier() != element) {
@@ -83,11 +105,13 @@ abstract class ActionAnnotatorBase implements Annotator {
 
     final List<Action> actions = strutsModel.findActionsByClass(clazz);
     if (!actions.isEmpty()) {
-      NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR)
+      final NavigationGutterIconBuilder<DomElement> gutterIconBuilder =
+        NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR)
           .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
           .setTargets(actions).setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip"))
-          .setCellRenderer(getActionRenderer())
-          .install(annotationHolder, element);
+          .setCellRenderer(getActionRenderer());
+
+      lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(element));
     }
   }
 
