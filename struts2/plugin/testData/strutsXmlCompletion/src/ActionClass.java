@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-public class A2ctionClass {
+public class ActionClass {
 
   private String myField;
 
@@ -25,7 +25,6 @@ public class A2ctionClass {
     return null;
   }
 
-  public String getValidActionMethodNoUnderlyingField() {
     return null;
   }
 
