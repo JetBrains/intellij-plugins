@@ -81,7 +81,7 @@ public class MxmlWriter {
       out.write(0);
     }
 
-    injectedASWriter.write();
+    injectedASWriter.write(psiFile.getProject());
     writer.endMessage();
 
     List<XmlFile> unregisteredDocumentFactories = propertyProcessor.getUnregisteredDocumentFactories();
@@ -488,7 +488,7 @@ public class MxmlWriter {
 
       return valueWriter.write(out, writer, propertyProcessor.isStyle());
     }
-    catch (InvalidProperty e) {
+    catch (InvalidPropertyException e) {
       error = e.getMessage();
     }
     catch (NumberFormatException e) {

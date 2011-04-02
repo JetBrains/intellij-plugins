@@ -94,7 +94,7 @@ public class InjectedASTest extends BaseTestCase {
   }
   
   public function ArrayOfPrimitives():void {
-    assertThat(app, [{dataProvider: {source: ['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']}}]);
+    assertThat(app, [{dataProvider: {source: ['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']}, selectionColor: 0xffffffff, rollOverColor: 0xffffffff}, {dataProvider: null}]);
   }
 }
 }

@@ -33,8 +33,9 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
       assertEquals(0, problems.size());
     }
     else {
-      assertEquals(1, problems.size());
-      assertEquals("Invalid color name: invalidcolorname", problems.get(0));
+      assertEquals(2, problems.size());
+      assertEquals("Unresolved variable data", problems.get(0));
+      assertEquals("Invalid color name invalidcolorname", problems.get(1));
     }
   }
 

@@ -255,7 +255,7 @@ public final class BaseWriter {
     write(className);
   }
 
-  public void writeColor(String value, boolean isPrimitiveStyle) throws InvalidProperty {
+  public void writeColor(String value, boolean isPrimitiveStyle) throws InvalidPropertyException {
     out.write(AmfExtendedTypes.COLOR_STYLE_MARKER);
     if (value.charAt(0) == '#') {
       if (isPrimitiveStyle) {
@@ -282,7 +282,7 @@ public final class BaseWriter {
           return;
         }
         catch (NumberFormatException e) {
-          throw new InvalidProperty("error.invalid.color.name", colorName);
+          throw new InvalidPropertyException("error.invalid.color.name", colorName);
         }
       }
       

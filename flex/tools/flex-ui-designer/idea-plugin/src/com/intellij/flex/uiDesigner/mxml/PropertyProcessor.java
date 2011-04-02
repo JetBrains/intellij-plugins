@@ -207,7 +207,7 @@ class PropertyProcessor {
     }
 
     @Override
-    public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidProperty {
+    public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
       final String type = descriptor.getType();
       if (isStyle) {
         int flags = isSkinProjectClass ? SKIN_INT_PROJECT : 0;

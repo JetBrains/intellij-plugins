@@ -218,7 +218,7 @@ class StateWriter {
     try {
       type = valueWriter.write(writer.getOut(), writer, false);
     }
-    catch (InvalidProperty invalidProperty) {
+    catch (InvalidPropertyException invalidProperty) {
       // todo handle invalidProperty for state
       throw new UnsupportedOperationException("");
     }

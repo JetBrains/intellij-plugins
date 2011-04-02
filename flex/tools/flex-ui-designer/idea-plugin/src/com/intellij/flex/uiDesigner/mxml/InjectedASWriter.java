@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -105,10 +106,10 @@ class InjectedASWriter {
     writer.getBlockOut().endRange(declarationsRange);
   }
 
-  public void write() {
+  public void write(Project project) {
     PrimitiveAmfOutputStream out = writer.getOut();
     writeDeclarations();
-    writeBinding(out);
+    writeBinding(out, project);
 
     reset();
   }
@@ -123,19 +124,44 @@ class InjectedASWriter {
     }
   }
 
-  private void writeBinding(PrimitiveAmfOutputStream out) {
-    out.write(bindingItems.size());
+  private void writeBinding(PrimitiveAmfOutputStream out, Project project) {
     if (bindingItems.isEmpty()) {
+      out.writeShort(0);
       return;
     }
-
+    
+    final int bindingSizePosition = out.getBlockOut().allocate(2);
+    int size = bindingItems.size();
+    
     for (Binding binding : bindingItems) {
-      binding.write(out);
+      int beforePosition = out.size();
+      String error;
+      try {
+        binding.write(out);
+        continue;
+      }
+      catch (InvalidPropertyException e) {
+        error = e.getMessage();
+      }
+      catch (RuntimeException e) {
+        error = e.getMessage();
+        LOG.error(e);
+      }
+      
+      size--;
+      writer.getBlockOut().setPosition(beforePosition);
+      FlexUIDesignerApplicationManager.getInstance().reportProblem(project, error);
     }
+
+    out.putShort(size, bindingSizePosition);
   }
 
-  private void writeObjectReference(PrimitiveAmfOutputStream out, String id) {
+  private void writeObjectReference(PrimitiveAmfOutputStream out, String id) throws InvalidPropertyException {
     ObjectReference reference = idReferenceMap.get(id);
+    if (reference == null) {
+      throw new InvalidPropertyException("error.unresolved.variable", id);
+    }
+    
     DeferredInstanceFromObjectReference deferredReference = reference.deferredReference;
     if (deferredReference == null || deferredReference.isWritten()) {
       out.writeUInt29(reference.id << 1);
@@ -387,7 +413,7 @@ class InjectedASWriter {
 
     protected abstract int getType();
 
-    void write(PrimitiveAmfOutputStream out) {
+    void write(PrimitiveAmfOutputStream out) throws InvalidPropertyException {
       out.writeUInt29(target);
       out.writeUInt29(propertyName);
       out.write(getType());
@@ -404,7 +430,7 @@ class InjectedASWriter {
     }
 
     @Override
-    void write(PrimitiveAmfOutputStream out) {
+    void write(PrimitiveAmfOutputStream out) throws InvalidPropertyException {
       super.write(out);
 
       out.write(values.length);
@@ -428,7 +454,7 @@ class InjectedASWriter {
     }
 
     @Override
-    void write(PrimitiveAmfOutputStream out) {
+    void write(PrimitiveAmfOutputStream out) throws InvalidPropertyException {
       super.write(out);
 
       writeObjectReference(out, value);
