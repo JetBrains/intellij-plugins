@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.codeInsight.EditorInfo;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.application.ApplicationManager;
@@ -10,7 +9,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
@@ -126,25 +124,6 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   private void registerModule(ModuleInfo moduleInfo, StringRegistry.StringWriter stringWriter) throws IOException {
     client.registerModule(myProject, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
   }
-  
-  protected void testFiles(final VirtualFile... originalVFiles) throws Exception {
-    testFiles(new MyTester(), false, originalVFiles);
-  }
-  
-  protected void testFile(String... originalVFilePath) throws Exception {
-    testFile(new MyTester(), originalVFilePath);
-  }
-  
-  protected void testFile(Tester tester, String... originalPaths) throws Exception {
-    VirtualFile[] originalVFiles = new VirtualFile[originalPaths.length];
-    for (int i = 0, originalPathsLength = originalPaths.length; i < originalPathsLength; i++) {
-      VirtualFile originalVFile = LocalFileSystem.getInstance().findFileByPath(getTestPath() + "/" + originalPaths[i]);
-      assert originalVFile != null;
-      originalVFiles[i] = originalVFile;
-    }
-    
-    testFiles(tester, true, originalVFiles);
-  }
 
   /**
    * standard impl in CodeInsightestCase is not suitable for us — in case of not null rawProjectRoot (we need test file in package), 
@@ -190,11 +169,42 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     return toDir;
   }
   
-  protected void testFiles(final Tester tester, boolean onlyFirst, final VirtualFile... originalVFiles) throws Exception {
+  protected void testFiles(final VirtualFile... originalVFiles) throws Exception {
+    testFiles(new MyTester(), originalVFiles.length, originalVFiles);
+  }
+  
+  protected void testFiles(String[] files, String... auxiliaryFiles) throws Exception {
+    VirtualFile[] originalVFiles = new VirtualFile[files.length + auxiliaryFiles.length];
+    int i = 0;
+    for (String file : files) {
+      originalVFiles[i++] = getVFile(getTestPath() + "/" + file);
+    }
+    int auxiliaryBorder = i;
+    for (String file : auxiliaryFiles) {
+      originalVFiles[i++] = getVFile(getTestPath() + "/" + file);
+    }
+    
+    testFiles(new MyTester(), auxiliaryBorder, originalVFiles);
+  }
+  
+  protected void testFile(String... originalVFilePath) throws Exception {
+    testFile(new MyTester(), originalVFilePath);
+  }
+  
+  protected void testFile(Tester tester, String... originalPaths) throws Exception {
+    VirtualFile[] originalVFiles = new VirtualFile[originalPaths.length];
+    for (int i = 0, originalPathsLength = originalPaths.length; i < originalPathsLength; i++) {
+      originalVFiles[i] = getVFile(getTestPath() + "/" + originalPaths[i]);
+    }
+    
+    testFiles(tester, 1, originalVFiles);
+  }
+  
+  protected void testFiles(final Tester tester, final int auxiliaryBorder, final VirtualFile... originalVFiles) throws Exception {
     VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles).getChildren();
     collectLocalStyleHolders();
 
-    for (int childrenLength = testVFiles.length, i = onlyFirst ? (childrenLength - 1) : 0; i < childrenLength; i++) {
+    for (int childrenLength = testVFiles.length, i = childrenLength - auxiliaryBorder; i < childrenLength; i++) {
       final VirtualFile file = testVFiles[i];
       if (!file.getName().endsWith(".mxml")) {
         continue;

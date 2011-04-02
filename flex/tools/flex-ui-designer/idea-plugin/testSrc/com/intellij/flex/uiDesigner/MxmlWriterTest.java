@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Flex(version="4.5")
 public class MxmlWriterTest extends MxmlWriterTestBase {
-    @Flex(version="4.5")
   public void test45() throws Exception {
     changeServiceImplementation(FlexUIDesignerApplicationManager.class, MyFlexUIDesignerApplicationManager.class);
     
@@ -33,7 +33,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     assertEquals(problems.get(0), "Invalid color name: invalidcolorname");
   }
 
-    @Flex(version="4.1")
+  @Flex(version="4.1")
   public void test41() throws Exception {
     testFile("states/UnusedStates.mxml");
   }

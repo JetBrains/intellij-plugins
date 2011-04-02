@@ -2,4 +2,9 @@
   <fx:Metadata>
     [HostComponent("spark.components.BorderContainer")]
   </fx:Metadata>
+
+  <states>
+    <State name="normal"/>
+    <State name="disabled"/>
+  </states>
 </Skin>

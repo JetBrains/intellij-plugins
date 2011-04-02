@@ -12,6 +12,7 @@ import org.flyti.roboflest.Roboflest.Assert;
 
 import java.io.File;
 
+@Flex(version="4.5")
 public class UITest extends MxmlWriterTestBase {
   private Roboflest roboflest = new Roboflest();
   
@@ -27,7 +28,6 @@ public class UITest extends MxmlWriterTestBase {
     sdkModificator.addRoot(LocalFileSystem.getInstance().findFileByPath(flexSdkRootPath + "/src"), OrderRootType.SOURCES);
   }
   
-  @Flex(version="4.5")
   public void testStyleNavigationToExternal() throws Exception {
     testFile(new Tester() {
       @Override
@@ -55,7 +55,6 @@ public class UITest extends MxmlWriterTestBase {
     }, "Form.mxml");
   }
   
-  @Flex(version="4.5")
   public void testStyleNavigationToSkinClass() throws Exception {
     testFile(new Tester() {
       @Override

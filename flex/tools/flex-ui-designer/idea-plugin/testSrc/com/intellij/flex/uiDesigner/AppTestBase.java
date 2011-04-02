@@ -157,7 +157,13 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   
   protected String getFlexVersion() {
     try {
-      return getClass().getMethod(getName()).getAnnotation(Flex.class).version();
+      Flex annotation = getClass().getMethod(getName()).getAnnotation(Flex.class);
+      if (annotation == null || annotation.version().isEmpty()) {
+        annotation = getClass().getAnnotation(Flex.class);
+      }
+      
+      assert annotation != null && !annotation.version().isEmpty();
+      return annotation.version();
     }
     catch (NoSuchMethodException e) {
       throw new AssertionFailedError(e.getMessage());
@@ -166,7 +172,8 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   
   protected boolean isRequireLocalStyleHolder() {
     try {
-      return getClass().getMethod(getName()).getAnnotation(Flex.class).requireLocalStyleHolder();
+      Flex annotation = getClass().getMethod(getName()).getAnnotation(Flex.class);
+      return annotation != null && annotation.requireLocalStyleHolder();
     }
     catch (NoSuchMethodException e) {
       throw new AssertionFailedError(e.getMessage());
