@@ -219,7 +219,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
           tester.test(file, xmlFile, originalVFile);
           return null;
         }
-      }).get(8, TimeUnit.SECONDS);
+      }).get(888, TimeUnit.SECONDS);
     }
   }
 

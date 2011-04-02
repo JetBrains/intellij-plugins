@@ -27,6 +27,7 @@ public class InjectedASTest extends BaseTestCase {
       ExplicitRadioButtonGroup();
       OneElementAsArray();
       TwoWayBinding();
+      ArrayOfPrimitives();
     }
   }
   
@@ -36,14 +37,14 @@ public class InjectedASTest extends BaseTestCase {
   
   public function Transitions():void {
     assertThat(app.explicitWidth, 400);
+    assertThat(app.transitions, [{effect: {targets: [{title: "One"}, {title: "Two"}, {title: "Three"}]}}]);
   }
 
   [Test(async)]
   public function ArrayLiteralOfReferences():void {
     var effectManagerClass:Class = getClass("mx.effects.EffectManager");
-    assertThat(effectManagerClass[getMxInternal("createEffectForType")](app, MouseEvent.MOUSE_DOWN), {alphaFrom: 1, repeatBehavior: "reverse"});
+    assertThat(effectManagerClass[getMxInternal("createEffectForType")](app, MouseEvent.MOUSE_DOWN), {alphaFrom: 1, repeatBehavior: "reverse", targets: [app]});
     assertThat(getClass("mx.core.FlexGlobals").topLevelApplication, app);
-    
     
     // 9
     LayoutManager.getInstance().validateNow();
@@ -90,6 +91,10 @@ public class InjectedASTest extends BaseTestCase {
   
   public function TwoWayBinding():void {
     // todo
+  }
+  
+  public function ArrayOfPrimitives():void {
+    assertThat(app, [{dataProvider: {source: ['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']}}]);
   }
 }
 }

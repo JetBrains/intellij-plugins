@@ -20,10 +20,6 @@
       <CheckBox label="Check mef"/>
 
       <mx:ColorPicker selectedColor="0xffffff"/>
-      
-      <List selectionColor="0xffffffff" rollOverColor="4294967295">
-        <ArrayCollection source="{['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']}"/>
-      </List>
     </VGroup>
     <VGroup>
       <ComboBox/>

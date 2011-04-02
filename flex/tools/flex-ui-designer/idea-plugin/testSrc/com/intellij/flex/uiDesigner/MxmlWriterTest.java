@@ -27,10 +27,15 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     vFiles[files.length + 2] = getVFile(getTestPath() + "/anim.swf");
 
     testFiles(vFiles);
-
+    
     final List<String> problems = ((MyFlexUIDesignerApplicationManager)FlexUIDesignerApplicationManager.getInstance()).problems;
-    assertEquals(problems.size(), 1);
-    assertEquals(problems.get(0), "Invalid color name: invalidcolorname");
+    if (testFile != null) {
+      assertEquals(0, problems.size());
+    }
+    else {
+      assertEquals(1, problems.size());
+      assertEquals("Invalid color name: invalidcolorname", problems.get(0));
+    }
   }
 
   @Flex(version="4.1")

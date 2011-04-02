@@ -37,7 +37,7 @@ class InjectedASWriter {
 
   private ByteRange declarationsRange;
 
-  final static ValueWriter BINDING = new ValueWriter() {
+  final static ValueWriter IGNORE = new ValueWriter() {
     @Override
     public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
       throw new UnsupportedOperationException();
@@ -56,13 +56,14 @@ class InjectedASWriter {
     }
 
     if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type)) {
-      if (checkArray(host, name, isStyle, context) == BINDING) {
-        return BINDING;
+      ValueWriter valueWriter = checkArray(host, name, isStyle, context);
+      if (valueWriter != null) {
+        return valueWriter;
       }
       else if (valueProvider instanceof XmlAttributeValueProvider) {
         // http://youtrack.jetbrains.net/issue/IDEA-64721
         LOG.warn("unsupported injected AS: " + host.getText());
-        return BINDING;
+        return IGNORE;
       }
       else {
         return null;
@@ -78,10 +79,10 @@ class InjectedASWriter {
     InjectedLanguageUtil.enumerate(host, visitor);
     if (visitor.values != null) {
       bindingItems.add(new ArrayBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values, isStyle));
-      return BINDING;
+      return IGNORE;
     }
     else {
-      return visitor.isUnsupported();
+      return visitor.getValueWriter();
     }
   }
 
@@ -91,13 +92,10 @@ class InjectedASWriter {
     if (visitor.values != null) {
       bindingItems.add(new ObjectBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values[0],
                                          isStyle));
-      return BINDING;
-    }
-    else if (visitor.valueWriter != null) {
-      return visitor.valueWriter;
+      return IGNORE;
     }
     else {
-      return visitor.isUnsupported();
+      return visitor.getValueWriter();
     }
   }
 
@@ -182,9 +180,9 @@ class InjectedASWriter {
       this.host = host;
       this.expectedType = expectedType;
     }
-
-    public ValueWriter isUnsupported() {
-      return unsupported ? BINDING : null;
+    
+    public ValueWriter getValueWriter() {
+      return unsupported ? IGNORE : valueWriter;
     }
 
     public void visit(@NotNull PsiFile injectedPsi, @NotNull List<PsiLanguageInjectionHost.Shred> places) {
@@ -211,20 +209,49 @@ class InjectedASWriter {
           }
 
           JSExpression[] expressions = ((JSArrayLiteralExpression)arguments[0]).getExpressions();
+          if (expressions.length == 0) {
+            valueWriter = IGNORE;
+            return;
+          }
+          
+          // todo mixed is not supported
+          int arrayOfPrimitives = -1;
+          for (JSExpression itemExpression : expressions) {
+            if (itemExpression instanceof JSReferenceExpression) {
+              // must not have children
+              if (itemExpression.getChildren().length == 0) {
+                if (arrayOfPrimitives == 0) {
+                  continue;
+                }
+                else if (arrayOfPrimitives == -1) {
+                  arrayOfPrimitives = 0;
+                  continue;
+                }
+              }
+            }
+            else if (itemExpression instanceof JSLiteralExpression) {
+              if (arrayOfPrimitives == 1) {
+                continue;
+              }
+              else if (arrayOfPrimitives == -1) {
+                arrayOfPrimitives = 1;
+                continue;
+              }
+            }
 
-          values = new String[expressions.length];
-          for (int i = 0, expressionsLength = expressions.length; i < expressionsLength; i++) {
-            JSExpression itemExpression = expressions[i];
-            if (itemExpression instanceof JSReferenceExpression && itemExpression.getChildren().length == 0) {
-              values[i] = ((JSReferenceExpression)itemExpression).getReferencedName();
+            warnUnsupported(expression, itemExpression);
+            return;
+          }
+          
+          assert arrayOfPrimitives != -1;
+          if (arrayOfPrimitives == 0) {
+            values = new String[expressions.length];
+            for (int i = 0, expressionsLength = expressions.length; i < expressionsLength; i++) {
+              values[i] = ((JSReferenceExpression)expressions[i]).getReferencedName();
             }
-            else {
-              LOG.warn("unsupported injected AS: " + itemExpression.getText() + " in outer expression " + expression.getText() +
-                       " (mxml: " + host.getText() + ")");
-              values = null;
-              unsupported = true;
-              return;
-            }
+          }
+          else {
+            valueWriter = new InjectedArrayOfPrimitivesWriter(expressions);
           }
         }
         else if (arguments[0] instanceof JSReferenceExpression && arguments[0].getChildren().length == 0) {
@@ -247,6 +274,12 @@ class InjectedASWriter {
       else {
         logUnsupported();
       }
+    }
+
+    private void warnUnsupported(JSCallExpression expression, JSExpression itemExpression) {
+      unsupported = true;
+      LOG.warn("unsupported injected AS: " + itemExpression.getText() + " in outer expression " + expression.getText() +
+               " (mxml: " + host.getText() + ")");
     }
 
     private ValueWriter checkEmbed(JSFile jsFile) {
@@ -273,7 +306,7 @@ class InjectedASWriter {
               continue;
             }
 
-            return BINDING;
+            return IGNORE;
           }
           else if (name.equals("mimeType")) {
             mimeType = p.getSimpleValue();
@@ -285,7 +318,7 @@ class InjectedASWriter {
 
         if (source == null) {
           reportError(FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
-          return BINDING;
+          return IGNORE;
         }
 
         if (mimeType == null ? source.getName().endsWith(".swf") : mimeType.equals("application/x-shockwave-flash")) {

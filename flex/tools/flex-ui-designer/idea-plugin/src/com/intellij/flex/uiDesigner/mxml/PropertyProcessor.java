@@ -106,7 +106,7 @@ class PropertyProcessor {
     }
 
     ValueWriter valueWriter = injectedASWriter.processProperty(valueProvider, name, type, isStyle, context);
-    if (valueWriter == InjectedASWriter.BINDING) {
+    if (valueWriter == InjectedASWriter.IGNORE) {
       return null;
     }
     else if (valueWriter != null) {
