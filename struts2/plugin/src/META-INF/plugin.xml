@@ -127,6 +127,7 @@
 
     <gotoSymbolContributor implementation="com.intellij.struts2.gotosymbol.GoToActionSymbolProvider"/>
     <gotoSymbolContributor implementation="com.intellij.struts2.gotosymbol.GoToPackageSymbolProvider"/>
+    <gotoRelatedProvider implementation="com.intellij.struts2.gotosymbol.GotoRelatedActionProvider"/>
 
     <xmlStructureViewBuilderProvider
         implementation="com.intellij.struts2.structure.StrutsStructureViewBuilderProvider"/>
