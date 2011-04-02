@@ -9,32 +9,43 @@
     <VerticalLayout/>
   </layout>
 
-  <Button label="Hello"/>
-  <Button label="Go">
-    <fontSize>30</fontSize>
-  </Button>
-  <ToggleButton label="Toggle me"/>
+  <HGroup gap="33">
+    <VGroup>
+      <Button label="Hello"/>
+      <Button label="Go">
+        <fontSize>30</fontSize>
+      </Button>
+      <ToggleButton label="Toggle me"/>
 
-  <CheckBox label="Check me"/>
+      <CheckBox label="Check mef"/>
 
-  <ComboBox/>
+      <mx:ColorPicker selectedColor="0xffffff"/>
+      
+      <List selectionColor="0xffffffff" rollOverColor="4294967295">
+        <ArrayCollection source="{['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']}"/>
+      </List>
+    </VGroup>
+    <VGroup>
+      <ComboBox/>
 
-  <ComboBox>
-    <ArrayCollection>
-      <fx:String>Flash</fx:String>
-      <fx:String>Director</fx:String>
-      <fx:String>Dreamweaver</fx:String>
-      <fx:String>ColdFusion</fx:String>
-      <fx:Number>23424</fx:Number>
-      <fx:Boolean>false</fx:Boolean>
-    </ArrayCollection>
-  </ComboBox>
+      <ComboBox>
+        <ArrayCollection>
+          <fx:String>RubyMine</fx:String>
+          <fx:String>PhpStorm</fx:String>
+          <fx:String>WebStorm</fx:String>
+          <fx:String>PyCharm</fx:String>
+          <fx:Number>23424</fx:Number>
+          <fx:Boolean>false</fx:Boolean>
+        </ArrayCollection>
+      </ComboBox>
+    </VGroup>
+  </HGroup>
 
   <ButtonBar>
     <ArrayCollection>
-      <fx:String>Flash</fx:String>
-      <fx:String>Director</fx:String>
-      <fx:String>Dreamweaver</fx:String>
+      <fx:String>MPS</fx:String>
+      <fx:String>dotTrace</fx:String>
+      <fx:String>dotCover</fx:String>
       <fx:String>ColdFusion</fx:String>
       <fx:Number>23424</fx:Number>
       <fx:Boolean>false</fx:Boolean>
@@ -52,11 +63,11 @@
   
   <HGroup>
     <Label text="Label 3" color="#ccaacc"/>
-    <TextInput width="100"/>
+    <TextInput width="#64"/>
   </HGroup>
   <HGroup>
     <Label text="Label 4" color="0x999900"/>
-    <TextInput width="100"/>
+    <TextInput width="0x64"/>
   </HGroup>
   <HGroup>
     <Label text="Label 5" color="0xaa00ee"/>
