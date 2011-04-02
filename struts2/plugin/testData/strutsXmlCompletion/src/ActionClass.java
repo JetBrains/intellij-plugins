@@ -25,11 +25,12 @@ public class ActionClass {
     return null;
   }
 
+  public String getValidActionMethodNoUnderlyingField() {
     return null;
   }
 
   public com.opensymphony.xwork2.Result validActionMethodResult() {
-   return null;
+    return null;
   }
 
   // invalid action-method
