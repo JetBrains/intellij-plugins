@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,10 +15,10 @@
 
 package com.intellij.struts2.annotators;
 
+import com.intellij.codeInsight.daemon.LineMarkerInfo;
+import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.jsp.impl.TldDescriptor;
-import com.intellij.lang.annotation.AnnotationHolder;
-import com.intellij.lang.annotation.Annotator;
 import com.intellij.lang.jsp.JspFileViewProvider;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Comparing;
@@ -54,7 +54,7 @@ import java.util.Set;
  *
  * @author Yann C&eacute;bron
  */
-public class JspActionAnnotator implements Annotator {
+public class JspActionAnnotator implements LineMarkerProvider {
 
   @NonNls
   private static final String ACTION_ATTRIBUTE_NAME = "action";
@@ -68,17 +68,35 @@ public class JspActionAnnotator implements Annotator {
     }
   };
 
-  public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder annotationHolder) {
-    if (!(psiElement instanceof XmlTag)) {
+  @Override
+  public LineMarkerInfo getLineMarkerInfo(final PsiElement psiElement) {
+    return null;
+  }
+
+  @Override
+  public void collectSlowLineMarkers(final List<PsiElement> psiElements,
+                                     final Collection<LineMarkerInfo> lineMarkerInfos) {
+    if (psiElements.isEmpty()) {
+      return;
+    }
+
+    for (final PsiElement element : psiElements) {
+      annotate(element, lineMarkerInfos);
+    }
+  }
+
+  private void annotate(@NotNull final PsiElement element,
+                        @NotNull final Collection<LineMarkerInfo> lineMarkerInfos) {
+    if (!(element instanceof XmlTag)) {
       return;
     }
 
     // short exit when Struts 2 facet not present
-    if (StrutsFacet.getInstance(psiElement) == null) {
+    if (StrutsFacet.getInstance(element) == null) {
       return;
     }
 
-    final XmlTag xmlTag = (XmlTag) psiElement;
+    final XmlTag xmlTag = (XmlTag) element;
 
     // any of our tags?
     final String tagName = xmlTag.getLocalName();
@@ -101,8 +119,8 @@ public class JspActionAnnotator implements Annotator {
       return;
     }
 
-    final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject())
-      .getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
+    final StrutsModel strutsModel = StrutsManager.getInstance(element.getProject())
+      .getCombinedModel(ModuleUtil.findModuleForPsiElement(element));
     if (strutsModel == null) {
       return;
     }
@@ -114,7 +132,8 @@ public class JspActionAnnotator implements Annotator {
     }
 
     // resolve to action method should be exactly 1
-    NavigationGutterIconBuilder.create(StrutsIcons.ACTION_CLASS_ICON).
+    final NavigationGutterIconBuilder<PsiElement> gutterIconBuilder =
+      NavigationGutterIconBuilder.create(StrutsIcons.ACTION_CLASS_ICON).
       setTooltipText(StrutsBundle.message("annotators.jsp.goto.action.method")).
       setEmptyPopupText(StrutsBundle.message("annotators.jsp.goto.action.method.notfound")).
       setTargets(new NotNullLazyValue<Collection<? extends PsiElement>>() {
@@ -122,7 +141,9 @@ public class JspActionAnnotator implements Annotator {
         protected Collection<PsiMethod> compute() {
           return ContainerUtil.mapNotNull(actions, ACTION_METHOD_FUNCTION);
         }
-      }).install(annotationHolder, xmlTag);
+      });
+
+    lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(xmlTag));
   }
 
   // TODO cache in JspFile's UserData?
