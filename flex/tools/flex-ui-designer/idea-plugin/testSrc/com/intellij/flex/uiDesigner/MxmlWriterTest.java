@@ -2,21 +2,15 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import js.JSTestOptions;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static js.JSTestOption.WithFlexSdk;
-import static js.JSTestOption.WithGumboSdk;
-
 public class MxmlWriterTest extends MxmlWriterTestBase {
-  @JSTestOptions({WithGumboSdk, WithFlexSdk})
-  @Flex(version="4.5")
+    @Flex(version="4.5")
   public void test45() throws Exception {
     changeServiceImplementation(FlexUIDesignerApplicationManager.class, MyFlexUIDesignerApplicationManager.class);
     
@@ -39,8 +33,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     assertEquals(problems.get(0), "Invalid color name: invalidcolorname");
   }
 
-  @JSTestOptions({WithGumboSdk, WithFlexSdk})
-  @Flex(version="4.1")
+    @Flex(version="4.1")
   public void test41() throws Exception {
     testFile("states/UnusedStates.mxml");
   }

@@ -11,8 +11,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.messages.MessageBusConnection;
-import js.JSTestOption;
-import js.JSTestOptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,7 +80,6 @@ public class AppTest extends AppTestBase {
     info.result.set("");
   }
 
-  @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexSdk})
   @Flex(version="4.5")
   public void testCloseAndOpenProject() throws Exception {
     info.count = 1;
@@ -95,7 +92,6 @@ public class AppTest extends AppTestBase {
     callClientAssert("close");
   }
   
-  @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexSdk})
   @Flex(version="4.5")
   public void testUpdateDocumentOnIdeaAutoSave() throws Exception {
     info.count = 2;
