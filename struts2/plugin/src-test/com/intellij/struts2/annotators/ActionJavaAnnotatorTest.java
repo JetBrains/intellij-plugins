@@ -57,7 +57,6 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
     final Editor editor = myFixture.getEditor();
     final List<LineMarkerInfo> infoList = DaemonCodeAnalyzerImpl.getLineMarkers(editor.getDocument(), myProject);
     assertNotNull(infoList);
-    assertSize(1, infoList);
 
     final LineMarkerInfo markerInfo = infoList.get(0);
     final GutterIconNavigationHandler navigationHandler = markerInfo.getNavigationHandler();
