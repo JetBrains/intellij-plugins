@@ -121,7 +121,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
         return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
 
-      return action.getActionMethods().toArray(new PsiMethod[action.getActionMethods().size()]);
+      return ArrayUtil.toObjectArray(action.getActionMethods());
     }
 
     public String getUnresolvedMessagePattern() {

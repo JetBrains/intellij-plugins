@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,6 +32,7 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.treeStructure.*;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,7 +73,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
           nodes.add(setNode);
         }
       }
-      return nodes.toArray(new SimpleNode[nodes.size()]);
+      return ArrayUtil.toObjectArray(nodes, SimpleNode.class);
     }
 
     public boolean isAutoExpandNode() {
@@ -333,7 +334,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       for (final VirtualFilePointer file : mySet.getFiles()) {
         nodes.add(new ConfigFileNode(file, this));
       }
-      return nodes.toArray(new SimpleNode[nodes.size()]);
+      return ArrayUtil.toObjectArray(nodes, SimpleNode.class);
     }
 
     public boolean isAutoExpandNode() {

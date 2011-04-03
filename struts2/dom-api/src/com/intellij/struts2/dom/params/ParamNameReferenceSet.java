@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.ReferenceSetBase;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +46,7 @@ class ParamNameReferenceSet extends ReferenceSetBase<ParamNameReference> {
 
   @Override
   public ParamNameReference[] getPsiReferences() {
-    return getReferences().toArray(new ParamNameReference[getReferences().size()]);
+    return ArrayUtil.toObjectArray(getReferences(), ParamNameReference.class);
   }
 
   @Nullable
