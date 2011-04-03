@@ -7,6 +7,8 @@ import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.flex.CssElementFormat;
 import com.intellij.flex.uiDesigner.flex.StylePane;
 
+import flash.display.DisplayObject;
+
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Shape;
@@ -42,7 +44,8 @@ public class Interactor {
   private var elementManager:ElementManager;
   
   private var outUpHandlerAdded:Boolean;
-  
+  private var mouseDownOnElement:Boolean;
+
   public function Interactor(elementManager:ElementManager, server:SocketManager) {
     this.elementManager = elementManager;
     this.server = server;
@@ -56,6 +59,7 @@ public class Interactor {
   //noinspection JSUnusedGlobalSymbols
   public function set pane(value:StylePane):void {
     value.skin.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
+    value.skin.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
     value.skin.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
     value.skin.addEventListener(MouseEvent.ROLL_OUT, mouseRollOutHandler);
   }
@@ -108,7 +112,7 @@ public class Interactor {
     else if (element != null) {
       if (state == ACTIVE && event.buttonDown) {
         outUpHandlerAdded = true;
-        container.stage.addEventListener(MouseEvent.MOUSE_UP, outUp);
+        DisplayObject(event.target).stage.addEventListener(MouseEvent.MOUSE_UP, outUp);
         return;
       }
       else {
@@ -130,9 +134,11 @@ public class Interactor {
   }
 
   private function mouseUpHandler(event:MouseEvent):void {
-    if (element == null || outUpHandlerAdded) {
+    if (element == null || outUpHandlerAdded || !mouseDownOnElement) {
       return;
     }
+
+    mouseDownOnElement = false;
     
     if (element.userData is String) {
       server.goToClass(_module, element.userData);
@@ -147,6 +153,12 @@ public class Interactor {
     updateState(NORMAL);
     
     event.updateAfterEvent();
+  }
+
+  private function mouseDownHandler(event:MouseEvent):void {
+    if (element != null) {
+      mouseDownOnElement = true;
+    }
   }
   
   private function fileSourceClickHandler(ruleset:CssRuleset):void {
