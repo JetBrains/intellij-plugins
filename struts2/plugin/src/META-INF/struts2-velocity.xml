@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ Copyright 2010 The authors
+  ~ Copyright 2011 The authors
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
@@ -17,7 +17,7 @@
 
 <idea-plugin version="2">
 
-  <extensions xmlns="com.intellij">
+  <extensions defaultExtensionNs="com.intellij">
     <velocity.globalMacroProvider implementation="com.intellij.struts2.velocity.Struts2GlobalMacroProvider"/>
     <velocity.globalVariableProvider implementation="com.intellij.struts2.velocity.Struts2GlobalVariableProvider"/>
 
