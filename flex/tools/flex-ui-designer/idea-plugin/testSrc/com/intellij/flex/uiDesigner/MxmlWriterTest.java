@@ -9,8 +9,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
 @Flex(version="4.5")
 public class MxmlWriterTest extends MxmlWriterTestBase {
+  @SuppressWarnings({"unchecked"})
   public void test45() throws Exception {
     changeServiceImplementation(FlexUIDesignerApplicationManager.class, MyFlexUIDesignerApplicationManager.class);
     
@@ -28,14 +32,12 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
 
     testFiles(vFiles);
     
-    final List<String> problems = ((MyFlexUIDesignerApplicationManager)FlexUIDesignerApplicationManager.getInstance()).problems;
+    String[] problems = ((MyFlexUIDesignerApplicationManager)FlexUIDesignerApplicationManager.getInstance()).getProblems();
     if (testFile != null) {
-      assertEquals(0, problems.size());
+      assertThat(problems, emptyArray());
     }
     else {
-      assertEquals(2, problems.size());
-      assertEquals("Unresolved variable data", problems.get(0));
-      assertEquals("Invalid color name invalidcolorname", problems.get(1));
+      assertThat(problems, array(equalTo("Unresolved variable data"), equalTo("Invalid color name invalidcolorname")));
     }
   }
 
@@ -69,6 +71,12 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
 
   private static class MyFlexUIDesignerApplicationManager extends FlexUIDesignerApplicationManager {
     private final List<String> problems = new ArrayList<String>();
+    
+    public String[] getProblems() {
+      final String[] strings = problems.toArray(new String[problems.size()]);
+      problems.clear();
+      return strings;
+    }
     
     @Override
     public void reportProblem(Project project, String message, MessageType messageType) {

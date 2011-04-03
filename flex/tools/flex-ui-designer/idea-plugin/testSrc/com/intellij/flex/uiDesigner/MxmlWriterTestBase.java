@@ -63,7 +63,8 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     }
     else {
       appRootDir = createTempDir("fud");
-      FileUtil.copy(new File(getFudHome() + "/app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(appRootDir, FlexUIDesignerApplicationManager.DESIGNER_SWF));
+      FileUtil.copy(new File(getFudHome() + "/app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(appRootDir,
+                                                                                                        FlexUIDesignerApplicationManager.DESIGNER_SWF));
     }
     return appRootDir;
   }
@@ -73,20 +74,16 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     super.setUp();
     
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-    final LibraryStyleInfoCollector styleInfoCollector = new LibraryStyleInfoCollector(myProject, myModule, stringWriter);
     stringWriter.startChange();
 
     appRootDir = getAppRootDir();
-    libraries = new SwcDependenciesSorter(appRootDir).sort(getLibraries(new Consumer<OriginalLibrary>() {
-      @Override
-      public void consume(OriginalLibrary originalLibrary) {
-        styleInfoCollector.collect(originalLibrary);
-      }
-    }), myProject.getLocationHash(), getFlexVersion());
+    libraries = new SwcDependenciesSorter(appRootDir).sort(getLibraries(new LibraryStyleInfoCollector(myProject, myModule, stringWriter)),
+                                                           myProject.getLocationHash(), getFlexVersion());
 
     final ServerSocket serverSocket = new ServerSocket(0, 1);
-    
-    DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"), System.getProperty("fud.air"));
+
+    DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"), 
+                                                                                                                      System.getProperty("fud.air"));
     adlRunConfiguration.arguments = new ArrayList<String>();
     adlRunConfiguration.arguments.add("-p");
     adlRunConfiguration.arguments.add(getFudHome() + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
@@ -94,19 +91,21 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     adlRunConfiguration.arguments.add("-cdd");
     adlRunConfiguration.arguments.add(getFudHome() + "/flex-injection/target");
 
-    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, getFudHome() + "/designer/src/main/resources/descriptor.xml", serverSocket.getLocalPort(), appRootDir.getPath(), new Consumer<Integer>() {
-      @Override
-      public void consume(Integer exitCode) {
-        if (exitCode != 0) {
-          try {
-            serverSocket.close();
+    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, getFudHome() + "/designer/src/main/resources/descriptor.xml",
+                                                       serverSocket.getLocalPort(), appRootDir.getPath(), new Consumer<Integer>() {
+        @Override
+        public void consume(Integer exitCode) {
+          if (exitCode != 0) {
+            try {
+              serverSocket.close();
+            }
+            catch (IOException ignored) {
+            }
+
+            fail("adl return " + exitCode);
           }
-          catch (IOException ignored) {}
-          
-          fail("adl return " + exitCode);
         }
-      }
-    });
+      });
 
     socket = serverSocket.accept();
     reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
@@ -219,7 +218,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
           tester.test(file, xmlFile, originalVFile);
           return null;
         }
-      }).get(888, TimeUnit.SECONDS);
+      }).get(8, TimeUnit.SECONDS);
     }
   }
 

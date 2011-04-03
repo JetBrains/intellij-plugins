@@ -29,7 +29,6 @@ public class ModuleInfoUtil {
                                               final String flexSdkVersion,
                                               final StringRegistry.StringWriter stringWriter) {
     final Module module = moduleInfo.getModule();
-
     final FlexBuildConfiguration flexBuildConfiguration;
     if (module.getModuleType() instanceof FlexModuleType) {
       flexBuildConfiguration = FlexBuildConfiguration.getInstance(module);
@@ -57,7 +56,7 @@ public class ModuleInfoUtil {
                                                           if (defaultsCss != null) {
                                                             moduleInfo.addLocalStyleHolder(new LocalStyleHolder(defaultsCss,
                                                                                                                 new CssWriter
-                                                                                                                (stringWriter)
+                                                                                                                  (stringWriter)
                                                                                                                   .write(defaultsCss,
                                                                                                                          module)));
                                                           }
