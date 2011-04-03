@@ -38,8 +38,15 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
 
   @NotNull
   public String searchNamespace() {
-    final String namespace = getNamespace().getStringValue();
-    return namespace != null ? namespace : DEFAULT_NAMESPACE;
+    StrutsPackage currentPackage = this;
+    while (currentPackage != null) {
+      if (DomUtil.hasXml(currentPackage.getNamespace())) {
+        return currentPackage.getNamespace().getStringValue();
+      }
+      currentPackage = currentPackage.getExtends().getValue();
+    }
+
+    return DEFAULT_NAMESPACE;
   }
 
   @Nullable
