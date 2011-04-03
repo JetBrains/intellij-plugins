@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +33,7 @@ import java.util.List;
 public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackage, LocationPresentation {
 
   public String getLocation() {
-    return getNamespace().getStringValue();
+    return searchNamespace();
   }
 
   @NotNull

@@ -244,7 +244,7 @@ public class StrutsApplicationComponent implements ApplicationComponent {
               .addLine("Class", action.getActionClass().getStringValue())
               .addLine("Method", action.getMethod().getStringValue())
               .addLine("Package", strutsPackage.getName().getStringValue())
-              .addLine("Namespace", strutsPackage.getNamespace().getStringValue());
+              .addLine("Namespace", strutsPackage.searchNamespace());
 
           return builder.getText();
         }
