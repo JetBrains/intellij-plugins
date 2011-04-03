@@ -4,7 +4,6 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin">
       <sourceFolder url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/testSrc" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/resources" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
