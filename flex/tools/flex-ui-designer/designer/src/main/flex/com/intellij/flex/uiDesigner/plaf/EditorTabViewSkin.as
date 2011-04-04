@@ -65,7 +65,7 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
     else if (event.target == _borderShape) {
       closeButtonRelatedRenderer = EditorTabLabelRenderer(segmentedControl.getElementAt(segmentedControl.selectedIndex));
       if (event.localX < closeButtonRelatedRenderer.x || event.localX > (closeButtonRelatedRenderer.x + closeButtonRelatedRenderer.getExplicitOrMeasuredWidth()) ||
-          event.localY < closeButtonRelatedRenderer.y ||
+          (event.localY + 2 /* selected tab label has top offset -2 (height 22 instead of 20 for unseleted tab label) */) < closeButtonRelatedRenderer.y ||
           (event.localY - 4 /* 1 top stripe border stroke + 2 white background stripe + 1 bottom stripe border stroke */) >
           (closeButtonRelatedRenderer.y + closeButtonRelatedRenderer.getExplicitOrMeasuredHeight())) {
         return;

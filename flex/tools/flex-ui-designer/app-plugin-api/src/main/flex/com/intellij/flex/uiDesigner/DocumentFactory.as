@@ -29,7 +29,7 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
   }
 
   public function deleteUser(user:DocumentFactory):Boolean {
-    var index:int = _users.indexOf(user);
+    var index:int = _users == null ? -1 : _users.indexOf(user);
     if (index == -1) {
       return false;
     }
