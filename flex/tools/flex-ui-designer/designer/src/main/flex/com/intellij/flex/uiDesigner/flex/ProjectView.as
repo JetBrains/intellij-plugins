@@ -8,16 +8,21 @@ import cocoa.tabView.TabView;
 import cocoa.ui;
 
 import com.intellij.flex.uiDesigner.Document;
+import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 
 import flash.utils.Dictionary;
 
+import mx.events.CollectionEvent;
+import mx.events.CollectionEventKind;
+
+import org.flyti.plexus.Injectable;
 import org.flyti.util.ArrayList;
 import org.flyti.util.List;
 
 use namespace ui;
 
 [ResourceBundle("Designer")]
-public class ProjectView extends AbstractComponent {
+public class ProjectView extends AbstractComponent implements Injectable {
   private static const _skinParts:Dictionary = new Dictionary();
   _skinParts.editorTabView = 0;
   _skinParts.sidebar = 0;
@@ -26,6 +31,11 @@ public class ProjectView extends AbstractComponent {
   ui var editorTabView:TabView;
 
   private const editorPanes:List = new ArrayList();
+  
+  private var _documentFactoryManager:DocumentFactoryManager;
+  public function set documentFactoryManager(value:DocumentFactoryManager):void {
+    _documentFactoryManager = value;
+  }
 
   override protected function get skinParts():Dictionary {
     return _skinParts;
@@ -41,6 +51,8 @@ public class ProjectView extends AbstractComponent {
 
   ui function editorTabViewAdded():void {
     editorTabView.items = editorPanes;
+    
+    editorPanes.addEventListener(CollectionEvent.COLLECTION_CHANGE, editorPanesChangeHandler, false, -1);
   }
 
   override protected function get primaryLaFKey():String {
@@ -53,6 +65,12 @@ public class ProjectView extends AbstractComponent {
 
     document.tabIndex = editorPanes.size;
     editorPanes.addItem(paneItem);
+  }
+
+  private function editorPanesChangeHandler(event:CollectionEvent):void {
+    if (event.kind == CollectionEventKind.REMOVE) {
+      _documentFactoryManager.unregister(DocumentPaneItem(event.items[0]).document.documentFactory);
+    }
   }
 }
 }

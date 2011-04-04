@@ -2,3 +2,7 @@ borders:
 - key: GroupItemRenderer
   type: Scale1
   contentInsets: {left: 5, right: 5, bottom: 6}
+- key: PushButton
+  subkey: TabLabel
+  type: Scale1
+  frameInsets: {top: 2}

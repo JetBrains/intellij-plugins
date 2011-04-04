@@ -25,8 +25,6 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
   @Override
   public void read(InputStream inputStream) throws IOException {
     createReader(inputStream);
-    final FlexUIDesignerApplicationManager designerAppManager = FlexUIDesignerApplicationManager.getInstance();
-
     readProcess:
     while (true) {
       final int command = reader.read();
@@ -35,7 +33,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
           break readProcess;
 
         case ServerMethod.goToClass:
-          final Module module = designerAppManager.getClient().getModule(reader.readInt());
+          final Module module = readModule();
           final String className = reader.readUTF();
           ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
@@ -49,7 +47,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
           break;
 
         case ServerMethod.openFile:
-          final Project project = designerAppManager.getClient().getModule(reader.readInt()).getProject();
+          final Project project = readProject();
           final OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, reader.readFile(), reader.readInt());
           ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
@@ -61,8 +59,11 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
           break;
 
         case ServerMethod.resolveExternalInlineStyleDeclarationSource:
-          ApplicationManager.getApplication()
-            .invokeLater(new ResolveExternalInlineStyleSourceAction(reader, designerAppManager.getClient().getModule(reader.readInt())));
+          ApplicationManager.getApplication().invokeLater(new ResolveExternalInlineStyleSourceAction(reader, readModule()));
+          break;
+
+        case ServerMethod.unregisterDocumentFactories:
+          unregisterDocumentFactories();
           break;
 
         case ServerMethod.showError:
@@ -75,6 +76,18 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     }
   }
 
+  private Module readModule() throws IOException {
+    return FlexUIDesignerApplicationManager.getInstance().getClient().getModule(reader.readInt());
+  }
+
+  private Project readProject() throws IOException {
+    return readModule().getProject();
+  }
+
+  private void unregisterDocumentFactories() throws IOException {
+    DocumentFactoryManager.getInstance(readProject()).unregister(reader.readIntArray());
+  }
+
   @Override
   public void close() throws IOException {
     if (reader != null) {
@@ -85,6 +98,48 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
   protected static class Reader extends DataInputStream {
     private Reader(InputStream in) {
       super(in);
+    }
+
+    public int[] readIntArray() throws IOException {
+      skipBytes(1);
+      int n = readUInt29() >> 1;
+      int[] array = new int[n];
+      skipBytes(1);
+      for (int i = 0; i < n; i++) {
+        array[i] = readInt();
+      }
+
+      return array;
+    }
+
+    private int readUInt29() throws IOException {
+      int value;
+
+      // Each byte must be treated as unsigned
+      int b = readByte() & 0xFF;
+
+      if (b < 128) {
+        return b;
+      }
+
+      value = (b & 0x7F) << 7;
+      b = readByte() & 0xFF;
+
+      if (b < 128) {
+        return (value | b);
+      }
+
+      value = (value | (b & 0x7F)) << 7;
+      b = readByte() & 0xFF;
+
+      if (b < 128) {
+        return (value | b);
+      }
+
+      value = (value | (b & 0x7F)) << 8;
+      b = readByte() & 0xFF;
+
+      return (value | b);
     }
 
     public VirtualFile readFile() throws IOException {

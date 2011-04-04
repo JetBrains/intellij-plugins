@@ -1,9 +1,6 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.DataControl;
 
-import mx.events.CollectionEvent;
-import mx.events.CollectionEventKind;
-
 import org.flyti.plexus.Injectable;
 import org.flyti.util.ArrayList;
 
@@ -27,6 +24,11 @@ public class StatesBarManager implements Injectable {
     
     _document = value;
     if (_presentation == null) {
+      return;
+    }
+    
+    if (_document == null) {
+      _presentation.hidden = true;
       return;
     }
     

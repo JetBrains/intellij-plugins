@@ -83,4 +83,4 @@ public class GroupItemRenderer extends AbstractView implements IDataRenderer, Lo
     border.draw(this, g, w, h);
   }
 }
-}x§
+}

@@ -5,5 +5,7 @@ public final class ServerMethod {
   public static const resolveExternalInlineStyleDeclarationSource:int = 2;
   
   public static const showError:int = 3;
+  
+  public static const unregisterDocumentFactories:int = 4;
 }
 }

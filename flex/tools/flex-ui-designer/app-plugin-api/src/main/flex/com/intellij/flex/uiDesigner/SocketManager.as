@@ -14,5 +14,7 @@ public interface SocketManager {
   function addSocketDataHandler(classId:int, handler:SocketDataHandler):void;
   
   function getSocket():Socket;
+
+  function unregisterDocumentFactories(module:Module, deleted:Vector.<int>):void;
 }
 }

@@ -148,5 +148,12 @@ public class SocketManagerImpl implements SocketManager {
   public function getSocket():Socket {
     return socket;
   }
+
+  public function unregisterDocumentFactories(module:Module, deleted:Vector.<int>):void {
+    socket.writeByte(ServerMethod.unregisterDocumentFactories);
+    socket.writeInt(module.id);
+    socket.writeObject(deleted);
+    socket.flush();
+  }
 }
 }
