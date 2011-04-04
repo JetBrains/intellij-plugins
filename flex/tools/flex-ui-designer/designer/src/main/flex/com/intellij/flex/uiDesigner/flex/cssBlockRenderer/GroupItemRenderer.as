@@ -8,6 +8,8 @@ import cocoa.text.TextFormat;
 
 import com.intellij.flex.uiDesigner.plaf.CustomTextFormatId;
 
+import flash.display.DisplayObjectContainer;
+
 import flash.display.Graphics;
 
 import mx.core.IDataRenderer;
@@ -48,7 +50,18 @@ public class GroupItemRenderer extends AbstractView implements IDataRenderer, Lo
     }
 
     _data = StyleDeclarationGroupItem(value);
-    labelHelper.text = _data.owner == null ? "Global" : ("Inherited from " + _data.owner.name);
+    var owner:DisplayObjectContainer = _data.owner;
+    if (owner == null) {
+      labelHelper.text = "Global"
+    }
+    else {
+      var id:String;
+      if (!("id" in owner) || (id = owner["id"]) == null) {
+        id = owner.name;
+      }
+      
+      labelHelper.text = "Inherited from " + id;
+    }
 
     invalidateDisplayList();
   }
@@ -70,4 +83,4 @@ public class GroupItemRenderer extends AbstractView implements IDataRenderer, Lo
     border.draw(this, g, w, h);
   }
 }
-}
+}x§
