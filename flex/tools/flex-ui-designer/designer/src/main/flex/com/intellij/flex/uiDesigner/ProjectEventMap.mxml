@@ -55,7 +55,6 @@
     </Injectors>
     <Injectors target="{ElementToolManager}">
       <PropertyInjector source="{ElementManager}" sourceKey="element"/>
-      <!--<PropertyInjector source="{DocumentManager}" sourceKey="document" targetKey="document"/>-->
     </Injectors>
     
     <Injectors target="{ElementManager}">
@@ -65,8 +64,14 @@
     <Injectors target="{SegmentedControl}" targetId="statesBar">
       <PropertySetter role="{StatesBarManager}" targetKey="presentation"/>
     </Injectors>
+    <Injectors target="{SegmentedControl}" targetId="elementTreeBar">
+      <PropertySetter role="{ElementTreeBarManager}" targetKey="presentation"/>
+    </Injectors>
     <Injectors target="{StatesBarManager}">
       <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
+    </Injectors>
+    <Injectors target="{ElementTreeBarManager}">
+      <PropertyInjector source="{ElementManager}" sourceKey="element"/>
     </Injectors>
   </injectors>
 </LocalEventMap>
