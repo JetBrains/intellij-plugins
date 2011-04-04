@@ -19,22 +19,9 @@ import java.util.List;
     @Storage(id = "other", file = "$WORKSPACE_FILE$")
   }
 )
-public class AirInstallerParameters implements PersistentStateComponent<AirInstallerParameters> {
+public class AirInstallerParameters extends AirInstallerParametersBase implements PersistentStateComponent<AirInstallerParameters> {
 
-  private final Sdk myFlexSdk;
-  public String AIR_DESCRIPTOR_PATH;
-  public String INSTALLER_FILE_NAME;
-  public String INSTALLER_FILE_LOCATION;
-  @AbstractCollection(elementTypes = {FilePathAndPathInPackage.class})
-  public List<FilePathAndPathInPackage> FILES_TO_PACKAGE;
   public boolean DO_NOT_SIGN;
-  public String KEYSTORE_PATH;
-  public String KEYSTORE_TYPE;
-  private final String myKeystorePassword;
-  public String KEY_ALIAS;
-  private final String myKeyPassword;
-  public String PROVIDER_CLASS;
-  public String TSA;
 
   public static AirInstallerParameters getInstance(final Project project) {
     return ServiceManager.getService(project, AirInstallerParameters.class);
@@ -57,19 +44,9 @@ public class AirInstallerParameters implements PersistentStateComponent<AirInsta
                                 final String keyPassword,
                                 final String provider,
                                 final String tsa) {
-    myFlexSdk = flexSdk;
-    AIR_DESCRIPTOR_PATH = airDescriptorPath;
-    INSTALLER_FILE_NAME = installerFileName;
-    INSTALLER_FILE_LOCATION = installerFileLocation;
-    FILES_TO_PACKAGE = filesToPackage;
+    super(keyAlias, installerFileName, keystorePath, keyPassword, provider, filesToPackage, tsa, installerFileLocation, keystoreType,
+          keystorePassword, flexSdk, airDescriptorPath);
     DO_NOT_SIGN = doNotSign;
-    KEYSTORE_PATH = keystorePath;
-    KEYSTORE_TYPE = keystoreType;
-    myKeystorePassword = keystorePassword;
-    KEY_ALIAS = keyAlias;
-    myKeyPassword = keyPassword;
-    PROVIDER_CLASS = provider;
-    TSA = tsa;
   }
 
   public AirInstallerParameters getState() {
@@ -78,33 +55,5 @@ public class AirInstallerParameters implements PersistentStateComponent<AirInsta
 
   public void loadState(final AirInstallerParameters state) {
     XmlSerializerUtil.copyBean(state, this);
-  }
-
-  @Transient
-  public Sdk getFlexSdk() {
-    return myFlexSdk;
-  }
-
-  @Transient
-  public String getKeyPassword() {
-    return myKeyPassword;
-  }
-
-  @Transient
-  public String getKeystorePassword() {
-    return myKeystorePassword;
-  }
-
-  public static class FilePathAndPathInPackage {
-    public String FILE_PATH = "";
-    public String PATH_IN_PACKAGE = "";
-
-    public FilePathAndPathInPackage() {
-    }
-
-    public FilePathAndPathInPackage(final String filePath, final String pathInPackage) {
-      FILE_PATH = filePath;
-      PATH_IN_PACKAGE = pathInPackage;
-    }
   }
 }

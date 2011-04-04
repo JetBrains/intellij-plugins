@@ -91,6 +91,8 @@ public class CreateAirDescriptorAction extends AnAction {
           attributes.setProperty("visible", "true");
           attributes.setProperty("width", String.valueOf(parameters.getApplicationWidth()));
           attributes.setProperty("height", String.valueOf(parameters.getApplicationHeight()));
+          attributes.setProperty("android_permissions_start", parameters.isAndroidPermissionsEnabled() ? "" : "<!--");
+          attributes.setProperty("android_permissions_end", parameters.isAndroidPermissionsEnabled() ? "" : "-->");
 
           final String airDescriptorContent = FileTemplateUtil.mergeTemplate(attributes, airDescriptorContentTemplate);
           final VirtualFile descriptorFolder = VfsUtil.createDirectories(parameters.getDescriptorFolderPath());
@@ -109,5 +111,4 @@ public class CreateAirDescriptorAction extends AnAction {
 
     return file;
   }
-
 }

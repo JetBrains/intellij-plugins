@@ -41,7 +41,6 @@ import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -200,10 +199,10 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   private void initInstallerLocationComponent() {
     myInstallerLocationComponent.getComponent()
       .addBrowseFolderListener(null, null, myProject, new FileChooserDescriptor(false, true, false, false, false, false) {
-        public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-          return super.isFileVisible(file, showHiddenFiles) && file.isDirectory();
-        }
-      }, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+          public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
+            return super.isFileVisible(file, showHiddenFiles) && file.isDirectory();
+          }
+        }, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
   }
 
   private void initTable() {
@@ -541,7 +540,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     final AirInstallerParameters parameters = getAirInstallerParameters();
     saveAsDefaultParameters(parameters);
 
-    final boolean ok = AdtTask.runWithProgress(myProject, createAirInstallerTask(myProject, parameters), "Packaging AIR installer", TITLE);
+    final boolean ok = AdtTask.runWithProgress(createAirInstallerTask(myProject, parameters), "Packaging AIR installer", TITLE);
 
     if (ok) {
       final ToolWindowManager manager = ToolWindowManager.getInstance(myProject);
@@ -594,7 +593,9 @@ public class PackageAirInstallerDialog extends DialogWrapper {
           catch (PasswordSafeException ignored) {
           }
 
-          if (StringUtil.isNotEmpty(parameters.KEY_ALIAS) || StringUtil.isNotEmpty(parameters.PROVIDER_CLASS) || StringUtil.isNotEmpty(parameters.TSA)) {
+          if (StringUtil.isNotEmpty(parameters.KEY_ALIAS) ||
+              StringUtil.isNotEmpty(parameters.PROVIDER_CLASS) ||
+              StringUtil.isNotEmpty(parameters.TSA)) {
             showMoreOptions(true);
           }
         }
@@ -603,68 +604,13 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   }
 
   private static AdtTask createAirInstallerTask(final Project project, final AirInstallerParameters parameters) {
-    return new AdtTask() {
-      protected List<String> buildCommand() {
-        final List<String> command =
-          FlexSdkUtils.getCommandLineForSdkTool(project, parameters.getFlexSdk(), null, "com.adobe.air.ADT", "adt.jar");
-
+    return new AdtTask(project, parameters.getFlexSdk()) {
+      protected void appendAdtOptions(List<String> command) {
         command.add(parameters.DO_NOT_SIGN ? "-prepare" : "-package");
         if (!parameters.DO_NOT_SIGN) {
-          if (parameters.KEY_ALIAS.length() > 0) {
-            command.add("-alias");
-            command.add(parameters.KEY_ALIAS);
-          }
-
-          command.add("-storetype");
-          command.add(parameters.KEYSTORE_TYPE);
-
-          command.add("-keystore");
-          command.add(parameters.KEYSTORE_PATH);
-
-          if (parameters.getKeystorePassword().length() > 0) {
-            command.add("-storepass");
-            command.add(parameters.getKeystorePassword());
-          }
-
-          if (parameters.getKeyPassword().length() > 0) {
-            command.add("-keypass");
-            command.add(parameters.getKeyPassword());
-          }
-
-          if (parameters.PROVIDER_CLASS.length() > 0) {
-            command.add("-providerName");
-            command.add(parameters.PROVIDER_CLASS);
-          }
-
-          if (parameters.TSA.length() > 0) {
-            command.add("-tsa");
-            command.add(parameters.TSA);
-          }
+          appendSigningOptions(command, parameters);
         }
-
-        command.add(parameters.INSTALLER_FILE_LOCATION + File.separatorChar + parameters.INSTALLER_FILE_NAME);
-        command.add(parameters.AIR_DESCRIPTOR_PATH);
-
-        for (FilePathAndPathInPackage path : parameters.FILES_TO_PACKAGE) {
-          final String fullPath = FileUtil.toSystemIndependentName(path.FILE_PATH.trim());
-          String relPathInPackage = FileUtil.toSystemIndependentName(path.PATH_IN_PACKAGE.trim());
-          if (relPathInPackage.startsWith("/")) {
-            relPathInPackage = relPathInPackage.substring(1);
-          }
-
-          if (fullPath.endsWith("/" + relPathInPackage)) {
-            command.add("-C");
-            command.add(FileUtil.toSystemDependentName(fullPath.substring(0, fullPath.length() - relPathInPackage.length())));
-            command.add(FileUtil.toSystemDependentName(relPathInPackage));
-          }
-          else {
-            command.add("-e");
-            command.add(FileUtil.toSystemDependentName(fullPath));
-            command.add(relPathInPackage);
-          }
-        }
-
-        return command;
+        appendPaths(command, parameters);
       }
     };
   }

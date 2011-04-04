@@ -15,19 +15,36 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
+import com.intellij.lang.javascript.flex.actions.airinstaller.AndroidAirPackageParameters;
+import com.intellij.lang.javascript.flex.actions.airinstaller.MobileAirTools;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ToolWindowId;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: Maxim.Mossienko
@@ -44,9 +61,100 @@ public class FlexRunner extends FlexBaseRunner {
                                           final ExecutionEnvironment env,
                                           final Sdk flexSdk,
                                           final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
-    return isRunAsAir(flexRunnerParameters)
-           ? launchAir(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters)
-           : launchFlex(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
+    return isRunOnDevice(flexRunnerParameters)
+           ? runOnDevice(project, flexSdk, (AirMobileRunnerParameters)flexRunnerParameters, false)
+           : isRunAsAir(flexRunnerParameters)
+             ? launchAir(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters)
+             : launchFlex(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
+  }
+
+  public static RunContentDescriptor runOnDevice(final Project project,
+                                                 final Sdk flexSdk,
+                                                 final AirMobileRunnerParameters params,
+                                                 final boolean isDebug) {
+    final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(params);
+
+    if (params.getAirMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.AndroidDevice) {
+      final AndroidAirPackageParameters packageParameters =
+        createAndroidPackageParams(project, flexSdk, swfPathAndApplicationId, params, isDebug);
+      final String apkPath = packageParameters.INSTALLER_FILE_LOCATION + "/" + packageParameters.INSTALLER_FILE_NAME;
+
+      if (MobileAirTools.ensureCertificateExists(project, flexSdk)
+          && MobileAirTools.packageApk(project, packageParameters)
+          && MobileAirTools.installApk(project, flexSdk, apkPath, swfPathAndApplicationId.second)
+          && MobileAirTools.launchAndroidApplication(project, flexSdk, swfPathAndApplicationId.second)) {
+        ToolWindowManager.getInstance(project)
+          .notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, FlexBundle.message("android.application.launched"));
+      }
+    }
+    else {
+      assert false;
+    }
+
+    return null;
+  }
+
+  private static Pair<String, String> getSwfPathAndApplicationId(final AirRunnerParameters params) {
+    final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(params.getAirDescriptorPath());
+    if (descriptorFile != null) {
+      try {
+        final String swfPath = FlexUtils.findXMLElement(descriptorFile.getInputStream(), "<application><initialWindow><content>");
+        final String applicationId = FlexUtils.findXMLElement(descriptorFile.getInputStream(), "<application><id>");
+        return Pair.create(swfPath, applicationId);
+      }
+      catch (IOException e) {/*ignore*/}
+    }
+    return Pair.create(null, null);
+  }
+
+  private static AndroidAirPackageParameters createAndroidPackageParams(final Project project,
+                                                                        final Sdk flexSdk,
+                                                                        final Pair<String, String> swfPathAndApplicationId,
+                                                                        final AirMobileRunnerParameters params,
+                                                                        boolean isDebug) {
+    final String swfPath = swfPathAndApplicationId.first;
+    String swfName = "";
+    String apkName = "";
+    String outputDirPath = "";
+    final int lastSlashIndex = FileUtil.toSystemIndependentName(swfPath).lastIndexOf('/');
+    final String suffix = ".swf";
+    if (swfPath.toLowerCase().endsWith(suffix) && lastSlashIndex < swfPath.length() - suffix.length()) {
+      swfName = swfPath.substring(lastSlashIndex + 1);
+      apkName = swfName.substring(0, swfName.length() - suffix.length()) + ".apk";
+      outputDirPath = params.getAirRootDirPath() + (lastSlashIndex == -1 ? "" : "/" + swfPath.substring(0, lastSlashIndex));
+    }
+
+    final List<AirInstallerParametersBase.FilePathAndPathInPackage> files =
+      new ArrayList<AirInstallerParametersBase.FilePathAndPathInPackage>();
+    files.add(new AirInstallerParametersBase.FilePathAndPathInPackage(params.getAirRootDirPath() + "/" + swfPath, swfName));
+
+    return new AndroidAirPackageParameters(flexSdk,
+                                           params.getAirDescriptorPath(),
+                                           apkName,
+                                           outputDirPath,
+                                           files,
+                                           isDebug,
+                                           isDebug,
+                                           isDebug ? getHostName() : "",
+                                           false,
+                                           -1,
+                                           "",
+                                           MobileAirTools.getTempKeystorePath(),
+                                           MobileAirTools.TEMP_KEYSTORE_TYPE,
+                                           MobileAirTools.TEMP_KEYSTORE_PASSWORD,
+                                           "",
+                                           "",
+                                           "",
+                                           "");
+  }
+
+  private static String getHostName() {
+    try {
+      return InetAddress.getLocalHost().getHostAddress();
+    }
+    catch (UnknownHostException e) {
+      return "127.0.0.1";
+    }
   }
 
   private RunContentDescriptor launchFlex(final Project project,
@@ -79,7 +187,6 @@ public class FlexRunner extends FlexBaseRunner {
             public boolean detachIsDefault() {
               return false;
             }
-
           };
 
           final ExecutionConsole console = createFlexUnitRunnerConsole(project, env, processHandler, executor);

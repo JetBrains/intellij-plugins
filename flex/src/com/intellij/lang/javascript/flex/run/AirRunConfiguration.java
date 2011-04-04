@@ -199,7 +199,7 @@ public class AirRunConfiguration extends FlexRunConfiguration {
             }
             break;
           case AndroidDevice:
-            // todo
+            assert false;
             break;
         }
       }

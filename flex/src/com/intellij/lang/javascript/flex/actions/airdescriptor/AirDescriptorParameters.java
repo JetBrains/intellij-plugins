@@ -16,6 +16,7 @@ public class AirDescriptorParameters {
   private final @NotNull String myApplicationTitle;
   private final int myApplicationWidth;
   private final int myApplicationHeight;
+  private final boolean myAndroidPermissionsEnabled;
 
   public AirDescriptorParameters(final @NotNull String descriptorFileName,
                                  final @NotNull String descriptorFolderPath,
@@ -27,7 +28,7 @@ public class AirDescriptorParameters {
                                  final @NotNull String applicationContent,
                                  final @NotNull String applicationTitle,
                                  final int applicationWidth,
-                                 final int applicationHeight) {
+                                 final int applicationHeight, boolean androidPermissionsEnabled) {
     myDescriptorFileName = descriptorFileName;
     myDescriptorFolderPath = descriptorFolderPath;
     myAirVersion = airVersion;
@@ -39,6 +40,7 @@ public class AirDescriptorParameters {
     myApplicationTitle = applicationTitle;
     myApplicationWidth = applicationWidth;
     myApplicationHeight = applicationHeight;
+    myAndroidPermissionsEnabled = androidPermissionsEnabled;
   }
 
   @NotNull
@@ -92,5 +94,9 @@ public class AirDescriptorParameters {
 
   public int getApplicationHeight() {
     return myApplicationHeight;
+  }
+
+  public boolean isAndroidPermissionsEnabled() {
+    return myAndroidPermissionsEnabled;
   }
 }

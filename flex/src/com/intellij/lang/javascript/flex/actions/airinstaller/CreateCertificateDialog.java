@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.actions.airinstaller;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -19,7 +18,6 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.util.Arrays;
-import java.util.List;
 
 public class CreateCertificateDialog extends DialogWrapper {
   private JPanel myMainPanel;
@@ -98,7 +96,7 @@ public class CreateCertificateDialog extends DialogWrapper {
   }
 
   protected void doOKAction() {
-    if (validateInput() && createCertificate()) {
+    if (validateInput() && PackageAirInstallerAction.createCertificate(myProject, myFlexSdk, getCertificateParameters())) {
       super.doOKAction();
     }
   }
@@ -167,42 +165,6 @@ public class CreateCertificateDialog extends DialogWrapper {
     final String countryCode = isShowingOptionalParameters() ? myCountryCodeTextField.getText().trim() : "";
 
     return new CertificateParameters(keystorePath, certificateName, keyType, password, orgUnit, orgName, countryCode);
-  }
-
-  private boolean createCertificate() {
-    return AdtTask
-      .runWithProgress(myProject, createCertificateTask(myProject, myFlexSdk, getCertificateParameters()), "Creating certificate", TITLE);
-  }
-
-  private static AdtTask createCertificateTask(final Project project, final Sdk flexSdk, final CertificateParameters parameters) {
-    return new AdtTask() {
-      protected List<String> buildCommand() {
-        final List<String> command = FlexSdkUtils.getCommandLineForSdkTool(project, flexSdk, null, "com.adobe.air.ADT", "adt.jar");
-
-        command.add("-certificate");
-        command.add("-cn");
-        command.add(parameters.getCertificateName());
-
-        if (parameters.getOrgUnit().length() > 0) {
-          command.add("-ou");
-          command.add(parameters.getOrgUnit());
-        }
-        if (parameters.getOrgName().length() > 0) {
-          command.add("-o");
-          command.add(parameters.getOrgName());
-        }
-        if (parameters.getCountryCode().length() > 0) {
-          command.add("-c");
-          command.add(parameters.getCountryCode());
-        }
-
-        command.add(parameters.getKeyType());
-        command.add(parameters.getKeystoreFilePath());
-        command.add(parameters.getKeystorePassword());
-
-        return command;
-      }
-    };
   }
 
   protected String getHelpId() {
