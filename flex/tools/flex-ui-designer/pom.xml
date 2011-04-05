@@ -10,6 +10,7 @@
   
   <properties>
     <flexMojos.version>4.0-de5</flexMojos.version>
+    <config.useRoboflest>true</config.useRoboflest>
   </properties>
 
   <name>Flex UI Designer Aggregator</name>
@@ -99,6 +100,9 @@
   <profiles>
     <profile>
       <id>release</id>
+      <properties>
+        <config.useRoboflest>false</config.useRoboflest>
+      </properties>
       <build>
         <plugins>
           <plugin>

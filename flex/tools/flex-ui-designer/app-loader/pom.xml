@@ -48,6 +48,12 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
           <additionalSourcePath>../designer/target</additionalSourcePath>
+          <defines combine.children="append">
+            <property>
+              <name>config::useRoboflest</name>
+              <value>${config.useRoboflest}</value>
+            </property>
+          </defines>
         </configuration>
       </plugin>
     </plugins>

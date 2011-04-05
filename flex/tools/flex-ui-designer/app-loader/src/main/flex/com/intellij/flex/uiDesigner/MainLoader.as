@@ -30,7 +30,9 @@ public class MainLoader extends Sprite {
       application.icon.bitmaps = [Bitmap(new icon128()).bitmapData, Bitmap(new icon256()).bitmapData, Bitmap(new icon32()).bitmapData];
     }
     
-    roboflest();
+    config::useRoboflest {
+      roboflest();
+    }
 
     var loader:Loader = new Loader();
     loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadCompleteHandler);

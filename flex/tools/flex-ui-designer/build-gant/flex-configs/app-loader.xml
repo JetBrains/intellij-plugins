@@ -19,6 +19,10 @@
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.18365/framework-4.5.0.18365.swc</path-element>
 		</library-path>
 		<accessible>false</accessible>
+    <define>
+			<name>config::useRoboflest</name>
+			<value>false</value>
+		</define>
 		<headless-server>false</headless-server>
 		<!--<namespaces>-->
 			<!--<namespace>-->
