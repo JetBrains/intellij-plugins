@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <name>Flex UI Designer</name>
   <description>Provides editing support for Flex UI</description>
-  <version>0.4.7</version>
+  <version>0.4.9</version>
   <vendor logo="/general/ijLogo.png">JetBrains</vendor>
   <idea-version since-build="106.149"/>
 

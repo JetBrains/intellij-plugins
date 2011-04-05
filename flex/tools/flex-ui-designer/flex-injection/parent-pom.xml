@@ -53,6 +53,9 @@
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
+          <!-- our AbcFilter can work only with debug SWC (i.e. DoABC for each script) -->
+          <debug>true</debug>
+          
           <!--<directory>true</directory> *** Adobe Error: directory '/Users/develar/workspace/flex-ui-designer/flex-injection/target/flex-injection-4.1-1.0-SNAPSHOT.swc' is not empty on second build -->
           <useResourceBundleMetadata>false</useResourceBundleMetadata>
           <useDefaultLocale>false</useDefaultLocale>

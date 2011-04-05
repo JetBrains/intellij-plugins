@@ -31,6 +31,14 @@
       <version>1.0-SNAPSHOT</version>
       <scope>internal</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.intellij.flex.uiDesigner</groupId>
+      <artifactId>designer</artifactId>
+      <type>swf</type>
+      <version>1.0-SNAPSHOT</version>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 
   <build>

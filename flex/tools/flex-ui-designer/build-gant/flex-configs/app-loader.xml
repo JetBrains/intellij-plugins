@@ -40,7 +40,7 @@
 		<!--</namespaces>-->
 		<warn-no-constructor>false</warn-no-constructor>
 		<fixed-literal-vector>true</fixed-literal-vector>
-		<debug>true</debug>
+		<debug>false</debug>
 		<locale/>
 		<theme/>
 	</compiler>

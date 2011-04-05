@@ -66,7 +66,7 @@
 		<show-binding-warnings>false</show-binding-warnings>
 		<warn-no-constructor>false</warn-no-constructor>
 		<fixed-literal-vector>true</fixed-literal-vector>
-		<debug>true</debug>
+		<debug>false</debug>
 		<locale>
 			<locale-element>en_US</locale-element>
 		</locale>
