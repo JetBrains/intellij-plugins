@@ -38,7 +38,7 @@ public class FlexSdkType extends SdkType implements IFlexSdkType {
   }
 
   public boolean isValidSdkHome(final String path) {
-    return FlexSdkUtils.isFlexSdkRoot(path != null ? VfsUtil.findRelativeFile(path, null) : null);
+    return FlexSdkUtils.isValidSdkRoot(this, path != null ? VfsUtil.findRelativeFile(path, null) : null);
   }
 
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {

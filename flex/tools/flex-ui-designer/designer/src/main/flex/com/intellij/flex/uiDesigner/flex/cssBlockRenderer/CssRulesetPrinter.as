@@ -12,8 +12,6 @@ import com.intellij.flex.uiDesigner.css.CssSelector;
 import com.intellij.flex.uiDesigner.flex.ClassReference;
 import com.intellij.flex.uiDesigner.flex.CssElementFormat;
 
-import flash.filesystem.File;
-
 import flash.text.engine.ContentElement;
 import flash.text.engine.GroupElement;
 import flash.text.engine.TextBlock;
@@ -98,16 +96,14 @@ public class CssRulesetPrinter {
     lp.constraint = new FloatConstraint(TextFloat.RIGHT);
     block.userData = lp;
     
+    var url:String = ruleset.file.url;
     var name:String = ruleset.file.name;
-    if (name == "defaults.css") {
-      var url:String = ruleset.file.url;
-      if (StringUtil.startsWith(url, "jar://")) {
-        var end:int = url.length - 14;
-        name = url.substring(url.lastIndexOf(File.separator, end - 5) + 1, end);
-      }
+    if (StringUtil.startsWith(url, "jar://")) {
+      var end:int = url.lastIndexOf("!/");
+      name = "[" + url.substring(url.lastIndexOf("/", end - 4) + 1, end) + "] " + name;
     }
     
-    var textElement:TextElement = new TextElement(name + " (line " + ruleset.line + ")", CssElementFormat.fileLinkHover);
+    var textElement:TextElement = new TextElement(name + ":" + ruleset.line, CssElementFormat.fileLinkHover);
     textElement.userData = ruleset;
     block.content = textElement;
     return block;

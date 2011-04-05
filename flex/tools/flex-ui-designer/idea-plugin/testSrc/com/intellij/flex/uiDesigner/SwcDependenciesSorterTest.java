@@ -2,12 +2,8 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
-import js.JSTestOptions;
 
 import java.io.File;
-
-import static js.JSTestOption.WithFlexSdk;
-import static js.JSTestOption.WithGumboSdk;
 
 public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
   @Override
@@ -29,7 +25,6 @@ public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
     }
   }
   
-  @JSTestOptions({WithGumboSdk, WithFlexSdk})
   @Flex(version="4.5")
   public void testDeleteIfAllDefitionsHaveUnresolvedDependencies() throws Exception {
     assertEquals(-1, libs.size() - libraries.size());
@@ -46,7 +41,6 @@ public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
     testFile("Form.mxml");
   }
   
-  @JSTestOptions({WithGumboSdk, WithFlexSdk})
   @Flex(version="4.1")
   public void testDelete() throws Exception {
 //    assertEquals(-1, libs.size() - libraries.size());
@@ -68,7 +62,6 @@ public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
     }
   }
 
-  @JSTestOptions({WithGumboSdk, WithFlexSdk})
   @Flex(version="4.5")
   public void testResolveToClassWithBiggestTimestamp() throws Exception {
     testFile("Form.mxml");

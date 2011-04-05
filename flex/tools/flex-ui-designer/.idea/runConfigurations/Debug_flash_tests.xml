@@ -3,6 +3,7 @@
     <RunnerSettings RunnerId="FlexDebugRunner" />
     <RunnerSettings RunnerId="Profile" />
     <ConfigurationWrapper RunnerId="FlexDebugRunner" />
+    <ConfigurationWrapper RunnerId="Profile" />
     <method>
       <option name="Make" enabled="false" />
     </method>

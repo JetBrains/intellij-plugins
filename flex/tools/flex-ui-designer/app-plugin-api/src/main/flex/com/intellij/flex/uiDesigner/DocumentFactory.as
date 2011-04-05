@@ -27,6 +27,17 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
     
     _users[_users.length] = user;
   }
+
+  public function deleteUser(user:DocumentFactory):Boolean {
+    var index:int = _users == null ? -1 : _users.indexOf(user);
+    if (index == -1) {
+      return false;
+    }
+    else {
+      _users.splice(index, 1);
+      return true;
+    }
+  }
   
   private var _className:String;
   public function get className():String {
@@ -44,6 +55,10 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
 
   public function get moduleContext():ModuleContext {
     return module.context;
+  }
+
+  public function get hasUsers():Boolean {
+    return _users != null && _users.length > 0;
   }
 }
 }

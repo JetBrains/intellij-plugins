@@ -346,7 +346,8 @@ public class FlexUnitPrecompileTask implements CompileTask {
       final String descriptorFolderPath = buildConfig.getCompileOutputPathForTests();
       final AirDescriptorParameters descriptorParams =
         new AirDescriptorParameters(descriptorFileName, descriptorFolderPath, airVersion, applicationId, applicationId, applicationId,
-                                    "0.0", buildConfig.OUTPUT_FILE_NAME, FlexBundle.message("flexunit.test.runner.caption"), 500, 400);
+                                    "0.0", buildConfig.OUTPUT_FILE_NAME, FlexBundle.message("flexunit.test.runner.caption"), 500, 400,
+                                    false);
       final Ref<IOException> createDescriptorError = new Ref<IOException>();
       Runnable createDescriptorRunnable = new Runnable() {
         public void run() {

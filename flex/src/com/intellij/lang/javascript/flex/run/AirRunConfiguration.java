@@ -64,33 +64,19 @@ public class AirRunConfiguration extends FlexRunConfiguration {
 
     switch (params.getAirRunMode()) {
       case AppDescriptor:
-        final String airDescriptorPath = params.getAirDescriptorPath().trim();
-        if (airDescriptorPath.length() == 0) {
-          throw new RuntimeConfigurationError(FlexBundle.message("air.descriptor.not.set"));
-        }
-        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
-        if (file == null || file.isDirectory()) {
-          throw new RuntimeConfigurationError(FlexBundle.message("air.descriptor.not.found", airDescriptorPath));
-        }
-
-        final String rootDirPath = params.getAirRootDirPath().trim();
-        if (rootDirPath.length() == 0) {
-          throw new RuntimeConfigurationError(FlexBundle.message("root.directory.not.set"));
-        }
-        final CompilerModuleExtension moduleExtension = CompilerModuleExtension.getInstance(module);
-        if (moduleExtension == null ||
-            !FileUtil.toSystemIndependentName(rootDirPath).equals(VfsUtil.urlToPath(moduleExtension.getCompilerOutputUrl()))) {
-          final VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(rootDirPath);
-          if (dir == null || !dir.isDirectory()) {
-            throw new RuntimeConfigurationError(FlexBundle.message("root.directory.not.found", rootDirPath));
-          }
-        }
+        checkAirDescriptorBasedConfiguration(module, params);
         break;
       case MainClass:
-        checkMainClassBasedConfiguration(module);
+        checkMainClassBasedConfiguration(module, params);
         break;
     }
 
+    checkAdlAndAirRuntime(module);
+
+    checkDebuggerSdk(params);
+  }
+
+  protected static void checkAdlAndAirRuntime(Module module) throws RuntimeConfigurationError {
     final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
     assert sdk != null;
     final String adlPath = FlexSdkUtils.getAdlPath(sdk);
@@ -114,8 +100,30 @@ public class AirRunConfiguration extends FlexRunConfiguration {
         throw new RuntimeConfigurationError(FlexBundle.message("air.runtime.not.found.check.sdk.settings", airRuntimePath, sdk.getName()));
       }
     }
+  }
 
-    checkDebuggerSdk();
+  protected static void checkAirDescriptorBasedConfiguration(Module module, AirRunnerParameters params) throws RuntimeConfigurationError {
+    final String airDescriptorPath = params.getAirDescriptorPath().trim();
+    if (airDescriptorPath.length() == 0) {
+      throw new RuntimeConfigurationError(FlexBundle.message("air.descriptor.not.set"));
+    }
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
+    if (file == null || file.isDirectory()) {
+      throw new RuntimeConfigurationError(FlexBundle.message("air.descriptor.not.found", airDescriptorPath));
+    }
+
+    final String rootDirPath = params.getAirRootDirPath().trim();
+    if (rootDirPath.length() == 0) {
+      throw new RuntimeConfigurationError(FlexBundle.message("root.directory.not.set"));
+    }
+    final CompilerModuleExtension moduleExtension = CompilerModuleExtension.getInstance(module);
+    if (moduleExtension == null ||
+        !FileUtil.toSystemIndependentName(rootDirPath).equals(VfsUtil.urlToPath(moduleExtension.getCompilerOutputUrl()))) {
+      final VirtualFile dir = LocalFileSystem.getInstance().findFileByPath(rootDirPath);
+      if (dir == null || !dir.isDirectory()) {
+        throw new RuntimeConfigurationError(FlexBundle.message("root.directory.not.found", rootDirPath));
+      }
+    }
   }
 
   public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
@@ -171,6 +179,29 @@ public class AirRunConfiguration extends FlexRunConfiguration {
       else {
         myNeedToRemoveAirRuntimeDir = false;
         myAirRuntimeDirForFlexmojosSdk = null;
+      }
+
+      if (params instanceof AirMobileRunnerParameters) {
+        final AirMobileRunnerParameters p = (AirMobileRunnerParameters)params;
+        switch (p.getAirMobileRunTarget()) {
+          case Emulator:
+            commandLine.addParameter("-profile");
+            commandLine.addParameter("mobileDevice");
+
+            commandLine.addParameter("-screensize");
+            final String adlAlias = p.getEmulator().adlAlias;
+            if (adlAlias != null) {
+              commandLine.addParameter(adlAlias);
+            }
+            else {
+              commandLine.addParameter(
+                p.getScreenWidth() + "x" + p.getScreenHeight() + ":" + p.getFullScreenWidth() + "x" + p.getFullScreenHeight());
+            }
+            break;
+          case AndroidDevice:
+            assert false;
+            break;
+        }
       }
 
       final String adlOptions = params.getAdlOptions();

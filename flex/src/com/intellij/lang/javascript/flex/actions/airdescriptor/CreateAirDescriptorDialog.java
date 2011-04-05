@@ -220,7 +220,7 @@ public class CreateAirDescriptorDialog extends DialogWrapper {
     int appHeight = parseUnsignedInt(myApplicationHeightTextField.getText());
 
     return new AirDescriptorParameters(descriptorFileName, descriptorFileLocation, airVersion, appId, appFileName, appName, appVersion,
-                                       appContent, appTitle, appWidth, appHeight);
+                                       appContent, appTitle, appWidth, appHeight, false);
   }
 
   private static int parseUnsignedInt(final String text) {

@@ -148,6 +148,20 @@ public class PrimitiveAmfOutputStream extends OutputStream {
   public void writeAmfUInt(int v) {
     writeAmfInt(v < 0 ? (v + 16777216) : v);
   }
+  
+  public void writeAmfUInt(long v) {
+    if (v < 0) {
+      v += 16777216;
+    }
+    
+    if (v >= INT28_MIN_VALUE && v <= INT28_MAX_VALUE) {
+      write(Amf3Types.INTEGER);
+      writeUInt29((int)v & UINT29_MASK);
+    }
+    else {
+      writeAmfDouble(v);
+    }
+  }
 
   @SuppressWarnings({"UnusedDeclaration"})
   public void writeAmfUInt(String v) {
@@ -160,8 +174,14 @@ public class PrimitiveAmfOutputStream extends OutputStream {
   }
 
   public final void writeAmfDouble(String v) {
-    write(Amf3Types.DOUBLE);
-    writeDouble(Double.parseDouble(v));
+    boolean startWithSharp;
+    if ((startWithSharp = v.startsWith("#")) || v.startsWith("0x")) {
+      v = v.substring(startWithSharp ? 1 : 2);
+      writeAmfDouble(Integer.parseInt(v, 16));
+    }
+    else {
+      writeAmfDouble(Double.parseDouble(v));
+    }
   }
 
   public final void write(int b) {

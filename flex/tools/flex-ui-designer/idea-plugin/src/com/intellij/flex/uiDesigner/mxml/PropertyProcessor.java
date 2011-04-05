@@ -77,9 +77,7 @@ class PropertyProcessor {
     return new PercentableValueWriter(value);
   }
 
-  public ValueWriter process(XmlElement element,
-                             XmlElementValueProvider valueProvider,
-                             AnnotationBackedDescriptor descriptor,
+  public ValueWriter process(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, 
                              Context context) {
     if (descriptor.isPredefined()) {
       LOG.error("unknown language element " + descriptor.getName());
@@ -108,53 +106,82 @@ class PropertyProcessor {
     }
 
     ValueWriter valueWriter = injectedASWriter.processProperty(valueProvider, name, type, isStyle, context);
-    if (valueWriter == InjectedASWriter.BINDING) {
+    if (valueWriter == InjectedASWriter.IGNORE) {
       return null;
     }
     else if (valueWriter != null) {
-      return valueWriter;
-    }
-
-    if (descriptor.isAllowsPercentage()) {
-      return processPercentable(valueProvider, descriptor);
-    }
-    else {
-      if (isStyle && name.equals("skinClass") && "Class".equals(descriptor.getType())) {
-        int skinProjectClassDocumentFactoryId = getSkinProjectClassDocumentFactoryId(valueProvider);
-        if (skinProjectClassDocumentFactoryId != -1) {
-          isSkinProjectClass = true;
-          name = "skinFactory";
-          return new SkinProjectClassValueWriter(skinProjectClassDocumentFactoryId, writer);
+      if (valueWriter instanceof ClassValueWriter && isSkinClass(descriptor)) {
+        SkinProjectClassValueWriter skinProjectClassValueWriter = getSkinProjectClassValueWriter(getSkinProjectClassDocumentFactoryId(
+          ((ClassValueWriter)valueWriter).getJsClas(), valueProvider));
+        if (skinProjectClassValueWriter != null) {
+          return skinProjectClassValueWriter;
         }
       }
+      
+      return valueWriter;
+    }
+    else if (descriptor.isAllowsPercentage()) {
+      return processPercentable(valueProvider, descriptor);
+    }
+    else if (isSkinClass(descriptor)) {
+      valueWriter = getSkinProjectClassValueWriter(getSkinProjectClassDocumentFactoryId(valueProvider));
+      if (valueWriter != null) {
+        return valueWriter;
+      }
+    }
 
+    if (AsCommonTypeNames.CLASS.equals(type)) {
+      return new ClassStringValueWriter(valueProvider.getTrimmed());
+    }
+    else {
       return new ValueWriterImpl(valueProvider, descriptor);
+    }
+  }
+
+  private boolean isSkinClass(AnnotationBackedDescriptor descriptor) {
+    return isStyle && name.equals("skinClass") && AsCommonTypeNames.CLASS.equals(descriptor.getType());
+  }
+  
+  private SkinProjectClassValueWriter getSkinProjectClassValueWriter(int skinProjectClassDocumentFactoryId) {
+    if (skinProjectClassDocumentFactoryId != -1) {
+      isSkinProjectClass = true;
+      name = "skinFactory";
+      return new SkinProjectClassValueWriter(skinProjectClassDocumentFactoryId, writer);
+    }
+    else {
+      return null;
     }
   }
 
   private int getSkinProjectClassDocumentFactoryId(XmlElementValueProvider valueProvider) {
     XmlElement injectedHost = valueProvider.getInjectedHost();
     if (injectedHost != null) {
-      PsiReference reference = injectedHost.getReference();
-      if (reference != null) {
-        PsiElement element = reference.resolve();
+      PsiReference[] references = injectedHost.getReferences();
+      if (references.length > 0) {
+        PsiElement element = references[references.length - 1].resolve();
         if (element instanceof JSClass) {
-          PsiFile psiFile = element.getContainingFile();
-          VirtualFile virtualFile = psiFile.getVirtualFile();
-          assert virtualFile != null;
-          boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
-          if (psiFile instanceof XmlFile) {
-            if (inSourceContent) {
-              return DocumentFactoryManager.getInstance(psiFile.getProject()).getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
-            }
-          }
-          else if (inSourceContent) {
-            LOG.error("support only mxml-based skin: " + valueProvider.getTrimmed());
-          }
+          return getSkinProjectClassDocumentFactoryId((JSClass)element, valueProvider);
         }
       }
     }
 
+    return -1;
+  }
+  
+  private int getSkinProjectClassDocumentFactoryId(JSClass jsClass, XmlElementValueProvider valueProvider) {
+    PsiFile psiFile = jsClass.getContainingFile();
+    VirtualFile virtualFile = psiFile.getVirtualFile();
+    assert virtualFile != null;
+    boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
+    if (psiFile instanceof XmlFile) {
+      if (inSourceContent) {
+        return DocumentFactoryManager.getInstance(psiFile.getProject()).getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
+      }
+    }
+    else if (inSourceContent) {
+      LOG.warn("support only mxml-based skin: " + valueProvider.getTrimmed());
+    }
+    
     return -1;
   }
 
@@ -180,7 +207,7 @@ class PropertyProcessor {
     }
 
     @Override
-    public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidProperty {
+    public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
       final String type = descriptor.getType();
       if (isStyle) {
         int flags = isSkinProjectClass ? SKIN_INT_PROJECT : 0;
@@ -204,7 +231,7 @@ class PropertyProcessor {
       else if (type.equals(JSCommonTypeNames.BOOLEAN_CLASS_NAME)) {
         out.writeAmfBoolean(valueProvider.getTrimmed());
       }
-      else if (type.equals("int") || type.equals("uint")) {
+      else if (type.equals(AsCommonTypeNames.INT) || type.equals(AsCommonTypeNames.UINT)) {
         String format = descriptor.getFormat();
         if (format != null && format.equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
           writer.writeColor(valueProvider.getTrimmed(), isStyle);
@@ -219,9 +246,6 @@ class PropertyProcessor {
       }
       else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
         writeUntypedPropertyValue(valueProvider, descriptor);
-      }
-      else if (type.equals("Class")) {
-        writer.writeClass(valueProvider.getTrimmed());
       }
       else if (type.equals("mx.core.IFactory")) {
         writeClassFactory(valueProvider);

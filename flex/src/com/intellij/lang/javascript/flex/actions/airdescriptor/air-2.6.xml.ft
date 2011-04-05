@@ -185,7 +185,7 @@
 	<!-- </iPhone> -->
 
 	<!-- Specify Android specific tags that get passed to AndroidManifest.xml file. -->
-	<!--<android> 
+	${android_permissions_start}<android>
 		<manifestAdditions>
 		<![CDATA[
 			<manifest android:installLocation="auto">
@@ -206,7 +206,7 @@
 			</manifest>
 		]]>
 		</manifestAdditions> 
-	</android> -->
+	</android> ${android_permissions_end}
 	<!-- End of the schema for adding the android specific tags in AndroidManifest.xml file -->
 
 </application>

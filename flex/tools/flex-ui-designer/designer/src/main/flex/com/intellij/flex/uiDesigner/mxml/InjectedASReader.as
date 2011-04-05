@@ -21,7 +21,7 @@ public class InjectedASReader {
   }
   
   private function readBinding(data:IDataInput, reader:MxmlReader):void {
-    const size:int = data.readByte();
+    const size:int = data.readShort();
     if (size == 0) {
       return;
     }

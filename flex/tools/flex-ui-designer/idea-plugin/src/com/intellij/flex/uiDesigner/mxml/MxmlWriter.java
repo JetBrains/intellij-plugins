@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,7 +28,12 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.List;
 
+import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.IGNORE;
+import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PRIMITIVE;
+
 public class MxmlWriter {
+  static final Logger LOG = Logger.getInstance(MxmlWriter.class.getName());
+  
   static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
 
   private PrimitiveAmfOutputStream out;
@@ -75,7 +81,7 @@ public class MxmlWriter {
       out.write(0);
     }
 
-    injectedASWriter.write();
+    injectedASWriter.write(psiFile.getProject());
     writer.endMessage();
 
     List<XmlFile> unregisteredDocumentFactories = propertyProcessor.getUnregisteredDocumentFactories();
@@ -200,27 +206,16 @@ public class MxmlWriter {
         }
         else {
           int beforePosition = out.size();
-          String error = null;
-          try {
-            int type = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined, context);
+          int type = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined, context);
+          if (type != IGNORE) {
             if (propertyProcessor.isStyle()) {
               cssDeclarationSourceDefined = true;
             }
-            if (type < PropertyProcessor.PRIMITIVE) {
-              error = FlexUIDesignerBundle.message("error.unknown.attribute.value.type", descriptor.getType());
+            if (type < PRIMITIVE) {
+              writer.getBlockOut().setPosition(beforePosition);
+              FlexUIDesignerApplicationManager.getInstance().reportProblem(attribute.getProject(), FlexUIDesignerBundle
+                .message("error.unknown.attribute.value.type", descriptor.getType()));
             }
-          }
-          catch (InvalidProperty e) {
-            error = e.getMessage();
-          }
-          catch (RuntimeException e) {
-            writer.getBlockOut().setPosition(beforePosition);
-            throw e;
-          }
-          
-          if (error != null) {
-            writer.getBlockOut().setPosition(beforePosition);
-            FlexUIDesignerApplicationManager.getInstance().reportProblem(attribute.getProject(), error);
           }
         }
       }
@@ -328,27 +323,16 @@ public class MxmlWriter {
             // skip
           }
           else {
-            int beforePosition = out.size();
-            int type;
-            try {
-              type = writeProperty(tag, createValueProvider(tag), annotationBackedDescriptor, cssDeclarationSourceDefined, context);
+            int type = writeProperty(tag, createValueProvider(tag), annotationBackedDescriptor, cssDeclarationSourceDefined, context);
+            if (type != IGNORE) {
               if (propertyProcessor.isStyle()) {
                 cssDeclarationSourceDefined = true;
               }
-            }
-            catch (InvalidProperty e) {
-              writer.getBlockOut().setPosition(beforePosition);
-              FlexUIDesignerApplicationManager.getInstance().reportProblem(tag.getProject(), e.getMessage());
-              continue;
-            }
-            catch (RuntimeException e) {
-              writer.getBlockOut().setPosition(beforePosition);
-              throw e;
-            }
 
-            if (type < PropertyProcessor.PRIMITIVE) {
-              assert context != null;
-              processPropertyTagValue(tag, context, type == PropertyProcessor.ARRAY);
+              if (type < PRIMITIVE) {
+                assert context != null;
+                processPropertyTagValue(tag, context, type == PropertyProcessor.ARRAY);
+              }
             }
           }
         }
@@ -480,25 +464,48 @@ public class MxmlWriter {
   }
 
   private int writeProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
-                            boolean cssDeclarationSourceDefined, Context context) throws InvalidProperty {
-    ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
-    if (valueWriter == null) {
-      return PropertyProcessor.IGNORE;
-    }
-
-    writer.write(propertyProcessor.getName());
-    if (propertyProcessor.isStyle()) {
-      out.write(PropertyClassifier.STYLE);
-      if (!cssDeclarationSourceDefined) {
-        defineInlineCssDeclaration(element.getParent());
+                            boolean cssDeclarationSourceDefined, Context context) {
+    String error;
+    int beforePosition = out.size();
+    try {
+      ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
+      if (valueWriter == null) {
+        return IGNORE;
       }
 
-      out.writeUInt29(element.getTextOffset());
-    }
-    else {
-      out.write(PropertyClassifier.PROPERTY);
-    }
+      writer.write(propertyProcessor.getName());
+      if (propertyProcessor.isStyle()) {
+        out.write(PropertyClassifier.STYLE);
+        if (!cssDeclarationSourceDefined) {
+          defineInlineCssDeclaration(element.getParent());
+        }
+  
+        out.writeUInt29(element.getTextOffset());
+      }
+      else {
+        out.write(PropertyClassifier.PROPERTY);
+      }
 
-    return valueWriter.write(out, writer, propertyProcessor.isStyle());
+      return valueWriter.write(out, writer, propertyProcessor.isStyle());
+    }
+    catch (InvalidPropertyException e) {
+      error = e.getMessage();
+    }
+    catch (NumberFormatException e) {
+      error = e.getMessage();
+      final String prefix = "For input string: \"";
+      if (error.startsWith(prefix)) {
+        error = error.substring(prefix.length(), error.charAt(error.length() - 1) == '"' ? error.length() - 1 : error.length());
+      }
+    }
+    catch (RuntimeException e) {
+      error = e.getMessage();
+      LOG.error(e);
+    }
+    
+    writer.getBlockOut().setPosition(beforePosition);
+    FlexUIDesignerApplicationManager.getInstance().reportProblem(element.getProject(), error);
+
+    return IGNORE;
   }
 }

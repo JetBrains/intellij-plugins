@@ -3,8 +3,7 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.compiler.options.CompilerUIConfigurable;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.lang.javascript.flex.*;
-import com.intellij.lang.javascript.flex.sdk.AirSdkType;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
@@ -571,19 +570,19 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
     setConditionalCompilationDefinitionsText();
 
     final Sdk flexSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
-    if (flexSdk != null) {
-      if (flexSdk.getSdkType() instanceof AirSdkType) {
-        myFlexSdkConfigXmlLabel.setText("air-config.xml");
-        myFlexSdkConfigXmlLabel.setIcon(flexSdk.getSdkType().getIcon());
-      }
-      else if (flexSdk.getSdkType() instanceof FlexSdkType) {
-        myFlexSdkConfigXmlLabel.setText("flex-config.xml");
-        myFlexSdkConfigXmlLabel.setIcon(flexSdk.getSdkType().getIcon());
-      }
-      else {
+    if (flexSdk != null && flexSdk.getSdkType() instanceof IFlexSdkType) {
+      final String baseConfigFileName = FlexSdkUtils.getBaseConfigFileName((IFlexSdkType)flexSdk.getSdkType());
+      myFlexSdkConfigXmlLabel.setText(baseConfigFileName);
+      myFlexSdkConfigXmlLabel.setIcon(flexSdk.getSdkType().getIcon());
+
+      if (flexSdk.getSdkType() instanceof FlexmojosSdkType) {
         myFlexSdkConfigXmlLabel.setText("(not applicable for Flexmojos SDK)");
         myFlexSdkConfigXmlLabel.setIcon(null);
       }
+    }
+    else {
+      myFlexSdkConfigXmlLabel.setText("(not applicable)");
+      myFlexSdkConfigXmlLabel.setIcon(null);
     }
 
     myServerTechnologyForm.setPathToServicesConfigXml(FileUtil.toSystemDependentName(config.PATH_TO_SERVICES_CONFIG_XML));

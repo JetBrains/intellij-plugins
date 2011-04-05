@@ -21,9 +21,7 @@ public class ModuleInfo {
     return module;
   }
 
-  public
-  @Nullable
-  List<LocalStyleHolder> getLocalStyleHolders() {
+  public @Nullable List<LocalStyleHolder> getLocalStyleHolders() {
     return localStyleHolders;
   }
 

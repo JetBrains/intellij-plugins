@@ -12,9 +12,7 @@ import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
-import com.intellij.lang.javascript.flex.run.AirRunnerParameters;
-import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
-import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
+import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -24,7 +22,6 @@ import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -317,10 +314,25 @@ public class FlexDebugProcess extends XDebugProcess {
         return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
       }
     }, " ");
+
     final Process process = Runtime.getRuntime().exec(ArrayUtil.toStringArray(fdbLaunchCommand));
+    sendCommand(new ReadGreetingCommand()); // just to read copyrights and wait for "(fdb)"
+
+    if (airRunnerParameters instanceof AirMobileRunnerParameters &&
+        ((AirMobileRunnerParameters)airRunnerParameters).getAirMobileRunTarget() ==
+        AirMobileRunnerParameters.AirMobileRunTarget.AndroidDevice) {
+      sendCommand(new StartAppOnAndroidDeviceCommand(flexSdk, ((AirMobileRunnerParameters)airRunnerParameters)));
+    }
+    else {
+      scheduleAdlLaunch(flexSdk, airRunnerParameters);
+    }
+
+    return process;
+  }
+
+  private void scheduleAdlLaunch(Sdk flexSdk, AirRunnerParameters airRunnerParameters) throws IOException {
     final String adlPath = FlexSdkUtils.getAdlPath(flexSdk);
     ensureExecutable(adlPath);
-    sendCommand(new ReadGreetingCommand()); // just to read copyrights and wait for "(fdb)"
     final List<String> airLaunchCommand = new ArrayList<String>();
     airLaunchCommand.add(adlPath);
 
@@ -338,6 +350,29 @@ public class FlexDebugProcess extends XDebugProcess {
       airRuntimeDirForFlexmojosSdk = null;
     }
 
+    if (airRunnerParameters instanceof AirMobileRunnerParameters) {
+      final AirMobileRunnerParameters p = (AirMobileRunnerParameters)airRunnerParameters;
+      switch (p.getAirMobileRunTarget()) {
+        case Emulator:
+          airLaunchCommand.add("-profile");
+          airLaunchCommand.add("mobileDevice");
+
+          airLaunchCommand.add("-screensize");
+          final String adlAlias = p.getEmulator().adlAlias;
+          if (adlAlias != null) {
+            airLaunchCommand.add(adlAlias);
+          }
+          else {
+            airLaunchCommand.add(
+              p.getScreenWidth() + "x" + p.getScreenHeight() + ":" + p.getFullScreenWidth() + "x" + p.getFullScreenHeight());
+          }
+          break;
+        case AndroidDevice:
+          assert false;
+          break;
+      }
+    }
+
     final String adlOptions = airRunnerParameters.getAdlOptions();
     if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
       airLaunchCommand.addAll(StringUtil.split(adlOptions, " "));
@@ -351,7 +386,6 @@ public class FlexDebugProcess extends XDebugProcess {
     }
     sendCommand(new StartAirAppDebuggingCommand(ArrayUtil.toStringArray(airLaunchCommand),
                                                 needToRemoveAirRuntimeDir ? airRuntimeDirForFlexmojosSdk : null));
-    return process;
   }
 
   private Process launchFlex(final List<String> fdbLaunchCommand, FlexRunnerParameters flexRunnerParameters) throws IOException {
@@ -1235,6 +1269,25 @@ public class FlexDebugProcess extends XDebugProcess {
         }
       });
 
+    }
+  }
+
+  class StartAppOnAndroidDeviceCommand extends StartDebuggingCommand {
+
+    private final Sdk myFlexSdk;
+    private final AirMobileRunnerParameters myAirRunnerParameters;
+
+    public StartAppOnAndroidDeviceCommand(final Sdk flexSdk, final AirMobileRunnerParameters airRunnerParameters) {
+      myFlexSdk = flexSdk;
+      myAirRunnerParameters = airRunnerParameters;
+    }
+
+    void launchDebuggedApplication() throws IOException {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        public void run() {
+          FlexRunner.runOnDevice(getSession().getProject(), myFlexSdk, myAirRunnerParameters, true);
+        }
+      });
     }
   }
 

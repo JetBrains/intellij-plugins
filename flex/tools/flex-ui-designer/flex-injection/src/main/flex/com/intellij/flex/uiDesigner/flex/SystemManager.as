@@ -81,6 +81,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     Singleton.registerClass(TOOL_TIP_MANAGER_FQN, ToolTipManagerImpl);
 
     implementations["mx.managers::IActiveWindowManager"] = new ActiveWindowManager();
+    implementations["mx.managers::ISystemManagerChildManager"] = this;
 
     Singleton.registerClass("mx.styles::IStyleManager2", RootStyleManager);
     Singleton.registerClass("mx.managers::IDragManager", DragManagerImpl);
@@ -556,6 +557,11 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   flex::v4_5
   public function addPreloadedRSL(loaderInfo:LoaderInfo, rsl:Vector.<RSLData>):void {
     throw new Error("forbidden");
+  }
+
+  // mx.managers::ISystemManagerChildManager, ChildManager, "cm.notifyStyleChangeInChildren(styleProp, true);" in CSSStyleDeclaration
+  //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
+  public function notifyStyleChangeInChildren(styleProp:String, recursive:Boolean):void {
   }
 }
 }

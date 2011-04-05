@@ -76,8 +76,8 @@ public class FlexSdkUtils {
 
     sdkModificator.setVersionString(readFlexSdkVersion(sdkRoot));
 
-    final String configFileRelativePath =
-      sdk.getSdkType() instanceof AirSdkType ? "frameworks/air-config.xml" : "frameworks/flex-config.xml";
+    final SdkType sdkType = sdk.getSdkType();
+    final String configFileRelativePath = getBaseConfigFileRelPath((IFlexSdkType)sdkType) ;
 
     final VirtualFile configFile = sdkRoot.findFileByRelativePath(configFileRelativePath);
     if (configFile == null) {
@@ -139,7 +139,6 @@ public class FlexSdkUtils {
         }
       }
     }
-
   }
 
   /**
@@ -189,16 +188,12 @@ public class FlexSdkUtils {
     }
   }
 
+  public static boolean isValidSdkRoot(final IFlexSdkType sdkType, final VirtualFile sdkRoot) {
+    return sdkRoot != null && VfsUtil.findRelativeFile(getBaseConfigFileRelPath(sdkType), sdkRoot) != null;
+  }
+
   public static boolean isFlexOrAirSdkRoot(final VirtualFile sdkRoot) {
-    return isFlexSdkRoot(sdkRoot) || isAirSdkRoot(sdkRoot);
-  }
-
-  public static boolean isFlexSdkRoot(final VirtualFile sdkRoot) {
-    return sdkRoot != null && sdkRoot.isValid() && VfsUtil.findRelativeFile("frameworks/flex-config.xml", sdkRoot) != null;
-  }
-
-  public static boolean isAirSdkRoot(final VirtualFile sdkRoot) {
-    return sdkRoot != null && sdkRoot.isValid() && VfsUtil.findRelativeFile("frameworks/air-config.xml", sdkRoot) != null;
+    return isValidSdkRoot(FlexSdkType.getInstance(), sdkRoot) || isValidSdkRoot(AirSdkType.getInstance(), sdkRoot);
   }
 
   @NotNull
@@ -283,10 +278,10 @@ public class FlexSdkUtils {
     else {
       final Ref<Sdk> sdkRef = new Ref<Sdk>();
       ApplicationManager.getApplication().invokeAndWait(new Runnable() {
-        public void run() {
-          sdkRef.set(doCreateSdk(sdkType, sdkHomePath));
-        }
-      }, ModalityState.defaultModalityState());
+          public void run() {
+            sdkRef.set(doCreateSdk(sdkType, sdkHomePath));
+          }
+        }, ModalityState.defaultModalityState());
       return sdkRef.get();
     }
   }
@@ -387,8 +382,9 @@ public class FlexSdkUtils {
     }
     return sdk.getHomePath() + AIR_RUNTIME_RELATIVE_PATH;
   }
-  
-  public static @Nullable String getAirRuntimePath(final @NotNull Sdk sdk) {
+
+  @Nullable
+  public static String getAirRuntimePath(final @NotNull Sdk sdk) {
     if (sdk.getSdkType() instanceof FlexmojosSdkType) {
       final SdkAdditionalData data = sdk.getSdkAdditionalData();
       if (data instanceof FlexmojosSdkAdditionalData) {
@@ -398,7 +394,7 @@ public class FlexSdkUtils {
     else {
       return sdk.getHomePath() + AIR_RUNTIME_RELATIVE_PATH;
     }
-    
+
     return null;
   }
 
@@ -621,5 +617,23 @@ public class FlexSdkUtils {
     catch (ExecutionException e) {/*ignore*/}
 
     return false;
+  }
+
+  public static String getBaseConfigFileRelPath(final IFlexSdkType sdkType) {
+    return "frameworks/" + getBaseConfigFileName(sdkType);
+  }
+
+  public static String getBaseConfigFileName(final IFlexSdkType sdkType) {
+    switch (sdkType.getSubtype()) {
+      case Flex:
+        return "flex-config.xml";
+      case AIR:
+        return "air-config.xml";
+      case AIRMobile:
+        return "airmobile-config.xml";
+      case Flexmojos:
+      default:
+        return null;
+    }
   }
 }

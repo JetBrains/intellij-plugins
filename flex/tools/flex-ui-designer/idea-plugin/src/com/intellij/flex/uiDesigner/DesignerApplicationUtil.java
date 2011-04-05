@@ -5,6 +5,7 @@ import com.intellij.execution.*;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
+import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
@@ -24,6 +25,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
@@ -34,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -128,17 +129,7 @@ final class DesignerApplicationUtil {
 
                 @Override
                 protected ProcessHandler doGetProcessHandler() {
-                  return new DefaultDebugProcessHandler() {
-                    @Override
-                    public void destroyProcess() {
-                      if (DebugPathManager.IS_DEV) {
-                        super.destroyProcess();
-                      }
-                      else {
-                        detachProcess();
-                      }
-                    }
-                  };
+                  return new MyDefaultDebugProcessHandler();
                 }
               };
             }
@@ -165,7 +156,7 @@ final class DesignerApplicationUtil {
     runner.execute(executor, new ExecutionEnvironment(runner, settings, module.getProject()), new ProgramRunner.Callback() {
       @Override
       public void processStarted(final RunContentDescriptor descriptor) {
-        ProcessHandler processHandler = descriptor.getProcessHandler();
+        final MyDefaultDebugProcessHandler processHandler = (MyDefaultDebugProcessHandler)descriptor.getProcessHandler();
         assert processHandler != null;
         //noinspection deprecation
         processHandler.putUserData(ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, true);
@@ -176,6 +167,8 @@ final class DesignerApplicationUtil {
             if (!project.isDisposed()) {
               ExecutionManager.getInstance(project).getContentManager().removeRunContent(executor, descriptor);
             }
+            
+            processHandler.myDestroyProcess();
           }
         }
         );
@@ -183,13 +176,29 @@ final class DesignerApplicationUtil {
       }
     });
   }
+  
+  private static class MyDefaultDebugProcessHandler extends DefaultDebugProcessHandler {
+    @Override
+    public void destroyProcess() {
+      if (DebugPathManager.IS_DEV) {
+        super.destroyProcess();
+      }
+      else {
+        detachProcess();
+      }
+    }
+    
+    private void myDestroyProcess() {
+      super.destroyProcess();
+    }
+  }
 
-  public static Process runAdl(AdlRunConfiguration adlRunConfiguration, String descriptor, int port,
+  public static ProcessHandler runAdl(AdlRunConfiguration adlRunConfiguration, String descriptor, int port,
                                final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     return runAdl(adlRunConfiguration, descriptor, port, null, adlExitHandler);
   }
 
-  public static Process runAdl(AdlRunConfiguration runConfiguration, String descriptor, int port, @Nullable String root,
+  public static ProcessHandler runAdl(AdlRunConfiguration runConfiguration, String descriptor, int port, @Nullable String root,
                                final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     ensureExecutable(runConfiguration.adlPath);
 
@@ -216,79 +225,9 @@ final class DesignerApplicationUtil {
       command.addAll(runConfiguration.arguments);
     }
 
-    final Process process = new ProcessBuilder(command).start();
-
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        InputStreamReader reader = new InputStreamReader(process.getInputStream());
-        int exitCode = 0;
-        try {
-          char[] buf = new char[1024];
-          int read;
-          while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-            String message = new String(buf, 0, read);
-            LOG.debug("[adl input stream]: " + message);
-          }
-
-          try {
-            exitCode = process.waitFor();
-          }
-          catch (InterruptedException ignored) {
-          }
-
-          switch (exitCode) {
-            case 0:
-              break;
-            case 137:
-              LOG.debug("ADL terminated, " + exitCode);
-              break;
-
-            default:
-              LOG.error("ADL finished with exit code " + exitCode);
-          }
-        }
-        catch (IOException e) {
-          LOG.error("adl input stream reading error", e);
-        }
-        finally {
-          if (adlExitHandler != null) {
-            adlExitHandler.consume(exitCode);
-          }
-
-          try {
-            reader.close();
-          }
-          catch (IOException ignored) {
-          }
-        }
-      }
-    });
-
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      public void run() {
-        InputStreamReader reader = new InputStreamReader(process.getErrorStream());
-        try {
-          char[] buf = new char[1024];
-          int read;
-          while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-            String message = new String(buf, 0, read);
-            LOG.debug("[adl error stream]: " + message);
-          }
-        }
-        catch (IOException e) {
-          LOG.error("adl error stream reading error", e);
-        }
-        finally {
-          try {
-            reader.close();
-          }
-          catch (IOException ignored) {
-          }
-        }
-      }
-    });
-
-    return process;
+    OSProcessHandler processHandler = new MyOSProcessHandler(command, adlExitHandler);
+    processHandler.startNotify();
+    return processHandler;
   }
 
   private static final Set<String> ourAlreadyMadeExecutable = new THashSet<String>();
@@ -323,6 +262,39 @@ final class DesignerApplicationUtil {
 
     public void onAdlExit(Runnable runnable) {
       onAdlExit = runnable;
+    }
+  }
+
+  private static class MyOSProcessHandler extends OSProcessHandler {
+    private Consumer<Integer> adlExitHandler;
+
+    public MyOSProcessHandler(List<String> command, Consumer<Integer> adlExitHandler) throws IOException {
+      super(new ProcessBuilder(command).start(), null);
+      this.adlExitHandler = adlExitHandler;
+    }
+
+    @Override
+    public void notifyTextAvailable(String text, Key outputType) {
+      LOG.debug("[adl output/error stream]: " + text);
+    }
+
+    @Override
+    protected void destroyProcessImpl() {
+      super.destroyProcessImpl();
+      callExitHandler(0);
+    }
+
+    @Override
+    protected void onOSProcessTerminated(int exitCode) {
+      callExitHandler(exitCode);
+    }
+
+    private void callExitHandler(int exitCode) {
+      if (adlExitHandler != null) {
+        adlExitHandler.consume(exitCode);
+        
+        adlExitHandler = null;
+      }
     }
   }
 }

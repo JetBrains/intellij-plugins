@@ -121,6 +121,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static boolean needToCheckThatCompilationEnabled(final FlexRunnerParameters parameters) {
     return parameters instanceof FlexUnitRunnerParameters
+           || (parameters instanceof AirMobileRunnerParameters &&
+               ((AirMobileRunnerParameters)parameters).getAirMobileRunMode() == AirMobileRunnerParameters.AirMobileRunMode.MainClass)
            || (parameters instanceof AirRunnerParameters &&
                ((AirRunnerParameters)parameters).getAirRunMode() == AirRunnerParameters.AirRunMode.MainClass)
            || (parameters.getRunMode() == FlexRunnerParameters.RunMode.MainClass);
@@ -474,6 +476,11 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     consoleView.addMessageFilter(new FlexStackTraceFilter(project));
     Disposer.register(project, consoleView);
     return consoleView;
+  }
+
+  public static boolean isRunOnDevice(final FlexRunnerParameters params) {
+    return params instanceof AirMobileRunnerParameters &&
+           ((AirMobileRunnerParameters)params).getAirMobileRunTarget() != AirMobileRunnerParameters.AirMobileRunTarget.Emulator;
   }
 
   public static boolean isRunAsAir(final FlexRunnerParameters params) {

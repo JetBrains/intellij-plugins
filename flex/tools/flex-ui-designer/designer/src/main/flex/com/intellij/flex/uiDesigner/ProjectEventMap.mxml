@@ -4,6 +4,8 @@
     import cocoa.SegmentedControl;
     import cocoa.tabView.TabView;
 
+    import com.intellij.flex.uiDesigner.flex.ProjectView;
+
     import com.intellij.flex.uiDesigner.flex.StylePane;
     import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.CssRulesetPrinter;
     import com.intellij.flex.uiDesigner.flex.cssBlockRenderer.Interactor;
@@ -13,7 +15,9 @@
 
   <components>
     <Component role="{ElementManager}"/>
-    <Component role="{DocumentFactoryManager}"/>
+    <Component role="{DocumentFactoryManager}">
+      <Requirement role="{SocketManager}"/>
+    </Component>
     <Component role="{ElementToolManager}"/>
     <Component role="{DocumentManager}" implementation="{DocumentManagerImpl}">
       <Requirement role="{LibraryManager}"/>
@@ -36,9 +40,13 @@
       <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
       <PropertyInjector targetKey="pane" target="{Interactor}"/>
     </Injectors>
+
+    <Injectors target="{ProjectView}">
+      <PropertyInjector source="{DocumentFactoryManager}" targetKey="documentFactoryManager"/>
+    </Injectors>
     
     <Injectors target="{TabView}" targetId="editorTabView">
-      <PropertyInjector source="{DocumentManager}" sourceKey="document.tabIndex" targetKey="selectedIndex"/>
+      <PropertyInjector source="{DocumentManager}" sourceKey="document.tabIndex" targetKey="selectedIndex" nullValue="-1"/>
       <PropertyInjector sourceKey="selectedItem.document" target="{DocumentManager}"/>
     </Injectors>
     
@@ -47,7 +55,6 @@
     </Injectors>
     <Injectors target="{ElementToolManager}">
       <PropertyInjector source="{ElementManager}" sourceKey="element"/>
-      <!--<PropertyInjector source="{DocumentManager}" sourceKey="document" targetKey="document"/>-->
     </Injectors>
     
     <Injectors target="{ElementManager}">
@@ -57,8 +64,14 @@
     <Injectors target="{SegmentedControl}" targetId="statesBar">
       <PropertySetter role="{StatesBarManager}" targetKey="presentation"/>
     </Injectors>
+    <Injectors target="{SegmentedControl}" targetId="elementTreeBar">
+      <PropertySetter role="{ElementTreeBarManager}" targetKey="presentation"/>
+    </Injectors>
     <Injectors target="{StatesBarManager}">
       <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
+    </Injectors>
+    <Injectors target="{ElementTreeBarManager}">
+      <PropertyInjector source="{ElementManager}" sourceKey="element"/>
     </Injectors>
   </injectors>
 </LocalEventMap>

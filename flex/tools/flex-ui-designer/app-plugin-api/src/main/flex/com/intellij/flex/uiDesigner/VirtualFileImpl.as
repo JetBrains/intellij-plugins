@@ -27,7 +27,7 @@ public final class VirtualFileImpl implements IExternalizable, VirtualFile {
   private var _name:String;
   public function get name():String {
     if (_name == null) {
-      var index:int = url.lastIndexOf(File.separator);
+      var index:int = url.lastIndexOf("/");
       if (index < 0) {
         _name = url;
       }

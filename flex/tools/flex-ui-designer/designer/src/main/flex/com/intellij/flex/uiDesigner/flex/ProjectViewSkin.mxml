@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="cocoa" xmlns:tools="com.intellij.flex.uiDesigner.flex.tools.*" xmlns:s="library://ns.adobe.com/flex/spark">
+<Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="cocoa" xmlns:tools="com.intellij.flex.uiDesigner.flex.tools.*">
   <fx:Metadata>
     [HostComponent("com.intellij.flex.uiDesigner.flex.ProjectView")]
   </fx:Metadata>
@@ -51,9 +51,10 @@
   <TabView id="editorTabView" lafSubkey="ProjectView"/>
   <Toolbar id="editorToolbar" height="25" lafSubkey="Editor">
     <layout>
-      <BarLayout padding="5"/>
+      <BarLayout padding="5" gap="12"/>
     </layout>
     <SegmentedControl id="statesBar"/>
+    <SegmentedControl id="elementTreeBar" itemRenderer="com.intellij.flex.uiDesigner.flex.ElementTreeBarItemRenderer"/>
   </Toolbar>
   <tools:ElementToolContainer id="elementToolContainer"/>
 

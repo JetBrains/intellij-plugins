@@ -1,12 +1,14 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
@@ -27,12 +29,20 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   private Socket socket;
   protected DataInputStream reader;
 
-  private Process adlProcess;
+  private ProcessHandler adlProcessHandler;
   
   private int passedCounter;
   protected List<Library> libraries;
   private LibrarySet librarySet;
   protected File appRootDir;
+  
+  protected String getRawProjectRoot() {
+    return useRawProjectRoot() ? getTestPath() : null;
+  }
+  
+  protected boolean useRawProjectRoot() {
+    return false;
+  }
 
   protected List<OriginalLibrary> getLibraries(Consumer<OriginalLibrary> initializer) {
     List<OriginalLibrary> libraries = new ArrayList<OriginalLibrary>(libs.size());
@@ -53,7 +63,8 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     }
     else {
       appRootDir = createTempDir("fud");
-      FileUtil.copy(new File(getFudHome() + "/app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(appRootDir, "designer.swf"));
+      FileUtil.copy(new File(getFudHome() + "/app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(appRootDir,
+                                                                                                        FlexUIDesignerApplicationManager.DESIGNER_SWF));
     }
     return appRootDir;
   }
@@ -63,20 +74,16 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     super.setUp();
     
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-    final LibraryStyleInfoCollector styleInfoCollector = new LibraryStyleInfoCollector(myProject, myModule, stringWriter);
     stringWriter.startChange();
 
     appRootDir = getAppRootDir();
-    libraries = new SwcDependenciesSorter(appRootDir).sort(getLibraries(new Consumer<OriginalLibrary>() {
-      @Override
-      public void consume(OriginalLibrary originalLibrary) {
-        styleInfoCollector.collect(originalLibrary);
-      }
-    }), myProject.getLocationHash(), getFlexVersion());
+    libraries = new SwcDependenciesSorter(appRootDir).sort(getLibraries(new LibraryStyleInfoCollector(myProject, myModule, stringWriter)),
+                                                           myProject.getLocationHash(), getFlexVersion());
 
     final ServerSocket serverSocket = new ServerSocket(0, 1);
-    
-    DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"), System.getProperty("fud.air"));
+
+    DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"), 
+                                                                                                                      System.getProperty("fud.air"));
     adlRunConfiguration.arguments = new ArrayList<String>();
     adlRunConfiguration.arguments.add("-p");
     adlRunConfiguration.arguments.add(getFudHome() + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
@@ -84,19 +91,21 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     adlRunConfiguration.arguments.add("-cdd");
     adlRunConfiguration.arguments.add(getFudHome() + "/flex-injection/target");
 
-    adlProcess = DesignerApplicationUtil.runAdl(adlRunConfiguration, getFudHome() + "/designer/src/main/resources/descriptor.xml", serverSocket.getLocalPort(), appRootDir.getPath(), new Consumer<Integer>() {
-      @Override
-      public void consume(Integer exitCode) {
-        if (exitCode != 0) {
-          try {
-            serverSocket.close();
+    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, getFudHome() + "/designer/src/main/resources/descriptor.xml",
+                                                       serverSocket.getLocalPort(), appRootDir.getPath(), new Consumer<Integer>() {
+        @Override
+        public void consume(Integer exitCode) {
+          if (exitCode != 0) {
+            try {
+              serverSocket.close();
+            }
+            catch (IOException ignored) {
+            }
+
+            fail("adl return " + exitCode);
           }
-          catch (IOException ignored) {}
-          
-          fail("adl return " + exitCode);
         }
-      }
-    });
+      });
 
     socket = serverSocket.accept();
     reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
@@ -114,9 +123,67 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   private void registerModule(ModuleInfo moduleInfo, StringRegistry.StringWriter stringWriter) throws IOException {
     client.registerModule(myProject, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
   }
+
+  /**
+   * standard impl in CodeInsightestCase is not suitable for us — in case of not null rawProjectRoot (we need test file in package), 
+   * we don't need "FileUtil.copyDir(projectRoot, toDirIO);"
+   * also, skip openEditorsAndActivateLast
+   */
+  protected VirtualFile configureByFiles(final VirtualFile rawProjectRoot, final VirtualFile... vFiles) throws IOException {
+    myFile = null;
+    myEditor = null;
+
+    final File toDirIO = createTempDirectory();
+    final VirtualFile toDir = getVirtualFile(toDirIO);
+
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      public void run() {
+        try {
+          final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
+          final ModifiableRootModel rootModel = rootManager.getModifiableModel();
+          
+          boolean rootSpecified = rawProjectRoot != null;
+          int rawRootPathLength = rootSpecified ? rawProjectRoot.getPath().length() : -1;
+          // auxiliary files should be copied first
+          for (int i = vFiles.length - 1; i >= 0; i--) {
+            VirtualFile vFile = vFiles[i];
+            if (rootSpecified) {
+              copyFilesFillingEditorInfos(rawProjectRoot, toDir, vFile.getPath().substring(rawRootPathLength));
+            }
+            else {
+              copyFilesFillingEditorInfos(vFile.getParent(), toDir, vFile.getName());
+            }
+          }
+
+          rootModel.addContentEntry(toDir).addSourceFolder(toDir, false);
+          doCommitModel(rootModel);
+          sourceRootAdded(toDir);
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
+      }
+    });
+    
+    return toDir;
+  }
   
   protected void testFiles(final VirtualFile... originalVFiles) throws Exception {
-    testFiles(new MyTester(), false, originalVFiles);
+    testFiles(new MyTester(), originalVFiles.length, originalVFiles);
+  }
+  
+  protected void testFiles(String[] files, String... auxiliaryFiles) throws Exception {
+    VirtualFile[] originalVFiles = new VirtualFile[files.length + auxiliaryFiles.length];
+    int i = 0;
+    for (String file : files) {
+      originalVFiles[i++] = getVFile(getTestPath() + "/" + file);
+    }
+    int auxiliaryBorder = i;
+    for (String file : auxiliaryFiles) {
+      originalVFiles[i++] = getVFile(getTestPath() + "/" + file);
+    }
+    
+    testFiles(new MyTester(), auxiliaryBorder, originalVFiles);
   }
   
   protected void testFile(String... originalVFilePath) throws Exception {
@@ -126,19 +193,17 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   protected void testFile(Tester tester, String... originalPaths) throws Exception {
     VirtualFile[] originalVFiles = new VirtualFile[originalPaths.length];
     for (int i = 0, originalPathsLength = originalPaths.length; i < originalPathsLength; i++) {
-      VirtualFile originalVFile = LocalFileSystem.getInstance().findFileByPath(getTestPath() + "/" + originalPaths[i]);
-      assert originalVFile != null;
-      originalVFiles[i] = originalVFile;
+      originalVFiles[i] = getVFile(getTestPath() + "/" + originalPaths[i]);
     }
     
-    testFiles(tester, true, originalVFiles);
+    testFiles(tester, 1, originalVFiles);
   }
   
-  protected void testFiles(final Tester tester, boolean onlyFirst, final VirtualFile... originalVFiles) throws Exception {
-    VirtualFile[] testVFiles = configureByFiles(null, originalVFiles).getChildren();
+  protected void testFiles(final Tester tester, final int auxiliaryBorder, final VirtualFile... originalVFiles) throws Exception {
+    VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles).getChildren();
     collectLocalStyleHolders();
 
-    for (int childrenLength = testVFiles.length, i = onlyFirst ? (childrenLength - 1) : 0; i < childrenLength; i++) {
+    for (int childrenLength = testVFiles.length, i = childrenLength - auxiliaryBorder; i < childrenLength; i++) {
       final VirtualFile file = testVFiles[i];
       if (!file.getName().endsWith(".mxml")) {
         continue;
@@ -189,7 +254,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     reader.close();
     socket.close();
 
-    adlProcess.destroy();
+    adlProcessHandler.destroyProcess();
     
     super.tearDown();
   }

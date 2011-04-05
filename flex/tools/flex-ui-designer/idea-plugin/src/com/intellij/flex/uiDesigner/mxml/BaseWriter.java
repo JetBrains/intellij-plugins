@@ -255,7 +255,7 @@ public final class BaseWriter {
     write(className);
   }
 
-  public void writeColor(String value, boolean isPrimitiveStyle) throws InvalidProperty {
+  public void writeColor(String value, boolean isPrimitiveStyle) throws InvalidPropertyException {
     out.write(AmfExtendedTypes.COLOR_STYLE_MARKER);
     if (value.charAt(0) == '#') {
       if (isPrimitiveStyle) {
@@ -271,20 +271,35 @@ public final class BaseWriter {
     }
     else {
       final String colorName = value.toLowerCase();
+      final String hexCodeForColorName = ColorSampleLookupValue.getHexCodeForColorName(colorName);
+      if (hexCodeForColorName == null) {
+        try {
+          long v = Long.parseLong(colorName);
+          if (isPrimitiveStyle) {
+            out.write(CssPropertyType.COLOR_INT);
+          }
+          out.writeAmfUInt(v);
+          return;
+        }
+        catch (NumberFormatException e) {
+          throw new InvalidPropertyException("error.invalid.color.name", colorName);
+        }
+      }
+      
       if (isPrimitiveStyle) {
         out.write(CssPropertyType.COLOR_STRING);
         stringWriter.writeNullable(colorName, out);
       }
-      final String hexCodeForColorName = ColorSampleLookupValue.getHexCodeForColorName(colorName);
-      if (hexCodeForColorName == null) {
-        throw new InvalidProperty("error.invalid.color.name", colorName);
-      }
-      else {
-        value = hexCodeForColorName.substring(1);
-      }
+       
+      value = hexCodeForColorName.substring(1);
     }
-
-    out.writeAmfUInt(Integer.parseInt(value, 16));
+    
+    if (value.length() > 6) {
+      out.writeAmfUInt(Long.parseLong(value, 16));
+    }
+    else {
+      out.writeAmfUInt(Integer.parseInt(value, 16));
+    }
   }
 
   public void writeDeferredInstanceFromArray() {

@@ -1,15 +1,12 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.DataControl;
 
-import mx.events.CollectionEvent;
-import mx.events.CollectionEventKind;
-
 import org.flyti.plexus.Injectable;
 import org.flyti.util.ArrayList;
 
 public class StatesBarManager implements Injectable {
-  private const statesSource:Vector.<Object> = new Vector.<Object>();
-  private const stateList:ArrayList = new ArrayList(statesSource);
+  private const source:Vector.<Object> = new Vector.<Object>();
+  private const sourceList:ArrayList = new ArrayList(source);
   
   public function get states():Array {
     return _document.uiComponent.states;
@@ -30,12 +27,17 @@ public class StatesBarManager implements Injectable {
       return;
     }
     
+    if (_document == null) {
+      _presentation.hidden = true;
+      return;
+    }
+    
     var documentStates:Array = states;
     _presentation.hidden = documentStates.length < 2;
     if (!_presentation.hidden) {
       updateStates(documentStates);
       var currentState:Object = _document.uiComponent.currentState;
-      _presentation.selectedIndex = (currentState == null || currentState == "") ? 0 : stateList.getItemIndex(currentState);
+      _presentation.selectedIndex = (currentState == null || currentState == "") ? 0 : sourceList.getItemIndex(currentState);
     }
   }
 
@@ -49,17 +51,17 @@ public class StatesBarManager implements Injectable {
 
     if (_presentation != null) {
       _presentation.action = changeHandler;
-      _presentation.items = stateList;
+      _presentation.items = sourceList;
     }
   }
   
   private function updateStates(rawStates:Array):void {
-    statesSource.length = rawStates.length;
+    source.length = rawStates.length;
     for (var i:int = 0, n:int = rawStates.length; i < n; i++) {
-      statesSource[i] = rawStates[i].name;
+      source[i] = rawStates[i].name;
     }
 
-    stateList.refresh();
+    sourceList.refresh();
   }
 
   private function changeHandler(item:String):void {

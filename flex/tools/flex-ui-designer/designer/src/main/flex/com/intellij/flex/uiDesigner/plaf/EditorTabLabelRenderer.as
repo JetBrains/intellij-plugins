@@ -25,11 +25,11 @@ internal class EditorTabLabelRenderer extends LabeledItemRenderer {
   
   private static const graphicsData:Vector.<IGraphicsData> = new <IGraphicsData>[inactiveStroke, inactiveFill];
   private static const graphicsData2:Vector.<IGraphicsData> = new <IGraphicsData>[inactiveStroke];
-  
+
   override protected function measure():void {
     if (labelHelper.hasText) {
       labelHelper.validate();
-      measuredWidth = Math.round(labelHelper.textWidth) + ((6 + 1) * 2);
+      measuredWidth = Math.round(labelHelper.textWidth) + (1 + 6 + 1 + 2 + 16 + 2);
     }
     else {
       measuredWidth = 0;
@@ -60,10 +60,15 @@ internal class EditorTabLabelRenderer extends LabeledItemRenderer {
     }
   }
   
+  public function clearSelected(tabViewSkin:EditorTabViewSkin):void {
+    tabViewSkin.borderShape.graphics.clear();
+    labelHelper.container = null;
+  }
+  
   private function drawSelected(tabViewSkin:EditorTabViewSkin, w:Number):void {
     labelHelper.container = tabViewSkin;
     labelHelper.validate();
-    labelHelper.moveToCenterWithXOffset(x, w, HEIGHT - 5);
+    labelHelper.move(x + 1 + 6, HEIGHT - 5);
     
     var g:Graphics = tabViewSkin.borderShape.graphics;
     g.clear();
@@ -95,7 +100,7 @@ internal class EditorTabLabelRenderer extends LabeledItemRenderer {
   private function drawNotSelected(g:Graphics, w:Number, h:Number):void {
     labelHelper.container = this;
     labelHelper.validate();
-    labelHelper.moveToCenter(w, h - 5);
+    labelHelper.move(1 + 6, h - 5);
     
     sharedMatrix.createGradientBox(w - 1, HEIGHT - 1, Math.PI / 2, 0.5, 0.5);
     g.drawGraphicsData(graphicsData);

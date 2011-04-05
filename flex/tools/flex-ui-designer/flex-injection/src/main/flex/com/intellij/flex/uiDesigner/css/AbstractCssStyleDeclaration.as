@@ -24,8 +24,10 @@ public class AbstractCssStyleDeclaration extends CSSStyleDeclaration implements 
         }
       }
       
-      var s:NonSharedStyleDeclarationProxy = NonSharedStyleDeclarationProxy(chain);
-      if (s.owner == target) {
+      var s:StyleDeclarationProxy = StyleDeclarationProxy(chain);
+      // if target has mx.styles.StyleProxy — chain is StyleDeclarationProxy (i.e. global, nonInheritingChain),
+      // otherwise NonSharedStyleDeclarationProxy
+      if (!(s is NonSharedStyleDeclarationProxy) || NonSharedStyleDeclarationProxy(s).owner == target) {
         return new NonSharedStyleDeclarationProxy(target, s, this);
       }
       else {

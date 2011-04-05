@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.plaf.aqua {
 import cocoa.plaf.LookAndFeelUtil;
+import cocoa.plaf.aqua.HUDPushButtonSkin;
 import cocoa.text.TextFormat;
 
 import com.intellij.flex.uiDesigner.plaf.CustomTextFormatId;
@@ -20,6 +21,7 @@ public class IdeaAquaLookAndFeel extends IdeaLookAndFeel {
     assetsDataClass = null;
     
     data[CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL] = SIDE_PANE_GROUP_ITEM_LABEL_FONT;
+    data["TabLabel.PushButton"] = HUDPushButtonSkin;
   }
 }
 }

@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.Disposable;
@@ -47,7 +48,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public static final String DESCRIPTOR_XML = "descriptor.xml";
 
   private Client client;
-  private Process adlProcess;
+  public ProcessHandler adlProcessHandler;
   private Server server;
 
   ProjectManagerListener projectManagerListener;
@@ -73,8 +74,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     closeClosable(client);
     closeClosable(server);
 
-    if (adlProcess != null) {
-      adlProcess.destroy();
+    if (adlProcessHandler != null) {
+      adlProcessHandler.destroyProcess();
     }
   }
   
@@ -114,7 +115,13 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         public void run() {
           try {
             if (!client.isModuleRegistered(module)) {
-              initLibrarySets(project, module);
+              try {
+                initLibrarySets(project, module);
+              }
+              catch (InitException e) {
+                LOG.error(e);
+                reportProblem(project, e.getMessage());
+              }
             }
 
             client.openDocument(module, psiFile);
@@ -172,6 +179,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
       if (adlRunConfiguration == null) {
         // TODO discuss: show error balloon saying 'Cannot find suitable SDK...'?
+        documentOpening = false;
         return;
       }
     }
@@ -197,11 +205,11 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         try {
           copyAppFiles();
         
-          adlProcess = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/" + DESCRIPTOR_XML,
+          adlProcessHandler = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/" + DESCRIPTOR_XML,
                                                       server.listen(), new Consumer<Integer>() {
               @Override
               public void consume(Integer integer) {
-                adlProcess = null;
+                adlProcessHandler = null;
                 if (onAdlExit != null) {
                   ApplicationManager.getApplication().invokeLater(onAdlExit);
                 }
@@ -271,30 +279,36 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     appFile.setLastModified(lastModified);
   }
 
-  private void initLibrarySets(@NotNull final Project project, @NotNull final Module module) throws IOException {
+  private void initLibrarySets(@NotNull final Project project, @NotNull final Module module) throws IOException, InitException {
     final LibraryCollector libraryCollector = new LibraryCollector();
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
     stringWriter.startChange();
 
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        final LibraryStyleInfoCollector styleInfoCollector = new LibraryStyleInfoCollector(project, module, stringWriter);
-        libraryCollector.collect(module, new Consumer<OriginalLibrary>() {
-          @Override
-          public void consume(OriginalLibrary originalLibrary) {
-            styleInfoCollector.collect(originalLibrary);
-          }
-        });
-      }
-    });
+    try {
+      ApplicationManager.getApplication().runReadAction(new Runnable() {
+        @Override
+        public void run() {
+          libraryCollector.collect(module, new LibraryStyleInfoCollector(project, module, stringWriter));
+        }
+      });
+    }
+    catch (RuntimeException e) {
+      stringWriter.rollbackChange();
+      throw new InitException("error.collect.libraries");
+    }
 
     final LibrarySet externalLibrarySet;
     ProjectInfo projectInfo = project.getUserData(PROJECT_INFO);
     if (projectInfo == null) {
       String librarySetId = project.getLocationHash();
-      externalLibrarySet = new LibrarySet(librarySetId, ApplicationDomainCreationPolicy.ONE, new SwcDependenciesSorter(appDir)
-        .sort(libraryCollector.getExternalLibraries(), librarySetId, libraryCollector.getFlexSdkVersion()));
+      try {
+        externalLibrarySet = new LibrarySet(librarySetId, ApplicationDomainCreationPolicy.ONE, new SwcDependenciesSorter(appDir)
+          .sort(libraryCollector.getExternalLibraries(), librarySetId, libraryCollector.getFlexSdkVersion()));
+      }
+      catch (RuntimeException e) {
+        throw new InitException("error.sort.libraries");
+      }
+      
       projectInfo = new ProjectInfo(externalLibrarySet);
       project.putUserData(PROJECT_INFO, projectInfo);
 
@@ -302,15 +316,22 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       client.registerLibrarySet(externalLibrarySet, stringWriter);
     }
     else {
+      stringWriter.finishChange();
       //noinspection UnusedAssignment
       externalLibrarySet = projectInfo.getLibrarySet();
       // todo merge existing libraries and new. create new custom external library set for myModule, 
       // if we have different version of the artifact
     }
 
-    final ModuleInfo moduleInfo = new ModuleInfo(module);
+    ModuleInfo moduleInfo = new ModuleInfo(module);
     stringWriter.startChange();
-    ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter);
+    try {
+      ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter);
+    }
+    catch (RuntimeException e) {
+      stringWriter.rollbackChange();
+      throw new InitException("error.collect.local.style.holders");
+    }
 
     client.registerModule(project, moduleInfo, new String[]{externalLibrarySet.getId()}, stringWriter);
   }
@@ -357,6 +378,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         }
         LOG.error(e);
       }
+      catch (InitException e) {
+        LOG.error(e);
+        reportProblem(myProject, e.getMessage());
+      }
       finally {
         documentOpening = false;
       }
@@ -367,7 +392,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     reportProblem(project, message, MessageType.ERROR);
   }
 
-  @SuppressWarnings({"MethodMayBeStatic"})
   public void reportProblem(final Project project, String message, MessageType messageType) {
     final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, messageType, null).setShowCallout(false)
       .setHideOnAction(false).createBalloon();

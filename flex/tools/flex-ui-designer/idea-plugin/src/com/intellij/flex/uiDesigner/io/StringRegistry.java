@@ -8,9 +8,47 @@ public class StringRegistry {
   private final ObjectIntHashMap<String> table = new ObjectIntHashMap<String>(1024);
   //  private final Map<String, Integer> table = new LinkedHashMap<String, Integer>();
   private StringWriter activeWriter;
+  
+  private int lastCommitedTableSize;
 
   public static StringRegistry getInstance() {
     return ServiceManager.getService(StringRegistry.class);
+  }
+  
+  private void startChange(StringWriter activeWriter) {
+    lastCommitedTableSize = table.size();
+    assert this.activeWriter == null;
+    this.activeWriter = activeWriter;
+  }
+  
+  private void rollbackChange() {
+    if (lastCommitedTableSize != table.size()) {
+      final int size = table.size();
+      TObjectIntIterator<String> iterator = table.iterator();
+      String[] newStrings = new String[table.size() - lastCommitedTableSize];
+      int newStringIndex = 0;
+      for (int i = size; i-- > 0; ) {
+        iterator.advance();
+        if (iterator.value() > lastCommitedTableSize) {
+          newStrings[newStringIndex++] = iterator.key();
+        }
+      }
+      
+      assert newStrings.length == newStringIndex;
+      for (String newString : newStrings) {
+        table.remove(newString);
+      }
+    }
+
+    resetAfterChange();
+  }
+
+  private void commitChange() {
+    resetAfterChange();
+  }
+
+  private void resetAfterChange() {
+    activeWriter = null;
   }
 
   public void reset() {
@@ -21,13 +59,17 @@ public class StringRegistry {
   public boolean isEmpty() {
     return table.isEmpty();
   }
-
-  public int getSize() {
-    return table.size();
-  }
-
-  public TObjectIntIterator<String> getIterator() {
-    return table.iterator();
+  
+  public String[] toArray() {
+    int size = table.size();
+    TObjectIntIterator<String> iterator = table.iterator();
+    String[] strings = new String[size];
+    for (int i = size; i-- > 0; ) {
+      iterator.advance();
+      strings[iterator.value() - 1] = iterator.key();
+    }
+    
+    return strings;
   }
 
   private int getNameReference(String string, StringWriter writer) {
@@ -70,15 +112,22 @@ public class StringRegistry {
     }
 
     public void startChange() {
-      assert stringRegistry.activeWriter == null;
-      stringRegistry.activeWriter = this;
+      stringRegistry.startChange(this);
+    }
+    
+    public void rollbackChange() {
+      reset();
+      stringRegistry.rollbackChange();
     }
 
     public void finishChange() {
+      reset();
+      stringRegistry.commitChange();
+    }
+    
+    private void reset() {
       counter = 0;
       out.reset();
-
-      stringRegistry.activeWriter = null;
     }
 
     public int getReference(String string) {
@@ -103,11 +152,21 @@ public class StringRegistry {
     }
 
     public int size() {
-      return (counter < 0x80 ? 1 : 2) + out.size();
+      return IOUtil.sizeOf(counter) + out.size();
     }
 
     public ByteArrayOutputStreamEx getByteArrayOut() {
       return out.getByteArrayOut();
+    }
+    
+    public void writeToIfStarted(PrimitiveAmfOutputStream to) {
+      if (stringRegistry.activeWriter == null) {
+        assert counter == 0;
+        to.writeUInt29(0);
+        return;
+      }
+      
+      writeTo(to); 
     }
 
     public void writeTo(PrimitiveAmfOutputStream to) {

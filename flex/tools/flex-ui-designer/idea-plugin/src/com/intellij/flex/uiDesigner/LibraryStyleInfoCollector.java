@@ -9,14 +9,14 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.Consumer;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.FileBasedIndex;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class LibraryStyleInfoCollector {
+public class LibraryStyleInfoCollector implements Consumer<OriginalLibrary> {
   private final Project project;
   private final Module module;
 
@@ -63,28 +63,26 @@ public class LibraryStyleInfoCollector {
       }, project);
 
     if (uniqueGuard.size() == 0) {
-      bytes.reset();
       return null;
     }
     else {
       bytes.putShort(uniqueGuard.size(), 0);
-      byte[] result = bytes.getByteArrayOut().toByteArray();
-      bytes.reset();
-      return result;
+      return bytes.getByteArrayOut().toByteArray();
     }
   }
 
-  public void collect(final @NotNull OriginalLibrary library) {
-    library.inheritingStyles = collectInherited(library.getFile());
+  @Override
+  public void consume(OriginalLibrary library) {
+    try {
+      library.inheritingStyles = collectInherited(library.getFile());
+    }
+    finally {
+      bytes.reset();
+    }
 
     VirtualFile defaultsCssVirtualFile = library.getDefaultsCssFile();
     if (defaultsCssVirtualFile != null) {
       library.defaultsStyle = cssWriter.write(defaultsCssVirtualFile, module);
     }
-
-    //CssFile cssFile = (CssFile) psiDocumentManager.getPsiFile(document);
-    //assert cssFile != null;
-    //need for activate FlexCssElementDescriptorProvider
-    //cssFile.putUserData(ModuleUtil.KEY_MODULE, module);
   }
 }

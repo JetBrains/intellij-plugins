@@ -16,7 +16,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ArrayUtil;
 import gnu.trove.TIntObjectHashMap;
-import gnu.trove.TObjectIntIterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -169,7 +168,7 @@ public class Client implements Closable {
 
     beginMessage(ClientMethod.registerModule);
 
-    stringWriter.writeTo(out);
+    stringWriter.writeToIfStarted(out);
 
     out.writeInt(id);
     out.writeInt(project.hashCode());
@@ -222,7 +221,7 @@ public class Client implements Closable {
       
       JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
       assert jsClass != null;
-      out.writeAmfUtf(jsClass.getName());
+      out.writeAmfUtf(jsClass.getQualifiedName());
       out.writeShort(id);
 
       writeDocumentFactory(module, psiFile, virtualFile, documentFileManager);
@@ -270,16 +269,7 @@ public class Client implements Closable {
     }
 
     beginMessage(ClientMethod.initStringRegistry);
-
-    int size = stringRegistry.getSize();
-    TObjectIntIterator<String> iterator = stringRegistry.getIterator();
-    String[] strings = new String[size];
-    for (int i = size; i-- > 0; ) {
-      iterator.advance();
-      strings[iterator.value() - 1] = iterator.key();
-    }
-
-    out.write(strings);
+    out.write(stringRegistry.toArray());
 
     blockOut.end();
   }

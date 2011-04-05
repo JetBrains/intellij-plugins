@@ -24,8 +24,11 @@ public class MainLoader extends Sprite {
   private static var icon32:Class;
 
   public function MainLoader() {
-    NativeApplication.nativeApplication.autoExit = false;
-    NativeApplication.nativeApplication.icon.bitmaps = [Bitmap(new icon128()).bitmapData, Bitmap(new icon256()).bitmapData, Bitmap(new icon32()).bitmapData];
+    var application:NativeApplication = NativeApplication.nativeApplication;
+    application.autoExit = false;
+    if (NativeApplication.supportsDockIcon) {
+      application.icon.bitmaps = [Bitmap(new icon128()).bitmapData, Bitmap(new icon256()).bitmapData, Bitmap(new icon32()).bitmapData];
+    }
     
     roboflest();
 

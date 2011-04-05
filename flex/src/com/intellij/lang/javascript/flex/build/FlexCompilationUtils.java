@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -152,6 +153,9 @@ public class FlexCompilationUtils {
 
     if (flexSdk.getSdkType() instanceof AirSdkType) {
       command.add("+configname=air");
+    }
+    else if (flexSdk.getSdkType() instanceof AirMobileSdkType) {
+      command.add("+configname=airmobile");
     }
 
     final boolean useSdkConfig = config.USE_DEFAULT_SDK_CONFIG_FILE && !(flexSdk.getSdkType() instanceof FlexmojosSdkType);

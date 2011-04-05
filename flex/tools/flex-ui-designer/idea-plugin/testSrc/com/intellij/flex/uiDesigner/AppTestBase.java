@@ -2,19 +2,27 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.sdk.AirSdkType;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import js.JSTestUtils;
 import junit.framework.AssertionFailedError;
 import org.picocontainer.MutablePicoContainer;
 
@@ -46,6 +54,12 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     return getTestDataPath() + "/sdk/playerglobal";
   }
   
+  protected VirtualFile getVFile(String file) {
+    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(file);
+    assert vFile != null;
+    return vFile;
+  }
+  
   protected void changeServiceImplementation(Class key, Class implementation) {
     MutablePicoContainer picoContainer = (MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer();
     picoContainer.unregisterComponent(key.getName());
@@ -55,13 +69,42 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   @Override
   protected void setUpJdk() {    
     flexSdkRootPath = getTestDataPath() + "/sdk/" + getFlexVersion();
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), flexSdkRootPath, true);
+    doSetupFlexSdk(myModule, flexSdkRootPath, true, getFlexVersion() + ".0");
+  }
+  
+  private void doSetupFlexSdk(final Module module, final String flexSdkRootPath, final boolean air, final String sdkVersion) {
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        //otherwise that brilliant javac won't compile
+        //noinspection RedundantCast
+        final Sdk sdk = FlexSdkUtils.createOrGetSdk(air ? (SdkType)AirSdkType.getInstance() : (SdkType)FlexSdkType.getInstance(),
+                                                    flexSdkRootPath);
+        assert sdk != null;
+        final SdkModificator modificator = sdk.getSdkModificator();
 
-    Sdk sdk = ModuleRootManager.getInstance(myModule).getSdk();
-    assert sdk != null;
-    SdkModificator sdkModificator = sdk.getSdkModificator();
-    modifySdk(sdk, sdkModificator);
-    sdkModificator.commitChanges();
+        modificator.setVersionString(sdkVersion);
+        modifySdk(sdk, modificator);
+        modificator.commitChanges();
+
+        final ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+        rootModel.setSdk(sdk);
+        rootModel.commit();
+
+        Disposer.register(module, new Disposable() {
+          @Override
+          public void dispose() {
+            ApplicationManager.getApplication().runWriteAction(new Runnable() {
+              @Override
+              public void run() {
+                final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
+                projectJdkTable.removeJdk(sdk);
+              }
+            });
+          }
+        });
+      }
+    });
   }
   
   @Override
@@ -70,12 +113,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   }
   
   protected void modifySdk(Sdk sdk, SdkModificator sdkModificator) {
-    sdkModificator.setVersionString(getFlexVersion() + ".0");
-    
     sdkModificator.addRoot(LocalFileSystem.getInstance().findFileByPath(getPlayerGlobalRootPath()), OrderRootType.CLASSES);
-    
-    sdkModificator.removeRoot(sdk.getHomeDirectory(), OrderRootType.CLASSES);
-    sdkModificator.removeRoot(sdk.getHomeDirectory(), OrderRootType.SOURCES);
     
     String[] list = new File(flexSdkRootPath).list();
     Arrays.sort(list);
@@ -91,8 +129,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   }
 
   protected void addLibrary(SdkModificator sdkModificator, String path, boolean fromSdk) {
-    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(path);
-    assert virtualFile != null;
+    VirtualFile virtualFile = getVFile(path);
     VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
     assert jarFile != null;
     
@@ -120,7 +157,13 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   
   protected String getFlexVersion() {
     try {
-      return getClass().getMethod(getName()).getAnnotation(Flex.class).version();
+      Flex annotation = getClass().getMethod(getName()).getAnnotation(Flex.class);
+      if (annotation == null || annotation.version().isEmpty()) {
+        annotation = getClass().getAnnotation(Flex.class);
+      }
+      
+      assert annotation != null && !annotation.version().isEmpty();
+      return annotation.version();
     }
     catch (NoSuchMethodException e) {
       throw new AssertionFailedError(e.getMessage());
@@ -129,22 +172,18 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   
   protected boolean isRequireLocalStyleHolder() {
     try {
-      return getClass().getMethod(getName()).getAnnotation(Flex.class).requireLocalStyleHolder();
+      Flex annotation = getClass().getMethod(getName()).getAnnotation(Flex.class);
+      return annotation != null && annotation.requireLocalStyleHolder();
     }
     catch (NoSuchMethodException e) {
       throw new AssertionFailedError(e.getMessage());
     }
   }
 
-  protected void copySwfAndDescriptor(final File rootDir) {
+  protected void copySwfAndDescriptor(final File rootDir) throws IOException {
     //noinspection ResultOfMethodCallIgnored
     rootDir.mkdirs();
-    try {
-      FileUtil.copy(new File(getFudHome(), "app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(rootDir, "designer.swf"));
-      FileUtil.copy(new File(getFudHome(), "designer/src/main/resources/descriptor.xml"), new File(rootDir, "descriptor.xml"));
-    }
-    catch (IOException e) {
-      LOG.error(e);
-    }
+    FileUtil.copy(new File(getFudHome(), "app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(rootDir, FlexUIDesignerApplicationManager.DESIGNER_SWF));
+    FileUtil.copy(new File(getFudHome(), "designer/src/main/resources/descriptor.xml"), new File(rootDir, FlexUIDesignerApplicationManager.DESCRIPTOR_XML));
   }
 }

@@ -24,8 +24,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
 
@@ -84,12 +82,16 @@ public class RunMainClassPrecompileTask implements CompileTask {
 
     if (params instanceof AirRunnerParameters) {
       final String airVersion = FlexSdkUtils.getAirVersion(FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
-      final String applicationId = "air.application";
+      final String applicationId = buildConfig.MAIN_CLASS;
+      final String applicationFileName = mainClassShortName;
+      final String applicationName = mainClassShortName;
+      final String applicationTitle = mainClassShortName;
       final String descriptorFileName = "_" + mainClassShortName + "-air-app.xml";
       final String descriptorFolderPath = buildConfig.getCompileOutputPath();
       final AirDescriptorParameters descriptorParams =
-        new AirDescriptorParameters(descriptorFileName, descriptorFolderPath, airVersion, applicationId, applicationId, applicationId,
-                                    "0.0", buildConfig.OUTPUT_FILE_NAME, mainClassShortName, 400, 300);
+        new AirDescriptorParameters(descriptorFileName, descriptorFolderPath, airVersion, applicationId, applicationFileName,
+                                    applicationName, "0.0", buildConfig.OUTPUT_FILE_NAME, applicationTitle, 400, 300,
+                                    params instanceof AirMobileRunnerParameters);
       final Ref<IOException> createDescriptorError = new Ref<IOException>();
       Runnable createDescriptorRunnable = new Runnable() {
         public void run() {
@@ -129,6 +131,10 @@ public class RunMainClassPrecompileTask implements CompileTask {
   public static boolean isMainClassBasedFlexRunConfiguration(final RunConfiguration runConfiguration) {
     if (runConfiguration instanceof FlexUnitRunConfiguration) {
       return false;
+    }
+    else if (runConfiguration instanceof AirMobileRunConfiguration) {
+      return ((AirMobileRunConfiguration)runConfiguration).getRunnerParameters().getAirMobileRunMode() ==
+             AirMobileRunnerParameters.AirMobileRunMode.MainClass;
     }
     else if (runConfiguration instanceof AirRunConfiguration) {
       return ((AirRunConfiguration)runConfiguration).getRunnerParameters().getAirRunMode() == AirRunnerParameters.AirRunMode.MainClass;

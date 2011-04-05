@@ -23,6 +23,7 @@
     <xdebugger.breakpointType implementation="com.intellij.lang.javascript.flex.debug.FlexBreakpointType"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.FlexRunConfigurationType"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.AirRunConfigurationType"/>
+    <configurationType implementation="com.intellij.lang.javascript.flex.run.AirMobileRunConfigurationType"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType"/>
     <moduleType id="Flex" implementationClass="com.intellij.lang.javascript.flex.FlexModuleType"/>
     <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.FlexModuleConfigurationEditorProvider"/>
@@ -31,6 +32,7 @@
     <frameworkSupport implementation="com.intellij.javascript.flex.FlexSupportProvider"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexSdkType"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.AirSdkType"/>
+    <sdkType implementation="com.intellij.lang.javascript.flex.sdk.AirMobileSdkType"/>
     <sdkType implementation="com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType"/>
     <facetType implementation="com.intellij.lang.javascript.flex.FlexFacetType"/>
     <library.type implementation="com.intellij.lang.javascript.flex.library.FlexLibraryType"/>

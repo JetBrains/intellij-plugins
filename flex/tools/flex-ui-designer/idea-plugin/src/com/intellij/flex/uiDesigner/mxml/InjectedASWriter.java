@@ -8,8 +8,10 @@ import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -36,7 +38,7 @@ class InjectedASWriter {
 
   private ByteRange declarationsRange;
 
-  final static ValueWriter BINDING = new ValueWriter() {
+  final static ValueWriter IGNORE = new ValueWriter() {
     @Override
     public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
       throw new UnsupportedOperationException();
@@ -55,48 +57,46 @@ class InjectedASWriter {
     }
 
     if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type)) {
-      if (checkArray(host, name, isStyle, context) == BINDING) {
-        return BINDING;
+      ValueWriter valueWriter = checkArray(host, name, isStyle, context);
+      if (valueWriter != null) {
+        return valueWriter;
       }
       else if (valueProvider instanceof XmlAttributeValueProvider) {
         // http://youtrack.jetbrains.net/issue/IDEA-64721
         LOG.warn("unsupported injected AS: " + host.getText());
-        return BINDING;
+        return IGNORE;
       }
       else {
         return null;
       }
     }
     else {
-      return checkObject(host, name, isStyle, context);
+      return checkObject(host, name, isStyle, context, type);
     }
   }
 
   private ValueWriter checkArray(PsiElement host, String name, boolean isStyle, @Nullable Context context) {
-    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, InjectedPsiVisitor.ExpectedType.ARRAY);
+    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, JSCommonTypeNames.ARRAY_CLASS_NAME);
     InjectedLanguageUtil.enumerate(host, visitor);
     if (visitor.values != null) {
       bindingItems.add(new ArrayBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values, isStyle));
-      return BINDING;
+      return IGNORE;
     }
     else {
-      return visitor.isUnsupported();
+      return visitor.getValueWriter();
     }
   }
 
-  private ValueWriter checkObject(PsiElement host, String name, boolean isStyle, @Nullable Context context) {
-    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, InjectedPsiVisitor.ExpectedType.OBJECT);
+  private ValueWriter checkObject(PsiElement host, String name, boolean isStyle, @Nullable Context context, @Nullable String type) {
+    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, type);
     InjectedLanguageUtil.enumerate(host, visitor);
     if (visitor.values != null) {
       bindingItems.add(new ObjectBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values[0],
                                          isStyle));
-      return BINDING;
-    }
-    else if (visitor.valueWriter != null) {
-      return visitor.valueWriter;
+      return IGNORE;
     }
     else {
-      return visitor.isUnsupported();
+      return visitor.getValueWriter();
     }
   }
 
@@ -106,10 +106,10 @@ class InjectedASWriter {
     writer.getBlockOut().endRange(declarationsRange);
   }
 
-  public void write() {
+  public void write(Project project) {
     PrimitiveAmfOutputStream out = writer.getOut();
     writeDeclarations();
-    writeBinding(out);
+    writeBinding(out, project);
 
     reset();
   }
@@ -124,19 +124,44 @@ class InjectedASWriter {
     }
   }
 
-  private void writeBinding(PrimitiveAmfOutputStream out) {
-    out.write(bindingItems.size());
+  private void writeBinding(PrimitiveAmfOutputStream out, Project project) {
     if (bindingItems.isEmpty()) {
+      out.writeShort(0);
       return;
     }
-
+    
+    final int bindingSizePosition = out.getBlockOut().allocate(2);
+    int size = bindingItems.size();
+    
     for (Binding binding : bindingItems) {
-      binding.write(out);
+      int beforePosition = out.size();
+      String error;
+      try {
+        binding.write(out);
+        continue;
+      }
+      catch (InvalidPropertyException e) {
+        error = e.getMessage();
+      }
+      catch (RuntimeException e) {
+        error = e.getMessage();
+        LOG.error(e);
+      }
+      
+      size--;
+      writer.getBlockOut().setPosition(beforePosition);
+      FlexUIDesignerApplicationManager.getInstance().reportProblem(project, error);
     }
+
+    out.putShort(size, bindingSizePosition);
   }
 
-  private void writeObjectReference(PrimitiveAmfOutputStream out, String id) {
+  private void writeObjectReference(PrimitiveAmfOutputStream out, String id) throws InvalidPropertyException {
     ObjectReference reference = idReferenceMap.get(id);
+    if (reference == null) {
+      throw new InvalidPropertyException("error.unresolved.variable", id);
+    }
+    
     DeferredInstanceFromObjectReference deferredReference = reference.deferredReference;
     if (deferredReference == null || deferredReference.isWritten()) {
       out.writeUInt29(reference.id << 1);
@@ -168,7 +193,8 @@ class InjectedASWriter {
 
   private static class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor {
     private final PsiElement host;
-    private final ExpectedType expectedType;
+    
+    private final @Nullable String expectedType;
 
     private boolean visited;
 
@@ -176,17 +202,13 @@ class InjectedASWriter {
     private String[] values;
     private ValueWriter valueWriter;
 
-    enum ExpectedType {
-      OBJECT, ARRAY
-    }
-
-    public InjectedPsiVisitor(PsiElement host, ExpectedType expectedType) {
+    public InjectedPsiVisitor(PsiElement host, String expectedType) {
       this.host = host;
       this.expectedType = expectedType;
     }
-
-    public ValueWriter isUnsupported() {
-      return unsupported ? BINDING : null;
+    
+    public ValueWriter getValueWriter() {
+      return unsupported ? IGNORE : valueWriter;
     }
 
     public void visit(@NotNull PsiFile injectedPsi, @NotNull List<PsiLanguageInjectionHost.Shred> places) {
@@ -208,29 +230,68 @@ class InjectedASWriter {
       JSExpression[] arguments = expression.getArgumentList().getArguments();
       if (arguments.length == 1) {
         if (arguments[0] instanceof JSArrayLiteralExpression) {
-          if (isUnexpected(ExpectedType.ARRAY)) {
+          if (isUnexpected(JSCommonTypeNames.ARRAY_CLASS_NAME)) {
             return;
           }
 
           JSExpression[] expressions = ((JSArrayLiteralExpression)arguments[0]).getExpressions();
+          if (expressions.length == 0) {
+            valueWriter = IGNORE;
+            return;
+          }
+          
+          // todo mixed is not supported
+          int arrayOfPrimitives = -1;
+          for (JSExpression itemExpression : expressions) {
+            if (itemExpression instanceof JSReferenceExpression) {
+              // must not have children
+              if (itemExpression.getChildren().length == 0) {
+                if (arrayOfPrimitives == 0) {
+                  continue;
+                }
+                else if (arrayOfPrimitives == -1) {
+                  arrayOfPrimitives = 0;
+                  continue;
+                }
+              }
+            }
+            else if (itemExpression instanceof JSLiteralExpression) {
+              if (arrayOfPrimitives == 1) {
+                continue;
+              }
+              else if (arrayOfPrimitives == -1) {
+                arrayOfPrimitives = 1;
+                continue;
+              }
+            }
 
-          values = new String[expressions.length];
-          for (int i = 0, expressionsLength = expressions.length; i < expressionsLength; i++) {
-            JSExpression itemExpression = expressions[i];
-            if (itemExpression instanceof JSReferenceExpression && itemExpression.getChildren().length == 0) {
-              values[i] = ((JSReferenceExpression)itemExpression).getReferencedName();
+            warnUnsupported(expression, itemExpression);
+            return;
+          }
+          
+          assert arrayOfPrimitives != -1;
+          if (arrayOfPrimitives == 0) {
+            values = new String[expressions.length];
+            for (int i = 0, expressionsLength = expressions.length; i < expressionsLength; i++) {
+              values[i] = ((JSReferenceExpression)expressions[i]).getReferencedName();
             }
-            else {
-              LOG.warn("unsupported injected AS: " + itemExpression.getText() + " in outer expression " + expression.getText() +
-                       " (mxml: " + host.getText() + ")");
-              values = null;
-              unsupported = true;
-              return;
-            }
+          }
+          else {
+            valueWriter = new InjectedArrayOfPrimitivesWriter(expressions);
           }
         }
         else if (arguments[0] instanceof JSReferenceExpression && arguments[0].getChildren().length == 0) {
-          values = new String[]{((JSReferenceExpression)arguments[0]).getReferencedName()};
+          // if propertyName="{CustomSkin}", so, write class, otherwise, it is binding
+          JSReferenceExpression referenceExpression = (JSReferenceExpression)arguments[0];
+          if (isExpectedObjectOrAnyType() || AsCommonTypeNames.CLASS.equals(expectedType)) {
+            PsiElement element = referenceExpression.resolve();
+            if (element instanceof JSClass) {
+              valueWriter = new ClassValueWriter(((JSClass)element));
+              return;
+            }
+          }
+
+          values = new String[]{referenceExpression.getReferencedName()};
         }
         else {
           logUnsupported();
@@ -239,6 +300,12 @@ class InjectedASWriter {
       else {
         logUnsupported();
       }
+    }
+
+    private void warnUnsupported(JSCallExpression expression, JSExpression itemExpression) {
+      unsupported = true;
+      LOG.warn("unsupported injected AS: " + itemExpression.getText() + " in outer expression " + expression.getText() +
+               " (mxml: " + host.getText() + ")");
     }
 
     private ValueWriter checkEmbed(JSFile jsFile) {
@@ -255,17 +322,17 @@ class InjectedASWriter {
             JSFileReference fileReference = (JSFileReference)p.getReferences()[0];
             PsiFileSystemItem psiFile = fileReference.resolve();
             if (psiFile == null) {
-              reportProblem(fileReference.getUnresolvedMessagePattern());
+              reportError(fileReference.getUnresolvedMessagePattern());
             }
             else if (psiFile.isDirectory()) {
-              reportProblem(FlexUIDesignerBundle.message("error.embed.source.is.directory", fileReference.getText()));
+              reportError(FlexUIDesignerBundle.message("error.embed.source.is.directory", fileReference.getText()));
             }
             else {
               source = psiFile.getVirtualFile();
               continue;
             }
 
-            return BINDING;
+            return IGNORE;
           }
           else if (name.equals("mimeType")) {
             mimeType = p.getSimpleValue();
@@ -276,8 +343,8 @@ class InjectedASWriter {
         }
 
         if (source == null) {
-          reportProblem(FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
-          return BINDING;
+          reportError(FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
+          return IGNORE;
         }
 
         if (mimeType == null ? source.getName().endsWith(".swf") : mimeType.equals("application/x-shockwave-flash")) {
@@ -285,8 +352,7 @@ class InjectedASWriter {
         }
         else {
           if (symbol != null) {
-            FlexUIDesignerApplicationManager.getInstance().reportProblem(host.getProject(), FlexUIDesignerBundle
-              .message("error.embed.symbol.unneeded", host.getText()), MessageType.WARNING);
+            reportWarning(FlexUIDesignerBundle.message("error.embed.symbol.unneeded", host.getText()));
           }
 
           return new BitmapValueWriter(source, mimeType);
@@ -295,20 +361,28 @@ class InjectedASWriter {
 
       return null;
     }
+    
+    private void reportWarning(String message) {
+      FlexUIDesignerApplicationManager.getInstance().reportProblem(host.getProject(), message, MessageType.WARNING);
+    }
 
-    private void reportProblem(String message) {
+    private void reportError(String message) {
       FlexUIDesignerApplicationManager.getInstance().reportProblem(host.getProject(), message);
     }
 
-    private boolean isUnexpected(ExpectedType actualType) {
-      if (expectedType == actualType) {
+    private boolean isUnexpected(String actualType) {
+      if (actualType.equals(expectedType) || expectedType == null || isExpectedObjectOrAnyType()) {
         return false;
       }
       else {
-        LOG.error("Expected " + expectedType + ", but got " + host.getText());
+        reportError("Expected " + expectedType + ", but got " + host.getText());
         unsupported = true;
         return true;
       }
+    }
+
+    private boolean isExpectedObjectOrAnyType() {
+      return JSCommonTypeNames.OBJECT_CLASS_NAME.equals(expectedType) || JSCommonTypeNames.ANY_TYPE.equals(expectedType);
     }
 
     private void logUnsupported() {
@@ -339,7 +413,7 @@ class InjectedASWriter {
 
     protected abstract int getType();
 
-    void write(PrimitiveAmfOutputStream out) {
+    void write(PrimitiveAmfOutputStream out) throws InvalidPropertyException {
       out.writeUInt29(target);
       out.writeUInt29(propertyName);
       out.write(getType());
@@ -356,7 +430,7 @@ class InjectedASWriter {
     }
 
     @Override
-    void write(PrimitiveAmfOutputStream out) {
+    void write(PrimitiveAmfOutputStream out) throws InvalidPropertyException {
       super.write(out);
 
       out.write(values.length);
@@ -380,7 +454,7 @@ class InjectedASWriter {
     }
 
     @Override
-    void write(PrimitiveAmfOutputStream out) {
+    void write(PrimitiveAmfOutputStream out) throws InvalidPropertyException {
       super.write(out);
 
       writeObjectReference(out, value);

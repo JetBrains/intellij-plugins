@@ -7,15 +7,12 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
-import js.JSTestOptions;
 import org.flyti.roboflest.Roboflest;
 import org.flyti.roboflest.Roboflest.Assert;
 
 import java.io.File;
 
-import static js.JSTestOption.WithFlexSdk;
-import static js.JSTestOption.WithGumboSdk;
-
+@Flex(version="4.5")
 public class UITest extends MxmlWriterTestBase {
   private Roboflest roboflest = new Roboflest();
   
@@ -31,8 +28,6 @@ public class UITest extends MxmlWriterTestBase {
     sdkModificator.addRoot(LocalFileSystem.getInstance().findFileByPath(flexSdkRootPath + "/src"), OrderRootType.SOURCES);
   }
   
-  @JSTestOptions({WithGumboSdk, WithFlexSdk})
-  @Flex(version="4.5")
   public void testStyleNavigationToExternal() throws Exception {
     testFile(new Tester() {
       @Override
@@ -60,8 +55,6 @@ public class UITest extends MxmlWriterTestBase {
     }, "Form.mxml");
   }
   
-  @JSTestOptions({WithGumboSdk, WithFlexSdk})
-  @Flex(version="4.5")
   public void testStyleNavigationToSkinClass() throws Exception {
     testFile(new Tester() {
       @Override

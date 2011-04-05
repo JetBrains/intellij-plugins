@@ -31,16 +31,27 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
   public DocumentFactoryManager(Project project) {
     super(project);
   }
-  
+
+  public void unregister(int[] ids) {
+    freeIndices.ensureCapacity(freeIndices.size() + ids.length);
+    for (int id : ids) {
+      files.set(id,  null);
+      freeIndices.add(id);
+    }
+  }
+
   public static DocumentFactoryManager getInstance(@NotNull Project project) {
     return project.getComponent(DocumentFactoryManager.class);
   }
 
   @Override
-  public void projectClosed() {
+  public void disposeComponent() {
     if (flexUIDesignerApplicationManagerConnection != null) {
       flexUIDesignerApplicationManagerConnection.disconnect();
-      fileDocumentManagerListener.unsubscribe();
+      // unsubscribed in applicationClosed
+      if (fileDocumentManagerListener.connection != null) {
+        fileDocumentManagerListener.unsubscribe();
+      }
     }
   }
 

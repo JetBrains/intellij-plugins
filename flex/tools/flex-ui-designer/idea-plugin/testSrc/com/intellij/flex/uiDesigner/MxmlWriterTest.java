@@ -2,21 +2,19 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import js.JSTestOptions;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static js.JSTestOption.WithFlexSdk;
-import static js.JSTestOption.WithGumboSdk;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
+@Flex(version="4.5")
 public class MxmlWriterTest extends MxmlWriterTestBase {
-  @JSTestOptions({WithGumboSdk, WithFlexSdk})
-  @Flex(version="4.5")
+  @SuppressWarnings({"unchecked"})
   public void test45() throws Exception {
     changeServiceImplementation(FlexUIDesignerApplicationManager.class, MyFlexUIDesignerApplicationManager.class);
     
@@ -33,19 +31,16 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     vFiles[files.length + 2] = getVFile(getTestPath() + "/anim.swf");
 
     testFiles(vFiles);
-
-    final List<String> problems = ((MyFlexUIDesignerApplicationManager)FlexUIDesignerApplicationManager.getInstance()).problems;
-    assertEquals(problems.size(), 1);
-    assertEquals(problems.get(0), "Invalid color name: invalidcolorname");
+    
+    String[] problems = ((MyFlexUIDesignerApplicationManager)FlexUIDesignerApplicationManager.getInstance()).getProblems();
+    if (testFile != null) {
+      assertThat(problems, emptyArray());
+    }
+    else {
+      assertThat(problems, array(equalTo("Unresolved variable data"), equalTo("Invalid color name invalidcolorname")));
+    }
   }
 
-  private VirtualFile getVFile(String file) {
-    VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(file);
-    assert vFile != null;
-    return vFile;
-  }
-
-  @JSTestOptions({WithGumboSdk, WithFlexSdk})
   @Flex(version="4.1")
   public void test41() throws Exception {
     testFile("states/UnusedStates.mxml");
@@ -76,6 +71,12 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
 
   private static class MyFlexUIDesignerApplicationManager extends FlexUIDesignerApplicationManager {
     private final List<String> problems = new ArrayList<String>();
+    
+    public String[] getProblems() {
+      final String[] strings = problems.toArray(new String[problems.size()]);
+      problems.clear();
+      return strings;
+    }
     
     @Override
     public void reportProblem(Project project, String message, MessageType messageType) {

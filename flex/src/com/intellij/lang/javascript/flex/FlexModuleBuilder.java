@@ -179,7 +179,7 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
       CreateAirDescriptorAction.createAirDescriptor(
         new AirDescriptorParameters(myAirDescriptorFileName, airDescriptorFolderPath, FlexSdkUtils.getAirVersion(mySdk),
                                     "samples.flex.HelloWorld",
-                                    "HelloWorld", "HelloWorld", "0.1", config.OUTPUT_FILE_NAME, "HelloWorld", 400, 300));
+                                    "HelloWorld", "HelloWorld", "0.1", config.OUTPUT_FILE_NAME, "HelloWorld", 400, 300, false));
     }
     catch (IOException e) {
       throw new ConfigurationException("Failed to create AIR application descriptor\n" + e.getMessage());

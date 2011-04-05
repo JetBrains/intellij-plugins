@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.run.RunMainClassPrecompileTask;
+import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -15,7 +16,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -553,7 +553,10 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     @NonNls String s = config.OUTPUT_TYPE.equals(FlexBuildConfiguration.APPLICATION) ? "mxmlc" : "compc";
 
     if (flexSdk.getSdkType() instanceof AirSdkType) {
-      s+= " +configname=air";
+      s += " +configname=air";
+    }
+    else if (flexSdk.getSdkType() instanceof AirMobileSdkType) {
+      s += " +configname=airmobile";
     }
 
     s += configsParam;

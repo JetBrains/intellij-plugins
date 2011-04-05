@@ -136,17 +136,17 @@ public class FlexRunConfiguration extends RunConfigurationBase
         }
         break;
       case MainClass:
-        checkMainClassBasedConfiguration(module);
+        checkMainClassBasedConfiguration(module, myRunnerParameters);
         break;
       case ConnectToRunningFlashPlayer:
         break;
     }
 
-    checkDebuggerSdk();
+    checkDebuggerSdk(myRunnerParameters);
   }
 
-  protected void checkDebuggerSdk() throws RuntimeConfigurationError {
-    final String debuggerSdkRaw = myRunnerParameters.getDebuggerSdkRaw();
+  protected static void checkDebuggerSdk(final FlexRunnerParameters params) throws RuntimeConfigurationError {
+    final String debuggerSdkRaw = params.getDebuggerSdkRaw();
     if (!debuggerSdkRaw.equals(FlexSdkComboBoxWithBrowseButton.MODULE_SDK_KEY)) {
       final Sdk sdk = ProjectJdkTable.getInstance().findJdk(debuggerSdkRaw);
       if (sdk == null || !(sdk.getSdkType() instanceof IFlexSdkType)) {
@@ -155,8 +155,9 @@ public class FlexRunConfiguration extends RunConfigurationBase
     }
   }
 
-  protected void checkMainClassBasedConfiguration(final Module module) throws RuntimeConfigurationError {
-    final String mainClassName = myRunnerParameters.getMainClassName();
+  protected static void checkMainClassBasedConfiguration(final Module module, final FlexRunnerParameters params)
+    throws RuntimeConfigurationError {
+    final String mainClassName = params.getMainClassName();
     if (StringUtil.isEmpty(mainClassName)) {
       throw new RuntimeConfigurationError(FlexBundle.message("class.not.specified"));
     }
