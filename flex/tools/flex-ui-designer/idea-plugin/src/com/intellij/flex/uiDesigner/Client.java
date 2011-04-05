@@ -5,6 +5,7 @@ import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.flex.uiDesigner.io.BlockDataOutputStream;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.components.ServiceManager;
@@ -18,6 +19,7 @@ import com.intellij.util.ArrayUtil;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -88,7 +90,39 @@ public class Client implements Closable {
     out.writeInt(project.hashCode());
     out.writeAmfUtf(project.getName());
 
+    Rectangle projectWindowBounds = getProjectWindowBounds(project);
+    if (projectWindowBounds == null) {
+      out.write(false);
+    }
+    else {
+      out.write(true);
+      out.writeShort(projectWindowBounds.x);
+      out.writeShort(projectWindowBounds.y);
+      out.writeShort(projectWindowBounds.width);
+      out.writeShort(projectWindowBounds.height);
+    }
+
     blockOut.end();
+  }
+
+  private static Rectangle getProjectWindowBounds(Project project) {
+    PropertiesComponent d = PropertiesComponent.getInstance(project);
+    try {
+      return d.isValueSet("fud_pw_x")
+             ? new Rectangle(parsePwV(d, "fud_pw_x"), parsePwV(d, "fud_pw_y"), parsePwV(d, "fud_pw_w"), parsePwV(d, "fud_pw_h"))
+             : null;
+    }
+    catch (NumberFormatException e) {
+      return null;
+    }
+  }
+
+  private static int parsePwV(PropertiesComponent propertiesComponent, String key) {
+    int v = Integer.parseInt(propertiesComponent.getValue(key));
+    if (v < 0 || v > 65535) {
+      throw new NumberFormatException("Value " + v + " out of range 0-65535");
+    }
+    return v;
   }
 
   private void beginMessage(ClientMethod method) {

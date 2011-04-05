@@ -79,7 +79,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
   }
   
-  private void closeClosable(Closable closable) {
+  private static void closeClosable(Closable closable) {
     try {
       if (closable != null) {
         closable.close();
@@ -213,7 +213,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
                 if (onAdlExit != null) {
                   ApplicationManager.getApplication().invokeLater(onAdlExit);
                 }
-                
+
                 documentOpening = false;
               }
             });
@@ -443,7 +443,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   }
 }
 
-@SuppressWarnings({"UnusedDeclaration"})
 enum ApplicationDomainCreationPolicy {
   ONE, MULTIPLE
 }

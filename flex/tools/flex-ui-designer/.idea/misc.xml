@@ -17,6 +17,8 @@
         <modules>
           <module name="app-loader" />
           <module name="app-plugin-api" />
+          <module name="aqua" />
+          <module name="base" />
           <module name="designer" />
           <module name="flex-injection" />
           <module name="flex-module-designer" />
@@ -29,6 +31,7 @@
           <module name="simple" />
           <module name="test-app-plugin" />
           <module name="testSimpleApp" />
+          <module name="ui" />
         </modules>
       </facet-type>
     </autodetection-disabled>

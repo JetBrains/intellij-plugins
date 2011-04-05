@@ -35,6 +35,7 @@
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/flex" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
@@ -43,7 +44,7 @@
     <orderEntry type="library" name="Maven: org.flyti.cocoa:acocoa:swc:1.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:4.5.0.18365" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: flashx:textLayout:swc:1.1.604" level="project" />
+    <orderEntry type="library" name="Maven: flashx:textLayout:swc:2.0.192-de1" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.0.18365" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:swc:4.5.0.18365" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:sparkskins:swc:4.5.0.18365" level="project" />
@@ -62,6 +63,9 @@
     <orderEntry type="library" name="Maven: org.flyti:collections:swc:1.3.5" level="project" />
     <orderEntry type="library" name="Maven: org.flyti:foundation:swc:1.2.1" level="project" />
     <orderEntry type="module" module-name="shared" />
+    <orderEntry type="library" name="Maven: org.tinytlf:layouts:swc:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.tinytlf:fte-utils:swc:1.1-SNAPSHOT" level="project" />
   </component>
 </module>
 

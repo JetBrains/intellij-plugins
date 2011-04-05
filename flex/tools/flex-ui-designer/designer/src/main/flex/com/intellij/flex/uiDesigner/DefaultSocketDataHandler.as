@@ -1,8 +1,13 @@
 package com.intellij.flex.uiDesigner {
+import cocoa.DocumentWindow;
+
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
+import com.intellij.flex.uiDesigner.ui.ProjectEventMap;
+import com.intellij.flex.uiDesigner.ui.ProjectView;
 
 import flash.display.BitmapData;
+import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
@@ -34,7 +39,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   public function handleSockedData(messageSize:int, method:int, data:IDataInput):void {
     switch (method) {
       case ClientMethod.openProject:
-        projectManager.open(data.readInt(), new Project(data.readUTFBytes(AmfUtil.readUInt29(data)), new ProjectEventMap()));
+        openProject(data);
         break;
       
       case ClientMethod.closeProject:
@@ -77,6 +82,20 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
         stringRegistry.initStringTable(data);
         break;
     }
+  }
+
+  private function openProject(input:IDataInput):void {
+    const id:int = input.readInt();
+    var project:Project = new Project(input.readUTFBytes(AmfUtil.readUInt29(input)), new ProjectEventMap());
+    var projectWindowBounds:Rectangle;
+    if (input.readBoolean()) {
+      projectWindowBounds = new Rectangle(input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort());
+    }
+    projectManager.open(id, project);
+
+    var window:DocumentWindow = new DocumentWindow(new ProjectView(), project.map, null, projectWindowBounds);
+    window.title = project.name;
+    project.window = window;
   }
   
   private function closeProject(id:int):void {

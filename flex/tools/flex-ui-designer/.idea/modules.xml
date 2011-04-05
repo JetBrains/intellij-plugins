@@ -5,13 +5,17 @@
       <module fileurl="file://$PROJECT_DIR$/abc-builder-maven-module/abc-builder-maven-plugin.iml" filepath="$PROJECT_DIR$/abc-builder-maven-module/abc-builder-maven-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app-loader/app-loader.iml" filepath="$PROJECT_DIR$/app-loader/app-loader.iml" />
       <module fileurl="file://$PROJECT_DIR$/app-plugin-api/app-plugin-api.iml" filepath="$PROJECT_DIR$/app-plugin-api/app-plugin-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plaf/aqua/aqua.iml" filepath="$PROJECT_DIR$/plaf/aqua/aqua.iml" group="plafAggregator and modules" />
+      <module fileurl="file://$PROJECT_DIR$/plaf/base/base.iml" filepath="$PROJECT_DIR$/plaf/base/base.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/designer/designer.iml" filepath="$PROJECT_DIR$/designer/designer.iml" />
       <module fileurl="file://$PROJECT_DIR$/flex-injection/flex-injection.iml" filepath="$PROJECT_DIR$/flex-injection/flex-injection.iml" />
       <module fileurl="file://$PROJECT_DIR$/flexUIDesignerAggregator.iml" filepath="$PROJECT_DIR$/flexUIDesignerAggregator.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea-plugin/idea-plugin.iml" filepath="$PROJECT_DIR$/idea-plugin/idea-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plaf/plafAggregator.iml" filepath="$PROJECT_DIR$/plaf/plafAggregator.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/shared/shared.iml" filepath="$PROJECT_DIR$/shared/shared.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-app-plugin/test-app-plugin.iml" filepath="$PROJECT_DIR$/test-app-plugin/test-app-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-module.iml" filepath="$PROJECT_DIR$/test-module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ui/ui.iml" filepath="$PROJECT_DIR$/ui/ui.iml" />
     </modules>
   </component>
 </project>

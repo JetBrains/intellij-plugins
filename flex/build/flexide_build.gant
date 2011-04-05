@@ -185,8 +185,9 @@ target('default': "Build artifacts") {
   }
 
   // script will do nothing if 'flex-ui-designer' plugin is not part of pluginFilter
-  def flex_ui_designer_build_script = includeFile("$home/flex/tools/flex-ui-designer/build-gant/flex_ui_designer_build.gant")
-  flex_ui_designer_build_script.execute("$home", "$paths.sandbox", "$home/out/flex-ide/classes/production/flex-ui-designer")
+  // develar 05.04.2010 temp disable
+  //def flex_ui_designer_build_script = includeFile("$home/flex/tools/flex-ui-designer/build-gant/flex_ui_designer_build.gant")
+  //flex_ui_designer_build_script.execute("$home", "$paths.sandbox", "$home/out/flex-ide/classes/production/flex-ui-designer")
 
   // script will do nothing if 'flex-profiler' plugin is not part of pluginFilter
   def flex_profiler_build_script = includeFile("$home/flex/tools/profiler/build-gant/flex_profiler_build.gant")

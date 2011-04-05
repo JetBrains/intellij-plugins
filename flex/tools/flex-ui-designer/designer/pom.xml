@@ -11,47 +11,14 @@
   <packaging>swf</packaging>
   <artifactId>designer</artifactId>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>flashx</groupId>
-        <artifactId>textLayout</artifactId>
-        <version>2.0.192-de1</version>
-        <type>swc</type>
-        <exclusions>
-          <exclusion>
-            <groupId>com.adobe.flex.framework</groupId>
-            <artifactId>playerglobal</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>com.intellij.flex.uiDesigner</groupId>
-      <artifactId>app-plugin-api</artifactId>
+      <artifactId>aqua</artifactId>
       <version>1.0-SNAPSHOT</version>
       <type>swc</type>
     </dependency>
-    <dependency>
-      <groupId>org.flyti.cocoa</groupId>
-      <artifactId>aquaLaF</artifactId>
-      <type>swc</type>
-      <exclusions>
-        <exclusion>
-          <groupId>com.adobe.flex.framework</groupId>
-          <artifactId>playerglobal</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.flyti.cocoa</groupId>
-      <artifactId>cocoa</artifactId>
-      <type>rb.swc</type>
-      <classifier>en_US</classifier>
-    </dependency>
+
     <dependency>
       <groupId>com.intellij.flex.uiDesigner</groupId>
       <artifactId>shared</artifactId>
@@ -61,44 +28,10 @@
     </dependency>
 
     <dependency>
-      <groupId>org.tinytlf</groupId>
-      <artifactId>layouts</artifactId>
-      <version>1.1-SNAPSHOT</version>
-      <type>swc</type>
+      <groupId>org.flyti.cocoa</groupId>
+      <artifactId>cocoa</artifactId>
+      <type>rb.swc</type>
+      <classifier>en_US</classifier>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.flyti</groupId>
-        <artifactId>asset-builder-maven-plugin</artifactId>
-        <version>1.4-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <!-- we don't want add additionalSourcePath another path -->
-          <output>../flex-injection/target/assets</output>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.sonatype.flexmojos</groupId>
-        <artifactId>flexmojos-maven-plugin</artifactId>
-        <configuration>
-          <localesCompiled>
-            <locale>en_US</locale>
-          </localesCompiled>
-          <compilerWarnings>
-            <show-binding-warnings>false</show-binding-warnings>
-          </compilerWarnings>
-          <additionalSourcePath>../flex-injection/target</additionalSourcePath>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
