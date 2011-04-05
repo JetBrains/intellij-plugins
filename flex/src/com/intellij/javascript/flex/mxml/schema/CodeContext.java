@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.psi.resolve.SwcCatalogXmlUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -407,9 +408,9 @@ public class CodeContext {
 
   private static void handleAllStandardManifests(final Module module, final Sdk flexSdk) {
     final VirtualFile flexSdkRoot = flexSdk == null ? null : flexSdk.getHomeDirectory();
-    final VirtualFile frameworksDir = flexSdkRoot != null && flexSdkRoot.isValid() ? flexSdkRoot.findChild("frameworks") : null;
-    final VirtualFile flexConfigFile = frameworksDir != null && flexSdk.getSdkType() instanceof IFlexSdkType ? frameworksDir
-      .findChild(FlexSdkUtils.getBaseConfigFileRelPath((IFlexSdkType)flexSdk.getSdkType())) : null;
+    final VirtualFile flexConfigFile = flexSdkRoot != null && flexSdk.getSdkType() instanceof IFlexSdkType ? VfsUtil.findRelativeFile(
+      FlexSdkUtils.getBaseConfigFileRelPath((IFlexSdkType)flexSdk.getSdkType()), flexSdkRoot) : null;
+
     if (flexConfigFile == null) return;
 
     final XmlFile flexConfigXmlFile = (XmlFile)PsiManager.getInstance(module.getProject()).findFile(flexConfigFile);
@@ -424,7 +425,7 @@ public class CodeContext {
           final String pathToManifest = namespaceTag.getSubTagText("manifest");
 
           if (namespace != null && pathToManifest != null) {
-            final VirtualFile manifestFile = VfsUtil.findRelativeFile(pathToManifest, frameworksDir);
+            final VirtualFile manifestFile = VfsUtil.findRelativeFile(pathToManifest, flexConfigFile.getParent());
 
             if (manifestFile != null) {
               handleStandardManifest(module, namespace, manifestFile, flexSdkRoot);
