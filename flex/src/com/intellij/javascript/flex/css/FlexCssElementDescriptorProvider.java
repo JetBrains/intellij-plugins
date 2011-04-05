@@ -60,15 +60,21 @@ public class FlexCssElementDescriptorProvider implements CssElementDescriptorPro
 
     Module module = ModuleUtil.findModuleForPsiElement(context);
     if (module == null) {
-      PsiFile topLevelFile = InjectedLanguageUtil.getTopLevelFile(context);
-      if (topLevelFile != null) {
-        module = ModuleUtil.findModuleForPsiElement(topLevelFile);
+      file = InjectedLanguageUtil.getTopLevelFile(context);
+      if (file != null) {
+        module = ModuleUtil.findModuleForPsiElement(file);
       }
     }
     if (module == null || !FlexUtils.isFlexModuleOrContainsFlexFacet(module)) {
       return false;
     }
-    //return !isLinkedFromHtmlOnly(file, module.getProject());
+
+    final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
+    if (vFile != null) {
+      final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
+      return dialect != CssDialect.CLASSIC;
+    }
+
     return true;
   }
 
