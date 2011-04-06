@@ -487,13 +487,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   @NotNull
   @Override
   public LocalQuickFix[] getQuickFixesForUnknownProperty(@NotNull String propertyName, @NotNull PsiElement context) {
-    final PsiFile file = InjectedLanguageUtil.getTopLevelFile(context);
-    if (file == null) {
-      return LocalQuickFix.EMPTY_ARRAY;
-    }
-
-    final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
-    if (vFile == null || !CssDialectsConfigurable.canBeConfigured(vFile)) {
+    final VirtualFile vFile = checkForQuickFixAndGetVFile(context);
+    if (vFile == null) {
       return LocalQuickFix.EMPTY_ARRAY;
     }
 
@@ -520,13 +515,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   @NotNull
   @Override
   public LocalQuickFix[] getQuickFixesForUnknownSimpleSelector(@NotNull String selectorName, @NotNull PsiElement context) {
-    final PsiFile file = InjectedLanguageUtil.getTopLevelFile(context);
-    if (file == null) {
-      return LocalQuickFix.EMPTY_ARRAY;
-    }
-
-    final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
-    if (vFile == null || !CssDialectsConfigurable.canBeConfigured(vFile)) {
+    final VirtualFile vFile = checkForQuickFixAndGetVFile(context);
+    if (vFile == null) {
       return LocalQuickFix.EMPTY_ARRAY;
     }
 
@@ -544,6 +534,26 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       }
     }
     return LocalQuickFix.EMPTY_ARRAY;
+  }
+
+  @Nullable
+  private static VirtualFile checkForQuickFixAndGetVFile(@NotNull PsiElement context) {
+    final PsiFile file = InjectedLanguageUtil.getTopLevelFile(context);
+    if (file == null) {
+      return null;
+    }
+
+    final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
+    if (vFile == null || !CssDialectsConfigurable.canBeConfigured(vFile)) {
+      return null;
+    }
+
+    final Module module = ModuleUtil.findModuleForFile(vFile, context.getProject());
+    if (module == null || !FlexUtils.isFlexModuleOrContainsFlexFacet(module)) {
+      return null;
+    }
+
+    return vFile;
   }
 
   private static class MyGlobalSearchScope extends GlobalSearchScope {
