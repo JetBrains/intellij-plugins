@@ -26,9 +26,7 @@ import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
   private final FlexFacet myFlexFacet;
@@ -58,13 +56,14 @@ public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
 
     final MavenProjectsTree.EmbedderTask task = new MavenProjectsTree.EmbedderTask() {
       public void run(MavenEmbedderWrapper embedder) throws MavenProcessCanceledException {
-        Map<MavenId, VirtualFile> mavenIdToFileMapping = null;
+        List<VirtualFile> temporaryFiles = null;
         final IgnoredFileBean[] filesToIgnoreOriginal = ChangeListManager.getInstance(project).getFilesToIgnore();
 
         try {
-          mavenIdToFileMapping = getMavenIdToOutputFileMapping(project, myTree.getProjects());
+          MavenWorkspaceMap workspaceMap = new MavenWorkspaceMap();
+          temporaryFiles = mavenIdToOutputFileMapping(workspaceMap, project, myTree.getProjects());
 
-          embedder.customizeForStrictResolve(convertFileMap(mavenIdToFileMapping), console, indicator);
+          embedder.customizeForStrictResolve(workspaceMap, console, indicator);
           final String generateConfigGoal =
             flexmojosGroupId + ":" + flexmojosArtifactId + ":generate-config-" + myMavenProject.getPackaging();
           MavenServerExecutionResult result = embedder
@@ -95,22 +94,14 @@ public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
         finally {
           ChangeListManager.getInstance(project).setFilesToIgnore(filesToIgnoreOriginal);
 
-          if (mavenIdToFileMapping != null) {
-            removeTemporaryFiles(project, mavenIdToFileMapping.values());
+          if (temporaryFiles != null && !temporaryFiles.isEmpty()) {
+            removeTemporaryFiles(project, temporaryFiles);
           }
         }
       }
     };
 
     myTree.executeWithEmbedder(myMavenProject, embeddersManager, MavenEmbeddersManager.FOR_POST_PROCESSING, console, indicator, task);
-  }
-
-  private MavenWorkspaceMap convertFileMap(Map<MavenId, VirtualFile> map) {
-    MavenWorkspaceMap result = new MavenWorkspaceMap();
-    for (Map.Entry<MavenId, VirtualFile> each : map.entrySet()) {
-      result.register(each.getKey(), new File(each.getValue().getPath()));
-    }
-    return result;
   }
 
   /**
@@ -120,11 +111,10 @@ public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
    * (see {@link #removeTemporaryFiles(com.intellij.openapi.project.Project, java.util.Collection)}).<br>
    * For not SWF/SWC projects - reference to pom.xml file is placed in result map.
    */
-  private static Map<MavenId, VirtualFile> getMavenIdToOutputFileMapping(final Project project,
-                                                                         final Collection<MavenProject> mavenProjects) throws IOException {
-    final Map<MavenId, VirtualFile> mavenIdToOutputFile = new THashMap<MavenId, VirtualFile>(mavenProjects.size());
-
+  private static List<VirtualFile> mavenIdToOutputFileMapping(final MavenWorkspaceMap workspaceMap, final Project project,
+                                                              final Collection<MavenProject> mavenProjects) throws IOException {
     final Ref<IOException> exception = new Ref<IOException>();
+    final List<VirtualFile> temporaryFiles = new ArrayList<VirtualFile>();
     MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
       public void run() {
         try {
@@ -145,11 +135,12 @@ public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
                 ChangeListManager.getInstance(project).addFilesToIgnore(IgnoredBeanFactory.ignoreFile(outputFilePath, project));
                 outputFile = FlexUtils.addFileWithContent(outputFileName, TEMPORARY_FILE_CONTENT, outputDir);
                 if (outputFile == null) throw new IOException(IdeBundle.message("error.message.unable.to.create.file", outputFileName));
+                temporaryFiles.add(outputFile);
               }
-              mavenIdToOutputFile.put(mavenProject.getMavenId(), outputFile);
+              workspaceMap.register(mavenProject.getMavenId(), new File(mavenProject.getFile().getPath()), new File(outputFile.getPath()));
             }
             else {
-              mavenIdToOutputFile.put(mavenProject.getMavenId(), mavenProject.getFile());
+              workspaceMap.register(mavenProject.getMavenId(), new File(mavenProject.getFile().getPath()));
             }
           }
         }
@@ -159,7 +150,7 @@ public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
       }
     });
     if (!exception.isNull()) throw exception.get();
-    return mavenIdToOutputFile;
+    return temporaryFiles;
   }
 
   private static void removeTemporaryFiles(final Project project, final Collection<VirtualFile> files) {
