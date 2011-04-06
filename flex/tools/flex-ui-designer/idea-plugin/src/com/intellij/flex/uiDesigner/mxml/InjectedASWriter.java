@@ -212,7 +212,12 @@ class InjectedASWriter {
     }
 
     public void visit(@NotNull PsiFile injectedPsi, @NotNull List<PsiLanguageInjectionHost.Shred> places) {
-      assert !visited;
+      // todo <s:Label text="{demandSelectedTO.journalist.nom} {demandSelectedTO.journalist.prenom}"/>
+      // will be called 2 — first for {demandSelectedTO.journalist.nom} and second for {demandSelectedTO.journalist.prenom}
+      if (visited) {
+        return;
+      }
+
       visited = true;
 
       assert places.size() == 1;

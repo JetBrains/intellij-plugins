@@ -50,13 +50,13 @@ public class DocumentContainer extends AbstractView {
   private function drawDocumentBackground(g:Graphics, w:Number, h:Number):void {
     g.clear();
     g.lineStyle(1, 0x999999); // intellij idea 0x515151, but it looks bad
-    //g.beginBitmapFill(gridBitmapData);
-    //g.drawRect(-1, -1, w + 1, h + 1);
-    //g.endFill();
-
-    g.beginFill(0xffaaff);
+    g.beginBitmapFill(gridBitmapData);
     g.drawRect(-1, -1, w + 1, h + 1);
     g.endFill();
+
+    //g.beginFill(0xffaaff);
+    //g.drawRect(-1, -1, w + 1, h + 1);
+    //g.endFill();
   }
 
   private function _documentSysteManager_mouseUpHandler(event:MouseEvent):void {

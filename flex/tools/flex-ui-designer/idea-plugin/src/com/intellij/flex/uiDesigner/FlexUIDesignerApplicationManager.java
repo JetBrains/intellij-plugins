@@ -93,15 +93,16 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   public void serverClosed() {
     documentOpening = false;
-    Application application = ApplicationManager.getApplication();
-    if (!application.isDisposed()) {
-      application.getMessageBus().syncPublisher(MESSAGE_TOPIC).applicationClosed();
-    }
     if (client != null) {
       for (Project project : ProjectManager.getInstance().getOpenProjects()) {
         project.putUserData(PROJECT_INFO, null);
       }
       closeClosable(client);
+    }
+    
+    Application application = ApplicationManager.getApplication();
+    if (!application.isDisposed()) {
+      application.getMessageBus().syncPublisher(MESSAGE_TOPIC).applicationClosed();
     }
   }
 
@@ -448,5 +449,5 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 }
 
 enum ApplicationDomainCreationPolicy {
-  ONE, MULTIPLE
+  ONE, @SuppressWarnings({"UnusedDeclaration"})MULTIPLE
 }
