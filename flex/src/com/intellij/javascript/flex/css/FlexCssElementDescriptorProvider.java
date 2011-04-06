@@ -1,11 +1,16 @@
 package com.intellij.javascript.flex.css;
 
 import com.intellij.codeInsight.documentation.DocumentationManager;
+import com.intellij.codeInsight.intention.HighPriorityAction;
+import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
@@ -14,6 +19,10 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.openapi.command.undo.BasicUndoableAction;
+import com.intellij.openapi.command.undo.UndoManager;
+import com.intellij.openapi.command.undo.UnexpectedUndoException;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
@@ -28,6 +37,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.*;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.references.HtmlCssClassOrIdReference;
+import com.intellij.psi.css.impl.util.table.CssElementDescriptorProviderImpl;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
@@ -36,6 +46,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -51,7 +62,7 @@ import java.util.List;
 /**
  * @author Eugene.Kudelevsky
  */
-public class FlexCssElementDescriptorProvider implements CssElementDescriptorProvider {  
+public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvider {
   public boolean isMyContext(@Nullable PsiElement context) {
     if (context == null) return false;
     PsiFile file = context.getContainingFile();
@@ -323,7 +334,7 @@ public class FlexCssElementDescriptorProvider implements CssElementDescriptorPro
     GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false) : context.getResolveScope();
     return JSResolveUtil.findElementsByName(className, context.getProject(), scope);
   }
-  
+
   @Nullable
   public static XmlElementDescriptor getTypeSelectorDescriptor(@NotNull CssSimpleSelector selector, @NotNull Module module) {
     CssNamespace namespace = ((CssFile)selector.getContainingFile()).getStylesheet().getNamespace(selector.getNamespaceName());
@@ -349,7 +360,7 @@ public class FlexCssElementDescriptorProvider implements CssElementDescriptorPro
         }
       }
     }
-    
+
     // flex 3 or file not in project files
     return getDeclarationsForSimpleSelector(selector.getElementName(), selector);
   }
@@ -372,7 +383,7 @@ public class FlexCssElementDescriptorProvider implements CssElementDescriptorPro
   }
 
   @NotNull
-  private static PsiElement[] getDeclarationsForSimpleSelector(@NotNull String className, @NotNull PsiElement context) {  
+  private static PsiElement[] getDeclarationsForSimpleSelector(@NotNull String className, @NotNull PsiElement context) {
     Collection<JSQualifiedNamedElement> elements = getClasses(className, context);
     if (elements != null && elements.size() > 0) {
       List<PsiElement> result = new ArrayList<PsiElement>();
@@ -473,6 +484,68 @@ public class FlexCssElementDescriptorProvider implements CssElementDescriptorPro
     return term.getTermType() == CssTermTypes.NUMBER;
   }
 
+  @NotNull
+  @Override
+  public LocalQuickFix[] getQuickFixesForUnknownProperty(@NotNull String propertyName, @NotNull PsiElement context) {
+    final PsiFile file = InjectedLanguageUtil.getTopLevelFile(context);
+    if (file == null) {
+      return LocalQuickFix.EMPTY_ARRAY;
+    }
+
+    final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
+    if (vFile == null || !CssDialectsConfigurable.canBeConfigured(vFile)) {
+      return LocalQuickFix.EMPTY_ARRAY;
+    }
+
+    final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
+    if (dialect == CssDialect.CLASSIC) {
+      final CssPropertyDescriptor flexDescriptor = getPropertyDescriptor(propertyName, context);
+      if (flexDescriptor != null) {
+        return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(CssDialect.FLEX, vFile)};
+      }
+    }
+    else {
+      final CssElementDescriptorProviderImpl classicCssDescriptorProvider =
+        CssElementDescriptorProvider.EP_NAME.findExtension(CssElementDescriptorProviderImpl.class);
+      if (classicCssDescriptorProvider != null) {
+        final CssPropertyDescriptor classicDescriptor = classicCssDescriptorProvider.getPropertyDescriptor(propertyName, context);
+        if (classicDescriptor != null) {
+          return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(CssDialect.CLASSIC, vFile)};
+        }
+      }
+    }
+    return LocalQuickFix.EMPTY_ARRAY;
+  }
+
+  @NotNull
+  @Override
+  public LocalQuickFix[] getQuickFixesForUnknownSimpleSelector(@NotNull String selectorName, @NotNull PsiElement context) {
+    final PsiFile file = InjectedLanguageUtil.getTopLevelFile(context);
+    if (file == null) {
+      return LocalQuickFix.EMPTY_ARRAY;
+    }
+
+    final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
+    if (vFile == null || !CssDialectsConfigurable.canBeConfigured(vFile)) {
+      return LocalQuickFix.EMPTY_ARRAY;
+    }
+
+    final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
+    if (dialect == CssDialect.CLASSIC) {
+      if (isPossibleSelector(selectorName, context)) {
+        return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(CssDialect.FLEX, vFile)};
+      }
+    }
+    else {
+      final CssElementDescriptorProviderImpl classicCssDescriptorProvider =
+        CssElementDescriptorProvider.EP_NAME.findExtension(CssElementDescriptorProviderImpl.class);
+      if (classicCssDescriptorProvider != null && classicCssDescriptorProvider.isPossibleSelector(selectorName, context)) {
+        return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(CssDialect.CLASSIC, vFile)};
+      }
+    }
+    return LocalQuickFix.EMPTY_ARRAY;
+  }
+
   private static class MyGlobalSearchScope extends GlobalSearchScope {
 
     private final GlobalSearchScope myDelegate;
@@ -505,6 +578,73 @@ public class FlexCssElementDescriptorProvider implements CssElementDescriptorPro
     @Override
     public boolean isSearchInLibraries() {
       return false;
+    }
+  }
+
+  private static class MySwitchToCssDialectQuickFix implements LocalQuickFix, IntentionAction, HighPriorityAction {
+    private final CssDialect myDialect;
+    private final VirtualFile myVirtualFile;
+
+    private MySwitchToCssDialectQuickFix(CssDialect dialect, VirtualFile virtualFile) {
+      myDialect = dialect;
+      myVirtualFile = virtualFile;
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+      return FlexBundle.message("switch.to.css.dialect.quickfix.name", myVirtualFile.getName(), myDialect.getDisplayName());
+    }
+
+    @NotNull
+    @Override
+    public String getText() {
+      return getName();
+    }
+
+    @NotNull
+    @Override
+    public String getFamilyName() {
+      return getName();
+    }
+
+    @Override
+    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+      return true;
+    }
+
+    @Override
+    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+      doApplyFix(project);
+    }
+
+    @Override
+    public boolean startInWriteAction() {
+      return false;
+    }
+
+    @Override
+    public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
+      doApplyFix(project);
+    }
+
+    private void doApplyFix(final Project project) {
+      final CssDialectMappings mappings = CssDialectMappings.getInstance(project);
+      final CssDialect oldDialect = mappings.getMapping(myVirtualFile);
+
+      UndoManager.getInstance(project).undoableActionPerformed(new BasicUndoableAction() {
+        @Override
+        public void undo() throws UnexpectedUndoException {
+          CssDialectMappings.getInstance(project).setMapping(myVirtualFile, oldDialect);
+        }
+
+        @Override
+        public void redo() throws UnexpectedUndoException {
+          CssDialectMappings.getInstance(project).setMapping(myVirtualFile, myDialect);
+        }
+      });
+
+      mappings.setMapping(myVirtualFile, myDialect);
     }
   }
 }

@@ -59,7 +59,7 @@ public class CssDialectsConfigurable extends LanguagePerFileConfigurable<CssDial
               children.add(new AbstractFileTreeTable.FileNode(contentRoot, myProject, new VirtualFileFilter() {
                 @Override
                 public boolean accept(VirtualFile file) {
-                  return file.isDirectory() || file.getFileType() == CssSupportLoader.CSS_FILE_TYPE;
+                  return file.isDirectory() || canBeConfigured(file);
                 }
               }));
             }
@@ -72,6 +72,10 @@ public class CssDialectsConfigurable extends LanguagePerFileConfigurable<CssDial
     treeView.getEmptyText().setText(FlexBundle.message("css.dialects.flex.modules.not.found"));
 
     return jComponent;
+  }
+
+  public static boolean canBeConfigured(@NotNull VirtualFile file) {
+    return file.getFileType() == CssSupportLoader.CSS_FILE_TYPE;
   }
 
   @Nullable
