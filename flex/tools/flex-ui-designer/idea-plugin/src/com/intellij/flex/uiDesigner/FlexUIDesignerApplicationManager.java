@@ -5,6 +5,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -92,7 +93,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   public void serverClosed() {
     documentOpening = false;
-    ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).applicationClosed();
+    Application application = ApplicationManager.getApplication();
+    if (!application.isDisposed()) {
+      application.getMessageBus().syncPublisher(MESSAGE_TOPIC).applicationClosed();
+    }
     if (client != null) {
       for (Project project : ProjectManager.getInstance().getOpenProjects()) {
         project.putUserData(PROJECT_INFO, null);
