@@ -52,7 +52,7 @@
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.0.18365" level="project" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:cocoa:swc:1.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.flyti:plexus:swc:1.3-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.flyti:collections:swc:1.3.4" level="project" />
+    <orderEntry type="library" name="Maven: org.flyti:collections:swc:1.3.5" level="project" />
     <orderEntry type="library" name="Maven: org.flyti:foundation:swc:1.2.1" level="project" />
     <orderEntry type="module" module-name="ui" />
     <orderEntry type="module" module-name="app-plugin-api" />
