@@ -6,6 +6,9 @@ import flash.display.DisplayObjectContainer;
 import flash.display.LoaderInfo;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.events.EventPhase;
+import flash.events.IEventDispatcher;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.geom.Transform;
@@ -518,9 +521,9 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   public function invalidateParentSizeAndDisplayList():void {
   }
 
-  //override public function get parent():DisplayObjectContainer {
-///    return null;
-  //}
+  override public function get parent():DisplayObjectContainer {
+    return null;
+  }
 
   private static var fakeTransform:Transform;
 
@@ -562,6 +565,108 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   // mx.managers::ISystemManagerChildManager, ChildManager, "cm.notifyStyleChangeInChildren(styleProp, true);" in CSSStyleDeclaration
   //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
   public function notifyStyleChangeInChildren(styleProp:String, recursive:Boolean):void {
+  }
+
+  private var proxiedMouseListeners:Dictionary;
+  private var proxiedMouseListenersInCapture:Dictionary;
+
+  override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0,
+                                            useWeakReference:Boolean = false):void {
+    if (type == MouseEvent.CLICK || type == MouseEvent.MOUSE_DOWN || type == MouseEvent.MOUSE_UP || type == MouseEvent.MOUSE_MOVE ||
+      type == MouseEvent.MOUSE_OVER || type == MouseEvent.MOUSE_OUT || type == MouseEvent.ROLL_OUT || type == MouseEvent.ROLL_OVER ||
+      type == MouseEvent.MIDDLE_CLICK || type == MouseEvent.MOUSE_WHEEL) {
+
+      var map:Dictionary;
+      if (useCapture) {
+        if (proxiedMouseListenersInCapture == null) {
+          proxiedMouseListenersInCapture = new Dictionary();
+        }
+        map = proxiedMouseListenersInCapture;
+      }
+      else {
+        if (proxiedMouseListeners == null) {
+          proxiedMouseListeners = new Dictionary();
+        }
+        map = proxiedMouseListeners;
+      }
+
+      var listeners:Vector.<Function> = map[type];
+      if (listeners == null) {
+        listeners = new Vector.<Function>();
+        map[type] = listeners;
+      }
+
+      if (listeners.length == 0) {
+        if (useCapture) {
+          stage.addEventListener(type, proxyMouseEventHandler, true);
+        }
+        else {
+          stage.addEventListener(type, proxyMouseEventHandler);
+        }
+      }
+
+      if (listeners.indexOf(listener) == -1) {
+        trace("ADDED", type,  useCapture);
+        listeners.push(listener);
+      }
+    }
+    else {
+      super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+    }
+  }
+
+  override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
+    var map:Dictionary;
+    if (useCapture) {
+      if (proxiedMouseListenersInCapture != null) {
+        map = proxiedMouseListenersInCapture;
+      }
+    }
+    else if (proxiedMouseListeners != null) {
+      map = proxiedMouseListeners;
+    }
+
+    var listeners:Vector.<Function> = map == null ? null : map[type];
+    if (listeners == null) {
+      super.removeEventListener(type, listener, useCapture);
+      return;
+    }
+
+    trace("REMOVED", type, useCapture);
+
+    var index:int = listeners.indexOf(listener);
+    if (index == -1) {
+      throw new Error("listener must exists");
+    }
+
+    listeners.splice(index, 1);
+    if (listeners.length == 0) {
+      trace("REMOVED proxyMouseEventHandler", useCapture);
+      stage.removeEventListener(type, proxyMouseEventHandler, useCapture);
+    }
+  }
+
+  private function proxyMouseEventHandler(event:MouseEvent):void {
+    trace("EXECUTED", event, event.eventPhase == EventPhase.CAPTURING_PHASE);
+    var listeners:Vector.<Function>;
+    if (event.eventPhase == EventPhase.CAPTURING_PHASE) {
+      listeners = proxiedMouseListenersInCapture[event.type];
+    }
+    else {
+      listeners = proxiedMouseListeners[event.type];
+    }
+
+    for each (var listener:Function in listeners.slice() /* copy, because may be removed in removeEventListener (side effect by call listener) */) {
+      listener(event);
+    }
+  }
+
+  public function addRealEventListener(type:String, listener:Function):void {
+    super.addEventListener(type, listener);
+  }
+
+  public function removeRealEventListener(type:String, listener:Function):void {
+    super.removeEventListener(type, listener);
   }
 }
 }

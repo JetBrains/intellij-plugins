@@ -31,7 +31,7 @@ public class ElementManager extends EventDispatcher implements Injectable {
     }
 
     if (_document != null) {
-      _document.systemManager.removeEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+      _document.systemManager.removeRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
     }
 
     _document = value;
@@ -39,8 +39,7 @@ public class ElementManager extends EventDispatcher implements Injectable {
       simpleStyleClientClass = null;
     }
     else {
-      _document.systemManager.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
-      _document.systemManager.addEventListener(MouseEvent.MOUSE_UP, _documentSysteManager_mouseUpHandler);
+      _document.systemManager.addRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
       simpleStyleClientClass = _document.module.getClass("mx.styles.IStyleClient");
       skinClass = _document.module.getClass("spark.components.supportClasses.Skin");
     }
@@ -61,10 +60,6 @@ public class ElementManager extends EventDispatcher implements Injectable {
     if (_element != object) {
       element = object;
     }
-  }
-
-  private function _documentSysteManager_mouseUpHandler(event:MouseEvent):void {
-    trace(event);
   }
 }
 }

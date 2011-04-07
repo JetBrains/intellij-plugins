@@ -102,7 +102,7 @@ public class Interactor {
     
     if (newElement == element) {
       if (outUpHandlerAdded) {
-        container.stage.removeEventListener(MouseEvent.MOUSE_UP, outUp);
+        DisplayObject(event.target).stage.removeEventListener(MouseEvent.MOUSE_UP, outUp);
         outUpHandlerAdded = false;
       }
       return;
