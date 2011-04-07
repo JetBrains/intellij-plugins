@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.IOUtil;
+import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -19,7 +20,6 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
@@ -30,7 +30,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -40,8 +42,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public static final Topic<FlexUIDesignerApplicationListener> MESSAGE_TOPIC =
     new Topic<FlexUIDesignerApplicationListener>("Flex UI Designer Application open and close events",
                                                  FlexUIDesignerApplicationListener.class);
-
-  private static final Key<ProjectInfo> PROJECT_INFO = Key.create("FUD_PROJECT_INFO");
 
   static final Logger LOG = Logger.getInstance(FlexUIDesignerApplicationManager.class.getName());
   
@@ -94,9 +94,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public void serverClosed() {
     documentOpening = false;
     if (client != null) {
-      for (Project project : ProjectManager.getInstance().getOpenProjects()) {
-        project.putUserData(PROJECT_INFO, null);
-      }
       closeClosable(client);
     }
     
@@ -111,7 +108,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     documentOpening = true;
 
     if (server == null || server.isClosed()) {
-      LOG.assertTrue(project.getUserData(PROJECT_INFO) == null);
       run(project, module, psiFile, debug);
     }
     else {
@@ -303,8 +299,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
 
     final LibrarySet externalLibrarySet;
-    ProjectInfo projectInfo = project.getUserData(PROJECT_INFO);
-    if (projectInfo == null) {
+    final InfoList<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
+    if (!registeredProjects.contains(project)) {
       String librarySetId = project.getLocationHash();
       try {
         externalLibrarySet = new LibrarySet(librarySetId, ApplicationDomainCreationPolicy.ONE, new SwcDependenciesSorter(appDir)
@@ -313,9 +309,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       catch (RuntimeException e) {
         throw new InitException("error.sort.libraries");
       }
-      
-      projectInfo = new ProjectInfo(externalLibrarySet);
-      project.putUserData(PROJECT_INFO, projectInfo);
+
+      registeredProjects.add(new ProjectInfo(project, externalLibrarySet));
 
       client.openProject(project);
       client.registerLibrarySet(externalLibrarySet, stringWriter);
@@ -323,7 +318,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     else {
       stringWriter.finishChange();
       //noinspection UnusedAssignment
-      externalLibrarySet = projectInfo.getLibrarySet();
+      externalLibrarySet = registeredProjects.getInfo(project).getLibrarySet();
       // todo merge existing libraries and new. create new custom external library set for myModule, 
       // if we have different version of the artifact
     }
@@ -430,14 +425,16 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         return;
       }
 
-      ProjectInfo projectInfo = project.getUserData(PROJECT_INFO);
-      if (projectInfo != null) {
-        project.putUserData(PROJECT_INFO, null);
+      final InfoList<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
+      if (registeredProjects.contains(project)) {
         try {
           client.closeProject(project);
         }
         catch (IOException e) {
           LOG.error(e);
+        }
+        finally {
+          registeredProjects.remove(project);
         }
       }
     }

@@ -1,12 +1,13 @@
 package com.intellij.flex.uiDesigner {
+import flash.display.NativeWindow;
 import flash.utils.Dictionary;
 
 public class ProjectManager {
   private const idMap:Dictionary = new Dictionary();
 
-  public function open(id:int, project:Project):void {
-    assert(!(id in idMap));
-    idMap[id] = project;
+  public function open(project:Project):void {
+    assert(!(project.id in idMap));
+    idMap[project.id] = project;
   }
   
   public function close(id:int):Project {
@@ -26,6 +27,16 @@ public class ProjectManager {
 
   public function getById(id:int):Project {
     return idMap[id];
+  }
+
+  public function getByNativeWindow(nativeWindow:NativeWindow):Project {
+    for each (var project:Project in idMap) {
+      if (project.window.nativeWindow == nativeWindow) {
+        return project;
+      }
+    }
+
+    throw new Error("project must be for window");
   }
 
   private var _project:Project;

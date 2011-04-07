@@ -2,10 +2,10 @@ package com.intellij.flex.uiDesigner {
 public class DocumentFactoryManager {
   private const factories:Vector.<DocumentFactory> = new Vector.<DocumentFactory>();
   
-  private var socketManager:SocketManager;
+  private var server:Server;
 
-  public function DocumentFactoryManager(socketManager:SocketManager) {
-    this.socketManager = socketManager;
+  public function DocumentFactoryManager(server:Server) {
+    this.server = server;
   }
 
   public function get(id:int):DocumentFactory {
@@ -37,7 +37,7 @@ public class DocumentFactoryManager {
       factories[deletedIndex] = null;
     }
     
-    socketManager.unregisterDocumentFactories(factory.module, deleted);
+    server.unregisterDocumentFactories(factory.module, deleted);
   }
 
   private function unregister2(factory:DocumentFactory, deleted:Vector.<int>):int {

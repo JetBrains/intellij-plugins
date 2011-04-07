@@ -144,7 +144,7 @@ public class LibraryCollector {
   }
 
   // 7
-  private void collectLibrariesFromModuleDependency(Module module) {
+  private static void collectLibrariesFromModuleDependency(Module module) {
     for (OrderEntry o : ModuleRootManager.getInstance(module).getOrderEntries()) {
       if (!(o instanceof ExportableOrderEntry) || !((ExportableOrderEntry)o).isExported()) {
         continue;

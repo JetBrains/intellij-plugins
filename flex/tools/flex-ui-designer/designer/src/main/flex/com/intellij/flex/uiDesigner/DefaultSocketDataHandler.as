@@ -6,7 +6,10 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 import com.intellij.flex.uiDesigner.ui.ProjectEventMap;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
 
+import flash.desktop.NativeApplication;
 import flash.display.BitmapData;
+import flash.display.NativeWindow;
+import flash.events.Event;
 import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
@@ -26,14 +29,24 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   private var bitmapDataManager:BitmapDataManager;
   private var swfDataManager:SwfDataManager;
 
+  private var applicationExiting:Boolean;
+
   public function DefaultSocketDataHandler(libraryManager:LibraryManager, projectManager:ProjectManager, moduleManager:ModuleManager, stringRegistry:StringRegistry) {
     this.libraryManager = libraryManager;
     this.projectManager = projectManager;
     this.moduleManager = moduleManager;
     this.stringRegistry = stringRegistry;
+
+    NativeApplication.nativeApplication.addEventListener(Event.EXITING, exitingHandler);
   }
-  
-  public function set socket(socket:Socket):void {
+
+  private var _socket:Socket;
+  public function set socket(value:Socket):void {
+    _socket = value;
+  }
+
+  private function exitingHandler(event:Event):void {
+    applicationExiting = true;
   }
 
   public function handleSockedData(messageSize:int, method:int, data:IDataInput):void {
@@ -43,7 +56,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
         break;
       
       case ClientMethod.closeProject:
-        closeProject(data.readInt());
+        closeProject(data.readUnsignedShort());
         break;
 
       case ClientMethod.registerLibrarySet:
@@ -85,17 +98,35 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private function openProject(input:IDataInput):void {
-    const id:int = input.readInt();
-    var project:Project = new Project(input.readUTFBytes(AmfUtil.readUInt29(input)), new ProjectEventMap());
+    var project:Project = new Project(input.readUnsignedShort(), input.readUTFBytes(AmfUtil.readUInt29(input)), new ProjectEventMap());
     var projectWindowBounds:Rectangle;
     if (input.readBoolean()) {
       projectWindowBounds = new Rectangle(input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort());
     }
-    projectManager.open(id, project);
+    projectManager.open(project);
 
     var window:DocumentWindow = new DocumentWindow(new ProjectView(), project.map, null, projectWindowBounds);
+    window.nativeWindow.addEventListener(Event.CLOSING, closeHandler);
     window.title = project.name;
     project.window = window;
+  }
+
+  private function closeHandler(event:Event):void {
+    if (applicationExiting) {
+
+    }
+
+    var window:NativeWindow = NativeWindow(event.target);
+    var bounds:Rectangle = window.bounds;
+    var project:Project = projectManager.getByNativeWindow(window);
+
+    _socket.writeByte(ServerMethod.saveProjectWindowBounds);
+    _socket.writeShort(project.id);
+    _socket.writeShort(bounds.x);
+    _socket.writeShort(bounds.y);
+    _socket.writeShort(bounds.width);
+    _socket.writeShort(bounds.height);
+    _socket.flush();
   }
   
   private function closeProject(id:int):void {
@@ -107,14 +138,14 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   
   private function registerModule(data:IDataInput):void {
     stringRegistry.readStringTable(data);
-    moduleManager.register(new Module(data.readInt(), projectManager.getById(data.readInt()), libraryManager.idsToInstancesAndMarkAsUsed(data.readObject()), data.readObject()));
+    moduleManager.register(new Module(data.readUnsignedShort(), projectManager.getById(data.readUnsignedShort()), libraryManager.idsToInstancesAndMarkAsUsed(data.readObject()), data.readObject()));
   }
   
   private var bitmapWorkaroundByteArray:ByteArray;
   
   private function registerDocumentFactory(input:IDataInput, messageSize:int):void {
     const prevBytesAvailable:int = input.bytesAvailable;
-    var module:Module = moduleManager.getById(input.readInt());
+    var module:Module = moduleManager.getById(input.readUnsignedShort());
     var bytes:ByteArray = new ByteArray();
     var documentFactory:DocumentFactory = new DocumentFactory(bytes, VirtualFileImpl.create(input), input.readUTFBytes(AmfUtil.readUInt29(input)), module);
     getDocumentFactoryManager(module).register(input.readUnsignedShort(), documentFactory);
@@ -126,7 +157,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   
   private function updateDocumentFactory(input:IDataInput, messageSize:int):void {
     const prevBytesAvailable:int = input.bytesAvailable;
-    var module:Module = moduleManager.getById(input.readInt());
+    var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
     
     stringRegistry.readStringTable(input);
@@ -183,14 +214,14 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private function openDocument(input:IDataInput):void {
-    var module:Module = moduleManager.getById(input.readInt());
+    var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
     projectManager.project = module.project;
     getDocumentManager(module).open(documentFactory);
   }
   
   private function updateDocuments(input:IDataInput):void {
-    var module:Module = moduleManager.getById(input.readInt());
+    var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
     var documentManager:DocumentManager = getDocumentManager(module);
     // not set projectManager.project — current project is not changed (opposite to openDocument)

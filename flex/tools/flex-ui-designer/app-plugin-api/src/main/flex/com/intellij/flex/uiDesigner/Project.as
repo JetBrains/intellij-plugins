@@ -8,12 +8,18 @@ public class Project {
   public var name:String;
   public var window:DocumentWindow;
 
-  public function Project(name:String, map:LocalEventMap) {
+  public function Project(id:int, name:String, map:LocalEventMap) {
+    _id = id;
     this.name = name;
 
     _map = map;
     _map.initializeContainer();
     plexusContainer = _map.container;
+  }
+
+  private var _id:int;
+  public function get id():int {
+    return _id;
   }
 
   private var plexusContainer:PlexusContainer;

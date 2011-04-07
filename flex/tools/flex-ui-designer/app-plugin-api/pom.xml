@@ -18,12 +18,6 @@
       <type>swc</type>
     </dependency>
     <dependency>
-      <groupId>org.flyti</groupId>
-      <artifactId>collections</artifactId>
-      <version>1.3.5</version>
-      <type>swc</type>
-    </dependency>
-    <dependency>
       <groupId>com.intellij.flex.uiDesigner</groupId>
       <artifactId>shared</artifactId>
       <type>swc</type>

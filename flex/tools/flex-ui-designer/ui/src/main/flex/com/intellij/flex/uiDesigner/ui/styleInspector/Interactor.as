@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.ui.styleInspector {
 import com.intellij.flex.uiDesigner.Module;
-import com.intellij.flex.uiDesigner.SocketManager;
+import com.intellij.flex.uiDesigner.Server;
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.ui.CssElementFormat;
@@ -33,7 +33,7 @@ public class Interactor {
   private static var fakeInteractor:FakeInteractor;
   private static const sharedPoint:Point = new Point();
   
-  private var server:SocketManager;
+  private var server:Server;
   
   private var element:TextElement;
   private var engine:ITextEngine;
@@ -44,7 +44,7 @@ public class Interactor {
   private var outUpHandlerAdded:Boolean;
   private var mouseDownOnElement:Boolean;
 
-  public function Interactor(elementManager:ElementManager, server:SocketManager) {
+  public function Interactor(elementManager:ElementManager, server:Server) {
     this.elementManager = elementManager;
     this.server = server;
   }

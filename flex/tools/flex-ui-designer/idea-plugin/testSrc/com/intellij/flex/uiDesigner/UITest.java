@@ -44,7 +44,7 @@ public class UITest extends MxmlWriterTestBase {
           @Override
           public void test() throws Exception {
             assertEquals(ServerMethod.resolveExternalInlineStyleDeclarationSource, reader.read());
-            assertEquals(myModule, client.getModule(reader.readInt()));
+            assertEquals(myModule, client.getModule(reader.readUnsignedShort()));
 
             XmlAttribute attribute = (XmlAttribute) new ResolveExternalInlineStyleSourceAction(reader, myModule).find();
             assertEquals("spark.skins.spark.ButtonBarLastButtonSkin", attribute.getDisplayValue());
@@ -71,7 +71,7 @@ public class UITest extends MxmlWriterTestBase {
           @Override
           public void test() throws Exception {
             assertEquals(ServerMethod.openFile, reader.read());
-            assertEquals(myModule, client.getModule(reader.readInt()));
+            assertEquals(myProject, client.getProject(reader.readUnsignedShort()));
             assertEquals(file.getUrl(), reader.readUTF());
             assertEquals(96, reader.readInt());
           }

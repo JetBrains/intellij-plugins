@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.plugins.test {
 import com.intellij.flex.uiDesigner.DocumentManager;
+import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.ProjectManager;
 
 import flash.events.Event;
@@ -37,7 +38,10 @@ internal class BaseTestCase implements TestCase {
   }
   
   protected final function getDefinition(name:String):Object {
-    return documentManager.document.module.context.getDefinition(name);
+    var context:ModuleContextEx = documentManager.document.module.context;
+    return context.getDefinition(name);
+    // compiler bug http://juick.com/develar/1301589
+    //return documentManager.document.module.context.getDefinition(name);
   }
   
   protected final function getClass(name:String):Class {

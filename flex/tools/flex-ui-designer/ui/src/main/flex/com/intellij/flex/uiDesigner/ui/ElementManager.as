@@ -40,6 +40,7 @@ public class ElementManager extends EventDispatcher implements Injectable {
     }
     else {
       _document.systemManager.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+      _document.systemManager.addEventListener(MouseEvent.MOUSE_UP, _documentSysteManager_mouseUpHandler);
       simpleStyleClientClass = _document.module.getClass("mx.styles.IStyleClient");
       skinClass = _document.module.getClass("spark.components.supportClasses.Skin");
     }
@@ -60,6 +61,10 @@ public class ElementManager extends EventDispatcher implements Injectable {
     if (_element != object) {
       element = object;
     }
+  }
+
+  private function _documentSysteManager_mouseUpHandler(event:MouseEvent):void {
+    trace(event);
   }
 }
 }

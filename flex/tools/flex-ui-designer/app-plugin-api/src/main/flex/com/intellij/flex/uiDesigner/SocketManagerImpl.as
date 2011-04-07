@@ -28,6 +28,10 @@ public class SocketManagerImpl implements SocketManager {
     return totalBytes - socket.bytesAvailable;
   }
 
+  public function getSocket():Socket {
+    return socket;
+  }
+
   public function addSocketDataHandler(classId:int, handler:SocketDataHandler):void {
     assert(!(classId in socketDataHandlers));
     socketDataHandlers[classId] = handler;
@@ -104,56 +108,6 @@ public class SocketManagerImpl implements SocketManager {
         throw new ArgumentError("unknown class: " + clientMethodClass);
       }
     }
-  }
-
-  public function goToClass(module:Module, className:String):void {
-    socket.writeByte(ServerMethod.goToClass);
-    socket.writeInt(module.id);
-    socket.writeUTF(className);
-    socket.flush();
-  }
-
-  // navigation for inline style in external file (for example, ButtonSkin in sparkskins.swc) is not supported
-  public function resolveExternalInlineStyleDeclarationSource(module:Module, parentFQN:String, elementFQN:String, targetStyleName:String, declarations:Vector.<CssDeclaration>):void {
-    socket.writeByte(ServerMethod.resolveExternalInlineStyleDeclarationSource);
-    socket.writeInt(module.id);
-    socket.writeUTF(parentFQN);
-    socket.writeUTF(elementFQN);
-    socket.writeUTF(targetStyleName);
-    socket.writeShort(declarations.length);
-    for each (var declaration:CssDeclaration in declarations) {
-      if (declaration.fromAs || declaration.value === undefined) {
-        socket.writeShort(0);
-        continue;
-      }
-
-      socket.writeUTF(declaration.name);
-      if (declaration.value is Class) {
-        socket.writeUTF(getQualifiedClassName(declaration.value).replace("::", "."));
-      }
-      else {
-        socket.writeUTF(declaration.value.toString());
-      }
-    }
-  }
-
-  public function openFile(module:Module, uri:String, textOffset:int):void {
-    socket.writeByte(ServerMethod.openFile);
-    socket.writeInt(module.id);
-    socket.writeUTF(uri);
-    socket.writeInt(textOffset);
-    socket.flush();
-  }
-
-  public function getSocket():Socket {
-    return socket;
-  }
-
-  public function unregisterDocumentFactories(module:Module, deleted:Vector.<int>):void {
-    socket.writeByte(ServerMethod.unregisterDocumentFactories);
-    socket.writeInt(module.id);
-    socket.writeObject(deleted);
-    socket.flush();
   }
 }
 }

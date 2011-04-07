@@ -111,6 +111,8 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
     client = new TestClient(socket.getOutputStream());
 
+    client.getRegisteredProjects().add(new ProjectInfo(myProject, librarySet));
+
     client.openProject(myProject);
     librarySet = new LibrarySet(myProject.getLocationHash(), ApplicationDomainCreationPolicy.ONE, libraries);
     client.registerLibrarySet(librarySet, stringWriter);

@@ -1,11 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.Amf3Types;
-import com.intellij.flex.uiDesigner.io.AmfOutputStream;
-import com.intellij.flex.uiDesigner.io.BlockDataOutputStream;
-import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.components.ServiceManager;
@@ -16,10 +12,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ArrayUtil;
-import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -32,7 +26,8 @@ public class Client implements Closable {
 
   private final MxmlWriter mxmlWriter = new MxmlWriter();
 
-  private final TIntObjectHashMap<ModuleInfo> registeredModules = new TIntObjectHashMap<ModuleInfo>();
+  private final InfoList<Module, ModuleInfo> registeredModules = new InfoList<Module, ModuleInfo>();
+  private final InfoList<Project, ProjectInfo> registeredProjects = new InfoList<Project, ProjectInfo>();
 
   public Client(OutputStream out) {
     setOutput(out);
@@ -50,12 +45,21 @@ public class Client implements Closable {
   }
 
   public boolean isModuleRegistered(Module module) {
-    return registeredModules.containsKey(module.hashCode());
+    return registeredModules.contains(module);
+  }
+
+  public InfoList<Project, ProjectInfo> getRegisteredProjects() {
+    return registeredProjects;
   }
 
   @NotNull
   public Module getModule(int id) {
-    return registeredModules.get(id).getModule();
+    return registeredModules.getElement(id);
+  }
+
+  @NotNull
+  public Project getProject(int id) {
+    return registeredProjects.getElement(id);
   }
 
   public void flush() throws IOException {
@@ -72,7 +76,8 @@ public class Client implements Closable {
     sessionId++;
 
     registeredModules.clear();
-    
+    registeredProjects.clear();
+
     mxmlWriter.reset();
 
     BinaryFileManager.getInstance().reset(sessionId);
@@ -87,42 +92,10 @@ public class Client implements Closable {
 
   public void openProject(Project project) throws IOException {
     beginMessage(ClientMethod.openProject);
-    out.writeInt(project.hashCode());
+    writeId(project);
     out.writeAmfUtf(project.getName());
-
-    Rectangle projectWindowBounds = getProjectWindowBounds(project);
-    if (projectWindowBounds == null) {
-      out.write(false);
-    }
-    else {
-      out.write(true);
-      out.writeShort(projectWindowBounds.x);
-      out.writeShort(projectWindowBounds.y);
-      out.writeShort(projectWindowBounds.width);
-      out.writeShort(projectWindowBounds.height);
-    }
-
+    ProjectWindowBounds.write(project, out);
     blockOut.end();
-  }
-
-  private static Rectangle getProjectWindowBounds(Project project) {
-    PropertiesComponent d = PropertiesComponent.getInstance(project);
-    try {
-      return d.isValueSet("fud_pw_x")
-             ? new Rectangle(parsePwV(d, "fud_pw_x"), parsePwV(d, "fud_pw_y"), parsePwV(d, "fud_pw_w"), parsePwV(d, "fud_pw_h"))
-             : null;
-    }
-    catch (NumberFormatException e) {
-      return null;
-    }
-  }
-
-  private static int parsePwV(PropertiesComponent propertiesComponent, String key) {
-    int v = Integer.parseInt(propertiesComponent.getValue(key));
-    if (v < 0 || v > 65535) {
-      throw new NumberFormatException("Value " + v + " out of range 0-65535");
-    }
-    return v;
   }
 
   private void beginMessage(ClientMethod method) {
@@ -133,7 +106,7 @@ public class Client implements Closable {
 
   public void closeProject(Project project) throws IOException {
     beginMessage(ClientMethod.closeProject);
-    out.writeInt(project.hashCode());
+    writeId(project);
     out.flush();
   }
 
@@ -197,15 +170,12 @@ public class Client implements Closable {
 
   public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter)
     throws IOException {
-    final int id = moduleInfo.getModule().hashCode();
-    registeredModules.put(id, moduleInfo);
-
     beginMessage(ClientMethod.registerModule);
 
     stringWriter.writeToIfStarted(out);
 
-    out.writeInt(id);
-    out.writeInt(project.hashCode());
+    out.writeShort(registeredModules.add(moduleInfo));
+    writeId(project);
     out.write(librarySetIds);
     out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
 
@@ -218,6 +188,7 @@ public class Client implements Closable {
     DocumentFactoryManager documentFileManager = DocumentFactoryManager.getInstance(module.getProject());
     VirtualFile virtualFile = psiFile.getVirtualFile();
     FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+    assert virtualFile != null;
     if (documentFileManager.isRegistered(virtualFile) && ArrayUtil.indexOf(fileDocumentManager.getUnsavedDocuments(),
                                                                            fileDocumentManager.getDocument(virtualFile)) != -1) {
       updateDocumentFactory(documentFileManager.getId(virtualFile), module, psiFile);
@@ -226,19 +197,18 @@ public class Client implements Closable {
 
     int factoryId = registerDocumentFactoryIfNeed(module, psiFile, documentFileManager, false);
     beginMessage(ClientMethod.openDocument);
-    out.writeInt(module.hashCode());
+    writeId(module);
     out.writeShort(factoryId);
   }
   
   public void updateDocumentFactory(int factoryId, Module module, XmlFile psiFile) throws IOException {
     beginMessage(ClientMethod.updateDocumentFactory);
-    final int moduleId = module.hashCode();
-    out.writeInt(moduleId);
+    writeId(module);
     out.writeShort(factoryId);
     writeDocumentFactory(module, psiFile, psiFile.getVirtualFile(), DocumentFactoryManager.getInstance(module.getProject()));
 
     beginMessage(ClientMethod.updateDocuments);
-    out.writeInt(moduleId);
+    writeId(module);
     out.writeShort(factoryId);
   }
 
@@ -250,7 +220,7 @@ public class Client implements Closable {
     final int id = documentFileManager.getId(virtualFile);
     if (!registered) {
       beginMessage(ClientMethod.registerDocumentFactory);
-      out.writeInt(module.hashCode());
+      writeId(module);
       writeVirtualFile(virtualFile, out);
       
       JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
@@ -306,6 +276,20 @@ public class Client implements Closable {
     out.write(stringRegistry.toArray());
 
     blockOut.end();
+  }
+
+
+
+  private void writeId(Module module) {
+    writeId(registeredModules.getId(module));
+  }
+
+  private void writeId(Project project) {
+    writeId(registeredProjects.getId(project));
+  }
+
+  private void writeId(int id) {
+    out.writeShort(id);
   }
 
   public static enum ClientMethod {

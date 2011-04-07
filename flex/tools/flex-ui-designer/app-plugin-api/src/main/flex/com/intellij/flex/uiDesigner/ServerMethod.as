@@ -7,5 +7,8 @@ public final class ServerMethod {
   public static const showError:int = 3;
   
   public static const unregisterDocumentFactories:int = 4;
+
+  public static const closeProject:int = 5;
+  public static const saveProjectWindowBounds:int = 6;
 }
 }

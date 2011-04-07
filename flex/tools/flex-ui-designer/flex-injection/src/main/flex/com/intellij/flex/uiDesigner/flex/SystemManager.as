@@ -518,9 +518,9 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   public function invalidateParentSizeAndDisplayList():void {
   }
 
-  override public function get parent():DisplayObjectContainer {
-    return null;
-  }
+  //override public function get parent():DisplayObjectContainer {
+///    return null;
+  //}
 
   private static var fakeTransform:Transform;
 

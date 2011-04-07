@@ -70,6 +70,10 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
           FlexUIDesignerApplicationManager.LOG.error(reader.readUTF());
           break;
 
+        case ServerMethod.saveProjectWindowBounds:
+          ProjectWindowBounds.save(readProject(), reader);
+          break;
+
         default:
           throw new IllegalArgumentException("unknown client command: " + command);
       }
@@ -77,11 +81,11 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
   }
 
   private Module readModule() throws IOException {
-    return FlexUIDesignerApplicationManager.getInstance().getClient().getModule(reader.readInt());
+    return FlexUIDesignerApplicationManager.getInstance().getClient().getModule(reader.readUnsignedShort());
   }
 
   private Project readProject() throws IOException {
-    return readModule().getProject();
+    return FlexUIDesignerApplicationManager.getInstance().getClient().getProject(reader.readUnsignedShort());
   }
 
   private void unregisterDocumentFactories() throws IOException {
