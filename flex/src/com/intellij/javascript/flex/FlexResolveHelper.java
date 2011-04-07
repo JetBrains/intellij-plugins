@@ -3,6 +3,7 @@ package com.intellij.javascript.flex;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.project.Project;
@@ -68,6 +69,7 @@ public class FlexResolveHelper implements JSResolveHelper {
   }
 
   public boolean importClass(final PsiScopeProcessor processor, final PsiNamedElement file, final String packageQualifierText) {
+    if (file instanceof JSFunction) return true;    // there is no need to process package stuff at function level
     final Project project = file.getProject();
     GlobalSearchScope scope = JSResolveUtil.getResolveScope(file);
     final MxmlAndFxgFilesProcessor filesProcessor = new MxmlAndFxgFilesProcessor() {
