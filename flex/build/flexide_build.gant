@@ -148,7 +148,8 @@ target('default': "Build artifacts") {
   }
 
   if (!dryRun) {
-    zipSources()
+    zipSources(home, paths.artifacts)
+    reportArtifact("sources.zip")
   }
 
   def usedJars = new HashSet();
@@ -223,23 +224,6 @@ target('default': "Build artifacts") {
   buildWinZip()
 
   buildNsis()
-}
-
-def zipSources() {
-  project.stage("zip sources")
-
-  def sources = "$paths.artifacts/sources.zip"
-  ant.mkdir(dir: paths.artifacts)
-  ant.delete(file: sources)
-  ant.zip(destfile: sources) {
-    fileset(dir: home) {
-      ["java", "ipr", "iml", "form", "xml", "properties"].each {
-        include(name: "**/*.$it")
-      }
-      exclude(name: "**/testData/**")
-    }
-  }
-  reportArtifact("sources.zip")
 }
 
 private def buildWinZip() {
