@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
+  protected static final String PASSED = "__passed__";
   protected static final Key<Boolean> IS_USER_LIB = Key.create("FUD_IS_USER_LIB");
   private static final String BASE_PATH = "/mxml";
   

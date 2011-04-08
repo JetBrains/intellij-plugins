@@ -29,7 +29,6 @@ public class TestUncaughtErrorManager extends UncaughtErrorManager {
   }
 
   override protected function sendMessage(message:String):void {
-    socket.writeByte(0);
     socket.writeUTF(message);
     socket.flush();
   }

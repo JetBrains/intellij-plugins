@@ -73,7 +73,7 @@ public class AppTest extends AppTestBase {
     
     await();
     
-    if (info.result.get() != null) {
+    if (!info.result.get().equals(PASSED)) {
       fail(info.result.get());
     }
     
@@ -105,6 +105,7 @@ public class AppTest extends AppTestBase {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
+        assert document != null;
         document.insertString(254, "A");
       }
     });
@@ -139,7 +140,7 @@ public class AppTest extends AppTestBase {
       createReader(inputStream);
       while (info.count != 0) {
         try {
-          info.result.set(reader.readBoolean() ? null : reader.readUTF());
+          info.result.set(reader.readUTF());
         }
         catch (IOException e) {
           if (!(e instanceof SocketException)) {

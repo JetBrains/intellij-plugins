@@ -24,7 +24,9 @@ internal class BaseTestCase implements TestCase {
   public function setUp():void {
     if (projectManager.project != null) {
       documentManager = DocumentManager(projectManager.project.getComponent(DocumentManager));
-      _app = documentManager.document.uiComponent;
+      if (documentManager.document != null) {
+        _app = documentManager.document.uiComponent;
+      }
     }
   }
   

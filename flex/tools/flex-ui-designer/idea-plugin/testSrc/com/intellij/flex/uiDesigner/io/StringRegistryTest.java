@@ -3,7 +3,7 @@ package com.intellij.flex.uiDesigner.io;
 import org.hamcrest.collection.IsArray;
 import org.junit.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class StringRegistryTest {

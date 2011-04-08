@@ -13,7 +13,7 @@ import org.flyti.roboflest.Roboflest.Assert;
 import java.io.File;
 import java.io.IOException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @Flex(version="4.5")
@@ -40,13 +40,20 @@ public class UITest extends MxmlWriterTestBase {
 
     roboflest.setStageOffset(reader);
   }
-  
-  public void testStyleNavigationToExternal() throws Exception {
-    testFile(new Tester() {
-      @Override
-      public void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
-        init(xmlFile);
 
+  private void assertClient() throws IOException {
+    assertClient(getTestName(false));
+  }
+
+  private void assertClient(String methodName) throws IOException {
+    client.test(methodName, TEST_CLASS_ID);
+    assertResult(methodName, -1);
+  }
+
+  public void testStyleNavigationToExternal() throws Exception {
+    testFile(new MyTester() {
+      @Override
+      public void test(final VirtualFile file) throws Exception {
         interact("styleNavigation", new Assert() {
           @Override
           public void test() throws Exception {
@@ -54,53 +61,49 @@ public class UITest extends MxmlWriterTestBase {
             assertThat(client.getModule(reader.readUnsignedShort()), equalTo(myModule));
 
             XmlAttribute attribute = (XmlAttribute) new ResolveExternalInlineStyleSourceAction(reader, myModule).find();
-            assertThat(attribute.getDisplayValue(), equalTo("spark.skins.spark.ButtonBarLastButtonSkin"));
-            assertThat(attribute.getTextOffset(), equalTo(2186));
+            assertThat(attribute.getDisplayValue(), "spark.skins.spark.ButtonBarLastButtonSkin");
+            assertThat(attribute.getTextOffset(), 2186);
           }
         });
       }
     }, "Form.mxml");
   }
-  
-  public void testStyleNavigationToSkinClass() throws Exception {
-    testFile(new Tester() {
-      @Override
-      public void test(final VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
-        init(xmlFile);
 
+  public void testStyleNavigationToSkinClass() throws Exception {
+    testFile(new MyTester() {
+      @Override
+      public void test(final VirtualFile file) throws Exception {
         interact("styleNavigation", new Assert() {
           @Override
           public void test() throws Exception {
             assertThat(reader.read(), equalTo(ServerMethod.openFile));
-            assertThat(client.getProject(reader.readUnsignedShort()), equalTo(myProject));
-            assertThat(reader.readUTF(), equalTo(file.getUrl()));
-            assertThat(reader.readInt(), equalTo(96));
+            assertMyProject();
+            assertThat(reader.readUTF(), file.getUrl());
+            assertThat(reader.readInt(), 96);
           }
         });
       }
     }, "ComponentWithCustomSkin.mxml", "CustomSkin.mxml");
   }
 
-  public void _testCloseDocument() throws Exception {
-    testFile(new Tester() {
+  private void assertMyProject() throws IOException {
+    assertThat(client.getProject(reader.readUnsignedShort()), equalTo(myProject));
+  }
+
+  public void testCloseDocument() throws Exception {
+    testFile(new MyTester() {
       @Override
-      public void test(final VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
-        client.openDocument(myModule, xmlFile);
-        client.test(getTestName(true), TEST_CLASS_ID);
-
-        assertResult(getTestName(true), -1);
-
-        roboflest.setStageOffset(reader);
-        assertTrue(reader.readBoolean());
-
-        interact("styleNavigation", new Assert() {
+      public void test(final VirtualFile file) throws Exception {
+        interact("closeDocument", new Assert() {
           @Override
           public void test() throws Exception {
-            assertThat(reader.read(), equalTo(ServerMethod.openFile));
-            assertThat(client.getProject(reader.readUnsignedShort()), equalTo(myProject));
-            assertThat(reader.readUTF(), equalTo(file.getUrl()));
-            assertThat(reader.readUTF(), equalTo(file.getUrl()));
-            assertThat(reader.readInt(), equalTo(96));
+            assertThat(reader.read(), ServerMethod.unregisterDocumentFactories);
+            assertMyProject();
+            assertThat(reader.readIntArray(), 0);
+
+            assertNotAvailable();
+
+            assertClient();
           }
         });
       }
@@ -114,5 +117,21 @@ public class UITest extends MxmlWriterTestBase {
   
   private void interact(String scriptName, final Assert... asserts) throws Exception {
     roboflest.test(new File(getTestDataPath() + "/roboflest/" + scriptName + ".txt"), asserts);
+  }
+
+  private abstract class MyTester implements Tester {
+    @Override
+    public final void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
+      init(xmlFile);
+      test(file);
+      assertNotAvailable();
+    }
+
+    protected abstract void test(final VirtualFile file) throws Exception;
+
+    protected void assertNotAvailable() throws InterruptedException, IOException {
+      Thread.sleep(50); // wait data
+      assertThat(reader.available(), 0);
+    }
   }
 }

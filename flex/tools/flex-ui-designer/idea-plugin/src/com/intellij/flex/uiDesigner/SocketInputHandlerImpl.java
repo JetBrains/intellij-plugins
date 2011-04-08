@@ -99,8 +99,8 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     }
   }
 
-  protected static class Reader extends DataInputStream {
-    private Reader(InputStream in) {
+  static class Reader extends DataInputStream {
+    Reader(InputStream in) {
       super(in);
     }
 

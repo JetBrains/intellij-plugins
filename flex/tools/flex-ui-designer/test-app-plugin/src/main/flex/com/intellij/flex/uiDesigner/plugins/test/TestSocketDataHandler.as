@@ -80,8 +80,16 @@ public class TestSocketDataHandler implements SocketDataHandler {
   public function handleSockedData(messageSize:int, methodNameSize:int, data:IDataInput):void {
     var method:String = data.readUTFBytes(methodNameSize);
     var clazz:Class = c[data.readByte()];
+
+    var methodInfo:Dictionary = describeCache[clazz];
+    if (methodInfo == null) {
+      methodInfo = collectTestAnnotation(clazz);
+      describeCache[clazz] = methodInfo;
+    }
+    var testAnnotation:TestAnnotation = methodInfo[method] || TestAnnotation.DEFAULT;
+
     var documentManager:DocumentManager = projectManager.project == null ? null : DocumentManager(projectManager.project.getComponent(DocumentManager));
-    if (documentManager != null && documentManager.document == null) {
+    if (!testAnnotation.nullableDocument && documentManager != null && documentManager.document == null) {
       trace("wait document");
       IEventDispatcher(documentManager).addEventListener("documentChanged", function(event:Event):void {
         IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
@@ -91,48 +99,39 @@ public class TestSocketDataHandler implements SocketDataHandler {
         if (systemManager.stage == null) {
           systemManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
             IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
-            test(clazz, method);
+            test(clazz, method, testAnnotation);
           });
         }
         else {
-          test(clazz, method);
+          test(clazz, method, testAnnotation);
         }
       });
     }
     else {
-      test(clazz, method);
+      test(clazz, method, testAnnotation);
     }
   }
   
-  private function test(clazz:Class, method:String):void {
+  private function test(clazz:Class, method:String, testAnnotation:TestAnnotation):void {
     trace("execute test " + method);
 
     if (clazz == UITest && method == "getStageOffset") {
       getStageOffset(projectManager);
       return;
     }
-
-    var methodInfo:Dictionary = describeCache[clazz];
-    if (methodInfo == null) {
-      methodInfo = collectTestAnnotation(clazz);
-      describeCache[clazz] = methodInfo;
-    }
     
     var test:TestCase = new clazz();
     test.init(projectManager, _socket);
     test.setUp();
-    
-    var testAnnotation:TestAnnotation = methodInfo[method];
-    if (testAnnotation != null) {
-      if (testAnnotation.async) {
-        if (timeoutTimer == null) {
-          timeoutTimer = new Timer(5000, 1);
-          timeoutTimer.addEventListener(TimerEvent.TIMER, timeOutHandler);
-        }
-        
-        timeoutTimer.start();
-        test.asyncSuccessHandler = asyncSuccessHandler;
+
+    if (testAnnotation.async) {
+      if (timeoutTimer == null) {
+        timeoutTimer = new Timer(5000, 1);
+        timeoutTimer.addEventListener(TimerEvent.TIMER, timeOutHandler);
       }
+
+      timeoutTimer.start();
+      test.asyncSuccessHandler = asyncSuccessHandler;
     }
     test[method]();
 
@@ -154,12 +153,11 @@ public class TestSocketDataHandler implements SocketDataHandler {
   }
   
   private function success():void {
-    _socket.writeByte(1);
+    _socket.writeUTF("__passed__");
     _socket.flush();
   }
   
   private function fail(message:String):void {
-    _socket.writeByte(0);
     _socket.writeUTF(message);
     _socket.flush();
   }
@@ -180,5 +178,8 @@ public class TestSocketDataHandler implements SocketDataHandler {
 }
 
 class TestAnnotation {
+  public static const DEFAULT:TestAnnotation = new TestAnnotation();
+
   public var async:Boolean;
+  public var nullableDocument:Boolean;
 }

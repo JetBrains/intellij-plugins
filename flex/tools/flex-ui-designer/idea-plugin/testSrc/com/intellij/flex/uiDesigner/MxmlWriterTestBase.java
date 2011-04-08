@@ -14,7 +14,6 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 
 import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -26,8 +25,8 @@ import java.util.concurrent.TimeUnit;
 
 abstract class MxmlWriterTestBase extends AppTestBase {
   protected TestClient client;
-  private Socket socket;
-  protected DataInputStream reader;
+  protected Socket socket;
+  protected SocketInputHandlerImpl.Reader reader;
 
   private ProcessHandler adlProcessHandler;
   
@@ -108,7 +107,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       });
 
     socket = serverSocket.accept();
-    reader = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+    reader = new SocketInputHandlerImpl.Reader(new BufferedInputStream(socket.getInputStream()));
     client = new TestClient(socket.getOutputStream());
 
     client.getRegisteredProjects().add(new ProjectInfo(myProject, librarySet));
@@ -235,8 +234,8 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   }
   
   protected void assertResult(String documentName, long time) throws IOException {
-    boolean result = reader.readBoolean();
-    if (result) {
+    String result = reader.readUTF();
+    if (result.equals(PASSED)) {
       if (time != -1) {
         System.out.print(" passed (" + time + ")\n");
         passedCounter++;
@@ -244,7 +243,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       }
     }
     else {
-      fail(documentName + "\n" + reader.readUTF());
+      fail(documentName + "\n" + result);
     }
   }
 

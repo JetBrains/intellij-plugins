@@ -72,6 +72,10 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
 
   // WARNING: you can't call flush after this, you must or end, or flush.
   public void end() throws IOException {
+    if ((count - lastBlockBegin) == SERVICE_DATA_SIZE) {
+      return;
+    }
+
     writeHeader();
     if (count >= 8192) {
       flushBuffer();

@@ -3,14 +3,13 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.hamcrest.core.IsEqual;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @Flex(version="4.5")
@@ -38,12 +37,12 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
       assertThat(problems, emptyArray());
     }
     else {
-      assertThat(problems, array(m("Unresolved variable unresolvedData"), m("Invalid color name invalidcolorname")));
+      assertThat(problems, m("Unresolved variable unresolvedData"), m("Invalid color name invalidcolorname"));
     }
   }
 
-  private static IsEqual<String> m(String message) {
-    return (IsEqual<String>)equalTo("<html><b>Flex UI Designer</b><ul><li>" + message + "</li></ul></html>");
+  private static String m(String message) {
+    return "<html><b>Flex UI Designer</b><ul><li>" + message + "</li></ul></html>";
   }
 
   @Flex(version="4.1")
