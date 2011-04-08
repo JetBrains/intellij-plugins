@@ -15,7 +15,7 @@ public final class Roboflest {
   }
 
   public void setStageOffset(DataInput dataInput) throws IOException {
-    setStageOffset(dataInput.readShort(), dataInput.readShort());
+    setStageOffset(dataInput.readUnsignedShort(), dataInput.readUnsignedShort());
   }
   
   public void test(File file, Assert... asserts) throws Exception {

@@ -28,6 +28,7 @@ public class InjectedASTest extends BaseTestCase {
       OneElementAsArray();
       TwoWayBinding();
       ArrayOfPrimitives();
+      UnresolvedVariableInScriptAsArrayItem();
     }
   }
   
@@ -94,7 +95,12 @@ public class InjectedASTest extends BaseTestCase {
   }
   
   public function ArrayOfPrimitives():void {
-    assertThat(app, [{dataProvider: {source: ['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']}, selectionColor: 0xffffffff, rollOverColor: 0xffffffff}, {dataProvider: null}]);
+    var m:Object = {dataProvider: null};
+    assertThat(app, [{dataProvider: {source: ['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']}, selectionColor: 0xffffffff, rollOverColor: 0xffffffff}, m, m]);
+  }
+
+  public function UnresolvedVariableInScriptAsArrayItem():void {
+    
   }
 }
 }

@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.hamcrest.core.IsEqual;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import static org.hamcrest.Matchers.*;
 public class MxmlWriterTest extends MxmlWriterTestBase {
   @SuppressWarnings({"unchecked"})
   public void test45() throws Exception {
-    changeServiceImplementation(FlexUIDesignerApplicationManager.class, MyFlexUIDesignerApplicationManager.class);
+    changeServiceImplementation(DocumentProblemManager.class, MyDocumentProblemManager.class);
     
     String testFile = System.getProperty("testFile");
     String[] files = testFile == null ? getTestFiles() : new String[]{getTestPath() + "/" + testFile + ".mxml"};
@@ -32,13 +33,17 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
 
     testFiles(vFiles);
     
-    String[] problems = ((MyFlexUIDesignerApplicationManager)FlexUIDesignerApplicationManager.getInstance()).getProblems();
+    String[] problems = ((MyDocumentProblemManager)DocumentProblemManager.getInstance()).getProblems();
     if (testFile != null) {
       assertThat(problems, emptyArray());
     }
     else {
-      assertThat(problems, array(equalTo("Unresolved variable data"), equalTo("Invalid color name invalidcolorname")));
+      assertThat(problems, array(m("Unresolved variable unresolvedData"), m("Invalid color name invalidcolorname")));
     }
+  }
+
+  private static IsEqual<String> m(String message) {
+    return (IsEqual<String>)equalTo("<html><b>Flex UI Designer</b><ul><li>" + message + "</li></ul></html>");
   }
 
   @Flex(version="4.1")
@@ -54,7 +59,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     return list;
   }
 
-  private void collectMxmlFiles(ArrayList<String> files, File parent) {
+  private static void collectMxmlFiles(ArrayList<String> files, File parent) {
     for (String name : parent.list()) {
       if (name.charAt(0) == '.') {
         // skip
@@ -69,7 +74,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     }
   }
 
-  private static class MyFlexUIDesignerApplicationManager extends FlexUIDesignerApplicationManager {
+  private static class MyDocumentProblemManager extends DocumentProblemManager {
     private final List<String> problems = new ArrayList<String>();
     
     public String[] getProblems() {
@@ -79,7 +84,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     }
     
     @Override
-    public void reportProblem(Project project, String message, MessageType messageType) {
+    public void report(Project project, String message, MessageType messageType) {
       problems.add(message);
     }
   }

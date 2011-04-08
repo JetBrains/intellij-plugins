@@ -15,6 +15,7 @@
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.io.StringRegistry" serviceImplementation="com.intellij.flex.uiDesigner.io.StringRegistry"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentFactoryManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentFactoryManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.BinaryFileManager" serviceImplementation="com.intellij.flex.uiDesigner.BinaryFileManager"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentProblemManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentProblemManager"/>
 
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>

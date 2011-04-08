@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class InjectedASWriter {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.flex.uiDesigner.mxml.MxmlWriter");
+  private static final Logger LOG = Logger.getInstance(InjectedASWriter.class.getName());
 
   private final THashMap<String, ObjectReference> idReferenceMap = new THashMap<String, ObjectReference>();
   private final List<Binding> bindingItems = new ArrayList<Binding>();
@@ -281,7 +281,16 @@ class InjectedASWriter {
           if (arrayOfPrimitives == 0) {
             values = new String[expressions.length];
             for (int i = 0, expressionsLength = expressions.length; i < expressionsLength; i++) {
-              values[i] = ((JSReferenceExpression)expressions[i]).getReferencedName();
+              JSReferenceExpression referenceExpression = (JSReferenceExpression)expressions[i];
+              PsiElement element = referenceExpression.resolve();
+              if (element instanceof JSVariable) {
+                values = null;
+                logUnsupported();
+                return;
+              }
+              else {
+                values[i] = referenceExpression.getReferencedName();
+              }
             }
           }
           else {
@@ -291,15 +300,21 @@ class InjectedASWriter {
         else if (arguments[0] instanceof JSReferenceExpression && arguments[0].getChildren().length == 0) {
           // if propertyName="{CustomSkin}", so, write class, otherwise, it is binding
           JSReferenceExpression referenceExpression = (JSReferenceExpression)arguments[0];
+          PsiElement element = referenceExpression.resolve();
           if (isExpectedObjectOrAnyType() || AsCommonTypeNames.CLASS.equals(expectedType)) {
-            PsiElement element = referenceExpression.resolve();
             if (element instanceof JSClass) {
               valueWriter = new ClassValueWriter(((JSClass)element));
               return;
             }
           }
 
-          values = new String[]{referenceExpression.getReferencedName()};
+          // variable in Script block or super class — skip it
+          if (element instanceof JSVariable) {
+            logUnsupported();
+          }
+          else {
+            values = new String[]{referenceExpression.getReferencedName()};
+          }
         }
         else {
           logUnsupported();

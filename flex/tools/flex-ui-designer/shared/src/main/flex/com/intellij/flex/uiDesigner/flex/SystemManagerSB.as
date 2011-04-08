@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.flex {
 import flash.display.DisplayObject;
-import flash.events.IEventDispatcher;
+import flash.display.Stage;
 import flash.geom.Rectangle;
 
 public interface SystemManagerSB {
@@ -13,5 +13,7 @@ public interface SystemManagerSB {
 
   function addRealEventListener(type:String, listener:Function):void;
   function removeRealEventListener(type:String, listener:Function):void;
+
+  function get stage():Stage;
 }
 }

@@ -11,10 +11,15 @@ import com.intellij.flex.uiDesigner.DocumentManager;
 
 import com.intellij.flex.uiDesigner.ProjectManager;
 import com.intellij.flex.uiDesigner.SocketDataHandler;
+import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
+
+import flash.display.NativeWindow;
 
 import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.events.TimerEvent;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.utils.Dictionary;
 import flash.utils.IDataInput;
@@ -80,7 +85,18 @@ public class TestSocketDataHandler implements SocketDataHandler {
       trace("wait document");
       IEventDispatcher(documentManager).addEventListener("documentChanged", function(event:Event):void {
         IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
-        test(clazz, method);
+        // todo investigate, is it a problem for real code
+        // (components in user document can call systemManager.addEventListener, but our systemManager requres stage at this moment)?
+        var systemManager:SystemManagerSB = documentManager.document.systemManager;
+        if (systemManager.stage == null) {
+          systemManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
+            IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
+            test(clazz, method);
+          });
+        }
+        else {
+          test(clazz, method);
+        }
       });
     }
     else {
@@ -90,6 +106,12 @@ public class TestSocketDataHandler implements SocketDataHandler {
   
   private function test(clazz:Class, method:String):void {
     trace("execute test " + method);
+
+    if (clazz == UITest && method == "getStageOffset") {
+      getStageOffset(projectManager);
+      return;
+    }
+
     var methodInfo:Dictionary = describeCache[clazz];
     if (methodInfo == null) {
       methodInfo = collectTestAnnotation(clazz);
@@ -117,6 +139,18 @@ public class TestSocketDataHandler implements SocketDataHandler {
     if (testAnnotation == null || !testAnnotation.async) {
       success();
     }
+  }
+
+  private function getStageOffset(projectManager:ProjectManager):void {
+    var nativeWindow:NativeWindow = projectManager.project.window.nativeWindow;
+    var point:Point = nativeWindow.globalToScreen(new Point(0, 0));
+    _socket.writeShort(point.x);
+    _socket.writeShort(point.y);
+
+    var bounds:Rectangle = nativeWindow.bounds;
+    bounds.width = 1280;
+    bounds.height = 770;
+    nativeWindow.bounds = bounds;
   }
   
   private function success():void {

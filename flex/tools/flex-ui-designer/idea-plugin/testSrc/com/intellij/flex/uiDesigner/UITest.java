@@ -11,10 +11,16 @@ import org.flyti.roboflest.Roboflest;
 import org.flyti.roboflest.Roboflest.Assert;
 
 import java.io.File;
+import java.io.IOException;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 @Flex(version="4.5")
 public class UITest extends MxmlWriterTestBase {
-  private Roboflest roboflest = new Roboflest();
+  private static final int TEST_CLASS_ID = 5;
+
+  private final Roboflest roboflest = new Roboflest();
   
   @Override
   protected String getBasePath() {
@@ -27,28 +33,29 @@ public class UITest extends MxmlWriterTestBase {
     
     sdkModificator.addRoot(LocalFileSystem.getInstance().findFileByPath(flexSdkRootPath + "/src"), OrderRootType.SOURCES);
   }
+
+  private void init(XmlFile xmlFile) throws IOException {
+    client.openDocument(myModule, xmlFile);
+    client.test("getStageOffset", TEST_CLASS_ID);
+
+    roboflest.setStageOffset(reader);
+  }
   
   public void testStyleNavigationToExternal() throws Exception {
     testFile(new Tester() {
       @Override
       public void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
-        client.openDocument(myModule, xmlFile);
-        client.test(getTestName(true), 5);
-
-        assertResult(getTestName(true), -1);
-
-        roboflest.setStageOffset(reader);
-        assertTrue(reader.readBoolean());
+        init(xmlFile);
 
         interact("styleNavigation", new Assert() {
           @Override
           public void test() throws Exception {
-            assertEquals(ServerMethod.resolveExternalInlineStyleDeclarationSource, reader.read());
-            assertEquals(myModule, client.getModule(reader.readUnsignedShort()));
+            assertThat(reader.read(), equalTo(ServerMethod.resolveExternalInlineStyleDeclarationSource));
+            assertThat(client.getModule(reader.readUnsignedShort()), equalTo(myModule));
 
             XmlAttribute attribute = (XmlAttribute) new ResolveExternalInlineStyleSourceAction(reader, myModule).find();
-            assertEquals("spark.skins.spark.ButtonBarLastButtonSkin", attribute.getDisplayValue());
-            assertEquals(2186, attribute.getTextOffset());
+            assertThat(attribute.getDisplayValue(), equalTo("spark.skins.spark.ButtonBarLastButtonSkin"));
+            assertThat(attribute.getTextOffset(), equalTo(2186));
           }
         });
       }
@@ -59,8 +66,27 @@ public class UITest extends MxmlWriterTestBase {
     testFile(new Tester() {
       @Override
       public void test(final VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
+        init(xmlFile);
+
+        interact("styleNavigation", new Assert() {
+          @Override
+          public void test() throws Exception {
+            assertThat(reader.read(), equalTo(ServerMethod.openFile));
+            assertThat(client.getProject(reader.readUnsignedShort()), equalTo(myProject));
+            assertThat(reader.readUTF(), equalTo(file.getUrl()));
+            assertThat(reader.readInt(), equalTo(96));
+          }
+        });
+      }
+    }, "ComponentWithCustomSkin.mxml", "CustomSkin.mxml");
+  }
+
+  public void _testCloseDocument() throws Exception {
+    testFile(new Tester() {
+      @Override
+      public void test(final VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
         client.openDocument(myModule, xmlFile);
-        client.test(getTestName(true), 5);
+        client.test(getTestName(true), TEST_CLASS_ID);
 
         assertResult(getTestName(true), -1);
 
@@ -70,14 +96,15 @@ public class UITest extends MxmlWriterTestBase {
         interact("styleNavigation", new Assert() {
           @Override
           public void test() throws Exception {
-            assertEquals(ServerMethod.openFile, reader.read());
-            assertEquals(myProject, client.getProject(reader.readUnsignedShort()));
-            assertEquals(file.getUrl(), reader.readUTF());
-            assertEquals(96, reader.readInt());
+            assertThat(reader.read(), equalTo(ServerMethod.openFile));
+            assertThat(client.getProject(reader.readUnsignedShort()), equalTo(myProject));
+            assertThat(reader.readUTF(), equalTo(file.getUrl()));
+            assertThat(reader.readUTF(), equalTo(file.getUrl()));
+            assertThat(reader.readInt(), equalTo(96));
           }
         });
       }
-    }, "ComponentWithCustomSkin.mxml", "CustomSkin.mxml");
+    }, "Embed.mxml");
   }
 
   @SuppressWarnings({"UnusedDeclaration"})

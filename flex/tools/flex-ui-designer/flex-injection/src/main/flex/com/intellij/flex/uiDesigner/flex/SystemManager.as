@@ -7,7 +7,6 @@ import flash.display.LoaderInfo;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.EventPhase;
-import flash.events.IEventDispatcher;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;

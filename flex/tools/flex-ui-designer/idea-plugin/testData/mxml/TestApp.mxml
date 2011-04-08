@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
-<l:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:l="library://ns.adobe.com/flex/spark" xmlns:local="*">
-  <local:Form/>
+<l:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:l="library://ns.adobe.com/flex/spark" xmlns:local="*"
+               xmlns:injectedas="injectedAS.*">
+  <injectedas:ArrayOfPrimitives/>
 </l:Application>

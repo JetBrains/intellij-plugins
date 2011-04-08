@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -239,19 +238,7 @@ public class Client implements Closable {
     throws IOException {
     MxmlWriter.Result result = mxmlWriter.write(psiFile);
     if (result.problems != null) {
-      StringBuilder builder = StringBuilderSpinAllocator.alloc();
-      FlexUIDesignerApplicationManager.appendTitle(builder);
-      try {
-        builder.append("<ul>");
-        for (String problem : result.problems) {
-          builder.append("<li>").append(problem).append("</li>");
-        }
-        builder.append("</ul></html>");
-        FlexUIDesignerApplicationManager.getInstance().reportProblem(module.getProject(), builder.toString());
-      }
-      finally {
-        StringBuilderSpinAllocator.dispose(builder);
-      }
+      DocumentProblemManager.getInstance().report(module.getProject(), result.problems);
     }
 
     if (result.subDocuments != null) {

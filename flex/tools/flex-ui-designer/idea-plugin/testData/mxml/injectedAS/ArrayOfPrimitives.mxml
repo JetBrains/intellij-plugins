@@ -2,9 +2,22 @@
   <fx:Script><![CDATA[
     private static const data:ArrayCollection = new ArrayCollection(["Item 1"]);
     ]]></fx:Script>
+
+  <fx:Declarations>
+    <!--<ArrayCollection id="dataDeclaredInDeclarations">-->
+      <!--<fx:String>RubyMine</fx:String>-->
+      <!--<fx:String>PhpStorm</fx:String>-->
+      <!--<fx:String>WebStorm</fx:String>-->
+      <!--<fx:String>PyCharm</fx:String>-->
+      <!--<fx:Number>23424</fx:Number>-->
+      <!--<fx:Boolean>false</fx:Boolean>-->
+    <!--</ArrayCollection>-->
+  </fx:Declarations>
   
   <List selectionColor="0xffffffff" rollOverColor="4294967295">
     <ArrayCollection source="{['IntelliJ IDEA', 'Flex IDE', 'ReSharper', 'YouTrack', 'TeamCity']}"/>
   </List>
   <List dataProvider="{data}"/>
+  <List dataProvider="{unresolvedData}"/>
+  <!--<List dataProvider="{dataDeclaredInDeclarations}"/>-->
 </VGroup>
