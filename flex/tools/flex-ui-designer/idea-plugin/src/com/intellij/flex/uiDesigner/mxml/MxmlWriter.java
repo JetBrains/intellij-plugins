@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager;
 import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
@@ -26,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.IGNORE;
@@ -38,9 +38,10 @@ public class MxmlWriter {
 
   private PrimitiveAmfOutputStream out;
 
+  private final List<String> problems = new ArrayList<String>();
   private final BaseWriter writer = new BaseWriter();
   private StateWriter stateWriter;
-  private final InjectedASWriter injectedASWriter = new InjectedASWriter(writer);
+  private final InjectedASWriter injectedASWriter = new InjectedASWriter(writer, problems);
 
   private XmlTextValueProvider xmlTextValueProvider;
   private XmlTagValueProvider xmlTagValueProvider;
@@ -54,42 +55,50 @@ public class MxmlWriter {
     writer.setOutput(this.out);
   }
 
-  public XmlFile[] write(@NotNull final XmlFile psiFile) throws IOException {
-    writer.beginMessage();
+  public Result write(@NotNull final XmlFile psiFile) throws IOException {
+    try {
+      writer.beginMessage();
 
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        XmlTag rootTag = psiFile.getRootTag();
-        assert rootTag != null;
-        ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor)rootTag.getDescriptor();
-        assert rootTagDescriptor != null;
-        final String fqn = rootTagDescriptor.getQualifiedName();
-        writer.writeObjectHeader(fqn.equals("spark.components.Application") ?
-                                 "com.intellij.flex.uiDesigner.flex.SparkApplication" : fqn);
-        processElements(rootTag, null, false, -1, out.size() - 2);
+      ApplicationManager.getApplication().runReadAction(new Runnable() {
+        @Override
+        public void run() {
+          XmlTag rootTag = psiFile.getRootTag();
+          assert rootTag != null;
+          ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor)rootTag.getDescriptor();
+          assert rootTagDescriptor != null;
+          final String fqn = rootTagDescriptor.getQualifiedName();
+          writer.writeObjectHeader(fqn.equals("spark.components.Application") ? "com.intellij.flex.uiDesigner.flex.SparkApplication" : fqn);
+          processElements(rootTag, null, false, -1, out.size() - 2);
+        }
+      });
+
+      out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
+
+      if (stateWriter != null) {
+        stateWriter.write();
+        hasStates = false;
       }
-    });
+      else {
+        out.write(0);
+      }
 
-    out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
-
-    if (stateWriter != null) {
-      stateWriter.write();
-      hasStates = false;
+      injectedASWriter.write();
+      writer.endMessage();
+      return new Result(propertyProcessor.getUnregisteredDocumentFactories(), problems);
     }
-    else {
-      out.write(0);
+    finally {
+      resetAfterMessage();
     }
+  }
 
-    injectedASWriter.write(psiFile.getProject());
-    writer.endMessage();
+  public static class Result {
+    public final XmlFile[] subDocuments;
+    public final String[] problems;
 
-    List<XmlFile> unregisteredDocumentFactories = propertyProcessor.getUnregisteredDocumentFactories();
-    final XmlFile[] documents = unregisteredDocumentFactories.isEmpty()
-                                ? null
-                                : unregisteredDocumentFactories.toArray(new XmlFile[unregisteredDocumentFactories.size()]);
-    resetAfterMessage();
-    return documents;
+    public Result(List<XmlFile> subDocuments, List<String> problems) {
+      this.subDocuments = subDocuments.isEmpty() ? null : subDocuments.toArray(new XmlFile[subDocuments.size()]);
+      this.problems = problems.isEmpty() ? null : problems.toArray(new String[problems.size()]);
+    }
   }
 
   public void reset() {
@@ -105,6 +114,8 @@ public class MxmlWriter {
   }
 
   private void resetAfterMessage() {
+    problems.clear();
+
     xmlAttributeValueProvider.setAttribute(null);
     xmlTextValueProvider = null;
     xmlTagValueProvider = null;
@@ -137,7 +148,7 @@ public class MxmlWriter {
   }
 
   // about id http://opensource.adobe.com/wiki/display/flexsdk/id+property+in+MXML+2009
-  private boolean isIdLanguageIdAttribute(XmlAttribute attribute) {
+  private static boolean isIdLanguageIdAttribute(XmlAttribute attribute) {
     String ns = attribute.getNamespace();
     return ns.length() == 0 || ns.equals(JavaScriptSupportLoader.MXML_URI3);
   }
@@ -213,8 +224,7 @@ public class MxmlWriter {
             }
             if (type < PRIMITIVE) {
               writer.getBlockOut().setPosition(beforePosition);
-              FlexUIDesignerApplicationManager.getInstance().reportProblem(attribute.getProject(), FlexUIDesignerBundle
-                .message("error.unknown.attribute.value.type", descriptor.getType()));
+              problems.add(FlexUIDesignerBundle.message("error.unknown.attribute.value.type", descriptor.getType()));
             }
           }
         }
@@ -504,7 +514,7 @@ public class MxmlWriter {
     }
     
     writer.getBlockOut().setPosition(beforePosition);
-    FlexUIDesignerApplicationManager.getInstance().reportProblem(element.getProject(), error);
+    problems.add(error);
 
     return IGNORE;
   }

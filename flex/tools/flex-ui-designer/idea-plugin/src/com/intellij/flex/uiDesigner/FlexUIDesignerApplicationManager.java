@@ -25,6 +25,7 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
+import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 
@@ -121,7 +122,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
               }
               catch (InitException e) {
                 LOG.error(e);
-                reportProblem(project, e.getMessage());
+                reportProblemWithTitle(project, e.getMessage());
               }
             }
 
@@ -380,7 +381,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       }
       catch (InitException e) {
         LOG.error(e);
-        reportProblem(myProject, e.getMessage());
+        reportProblemWithTitle(myProject, e.getMessage());
       }
       finally {
         documentOpening = false;
@@ -388,8 +389,22 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
   }
 
+  public static StringBuilder appendTitle(StringBuilder builder) {
+    return builder.append("<html><b>").append(FlexUIDesignerBundle.message("plugin.name")).append("</b>");
+  }
+
   public void reportProblem(final Project project, String message) {
     reportProblem(project, message, MessageType.ERROR);
+  }
+
+  public void reportProblemWithTitle(final Project project, String message) {
+    StringBuilder builder = StringBuilderSpinAllocator.alloc();
+    try {
+      reportProblem(project, appendTitle(builder).append("<p>").append(message).append("</p></html>").toString());
+    }
+    finally {
+      StringBuilderSpinAllocator.dispose(builder);
+    }
   }
 
   public void reportProblem(final Project project, String message, MessageType messageType) {

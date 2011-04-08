@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager;
 import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
@@ -11,8 +10,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -36,6 +33,8 @@ class InjectedASWriter {
   private final BaseWriter writer;
   private ObjectReference lastObjectReference;
 
+  private final List<String> problems;
+
   private ByteRange declarationsRange;
 
   final static ValueWriter IGNORE = new ValueWriter() {
@@ -45,8 +44,9 @@ class InjectedASWriter {
     }
   };
 
-  public InjectedASWriter(BaseWriter writer) {
+  public InjectedASWriter(BaseWriter writer, List<String> problems) {
     this.writer = writer;
+    this.problems = problems;
   }
 
   public ValueWriter processProperty(XmlElementValueProvider valueProvider, String name, @Nullable String type, boolean isStyle,
@@ -76,7 +76,7 @@ class InjectedASWriter {
   }
 
   private ValueWriter checkArray(PsiElement host, String name, boolean isStyle, @Nullable Context context) {
-    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, JSCommonTypeNames.ARRAY_CLASS_NAME);
+    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, JSCommonTypeNames.ARRAY_CLASS_NAME, problems);
     InjectedLanguageUtil.enumerate(host, visitor);
     if (visitor.values != null) {
       bindingItems.add(new ArrayBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values, isStyle));
@@ -88,7 +88,7 @@ class InjectedASWriter {
   }
 
   private ValueWriter checkObject(PsiElement host, String name, boolean isStyle, @Nullable Context context, @Nullable String type) {
-    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, type);
+    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, type, problems);
     InjectedLanguageUtil.enumerate(host, visitor);
     if (visitor.values != null) {
       bindingItems.add(new ObjectBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values[0],
@@ -106,10 +106,10 @@ class InjectedASWriter {
     writer.getBlockOut().endRange(declarationsRange);
   }
 
-  public void write(Project project) {
+  public void write() {
     PrimitiveAmfOutputStream out = writer.getOut();
     writeDeclarations();
-    writeBinding(out, project);
+    writeBinding(out);
 
     reset();
   }
@@ -124,7 +124,7 @@ class InjectedASWriter {
     }
   }
 
-  private void writeBinding(PrimitiveAmfOutputStream out, Project project) {
+  private void writeBinding(PrimitiveAmfOutputStream out) {
     if (bindingItems.isEmpty()) {
       out.writeShort(0);
       return;
@@ -150,7 +150,7 @@ class InjectedASWriter {
       
       size--;
       writer.getBlockOut().setPosition(beforePosition);
-      FlexUIDesignerApplicationManager.getInstance().reportProblem(project, error);
+      problems.add(error);
     }
 
     out.putShort(size, bindingSizePosition);
@@ -202,9 +202,12 @@ class InjectedASWriter {
     private String[] values;
     private ValueWriter valueWriter;
 
-    public InjectedPsiVisitor(PsiElement host, String expectedType) {
+    private final List<String> problems;
+
+    public InjectedPsiVisitor(PsiElement host, String expectedType, List<String> problems) {
       this.host = host;
       this.expectedType = expectedType;
+      this.problems = problems;
     }
     
     public ValueWriter getValueWriter() {
@@ -357,7 +360,7 @@ class InjectedASWriter {
         }
         else {
           if (symbol != null) {
-            reportWarning(FlexUIDesignerBundle.message("error.embed.symbol.unneeded", host.getText()));
+            reportError(FlexUIDesignerBundle.message("error.embed.symbol.unneeded", host.getText()));
           }
 
           return new BitmapValueWriter(source, mimeType);
@@ -367,12 +370,8 @@ class InjectedASWriter {
       return null;
     }
     
-    private void reportWarning(String message) {
-      FlexUIDesignerApplicationManager.getInstance().reportProblem(host.getProject(), message, MessageType.WARNING);
-    }
-
     private void reportError(String message) {
-      FlexUIDesignerApplicationManager.getInstance().reportProblem(host.getProject(), message);
+      problems.add(message);
     }
 
     private boolean isUnexpected(String actualType) {

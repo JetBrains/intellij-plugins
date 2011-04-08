@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -236,9 +237,25 @@ public class Client implements Closable {
   
   private void writeDocumentFactory(Module module, XmlFile psiFile, VirtualFile virtualFile, DocumentFactoryManager documentFileManager)
     throws IOException {
-    XmlFile[] subDocuments = mxmlWriter.write(psiFile);
-    if (subDocuments != null) {
-      for (XmlFile subDocument : subDocuments) {
+    MxmlWriter.Result result = mxmlWriter.write(psiFile);
+    if (result.problems != null) {
+      StringBuilder builder = StringBuilderSpinAllocator.alloc();
+      FlexUIDesignerApplicationManager.appendTitle(builder);
+      try {
+        builder.append("<ul>");
+        for (String problem : result.problems) {
+          builder.append("<li>").append(problem).append("</li>");
+        }
+        builder.append("</ul></html>");
+        FlexUIDesignerApplicationManager.getInstance().reportProblem(module.getProject(), builder.toString());
+      }
+      finally {
+        StringBuilderSpinAllocator.dispose(builder);
+      }
+    }
+
+    if (result.subDocuments != null) {
+      for (XmlFile subDocument : result.subDocuments) {
         Module moduleForFile = ModuleUtil.findModuleForFile(virtualFile, psiFile.getProject());
         if (module != moduleForFile) {
           FlexUIDesignerApplicationManager.LOG.error("Currently, support subdocument only from current module");
