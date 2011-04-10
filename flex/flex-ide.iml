@@ -39,8 +39,8 @@
     <orderEntry type="module" module-name="flex-ui-designer" />
     <orderEntry type="module" module-name="IntelliLang-java" />
     <orderEntry type="module" module-name="JSInspections" />
-    <orderEntry type="module" module-name="moduledeps" />
     <orderEntry type="module" module-name="lang-impl" />
+    <orderEntry type="module" module-name="flex-profiler" />
   </component>
 </module>
 
