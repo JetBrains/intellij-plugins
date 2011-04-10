@@ -221,12 +221,12 @@ public class Client implements Closable {
     if (!registered) {
       beginMessage(ClientMethod.registerDocumentFactory);
       writeId(module);
+      out.writeShort(id);
       writeVirtualFile(virtualFile, out);
       
       JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
       assert jsClass != null;
       out.writeAmfUtf(jsClass.getQualifiedName());
-      out.writeShort(id);
 
       writeDocumentFactory(module, psiFile, virtualFile, documentFileManager);
     }

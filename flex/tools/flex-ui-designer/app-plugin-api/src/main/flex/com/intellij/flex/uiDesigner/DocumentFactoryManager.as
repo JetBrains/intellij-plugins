@@ -18,7 +18,8 @@ public class DocumentFactoryManager {
     return documentFactory;
   }
 
-  public function register(id:int, factory:DocumentFactory):void {
+  public function register(factory:DocumentFactory):void {
+    var id:int = factory.id;
     assert(id == factories.length || (id < factories.length && factories[id] == null));
     
     factories[id] = factory;

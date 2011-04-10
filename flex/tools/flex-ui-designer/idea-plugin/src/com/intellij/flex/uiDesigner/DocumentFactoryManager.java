@@ -156,4 +156,8 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
     
     return id;
   }
+
+  public @NotNull VirtualFile getFile(int id) {
+    return files.get(id);
+  }
 }

@@ -5,15 +5,14 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.util.StringBuilderSpinAllocator;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 public class SocketInputHandlerImpl implements SocketInputHandler {
   protected Reader reader;
@@ -67,7 +66,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
           break;
 
         case ServerMethod.showError:
-          FlexUIDesignerApplicationManager.LOG.error(reader.readUTF());
+          showError();
           break;
 
         case ServerMethod.saveProjectWindowBounds:
@@ -78,6 +77,37 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
           throw new IllegalArgumentException("unknown client command: " + command);
       }
     }
+  }
+
+  private void showError() throws IOException {
+    final String message;
+    if (reader.readBoolean()) {
+      StringBuilder builder = StringBuilderSpinAllocator.alloc();
+      try {
+        Project project = readProject();
+        final VirtualFile file = DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort());
+        builder.append(reader.readUTF());
+        builder.append("\nFile: ").append(file.getPath()).append("\nFile content: \n").append(LoadTextUtil.loadText(file));
+        message = builder.toString();
+      }
+      finally {
+        StringBuilderSpinAllocator.dispose(builder);
+      }
+    }
+    else {
+      message = reader.readUTF();
+    }
+
+    FlexUIDesignerApplicationManager.LOG.error(message, new Throwable() {
+      @Override
+      public void printStackTrace(PrintStream s) {
+      }
+
+      @Override
+      public Throwable fillInStackTrace() {
+        return this;
+      }
+    });
   }
 
   private Module readModule() throws IOException {

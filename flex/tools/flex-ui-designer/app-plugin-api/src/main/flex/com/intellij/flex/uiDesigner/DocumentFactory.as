@@ -2,13 +2,13 @@ package com.intellij.flex.uiDesigner {
 import flash.utils.ByteArray;
 
 public class DocumentFactory implements SerializedDocumentDataProvider, DocumentReaderContext {
-  private var _data:ByteArray;
   public var module:Module;
   
   // not subdocument, only Document as tab in our UI
   public var document:Document;
   
-  public function DocumentFactory(data:ByteArray, file:VirtualFile, className:String, module:Module) {
+  public function DocumentFactory(id:int, data:ByteArray, file:VirtualFile, className:String, module:Module) {
+    _id = id;
     _data = data;
     _file = file;
     _className = className;
@@ -38,12 +38,18 @@ public class DocumentFactory implements SerializedDocumentDataProvider, Document
       return true;
     }
   }
+
+  private var _id:int;
+  public function get id():int {
+    return _id;
+  }
   
   private var _className:String;
   public function get className():String {
     return _className;
   }
 
+  private var _data:ByteArray;
   public function get data():ByteArray {
     return _data;
   }

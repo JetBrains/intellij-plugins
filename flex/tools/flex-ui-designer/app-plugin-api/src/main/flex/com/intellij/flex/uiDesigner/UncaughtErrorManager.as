@@ -1,11 +1,16 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.util.StringUtil;
 
+import flash.desktop.NativeApplication;
+import flash.display.NativeWindow;
+
 import flash.display.Sprite;
 import flash.events.ErrorEvent;
 import flash.events.UncaughtErrorEvent;
 import flash.net.Socket;
 import flash.system.Capabilities;
+
+import org.flyti.plexus.PlexusManager;
 
 public class UncaughtErrorManager {
   protected var socket:Socket;
@@ -46,7 +51,30 @@ public class UncaughtErrorManager {
   }
 
   protected function sendMessage(message:String):void {
+    var projectId:int = -1;
+    var documentFactoryId:int = -1;
+    try {
+      var activeWindow:NativeWindow = NativeApplication.nativeApplication.activeWindow;
+      if (activeWindow != null) {
+        var project:Project = ProjectManager(PlexusManager.instance.container.lookup(ProjectManager)).project;
+        if (project != null) {
+          var document:Document = DocumentManager(project.getComponent(DocumentManager)).document;
+          if (document != null) {
+            projectId = project.id;
+            documentFactoryId = document.documentFactory.id;
+          }
+        }
+      }
+    }
+    catch (ignored:Error) {
+    }
+
     socket.writeByte(ServerMethod.showError);
+    socket.writeBoolean(documentFactoryId != -1);
+    if (documentFactoryId != -1) {
+      socket.writeShort(projectId);
+      socket.writeShort(documentFactoryId);
+    }
     socket.writeUTF(message);
     socket.flush();
   }

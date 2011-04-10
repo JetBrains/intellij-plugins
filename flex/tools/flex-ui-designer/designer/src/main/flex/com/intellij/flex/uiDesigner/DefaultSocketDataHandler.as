@@ -147,8 +147,8 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     const prevBytesAvailable:int = input.bytesAvailable;
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var bytes:ByteArray = new ByteArray();
-    var documentFactory:DocumentFactory = new DocumentFactory(bytes, VirtualFileImpl.create(input), input.readUTFBytes(AmfUtil.readUInt29(input)), module);
-    getDocumentFactoryManager(module).register(input.readUnsignedShort(), documentFactory);
+    var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input), input.readUTFBytes(AmfUtil.readUInt29(input)), module);
+    getDocumentFactoryManager(module).register(documentFactory);
     
     stringRegistry.readStringTable(input);
  
