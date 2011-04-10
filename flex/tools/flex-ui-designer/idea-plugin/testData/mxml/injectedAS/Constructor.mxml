@@ -1,0 +1,18 @@
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx">
+  <fx:Script><![CDATA[
+    private function displayFrenchDate():void {
+
+    }
+    ]]></fx:Script>
+
+  <mx:DateField id="date3" selectedDate="{new Date (2005, 3, 10)}"/>
+
+  <mx:Form horizontalCenter="0" top="10" width="100%">
+    <mx:FormItem label="date">
+      <mx:DateField id="dateDiffusion" yearNavigationEnabled="true"
+                    disabledRanges="{[ {rangeEnd: new Date(2009, 11, 30)} ]}" color="0x000000"
+                    showToday="true"
+                    labelFunction="displayFrenchDate"/>
+    </mx:FormItem>
+  </mx:Form>
+</VGroup>

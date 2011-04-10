@@ -29,6 +29,7 @@ public class InjectedASTest extends BaseTestCase {
       TwoWayBinding();
       ArrayOfPrimitives();
       UnresolvedVariableInScriptAsArrayItem();
+      Constructor();
     }
   }
   
@@ -101,6 +102,10 @@ public class InjectedASTest extends BaseTestCase {
 
   public function UnresolvedVariableInScriptAsArrayItem():void {
     
+  }
+
+  public function Constructor():void {
+
   }
 }
 }

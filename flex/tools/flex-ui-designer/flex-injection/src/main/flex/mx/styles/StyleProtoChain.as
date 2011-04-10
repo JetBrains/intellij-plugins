@@ -1,4 +1,5 @@
 package mx.styles {
+import com.intellij.flex.uiDesigner.css.AbstractCssStyleDeclaration;
 import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.InlineCssStyleDeclaration;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
@@ -19,7 +20,7 @@ public class StyleProtoChain {
   }
 
   public static function initProtoChain(object:IStyleClient):void {
-    if (object.styleDeclaration != null && !(object.styleDeclaration is InlineCssStyleDeclaration)) {
+    if (object.styleDeclaration != null && !(object.styleDeclaration is AbstractCssStyleDeclaration)) {
       object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInlineWithFactory(object.styleDeclaration.defaultFactory), StyleManagerEx(getStyleManager(object)));
     }
     return FtyleProtoChain.initProtoChain(object);
