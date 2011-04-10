@@ -485,6 +485,8 @@ def layoutFull(String target, Set usedJars) {
     //
     def layouts = includeFile("$home/build/scripts/layouts.gant")
     println("layout plugins\n\n")
+
+    setProperty("buildFlexToolPlugins", true)
     layouts.layoutPlugins()
 
     dir("bin") {
