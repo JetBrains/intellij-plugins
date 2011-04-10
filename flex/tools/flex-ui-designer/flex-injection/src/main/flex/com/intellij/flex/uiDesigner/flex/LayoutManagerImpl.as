@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.flex {
 import mx.managers.LayoutManager;
 
-public class LayoutManagerImpl extends LayoutManager {
+internal class LayoutManagerImpl extends LayoutManager {
   private static var instance:LayoutManagerImpl;
 
   public function LayoutManagerImpl():void {

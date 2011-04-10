@@ -25,8 +25,12 @@ public class DocumentFactoryManager {
     factories[id] = factory;
   }
   
-  public function unregister(factory:DocumentFactory):void {
+  public function unregister(document:Document):void {
+    var factory:DocumentFactory = document.documentFactory;
     factory.document = null;
+    if (document.systemManager != null) {
+      document.systemManager.removeProxyMouseEventHandlers();
+    }
 
     var deleted:Vector.<int> = new Vector.<int>();
     var id:int = unregister2(factory, deleted);

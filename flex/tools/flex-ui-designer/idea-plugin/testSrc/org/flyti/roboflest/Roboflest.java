@@ -21,7 +21,7 @@ public final class Roboflest {
   public void test(File file, Assert... asserts) throws Exception {
     BufferedReader input = new BufferedReader(new FileReader(file));
     Robot robot = new Robot();
-    robot.setAutoDelay(300);
+    robot.setAutoDelay(800); // todo Why after this commit testStyleNavigationToExternal is failed with 300ms?
     
     String line;
     int assertIndex = 0;

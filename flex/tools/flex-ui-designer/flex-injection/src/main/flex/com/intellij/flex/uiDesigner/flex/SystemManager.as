@@ -6,6 +6,7 @@ import flash.display.DisplayObjectContainer;
 import flash.display.LoaderInfo;
 import flash.display.Shape;
 import flash.display.Sprite;
+import flash.display.Stage;
 import flash.events.EventPhase;
 import flash.events.MouseEvent;
 import flash.geom.Point;
@@ -55,35 +56,40 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   private static const LAYOUT_MANAGER_FQN:String = "mx.managers::ILayoutManager";
   private static const POP_UP_MANAGER_FQN:String = "mx.managers::IPopUpManager";
   private static const TOOL_TIP_MANAGER_FQN:String = "mx.managers::IToolTipManager2";
+  internal static const SYSTEM_MANAGER_CHILD_MANAGER:String = "mx.managers::ISystemManagerChildManager";
 
   private var flexModuleFactory:IFlexModuleFactory;
 
   private const implementations:Dictionary = new Dictionary();
 
-  public function SystemManager(moduleFactory:IFlexModuleFactory) {
-    init(moduleFactory);
-  }
+  public function init(moduleFactory:Object, stage:Stage, uiInitializeOrCallLaterErrorHandler:Function):void {
+    var topLevelSystemManagers:Array = SystemManagerGlobals.topLevelSystemManagers;
+    if (topLevelSystemManagers.length == 0) {
+      topLevelSystemManagers[0] = new TopLevelSystemManager(stage, uiInitializeOrCallLaterErrorHandler);
+    }
 
-  private function init(moduleFactory:IFlexModuleFactory):void {
-    SystemManagerGlobals.topLevelSystemManagers.push(this);
+    UIComponentGlobals.designMode = true;
+    UIComponentGlobals.catchCallLaterExceptions = true;
+    addRealEventListener("initializeError", uiInitializeOrCallLaterErrorHandler);
+    addRealEventListener("callLaterError", uiInitializeOrCallLaterErrorHandler);
 
     if (UIComponentGlobals.layoutManager == null) {
       Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManagerImpl);
       UIComponentGlobals.layoutManager = new LayoutManagerImpl();
     }
 
-    flexModuleFactory = moduleFactory;
+    flexModuleFactory = IFlexModuleFactory(moduleFactory);
 
     //  if not null — ModuleManagerGlobals class is shareable for this Document
     if (ModuleManagerGlobals.managerSingleton == null) {
-      ModuleManagerGlobals.managerSingleton = new ModuleManager(moduleFactory);
+      ModuleManagerGlobals.managerSingleton = new ModuleManager(flexModuleFactory);
     }
 
     Singleton.registerClass(POP_UP_MANAGER_FQN, PopUpManagerImpl);
     Singleton.registerClass(TOOL_TIP_MANAGER_FQN, ToolTipManagerImpl);
 
     implementations["mx.managers::IActiveWindowManager"] = new ActiveWindowManager();
-    implementations["mx.managers::ISystemManagerChildManager"] = this;
+    implementations[SYSTEM_MANAGER_CHILD_MANAGER] = this;
 
     Singleton.registerClass("mx.styles::IStyleManager2", RootStyleManager);
     Singleton.registerClass("mx.managers::IDragManager", DragManagerImpl);
@@ -328,6 +334,8 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   }
 
   public function setUserDocument(object:DisplayObject):void {
+    removeProxyMouseEventHandlers();
+    
     if (_document != null) {
       removeRawChild(_document);
     }
@@ -617,7 +625,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
     var map:Dictionary;
     if (useCapture) {
-      if (proxiedMouseListenersInCapture != null) {
+      if (proxiedMouseListeners != null) {
         map = proxiedMouseListenersInCapture;
       }
     }
@@ -631,11 +639,10 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
       return;
     }
 
-    trace("REMOVED", type, useCapture);
-
     var index:int = listeners.indexOf(listener);
+    trace("REMOVED", index, type, useCapture);
     if (index == -1) {
-      throw new Error("listener must exists");
+      return;
     }
 
     listeners.splice(index, 1);
@@ -657,6 +664,22 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
     for each (var listener:Function in listeners.slice() /* copy, because may be removed in removeEventListener (side effect by call listener) */) {
       listener(event);
+    }
+  }
+
+  public function removeProxyMouseEventHandlers():void {
+    if (stage != null) {
+      removeProxyMouseEventHandlers2(proxiedMouseListeners, false);
+      removeProxyMouseEventHandlers2(proxiedMouseListenersInCapture, true);
+    }
+  }
+
+  private function removeProxyMouseEventHandlers2(map:Dictionary, useCapture:Boolean):void {
+    if (map != null) {
+      for (var type:String in map) {
+        stage.removeEventListener(type, proxyMouseEventHandler, useCapture);
+        map[type].length = 0;
+      }
     }
   }
 

@@ -15,5 +15,9 @@ public interface SystemManagerSB {
   function removeRealEventListener(type:String, listener:Function):void;
 
   function get stage():Stage;
+
+  function init(moduleFactory:Object, stage:Stage, uiInitializeOrCallLaterErrorHandler:Function):void;
+
+  function removeProxyMouseEventHandlers():void;
 }
 }

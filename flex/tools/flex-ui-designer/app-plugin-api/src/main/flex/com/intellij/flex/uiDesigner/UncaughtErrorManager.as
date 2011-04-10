@@ -3,7 +3,6 @@ import cocoa.util.StringUtil;
 
 import flash.desktop.NativeApplication;
 import flash.display.NativeWindow;
-
 import flash.display.Sprite;
 import flash.events.ErrorEvent;
 import flash.events.UncaughtErrorEvent;
@@ -28,6 +27,7 @@ public class UncaughtErrorManager {
     var message:String;
     var error:Object = event.error;
     if (error is Error) {
+      // must be only buildErrorMessage(event.error), without any cast (i.e. Error(error)) — invalid staktrace (AIR 2.6) (thanks, Adobe) otherwise
       message = Capabilities.isDebugger ? buildErrorMessage(event.error) : Error(error).message;
     }
     else {
@@ -48,6 +48,10 @@ public class UncaughtErrorManager {
     else {
       return message;
     }
+  }
+
+  public function uiInitializeOrCallLaterErrorHandler(event:Object /* mx.events.DynamicEvent */):void {
+    sendMessage(event.type + "\n" + (Capabilities.isDebugger ? buildErrorMessage(event.error) : Error(event.error).message));
   }
 
   protected function sendMessage(message:String):void {

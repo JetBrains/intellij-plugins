@@ -1,7 +1,10 @@
 package com.intellij.flex.uiDesigner {
+import cocoa.DocumentWindow;
+
 import com.intellij.flex.uiDesigner.css.CssReader;
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleValueResolverImpl;
+import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 import com.intellij.flex.uiDesigner.ui.DocumentContainer;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
 
@@ -123,9 +126,13 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   private function createSystemManager(document:Document, module:Module):void {
     var flexModuleFactoryClass:Class = module.getClass("com.intellij.flex.uiDesigner.flex.FlexModuleFactory");
     var systemManagerClass:Class = module.getClass("com.intellij.flex.uiDesigner.flex.SystemManager");
-    document.systemManager = new systemManagerClass(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain));
-    document.container = new DocumentContainer(Sprite(document.systemManager));
-    ProjectView(module.project.window.contentView).addDocument(document);
+    var window:DocumentWindow = module.project.window;
+    var systemManager:SystemManagerSB = new systemManagerClass();
+    document.systemManager = systemManager;
+    systemManager.init(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain), window.nativeWindow.stage,
+                       UncaughtErrorManager(module.project.getComponent(UncaughtErrorManager)).uiInitializeOrCallLaterErrorHandler);
+    document.container = new DocumentContainer(Sprite(systemManager));
+    ProjectView(window.contentView).addDocument(document);
   }
 }
 }

@@ -1,6 +1,4 @@
 package com.intellij.flex.uiDesigner.ui {
-import com.intellij.flex.uiDesigner.flex.*;
-
 import cocoa.AbstractComponent;
 import cocoa.ClassFactory;
 import cocoa.pane.PaneItem;
@@ -72,7 +70,7 @@ public class ProjectView extends AbstractComponent implements Injectable {
 
   private function editorPanesChangeHandler(event:CollectionEvent):void {
     if (event.kind == CollectionEventKind.REMOVE) {
-      _documentFactoryManager.unregister(DocumentPaneItem(event.items[0]).document.documentFactory);
+      _documentFactoryManager.unregister(DocumentPaneItem(event.items[0]).document);
     }
   }
 }
