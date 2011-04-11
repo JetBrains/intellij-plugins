@@ -14,6 +14,7 @@
       <module fileurl="file://$PROJECT_DIR$/plaf/plafAggregator.iml" filepath="$PROJECT_DIR$/plaf/plafAggregator.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/shared/shared.iml" filepath="$PROJECT_DIR$/shared/shared.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-app-plugin/test-app-plugin.iml" filepath="$PROJECT_DIR$/test-app-plugin/test-app-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test-data-libs/test-data-libs.iml" filepath="$PROJECT_DIR$/test-data-libs/test-data-libs.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-module.iml" filepath="$PROJECT_DIR$/test-module.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui/ui.iml" filepath="$PROJECT_DIR$/ui/ui.iml" />
     </modules>

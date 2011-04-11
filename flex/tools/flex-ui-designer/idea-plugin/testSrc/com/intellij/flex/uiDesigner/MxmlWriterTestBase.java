@@ -68,10 +68,14 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     return appRootDir;
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    
+  private boolean adlRunned;
+  protected final void runAdl() throws Exception {
+    if (adlRunned) {
+      return;
+    }
+
+    adlRunned = true;
+
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
     stringWriter.startChange();
 
@@ -80,7 +84,6 @@ abstract class MxmlWriterTestBase extends AppTestBase {
                                                            myProject.getLocationHash(), getFlexVersion());
 
     final ServerSocket serverSocket = new ServerSocket(0, 1);
-
     DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"), 
                                                                                                                       System.getProperty("fud.air"));
     adlRunConfiguration.arguments = new ArrayList<String>();
@@ -110,12 +113,10 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     reader = new SocketInputHandlerImpl.Reader(new BufferedInputStream(socket.getInputStream()));
     client = new TestClient(socket.getOutputStream());
 
-    client.getRegisteredProjects().add(new ProjectInfo(myProject, librarySet));
-
-    client.openProject(myProject);
     librarySet = new LibrarySet(myProject.getLocationHash(), ApplicationDomainCreationPolicy.ONE, libraries);
+    client.getRegisteredProjects().add(new ProjectInfo(myProject, librarySet));
+    client.openProject(myProject);
     client.registerLibrarySet(librarySet, stringWriter);
-    
     if (!isRequireLocalStyleHolder()) {
       registerModule(new ModuleInfo(myModule), stringWriter);
     }
@@ -125,12 +126,15 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     client.registerModule(myProject, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
   }
 
+  protected void modifyModule(ModifiableRootModel model) {
+  }
+
   /**
    * standard impl in CodeInsightestCase is not suitable for us — in case of not null rawProjectRoot (we need test file in package), 
    * we don't need "FileUtil.copyDir(projectRoot, toDirIO);"
    * also, skip openEditorsAndActivateLast
    */
-  protected VirtualFile configureByFiles(final VirtualFile rawProjectRoot, final VirtualFile... vFiles) throws IOException {
+  protected VirtualFile configureByFiles(final VirtualFile rawProjectRoot, final VirtualFile... vFiles) throws Exception {
     myFile = null;
     myEditor = null;
 
@@ -157,6 +161,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
           }
 
           rootModel.addContentEntry(toDir).addSourceFolder(toDir, false);
+          modifyModule(rootModel);
           doCommitModel(rootModel);
           sourceRootAdded(toDir);
         }
@@ -165,7 +170,8 @@ abstract class MxmlWriterTestBase extends AppTestBase {
         }
       }
     });
-    
+
+    runAdl();
     return toDir;
   }
   

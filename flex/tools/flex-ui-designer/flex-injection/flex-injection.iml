@@ -3,7 +3,7 @@
   <component name="FacetManager">
     <facet type="flex" name="Flex">
       <configuration flex_sdk="flex_sdk_4.5">
-        <option name="DO_BUILD" value="true" />
+        <option name="DO_BUILD" value="false" />
         <option name="OUTPUT_TYPE" value="Application" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />
         <option name="USE_CUSTOM_CONFIG_FILE" value="true" />

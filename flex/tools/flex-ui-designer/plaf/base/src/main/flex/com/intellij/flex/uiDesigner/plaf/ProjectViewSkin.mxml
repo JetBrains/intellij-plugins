@@ -1,4 +1,3 @@
-<?xml version="1.0"?>
 <Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="cocoa" xmlns:tools="com.intellij.flex.uiDesigner.ui.tools.*">
   <fx:Metadata>
     [HostComponent("com.intellij.flex.uiDesigner.ui.ProjectView")]

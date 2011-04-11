@@ -16,6 +16,7 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
@@ -55,13 +56,13 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     return getTestDataPath() + "/sdk/playerglobal";
   }
   
-  protected VirtualFile getVFile(String file) {
+  protected static VirtualFile getVFile(String file) {
     VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(file);
     assert vFile != null;
     return vFile;
   }
   
-  protected void changeServiceImplementation(Class key, Class implementation) {
+  protected static void changeServiceImplementation(Class key, Class implementation) {
     MutablePicoContainer picoContainer = (MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer();
     picoContainer.unregisterComponent(key.getName());
     picoContainer.registerComponentImplementation(key.getName(), implementation);
@@ -142,6 +143,18 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     sdkModificator.addRoot(jarFile, OrderRootType.CLASSES);
   }
 
+  protected void addLibrary(ModifiableRootModel model, String path) {
+    VirtualFile virtualFile = getVFile(path);
+    VirtualFile jarFile = JarFileSystem.getInstance().getJarRootForLocalFile(virtualFile);
+    assert jarFile != null;
+    jarFile.putUserData(IS_USER_LIB, true);
+
+    libs.add(new Pair<VirtualFile, VirtualFile>(virtualFile, jarFile));
+    Library.ModifiableModel libraryModel = model.getModuleLibraryTable().createLibrary(path).getModifiableModel();
+    libraryModel.addRoot(jarFile, OrderRootType.CLASSES);
+    libraryModel.commit();
+  }
+
   @Override
   protected void tearDown() throws Exception {
     StringRegistry.getInstance().reset();
@@ -181,7 +194,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     }
   }
 
-  protected void copySwfAndDescriptor(final File rootDir) throws IOException {
+  protected static void copySwfAndDescriptor(final File rootDir) throws IOException {
     //noinspection ResultOfMethodCallIgnored
     rootDir.mkdirs();
     FileUtil.copy(new File(getFudHome(), "app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(rootDir, FlexUIDesignerApplicationManager.DESIGNER_SWF));

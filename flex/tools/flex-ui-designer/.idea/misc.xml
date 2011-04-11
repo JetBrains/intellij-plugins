@@ -30,6 +30,7 @@
           <module name="shared" />
           <module name="simple" />
           <module name="test-app-plugin" />
+          <module name="test-data-libs" />
           <module name="testSimpleApp" />
           <module name="ui" />
         </modules>

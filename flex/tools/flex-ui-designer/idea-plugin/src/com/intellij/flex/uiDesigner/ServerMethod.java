@@ -6,6 +6,7 @@ final class ServerMethod {
   public static final int resolveExternalInlineStyleDeclarationSource = 2;
 
   public static final int showError = 3;
+
   public static final int unregisterDocumentFactories = 4;
 
   public static final int closeProject = 5;

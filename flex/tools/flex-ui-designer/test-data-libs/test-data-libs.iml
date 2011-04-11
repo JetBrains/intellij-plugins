@@ -3,19 +3,19 @@
   <component name="FacetManager">
     <facet type="flex" name="Flex">
       <configuration flex_sdk="compiler-4.5.0.18365.pom">
-        <option name="DO_BUILD" value="true" />
+        <option name="DO_BUILD" value="false" />
         <option name="OUTPUT_TYPE" value="Library" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />
         <option name="USE_CUSTOM_CONFIG_FILE" value="true" />
-        <option name="CUSTOM_CONFIG_FILE" value="$MODULE_DIR$/../../../IDEA-22472-workaround/target/IDEA-22472-workaround-1.0-SNAPSHOT-configs.xml" />
+        <option name="CUSTOM_CONFIG_FILE" value="$MODULE_DIR$/target/test-data-libs-configs.xml" />
         <option name="USE_CUSTOM_CONFIG_FILE_FOR_TESTS" value="false" />
         <option name="CUSTOM_CONFIG_FILE_FOR_TESTS" value="" />
         <option name="APPLICATION_ENTRY_POINT" value="" />
         <option name="MAIN_CLASS" value="" />
-        <option name="OUTPUT_FILE_NAME" value="IDEA-22472-workaround-1.0-SNAPSHOT.swc" />
+        <option name="OUTPUT_FILE_NAME" value="test-data-libs.swc" />
         <option name="USE_FACET_COMPILE_OUTPUT_PATH" value="true" />
-        <option name="FACET_COMPILE_OUTPUT_PATH" value="$MODULE_DIR$/../../../IDEA-22472-workaround/target" />
-        <option name="FACET_COMPILE_OUTPUT_PATH_FOR_TESTS" value="$MODULE_DIR$/../../../IDEA-22472-workaround/target/test-classes" />
+        <option name="FACET_COMPILE_OUTPUT_PATH" value="$MODULE_DIR$/target" />
+        <option name="FACET_COMPILE_OUTPUT_PATH_FOR_TESTS" value="$MODULE_DIR$/target/test-classes" />
         <option name="INCLUDE_RESOURCE_FILES_IN_SWC" value="false" />
         <option name="TARGET_PLAYER_VERSION" value="" />
         <option name="STATIC_LINK_RUNTIME_SHARED_LIBRARIES" value="false" />
@@ -32,20 +32,17 @@
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/../../../IDEA-22472-workaround/target/classes" />
-    <output-test url="file://$MODULE_DIR$/../../../IDEA-22472-workaround/target/test-classes" />
-    <exclude-output />
-    <content url="file://$MODULE_DIR$/../../../IDEA-22472-workaround">
-      <excludeFolder url="file://$MODULE_DIR$/../../../IDEA-22472-workaround/target" />
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/flex" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:framework:swc:4.5.0.19786" level="project" />
-    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:mx:swc:4.5.0.19786" level="project" />
-    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:spark:swc:4.5.0.19786" level="project" />
-    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.0.19786" level="project" />
-    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.0.19786" level="project" />
-    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:airglobal:swc:4.5.0.19786" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.0.18365" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:mx:swc:4.5.0.18365" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:playerglobal:swc:10.1" level="project" />
   </component>
 </module>
 

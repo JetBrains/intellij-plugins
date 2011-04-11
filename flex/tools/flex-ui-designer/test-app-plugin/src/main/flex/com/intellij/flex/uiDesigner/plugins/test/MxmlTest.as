@@ -23,6 +23,7 @@ public class MxmlTest extends BaseTestCase {
       MixedTextAndSubTags();
       InlineArrayAsAttributeValue();
       InvalidColorName();
+      RuntimeError();
     }
   }
   
@@ -89,6 +90,10 @@ public class MxmlTest extends BaseTestCase {
   
   public function InvalidColorName():void {
     assertThat(app, [{color: 0}]);
+  }
+
+  public function RuntimeError():void {
+    assertThat(app, [{text: 1}, {} , {text: 2}]);
   }
 }
 }

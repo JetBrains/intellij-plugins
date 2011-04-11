@@ -1,10 +1,12 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +16,18 @@ import static org.hamcrest.Matchers.*;
 
 @Flex(version="4.5")
 public class MxmlWriterTest extends MxmlWriterTestBase {
-  @SuppressWarnings({"unchecked"})
+  @Override
+  protected void setUpModule() {
+    super.setUpModule();
+  }
+
+  @Override
+  protected void modifyModule(ModifiableRootModel model) {
+    if (getName().equals("testRuntimeError")) {
+      addLibrary(model, getFudHome() + "/test-data-libs/target/test-data-libs.swc");
+    }
+  }
+
   public void test45() throws Exception {
     changeServiceImplementation(DocumentProblemManager.class, MyDocumentProblemManager.class);
     
@@ -50,6 +63,20 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     testFile("states/UnusedStates.mxml");
   }
 
+  public void testRuntimeError() throws Exception {
+    testFile("RuntimeError.mxml");
+  }
+
+  @Override
+  protected void assertResult(String documentName, long time) throws IOException {
+    super.assertResult(documentName, time);
+
+    if (getName().equals("testRuntimeError")) {
+      @SuppressWarnings({"UnusedDeclaration"}) String message = reader.readUTF();
+      assertThat(reader.available(), 0);
+    }
+  }
+
   private String[] getTestFiles() {
     ArrayList<String> files = new ArrayList<String>(20);
     collectMxmlFiles(files, new File(getTestPath()));
@@ -63,7 +90,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
       if (name.charAt(0) == '.') {
         // skip
       }
-      else if (name.endsWith(".mxml") && !name.startsWith("TestApp.") && !name.startsWith("Constructor.")) {
+      else if (name.endsWith(".mxml") && !name.startsWith("TestApp.") && !name.startsWith("Constructor.") && !name.startsWith("RuntimeError.")) {
         files.add(parent.getPath() + "/" + name);
       }
       File file = new File(parent, name);

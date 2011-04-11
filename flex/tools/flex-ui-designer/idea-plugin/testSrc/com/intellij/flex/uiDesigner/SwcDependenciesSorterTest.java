@@ -27,6 +27,8 @@ public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
   
   @Flex(version="4.5")
   public void testDeleteIfAllDefitionsHaveUnresolvedDependencies() throws Exception {
+    runAdl();
+
     assertEquals(-1, libs.size() - libraries.size());
 
     for (Library library : libraries) {
