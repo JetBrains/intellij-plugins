@@ -2,13 +2,9 @@ package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
-import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.configurations.RuntimeConfiguration;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
-import com.intellij.execution.testframework.TestsUIUtil;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -17,7 +13,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Pair;
@@ -187,17 +182,5 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
 
   public int compareTo(Object o) {
     return PREFERED;
-  }
-
-  @Override
-  protected RunnerAndConfigurationSettings cloneTemplateConfiguration(Project project, ConfigurationContext context) {
-    if (context != null) {
-      final RuntimeConfiguration original = context.getOriginalConfiguration(getConfigurationFactory().getType());
-      if (original instanceof TestsUIUtil.DelegatingRuntimeConfiguration) {
-        RunConfiguration c = ((TestsUIUtil.DelegatingRuntimeConfiguration)original).getPeer().clone();
-        return RunManagerEx.getInstanceEx(project).createConfiguration(c, getConfigurationFactory());
-      }
-    }
-    return RunManagerEx.getInstanceEx(project).createConfiguration("", getConfigurationFactory());
   }
 }
