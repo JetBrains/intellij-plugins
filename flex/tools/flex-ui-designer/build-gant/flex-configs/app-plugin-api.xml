@@ -3,6 +3,7 @@
 	<compiler>
 		<source-path>
 			<path-element>@@source@@/flex</path-element>
+                        <path-element>@@target@@</path-element>
 		</source-path>
 		<include-libraries/>
 		<external-library-path>

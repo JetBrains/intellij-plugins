@@ -3,8 +3,11 @@
 	<compiler>
 		<source-path>
 			<path-element>@@source@@/flex</path-element>
-			<path-element>@@source@@/locales/{locale}</path-element>
-			<path-element>@@source@@/resources</path-element>
+			<path-element>@@source:ui@@/flex</path-element>
+			<path-element>@@source:ui@@/resources</path-element>
+			<path-element>@@source:ui@@/locales/{locale}</path-element>
+			<path-element>@@source:plaf/base@@/flex</path-element>
+			<path-element>@@source:plaf/aqua@@/flex</path-element>
 			<path-element>@@target@@</path-element>
 		</source-path>
 		<include-libraries/>
