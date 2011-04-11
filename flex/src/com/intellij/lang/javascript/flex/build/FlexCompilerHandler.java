@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.ProjectTopics;
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.facet.FacetManager;
+import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
@@ -896,7 +897,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       return false;
     }
 
-    return (file.getFileType() == JavaScriptSupportLoader.JAVASCRIPT && "as".equalsIgnoreCase(file.getExtension())) ||
+    return file.getFileType() == ActionScriptFileType.INSTANCE ||
            JavaScriptSupportLoader.isMxmlOrFxgFile(file);
   }
 

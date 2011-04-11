@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.generation;
 
 import com.intellij.codeInsight.actions.BaseCodeInsightAction;
+import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -56,7 +57,7 @@ abstract class BaseJSGenerateAction extends AnAction {
 
     JSClass jsClass = null;
     if (file != null && psiFile != null && editor != null) {
-      if (JavaScriptSupportLoader.isFlexMxmFile(file) || (file.getFileType() == JavaScriptSupportLoader.JAVASCRIPT && psiFile.getLanguage() == JavaScriptSupportLoader.ECMA_SCRIPT_L4)) {
+      if (JavaScriptSupportLoader.isFlexMxmFile(file) || (file.getFileType() == ActionScriptFileType.INSTANCE)) {
         jsClass = BaseJSGenerateHandler.findClass(psiFile, editor);
       }
     }
