@@ -50,7 +50,10 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
       assertThat(problems, emptyArray());
     }
     else {
-      assertThat(problems, m("Unresolved variable unresolvedData"), m("Invalid color name invalidcolorname"));
+      assertThat(problems,
+                 m("Unresolved variable unresolvedData"),
+                 m("Invalid color name invalidcolorname"),
+                 m("Default property not found for Rect (line: 2)"));
     }
   }
 

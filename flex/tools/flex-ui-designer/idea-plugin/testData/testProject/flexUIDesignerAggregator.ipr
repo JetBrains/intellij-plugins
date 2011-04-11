@@ -107,6 +107,7 @@
           <module name="IDEA-22472-workaround-4.5" />
           <module name="shared" />
           <module name="test" />
+          <module name="test-data-libs" />
           <module name="test-project" />
           <module name="ui" />
         </modules>
@@ -292,6 +293,7 @@
       <module fileurl="file://$PROJECT_DIR$/../../../plaf/plafAggregator.iml" filepath="$PROJECT_DIR$/../../../plaf/plafAggregator.iml" />
       <module fileurl="file://$PROJECT_DIR$/shared.iml" filepath="$PROJECT_DIR$/shared.iml" />
       <module fileurl="file://$PROJECT_DIR$/test.iml" filepath="$PROJECT_DIR$/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../test-data-libs/test-data-libs.iml" filepath="$PROJECT_DIR$/../../../test-data-libs/test-data-libs.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-module.iml" filepath="$PROJECT_DIR$/test-module.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../../ui/ui.iml" filepath="$PROJECT_DIR$/../../../ui/ui.iml" />
     </modules>
@@ -395,6 +397,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.0.18365/framework-4.5.0.18365-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: com.adobe.flex.framework:mx:swc:4.5.0.18365">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/mx/4.5.0.18365/mx-4.5.0.18365.swc!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/mx/4.5.0.18365/mx-4.5.0.18365-asdoc.zip!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/mx/4.5.0.18365/mx-4.5.0.18365-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: com.adobe.flex.framework:osmf:swc:4.5.0.18365">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/osmf/4.5.0.18365/osmf-4.5.0.18365.swc!/" />
@@ -404,6 +417,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/osmf/4.5.0.18365/osmf-4.5.0.18365-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.adobe.flex.framework:playerglobal:swc:10.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/playerglobal/10.1/playerglobal-10.1.swc!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/playerglobal/10.1/playerglobal-10.1-asdoc.zip!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/playerglobal/10.1/playerglobal-10.1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: com.adobe.flex.framework:rpc:rb.swc:4.5.0.18365">

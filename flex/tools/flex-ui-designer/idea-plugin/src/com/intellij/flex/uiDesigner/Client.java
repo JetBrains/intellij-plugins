@@ -67,7 +67,8 @@ public class Client implements Closable {
   }
 
   @Override
-  public void close() throws IOException {
+  // synchronized due to out, otherwise may be NPE at out.closeWithoutFlush() (meaningful primary for tests)
+  public synchronized void close() throws IOException {
     if (out == null) {
       return;
     }

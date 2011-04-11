@@ -24,6 +24,7 @@ public class MxmlTest extends BaseTestCase {
       InlineArrayAsAttributeValue();
       InvalidColorName();
       RuntimeError();
+      CannotFindDefaultProperty();
     }
   }
   
@@ -94,6 +95,10 @@ public class MxmlTest extends BaseTestCase {
 
   public function RuntimeError():void {
     assertThat(app, [{text: 1}, {} , {text: 2}]);
+  }
+
+  public function CannotFindDefaultProperty():void {
+    assertThat(app, [{fill: null}, {text: 2}]);
   }
 }
 }

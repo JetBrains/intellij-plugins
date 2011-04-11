@@ -11,6 +11,8 @@ import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -380,9 +382,16 @@ public class MxmlWriter {
     assert descriptor != null;
     AnnotationBackedDescriptor defaultDescriptor = descriptor.getDefaultPropertyDescriptor();
     if (defaultDescriptor == null) {
-      writer.write("0");
-      out.write(PropertyClassifier.MX_CONTAINER_CHILDREN);
-      return 1;
+      if (JSInheritanceUtil.isParentClass((JSClass)descriptor.getDeclaration(), "mx.core.IContainer")) {
+        writer.write("0");
+        out.write(PropertyClassifier.MX_CONTAINER_CHILDREN);
+        return 1;
+      }
+      else {
+        // http://youtrack.jetbrains.net/issue/IDEA-66565
+        problems.add(FlexUIDesignerBundle.message("error.default.property.not.found", tag.getName(),
+                                                  getDocument(tag).getLineNumber(tag.getTextOffset()) + 1));
+      }
     }
     else {
       writer.write(defaultDescriptor.getName());
@@ -464,10 +473,14 @@ public class MxmlWriter {
     return true;
   }
 
-  private void defineInlineCssDeclaration(@NotNull PsiElement element) {
+  private Document getDocument(@NotNull PsiElement element) {
     VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
     assert virtualFile != null;
-    Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+    return FileDocumentManager.getInstance().getDocument(virtualFile);
+  }
+
+  private void defineInlineCssDeclaration(@NotNull PsiElement element) {
+    Document document = getDocument(element);
     int textOffset = element.getTextOffset();
     out.writeUInt29(textOffset);
     out.writeUInt29(document.getLineNumber(textOffset));

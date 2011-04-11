@@ -114,7 +114,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
                 initLibrarySets(project, module);
               }
               catch (InitException e) {
-                LOG.error(e);
+                LOG.error(e.getCause());
                 DocumentProblemManager.getInstance().reportWithTitle(project, e.getMessage());
               }
             }
@@ -289,7 +289,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
     catch (RuntimeException e) {
       stringWriter.rollbackChange();
-      throw new InitException("error.collect.libraries");
+      throw new InitException(e, "error.collect.libraries");
     }
 
     final LibrarySet externalLibrarySet;
@@ -301,7 +301,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           .sort(libraryCollector.getExternalLibraries(), librarySetId, libraryCollector.getFlexSdkVersion()));
       }
       catch (RuntimeException e) {
-        throw new InitException("error.sort.libraries");
+        throw new InitException(e, "error.sort.libraries");
       }
 
       registeredProjects.add(new ProjectInfo(project, externalLibrarySet));
@@ -324,7 +324,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
     catch (RuntimeException e) {
       stringWriter.rollbackChange();
-      throw new InitException("error.collect.local.style.holders");
+      throw new InitException(e, "error.collect.local.style.holders");
     }
 
     client.registerModule(project, moduleInfo, new String[]{externalLibrarySet.getId()}, stringWriter);
@@ -373,7 +373,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         LOG.error(e);
       }
       catch (InitException e) {
-        LOG.error(e);
+        LOG.error(e.getCause());
         DocumentProblemManager.getInstance().reportWithTitle(myProject, e.getMessage());
       }
       finally {
