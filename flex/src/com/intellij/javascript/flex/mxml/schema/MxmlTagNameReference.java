@@ -2,8 +2,10 @@ package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
@@ -25,6 +27,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.Processor;
 import com.intellij.xml.XmlAttributeDescriptor;
+import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,12 +60,33 @@ public class MxmlTagNameReference extends TagNameReference {
       final SchemaPrefixReference schemaPrefixReference = getSchemaPrefixReference(tag);
       final SchemaPrefix schemaPrefix = schemaPrefixReference == null ? null : schemaPrefixReference.resolve();
 
+      final String oldPrefix = tag.getNamespacePrefix();
       final String newLocalName = FileUtil.getNameWithoutExtension(((PsiFile)element).getName());
       tag.setName(StringUtil.isEmpty(newPrefix) ? newLocalName : (newPrefix + ":" + newLocalName));
+
+      fixSubTagsPrefixes(tag, oldPrefix, newPrefix);
 
       removeNamespaceDeclarationIfNotUsed(schemaPrefix);
 
       return tag;
+    }
+  }
+
+  private static void fixSubTagsPrefixes(final XmlTag tag, final String oldPrefix, final String newPrefix) {
+    final XmlElementDescriptor descriptor = tag.getDescriptor();
+    if (!(descriptor instanceof ClassBackedElementDescriptor)) {
+      return;
+    }
+
+    for (final XmlTag subTag : tag.getSubTags()) {
+      if (Comparing.strEqual(subTag.getNamespacePrefix(), oldPrefix) && subTag.getDescriptor() == null) {
+        final String oldSubTagName = subTag.getName();
+        subTag.setName(StringUtil.isEmpty(newPrefix) ? subTag.getLocalName() : (newPrefix + ":" + subTag.getLocalName()));
+        final XmlElementDescriptor subTagDescriptor = descriptor.getElementDescriptor(subTag, tag);
+        if (!(subTagDescriptor instanceof AnnotationBackedDescriptor)) {
+          subTag.setName(oldSubTagName);
+        }
+      }
     }
   }
 
