@@ -57,11 +57,6 @@ public class FlexResolveHelper implements JSResolveHelper {
     FileBasedIndex.getInstance().processValues(FilenameIndex.NAME, className + JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT, null,
                                                processor, scope);
     if (result.isNull()) {
-      FileBasedIndex.getInstance().processValues(FilenameIndex.NAME, className + JavaScriptSupportLoader.MXML_FILE_EXTENSION2_DOT, null,
-                                                 processor, scope);
-    }
-
-    if (result.isNull()) {
       FileBasedIndex.getInstance().processValues(FilenameIndex.NAME, className + JavaScriptSupportLoader.FXG_FILE_EXTENSION_DOT, null,
                                                  processor, scope);
     }
@@ -112,7 +107,6 @@ public class FlexResolveHelper implements JSResolveHelper {
         VirtualFile child = vfile.findChild(resolvedName);
         if (child == null) {
           child = vfile.findChild(resolvedName + JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT);
-          if (child == null) child = vfile.findChild(resolvedName + JavaScriptSupportLoader.MXML_FILE_EXTENSION2_DOT);
           if (child == null) child = vfile.findChild(resolvedName + JavaScriptSupportLoader.FXG_FILE_EXTENSION_DOT);
         }
         if (child != null) if (!processor.process(child)) return false;
