@@ -10,6 +10,9 @@
     <content url="file://$USER_HOME$/Desktop/dddd">
       <sourceFolder url="file://$USER_HOME$/Desktop/dddd" isTestSource="false" />
     </content>
+    <content url="file://$MODULE_DIR$/../assets">
+      <sourceFolder url="file://$MODULE_DIR$/../assets" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../css">
       <sourceFolder url="file://$MODULE_DIR$/../css" isTestSource="false" />
     </content>

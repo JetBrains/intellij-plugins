@@ -126,7 +126,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     client.registerModule(myProject, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
   }
 
-  protected void modifyModule(ModifiableRootModel model) {
+  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
   }
 
   /**
@@ -161,7 +161,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
           }
 
           rootModel.addContentEntry(toDir).addSourceFolder(toDir, false);
-          modifyModule(rootModel);
+          modifyModule(rootModel, toDir);
           doCommitModel(rootModel);
           sourceRootAdded(toDir);
         }

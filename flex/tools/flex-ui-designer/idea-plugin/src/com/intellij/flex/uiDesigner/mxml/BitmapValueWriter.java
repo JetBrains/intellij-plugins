@@ -10,12 +10,17 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
 class BitmapValueWriter extends BinaryValueWriter {
+  private static final int MAX_BUFFER_LENGTH = 12288;
+  private static final byte[] byteBuffer = new byte[MAX_BUFFER_LENGTH];
+
   private final String mimeType;
 
   public BitmapValueWriter(@NotNull VirtualFile virtualFile, @Nullable String mimeType) {
@@ -68,11 +73,37 @@ class BitmapValueWriter extends BinaryValueWriter {
     // http://juick.com/develar/1274330 flex compiler determine BitmapData.transparent by file type, 
     // but not actual pixels (i.e. BufferedImage.getTransparency()), so, for png always true, false for others (gif and jpg)
     out.write((mimeType == null ? virtualFile.getName().endsWith(".png") : mimeType.equals("image/png")) ? 1 : 0);
-    for (int pixel : image.getRGB(0, 0, width, height, null, 0, width)) {
-      out.write((pixel >>> 24) & 0xFF);
-      out.write((pixel >>> 16) & 0xFF);
-      out.write((pixel >>> 8) & 0xFF);
-      out.write((pixel) & 0xFF);
+
+    WritableRaster raster = image.getRaster();
+    final int nbands = raster.getNumBands();
+    assert nbands == 3 || nbands == 4;
+    assert raster.getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE;
+    byte[] data = new byte[nbands];
+    int yoff = 0;
+    int bufferLength = 0;
+    for (int y = 0; y < height; y++, yoff += width) {
+      for (int x = 0; x < width; x++) {
+        raster.getDataElements(x, y, data);
+        if (nbands == 4) {
+          byteBuffer[bufferLength++] = (byte)(data[3] & 0xff);
+        }
+        else {
+          byteBuffer[bufferLength++] = (byte)255;
+        }
+
+        byteBuffer[bufferLength++] = (byte)(data[0] & 0xff);
+        byteBuffer[bufferLength++] = (byte)(data[1] & 0xff);
+        byteBuffer[bufferLength++] = (byte)(data[2] & 0xff);
+
+        if (bufferLength == MAX_BUFFER_LENGTH) {
+          out.write(byteBuffer, 0, bufferLength);
+          bufferLength = 0;
+        }
+      }
+    }
+
+    if (bufferLength > 0) {
+      out.write(byteBuffer, 0, bufferLength);
     }
   }
   

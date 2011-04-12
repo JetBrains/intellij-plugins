@@ -27,10 +27,6 @@ class FlexSdkAbcInjector extends AbcFilter {
 
   @Override
   protected boolean doAbc2(int length, String name, FileChannel outputFileChannel) throws IOException {
-    if (name.equals(STYLE_PROTO_CHAIN)) {
-
-    }
-
     if (flexInjected) {
       return false;
     }

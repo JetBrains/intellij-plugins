@@ -310,9 +310,7 @@
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="libraryTable">
     <library name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.0.18365">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.0.18365/airframework-4.5.0.18365-en_US.rb.swc!/" />
-      </CLASSES>
+      <CLASSES />
       <JAVADOC>
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.0.18365/airframework-4.5.0.18365-asdoc.zip!/" />
       </JAVADOC>
@@ -376,9 +374,7 @@
       </SOURCES>
     </library>
     <library name="Maven: com.adobe.flex.framework:framework:rb.swc:4.5.0.18365">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.0.18365/framework-4.5.0.18365-en_US.rb.swc!/" />
-      </CLASSES>
+      <CLASSES />
       <JAVADOC>
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.0.18365/framework-4.5.0.18365-asdoc.zip!/" />
       </JAVADOC>
@@ -431,9 +427,7 @@
       </SOURCES>
     </library>
     <library name="Maven: com.adobe.flex.framework:rpc:rb.swc:4.5.0.18365">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/rpc/4.5.0.18365/rpc-4.5.0.18365-en_US.rb.swc!/" />
-      </CLASSES>
+      <CLASSES />
       <JAVADOC>
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/rpc/4.5.0.18365/rpc-4.5.0.18365-asdoc.zip!/" />
       </JAVADOC>
@@ -464,9 +458,7 @@
       </SOURCES>
     </library>
     <library name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.0.18365">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.0.18365/spark-4.5.0.18365-en_US.rb.swc!/" />
-      </CLASSES>
+      <CLASSES />
       <JAVADOC>
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.0.18365/spark-4.5.0.18365-asdoc.zip!/" />
       </JAVADOC>

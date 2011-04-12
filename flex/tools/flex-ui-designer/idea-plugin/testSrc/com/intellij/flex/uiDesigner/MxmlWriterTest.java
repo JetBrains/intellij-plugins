@@ -22,9 +22,11 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
   }
 
   @Override
-  protected void modifyModule(ModifiableRootModel model) {
+  protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
     if (getName().equals("test45")) {
       addLibrary(model, getFudHome() + "/test-data-libs/target/test-data-libs.swc");
+      final VirtualFile assetsDir = getVFile(getTestDataPath() + "/assets");
+      model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
     }
   }
 
@@ -34,14 +36,12 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     String testFile = System.getProperty("testFile");
     String[] files = testFile == null ? getTestFiles() : new String[]{getTestPath() + "/" + testFile + ".mxml"};
 
-    final VirtualFile[] vFiles = new VirtualFile[files.length + 3];
+    final VirtualFile[] vFiles = new VirtualFile[files.length + 1];
     for (int i = 0; i < files.length; i++) {
       vFiles[i] = getVFile(files[i]);
     }
     
-    vFiles[files.length] = getVFile(getTestPath() + "/background.jpg");
-    vFiles[files.length + 1] = getVFile(getTestPath() + "/background.p-n-g");
-    vFiles[files.length + 2] = getVFile(getTestPath() + "/anim.swf");
+    vFiles[files.length] = getVFile(getTestPath() + "/anim.swf");
 
     testFiles(vFiles);
     
