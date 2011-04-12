@@ -80,7 +80,8 @@
             
             <include>mx.styles.StyleProtoChain</include>
             <include>mx.styles.StyleManager</include>
-            
+            <include>mx.managers.LayoutManager</include>
+
             <include>spark.components.WindowedApplication</include>
             <include>com.intellij.flex.uiDesigner.flex.SparkApplication</include>
           </includes>
@@ -114,7 +115,6 @@
             <symbol>mx.core.UIComponent</symbol>
             <symbol>mx.resources.ResourceManager</symbol>
             <symbol>mx.resources.IResourceManager</symbol>
-            <symbol>mx.managers.LayoutManager</symbol>
             <symbol>mx.managers.FocusManager</symbol>
             <symbol>mx.managers.PopUpManagerImpl</symbol>
             <symbol>mx.core.mx_internal</symbol>

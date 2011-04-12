@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -12,7 +12,10 @@ import gnu.trove.TLinkedList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -186,15 +189,15 @@ public class SwcDependenciesSorter {
     VirtualFile swfFile = library.getSwfFile();
     File modifiedSwf = createSwfOutFile(library);
     final long timeStamp = swfFile.getTimeStamp();
-    if ((timeStamp - modifiedSwf.lastModified()) > 2000) {
+    if (timeStamp != modifiedSwf.lastModified()) {
       final InputStream inputStream = swfFile.getInputStream();
-      final FileOutputStream outputStream = new FileOutputStream(modifiedSwf);
       try {
-        FileUtil.copy(inputStream, outputStream);
+        IOUtil.saveStream(inputStream, modifiedSwf);
+        //noinspection ResultOfMethodCallIgnored
+        modifiedSwf.setLastModified(timeStamp);
       }
       finally {
         inputStream.close();
-        outputStream.close();
       }
     }
   }
@@ -217,7 +220,8 @@ public class SwcDependenciesSorter {
     }
 
     if (filteredLibrary.hasUnresolvedDefinitions() ||
-        ((timeStamp > injectionLastModified ? timeStamp : injectionLastModified) - modifiedSwf.lastModified()) > 2000) {
+        timeStamp > modifiedSwf.lastModified() ||
+        injectionLastModified > modifiedSwf.lastModified()) {
       Set<CharSequence> definitions = filteredLibrary.hasUnresolvedDefinitions()
                                       ? filteredLibrary.getUnresolvedDefinitions()
                                       : new THashSet<CharSequence>(5);
@@ -226,11 +230,10 @@ public class SwcDependenciesSorter {
       definitions.add("mx.managers:SystemManagerProxy");
 
       definitions.add("mx.styles:StyleManager");
+      definitions.add(FlexSdkAbcInjector.LAYOUT_MANAGER);
       definitions.add("mx.styles:StyleManagerImpl");
       new FlexSdkAbcInjector(injectionUrlConnection).inject(swfFile, modifiedSwf, flexSdkVersion,
                              new AbcNameFilterByNameSetAndStartsWith(definitions, new String[]{"mx.managers.marshalClasses:"}));
-      //noinspection ResultOfMethodCallIgnored
-      modifiedSwf.setLastModified(timeStamp);
     }
   }
 
@@ -239,7 +242,7 @@ public class SwcDependenciesSorter {
     VirtualFile swfFile = library.getSwfFile();
     File modifiedSwf = createSwfOutFile(library);
     final long timeStamp = swfFile.getTimeStamp();
-    if ((timeStamp - modifiedSwf.lastModified()) > 2000) {
+    if (timeStamp != modifiedSwf.lastModified()) {
       AbcFilter filter = new AbcFilter();
       filter.replaceMainClass = replaceMainClass;
       filter.filter(swfFile, modifiedSwf, new AbcNameFilterByNameSet(definitions));

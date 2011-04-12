@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.flex {
+import com.intellij.flex.uiDesigner.UiErrorHandler;
 import com.intellij.flex.uiDesigner.css.RootStyleManager;
 
 import flash.display.DisplayObject;
@@ -32,6 +33,7 @@ import mx.core.UIComponent;
 import mx.core.UIComponentGlobals;
 import mx.core.mx_internal;
 import mx.effects.EffectManager;
+import mx.events.DynamicEvent;
 import mx.events.FlexEvent;
 import mx.managers.DragManagerImpl;
 import mx.managers.FocusManager;
@@ -39,6 +41,7 @@ import mx.managers.IFocusManager;
 import mx.managers.IFocusManagerContainer;
 import mx.managers.ILayoutManagerClient;
 import mx.managers.ISystemManager;
+import mx.managers.LayoutManager;
 import mx.managers.PopUpManagerImpl;
 import mx.managers.SystemManagerGlobals;
 import mx.managers.ToolTipManagerImpl;
@@ -60,23 +63,23 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
   private var flexModuleFactory:IFlexModuleFactory;
 
+  private var uiErrorHandler:UiErrorHandler;
+
   private const implementations:Dictionary = new Dictionary();
 
-  public function init(moduleFactory:Object, stage:Stage, uiInitializeOrCallLaterErrorHandler:Function):void {
-    var topLevelSystemManagers:Array = SystemManagerGlobals.topLevelSystemManagers;
-    if (topLevelSystemManagers.length == 0) {
-      topLevelSystemManagers[0] = new TopLevelSystemManager(stage, uiInitializeOrCallLaterErrorHandler);
+  public function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler):void {
+    if (UIComponentGlobals.layoutManager == null) {
+      UIComponentGlobals.designMode = true;
+      UIComponentGlobals.catchCallLaterExceptions = true;
+      SystemManagerGlobals.topLevelSystemManagers[0] = new TopLevelSystemManager(stage);
+
+      Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManager);
+      UIComponentGlobals.layoutManager = new LayoutManager(stage.getChildAt(0), uiErrorHandler);
     }
 
-    UIComponentGlobals.designMode = true;
-    UIComponentGlobals.catchCallLaterExceptions = true;
+    this.uiErrorHandler = uiErrorHandler;
     addRealEventListener("initializeError", uiInitializeOrCallLaterErrorHandler);
     addRealEventListener("callLaterError", uiInitializeOrCallLaterErrorHandler);
-
-    if (UIComponentGlobals.layoutManager == null) {
-      Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManagerImpl);
-      UIComponentGlobals.layoutManager = new LayoutManagerImpl();
-    }
 
     flexModuleFactory = IFlexModuleFactory(moduleFactory);
 
@@ -114,6 +117,10 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     EffectManager.registerEffectTrigger("rollOutEffect", "rollOut");
     EffectManager.registerEffectTrigger("rollOverEffect", "rollOver");
     EffectManager.registerEffectTrigger("showEffect", "show");
+  }
+
+  private function uiInitializeOrCallLaterErrorHandler(event:DynamicEvent):void {
+    uiErrorHandler.handleUiError(event.error, event.source);
   }
 
   private var _document:DisplayObject;
@@ -613,7 +620,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
       }
 
       if (listeners.indexOf(listener) == -1) {
-        trace("ADDED", type,  useCapture);
+        //trace("ADDED", type,  useCapture);
         listeners.push(listener);
       }
     }
@@ -640,20 +647,20 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     }
 
     var index:int = listeners.indexOf(listener);
-    trace("REMOVED", index, type, useCapture);
+    //trace("REMOVED", index, type, useCapture);
     if (index == -1) {
       return;
     }
 
     listeners.splice(index, 1);
     if (listeners.length == 0) {
-      trace("REMOVED proxyMouseEventHandler", useCapture);
+      //trace("REMOVED proxyMouseEventHandler", useCapture);
       stage.removeEventListener(type, proxyMouseEventHandler, useCapture);
     }
   }
 
   private function proxyMouseEventHandler(event:MouseEvent):void {
-    trace("EXECUTED", event, event.eventPhase == EventPhase.CAPTURING_PHASE);
+    //trace("EXECUTED", event, event.eventPhase == EventPhase.CAPTURING_PHASE);
     var listeners:Vector.<Function>;
     if (event.eventPhase == EventPhase.CAPTURING_PHASE) {
       listeners = proxiedMouseListenersInCapture[event.type];

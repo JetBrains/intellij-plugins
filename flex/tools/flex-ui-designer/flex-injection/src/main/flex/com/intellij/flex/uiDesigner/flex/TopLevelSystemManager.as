@@ -13,16 +13,14 @@ import mx.core.IChildList;
 
 flex::v4_5
 import mx.core.RSLData;
+
 import mx.managers.ISystemManager;
 
 internal class TopLevelSystemManager implements ISystemManager {
   private var _stage:Stage;
 
-  private var uiInitializeOrCallLaterErrorHandler:Function;
-
-  public function TopLevelSystemManager(stage:Stage, uiInitializeOrCallLaterErrorHandler:Function) {
+  public function TopLevelSystemManager(stage:Stage) {
     _stage = stage;
-    this.uiInitializeOrCallLaterErrorHandler = uiInitializeOrCallLaterErrorHandler;
   }
 
   public function get cursorChildren():IChildList {
@@ -118,32 +116,16 @@ internal class TopLevelSystemManager implements ISystemManager {
 
   public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0,
                                    useWeakReference:Boolean = false):void {
-    if (type == Event.RENDER || type == Event.ENTER_FRAME) {
-      _stage.getChildAt(0).addEventListener(type, listener, useCapture, priority, useWeakReference);
-    }
-    else {
-      trace("tsm: skip addEventListener " + type);
-    }
+    trace("tsm: skip addEventListener " + type);
   }
 
   public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
-    if (type == Event.RENDER || type == Event.ENTER_FRAME) {
-      _stage.getChildAt(0).removeEventListener(Event.RENDER, listener);
-    }
-    else {
-      trace("tsm: skip removeEventListener " + type);
-    }
+    trace("tsm: skip removeEventListener " + type);
   }
 
   public function dispatchEvent(event:Event):Boolean {
-    if (event.type == "initializeError" || event.type == "callLaterError") {
-      uiInitializeOrCallLaterErrorHandler(event);
-      return true;
-    }
-    else {
-      trace("tsm: skip dispatchEvent " + event.toString());
-      return false;
-    }
+    trace("tsm: skip dispatchEvent " + event.toString());
+    return false;
   }
 
   public function hasEventListener(type:String):Boolean {

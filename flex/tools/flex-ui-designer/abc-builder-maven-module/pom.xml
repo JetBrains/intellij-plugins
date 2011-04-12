@@ -9,7 +9,7 @@
   <version>1.0-SNAPSHOT</version>
 
   <properties>
-    <maven.version>3.0.2</maven.version>
+    <maven.version>3.0.3</maven.version>
   </properties>
 
   <dependencies>

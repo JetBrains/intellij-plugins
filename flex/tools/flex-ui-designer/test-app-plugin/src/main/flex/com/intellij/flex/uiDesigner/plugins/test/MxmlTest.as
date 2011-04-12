@@ -4,8 +4,11 @@ import flash.display.BitmapData;
 import org.hamcrest.Matcher;
 import org.hamcrest.assertThat;
 import org.hamcrest.core.allOf;
+import org.hamcrest.core.anyOf;
 import org.hamcrest.core.isA;
+import org.hamcrest.core.not;
 import org.hamcrest.object.equalTo;
+import org.hamcrest.object.nullValue;
 import org.hamcrest.object.strictlyEqualTo;
 
 public class MxmlTest extends BaseTestCase {
@@ -94,7 +97,15 @@ public class MxmlTest extends BaseTestCase {
   }
 
   public function RuntimeError():void {
+    app.validateNow(); // force update for predictable asserts (updateDisplayList with expected error logs before our tests passed result)
     assertThat(app, [{text: 1}, {} , {text: 2}]);
+  }
+
+  [Test(nullableDocument)]
+  public function RuntimeErrorInMxmlRead():void {
+    if (documentManager.document != null) {
+      assertThat(documentManager.document.file.name, not("RuntimeErrorInMxmlRead.mxml"));
+    }
   }
 
   public function CannotFindDefaultProperty():void {

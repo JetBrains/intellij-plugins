@@ -9,6 +9,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 class FlexSdkAbcInjector extends AbcFilter {
+  public static final String STYLE_PROTO_CHAIN = "mx.styles:StyleProtoChain";
+  public static final String LAYOUT_MANAGER = "mx.managers:LayoutManager";
+
   private boolean flexInjected;
   private String flexSdkVersion;
   private final URLConnection injectionUrlConnection;
@@ -24,11 +27,15 @@ class FlexSdkAbcInjector extends AbcFilter {
 
   @Override
   protected boolean doAbc2(int length, String name, FileChannel outputFileChannel) throws IOException {
+    if (name.equals(STYLE_PROTO_CHAIN)) {
+
+    }
+
     if (flexInjected) {
       return false;
     }
 
-    boolean isStyleProtoChain = name.equals("mx.styles:StyleProtoChain");
+    boolean isStyleProtoChain = name.equals(STYLE_PROTO_CHAIN);
     if (isStyleProtoChain) {
       final int oldPosition = byteBuffer.position();
       byteBuffer.position(byteBuffer.position() + 4 + name.length() + 1 /* null-terminated string */);

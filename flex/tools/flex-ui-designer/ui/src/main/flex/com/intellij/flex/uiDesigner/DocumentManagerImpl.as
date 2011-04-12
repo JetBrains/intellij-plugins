@@ -41,28 +41,37 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     if (documentFactory.document == null) {
       libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory);
     }
-    else {
-      doOpen(documentFactory, documentFactory.document);
+    else if (doOpen(documentFactory, documentFactory.document)) {
       document.container.invalidateDisplayList();
     }
   }
 
   private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory):void {
     var document:Document = new Document(documentFactory);
-    createStyleManager(documentFactory.module, documentFactory);
-    createSystemManager(document, documentFactory.module);
-    documentFactory.document = document;
+    var module:Module = documentFactory.module;
+    createStyleManager(module, documentFactory);
+    createSystemManager(document, module);
 
-    doOpen(documentFactory, document);
+    if (doOpen(documentFactory, document)) {
+      documentFactory.document = document;
+      ProjectView(module.project.window.contentView).addDocument(document);
+    }
   }
 
-  private function doOpen(documentFactory:DocumentFactory, document:Document):void {
-    var object:Object = documentReader.read(documentFactory.data, documentFactory, document.styleManager);
-    document.uiComponent = object;
-    document.systemManager.setUserDocument(DisplayObject(object));
+  private function doOpen(documentFactory:DocumentFactory, document:Document):Boolean {
+    try {
+      var object:Object = documentReader.read(documentFactory.data, documentFactory, document.styleManager);
+      document.uiComponent = object;
+      document.systemManager.setUserDocument(DisplayObject(object));
+      documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
+    }
+    catch (e:Error) {
+      getUncaughtErrorManager(document.module).readDocumentErrorHandler(e);
+      return false;
+    }
 
-    documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
     this.document = document;
+    return true;
   }
 
   private function createStyleManager(module:Module, documentFactory:DocumentFactory):void {
@@ -130,9 +139,12 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var systemManager:SystemManagerSB = new systemManagerClass();
     document.systemManager = systemManager;
     systemManager.init(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain), window.nativeWindow.stage,
-                       UncaughtErrorManager(module.project.getComponent(UncaughtErrorManager)).uiInitializeOrCallLaterErrorHandler);
+                       getUncaughtErrorManager(module));
     document.container = new DocumentContainer(Sprite(systemManager));
-    ProjectView(window.contentView).addDocument(document);
+  }
+
+  private function getUncaughtErrorManager(module:Module):UncaughtErrorManager {
+    return UncaughtErrorManager(module.project.getComponent(UncaughtErrorManager));
   }
 }
 }

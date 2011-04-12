@@ -11,7 +11,7 @@ import flash.system.Capabilities;
 
 import org.flyti.plexus.PlexusManager;
 
-public class UncaughtErrorManager {
+public class UncaughtErrorManager implements UiErrorHandler {
   protected var socket:Socket;
 
   public function UncaughtErrorManager(socketManager:SocketManager) {
@@ -50,8 +50,12 @@ public class UncaughtErrorManager {
     }
   }
 
-  public function uiInitializeOrCallLaterErrorHandler(event:Object /* mx.events.DynamicEvent */):void {
-    sendMessage(event.type + "\n" + (Capabilities.isDebugger ? buildErrorMessage(event.error) : Error(event.error).message));
+  public function handleUiError(error:Error, object:Object):void {
+    sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : Error(error).message);
+  }
+
+  public function readDocumentErrorHandler(error:Error):void {
+    sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : error.message);
   }
 
   protected function sendMessage(message:String):void {

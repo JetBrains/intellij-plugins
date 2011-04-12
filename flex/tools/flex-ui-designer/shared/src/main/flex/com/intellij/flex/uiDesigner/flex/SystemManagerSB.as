@@ -1,4 +1,6 @@
 package com.intellij.flex.uiDesigner.flex {
+import com.intellij.flex.uiDesigner.UiErrorHandler;
+
 import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.geom.Rectangle;
@@ -16,7 +18,7 @@ public interface SystemManagerSB {
 
   function get stage():Stage;
 
-  function init(moduleFactory:Object, stage:Stage, uiInitializeOrCallLaterErrorHandler:Function):void;
+  function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler):void;
 
   function removeProxyMouseEventHandlers():void;
 }

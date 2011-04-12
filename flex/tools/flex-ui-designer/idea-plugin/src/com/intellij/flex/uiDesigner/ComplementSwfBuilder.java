@@ -16,8 +16,8 @@ public class ComplementSwfBuilder {
       new AbcNameFilterByNameSetAndStartsWith(Collections.<CharSequence>emptyList(), new String[]{"mx.", "spark."}) {
         @Override
         public boolean accept(String name) {
-          return name.equals("mx.styles:StyleProtoChain") ||
-                 name.equals("mx.styles:StyleManager") ||
+          return name.equals(FlexSdkAbcInjector.STYLE_PROTO_CHAIN) || name.equals("mx.styles:StyleManager") ||
+                 name.equals(FlexSdkAbcInjector.LAYOUT_MANAGER) ||
                  (super.accept(name) && !sparkInclusionNameFilter.accept(name) && !airsparkDefinitions.contains(name));
         }
       };

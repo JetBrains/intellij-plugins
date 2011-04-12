@@ -9,12 +9,12 @@ import java.io.InputStream;
 
 public final class IOUtil {
   public static void saveStream(InputStream input, File output) throws IOException {
-    FileOutputStream os = new FileOutputStream(output);
+    FileOutputStream outputStream = new FileOutputStream(output);
     try {
-      FileUtil.copy(input, os);
+      FileUtil.copy(input, outputStream);
     }
     finally {
-      os.close();
+      outputStream.close();
     }
   }
   

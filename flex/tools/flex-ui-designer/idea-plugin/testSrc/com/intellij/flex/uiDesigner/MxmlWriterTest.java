@@ -23,7 +23,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
 
   @Override
   protected void modifyModule(ModifiableRootModel model) {
-    if (getName().equals("testRuntimeError")) {
+    if (getName().equals("test45")) {
       addLibrary(model, getFudHome() + "/test-data-libs/target/test-data-libs.swc");
     }
   }
@@ -66,18 +66,22 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
     testFile("states/UnusedStates.mxml");
   }
 
-  public void testRuntimeError() throws Exception {
-    testFile("RuntimeError.mxml");
-  }
-
   @Override
   protected void assertResult(String documentName, long time) throws IOException {
-    super.assertResult(documentName, time);
-
-    if (getName().equals("testRuntimeError")) {
-      @SuppressWarnings({"UnusedDeclaration"}) String message = reader.readUTF();
-      assertThat(reader.available(), 0);
+    if (documentName.equals("RuntimeErrorInMxmlRead")) {
+      assertThat(reader.readUTF(), startsWith("Error: Boo\n\tat com.intellij.flex.uiDesigner.test::LabelWithError()"));
     }
+    else if (documentName.equals("RuntimeError")) {
+      System.out.print("\n\nSTART IGNORE ME\n\n");
+      System.out.print(reader.readUTF());
+      super.assertResult(documentName, time);
+      System.out.print(reader.readUTF());
+      System.out.print("\n\nEND IGNORE ME\n\n");
+      return;
+    }
+
+    super.assertResult(documentName, time);
+    assertThat(reader.available(), 0);
   }
 
   private String[] getTestFiles() {
@@ -93,7 +97,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
       if (name.charAt(0) == '.') {
         // skip
       }
-      else if (name.endsWith(".mxml") && !name.startsWith("TestApp.") && !name.startsWith("Constructor.") && !name.startsWith("RuntimeError.")) {
+      else if (name.endsWith(".mxml") && !name.startsWith("TestApp.") && !name.startsWith("Constructor.")) {
         files.add(parent.getPath() + "/" + name);
       }
       File file = new File(parent, name);
