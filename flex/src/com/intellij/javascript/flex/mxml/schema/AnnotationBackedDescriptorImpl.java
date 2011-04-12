@@ -510,17 +510,31 @@ public class AnnotationBackedDescriptorImpl
 
     if (isAllowsPercentage() && value != null && value.endsWith("%")) value = value.substring(0, value.length() - 1);
 
-    if ("int".equals(type) || "uint".equals(type)) {
+    boolean uint = false;
+    if ("int".equals(type) || (uint = "uint".equals(type))) {
       try {
         boolean startWithSharp = false;
         if (value != null && ((startWithSharp = value.startsWith("#")) || value.startsWith("0x"))) {
-          final long l = Long.parseLong(value.substring(startWithSharp ? 1 : 2), 16);
-          if (l < 0 || l > 0xFFFFFFFFL) {
-            throw new NumberFormatException("value out of range");
+          if (uint) {
+            final long l = Long.parseLong(value.substring(startWithSharp ? 1 : 2), 16);
+            if (l < 0 || l > 0xFFFFFFFFL) {
+              throw new NumberFormatException("value out of range");
+            }
+          }
+          else {
+            Integer.parseInt(value.substring(startWithSharp ? 1 : 2), 16);
           }
         }
         else if (!"Color".equals(format) || (value != null && value.length() > 0 && !Character.isLetter(value.charAt(0)))) {
-          Integer.parseInt(value);
+          if (uint) {
+            final long l = Long.parseLong(value);
+            if (l < 0 || l > 0xFFFFFFFFL) {
+              throw new NumberFormatException("value out of range");
+            }
+          }
+          else {
+            Integer.parseInt(value);
+          }
         }
       }
       catch (NumberFormatException ex) {
