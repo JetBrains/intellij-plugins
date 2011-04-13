@@ -196,9 +196,12 @@ public class FlexRunConfiguration extends RunConfigurationBase
   }
 
   public String suggestedName() {
+    final String path = myRunnerParameters.getHtmlOrSwfFilePath();
     return myRunnerParameters.getRunMode() == FlexRunnerParameters.RunMode.MainClass
            ? StringUtil.getShortName(myRunnerParameters.getMainClassName())
-           : "unnamed";
+           : myRunnerParameters.getRunMode() == FlexRunnerParameters.RunMode.HtmlOrSwfFile
+             ? path.substring(path.lastIndexOf('/') + 1)
+             : "unnamed";
   }
 
   @NotNull

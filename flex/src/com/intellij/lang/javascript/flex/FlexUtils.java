@@ -50,10 +50,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Maxim.Mossienko
@@ -65,7 +62,7 @@ public class FlexUtils {
 
   public static FlexFacet addFlexFacet(final Module module, final @Nullable Sdk flexSdk, final ModifiableRootModel modifiableRootModel) {
     final ModifiableFacetModel facetModel = FacetManager.getInstance(module).createModifiableModel();
-    final FacetType<FlexFacet,FlexFacetConfiguration> facetType = FlexFacetType.getInstance();
+    final FacetType<FlexFacet, FlexFacetConfiguration> facetType = FlexFacetType.getInstance();
     final FlexFacet flexFacet = facetType.createFacet(module, facetType.getDefaultFacetName(), facetType.createDefaultConfiguration(),
                                                       null);
 
@@ -131,7 +128,7 @@ public class FlexUtils {
             FileEditorManager.getInstance(project).openFile(sampleApplicationFile, true);
           }
         };
-        
+
         if (project.isInitialized()) {
           runnable.run();
         }
@@ -279,6 +276,48 @@ public class FlexUtils {
     }
     return false;
   }
+
+  public static boolean isAirDesktopDescriptorFile(final VirtualFile file) {
+    try {
+      final Map<String, List<String>> elements =
+        findXMLElements(file.getInputStream(), Arrays.asList("<application><android>", "<application><iPhone>"));
+      return elements.get("<application><android>").isEmpty() && elements.get("<application><iPhone>").isEmpty();
+    }
+    catch (IOException e) {
+      return false;
+    }
+  }
+
+  public static boolean isAirMobileDescriptorFile(final VirtualFile file) {
+    try {
+      final Map<String, List<String>> elements =
+        findXMLElements(file.getInputStream(), Arrays.asList("<application><android>", "<application><iPhone>"));
+      return !elements.get("<application><android>").isEmpty() || !elements.get("<application><iPhone>").isEmpty();
+    }
+    catch (IOException e) {
+      return false;
+    }
+  }
+
+  /*
+  public static boolean isAirAndroidDescriptorFile(final VirtualFile file) {
+    try {
+      return findXMLElement(file.getInputStream(), "<application><android>") != null;
+    }
+    catch (IOException e) {
+      return false;
+    }
+  }
+
+  public static boolean isAirIPhoneDescriptorFile(final VirtualFile file) {
+    try {
+      return findXMLElement(file.getInputStream(), "<application><iPhone>") != null;
+    }
+    catch (IOException e) {
+      return false;
+    }
+  }
+  */
 
   /**
    * Looks through input stream containing XML document and finds all entries of XML elements listed in <code>xmlElements</code>.
@@ -563,5 +602,4 @@ public class FlexUtils {
     }
     return FileUtil.toSystemDependentName(PathManager.getHomePath() + folder + filename);
   }
-
 }

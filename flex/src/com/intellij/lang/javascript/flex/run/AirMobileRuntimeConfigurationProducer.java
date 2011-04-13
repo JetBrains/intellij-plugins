@@ -18,12 +18,12 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class AirRuntimeConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
+public class AirMobileRuntimeConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
 
   private PsiElement mySourceElement;
 
-  public AirRuntimeConfigurationProducer() {
-    super(AirRunConfigurationType.getInstance());
+  public AirMobileRuntimeConfigurationProducer() {
+    super(AirMobileRunConfigurationType.getInstance());
   }
 
   public PsiElement getSourceElement() {
@@ -36,21 +36,21 @@ public class AirRuntimeConfigurationProducer extends RuntimeConfigurationProduce
 
     mySourceElement = location.getPsiElement();
     final Module module = context.getModule();
-    if (module == null || !FlexSdkUtils.hasDependencyOnAir(module)) {
+    if (module == null || !FlexSdkUtils.hasDependencyOnAirMobile(module)) {
       return null;
     }
 
     final PsiFile psiFile = mySourceElement.getContainingFile();
     final VirtualFile virtualFile = psiFile == null ? null : psiFile.getVirtualFile();
-    if (virtualFile != null && FlexUtils.isAirDescriptorFile(virtualFile) && FlexUtils.isAirDesktopDescriptorFile(virtualFile)) {
+    if (virtualFile != null && FlexUtils.isAirDescriptorFile(virtualFile) && FlexUtils.isAirMobileDescriptorFile(virtualFile)) {
       final FlexBuildConfiguration config = FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module).iterator().next();
       final RunnerAndConfigurationSettings settings = RunManagerEx.getInstanceEx(location.getProject())
-        .createConfiguration("", AirRunConfigurationType.getFactory());
-      final AirRunConfiguration runConfiguration = (AirRunConfiguration)settings.getConfiguration();
-      final AirRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
+        .createConfiguration("", AirMobileRunConfigurationType.getFactory());
+      final AirMobileRunConfiguration runConfiguration = (AirMobileRunConfiguration)settings.getConfiguration();
+      final AirMobileRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
 
       runnerParameters.setModuleName(module.getName());
-      runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.AppDescriptor);
+      runnerParameters.setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.AppDescriptor);
       runnerParameters.setAirDescriptorPath(virtualFile.getPath());
       runnerParameters.setAirRootDirPath(config.getCompileOutputPath());
       settings.setName(runConfiguration.suggestedName());
@@ -58,14 +58,14 @@ public class AirRuntimeConfigurationProducer extends RuntimeConfigurationProduce
     }
     else {
       final JSClass jsClass = FlexRuntimeConfigurationProducer.getJSClass(mySourceElement);
-      if (jsClass != null && FlexRuntimeConfigurationProducer.isAcceptedMainClass(jsClass, module, true)) {
-        final RunnerAndConfigurationSettings settings =
-          RunManagerEx.getInstanceEx(location.getProject()).createConfiguration("", AirRunConfigurationType.getFactory());
-        final AirRunConfiguration runConfiguration = (AirRunConfiguration)settings.getConfiguration();
-        final AirRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
+      if (jsClass != null && FlexRuntimeConfigurationProducer.isAcceptedMainClass(jsClass, module, false)) {
+        final RunnerAndConfigurationSettings settings = RunManagerEx.getInstanceEx(location.getProject())
+          .createConfiguration("", AirMobileRunConfigurationType.getFactory());
+        final AirMobileRunConfiguration runConfiguration = (AirMobileRunConfiguration)settings.getConfiguration();
+        final AirMobileRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
 
         runnerParameters.setModuleName(module.getName());
-        runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.MainClass);
+        runnerParameters.setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.MainClass);
         runnerParameters.setMainClassName(jsClass.getQualifiedName());
         settings.setName(runConfiguration.suggestedName());
         return settings;
@@ -83,18 +83,19 @@ public class AirRuntimeConfigurationProducer extends RuntimeConfigurationProduce
     if (!(location instanceof PsiLocation)) return null;
     final PsiElement psiElement = location.getPsiElement();
     final Module module = ModuleUtil.findModuleForPsiElement(psiElement);
-    if (module == null || !FlexSdkUtils.hasDependencyOnAir(module)) {
+    if (module == null || !FlexSdkUtils.hasDependencyOnAirMobile(module)) {
       return null;
     }
 
     final PsiFile psiFile = psiElement.getContainingFile();
     final VirtualFile virtualFile = psiFile == null ? null : psiFile.getVirtualFile();
-    if (virtualFile != null && FlexUtils.isAirDescriptorFile(virtualFile) && FlexUtils.isAirDesktopDescriptorFile(virtualFile)) {
+    if (virtualFile != null && FlexUtils.isAirDescriptorFile(virtualFile) && FlexUtils.isAirMobileDescriptorFile(virtualFile)) {
       final FlexBuildConfiguration config = FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module).iterator().next();
       for (final RunnerAndConfigurationSettings existingConfiguration : existingConfigurations) {
-        final AirRunnerParameters runnerParameters = ((AirRunConfiguration)existingConfiguration.getConfiguration()).getRunnerParameters();
+        final AirMobileRunnerParameters runnerParameters =
+          ((AirMobileRunConfiguration)existingConfiguration.getConfiguration()).getRunnerParameters();
         if (module.getName().equals(runnerParameters.getModuleName()) &&
-            AirRunnerParameters.AirRunMode.AppDescriptor == runnerParameters.getAirRunMode() &&
+            AirMobileRunnerParameters.AirMobileRunMode.AppDescriptor == runnerParameters.getAirMobileRunMode() &&
             virtualFile.getPath().equals(runnerParameters.getAirDescriptorPath()) &&
             config.getCompileOutputPath().equals(runnerParameters.getAirRootDirPath())) {
           return existingConfiguration;
@@ -103,12 +104,12 @@ public class AirRuntimeConfigurationProducer extends RuntimeConfigurationProduce
     }
     else {
       final JSClass jsClass = FlexRuntimeConfigurationProducer.getJSClass(psiElement);
-      if (jsClass != null && FlexRuntimeConfigurationProducer.isAcceptedMainClass(jsClass, module, true)) {
+      if (jsClass != null && FlexRuntimeConfigurationProducer.isAcceptedMainClass(jsClass, module, false)) {
         for (final RunnerAndConfigurationSettings existingConfiguration : existingConfigurations) {
-          final AirRunnerParameters runnerParameters =
-            ((AirRunConfiguration)existingConfiguration.getConfiguration()).getRunnerParameters();
+          final AirMobileRunnerParameters runnerParameters =
+            ((AirMobileRunConfiguration)existingConfiguration.getConfiguration()).getRunnerParameters();
           if (module.getName().equals(runnerParameters.getModuleName()) &&
-              AirRunnerParameters.AirRunMode.MainClass == runnerParameters.getAirRunMode() &&
+              AirMobileRunnerParameters.AirMobileRunMode.MainClass == runnerParameters.getAirMobileRunMode() &&
               runnerParameters.getMainClassName().equals(jsClass.getQualifiedName())) {
             return existingConfiguration;
           }
@@ -122,5 +123,4 @@ public class AirRuntimeConfigurationProducer extends RuntimeConfigurationProduce
   public int compareTo(Object o) {
     return PREFERED;
   }
-
 }

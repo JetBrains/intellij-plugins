@@ -53,9 +53,12 @@ public class AirRunConfiguration extends FlexRunConfiguration {
   }
 
   public String suggestedName() {
+    final String descriptorPath = getRunnerParameters().getAirDescriptorPath();
     return getRunnerParameters().getAirRunMode() == AirRunnerParameters.AirRunMode.MainClass
            ? StringUtil.getShortName(getRunnerParameters().getMainClassName())
-           : "unnamed";
+           : getRunnerParameters().getAirRunMode() == AirRunnerParameters.AirRunMode.AppDescriptor
+             ? descriptorPath.substring(descriptorPath.lastIndexOf('/') + 1)
+             : "unnamed";
   }
 
   public void checkConfiguration() throws RuntimeConfigurationException {

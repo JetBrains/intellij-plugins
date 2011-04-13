@@ -158,10 +158,9 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
 
   public static void createFlexRunConfiguration(final Project project, final @Nullable Module module, final String _absoluteFilePath) {
     final String absoluteFilePath = FileUtil.toSystemIndependentName(_absoluteFilePath);
-    final String name = absoluteFilePath.substring(absoluteFilePath.lastIndexOf("/") + 1);
 
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
-    final RunnerAndConfigurationSettings settings = runManager.createConfiguration(name, FlexRunConfigurationType.getFactory());
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", FlexRunConfigurationType.getFactory());
     settings.setTemporary(false);
     runManager.addConfiguration(settings, false);
     runManager.setActiveConfiguration(settings);
@@ -171,6 +170,7 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
     runnerParameters.setModuleName(module == null ? "" : module.getName());
     runnerParameters.setRunMode(FlexRunnerParameters.RunMode.HtmlOrSwfFile);
     runnerParameters.setHtmlOrSwfFilePath(absoluteFilePath);
+    settings.setName(runConfiguration.suggestedName());
   }
 
   private void createAirDescriptor(final String airDescriptorFolderPath, final FlexBuildConfiguration config)
@@ -206,16 +206,15 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
       runnerParameters.setModuleName(module.getName());
 
       if (myCreateAirDescriptor) {
-        runConfiguration.setName(myAirDescriptorFileName);
         runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.AppDescriptor);
         runnerParameters.setAirDescriptorPath(sourceRoot.getPath() + "/" + myAirDescriptorFileName);
         runnerParameters.setAirRootDirPath(outputDirPath);
       }
       else {
-        runConfiguration.setName(config.MAIN_CLASS);
         runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.MainClass);
         runnerParameters.setMainClassName(config.MAIN_CLASS);
       }
+      settings.setName(runConfiguration.suggestedName());
     }
     else {
       createFlexRunConfiguration(module, config.OUTPUT_FILE_NAME);

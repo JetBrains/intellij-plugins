@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -49,7 +50,12 @@ public class FlexRuntimeConfigurationProducer extends RuntimeConfigurationProduc
   @Nullable
   protected RunnerAndConfigurationSettings createConfigurationByElement(final Location location, final ConfigurationContext context) {
     final Module module = context.getModule();
-    if (!(location instanceof PsiLocation) || module == null) return null;
+    if (!(location instanceof PsiLocation) ||
+        module == null ||
+        FlexSdkUtils.hasDependencyOnAir(module) ||
+        FlexSdkUtils.hasDependencyOnAirMobile(module)) {
+      return null;
+    }
     mySourceElement = location.getPsiElement();
 
     final String htmlWrapperAbsolutePath = getHtmlWrapperAbsolutePath(module, mySourceElement);

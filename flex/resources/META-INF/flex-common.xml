@@ -68,6 +68,7 @@
     <testSrcLocator implementation="com.intellij.lang.javascript.flex.flexunit.FlexQualifiedNameLocationProvider"/>
     <configurationProducer implementation="com.intellij.lang.javascript.flex.run.FlexRuntimeConfigurationProducer"/>
     <configurationProducer implementation="com.intellij.lang.javascript.flex.run.AirRuntimeConfigurationProducer"/>
+    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.AirMobileRuntimeConfigurationProducer"/>
     <configurationProducer implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRuntimeConfigurationProducer"/>
     <psi.referenceContributor implementation="com.intellij.javascript.flex.FlexReferenceContributor"/>
     <lookup.charFilter implementation="com.intellij.lang.javascript.flex.ActionScriptCharFilter"/>

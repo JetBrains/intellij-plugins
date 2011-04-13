@@ -33,9 +33,12 @@ public class AirMobileRunConfiguration extends AirRunConfiguration {
   }
 
   public String suggestedName() {
+    final String descriptorPath = getRunnerParameters().getAirDescriptorPath();
     return getRunnerParameters().getAirMobileRunMode() == AirMobileRunnerParameters.AirMobileRunMode.MainClass
            ? StringUtil.getShortName(getRunnerParameters().getMainClassName())
-           : "unnamed";
+           : getRunnerParameters().getAirMobileRunMode() == AirMobileRunnerParameters.AirMobileRunMode.AppDescriptor
+             ? descriptorPath.substring(descriptorPath.lastIndexOf('/') + 1)
+             : "unnamed";
   }
 
   // todo

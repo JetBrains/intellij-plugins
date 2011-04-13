@@ -77,7 +77,7 @@ public class FlexSdkUtils {
     sdkModificator.setVersionString(readFlexSdkVersion(sdkRoot));
 
     final SdkType sdkType = sdk.getSdkType();
-    final String configFileRelativePath = getBaseConfigFileRelPath((IFlexSdkType)sdkType) ;
+    final String configFileRelativePath = getBaseConfigFileRelPath((IFlexSdkType)sdkType);
 
     final VirtualFile configFile = sdkRoot.findFileByRelativePath(configFileRelativePath);
     if (configFile == null) {
@@ -298,7 +298,17 @@ public class FlexSdkUtils {
     });
   }
 
-  public static boolean hasDependencyOnAir(@NotNull Module module) {
+  public static boolean hasDependencyOnAir(final @NotNull Module module) {
+    return hasDependencyOn(module, AirSdkType.getInstance(), "Maven: com.adobe.flex.framework:framework:swc:");
+  }
+
+  public static boolean hasDependencyOnAirMobile(final @NotNull Module module) {
+    return hasDependencyOn(module, AirMobileSdkType.getInstance(), "Maven: com.adobe.flex.framework:mobilecomponents:swc:");
+  }
+
+  private static boolean hasDependencyOn(final @NotNull Module module,
+                                         final @NotNull SdkType sdkType,
+                                         final @NotNull String mavenLibraryNameStart) {
     final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
     if (sdk != null) {
       if (sdk.getSdkType() instanceof FlexmojosSdkType) {
@@ -306,14 +316,14 @@ public class FlexSdkUtils {
         for (OrderEntry orderEntry : rootManager.getOrderEntries()) {
           if (orderEntry instanceof LibraryOrderEntry) {
             final String libName = ((LibraryOrderEntry)orderEntry).getLibraryName();
-            if (libName != null && (libName.contains("airglobal") || libName.contains("airframework"))) {
+            if (libName != null && (libName.startsWith(mavenLibraryNameStart))) {
               return true;
             }
           }
         }
       }
       else {
-        return sdk.getSdkType() instanceof AirSdkType;
+        return sdk.getSdkType() == sdkType;
       }
     }
     return false;

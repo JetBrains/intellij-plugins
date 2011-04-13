@@ -46,4 +46,8 @@ public class AirMobileRunConfigurationType implements ConfigurationType {
   public static AirMobileRunConfigurationType getInstance() {
     return ContainerUtil.findInstance(Extensions.getExtensions(CONFIGURATION_TYPE_EP), AirMobileRunConfigurationType.class);
   }
+
+  public static ConfigurationFactory getFactory() {
+    return getInstance().getConfigurationFactories()[0];
+  }
 }
