@@ -13,8 +13,6 @@ import com.intellij.openapi.vcs.changes.IgnoredFileBean;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import gnu.trove.THashMap;
-import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.model.MavenWorkspaceMap;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.server.MavenEmbedderWrapper;
@@ -26,7 +24,10 @@ import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
   private final FlexFacet myFlexFacet;

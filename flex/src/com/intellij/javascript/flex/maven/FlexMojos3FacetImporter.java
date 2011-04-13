@@ -23,6 +23,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.importing.MavenModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenConstants;
@@ -49,8 +50,6 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
   private static final String FLEX_COMPILER_ARTIFACT_ID = "compiler";
   private static final String RESOURCE_MODULE_FACET_PREFIX = "Resource module-";
   private static final String MX_MODULE_FACET_PREFIX = "Flex module ";  // here 'module' means Flex class inherited from mx.modules.Module
-  private static final String COMPILER_CONFIG_XML_SUFFIX_FLEXMOJOS_3 = "-config-report.xml";
-  private static final String COMPILER_CONFIG_XML_SUFFIX_FLEXMOJOS_4 = "-configs.xml";
 
   private static final Pattern[] ADDITIONAL_JAR_NAME_PATTERNS_TO_INCLUDE_IN_FLEXMOJOS_SDK_CLASSPATH =
     {Pattern.compile("afe"), Pattern.compile("aglj[0-9]+"), Pattern.compile("flex-fontkit"), Pattern.compile("license"),
@@ -60,6 +59,21 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
 
   public FlexMojos3FacetImporter() {
     super(FLEXMOJOS_GROUP_ID, FLEXMOJOS_ARTIFACT_ID);
+  }
+
+  protected boolean isApplicable(char majorVersion) {
+    return majorVersion == '3';
+  }
+
+  @Override
+  public boolean isApplicable(MavenProject project) {
+    if (!super.isApplicable(project)) {
+      return false;
+    }
+
+    MavenPlugin plugin = getFlexmojosPlugin(project);
+    String version = plugin.getVersion();
+    return version != null && isApplicable(plugin.getVersion().charAt(0));
   }
 
   protected synchronized void prepareImporter(final MavenProject p) {
@@ -242,18 +256,29 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     }
 
     if (StringUtil.compareVersionNumbers(flexmojosPlugin.getVersion(), "3.4") >= 0) {
-      postTasks.add(new GenerateFlexConfigTask(facet, project, mavenTree, FLEXMOJOS_GROUP_ID, FLEXMOJOS_ARTIFACT_ID, this));
+      addGenerateFlexConfigTask(postTasks, facet, project, mavenTree);
     }
     else {
       showFlexConfigWarningIfNeeded(module.getProject(), project, facet);
     }
 
-    for (final FlexFacet flexFacet : facetModel.getFacetsByType(myFacetType.getId())) {
-      if (isMxModuleFacet(flexFacet)) {
-        postTasks.add(new GenerateFlexConfigFilesForMxModulesTask(module, project, mavenTree));
-        break;
+    if (isGenerateFlexConfigFilesForMxModules()) {
+      for (final FlexFacet flexFacet : facetModel.getFacetsByType(myFacetType.getId())) {
+        if (isMxModuleFacet(flexFacet)) {
+          postTasks.add(new GenerateFlexConfigFilesForMxModulesTask(getCompilerConfigXmlSuffix(), module, project, mavenTree));
+          break;
+        }
       }
     }
+  }
+
+  protected boolean isGenerateFlexConfigFilesForMxModules() {
+    return true;
+  }
+
+  protected void addGenerateFlexConfigTask(List<MavenProjectsProcessorTask> postTasks, FlexFacet facet,
+                                           MavenProject project, MavenProjectsTree mavenTree) {
+    postTasks.add(new GenerateFlexConfigTask(facet, project, mavenTree, FLEXMOJOS_GROUP_ID, FLEXMOJOS_ARTIFACT_ID, this));
   }
 
   private static void ensureSdkHasRequiredAdditionalJarPaths(final @NotNull Sdk flexSdk,
@@ -351,7 +376,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
 
     config.USE_DEFAULT_SDK_CONFIG_FILE = false;
     config.USE_CUSTOM_CONFIG_FILE = true;
-    config.CUSTOM_CONFIG_FILE = getTargetFilePath(project, suffix + getCompilerConfigXmlSuffix(flexmojosPlugin));
+    config.CUSTOM_CONFIG_FILE = getTargetFilePath(project, suffix + getCompilerConfigXmlSuffix());
 
     final String outputFilePath = getOutputFilePath(project);
     final int lastSlashIndex = outputFilePath.lastIndexOf("/");
@@ -366,8 +391,8 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     }
 
     reimportCompileLocales(project, config);
-    reimportRuntimeLocalesFacets(project, flexmojosPlugin, module, modelsProvider);
-    reimportMxModuleFacets(project, flexmojosPlugin, module, modelsProvider);
+    reimportRuntimeLocalesFacets(project, module, modelsProvider);
+    reimportMxModuleFacets(project, module, modelsProvider);
   }
 
   @Override
@@ -388,10 +413,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     config.LOCALE = StringUtil.join(getLocales(project, true), ",");
   }
 
-  private void reimportRuntimeLocalesFacets(final MavenProject project,
-                                            final MavenPlugin flexmojosPlugin,
-                                            final Module module,
-                                            final MavenModifiableModelsProvider modelsProvider) {
+  private void reimportRuntimeLocalesFacets(final MavenProject project, final Module module, final MavenModifiableModelsProvider modelsProvider) {
     FacetModel model = modelsProvider.getFacetModel(module);
 
     String packaging = project.getPackaging();
@@ -420,11 +442,11 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
 
       config.USE_DEFAULT_SDK_CONFIG_FILE = false;
       config.USE_CUSTOM_CONFIG_FILE = true;
-      config.CUSTOM_CONFIG_FILE = outputPath.replace("." + extension, getCompilerConfigXmlSuffix(flexmojosPlugin));
+      config.CUSTOM_CONFIG_FILE = outputPath.replace("." + extension, getCompilerConfigXmlSuffix());
     }
   }
 
-  private void reimportMxModuleFacets(final MavenProject project, final MavenPlugin flexmojosPlugin, final Module module, final MavenModifiableModelsProvider modelsProvider) {
+  private void reimportMxModuleFacets(final MavenProject project, final Module module, final MavenModifiableModelsProvider modelsProvider) {
     final FacetModel facetModel = modelsProvider.getFacetModel(module);
 
     if (!isApplication(project)) {
@@ -450,7 +472,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
 
       config.USE_DEFAULT_SDK_CONFIG_FILE = false;
       config.USE_CUSTOM_CONFIG_FILE = true;
-      config.CUSTOM_CONFIG_FILE = outputPath.replace(".swf", getCompilerConfigXmlSuffix(flexmojosPlugin));
+      config.CUSTOM_CONFIG_FILE = outputPath.replace(".swf", getCompilerConfigXmlSuffix());
     }
   }
 
@@ -474,18 +496,25 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     return runtimeLocaleOuputPathPattern.replaceAll("\\{locale\\}", Matcher.quoteReplacement(locale));
   }
 
-  private List<String> getLocales(MavenProject mavenProject, boolean compiled) {
+  protected @Nullable Element getLocalesElement(MavenProject mavenProject, boolean compiled) {
     Element localesElement = getConfig(mavenProject, (compiled ? "compiled" : "runtime") + "Locales");
     if (compiled && localesElement == null) {
       localesElement = getConfig(mavenProject, "locales");
-      if (localesElement == null && isApplication(mavenProject)) {
+    }
+
+    return localesElement;
+  }
+
+  private List<String> getLocales(MavenProject mavenProject, boolean compiled) {
+    Element localesElement = getLocalesElement(mavenProject, compiled);
+    if (localesElement == null) {
+      if (compiled && isApplication(mavenProject)) {
         final String defaultLocale = getDefaultLocale(mavenProject);
         if (defaultLocale != null) {
           return Collections.singletonList(defaultLocale);
         }
       }
-    }
-    if (localesElement == null) {
+      
       return Collections.emptyList();
     }
 
@@ -534,9 +563,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     return facet.getName().substring(MX_MODULE_FACET_PREFIX.length());
   }
 
-  static String getCompilerConfigXmlSuffix(final @NotNull MavenPlugin flexmojosPlugin) {
-    final String version = flexmojosPlugin.getVersion();
-    return (version != null && version.startsWith("4.")) ? COMPILER_CONFIG_XML_SUFFIX_FLEXMOJOS_4 : COMPILER_CONFIG_XML_SUFFIX_FLEXMOJOS_3;
+  protected String getCompilerConfigXmlSuffix() {
+    return "-config-report.xml";
   }
-
 }

@@ -31,11 +31,14 @@ public class GenerateFlexConfigFilesForMxModulesTask extends MavenProjectsProces
   // compilation of modules should not overwrtite report files prodiced by main application compilation so some compiler options should be excluded
   private static final String[] ELEMENTS_TO_REMOVE = {"dump-config", "link-report", "resource-bundle-list"};
 
-  public GenerateFlexConfigFilesForMxModulesTask(final Module module,
+  private final String compilerConfigXmlSuffix;
+
+  public GenerateFlexConfigFilesForMxModulesTask(final String compilerConfigXmlSuffix, final Module module,
                                                  final MavenProject mavenProject,
                                                  final MavenProjectsTree mavenProjectsTree) {
     super(mavenProject, mavenProjectsTree);
     myModule = module;
+    this.compilerConfigXmlSuffix = compilerConfigXmlSuffix;
   }
 
   public void perform(final Project project,
@@ -56,8 +59,6 @@ public class GenerateFlexConfigFilesForMxModulesTask extends MavenProjectsProces
         indicator.setText("Generating Flex compiler configuration file for " + config.OUTPUT_FILE_NAME);
 
         final String configFilePath = config.CUSTOM_CONFIG_FILE;
-        final String compilerConfigXmlSuffix =
-          FlexMojos3FacetImporter.getCompilerConfigXmlSuffix(FlexMojos3FacetImporter.getFlexmojosPlugin(myMavenProject));
         assert configFilePath.endsWith(compilerConfigXmlSuffix);
         final String outputFilePath = configFilePath.replace(compilerConfigXmlSuffix, ".swf");
 
