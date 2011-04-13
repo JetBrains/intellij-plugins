@@ -3,8 +3,6 @@ package com.intellij.flex.maven;
 import org.apache.maven.model.Build;
 import org.apache.maven.project.MavenProject;
 import org.sonatype.flexmojos.compiler.*;
-import org.sonatype.flexmojos.configurator.Configurator;
-import org.sonatype.flexmojos.configurator.ConfiguratorException;
 import org.sonatype.flexmojos.generator.iface.StringUtil;
 
 import java.io.*;
@@ -15,9 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class IdeaConfigurator implements Configurator {
-  @SuppressWarnings({"FieldCanBeLocal"})
-  private MavenProject project;
+public class IdeaConfigurator {
   private OutputStreamWriter out;
 
   private static final Map<String, String> childTagNameMap = new HashMap<String, String>(9);
@@ -36,38 +32,20 @@ public class IdeaConfigurator implements Configurator {
     childTagNameMap.put("theme", "filename");
   }
 
-  @Override
-  public void buildConfiguration(ICommandLineConfiguration configuration, File sourceFile, Map<String, Object> parameters) throws ConfiguratorException {
-    try {
-      init(parameters);
-      build(configuration, ICommandLineConfiguration.class, "\n\t", null);
-
-      out.append("\n\t<file-specs>\n\t\t<path-element>").append(sourceFile.getAbsolutePath()).append("</path-element>\n\t</file-specs>");
-      close();
-    }
-    catch (Exception e) {
-      throw new ConfiguratorException(e.getMessage(), e);
-    }
+  public void buildConfiguration(ICommandLineConfiguration configuration, File sourceFile) throws Exception {
+    build(configuration, ICommandLineConfiguration.class, "\n\t", null);
+    out.append("\n\t<file-specs>\n\t\t<path-element>").append(sourceFile.getAbsolutePath()).append("</path-element>\n\t</file-specs>");
+    close();
   }
 
-  @Override
-  public void buildConfiguration(ICompcConfiguration configuration, Map<String, Object> parameters) throws ConfiguratorException {
-    try {
-      init(parameters);
-      build(configuration, ICompcConfiguration.class, "\n\t", null);
-      close();
-    }
-    catch (Exception e) {
-      throw new ConfiguratorException(e.getMessage(), e);
-    }
+  public void buildConfiguration(ICompcConfiguration configuration) throws Exception {
+    build(configuration, ICompcConfiguration.class, "\n\t", null);
+    close();
   }
 
-  private void init(Map<String, Object> parameters) throws IOException {
-    project = (MavenProject) parameters.get("project");
-
+  public void init(MavenProject project, String classifier) throws IOException {
     Build build = project.getBuild();
     StringBuilder pathBuilder = new StringBuilder(build.getDirectory()).append(File.separatorChar).append(build.getFinalName());
-    String classifier = (String) parameters.get("classifier");
     if (classifier != null) {
       pathBuilder.append('-').append(classifier);
     }
@@ -105,7 +83,7 @@ public class IdeaConfigurator implements Configurator {
         continue;
       }
 
-      if (methodName.equals("getFixedLiteralVector") && !((Boolean) value)) {
+      if (methodName.equals("getFixedLiteralVector") && !((Boolean)value)) {
         continue;
       }
 
@@ -128,18 +106,18 @@ public class IdeaConfigurator implements Configurator {
         final IRuntimeSharedLibraryPath[] values;
         if (returnType.isArray()) {
           //noinspection ConstantConditions
-          values = (IRuntimeSharedLibraryPath[]) value;
+          values = (IRuntimeSharedLibraryPath[])value;
         }
         else {
           //noinspection ConstantConditions
-          values = new IRuntimeSharedLibraryPath[]{(IRuntimeSharedLibraryPath) value};
+          values = new IRuntimeSharedLibraryPath[]{(IRuntimeSharedLibraryPath)value};
         }
 
         for (IRuntimeSharedLibraryPath arg : values) {
           out.append("\n\t<").append(name).append(">\n\t\t<path-element>").append(arg.pathElement()).append("</path-element>");
 
           //noinspection unchecked
-          for (Map.Entry<String, String> entry : (Set<Map.Entry<String, String>>) arg.rslUrl().entrySet()) {
+          for (Map.Entry<String, String> entry : (Set<Map.Entry<String, String>>)arg.rslUrl().entrySet()) {
             out.append("\n\t\t<rsl-url>").append(entry.getKey()).append("</rsl-url>");
 
             if (entry.getValue() != null) {
@@ -155,19 +133,19 @@ public class IdeaConfigurator implements Configurator {
         Class<?> type = returnType;
         if (type.isArray()) {
           //noinspection ConstantConditions
-          values = (IFlexArgument[]) value;
+          values = (IFlexArgument[])value;
           type = returnType.getComponentType();
         }
         else {
           //noinspection ConstantConditions
-          values = new IFlexArgument[]{(IFlexArgument) value};
+          values = new IFlexArgument[]{(IFlexArgument)value};
           type = returnType;
         }
 
         for (IFlexArgument iFlexArgument : values) {
           out.append(indent).append('<').append(name).append('>');
 
-          for (String argMethodName : (String[]) type.getField("ORDER").get(iFlexArgument)) {
+          for (String argMethodName : (String[])type.getField("ORDER").get(iFlexArgument)) {
             Object argValue = type.getDeclaredMethod(argMethodName).invoke(iFlexArgument);
             if (argValue == null) {
               throw new UnsupportedOperationException();
@@ -184,15 +162,16 @@ public class IdeaConfigurator implements Configurator {
 //              }
             }
             else {
-              writeTag(indent, argMethodName, (String) argValue);
+              writeTag(indent, argMethodName, (String)argValue);
             }
           }
 
           out.append(indent).append("</").append(name).append('>');
         }
       }
-      else if (configuration instanceof IMetadataConfiguration && (name.equals("language") || name.equals("creator") || name.equals("publisher"))) {
-        for (String v : (String[]) value) {
+      else if (configuration instanceof IMetadataConfiguration &&
+               (name.equals("language") || name.equals("creator") || name.equals("publisher"))) {
+        for (String v : (String[])value) {
           out.append(indent).append("<").append(name).append(">").append(v).append("</").append(name).append('>');
         }
       }
@@ -200,10 +179,10 @@ public class IdeaConfigurator implements Configurator {
         Object[] values;
         if (returnType.isArray()) {
           //noinspection ConstantConditions
-          values = (Object[]) value;
+          values = (Object[])value;
         }
         else {
-          values = ((Collection<?>) value).toArray();
+          values = ((Collection<?>)value).toArray();
         }
 
         out.append(indent).append('<').append(name);

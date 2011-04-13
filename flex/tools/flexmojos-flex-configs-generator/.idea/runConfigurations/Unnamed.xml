@@ -5,14 +5,14 @@
         <MavenGeneralSettings>
           <option name="checksumPolicy" value="FAIL" />
           <option name="failureBehavior" value="FAST" />
+          <option name="localRepository" value="" />
           <option name="mavenHome" value="" />
-          <option name="mavenSettingsFile" value="" />
           <option name="nonRecursive" value="false" />
-          <option name="overriddenLocalRepository" value="" />
           <option name="pluginUpdatePolicy" value="DO_NOT_UPDATE" />
           <option name="printErrorStackTraces" value="false" />
           <option name="snapshotUpdatePolicy" value="ALWAYS_UPDATE" />
           <option name="usePluginRegistry" value="false" />
+          <option name="userSettingsFile" value="" />
           <option name="workOffline" value="true" />
         </MavenGeneralSettings>
       </option>

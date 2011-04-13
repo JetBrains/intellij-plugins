@@ -10,19 +10,19 @@
 
   <groupId>com.intellij.flex.maven</groupId>
   <artifactId>flexmojos-idea-configurator</artifactId>
-  <!--<version>1.0.3</version>-->
-  <version>1.0.4-de</version>
+  <version>1.1</version>
+
+  <packaging>maven-plugin</packaging>
 
   <properties>
-    <maven.version>3.0.2</maven.version>
+    <maven.version>3.0.3</maven.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.sonatype.flexmojos</groupId>
-      <artifactId>flexmojos-configurator</artifactId>
-      <!--<version>4.0-beta-4</version>-->
-      <version>4.0-de4</version>
+      <artifactId>flexmojos-maven-plugin</artifactId>
+      <version>4.0-de5</version>
     </dependency>
 
     <dependency>
