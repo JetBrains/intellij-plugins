@@ -31,14 +31,14 @@
         <MavenRunnerParameters>
           <option name="goals">
             <list>
-              <option value="org.sonatype.flexmojos:flexmojos-maven-plugin:4.0-de3:configurator" />
+              <option value="com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.1:generateConfig" />
               <option value="-e" />
             </list>
           </option>
           <option name="profiles">
             <set />
           </option>
-          <option name="workingDirPath" value="$PROJECT_DIR$/../flex-ui-designer/shared" />
+          <option name="workingDirPath" value="$PROJECT_DIR$/../idea/flex/tools/flex-ui-designer" />
         </MavenRunnerParameters>
       </option>
     </MavenSettings>
@@ -46,6 +46,9 @@
       <option name="DEBUG_PORT" value="63374" />
       <option name="TRANSPORT" value="0" />
       <option name="LOCAL" value="true" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="Profile ">
+      <option name="myExternalizedOptions" value="&#10;additional-options2=onexit\=snapshot&#10;" />
     </RunnerSettings>
     <RunnerSettings RunnerId="Run" />
     <ConfigurationWrapper RunnerId="Debug" />

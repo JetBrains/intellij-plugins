@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.flyti</groupId>
+    <artifactId>java-forge</artifactId>
+    <version>3</version>
+  </parent>
+
+  <groupId>com.intellij.flex.maven</groupId>
+  <artifactId>idea-flexmojos-maven-plugin</artifactId>
+  <version>1.1</version>
+
+  <packaging>maven-plugin</packaging>
+
+  <properties>
+    <maven.version>3.0.3</maven.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-maven-plugin</artifactId>
+      <version>4.0-beta-7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-maven-plugin</artifactId>
+      <version>4.0-beta-7</version>
+      <type>maven-plugin</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${maven.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${maven.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-component-metadata</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.ops4j</groupId>
+        <artifactId>maven-inherit-plugin</artifactId>
+        <version>1.2-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>inherit</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/flexmojos-idea-configurator.iml" filepath="$PROJECT_DIR$/flexmojos-idea-configurator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dream-way/flexmojos-idea-configurator (1).iml" filepath="$PROJECT_DIR$/dream-way/flexmojos-idea-configurator (1).iml" />
+      <module fileurl="file://$PROJECT_DIR$/new-way/idea-flexmojos-maven-plugin.iml" filepath="$PROJECT_DIR$/new-way/idea-flexmojos-maven-plugin.iml" />
     </modules>
   </component>
 </project>
