@@ -66,7 +66,6 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
 
     final List<FtlVariable> result = new ArrayList<FtlVariable>();
     result.add(new MyFtlLightVariable("stack", file, (FtlType) null));
-    result.add(new MyFtlLightVariable("action", file, (FtlType) null));
     result.add(new MyFtlLightVariable("response", file, "javax.servlet.http.HttpServletResponse"));
     result.add(new MyFtlLightVariable("res", file, "javax.servlet.http.HttpServletResponse"));
     result.add(new MyFtlLightVariable("request", file, "javax.servlet.http.HttpServletRequest"));
@@ -98,7 +97,9 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
                    file.getManager().areElementsEquivalent(file.getOriginalFile(), target))) {
                 final PsiClassType actionType =
                   JavaPsiFacade.getInstance(actionClass.getProject()).getElementFactory().createType(actionClass);
-                result.add(new MyFtlLightVariable("", action.getXmlTag(), FtlPsiType.wrap(actionType)));
+                final FtlPsiType ftlPsiType = FtlPsiType.wrap(actionType);
+                result.add(new MyFtlLightVariable("", action.getXmlTag(), ftlPsiType));
+                result.add(new MyFtlLightVariable("action", action.getXmlTag(), ftlPsiType));
                 return false; // stop after first match
               }
             }

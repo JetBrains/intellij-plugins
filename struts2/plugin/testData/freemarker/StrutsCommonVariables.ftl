@@ -1,5 +1,4 @@
 ${stack}
-${action}
 ${request}
 ${req}
 ${response}
