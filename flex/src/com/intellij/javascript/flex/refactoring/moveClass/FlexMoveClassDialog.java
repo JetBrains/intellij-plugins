@@ -241,4 +241,9 @@ public class FlexMoveClassDialog extends RefactoringDialog {
     }
     invokeRefactoring(processor);
   }
+
+  @Override
+  protected String getHelpId() {
+    return myFileLocal ? "Move_Inner_to_Upper_Level_Dialog_for_ActionScript" : "refactoring.moveClass";
+  }
 }
