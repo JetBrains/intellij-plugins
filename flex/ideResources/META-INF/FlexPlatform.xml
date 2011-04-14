@@ -147,8 +147,6 @@
 
     <extensionPoint name="debuggerEditorTextProvider" beanClass="com.intellij.lang.LanguageExtensionPoint" />
 
-    <extensionPoint name="stackFrameFilter" interface="com.intellij.execution.filters.StackFrameFilter"/>
-
     <extensionPoint name="paletteItemProvider" area="IDEA_PROJECT" interface="com.intellij.ide.palette.PaletteItemProvider"/>
 
     <extensionPoint name="javadocTagInfo" area="IDEA_PROJECT" interface="com.intellij.psi.javadoc.JavadocTagInfo"/>
@@ -778,10 +776,6 @@
     <gotoFileContributor implementation="com.intellij.ide.util.gotoByName.ProjectBaseDirNavigationContributor"/>
 
     <consoleFilterProvider implementation="com.intellij.execution.filters.DefaultConsoleFiltersProvider"/>
-    <console.folding implementation="com.intellij.execution.filters.AuxiliaryCallsFolding"/>
-
-    <stackFrameFilter implementation="com.intellij.execution.filters.ReflectionStackFrameFilter"/>
-    <stackFrameFilter implementation="com.intellij.execution.filters.RmiStackFrameFilter"/>
 
     <debuggerEditorTextProvider language="JAVA" implementationClass="com.intellij.debugger.impl.JavaEditorTextProviderImpl"/>
 
