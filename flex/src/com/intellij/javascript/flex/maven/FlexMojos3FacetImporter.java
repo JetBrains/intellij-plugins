@@ -5,6 +5,7 @@ import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -278,7 +279,9 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
 
   protected void addGenerateFlexConfigTask(List<MavenProjectsProcessorTask> postTasks, FlexFacet facet,
                                            MavenProject project, MavenProjectsTree mavenTree) {
-    postTasks.add(new GenerateFlexConfigTask(facet, project, mavenTree, FLEXMOJOS_GROUP_ID, FLEXMOJOS_ARTIFACT_ID, this));
+    if (FlexCompilerProjectConfiguration.getInstance(facet.getModule().getProject()).GENERATE_FLEXMOJOS_CONFIGS) {
+      postTasks.add(new GenerateFlexConfigTask(facet, project, mavenTree, FLEXMOJOS_GROUP_ID, FLEXMOJOS_ARTIFACT_ID, this));
+    }
   }
 
   private static void ensureSdkHasRequiredAdditionalJarPaths(final @NotNull Sdk flexSdk,

@@ -6,5 +6,6 @@
     <importer implementation="com.intellij.javascript.flex.maven.FlexMojos2FacetImporter"/>
     <importer implementation="com.intellij.javascript.flex.maven.FlexMojos3FacetImporter"/>
     <importer implementation="com.intellij.javascript.flex.maven.FlexMojos4FacetImporter"/>
+    <additional.importing.settings implementation="com.intellij.javascript.flex.maven.FlexmojosImportingSettings"/>
   </extensions>
 </idea-plugin>
