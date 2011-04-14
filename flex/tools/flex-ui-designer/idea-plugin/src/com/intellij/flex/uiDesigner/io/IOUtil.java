@@ -21,4 +21,19 @@ public final class IOUtil {
   public static int sizeOf(int counter) {
     return counter < 0x80 ? 1 : 2;
   }
+
+  public static byte[] getBytes(ByteProvider... byteProviders) {
+    int size = 0;
+    for (ByteProvider byteProvider : byteProviders) {
+      size += byteProvider.size();
+    }
+
+    byte[] bytes = new byte[size];
+    int offset = 0;
+    for (ByteProvider byteProvider : byteProviders) {
+      offset = byteProvider.writeTo(bytes, offset);
+    }
+
+    return bytes;
+  }
 }

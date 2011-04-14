@@ -1,5 +1,6 @@
-package com.intellij.flex.uiDesigner.flex {
+package com.intellij.flex.uiDesigner.css {
 import com.intellij.flex.uiDesigner.StringRegistry;
+import com.intellij.flex.uiDesigner.flex.ClassReference;
 
 import flash.utils.IDataInput;
 import flash.utils.IDataOutput;

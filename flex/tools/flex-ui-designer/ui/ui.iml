@@ -20,7 +20,7 @@
         <option name="TARGET_PLAYER_VERSION" value="" />
         <option name="STATIC_LINK_RUNTIME_SHARED_LIBRARIES" value="false" />
         <option name="USE_LOCALE_SETTINGS" value="true" />
-        <option name="LOCALE" value="" />
+        <option name="LOCALE" value="en_US" />
         <option name="ADDITIONAL_COMPILER_OPTIONS" value="" />
         <option name="PATH_TO_SERVICES_CONFIG_XML" value="" />
         <option name="CONTEXT_ROOT" value="" />
@@ -36,6 +36,7 @@
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/flex" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/locales/en_US" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>

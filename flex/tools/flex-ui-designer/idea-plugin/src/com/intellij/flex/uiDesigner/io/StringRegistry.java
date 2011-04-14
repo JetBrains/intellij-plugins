@@ -5,40 +5,21 @@ import gnu.trove.TObjectIntIterator;
 import org.jetbrains.annotations.Nullable;
 
 public class StringRegistry {
-  private final ObjectIntHashMap<String> table = new ObjectIntHashMap<String>(1024);
-  //  private final Map<String, Integer> table = new LinkedHashMap<String, Integer>();
+  private final TransactionableStringIntHashMap table = new TransactionableStringIntHashMap(1024, 1);
   private StringWriter activeWriter;
-  
-  private int lastCommitedTableSize;
 
   public static StringRegistry getInstance() {
     return ServiceManager.getService(StringRegistry.class);
   }
   
   private void startChange(StringWriter activeWriter) {
-    lastCommitedTableSize = table.size();
+    table.start();
     assert this.activeWriter == null;
     this.activeWriter = activeWriter;
   }
   
   private void rollbackChange() {
-    if (lastCommitedTableSize != table.size()) {
-      final int size = table.size();
-      TObjectIntIterator<String> iterator = table.iterator();
-      String[] newStrings = new String[table.size() - lastCommitedTableSize];
-      int newStringIndex = 0;
-      for (int i = size; i-- > 0; ) {
-        iterator.advance();
-        if (iterator.value() > lastCommitedTableSize) {
-          newStrings[newStringIndex++] = iterator.key();
-        }
-      }
-      
-      assert newStrings.length == newStringIndex;
-      for (String newString : newStrings) {
-        table.remove(newString);
-      }
-    }
+    table.rollback();
 
     resetAfterChange();
   }

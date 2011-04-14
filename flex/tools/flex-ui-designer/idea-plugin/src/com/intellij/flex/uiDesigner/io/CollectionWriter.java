@@ -7,7 +7,7 @@ abstract class CollectionWriter {
   protected final ByteArrayOutputStreamEx byteOutput;
 
   protected final AmfOutputStream headerOutput;
-  protected final AmfOutputStream out;
+  protected final TransactionableAmfOutputStream out;
 
   protected int counter = 0;
 
@@ -18,16 +18,15 @@ abstract class CollectionWriter {
     byteOutput = new ByteArrayOutputStreamEx(bodyBufferSize);
 
     headerOutput = new AmfOutputStream(headerByteOutput);
-    out = new AmfOutputStream(byteOutput);
+    out = new TransactionableAmfOutputStream(byteOutput);
 
     isReferenceTablesShared = sharedReferenceTablesOwner != null;
     if (isReferenceTablesShared) {
       if (sharedReferenceTablesOwner.headerOutput.stringTable == null) {
-        sharedReferenceTablesOwner.headerOutput.stringTable = sharedReferenceTablesOwner.out.stringTable = new ObjectIntHashMap<String>()
-        ;
+        sharedReferenceTablesOwner.headerOutput.stringTable = sharedReferenceTablesOwner.out.stringTable = new TransactionableStringIntHashMap();
       }
       if (sharedReferenceTablesOwner.headerOutput.traitsTable == null) {
-        sharedReferenceTablesOwner.headerOutput.traitsTable = sharedReferenceTablesOwner.out.traitsTable = new ObjectIntHashMap<String>();
+        sharedReferenceTablesOwner.headerOutput.traitsTable = sharedReferenceTablesOwner.out.traitsTable = new TransactionableStringIntHashMap();
       }
 
       headerOutput.stringTable = out.stringTable = sharedReferenceTablesOwner.headerOutput.stringTable;
@@ -60,8 +59,6 @@ abstract class CollectionWriter {
     out.write(Amf3Types.OBJECT);
     out.writeObjectTraits(className);
   }
-
-  abstract byte[] get();
 
   public void writeTo(AmfOutputStream out) {
     writeHeader(out);

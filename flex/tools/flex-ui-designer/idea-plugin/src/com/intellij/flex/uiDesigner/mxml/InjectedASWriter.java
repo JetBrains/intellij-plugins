@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
+import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.lang.javascript.JSTokenTypes;
@@ -8,12 +9,10 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -342,20 +341,9 @@ class InjectedASWriter {
         for (JSAttributeNameValuePair p : attribute.getValues()) {
           final String name = p.getName();
           if (name == null || name.equals("source")) {
-            JSFileReference fileReference = (JSFileReference)p.getReferences()[0];
-            PsiFileSystemItem psiFile = fileReference.resolve();
-            if (psiFile == null) {
-              reportError(fileReference.getUnresolvedMessagePattern());
+            if ((source = InjectionUtil.getReferencedFile(p, problems)) == null) {
+              return IGNORE;
             }
-            else if (psiFile.isDirectory()) {
-              reportError(FlexUIDesignerBundle.message("error.embed.source.is.directory", fileReference.getText()));
-            }
-            else {
-              source = psiFile.getVirtualFile();
-              continue;
-            }
-
-            return IGNORE;
           }
           else if (name.equals("mimeType")) {
             mimeType = p.getSimpleValue();

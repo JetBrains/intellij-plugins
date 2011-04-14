@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.io;
 
-public class VectorWriter extends CollectionWriter {
+import org.jetbrains.annotations.Nullable;
+
+public class VectorWriter extends CollectionWriter implements ByteProvider {
   private final String elementClassName;
   private final String vectorClassName;
 
@@ -17,7 +19,7 @@ public class VectorWriter extends CollectionWriter {
     this(elementClassName, null, sharedReferenceTablesOwner);
   }
 
-  public VectorWriter(String elementClassName, String vectorClassName, CollectionWriter sharedReferenceTablesOwner) {
+  public VectorWriter(String elementClassName, @Nullable String vectorClassName, @Nullable CollectionWriter sharedReferenceTablesOwner) {
     super(1 + 3 + 1, 1024 * 8, sharedReferenceTablesOwner);
 
     this.elementClassName = elementClassName;
@@ -25,12 +27,18 @@ public class VectorWriter extends CollectionWriter {
   }
 
   public AmfOutputStream getOutputForIteration() {
+    out.start();
     out.write(Amf3Types.OBJECT);
     out.writeObjectTraits(elementClassName);
 
     counter++;
 
     return out;
+  }
+
+  public void rollbackLastIteration() {
+    counter--;
+    out.rollback();
   }
 
   public AmfOutputStream getOutputForCustomData() {
@@ -51,25 +59,18 @@ public class VectorWriter extends CollectionWriter {
     out.write(1);
   }
 
-  public byte[] get() {
+  @Override
+  public int size() {
     writeHeader(headerOutput);
-
-    byte[] bytes = new byte[headerOutput.size() + out.size()];
-    headerByteOutput.writeTo(bytes, 0);
-    byteOutput.writeTo(bytes, headerOutput.size());
-    return bytes;
+    return headerOutput.size() + out.size();
   }
 
-  public byte[] get(StringRegistry.StringWriter stringWriter) {
-    writeHeader(headerOutput);
+  @Override
+  public int writeTo(byte[] bytes, int offset) {
+    headerByteOutput.writeTo(bytes, offset);
+    offset += headerOutput.size();
+    byteOutput.writeTo(bytes, offset);
 
-    int stringWriterSize = stringWriter.size();
-    byte[] bytes = new byte[stringWriterSize + headerOutput.size() + out.size()];
-    stringWriter.writeTo(bytes);
-    headerByteOutput.writeTo(bytes, stringWriterSize);
-    byteOutput.writeTo(bytes, stringWriterSize + headerOutput.size());
-
-    stringWriter.finishChange();
-    return bytes;
+    return offset + byteOutput.size();
   }
 }

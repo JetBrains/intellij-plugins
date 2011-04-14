@@ -53,11 +53,11 @@ public class InfoList<E,I extends InfoList.Info> {
     freeIndices.resetQuick();
   }
 
-  public static abstract class Info<E> {
+  public static class Info<E> {
     private int id = -1;
     protected final E element;
 
-    protected Info(E element) {
+    public Info(E element) {
       this.element = element;
     }
   }

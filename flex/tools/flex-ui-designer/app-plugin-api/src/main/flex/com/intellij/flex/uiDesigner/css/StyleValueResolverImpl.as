@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.css {
 import com.intellij.flex.uiDesigner.flex.ClassReference;
-import com.intellij.flex.uiDesigner.flex.ClassReferenceImpl;
+import com.intellij.flex.uiDesigner.css.ClassReferenceImpl;
 
 import flash.system.ApplicationDomain;
 

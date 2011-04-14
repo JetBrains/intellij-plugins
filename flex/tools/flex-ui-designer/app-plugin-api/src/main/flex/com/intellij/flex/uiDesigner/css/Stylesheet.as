@@ -7,6 +7,8 @@ import flash.utils.IDataOutput;
 import flash.utils.IExternalizable;
 
 public class Stylesheet implements IExternalizable {
+  private var usedImages:Vector.<int>;
+
   private var _namespaces:Dictionary;
   public function get namespaces():Dictionary {
     return _namespaces;
@@ -23,7 +25,7 @@ public class Stylesheet implements IExternalizable {
   public function readExternal(input:IDataInput):void {
     _rulesets = input.readObject();
     
-    const n:int = input.readUnsignedByte();
+    var n:int = input.readUnsignedByte();
     if (n > 0) {
       var stringRegistry:StringRegistry = StringRegistry.instance;
       _namespaces = new Dictionary();
@@ -31,6 +33,8 @@ public class Stylesheet implements IExternalizable {
         _namespaces[stringRegistry.read(input)] = stringRegistry.read(input);
       }
     }
+
+    usedImages = input.readObject();
   }
 }
 }

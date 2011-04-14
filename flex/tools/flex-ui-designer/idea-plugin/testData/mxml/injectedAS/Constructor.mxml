@@ -9,10 +9,8 @@
 
   <mx:Form horizontalCenter="0" top="10" width="100%">
     <mx:FormItem label="date">
-      <mx:DateField id="dateDiffusion" yearNavigationEnabled="true"
-                    disabledRanges="{[ {rangeEnd: new Date(2009, 11, 30)} ]}" color="0x000000"
-                    showToday="true"
-                    labelFunction="displayFrenchDate"/>
+      <mx:DateField id="dateDiffusion" yearNavigationEnabled="true" showToday="true" labelFunction="displayFrenchDate"
+                    disabledRanges="{[ {rangeEnd: new Date(2009, 11, 30)} ]}" color="0x000000"/>
     </mx:FormItem>
   </mx:Form>
 </VGroup>

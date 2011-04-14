@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 
-public final class AmfOutputStream extends PrimitiveAmfOutputStream {
+public class AmfOutputStream extends PrimitiveAmfOutputStream {
   private static final byte[] STRING_ALIAS = {3, 115};
 
-  ObjectIntHashMap<String> stringTable;
-  ObjectIntHashMap<String> traitsTable;
+  TransactionableStringIntHashMap stringTable;
+  TransactionableStringIntHashMap traitsTable;
 
   public AmfOutputStream(OutputStream out) {
     super(out);
@@ -136,7 +136,7 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
 
   private boolean byReference(String s) {
     if (stringTable == null) {
-      stringTable = new ObjectIntHashMap<String>(32);
+      stringTable = new TransactionableStringIntHashMap(32);
     }
     else {
       int reference = stringTable.get(s);
@@ -159,7 +159,7 @@ public final class AmfOutputStream extends PrimitiveAmfOutputStream {
 
   private boolean traitsByReference(String s) {
     if (traitsTable == null) {
-      traitsTable = new ObjectIntHashMap<String>(8);
+      traitsTable = new TransactionableStringIntHashMap(8);
     }
     else {
       int reference = traitsTable.get(s);

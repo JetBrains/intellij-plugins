@@ -81,7 +81,7 @@ public class Client implements Closable {
 
     mxmlWriter.reset();
 
-    BinaryFileManager.getInstance().reset(sessionId);
+    BinaryFileManager.getInstance().reset();
 
     try {
       out.closeWithoutFlush();

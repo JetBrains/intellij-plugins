@@ -15,6 +15,10 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream {
     return count;
   }
 
+  public void setPosition(int newPosition) {
+    count = newPosition;
+  }
+
   public int allocate(int size) {
     int insertPosition = count;
     // we can't simple increment count — we must erase old buffer content

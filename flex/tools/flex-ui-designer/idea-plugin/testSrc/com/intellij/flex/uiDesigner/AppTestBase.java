@@ -37,9 +37,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   protected static final String PASSED = "__passed__";
   protected static final Key<Boolean> IS_USER_LIB = Key.create("FUD_IS_USER_LIB");
   private static final String BASE_PATH = "/mxml";
-  
-  private static int sessionId;
-  
+
   protected String flexSdkRootPath;
   protected final List<Pair<VirtualFile, VirtualFile>> libs = new ArrayList<Pair<VirtualFile, VirtualFile>>();
   
@@ -158,9 +156,8 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   @Override
   protected void tearDown() throws Exception {
     StringRegistry.getInstance().reset();
-    
-    sessionId++;
-    BinaryFileManager.getInstance().reset(sessionId);
+
+    BinaryFileManager.getInstance().reset();
 
     for (Pair<VirtualFile, VirtualFile> lib : libs) {
       LibraryCollector.clearCache(lib.getSecond());

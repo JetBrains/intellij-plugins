@@ -10,7 +10,7 @@ public class PrimitiveAmfOutputStream extends OutputStream {
   private static final int INT28_MAX_VALUE = 0x0FFFFFFF;
   private static final int INT28_MIN_VALUE = 0xF0000000;
 
-  private AbstractByteArrayOutputStream out;
+  protected AbstractByteArrayOutputStream out;
 
   public PrimitiveAmfOutputStream(@NotNull OutputStream out) {
     this.out = (AbstractByteArrayOutputStream)out;

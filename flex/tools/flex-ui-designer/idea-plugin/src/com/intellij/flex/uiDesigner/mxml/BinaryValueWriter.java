@@ -18,15 +18,15 @@ abstract class BinaryValueWriter extends AbstractPrimitiveValueWriter {
   }
 
   protected int checkRegistered(PrimitiveAmfOutputStream out) {
-    int id = BinaryFileManager.getInstance().getId(virtualFile);
-    if (id == -1) {
-      id = BinaryFileManager.getInstance().add(virtualFile);
-      out.writeUInt29(id);
-      return id;
+    BinaryFileManager binaryFileManager = BinaryFileManager.getInstance();
+    if (binaryFileManager.isRegistered(virtualFile)) {
+      out.writeUInt29(binaryFileManager.getId(virtualFile));
+      return -1;
     }
     else {
+      int id = binaryFileManager.add(virtualFile);
       out.writeUInt29(id);
-      return -1;
+      return id;
     }
   }
 

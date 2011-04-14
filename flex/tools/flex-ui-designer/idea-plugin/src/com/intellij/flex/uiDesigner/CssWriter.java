@@ -1,9 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.Amf3Types;
-import com.intellij.flex.uiDesigner.io.AmfOutputStream;
-import com.intellij.flex.uiDesigner.io.StringRegistry;
-import com.intellij.flex.uiDesigner.io.VectorWriter;
+import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
@@ -22,12 +19,16 @@ import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.CssUtil;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlToken;
 import com.intellij.xml.XmlElementDescriptor;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class CssWriter {
   private static final Logger LOG = Logger.getInstance(CssWriter.class.getName());
+
+  private final VectorIntWriter usedImages = new VectorIntWriter();
 
   private AmfOutputStream propertyOut;
   private final VectorWriter rulesetVectorWriter = new VectorWriter("d");
@@ -41,6 +42,7 @@ public class CssWriter {
 
   public byte[] write(VirtualFile file, Module module) {
     Document document = FileDocumentManager.getInstance().getDocument(file);
+    assert document != null;
     CssFile cssFile = (CssFile)PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document);
     return write(cssFile, document, module);
   }
@@ -50,6 +52,8 @@ public class CssWriter {
   }
 
   public byte[] write(CssFile cssFile, Document document, Module module) {
+    usedImages.prepareIteration();
+
     rulesetVectorWriter.prepareIteration();
 
     CssStylesheet stylesheet = cssFile.getStylesheet();
@@ -77,16 +81,22 @@ public class CssWriter {
         CssTermList value = declaration.getValue();
 
         propertyOut = declarationVectorWriter.getOutputForIteration();
-        stringWriter.writeNullable(declaration.getPropertyName(), propertyOut);
+        try {
+          stringWriter.write(declaration.getPropertyName(), propertyOut);
 
-        textOffset = declaration.getTextOffset();
-        propertyOut.writeUInt29(documentWindow == null ? textOffset : documentWindow.injectedToHost(textOffset));
+          textOffset = declaration.getTextOffset();
+          propertyOut.writeUInt29(documentWindow == null ? textOffset : documentWindow.injectedToHost(textOffset));
 
-        if (propertyDescriptor == null || !(propertyDescriptor instanceof FlexCssPropertyDescriptor)) {
-          writeUndefinedPropertyValue(value);
+          if (propertyDescriptor == null || !(propertyDescriptor instanceof FlexCssPropertyDescriptor)) {
+            writeUndefinedPropertyValue(value);
+          }
+          else {
+            writePropertyValue(value, ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo());
+          }
         }
-        else {
-          writePropertyValue(value, ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo());
+        catch (RuntimeException e) {
+          //LOG.warn(e);
+          declarationVectorWriter.rollbackLastIteration();
         }
       }
 
@@ -94,7 +104,6 @@ public class CssWriter {
     }
 
     AmfOutputStream outputForCustomData = rulesetVectorWriter.getOutputForCustomData();
-
     CssNamespace[] namespaces = stylesheet.getNamespaces();
     outputForCustomData.write(namespaces.length);
     if (namespaces.length > 0) {
@@ -104,7 +113,7 @@ public class CssWriter {
       }
     }
 
-    return rulesetVectorWriter.get();
+    return IOUtil.getBytes(rulesetVectorWriter, usedImages);
   }
 
   private void writeSelectors(CssRuleset ruleset, AmfOutputStream out, Module module) {
@@ -165,9 +174,13 @@ public class CssWriter {
   }
 
   private void writePropertyValue(CssTermList value, FlexStyleIndexInfo info) {
-    switch (info.getType().charAt(0)) {
+    final String type = info.getType();
+    assert type != null;
+    switch (type.charAt(0)) {
       case 'u':
-        if (info.getFormat().equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
+        final String format = info.getFormat();
+        assert format != null;
+        if (format.equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
           // http://youtrack.jetbrains.net/issue/IDEA-59632
           if (value.getText().equals("0")) {
             propertyOut.write(CssPropertyType.NUMBER);
@@ -191,6 +204,7 @@ public class CssWriter {
 
       case 'S':
         // special case: ClassReference(null);
+        //noinspection ConstantConditions
         if (value.getFirstChild().getFirstChild().getNode().getElementType() == CssElementTypes.CSS_FUNCTION) {
           propertyOut.write(CssPropertyType.NULL);
           propertyOut.write(Amf3Types.NULL);
@@ -212,6 +226,7 @@ public class CssWriter {
         break;
 
       case 'C': // Class, ClassReference("mx.skins.halo.HaloFocusRect");
+        //noinspection ConstantConditions
         writeClassReference(value.getFirstChild().getFirstChild());
         break;
 
@@ -273,7 +288,7 @@ public class CssWriter {
       }
     }
     else if (termType == CssTermTypes.IDENT) {
-      ASTNode node = value.getFirstChild().getFirstChild().getNode();
+      @SuppressWarnings({"ConstantConditions"}) ASTNode node = value.getFirstChild().getFirstChild().getNode();
       if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
         writeFunctionValueForUndefinedProperty((CssFunction)node);
       }
@@ -325,8 +340,7 @@ public class CssWriter {
         break;
 
       case 'E':
-        propertyOut.write(CssPropertyType.EMBED);
-        declarationVectorWriter.writeObjectValueHeader("e");
+        writeEmbed(cssFunction);
         break;
 
       default:
@@ -334,8 +348,43 @@ public class CssWriter {
     }
   }
 
-  @SuppressWarnings({"UnusedDeclaration"})
-  private final class FlexCssConditionKind {
+  private void writeEmbed(CssFunction cssFunction) {
+    propertyOut.write(CssPropertyType.EMBED);
+    declarationVectorWriter.writeObjectValueHeader("ei");
+
+    CssTerm[] terms = PsiTreeUtil.getChildrenOfType(PsiTreeUtil.getRequiredChildOfType(cssFunction, CssTermList.class), CssTerm.class);
+    VirtualFile source = null;
+    assert terms != null;
+    for (int i = 0, termsLength = terms.length; i < termsLength; i++) {
+      CssTerm term = terms[i];
+      final PsiElement firstChild = term.getFirstChild();
+      if (firstChild == null) {
+        throw new IllegalArgumentException("invalid property value");
+      }
+      else if (firstChild instanceof CssString) {
+        source = InjectionUtil.getReferencedFile(firstChild, new ArrayList<String>());
+      }
+      else if (firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == CssElementTypes.CSS_IDENT) {
+        String name = firstChild.getText();
+        if (name.equals("source")) {
+          source = InjectionUtil.getReferencedFile(terms[++i].getFirstChild(), new ArrayList<String>());
+        }
+      }
+    }
+
+    BinaryFileManager binaryFileManager = BinaryFileManager.getInstance();
+    final int fileId;
+    if (binaryFileManager.isRegistered(source)) {
+      fileId = binaryFileManager.getId(source);
+    }
+    else {
+      fileId = binaryFileManager.add(source);
+    }
+
+    propertyOut.writeUInt29(fileId);
+  }
+
+  private static final class FlexCssConditionKind {
     public static final int CLASS = 0;
     public static final int ID = 1;
     public static final int PSEUDO = 2;
