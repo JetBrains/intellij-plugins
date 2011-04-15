@@ -123,6 +123,8 @@
     <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider"/>
     <langCodeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptLanguageCodeStyleSettingsProvider"/>
 
+    <writingAccessProvider implementation="com.intellij.lang.javascript.flex.FlexWritingAccessProvider"/>
+
     <intentionAction>
       <className>com.intellij.lang.javascript.intentions.CreateJSSubclassIntention</className>
       <category>ActionScript</category>
