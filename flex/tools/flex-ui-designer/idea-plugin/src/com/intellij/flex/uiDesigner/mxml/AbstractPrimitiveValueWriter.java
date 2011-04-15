@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 
 abstract class AbstractPrimitiveValueWriter implements ValueWriter {
@@ -8,7 +9,7 @@ abstract class AbstractPrimitiveValueWriter implements ValueWriter {
   }
 
   @Override
-  public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
+  public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
     if (isStyle) {
       out.write(getStyleFlags());
     }
@@ -18,5 +19,5 @@ abstract class AbstractPrimitiveValueWriter implements ValueWriter {
     return isStyle ? PropertyProcessor.PRIMITIVE_STYLE : PropertyProcessor.PRIMITIVE;
   }
 
-  protected abstract void write(PrimitiveAmfOutputStream out, BaseWriter writer);
+  protected abstract void write(PrimitiveAmfOutputStream out, BaseWriter writer) throws InvalidPropertyException;
 }

@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.Client;
+import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,7 @@ class BitmapValueWriter extends BinaryValueWriter {
   }
 
   @Override
-  protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) {
+  protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) throws InvalidPropertyException {
     out.write(AmfExtendedTypes.BITMAP);
     int id;
     if ((id = checkRegistered(out)) == -1) {
@@ -41,20 +42,18 @@ class BitmapValueWriter extends BinaryValueWriter {
       image = getImage();
     }
     catch (IOException e) {
-      LOG.error(e);
-      // todo write special error image 
-      return;
+      throw new InvalidPropertyException(e, "error.cannot.write.binary.file", virtualFile.getName());
+      // todo write special error image
     }
 
     try {
-      final OutputStream output =
-        writer.getBlockOut().writeUnbufferedHeader(2 + 2 + 2 + 2 + 1 + (image.getWidth() * image.getHeight() * 4));
+      OutputStream output = writer.getBlockOut().writeUnbufferedHeader(2 + 2 + 2 + 2 + 1 + (image.getWidth() * image.getHeight() * 4));
       output.write(Client.ClientMethod.METHOD_CLASS);
       output.write(Client.ClientMethod.registerBitmap.ordinal());
       write(id, image, output);
     }
     catch (IOException e) {
-      LOG.error(e);
+      throw new InvalidPropertyException(e, "error.cannot.write.binary.file", virtualFile.getName());
     }
   }
   
@@ -106,7 +105,6 @@ class BitmapValueWriter extends BinaryValueWriter {
       out.write(byteBuffer, 0, bufferLength);
     }
   }
-  
 
   /**
    * ImageIO doesn't support TIFF, but Flex compiler too, so, we don't need JAI

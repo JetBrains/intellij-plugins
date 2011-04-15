@@ -25,9 +25,8 @@ import com.intellij.util.Processor;
 import java.util.Collection;
 
 public class ModuleInfoUtil {
-  public static void collectLocalStyleHolders(final ModuleInfo moduleInfo,
-                                              final String flexSdkVersion,
-                                              final StringRegistry.StringWriter stringWriter) {
+  public static void collectLocalStyleHolders(final ModuleInfo moduleInfo, final String flexSdkVersion,
+                                              final StringRegistry.StringWriter stringWriter, final ProblemsHolder problemsHolder) {
     final Module module = moduleInfo.getModule();
     final FlexBuildConfiguration flexBuildConfiguration;
     if (module.getModuleType() instanceof FlexModuleType) {
@@ -40,13 +39,13 @@ public class ModuleInfoUtil {
     }
 
     ApplicationManager.getApplication().runReadAction(FlexBuildConfiguration.APPLICATION.equals(flexBuildConfiguration.OUTPUT_TYPE) ?
-                                                      new ApplicationLocalStyleFinder(stringWriter, moduleInfo, flexSdkVersion) :
+                                                      new ApplicationLocalStyleFinder(stringWriter, moduleInfo, flexSdkVersion, problemsHolder) :
                                                       new Runnable() {
                                                         @Override
                                                         public void run() {
                                                           VirtualFile defaultsCss = null;
-                                                          for (VirtualFile sourceRoot : ModuleRootManager
-                                                            .getInstance(moduleInfo.getModule()).getSourceRoots(false)) {
+                                                          for (VirtualFile sourceRoot : ModuleRootManager.getInstance(
+                                                            moduleInfo.getModule()).getSourceRoots(false)) {
                                                             if ((defaultsCss = sourceRoot.findChild(OriginalLibrary.DEFAULTS_CSS)) !=
                                                                 null) {
                                                               break;
@@ -54,11 +53,9 @@ public class ModuleInfoUtil {
                                                           }
 
                                                           if (defaultsCss != null) {
-                                                            moduleInfo.addLocalStyleHolder(new LocalStyleHolder(defaultsCss,
-                                                                                                                new CssWriter
-                                                                                                                  (stringWriter)
-                                                                                                                  .write(defaultsCss,
-                                                                                                                         module)));
+                                                            moduleInfo.addLocalStyleHolder(
+                                                              new LocalStyleHolder(defaultsCss, new CssWriter(stringWriter).write(
+                                                                defaultsCss, module, problemsHolder)));
                                                           }
                                                         }
                                                       });
@@ -72,14 +69,15 @@ public class ModuleInfoUtil {
     private final ModuleInfo moduleInfo;
     private final String flexSdkVersion;
 
-    private LocalStyleWriter getStyleWriter() {
+    private LocalStyleWriter getStyleWriter(ProblemsHolder problemsHolder) {
       if (localStyleWriter == null) {
-        localStyleWriter = new LocalStyleWriter(stringWriter);
+        localStyleWriter = new LocalStyleWriter(stringWriter, problemsHolder);
       }
       return localStyleWriter;
     }
 
-    ApplicationLocalStyleFinder(StringRegistry.StringWriter stringWriter, final ModuleInfo moduleInfo, String flexSdkVersion) {
+    ApplicationLocalStyleFinder(StringRegistry.StringWriter stringWriter, final ModuleInfo moduleInfo, String flexSdkVersion,
+                                final ProblemsHolder problemsHolder) {
       this.stringWriter = stringWriter;
       this.moduleInfo = moduleInfo;
       this.flexSdkVersion = flexSdkVersion;
@@ -94,8 +92,8 @@ public class ModuleInfoUtil {
               for (final XmlTag subTag : rootTag.getSubTags()) {
                 if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
                     subTag.getLocalName().equals(FlexPredefinedTagNames.STYLE)) {
-                  if (getStyleWriter().write(subTag, moduleInfo.getModule())) {
-                    moduleInfo.addLocalStyleHolder(new LocalStyleHolder(containingFile.getVirtualFile(), getStyleWriter().getData()));
+                  if (getStyleWriter(problemsHolder).write(subTag, moduleInfo.getModule())) {
+                    moduleInfo.addLocalStyleHolder(new LocalStyleHolder(containingFile.getVirtualFile(), localStyleWriter.getData()));
                   }
                   break;
                 }

@@ -23,11 +23,13 @@ public class LibraryStyleInfoCollector implements Consumer<OriginalLibrary> {
   private final PrimitiveAmfOutputStream bytes = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(128));
   private final CssWriter cssWriter;
   private final StringRegistry.StringWriter stringWriter;
+  private final ProblemsHolder problemsHolder;
 
-  public LibraryStyleInfoCollector(Project project, Module module, StringRegistry.StringWriter stringWriter) {
+  public LibraryStyleInfoCollector(Project project, Module module, StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder) {
     this.project = project;
     this.module = module;
     this.stringWriter = stringWriter;
+    this.problemsHolder = problemsHolder;
     cssWriter = new CssWriter(this.stringWriter);
   }
 
@@ -82,7 +84,7 @@ public class LibraryStyleInfoCollector implements Consumer<OriginalLibrary> {
 
     VirtualFile defaultsCssVirtualFile = library.getDefaultsCssFile();
     if (defaultsCssVirtualFile != null) {
-      library.defaultsStyle = cssWriter.write(defaultsCssVirtualFile, module);
+      library.defaultsStyle = cssWriter.write(defaultsCssVirtualFile, module, problemsHolder);
     }
   }
 }

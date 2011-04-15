@@ -23,7 +23,6 @@ import com.intellij.psi.xml.XmlToken;
 import com.intellij.xml.XmlElementDescriptor;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class CssWriter {
   private static final Logger LOG = Logger.getInstance(CssWriter.class.getName());
@@ -36,22 +35,26 @@ public class CssWriter {
 
   private final StringRegistry.StringWriter stringWriter;
 
+  private ProblemsHolder problemsHolder;
+
   public CssWriter(StringRegistry.StringWriter stringWriter) {
     this.stringWriter = stringWriter;
   }
 
-  public byte[] write(VirtualFile file, Module module) {
+  public byte[] write(VirtualFile file, Module module, ProblemsHolder problemsHolder) {
     Document document = FileDocumentManager.getInstance().getDocument(file);
     assert document != null;
     CssFile cssFile = (CssFile)PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document);
-    return write(cssFile, document, module);
+    return write(cssFile, document, module, problemsHolder);
   }
 
-  public byte[] write(CssFile cssFile, Module module) {
-    return write(cssFile, PsiDocumentManager.getInstance(module.getProject()).getDocument(cssFile), module);
+  public byte[] write(CssFile cssFile, Module module, ProblemsHolder problemsHolder) {
+    return write(cssFile, PsiDocumentManager.getInstance(module.getProject()).getDocument(cssFile), module, problemsHolder);
   }
 
-  public byte[] write(CssFile cssFile, Document document, Module module) {
+  public byte[] write(CssFile cssFile, Document document, Module module, ProblemsHolder problemsHolder) {
+    this.problemsHolder = problemsHolder;
+
     usedImages.prepareIteration();
 
     rulesetVectorWriter.prepareIteration();
@@ -93,11 +96,16 @@ public class CssWriter {
           else {
             writePropertyValue(value, ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo());
           }
+          continue;
         }
         catch (RuntimeException e) {
-          LOG.warn(e);
-          declarationVectorWriter.rollbackLastIteration();
+          problemsHolder.add(e, declaration.getPropertyName());
         }
+        catch (Throwable e) {
+          problemsHolder.add(e);
+        }
+
+        declarationVectorWriter.rollbackLastIteration();
       }
 
       declarationVectorWriter.writeTo(rulesetOut);
@@ -173,7 +181,7 @@ public class CssWriter {
     }
   }
 
-  private void writePropertyValue(CssTermList value, FlexStyleIndexInfo info) {
+  private void writePropertyValue(CssTermList value, FlexStyleIndexInfo info) throws InvalidPropertyException {
     final String type = info.getType();
     assert type != null;
     switch (type.charAt(0)) {
@@ -268,7 +276,7 @@ public class CssWriter {
   }
 
   // 5
-  private void writeUndefinedPropertyValue(CssTermList value) {
+  private void writeUndefinedPropertyValue(CssTermList value) throws InvalidPropertyException {
     CssTerm[] terms = PsiTreeUtil.getChildrenOfType(value, CssTerm.class);
     assert terms != null && terms.length > 0;
     CssTermType termType = terms[0].getTermType();
@@ -332,7 +340,7 @@ public class CssWriter {
     }
   }
 
-  private void writeFunctionValueForUndefinedProperty(CssFunction cssFunction) {
+  private void writeFunctionValueForUndefinedProperty(CssFunction cssFunction) throws InvalidPropertyException {
     String functionName = cssFunction.getFunctionName();
     switch (functionName.charAt(0)) {
       case 'C':
@@ -348,15 +356,12 @@ public class CssWriter {
     }
   }
 
-  private void writeEmbed(CssFunction cssFunction) {
+  private void writeEmbed(CssFunction cssFunction) throws InvalidPropertyException {
     propertyOut.write(CssPropertyType.EMBED);
     declarationVectorWriter.writeObjectValueHeader("ei");
-
-    final ArrayList<String> problems = new ArrayList<String>();
-
     CssTerm[] terms = PsiTreeUtil.getChildrenOfType(PsiTreeUtil.getRequiredChildOfType(cssFunction, CssTermList.class), CssTerm.class);
     VirtualFile source = null;
-    String symbol = null;
+    @SuppressWarnings({"UnusedDeclaration"}) String symbol = null;
     assert terms != null;
     for (int i = 0, termsLength = terms.length; i < termsLength; i++) {
       CssTerm term = terms[i];
@@ -366,12 +371,12 @@ public class CssWriter {
       }
       else {
         if (firstChild instanceof CssString) {
-          source = InjectionUtil.getReferencedFile(firstChild, problems, false);
+          source = InjectionUtil.getReferencedFile(firstChild, problemsHolder, false);
         }
         else if (firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == CssElementTypes.CSS_IDENT) {
           String name = firstChild.getText();
           if (name.equals("source")) {
-            source = InjectionUtil.getReferencedFile(terms[++i].getFirstChild(), problems, false);
+            source = InjectionUtil.getReferencedFile(terms[++i].getFirstChild(), problemsHolder, false);
           }
           else if (name.equals("symbol")) {
             //noinspection ConstantConditions,UnusedAssignment
@@ -382,7 +387,7 @@ public class CssWriter {
     }
 
     if (source == null) {
-      problems.add(FlexUIDesignerBundle.message("error.embed.source.not.specified", cssFunction.getText()));
+      problemsHolder.add(FlexUIDesignerBundle.message("error.embed.source.not.specified", cssFunction.getText()));
       throw new IllegalArgumentException("todo");
     }
 
@@ -392,7 +397,7 @@ public class CssWriter {
       fileId = binaryFileManager.getId(source);
     }
     else {
-      fileId = binaryFileManager.add(source);
+      fileId = binaryFileManager.registerFile(source, BinaryFileType.IMAGE);
     }
 
     propertyOut.writeUInt29(fileId);

@@ -17,11 +17,6 @@ import static org.hamcrest.Matchers.*;
 @Flex(version="4.5")
 public class MxmlWriterTest extends MxmlWriterTestBase {
   @Override
-  protected void setUpModule() {
-    super.setUpModule();
-  }
-
-  @Override
   protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
     if (getName().equals("test45")) {
       addLibrary(model, getFudHome() + "/test-data-libs/target/test-data-libs.swc");
@@ -32,7 +27,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
 
   public void test45() throws Exception {
     changeServiceImplementation(DocumentProblemManager.class, MyDocumentProblemManager.class);
-    
+
     String testFile = System.getProperty("testFile");
     String[] files = testFile == null ? getTestFiles() : new String[]{getTestPath() + "/" + testFile + ".mxml"};
 

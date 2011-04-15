@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
+import com.intellij.flex.uiDesigner.InvalidPropertyException;
+import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
@@ -14,7 +16,6 @@ import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,23 +28,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.IGNORE;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PRIMITIVE;
 
 public class MxmlWriter {
-  static final Logger LOG = Logger.getInstance(MxmlWriter.class.getName());
-  
   static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
 
   private PrimitiveAmfOutputStream out;
 
-  private final List<String> problems = new ArrayList<String>();
+  private final ProblemsHolder problemsHolder = new ProblemsHolder();
   private final BaseWriter writer = new BaseWriter();
   private StateWriter stateWriter;
-  private final InjectedASWriter injectedASWriter = new InjectedASWriter(writer, problems);
+  private final InjectedASWriter injectedASWriter = new InjectedASWriter(writer, problemsHolder);
 
   private XmlTextValueProvider xmlTextValueProvider;
   private XmlTagValueProvider xmlTagValueProvider;
@@ -86,7 +84,7 @@ public class MxmlWriter {
 
       injectedASWriter.write();
       writer.endMessage();
-      return new Result(propertyProcessor.getUnregisteredDocumentFactories(), problems);
+      return new Result(propertyProcessor.getUnregisteredDocumentFactories(), problemsHolder);
     }
     finally {
       resetAfterMessage();
@@ -97,9 +95,9 @@ public class MxmlWriter {
     public final XmlFile[] subDocuments;
     public final String[] problems;
 
-    public Result(List<XmlFile> subDocuments, List<String> problems) {
+    public Result(List<XmlFile> subDocuments, ProblemsHolder problems) {
       this.subDocuments = subDocuments.isEmpty() ? null : subDocuments.toArray(new XmlFile[subDocuments.size()]);
-      this.problems = problems.isEmpty() ? null : problems.toArray(new String[problems.size()]);
+      this.problems = problems.isEmpty() ? null : problems.getResultList();
     }
   }
 
@@ -116,7 +114,7 @@ public class MxmlWriter {
   }
 
   private void resetAfterMessage() {
-    problems.clear();
+    problemsHolder.clear();
 
     xmlAttributeValueProvider.setAttribute(null);
     xmlTextValueProvider = null;
@@ -226,7 +224,7 @@ public class MxmlWriter {
             }
             if (type < PRIMITIVE) {
               writer.getBlockOut().setPosition(beforePosition);
-              problems.add(FlexUIDesignerBundle.message("error.unknown.attribute.value.type", descriptor.getType()));
+              problemsHolder.add(FlexUIDesignerBundle.message("error.unknown.attribute.value.type", descriptor.getType()));
             }
           }
         }
@@ -389,7 +387,7 @@ public class MxmlWriter {
       }
       else {
         // http://youtrack.jetbrains.net/issue/IDEA-66565
-        problems.add(FlexUIDesignerBundle.message("error.default.property.not.found", tag.getName(),
+        problemsHolder.add(FlexUIDesignerBundle.message("error.default.property.not.found", tag.getName(),
                                                   getDocument(tag).getLineNumber(tag.getTextOffset()) + 1));
       }
     }
@@ -488,8 +486,7 @@ public class MxmlWriter {
 
   private int writeProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
                             boolean cssDeclarationSourceDefined, Context context) {
-    String error;
-    int beforePosition = out.size();
+    final int beforePosition = out.size();
     try {
       ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
       if (valueWriter == null) {
@@ -511,24 +508,14 @@ public class MxmlWriter {
 
       return valueWriter.write(out, writer, propertyProcessor.isStyle());
     }
-    catch (InvalidPropertyException e) {
-      error = e.getMessage();
-    }
-    catch (NumberFormatException e) {
-      error = e.getMessage();
-      final String prefix = "For input string: \"";
-      if (error.startsWith(prefix)) {
-        error = error.substring(prefix.length(), error.charAt(error.length() - 1) == '"' ? error.length() - 1 : error.length());
-      }
-    }
     catch (RuntimeException e) {
-      error = e.getMessage();
-      LOG.error(e);
+      problemsHolder.add(e, descriptor.getName());
+    }
+    catch (Throwable e) {
+      problemsHolder.add(e);
     }
     
     writer.getBlockOut().setPosition(beforePosition);
-    problems.add(error);
-
     return IGNORE;
   }
 }

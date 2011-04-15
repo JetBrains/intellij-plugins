@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.CssWriter;
+import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiElement;
@@ -20,8 +21,10 @@ import java.util.List;
 public class LocalStyleWriter {
   private byte[] data;
   private final CssWriter cssWriter;
+  private final ProblemsHolder problemsHolder;
 
-  public LocalStyleWriter(StringRegistry.StringWriter stringWriter) {
+  public LocalStyleWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder) {
+    this.problemsHolder = problemsHolder;
     cssWriter = new CssWriter(stringWriter);
   }
 
@@ -61,7 +64,7 @@ public class LocalStyleWriter {
       return false;
     }
 
-    data = cssWriter.write(cssFile, module);
+    data = cssWriter.write(cssFile, module, problemsHolder);
     return true;
   }
 

@@ -5,10 +5,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 
-import java.util.List;
-
 public final class InjectionUtil {
-  public static VirtualFile getReferencedFile(PsiElement element, List<String> problems, boolean resolveToFirstIfMulti) {
+  public static VirtualFile getReferencedFile(PsiElement element, ProblemsHolder problemsHolder, boolean resolveToFirstIfMulti) {
     final PsiReference[] references = element.getReferences();
     final JSFileReference fileReference;
     int i = references.length - 1;
@@ -19,7 +17,7 @@ public final class InjectionUtil {
         break;
       }
       else if (--i < 0) {
-        problems.add("TODO text about error");
+        problemsHolder.add("TODO text about error");
         return null;
       }
     }
@@ -37,10 +35,10 @@ public final class InjectionUtil {
     }
 
     if (psiFile == null) {
-      problems.add(fileReference.getUnresolvedMessagePattern());
+      problemsHolder.add(fileReference.getUnresolvedMessagePattern());
     }
     else if (psiFile.isDirectory()) {
-      problems.add(FlexUIDesignerBundle.message("error.embed.source.is.directory", fileReference.getText()));
+      problemsHolder.add(FlexUIDesignerBundle.message("error.embed.source.is.directory", fileReference.getText()));
     }
     else {
       return psiFile.getVirtualFile();

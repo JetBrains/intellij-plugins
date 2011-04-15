@@ -26,6 +26,10 @@ public class DocumentProblemManager {
     report(project, message, MessageType.ERROR);
   }
 
+  public void report(Project project, ProblemsHolder problems) {
+    report(project, problems.getResultList());
+  }
+
   public void report(Project project, String[] problems) {
     StringBuilder builder = StringBuilderSpinAllocator.alloc();
     try {
@@ -42,6 +46,7 @@ public class DocumentProblemManager {
   }
 
   public void reportWithTitle(final Project project, String message) {
+    @SuppressWarnings({"MismatchedQueryAndUpdateOfStringBuilder"})
     StringBuilder builder = StringBuilderSpinAllocator.alloc();
     try {
       report(project, appendTitle(builder).append("<p>").append(message).append("</p></html>").toString());

@@ -87,8 +87,8 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
         registerBitmap(data);
         break;
       
-      case ClientMethod.registerSwf:
-        registerSwf(data);
+      case ClientMethod.registerBinaryFile:
+        registerBinaryFile(data);
         break;
       
       case ClientMethod.initStringRegistry:
@@ -187,6 +187,14 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     bitmapDataManager.register(id, bitmapData);
   }
   
+  private function registerBinaryFile(data:IDataInput):void {
+    var type:int = data.readByte();
+    var id:int = data.readUnsignedShort();
+    if (type == 1) {
+      registerSwf(data);
+    }
+  }
+  
   private function registerSwf(input:IDataInput):void {
     var id:int = input.readShort();
     // we cannot change Loader API
@@ -271,5 +279,5 @@ final class ClientMethod {
   public static const initStringRegistry:int = 9;
   
   public static const registerBitmap:int = 10;
-  public static const registerSwf:int = 11;
+  public static const registerBinaryFile:int = 11;
 }

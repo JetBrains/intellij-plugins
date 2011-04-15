@@ -2,6 +2,8 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
 import com.intellij.flex.uiDesigner.InjectionUtil;
+import com.intellij.flex.uiDesigner.InvalidPropertyException;
+import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.lang.javascript.JSTokenTypes;
@@ -32,7 +34,7 @@ class InjectedASWriter {
   private final BaseWriter writer;
   private ObjectReference lastObjectReference;
 
-  private final List<String> problems;
+  private final ProblemsHolder problemsHolder;
 
   private ByteRange declarationsRange;
 
@@ -43,9 +45,9 @@ class InjectedASWriter {
     }
   };
 
-  public InjectedASWriter(BaseWriter writer, List<String> problems) {
+  public InjectedASWriter(BaseWriter writer, ProblemsHolder problemsHolder) {
     this.writer = writer;
-    this.problems = problems;
+    this.problemsHolder = problemsHolder;
   }
 
   public ValueWriter processProperty(XmlElementValueProvider valueProvider, String name, @Nullable String type, boolean isStyle,
@@ -75,7 +77,7 @@ class InjectedASWriter {
   }
 
   private ValueWriter checkArray(PsiElement host, String name, boolean isStyle, @Nullable Context context) {
-    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, JSCommonTypeNames.ARRAY_CLASS_NAME, problems);
+    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, JSCommonTypeNames.ARRAY_CLASS_NAME, problemsHolder);
     InjectedLanguageUtil.enumerate(host, visitor);
     if (visitor.values != null) {
       bindingItems.add(new ArrayBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values, isStyle));
@@ -87,7 +89,7 @@ class InjectedASWriter {
   }
 
   private ValueWriter checkObject(PsiElement host, String name, boolean isStyle, @Nullable Context context, @Nullable String type) {
-    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, type, problems);
+    InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, type, problemsHolder);
     InjectedLanguageUtil.enumerate(host, visitor);
     if (visitor.values != null) {
       bindingItems.add(new ObjectBinding(writer.getObjectOrFactoryId(context), writer.getNameReference(name), visitor.values[0],
@@ -134,22 +136,16 @@ class InjectedASWriter {
     
     for (Binding binding : bindingItems) {
       int beforePosition = out.size();
-      String error;
       try {
         binding.write(out);
         continue;
       }
-      catch (InvalidPropertyException e) {
-        error = e.getMessage();
-      }
-      catch (RuntimeException e) {
-        error = e.getMessage();
-        LOG.error(e);
+      catch (Throwable e) {
+        problemsHolder.add(e);
       }
       
       size--;
       writer.getBlockOut().setPosition(beforePosition);
-      problems.add(error);
     }
 
     out.putShort(size, bindingSizePosition);
@@ -201,12 +197,12 @@ class InjectedASWriter {
     private String[] values;
     private ValueWriter valueWriter;
 
-    private final List<String> problems;
+    private final ProblemsHolder problemsHolder;
 
-    public InjectedPsiVisitor(PsiElement host, String expectedType, List<String> problems) {
+    public InjectedPsiVisitor(PsiElement host, String expectedType, ProblemsHolder problemsHolder) {
       this.host = host;
       this.expectedType = expectedType;
-      this.problems = problems;
+      this.problemsHolder = problemsHolder;
     }
     
     public ValueWriter getValueWriter() {
@@ -341,7 +337,7 @@ class InjectedASWriter {
         for (JSAttributeNameValuePair p : attribute.getValues()) {
           final String name = p.getName();
           if (name == null || name.equals("source")) {
-            if ((source = InjectionUtil.getReferencedFile(p, problems, true)) == null) {
+            if ((source = InjectionUtil.getReferencedFile(p, problemsHolder, true)) == null) {
               return IGNORE;
             }
           }
@@ -354,7 +350,7 @@ class InjectedASWriter {
         }
 
         if (source == null) {
-          reportError(FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
+          problemsHolder.add(FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
           return IGNORE;
         }
 
@@ -363,7 +359,7 @@ class InjectedASWriter {
         }
         else {
           if (symbol != null) {
-            reportError(FlexUIDesignerBundle.message("error.embed.symbol.unneeded", host.getText()));
+            problemsHolder.add(FlexUIDesignerBundle.message("error.embed.symbol.unneeded", host.getText()));
           }
 
           return new BitmapValueWriter(source, mimeType);
@@ -372,17 +368,13 @@ class InjectedASWriter {
 
       return null;
     }
-    
-    private void reportError(String message) {
-      problems.add(message);
-    }
 
     private boolean isUnexpected(String actualType) {
       if (actualType.equals(expectedType) || expectedType == null || isExpectedObjectOrAnyType()) {
         return false;
       }
       else {
-        reportError("Expected " + expectedType + ", but got " + host.getText());
+        problemsHolder.add("Expected " + expectedType + ", but got " + host.getText());
         unsupported = true;
         return true;
       }

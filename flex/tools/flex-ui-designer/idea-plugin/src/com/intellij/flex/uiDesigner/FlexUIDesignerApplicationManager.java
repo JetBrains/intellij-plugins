@@ -42,7 +42,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public static final String DESIGNER_SWF = "designer.swf";
   public static final String DESCRIPTOR_XML = "descriptor.xml";
 
-  private Client client;
+  protected Client client;
   public ProcessHandler adlProcessHandler;
   private Server server;
 
@@ -279,15 +279,16 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
     stringWriter.startChange();
 
+    final ProblemsHolder problemsHolder = new ProblemsHolder();
     try {
       ApplicationManager.getApplication().runReadAction(new Runnable() {
         @Override
         public void run() {
-          libraryCollector.collect(module, new LibraryStyleInfoCollector(project, module, stringWriter));
+          libraryCollector.collect(module, new LibraryStyleInfoCollector(project, module, stringWriter, problemsHolder));
         }
       });
     }
-    catch (RuntimeException e) {
+    catch (Throwable e) {
       stringWriter.rollbackChange();
       throw new InitException(e, "error.collect.libraries");
     }
@@ -300,7 +301,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         externalLibrarySet = new LibrarySet(librarySetId, ApplicationDomainCreationPolicy.ONE, new SwcDependenciesSorter(appDir)
           .sort(libraryCollector.getExternalLibraries(), librarySetId, libraryCollector.getFlexSdkVersion()));
       }
-      catch (RuntimeException e) {
+      catch (Throwable e) {
         throw new InitException(e, "error.sort.libraries");
       }
 
@@ -320,13 +321,16 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     ModuleInfo moduleInfo = new ModuleInfo(module);
     stringWriter.startChange();
     try {
-      ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter);
+      ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder);
     }
-    catch (RuntimeException e) {
+    catch (Throwable e) {
       stringWriter.rollbackChange();
       throw new InitException(e, "error.collect.local.style.holders");
     }
 
+    if (!problemsHolder.isEmpty()) {
+      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
+    }
     client.registerModule(project, moduleInfo, new String[]{externalLibrarySet.getId()}, stringWriter);
   }
 

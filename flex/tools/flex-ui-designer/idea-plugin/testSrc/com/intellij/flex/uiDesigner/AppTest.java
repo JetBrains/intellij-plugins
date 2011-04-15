@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 public class AppTest extends AppTestBase {
   private MessageBusConnection connection;
   private final Info info = new Info();
-  
 
   @Override
   protected void setUp() throws Exception {
@@ -52,6 +51,11 @@ public class AppTest extends AppTestBase {
     copySwfAndDescriptor(new File(PathManager.getSystemPath(), "flexUIDesigner"));
     FlexUIDesignerApplicationManager.getInstance().openDocument(myProject, myModule, (XmlFile)myFile, false);
     await();
+
+    if (!info.result.get().equals(PASSED)) {
+      fail(info.result.get());
+    }
+    
     return newParent;
   }
   
@@ -72,10 +76,6 @@ public class AppTest extends AppTestBase {
     client.flush();
     
     await();
-    
-    if (!info.result.get().equals(PASSED)) {
-      fail(info.result.get());
-    }
     
     info.result.set("");
   }

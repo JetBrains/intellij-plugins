@@ -5,6 +5,8 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+
 public class BinaryFileManager {
   private final InfoList<VirtualFile, InfoList.Info<VirtualFile>> files = new InfoList<VirtualFile, InfoList.Info<VirtualFile>>();
 
@@ -26,5 +28,16 @@ public class BinaryFileManager {
 
   public int add(@NotNull VirtualFile virtualFile) {
     return files.add(new InfoList.Info<VirtualFile>(virtualFile));
+  }
+
+  public int registerFile(@NotNull VirtualFile virtualFile, BinaryFileType type) throws InvalidPropertyException {
+    int id = files.add(new InfoList.Info<VirtualFile>(virtualFile));
+    try {
+      FlexUIDesignerApplicationManager.getInstance().getClient().registerBinaryFile(id, virtualFile, type);
+      return id;
+    }
+    catch (IOException e) {
+      throw new InvalidPropertyException(e, "error.cannot.write.binary.file", virtualFile.getName());
+    }
   }
 }

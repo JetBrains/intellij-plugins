@@ -2,15 +2,12 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.BinaryFileManager;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 abstract class BinaryValueWriter extends AbstractPrimitiveValueWriter {
-  protected static final Logger LOG = Logger.getInstance(BinaryValueWriter.class.getName());
-  
   protected final VirtualFile virtualFile;
 
   public BinaryValueWriter(VirtualFile virtualFile) {

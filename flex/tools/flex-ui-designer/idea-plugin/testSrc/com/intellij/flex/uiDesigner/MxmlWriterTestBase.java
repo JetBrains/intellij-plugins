@@ -75,13 +75,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     }
 
     adlRunned = true;
-
-    final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-    stringWriter.startChange();
-
     appRootDir = getAppRootDir();
-    libraries = new SwcDependenciesSorter(appRootDir).sort(getLibraries(new LibraryStyleInfoCollector(myProject, myModule, stringWriter)),
-                                                           myProject.getLocationHash(), getFlexVersion());
 
     final ServerSocket serverSocket = new ServerSocket(0, 1);
     DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"), 
@@ -113,12 +107,35 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     reader = new SocketInputHandlerImpl.Reader(new BufferedInputStream(socket.getInputStream()));
     client = new TestClient(socket.getOutputStream());
 
+    changeServiceImplementation(FlexUIDesignerApplicationManager.class, MyFlexUIDesignerApplicationManager.class);
+    ((MyFlexUIDesignerApplicationManager)FlexUIDesignerApplicationManager.getInstance()).setClient(client);
+
+    final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
+    stringWriter.startChange();
+
+    ProblemsHolder problemsHolder = new ProblemsHolder();
+    libraries = new SwcDependenciesSorter(appRootDir).sort(getLibraries(new LibraryStyleInfoCollector(myProject, myModule, stringWriter,
+                                                                                                      problemsHolder)),
+                                                           myProject.getLocationHash(), getFlexVersion());
+    assertEmpty(problemsHolder.getResultList());
+
     librarySet = new LibrarySet(myProject.getLocationHash(), ApplicationDomainCreationPolicy.ONE, libraries);
     client.getRegisteredProjects().add(new ProjectInfo(myProject, librarySet));
     client.openProject(myProject);
     client.registerLibrarySet(librarySet, stringWriter);
     if (!isRequireLocalStyleHolder()) {
       registerModule(new ModuleInfo(myModule), stringWriter);
+    }
+  }
+
+  private static class MyFlexUIDesignerApplicationManager extends FlexUIDesignerApplicationManager {
+    @Override
+    public Client getClient() {
+      return client;
+    }
+
+    public void setClient(TestClient client) {
+      this.client = client;
     }
   }
 
@@ -234,7 +251,9 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       ModuleInfo moduleInfo = new ModuleInfo(myModule);
       final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
       stringWriter.startChange();
-      ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, getFlexVersion(), stringWriter);
+      ProblemsHolder problemsHolder = new ProblemsHolder();
+      ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, getFlexVersion(), stringWriter, problemsHolder);
+      assertEmpty(problemsHolder.getResultList());
       registerModule(moduleInfo, stringWriter);
     }
   }
