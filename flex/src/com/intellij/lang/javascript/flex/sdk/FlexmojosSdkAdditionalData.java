@@ -144,7 +144,7 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
     final int index = version.lastIndexOf('.');
     if (index <= 0) return null;
 
-    final List<Sdk> sdks = FlexSdkUtils.getAllFlexAndAirSdks();
+    final List<Sdk> sdks = FlexSdkUtils.getAllFlexOrAirOrMobileSdks();
 
     // try to find the same version
     final String baseVersion = version.substring(0, index);

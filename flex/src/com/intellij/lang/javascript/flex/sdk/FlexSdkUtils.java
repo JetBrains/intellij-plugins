@@ -228,7 +228,7 @@ public class FlexSdkUtils {
     return ProjectJdkTable.getInstance().getSdksOfType(AirSdkType.getInstance());
   }
 
-  public static List<Sdk> getAllFlexAndAirSdks() {
+  public static List<Sdk> getAllFlexOrAirOrMobileSdks() {
     List<Sdk> result = new ArrayList<Sdk>();
     final Sdk[] sdks = ProjectJdkTable.getInstance().getAllJdks();
     for (Sdk sdk : sdks) {
@@ -299,7 +299,7 @@ public class FlexSdkUtils {
   }
 
   public static boolean hasDependencyOnAir(final @NotNull Module module) {
-    return hasDependencyOn(module, AirSdkType.getInstance(), "Maven: com.adobe.flex.framework:framework:swc:");
+    return hasDependencyOn(module, AirSdkType.getInstance(), "Maven: com.adobe.flex.framework:airframework:swc:");
   }
 
   public static boolean hasDependencyOnAirMobile(final @NotNull Module module) {
