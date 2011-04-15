@@ -122,6 +122,7 @@ public class FlexDebugProcess extends XDebugProcess {
                : FlexBundle.message("initializing.flex.debugger");
   }
 
+  @NotNull
   @Override
   public XDebuggerEditorsProvider getEditorsProvider() {
     return new FlexDebuggerEditorsProvider();
