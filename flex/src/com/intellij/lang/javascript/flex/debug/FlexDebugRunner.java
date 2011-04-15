@@ -9,9 +9,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
-import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
-import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
-import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
+import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -48,6 +46,11 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                           final ExecutionEnvironment env,
                                           final Sdk flexSdk,
                                           final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
+    if (isRunOnDevice(flexRunnerParameters) &&
+        !FlexRunner.packAndInstallToDevice(project, flexSdk, (AirMobileRunnerParameters)flexRunnerParameters, true)) {
+      return null;
+    }
+
     final XDebugSession debugSession =
       XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
         @NotNull
@@ -67,7 +70,6 @@ public class FlexDebugRunner extends FlexBaseRunner {
                 }
                 return super.createConsole();
               }
-
             };
           }
           catch (IOException e) {

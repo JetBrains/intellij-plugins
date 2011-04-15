@@ -1,11 +1,15 @@
 package com.intellij.lang.javascript.flex.sdk;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,6 +66,24 @@ public class AirMobileSdkType extends SdkType implements IFlexSdkType {
 
   public Icon getIcon() {
     return airMobileIcon;
+  }
+
+  @Override
+  public FileChooserDescriptor getHomeChooserDescriptor() {
+    final FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false) {
+      public void validateSelectedFiles(VirtualFile[] files) throws Exception {
+        if (files.length != 0) {
+          final String selectedPath = files[0].getPath();
+          if (!isValidSdkHome(selectedPath)) {
+            throw new Exception(FlexBundle.message("air.sdk.home.incorrect"));
+          }
+        }
+      }
+    };
+
+    descriptor.setTitle(ProjectBundle.message("sdk.configure.home.title", getPresentableName()));
+    descriptor.setDescription(FlexBundle.message("select.air.sdk.home.description"));
+    return descriptor;
   }
 
   @NotNull

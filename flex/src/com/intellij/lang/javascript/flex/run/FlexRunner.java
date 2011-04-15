@@ -64,16 +64,18 @@ public class FlexRunner extends FlexBaseRunner {
                                           final Sdk flexSdk,
                                           final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
     return isRunOnDevice(flexRunnerParameters)
-           ? runOnDevice(project, flexSdk, (AirMobileRunnerParameters)flexRunnerParameters, false)
+           ? packAndInstallToDevice(project, flexSdk, (AirMobileRunnerParameters)flexRunnerParameters, false)
+             ? launchOnDevice(project, flexSdk, (AirMobileRunnerParameters)flexRunnerParameters, false)
+             : null
            : isRunAsAir(flexRunnerParameters)
              ? launchAir(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters)
              : launchFlex(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
   }
 
-  public static RunContentDescriptor runOnDevice(final Project project,
-                                                 final Sdk flexSdk,
-                                                 final AirMobileRunnerParameters params,
-                                                 final boolean isDebug) {
+  public static boolean packAndInstallToDevice(final Project project,
+                                               final Sdk flexSdk,
+                                               final AirMobileRunnerParameters params,
+                                               final boolean isDebug) {
     final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(params);
 
     if (params.getAirMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.AndroidDevice) {
@@ -83,11 +85,27 @@ public class FlexRunner extends FlexBaseRunner {
         createAndroidPackageParams(project, flexSdk, swfPathAndApplicationId, params, isDebug);
       final String apkPath = packageParameters.INSTALLER_FILE_LOCATION + "/" + packageParameters.INSTALLER_FILE_NAME;
 
-      if (MobileAirTools.checkAdtVersion(module, flexSdk)
-          && MobileAirTools.ensureCertificateExists(project, flexSdk)
-          && MobileAirTools.packageApk(project, packageParameters)
-          && MobileAirTools.installApk(project, flexSdk, apkPath, swfPathAndApplicationId.second)
-          && MobileAirTools.launchAndroidApplication(project, flexSdk, swfPathAndApplicationId.second)) {
+      return MobileAirTools.checkAdtVersion(module, flexSdk)
+             && MobileAirTools.ensureCertificateExists(project, flexSdk)
+             && MobileAirTools.packageApk(project, packageParameters)
+             && MobileAirTools.installApk(project, flexSdk, apkPath, swfPathAndApplicationId.second);
+    }
+    else {
+      assert false;
+    }
+
+    return false;
+  }
+
+  @Nullable
+  public static RunContentDescriptor launchOnDevice(final Project project,
+                                                    final Sdk flexSdk,
+                                                    final AirMobileRunnerParameters params,
+                                                    final boolean isDebug) {
+    final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(params);
+
+    if (params.getAirMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.AndroidDevice) {
+      if (MobileAirTools.launchAndroidApplication(project, flexSdk, swfPathAndApplicationId.second)) {
         ToolWindowManager.getInstance(project).notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.INFO,
                                                                FlexBundle.message("android.application.launched"));
       }

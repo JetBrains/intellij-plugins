@@ -319,13 +319,15 @@ public class FlexDebugProcess extends XDebugProcess {
     final Process process = Runtime.getRuntime().exec(ArrayUtil.toStringArray(fdbLaunchCommand));
     sendCommand(new ReadGreetingCommand()); // just to read copyrights and wait for "(fdb)"
 
-    if (airRunnerParameters instanceof AirMobileRunnerParameters &&
-        ((AirMobileRunnerParameters)airRunnerParameters).getAirMobileRunTarget() ==
-        AirMobileRunnerParameters.AirMobileRunTarget.AndroidDevice) {
-      sendCommand(new StartAppOnAndroidDeviceCommand(flexSdk, ((AirMobileRunnerParameters)airRunnerParameters)));
-    }
-    else {
-      scheduleAdlLaunch(flexSdk, airRunnerParameters);
+    if (airRunnerParameters instanceof AirMobileRunnerParameters) {
+      switch (((AirMobileRunnerParameters)airRunnerParameters).getAirMobileRunTarget()) {
+        case Emulator:
+          scheduleAdlLaunch(flexSdk, airRunnerParameters);
+          break;
+        case AndroidDevice:
+          sendCommand(new StartAppOnAndroidDeviceCommand(flexSdk, ((AirMobileRunnerParameters)airRunnerParameters)));
+          break;
+      }
     }
 
     return process;
@@ -1286,7 +1288,7 @@ public class FlexDebugProcess extends XDebugProcess {
     void launchDebuggedApplication() throws IOException {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         public void run() {
-          FlexRunner.runOnDevice(getSession().getProject(), myFlexSdk, myRunnerParameters, true);
+          FlexRunner.launchOnDevice(getSession().getProject(), myFlexSdk, myRunnerParameters, true);
         }
       });
     }
