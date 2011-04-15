@@ -19,7 +19,7 @@ public class InfoList<E,I extends InfoList.Info> {
     return info.id;
   }
 
-  public void remove(E element) {
+  public void remove(@NotNull E element) {
     freeIndices.add(getInfo(element).id);
     elements.remove(element);
   }
@@ -57,7 +57,7 @@ public class InfoList<E,I extends InfoList.Info> {
     private int id = -1;
     protected final E element;
 
-    public Info(E element) {
+    public Info(@NotNull E element) {
       this.element = element;
     }
   }

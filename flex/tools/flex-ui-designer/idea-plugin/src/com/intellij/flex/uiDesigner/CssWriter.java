@@ -95,7 +95,7 @@ public class CssWriter {
           }
         }
         catch (RuntimeException e) {
-          //LOG.warn(e);
+          LOG.warn(e);
           declarationVectorWriter.rollbackLastIteration();
         }
       }
@@ -352,8 +352,11 @@ public class CssWriter {
     propertyOut.write(CssPropertyType.EMBED);
     declarationVectorWriter.writeObjectValueHeader("ei");
 
+    final ArrayList<String> problems = new ArrayList<String>();
+
     CssTerm[] terms = PsiTreeUtil.getChildrenOfType(PsiTreeUtil.getRequiredChildOfType(cssFunction, CssTermList.class), CssTerm.class);
     VirtualFile source = null;
+    String symbol = null;
     assert terms != null;
     for (int i = 0, termsLength = terms.length; i < termsLength; i++) {
       CssTerm term = terms[i];
@@ -361,15 +364,26 @@ public class CssWriter {
       if (firstChild == null) {
         throw new IllegalArgumentException("invalid property value");
       }
-      else if (firstChild instanceof CssString) {
-        source = InjectionUtil.getReferencedFile(firstChild, new ArrayList<String>());
-      }
-      else if (firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == CssElementTypes.CSS_IDENT) {
-        String name = firstChild.getText();
-        if (name.equals("source")) {
-          source = InjectionUtil.getReferencedFile(terms[++i].getFirstChild(), new ArrayList<String>());
+      else {
+        if (firstChild instanceof CssString) {
+          source = InjectionUtil.getReferencedFile(firstChild, problems, false);
+        }
+        else if (firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == CssElementTypes.CSS_IDENT) {
+          String name = firstChild.getText();
+          if (name.equals("source")) {
+            source = InjectionUtil.getReferencedFile(terms[++i].getFirstChild(), problems, false);
+          }
+          else if (name.equals("symbol")) {
+            //noinspection ConstantConditions,UnusedAssignment
+            symbol = ((CssString)terms[++i].getFirstChild()).getValue();
+          }
         }
       }
+    }
+
+    if (source == null) {
+      problems.add(FlexUIDesignerBundle.message("error.embed.source.not.specified", cssFunction.getText()));
+      throw new IllegalArgumentException("todo");
     }
 
     BinaryFileManager binaryFileManager = BinaryFileManager.getInstance();

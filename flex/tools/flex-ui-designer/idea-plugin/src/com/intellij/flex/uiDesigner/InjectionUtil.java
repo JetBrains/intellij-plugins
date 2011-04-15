@@ -2,14 +2,13 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 
 import java.util.List;
 
 public final class InjectionUtil {
-  public static VirtualFile getReferencedFile(PsiElement element, List<String> problems) {
+  public static VirtualFile getReferencedFile(PsiElement element, List<String> problems, boolean resolveToFirstIfMulti) {
     final PsiReference[] references = element.getReferences();
     final JSFileReference fileReference;
     int i = references.length - 1;
@@ -25,7 +24,18 @@ public final class InjectionUtil {
       }
     }
 
-    PsiFileSystemItem psiFile = fileReference.resolve();
+    ResolveResult[] resolveResults = fileReference.multiResolve(false);
+    final PsiFileSystemItem psiFile;
+    if (resolveResults.length == 0) {
+      psiFile = null;
+    }
+    else if (resolveResults.length == 1 || resolveToFirstIfMulti) {
+      psiFile = (PsiFileSystemItem)resolveResults[0].getElement();
+    }
+    else {
+      psiFile = resolveResult(element, resolveResults);
+    }
+
     if (psiFile == null) {
       problems.add(fileReference.getUnresolvedMessagePattern());
     }
@@ -37,5 +47,17 @@ public final class InjectionUtil {
     }
 
     return null;
+  }
+
+  private static PsiFileSystemItem resolveResult(PsiElement element, ResolveResult[] resolveResults) {
+    final PsiFile currentTopLevelFile = InjectedLanguageUtil.getTopLevelFile(element);
+    for (ResolveResult resolveResult : resolveResults) {
+      PsiElement resolvedElement = resolveResult.getElement();
+      if (InjectedLanguageUtil.getTopLevelFile(resolvedElement).equals(currentTopLevelFile)) {
+        return (PsiFileSystemItem)resolvedElement;
+      }
+    }
+
+    return (PsiFileSystemItem)resolveResults[0].getElement();
   }
 }

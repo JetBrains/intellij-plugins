@@ -341,7 +341,7 @@ class InjectedASWriter {
         for (JSAttributeNameValuePair p : attribute.getValues()) {
           final String name = p.getName();
           if (name == null || name.equals("source")) {
-            if ((source = InjectionUtil.getReferencedFile(p, problems)) == null) {
+            if ((source = InjectionUtil.getReferencedFile(p, problems, true)) == null) {
               return IGNORE;
             }
           }
