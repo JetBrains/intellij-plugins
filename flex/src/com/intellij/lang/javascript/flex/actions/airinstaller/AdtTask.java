@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.actions.airinstaller;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -64,7 +65,8 @@ public abstract class AdtTask {
         return true;
       }
       else {
-        Messages.showErrorDialog(task.myProject, StringUtil.join(messages, "\n"), frameTitle);
+        final String message = messages.isEmpty() ? FlexBundle.message("unexpected.empty.adt.output") : StringUtil.join(messages, "\n");
+        Messages.showErrorDialog(task.myProject, message, frameTitle);
       }
     }
 
