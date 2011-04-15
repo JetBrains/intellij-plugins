@@ -24,6 +24,8 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.MessageType;
@@ -75,16 +77,19 @@ public class FlexRunner extends FlexBaseRunner {
     final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(params);
 
     if (params.getAirMobileRunTarget() == AirMobileRunnerParameters.AirMobileRunTarget.AndroidDevice) {
+      final Module module = ModuleManager.getInstance(project).findModuleByName(params.getModuleName());
+      assert module != null;
       final AndroidAirPackageParameters packageParameters =
         createAndroidPackageParams(project, flexSdk, swfPathAndApplicationId, params, isDebug);
       final String apkPath = packageParameters.INSTALLER_FILE_LOCATION + "/" + packageParameters.INSTALLER_FILE_NAME;
 
-      if (MobileAirTools.ensureCertificateExists(project, flexSdk)
+      if (MobileAirTools.checkAdtVersion(module, flexSdk)
+          && MobileAirTools.ensureCertificateExists(project, flexSdk)
           && MobileAirTools.packageApk(project, packageParameters)
           && MobileAirTools.installApk(project, flexSdk, apkPath, swfPathAndApplicationId.second)
           && MobileAirTools.launchAndroidApplication(project, flexSdk, swfPathAndApplicationId.second)) {
-        ToolWindowManager.getInstance(project)
-          .notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, FlexBundle.message("android.application.launched"));
+        ToolWindowManager.getInstance(project).notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.INFO,
+                                                               FlexBundle.message("android.application.launched"));
       }
     }
     else {

@@ -279,11 +279,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     try {
       final String debug = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><compiler><debug>");
       if (!"true".equals(debug)) {
-        final HyperlinkListener listener = new HyperlinkListener() {
-          public void hyperlinkUpdate(final HyperlinkEvent e) {
-            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && configFile.isValid()) {
-              FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, configFile), true);
-            }
+        final HyperlinkListener listener = new HyperlinkAdapter() {
+          protected void hyperlinkActivated(final HyperlinkEvent e) {
+            FileEditorManager.getInstance(project).openTextEditor(new OpenFileDescriptor(project, configFile), true);
           }
         };
         ToolWindowManager.getInstance(project)

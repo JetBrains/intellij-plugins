@@ -37,9 +37,11 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     private Sdk mySdk;
   }
 
-  public static final Condition<Sdk> FLEX_OR_AIR_SDK = new Condition<Sdk>() {
+  public static final Condition<Sdk> FLEX_RELATED_EXCEPT_FLEXMOJOS = new Condition<Sdk>() {
     public boolean value(final Sdk sdk) {
-      return sdk != null && (sdk.getSdkType() instanceof FlexSdkType || sdk.getSdkType() instanceof AirSdkType);
+      return sdk != null &&
+             sdk.getSdkType() instanceof IFlexSdkType &&
+             ((IFlexSdkType)sdk.getSdkType()).getSubtype() != IFlexSdkType.Subtype.Flexmojos;
     }
   };
 
@@ -57,7 +59,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
   private boolean myShowModuleSdk = false;
 
   public FlexSdkComboBoxWithBrowseButton() {
-    this(FLEX_OR_AIR_SDK);
+    this(FLEX_RELATED_EXCEPT_FLEXMOJOS);
   }
 
   public FlexSdkComboBoxWithBrowseButton(final Condition<Sdk> sdkEvaluator) {
@@ -263,5 +265,4 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
       myModuleSdk.mySdk = sdk;
     }
   }
-
 }

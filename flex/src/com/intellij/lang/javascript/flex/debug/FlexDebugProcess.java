@@ -1276,17 +1276,17 @@ public class FlexDebugProcess extends XDebugProcess {
   class StartAppOnAndroidDeviceCommand extends StartDebuggingCommand {
 
     private final Sdk myFlexSdk;
-    private final AirMobileRunnerParameters myAirRunnerParameters;
+    private final AirMobileRunnerParameters myRunnerParameters;
 
-    public StartAppOnAndroidDeviceCommand(final Sdk flexSdk, final AirMobileRunnerParameters airRunnerParameters) {
+    public StartAppOnAndroidDeviceCommand(final Sdk flexSdk, final AirMobileRunnerParameters runnerParameters) {
       myFlexSdk = flexSdk;
-      myAirRunnerParameters = airRunnerParameters;
+      myRunnerParameters = runnerParameters;
     }
 
     void launchDebuggedApplication() throws IOException {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         public void run() {
-          FlexRunner.runOnDevice(getSession().getProject(), myFlexSdk, myAirRunnerParameters, true);
+          FlexRunner.runOnDevice(getSession().getProject(), myFlexSdk, myRunnerParameters, true);
         }
       });
     }

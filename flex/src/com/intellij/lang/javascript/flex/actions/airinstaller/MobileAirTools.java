@@ -1,11 +1,27 @@
 package com.intellij.lang.javascript.flex.actions.airinstaller;
 
+import com.intellij.facet.FacetManager;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexFacet;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.HyperlinkAdapter;
+import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.event.HyperlinkEvent;
 import java.io.File;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class MobileAirTools {
 
@@ -14,6 +30,7 @@ public class MobileAirTools {
   private static final String TEMP_KEY_TYPE = "1024-RSA";
   public static final String TEMP_KEYSTORE_TYPE = "PKCS12";
   public static final String TEMP_KEYSTORE_PASSWORD = "a";
+  private static final Pattern ADT_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,6})*");
 
   private MobileAirTools() {
   }
@@ -30,6 +47,81 @@ public class MobileAirTools {
       return PackageAirInstallerAction.createCertificate(project, flexSdk, params);
     }
     return true;
+  }
+
+  @Nullable
+  public static String getAdtVersion(final Project project, final Sdk sdk) {
+    final Ref<String> versionRef = new Ref<String>();
+
+    AdtTask.runWithProgress(new AdtTask(project, sdk) {
+        protected void appendAdtOptions(final List<String> command) {
+          command.add("-version");
+        }
+
+        protected boolean checkMessages(final List<String> messages) {
+          if (messages.size() == 1) {
+            String output = messages.get(0);
+            // adt version "1.5.0.7220"
+            // 2.6.0.19120
+
+            final String prefix = "adt version \"";
+            final String suffix = "\"";
+
+            if (output.startsWith(prefix) && output.endsWith(suffix)) {
+              output = output.substring(prefix.length(), output.length() - suffix.length());
+            }
+
+            if (ADT_VERSION_PATTERN.matcher(output).matches()) {
+              versionRef.set(output);
+              return true;
+            }
+          }
+
+          return false;
+        }
+      }, "Checking AIR version", "Check AIR Version");
+    return versionRef.get();
+  }
+
+  public static boolean checkAdtVersion(final Module module, final Sdk sdk) {
+    final String adtVersion = getAdtVersion(module.getProject(), sdk);
+    if (adtVersion != null) {
+      if (StringUtil.compareVersionNumbers(adtVersion, "2.6") >= 0) {
+        return true;
+      }
+
+      final MessageDialogWithHyperlinkListener dialog =
+        new MessageDialogWithHyperlinkListener(module.getProject(),
+                                               FlexBundle.message("air.mobile.version.problem.title"),
+                                               UIUtil.getErrorIcon(),
+                                               FlexBundle.message("air.mobile.version.problem", sdk.getName(), module.getName(),
+                                                                  adtVersion));
+
+      dialog.addHyperlinkListener(new HyperlinkAdapter() {
+        protected void hyperlinkActivated(final HyperlinkEvent e) {
+          dialog.close(DialogWrapper.OK_EXIT_CODE);
+
+          final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
+          ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
+            public void run() {
+              if (module.getModuleType() instanceof FlexModuleType) {
+                projectStructureConfigurable.select(module.getName(), ProjectBundle.message("modules.classpath.title"), true);
+              }
+              else {
+                final FlexFacet facet = FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
+                if (facet != null) {
+                  projectStructureConfigurable.select(facet, true);
+                }
+              }
+            }
+          });
+        }
+      });
+
+      dialog.show();
+    }
+
+    return false;
   }
 
   public static boolean packageApk(final Project project, final AndroidAirPackageParameters parameters) {
