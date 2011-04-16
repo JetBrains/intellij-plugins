@@ -20,6 +20,9 @@ import org.flyti.plexus.PlexusManager;
 
 registerClassAlias("lsh", LocalStyleHolder);
 
+/**
+ * WARNING: THIS CLASS MUST BE HERE: IntelliJ IDEA can debug classes only in designer module, but not in any other, like app-plugin-api
+ */
 public class DefaultSocketDataHandler implements SocketDataHandler {
   private var projectManager:ProjectManager;
   private var libraryManager:LibraryManager;
@@ -27,7 +30,6 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   private var stringRegistry:StringRegistry;
   
   private var bitmapDataManager:BitmapDataManager;
-  private var swfDataManager:SwfDataManager;
 
   private var applicationExiting:Boolean;
 
@@ -38,6 +40,24 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     this.stringRegistry = stringRegistry;
 
     NativeApplication.nativeApplication.addEventListener(Event.EXITING, exitingHandler);
+  }
+
+  private var _embedSwfManager:EmbedSwfManager;
+  private function get embedSwfManager():EmbedSwfManager {
+    if (_embedSwfManager == null) {
+      _embedSwfManager = EmbedSwfManager(PlexusManager.instance.container.lookup(EmbedSwfManager));
+    }
+
+    return _embedSwfManager;
+  }
+
+  private var _embedImageManager:EmbedImageManager;
+  private function get embedImageManager():EmbedImageManager {
+    if (_embedImageManager == null) {
+      _embedImageManager = EmbedImageManager(PlexusManager.instance.container.lookup(EmbedImageManager));
+    }
+
+    return _embedImageManager;
   }
 
   private var _socket:Socket;
@@ -141,7 +161,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     moduleManager.register(new Module(data.readUnsignedShort(), projectManager.getById(data.readUnsignedShort()), libraryManager.idsToInstancesAndMarkAsUsed(data.readObject()), data.readObject()));
   }
   
-  private var bitmapWorkaroundByteArray:ByteArray;
+  private var flashWorkaroundByteArray:ByteArray;
   
   private function registerDocumentFactory(input:IDataInput, messageSize:int):void {
     const prevBytesAvailable:int = input.bytesAvailable;
@@ -173,12 +193,12 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     var id:int = input.readShort();
     var bitmapData:BitmapData = new BitmapData(input.readShort(), input.readShort(), input.readBoolean(), 0);
     // we cannot change BitmapData API
-    if (bitmapWorkaroundByteArray == null) {
-      bitmapWorkaroundByteArray = new ByteArray();
+    if (flashWorkaroundByteArray == null) {
+      flashWorkaroundByteArray = new ByteArray();
     }
-    input.readBytes(bitmapWorkaroundByteArray, 0, bitmapData.width * bitmapData.height * 4);
-    bitmapData.setPixels(bitmapData.rect, bitmapWorkaroundByteArray);
-    bitmapWorkaroundByteArray.clear();
+    input.readBytes(flashWorkaroundByteArray, 0, bitmapData.width * bitmapData.height * 4);
+    bitmapData.setPixels(bitmapData.rect, flashWorkaroundByteArray);
+    flashWorkaroundByteArray.clear();
 
     if (bitmapDataManager == null) {
       bitmapDataManager = BitmapDataManager(PlexusManager.instance.container.lookup(BitmapDataManager));
@@ -187,30 +207,19 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     bitmapDataManager.register(id, bitmapData);
   }
   
-  private function registerBinaryFile(data:IDataInput):void {
-    var type:int = data.readByte();
-    var id:int = data.readUnsignedShort();
-    if (type == 1) {
-      registerSwf(data);
-    }
-  }
-  
-  private function registerSwf(input:IDataInput):void {
-    var id:int = input.readShort();
+  private function registerBinaryFile(input:IDataInput):void {
+    var type:int = input.readByte();
+    var id:int = input.readUnsignedShort();
     // we cannot change Loader API
-    if (bitmapWorkaroundByteArray == null) {
-      bitmapWorkaroundByteArray = new ByteArray();
+    if (flashWorkaroundByteArray == null) {
+      flashWorkaroundByteArray = new ByteArray();
     }
 
     var length:int = input.readInt();
-    input.readBytes(bitmapWorkaroundByteArray, 0, length);
-    
-    if (swfDataManager == null) {
-      swfDataManager = SwfDataManager(PlexusManager.instance.container.lookup(SwfDataManager));
-    }
-    
-    swfDataManager.load(id, bitmapWorkaroundByteArray);
-    bitmapWorkaroundByteArray.clear();
+    input.readBytes(flashWorkaroundByteArray, 0, length);
+
+    (type == 1 ? embedSwfManager : embedImageManager).load(id, flashWorkaroundByteArray);
+    flashWorkaroundByteArray.clear();
   }
   
   private function getDocumentFactoryManager(module:Module):DocumentFactoryManager {
@@ -253,8 +262,9 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     const parentId:int = data.readInt();
     StringRegistry.instance.readStringTable(data);
     var librarySet:LibrarySet = new LibrarySet(id, parentId == -1 ? null : libraryManager.getById(parentId));
-    librarySet.readExternal(data);
-    libraryManager.register(librarySet);
+    var assetLoadSemaphore:AssetLoadSemaphore = new AssetLoadSemaphore();
+    librarySet.readExternal(data, assetLoadSemaphore);
+    libraryManager.register(librarySet, assetLoadSemaphore);
   }
 
   public function pendingReadIsAllowable(method:int):Boolean {

@@ -8,7 +8,10 @@ public final class CssPropertyType {
   public static final int ARRAY_OF_NUMBER = 3;
 
   public static final int CLASS_REFERENCE = 4;
-  public static final int EMBED = 5;
+
+  public static final int EMBED_SWF = 5;
+  public static final int EMBED_IMAGE = 10;
+
   public static final int BOOL = 6;
 
   public static final int NULL = 7;

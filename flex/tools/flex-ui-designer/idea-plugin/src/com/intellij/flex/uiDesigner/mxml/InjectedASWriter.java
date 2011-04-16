@@ -354,7 +354,7 @@ class InjectedASWriter {
           return IGNORE;
         }
 
-        if (mimeType == null ? source.getName().endsWith(".swf") : mimeType.equals("application/x-shockwave-flash")) {
+        if (InjectionUtil.isSwf(source, mimeType)) {
           return new SwfValueWriter(source, symbol);
         }
         else {

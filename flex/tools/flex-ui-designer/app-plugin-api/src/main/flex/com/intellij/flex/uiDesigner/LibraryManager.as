@@ -47,7 +47,7 @@ public class LibraryManager {
     }
   }
 
-  public function register(librarySet:LibrarySet):void {
+  public function register(librarySet:LibrarySet, assetLoadSemaphore:AssetLoadSemaphore):void {
     assert(!(librarySet.id in idMap));
     idMap[librarySet.id] = librarySet;
 

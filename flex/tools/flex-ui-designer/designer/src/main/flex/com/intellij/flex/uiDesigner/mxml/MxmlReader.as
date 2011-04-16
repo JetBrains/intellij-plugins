@@ -6,9 +6,9 @@ import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.ModuleContext;
 import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.StringRegistry;
-import com.intellij.flex.uiDesigner.SwfDataManager;
+import com.intellij.flex.uiDesigner.EmbedSwfManager;
 import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
-import com.intellij.flex.uiDesigner.css.CssDeclarationType;
+import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.css.CssSkinClassDeclaration;
 import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
@@ -38,7 +38,7 @@ public final class MxmlReader implements DocumentReader {
   
   private var stringRegistry:StringRegistry;
   private var bitmapDataManager:BitmapDataManager;
-  private var swfDataManager:SwfDataManager;
+  private var swfDataManager:EmbedSwfManager;
 
   private const stateReader:StateReader = new StateReader();
   private const injectedASReader:InjectedASReader = new InjectedASReader();
@@ -52,7 +52,7 @@ public final class MxmlReader implements DocumentReader {
   
   internal var factoryContext:DeferredInstanceFromBytesContext;
 
-  public function MxmlReader(stringRegistry:StringRegistry, bitmapDataManager:BitmapDataManager, swfDataManager:SwfDataManager) {
+  public function MxmlReader(stringRegistry:StringRegistry, bitmapDataManager:BitmapDataManager, swfDataManager:EmbedSwfManager) {
     this.stringRegistry = stringRegistry;
     this.bitmapDataManager = bitmapDataManager;
     this.swfDataManager = swfDataManager;
@@ -246,42 +246,42 @@ public final class MxmlReader implements DocumentReader {
         case Amf3Types.STRING:
           propertyHolder[propertyName] = input.readUTFBytes(AmfUtil.readUInt29(input));
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssDeclarationType.STRING;
+            cssPropertyDescriptor.type = CssPropertyType.STRING;
           }
           break;
 
         case Amf3Types.DOUBLE:
           propertyHolder[propertyName] = input.readDouble();
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssDeclarationType.NUMBER;
+            cssPropertyDescriptor.type = CssPropertyType.NUMBER;
           }
           break;
 
         case Amf3Types.INTEGER:
           propertyHolder[propertyName] = (AmfUtil.readUInt29(input) << 3) >> 3;
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssDeclarationType.NUMBER;
+            cssPropertyDescriptor.type = CssPropertyType.NUMBER;
           }
           break;
 
         case Amf3Types.TRUE:
           propertyHolder[propertyName] = true;
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssDeclarationType.BOOL;
+            cssPropertyDescriptor.type = CssPropertyType.BOOL;
           }
           break;
 
         case Amf3Types.FALSE:
           propertyHolder[propertyName] = false;
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssDeclarationType.BOOL;
+            cssPropertyDescriptor.type = CssPropertyType.BOOL;
           }
           break;
 
         case Amf3Types.OBJECT:
           propertyHolder[propertyName] = readObject(stringRegistry.read(input));
           if (cssPropertyDescriptor != null) {
-            cssPropertyDescriptor.type = CssDeclarationType.EFFECT;
+            cssPropertyDescriptor.type = CssPropertyType.EFFECT;
           }
           break;
 
@@ -296,7 +296,7 @@ public final class MxmlReader implements DocumentReader {
           }
           else {
             cssPropertyDescriptor.type = input.readByte();
-            if (cssPropertyDescriptor.type == CssDeclarationType.COLOR_STRING) {
+            if (cssPropertyDescriptor.type == CssPropertyType.COLOR_STRING) {
               cssPropertyDescriptor.colorName = stringRegistry.read(input);
             }
             cssPropertyDescriptor.value = input.readObject();

@@ -27,11 +27,9 @@ import java.awt.*;
 public class CssWriter {
   private static final Logger LOG = Logger.getInstance(CssWriter.class.getName());
 
-  private final VectorIntWriter usedImages = new VectorIntWriter();
-
-  private AmfOutputStream propertyOut;
-  private final VectorWriter rulesetVectorWriter = new VectorWriter("d");
-  private final VectorWriter declarationVectorWriter = new VectorWriter("p", "pi", rulesetVectorWriter);
+  private PrimitiveAmfOutputStream propertyOut;
+  private final CustomVectorWriter rulesetVectorWriter = new CustomVectorWriter();
+  private final CustomVectorWriter declarationVectorWriter = new CustomVectorWriter();
 
   private final StringRegistry.StringWriter stringWriter;
 
@@ -55,8 +53,6 @@ public class CssWriter {
   public byte[] write(CssFile cssFile, Document document, Module module, ProblemsHolder problemsHolder) {
     this.problemsHolder = problemsHolder;
 
-    usedImages.prepareIteration();
-
     rulesetVectorWriter.prepareIteration();
 
     CssStylesheet stylesheet = cssFile.getStylesheet();
@@ -64,7 +60,7 @@ public class CssWriter {
 
     final DocumentWindow documentWindow = document instanceof DocumentWindow ? (DocumentWindow)document : null;
     for (CssRuleset ruleset : rulesets) {
-      AmfOutputStream rulesetOut = rulesetVectorWriter.getOutputForIteration();
+      PrimitiveAmfOutputStream rulesetOut = rulesetVectorWriter.getOutputForIteration();
 
       int textOffset = ruleset.getTextOffset();
       if (documentWindow != null) {
@@ -111,7 +107,7 @@ public class CssWriter {
       declarationVectorWriter.writeTo(rulesetOut);
     }
 
-    AmfOutputStream outputForCustomData = rulesetVectorWriter.getOutputForCustomData();
+    PrimitiveAmfOutputStream outputForCustomData = rulesetVectorWriter.getOutputForCustomData();
     CssNamespace[] namespaces = stylesheet.getNamespaces();
     outputForCustomData.write(namespaces.length);
     if (namespaces.length > 0) {
@@ -121,10 +117,10 @@ public class CssWriter {
       }
     }
 
-    return IOUtil.getBytes(rulesetVectorWriter, usedImages);
+    return IOUtil.getBytes(rulesetVectorWriter);
   }
 
-  private void writeSelectors(CssRuleset ruleset, AmfOutputStream out, Module module) {
+  private void writeSelectors(CssRuleset ruleset, PrimitiveAmfOutputStream out, Module module) {
     CssSelector[] selectors = ruleset.getSelectorList().getSelectors();
     out.write(selectors.length);
 
@@ -215,11 +211,10 @@ public class CssWriter {
         //noinspection ConstantConditions
         if (value.getFirstChild().getFirstChild().getNode().getElementType() == CssElementTypes.CSS_FUNCTION) {
           propertyOut.write(CssPropertyType.NULL);
-          propertyOut.write(Amf3Types.NULL);
         }
         else {
           propertyOut.write(CssPropertyType.STRING);
-          propertyOut.write(StringUtil.stripQuotesAroundValue(value.getText()));
+          propertyOut.writeAmfUtf(StringUtil.stripQuotesAroundValue(value.getText()));
         }
         break;
 
@@ -260,12 +255,10 @@ public class CssWriter {
     // ClassReference(null);
     if (className.equals("null")) {
       propertyOut.write(CssPropertyType.NULL);
-      propertyOut.write(Amf3Types.NULL);
     }
     else {
       propertyOut.write(CssPropertyType.CLASS_REFERENCE);
-      declarationVectorWriter.writeObjectValueHeader("c");
-      stringWriter.writeNullable(StringUtil.stripQuotesAroundValue(className), propertyOut);
+      stringWriter.write(StringUtil.stripQuotesAroundValue(className), propertyOut);
     }
   }
 
@@ -313,7 +306,7 @@ public class CssWriter {
         }
         else {
           propertyOut.write(CssPropertyType.STRING);
-          propertyOut.write(StringUtil.stripQuotesAroundValue(v));
+          propertyOut.writeAmfUtf(StringUtil.stripQuotesAroundValue(v));
         }
       }
     }
@@ -357,11 +350,11 @@ public class CssWriter {
   }
 
   private void writeEmbed(CssFunction cssFunction) throws InvalidPropertyException {
-    propertyOut.write(CssPropertyType.EMBED);
-    declarationVectorWriter.writeObjectValueHeader("ei");
+    System.out.print(cssFunction.getText());
     CssTerm[] terms = PsiTreeUtil.getChildrenOfType(PsiTreeUtil.getRequiredChildOfType(cssFunction, CssTermList.class), CssTerm.class);
     VirtualFile source = null;
-    @SuppressWarnings({"UnusedDeclaration"}) String symbol = null;
+    String symbol = null;
+    String mimeType = null;
     assert terms != null;
     for (int i = 0, termsLength = terms.length; i < termsLength; i++) {
       CssTerm term = terms[i];
@@ -379,8 +372,12 @@ public class CssWriter {
             source = InjectionUtil.getReferencedFile(terms[++i].getFirstChild(), problemsHolder, false);
           }
           else if (name.equals("symbol")) {
-            //noinspection ConstantConditions,UnusedAssignment
+            //noinspection ConstantConditions
             symbol = ((CssString)terms[++i].getFirstChild()).getValue();
+          }
+          else if (name.equals("mimeType")) {
+            //noinspection ConstantConditions
+            mimeType = ((CssString)terms[++i].getFirstChild()).getValue();
           }
         }
       }
@@ -391,15 +388,25 @@ public class CssWriter {
       throw new IllegalArgumentException("todo");
     }
 
+    final boolean isSwf = InjectionUtil.isSwf(source, mimeType);
     BinaryFileManager binaryFileManager = BinaryFileManager.getInstance();
     final int fileId;
     if (binaryFileManager.isRegistered(source)) {
       fileId = binaryFileManager.getId(source);
     }
     else {
-      fileId = binaryFileManager.registerFile(source, BinaryFileType.IMAGE);
+      fileId = binaryFileManager.registerFile(source, isSwf ? BinaryFileType.SWF : BinaryFileType.IMAGE);
     }
 
+    propertyOut.write(isSwf ? CssPropertyType.EMBED_SWF : CssPropertyType.EMBED_IMAGE);
+    if (isSwf) {
+      if (symbol == null) {
+        propertyOut.write(0);
+      }
+      else {
+        propertyOut.writeAmfUtf(symbol);
+      }
+    }
     propertyOut.writeUInt29(fileId);
   }
 

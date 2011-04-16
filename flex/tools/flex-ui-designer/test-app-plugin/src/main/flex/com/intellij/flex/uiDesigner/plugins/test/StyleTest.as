@@ -3,7 +3,7 @@ import com.intellij.flex.uiDesigner.Library;
 import com.intellij.flex.uiDesigner.LibrarySet;
 import com.intellij.flex.uiDesigner.OriginalLibrary;
 import com.intellij.flex.uiDesigner.css.CssClassCondition;
-import com.intellij.flex.uiDesigner.css.CssDeclarationType;
+import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssPseudoCondition;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 
@@ -53,17 +53,17 @@ public class StyleTest extends BaseTestCase {
 
     var style:Vector.<CssRuleset> = library.defaultsStyle.rulesets;
     assertThat(style.length, 42);
-    assertThat(style[0], {selectors: [{subject: "spark.components.Application", conditions: null}], declarations: [{colorName: null, type: CssDeclarationType.COLOR_INT, value: 0xffffff}, {name: "skinClass", type: CssDeclarationType.CLASS_REFERENCE, value: {className: "spark.skins.spark.ApplicationSkin"}}]});
-    assertThat(style[2], {selectors: [{subject: "spark.components.Button", conditions: null, ancestor: null}], declarations: [{colorName: null, name: "skinClass", type: CssDeclarationType.CLASS_REFERENCE, value: {className: "spark.skins.spark.ButtonSkin"}}]});
-    assertThat(style[3], {selectors: [{subject: "spark.components.Button", conditions: [allOf(instanceOf(CssClassCondition), {value: "emphasized"})]}], declarations: [{colorName: null, name: "skinClass", type: CssDeclarationType.CLASS_REFERENCE, value: {className: "spark.skins.spark.DefaultButtonSkin"}}]});
+    assertThat(style[0], {selectors: [{subject: "spark.components.Application", conditions: null}], declarations: [{colorName: null, type: CssPropertyType.COLOR_INT, value: 0xffffff}, {name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.ApplicationSkin"}}]});
+    assertThat(style[2], {selectors: [{subject: "spark.components.Button", conditions: null, ancestor: null}], declarations: [{colorName: null, name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.ButtonSkin"}}]});
+    assertThat(style[3], {selectors: [{subject: "spark.components.Button", conditions: [allOf(instanceOf(CssClassCondition), {value: "emphasized"})]}], declarations: [{colorName: null, name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.DefaultButtonSkin"}}]});
     
     assertThat(style[6], {selectors: [{subject: "spark.components.ComboBox", conditions: null}], declarations: [
-      {name: "dropShadowVisible", type: CssDeclarationType.BOOL, value: strictlyEqualTo(true)},
-      {name: "paddingBottom", type: CssDeclarationType.NUMBER, value: 3},
-      {name: "paddingLeft", type: CssDeclarationType.NUMBER, value: 3},
-      {name: "paddingRight", type: CssDeclarationType.NUMBER, value: 3},
-      {name: "paddingTop", type: CssDeclarationType.NUMBER, value: 5},
-      {colorName: null, name: "skinClass", type: CssDeclarationType.CLASS_REFERENCE, value: {className: "spark.skins.spark.ComboBoxSkin"}}
+      {name: "dropShadowVisible", type: CssPropertyType.BOOL, value: strictlyEqualTo(true)},
+      {name: "paddingBottom", type: CssPropertyType.NUMBER, value: 3},
+      {name: "paddingLeft", type: CssPropertyType.NUMBER, value: 3},
+      {name: "paddingRight", type: CssPropertyType.NUMBER, value: 3},
+      {name: "paddingTop", type: CssPropertyType.NUMBER, value: 5},
+      {colorName: null, name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.ComboBoxSkin"}}
     ]});
     
     assertThat(style[28], {selectors: [{subject: "spark.components.supportClasses.SkinnableTextBase", conditions: [allOf(instanceOf(CssPseudoCondition), {value: "normalWithPrompt"})], ancestor: null}]});

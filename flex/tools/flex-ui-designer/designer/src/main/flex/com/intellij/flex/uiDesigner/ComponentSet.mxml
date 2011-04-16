@@ -5,14 +5,14 @@
   
   <Component role="{LibraryManager}"/>
   <Component role="{BitmapDataManager}"/>
-  <Component role="{SwfDataManager}"/>
+  <Component role="{EmbedSwfManager}"/>
   <Component role="{ProjectManager}"/>
   <Component role="{ModuleManager}"/>
   <Component role="{StringRegistry}"/>
   <Component role="{DocumentReader}" implementation="{MxmlReader}">
     <Requirement role="{StringRegistry}"/>
     <Requirement role="{BitmapDataManager}"/>
-    <Requirement role="{SwfDataManager}"/>
+    <Requirement role="{EmbedSwfManager}"/>
   </Component>
 	<Component role="{SocketManager}" implementation="{SocketManagerImpl}"/>
   <Component role="{DefaultSocketDataHandler}">

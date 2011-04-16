@@ -51,11 +51,6 @@ public class AppTest extends AppTestBase {
     copySwfAndDescriptor(new File(PathManager.getSystemPath(), "flexUIDesigner"));
     FlexUIDesignerApplicationManager.getInstance().openDocument(myProject, myModule, (XmlFile)myFile, false);
     await();
-
-    if (!info.result.get().equals(PASSED)) {
-      fail(info.result.get());
-    }
-    
     return newParent;
   }
   
@@ -77,6 +72,10 @@ public class AppTest extends AppTestBase {
     
     await();
     
+    if (!info.result.get().equals(PASSED)) {
+      fail(info.result.get());
+    }
+
     info.result.set("");
   }
 

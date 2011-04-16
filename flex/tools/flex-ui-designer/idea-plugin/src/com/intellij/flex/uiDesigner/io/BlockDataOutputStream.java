@@ -54,10 +54,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
 
   private void writeHeader() {
     int length = count - lastBlockBegin - SERVICE_DATA_SIZE;
-    buffer[lastBlockBegin] = (byte)((length >>> 24) & 0xFF);
-    buffer[lastBlockBegin + 1] = (byte)((length >>> 16) & 0xFF);
-    buffer[lastBlockBegin + 2] = (byte)((length >>> 8) & 0xFF);
-    buffer[lastBlockBegin + 3] = (byte)(length & 0xFF);
+    IOUtil.writeInt(length, buffer, lastBlockBegin);
   }
 
   private void flushBuffer() throws IOException {

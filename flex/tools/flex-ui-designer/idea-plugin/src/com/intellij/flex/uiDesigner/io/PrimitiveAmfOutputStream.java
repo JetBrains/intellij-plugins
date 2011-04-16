@@ -113,7 +113,6 @@ public class PrimitiveAmfOutputStream extends OutputStream {
 
     int count = out.size();
     final byte[] bytes = out.getBuffer(utflen);
-
     for (int i = 0; i < strlen; i++) {
       c = s.charAt(i);
       if (c <= 0x007F) {
@@ -222,12 +221,8 @@ public class PrimitiveAmfOutputStream extends OutputStream {
   }
 
   public final void writeInt(int v) {
-    int count = out.size();
-    final byte[] bytes = out.getBuffer(4);
-    bytes[count++] = (byte)((v >>> 24) & 0xFF);
-    bytes[count++] = (byte)((v >>> 16) & 0xFF);
-    bytes[count++] = (byte)((v >>> 8) & 0xFF);
-    bytes[count] = (byte)(v & 0xFF);
+    final int offset = out.size();
+    IOUtil.writeInt(v, out.getBuffer(4), offset);
   }
 
   public final void writeLong(long v) {

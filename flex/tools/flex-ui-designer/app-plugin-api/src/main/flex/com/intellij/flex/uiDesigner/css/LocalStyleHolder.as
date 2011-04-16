@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.css {
+import com.intellij.flex.uiDesigner.AssetLoadSemaphore;
 import com.intellij.flex.uiDesigner.VirtualFile;
 import com.intellij.flex.uiDesigner.VirtualFileImpl;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
@@ -17,10 +18,10 @@ public class LocalStyleHolder implements IExternalizable {
   }
 
   private var _stylesheet:Stylesheet;
-  public function get stylesheet():Stylesheet {
+  public function getStylesheet(assetLoadSemaphore:AssetLoadSemaphore):Stylesheet {
     if (_stylesheet == null) {
       _stylesheet = new Stylesheet();
-      _stylesheet.readExternal(data);
+      _stylesheet.readExternal(data, assetLoadSemaphore);
       _file.stylesheet = _stylesheet;
       data = null;
     }

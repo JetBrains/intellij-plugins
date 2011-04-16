@@ -1,21 +1,11 @@
 package com.intellij.flex.uiDesigner {
-import com.intellij.flex.uiDesigner.css.CssDeclaration;
-import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
-import com.intellij.flex.uiDesigner.css.CssRuleset;
-import com.intellij.flex.uiDesigner.css.ClassReferenceImpl;
-import com.intellij.flex.uiDesigner.css.EmbedImage;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.net.registerClassAlias;
 import flash.system.ApplicationDomain;
 import flash.utils.IDataInput;
 
-registerClassAlias("d", CssRuleset);
-registerClassAlias("p", CssDeclarationImpl);
-registerClassAlias("pi", CssDeclaration);
 registerClassAlias("f", VirtualFileImpl);
-registerClassAlias("c", ClassReferenceImpl);
-registerClassAlias("ei", EmbedImage);
 
 public final class LibrarySet {
   /**
@@ -51,7 +41,7 @@ public final class LibrarySet {
     return _libraries;
   }
 
-  public function readExternal(input:IDataInput):void {
+  public function readExternal(input:IDataInput, assetLoadSemaphore:AssetLoadSemaphore):void {
     _applicationDomainCreationPolicy = ApplicationDomainCreationPolicy.enumSet[input.readByte()];
     var n:int = input.readUnsignedShort();
     _libraries = new Vector.<Library>(n, true);
@@ -61,7 +51,7 @@ public final class LibrarySet {
       if (marker == 0) {
         originalLibrary = new OriginalLibrary();
         _libraries[i] = originalLibrary;
-        originalLibrary.readExternal(input);
+        originalLibrary.readExternal(input, assetLoadSemaphore);
         originalLibraries.push(originalLibrary);
       }
       else if (marker == 1) {
@@ -72,7 +62,7 @@ public final class LibrarySet {
         _libraries[i] = filteredLibrary;
         if (marker == 2) {
           filteredLibrary.origin = originalLibrary = new OriginalLibrary();
-          originalLibrary.readExternal(input);
+          originalLibrary.readExternal(input, assetLoadSemaphore);
           originalLibraries.push(originalLibrary);
         }
         else {

@@ -6,9 +6,22 @@ import flash.events.IOErrorEvent;
 import flash.system.LoaderContext;
 import flash.utils.ByteArray;
 
-public class SwfDataManager {
+public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedAssetManager {
   private var data:Vector.<SwfCache>;
-  private var contentParent:ContentParent;
+
+
+  public function isReady(id:int, symbol:String):Boolean {
+    var swfCache:SwfCache = data[id];
+    return swfCache.rootClass != null;
+  }
+
+  public function get(id:int, symbol:String):Object {
+    return get2(data[id], symbol);
+  }
+
+  private function get2(swfCache:SwfCache, symbol:String):Object {
+    return symbol == null ? swfCache.rootClass : Class(swfCache.applicationDomain.getDefinition(symbol));
+  }
   
   public function assign(id:int, symbol:String, propertyHolder:Object, propertyName:String):void {
     var swfCache:SwfCache = data[id];
@@ -25,7 +38,7 @@ public class SwfDataManager {
       }
     }
     else {
-      propertyHolder[propertyName] = symbol == null ? swfCache.rootClass : Class(swfCache.applicationDomain.getDefinition(symbol));
+      propertyHolder[propertyName] = get2(data[id], symbol);
     }
   }
   
@@ -44,38 +57,22 @@ public class SwfDataManager {
     data[id] = swfCache;
     
     var loader:Loader = new MyLoader(swfCache);
-    loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadCompleteHandler);
-    loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
+    addLoaderListeners(loader);
     var loaderContext:LoaderContext = new LoaderContext(false, swfCache.applicationDomain);
-    // AIR 2.6
-    if ("imageDecodingPolicy" in loaderContext) {
-      loaderContext["imageDecodingPolicy"] = "onLoad";
-      if (contentParent == null) {
-        contentParent = new ContentParent();
-        loaderContext["requestedContentParent"] = contentParent;
-      }
-    }
+    configureLoaderContext(loaderContext);
     loaderContext.allowCodeImport = true;
     loader.loadBytes(bytes, loaderContext);
   }
 
-  protected function loadCompleteHandler(event:Event):void {
-    var loaderInfo:LoaderInfo = LoaderInfo(event.currentTarget);
-    removeLoaderListeners(loaderInfo);
-    var loader:MyLoader = MyLoader(loaderInfo.loader);
+  override protected function loadCompleteHandler(event:Event):void {
+    super.loadCompleteHandler(event);
+    var loader:MyLoader = MyLoader(LoaderInfo(event.currentTarget).loader);
     loader.assign();
   }
 
-  private function loadErrorHandler(event:IOErrorEvent):void {
-    var loaderInfo:LoaderInfo = LoaderInfo(event.currentTarget);
-		removeLoaderListeners(loaderInfo);
-    
-    data[MyLoader(loaderInfo.loader).swfCache.id] = null;
-  }
-
-  private function removeLoaderListeners(loaderInfo:LoaderInfo):void {
-    loaderInfo.removeEventListener(Event.COMPLETE, loadCompleteHandler);
-    loaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
+  override protected function loadErrorHandler(event:IOErrorEvent):void {
+    super.loadErrorHandler(event);
+    data[MyLoader(LoaderInfo(event.currentTarget).loader).swfCache.id] = null;
   }
 }
 }
@@ -136,23 +133,5 @@ final class MyLoader extends Loader {
     }
     
     unload();
-  }
-}
-
-final class ContentParent extends Sprite {
-  override public function addChild(child:DisplayObject):DisplayObject {
-    return child;
-  }
-
-  override public function addChildAt(child:DisplayObject, index:int):DisplayObject {
-    return child;
-  }
-
-  override public function removeChildAt(index:int):DisplayObject {
-    return null;
-  }
-
-  override public function removeChild(child:DisplayObject):DisplayObject {
-    return child;
   }
 }

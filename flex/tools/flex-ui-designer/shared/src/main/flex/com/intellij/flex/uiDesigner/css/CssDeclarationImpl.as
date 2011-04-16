@@ -1,12 +1,5 @@
 package com.intellij.flex.uiDesigner.css {
-import com.intellij.flex.uiDesigner.StringRegistry;
-import com.intellij.flex.uiDesigner.io.AmfUtil;
-
-import flash.utils.IDataInput;
-import flash.utils.IDataOutput;
-import flash.utils.IExternalizable;
-
-public final class CssDeclarationImpl implements IExternalizable, CssDeclaration {
+public final class CssDeclarationImpl extends AbstractCssDeclaration implements CssDeclaration {
   public function CssDeclarationImpl(fromAs:Boolean = false) {
     _fromAs = fromAs;
   }
@@ -15,6 +8,16 @@ public final class CssDeclarationImpl implements IExternalizable, CssDeclaration
     var declaration:CssDeclarationImpl = new CssDeclarationImpl(false);
     declaration._name = name;
     declaration._textOffset = textOffset;
+    return declaration;
+  }
+
+  public static function create2(type:int, name:String, textOffset:int, colorName:String, value:Object):CssDeclarationImpl {
+    var declaration:CssDeclarationImpl = new CssDeclarationImpl(false);
+    declaration._type = type;
+    declaration._name = name;
+    declaration._textOffset = textOffset;
+    declaration.colorName = colorName;
+    declaration._value = value;
     return declaration;
   }
   
@@ -37,22 +40,6 @@ public final class CssDeclarationImpl implements IExternalizable, CssDeclaration
   
   public function get presentableName():String {
     return _name;
-  }
-
-  public function writeExternal(output:IDataOutput):void {
-  }
-
-  public function readExternal(input:IDataInput):void {
-    var stringRegistry:StringRegistry = StringRegistry.instance;
-    _name = stringRegistry.read(input);
-    _textOffset = AmfUtil.readUInt29(input);
-    type = input.readByte();
-
-    if (_type == CssDeclarationType.COLOR_STRING) {
-      _colorName = stringRegistry.read(input);
-    }
-
-    _value = input.readObject();
   }
   
   private var _type:int = -1;
@@ -78,11 +65,6 @@ public final class CssDeclarationImpl implements IExternalizable, CssDeclaration
   }
   public function set colorName(value:String):void {
     _colorName = value;
-  }
-
-  private var _textOffset:int;
-  public function get textOffset():int {
-    return _textOffset;
   }
 }
 }

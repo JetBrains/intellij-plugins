@@ -127,8 +127,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
         break;
       }
     }
-    
-    cssReader.read(suitableLocalStyleHolder.stylesheet.rulesets, suitableLocalStyleHolder.file);
+
+    var assetLoadSemaphore:AssetLoadSemaphore = new AssetLoadSemaphore();
+    cssReader.read(suitableLocalStyleHolder.getStylesheet(assetLoadSemaphore).rulesets, suitableLocalStyleHolder.file);
     cssReader.finalizeRead();
   }
 

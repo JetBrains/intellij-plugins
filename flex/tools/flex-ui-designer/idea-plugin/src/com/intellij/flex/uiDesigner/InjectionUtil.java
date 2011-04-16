@@ -6,6 +6,10 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 
 public final class InjectionUtil {
+  public static boolean isSwf(VirtualFile source, String mimeType) {
+    return mimeType == null ? source.getName().endsWith(".swf") : mimeType.equals("application/x-shockwave-flash");
+  }
+
   public static VirtualFile getReferencedFile(PsiElement element, ProblemsHolder problemsHolder, boolean resolveToFirstIfMulti) {
     final PsiReference[] references = element.getReferences();
     final JSFileReference fileReference;

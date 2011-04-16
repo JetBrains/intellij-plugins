@@ -36,4 +36,11 @@ public final class IOUtil {
 
     return bytes;
   }
+
+  public static void writeInt(final int v, final byte[] bytes, int offset) {
+    bytes[offset++] = (byte)((v >>> 24) & 0xFF);
+    bytes[offset++] = (byte)((v >>> 16) & 0xFF);
+    bytes[offset++] = (byte)((v >>> 8) & 0xFF);
+    bytes[offset] = (byte)(v & 0xFF);
+  }
 }

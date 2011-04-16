@@ -5,7 +5,7 @@ import flash.utils.Dictionary;
 
 public class InlineCssRuleset extends CssRuleset {
   public function InlineCssRuleset() {
-    _declarations = new Vector.<CssDeclaration>();
+    declarations = new Vector.<CssDeclaration>();
   }
   
   public static function createInline(line:int, offset:int, file:VirtualFile = null):InlineCssRuleset {

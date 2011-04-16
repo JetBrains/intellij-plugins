@@ -4,10 +4,8 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.utils.Dictionary;
 import flash.utils.IDataInput;
-import flash.utils.IDataOutput;
-import flash.utils.IExternalizable;
 
-public class OriginalLibrary implements IExternalizable, Library {
+public class OriginalLibrary implements Library {
   private var _path:String;
   public function get path():String {
     return _path;
@@ -28,10 +26,7 @@ public class OriginalLibrary implements IExternalizable, Library {
     return _defaultsStyle;
   }
 
-  public function writeExternal(output:IDataOutput):void {
-  }
-
-  public function readExternal(input:IDataInput):void {
+  public function readExternal(input:IDataInput, assetLoadSemaphore:AssetLoadSemaphore):void {
     _path = input.readUTFBytes(AmfUtil.readUInt29(input));
     _file = VirtualFileImpl.create(input);
 
@@ -46,7 +41,7 @@ public class OriginalLibrary implements IExternalizable, Library {
 
     if (input.readBoolean()) {
       _defaultsStyle = new Stylesheet();
-      _defaultsStyle.readExternal(input);
+      _defaultsStyle.readExternal(input, assetLoadSemaphore);
     }
   }
 }
