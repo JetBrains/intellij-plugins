@@ -3,6 +3,8 @@ import flash.display.DisplayObjectContainer;
 import flash.display.LoaderInfo;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
 import flash.utils.ByteArray;
 
 public class EmbedImageManager extends AbstractEmbedAssetManager implements EmbedAssetManager {
@@ -18,6 +20,12 @@ public class EmbedImageManager extends AbstractEmbedAssetManager implements Embe
     else {
       assert(data[id] == null);
     }
+
+    //var loader:MyLoader = new MyLoader(id);
+    //addLoaderListeners(loader);
+    //var loaderContext:LoaderContext = new LoaderContext(false, new ApplicationDomain());
+    //configureLoaderContext(loaderContext);
+    //loader.loadBytes(bytes, loaderContext);
   }
 
   public function get(id:int):Class {

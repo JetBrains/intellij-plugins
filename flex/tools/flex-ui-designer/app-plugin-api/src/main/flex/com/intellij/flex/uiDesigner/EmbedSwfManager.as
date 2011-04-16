@@ -77,6 +77,7 @@ public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedA
 }
 }
 
+import flash.display.AVM1Movie;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
@@ -121,7 +122,7 @@ final class MyLoader extends Loader {
   }
   
   public function assign():void {
-    swfCache.rootClass = DisplayObjectContainer(content).getChildAt(0)["constructor"];
+    swfCache.rootClass = content is AVM1Movie ? content["constructor"] : DisplayObjectContainer(content).getChildAt(0)["constructor"];
     if (swfCache.pendingClient != null) {
       swfCache.pendingClient.assign(content, swfCache);
       swfCache.pendingClient = null;

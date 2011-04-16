@@ -228,9 +228,11 @@ public class CssWriter {
         propertyOut.writeAmfDouble(value.getText());
         break;
 
-      case 'C': // Class, ClassReference("mx.skins.halo.HaloFocusRect");
+      case 'C':
+        // Class, brokenImageSkin: Embed(source="Assets.swf",symbol="__brokenImage"); or brokenImageBorderSkin: ClassReference("mx.skins.halo.BrokenImageBorderSkin");
+        // or ClassReference(null);
         //noinspection ConstantConditions
-        writeClassReference(value.getFirstChild().getFirstChild());
+        writeFunctionValue((CssFunction)value.getFirstChild().getFirstChild());
         break;
 
       case 'O': // Object, like baselineShift
@@ -250,15 +252,17 @@ public class CssWriter {
     }
   }
 
-  private void writeClassReference(PsiElement element) {
-    String className = PsiTreeUtil.getRequiredChildOfType(element, CssTermList.class).getText();
+  @SuppressWarnings({"ConstantConditions"})
+  private void writeClassReference(ASTNode node) {
+    ASTNode valueNode = node.findChildByType(CssElementTypes.CSS_TERM_LIST).getFirstChildNode().getFirstChildNode();
     // ClassReference(null);
-    if (className.equals("null")) {
+    if (valueNode instanceof XmlToken) {
+      assert valueNode.getText().equals("null");
       propertyOut.write(CssPropertyType.NULL);
     }
     else {
       propertyOut.write(CssPropertyType.CLASS_REFERENCE);
-      stringWriter.write(StringUtil.stripQuotesAroundValue(className), propertyOut);
+      stringWriter.write(((CssString)valueNode).getValue(), propertyOut);
     }
   }
 
@@ -291,7 +295,7 @@ public class CssWriter {
     else if (termType == CssTermTypes.IDENT) {
       @SuppressWarnings({"ConstantConditions"}) ASTNode node = value.getFirstChild().getFirstChild().getNode();
       if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
-        writeFunctionValueForUndefinedProperty((CssFunction)node);
+        writeFunctionValue((CssFunction)node);
       }
       else {
         assert terms.length == 1;
@@ -333,11 +337,11 @@ public class CssWriter {
     }
   }
 
-  private void writeFunctionValueForUndefinedProperty(CssFunction cssFunction) throws InvalidPropertyException {
+  private void writeFunctionValue(CssFunction cssFunction) throws InvalidPropertyException {
     String functionName = cssFunction.getFunctionName();
     switch (functionName.charAt(0)) {
       case 'C':
-        writeClassReference(cssFunction);
+        writeClassReference((ASTNode)cssFunction);
         break;
 
       case 'E':
@@ -350,7 +354,7 @@ public class CssWriter {
   }
 
   private void writeEmbed(CssFunction cssFunction) throws InvalidPropertyException {
-    System.out.print(cssFunction.getText());
+    //System.out.print(cssFunction.getText() + "\n");
     CssTerm[] terms = PsiTreeUtil.getChildrenOfType(PsiTreeUtil.getRequiredChildOfType(cssFunction, CssTermList.class), CssTerm.class);
     VirtualFile source = null;
     String symbol = null;
