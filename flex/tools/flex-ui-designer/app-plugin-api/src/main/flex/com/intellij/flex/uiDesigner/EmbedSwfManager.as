@@ -54,7 +54,8 @@ public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedA
     
     var swfCache:SwfCache = new SwfCache(id);
     data[id] = swfCache;
-    
+
+    return;
     var loader:Loader = new MyLoader(swfCache);
     addLoaderListeners(loader);
     var loaderContext:LoaderContext = new LoaderContext(false, swfCache.applicationDomain);

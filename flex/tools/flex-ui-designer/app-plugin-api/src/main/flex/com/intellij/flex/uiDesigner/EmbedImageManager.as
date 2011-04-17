@@ -20,6 +20,7 @@ public class EmbedImageManager extends AbstractEmbedAssetManager implements Embe
       assert(data[id] == null);
     }
 
+    return;
     var loader:MyLoader = new MyLoader(id);
     addLoaderListeners(loader);
     var loaderContext:LoaderContext = new LoaderContext(false, new ApplicationDomain());

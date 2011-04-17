@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,23 +76,31 @@ class BitmapValueWriter extends BinaryValueWriter {
     WritableRaster raster = image.getRaster();
     final int nbands = raster.getNumBands();
     assert nbands == 3 || nbands == 4;
-    assert raster.getDataBuffer().getDataType() == DataBuffer.TYPE_BYTE;
-    byte[] data = new byte[nbands];
-    int yoff = 0;
+    final DataBufferByte dataBuffer = (DataBufferByte)raster.getDataBuffer();
+    assert dataBuffer.getNumBanks() == 1;
+    byte[] data = dataBuffer.getData();
     int bufferLength = 0;
-    for (int y = 0; y < height; y++, yoff += width) {
-      for (int x = 0; x < width; x++) {
-        raster.getDataElements(x, y, data);
-        if (nbands == 4) {
-          byteBuffer[bufferLength++] = (byte)(data[3] & 0xff);
-        }
-        else {
-          byteBuffer[bufferLength++] = (byte)255;
-        }
+    if (nbands == 3) {
+      assert image.getType() == BufferedImage.TYPE_3BYTE_BGR;
+      for (int i = 0, n = data.length; i < n; i += 3) {
+        byteBuffer[bufferLength++] = (byte)255;
+        byteBuffer[bufferLength++] = (byte)(data[i + 2] & 0xff);
+        byteBuffer[bufferLength++] = (byte)(data[i + 1] & 0xff);
+        byteBuffer[bufferLength++] = (byte)(data[i] & 0xff);
 
-        byteBuffer[bufferLength++] = (byte)(data[0] & 0xff);
-        byteBuffer[bufferLength++] = (byte)(data[1] & 0xff);
-        byteBuffer[bufferLength++] = (byte)(data[2] & 0xff);
+        if (bufferLength == MAX_BUFFER_LENGTH) {
+          out.write(byteBuffer, 0, bufferLength);
+          bufferLength = 0;
+        }
+      }
+    }
+    else {
+      assert image.getType() == BufferedImage.TYPE_4BYTE_ABGR;
+      for (int i = 0, n = data.length; i < n; i += 4) {
+        byteBuffer[bufferLength++] = (byte)(data[i] & 0xff);
+        byteBuffer[bufferLength++] = (byte)(data[i + 3] & 0xff);
+        byteBuffer[bufferLength++] = (byte)(data[i + 2] & 0xff);
+        byteBuffer[bufferLength++] = (byte)(data[i + 1] & 0xff);
 
         if (bufferLength == MAX_BUFFER_LENGTH) {
           out.write(byteBuffer, 0, bufferLength);
