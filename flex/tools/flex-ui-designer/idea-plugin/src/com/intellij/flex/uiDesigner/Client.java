@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.uiDesigner.abc.ImageWrapper;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -261,8 +262,14 @@ public class Client implements Closable {
     beginMessage(ClientMethod.qualifyExternalInlineStyleSource);
   }
 
-  public void registerBinaryFile(int id, @NotNull VirtualFile file, BinaryFileType type) throws IOException {
-    final int length = (int)file.getLength();
+  public void registerBinaryFile(int id, final @NotNull VirtualFile file, final BinaryFileType type) throws IOException {
+    int length = (int)file.getLength();
+    ImageWrapper imageWrapper = null;
+    if (type == BinaryFileType.IMAGE) {
+      imageWrapper = new ImageWrapper(length);
+      length = imageWrapper.getLength();
+    }
+
     OutputStream directOut = blockOut.writeUnbufferedHeader(2 + 1 + 2 + 4 + length);
     directOut.write(ClientMethod.METHOD_CLASS);
     directOut.write(ClientMethod.registerBinaryFile.ordinal());
@@ -276,9 +283,14 @@ public class Client implements Closable {
     directOut.write((length >>> 8) & 0xFF);
     directOut.write(length & 0xFF);
 
-    InputStream inputStream = file.getInputStream();
+    final InputStream inputStream = file.getInputStream();
     try {
-      FileUtil.copy(inputStream, directOut);
+      if (type == BinaryFileType.IMAGE) {
+        imageWrapper.wrap(inputStream, directOut);
+      }
+      else {
+        FileUtil.copy(inputStream, directOut);
+      }
     }
     finally {
       inputStream.close();

@@ -1,5 +1,7 @@
-package com.intellij.flex.uiDesigner;
+package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
+import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 
@@ -8,7 +10,7 @@ import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-class FlexSdkAbcInjector extends AbcFilter {
+public class FlexSdkAbcInjector extends AbcFilter {
   public static final String STYLE_PROTO_CHAIN = "mx.styles:StyleProtoChain";
   public static final String LAYOUT_MANAGER = "mx.managers:LayoutManager";
 
@@ -56,7 +58,7 @@ class FlexSdkAbcInjector extends AbcFilter {
       byteBuffer.limit(byteBuffer.capacity());
 
       if (injectionUrlConnection == null) {
-        final FileChannel injection = new FileInputStream(new File(DebugPathManager.getFudHome() + "/flex-injection/target/" + 
+        final FileChannel injection = new FileInputStream(new File(DebugPathManager.getFudHome() + "/flex-injection/target/" +
                                                                    ComplementSwfBuilder.generateInjectionName(flexSdkVersion))).getChannel();
         try {
           injection.transferTo(0, injection.size(), outputFileChannel);

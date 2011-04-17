@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/abc-blank-maker/abc-blank-maker.iml" filepath="$PROJECT_DIR$/abc-blank-maker/abc-blank-maker.iml" />
       <module fileurl="file://$PROJECT_DIR$/abc-builder-maven-module/abc-builder-maven-plugin.iml" filepath="$PROJECT_DIR$/abc-builder-maven-module/abc-builder-maven-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app-loader/app-loader.iml" filepath="$PROJECT_DIR$/app-loader/app-loader.iml" />
       <module fileurl="file://$PROJECT_DIR$/app-plugin-api/app-plugin-api.iml" filepath="$PROJECT_DIR$/app-plugin-api/app-plugin-api.iml" />

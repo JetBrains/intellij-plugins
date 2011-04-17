@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.uiDesigner.abc.AbcFilter;
 import junit.framework.TestCase;
 
 import java.io.File;

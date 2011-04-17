@@ -9,7 +9,6 @@ import flash.utils.ByteArray;
 public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedAssetManager {
   private var data:Vector.<SwfCache>;
 
-
   public function isReady(id:int, symbol:String):Boolean {
     var swfCache:SwfCache = data[id];
     return swfCache.rootClass != null;
@@ -60,7 +59,6 @@ public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedA
     addLoaderListeners(loader);
     var loaderContext:LoaderContext = new LoaderContext(false, swfCache.applicationDomain);
     configureLoaderContext(loaderContext);
-    loaderContext.allowCodeImport = true;
     loader.loadBytes(bytes, loaderContext);
   }
 

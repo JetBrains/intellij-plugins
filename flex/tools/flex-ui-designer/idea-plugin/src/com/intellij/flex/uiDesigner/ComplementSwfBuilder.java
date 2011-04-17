@@ -1,5 +1,9 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.uiDesigner.abc.AbcFilter;
+import com.intellij.flex.uiDesigner.abc.AbcNameFilter;
+import com.intellij.flex.uiDesigner.abc.FlexSdkAbcInjector;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +27,7 @@ public class ComplementSwfBuilder {
       };
 
     File source = getSourceFile(rootPath, flexVersion);
-    new AbcFilter().filter(source, getAbcFile(rootPath, flexVersion), filter);
+    new AbcFilter().filter(source, createAbcFile(rootPath, flexVersion), filter);
     new AbcFilter().filter(source, new File(rootPath + "/complement-flex" + flexVersion + ".swf"), sparkInclusionNameFilter);
     new AbcFilter().filter(source, new File(rootPath + "/complement-air4.swf"), new AbcNameFilter() {
       @Override
@@ -37,7 +41,7 @@ public class ComplementSwfBuilder {
     return new File(folder, "flex-injection-" + flexVersion + "-1.0-SNAPSHOT.swf");
   }
 
-  public static File getAbcFile(String folder, String flexVersion) {
+  public static File createAbcFile(String folder, String flexVersion) {
     return new File(folder, generateInjectionName(flexVersion));
   }
   

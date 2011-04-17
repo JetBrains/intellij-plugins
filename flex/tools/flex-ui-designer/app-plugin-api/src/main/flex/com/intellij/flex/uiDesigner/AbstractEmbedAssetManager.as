@@ -9,16 +9,15 @@ public class AbstractEmbedAssetManager {
   private static var contentParent:ContentParent;
 
   protected function configureLoaderContext(loaderContext:LoaderContext):void {
+    loaderContext.allowCodeImport = true;
     // AIR 2.6
-    if (!("imageDecodingPolicy" in loaderContext)) {
+    if (!("requestedContentParent" in loaderContext)) {
       return;
     }
-
-    loaderContext["imageDecodingPolicy"] = "onLoad";
     if (contentParent == null) {
       contentParent = new ContentParent();
-      loaderContext["requestedContentParent"] = contentParent;
     }
+    loaderContext["requestedContentParent"] = contentParent;
   }
 
   protected function loadErrorHandler(event:IOErrorEvent):void {
@@ -32,7 +31,7 @@ public class AbstractEmbedAssetManager {
   }
 
   protected function addLoaderListeners(loader:Loader):void {
-    loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadCompleteHandler);
+    loader.contentLoaderInfo.addEventListener(Event.INIT, loadCompleteHandler);
     loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
   }
 

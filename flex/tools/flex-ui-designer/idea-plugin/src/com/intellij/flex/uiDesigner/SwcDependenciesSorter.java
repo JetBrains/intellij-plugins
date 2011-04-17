@@ -1,5 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.uiDesigner.abc.AbcFilter;
+import com.intellij.flex.uiDesigner.abc.AbcNameFilter;
+import com.intellij.flex.uiDesigner.abc.FlexSdkAbcInjector;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -45,7 +48,7 @@ public class SwcDependenciesSorter {
   private static long createInjectionAbc(String flexSdkVersion, boolean force) throws IOException {
     final String rootPath = DebugPathManager.getFudHome() + "/flex-injection/target";
     File abcSource = ComplementSwfBuilder.getSourceFile(rootPath, flexSdkVersion);
-    File abc = ComplementSwfBuilder.getAbcFile(rootPath, flexSdkVersion);
+    File abc = ComplementSwfBuilder.createAbcFile(rootPath, flexSdkVersion);
     if (!force && abcSource.lastModified() < abc.lastModified()) {
       return abc.lastModified();
     }

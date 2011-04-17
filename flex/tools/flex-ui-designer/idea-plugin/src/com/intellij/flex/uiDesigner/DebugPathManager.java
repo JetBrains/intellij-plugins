@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-final class DebugPathManager {
+public final class DebugPathManager {
   private static String ideaHome;
   private static String fudHome;
   
@@ -24,7 +24,7 @@ final class DebugPathManager {
     return ideaHome;
   }
 
-  static String getFudHome() {
+  public static String getFudHome() {
     if (fudHome == null) {
       if (isUnitTestMode()) {
         ideaHome = getRootByClass(PathManager.class);

@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner;
+package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -16,12 +16,8 @@ import java.util.zip.ZipException;
  name='org/flyti/plexus/events/DispatcherEvent'>)
  * Optimized SWF (merged DoABC2) is not supported.
  */
-class AbcFilter {
+public class AbcFilter {
   private static final int PARTIAL_HEADER_LENGTH = 8;
-
-  private static final int endTag = 0;
-  private static final int stagDoABC2 = 82;
-  private static final int symbolClass = 76;
 
   protected ByteBuffer byteBuffer;
   private final char[] abcNameBuffer = new char[256];
@@ -39,16 +35,15 @@ class AbcFilter {
   }
 
   private void filter(InputStream inputStream, long inputLength, File out, AbcNameFilter abcNameFilter) throws IOException {
-    boolean onlyABC = out.getPath().endsWith(".abc");
+    final boolean onlyABC = out.getPath().endsWith(".abc");
     final int uncompressedBodyLength;
     final boolean compressed;
     byte[] data;
     try {
       int n = inputStream.read(partialHeader);
       assert n == PARTIAL_HEADER_LENGTH;
-      uncompressedBodyLength =
-        (partialHeader[4] & 0xFF | (partialHeader[5] & 0xFF) << 8 | (partialHeader[6] & 0xFF) << 16 | partialHeader[7] << 24) -
-        PARTIAL_HEADER_LENGTH;
+      uncompressedBodyLength = (partialHeader[4] & 0xFF | (partialHeader[5] & 0xFF) << 8 |
+                                (partialHeader[6] & 0xFF) << 16 | partialHeader[7] << 24) - PARTIAL_HEADER_LENGTH;
       compressed = partialHeader[0] == 0x43;
       data = FileUtil.loadBytes(inputStream, compressed ? ((int)inputLength - PARTIAL_HEADER_LENGTH) : uncompressedBodyLength);
     }
@@ -121,12 +116,12 @@ class AbcFilter {
       }
 
       switch (type) {
-        case endTag:
+        case TagTypes.End:
           byteBuffer.position(lastWrittenPosition);
           outputFileChannel.write(byteBuffer);
           return;
 
-        case symbolClass: {
+        case TagTypes.SymbolClass: {
           final int tagStartPosition = byteBuffer.position();
           if (replaceMainClass) {
             lastWrittenPosition =
@@ -136,7 +131,7 @@ class AbcFilter {
         }
         break;
 
-        case stagDoABC2:
+        case TagTypes.DoABC2:
           String name = readAbcName(byteBuffer.position() + 4);
           if (!abcNameFilter.accept(name)) {
             byteBuffer.limit(byteBuffer.position() - 6);
@@ -174,10 +169,10 @@ class AbcFilter {
       }
 
       switch (type) {
-        case endTag:
+        case TagTypes.End:
           return;
 
-        case stagDoABC2:
+        case TagTypes.DoABC2:
           String name = readAbcName(byteBuffer.position() + 4);
           if (abcNameFilter.accept(name)) {
             byteBuffer.position(byteBuffer.position() - 6);
@@ -194,8 +189,7 @@ class AbcFilter {
     }
   }
   
-  private int parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(int lastWrittenPosition,
-                                                                          FileChannel outputFileChannel,
+  private int parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(int lastWrittenPosition, FileChannel outputFileChannel,
                                                                           int tagLength) throws IOException {
     final int startTagPosition = byteBuffer.position() - (tagLength >= 63 ? 6 : 2);
     int numSymbols = byteBuffer.getShort();
@@ -209,7 +203,7 @@ class AbcFilter {
         byteBuffer.put((byte)0);
 
         byteBuffer.position(startTagPosition);
-        encodeTagHeader(symbolClass, tagLength - (name.length() - nb.length));
+        encodeTagHeader(TagTypes.SymbolClass, tagLength - (name.length() - nb.length));
 
         byteBuffer.position(lastWrittenPosition);
         byteBuffer.limit(position + nb.length + 1);

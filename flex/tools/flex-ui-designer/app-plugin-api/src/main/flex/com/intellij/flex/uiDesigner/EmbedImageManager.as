@@ -1,5 +1,4 @@
 package com.intellij.flex.uiDesigner {
-import flash.display.DisplayObjectContainer;
 import flash.display.LoaderInfo;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
@@ -21,11 +20,11 @@ public class EmbedImageManager extends AbstractEmbedAssetManager implements Embe
       assert(data[id] == null);
     }
 
-    //var loader:MyLoader = new MyLoader(id);
-    //addLoaderListeners(loader);
-    //var loaderContext:LoaderContext = new LoaderContext(false, new ApplicationDomain());
-    //configureLoaderContext(loaderContext);
-    //loader.loadBytes(bytes, loaderContext);
+    var loader:MyLoader = new MyLoader(id);
+    addLoaderListeners(loader);
+    var loaderContext:LoaderContext = new LoaderContext(false, new ApplicationDomain());
+    configureLoaderContext(loaderContext);
+    loader.loadBytes(bytes, loaderContext);
   }
 
   public function get(id:int):Class {
@@ -34,8 +33,9 @@ public class EmbedImageManager extends AbstractEmbedAssetManager implements Embe
 
   override protected function loadCompleteHandler(event:Event):void {
     super.loadCompleteHandler(event);
-    var loader:MyLoader = MyLoader(LoaderInfo(event.currentTarget).loader);
-    data[loader.id] = DisplayObjectContainer(loader.content).getChildAt(0)["constructor"];
+    var loaderInfo:LoaderInfo = LoaderInfo(event.currentTarget);
+    var loader:MyLoader = MyLoader(loaderInfo.loader);
+    data[loader.id] = Class(loaderInfo.applicationDomain.getDefinition("B"));
   }
 
   override protected function loadErrorHandler(event:IOErrorEvent):void {
