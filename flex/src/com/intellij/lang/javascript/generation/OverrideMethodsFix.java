@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Maxim.Mossienko
@@ -24,10 +25,10 @@ public class OverrideMethodsFix extends BaseCreateMethodsFix<JSFunction> {
   }
 
   protected String buildFunctionBodyText(final String retType, final JSParameterList parameterList, final JSFunction func) {
-    return buildDelegatingText(retType, parameterList, func, "super");
+    return buildDelegatingText(retType, parameterList, func, "super", anchor != null ? anchor:myJsClass);
   }
 
-  public static String buildDelegatingText(String retType, JSParameterList parameterList, JSFunction func, String qualifier) {
+  public static String buildDelegatingText(String retType, JSParameterList parameterList, JSFunction func, String qualifier, @NotNull PsiElement anchor) {
     @NonNls StringBuilder functionText = new StringBuilder();
     functionText.append("{\n");
 
@@ -38,9 +39,8 @@ public class OverrideMethodsFix extends BaseCreateMethodsFix<JSFunction> {
     functionText.append(qualifier).append(".");
     final JSAttributeList attributeList = func.getAttributeList();
     if (attributeList != null) {
-      String ns;
-      if ((ns = attributeList.getNamespace()) != null) {
-        functionText.append(ns).append("::");
+      if (attributeList.getNamespace() != null) {
+        functionText.append(calcNamespaceId(attributeList, JSResolveUtil.getNamespaceValue(attributeList), anchor)).append("::");
       }
     }
     functionText.append(func.getName());
