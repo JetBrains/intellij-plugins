@@ -46,39 +46,62 @@ public final class LibrarySet {
     var n:int = input.readUnsignedShort();
     _libraries = new Vector.<Library>(n, true);
     var originalLibrary:OriginalLibrary;
+    var filteredLibrary:FilteredLibrary;
     for (var i:int = 0; i < n; i++) {
       const marker:int = input.readByte();
       if (marker == 4) {
-        _libraries[i] = new EmbedLibrary(input.readUTFBytes(AmfUtil.readUInt29(input)));
+        _libraries[i] = new EmbedLibrary(_libraries[input.readUnsignedShort()], input.readUTFBytes(AmfUtil.readUInt29(input)));
       }
       else {
         var originalLibraryId:int = input.readUnsignedShort();
-        if (marker == 0) {
-          originalLibrary = new OriginalLibrary();
-          _libraries[i] = originalLibrary;
-          originalLibraries[originalLibraryId] = originalLibrary;
-          originalLibrary.readExternal(input, assetLoadSemaphore);
-        }
-        else if (marker == 1) {
+        if (marker == 1) {
           _libraries[i] = originalLibraries[originalLibraryId];
         }
-        else if (marker < 4) {
-          var filteredLibrary:FilteredLibrary = new FilteredLibrary();
-          _libraries[i] = filteredLibrary;
-          if (marker == 2) {
-            filteredLibrary.origin = originalLibrary = new OriginalLibrary();
+        else {
+          var parents:Vector.<Library> = readParents(input);
+          if (marker == 0) {
+            originalLibrary = new OriginalLibrary(parents);
+            _libraries[i] = originalLibrary;
             originalLibraries[originalLibraryId] = originalLibrary;
             originalLibrary.readExternal(input, assetLoadSemaphore);
           }
-          else {
-            filteredLibrary.origin = originalLibraries[originalLibraryId];
+          else if (marker < 4) {
+            filteredLibrary = new FilteredLibrary(parents);
+            _libraries[i] = filteredLibrary;
+            if (marker == 2) {
+              filteredLibrary.origin = originalLibrary = new OriginalLibrary(null);
+              originalLibraries[originalLibraryId] = originalLibrary;
+              originalLibrary.readExternal(input, assetLoadSemaphore);
+            }
+            else {
+              filteredLibrary.origin = originalLibraries[originalLibraryId];
+            }
           }
-        }
-        else {
-          throw new ArgumentError("Unknown marker " + marker);
+          else {
+            throw new ArgumentError("Unknown marker " + marker);
+          }
+
+          if (parents != null) {
+            for each (var parentLibrary:Library in parents) {
+              parentLibrary.addSuccessor(marker == 0 ? originalLibrary : filteredLibrary);
+            }
+          }
         }
       }
     }
+  }
+
+  private function readParents(input:IDataInput):Vector.<Library> {
+    var n:int = input.readUnsignedByte();
+    if (n == 0) {
+      return null;
+    }
+
+    var parents:Vector.<Library> = new Vector.<Library>(n, true);
+    for (var i:int = 0; i < n; i++) {
+      parents[i] = _libraries[input.readUnsignedShort()];
+    }
+    return parents;
   }
 }
 }

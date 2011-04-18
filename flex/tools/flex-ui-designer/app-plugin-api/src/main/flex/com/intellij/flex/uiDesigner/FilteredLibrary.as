@@ -3,7 +3,11 @@ import com.intellij.flex.uiDesigner.css.Stylesheet;
 
 import flash.utils.Dictionary;
 
-public class FilteredLibrary implements Library {
+public class FilteredLibrary extends AbstractLibrary implements Library {
+  public function FilteredLibrary(parents:Vector.<Library>) {
+    super(parents);
+  }
+  
   public var origin:OriginalLibrary;
 
   public function get path():String {

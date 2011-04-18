@@ -1,10 +1,12 @@
 package com.intellij.flex.uiDesigner;
 
-public class EmbedLibrary implements Library {
-  private String path;
+class EmbedLibrary implements Library {
+  private final String path;
+  public final OriginalLibrary parent;
 
-  public EmbedLibrary(String path) {
+  public EmbedLibrary(String path, OriginalLibrary parent) {
     this.path = path;
+    this.parent = parent;
   }
 
   public String getPath() {

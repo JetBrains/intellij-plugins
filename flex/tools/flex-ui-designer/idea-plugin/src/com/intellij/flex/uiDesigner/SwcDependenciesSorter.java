@@ -129,8 +129,7 @@ public class SwcDependenciesSorter {
         }
 
         abcModified = true;
-        filter.filter(library.getSwfFile(), createSwfOutFile(library, postfix),
-                      new AbcNameFilterByNameSet(library.unresolvedDefinitions));
+        filter.filter(library.getSwfFile(), createSwfOutFile(library, postfix), new AbcNameFilterByNameSet(library.unresolvedDefinitions));
       }
 
       if (!abcModified) {
@@ -155,7 +154,7 @@ public class SwcDependenciesSorter {
         }
 
         if (complementName != null) {
-          sortedLibraries.add(new EmbedLibrary(complementName));
+          sortedLibraries.add(new EmbedLibrary(complementName, library));
         }
       }
 

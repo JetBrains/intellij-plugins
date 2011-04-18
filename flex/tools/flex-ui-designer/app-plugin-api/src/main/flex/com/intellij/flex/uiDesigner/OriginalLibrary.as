@@ -5,7 +5,11 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 import flash.utils.Dictionary;
 import flash.utils.IDataInput;
 
-public class OriginalLibrary implements Library {
+public class OriginalLibrary extends AbstractLibrary implements Library {
+  public function OriginalLibrary(parents:Vector.<Library>) {
+    super(parents);
+  }
+  
   private var _path:String;
   public function get path():String {
     return _path;

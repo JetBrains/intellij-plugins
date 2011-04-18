@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.util.FileUtil;
 
-import flash.display.Loader;
+import flash.display.LoaderInfo;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.filesystem.File;
@@ -15,7 +15,7 @@ import flash.utils.ByteArray;
  */
 public class QueueLoader {
   private var librarySet:LibrarySet;
-  private var currentIndex:int;
+  private var loadedCount:int;
 
   //noinspection JSUnusedLocalSymbols
   [Embed(source="/complement-flex4.1.swf", mimeType="application/octet-stream")]
@@ -55,7 +55,6 @@ public class QueueLoader {
   private var completeHandler:Function;
   private var errorHandler:Function;
 
-  private const loader:Loader = new Loader();
   private const loaderContext:LoaderContext = new LoaderContext();
   private const urlRequest:URLRequest = new URLRequest();
 
@@ -64,8 +63,23 @@ public class QueueLoader {
     this.errorHandler = errorHandler;
 
     loaderContext.allowCodeImport = true;
-    loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadCompleteHandler);
-    loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
+    LoaderContentParentAdobePleaseDoNextStep.configureContext(loaderContext);
+  }
+
+  private const freeLoaders:Vector.<MyLoader> = new Vector.<MyLoader>();
+  private function createLoadder(library:Library):MyLoader {
+    var loader:MyLoader;
+    if (freeLoaders.length == 0) {
+      loader = new MyLoader();
+      loader.contentLoaderInfo.addEventListener(Event.INIT, loadCompleteHandler);
+      loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
+    }
+    else {
+      loader = freeLoaders.pop();
+    }
+
+    loader.library = library;
+    return loader;
   }
 
   private function loadErrorHandler(event:IOErrorEvent):void {
@@ -84,22 +98,27 @@ public class QueueLoader {
 
   private function doLoadLibrarySet(librarySet:LibrarySet):void {
     this.librarySet = librarySet;
-    currentIndex = 0;
+    loadedCount = 0;
     assert(_rootDomain != null);
     loaderContext.applicationDomain = new ApplicationDomain(librarySet.parent == null ? _rootDomain : librarySet.parent.applicationDomain);
-    loadNextLibrary();
+    for each (var library:Library in librarySet.libraries) {
+      if (library.parents == null) {
+        loadLibrary(library);
+      }
+    }
   }
 
-  private function loadNextLibrary():void {
+  private function loadLibrary(library:Library):void {
+    library.loadState = LoadState.LOADING;
+    var loader:MyLoader = createLoadder(library);
     // *** Adobe http://juick.com/develar/896344  http://juick.com/develar/896278
-    var library:Library = librarySet.libraries[currentIndex++];
     if (library is EmbedLibrary) {
-      trace("load: @" + library.path);
+      //trace("load: @" + library.path);
       loader.loadBytes(getFlexComplementSwfBytes(library.path), loaderContext);
     }
     else {
       urlRequest.url = "app:/" + library.path + (library is OriginalLibrary ? ".swf" : "_" + librarySet.id + ".swf");
-      trace("load: " + urlRequest.url);
+      //trace("load: " + urlRequest.url);
       loader.load(urlRequest, loaderContext);
     }
   }
@@ -120,12 +139,32 @@ public class QueueLoader {
   }
 
   private function loadCompleteHandler(event:Event):void {
-    if (currentIndex < librarySet.libraries.length) {
+    loadedCount++;
+    if (loadedCount < librarySet.libraries.length) {
       if (librarySet.applicationDomainCreationPolicy == ApplicationDomainCreationPolicy.MULTIPLE) {
         loaderContext.applicationDomain = new ApplicationDomain(loaderContext.applicationDomain);
       }
 
-      loadNextLibrary();
+      var loader:MyLoader = MyLoader(LoaderInfo(event.currentTarget).loader);
+      var loadedLibrary:Library = loader.library;
+      loadedLibrary.loadState = LoadState.READY;
+      loader.library = null;
+      freeLoaders.push(loader);
+      if (loadedLibrary.successors == null) {
+        return;
+      }
+
+      ol: for each (var library:Library in loadedLibrary.successors) {
+        if (library.loadState == LoadState.UNINITIALIZED) {
+          for each (var parentLibrary:Library in library.parents) {
+            if (parentLibrary.loadState != LoadState.READY) {
+              continue ol;
+            }
+          }
+
+          loadLibrary(library);
+        }
+      }
     }
     else {
       librarySet.applicationDomain = loaderContext.applicationDomain;
@@ -139,4 +178,12 @@ public class QueueLoader {
     }
   }
 }
+}
+
+import com.intellij.flex.uiDesigner.Library;
+
+import flash.display.Loader;
+
+final class MyLoader extends Loader {
+  public var library:Library;
 }

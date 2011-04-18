@@ -10,5 +10,14 @@ public interface Library {
   function get defaultsStyle():Stylesheet;
 
   function get file():VirtualFile;
+
+  function get parents():Vector.<Library>;
+
+  function get successors():Vector.<Library>;
+
+  function addSuccessor(successor:Library):void;
+
+  function get loadState():int;
+  function set loadState(value:int):void;
 }
 }

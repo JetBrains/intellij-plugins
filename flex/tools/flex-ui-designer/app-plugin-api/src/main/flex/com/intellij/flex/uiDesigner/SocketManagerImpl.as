@@ -1,11 +1,8 @@
 package com.intellij.flex.uiDesigner {
-import com.intellij.flex.uiDesigner.css.CssDeclaration;
-
 import flash.events.ProgressEvent;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
 import flash.utils.Dictionary;
-import flash.utils.getQualifiedClassName;
 
 registerClassAlias("s", String);
 
@@ -53,7 +50,7 @@ public class SocketManagerImpl implements SocketManager {
   private function socketDataHandler(event:ProgressEvent):void {
     if (event != null) {
       totalBytes += event.bytesLoaded;
-      trace("socket data handler: bytesLoaded " + event.bytesLoaded + " socket bytesAvailable " + socket.bytesAvailable + " last unread " + (socket.bytesAvailable - event.bytesLoaded));
+      //trace("socket data handler: bytesLoaded " + event.bytesLoaded + " socket bytesAvailable " + socket.bytesAvailable + " last unread " + (socket.bytesAvailable - event.bytesLoaded));
     }
     
     if (unreadSocketRemainder != 0) {

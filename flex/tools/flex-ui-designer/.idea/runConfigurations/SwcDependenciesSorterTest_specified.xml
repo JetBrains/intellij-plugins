@@ -6,8 +6,8 @@
     <option name="ALTERNATIVE_JRE_PATH" value="" />
     <option name="PACKAGE_NAME" value="com.intellij.flex.uiDesigner" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.SwcDependenciesSorterTest" />
-    <option name="METHOD_NAME" value="testDelete" />
-    <option name="TEST_OBJECT" value="method" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="class" />
     <option name="VM_PARAMETERS" value="-Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.test.debug=true -Dfud.adl=$ADL$ -Dfud.air=$AIR$" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />

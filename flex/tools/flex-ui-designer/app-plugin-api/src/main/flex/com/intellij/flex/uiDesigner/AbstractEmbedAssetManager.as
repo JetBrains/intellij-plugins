@@ -6,18 +6,14 @@ import flash.events.IOErrorEvent;
 import flash.system.LoaderContext;
 
 public class AbstractEmbedAssetManager {
-  private static var contentParent:ContentParent;
-
   protected function configureLoaderContext(loaderContext:LoaderContext):void {
     loaderContext.allowCodeImport = true;
     // AIR 2.6
     if (!("requestedContentParent" in loaderContext)) {
       return;
     }
-    if (contentParent == null) {
-      contentParent = new ContentParent();
-    }
-    loaderContext["requestedContentParent"] = contentParent;
+
+    LoaderContentParentAdobePleaseDoNextStep.configureContext(loaderContext);
   }
 
   protected function loadErrorHandler(event:IOErrorEvent):void {
@@ -40,25 +36,4 @@ public class AbstractEmbedAssetManager {
     loaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
   }
 }
-}
-
-import flash.display.DisplayObject;
-import flash.display.Sprite;
-
-final class ContentParent extends Sprite {
-  override public function addChild(child:DisplayObject):DisplayObject {
-    return child;
-  }
-
-  override public function addChildAt(child:DisplayObject, index:int):DisplayObject {
-    return child;
-  }
-
-  override public function removeChildAt(index:int):DisplayObject {
-    return null;
-  }
-
-  override public function removeChild(child:DisplayObject):DisplayObject {
-    return child;
-  }
 }

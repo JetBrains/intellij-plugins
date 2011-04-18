@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 public class Client implements Closable {
   protected AmfOutputStream out;
@@ -80,6 +81,7 @@ public class Client implements Closable {
     mxmlWriter.reset();
 
     BinaryFileManager.getInstance().reset();
+    LibraryManager.getInstance().reset();
 
     try {
       out.closeWithoutFlush();
@@ -117,13 +119,15 @@ public class Client implements Closable {
     stringWriter.writeTo(out);
 
     out.write(librarySet.getApplicationDomainCreationPolicy());
-    out.writeShort(librarySet.getLibraries().size());
-    for (Library library : librarySet.getLibraries()) {
+    final List<Library> libraries = librarySet.getLibraries();
+    out.writeShort(libraries.size());
+    final LibraryManager libraryManager = LibraryManager.getInstance();
+    for (Library library : libraries) {
       final OriginalLibrary originalLibrary;
       final boolean unregisteredLibrary;
       if (library instanceof OriginalLibrary) {
         originalLibrary = (OriginalLibrary)library;
-        unregisteredLibrary = !LibraryManager.getInstance().isRegistered(originalLibrary);
+        unregisteredLibrary = !libraryManager.isRegistered(originalLibrary);
         if (originalLibrary.filtered) {
           out.write(unregisteredLibrary ? 2 : 3);
         }
@@ -132,13 +136,16 @@ public class Client implements Closable {
         }
       }
       else {
+        final EmbedLibrary embedLibrary = (EmbedLibrary)library;
         out.write(4);
-        out.writeAmfUtf(((EmbedLibrary)library).getPath());
+        out.writeShort(libraries.indexOf(embedLibrary.parent));
+        out.writeAmfUtf(embedLibrary.getPath());
         continue;
       }
 
       if (unregisteredLibrary) {
-        out.writeShort(LibraryManager.getInstance().add(originalLibrary));
+        out.writeShort(libraryManager.add(originalLibrary));
+        writeParents(libraries, originalLibrary);
         out.writeAmfUtf(originalLibrary.getPath());
         writeVirtualFile(originalLibrary.getFile(), out);
 
@@ -159,10 +166,26 @@ public class Client implements Closable {
       }
       else {
         out.writeShort(originalLibrary.getId());
+        if (originalLibrary.filtered) {
+          writeParents(libraries, originalLibrary);
+        }
       }
     }
 
     blockOut.end();
+  }
+
+  private void writeParents(List<Library> libraries, OriginalLibrary originalLibrary) {
+    if (originalLibrary.parents.isEmpty()) {
+      out.write(0);
+    }
+    else {
+      out.write(originalLibrary.parents.size());
+      for (OriginalLibrary parent : originalLibrary.parents) {
+        // can't use parent.getId(), because parents/successors related to filtered, but not to original id
+        out.writeShort(libraries.indexOf(parent));
+      }
+    }
   }
 
   public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter)
@@ -177,7 +200,6 @@ public class Client implements Closable {
     out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
 
     out.reset();
-
     blockOut.end();
   }
 

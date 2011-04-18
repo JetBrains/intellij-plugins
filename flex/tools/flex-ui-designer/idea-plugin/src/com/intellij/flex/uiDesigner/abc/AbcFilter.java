@@ -35,7 +35,6 @@ public class AbcFilter {
   }
 
   private void filter(InputStream inputStream, long inputLength, File out, AbcNameFilter abcNameFilter) throws IOException {
-    final boolean onlyABC = out.getPath().endsWith(".abc");
     final int uncompressedBodyLength;
     final boolean compressed;
     byte[] data;
@@ -73,6 +72,7 @@ public class AbcFilter {
 
     FileOutputStream outputStream = new FileOutputStream(out);
     FileChannel outputFileChannel = outputStream.getChannel();
+    final boolean onlyABC = out.getPath().endsWith(".abc");
     if (!onlyABC) {
       outputFileChannel.position(PARTIAL_HEADER_LENGTH);
     }
