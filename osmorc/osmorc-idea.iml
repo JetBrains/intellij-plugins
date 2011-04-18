@@ -63,15 +63,6 @@
     <orderEntry type="module" module-name="execution-impl" />
     <orderEntry type="module" module-name="debugger-impl" />
     <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/pax-runner-1.5.0-SNAPSHOT.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="bundlor-1.0.0">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar!/" />
@@ -137,6 +128,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/com.springsource.util.osgi-2.0.0.RELEASE.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pax-runner-1.6.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

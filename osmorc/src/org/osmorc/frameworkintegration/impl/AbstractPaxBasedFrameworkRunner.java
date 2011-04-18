@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
  * @version $Id:$
  */
 public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties> extends AbstractFrameworkRunner<P> implements ExternalVMFrameworkRunner {
-  private static final String PaxRunnerLib = "pax-runner-1.5.0-SNAPSHOT.jar";
+  private static final String PaxRunnerLib = "pax-runner-1.6.1.jar";
 
   protected AbstractPaxBasedFrameworkRunner() {
   }
