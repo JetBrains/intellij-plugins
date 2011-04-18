@@ -70,7 +70,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
       System.out.print("\n\nSTART IGNORE ME\n\n");
       System.out.print(reader.readUTF());
       super.assertResult(documentName, time);
-      System.out.print(reader.readUTF());
+      //System.out.print(reader.readUTF());
       System.out.print("\n\nEND IGNORE ME\n\n");
       return;
     }

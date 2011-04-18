@@ -43,15 +43,15 @@ public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedA
   
   public function load(id:int, bytes:ByteArray):void {
     if (data == null) {
-      data = new Vector.<SwfCache>(id + 8);
+      data = new Vector.<SwfCache>(id + 16);
     }
     else if (id >= data.length) {
-      data.length += 8;
+      data.length = Math.max(data.length, id) + 16;
     }
     else {
       assert(data[id] == null);
     }
-    
+
     var swfCache:SwfCache = new SwfCache(id);
     data[id] = swfCache;
 

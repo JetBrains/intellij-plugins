@@ -14,6 +14,7 @@ import gnu.trove.THashSet;
 import gnu.trove.TLinkedList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -279,7 +280,7 @@ public class SwcDependenciesSorter {
   }
 
   @SuppressWarnings({"UnusedDeclaration"})
-  // debug
+  @TestOnly
   private Map<CharSequence, Definition> getDefinitions(FilteredLibrary library) {
     Map<CharSequence, Definition> definitions = new HashMap<CharSequence, Definition>();
     for (Map.Entry<CharSequence, Definition> entry : definitionMap.entrySet()) {
