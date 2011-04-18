@@ -124,13 +124,12 @@ public class Client implements Closable {
       if (library instanceof OriginalLibrary) {
         originalLibrary = (OriginalLibrary)library;
         unregisteredLibrary = !LibraryManager.getInstance().isRegistered(originalLibrary);
-        out.write(unregisteredLibrary ? 0 : 1);
-      }
-      else if (library instanceof FilteredLibrary) {
-        FilteredLibrary filteredLibrary = (FilteredLibrary)library;
-        originalLibrary = filteredLibrary.getOrigin();
-        unregisteredLibrary = !LibraryManager.getInstance().isRegistered(originalLibrary);
-        out.write(unregisteredLibrary ? 2 : 3);
+        if (originalLibrary.filtered) {
+          out.write(unregisteredLibrary ? 2 : 3);
+        }
+        else {
+          out.write(unregisteredLibrary ? 0 : 1);
+        }
       }
       else {
         out.write(4);

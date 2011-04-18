@@ -2,13 +2,20 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.openapi.vfs.VirtualFile;
+import gnu.trove.THashSet;
+import gnu.trove.TLinkable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class OriginalLibrary extends InfoList.Info<VirtualFile> implements Library {
+import java.util.Set;
+
+class OriginalLibrary extends InfoList.Info<VirtualFile> implements Library, TLinkable {
   public static final String DEFAULTS_CSS = "defaults.css";
   private static final String CATALOG = "catalog.xml";
   private static final String SWF = "library.swf";
+
+  private TLinkable previous;
+  private TLinkable next;
 
   public byte[] inheritingStyles;
   public byte[] defaultsStyle;
@@ -16,11 +23,30 @@ class OriginalLibrary extends InfoList.Info<VirtualFile> implements Library {
   private final String path;
   private final boolean fromSdk;
 
+  public boolean filtered;
+
+  public int inDegree;
+  public int definitionCounter;
+
+  public CharSequence mxCoreFlexModuleFactoryClassName;
+
+  public final Set<CharSequence> unresolvedDefinitions = new THashSet<CharSequence>();
+  public final Set<OriginalLibrary> successors = new THashSet<OriginalLibrary>();
+  public final Set<OriginalLibrary> parents = new THashSet<OriginalLibrary>();
+
   public OriginalLibrary(String relativePath, VirtualFile file, boolean fromSdk) {
     super(file);
 
     this.path = relativePath;
     this.fromSdk = fromSdk;
+  }
+
+  public boolean hasUnresolvedDefinitions() {
+    return !unresolvedDefinitions.isEmpty();
+  }
+
+  public boolean hasDefinitions() {
+    return definitionCounter > 0;
   }
 
   @Nullable
@@ -58,5 +84,25 @@ class OriginalLibrary extends InfoList.Info<VirtualFile> implements Library {
 
   public boolean isFromSdk() {
     return fromSdk;
+  }
+
+  @Override
+  public TLinkable getNext() {
+    return next;
+  }
+
+  @Override
+  public TLinkable getPrevious() {
+    return previous;
+  }
+
+  @Override
+  public void setNext(TLinkable linkable) {
+    next = linkable;
+  }
+
+  @Override
+  public void setPrevious(TLinkable linkable) {
+    previous = linkable;
   }
 }

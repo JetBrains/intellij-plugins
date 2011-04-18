@@ -32,10 +32,7 @@ public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
     assertEquals(-1, libs.size() - libraries.size());
 
     for (Library library : libraries) {
-      if (library instanceof FilteredLibrary) {
-        assertFalse(((FilteredLibrary) library).getOrigin().getPath().contains("spark_dmv"));
-      }
-      else if (library instanceof OriginalLibrary) {
+      if (library instanceof OriginalLibrary) {
         assertFalse(((OriginalLibrary) library).getPath().contains("spark_dmv"));
       }
     }

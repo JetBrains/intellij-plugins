@@ -7,6 +7,13 @@ public class LibrarySet {
   private final ApplicationDomainCreationPolicy applicationDomainCreationPolicy;
   private final List<Library> libraries;
 
+  public LibrarySet(String id, ApplicationDomainCreationPolicy applicationDomainCreationPolicy, List<Library> libraries) {
+    this.id = id;
+
+    this.applicationDomainCreationPolicy = applicationDomainCreationPolicy;
+    this.libraries = libraries;
+  }
+
   public String getId() {
     return id;
   }
@@ -17,12 +24,5 @@ public class LibrarySet {
 
   public ApplicationDomainCreationPolicy getApplicationDomainCreationPolicy() {
     return applicationDomainCreationPolicy;
-  }
-
-  public LibrarySet(String id, ApplicationDomainCreationPolicy applicationDomainCreationPolicy, List<Library> libraries) {
-    this.id = id;
-
-    this.applicationDomainCreationPolicy = applicationDomainCreationPolicy;
-    this.libraries = libraries;
   }
 }
