@@ -28,6 +28,7 @@
 
     <property file="build.properties"/>
     <property  name="bnd.version" value="0.0.384"/>
+    <property name="pax.runner.version" value="1.6.1"/>
     <patternset id="ignored.files">
         <exclude name="**/CVS/**"/>
         <exclude name="**/SCCS/**"/>
@@ -149,8 +150,8 @@
               tofile="${tmp.dir.osmorc}/lib/org.eclipse.osgi.jar"/>
         <copy file="${module.osmorc.basedir}/lib/bnd-${bnd.version}.jar" tofile="${tmp.dir.osmorc}/lib/bnd-${bnd.version}.jar"/>
         <copy file="${module.osmorc.basedir}/lib/binding-2.0.6.jar" tofile="${tmp.dir.osmorc}/lib/binding-2.0.6.jar"/>
-        <copy file="${module.osmorc.basedir}/lib/pax-runner-1.5.0-SNAPSHOT.jar"
-              tofile="${tmp.dir.osmorc}/lib/pax-runner-1.5.0-SNAPSHOT.jar"/>
+        <copy file="${module.osmorc.basedir}/lib/pax-runner-${pax.runner.version}.jar"
+              tofile="${tmp.dir.osmorc}/lib/pax-runner-${pax.runner.version}.jar"/>
       <copy file="${module.osmorc.basedir}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar"/>
       <copy file="${module.osmorc.basedir}/lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.bundlor.ant-1.0.0.RELEASE.jar"/>
       <copy file="${module.osmorc.basedir}/lib/com.springsource.bundlor.blint-1.0.0.RELEASE.jar" tofile="${tmp.dir.osmorc}/lib/com.springsource.bundlor.blint-1.0.0.RELEASE.jar"/>
