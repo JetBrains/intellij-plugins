@@ -48,30 +48,35 @@ public final class LibrarySet {
     var originalLibrary:OriginalLibrary;
     for (var i:int = 0; i < n; i++) {
       const marker:int = input.readByte();
-      if (marker == 0) {
-        originalLibrary = new OriginalLibrary();
-        _libraries[i] = originalLibrary;
-        originalLibrary.readExternal(input, assetLoadSemaphore);
-        originalLibraries.push(originalLibrary);
-      }
-      else if (marker == 1) {
-        _libraries[i] = originalLibraries[input.readShort()];
-      }
-      else if (marker < 4) {
-        var filteredLibrary:FilteredLibrary = new FilteredLibrary();
-        _libraries[i] = filteredLibrary;
-        if (marker == 2) {
-          filteredLibrary.origin = originalLibrary = new OriginalLibrary();
-          originalLibrary.readExternal(input, assetLoadSemaphore);
-          originalLibraries.push(originalLibrary);
-        }
-        else {
-          filteredLibrary.origin = originalLibraries[input.readShort()];
-        }
+      if (marker == 4) {
+        _libraries[i] = new EmbedLibrary(input.readUTFBytes(AmfUtil.readUInt29(input)));
       }
       else {
-        assert(marker == 4);
-        _libraries[i] = new EmbedLibrary(input.readUTFBytes(AmfUtil.readUInt29(input)));
+        var originalLibraryId:int = input.readUnsignedShort();
+        if (marker == 0) {
+          originalLibrary = new OriginalLibrary();
+          _libraries[i] = originalLibrary;
+          originalLibraries[originalLibraryId] = originalLibrary;
+          originalLibrary.readExternal(input, assetLoadSemaphore);
+        }
+        else if (marker == 1) {
+          _libraries[i] = originalLibraries[originalLibraryId];
+        }
+        else if (marker < 4) {
+          var filteredLibrary:FilteredLibrary = new FilteredLibrary();
+          _libraries[i] = filteredLibrary;
+          if (marker == 2) {
+            filteredLibrary.origin = originalLibrary = new OriginalLibrary();
+            originalLibraries[originalLibraryId] = originalLibrary;
+            originalLibrary.readExternal(input, assetLoadSemaphore);
+          }
+          else {
+            filteredLibrary.origin = originalLibraries[originalLibraryId];
+          }
+        }
+        else {
+          throw new ArgumentError("Unknown marker " + marker);
+        }
       }
     }
   }

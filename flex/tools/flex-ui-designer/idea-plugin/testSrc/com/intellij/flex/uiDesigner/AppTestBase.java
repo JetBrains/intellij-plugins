@@ -158,10 +158,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     StringRegistry.getInstance().reset();
 
     BinaryFileManager.getInstance().reset();
-
-    for (Pair<VirtualFile, VirtualFile> lib : libs) {
-      LibraryCollector.clearCache(lib.getSecond());
-    }
+    LibraryManager.getInstance().reset();
     
     super.tearDown();
   }

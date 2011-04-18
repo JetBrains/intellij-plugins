@@ -28,6 +28,10 @@ public class InfoList<E,I extends InfoList.Info> {
     return elements.containsKey(element);
   }
 
+  public boolean contains(I info) {
+    return info.id != -1;
+  }
+
   public @NotNull E getElement(int id) {
     for (I info : elements.values()) {
       if (info.id == id) {
@@ -59,6 +63,10 @@ public class InfoList<E,I extends InfoList.Info> {
 
     public Info(@NotNull E element) {
       this.element = element;
+    }
+
+    public int getId() {
+      return id;
     }
   }
 }

@@ -24,9 +24,6 @@ public class Client implements Closable {
   protected AmfOutputStream out;
   protected BlockDataOutputStream blockOut;
 
-  private int registeredLibraryCounter;
-  protected int sessionId;
-
   private final MxmlWriter mxmlWriter = new MxmlWriter();
 
   private final InfoList<Module, ModuleInfo> registeredModules = new InfoList<Module, ModuleInfo>();
@@ -76,8 +73,6 @@ public class Client implements Closable {
       return;
     }
     blockOut = null;
-    registeredLibraryCounter = 0;
-    sessionId++;
 
     registeredModules.clear();
     registeredProjects.clear();
@@ -128,24 +123,23 @@ public class Client implements Closable {
       final boolean unregisteredLibrary;
       if (library instanceof OriginalLibrary) {
         originalLibrary = (OriginalLibrary)library;
-        unregisteredLibrary = originalLibrary.sessionId != sessionId;
+        unregisteredLibrary = !LibraryManager.getInstance().isRegistered(originalLibrary);
         out.write(unregisteredLibrary ? 0 : 1);
       }
       else if (library instanceof FilteredLibrary) {
         FilteredLibrary filteredLibrary = (FilteredLibrary)library;
         originalLibrary = filteredLibrary.getOrigin();
-        unregisteredLibrary = originalLibrary.sessionId != sessionId;
+        unregisteredLibrary = !LibraryManager.getInstance().isRegistered(originalLibrary);
         out.write(unregisteredLibrary ? 2 : 3);
       }
       else {
         out.write(4);
-        out.writeNotEmptyString(((EmbedLibrary)library).getPath());
+        out.writeAmfUtf(((EmbedLibrary)library).getPath());
         continue;
       }
 
       if (unregisteredLibrary) {
-        originalLibrary.id = registeredLibraryCounter++;
-        originalLibrary.sessionId = sessionId;
+        out.writeShort(LibraryManager.getInstance().add(originalLibrary));
         out.writeAmfUtf(originalLibrary.getPath());
         writeVirtualFile(originalLibrary.getFile(), out);
 
@@ -165,7 +159,7 @@ public class Client implements Closable {
         }
       }
       else {
-        out.writeShort(originalLibrary.id);
+        out.writeShort(originalLibrary.getId());
       }
     }
 
