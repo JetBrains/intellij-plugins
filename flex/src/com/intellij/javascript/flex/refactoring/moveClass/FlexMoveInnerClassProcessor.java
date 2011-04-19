@@ -3,12 +3,12 @@ package com.intellij.javascript.flex.refactoring.moveClass;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
-import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSVarStatement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSNamedElementKind;
@@ -25,18 +25,22 @@ import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.MoveCallback;
-import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.refactoring.util.NonCodeUsageInfo;
 import com.intellij.refactoring.util.TextOccurrencesUtil;
 import com.intellij.usageView.*;
+import com.intellij.util.Processor;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -78,16 +82,24 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   @NotNull
   @Override
   protected UsageInfo[] findUsages() {
-    Collection<UsageInfo> result = new ArrayList<UsageInfo>();
-    for (PsiReference reference : ReferencesSearch.search(myElement, new LocalSearchScope(myElement.getContainingFile()))) {
-      final PsiElement element = reference.getElement();
-      if (!(element instanceof JSReferenceExpression)) {
-        continue;
+    final Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<UsageInfo>());
+    ReferencesSearch.search(myElement, new LocalSearchScope(myElement.getContainingFile())).forEach(new Processor<PsiReference>() {
+      @Override
+      public boolean process(PsiReference reference) {
+        final PsiElement element = reference.getElement();
+        if (!(element instanceof JSReferenceExpression)) {
+          return true;
+        }
+        if (JSResolveUtil.isSelfReference(element)) {
+          return true;
+        }
+        result.add(new UsageInfo(element));
+        return true;
       }
-      if (JSResolveUtil.isSelfReference(element)) {
-        continue;
-      }
-      result.add(new UsageInfo(element));
+    });
+
+    if (myElement instanceof JSClass) {
+      JSRefactoringUtil.addConstuctorUsages((JSClass)myElement, true, result);
     }
     TextOccurrencesUtil.findNonCodeUsages(myElement, myElement.getName(), mySearchInComments, mySearchTextOccurences,
                                           StringUtil.getQualifiedName(myPackageName, myClassName), result);
@@ -114,18 +126,30 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     JSRefactoringUtil.fixOutgoingReferences(myElement, importsInTargetFile, namespacesInTargetFile, Collections.singletonList(
       ((JSAttributeListOwner)myElement)), null, false, false);
 
+    myElement.setName(myClassName);
+    Collection<UsageInfo> usagesToProcess = new ArrayList<UsageInfo>(Arrays.asList(usages));
+    for (Iterator<UsageInfo> i = usagesToProcess.iterator(); i.hasNext();) {
+      UsageInfo usage = i.next();
+      PsiElement element;
+      if (usage instanceof NonCodeUsageInfo || !((element = usage.getElement()) instanceof JSReferenceExpression) ||
+          !PsiTreeUtil.isAncestor(myElement, element, false)) {
+        continue;
+      }
+      ((JSReferenceExpression)element).bindToElement(myElement);
+      i.remove();
+    }
+
     final PsiElement clazz =
       JSResolveUtil.findClassByQName(StringUtil.getQualifiedName(myPackageName, myClassName), GlobalSearchScope.projectScope(myProject));
     PsiElement toInsert = myElement instanceof JSVariable ? JSRefactoringUtil.getVarStatementCopy((JSVariable)myElement) : myElement.copy();
     final PsiElement inserted = clazz.replace(toInsert);
     JSQualifiedNamedElement newClass =
       inserted instanceof JSVarStatement ? ((JSVarStatement)inserted).getVariables()[0] : (JSQualifiedNamedElement)inserted;
-    new RenameProcessor(myProject, newClass, myClassName, false, false).run();
     JSRefactoringUtil.handleDocCommentAndFormat(inserted, formatters);
     JSRefactoringUtil.deleteWithNoPostponedFormatting(myElement);
 
     if (myPackageName.length() > 0) {
-      for (UsageInfo usage : usages) {
+      for (UsageInfo usage : usagesToProcess) {
         if (usage instanceof NonCodeUsageInfo || usage.getFile() != sourceFile) continue;
         final PsiElement element = usage.getElement();
         if (element == null) continue;
@@ -137,7 +161,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
     boolean makePublic = false;
     List<NonCodeUsageInfo> nonCodeUsages = new ArrayList<NonCodeUsageInfo>();
-    for (UsageInfo usage : usages) {
+    for (UsageInfo usage : usagesToProcess) {
       if (usage instanceof NonCodeUsageInfo) {
         nonCodeUsages.add((NonCodeUsageInfo)usage);
       }

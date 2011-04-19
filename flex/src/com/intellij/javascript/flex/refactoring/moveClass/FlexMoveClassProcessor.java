@@ -32,10 +32,7 @@ import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
 
@@ -82,11 +79,11 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
   @NotNull
   @Override
   protected UsageInfo[] findUsages() {
-    Collection<UsageInfo> result = new ArrayList<UsageInfo>();
+    Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<UsageInfo>());
     result.addAll(Arrays.asList(super.findUsages()));
     for (JSQualifiedNamedElement element : myElements) {
       if (element instanceof JSClass) {
-        JSRefactoringUtil.addConstuctorUsages((JSClass)element, result);
+        JSRefactoringUtil.addConstuctorUsages((JSClass)element, false, result);
       }
       TextOccurrencesUtil.findNonCodeUsages(element, element.getQualifiedName(), mySearchInComments, mySearchInNonJavaFiles,
                                             StringUtil.getQualifiedName(myTargetPackage, element.getName()), result);
