@@ -123,6 +123,7 @@
     <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider"/>
     <langCodeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptLanguageCodeStyleSettingsProvider"/>
 
+    <treeStructureProvider implementation="com.intellij.lang.javascript.flex.presentation.SwfProjectViewStructureProvider"/>
     <writingAccessProvider implementation="com.intellij.lang.javascript.flex.FlexWritingAccessProvider"/>
 
     <intentionAction>
