@@ -227,7 +227,7 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case PropertyClassifier.ID:
-          propertyHolder.id = input.readUTFBytes(AmfUtil.readUInt29(input));
+          propertyHolder.id = AmfUtil.readUtf(input);
           continue;
         
         case PropertyClassifier.MX_CONTAINER_CHILDREN:
@@ -244,7 +244,7 @@ public final class MxmlReader implements DocumentReader {
 
       switch (input.readByte()) {
         case Amf3Types.STRING:
-          propertyHolder[propertyName] = input.readUTFBytes(AmfUtil.readUInt29(input));
+          propertyHolder[propertyName] = AmfUtil.readUtf(input);
           if (cssPropertyDescriptor != null) {
             cssPropertyDescriptor.type = CssPropertyType.STRING;
           }
@@ -458,7 +458,7 @@ public final class MxmlReader implements DocumentReader {
       else {
         switch (className) {
           case "String":
-            array[count++] = input.readUTFBytes(AmfUtil.readUInt29(input));
+            array[count++] = AmfUtil.readUtf(input);
             break;
 
           case "Number":

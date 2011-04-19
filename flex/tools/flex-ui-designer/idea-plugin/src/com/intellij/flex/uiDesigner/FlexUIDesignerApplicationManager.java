@@ -5,6 +5,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -24,9 +25,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -58,6 +57,57 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   public static FlexUIDesignerApplicationManager getInstance() {
     return ServiceManager.getService(FlexUIDesignerApplicationManager.class);
+  }
+
+  private boolean added;
+
+  @SuppressWarnings({"ResultOfMethodCallIgnored"})
+  public void ff() {
+    //if (added) {
+    //  return;
+    //}
+    //
+    //added = true;
+    //
+    //final String p = "/Users/develar/workspace/idea/flex/tools/flex-ui-designer/.idea/sa";
+    //final File f = new File("/Users/develar/res");
+    //File file = new File(p);
+    //try {
+    //  file.createNewFile();
+    //}
+    //catch (IOException e) {
+    //  LOG.error(e);
+    //}
+    //final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(p);
+    //assert virtualFile != null;
+    //
+    //
+    //
+    //
+    //ApplicationManager.getApplication().getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+    //  @Override
+    //  public void before(List<? extends VFileEvent> events) {
+    //    for (VFileEvent event : events) {
+    //      if (event instanceof VFileContentChangeEvent) {
+    //        final VFileContentChangeEvent ce = (VFileContentChangeEvent)event;
+    //        final VirtualFile file = ce.getFile();
+    //        if (file == virtualFile) {
+    //
+    //          try {
+    //            new DataOutputStream(new FileOutputStream(f)).writeUTF("YES!!!");
+    //          }
+    //          catch (IOException e) {
+    //            LOG.error(e);
+    //          }
+    //        }
+    //      }
+    //    }
+    //  }
+    //
+    //  @Override
+    //  public void after(List<? extends VFileEvent> events) {
+    //  }
+    //});
   }
 
   public Client getClient() {
@@ -102,6 +152,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     documentOpening = true;
 
     if (server == null || server.isClosed()) {
+      ff();
       run(project, module, psiFile, debug);
     }
     else {
@@ -420,8 +471,4 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     public void projectClosing(Project project) {
     }
   }
-}
-
-enum ApplicationDomainCreationPolicy {
-  ONE, @SuppressWarnings({"UnusedDeclaration"})MULTIPLE
 }

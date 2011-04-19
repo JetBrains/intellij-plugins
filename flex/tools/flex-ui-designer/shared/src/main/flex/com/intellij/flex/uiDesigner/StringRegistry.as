@@ -42,7 +42,7 @@ public final class StringRegistry {
 
     var n:int = table.length;
     for (; i < n; i++) {
-      table[i] = input.readUTFBytes(AmfUtil.readUInt29(input));
+      table[i] = AmfUtil.readUtf(input);
     }
   }
   

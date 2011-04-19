@@ -20,5 +20,9 @@ public final class AmfUtil {
 
     return (((value | (b & 0x7F)) << 8) | (input.readByte() & 0xFF));
   }
+
+  public static function readUtf(input:IDataInput):String {
+    return input.readUTFBytes(readUInt29(input));
+  }
 }
 }

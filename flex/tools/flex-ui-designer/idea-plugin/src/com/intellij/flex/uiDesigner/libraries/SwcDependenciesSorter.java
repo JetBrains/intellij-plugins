@@ -1,19 +1,15 @@
-package com.intellij.flex.uiDesigner;
+package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.flex.uiDesigner.abc.AbcFilter;
-import com.intellij.flex.uiDesigner.abc.AbcNameFilter;
-import com.intellij.flex.uiDesigner.abc.FlexSdkAbcInjector;
+import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
+import com.intellij.flex.uiDesigner.DebugPathManager;
+import com.intellij.flex.uiDesigner.abc.*;
 import com.intellij.flex.uiDesigner.io.IOUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.impl.source.parsing.xml.XmlBuilder;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilderDriver;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import gnu.trove.TLinkedList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
@@ -255,8 +251,8 @@ public class SwcDependenciesSorter {
   private void analyzeDefinitions() {
     for (Map.Entry<CharSequence, Definition> entry : definitionMap.entrySet()) {
       final Definition definition = entry.getValue();
-      if (definition.dependencies != null && (definition.hasUnresolvedDependencies == UnresolvedState.NO ||
-                                              (definition.hasUnresolvedDependencies == UnresolvedState.UNKNOWN &&
+      if (definition.dependencies != null && (definition.hasUnresolvedDependencies == Definition.UnresolvedState.NO ||
+                                              (definition.hasUnresolvedDependencies == Definition.UnresolvedState.UNKNOWN &&
                                                !hasUnresolvedDependencies(definition, entry.getKey())))) {
         final OriginalLibrary library = definition.getLibrary();
         for (CharSequence dependencyId : definition.dependencies) {
@@ -291,243 +287,18 @@ public class SwcDependenciesSorter {
 
   private boolean hasUnresolvedDependencies(Definition definition, CharSequence definitionName) {
     // set before to prevent stack overflow for crossed dependencies
-    definition.hasUnresolvedDependencies = UnresolvedState.NO;
+    definition.hasUnresolvedDependencies = Definition.UnresolvedState.NO;
 
     for (CharSequence dependencyId : definition.dependencies) {
       final Definition dependency = definitionMap.get(dependencyId);
-      if (dependency == null || dependency.hasUnresolvedDependencies == UnresolvedState.YES ||
-          (dependency.hasUnresolvedDependencies == UnresolvedState.UNKNOWN && hasUnresolvedDependencies(dependency, dependencyId))) {
+      if (dependency == null || dependency.hasUnresolvedDependencies == Definition.UnresolvedState.YES ||
+          (dependency.hasUnresolvedDependencies == Definition.UnresolvedState.UNKNOWN && hasUnresolvedDependencies(dependency, dependencyId))) {
         definition.getLibrary().unresolvedDefinitions.add(definitionName);
-        definition.hasUnresolvedDependencies = UnresolvedState.YES;
+        definition.hasUnresolvedDependencies = Definition.UnresolvedState.YES;
         return true;
       }
     }
 
     return false;
-  }
-
-  private static class CatalogXmlBuilder implements XmlBuilder {
-    private boolean processDependencies;
-
-    private Definition definition;
-    private final ArrayList<CharSequence> dependencies = new ArrayList<CharSequence>();
-    private CharSequence mod;
-
-    private OriginalLibrary library;
-    private final Map<CharSequence, Definition> definitionMap;
-
-    public CatalogXmlBuilder(final Map<CharSequence, Definition> definitionMap) {
-      this.definitionMap = definitionMap;
-    }
-
-    public void setLibrary(OriginalLibrary library) {
-      this.library = library;
-    }
-
-    @Override
-    public void doctype(@Nullable CharSequence publicId, @Nullable CharSequence systemId, int startOffset, int endOffset) {
-    }
-
-    @Override
-    public ProcessingOrder startTag(CharSequence localName, String namespace, int startoffset, int endoffset, int headerEndOffset) {
-      if (localName.equals("script")) {
-        return ProcessingOrder.TAGS_AND_ATTRIBUTES;
-      }
-      else if (localName.equals("def")) {
-        definition = new Definition(library);
-        return ProcessingOrder.TAGS_AND_ATTRIBUTES;
-      }
-      else if (definition != null) {
-        return ProcessingOrder.TAGS_AND_ATTRIBUTES;
-      }
-      else {
-        return ProcessingOrder.TAGS;
-      }
-    }
-
-    @Override
-    public void endTag(CharSequence localName, String namespace, int startoffset, int endoffset) {
-      if (processDependencies && localName.equals("script")) {
-        if (!dependencies.isEmpty()) {
-          definition.dependencies = dependencies.toArray(new CharSequence[dependencies.size()]);
-          dependencies.clear();
-        }
-        else {
-          definition.hasUnresolvedDependencies = UnresolvedState.NO;
-        }
-        definition = null;
-        processDependencies = false;
-      }
-    }
-
-    @Override
-    public void attribute(CharSequence name, CharSequence value, int startoffset, int endoffset) {
-      if (name.equals("mod")) {
-        mod = value;
-      }
-      else if (processDependencies) {
-        if (name.equals("id") &&
-            !(StringUtil.startsWith(value, "flash.") ||
-              value.charAt(0) == '_' ||
-              !StringUtil.contains(value, 1, value.length() - 1, ':'))) {
-          dependencies.add(value);
-        }
-      }
-      else if (definition != null) {
-        if (value.charAt(0) != '_') {
-          Definition oldDefinition = definitionMap.get(value);
-          if (oldDefinition == null) {
-            definition.setTimeAsCharSequence(mod);
-          }
-          else {
-            definition.time = Long.parseLong(mod.toString());
-            if (definition.time > oldDefinition.getTime()) {
-              oldDefinition.getLibrary().definitionCounter--;
-              oldDefinition.getLibrary().unresolvedDefinitions.add(value);
-            }
-            else {
-              definition = null;
-              // filter library, remove definition abc bytecode from lib swf
-              library.unresolvedDefinitions.add(value);
-              return;
-            }
-          }
-
-          definitionMap.put(value, definition);
-          library.definitionCounter++;
-          processDependencies = true;
-        }
-        else if (StringUtil.endsWith(value, "_mx_core_FlexModuleFactory")) {
-          library.mxCoreFlexModuleFactoryClassName = value;
-        }
-        else {
-          definition = null;
-        }
-      }
-    }
-
-    @Override
-    public void textElement(CharSequence display, CharSequence physical, int startoffset, int endoffset) {
-    }
-
-    @Override
-    public void entityRef(CharSequence ref, int startOffset, int endOffset) {
-    }
-
-    @Override
-    public void error(String message, int startOffset, int endOffset) {
-    }
-  }
-
-  private static class UnresolvedState {
-    public static int UNKNOWN = 0;
-    public static int YES = 1;
-    public static int NO = -1;
-  }
-
-  private static class Definition {
-    private final OriginalLibrary library;
-
-    public CharSequence[] dependencies;
-    public int hasUnresolvedDependencies = UnresolvedState.UNKNOWN;
-
-    private CharSequence timeAsCharSequence;
-    public long time = -1;
-
-    public void setTimeAsCharSequence(CharSequence timeAsCharSequence) {
-      this.timeAsCharSequence = timeAsCharSequence;
-    }
-
-    public long getTime() {
-      if (time == -1) {
-        time = Long.parseLong(timeAsCharSequence.toString());
-      }
-
-      return time;
-    }
-
-    Definition(final OriginalLibrary library) {
-      this.library = library;
-      if (library.isFromSdk()) {
-        time = Long.MAX_VALUE;
-      }
-    }
-
-    @NotNull
-    public OriginalLibrary getLibrary() {
-      return library;
-    }
-  }
-}
-
-class AbcNameFilterByNameSet implements AbcNameFilter {
-  private final Collection<CharSequence> definitions;
-  protected final boolean inclusion;
-
-  AbcNameFilterByNameSet(Collection<CharSequence> definitions) {
-    this.definitions = definitions;
-    inclusion = false;
-  }
-
-  AbcNameFilterByNameSet(Collection<CharSequence> definitions, boolean inclusion) {
-    this.definitions = definitions;
-    this.inclusion = inclusion;
-  }
-
-  @Override
-  public boolean accept(String name) {
-    return definitions.contains(name) == inclusion;
-  }
-}
-
-class AbcNameFilterByNameSetAndStartsWith extends AbcNameFilterByNameSet {
-  private final String[] startsWith;
-
-  AbcNameFilterByNameSetAndStartsWith(Collection<CharSequence> definitions, String[] startsWith) {
-    this(definitions, startsWith, false);
-  }
-
-  AbcNameFilterByNameSetAndStartsWith(Collection<CharSequence> definitions, String[] startsWith, boolean inclusion) {
-    super(definitions, inclusion);
-    this.startsWith = startsWith;
-  }
-
-  @Override
-  public boolean accept(String name) {
-    if (inclusion) {
-      if (super.accept(name)) {
-        return true;
-      }
-    }
-    else if (!super.accept(name)) {
-      return false;
-    }
-
-    for (String s : startsWith) {
-      if (name.startsWith(s)) {
-        return inclusion;
-      }
-    }
-
-    return !inclusion;
-  }
-}
-
-class AbcNameFilterStartsWith implements AbcNameFilter {
-  private final boolean inclusion;
-  private final String startsWith;
-
-  public AbcNameFilterStartsWith(String startsWith, boolean inclusion) {
-    this.startsWith = startsWith;
-    this.inclusion = inclusion;
-  }
-
-  @Override
-  public boolean accept(String name) {
-    if (name.startsWith(startsWith)) {
-      return inclusion;
-    }
-
-    return !inclusion;
   }
 }

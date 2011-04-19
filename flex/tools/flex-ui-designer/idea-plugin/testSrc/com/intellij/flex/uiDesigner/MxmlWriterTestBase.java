@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.roots.ModifiableRootModel;

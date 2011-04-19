@@ -50,7 +50,7 @@ public final class LibrarySet {
     for (var i:int = 0; i < n; i++) {
       const marker:int = input.readByte();
       if (marker == 4) {
-        _libraries[i] = new EmbedLibrary(_libraries[input.readUnsignedShort()], input.readUTFBytes(AmfUtil.readUInt29(input)));
+        _libraries[i] = new EmbedLibrary(_libraries[input.readUnsignedShort()], AmfUtil.readUtf(input));
       }
       else {
         var originalLibraryId:int = input.readUnsignedShort();

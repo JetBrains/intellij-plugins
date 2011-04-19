@@ -8,6 +8,7 @@ internal final class LoaderContentParentAdobePleaseDoNextStep extends Sprite {
   private static const instance:LoaderContentParentAdobePleaseDoNextStep = new LoaderContentParentAdobePleaseDoNextStep();
 
   public static function configureContext(context:LoaderContext):void {
+    // http://juick.com/develar/1320029
     return;
     var version:Array = Capabilities.version.split(' ')[1].split(',');
     var major:Number = parseFloat(version[0]);

@@ -5,11 +5,10 @@
   <parent>
     <groupId>org.flyti.superPOMs</groupId>
     <artifactId>common</artifactId>
-    <version>27</version>
+    <version>28</version>
   </parent>
   
   <properties>
-    <flexMojos.version>4.0-de5</flexMojos.version>
     <config.useRoboflest>true</config.useRoboflest>
   </properties>
 

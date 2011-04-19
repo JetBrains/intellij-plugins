@@ -1,6 +1,9 @@
-package com.intellij.flex.uiDesigner;
+package com.intellij.flex.uiDesigner.libraries;
 
-class EmbedLibrary implements Library {
+import com.intellij.flex.uiDesigner.libraries.Library;
+import com.intellij.flex.uiDesigner.libraries.OriginalLibrary;
+
+public class EmbedLibrary implements Library {
   private final String path;
   public final OriginalLibrary parent;
 

@@ -44,7 +44,7 @@ public final class VirtualFileImpl implements IExternalizable, VirtualFile {
   }
 
   public static function create(input:IDataInput):VirtualFile {
-    return create2(input.readUTFBytes(AmfUtil.readUInt29(input)), input.readUTFBytes(AmfUtil.readUInt29(input)));
+    return create2(AmfUtil.readUtf(input), AmfUtil.readUtf(input));
   }
   
   public static function create2(url:String, presentableUrl:String):VirtualFile {
@@ -63,8 +63,8 @@ public final class VirtualFileImpl implements IExternalizable, VirtualFile {
   }
 
   public function readExternal(input:IDataInput):void {
-    _url = input.readUTFBytes(AmfUtil.readUInt29(input));
-    _presentableUrl = input.readUTFBytes(AmfUtil.readUInt29(input));
+    _url = AmfUtil.readUtf(input);
+    _presentableUrl = AmfUtil.readUtf(input);
   }
 }
 }

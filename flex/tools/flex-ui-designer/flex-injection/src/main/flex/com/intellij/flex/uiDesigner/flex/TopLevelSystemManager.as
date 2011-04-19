@@ -116,7 +116,7 @@ internal class TopLevelSystemManager implements ISystemManager {
 
   public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0,
                                    useWeakReference:Boolean = false):void {
-    trace("tsm: skip addEventListener " + type);
+    //trace("tsm: skip addEventListener " + type);
   }
 
   public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {

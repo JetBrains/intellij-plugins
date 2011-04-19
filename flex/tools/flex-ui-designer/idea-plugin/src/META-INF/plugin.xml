@@ -3,7 +3,7 @@
   <description>Provides editing support for Flex UI</description>
   <version>0.4.10</version>
   <vendor logo="/general/ijLogo.png">JetBrains</vendor>
-  <idea-version since-build="106.149"/>
+  <idea-version since-build="106.491"/>
 
   <resource-bundle>messages.FlexUIDesignerBundle</resource-bundle>
 
@@ -16,7 +16,7 @@
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentFactoryManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentFactoryManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.BinaryFileManager" serviceImplementation="com.intellij.flex.uiDesigner.BinaryFileManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentProblemManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentProblemManager"/>
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.LibraryManager" serviceImplementation="com.intellij.flex.uiDesigner.LibraryManager"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.libraries.LibraryManager" serviceImplementation="com.intellij.flex.uiDesigner.libraries.LibraryManager"/>
 
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>

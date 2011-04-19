@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.uiDesigner.libraries.Library;
+import com.intellij.flex.uiDesigner.libraries.OriginalLibrary;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 

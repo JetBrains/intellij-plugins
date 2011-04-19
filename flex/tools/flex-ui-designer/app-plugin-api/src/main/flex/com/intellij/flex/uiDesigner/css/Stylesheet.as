@@ -56,7 +56,7 @@ public final class Stylesheet {
         var type:int = input.readByte();
         switch (type) {
           case 8:
-            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, input.readUTFBytes(AmfUtil.readUInt29(input)));
+            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, AmfUtil.readUtf(input));
             break;
 
           case 4:

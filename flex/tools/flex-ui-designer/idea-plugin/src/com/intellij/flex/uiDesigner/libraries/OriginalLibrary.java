@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner;
+package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-class OriginalLibrary extends InfoList.Info<VirtualFile> implements Library, TLinkable {
+public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Library, TLinkable {
   public static final String DEFAULTS_CSS = "defaults.css";
   private static final String CATALOG = "catalog.xml";
   private static final String SWF = "library.swf";

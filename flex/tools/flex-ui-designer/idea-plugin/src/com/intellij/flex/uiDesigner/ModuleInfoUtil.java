@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.libraries.OriginalLibrary;
 import com.intellij.flex.uiDesigner.mxml.LocalStyleWriter;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;

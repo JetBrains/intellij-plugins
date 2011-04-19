@@ -17,6 +17,9 @@ import java.io.*;
 public class SocketInputHandlerImpl implements SocketInputHandler {
   protected Reader reader;
 
+  private final File resultFile = new File("/Users/develar/res");
+  private final File resReady = new File("/Users/develar/resReady");
+
   protected void createReader(InputStream inputStream) {
     reader = new Reader(new BufferedInputStream(inputStream));
   }
@@ -34,16 +37,27 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         case ServerMethod.goToClass:
           final Module module = readModule();
           final String className = reader.readUTF();
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              JSClass classElement =
-                ((JSClass)JSResolveUtil.findClassByQName(className, module.getModuleWithDependenciesAndLibrariesScope(false)));
-              classElement.navigate(true);
-              ProjectUtil.focusProjectWindow(classElement.getProject(), true);
-            }
-          });
+
+          final DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(resultFile)));
+          dataOutputStream.writeUTF("YES!!!");
+          dataOutputStream.close();
+
+          //noinspection ResultOfMethodCallIgnored
+          resReady.createNewFile();
+
+          //FlexUIDesignerApplicationManager.getInstance().getClient().gg();
           break;
+
+          //ApplicationManager.getApplication().invokeLater(new Runnable() {
+          //  @Override
+          //  public void run() {
+          //    JSClass classElement =
+          //      ((JSClass)JSResolveUtil.findClassByQName(className, module.getModuleWithDependenciesAndLibrariesScope(false)));
+          //    classElement.navigate(true);
+          //    ProjectUtil.focusProjectWindow(classElement.getProject(), true);
+          //  }
+          //});
+          //break;
 
         case ServerMethod.openFile:
           final Project project = readProject();

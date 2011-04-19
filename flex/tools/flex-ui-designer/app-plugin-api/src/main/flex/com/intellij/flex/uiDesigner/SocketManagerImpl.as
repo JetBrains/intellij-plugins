@@ -12,6 +12,12 @@ public class SocketManagerImpl implements SocketManager {
   private var deferredMessageSize:int;
   private var unreadSocketRemainder:int;
 
+  private static var S:int;
+
+  public static function ff():int {
+    return S;
+  }
+
   private const socketDataHandlers:Dictionary = new Dictionary();
   
   // for debug only
@@ -48,6 +54,12 @@ public class SocketManagerImpl implements SocketManager {
   }
 
   private function socketDataHandler(event:ProgressEvent):void {
+    if (Server.F) {
+      trace(event);
+      S = socket.bytesAvailable;
+      return;
+    }
+
     if (event != null) {
       totalBytes += event.bytesLoaded;
       //trace("socket data handler: bytesLoaded " + event.bytesLoaded + " socket bytesAvailable " + socket.bytesAvailable + " last unread " + (socket.bytesAvailable - event.bytesLoaded));
@@ -87,9 +99,9 @@ public class SocketManagerImpl implements SocketManager {
       if (handler != null) {
         var position:int = socket.bytesAvailable + 1 /* method class size */;
         const method:int = socket.readByte();
-        trace(clientMethodClass + ":" + method);
+        //trace(clientMethodClass + ":" + method);
         handler.handleSockedData(messageSize - 2, method, socket);
-        trace(clientMethodClass + ":" + method + " processed");
+        //trace(clientMethodClass + ":" + method + " processed");
         if (messageSize != (position - socket.bytesAvailable)) {
           if (handler.pendingReadIsAllowable(method)) {
             unreadSocketRemainder = socket.bytesAvailable;

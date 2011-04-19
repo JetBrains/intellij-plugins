@@ -13,6 +13,7 @@ import flash.events.Event;
 import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
+import flash.system.System;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 
@@ -69,56 +70,61 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     applicationExiting = true;
   }
 
-  public function handleSockedData(messageSize:int, method:int, data:IDataInput):void {
+  public function handleSockedData(messageSize:int, method:int, input:IDataInput):void {
     switch (method) {
       case ClientMethod.openProject:
-        openProject(data);
+        openProject(input);
         break;
       
       case ClientMethod.closeProject:
-        closeProject(data.readUnsignedShort());
+        closeProject(input.readUnsignedShort());
         break;
 
       case ClientMethod.registerLibrarySet:
-        registerLibrarySet(data);
+        registerLibrarySet(input);
         break;
 
       case ClientMethod.registerModule:
-        registerModule(data);
+        registerModule(input);
         break;
       
       case ClientMethod.registerDocumentFactory:
-        registerDocumentFactory(data, messageSize);
+        registerDocumentFactory(input, messageSize);
         break;
       
       case ClientMethod.updateDocumentFactory:
-        updateDocumentFactory(data, messageSize);
+        updateDocumentFactory(input, messageSize);
         break;
 
       case ClientMethod.openDocument:
-        openDocument(data);
+        openDocument(input);
         break;
       
       case ClientMethod.updateDocuments:
-        updateDocuments(data);
+        updateDocuments(input);
         break;
       
       case ClientMethod.registerBitmap:
-        registerBitmap(data);
+        registerBitmap(input);
         break;
       
       case ClientMethod.registerBinaryFile:
-        registerBinaryFile(data);
+        registerBinaryFile(input);
         break;
       
       case ClientMethod.initStringRegistry:
-        stringRegistry.initStringTable(data);
+        stringRegistry.initStringTable(input);
+        break;
+
+      case ClientMethod.gg:
+        //Server.RRR = AmfUtil.readUtf(input);
+        System.resume();
         break;
     }
   }
 
   private function openProject(input:IDataInput):void {
-    var project:Project = new Project(input.readUnsignedShort(), input.readUTFBytes(AmfUtil.readUInt29(input)), new ProjectEventMap());
+    var project:Project = new Project(input.readUnsignedShort(), AmfUtil.readUtf(input), new ProjectEventMap());
     var projectWindowBounds:Rectangle;
     if (input.readBoolean()) {
       projectWindowBounds = new Rectangle(input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort());
@@ -156,9 +162,9 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     }
   }
   
-  private function registerModule(data:IDataInput):void {
-    stringRegistry.readStringTable(data);
-    moduleManager.register(new Module(data.readUnsignedShort(), projectManager.getById(data.readUnsignedShort()), libraryManager.idsToInstancesAndMarkAsUsed(data.readObject()), data.readObject()));
+  private function registerModule(input:IDataInput):void {
+    stringRegistry.readStringTable(input);
+    moduleManager.register(new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()), libraryManager.idsToInstancesAndMarkAsUsed(input.readObject()), input.readObject()));
   }
   
   private var flashWorkaroundByteArray:ByteArray;
@@ -167,7 +173,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     const prevBytesAvailable:int = input.bytesAvailable;
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var bytes:ByteArray = new ByteArray();
-    var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input), input.readUTFBytes(AmfUtil.readUInt29(input)), module);
+    var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input), AmfUtil.readUtf(input), module);
     getDocumentFactoryManager(module).register(documentFactory);
     
     stringRegistry.readStringTable(input);
@@ -290,4 +296,5 @@ final class ClientMethod {
   
   public static const registerBitmap:int = 10;
   public static const registerBinaryFile:int = 11;
+  public static const gg:int = 12;
 }

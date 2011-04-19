@@ -31,7 +31,7 @@ public class OriginalLibrary extends AbstractLibrary implements Library {
   }
 
   public function readExternal(input:IDataInput, assetLoadSemaphore:AssetLoadSemaphore):void {
-    _path = input.readUTFBytes(AmfUtil.readUInt29(input));
+    _path = AmfUtil.readUtf(input);
     _file = VirtualFileImpl.create(input);
 
     var n:int = input.readUnsignedShort();

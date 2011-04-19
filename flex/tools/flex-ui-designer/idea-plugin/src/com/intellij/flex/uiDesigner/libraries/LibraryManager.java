@@ -1,5 +1,6 @@
-package com.intellij.flex.uiDesigner;
+package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.uiDesigner.EntityListManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;

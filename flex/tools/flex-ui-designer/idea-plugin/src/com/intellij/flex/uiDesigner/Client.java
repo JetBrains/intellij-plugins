@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.abc.ImageWrapper;
 import com.intellij.flex.uiDesigner.io.*;
+import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -64,6 +65,12 @@ public class Client implements Closable {
   }
 
   public void flush() throws IOException {
+    out.flush();
+  }
+
+  public void gg() throws IOException {
+    beginMessage(ClientMethod.GG);
+    out.writeAmfUtf("YES");
     out.flush();
   }
 
@@ -351,7 +358,8 @@ public class Client implements Closable {
   public static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, openDocument, updateDocuments,
     qualifyExternalInlineStyleSource, initStringRegistry,
-    registerBitmap, registerBinaryFile;
+    registerBitmap, registerBinaryFile,
+    GG;
     
     public static final int METHOD_CLASS = 0;
   }

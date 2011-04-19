@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.InfoList;
+import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.openapi.project.Project;
 
 public class ProjectInfo extends InfoList.Info<Project> {

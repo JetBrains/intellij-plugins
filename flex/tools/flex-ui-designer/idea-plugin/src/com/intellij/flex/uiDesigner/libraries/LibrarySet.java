@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner;
+package com.intellij.flex.uiDesigner.libraries;
 
 import java.util.List;
 
