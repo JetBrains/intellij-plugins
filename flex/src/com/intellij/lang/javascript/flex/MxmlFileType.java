@@ -13,10 +13,10 @@ import javax.swing.*;
  * Time: 13:50
  */
 public class MxmlFileType extends XmlLikeFileType {
-  //public static final XMLLanguage LANGUAGE = new XMLLanguage("mxml") {};
+  public static final XMLLanguage LANGUAGE = new XMLLanguage(XMLLanguage.INSTANCE, "Mxml") {};
 
   public MxmlFileType() {
-    super(XMLLanguage.INSTANCE);
+    super(LANGUAGE);
   }
 
   @NotNull
@@ -42,5 +42,5 @@ public class MxmlFileType extends XmlLikeFileType {
     return ICON;
   }
 
-  private static final Icon ICON = IconLoader.getIcon("/fileTypes/xml.png");
+  private static final Icon ICON = IconLoader.getIcon("/fileTypes/xml.png"); // TODO icon
 }

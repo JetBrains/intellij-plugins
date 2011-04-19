@@ -47,6 +47,10 @@ import java.util.Set;
  */
 public class AnnotationBackedDescriptorImpl
   implements Validator<XmlElement>, AnnotationBackedDescriptor, XmlElementDescriptorAwareAboutChildren {
+  private static final String[] DEFERRED_IMMEDIATE = {"deferred", "immediate"};
+  private static final String[] AUTO_NEVER = {"auto", "never"};
+  private static final String[] E4X_XML = {"e4x", "xml"};
+  private static final String[] TRUE_FALSE = {"true", "false"};
   protected final String name;
   protected final ClassBackedElementDescriptor parentDescriptor;
 
@@ -121,20 +125,20 @@ public class AnnotationBackedDescriptorImpl
     if (predefined) {
       if (FlexStateElementNames.ITEM_CREATION_POLICY.equals(name)) {
         myEnumerated = true;
-        myEnumeratedValues = new String[]{"deferred", "immediate"};
+        myEnumeratedValues = DEFERRED_IMMEDIATE;
       }
       else if (FlexStateElementNames.ITEM_DESTRUCTION_POLICY.equals(name)) {
         myEnumerated = true;
-        myEnumeratedValues = new String[]{"auto", "never"};
+        myEnumeratedValues = AUTO_NEVER;
       }
       else if (CodeContext.FORMAT_ATTR_NAME.equals(name) && XmlBackedJSClassImpl.XML_TAG_NAME.equals(parentDescriptor.getName())) {
         myEnumerated = true;
-        myEnumeratedValues = new String[]{"e4x", "xml"};
+        myEnumeratedValues = E4X_XML;
         myEnumeratedValuesCaseSensitive = false;
       }
       else if (CodeContext.TWO_WAY_ATTR_NAME.equals(name) && FlexPredefinedTagNames.BINDING.equals(parentDescriptor.getName())) {
         myEnumerated = true;
-        myEnumeratedValues = new String[]{"true", "false"};
+        myEnumeratedValues = TRUE_FALSE;
         myEnumeratedValuesCaseSensitive = false;
       }
     }
@@ -403,7 +407,7 @@ public class AnnotationBackedDescriptorImpl
 
       if (myEnumerated) {
         if (JSCommonTypeNames.BOOLEAN_CLASS_NAME.equals(type)) {
-          enumerationValues = new String[]{"true", "false"};
+          enumerationValues = TRUE_FALSE;
         }
         else {
           final PsiElement element = getDeclaration();

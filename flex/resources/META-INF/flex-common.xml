@@ -44,6 +44,8 @@
     <refactoring.moveHandler implementation="com.intellij.javascript.flex.refactoring.moveClass.FlexMoveFileRefactoringHandler"
                              order="before moveFileOrDir, before moveJavaFileOrDir"/>
     <fileTypeFactory implementation="com.intellij.javascript.flex.FlexApplicationComponent"/>
+    <lang.parserDefinition language="Mxml" implementationClass="com.intellij.javascript.flex.MxmlParserDefinition"/>
+    <completionData fileType="MXML" className="com.intellij.codeInsight.completion.XmlCompletionData"/>
     <standardResourceProvider implementation="com.intellij.javascript.flex.FlexApplicationComponent$ResourceProvider"/>
 
     <fileBasedIndex implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSuperClassesIndex"/>
