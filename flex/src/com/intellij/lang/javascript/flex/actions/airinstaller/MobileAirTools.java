@@ -4,6 +4,7 @@ import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
@@ -11,15 +12,20 @@ import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -31,6 +37,7 @@ public class MobileAirTools {
   public static final String TEMP_KEYSTORE_TYPE = "PKCS12";
   public static final String TEMP_KEYSTORE_PASSWORD = "a";
   private static final Pattern ADT_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,6})*");
+  private static final String ADB_RELATIVE_PATH = "/lib/android/bin/adb" + (SystemInfo.isWindows ? ".exe" : "");
 
   private MobileAirTools() {
   }
@@ -53,7 +60,7 @@ public class MobileAirTools {
   public static String getAdtVersion(final Project project, final Sdk sdk) {
     final Ref<String> versionRef = new Ref<String>();
 
-    AdtTask.runWithProgress(new AdtTask(project, sdk) {
+    ExternalTask.runWithProgress(new AdtTask(project, sdk) {
         protected void appendAdtOptions(final List<String> command) {
           command.add("-version");
         }
@@ -125,10 +132,10 @@ public class MobileAirTools {
   }
 
   public static boolean packageApk(final Project project, final AndroidAirPackageParameters parameters) {
-    return AdtTask.runWithProgress(createApkTask(project, parameters), "Creating Android package", "Create Android Package");
+    return ExternalTask.runWithProgress(createApkTask(project, parameters), "Creating Android package", "Create Android Package");
   }
 
-  private static AdtTask createApkTask(final Project project, final AndroidAirPackageParameters parameters) {
+  private static ExternalTask createApkTask(final Project project, final AndroidAirPackageParameters parameters) {
     return new AdtTask(project, parameters.getFlexSdk()) {
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
@@ -159,7 +166,7 @@ public class MobileAirTools {
 
   public static boolean installApk(final Project project, final Sdk flexSdk, final String apkPath, final String applicationId) {
     return uninstallAndroidApplication(project, flexSdk, applicationId) &&
-           AdtTask.runWithProgress(new AdtTask(project, flexSdk) {
+           ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
                protected void appendAdtOptions(final List<String> command) {
                  command.add("-installApp");
                  command.add("-platform");
@@ -171,7 +178,7 @@ public class MobileAirTools {
   }
 
   private static boolean uninstallAndroidApplication(final Project project, final Sdk flexSdk, final String applicationId) {
-    return AdtTask.runWithProgress(new AdtTask(project, flexSdk) {
+    return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
         protected void appendAdtOptions(final List<String> command) {
           command.add("-uninstallApp");
           command.add("-platform");
@@ -190,7 +197,7 @@ public class MobileAirTools {
   }
 
   public static boolean launchAndroidApplication(final Project project, final Sdk flexSdk, final String applicationId) {
-    return AdtTask.runWithProgress(new AdtTask(project, flexSdk) {
+    return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
         protected void appendAdtOptions(final List<String> command) {
           command.add("-launchApp");
           command.add("-platform");
@@ -198,6 +205,30 @@ public class MobileAirTools {
           command.add("-appid");
           command.add(applicationId);
         }
-      }, "Launching Android application " + applicationId, "Launch Android Application");
+      }, FlexBundle.message("launching.android.application", applicationId), FlexBundle.message("launch.android.application.title"));
+  }
+
+  public static void forwardTcpPort(final Project project, final Sdk sdk, final int usbDebugPort) {
+    final String adbPath = sdk.getHomePath() + ADB_RELATIVE_PATH;
+    final VirtualFile adbExecutable = LocalFileSystem.getInstance().findFileByPath(adbPath);
+    final String presentableCommand = "adb forward tcp:" + usbDebugPort + " tcp:" + usbDebugPort;
+
+    if (adbExecutable != null) {
+      ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
+          protected List<String> createCommandLine() {
+            final List<String> command = new ArrayList<String>();
+            command.add(adbExecutable.getPath());
+            command.add("forward");
+            command.add("tcp:" + usbDebugPort);
+            command.add("tcp:" + usbDebugPort);
+            return command;
+          }
+        }, presentableCommand, FlexBundle.message("adb.forward.title"));
+    }
+    else {
+      Messages
+        .showWarningDialog(project, FlexBundle.message("adb.not.found", FileUtil.toSystemDependentName(adbPath), presentableCommand),
+                           FlexBundle.message("adb.forward.title"));
+    }
   }
 }

@@ -8,11 +8,19 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.actions.airinstaller.MobileAirTools;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
-import com.intellij.lang.javascript.flex.run.*;
+import com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters;
+import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
+import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
+import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.Pair;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
@@ -20,6 +28,8 @@ import com.intellij.xdebugger.XDebuggerManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+
+import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileDebugTransport;
 
 /**
  * User: Maxim.Mossienko
@@ -46,9 +56,20 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                           final ExecutionEnvironment env,
                                           final Sdk flexSdk,
                                           final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
-    if (isRunOnDevice(flexRunnerParameters) &&
-        !FlexRunner.packAndInstallToDevice(project, flexSdk, (AirMobileRunnerParameters)flexRunnerParameters, true)) {
-      return null;
+    if (isRunOnDevice(flexRunnerParameters)) {
+      final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)flexRunnerParameters;
+      final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(mobileParams);
+
+      if (!packAndInstallToDevice(project, flexSdk, mobileParams, swfPathAndApplicationId.first, swfPathAndApplicationId.second, true)) {
+        return null;
+      }
+
+      if (mobileParams.getDebugTransport() == AirMobileDebugTransport.USB) {
+
+        launchOnDevice(project, flexSdk, mobileParams, swfPathAndApplicationId.second, true);
+        waitUntilCountdownStartsOnDevice(project, swfPathAndApplicationId.second);
+        MobileAirTools.forwardTcpPort(project, flexSdk, mobileParams.getUsbDebugPort());
+      }
     }
 
     final XDebugSession debugSession =
@@ -79,5 +100,28 @@ public class FlexDebugRunner extends FlexBaseRunner {
       });
 
     return debugSession.getRunContentDescriptor();
+  }
+
+  /**
+   * While debug mobile application via USB fdb must be launched only when Android AIR app is started and shows countdown.
+   * So this method waits for some time (3 seconds by default) as we hope that it is enough for application for startup and do not want to bother user with a dialog.
+   */
+  private static void waitUntilCountdownStartsOnDevice(final Project project, final String applicationId) {
+    final Runnable process = new Runnable() {
+      public void run() {
+        final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+        if (indicator != null) {
+          indicator.setIndeterminate(true);
+        }
+
+        try {
+          Thread.sleep(Integer.getInteger("air.mobile.application.startup.waiting.time.millis", 3000));
+        }
+        catch (InterruptedException ignored) {/*ignore*/}
+      }
+    };
+
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(process, FlexBundle.message("waiting.for.application.startup"), false,
+                                                                      project);
   }
 }

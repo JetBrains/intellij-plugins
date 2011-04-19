@@ -64,6 +64,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
+import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileDebugTransport;
+
 /**
  * @author Maxim.Mossienko
  * Date: Jan 22, 2008
@@ -223,29 +225,17 @@ public class FlexDebugProcess extends XDebugProcess {
       myFlexUnitConnection = null;
     }
 
-    final List<String> fdbLaunchCommand;
-    if (isDebuggerFromSdk3()) {
-      String classpath = FlexUtils.getPathToBundledJar("idea-fdb-3-fix.jar");
-      if (!(debuggerSdk.getSdkType() instanceof FlexmojosSdkType)) {
-        classpath += File.pathSeparator + FileUtil.toSystemDependentName(debuggerSdk.getHomePath() + "/lib/fdb.jar");
-      }
+    String classpath = FileUtil.toSystemDependentName(debuggerSdk.getHomePath() + "/lib/fdb.jar");
 
-      fdbLaunchCommand =
-        FlexSdkUtils.getCommandLineForSdkTool(session.getProject(), debuggerSdk, classpath, "flex.tools.debugger.cli.DebugCLI", null);
+    if (isDebuggerFromSdk3()) {
+      classpath = FlexUtils.getPathToBundledJar("idea-fdb-3-fix.jar") + File.pathSeparator + classpath;
     }
     else if (isDebuggerFromSdk4() && (myDebuggerVersion.contains("14159") || myDebuggerVersion.contains("16076"))) {
-      String classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.0.0.14159-fix.jar");
-      if (!(debuggerSdk.getSdkType() instanceof FlexmojosSdkType)) {
-        classpath += File.pathSeparator + FileUtil.toSystemDependentName(debuggerSdk.getHomePath() + "/lib/fdb.jar");
-      }
+      classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.0.0.14159-fix.jar") + File.pathSeparator + classpath;
+    }
 
-      fdbLaunchCommand =
-        FlexSdkUtils.getCommandLineForSdkTool(session.getProject(), debuggerSdk, classpath, "flex.tools.debugger.cli.DebugCLI", null);
-    }
-    else {
-      fdbLaunchCommand =
-        FlexSdkUtils.getCommandLineForSdkTool(session.getProject(), debuggerSdk, null, "flex.tools.debugger.cli.DebugCLI", "fdb.jar");
-    }
+    final List<String> fdbLaunchCommand =
+      FlexSdkUtils.getCommandLineForSdkTool(session.getProject(), debuggerSdk, classpath, "flex.tools.debugger.cli.DebugCLI", null);
 
     fdbProcess = FlexBaseRunner.isRunAsAir(flexRunnerParameters)
                    ? launchAir(fdbLaunchCommand, (AirRunnerParameters)flexRunnerParameters, flexSdk)
@@ -308,7 +298,15 @@ public class FlexDebugProcess extends XDebugProcess {
     }
   }
 
-  private Process launchAir(final List<String> fdbLaunchCommand, final AirRunnerParameters airRunnerParameters, final Sdk flexSdk) throws IOException {
+  private Process launchAir(final List<String> fdbLaunchCommand, final AirRunnerParameters airRunnerParameters, final Sdk flexSdk)
+    throws IOException {
+
+    if (airRunnerParameters instanceof AirMobileRunnerParameters &&
+        ((AirMobileRunnerParameters)airRunnerParameters).getDebugTransport() == AirMobileDebugTransport.USB) {
+      fdbLaunchCommand.add("-p");
+      fdbLaunchCommand.add(String.valueOf(((AirMobileRunnerParameters)airRunnerParameters).getUsbDebugPort()));
+    }
+
     ensureExecutable(fdbLaunchCommand.get(0));
     myFdbLaunchCommand = StringUtil.join(fdbLaunchCommand, new Function<String, String>() {
       public String fun(final String s) {
@@ -320,13 +318,15 @@ public class FlexDebugProcess extends XDebugProcess {
     sendCommand(new ReadGreetingCommand()); // just to read copyrights and wait for "(fdb)"
 
     if (airRunnerParameters instanceof AirMobileRunnerParameters) {
-      switch (((AirMobileRunnerParameters)airRunnerParameters).getAirMobileRunTarget()) {
+      final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)airRunnerParameters;
+      switch (mobileParams.getAirMobileRunTarget()) {
         case Emulator:
           scheduleAdlLaunch(flexSdk, airRunnerParameters);
           break;
         case AndroidDevice:
-          sendCommand(new StartAppOnAndroidDeviceCommand(flexSdk, ((AirMobileRunnerParameters)airRunnerParameters)));
-          break;
+          sendCommand(mobileParams.getDebugTransport() == AirMobileDebugTransport.Network
+                      ? new StartAppOnAndroidDeviceCommand(flexSdk, mobileParams)
+                      : new StartDebuggingCommand());
       }
     }
 
@@ -412,7 +412,7 @@ public class FlexDebugProcess extends XDebugProcess {
       }, " ");
     final Process process = Runtime.getRuntime().exec(ArrayUtil.toStringArray(fdbLaunchCommand));
     sendCommand(new ReadGreetingCommand());
-    sendCommand(new LaunchBrowserCommand(url, flexRunnerParameters));
+    sendCommand(url == null ? new StartDebuggingCommand() : new LaunchBrowserCommand(url, flexRunnerParameters));
     return process;
   }
 
@@ -1288,32 +1288,27 @@ public class FlexDebugProcess extends XDebugProcess {
     void launchDebuggedApplication() throws IOException {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         public void run() {
-          FlexRunner.launchOnDevice(getSession().getProject(), myFlexSdk, myRunnerParameters, true);
+          FlexBaseRunner.launchOnDevice(getSession().getProject(), myFlexSdk, myRunnerParameters, true);
         }
       });
     }
   }
 
   class LaunchBrowserCommand extends StartDebuggingCommand {
-    /**
-     * null means that we want to connect to already running Flash player
-     */
-    private final @Nullable String myUrl;
+    private final @NotNull String myUrl;
     private final FlexRunnerParameters myFlexRunnerParameters;
 
-    LaunchBrowserCommand(final @Nullable String url, FlexRunnerParameters flexRunnerParameters) {
+    LaunchBrowserCommand(final @NotNull String url, FlexRunnerParameters flexRunnerParameters) {
       myUrl = url;
       myFlexRunnerParameters = flexRunnerParameters;
     }
 
     void launchDebuggedApplication() {
-      if (myUrl != null) {
-        FlexBaseRunner.launchWithSelectedApplication(myUrl, myFlexRunnerParameters);
-      }
+      FlexBaseRunner.launchWithSelectedApplication(myUrl, myFlexRunnerParameters);
     }
   }
 
-  abstract class StartDebuggingCommand extends DebuggerCommand {
+  class StartDebuggingCommand extends DebuggerCommand {
 
     StartDebuggingCommand() {
       super("run", CommandOutputProcessingType.SPECIAL_PROCESSING);
@@ -1378,7 +1373,7 @@ public class FlexDebugProcess extends XDebugProcess {
       return CommandOutputProcessingMode.PROCEEDING;
     }
 
-    abstract void launchDebuggedApplication() throws IOException;
+    void launchDebuggedApplication() throws IOException {}
   }
 
   private class SuspendResumeDebuggerCommand extends SuspendDebuggerCommand {

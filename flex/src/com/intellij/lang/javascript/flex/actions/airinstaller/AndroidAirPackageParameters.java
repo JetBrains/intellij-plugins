@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.actions.airinstaller;
 
+import com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
@@ -17,7 +18,8 @@ import java.util.List;
     @Storage(id = "other", file = "$WORKSPACE_FILE$")
   }
 )
-public class AndroidAirPackageParameters extends AirInstallerParametersBase implements PersistentStateComponent<AndroidAirPackageParameters> {
+public class AndroidAirPackageParameters extends AirInstallerParametersBase
+  implements PersistentStateComponent<AndroidAirPackageParameters> {
 
   public boolean IS_DEBUG;
   public boolean IS_DEBUG_CONNECT;
@@ -31,7 +33,8 @@ public class AndroidAirPackageParameters extends AirInstallerParametersBase impl
   }
 
   public AndroidAirPackageParameters() {
-    this(null, "", "", "", new ArrayList<FilePathAndPathInPackage>(), false, true, "", false, 7936, "", "", "PKCS12", "", "", "", "", "");
+    this(null, "", "", "", new ArrayList<FilePathAndPathInPackage>(), false, true, "", false, AirMobileRunnerParameters.DEBUG_PORT_DEFAULT,
+         "", "", "PKCS12", "", "", "", "", "");
   }
 
   public AndroidAirPackageParameters(final Sdk flexSdk,

@@ -4,9 +4,9 @@ import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.ide.passwordSafe.PasswordSafeException;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
@@ -540,7 +540,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     final AirInstallerParameters parameters = getAirInstallerParameters();
     saveAsDefaultParameters(parameters);
 
-    final boolean ok = AdtTask.runWithProgress(createAirInstallerTask(myProject, parameters), "Packaging AIR installer", TITLE);
+    final boolean ok = ExternalTask.runWithProgress(createAirInstallerTask(myProject, parameters), "Packaging AIR installer", TITLE);
 
     if (ok) {
       final ToolWindowManager manager = ToolWindowManager.getInstance(myProject);
@@ -603,7 +603,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     }
   }
 
-  private static AdtTask createAirInstallerTask(final Project project, final AirInstallerParameters parameters) {
+  private static ExternalTask createAirInstallerTask(final Project project, final AirInstallerParameters parameters) {
     return new AdtTask(project, parameters.getFlexSdk()) {
       protected void appendAdtOptions(List<String> command) {
         command.add(parameters.DO_NOT_SIGN ? "-prepare" : "-package");

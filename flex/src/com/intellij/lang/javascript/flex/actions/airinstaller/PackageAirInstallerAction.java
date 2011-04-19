@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.actions.airinstaller;
 
+import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -21,11 +22,11 @@ public class PackageAirInstallerAction extends AnAction {
   }
 
   public static boolean createCertificate(final Project project, final Sdk flexSdk, final CertificateParameters parameters) {
-    return AdtTask.runWithProgress(createCertificateTask(project, flexSdk, parameters), "Creating certificate",
-                                   CreateCertificateDialog.TITLE);
+    return ExternalTask.runWithProgress(createCertificateTask(project, flexSdk, parameters), "Creating certificate",
+                                        CreateCertificateDialog.TITLE);
   }
 
-  private static AdtTask createCertificateTask(final Project project, final Sdk flexSdk, final CertificateParameters parameters) {
+  private static ExternalTask createCertificateTask(final Project project, final Sdk flexSdk, final CertificateParameters parameters) {
     return new AdtTask(project, flexSdk) {
       protected void appendAdtOptions(List<String> command) {
         command.add("-certificate");

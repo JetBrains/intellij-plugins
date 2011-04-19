@@ -27,6 +27,8 @@ import com.intellij.openapi.util.text.StringUtil;
 
 import java.io.IOException;
 
+import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunMode;
+
 public class RunMainClassPrecompileTask implements CompileTask {
   private final Project myProject;
 
@@ -133,8 +135,7 @@ public class RunMainClassPrecompileTask implements CompileTask {
       return false;
     }
     else if (runConfiguration instanceof AirMobileRunConfiguration) {
-      return ((AirMobileRunConfiguration)runConfiguration).getRunnerParameters().getAirMobileRunMode() ==
-             AirMobileRunnerParameters.AirMobileRunMode.MainClass;
+      return ((AirMobileRunConfiguration)runConfiguration).getRunnerParameters().getAirMobileRunMode() == AirMobileRunMode.MainClass;
     }
     else if (runConfiguration instanceof AirRunConfiguration) {
       return ((AirRunConfiguration)runConfiguration).getRunnerParameters().getAirRunMode() == AirRunnerParameters.AirRunMode.MainClass;

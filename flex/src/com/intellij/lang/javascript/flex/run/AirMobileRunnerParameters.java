@@ -5,9 +5,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class AirMobileRunnerParameters extends AirRunnerParameters {
 
+  public static final int DEBUG_PORT_DEFAULT = 7936;
 
   public enum AirMobileRunTarget {
-    Emulator, AndroidDevice
+    Emulator, AndroidDevice, iOSDevice
   }
 
   public enum Emulator {
@@ -52,7 +53,10 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
 
   public enum AirMobileRunMode {
     AppDescriptor, MainClass/*, AndroidApk*/
+  }
 
+  public enum AirMobileDebugTransport {
+    Network, USB
   }
 
   private @NotNull AirMobileRunTarget myAirMobileRunTarget = AirMobileRunTarget.Emulator;
@@ -62,9 +66,10 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
   private int myScreenHeight = 0;
   private int myFullScreenWidth = 0;
   private int myFullScreenHeight = 0;
+  private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.Network;
+  private int myUsbDebugPort = DEBUG_PORT_DEFAULT;
 
   @NotNull
-  @Attribute("air_mobile_run_target")
   public AirMobileRunTarget getAirMobileRunTarget() {
     return myAirMobileRunTarget;
   }
@@ -74,7 +79,6 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
   }
 
   @NotNull
-  @Attribute("air_mobile_run_mode")
   public AirMobileRunMode getAirMobileRunMode() {
     return myAirMobileRunMode;
   }
@@ -84,7 +88,6 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
   }
 
   @NotNull
-  @Attribute("emulator_type")
   public Emulator getEmulator() {
     return myEmulator;
   }
@@ -123,6 +126,23 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
 
   public void setFullScreenHeight(int fullScreenHeight) {
     myFullScreenHeight = fullScreenHeight;
+  }
+
+  @NotNull
+  public AirMobileDebugTransport getDebugTransport() {
+    return myDebugTransport;
+  }
+
+  public void setDebugTransport(@NotNull final AirMobileDebugTransport debugTransport) {
+    myDebugTransport = debugTransport;
+  }
+
+  public int getUsbDebugPort() {
+    return myUsbDebugPort;
+  }
+
+  public void setUsbDebugPort(final int usbDebugPort) {
+    myUsbDebugPort = usbDebugPort;
   }
 
   public AirMobileRunnerParameters clone() {

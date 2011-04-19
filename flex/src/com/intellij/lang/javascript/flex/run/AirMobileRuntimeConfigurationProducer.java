@@ -18,6 +18,8 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunMode;
+
 public class AirMobileRuntimeConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
 
   private PsiElement mySourceElement;
@@ -50,7 +52,7 @@ public class AirMobileRuntimeConfigurationProducer extends RuntimeConfigurationP
       final AirMobileRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
 
       runnerParameters.setModuleName(module.getName());
-      runnerParameters.setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.AppDescriptor);
+      runnerParameters.setAirMobileRunMode(AirMobileRunMode.AppDescriptor);
       runnerParameters.setAirDescriptorPath(virtualFile.getPath());
       runnerParameters.setAirRootDirPath(config.getCompileOutputPath());
       settings.setName(runConfiguration.suggestedName());
@@ -65,7 +67,7 @@ public class AirMobileRuntimeConfigurationProducer extends RuntimeConfigurationP
         final AirMobileRunnerParameters runnerParameters = runConfiguration.getRunnerParameters();
 
         runnerParameters.setModuleName(module.getName());
-        runnerParameters.setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.MainClass);
+        runnerParameters.setAirMobileRunMode(AirMobileRunMode.MainClass);
         runnerParameters.setMainClassName(jsClass.getQualifiedName());
         settings.setName(runConfiguration.suggestedName());
         return settings;
@@ -95,7 +97,7 @@ public class AirMobileRuntimeConfigurationProducer extends RuntimeConfigurationP
         final AirMobileRunnerParameters runnerParameters =
           ((AirMobileRunConfiguration)existingConfiguration.getConfiguration()).getRunnerParameters();
         if (module.getName().equals(runnerParameters.getModuleName()) &&
-            AirMobileRunnerParameters.AirMobileRunMode.AppDescriptor == runnerParameters.getAirMobileRunMode() &&
+            AirMobileRunMode.AppDescriptor == runnerParameters.getAirMobileRunMode() &&
             virtualFile.getPath().equals(runnerParameters.getAirDescriptorPath()) &&
             config.getCompileOutputPath().equals(runnerParameters.getAirRootDirPath())) {
           return existingConfiguration;
@@ -109,7 +111,7 @@ public class AirMobileRuntimeConfigurationProducer extends RuntimeConfigurationP
           final AirMobileRunnerParameters runnerParameters =
             ((AirMobileRunConfiguration)existingConfiguration.getConfiguration()).getRunnerParameters();
           if (module.getName().equals(runnerParameters.getModuleName()) &&
-              AirMobileRunnerParameters.AirMobileRunMode.MainClass == runnerParameters.getAirMobileRunMode() &&
+              AirMobileRunMode.MainClass == runnerParameters.getAirMobileRunMode() &&
               runnerParameters.getMainClassName().equals(jsClass.getQualifiedName())) {
             return existingConfiguration;
           }

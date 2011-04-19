@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunMode;
+
 public class AirMobileRunConfiguration extends AirRunConfiguration {
 
   public AirMobileRunConfiguration(final Project project, final ConfigurationFactory configurationFactory, final String name) {
@@ -34,9 +36,9 @@ public class AirMobileRunConfiguration extends AirRunConfiguration {
 
   public String suggestedName() {
     final String descriptorPath = getRunnerParameters().getAirDescriptorPath();
-    return getRunnerParameters().getAirMobileRunMode() == AirMobileRunnerParameters.AirMobileRunMode.MainClass
+    return getRunnerParameters().getAirMobileRunMode() == AirMobileRunMode.MainClass
            ? StringUtil.getShortName(getRunnerParameters().getMainClassName())
-           : getRunnerParameters().getAirMobileRunMode() == AirMobileRunnerParameters.AirMobileRunMode.AppDescriptor
+           : getRunnerParameters().getAirMobileRunMode() == AirMobileRunMode.AppDescriptor
              ? descriptorPath.substring(descriptorPath.lastIndexOf('/') + 1)
              : "unnamed";
   }
