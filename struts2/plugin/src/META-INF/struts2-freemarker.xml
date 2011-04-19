@@ -22,6 +22,7 @@
     <struts2.resultContributor implementation="com.intellij.struts2.freemarker.FreeMarkerStrutsResultContributor"/>
 
     <multiHostInjector implementation="com.intellij.struts2.freemarker.FreeMarkerCssInlineStyleInjector"/>
+    <multiHostInjector implementation="com.intellij.struts2.freemarker.FreeMarkerJavaScriptInjector"/>
 
   </extensions>
 

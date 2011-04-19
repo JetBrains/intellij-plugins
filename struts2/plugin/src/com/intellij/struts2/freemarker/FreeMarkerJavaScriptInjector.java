@@ -20,13 +20,12 @@ import com.intellij.freemarker.psi.FtlStringLiteral;
 import com.intellij.freemarker.psi.directives.FtlMacro;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.css.CssSupportLoader;
-import com.intellij.struts2.StrutsConstants;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,34 +35,35 @@ import java.util.List;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 /**
- * Adds CSS inline support for UI/jQuery-plugin tags in Freemarker.
+ * Adds JavaScript support for Struts UI/jQuery-plugin attributes in Freemarker.
  *
  * @author Yann C&eacute;bron
  */
-public class FreeMarkerCssInlineStyleInjector implements MultiHostInjector {
+public class FreeMarkerJavaScriptInjector implements MultiHostInjector {
 
-  private static final PsiElementPattern.Capture<FtlStringLiteral> CSS_ELEMENT_PATTERN =
+  private static final PsiElementPattern.Capture<FtlStringLiteral> JS_ELEMENT_PATTERN =
     psiElement(FtlStringLiteral.class)
-      .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 taglib CSS Attributes") {
+      .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 taglib JS Attributes") {
         @Override
         public boolean accepts(@NotNull final FtlNameValuePair ftlNameValuePair, final ProcessingContext processingContext) {
-          return Arrays.binarySearch(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES, ftlNameValuePair.getName()) > -1;
+          final String name = ftlNameValuePair.getName();
+          return name != null &&
+                 (name.startsWith("on") || name.startsWith("doubleOn")) &&
+                 !name.endsWith("Topics");
         }
       }))
       .withSuperParent(3, psiElement(FtlMacro.class).with(FreemarkerInjectionConstants.TAGLIB_PREFIX));
 
-  @Override
-  public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar, @NotNull final PsiElement psiElement) {
-    if (CSS_ELEMENT_PATTERN.accepts(psiElement)) {
-      final TextRange range = new TextRange(1, psiElement.getTextLength() - 1);
-      multiHostRegistrar.startInjecting(CssSupportLoader.CSS_FILE_TYPE.getLanguage())
-        .addPlace("inline.style {", "}", (PsiLanguageInjectionHost) psiElement, range)
+  public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement host) {
+    if (JS_ELEMENT_PATTERN.accepts(host)) {
+      registrar.startInjecting(JavaScriptSupportLoader.JAVASCRIPT.getLanguage())
+        .addPlace(null, null, (PsiLanguageInjectionHost) host,
+                  TextRange.from(1, host.getTextLength() - 2))
         .doneInjecting();
     }
   }
 
   @NotNull
-  @Override
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
     return Arrays.asList(FtlStringLiteral.class);
   }

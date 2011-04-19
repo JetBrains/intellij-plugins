@@ -31,11 +31,11 @@
 
   <!-- required dependencies -->
   <depends>com.intellij.javaee</depends>
+  <depends>JavaScript</depends>
 
   <!-- optional dependencies -->
   <depends optional="true">HtmlTools</depends>
   <depends optional="true" config-file="struts2-freemarker.xml">com.intellij.freemarker</depends>
-  <depends optional="true" config-file="struts2-javascript.xml">JavaScript</depends>
   <depends optional="true" config-file="struts2-spring.xml">com.intellij.spring</depends>
   <depends optional="true" config-file="struts2-groovy.xml">org.intellij.groovy</depends>
   <depends optional="true" config-file="struts2-tiles.xml">StrutsAssistant</depends>
@@ -192,8 +192,9 @@
         implementation="com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider"/>
     <javaee.web.deployedFileUrlConverter implementation="com.intellij.struts2.preview.Struts2UrlConverter"/>
 
-    <!-- inject CSS into Struts UI tags -->
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibCssInlineStyleInjector"/>
+    <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibJavaScriptInjector"/>
+
   </extensions>
 
   <application-components>
