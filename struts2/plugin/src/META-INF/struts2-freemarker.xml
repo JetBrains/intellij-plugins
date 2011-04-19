@@ -20,6 +20,9 @@
   <extensions defaultExtensionNs="com.intellij">
     <freemarker.globalVariableProvider implementation="com.intellij.struts2.freemarker.Struts2GlobalVariableProvider"/>
     <struts2.resultContributor implementation="com.intellij.struts2.freemarker.FreeMarkerStrutsResultContributor"/>
+
+    <multiHostInjector implementation="com.intellij.struts2.freemarker.FreeMarkerCssInlineStyleInjector"/>
+
   </extensions>
 
 </idea-plugin>

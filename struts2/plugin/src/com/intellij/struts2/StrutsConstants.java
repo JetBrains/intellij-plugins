@@ -87,9 +87,9 @@ public final class StrutsConstants {
    */
   @NonNls
   public static final String[] STRUTS_DTDS = {
-      STRUTS_2_0_DTD_ID, STRUTS_2_0_DTD_URI,
-      STRUTS_2_1_DTD_ID, STRUTS_2_1_DTD_URI,
-      STRUTS_2_1_7_DTD_URI, STRUTS_2_1_7_DTD_ID
+    STRUTS_2_0_DTD_ID, STRUTS_2_0_DTD_URI,
+    STRUTS_2_1_DTD_ID, STRUTS_2_1_DTD_URI,
+    STRUTS_2_1_7_DTD_URI, STRUTS_2_1_7_DTD_ID
   };
 
   @NonNls
@@ -134,6 +134,13 @@ public final class StrutsConstants {
    */
   @NonNls
   public static final String TAGLIB_STRUTS_UI_PREFIX = "s";
+
+  /**
+   * Struts UI taglib CSS-attributes.
+   */
+  @NonNls
+  public static final String[] TAGLIB_STRUTS_UI_CSS_ATTRIBUTES =
+    new String[]{"buttonCssStyle", "cssErrorStyle", "cssStyle", "doubleCssStyle"};
 
   /**
    * Struts jQuery-plugin taglib URI.

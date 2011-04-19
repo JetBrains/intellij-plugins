@@ -25,7 +25,6 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.css.CssSupportLoader;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.struts2.StrutsConstants;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -37,30 +36,15 @@ import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
 import static com.intellij.patterns.XmlPatterns.xmlTag;
 
 /**
- * Adds CSS inline support for UI/jQuery-plugin tags.
+ * Adds CSS inline support for UI/jQuery-plugin tags in JSP(X).
  *
  * @author Yann C&eacute;bron
  */
 public class TaglibCssInlineStyleInjector implements MultiHostInjector {
 
-  @NonNls
-  private static final String CSS_STYLE = "cssStyle";
-
-  @NonNls
-  private static final String CSS_ERROR_STYLE = "cssErrorStyle";
-
-  // Tags: inputtransferselect, optiontransferselect ===========
-  @NonNls
-  private static final String BUTTON_CSS_STYLE = "buttonCssStyle";
-  @NonNls
-  private static final String DOUBLE_CSS_STYLE = "doubleCssStyle";
-
   private static final ElementPattern<XmlAttributeValue> CSS_ELEMENT_PATTERN =
       xmlAttributeValue()
-          .withLocalName(CSS_STYLE,
-                         CSS_ERROR_STYLE,
-                         BUTTON_CSS_STYLE,
-                         DOUBLE_CSS_STYLE)
+          .withLocalName(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES)
           .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
                             virtualFile().ofType(StdFileTypes.JSPX)))
           .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
