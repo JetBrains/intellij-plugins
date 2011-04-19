@@ -47,6 +47,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   ProjectManagerListener projectManagerListener;
 
+  public File getAppDir() {
+    return appDir;
+  }
+
   private File appDir;
 
   private boolean documentOpening;
@@ -57,57 +61,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   public static FlexUIDesignerApplicationManager getInstance() {
     return ServiceManager.getService(FlexUIDesignerApplicationManager.class);
-  }
-
-  private boolean added;
-
-  @SuppressWarnings({"ResultOfMethodCallIgnored"})
-  public void ff() {
-    //if (added) {
-    //  return;
-    //}
-    //
-    //added = true;
-    //
-    //final String p = "/Users/develar/workspace/idea/flex/tools/flex-ui-designer/.idea/sa";
-    //final File f = new File("/Users/develar/res");
-    //File file = new File(p);
-    //try {
-    //  file.createNewFile();
-    //}
-    //catch (IOException e) {
-    //  LOG.error(e);
-    //}
-    //final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(p);
-    //assert virtualFile != null;
-    //
-    //
-    //
-    //
-    //ApplicationManager.getApplication().getMessageBus().connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
-    //  @Override
-    //  public void before(List<? extends VFileEvent> events) {
-    //    for (VFileEvent event : events) {
-    //      if (event instanceof VFileContentChangeEvent) {
-    //        final VFileContentChangeEvent ce = (VFileContentChangeEvent)event;
-    //        final VirtualFile file = ce.getFile();
-    //        if (file == virtualFile) {
-    //
-    //          try {
-    //            new DataOutputStream(new FileOutputStream(f)).writeUTF("YES!!!");
-    //          }
-    //          catch (IOException e) {
-    //            LOG.error(e);
-    //          }
-    //        }
-    //      }
-    //    }
-    //  }
-    //
-    //  @Override
-    //  public void after(List<? extends VFileEvent> events) {
-    //  }
-    //});
   }
 
   public Client getClient() {
@@ -152,7 +105,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     documentOpening = true;
 
     if (server == null || server.isClosed()) {
-      ff();
       run(project, module, psiFile, debug);
     }
     else {

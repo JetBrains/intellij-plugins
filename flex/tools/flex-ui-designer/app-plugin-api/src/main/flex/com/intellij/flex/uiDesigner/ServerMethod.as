@@ -10,5 +10,7 @@ public final class ServerMethod {
 
   public static const closeProject:int = 5;
   public static const saveProjectWindowBounds:int = 6;
+
+  public static const getResourceBundle:int = 7;
 }
 }

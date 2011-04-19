@@ -68,12 +68,6 @@ public class Client implements Closable {
     out.flush();
   }
 
-  public void gg() throws IOException {
-    beginMessage(ClientMethod.GG);
-    out.writeAmfUtf("YES");
-    out.flush();
-  }
-
   @Override
   // synchronized due to out, otherwise may be NPE at out.closeWithoutFlush() (meaningful primary for tests)
   public synchronized void close() throws IOException {
@@ -127,13 +121,17 @@ public class Client implements Closable {
 
     out.write(librarySet.getApplicationDomainCreationPolicy());
     final List<Library> libraries = librarySet.getLibraries();
-    out.writeShort(libraries.size());
+    out.writeShort(sizeOfOriginalLibrary(libraries));
     final LibraryManager libraryManager = LibraryManager.getInstance();
     for (Library library : libraries) {
       final OriginalLibrary originalLibrary;
       final boolean unregisteredLibrary;
       if (library instanceof OriginalLibrary) {
         originalLibrary = (OriginalLibrary)library;
+        if (!originalLibrary.hasDefinitions()) {
+          continue;
+        }
+
         unregisteredLibrary = !libraryManager.isRegistered(originalLibrary);
         if (originalLibrary.filtered) {
           out.write(unregisteredLibrary ? 2 : 3);
@@ -145,7 +143,7 @@ public class Client implements Closable {
       else {
         final EmbedLibrary embedLibrary = (EmbedLibrary)library;
         out.write(4);
-        out.writeShort(libraries.indexOf(embedLibrary.parent));
+        out.writeShort(indexOfOriginalLibrary(libraries, embedLibrary.parent));
         out.writeAmfUtf(embedLibrary.getPath());
         continue;
       }
@@ -182,6 +180,44 @@ public class Client implements Closable {
     blockOut.end();
   }
 
+  private int sizeOfOriginalLibrary(List<Library> libraries) {
+    int size = 0;
+    for (Library library : libraries) {
+      if (library instanceof OriginalLibrary) {
+        final OriginalLibrary originalLibrary = (OriginalLibrary)library;
+        if (originalLibrary.hasDefinitions()) {
+          size++;
+        }
+      }
+      else {
+        size++;
+      }
+    }
+
+    return size;
+  }
+
+  // can't use standard List.indexOf, because server list contains resource libraries, but client doesn't
+  private int indexOfOriginalLibrary(List<Library> libraries, OriginalLibrary o) {
+    int index = 0;
+    for (Library library : libraries) {
+      if (library instanceof OriginalLibrary) {
+        final OriginalLibrary originalLibrary = (OriginalLibrary)library;
+        if (originalLibrary.hasDefinitions()) {
+          if (o == originalLibrary) {
+            return index;
+          }
+          index++;
+        }
+      }
+      else {
+        index++;
+      }
+    }
+
+    throw new IllegalArgumentException();
+  }
+
   private void writeParents(List<Library> libraries, OriginalLibrary originalLibrary) {
     if (originalLibrary.parents.isEmpty()) {
       out.write(0);
@@ -190,7 +226,7 @@ public class Client implements Closable {
       out.write(originalLibrary.parents.size());
       for (OriginalLibrary parent : originalLibrary.parents) {
         // can't use parent.getId(), because parents/successors related to filtered, but not to original id
-        out.writeShort(libraries.indexOf(parent));
+        out.writeShort(indexOfOriginalLibrary(libraries, parent));
       }
     }
   }
@@ -358,8 +394,7 @@ public class Client implements Closable {
   public static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, openDocument, updateDocuments,
     qualifyExternalInlineStyleSource, initStringRegistry,
-    registerBitmap, registerBinaryFile,
-    GG;
+    registerBitmap, registerBinaryFile;
     
     public static final int METHOD_CLASS = 0;
   }

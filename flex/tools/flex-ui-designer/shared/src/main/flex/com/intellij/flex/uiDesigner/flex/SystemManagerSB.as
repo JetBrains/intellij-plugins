@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.flex {
+import com.intellij.flex.uiDesigner.ResourceBundleProvider;
 import com.intellij.flex.uiDesigner.UiErrorHandler;
 
 import flash.display.DisplayObject;
@@ -18,7 +19,7 @@ public interface SystemManagerSB {
 
   function get stage():Stage;
 
-  function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler):void;
+  function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler, resourceBundleProvider:ResourceBundleProvider):void;
 
   function removeProxyMouseEventHandlers():void;
 }

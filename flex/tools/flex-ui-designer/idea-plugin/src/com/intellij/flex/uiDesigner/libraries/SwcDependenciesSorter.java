@@ -62,7 +62,7 @@ public class SwcDependenciesSorter {
     for (OriginalLibrary library : libraries) {
       catalogXmlBuilder.setLibrary(library);
       new XmlBuilderDriver(VfsUtil.loadText(library.getCatalogFile())).build(catalogXmlBuilder);
-      if (library.hasDefinitions()) {
+      if (library.hasDefinitions() || library.hasResourceBundles()) {
         filteredLibraries.add(library);
       }
     }
@@ -74,6 +74,9 @@ public class SwcDependenciesSorter {
     AbcFilter filter = null;
     for (OriginalLibrary library : filteredLibraries) {
       if (!library.hasDefinitions()) {
+        if (library.hasResourceBundles()) {
+          queue.add(library);
+        }
         continue;
       }
 
@@ -136,7 +139,7 @@ public class SwcDependenciesSorter {
     List<Library> sortedLibraries = new ArrayList<Library>(filteredLibraries.size());
     while (!queue.isEmpty()) {
       OriginalLibrary library = queue.removeFirst();
-      assert library.hasDefinitions();
+      assert library.hasDefinitions() || library.hasResourceBundles();
       sortedLibraries.add(library);
 
       if (library.defaultsStyle != null) {
@@ -155,7 +158,6 @@ public class SwcDependenciesSorter {
       }
 
       for (OriginalLibrary successor : library.successors) {
-        //successor.parents.remove(library);
         if (--successor.inDegree == 0) {
           queue.add(successor);
         }
@@ -228,6 +230,8 @@ public class SwcDependenciesSorter {
 
       definitions.add("mx.styles:StyleManager");
       definitions.add(FlexSdkAbcInjector.LAYOUT_MANAGER);
+      definitions.add(FlexSdkAbcInjector.RESOURCE_MANAGER);
+      definitions.add(FlexSdkAbcInjector.RESOURCE_MANAGER + "Impl");
       definitions.add("mx.styles:StyleManagerImpl");
       new FlexSdkAbcInjector(injectionUrlConnection).inject(swfFile, modifiedSwf, flexSdkVersion,
                              new AbcNameFilterByNameSetAndStartsWith(definitions, new String[]{"mx.managers.marshalClasses:"}));

@@ -2,13 +2,20 @@ package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilder;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 class CatalogXmlBuilder implements XmlBuilder {
+  static final String PROPERTIES_EXTENSION = ".properties";
+  private static final int PROPERTIES_EXTENSION_LENGTH = PROPERTIES_EXTENSION.length();
+  private static final String LOCALE_PREFIX = "locale/";
+  private static final int LOCALE_PREFIX_LENGTH = LOCALE_PREFIX.length();
+
   private boolean processDependencies;
+  private boolean processFiles;
 
   private Definition definition;
   private final ArrayList<CharSequence> dependencies = new ArrayList<CharSequence>();
@@ -41,6 +48,10 @@ class CatalogXmlBuilder implements XmlBuilder {
     else if (definition != null) {
       return ProcessingOrder.TAGS_AND_ATTRIBUTES;
     }
+    else if (localName.equals("file")) {
+      processFiles = true;
+      return ProcessingOrder.TAGS_AND_ATTRIBUTES;
+    }
     else {
       return ProcessingOrder.TAGS;
     }
@@ -68,9 +79,7 @@ class CatalogXmlBuilder implements XmlBuilder {
     }
     else if (processDependencies) {
       if (name.equals("id") &&
-          !(StringUtil.startsWith(value, "flash.") ||
-            value.charAt(0) == '_' ||
-            !StringUtil.contains(value, 1, value.length() - 1, ':'))) {
+          !(StringUtil.startsWith(value, "flash.") || value.charAt(0) == '_' || !StringUtil.contains(value, 1, value.length() - 1, ':'))) {
         dependencies.add(value);
       }
     }
@@ -103,6 +112,19 @@ class CatalogXmlBuilder implements XmlBuilder {
       }
       else {
         definition = null;
+      }
+    }
+    else if (processFiles && name.equals("path")) {
+      if (StringUtil.startsWith(value, LOCALE_PREFIX) && StringUtil.endsWith(value, PROPERTIES_EXTENSION)) {
+        final int vlength = value.length();
+        final int secondSlashPosition = StringUtil.lastIndexOf(value, '/', LOCALE_PREFIX_LENGTH + 2, vlength - PROPERTIES_EXTENSION_LENGTH - 1);
+        final String locale = value.subSequence(LOCALE_PREFIX_LENGTH, secondSlashPosition).toString();
+        THashSet<String> bundles = library.resourceBundles.get(locale);
+        if (bundles == null) {
+          bundles = new THashSet<String>();
+          library.resourceBundles.put(locale, bundles);
+        }
+        bundles.add(value.subSequence(secondSlashPosition + 1, vlength - PROPERTIES_EXTENSION_LENGTH).toString());
       }
     }
   }

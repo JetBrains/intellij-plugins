@@ -19,7 +19,7 @@ public class ComplementSwfBuilder {
         @Override
         public boolean accept(String name) {
           return name.equals(FlexSdkAbcInjector.STYLE_PROTO_CHAIN) || name.equals("mx.styles:StyleManager") ||
-                 name.equals(FlexSdkAbcInjector.LAYOUT_MANAGER) ||
+                 name.equals(FlexSdkAbcInjector.LAYOUT_MANAGER) || name.equals(FlexSdkAbcInjector.RESOURCE_MANAGER) ||
                  (super.accept(name) && !sparkInclusionNameFilter.accept(name) && !airsparkDefinitions.contains(name));
         }
       };

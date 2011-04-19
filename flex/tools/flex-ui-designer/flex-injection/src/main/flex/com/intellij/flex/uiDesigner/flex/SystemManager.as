@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.flex {
+import com.intellij.flex.uiDesigner.ResourceBundleProvider;
 import com.intellij.flex.uiDesigner.UiErrorHandler;
 import com.intellij.flex.uiDesigner.css.RootStyleManager;
 
@@ -24,6 +25,7 @@ import mx.core.IFlexModule;
 import mx.core.IFlexModuleFactory;
 import mx.core.IRawChildrenContainer;
 import mx.core.IUIComponent;
+import mx.resources.ResourceManager;
 
 flex::v4_5
 import mx.core.RSLData;
@@ -67,7 +69,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
   private const implementations:Dictionary = new Dictionary();
 
-  public function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler):void {
+  public function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler, resourceBundleProvider:ResourceBundleProvider):void {
     if (UIComponentGlobals.layoutManager == null) {
       UIComponentGlobals.designMode = true;
       UIComponentGlobals.catchCallLaterExceptions = true;
@@ -75,6 +77,8 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
       Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManager);
       UIComponentGlobals.layoutManager = new LayoutManager(stage.getChildAt(0), uiErrorHandler);
+
+      new ResourceManager(resourceBundleProvider);
     }
 
     this.uiErrorHandler = uiErrorHandler;
@@ -95,6 +99,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     implementations[SYSTEM_MANAGER_CHILD_MANAGER] = this;
 
     Singleton.registerClass("mx.styles::IStyleManager2", RootStyleManager);
+    Singleton.registerClass("mx.resources::IResourceManager", ResourceManager);
     Singleton.registerClass("mx.managers::IDragManager", DragManagerImpl);
     Singleton.registerClass("mx.managers::IHistoryManager", HistoryManagerImpl);
     Singleton.registerClass("mx.managers::IBrowserManager", BrowserManagerImpl);

@@ -3,53 +3,28 @@ import com.intellij.flex.uiDesigner.css.CssDeclaration;
 
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
-
 import flash.filesystem.FileStream;
-
 import flash.net.Socket;
-import flash.system.System;
+import flash.utils.Dictionary;
 import flash.utils.getQualifiedClassName;
 import flash.utils.getTimer;
 
-public class Server {
+public class Server implements ResourceBundleProvider {
   private var socket:Socket;
+  private var uncaughtErrorManager:UncaughtErrorManager;
 
-  private const resultFile:File = new File("/Users/develar/res");
-  private const resReady:File = new File("/Users/develar/resReady");
-
- public static var F:Boolean;
-
-
-  public function Server(socketManager:SocketManager) {
+  public function Server(socketManager:SocketManager, uncaughtErrorManager:UncaughtErrorManager) {
     socket = socketManager.getSocket();
+    this.uncaughtErrorManager = uncaughtErrorManager;
     assert(socket != null);
   }
 
   public function goToClass(module:Module, className:String):void {
-    //F = true;
     socket.writeByte(ServerMethod.goToClass);
     writeModuleId(module);
     socket.writeUTF(className);
     socket.flush();
-
-    //while (SocketManagerImpl.ff() == 0) {
-    //
-    //}
-
-    //trace(socket.readInt(), socket.readByte(), socket.readByte(), socket.readUTF());
-
-    var time:int = getTimer();
-    // fileStream.bytesAvailable is not update, i.e. we cannot while (fileStream.bytesAvailable == 0), so, we delete file after read
-    while (!resReady.exists) {
-
     }
-
-    var fileStream:FileStream = new FileStream();
-    fileStream.open(resultFile, FileMode.READ);
-    trace(fileStream.readUTF(), getTimer() - time);
-    fileStream.close();
-    resReady.deleteFile();
-  }
 
   // navigation for inline style in external file (for example, ButtonSkin in sparkskins.swc) is not supported
   public function resolveExternalInlineStyleDeclarationSource(module:Module, parentFQN:String, elementFQN:String, targetStyleName:String, declarations:Vector.<CssDeclaration>):void {
@@ -96,6 +71,54 @@ public class Server {
 
   private function writeProjectId(project:Project):void {
     socket.writeShort(project.id);
+  }
+
+  // http://exaflood.de/syrotech/air-securityerror-filewriteresource/
+  private const resultReadyFile:File = new File(File.applicationDirectory.nativePath + "/d");
+  private const resultFile:File = new File(File.applicationDirectory.nativePath + "/r");
+
+  public function getResourceBundle(locale:String, bundleName:String):Dictionary {
+    try {
+      socket.writeByte(ServerMethod.getResourceBundle);
+      var project:Project = ProjectUtil.getProjectForActiveWindow();
+      // todo MUST BE MODULE
+      writeProjectId(project);
+      socket.writeUTF(locale);
+      socket.writeUTF(bundleName);
+      socket.flush();
+
+      // fileStream.bytesAvailable is not update, i.e. we cannot while (fileStream.bytesAvailable == 0), so, we delete file after read
+      while (!resultReadyFile.exists) {
+      }
+
+      var result:Dictionary;
+      var fileStream:FileStream = new FileStream();
+      fileStream.open(resultFile, FileMode.READ);
+      try {
+        result = fileStream.readObject();
+      }
+      finally {
+        fileStream.close();
+      }
+
+      resultReadyFile.deleteFile();
+      return result;
+    }
+    catch (e:Error) {
+      uncaughtErrorManager.handleError(e);
+    }
+    finally {
+      if (resultReadyFile.exists) {
+        try {
+          resultReadyFile.deleteFile();
+        }
+        catch (e:Error) {
+          uncaughtErrorManager.handleError(e);
+        }
+      }
+    }
+
+    return null;
   }
 }
 }

@@ -2,11 +2,13 @@ package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.openapi.vfs.VirtualFile;
+import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import gnu.trove.TLinkable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
 import java.util.Set;
 
 public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Library, TLinkable {
@@ -34,6 +36,9 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
   public final Set<OriginalLibrary> successors = new THashSet<OriginalLibrary>();
   public final Set<OriginalLibrary> parents = new THashSet<OriginalLibrary>();
 
+  // en_US => {"layout", "components"}
+  public final Map<String,THashSet<String>> resourceBundles = new THashMap<String,THashSet<String>>();
+
   public OriginalLibrary(String relativePath, VirtualFile file, boolean fromSdk) {
     super(file);
 
@@ -47,6 +52,10 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
 
   public boolean hasDefinitions() {
     return definitionCounter > 0;
+  }
+
+  public boolean hasResourceBundles() {
+    return !resourceBundles.isEmpty();
   }
 
   @Nullable

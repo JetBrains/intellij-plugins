@@ -8,6 +8,7 @@
   <resource-bundle>messages.FlexUIDesignerBundle</resource-bundle>
 
   <depends optional="false">com.intellij.flex</depends>
+  <depends optional="false">com.intellij.properties</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager" serviceImplementation="com.intellij.flex.uiDesigner.FlexUIDesignerApplicationManager"/>

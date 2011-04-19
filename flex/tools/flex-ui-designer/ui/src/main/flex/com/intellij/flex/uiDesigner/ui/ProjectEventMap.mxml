@@ -26,6 +26,7 @@
     <Component role="{DocumentManager}" implementation="{DocumentManagerImpl}">
       <Requirement role="{LibraryManager}"/>
       <Requirement role="{DocumentReader}"/>
+      <Requirement role="{Server}"/>
     </Component>
     <Component role="{StatesBarManager}"/>
     <Component role="{Interactor}">

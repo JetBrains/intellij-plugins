@@ -26,5 +26,6 @@
 	</Component>
   <Component role="{Server}">
 		<Requirement role="{SocketManager}"/>
+		<Requirement role="{UncaughtErrorManager}"/>
 	</Component>
 </ComponentSet>

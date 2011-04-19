@@ -32,7 +32,8 @@ public class InfoList<E,I extends InfoList.Info> {
     return info.id != -1;
   }
 
-  public @NotNull E getElement(int id) {
+  @NotNull
+  public E getElement(int id) {
     for (I info : elements.values()) {
       if (info.id == id) {
         //noinspection unchecked
@@ -43,8 +44,20 @@ public class InfoList<E,I extends InfoList.Info> {
     throw new IllegalArgumentException("Element is not registered for id " + id);
   }
 
-  public @NotNull I getInfo(E element) {
+  @NotNull
+  public I getInfo(E element) {
     return elements.get(element);
+  }
+
+  @NotNull
+  public I getInfo(int id) {
+    for (I info : elements.values()) {
+      if (info.id == id) {
+        return info;
+      }
+    }
+
+    throw new IllegalArgumentException("Element is not registered for id " + id);
   }
 
   public int getId(E element) {
@@ -67,6 +80,10 @@ public class InfoList<E,I extends InfoList.Info> {
 
     public int getId() {
       return id;
+    }
+
+    public E getElement() {
+      return element;
     }
   }
 }

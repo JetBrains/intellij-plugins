@@ -18,10 +18,12 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   private var libraryManager:LibraryManager;
 
   private var documentReader:DocumentReader;
+  private var server:Server;
 
-  public function DocumentManagerImpl(libraryManager:LibraryManager, documentReader:DocumentReader) {
+  public function DocumentManagerImpl(libraryManager:LibraryManager, documentReader:DocumentReader, server:Server) {
     this.libraryManager = libraryManager;
     this.documentReader = documentReader;
+    this.server = server;
   }
 
   private var _document:Document;
@@ -140,7 +142,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var systemManager:SystemManagerSB = new systemManagerClass();
     document.systemManager = systemManager;
     systemManager.init(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain), window.nativeWindow.stage,
-                       getUncaughtErrorManager(module));
+                       getUncaughtErrorManager(module), server);
     document.container = new DocumentContainer(Sprite(systemManager));
   }
 

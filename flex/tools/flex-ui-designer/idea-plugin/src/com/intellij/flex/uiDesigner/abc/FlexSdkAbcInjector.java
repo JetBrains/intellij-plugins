@@ -13,6 +13,7 @@ import java.nio.channels.FileChannel;
 public class FlexSdkAbcInjector extends AbcFilter {
   public static final String STYLE_PROTO_CHAIN = "mx.styles:StyleProtoChain";
   public static final String LAYOUT_MANAGER = "mx.managers:LayoutManager";
+  public static final String RESOURCE_MANAGER = "mx.resources:ResourceManager";
 
   private boolean flexInjected;
   private String flexSdkVersion;

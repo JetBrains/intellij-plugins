@@ -1,15 +1,11 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.util.StringUtil;
 
-import flash.desktop.NativeApplication;
-import flash.display.NativeWindow;
 import flash.display.Sprite;
 import flash.events.ErrorEvent;
 import flash.events.UncaughtErrorEvent;
 import flash.net.Socket;
 import flash.system.Capabilities;
-
-import org.flyti.plexus.PlexusManager;
 
 public class UncaughtErrorManager implements UiErrorHandler {
   protected var socket:Socket;
@@ -50,6 +46,10 @@ public class UncaughtErrorManager implements UiErrorHandler {
     }
   }
 
+  public function handleError(error:Error):void {
+    sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : error.message);
+  }
+
   public function handleUiError(error:Error, object:Object):void {
     sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : Error(error).message);
   }
@@ -62,15 +62,12 @@ public class UncaughtErrorManager implements UiErrorHandler {
     var projectId:int = -1;
     var documentFactoryId:int = -1;
     try {
-      var activeWindow:NativeWindow = NativeApplication.nativeApplication.activeWindow;
-      if (activeWindow != null) {
-        var project:Project = ProjectManager(PlexusManager.instance.container.lookup(ProjectManager)).project;
-        if (project != null) {
-          var document:Document = DocumentManager(project.getComponent(DocumentManager)).document;
-          if (document != null) {
-            projectId = project.id;
-            documentFactoryId = document.documentFactory.id;
-          }
+      var project:Project = ProjectUtil.getProjectForActiveWindow();
+      if (project != null) {
+        var document:Document = DocumentManager(project.getComponent(DocumentManager)).document;
+        if (document != null) {
+          projectId = project.id;
+          documentFactoryId = document.documentFactory.id;
         }
       }
     }
