@@ -136,7 +136,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/pax-runner-1.6.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/pax-runner-1.7.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -28,7 +28,7 @@
 
     <property file="build.properties"/>
     <property  name="bnd.version" value="0.0.384"/>
-    <property name="pax.runner.version" value="1.6.1"/>
+    <property name="pax.runner.version" value="1.7.1"/>
     <patternset id="ignored.files">
         <exclude name="**/CVS/**"/>
         <exclude name="**/SCCS/**"/>

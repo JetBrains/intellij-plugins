@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
  * @version $Id:$
  */
 public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties> extends AbstractFrameworkRunner<P> implements ExternalVMFrameworkRunner {
-  private static final String PaxRunnerLib = "pax-runner-1.6.1.jar";
+  private static final String PaxRunnerLib = "pax-runner-1.7.1.jar";
 
   protected AbstractPaxBasedFrameworkRunner() {
   }
@@ -89,7 +89,7 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
 
   public void fillCommandLineParameters(@NotNull ParametersList commandLineParameters, @NotNull SelectedBundle[] bundlesToInstall) {
     commandLineParameters.add("--p=" + getOsgiFrameworkName().toLowerCase());
-
+    commandLineParameters.add("--nologo=true"); 
     // Use the selected version if specified.
     FrameworkInstanceDefinition definition = getRunConfiguration().getInstanceToUse();
     String version = definition.getVersion();
