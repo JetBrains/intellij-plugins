@@ -100,7 +100,8 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     for (SelectedBundle bundle : bundlesToInstall) {
       String prefix = CachingBundleInfoProvider.isExploded(bundle.getBundleUrl()) ? "scan-bundle:" : "";
       if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
-        commandLineParameters.add(prefix+bundle.getBundleUrl() + "@" + bundle.getStartLevel());
+        int bundleStartLevel = bundle.isDefaultStartLevel() ? getRunConfiguration().getDefaultStartLevel() : bundle.getStartLevel();
+        commandLineParameters.add(prefix+bundle.getBundleUrl() + "@" + bundleStartLevel);
       }
       else {
         if ( CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {

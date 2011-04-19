@@ -84,7 +84,8 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
     if ( myRunConfiguration.isAutoStartLevel() ) {
       int sl = 0;
       for (SelectedBundle selectedBundle : bundlesToStart) {
-        sl = Math.max(selectedBundle.getStartLevel(), sl);
+        int selectedBundleStartLevel = selectedBundle.isDefaultStartLevel() ? myRunConfiguration.getDefaultStartLevel() : selectedBundle.getStartLevel();
+        sl = Math.max(selectedBundleStartLevel, sl);
       }
       return sl;
     }

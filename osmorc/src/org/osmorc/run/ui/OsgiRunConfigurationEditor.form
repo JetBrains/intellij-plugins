@@ -91,14 +91,12 @@
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:p:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:max(d;80px):noGrow"/>
+            <colspec value="left:max(m;80px):noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:p:noGrow"/>
-            <colspec value="left:5dlu:noGrow"/>
-            <colspec value="fill:p:noGrow"/>
-            <colspec value="fill:max(d;4px):noGrow"/>
+            <colspec value="left:max(p;4px):noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:max(d;80px):noGrow"/>
+            <colspec value="left:max(m;80px):noGrow"/>
             <colspec value="left:4dlu:grow"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -134,25 +132,16 @@
               </component>
               <component id="fc18c" class="javax.swing.JSpinner" binding="myFrameworkStartLevel">
                 <constraints>
-                  <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties/>
               </component>
-              <component id="1333c" class="javax.swing.JCheckBox" binding="myAutomaticStartLevel">
-                <constraints>
-                  <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms/>
-                </constraints>
-                <properties>
-                  <text value="Auto"/>
-                </properties>
-              </component>
               <component id="b7deb" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="0" column="11" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
                 <properties>
@@ -161,7 +150,7 @@
               </component>
               <component id="fe15a" class="javax.swing.JSpinner" binding="myDefaultStartLevel">
                 <constraints>
-                  <grid row="0" column="13" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="0" column="11" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>

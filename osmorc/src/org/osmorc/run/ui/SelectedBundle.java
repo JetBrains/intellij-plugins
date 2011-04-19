@@ -36,138 +36,147 @@ import org.jetbrains.annotations.Nullable;
  * @version $Id:$
  */
 public class SelectedBundle {
-    public SelectedBundle(@NotNull String displayName, @Nullable String url, @NotNull BundleType bundleType) {
-        this.displayName = displayName;
-        bundleUrl = url;
-        this.bundleType = bundleType;
-        startAfterInstallation = bundleType.isDefaultStartAfterInstallation();
-        startLevel = 1;
+  public SelectedBundle(@NotNull String displayName, @Nullable String url, @NotNull BundleType bundleType) {
+    this.displayName = displayName;
+    bundleUrl = url;
+    this.bundleType = bundleType;
+    startAfterInstallation = bundleType.isDefaultStartAfterInstallation();
+    startLevel = 1;
+  }
+
+  @NotNull
+  public String getName() {
+    return displayName;
+  }
+
+  public void setName(@NotNull String displayName) {
+    this.displayName = displayName;
+  }
+
+  @Nullable
+  public String getBundleUrl() {
+    return bundleUrl;
+  }
+
+
+  public String toString() {
+    return displayName + (bundleUrl != null ? (" (" + bundleUrl.substring(bundleUrl.lastIndexOf("/") + 1) + ")") : "");
+  }
+
+  /**
+   * Two selected bundles equal, when they point to the same URL. When the bundles are modules, they do not necessarily
+   * have to point to the same URL, as the URL might be null on modules, so in this case the display name decides.
+   *
+   * @param o the object to check for equality
+   * @return true if the given object represents the same bundle as this bundle.
+   */
+  public boolean equals(Object o) {
+    if (o == null) {
+      return false;
     }
+    if (o instanceof SelectedBundle) {
+      SelectedBundle other = (SelectedBundle)o;
 
-    @NotNull
-    public String getName() {
-        return displayName;
+      return isModule() ? isEqual(displayName, other.displayName) : isEqual(bundleUrl, other.bundleUrl);
     }
+    return false;
+  }
 
-    public void setName(@NotNull String displayName) {
-        this.displayName = displayName;
-    }
+  @Override
+  public int hashCode() {
+    return isModule() ? displayName.hashCode() : (bundleUrl != null ? bundleUrl.hashCode() : 0);
+  }
 
-    @Nullable
-    public String getBundleUrl() {
-        return bundleUrl;
-    }
+  private boolean isEqual(Object o1, Object o2) {
+    return o1 == null && o2 == null || o1 != null && o2 != null && o1.equals(o2) && o2.equals(o1);
+  }
 
+  /**
+   * @return the start level of this bundle. Unless set to something else, this is 1.
+   */
+  public int getStartLevel() {
+    return startLevel;
+  }
 
-    public String toString() {
-        return displayName + (bundleUrl != null ? (" (" + bundleUrl.substring(bundleUrl.lastIndexOf("/") + 1) + ")") : "");
+  /**
+   * Returns true, if the start level of this bundle should be the default start level of the run configuration.
+   *
+   * @return true, if the start level of this bundle should be the default start level of the run configuration, false otherwise.
+   */
+  public boolean isDefaultStartLevel() {
+    return startLevel == 0;
+  }
+
+  public void setStartLevel(int startLevel) {
+    this.startLevel = startLevel;
+  }
+
+  public void setBundleUrl(@Nullable String bundleUrl) {
+    this.bundleUrl = bundleUrl;
+  }
+
+  public BundleType getBundleType() {
+    return bundleType;
+  }
+
+  public void setBundleType(BundleType bundleType) {
+    this.bundleType = bundleType;
+  }
+
+  public boolean isModule() {
+    return bundleType == BundleType.Module;
+  }
+
+  public boolean isStartAfterInstallation() {
+    return startAfterInstallation;
+  }
+
+  public void setStartAfterInstallation(boolean startAfterInstallation) {
+    this.startAfterInstallation = startAfterInstallation;
+  }
+
+  private String displayName;
+  @Nullable
+  private String bundleUrl;
+  private int startLevel;
+  private boolean startAfterInstallation;
+  private BundleType bundleType;
+
+  /**
+   * The type of a selected bundle,
+   */
+  public static enum BundleType {
+    /**
+     * The selected bundle is a module of the currently open project.
+     */
+    Module(true),
+    /**
+     * The selected bundle is an existing bundle that is part of the OSGi framework (e.g. the Knopflerfish Desktop
+     * bundle).
+     */
+    FrameworkBundle(true),
+    /**
+     * The selected bundle is a library used in this project, that should be started. This is rarely used, except for
+     * Libraries that are meant to be used as bundles (such as Spring-DM).
+     */
+    StartableLibrary(true),
+
+    /**
+     * The selected bundle is a plain library that should be installed only.
+     */
+    PlainLibrary(false);
+
+    BundleType(boolean startAfterInstallation) {
+      defaultStartAfterInstallation = startAfterInstallation;
     }
 
     /**
-     * Two selected bundles equal, when they point to the same URL. When the bundles are modules, they do not necessarily
-     * have to point to the same URL, as the URL might be null on modules, so in this case the display name decides.
-     *
-     * @param o the object to check for equality
-     * @return true if the given object represents the same bundle as this bundle.
+     * @return true if bundles of this type should by default be started after installation, false otherwise.
      */
-    public boolean equals(Object o) {
-        if (o == null) {
-            return false;
-        }
-        if (o instanceof SelectedBundle) {
-            SelectedBundle other = (SelectedBundle) o;
-
-            return isModule() ? isEqual(displayName, other.displayName) : isEqual(bundleUrl, other.bundleUrl);
-        }
-        return false;
+    public boolean isDefaultStartAfterInstallation() {
+      return defaultStartAfterInstallation;
     }
 
-    @Override
-    public int hashCode() {
-        return isModule() ? displayName.hashCode() : (bundleUrl != null ? bundleUrl.hashCode() : 0);
-    }
-
-    private boolean isEqual(Object o1, Object o2) {
-        return o1 == null && o2 == null || o1 != null && o2 != null && o1.equals(o2) && o2.equals(o1);
-    }
-
-    /**
-     * @return the start level of this bundle. Unless set to something else, this is 1.
-     */
-    public int getStartLevel() {
-        return startLevel;
-    }
-
-    public void setStartLevel(int startLevel) {
-        this.startLevel = startLevel;
-    }
-
-    public void setBundleUrl(@Nullable String bundleUrl) {
-        this.bundleUrl = bundleUrl;
-    }
-
-    public BundleType getBundleType() {
-        return bundleType;
-    }
-
-    public void setBundleType(BundleType bundleType) {
-        this.bundleType = bundleType;
-    }
-
-    public boolean isModule() {
-        return bundleType == BundleType.Module;
-    }
-
-    public boolean isStartAfterInstallation() {
-        return startAfterInstallation;
-    }
-
-    public void setStartAfterInstallation(boolean startAfterInstallation) {
-        this.startAfterInstallation = startAfterInstallation;
-    }
-
-    private String displayName;
-    @Nullable
-    private String bundleUrl;
-    private int startLevel;
-    private boolean startAfterInstallation;
-    private BundleType bundleType;
-
-    /**
-     * The type of a selected bundle,
-     */
-    public static enum BundleType {
-        /**
-         * The selected bundle is a module of the currently open project.
-         */
-        Module(true),
-        /**
-         * The selected bundle is an existing bundle that is part of the OSGi framework (e.g. the Knopflerfish Desktop
-         * bundle).
-         */
-        FrameworkBundle(true),
-        /**
-         * The selected bundle is a library used in this project, that should be started. This is rarely used, except for
-         * Libraries that are meant to be used as bundles (such as Spring-DM).
-         */
-        StartableLibrary(true),
-
-        /**
-         * The selected bundle is a plain library that should be installed only.
-         */
-        PlainLibrary(false);
-
-        BundleType(boolean startAfterInstallation) {
-            defaultStartAfterInstallation = startAfterInstallation;
-        }
-
-        /**
-         * @return true if bundles of this type should by default be started after installation, false otherwise.
-         */
-        public boolean isDefaultStartAfterInstallation() {
-            return defaultStartAfterInstallation;
-        }
-
-        private final boolean defaultStartAfterInstallation;
-    }
+    private final boolean defaultStartAfterInstallation;
+  }
 }

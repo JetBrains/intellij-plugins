@@ -98,8 +98,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   @NonNls
   private static final String DEFAULT_START_LEVEL = "defaultStartLevel";
   @NonNls
-  private static final String AUTO_START_LEVEL = "autoStartLevel";
-  @NonNls
   public static final String GENERATE_WORKING_DIR_ATTRIBUTE = "generateWorkingDir";
   @Nullable
   private OsgiRunConfigurationChecker checker;
@@ -108,7 +106,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   private List<SelectedBundle> bundlesToDeploy;
   private int frameworkStartLevel = 1;
   private int defaultStartLevel = 5;
-  private boolean autoStartLevel;
   private String programParameters;
   private String vmParameters;
   private String alternativeJrePath;
@@ -145,7 +142,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     includeAllBundlesInClassPath = Boolean.valueOf(element.getAttributeValue(INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE, "false"));
     useAlternativeJre = Boolean.valueOf(element.getAttributeValue(USE_ALTERNATIVE_JRE_ATTRIBUTE, "false"));
     alternativeJrePath = element.getAttributeValue(ALTERNATIVE_JRE_PATH, "");
-    autoStartLevel = Boolean.valueOf(element.getAttributeValue(AUTO_START_LEVEL));
     generateWorkingDir = Boolean.valueOf(element.getAttributeValue(GENERATE_WORKING_DIR_ATTRIBUTE));
 
     String fwsl = element.getAttributeValue(FRAMEWORK_START_LEVEL);
@@ -250,7 +246,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     element.setAttribute(ALTERNATIVE_JRE_PATH, alternativeJrePath != null ? alternativeJrePath : "");
     element.setAttribute(FRAMEWORK_START_LEVEL, String.valueOf(frameworkStartLevel));
     element.setAttribute(DEFAULT_START_LEVEL, String.valueOf(defaultStartLevel));
-    element.setAttribute(AUTO_START_LEVEL, String.valueOf(autoStartLevel));
     element.setAttribute(GENERATE_WORKING_DIR_ATTRIBUTE, String.valueOf(generateWorkingDir));
 
 
@@ -370,7 +365,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   }
 
   public boolean isAutoStartLevel() {
-    return autoStartLevel;
+    return frameworkStartLevel == 0;
   }
 
   public boolean isIncludeAllBundlesInClassPath() {
@@ -391,10 +386,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
 
   public void setAlternativeJrePath(String alternativeJrePath) {
     this.alternativeJrePath = alternativeJrePath;
-  }
-
-  public void setAutoStartLevel(boolean autoStartLevel) {
-    this.autoStartLevel = autoStartLevel;
   }
 
   public void setBundlesToDeploy(final List<SelectedBundle> bundlesToDeploy) {

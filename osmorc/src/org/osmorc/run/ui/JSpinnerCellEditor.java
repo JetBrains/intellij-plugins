@@ -1,10 +1,15 @@
 package org.osmorc.run.ui;
 
+import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -19,8 +24,13 @@ import java.util.EventObject;
 public class JSpinnerCellEditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
   final JSpinner spinner = new JSpinner();
 
+  private static final Logger LOG = Logger.getInstance("#org.osmorc.run.ui.JSpinnerCellEditor");
+
+
   public JSpinnerCellEditor() {
     spinner.setModel(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
+    JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
+    editor.getTextField().setFormatterFactory(new DefaultFormatterFactory(new MyNumberFormatter("Default")));
   }
 
   public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
@@ -61,8 +71,46 @@ public class JSpinnerCellEditor extends AbstractCellEditor implements TableCellE
   }
 
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-    spinner.setValue(value);
+    try {
+      spinner.setValue(value);
+    }
+    catch (IllegalArgumentException e) {
+      LOG.warn("INvalid value: " + value, e);
+    }
     table.setRowHeight(row, spinner.getPreferredSize().height);
     return spinner;
+  }
+
+
+  public static class MyNumberFormatter extends NumberFormatter {
+
+    private String myZeroValue;
+
+    public MyNumberFormatter(@NotNull String zeroValue) {
+      myZeroValue = zeroValue;
+      setValueClass(Integer.class);
+    }
+
+    @Override
+    public String valueToString(Object value) throws ParseException {
+
+
+      if ((value instanceof Long && value.equals(0L)) || (value instanceof Integer && value.equals(0))) {
+        return myZeroValue;
+      }
+      else {
+        return super.valueToString(value);
+      }
+    }
+
+    @Override
+    public Object stringToValue(String text) throws ParseException {
+      if (text.equals(myZeroValue)) {
+        return 0;
+      }
+      else {
+        return super.stringToValue(text);
+      }
+    }
   }
 }

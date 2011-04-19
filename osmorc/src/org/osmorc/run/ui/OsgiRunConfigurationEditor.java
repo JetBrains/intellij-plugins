@@ -55,6 +55,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.text.DefaultFormatterFactory;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -76,7 +77,12 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
   public OsgiRunConfigurationEditor(final Project project) {
     ApplicationSettings registry = ServiceManager.getService(ApplicationSettings.class);
+    myFrameworkStartLevel.setModel(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
+    JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)myFrameworkStartLevel.getEditor();
+    editor.getTextField().setFormatterFactory(new DefaultFormatterFactory(new JSpinnerCellEditor.MyNumberFormatter("Auto")));
     DefaultComboBoxModel cbmodel = new DefaultComboBoxModel(registry.getFrameworkInstanceDefinitions().toArray());
+
+    myDefaultStartLevel.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
     frameworkInstances.setModel(cbmodel);
     frameworkInstances.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -116,12 +122,6 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
                                null, FileChooserDescriptorFactory.createSingleFolderDescriptor());
     workingDirField.getTextField().setColumns(30);
     frameworkSpecificBundleSelectionActions = new DefaultActionGroup("frameworkSpecificBundleSelectionActions", true);
-
-    myAutomaticStartLevel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        myFrameworkStartLevel.setEnabled(!myAutomaticStartLevel.isSelected());
-      }
-    });
 
     frameworkSpecificButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -263,9 +263,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     }
     modulesList.getColumnModel().getColumn(1).setPreferredWidth(200);
 
-    myAutomaticStartLevel.setSelected(osgiRunConfiguration.isAutoStartLevel());
     myFrameworkStartLevel.setValue(osgiRunConfiguration.getFrameworkStartLevel());
-    myFrameworkStartLevel.setEnabled(!myAutomaticStartLevel.isSelected());
     myDefaultStartLevel.setValue(osgiRunConfiguration.getDefaultStartLevel());
 
     boolean useUserDefinedFields = !osgiRunConfiguration.isGenerateWorkingDir();
@@ -297,7 +295,6 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     osgiRunConfiguration.setAlternativeJrePath(alternativeJREPanel.getPath());
     osgiRunConfiguration.setFrameworkStartLevel((Integer)myFrameworkStartLevel.getValue());
     osgiRunConfiguration.setDefaultStartLevel((Integer)myDefaultStartLevel.getValue());
-    osgiRunConfiguration.setAutoStartLevel(myAutomaticStartLevel.isSelected());
     osgiRunConfiguration.setGenerateWorkingDir(osmorcControlledRadioButton.isSelected());
     FrameworkInstanceDefinition frameworkInstanceDefinition = (FrameworkInstanceDefinition)frameworkInstances.getSelectedItem();
     if (frameworkInstanceDefinition != null) {
@@ -339,7 +336,6 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   private JButton frameworkSpecificButton;
   private AlternativeJREPanel alternativeJREPanel;
   private JSpinner myFrameworkStartLevel;
-  private JCheckBox myAutomaticStartLevel;
   private JSpinner myDefaultStartLevel;
   private final Project project;
   private FrameworkRunPropertiesEditor currentFrameworkRunPropertiesEditor;
