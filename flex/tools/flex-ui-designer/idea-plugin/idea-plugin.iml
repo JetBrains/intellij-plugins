@@ -29,6 +29,7 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" name="swf libs" level="project" />
   </component>
 </module>
 

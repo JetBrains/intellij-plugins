@@ -191,7 +191,7 @@ public class SwcDependenciesSorter {
     if (timeStamp != modifiedSwf.lastModified()) {
       final InputStream inputStream = swfFile.getInputStream();
       try {
-        IOUtil.saveStream(inputStream, modifiedSwf);
+        Optimizer.optimize(inputStream, modifiedSwf);
         //noinspection ResultOfMethodCallIgnored
         modifiedSwf.setLastModified(timeStamp);
       }

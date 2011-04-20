@@ -2,7 +2,7 @@
 <module type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="flex" name="Flex">
-      <configuration>
+      <configuration flex_sdk="flex_sdk_4.5">
         <option name="DO_BUILD" value="true" />
         <option name="OUTPUT_TYPE" value="Application" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />

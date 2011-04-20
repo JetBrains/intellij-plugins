@@ -29,21 +29,21 @@ public class FlexSdkAbcInjector extends AbcFilter {
   }
 
   @Override
-  protected boolean doAbc2(int length, String name, FileChannel outputFileChannel) throws IOException {
+  protected boolean doAbc2(int length, String name, FileChannel outFileChannel) throws IOException {
     if (flexInjected) {
       return false;
     }
 
     boolean isStyleProtoChain = name.equals(STYLE_PROTO_CHAIN);
     if (isStyleProtoChain) {
-      final int oldPosition = byteBuffer.position();
-      byteBuffer.position(byteBuffer.position() + 4 + name.length() + 1 /* null-terminated string */);
+      final int oldPosition = buffer.position();
+      buffer.position(buffer.position() + 4 + name.length() + 1 /* null-terminated string */);
       parseCPoolAndRenameStyleProtoChain();
 
       // modify abcname
-      byteBuffer.position(oldPosition + 4 + 10);
-      byteBuffer.put((byte)'F');
-      byteBuffer.position(oldPosition);
+      buffer.position(oldPosition + 4 + 10);
+      buffer.put((byte)'F');
+      buffer.position(oldPosition);
     }
 
     // for flex 4.5 we can inject our classes after StyleProtoChain, but for 4.1 (mx.swc is not yet extracted in this SDK version)
@@ -52,17 +52,17 @@ public class FlexSdkAbcInjector extends AbcFilter {
     if (isStyleProtoChain ? flexSdkVersion.equals("4.5") : (flexSdkVersion.equals("4.1") && name.equals("mx.styles:CSSStyleDeclaration"))) {
       flexInjected = true;
 
-      byteBuffer.limit(byteBuffer.position() + length);
-      byteBuffer.position(lastWrittenPosition);
-      outputFileChannel.write(byteBuffer);
-      lastWrittenPosition = byteBuffer.limit();
-      byteBuffer.limit(byteBuffer.capacity());
+      buffer.limit(buffer.position() + length);
+      buffer.position(lastWrittenPosition);
+      outFileChannel.write(buffer);
+      lastWrittenPosition = buffer.limit();
+      buffer.limit(buffer.capacity());
 
       if (injectionUrlConnection == null) {
         final FileChannel injection = new FileInputStream(new File(DebugPathManager.getFudHome() + "/flex-injection/target/" +
                                                                    ComplementSwfBuilder.generateInjectionName(flexSdkVersion))).getChannel();
         try {
-          injection.transferTo(0, injection.size(), outputFileChannel);
+          injection.transferTo(0, injection.size(), outFileChannel);
         }
         finally {
           injection.close();
@@ -71,7 +71,7 @@ public class FlexSdkAbcInjector extends AbcFilter {
       else {
         InputStream inputStream = injectionUrlConnection.getInputStream();
         try {
-          outputFileChannel.write(ByteBuffer.wrap(FileUtil.loadBytes(inputStream)));
+          outFileChannel.write(ByteBuffer.wrap(FileUtil.loadBytes(inputStream)));
         }
         finally {
           inputStream.close();
@@ -85,7 +85,7 @@ public class FlexSdkAbcInjector extends AbcFilter {
   }
 
   private void parseCPoolAndRenameStyleProtoChain() throws IOException {
-    byteBuffer.position(byteBuffer.position() + 4);
+    buffer.position(buffer.position() + 4);
 
     int n = readU32();
     while (n-- > 1) {
@@ -99,14 +99,14 @@ public class FlexSdkAbcInjector extends AbcFilter {
 
     n = readU32();
     if (n != 0) {
-      byteBuffer.position(byteBuffer.position() + ((n - 1) * 8));
+      buffer.position(buffer.position() + ((n - 1) * 8));
     }
 
     n = readU32();
     while (n-- > 1) {
       int l = readU32();
       String name = readUTFBytes(l).replace("StyleProtoChain", "FtyleProtoChain");
-      byteBuffer.position(byteBuffer.position() - l);
+      buffer.position(buffer.position() - l);
       writeUTF(name, l);
     }
   }
@@ -115,7 +115,7 @@ public class FlexSdkAbcInjector extends AbcFilter {
     try {
       byte[] buf = new byte[i];
       while (i > 0) {
-        buf[(buf.length - i)] = byteBuffer.get();
+        buf[(buf.length - i)] = buffer.get();
         --i;
       }
       return new String(buf, "utf-8");
@@ -153,6 +153,6 @@ public class FlexSdkAbcInjector extends AbcFilter {
         bytearr[count++] = (byte)(0x80 | ((c) & 0x3F));
       }
     }
-    byteBuffer.put(bytearr);
+    buffer.put(bytearr);
   }
 }

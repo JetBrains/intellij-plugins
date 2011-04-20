@@ -8,7 +8,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class ImageWrapper {
+public class ImageWrapper extends AbcEncoder {
   private static byte[] B_ABC;
 
   private static final ThreadLocal<ByteBuffer> BUFFER = new ThreadLocal<ByteBuffer>() {
@@ -31,7 +31,7 @@ public class ImageWrapper {
 
   private final int dataLength;
   private final int totalLength;
-  private final ByteBuffer buffer;
+
 
   public ImageWrapper(int dataLength) throws IOException {
     this.dataLength = dataLength;
@@ -76,8 +76,7 @@ public class ImageWrapper {
     encodeTagHeader(TagTypes.SymbolClass, SYMBOL_CLASS_TAG_LENGTH);
     buffer.putShort((short)1);
     buffer.putShort((short)1);
-    buffer.put((byte)'B');
-    buffer.put((byte)0);
+    writeSwfString('B');
     write(out);
 
     out.write(SWF_FOOTER);
@@ -86,19 +85,5 @@ public class ImageWrapper {
   private void write(OutputStream out) throws IOException {
     out.write(buffer.array(), 0, buffer.position());
     buffer.position(0);
-  }
-
-  private void encodeLongTagHeader(int type, int length) {
-    buffer.putShort((short)((type << 6) | 63));
-    buffer.putInt(length);
-  }
-
-  private void encodeTagHeader(int code, int length) {
-    if (length >= 63) {
-      encodeLongTagHeader(code, length);
-    }
-    else {
-      buffer.putShort((short)((code << 6) | length));
-    }
   }
 }
