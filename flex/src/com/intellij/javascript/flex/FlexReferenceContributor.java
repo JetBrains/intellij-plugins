@@ -40,6 +40,7 @@ import com.intellij.psi.filters.position.ParentElementFilter;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.AttributeValueSelfReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.BasicAttributeValueReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileBasedUserDataCache;
+import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
@@ -49,7 +50,6 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.SmartList;
 import com.intellij.util.text.StringTokenizer;
 import com.intellij.xml.XmlAttributeDescriptor;
-import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.util.XmlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -445,56 +445,11 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       }
     };
 
-    XmlUtil.registerXmlTagReferenceProvider(registrar, null, mxmlElementFilter, true, new PsiReferenceProvider() {
-      @NotNull
-      @Override
-      public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
-        final XmlTag tag = (XmlTag)element;
-        final XmlElementDescriptor descriptor = tag.getDescriptor();
-        if (!(descriptor instanceof AnnotationBackedDescriptor)) return PsiReference.EMPTY_ARRAY;
+    XmlUtil.registerXmlTagReferenceProvider(registrar, null, mxmlElementFilter, true,
+                                            createReferenceProviderForTagOrAttributeExpectingJSClass(quickFixProvider));
 
-        final String type = ((AnnotationBackedDescriptor)descriptor).getType();
-        if (!"Class".equals(type) && !"mx.core.IFactory".equals(type)) return PsiReference.EMPTY_ARRAY;
-
-        final TextRange textRange = ElementManipulators.getValueTextRange(element);
-        if (textRange.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
-
-        final String trimmedText = tag.getValue().getTrimmedText();
-        if (trimmedText.indexOf('{') != -1 || trimmedText.indexOf('@') != -1) return PsiReference.EMPTY_ARRAY;
-
-        final JSReferenceSet jsReferenceSet = new JSReferenceSet(element, trimmedText, textRange.getStartOffset(), false, false, true);
-        if (SKIN_CLASS_ATTR_NAME.equals(tag.getLocalName())) {
-          jsReferenceSet.setBaseClassFqn(UI_COMPONENT_FQN);
-        }
-        jsReferenceSet.setQuickFixProvider(quickFixProvider);
-        return jsReferenceSet.getReferences();
-      }
-    });
-
-    XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, null, mxmlElementFilter, new PsiReferenceProvider() {
-      @NotNull
-      public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
-                                                   @NotNull final ProcessingContext context) {
-        final XmlAttribute xmlAttribute = PsiTreeUtil.getParentOfType(element, XmlAttribute.class);
-        final XmlAttributeDescriptor descriptor = xmlAttribute == null ? null : xmlAttribute.getDescriptor();
-        if (!(descriptor instanceof AnnotationBackedDescriptor)) return PsiReference.EMPTY_ARRAY;
-
-        final String type = ((AnnotationBackedDescriptor)descriptor).getType();
-        if (!"Class".equals(type) && !"mx.core.IFactory".equals(type)) return PsiReference.EMPTY_ARRAY;
-
-        final Pair<String, TextRange> trimmedValueAndRange = getTrimmedValueAndRange((XmlAttributeValue)element);
-        if (trimmedValueAndRange.second.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
-        if (trimmedValueAndRange.first.indexOf('{') != -1 || trimmedValueAndRange.first.indexOf('@') != -1) return PsiReference.EMPTY_ARRAY;
-
-        final JSReferenceSet jsReferenceSet =
-          new JSReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, false, true);
-        if (SKIN_CLASS_ATTR_NAME.equals(xmlAttribute.getName())) {
-          jsReferenceSet.setBaseClassFqn(UI_COMPONENT_FQN);
-        }
-        jsReferenceSet.setQuickFixProvider(quickFixProvider);
-        return jsReferenceSet.getReferences();
-      }
-    });
+    XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, null, mxmlElementFilter,
+                                                       createReferenceProviderForTagOrAttributeExpectingJSClass(quickFixProvider));
 
     registrar.registerReferenceProvider(xmlAttribute().withParent(XmlTag.class).with(new PatternCondition<XmlAttribute>("") {
       @Override
@@ -648,13 +603,64 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       });
   }
 
-  public static Pair<String,TextRange> getTrimmedValueAndRange(final @NotNull XmlAttributeValue xmlAttributeValue) {
-    final String value = xmlAttributeValue.getValue();
-    final String trimmedText = value.trim();
-    final int index = xmlAttributeValue.getText().indexOf(trimmedText);
-    return index < 0 || trimmedText.length() == 0
-           ? Pair.create(value, xmlAttributeValue.getValueTextRange())
-           : Pair.create(trimmedText, new TextRange(index, index + trimmedText.length()));
+  private static PsiReferenceProvider createReferenceProviderForTagOrAttributeExpectingJSClass(final QuickFixProvider<PsiReference> quickFixProvider) {
+    return new PsiReferenceProvider() {
+      @NotNull
+      public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
+                                                   @NotNull final ProcessingContext context) {
+        final PsiMetaData descriptor;
+        final String name;
+
+        if (element instanceof XmlTag) {
+          descriptor = ((XmlTag)element).getDescriptor();
+          name = ((XmlTag)element).getLocalName();
+        }
+        else if (element instanceof XmlAttributeValue) {
+          final XmlAttribute xmlAttribute = PsiTreeUtil.getParentOfType(element, XmlAttribute.class);
+          descriptor = xmlAttribute == null ? null : xmlAttribute.getDescriptor();
+          name = xmlAttribute == null ? "" : xmlAttribute.getName();
+        }
+        else {
+          assert false : element;
+          return PsiReference.EMPTY_ARRAY;
+        }
+
+        if (!(descriptor instanceof AnnotationBackedDescriptor)) return PsiReference.EMPTY_ARRAY;
+
+        final String type = ((AnnotationBackedDescriptor)descriptor).getType();
+        if (!"Class".equals(type) && !"mx.core.IFactory".equals(type)) return PsiReference.EMPTY_ARRAY;
+
+        final Pair<String, TextRange> trimmedValueAndRange = getTrimmedValueAndRange((XmlElement)element);
+        if (trimmedValueAndRange.second.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
+        if (trimmedValueAndRange.first.indexOf('{') != -1 || trimmedValueAndRange.first.indexOf('@') != -1) return PsiReference.EMPTY_ARRAY;
+
+        final JSReferenceSet jsReferenceSet =
+          new JSReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, false, true);
+        if (SKIN_CLASS_ATTR_NAME.equals(name)) {
+          jsReferenceSet.setBaseClassFqn(UI_COMPONENT_FQN);
+        }
+        jsReferenceSet.setQuickFixProvider(quickFixProvider);
+        return jsReferenceSet.getReferences();
+      }
+    };
+  }
+
+  private static Pair<String, TextRange> getTrimmedValueAndRange(final @NotNull XmlElement xmlElement) {
+    if (xmlElement instanceof XmlTag) {
+      return Pair.create(((XmlTag)xmlElement).getValue().getTrimmedText(), ElementManipulators.getValueTextRange(xmlElement));
+    }
+    else if (xmlElement instanceof XmlAttributeValue) {
+      final String value = ((XmlAttributeValue)xmlElement).getValue();
+      final String trimmedText = value.trim();
+      final int index = xmlElement.getText().indexOf(trimmedText);
+      return index < 0 || trimmedText.length() == 0
+             ? Pair.create(value, ((XmlAttributeValue)xmlElement).getValueTextRange())
+             : Pair.create(trimmedText, new TextRange(index, index + trimmedText.length()));
+    }
+    else {
+      assert false;
+      return Pair.create(null, null);
+    }
   }
 
   private static PsiReference[] buildStateRefs(PsiElement element) {
