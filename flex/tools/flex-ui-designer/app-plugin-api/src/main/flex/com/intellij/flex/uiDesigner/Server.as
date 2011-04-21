@@ -1,13 +1,14 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
 
+import flash.display.BitmapData;
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
 import flash.net.Socket;
+import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 import flash.utils.getQualifiedClassName;
-import flash.utils.getTimer;
 
 public class Server implements ResourceBundleProvider {
   private var socket:Socket;
@@ -77,6 +78,48 @@ public class Server implements ResourceBundleProvider {
   private const resultReadyFile:File = new File(File.applicationDirectory.nativePath + "/d");
   private const resultFile:File = new File(File.applicationDirectory.nativePath + "/r");
 
+  private static var flashWorkaroundByteArray:ByteArray;
+
+  public function getBitmapData(id:int):BitmapData {
+    try {
+      socket.writeByte(ServerMethod.getBitmapData);
+      socket.writeShort(id);
+      socket.flush();
+
+      while (!resultReadyFile.exists) {
+      }
+
+      var fileStream:FileStream = new FileStream();
+      fileStream.open(resultFile, FileMode.READ);
+      try {
+        var bitmapData:BitmapData = new BitmapData(fileStream.readUnsignedShort(), fileStream.readUnsignedShort(), fileStream.readBoolean(), 0);
+        if (flashWorkaroundByteArray == null) {
+          flashWorkaroundByteArray = new ByteArray();
+        }
+        fileStream.readBytes(flashWorkaroundByteArray);
+        bitmapData.setPixels(bitmapData.rect, flashWorkaroundByteArray);
+        flashWorkaroundByteArray.clear();
+        return bitmapData;
+      }
+      finally {
+        fileStream.close();
+      }
+    }
+    finally {
+      if (resultReadyFile.exists) {
+        try {
+          resultReadyFile.deleteFile();
+        }
+        catch (e:Error) {
+          uncaughtErrorManager.handleError(e);
+        }
+      }
+    }
+
+    //noinspection UnreachableCodeJS
+    throw new Error("Burn in hell, Adobe.");
+  }
+
   public function getResourceBundle(locale:String, bundleName:String):Dictionary {
     try {
       socket.writeByte(ServerMethod.getResourceBundle);
@@ -91,18 +134,14 @@ public class Server implements ResourceBundleProvider {
       while (!resultReadyFile.exists) {
       }
 
-      var result:Dictionary;
       var fileStream:FileStream = new FileStream();
       fileStream.open(resultFile, FileMode.READ);
       try {
-        result = fileStream.readObject();
+        return fileStream.readObject();
       }
       finally {
         fileStream.close();
       }
-
-      resultReadyFile.deleteFile();
-      return result;
     }
     catch (e:Error) {
       uncaughtErrorManager.handleError(e);

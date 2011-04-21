@@ -2,8 +2,8 @@ package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
 import com.intellij.flex.uiDesigner.DebugPathManager;
+import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
 import com.intellij.flex.uiDesigner.abc.*;
-import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilderDriver;
@@ -85,7 +85,7 @@ public class SwcDependenciesSorter {
         String path = library.getPath();
         if (path.startsWith("framework")) {
           abcModified = true;
-          injectFrameworkSwc(flexSdkVersion, library);
+          injectFrameworkSwc(flexSdkVersion, library, libraries);
         }
         else if (path.startsWith("airspark")) {
           if (library.hasUnresolvedDefinitions()) {
@@ -201,7 +201,7 @@ public class SwcDependenciesSorter {
     }
   }
 
-  private void injectFrameworkSwc(String flexSdkVersion, OriginalLibrary library) throws IOException {
+  private void injectFrameworkSwc(String flexSdkVersion, OriginalLibrary library, List<OriginalLibrary> libraries) throws IOException {
     VirtualFile swfFile = library.getSwfFile();
     File modifiedSwf = createSwfOutFile(library);
     final long timeStamp = swfFile.getTimeStamp();
@@ -221,9 +221,7 @@ public class SwcDependenciesSorter {
     if (library.hasUnresolvedDefinitions() ||
         timeStamp > modifiedSwf.lastModified() ||
         injectionLastModified > modifiedSwf.lastModified()) {
-      Set<CharSequence> definitions = library.hasUnresolvedDefinitions()
-                                      ? library.unresolvedDefinitions
-                                      : new THashSet<CharSequence>(5);
+      Set<CharSequence> definitions = library.hasUnresolvedDefinitions() ? library.unresolvedDefinitions : new THashSet<CharSequence>(8);
       definitions.add("FrameworkClasses");
       definitions.add("mx.managers.systemClasses:MarshallingSupport");
       definitions.add("mx.managers:SystemManagerProxy");
@@ -233,7 +231,15 @@ public class SwcDependenciesSorter {
       definitions.add(FlexSdkAbcInjector.RESOURCE_MANAGER);
       definitions.add(FlexSdkAbcInjector.RESOURCE_MANAGER + "Impl");
       definitions.add("mx.styles:StyleManagerImpl");
-      new FlexSdkAbcInjector(injectionUrlConnection).inject(swfFile, modifiedSwf, flexSdkVersion,
+
+      RequiredAssetsInfo requiredAssetsInfo = new RequiredAssetsInfo();
+      for (OriginalLibrary originalLibrary : libraries) {
+        if (originalLibrary.requiredAssetsInfo != null) {
+          requiredAssetsInfo.append(originalLibrary.requiredAssetsInfo);
+        }
+      }
+
+      new FlexSdkAbcInjector(flexSdkVersion, injectionUrlConnection, requiredAssetsInfo).filter(swfFile, modifiedSwf,
                              new AbcNameFilterByNameSetAndStartsWith(definitions, new String[]{"mx.managers.marshalClasses:"}));
     }
   }

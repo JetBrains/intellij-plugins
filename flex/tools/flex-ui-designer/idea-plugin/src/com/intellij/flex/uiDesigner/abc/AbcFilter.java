@@ -24,6 +24,7 @@ public class AbcFilter extends AbcEncoder {
 
   public boolean replaceMainClass;
   protected int lastWrittenPosition;
+  protected FileChannel channel;
 
   public void filter(File inputFile, File out, AbcNameFilter abcNameFilter) throws IOException {
     filter(new FileInputStream(inputFile), inputFile.length(), out, abcNameFilter);
@@ -70,22 +71,23 @@ public class AbcFilter extends AbcEncoder {
     buffer.position((int)Math.ceil((float)(5 + ((data[0] & 0xFF) >> -(5 - 8)) * 4) / 8) + 2 + 2);
 
     FileOutputStream outputStream = new FileOutputStream(out);
-    FileChannel outputFileChannel = outputStream.getChannel();
+    channel = outputStream.getChannel();
     final boolean onlyABC = out.getPath().endsWith(".abc");
     if (!onlyABC) {
-      outputFileChannel.position(PARTIAL_HEADER_LENGTH);
+      channel.position(PARTIAL_HEADER_LENGTH);
     }
 
     try {
       if (!onlyABC) {
-        filterTags(outputFileChannel, abcNameFilter);
-        writeHeader(outputFileChannel);
+        filterTags(abcNameFilter);
+        writeHeader();
       }
       else {
-        filterAbcTags(outputFileChannel, abcNameFilter);
+        filterAbcTags(abcNameFilter);
       }
     }
     finally {
+      channel = null;
       outputStream.flush();
       outputStream.close();
     }
@@ -104,19 +106,19 @@ public class AbcFilter extends AbcEncoder {
     }
   }
 
-  private void writeHeader(FileChannel outFileChannel) throws IOException {
-    int length = (int)outFileChannel.position();
-    outFileChannel.position(0);
+  private void writeHeader() throws IOException {
+    int length = (int)channel.position();
+    channel.position(0);
     buffer.clear();
     buffer.put((byte)0x46); // write as uncompressed
     buffer.put(partialHeader, 1, 3);
     buffer.putInt(length);
 
     buffer.flip();
-    outFileChannel.write(buffer);
+    channel.write(buffer);
   }
 
-  private void filterTags(FileChannel outFileChannel, AbcNameFilter abcNameFilter) throws IOException {
+  private void filterTags(AbcNameFilter abcNameFilter) throws IOException {
     lastWrittenPosition = 0;
 
     while (buffer.position() < buffer.limit()) {
@@ -130,32 +132,33 @@ public class AbcFilter extends AbcEncoder {
       switch (type) {
         case TagTypes.End:
           buffer.position(lastWrittenPosition);
-          outFileChannel.write(buffer);
+          channel.write(buffer);
           return;
 
         case TagTypes.SymbolClass: {
           final int tagStartPosition = buffer.position();
           if (replaceMainClass) {
             lastWrittenPosition =
-              parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(lastWrittenPosition, outFileChannel, length);
+              parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(lastWrittenPosition, length);
           }
           buffer.position(tagStartPosition + length);
         }
         break;
 
+        case TagTypes.EnableDebugger:
+        case TagTypes.EnableDebugger2:
+        case TagTypes.SetBackgroundColor:
+        case TagTypes.ProductInfo:
+          skipTag(length);
+          break;
+
         case TagTypes.DoABC2:
           String name = readAbcName(buffer.position() + 4);
           if (!abcNameFilter.accept(name)) {
-            buffer.limit(buffer.position() - 6);
-            buffer.position(lastWrittenPosition);
-            outFileChannel.write(buffer);
-
-            lastWrittenPosition = buffer.limit() + length + 6;
-            buffer.limit(buffer.capacity());
-            buffer.position(lastWrittenPosition);
+            skipTag(length);
             continue;
           }
-          else if (doAbc2(length, name, outFileChannel)) {
+          else if (doAbc2(length, name)) {
             continue;
           }
           // through
@@ -166,12 +169,23 @@ public class AbcFilter extends AbcEncoder {
       }
     }
   }
+
+  private void skipTag(int length) throws IOException {
+    int tagHeaderLength = length < 63 ? 2 : 6;
+    buffer.limit(buffer.position() - tagHeaderLength);
+    buffer.position(lastWrittenPosition);
+    channel.write(buffer);
+
+    lastWrittenPosition = buffer.limit() + length + tagHeaderLength;
+    buffer.limit(buffer.capacity());
+    buffer.position(lastWrittenPosition);
+  }
   
-  protected boolean doAbc2(int length, String name, FileChannel outFileChannel) throws IOException {
+  protected boolean doAbc2(int length, String name) throws IOException {
     return false;
   }
 
-  private void filterAbcTags(FileChannel outputFileChannel, AbcNameFilter abcNameFilter) throws IOException {
+  private void filterAbcTags(AbcNameFilter abcNameFilter) throws IOException {
     while (true) {
       int tagCodeAndLength = buffer.getShort();
       int type = tagCodeAndLength >> 6;
@@ -189,7 +203,7 @@ public class AbcFilter extends AbcEncoder {
           if (abcNameFilter.accept(name)) {
             buffer.position(buffer.position() - 6);
             buffer.limit(buffer.position() + length + 6);
-            outputFileChannel.write(buffer);
+            channel.write(buffer);
 
             buffer.limit(buffer.capacity());
             continue;
@@ -201,8 +215,7 @@ public class AbcFilter extends AbcEncoder {
     }
   }
   
-  private int parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(int lastWrittenPosition, FileChannel outputFileChannel,
-                                                                          int tagLength) throws IOException {
+  private int parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(int lastWrittenPosition, int tagLength) throws IOException {
     final int startTagPosition = buffer.position() - (tagLength >= 63 ? 6 : 2);
     int numSymbols = buffer.getShort();
     for (int i = 0; i < numSymbols; i++) {
@@ -219,7 +232,7 @@ public class AbcFilter extends AbcEncoder {
 
         buffer.position(lastWrittenPosition);
         buffer.limit(position + nb.length + 1);
-        outputFileChannel.write(buffer);
+        channel.write(buffer);
 
         buffer.limit(buffer.capacity());
         return position + name.length() + 1;

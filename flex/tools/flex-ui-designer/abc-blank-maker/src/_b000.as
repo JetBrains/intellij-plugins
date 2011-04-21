@@ -3,10 +3,10 @@ import flash.display.BitmapData;
 
 import mx.core.BitmapAsset;
 
-public class B extends BitmapAsset {
+public class _b000 extends BitmapAsset {
   public static var data:BitmapData;
 
-  public function B() {
+  public function _b000() {
     super(data);
   }
 }

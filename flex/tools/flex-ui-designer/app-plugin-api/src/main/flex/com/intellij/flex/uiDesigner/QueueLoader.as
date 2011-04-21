@@ -71,7 +71,7 @@ public class QueueLoader {
     var loader:MyLoader;
     if (freeLoaders.length == 0) {
       loader = new MyLoader();
-      loader.contentLoaderInfo.addEventListener(Event.INIT, loadCompleteHandler);
+      loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadCompleteHandler);
       loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
     }
     else {

@@ -4,4 +4,4 @@ export PATH=/Developer/SDKs/flex_sdk_4.5.0.19786/bin:$PATH
 
 cd /Users/develar/workspace/idea/flex/tools/flex-ui-designer/abc-blank-maker/src
 
-compc -load-config= -external-library-path /Developer/SDKs/flex_sdk_4.5.0.19786/frameworks/libs/framework.swc -external-library-path /Developer/SDKs/flex_sdk_4.5.0.19786/frameworks/libs/player/10.2/playerglobal.swc -debug=false -directory=true -include-classes=B -output=b -sp=.
+compc -load-config= -external-library-path /Developer/SDKs/flex_sdk_4.5.0.19786/frameworks/libs/framework.swc -external-library-path /Developer/SDKs/flex_sdk_4.5.0.19786/frameworks/libs/player/10.2/playerglobal.swc -debug=false -directory=true -include-classes=_b000 -output=b -sp=.

@@ -7,7 +7,13 @@ import java.io.IOException;
 
 final class AbcBlankMaker {
   public static void main(String[] args) throws IOException {
-    new AbcFilter().filter(new File("abc-blank-maker/src/b/library.swf"), new File("out/B.abc"), new AbcNameFilterByEquals("B"));
+    //new AbcFilter().filter(new File("abc-blank-maker/src/b/library.swf"), new File("idea-plugin/resources/B.abc"), new AbcNameFilterByEquals("_b000"));
+    new AbcFilter().filter(new File("/Developer/SDKs/flex_sdk_4.5.0.19786/frameworks/libs/framework 2/library.swf"), new File("/Developer/SDKs/flex_sdk_4.5.0.19786/frameworks/libs/framework 2/libraryOPTIMIZED.swf"), new AbcNameFilter() {
+      @Override
+      public boolean accept(String name) {
+        return true;
+      }
+    });
 
     //u();
   }

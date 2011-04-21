@@ -6,6 +6,7 @@
     ]]></fx:Script>
 
   <mx:DateField id="date3" selectedDate="{new Date (2005, 3, 10)}"/>
+  <mx:DateChooser/>
 
   <mx:Form horizontalCenter="0" top="10" width="100%">
     <mx:FormItem label="date">

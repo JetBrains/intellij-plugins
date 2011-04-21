@@ -35,8 +35,14 @@ public class CssWriter {
 
   private ProblemsHolder problemsHolder;
 
+  private RequiredAssetsInfo requiredAssetsInfo;
+
   public CssWriter(StringRegistry.StringWriter stringWriter) {
     this.stringWriter = stringWriter;
+  }
+
+  public RequiredAssetsInfo getRequiredAssetsInfo() {
+    return requiredAssetsInfo;
   }
 
   public byte[] write(VirtualFile file, Module module, ProblemsHolder problemsHolder) {
@@ -51,6 +57,7 @@ public class CssWriter {
   }
 
   public byte[] write(CssFile cssFile, Document document, Module module, ProblemsHolder problemsHolder) {
+    requiredAssetsInfo = null;
     this.problemsHolder = problemsHolder;
 
     rulesetVectorWriter.prepareIteration();
@@ -392,6 +399,10 @@ public class CssWriter {
       throw new IllegalArgumentException("todo");
     }
 
+    if (requiredAssetsInfo == null) {
+      requiredAssetsInfo = new RequiredAssetsInfo();
+    }
+
     final boolean isSwf = InjectionUtil.isSwf(source, mimeType);
     BinaryFileManager binaryFileManager = BinaryFileManager.getInstance();
     final int fileId;
@@ -399,7 +410,13 @@ public class CssWriter {
       fileId = binaryFileManager.getId(source);
     }
     else {
-      fileId = binaryFileManager.registerFile(source, isSwf ? BinaryFileType.SWF : BinaryFileType.IMAGE);
+      fileId = binaryFileManager.add(source, mimeType);
+      if (isSwf) {
+        requiredAssetsInfo.swfCount++;
+      }
+      else {
+        requiredAssetsInfo.bitmapCount++;
+      }
     }
 
     propertyOut.write(isSwf ? CssPropertyType.EMBED_SWF : CssPropertyType.EMBED_IMAGE);

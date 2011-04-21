@@ -32,7 +32,6 @@ public class ImageWrapper extends AbcEncoder {
   private final int dataLength;
   private final int totalLength;
 
-
   public ImageWrapper(int dataLength) throws IOException {
     this.dataLength = dataLength;
     initAbcBlank();

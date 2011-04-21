@@ -49,7 +49,7 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream {
     count = newCount;
   }
 
-  public byte[] getBuffer() {
+  public final byte[] getBuffer() {
     return buffer;
   }
 

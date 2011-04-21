@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
@@ -21,6 +22,7 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
 
   public byte[] inheritingStyles;
   public byte[] defaultsStyle;
+  public RequiredAssetsInfo requiredAssetsInfo;
 
   private final String path;
   private final boolean fromSdk;

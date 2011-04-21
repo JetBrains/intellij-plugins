@@ -1,8 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.Amf3Types;
-import com.intellij.flex.uiDesigner.io.AmfOutputStream;
-import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
+import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -18,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.StringBuilderSpinAllocator;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 
@@ -48,6 +47,16 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         case ServerMethod.getResourceBundle:
           try {
             getResourceBundle();
+          }
+          finally {
+            //noinspection ResultOfMethodCallIgnored
+            resultReadyFile.createNewFile();
+          }
+          break;
+
+        case ServerMethod.getBitmapData:
+          try {
+            getBitmapData();
           }
           finally {
             //noinspection ResultOfMethodCallIgnored
@@ -93,12 +102,19 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     });
   }
 
-  private void getResourceBundle() throws IOException {
+  private void initResultFile() {
     if (resultFile == null) {
       File appDir = FlexUIDesignerApplicationManager.getInstance().getAppDir();
       resultReadyFile = new File(appDir, "d");
       resultFile = new File(appDir, "r");
+      
+      resultFile.deleteOnExit();
+      resultReadyFile.deleteOnExit();
     }
+  }
+
+  private void getResourceBundle() throws IOException {
+    initResultFile();
 
     final ProjectInfo projectInfo = FlexUIDesignerApplicationManager.getInstance().getClient().getRegisteredProjects().getInfo(readEntityId());
     ApplicationManager.getApplication().runReadAction(new Runnable() {
@@ -136,6 +152,20 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         }
       }
     });
+  }
+
+  private void getBitmapData() throws IOException {
+    initResultFile();
+
+    AssetInfo assetInfo = BinaryFileManager.getInstance().getInfo(reader.readUnsignedShort());
+    BufferedImage image = ImageUtil.getImage(assetInfo.getElement(), assetInfo.mimeType);
+    FileOutputStream fileOut = new FileOutputStream(resultFile);
+    try {
+      ImageUtil.write(image, fileOut, assetInfo.mimeType, assetInfo.getElement());
+    }
+    finally {
+      fileOut.close();
+    }
   }
 
   private void goToClass() throws IOException {

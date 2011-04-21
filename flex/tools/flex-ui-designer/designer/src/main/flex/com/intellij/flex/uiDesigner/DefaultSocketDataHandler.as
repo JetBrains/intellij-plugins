@@ -197,7 +197,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
 
   private function registerBitmap(input:IDataInput):void {
     var id:int = input.readShort();
-    var bitmapData:BitmapData = new BitmapData(input.readShort(), input.readShort(), input.readBoolean(), 0);
+    var bitmapData:BitmapData = new BitmapData(input.readUnsignedShort(), input.readUnsignedShort(), input.readBoolean(), 0);
     // we cannot change BitmapData API
     if (flashWorkaroundByteArray == null) {
       flashWorkaroundByteArray = new ByteArray();

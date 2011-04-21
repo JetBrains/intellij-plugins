@@ -43,4 +43,9 @@ public final class IOUtil {
     bytes[offset++] = (byte)((v >>> 8) & 0xFF);
     bytes[offset] = (byte)(v & 0xFF);
   }
+
+  public static void writeShort(final int v, final byte[] bytes, int offset) {
+    bytes[offset++] = (byte)((v >>> 8) & 0xFF);
+    bytes[offset] = (byte)(v & 0xFF);
+  }
 }

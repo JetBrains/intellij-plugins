@@ -2,8 +2,8 @@ package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
 import com.intellij.flex.uiDesigner.DebugPathManager;
+import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.*;
 import java.net.URLConnection;
@@ -16,20 +16,18 @@ public class FlexSdkAbcInjector extends AbcFilter {
   public static final String RESOURCE_MANAGER = "mx.resources:ResourceManager";
 
   private boolean flexInjected;
-  private String flexSdkVersion;
+  private final String flexSdkVersion;
   private final URLConnection injectionUrlConnection;
+  private final RequiredAssetsInfo requiredAssetsInfo;
 
-  public FlexSdkAbcInjector(URLConnection injectionUrlConnection) {
-    this.injectionUrlConnection = injectionUrlConnection;
-  }
-
-  public void inject(VirtualFile inputFile, File out, String flexSdkVersion, AbcNameFilter abcNameFilter) throws IOException {
+  public FlexSdkAbcInjector(String flexSdkVersion, URLConnection injectionUrlConnection, RequiredAssetsInfo requiredAssetsInfo) {
     this.flexSdkVersion = flexSdkVersion;
-    filter(inputFile, out, abcNameFilter);
+    this.injectionUrlConnection = injectionUrlConnection;
+    this.requiredAssetsInfo = requiredAssetsInfo;
   }
 
   @Override
-  protected boolean doAbc2(int length, String name, FileChannel outFileChannel) throws IOException {
+  protected boolean doAbc2(int length, String name) throws IOException {
     if (flexInjected) {
       return false;
     }
@@ -54,7 +52,7 @@ public class FlexSdkAbcInjector extends AbcFilter {
 
       buffer.limit(buffer.position() + length);
       buffer.position(lastWrittenPosition);
-      outFileChannel.write(buffer);
+      channel.write(buffer);
       lastWrittenPosition = buffer.limit();
       buffer.limit(buffer.capacity());
 
@@ -62,7 +60,7 @@ public class FlexSdkAbcInjector extends AbcFilter {
         final FileChannel injection = new FileInputStream(new File(DebugPathManager.getFudHome() + "/flex-injection/target/" +
                                                                    ComplementSwfBuilder.generateInjectionName(flexSdkVersion))).getChannel();
         try {
-          injection.transferTo(0, injection.size(), outFileChannel);
+          injection.transferTo(0, injection.size(), channel);
         }
         finally {
           injection.close();
@@ -71,11 +69,15 @@ public class FlexSdkAbcInjector extends AbcFilter {
       else {
         InputStream inputStream = injectionUrlConnection.getInputStream();
         try {
-          outFileChannel.write(ByteBuffer.wrap(FileUtil.loadBytes(inputStream)));
+          channel.write(ByteBuffer.wrap(FileUtil.loadBytes(inputStream)));
         }
         finally {
           inputStream.close();
         }
+      }
+
+      if (requiredAssetsInfo.bitmapCount != 0) {
+        ImageClassPoolGenerator.generate(channel, requiredAssetsInfo.bitmapCount);
       }
 
       return true;

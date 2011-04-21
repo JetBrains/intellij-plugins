@@ -23,6 +23,7 @@
       <entry name="?*.js" />
       <entry name="?*.css" />
       <entry name="?*.swf" />
+      <entry name="?*.abc" />
     </wildcardResourcePatterns>
     <annotationProcessing enabled="false" useClasspath="true" />
   </component>

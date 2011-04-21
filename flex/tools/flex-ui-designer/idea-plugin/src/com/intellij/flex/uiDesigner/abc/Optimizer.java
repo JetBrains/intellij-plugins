@@ -15,9 +15,18 @@ public class Optimizer {
     tagDecoder.parse(movieDecoder);
 
     movie.uuid = null;
-    //movie.topLevelClass = null;
+    movie.enableDebugger = null;
+    movie.bgcolor = null;
+    movie.topLevelClass = null;
+    movie.productInfo = null;
     try {
+      // <censored> Flex SDK <censored>
+      if (movie.frames.size() > 1) {
+        movie.frames.remove(1);
+      }
+      
       merge(movie.frames.get(0).doABCs, true, true);
+
     }
     catch (DecoderException e) {
       throw new IOException(e);
@@ -27,8 +36,13 @@ public class Optimizer {
     System.setProperty("flex.swf.uncompressed", "true");
     MovieEncoder encoder = new MovieEncoder(handler);
     encoder.export(movie);
-
-    handler.writeTo(new FileOutputStream(outFile));
+    final FileOutputStream out = new FileOutputStream(outFile);
+    try {
+      handler.writeTo(out);
+    }
+    finally {
+      out.close();
+    }
   }
 
   private static void merge(List<DoABC> doABCs, boolean keepDebugOpcodes, boolean runPeephole) throws DecoderException {

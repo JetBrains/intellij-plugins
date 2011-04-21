@@ -13,4 +13,5 @@ final class ServerMethod {
   public static final int saveProjectWindowBounds = 6;
 
   public static final int getResourceBundle = 7;
+  public static final int getBitmapData = 8;
 }

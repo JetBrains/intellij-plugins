@@ -12,5 +12,6 @@ public final class ServerMethod {
   public static const saveProjectWindowBounds:int = 6;
 
   public static const getResourceBundle:int = 7;
+  public static const getBitmapData:int = 8;
 }
 }

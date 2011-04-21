@@ -6,6 +6,9 @@
   <Component role="{LibraryManager}"/>
   <Component role="{BitmapDataManager}"/>
   <Component role="{EmbedSwfManager}"/>
+  <Component role="{EmbedImageManager}">
+    <Requirement role="{Server}"/>
+  </Component>
   <Component role="{ProjectManager}"/>
   <Component role="{ModuleManager}"/>
   <Component role="{StringRegistry}"/>
