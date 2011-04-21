@@ -109,7 +109,7 @@ public class FlexStackFrame extends XStackFrame {
               scopeChain.add(path);
               final String name = "Locals of " + funName;
               resultChildren.add(name,
-                new MyXValue(
+                new FlexValue(
                   name,
                   path,
                   "[Object " + id + ", " + CLASS_MARKER + token + "']",
@@ -369,7 +369,7 @@ public class FlexStackFrame extends XStackFrame {
       if (callback != null) {
         ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
           public void run() {
-            callback.evaluated(new MyXValue(expression, expression, result, null, ValueType.Other));
+            callback.evaluated(new FlexValue(expression, expression, result, null, ValueType.Other));
           }
         });
       } else {
@@ -394,9 +394,9 @@ public class FlexStackFrame extends XStackFrame {
 
   private static final Comparator<XValue> myArrayElementsComparator = new Comparator<XValue>() {
     public int compare(XValue o1, XValue o2) {
-      if (o1 instanceof MyXValue && o2 instanceof MyXValue) {
-        String name = ((MyXValue)o1).myName;
-        String name2 = ((MyXValue)o2).myName;
+      if (o1 instanceof FlexValue && o2 instanceof FlexValue) {
+        String name = ((FlexValue)o1).myName;
+        String name2 = ((FlexValue)o2).myName;
 
         if (!StringUtil.isEmpty(name) &&
             !StringUtil.isEmpty(name2) &&
@@ -434,7 +434,7 @@ public class FlexStackFrame extends XStackFrame {
     }
   }
 
-  class MyXValue extends XValue {
+  class FlexValue extends XValue {
 
     private final String myName;
     private final String myExpression;
@@ -448,7 +448,7 @@ public class FlexStackFrame extends XStackFrame {
     private static final String ESCAPE_START = "IDEA-ESCAPE-START";
     private static final String ESCAPE_END = "IDEA-ESCAPE-END";
 
-    MyXValue(String _name, String _expression, String _result, @Nullable String _parentResult, @NotNull ValueType _valueType) {
+    FlexValue(String _name, String _expression, String _result, @Nullable String _parentResult, @NotNull ValueType _valueType) {
       myName = _name;
       myExpression = _expression;
       myResult = unescape(_result);
@@ -504,7 +504,7 @@ public class FlexStackFrame extends XStackFrame {
           final String finalType = type;
           final EvaluateCommand command = new EvaluateCommand(myExpression + ".toXMLString()", new XDebuggerEvaluator.XEvaluationCallback() {
             public void evaluated(@NotNull XValue result) {
-              setResult(((MyXValue)result).myResult, node, finalType, isObject);
+              setResult(((FlexValue)result).myResult, node, finalType, isObject);
             }
 
             public void errorOccurred(@NotNull String errorMessage) {
@@ -526,7 +526,7 @@ public class FlexStackFrame extends XStackFrame {
           if ("XMLList".equals(type)) {
             node.setFullValueEvaluator(new XFullValueEvaluator(FlexBundle.message("debugger.show.full.value")) {
               public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
-                new XmlObjectEvaluator(MyXValue.this, callback).startEvaluation();
+                new XmlObjectEvaluator(FlexValue.this, callback).startEvaluation();
               }
             });
 
@@ -565,7 +565,7 @@ public class FlexStackFrame extends XStackFrame {
 
                 node.setFullValueEvaluator(new XFullValueEvaluator(FlexBundle.message("debugger.show.full.value")) {
                   public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
-                    new XmlObjectEvaluator(MyXValue.this, callback).startEvaluation();
+                    new XmlObjectEvaluator(FlexValue.this, callback).startEvaluation();
                   }
                 });
 
@@ -654,7 +654,7 @@ public class FlexStackFrame extends XStackFrame {
         CommandOutputProcessingMode doOnTextAvailable(@NonNls final String resultS) {
           StringTokenizer tokenizer = new StringTokenizer(resultS, "\r\n");
           String evaluationInfo = tokenizer.nextToken();
-          final List<MyXValue> result1 = new ArrayList<MyXValue>(tokenizer.countTokens());
+          final List<FlexValue> result1 = new ArrayList<FlexValue>(tokenizer.countTokens());
 
           while (tokenizer.hasMoreElements()) {
             final String s = tokenizer.nextToken().trim();
@@ -676,7 +676,7 @@ public class FlexStackFrame extends XStackFrame {
             // either parameter of static function from scopechain or a field. Static functions from scopechain look like following:
             // // [Object 52571545, class='Main$/staticFunction']
             final ValueType valueType = type != null && type.indexOf('/') > -1 ? ValueType.Parameter : ValueType.Field;
-            result1.add(new MyXValue(fieldName, evaluatedPath, s.substring(i1 + DELIM.length()), MyXValue.this.myResult, valueType));
+            result1.add(new FlexValue(fieldName, evaluatedPath, s.substring(i1 + DELIM.length()), FlexValue.this.myResult, valueType));
           }
 
           if (evaluationInfo != null && toSortNumerically(evaluationInfo)) {
@@ -684,7 +684,7 @@ public class FlexStackFrame extends XStackFrame {
           }
 
           final XValueChildrenList children = new XValueChildrenList();
-          for (MyXValue value : result1) {
+          for (FlexValue value : result1) {
             children.add(value.myName, value);
           }
           node.addChildren(children, true);
@@ -865,7 +865,7 @@ public class FlexStackFrame extends XStackFrame {
     return null;
   }
 
-  private static String validObjectId(String s) {
+  static String validObjectId(String s) {
     // some object ids from Flash player are negative (e.g. on Linux) and can not be consumed back e.g. for tracing
     // so we transform them into unsigned ones assuming there is just sign transmition problem (see IDEADEV-39082)
     long idVal = Long.parseLong(s);
@@ -1032,7 +1032,7 @@ public class FlexStackFrame extends XStackFrame {
           if (previousNameAndValue != null) {
             String prevName = previousNameAndValue.first;
             resultChildren.add(prevName,
-              new MyXValue(
+              new FlexValue(
                 prevName, prevName,
                 removeTrailingNewLines(previousNameAndValue.second),
                 null,
@@ -1047,7 +1047,7 @@ public class FlexStackFrame extends XStackFrame {
         if (previousNameAndValue != null) {
           String prevName = previousNameAndValue.first;
           resultChildren.add(prevName,
-            new MyXValue(
+            new FlexValue(
               prevName, prevName,
               removeTrailingNewLines(previousNameAndValue.second),
               null,

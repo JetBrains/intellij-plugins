@@ -51,6 +51,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import com.intellij.xdebugger.frame.XValueMarkerProvider;
 import com.intellij.xdebugger.stepping.XSmartStepIntoHandler;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -1155,6 +1156,32 @@ public class FlexDebugProcess extends XDebugProcess {
       }
       return true;
     }
+  }
+
+  public XValueMarkerProvider<FlexStackFrame.FlexValue, String> createValueMarkerProvider() {
+    return new XValueMarkerProvider<FlexStackFrame.FlexValue, String>(FlexStackFrame.FlexValue.class) {
+      public boolean canMark(@NotNull final FlexStackFrame.FlexValue value) {
+        return getObjectId(value) != null;
+      }
+
+      public String getMarker(@NotNull final FlexStackFrame.FlexValue value) {
+        return getObjectId(value);
+      }
+
+      private String getObjectId(final FlexStackFrame.FlexValue value) {
+        final String text = value.getResult();
+        final String prefix = "[Object ";
+        final String suffix = ", class=";
+        int suffixIndex;
+        if (text.startsWith(prefix) && (suffixIndex = text.indexOf(suffix, prefix.length())) > 0) {
+          try {
+            return FlexStackFrame.validObjectId(text.substring(prefix.length(), suffixIndex));
+          }
+          catch (NumberFormatException e) {/*ignore*/}
+        }
+        return null;
+      }
+    };
   }
 
   static class QuitCommand extends DebuggerCommand {
