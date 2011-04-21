@@ -104,7 +104,7 @@ public class CreateHtmlWrapperAction extends AnAction {
               attributes.setProperty(REQUIRED_FLASH_PLAYER_VERSION_MINOR, String.valueOf(parameters.getFlashPlayerVersionMinor()));
               attributes.setProperty(REQUIRED_FLASH_PLAYER_VERSION_REVISION, String.valueOf(parameters.getFlashPlayerVersionRevision()));
 
-              final String resultText = FileTemplateUtil.mergeTemplate(attributes, VfsUtil.loadText(file));
+              final String resultText = FileTemplateUtil.mergeTemplate(attributes, VfsUtil.loadText(file), true);
               _htmlFile = FlexUtils.addFileWithContent(parameters.getHtmlFileName(), resultText, parameters.getHtmlFileLocation());
             }
             else {

@@ -94,7 +94,7 @@ public class CreateAirDescriptorAction extends AnAction {
           attributes.setProperty("android_permissions_start", parameters.isAndroidPermissionsEnabled() ? "" : "<!--");
           attributes.setProperty("android_permissions_end", parameters.isAndroidPermissionsEnabled() ? "" : "-->");
 
-          final String airDescriptorContent = FileTemplateUtil.mergeTemplate(attributes, airDescriptorContentTemplate);
+          final String airDescriptorContent = FileTemplateUtil.mergeTemplate(attributes, airDescriptorContentTemplate, true);
           final VirtualFile descriptorFolder = VfsUtil.createDirectories(parameters.getDescriptorFolderPath());
           return FlexUtils.addFileWithContent(parameters.getDescriptorFileName(), airDescriptorContent, descriptorFolder);
         }
