@@ -577,6 +577,7 @@ public class FlexSdkUtils {
     final String vmOptions = FlexCompilerProjectConfiguration.getInstance(project).VM_OPTIONS;
     if (StringUtil.isNotEmpty(vmOptions)) result.addAll(StringUtil.split(vmOptions, " "));
 
+    result.add("-Djava.awt.headless=true");
     result.add("-Duser.language=en");
     result.add("-Duser.region=en");
 
