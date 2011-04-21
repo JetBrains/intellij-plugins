@@ -1,5 +1,4 @@
 package com.intellij.flex.uiDesigner.css {
-import com.intellij.flex.uiDesigner.AssetLoadSemaphore;
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
@@ -19,13 +18,13 @@ public final class Stylesheet {
     return _rulesets;
   }
 
-  public function readExternal(input:IDataInput, assetLoadSemaphore:AssetLoadSemaphore):void {
+  public function readExternal(input:IDataInput):void {
     var stringRegistry:StringRegistry = StringRegistry.instance;
     var n:int = AmfUtil.readUInt29(input);
     if (n > 0) {
       _rulesets = new Vector.<CssRuleset>(n, true);
       for (var i:int = 0; i < n; i++) {
-        readRuleset(_rulesets[i] = CssRuleset.create(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input)), input, stringRegistry, assetLoadSemaphore);
+        readRuleset(_rulesets[i] = CssRuleset.create(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input)), input, stringRegistry);
       }
     }
     
@@ -38,7 +37,7 @@ public final class Stylesheet {
     }
   }
 
-  private static function readRuleset(ruleset:CssRuleset, input:IDataInput, stringRegistry:StringRegistry, assetLoadSemaphore:AssetLoadSemaphore):void {
+  private static function readRuleset(ruleset:CssRuleset, input:IDataInput, stringRegistry:StringRegistry):void {
     var i:int;
     const selectorsLength:int = input.readByte();
     var selectors:Vector.<CssSelector> = new Vector.<CssSelector>(selectorsLength, true);
@@ -69,11 +68,11 @@ public final class Stylesheet {
 
           case 5:
             const symbolLength:int = AmfUtil.readUInt29(input);
-            assetLoadSemaphore.notifyEmbedSwf(CssEmbedSwfDeclaration(declarations[i] = CssEmbedSwfDeclaration.create(name, textOffset, symbolLength == 0 ? null : input.readUTFBytes(symbolLength), AmfUtil.readUInt29(input))));
+            CssEmbedSwfDeclaration(declarations[i] = CssEmbedSwfDeclaration.create(name, textOffset, symbolLength == 0 ? null : input.readUTFBytes(symbolLength), AmfUtil.readUInt29(input)));
             break;
 
           case 10:
-            assetLoadSemaphore.notifyEmbedImage(CssEmbedImageDeclaration(declarations[i] = CssEmbedImageDeclaration.create(name, textOffset, AmfUtil.readUInt29(input))));
+            CssEmbedImageDeclaration(declarations[i] = CssEmbedImageDeclaration.create(name, textOffset, AmfUtil.readUInt29(input)));
             break;
 
           default:

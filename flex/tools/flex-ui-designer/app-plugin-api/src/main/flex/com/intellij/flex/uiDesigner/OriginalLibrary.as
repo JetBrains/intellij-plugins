@@ -30,7 +30,7 @@ public class OriginalLibrary extends AbstractLibrary implements Library {
     return _defaultsStyle;
   }
 
-  public function readExternal(input:IDataInput, assetLoadSemaphore:AssetLoadSemaphore):void {
+  public function readExternal(input:IDataInput):void {
     _path = AmfUtil.readUtf(input);
     _file = VirtualFileImpl.create(input);
 
@@ -45,7 +45,7 @@ public class OriginalLibrary extends AbstractLibrary implements Library {
 
     if (input.readBoolean()) {
       _defaultsStyle = new Stylesheet();
-      _defaultsStyle.readExternal(input, assetLoadSemaphore);
+      _defaultsStyle.readExternal(input);
     }
   }
 }

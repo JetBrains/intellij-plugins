@@ -268,9 +268,8 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     const parentId:int = data.readInt();
     StringRegistry.instance.readStringTable(data);
     var librarySet:LibrarySet = new LibrarySet(id, parentId == -1 ? null : libraryManager.getById(parentId));
-    var assetLoadSemaphore:AssetLoadSemaphore = new AssetLoadSemaphore();
-    librarySet.readExternal(data, assetLoadSemaphore);
-    libraryManager.register(librarySet, assetLoadSemaphore);
+    librarySet.readExternal(data);
+    libraryManager.register(librarySet);
   }
 
   public function pendingReadIsAllowable(method:int):Boolean {

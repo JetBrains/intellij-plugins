@@ -25,6 +25,17 @@
     <orderEntry type="module" module-name="JavaScript-tests" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
     <orderEntry type="module" module-name="properties" />
+    <orderEntry type="module-library">
+      <library name="swf">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib" />
+          <root url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

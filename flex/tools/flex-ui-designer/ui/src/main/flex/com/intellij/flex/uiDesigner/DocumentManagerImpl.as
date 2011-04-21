@@ -130,8 +130,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       }
     }
 
-    var assetLoadSemaphore:AssetLoadSemaphore = new AssetLoadSemaphore();
-    cssReader.read(suitableLocalStyleHolder.getStylesheet(assetLoadSemaphore).rulesets, suitableLocalStyleHolder.file);
+    cssReader.read(suitableLocalStyleHolder.getStylesheet().rulesets, suitableLocalStyleHolder.file);
     cssReader.finalizeRead();
   }
 

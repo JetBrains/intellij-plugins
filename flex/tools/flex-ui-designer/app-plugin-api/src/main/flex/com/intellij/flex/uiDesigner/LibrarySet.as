@@ -41,7 +41,7 @@ public final class LibrarySet {
     return _libraries;
   }
 
-  public function readExternal(input:IDataInput, assetLoadSemaphore:AssetLoadSemaphore):void {
+  public function readExternal(input:IDataInput):void {
     _applicationDomainCreationPolicy = ApplicationDomainCreationPolicy.enumSet[input.readByte()];
     var n:int = input.readUnsignedShort();
     _libraries = new Vector.<Library>(n, true);
@@ -63,7 +63,7 @@ public final class LibrarySet {
             originalLibrary = new OriginalLibrary(parents);
             _libraries[i] = originalLibrary;
             originalLibraries[originalLibraryId] = originalLibrary;
-            originalLibrary.readExternal(input, assetLoadSemaphore);
+            originalLibrary.readExternal(input);
           }
           else if (marker < 4) {
             filteredLibrary = new FilteredLibrary(parents);
@@ -71,7 +71,7 @@ public final class LibrarySet {
             if (marker == 2) {
               filteredLibrary.origin = originalLibrary = new OriginalLibrary(null);
               originalLibraries[originalLibraryId] = originalLibrary;
-              originalLibrary.readExternal(input, assetLoadSemaphore);
+              originalLibrary.readExternal(input);
             }
             else {
               filteredLibrary.origin = originalLibraries[originalLibraryId];
