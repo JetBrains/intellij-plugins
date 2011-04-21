@@ -330,6 +330,9 @@ public class FlexDebugProcess extends XDebugProcess {
                       : new StartDebuggingCommand());
       }
     }
+    else {
+      scheduleAdlLaunch(flexSdk, airRunnerParameters);
+    }
 
     return process;
   }
