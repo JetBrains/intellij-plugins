@@ -100,8 +100,9 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
     final ActionListener actionListener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
-        final JComboBox comboBox = myApplicationDescriptorComponent.getComponent().getComboBox();
-        final Component toFocus = comboBox.isEnabled() ? comboBox : myMainClassComponent.getComponent().getChildComponent();
+        final Component toFocus = myAirDescriptorRadioButton.isSelected()
+                                  ? myApplicationDescriptorComponent.getComponent().getComboBox()
+                                  : myMainClassComponent.getComponent().getChildComponent();
         IdeFocusManager.getInstance(myProject).requestFocus(toFocus, true);
       }
     };
@@ -166,7 +167,6 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
       .setItem(FileUtil.toSystemDependentName(runnerParameters.getAirDescriptorPath()));
     myRootDirectoryComponent.getComponent().setText(FileUtil.toSystemDependentName(runnerParameters.getAirRootDirPath()));
     myMainClassComponent.getComponent().setText(runnerParameters.getMainClassName());
-    myAdlOptionsComponent.getComponent().setText(runnerParameters.getAdlOptions());
     myAdlOptionsComponent.getComponent().setText(runnerParameters.getAdlOptions());
     myProgramParametersComponent.getComponent().setText(runnerParameters.getAirProgramParameters());
 

@@ -142,8 +142,9 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     final ActionListener actionListener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
-        final JComboBox comboBox = myApplicationDescriptorComponent.getComponent().getComboBox();
-        final Component toFocus = comboBox.isEnabled() ? comboBox : myMainClassComponent.getComponent().getChildComponent();
+        final Component toFocus = myAirDescriptorRadioButton.isSelected()
+                                  ? myApplicationDescriptorComponent.getComponent().getComboBox()
+                                  : myMainClassComponent.getComponent().getChildComponent();
         IdeFocusManager.getInstance(myProject).requestFocus(toFocus, true);
       }
     };
@@ -171,7 +172,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     myRootDirectoryComponent.setVisible(myAirDescriptorRadioButton.isSelected());
     myMainClassComponent.setVisible(myMainClassRadioButton.isSelected());
 
-    myAdlOptionsComponent.setVisible(myOnEmulatorRadioButton.isSelected());
+    myAdlOptionsComponent.setEnabled(myOnEmulatorRadioButton.isSelected());
   }
 
   private void updateEmulatorRelatedControls() {
@@ -228,7 +229,6 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
       .setItem(FileUtil.toSystemDependentName(params.getAirDescriptorPath()));
     myRootDirectoryComponent.getComponent().setText(FileUtil.toSystemDependentName(params.getAirRootDirPath()));
     myMainClassComponent.getComponent().setText(params.getMainClassName());
-    myAdlOptionsComponent.getComponent().setText(params.getAdlOptions());
     myAdlOptionsComponent.getComponent().setText(params.getAdlOptions());
 
     final Module module = myModulesComboboxWrapper.getSelectedModule();
