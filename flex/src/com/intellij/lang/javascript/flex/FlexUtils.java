@@ -6,6 +6,7 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
+import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -108,11 +109,12 @@ public class FlexUtils {
       config.CUSTOM_CONFIG_FILE = file.getPath();
     }
 
-    if (sampleFileName != null) {
+    if (sdk != null && sampleFileName != null) {
       assert sampleFileName.endsWith(".mxml") || sampleFileName.endsWith(".as");
       final String sampleClassName = sampleFileName.substring(0, sampleFileName.lastIndexOf('.'));
       final String extension = sampleFileName.substring(sampleFileName.lastIndexOf('.'));
-      final String sampleTechnology = sdk != null && sdk.getSdkType() instanceof AirSdkType ? "AIR" : "Flex";
+      final String sampleTechnology =
+        sdk.getSdkType() instanceof AirMobileSdkType ? "AIRMobile" : sdk.getSdkType() instanceof AirSdkType ? "AIR" : "Flex";
       final String suffix = ".mxml".equals(extension) && FlexSdkUtils.isFlex4Sdk(sdk) ? "_Spark" : "";
 
       final String helloWorldTemplate = "HelloWorld_" + sampleTechnology + suffix + extension + ".ft";

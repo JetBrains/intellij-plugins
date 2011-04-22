@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
@@ -105,7 +106,10 @@ class SetupFlexModuleWizardStep extends ModuleWizardStep {
     myCreateSampleAppCheckBox.setEnabled(myApplicationOutputTypeRadioButton.isSelected() && sdk != null && srcRootExists);
 
     if (sdk != null) {
-      if (sdk.getSdkType() instanceof AirSdkType) {
+      if (sdk.getSdkType() instanceof AirMobileSdkType) {
+        myCreateSampleAppCheckBox.setText(FlexBundle.message("create.sample.mobile.air.application"));
+      }
+      else if (sdk.getSdkType() instanceof AirSdkType) {
         myCreateSampleAppCheckBox.setText(FlexBundle.message("create.sample.air.application"));
       }
       else {
@@ -132,8 +136,10 @@ class SetupFlexModuleWizardStep extends ModuleWizardStep {
   }
 
   private void updateCreateAirDescriptorControls(final Sdk sdk, final boolean srcRootExists) {
-    myCreateAirDescriptorCheckBox.setEnabled(
-      myApplicationOutputTypeRadioButton.isSelected() && sdk != null && sdk.getSdkType() instanceof AirSdkType && srcRootExists);
+    myCreateAirDescriptorCheckBox.setEnabled(myApplicationOutputTypeRadioButton.isSelected() &&
+                                             srcRootExists &&
+                                             sdk != null &&
+                                             (sdk.getSdkType() instanceof AirSdkType || sdk.getSdkType() instanceof AirMobileSdkType));
     myAirDescriptorFileNameTextField.setEnabled(myCreateAirDescriptorCheckBox.isEnabled() && myCreateAirDescriptorCheckBox.isSelected());
   }
 

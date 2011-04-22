@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.actions.htmlwrapper.CreateHtmlWrapperDi
 import com.intellij.lang.javascript.flex.actions.htmlwrapper.HTMLWrapperParameters;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.*;
+import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
@@ -178,8 +179,8 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
     try {
       CreateAirDescriptorAction.createAirDescriptor(
         new AirDescriptorParameters(myAirDescriptorFileName, airDescriptorFolderPath, FlexSdkUtils.getAirVersion(mySdk),
-                                    "samples.flex.HelloWorld",
-                                    "HelloWorld", "HelloWorld", "0.1", config.OUTPUT_FILE_NAME, "HelloWorld", 400, 300, false));
+                                    "samples.flex.HelloWorld", "HelloWorld", "HelloWorld", "0.1", config.OUTPUT_FILE_NAME, "HelloWorld",
+                                    400, 300, mySdk != null && mySdk.getSdkType() instanceof AirMobileSdkType));
     }
     catch (IOException e) {
       throw new ConfigurationException("Failed to create AIR application descriptor\n" + e.getMessage());
@@ -189,14 +190,16 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
   private void createRunConfiguration(final Module module, final VirtualFile sourceRoot) {
     final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(module);
 
-    if (mySdk != null && mySdk.getSdkType() instanceof AirSdkType) {
+    if (mySdk != null && (mySdk.getSdkType() instanceof AirMobileSdkType || mySdk.getSdkType() instanceof AirSdkType)) {
+      final IFlexSdkType.Subtype subtype = ((IFlexSdkType)mySdk.getSdkType()).getSubtype();
       final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
 
       final CompilerModuleExtension moduleExtension = CompilerModuleExtension.getInstance(module);
       final String outputDirPath = moduleExtension == null ? "" : VfsUtil.urlToPath(moduleExtension.getCompilerOutputUrl());
 
-
-      final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", AirRunConfigurationType.getFactory());
+      final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", subtype == IFlexSdkType.Subtype.AIRMobile
+                                                                                         ? AirMobileRunConfigurationType.getFactory()
+                                                                                         : AirRunConfigurationType.getFactory());
       settings.setTemporary(false);
       runManager.addConfiguration(settings, false);
       runManager.setActiveConfiguration(settings);
@@ -206,14 +209,25 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
       runnerParameters.setModuleName(module.getName());
 
       if (myCreateAirDescriptor) {
-        runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.AppDescriptor);
+        if (runnerParameters instanceof AirMobileRunnerParameters) {
+          ((AirMobileRunnerParameters)runnerParameters).setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.AppDescriptor);
+        }
+        else {
+          runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.AppDescriptor);
+        }
         runnerParameters.setAirDescriptorPath(sourceRoot.getPath() + "/" + myAirDescriptorFileName);
         runnerParameters.setAirRootDirPath(outputDirPath);
       }
       else {
-        runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.MainClass);
+        if (runnerParameters instanceof AirMobileRunnerParameters) {
+          ((AirMobileRunnerParameters)runnerParameters).setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.MainClass);
+        }
+        else {
+          runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.MainClass);
+        }
         runnerParameters.setMainClassName(config.MAIN_CLASS);
       }
+
       settings.setName(runConfiguration.suggestedName());
     }
     else {
