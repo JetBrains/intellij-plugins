@@ -34,8 +34,9 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
 
   @Override
   public boolean canRepresent(Object element) {
-    return getValue().getClass() == element.getClass() &&
-           Comparing.equal(getValue().getQualifiedName(), ((JSQualifiedNamedElement)element).getQualifiedName());
+    JSQualifiedNamedElement value = getValue();
+    return value != null && element != null && value.getClass() == element.getClass() &&
+           Comparing.equal(value.getQualifiedName(), ((JSQualifiedNamedElement)element).getQualifiedName());
   }
 
   @NotNull
