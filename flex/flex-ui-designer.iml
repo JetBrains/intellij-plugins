@@ -26,7 +26,7 @@
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
     <orderEntry type="module" module-name="properties" />
     <orderEntry type="module-library">
-      <library name="swf">
+      <library name="asc">
         <CLASSES>
           <root url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib" />
           <root url="file://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib" />
