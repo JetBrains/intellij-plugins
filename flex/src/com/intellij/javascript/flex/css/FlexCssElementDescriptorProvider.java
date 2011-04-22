@@ -8,7 +8,6 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.documentation.DocumentationProvider;
-import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -23,8 +22,6 @@ import com.intellij.openapi.command.undo.BasicUndoableAction;
 import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -40,14 +37,11 @@ import com.intellij.psi.css.impl.util.references.HtmlCssClassOrIdReference;
 import com.intellij.psi.css.impl.util.table.CssElementDescriptorProviderImpl;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
-import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlElementDescriptor;
@@ -89,39 +83,6 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return true;
   }
 
-  private static boolean isLinkedFromHtmlOnly(@NotNull PsiFile file, @NotNull Project project) {
-    file = file.getOriginalFile();
-    if (file.getFileType() != CssSupportLoader.CSS_FILE_TYPE) {
-      return false;
-    }
-    if (InjectedLanguageManager.getInstance(project).isInjectedFragment(file)) {
-      return false;
-    }
-    final boolean[] result = {false};
-    ReferencesSearch.search(file, new MyGlobalSearchScope(project), true).forEach(new Processor<PsiReference>() {
-      @Override
-      public boolean process(PsiReference ref) {
-        if (ref != null) {
-          PsiElement element = ref.getElement();
-          if (element != null) {
-            PsiFile refFile = element.getContainingFile();
-            if (refFile != null) {
-              if (HtmlUtil.hasHtml(refFile)) {
-                result[0] = true;
-              }
-              if (JavaScriptSupportLoader.isFlexMxmFile(refFile)) {
-                result[0] = false;
-                return false;
-              }
-            }
-          }
-        }
-        return true;
-      }
-    });
-    return result[0];
-  }
-
   @Nullable
   private static String findJsClassOrFile(@NotNull JSClass root, Set<JSClass> visited, Set<String> possibleQNames) {
     if (!visited.add(root)) return null;
@@ -148,8 +109,9 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   private static List<FlexStyleIndexInfo> filter(Collection<? extends Collection<FlexStyleIndexInfo>> collections,
-                                                 List<String> selectors,
-                                                 @NotNull GlobalSearchScope scope) {
+                                                 List<CssSimpleSelector> selectors,
+                                                 @NotNull GlobalSearchScope scope,
+                                                 @Nullable Module module) {
     Set<String> allNames = new HashSet<String>();
     for (Collection<FlexStyleIndexInfo> collection : collections) {
       for (FlexStyleIndexInfo info : collection) {
@@ -159,13 +121,28 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     Set<String> namesFromSelectors = null;
     if (selectors.size() > 0 && !containsGlobalSelectors(selectors)) {
       namesFromSelectors = new HashSet<String>();
-      for (String selector : selectors) {
-        Collection<JSQualifiedNamedElement> elements = JSResolveUtil.findElementsByName(selector, scope.getProject(), scope);
-        for (PsiElement element : elements) {
-          if (element instanceof JSClass) {
-            String classOrFileName = findJsClassOrFile((JSClass)element, new HashSet<JSClass>(), allNames);
+      for (CssSimpleSelector selector : selectors) {
+
+        if (module != null) {
+          final JSClass jsClass = getClassFromMxmlDescriptor(selector, module);
+          if (jsClass != null) {
+            String classOrFileName = findJsClassOrFile(jsClass, new HashSet<JSClass>(), allNames);
             if (classOrFileName != null) {
               namesFromSelectors.add(classOrFileName);
+            }
+            continue;
+          }
+        }
+
+        final String selectorName = selector.getElementName();
+        if (selectorName != null) {
+          Collection<JSQualifiedNamedElement> elements = JSResolveUtil.findElementsByName(selectorName, scope.getProject(), scope);
+          for (PsiElement element : elements) {
+            if (element instanceof JSClass) {
+              String classOrFileName = findJsClassOrFile((JSClass)element, new HashSet<JSClass>(), allNames);
+              if (classOrFileName != null) {
+                namesFromSelectors.add(classOrFileName);
+              }
             }
           }
         }
@@ -201,8 +178,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       Module module = ModuleUtil.findModuleForPsiElement(context);
       GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false):context.getResolveScope();
       List<Set<FlexStyleIndexInfo>> lists = FileBasedIndex.getInstance().getValues(FlexStyleIndex.INDEX_ID, propertyName, scope);
-      List<String> selectors = findSimpleSelectorsAbove(context);
-      List<FlexStyleIndexInfo> infos = filter(lists, selectors, scope);
+      List<CssSimpleSelector> selectors = findSimpleSelectorsAbove(context);
+      List<FlexStyleIndexInfo> infos = filter(lists, selectors, scope, module);
       if (infos.size() > 0) {
         return new FlexCssPropertyDescriptor(infos);
       }
@@ -262,13 +239,26 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   @NotNull
-  private static String[] getPropertyNamesDynamically(@NotNull List<String> shortClassNames, @NotNull Module module) {
+  private static String[] getPropertyNamesDynamically(@NotNull List<CssSimpleSelector> selectors, @NotNull Module module) {
     FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
     GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
     Set<JSClass> visited = new HashSet<JSClass>();
     Set<String> result = new HashSet<String>();
     Project project = module.getProject();
-    for (String shortClassName : shortClassNames) {
+
+    for (CssSimpleSelector selector : selectors) {
+
+      final JSClass jsClass = getClassFromMxmlDescriptor(selector, module);
+      if (jsClass != null) {
+        fillPropertyNamesDinamically(jsClass, visited, result);
+        continue;
+      }
+
+      final String shortClassName = selector.getElementName();
+      if (shortClassName == null) {
+        continue;
+      }
+
       Collection<JSQualifiedNamedElement> candidates = JSResolveUtil.findElementsByName(shortClassName, project, scope);
       for (JSQualifiedNamedElement candidate : candidates) {
         if (candidate instanceof JSClass) {
@@ -276,6 +266,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
         }
       }
     }
+
     for (Iterator<String> iterator = result.iterator(); iterator.hasNext();) {
       String propertyName = iterator.next();
       List<Set<FlexStyleIndexInfo>> values = fileBasedIndex.getValues(FlexStyleIndex.INDEX_ID, propertyName, scope);
@@ -286,13 +277,19 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return ArrayUtil.toStringArray(result);
   }
 
-  private static boolean containsGlobalSelectors(@NotNull Collection<String> selectors) {
-    return selectors.contains("") || selectors.contains("global") || selectors.contains("*");
+  private static boolean containsGlobalSelectors(@NotNull List<CssSimpleSelector> selectors) {
+    for (CssSimpleSelector selector : selectors) {
+      final String elementName = selector.getElementName();
+      if ("".equals(elementName) || "global".equals(elementName) || "*".equals(elementName)) {
+        return  true;
+      }
+    }
+    return false;
   }
 
   @NotNull
   public String[] getPropertyNames(@NotNull PsiElement context) {
-    List<String> simpleSelectors = findSimpleSelectorsAbove(context);
+    List<CssSimpleSelector> simpleSelectors = findSimpleSelectorsAbove(context);
     if (simpleSelectors.size() > 0 && !containsGlobalSelectors(simpleSelectors)) {
       Module module = ModuleUtil.findModuleForPsiElement(context);
       if (module != null) {
@@ -346,18 +343,26 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
   }
 
+  @Nullable
+  private static JSClass getClassFromMxmlDescriptor(@NotNull CssSimpleSelector selector, @NotNull Module module) {
+    final XmlElementDescriptor xmlElementDescriptor = getTypeSelectorDescriptor(selector, module);
+    if (xmlElementDescriptor == null) {
+      return null;
+    }
+
+    final PsiElement declaration = xmlElementDescriptor.getDeclaration();
+    return declaration instanceof JSClass ? (JSClass)declaration : null;
+  }
+
   @NotNull
   public PsiElement[] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
     // flex 4
     Module module = ModuleUtil.findModuleForPsiElement(selector);
     // only for project files, due to unknown code context otherwise
     if (module != null) {
-      XmlElementDescriptor elementDescriptor = getTypeSelectorDescriptor(selector, module);
-      if (elementDescriptor != null) {
-        PsiElement jsClass = elementDescriptor.getDeclaration();
-        if (jsClass instanceof JSClass) {
-          return new PsiElement[]{jsClass};
-        }
+      final JSClass jsClass = getClassFromMxmlDescriptor(selector, module);
+      if (jsClass != null) {
+        return new PsiElement[]{jsClass};
       }
     }
 
@@ -439,8 +444,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   @NotNull
-  private static List<String> findSimpleSelectorsAbove(@NotNull PsiElement context) {
-    List<String> result = new ArrayList<String>();
+  private static List<CssSimpleSelector> findSimpleSelectorsAbove(@NotNull PsiElement context) {
+    List<CssSimpleSelector> result = new ArrayList<CssSimpleSelector>();
     CssRuleset ruleset = PsiTreeUtil.getParentOfType(context, CssRuleset.class);
     if (ruleset != null) {
       CssSelectorList selectorList = ruleset.getSelectorList();
@@ -453,10 +458,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
             }
           }
           if (simpleSelector != null) {
-            String elementName = simpleSelector.getElementName();
-            if (elementName != null) {
-              result.add(elementName);
-            }
+            result.add(simpleSelector);
           }
         }
       }
@@ -554,41 +556,6 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
 
     return vFile;
-  }
-
-  private static class MyGlobalSearchScope extends GlobalSearchScope {
-
-    private final GlobalSearchScope myDelegate;
-
-    public MyGlobalSearchScope(Project project) {
-      myDelegate = ProjectScope.getProjectScope(project);
-    }
-
-    @Override
-    public boolean contains(VirtualFile file) {
-      if (!myDelegate.contains(file)) {
-        return false;
-      }
-      FileType type = file.getFileType();
-      return type == StdFileTypes.HTML || type == StdFileTypes.XHTML ||
-             type == StdFileTypes.JSP || type == StdFileTypes.JSPX ||
-             type == StdFileTypes.XML;
-    }
-
-    @Override
-    public int compare(VirtualFile file1, VirtualFile file2) {
-      return 0;
-    }
-
-    @Override
-    public boolean isSearchInModuleContent(@NotNull Module module) {
-      return true;
-    }
-
-    @Override
-    public boolean isSearchInLibraries() {
-      return false;
-    }
   }
 
   private static class MySwitchToCssDialectQuickFix implements LocalQuickFix, IntentionAction, HighPriorityAction {
