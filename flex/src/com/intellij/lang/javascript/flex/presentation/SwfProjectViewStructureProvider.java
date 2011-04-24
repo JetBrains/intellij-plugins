@@ -192,8 +192,8 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
       if (settings.isHideEmptyMiddlePackages()) {
         String subQname = getEmptyMiddlePackageQname(elements, from, to, qName);
         if (subQname != null) {
-          return new SwfPackageElementNode(project, subQname, subQname.substring(StringUtil.getPackageName(qName).length() + 1), settings,
-                                           elements, from, to);
+          String displayText = qName.contains(".") ? subQname.substring(StringUtil.getPackageName(qName).length() + 1) : subQname;
+          return new SwfPackageElementNode(project, subQname, displayText, settings, elements, from, to);
         }
       }
       return new SwfPackageElementNode(project, qName, StringUtil.getShortName(qName), settings, elements, from, to);
