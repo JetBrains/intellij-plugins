@@ -127,7 +127,8 @@ public class FlexUnitSupport {
   public boolean isPotentialTestMethod(JSFunction method) {
     if (method.getKind() == JSFunction.FunctionKind.CONSTRUCTOR) return false;
 
-    if (isFlunitSubclass((JSClass)method.getParent()) || isFlexUnit1Subclass((JSClass)method.getParent())) {
+    PsiElement parent = method.getParent();
+    if (parent instanceof JSClass && (isFlunitSubclass((JSClass)parent) || isFlexUnit1Subclass((JSClass)parent))) {
       if (method.getName() != null && method.getName().startsWith("test")) return true;
     }
 
