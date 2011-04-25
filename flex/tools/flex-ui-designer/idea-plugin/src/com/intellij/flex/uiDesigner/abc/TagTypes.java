@@ -8,6 +8,7 @@ interface TagTypes {
 
   int EnableDebugger = 58;
   int EnableDebugger2 = 64;
+  int DebugID = 63;
 
   int SetBackgroundColor = 9;
   int ProductInfo = 41;

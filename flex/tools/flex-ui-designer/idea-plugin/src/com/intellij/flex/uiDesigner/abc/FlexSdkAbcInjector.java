@@ -5,10 +5,11 @@ import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
 import com.intellij.openapi.util.io.FileUtil;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 
 public class FlexSdkAbcInjector extends AbcFilter {
   public static final String STYLE_PROTO_CHAIN = "mx.styles:StyleProtoChain";
@@ -27,7 +28,7 @@ public class FlexSdkAbcInjector extends AbcFilter {
   }
 
   @Override
-  protected boolean doAbc2(int length, String name) throws IOException {
+  protected boolean doAbc2(int length, String name) throws IOException, DecoderException {
     if (flexInjected) {
       return false;
     }
@@ -57,19 +58,13 @@ public class FlexSdkAbcInjector extends AbcFilter {
       buffer.limit(buffer.capacity());
 
       if (injectionUrlConnection == null) {
-        final FileChannel injection = new FileInputStream(new File(DebugPathManager.getFudHome() + "/flex-injection/target/" +
-                                                                   ComplementSwfBuilder.generateInjectionName(flexSdkVersion))).getChannel();
-        try {
-          injection.transferTo(0, injection.size(), channel);
-        }
-        finally {
-          injection.close();
-        }
+        decoders.add(new Decoder(new DataBuffer(FileUtil.loadFileBytes(new File(
+          DebugPathManager.getFudHome() + "/flex-injection/target/" + ComplementSwfBuilder.generateInjectionName(flexSdkVersion))))));
       }
       else {
         InputStream inputStream = injectionUrlConnection.getInputStream();
         try {
-          channel.write(ByteBuffer.wrap(FileUtil.loadBytes(inputStream)));
+          decoders.add(new Decoder(new DataBuffer((FileUtil.loadBytes(inputStream)))));
         }
         finally {
           inputStream.close();

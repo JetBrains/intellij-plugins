@@ -7,6 +7,8 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.ZipException;
@@ -25,6 +27,8 @@ public class AbcFilter extends AbcEncoder {
   public boolean replaceMainClass;
   protected int lastWrittenPosition;
   protected FileChannel channel;
+  
+  protected List<Decoder> decoders = new ArrayList<Decoder>(256);
 
   public void filter(File inputFile, File out, AbcNameFilter abcNameFilter) throws IOException {
     filter(new FileInputStream(inputFile), inputFile.length(), out, abcNameFilter);
@@ -67,6 +71,8 @@ public class AbcFilter extends AbcEncoder {
     buffer = ByteBuffer.wrap(data);
     buffer.order(ByteOrder.LITTLE_ENDIAN);
 
+    //bufferWrapper = new BufferWrapper(buffer);
+
     // skip rect, FrameRate, FrameCount
     buffer.position((int)Math.ceil((float)(5 + ((data[0] & 0xFF) >> -(5 - 8)) * 4) / 8) + 2 + 2);
 
@@ -86,24 +92,27 @@ public class AbcFilter extends AbcEncoder {
         filterAbcTags(abcNameFilter);
       }
     }
+    catch (DecoderException e) {
+      throw new IOException(e);
+    }
     finally {
       channel = null;
       outputStream.flush();
       outputStream.close();
     }
 
-    if (onlyABC) {
-      return;
-    }
-
-    // todo yes, unnecessary recopying, but experimental, will be optimized later
-    BufferedInputStream in = new BufferedInputStream(new FileInputStream(out));
-    try {
-      Optimizer.optimize(in, out);
-    }
-    finally {
-      in.close();
-    }
+    //if (onlyABC) {
+    //  return;
+    //}
+    //
+    //// todo yes, unnecessary recopying, but experimental, will be optimized later
+    //BufferedInputStream in = new BufferedInputStream(new FileInputStream(out));
+    //try {
+    //  Optimizer.optimize(in, out);
+    //}
+    //finally {
+    //  in.close();
+    //}
   }
 
   private void writeHeader() throws IOException {
@@ -118,7 +127,7 @@ public class AbcFilter extends AbcEncoder {
     channel.write(buffer);
   }
 
-  private void filterTags(AbcNameFilter abcNameFilter) throws IOException {
+  private void filterTags(AbcNameFilter abcNameFilter) throws IOException, DecoderException {
     lastWrittenPosition = 0;
 
     while (buffer.position() < buffer.limit()) {
@@ -137,20 +146,26 @@ public class AbcFilter extends AbcEncoder {
 
         case TagTypes.SymbolClass: {
           final int tagStartPosition = buffer.position();
+          writeDataBeforeTag(length);
+
+          mergeDoAbc();
+          lastWrittenPosition = tagStartPosition - (length < 63 ? 2 : 6);
+          buffer.position(tagStartPosition);
+
           if (replaceMainClass) {
             lastWrittenPosition =
               parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(lastWrittenPosition, length);
           }
           buffer.position(tagStartPosition + length);
         }
-        break;
+        continue;
 
         case TagTypes.EnableDebugger:
         case TagTypes.EnableDebugger2:
         case TagTypes.SetBackgroundColor:
         case TagTypes.ProductInfo:
           skipTag(length);
-          break;
+          continue;
 
         case TagTypes.DoABC2:
           String name = readAbcName(buffer.position() + 4);
@@ -158,10 +173,21 @@ public class AbcFilter extends AbcEncoder {
             skipTag(length);
             continue;
           }
-          else if (doAbc2(length, name)) {
+          else {
+            int oldPosition = buffer.position();
+            writeDataBeforeTag(length);
+            buffer.position(oldPosition);
+
+            if (doAbc2(length, name)) {
+            }
+            else {
+              buffer.position(buffer.position() + 4 + name.length() + 1 /* null-terminated string */);
+              decoders.add(new Decoder(new BufferWrapper(buffer, length)));
+            }
+
+            buffer.position(lastWrittenPosition);
             continue;
           }
-          // through
 
         default:
           buffer.position(buffer.position() + length);
@@ -170,18 +196,110 @@ public class AbcFilter extends AbcEncoder {
     }
   }
 
-  private void skipTag(int length) throws IOException {
-    int tagHeaderLength = length < 63 ? 2 : 6;
+  private void mergeDoAbc() throws DecoderException, IOException {
+    final Decoder[] decoders = this.decoders.toArray(new Decoder[this.decoders.size()]);
+    final int abcSize = decoders.length;
+    final ConstantPool[] pools = new ConstantPool[abcSize];
+    for (int i = 0; i < abcSize; i++) {
+      pools[i] = decoders[i].constantPool;
+    }
+
+    final Encoder encoder = new Encoder(46, 16);
+    encoder.enablePeepHole();
+    encoder.configure(decoders);
+    encoder.addConstantPools(pools);
+
+    Decoder decoder;
+    // decode methodInfo...
+    for (int i = 0; i < abcSize; i++) {
+      decoder = decoders[i];
+      encoder.useConstantPool(i);
+
+      Decoder.MethodInfo methodInfo = decoder.methodInfo;
+      for (int j = 0, infoSize = methodInfo.size(); j < infoSize; j++) {
+        methodInfo.decode(j, encoder);
+      }
+    }
+
+    // decode metadataInfo...
+    for (int j = 0; j < abcSize; j++) {
+      decoder = decoders[j];
+      encoder.useConstantPool(j);
+
+      Decoder.MetaDataInfo metadataInfo = decoder.metadataInfo;
+      for (int k = 0, infoSize = metadataInfo.size(); k < infoSize; k++) {
+        metadataInfo.decode(k, encoder);
+      }
+    }
+
+    // decode classInfo...
+    for (int j = 0; j < abcSize; j++) {
+      decoder = decoders[j];
+      encoder.useConstantPool(j);
+
+      Decoder.ClassInfo classInfo = decoder.classInfo;
+      for (int k = 0, infoSize = classInfo.size(); k < infoSize; k++) {
+        classInfo.decodeInstance(k, encoder);
+      }
+    }
+
+    for (int j = 0; j < abcSize; j++) {
+      decoder = decoders[j];
+      encoder.useConstantPool(j);
+
+      Decoder.ClassInfo classInfo = decoder.classInfo;
+      for (int k = 0, infoSize = classInfo.size(); k < infoSize; k++) {
+        classInfo.decodeClass(k, encoder);
+      }
+    }
+
+    // decode scripts...
+    for (int j = 0; j < abcSize; j++) {
+      decoder = decoders[j];
+      encoder.useConstantPool(j);
+
+      Decoder.ScriptInfo scriptInfo = decoder.scriptInfo;
+
+      for (int k = 0, scriptSize = scriptInfo.size(); k < scriptSize; k++) {
+        scriptInfo.decode(k, encoder);
+      }
+    }
+
+    // decode method bodies...
+    for (int j = 0; j < abcSize; j++) {
+      decoder = decoders[j];
+      encoder.useConstantPool(j);
+
+      Decoder.MethodBodies methodBodies = decoder.methodBodies;
+      for (int k = 0, bodySize = methodBodies.size(); k < bodySize; k++) {
+        methodBodies.decode(k, 2, encoder);
+      }
+    }
+
+    ByteBuffer b = ByteBuffer.allocate(2 * 1024 * 1024);
+    b.order(ByteOrder.LITTLE_ENDIAN);
+    encoder.toABC(b);
+    b.flip();
+    channel.write(b);
+  }
+
+  private void writeDataBeforeTag(int tagLength) throws IOException {
+    int tagHeaderLength = tagLength < 63 ? 2 : 6;
     buffer.limit(buffer.position() - tagHeaderLength);
     buffer.position(lastWrittenPosition);
     channel.write(buffer);
 
-    lastWrittenPosition = buffer.limit() + length + tagHeaderLength;
+    lastWrittenPosition = buffer.limit() + tagLength + tagHeaderLength;
     buffer.limit(buffer.capacity());
+  }
+
+  private void skipTag(int tagLength) throws IOException {
+    writeDataBeforeTag(tagLength);
+
     buffer.position(lastWrittenPosition);
   }
   
-  protected boolean doAbc2(int length, String name) throws IOException {
+  protected boolean doAbc2(int length, String name) throws IOException, DecoderException {
     return false;
   }
 
