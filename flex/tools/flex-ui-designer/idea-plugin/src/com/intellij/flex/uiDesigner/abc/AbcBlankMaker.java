@@ -7,6 +7,7 @@ import java.io.IOException;
 
 final class AbcBlankMaker {
   public static void main(String[] args) throws IOException {
+    final long time = System.currentTimeMillis();
     //new AbcFilter().filter(new File("abc-blank-maker/src/b/library.swf"), new File("idea-plugin/resources/B.abc"), new AbcNameFilterByEquals("_b000"));
     new AbcFilter().filter(new File("/Developer/SDKs/flex_sdk_4.5.0.19786/frameworks/libs/framework 2/library.swf"), new File("/Developer/SDKs/flex_sdk_4.5.0.19786/frameworks/libs/framework 2/libraryOPTIMIZED.swf"), new AbcNameFilter() {
       @Override
@@ -14,6 +15,8 @@ final class AbcBlankMaker {
         return true;
       }
     });
+    System.out.print("\n");
+    System.out.print(System.currentTimeMillis() - time);
 
     //u();
   }

@@ -179,7 +179,7 @@ public class SwcDependenciesSorter {
     for (CharSequence s : set) {
       writer.append(s);
       writer.append('\n');
-    }
+    } 
 
     writer.flush();
   }
@@ -191,7 +191,7 @@ public class SwcDependenciesSorter {
     if (timeStamp != modifiedSwf.lastModified()) {
       final InputStream inputStream = swfFile.getInputStream();
       try {
-        Optimizer.optimize(inputStream, modifiedSwf);
+        //Optimizer.optimize(inputStream, modifiedSwf);
         //noinspection ResultOfMethodCallIgnored
         modifiedSwf.setLastModified(timeStamp);
       }

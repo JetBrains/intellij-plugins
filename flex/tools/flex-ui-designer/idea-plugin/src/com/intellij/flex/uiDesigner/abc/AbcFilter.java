@@ -100,19 +100,6 @@ public class AbcFilter extends AbcEncoder {
       outputStream.flush();
       outputStream.close();
     }
-
-    //if (onlyABC) {
-    //  return;
-    //}
-    //
-    //// todo yes, unnecessary recopying, but experimental, will be optimized later
-    //BufferedInputStream in = new BufferedInputStream(new FileInputStream(out));
-    //try {
-    //  Optimizer.optimize(in, out);
-    //}
-    //finally {
-    //  in.close();
-    //}
   }
 
   private void writeHeader() throws IOException {
@@ -164,6 +151,7 @@ public class AbcFilter extends AbcEncoder {
         case TagTypes.EnableDebugger2:
         case TagTypes.SetBackgroundColor:
         case TagTypes.ProductInfo:
+        case TagTypes.DebugID:
           skipTag(length);
           continue;
 
@@ -181,8 +169,9 @@ public class AbcFilter extends AbcEncoder {
             if (doAbc2(length, name)) {
             }
             else {
-              buffer.position(buffer.position() + 4 + name.length() + 1 /* null-terminated string */);
-              decoders.add(new Decoder(new BufferWrapper(buffer, length)));
+              final int off = 4 + name.length() + 1;
+              buffer.position(buffer.position() + off /* null-terminated string */);
+              decoders.add(new Decoder(new BufferWrapper(buffer, length - off)));
             }
 
             buffer.position(lastWrittenPosition);
@@ -197,11 +186,10 @@ public class AbcFilter extends AbcEncoder {
   }
 
   private void mergeDoAbc() throws DecoderException, IOException {
-    final Decoder[] decoders = this.decoders.toArray(new Decoder[this.decoders.size()]);
-    final int abcSize = decoders.length;
+    final int abcSize = decoders.size();
     final ConstantPool[] pools = new ConstantPool[abcSize];
     for (int i = 0; i < abcSize; i++) {
-      pools[i] = decoders[i].constantPool;
+      pools[i] = decoders.get(i).constantPool;
     }
 
     final Encoder encoder = new Encoder(46, 16);
@@ -212,7 +200,7 @@ public class AbcFilter extends AbcEncoder {
     Decoder decoder;
     // decode methodInfo...
     for (int i = 0; i < abcSize; i++) {
-      decoder = decoders[i];
+      decoder = decoders.get(i);
       encoder.useConstantPool(i);
 
       Decoder.MethodInfo methodInfo = decoder.methodInfo;
@@ -223,7 +211,7 @@ public class AbcFilter extends AbcEncoder {
 
     // decode metadataInfo...
     for (int j = 0; j < abcSize; j++) {
-      decoder = decoders[j];
+      decoder = decoders.get(j);
       encoder.useConstantPool(j);
 
       Decoder.MetaDataInfo metadataInfo = decoder.metadataInfo;
@@ -234,7 +222,7 @@ public class AbcFilter extends AbcEncoder {
 
     // decode classInfo...
     for (int j = 0; j < abcSize; j++) {
-      decoder = decoders[j];
+      decoder = decoders.get(j);
       encoder.useConstantPool(j);
 
       Decoder.ClassInfo classInfo = decoder.classInfo;
@@ -244,7 +232,7 @@ public class AbcFilter extends AbcEncoder {
     }
 
     for (int j = 0; j < abcSize; j++) {
-      decoder = decoders[j];
+      decoder = decoders.get(j);
       encoder.useConstantPool(j);
 
       Decoder.ClassInfo classInfo = decoder.classInfo;
@@ -255,7 +243,7 @@ public class AbcFilter extends AbcEncoder {
 
     // decode scripts...
     for (int j = 0; j < abcSize; j++) {
-      decoder = decoders[j];
+      decoder = decoders.get(j);
       encoder.useConstantPool(j);
 
       Decoder.ScriptInfo scriptInfo = decoder.scriptInfo;
@@ -267,7 +255,7 @@ public class AbcFilter extends AbcEncoder {
 
     // decode method bodies...
     for (int j = 0; j < abcSize; j++) {
-      decoder = decoders[j];
+      decoder = decoders.get(j);
       encoder.useConstantPool(j);
 
       Decoder.MethodBodies methodBodies = decoder.methodBodies;

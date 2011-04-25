@@ -92,13 +92,6 @@ class DataBuffer {
     return Double.longBitsToDouble(first & 0xFFFFFFFFL | second << 32);
   }
 
-  public byte[] readBytes(int length) {
-    byte[] bytes = new byte[length];
-    System.arraycopy(data, offset + position, bytes, 0, length);
-    position += length;
-    return bytes;
-  }
-
   public String readString(int length) {
     try {
       return new String(data, offset + position, length, "UTF8");
@@ -112,8 +105,8 @@ class DataBuffer {
     position += length;
   }
 
-  public void skipEntries(long entries) {
-    for (long i = 0; i < entries; ++i) {
+  public void skipEntries(int entries) {
+    for (int i = 0; i < entries; i++) {
       readU32();
     }
   }
@@ -127,23 +120,21 @@ class DataBuffer {
       return false;
     }
 
-    for (int i = start1, j = start2; i < end1; ) {
-      if (data[offset + i] != b.data[b.offset + j]) {
+    end1 += offset;
+    for (int i = start1 + offset, j = start2 + b.offset; i < end1;) {
+      if (data[i++] != b.data[j++]) {
         return false;
       }
-
-      i++;
-      j++;
     }
 
-    return b == this;
+    return true;
   }
 
   public int hashCode(int start, int end) {
     long hash = 1234;
-
-    for (int j = offset + start; j < end; j++) {
-      hash ^= data[j];
+    end += offset;
+    for (int i = offset + start; i < end; i++) {
+      hash ^= data[i];
     }
 
     return (int)((hash >> 32) ^ hash);

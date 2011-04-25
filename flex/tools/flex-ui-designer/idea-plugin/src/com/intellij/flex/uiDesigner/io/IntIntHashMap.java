@@ -3,6 +3,14 @@ package com.intellij.flex.uiDesigner.io;
 import gnu.trove.TIntIntHashMap;
 
 public final class IntIntHashMap extends TIntIntHashMap {
+  public IntIntHashMap(int initialCapacity) {
+    super(initialCapacity);
+  }
+
+  public IntIntHashMap() {
+
+  }
+
   @Override
   public int get(int key) {
     int index = index(key);

@@ -13,16 +13,6 @@ final class Scanner {
     return positions;
   }
 
-  public static int[] scanUIntConstants(DataBuffer in) {
-    int size = in.readU32();
-    int[] positions = new int[size];
-    for (int i = 1; i < size; i++) {
-      positions[i] = in.position();
-      in.readU32();
-    }
-    return positions;
-  }
-
   public static int[] scanDoubleConstants(DataBuffer in) {
     int size = in.readU32();
     int[] positions = new int[size];
@@ -49,7 +39,7 @@ final class Scanner {
     int[] positions = new int[size];
     for (int i = 1; i < size; i++) {
       positions[i] = in.position();
-      in.readU8(); // kind byte
+      in.skip(1); // kind byte
       in.readU32();
     }
     return positions;
@@ -60,8 +50,7 @@ final class Scanner {
     int[] positions = new int[size];
     for (int i = 1; i < size; i++) {
       positions[i] = in.position();
-      long count = in.readU32();
-      in.skipEntries(count);
+      in.skipEntries(in.readU32());
     }
     return positions;
   }
@@ -96,8 +85,7 @@ final class Scanner {
           break;
         case CONSTANT_TypeName:
           in.readU32(); // name index
-          long count = in.readU32(); // param count;
-          in.skipEntries(count);
+          in.skipEntries(in.readU32());
           break;
         default:
           throw new DecoderException("Invalid constant type: " + kind);
@@ -113,7 +101,7 @@ final class Scanner {
     for (int i = 0; i < size; i++) {
       positions[i] = in.position();
 
-      long paramCount = in.readU32();
+      int paramCount = in.readU32();
       in.readU32(); // ret type
       in.skipEntries(paramCount);
       in.readU32(); //name_index
@@ -139,11 +127,8 @@ final class Scanner {
 
     for (int i = 0; i < size; i++) {
       positions[i] = in.position();
-
       in.readU32();
-      long value_count = in.readU32();
-
-      in.skipEntries(value_count * 2);
+      in.skipEntries(in.readU32() * 2);
     }
 
     return positions;
@@ -162,8 +147,7 @@ final class Scanner {
         in.readU32();//protected namespace
       }
 
-      long interfaceCount = in.readU32();
-      in.skipEntries(interfaceCount);
+      in.skipEntries(in.readU32());
       in.readU32(); //init index
 
       scanTraits(in);
@@ -217,7 +201,7 @@ final class Scanner {
   }
 
   private static void scanExceptions(DataBuffer in) {
-    long count = in.readU32();
+    int count = in.readU32();
     if (in.minorVersion() == 15) {
       in.skipEntries(count * 4);
     }
@@ -260,8 +244,7 @@ final class Scanner {
       }
 
       if (((kind >> 4) & TRAIT_FLAG_metadata) != 0) {
-        long metadata = in.readU32();
-        in.skipEntries(metadata);
+        in.skipEntries(in.readU32());
       }
     }
   }

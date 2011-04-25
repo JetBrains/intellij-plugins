@@ -1,32 +1,26 @@
 package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.io.ObjectIntHashMap;
-import gnu.trove.TObjectIntProcedure;
 
 import java.nio.ByteBuffer;
-import java.util.TreeMap;
 
-class ByteArrayPool {
-  protected ObjectIntHashMap<ByteArray> map;
-  protected com.intellij.util.containers.Stack<ByteArray> wrappers;
-  private ByteArray key;
+class PoolPart {
+  private final ObjectIntHashMap<ByteArray> map;
+  private final ByteArray key = createByteArray();
 
-  ByteArrayPool() {
-    map = new ObjectIntHashMap<ByteArray>();
-    wrappers = new com.intellij.util.containers.Stack<ByteArray>();
-    key = newByteArray();
+  private final ByteArray[] list;
+
+  PoolPart(int poolPartLength) {
+    map = new ObjectIntHashMap<ByteArray>(poolPartLength);
+    list = new ByteArray[poolPartLength - 1];
   }
 
-  ByteArray newByteArray() {
+  ByteArray createByteArray() {
     return new ByteArray();
   }
 
   int store(DataBuffer data, int start, int end) {
-    ByteArray a = wrappers.isEmpty() ? null : wrappers.pop();
-    if (a == null) {
-      a = newByteArray();
-    }
-
+    ByteArray a = createByteArray();
     a.clear();
     a.data = data;
     a.start = start;
@@ -34,6 +28,7 @@ class ByteArrayPool {
     a.init();
     int index = map.size() + 1;
     map.put(a, index);
+    list[index - 1] = a;
     return index;
   }
 
@@ -42,7 +37,6 @@ class ByteArrayPool {
     key.data = data;
     key.start = start;
     key.end = end;
-    key.hash = 0;
     key.init();
 
     return map.get(key);
@@ -53,23 +47,19 @@ class ByteArrayPool {
   }
 
   void writeTo(ByteBuffer b, int f) {
-    final TreeMap<Integer, ByteArray> sortedMap = new TreeMap<Integer, ByteArray>();
-    map.forEachEntry(new TObjectIntProcedure<ByteArray>() {
-      @Override
-      public boolean execute(ByteArray a, int b) {
-        sortedMap.put(b, a);
-        return true;
-      }
-    });
-
-    writeU32(b, (sortedMap.size() == 0) ? 0 : sortedMap.size() + f);
-
-    for (ByteArray a : sortedMap.values()) {
+    final long time = System.currentTimeMillis();
+    final int size = map.size();
+    writeU32(b, size == 0 ? 0 : size + f);
+    for (int i = 0; i < size; i++) {
+      ByteArray a = list[i];
       a.data.writeTo(b, a.start, a.end);
     }
+   
+    System.out.print("\nf: ");
+    System.out.print(System.currentTimeMillis() - time);
   }
 
-  protected void writeU32(ByteBuffer buffer, long v) {
+    static void writeU32(ByteBuffer buffer, long v) {
     if (v < 128 && v >= 0) {
       buffer.put((byte)v);
     }

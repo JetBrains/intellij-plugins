@@ -49,6 +49,11 @@ class WritableDataBuffer extends DataBuffer {
     data[size++] = (byte)v;
   }
 
+  public int copyU8(DataBuffer dataBuffer) {
+    resize(1);
+    return data[size++] = (byte)dataBuffer.readU8();
+  }
+
   public void writeU8(int pos, int v) {
     data[pos] = (byte)v;
   }

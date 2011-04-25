@@ -604,11 +604,7 @@ final class Decoder {
             v.OP_pushdouble(index);
             continue;
           }
-          case OP_pushdecimal: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_pushdecimal(index);
-            continue;
-          }
+
           case OP_getlocal: {
             int index = in.readU32();
             v.OP_getlocal(index);

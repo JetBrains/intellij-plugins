@@ -5,6 +5,7 @@ import gnu.trove.TIntArrayList;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
@@ -53,12 +54,12 @@ class Encoder {
     }
   }
 
-  public void configure(Decoder[] decoders) {
+  public void configure(List<Decoder> decoders) {
     int estimatedSize = 0, total = 0;
-    int[] sizes = new int[decoders.length];
+    int[] sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
-      estimatedSize += decoders[i].methodInfo.estimatedSize;
-      sizes[i] = decoders[i].methodInfo.size();
+      estimatedSize += decoders.get(i).methodInfo.estimatedSize;
+      sizes[i] = decoders.get(i).methodInfo.size();
       total += sizes[i];
     }
     methodInfo = new BytecodeBuffer2(estimatedSize, sizes);
@@ -66,20 +67,20 @@ class Encoder {
 
     estimatedSize = 0;
     total = 0;
-    sizes = new int[decoders.length];
+    sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
-      estimatedSize += decoders[i].metadataInfo.estimatedSize;
-      sizes[i] = decoders[i].metadataInfo.size();
+      estimatedSize += decoders.get(i).metadataInfo.estimatedSize;
+      sizes[i] = decoders.get(i).metadataInfo.size();
       total += sizes[i];
     }
-    metadataInfo = new ByteArrayPool2(sizes);
+    metadataInfo = new ByteArrayPool2(sizes, total);
 
     estimatedSize = 0;
     total = 0;
-    sizes = new int[decoders.length];
+    sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
-      estimatedSize += decoders[i].classInfo.estimatedSize;
-      sizes[i] = decoders[i].classInfo.size();
+      estimatedSize += decoders.get(i).classInfo.estimatedSize;
+      sizes[i] = decoders.get(i).classInfo.size();
       total += sizes[i];
     }
     classInfo = new BytecodeBuffer2(estimatedSize, sizes);
@@ -87,10 +88,10 @@ class Encoder {
 
     estimatedSize = 0;
     total = 0;
-    sizes = new int[decoders.length];
+    sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
-      estimatedSize += decoders[i].scriptInfo.estimatedSize;
-      sizes[i] = decoders[i].scriptInfo.size();
+      estimatedSize += decoders.get(i).scriptInfo.estimatedSize;
+      sizes[i] = decoders.get(i).scriptInfo.size();
       total += sizes[i];
     }
     scriptInfo = new BytecodeBuffer2(estimatedSize, sizes);
@@ -98,10 +99,10 @@ class Encoder {
 
     estimatedSize = 0;
     total = 0;
-    sizes = new int[decoders.length];
+    sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
-      estimatedSize += decoders[i].methodBodies.estimatedSize;
-      sizes[i] = decoders[i].methodBodies.size();
+      estimatedSize += decoders.get(i).methodBodies.estimatedSize;
+      sizes[i] = decoders.get(i).methodBodies.size();
       total += sizes[i];
     }
     methodBodies = new BytecodeBuffer2(estimatedSize, sizes);
@@ -139,20 +140,14 @@ class Encoder {
   }
 
   public void methodInfo(int returnType, int[] paramTypes, int nativeName, int flags, int[] values, int[] value_kinds, int[] param_names) {
-    if (paramTypes == null) {
-      methodInfo.writeU32(0);
-    }
-    else {
-      methodInfo.writeU32(paramTypes.length);
-    }
-
-    methodInfo.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, returnType));
+    methodInfo.writeU32(paramTypes == null ? 0 : paramTypes.length);
+    methodInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, returnType));
 
     for (int i = 0, paramCount = (paramTypes == null) ? 0 : paramTypes.length; i < paramCount; i++) {
-      methodInfo.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, paramTypes[i]));
+      methodInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, paramTypes[i]));
     }
 
-    methodInfo.writeU32((disableDebugging) ? 0 : history.getIndex(poolIndex, IndexHistory.cp_string, nativeName));
+    methodInfo.writeU32((disableDebugging) ? 0 : history.getIndex(poolIndex, IndexHistory.STRING, nativeName));
 
     if (disableDebugging) {
       // Nuke the param names if we're getting rid of debugging info, don't want them showing
@@ -176,19 +171,16 @@ class Encoder {
 
       switch (value_kinds[i]) {
         case CONSTANT_Utf8:
-          kind = IndexHistory.cp_string;
+          kind = IndexHistory.STRING;
           break;
         case CONSTANT_Integer:
-          kind = IndexHistory.cp_int;
+          kind = IndexHistory.INT;
           break;
         case CONSTANT_UInteger:
-          kind = IndexHistory.cp_uint;
+          kind = IndexHistory.UINT;
           break;
         case CONSTANT_Double:
-          kind = IndexHistory.cp_double;
-          break;
-        case CONSTANT_Decimal:
-          kind = IndexHistory.cp_decimal;
+          kind = IndexHistory.DOUBLE;
           break;
         case CONSTANT_Namespace:
         case CONSTANT_PrivateNamespace:
@@ -197,17 +189,17 @@ class Encoder {
         case CONSTANT_ProtectedNamespace:
         case CONSTANT_ExplicitNamespace:
         case CONSTANT_StaticProtectedNs:
-          kind = IndexHistory.cp_ns;
+          kind = IndexHistory.NS;
           break;
         case CONSTANT_Qname:
         case CONSTANT_QnameA:
         case CONSTANT_Multiname:
         case CONSTANT_MultinameA:
         case CONSTANT_TypeName:
-          kind = IndexHistory.cp_mn;
+          kind = IndexHistory.MULTINAME;
           break;
         case CONSTANT_Namespace_Set:
-          kind = IndexHistory.cp_nsset;
+          kind = IndexHistory.NS_SET;
           break;
       }
 
@@ -236,14 +228,14 @@ class Encoder {
     // Nuke the param names if we're not keeping debugging around
     if ((flags & METHOD_HasParamNames) != 0 && param_names != null) {
       for (int i = 0, param_namesLength = param_names.length; i < param_namesLength; i++) {
-        methodInfo.writeU32(history.getIndex(poolIndex, IndexHistory.cp_string, returnType));
+        methodInfo.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, returnType));
       }
     }
   }
 
   public void metadataInfo(int index, int name, int[] keys, int[] values) throws DecoderException {
     WritableDataBuffer buffer = new WritableDataBuffer(6);
-    buffer.writeU32(history.getIndex(poolIndex, IndexHistory.cp_string, name));
+    buffer.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, name));
     if (keys == null) {
       buffer.writeU32(0);
     }
@@ -252,11 +244,11 @@ class Encoder {
     }
 
     for (int i = 0, keyCount = (keys == null) ? 0 : keys.length; i < keyCount; i++) {
-      buffer.writeU32(history.getIndex(poolIndex, IndexHistory.cp_string, keys[i]));
+      buffer.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, keys[i]));
     }
 
     for (int i = 0, valueCount = (values == null) ? 0 : values.length; i < valueCount; i++) {
-      buffer.writeU32(history.getIndex(poolIndex, IndexHistory.cp_string, values[i]));
+      buffer.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, values[i]));
     }
 
     metadataInfo.addData(poolIndex, index, buffer);
@@ -270,8 +262,8 @@ class Encoder {
                             int[] interfaces,
                             int iinit,
                             int protectedNamespace) {
-    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, name));
-    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, superName));
+    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
+    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, superName));
 
     int flags = 0;
     flags = (isFinal) ? (flags | CLASS_FLAG_final) : flags;
@@ -281,7 +273,7 @@ class Encoder {
     classInfo.writeU8(flags);
 
     if (protectedNamespace != 0) {
-      classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.cp_ns, protectedNamespace));
+      classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.NS, protectedNamespace));
     }
 
     if (interfaces == null) {
@@ -292,7 +284,7 @@ class Encoder {
     }
 
     for (int i = 0, interfaceCount = interfaces == null ? 0 : interfaces.length; i < interfaceCount; i++) {
-      classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, interfaces[i]));
+      classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, interfaces[i]));
     }
 
     classInfo.writeU32(methodInfo.getIndex(poolIndex, iinit));
@@ -357,9 +349,9 @@ class Encoder {
       exceptions.writeU32(opcodes.getOffset(start));
       exceptions.writeU32(opcodes.getOffset(end));
       exceptions.writeU32(opcodes.getOffset(target));
-      exceptions.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, type));
+      exceptions.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, type));
       if (minorVersion != 15) {
-        exceptions.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, name));
+        exceptions.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
       }
     }
   }
@@ -411,7 +403,7 @@ class Encoder {
   }
 
   public void slotTrait(int trait_kind, int name, int slotId, int type, int value, int value_kind, int[] metadata) {
-    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, name));
+    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
     TIntArrayList new_metadata = trimMetadata(metadata);
     if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata.size() == 0) {
       trait_kind = trait_kind & ~(TRAIT_FLAG_metadata << 4);
@@ -419,25 +411,22 @@ class Encoder {
     currentBuffer.writeU8(trait_kind);
 
     currentBuffer.writeU32(slotId);
-    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, type));
+    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, type));
 
     int kind = -1;
 
     switch (value_kind) {
       case CONSTANT_Utf8:
-        kind = IndexHistory.cp_string;
+        kind = IndexHistory.STRING;
         break;
       case CONSTANT_Integer:
-        kind = IndexHistory.cp_int;
+        kind = IndexHistory.INT;
         break;
       case CONSTANT_UInteger:
-        kind = IndexHistory.cp_uint;
+        kind = IndexHistory.UINT;
         break;
       case CONSTANT_Double:
-        kind = IndexHistory.cp_double;
-        break;
-      case CONSTANT_Decimal:
-        kind = IndexHistory.cp_decimal;
+        kind = IndexHistory.DOUBLE;
         break;
       case CONSTANT_Namespace:
       case CONSTANT_PrivateNamespace:
@@ -446,17 +435,17 @@ class Encoder {
       case CONSTANT_ProtectedNamespace:
       case CONSTANT_ExplicitNamespace:
       case CONSTANT_StaticProtectedNs:
-        kind = IndexHistory.cp_ns;
+        kind = IndexHistory.NS;
         break;
       case CONSTANT_Qname:
       case CONSTANT_QnameA:
       case CONSTANT_Multiname:
       case CONSTANT_MultinameA:
       case CONSTANT_TypeName:
-        kind = IndexHistory.cp_mn;
+        kind = IndexHistory.MULTINAME;
         break;
       case CONSTANT_Namespace_Set:
-        kind = IndexHistory.cp_nsset;
+        kind = IndexHistory.NS_SET;
         break;
     }
 
@@ -485,7 +474,7 @@ class Encoder {
   }
 
   public void methodTrait(int trait_kind, int name, int dispId, int methodInfo, int[] metadata) {
-    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, name));
+    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
     TIntArrayList new_metadata = trimMetadata(metadata);
     if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata.size() == 0) {
       trait_kind = trait_kind & ~(TRAIT_FLAG_metadata << 4);
@@ -500,7 +489,7 @@ class Encoder {
   }
 
   public void classTrait(int kind, int name, int slotId, int classIndex, int[] metadata) {
-    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, name));
+    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
     TIntArrayList new_metadata = trimMetadata(metadata);
     if (((kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata.size() == 0) {
       kind = kind & ~(TRAIT_FLAG_metadata << 4);
@@ -514,7 +503,7 @@ class Encoder {
   }
 
   public void functionTrait(int kind, int name, int slotId, int methodInfo, int[] metadata) {
-    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, name));
+    currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
     TIntArrayList new_metadata = trimMetadata(metadata);
     if (((kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata.size() == 0) {
       kind = kind & ~(TRAIT_FLAG_metadata << 4);
@@ -695,7 +684,7 @@ class Encoder {
         opcodes.writeU8(di_local);
         // FIX: is this a constant pool index? if so, we need to know the constant type...
         // opcodes.writeU32(index);
-        opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_string, index));
+        opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, index));
         opcodes.writeU8(slot);
         opcodes.writeU32(linenum);
       }
@@ -706,7 +695,7 @@ class Encoder {
     if (opcodePass == 1) {
       if (!disableDebugging) {
         beginop(OP_debugfile);
-        opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_string, index));
+        opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, index));
       }
     }
   }
@@ -745,42 +734,35 @@ class Encoder {
   public void OP_pushstring(int index) {
     if (opcodePass == 1) {
       beginop(OP_pushstring);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_string, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, index));
     }
   }
 
   public void OP_pushnamespace(int index) {
     if (opcodePass == 1) {
       beginop(OP_pushnamespace);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_ns, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.NS, index));
     }
   }
 
   public void OP_pushint(int index) {
     if (opcodePass == 1) {
       beginop(OP_pushint);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_int, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.INT, index));
     }
   }
 
   public void OP_pushuint(int index) {
     if (opcodePass == 1) {
       beginop(OP_pushuint);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_uint, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.UINT, index));
     }
   }
 
   public void OP_pushdouble(int index) {
     if (opcodePass == 1) {
       beginop(OP_pushdouble);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_double, index));
-    }
-  }
-
-  public void OP_pushdecimal(int index) {
-    if (opcodePass == 1) {
-      beginop(OP_pushdecimal);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_decimal, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.DOUBLE, index));
     }
   }
 
@@ -1461,14 +1443,14 @@ class Encoder {
 
   public void OP_getproperty(int index) {
     if (opcodePass == 1) {
-      if (opat(1) == OP_findpropstrict && readIntAt(1) == history.getIndex(poolIndex, IndexHistory.cp_mn, index)) {
+      if (opat(1) == OP_findpropstrict && readIntAt(1) == history.getIndex(poolIndex, IndexHistory.MULTINAME, index)) {
         rewind(1);
         OP_getlex(index);
         return;
       }
 
       beginop(OP_getproperty);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
@@ -1479,7 +1461,7 @@ class Encoder {
       }
 
       beginop(OP_setproperty);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
@@ -1490,42 +1472,42 @@ class Encoder {
       }
 
       beginop(OP_initproperty);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
   public void OP_getdescendants(int index) {
     if (opcodePass == 1) {
       beginop(OP_getdescendants);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
   public void OP_findpropstrict(int index) {
     if (opcodePass == 1) {
       beginop(OP_findpropstrict);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
   public void OP_findproperty(int index) {
     if (opcodePass == 1) {
       beginop(OP_findproperty);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
   public void OP_finddef(int index) {
     if (opcodePass == 1) {
       beginop(OP_finddef);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
   public void OP_getlex(int index) {
     if (opcodePass == 1) {
       beginop(OP_getlex);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
@@ -1558,7 +1540,7 @@ class Encoder {
   public void OP_deleteproperty(int index) {
     if (opcodePass == 1) {
       beginop(OP_deleteproperty);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
@@ -1652,7 +1634,7 @@ class Encoder {
       }
 
       beginop(OP_callproperty);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
       opcodes.writeU32(argc);
     }
   }
@@ -1660,7 +1642,7 @@ class Encoder {
   public void OP_callproplex(int index, int argc) {
     if (opcodePass == 1) {
       beginop(OP_callproplex);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
       opcodes.writeU32(argc);
     }
   }
@@ -1668,7 +1650,7 @@ class Encoder {
   public void OP_constructprop(int index, int argc) {
     if (opcodePass == 1) {
       beginop(OP_constructprop);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
       opcodes.writeU32(argc);
     }
   }
@@ -1676,7 +1658,7 @@ class Encoder {
   public void OP_callsuper(int index, int argc) {
     if (opcodePass == 1) {
       beginop(OP_callsuper);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
       opcodes.writeU32(argc);
     }
   }
@@ -1684,14 +1666,14 @@ class Encoder {
   public void OP_getsuper(int index) {
     if (opcodePass == 1) {
       beginop(OP_getsuper);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
   public void OP_setsuper(int index) {
     if (opcodePass == 1) {
       beginop(OP_setsuper);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
@@ -1716,7 +1698,7 @@ class Encoder {
   public void OP_astype(int index) {
     if (opcodePass == 1) {
       beginop(OP_astype);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
@@ -1728,13 +1710,13 @@ class Encoder {
 
   public void OP_coerce(int index) {
     if (opcodePass == 1) {
-      if (opat(1) == OP_coerce && readIntAt(1) == history.getIndex(poolIndex, IndexHistory.cp_mn, index)) {
+      if (opat(1) == OP_coerce && readIntAt(1) == history.getIndex(poolIndex, IndexHistory.MULTINAME, index)) {
         // second coerce to same type is redundant
         return;
       }
 
       beginop(OP_coerce);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
@@ -1841,7 +1823,7 @@ class Encoder {
   public void OP_istype(int index) {
     if (opcodePass == 1) {
       beginop(OP_istype);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
     }
   }
 
@@ -1934,7 +1916,7 @@ class Encoder {
   public void OP_dxns(int index) {
     if (opcodePass == 1) {
       beginop(OP_dxns);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_string, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, index));
     }
   }
 
@@ -2113,7 +2095,7 @@ class Encoder {
   public void OP_callsupervoid(int index, int argc) {
     if (opcodePass == 1) {
       beginop(OP_callsupervoid);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
       opcodes.writeU32(argc);
     }
   }
@@ -2121,7 +2103,7 @@ class Encoder {
   public void OP_callpropvoid(int index, int argc) {
     if (opcodePass == 1) {
       beginop(OP_callpropvoid);
-      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.cp_mn, index));
+      opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, index));
       opcodes.writeU32(argc);
     }
   }
@@ -2204,22 +2186,21 @@ class Encoder {
     }
   }
 
-  static class ByteArrayPool2 extends ByteArrayPool {
-    ByteArrayPool2(int[] sizes) {
+  private static class ByteArrayPool2 extends PoolPart {
+    private int size = 0;
+    private final int[] sizes;
+    private final IntIntHashMap indexes;
+
+    ByteArrayPool2(int[] sizes, int total) {
+      super(total);
       this.sizes = sizes;
-      indexes = new IntIntHashMap();
+      indexes = new IntIntHashMap(total);
     }
-
-    int size = 0;
-
-    private int[] sizes;
-
-    private IntIntHashMap indexes;
 
     int addData(int poolIndex, int oldIndex, WritableDataBuffer data) {
       int index = contains(data, 0, data.size());
       if (index == -1) {
-        index = this.store(data, 0, data.size());
+        index = store(data, 0, data.size());
         size += data.size();
       }
       // ByteArrayPool is 1 based, we want zero based for metadataInfos
@@ -2233,7 +2214,6 @@ class Encoder {
         newIndex += sizes[i];
       }
       newIndex += oldIndex;
-
       return newIndex;
     }
 
@@ -2250,15 +2230,13 @@ class Encoder {
     }
   }
 
-  static class BytecodeBuffer2 extends WritableDataBuffer {
+  private static class BytecodeBuffer2 extends WritableDataBuffer {
+    private final int[] sizes;
+
     BytecodeBuffer2(int estimatedSize, int[] sizes) {
       super(estimatedSize);
       this.sizes = sizes;
-      this.estimatedSize = estimatedSize;
     }
-
-    private int[] sizes;
-    int estimatedSize;
 
     int getIndex(int poolIndex, int oldIndex) {
       int newIndex = 0;
@@ -2271,11 +2249,11 @@ class Encoder {
     }
   }
 
-  class DataBuffer3 extends WritableDataBuffer {
+  private class DataBuffer3 extends WritableDataBuffer {
     IntIntHashMap offsets;
-    Decoder[] decoders;
+    List<Decoder> decoders;
 
-    DataBuffer3(Decoder[] decoders, int estimatedSize) {
+    DataBuffer3(List<Decoder> decoders, int estimatedSize) {
       super(estimatedSize);
       offsets = new IntIntHashMap();
       this.decoders = decoders;
@@ -2297,7 +2275,7 @@ class Encoder {
 
     void updateOffset(int offset) {
       int i = offsets.get(offset);
-      int p = offsets.get(decoders[poolIndex].position());
+      int p = offsets.get(decoders.get(poolIndex).position());
       if (i != -1 && p != -1) {
         writeS24(p - 3, i - p);
       }

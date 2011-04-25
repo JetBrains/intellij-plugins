@@ -11,51 +11,43 @@ class ConstantPool {
   DataBuffer in;
   private int size;
 
-  int[] intpositions;
-  int[] uintpositions;
-  int[] doublepositions;
-  int[] strpositions;
-  int[] nspositions;
-  int[] nsspositions;
-  int[] mnpositions;
-
-  int intEnd;
-  int uintEnd;
-  int doubleEnd;
-  int strEnd;
-  int nsEnd;
-  int nssEnd;
-  int mnEnd;
+  final int[][] positions = new int[7][];
+  final int[] ends = new int[7];
 
   public ConstantPool(DataBuffer in) throws DecoderException {
     this.in = in;
-    scan();
-  }
 
-  private void scan() throws DecoderException {
-    intpositions = Scanner.scanIntConstants(in);
-    intEnd = in.position();
-    uintpositions = Scanner.scanUIntConstants(in);
-    uintEnd = in.position();
-    doublepositions = Scanner.scanDoubleConstants(in);
-    doubleEnd = in.position();
+    for (int i = 0; i < 7; i++) {
+      switch (i) {
+        case IndexHistory.INT:
+        case IndexHistory.UINT:
+          positions[i] = Scanner.scanIntConstants(in);
+          break;
 
-    strpositions = Scanner.scanStrConstants(in);
-    strEnd = in.position();
-    nspositions = Scanner.scanNsConstants(in);
-    nsEnd = in.position();
-    nsspositions = Scanner.scanNsSetConstants(in);
-    nssEnd = in.position();
-    mnpositions = Scanner.scanMultinameConstants(in);
-    mnEnd = in.position();
+        case IndexHistory.DOUBLE:
+          positions[i] = Scanner.scanDoubleConstants(in);
+          break;
 
-    size = ((intpositions.length == 0) ? 0 : (intpositions.length - 1)) +
-           ((uintpositions.length == 0) ? 0 : (uintpositions.length - 1)) +
-           ((doublepositions.length == 0) ? 0 : (doublepositions.length - 1)) +
-           ((strpositions.length == 0) ? 0 : (strpositions.length - 1)) +
-           ((nspositions.length == 0) ? 0 : (nspositions.length - 1)) +
-           ((nsspositions.length == 0) ? 0 : (nsspositions.length - 1)) +
-           ((mnpositions.length == 0) ? 0 : (mnpositions.length - 1));
+        case IndexHistory.STRING:
+          positions[i] = Scanner.scanStrConstants(in);
+          break;
+
+        case IndexHistory.NS:
+          positions[i] = Scanner.scanNsConstants(in);
+          break;
+
+        case IndexHistory.NS_SET:
+          positions[i] = Scanner.scanNsSetConstants(in);
+          break;
+
+        case IndexHistory.MULTINAME:
+          positions[i] = Scanner.scanMultinameConstants(in);
+          break;
+      }
+
+      ends[i] = in.position();
+      size += positions[i].length == 0 ? 0 : positions[i].length - 1;
+    }
   }
 
   public int size() {
@@ -67,7 +59,7 @@ class ConstantPool {
       return 0;
     }
 
-    int pos = intpositions[index];
+    int pos = positions[IndexHistory.INT][index];
     int originalPos = in.position();
     in.seek(pos);
 
@@ -81,7 +73,7 @@ class ConstantPool {
       return 0;
     }
 
-    int pos = uintpositions[index];
+    int pos = positions[IndexHistory.UINT][index];
     int originalPos = in.position();
     in.seek(pos);
     long value = in.readU32();
@@ -94,7 +86,7 @@ class ConstantPool {
       return 0;
     }
 
-    int pos = doublepositions[index];
+    int pos = positions[IndexHistory.DOUBLE][index];
     int originalPos = in.position();
     in.seek(pos);
     double value = in.readDouble();
@@ -107,7 +99,7 @@ class ConstantPool {
       return null;
     }
 
-    int pos = strpositions[index];
+    int pos = positions[IndexHistory.STRING][index];
     int originalPos = in.position();
     in.seek(pos);
     String value = in.readString(in.readU32());
@@ -124,7 +116,7 @@ class ConstantPool {
     if (index == 0) {
       return null;
     }
-    int pos = nspositions[index];
+    int pos = positions[IndexHistory.NS][index];
     int originalPos = in.position();
     in.seek(pos);
     int kind = in.readU8();
@@ -152,7 +144,7 @@ class ConstantPool {
       return null;
     }
 
-    int pos = nsspositions[index];
+    int pos = positions[IndexHistory.NS_SET][index];
     int originalPos = in.position();
     in.seek(pos);
     int count = in.readU32();
@@ -169,7 +161,7 @@ class ConstantPool {
       return null;
     }
 
-    int pos = mnpositions[index];
+    int pos = positions[IndexHistory.MULTINAME][index];
     int originalPos = in.position();
     in.seek(pos);
     int kind = in.readU8();
@@ -208,7 +200,7 @@ class ConstantPool {
       return null;
     }
 
-    int pos = mnpositions[index];
+    int pos = positions[IndexHistory.MULTINAME][index];
     int originalPos = in.position();
     in.seek(pos);
     int kind = in.readU8();
@@ -234,7 +226,7 @@ class ConstantPool {
       return null;
     }
 
-    int pos = mnpositions[index];
+    int pos = positions[IndexHistory.MULTINAME][index];
     int originalPos = in.position();
     in.seek(pos);
     int kind = in.readU8();
@@ -361,12 +353,12 @@ class ConstantPool {
   }
 }
 
-final class NSPool extends ByteArrayPool {
-  NSPool() {
-    super();
+final class NSPool extends PoolPart {
+  NSPool(int poolPartLength) {
+    super(poolPartLength);
   }
 
-  ByteArray newByteArray() {
+  ByteArray createByteArray() {
     return new NS();
   }
 }
@@ -376,8 +368,6 @@ final class NS extends ByteArray {
   int index = 0;
 
   void init() {
-    super.init();
-
     int originalPos = data.position();
     data.seek(start);
     nsKind = data.readU8();
@@ -407,103 +397,98 @@ final class NS extends ByteArray {
   }
 
   public boolean equals(Object obj) {
-    boolean equal = false;
     if (obj instanceof NS) {
       NS ns = (NS)obj;
-      if (this.nsKind == CONSTANT_PrivateNamespace) {
+      if (nsKind == CONSTANT_PrivateNamespace) {
         // Private namespaces are only equal if they are literally the same namespace,
         // the name is not important.
-        equal = (this.data == ns.data) && (this.start == ns.start) && (this.end == ns.end);
+        return data == ns.data && start == ns.start && end == ns.end;
       }
       else {
-        equal = (ns.nsKind == this.nsKind) && (ns.index == this.index);
+        return ns.nsKind == nsKind && ns.index == index;
       }
     }
-    return equal;
+    return false;
   }
 }
 
 
-final class NSSPool extends ByteArrayPool {
-  NSSPool() {
-    super();
+final class NSSPool extends PoolPart {
+  NSSPool(int poolPartLength) {
+    super(poolPartLength);
   }
 
-  ByteArray newByteArray() {
+  ByteArray createByteArray() {
     return new NSS();
   }
-}
 
-final class NSS extends ByteArray {
-  int[] set = null;
-  int size = 0;
+  private static final class NSS extends ByteArray {
+    private int[] set;
+    private int size;
 
-  void init() {
-    super.init();
+    void init() {
+      int originalPos = data.position();
+      data.seek(start);
+      int count = data.readU32();
 
-    int originalPos = data.position();
-    data.seek(start);
-    int count = data.readU32();
+      if (set == null || count > set.length) {
+        set = new int[count];
+      }
+      size = count;
 
-    if (set == null || count > set.length) {
-      set = new int[count];
+      for (int k = 0; k < count; k++) {
+        set[k] = data.readU32();
+      }
+      data.seek(originalPos);
+
+      long num = 1234;
+      for (int k = 0; k < count; k++) {
+        num ^= set[k];
+      }
+      hash = (int)((num >> 32) ^ num);
     }
-    size = count;
 
-    for (int k = 0; k < count; k++) {
-      set[k] = data.readU32();
+    void clear() {
+      super.clear();
+      size = 0;
     }
-    data.seek(originalPos);
 
-    long num = 1234;
-    for (int k = 0; k < count; k++) {
-      num ^= set[k];
-    }
-    hash = (int)((num >> 32) ^ num);
-  }
-
-  void clear() {
-    super.clear();
-    size = 0;
-  }
-
-  public boolean equals(Object obj) {
-    if (obj instanceof NSS) {
-      NSS nss = (NSS)obj;
-      if (size == nss.size) {
-        for (int i = 0; i < size; i++) {
-          if (set[i] != nss.set[i]) {
-            return false;
+    public boolean equals(Object obj) {
+      if (obj instanceof NSS) {
+        NSS nss = (NSS)obj;
+        if (size == nss.size) {
+          for (int i = 0; i < size; i++) {
+            if (set[i] != nss.set[i]) {
+              return false;
+            }
           }
+          return true;
         }
-        return true;
+        else {
+          return false;
+        }
       }
       else {
         return false;
       }
     }
-    else {
-      return false;
-    }
   }
 }
 
-final class MultiNamePool extends ByteArrayPool {
-  MultiNamePool() {
-    super();
+final class MultiNamePool extends PoolPart {
+  public MultiNamePool(int poolPartLength) {
+    super(poolPartLength);
   }
 
-  ByteArray newByteArray() {
-    return new MN();
+  ByteArray createByteArray() {
+    return new MultinameByteArray();
   }
 }
 
-final class MN extends ByteArray {
+final class MultinameByteArray extends ByteArray {
   int constKind = 0, index1 = 1, index2 = 1;
 
   void init() {
-    super.init();
-
     int originalPos = data.position();
     data.seek(start);
     constKind = data.readU8();
@@ -569,8 +554,8 @@ final class MN extends ByteArray {
   }
 
   public boolean equals(Object obj) {
-    if (obj instanceof MN) {
-      MN mn = (MN)obj;
+    if (obj instanceof MultinameByteArray) {
+      MultinameByteArray mn = (MultinameByteArray)obj;
 
       switch (constKind) {
         case CONSTANT_Qname:
