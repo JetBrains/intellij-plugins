@@ -99,7 +99,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     });
 
     if (myElement instanceof JSClass) {
-      JSRefactoringUtil.addConstuctorUsages((JSClass)myElement, true, result);
+      JSRefactoringUtil.addConstructorUsages((JSClass)myElement, true, result);
     }
     TextOccurrencesUtil.findNonCodeUsages(myElement, myElement.getName(), mySearchInComments, mySearchTextOccurences,
                                           StringUtil.getQualifiedName(myPackageName, myClassName), result);

@@ -83,7 +83,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
     result.addAll(Arrays.asList(super.findUsages()));
     for (JSQualifiedNamedElement element : myElements) {
       if (element instanceof JSClass) {
-        JSRefactoringUtil.addConstuctorUsages((JSClass)element, false, result);
+        JSRefactoringUtil.addConstructorUsages((JSClass)element, false, result);
       }
       TextOccurrencesUtil.findNonCodeUsages(element, element.getQualifiedName(), mySearchInComments, mySearchInNonJavaFiles,
                                             StringUtil.getQualifiedName(myTargetPackage, element.getName()), result);
