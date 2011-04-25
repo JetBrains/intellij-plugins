@@ -4,7 +4,7 @@ import gnu.trove.TIntHashSet;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
-final class Decoder extends DataBuffer {
+final class Decoder {
   public final ConstantPool constantPool;
   public final MethodInfo methodInfo;
   public final MetaDataInfo metadataInfo;
@@ -19,26 +19,11 @@ final class Decoder extends DataBuffer {
     in.skip(4);
     constantPool = new ConstantPool(in);
 
-    int pos = in.position();
     methodInfo = new MethodInfo(in);
-    methodInfo.estimatedSize = in.position() - pos;
-
-    pos = in.position();
     metadataInfo = new MetaDataInfo(in);
-    metadataInfo.estimatedSize = in.position() - pos;
-
-    pos = in.position();
     classInfo = new ClassInfo(in);
-    classInfo.estimatedSize = in.position() - pos;
-
-    pos = in.position();
     scriptInfo = new ScriptInfo(in);
-    scriptInfo.estimatedSize = in.position() - pos;
-
-    pos = in.position();
     methodBodies = new MethodBodies(in);
-    methodBodies.estimatedSize = in.position() - pos;
-
     opcodes = new Opcodes(in);
 
     this.in = in;
@@ -48,22 +33,33 @@ final class Decoder extends DataBuffer {
     return in.position();
   }
 
-  public static final class MethodInfo {
-    MethodInfo(DataBuffer in) {
-      this(in, Scanner.scanMethods(in));
-    }
+  private abstract static class Info {
+    final DataBuffer in;
+    final int estimatedSize;
+    protected final int[] positions;
 
-    MethodInfo(DataBuffer in, int[] positions) {
+    Info(DataBuffer in) {
+      int pos = in.position();
       this.in = in;
-      this.positions = positions;
+      this.positions = scan();
+      estimatedSize = in.position() - pos;
     }
 
-    DataBuffer in;
-    int estimatedSize;
-    private int[] positions;
+    abstract protected int[] scan();
 
     public int size() {
       return positions.length;
+    }
+  }
+
+  public static final class MethodInfo extends Info {
+    MethodInfo(DataBuffer in) {
+      super(in);
+    }
+
+    @Override
+    protected int[] scan() {
+      return Scanner.scanMethods(in);
     }
 
     public void decode(int index, Encoder visitor) throws DecoderException {
@@ -111,104 +107,57 @@ final class Decoder extends DataBuffer {
     }
   }
 
-  public static final class MetaDataInfo {
+  public static final class MetaDataInfo extends Info {
     MetaDataInfo(DataBuffer in) {
-      this(in, Scanner.scanMetadata(in));
+      super(in);
     }
 
-    MetaDataInfo(DataBuffer in, int[] positions) {
-      this.in = in;
-      this.positions = positions;
-    }
-
-    DataBuffer in;
-    int estimatedSize;
-    private int[] positions;
-
-    public int size() {
-      return positions.length;
+    @Override
+    protected int[] scan() {
+      return Scanner.scanMetadata(in);
     }
 
     public void decode(int index, Encoder visitor) throws DecoderException {
       int pos = positions[index];
       int originalPos = in.position();
       in.seek(pos);
-
-      int nameIndex = in.readU32();
-      int valueCount = in.readU32();
-
-      int[] keys = null;
-      int[] values = null;
-      if (valueCount > 0) {
-        keys = new int[valueCount];
-        values = new int[valueCount];
-        for (int j = 0; j < valueCount; j++) {
-          keys[j] = in.readU32();
-        }
-        for (int j = 0; j < valueCount; j++) {
-          values[j] = in.readU32();
-        }
-      }
-
+      visitor.metadataInfo(index, in.readU32(), in.readU32(), in);
       in.seek(originalPos);
-
-      visitor.metadataInfo(index, nameIndex, keys, values);
     }
   }
 
   public static final class ClassInfo {
+    final DataBuffer in;
+    final int estimatedSize;
+    private final int[] cPositions;
+    private final int[] iPositions;
+    private final Traits cTraits;
+    private final Traits iTraits;
+
     ClassInfo(DataBuffer in) {
       this.in = in;
+      int pos = in.position();
       int size = in.readU32();
       iPositions = Scanner.scanInstances(in, size);
       iTraits = new Traits(in);
       cPositions = Scanner.scanClasses(in, size);
       cTraits = new Traits(in);
+      estimatedSize = in.position() - pos;
     }
-
-    DataBuffer in;
-    int estimatedSize;
-    private int[] cPositions;
-    private int[] iPositions;
-    private Traits cTraits;
-    private Traits iTraits;
 
     public int size() {
       return cPositions.length;
     }
 
-    public int decodeInstance(int index, Encoder visitor) throws DecoderException {
+    public void decodeInstance(int index, Encoder visitor) throws DecoderException {
       int pos = iPositions[index];
       int originalPos = in.position();
       in.seek(pos);
-
-      int name = in.readU32();
-      int superName = in.readU32();
-
-      int flags = in.readU8();
-      boolean isFinal = (flags & CLASS_FLAG_final) != 0;
-      boolean isDynamic = (flags & CLASS_FLAG_sealed) == 0;
-      boolean isInterface = (flags & CLASS_FLAG_interface) != 0;
-      boolean hasProtected = (flags & CLASS_FLAG_protected) != 0;
-
-      int protectedNamespace = hasProtected ? in.readU32() : 0;
-
-      int interfaceCount = in.readU32();
-      int[] interfaces = new int[interfaceCount];
-      if (interfaceCount > 0) {
-        for (int j = 0; j < interfaceCount; j++) {
-          interfaces[j] = in.readU32();
-        }
-      }
-
-      int iinit = in.readU32();
-      visitor.startInstance(name, superName, isDynamic, isFinal, isInterface, interfaces, iinit, protectedNamespace);
+      visitor.startInstance(in);
       iTraits.decode(visitor);
       visitor.endInstance();
 
       in.seek(originalPos);
-
-      return name;
     }
 
     public void decodeClass(int index, Encoder visitor) throws DecoderException {
@@ -225,24 +174,17 @@ final class Decoder extends DataBuffer {
     }
   }
 
-  public static final class ScriptInfo {
-    ScriptInfo(DataBuffer in) {
-      this(in, Scanner.scanScripts(in));
-    }
+  public static final class ScriptInfo extends Info {
+    private final Traits traits;
 
-    ScriptInfo(DataBuffer in, int[] positions) {
-      this.in = in;
-      this.positions = positions;
+    ScriptInfo(DataBuffer in) {
+      super(in);
       traits = new Traits(in);
     }
 
-    DataBuffer in;
-    int estimatedSize;
-    private int[] positions;
-    private Traits traits;
-
-    public int size() {
-      return positions.length;
+    @Override
+    protected int[] scan() {
+      return Scanner.scanScripts(in);
     }
 
     public void decode(int index, Encoder visitor) throws DecoderException {
@@ -250,8 +192,7 @@ final class Decoder extends DataBuffer {
       int originalPos = in.position();
       in.seek(pos);
 
-      int initID = in.readU32();
-      visitor.startScript(initID);
+      visitor.startScript(in.readU32());
       traits.decode(visitor);
       visitor.endScript();
 
@@ -259,24 +200,17 @@ final class Decoder extends DataBuffer {
     }
   }
 
-  public final class MethodBodies {
-    MethodBodies(DataBuffer in) {
-      this(in, Scanner.scanMethodBodies(in));
-    }
+  public final class MethodBodies extends Info {
+    private final Traits traits;
 
-    MethodBodies(DataBuffer in, int[] positions) {
-      this.in = in;
-      this.positions = positions;
+    MethodBodies(DataBuffer in) {
+      super(in);
       traits = new Traits(in);
     }
 
-    DataBuffer in;
-    int estimatedSize;
-    private int[] positions;
-    private Traits traits;
-
-    public int size() {
-      return positions.length;
+    @Override
+    protected int[] scan() {
+      return Scanner.scanMethodBodies(in);
     }
 
     public void decode(int index, int opcodePass, Encoder visitor) throws DecoderException {
@@ -301,7 +235,6 @@ final class Decoder extends DataBuffer {
         opcodes.reset();
         in.seek(exPos);
         int exCount = in.readU32();
-
         visitor.startExceptions(exCount);
 
         decodeExceptions(in, codeStart, visitor, exCount);
@@ -342,7 +275,7 @@ final class Decoder extends DataBuffer {
       this.in = in;
     }
 
-    DataBuffer in;
+    final DataBuffer in;
 
     void decode(Encoder visitor) throws DecoderException {
       int count = in.readU32();
@@ -351,7 +284,7 @@ final class Decoder extends DataBuffer {
       for (int i = 0; i < count; i++) {
         int name = in.readU32();
         int kind = in.readU8();
-        int slotID, typeID, valueID, methInfo, dispID, classID;
+        int slotID, typeID, valueID;
         int value_kind = 0;
 
         switch (kind & 0x0f) {
@@ -368,30 +301,20 @@ final class Decoder extends DataBuffer {
           case TRAIT_Method:
           case TRAIT_Getter:
           case TRAIT_Setter:
-            dispID = in.readU32();
-            methInfo = in.readU32();
-            visitor.methodTrait(kind, name, dispID, methInfo, decodeMetaData(kind));
+            visitor.methodTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind));
             break;
           case TRAIT_Class:
-            slotID = in.readU32();
-            classID = in.readU32();
-            visitor.classTrait(kind, name, slotID, classID, decodeMetaData(kind));
+            visitor.classTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind));
             break;
           case TRAIT_Function:
-            slotID = in.readU32();
-            methInfo = in.readU32();
-            visitor.functionTrait(kind, name, slotID, methInfo, decodeMetaData(kind));
+            visitor.functionTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind));
             break;
-          default:
-            // do nothing. macromedia.abc.Scanner would throw an exception.
-            // bad abc code will not reach here.
         }
       }
     }
 
     private int[] decodeMetaData(int kind) {
       int[] md = null;
-
       if (((kind >> 4) & TRAIT_FLAG_metadata) != 0) {
         int length = in.readU32();
         if (length > 0) {
@@ -412,7 +335,7 @@ final class Decoder extends DataBuffer {
       this.in = in;
     }
 
-    DataBuffer in;
+    final DataBuffer in;
 
     private TIntHashSet targetSet;
 

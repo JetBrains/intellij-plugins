@@ -28,9 +28,10 @@ public class FlexSdkAbcInjector extends AbcFilter {
   }
 
   @Override
-  protected boolean doAbc2(int length, String name) throws IOException, DecoderException {
+  protected void doAbc2(int length, String name) throws IOException, DecoderException {
     if (flexInjected) {
-      return false;
+      super.doAbc2(length, name);
+      return;
     }
 
     boolean isStyleProtoChain = name.equals(STYLE_PROTO_CHAIN);
@@ -45,18 +46,13 @@ public class FlexSdkAbcInjector extends AbcFilter {
       buffer.position(oldPosition);
     }
 
+    super.doAbc2(length, name);
+
     // for flex 4.5 we can inject our classes after StyleProtoChain, but for 4.1 (mx.swc is not yet extracted in this SDK version)
     // we cannot — CSSStyleDeclaration located later, so, we inject after it
     // at the same time we cannot inject after CSSStyleDeclaration for 4.5, so, injection place depends on Flex SDK version
     if (isStyleProtoChain ? flexSdkVersion.equals("4.5") : (flexSdkVersion.equals("4.1") && name.equals("mx.styles:CSSStyleDeclaration"))) {
       flexInjected = true;
-
-      buffer.limit(buffer.position() + length);
-      buffer.position(lastWrittenPosition);
-      channel.write(buffer);
-      lastWrittenPosition = buffer.limit();
-      buffer.limit(buffer.capacity());
-
       if (injectionUrlConnection == null) {
         decoders.add(new Decoder(new DataBuffer(FileUtil.loadFileBytes(new File(
           DebugPathManager.getFudHome() + "/flex-injection/target/" + ComplementSwfBuilder.generateInjectionName(flexSdkVersion))))));
@@ -72,13 +68,9 @@ public class FlexSdkAbcInjector extends AbcFilter {
       }
 
       if (requiredAssetsInfo.bitmapCount != 0) {
-        ImageClassPoolGenerator.generate(channel, requiredAssetsInfo.bitmapCount);
+        ImageClassPoolGenerator.generate(decoders, requiredAssetsInfo.bitmapCount);
       }
-
-      return true;
     }
-    
-    return false;
   }
 
   private void parseCPoolAndRenameStyleProtoChain() throws IOException {

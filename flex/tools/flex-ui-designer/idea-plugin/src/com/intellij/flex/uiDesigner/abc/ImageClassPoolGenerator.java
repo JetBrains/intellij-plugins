@@ -4,10 +4,9 @@ import com.intellij.openapi.util.io.FileUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 
-public final class ImageClassPoolGenerator extends AbcEncoder {
+final class ImageClassPoolGenerator extends AbcEncoder {
   private static byte[] B_ABC;
   private static final int NAME_POS = 12;
 
@@ -23,30 +22,29 @@ public final class ImageClassPoolGenerator extends AbcEncoder {
     }
   }
 
-  public static void generate(FileChannel outFileChannel, int size) throws IOException {
+  public static void generate(ArrayList<Decoder> decoders, int size) throws IOException {
     initAbcBlank();
 
     if (size < 0 || size > 4095) {
       throw new IllegalArgumentException("size must be >= 0 <= 4095");
     }
 
-    ByteBuffer buffer = ByteBuffer.wrap(B_ABC);
-    outFileChannel.write(buffer);
-    buffer.clear();
+    decoders.ensureCapacity(decoders.size() + size);
+    decoders.add(new Decoder(new DataBuffer(B_ABC)));
 
     for (int i = 1, n = size - 1; i < n; i++) {
-      String index = Integer.toHexString(i);
+      final byte[] bAbc = new byte[B_ABC.length];
+      System.arraycopy(B_ABC, 0, bAbc, 0, bAbc.length);
+
+      final String index = Integer.toHexString(i);
       int j = 0;
       final int relativeOffset = 3 - index.length();
       final int offset = NAME_POS + relativeOffset;
       while (j < index.length()) {
-        B_ABC[offset + j] = (byte)index.charAt(j++);
+        bAbc[offset + j] = (byte)index.charAt(j++);
       }
 
-      System.arraycopy(B_ABC, offset, B_ABC, 27 + relativeOffset, j);
-
-      outFileChannel.write(buffer);
-      buffer.clear();
+      decoders.add(new Decoder(new DataBuffer(bAbc)));
     }
   }
 }

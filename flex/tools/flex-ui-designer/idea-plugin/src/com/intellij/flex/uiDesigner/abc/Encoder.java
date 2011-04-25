@@ -18,11 +18,11 @@ class Encoder {
   private int poolIndex, opcodePass, exPass;
   private boolean disableDebugging, peepHole;
 
-  private BytecodeBuffer2 methodInfo;
+  private DataBuffer2 methodInfo;
   private MetadataInfoByteArray metadataInfo;
-  private BytecodeBuffer2 classInfo;
-  private BytecodeBuffer2 scriptInfo;
-  private BytecodeBuffer2 methodBodies;
+  private DataBuffer2 classInfo;
+  private DataBuffer2 scriptInfo;
+  private DataBuffer2 methodBodies;
   private DataBuffer3 opcodes;
   private WritableDataBuffer exceptions;
 
@@ -63,7 +63,7 @@ class Encoder {
       sizes[i] = decoders.get(i).methodInfo.size();
       total += sizes[i];
     }
-    methodInfo = new BytecodeBuffer2(estimatedSize, sizes);
+    methodInfo = new DataBuffer2(estimatedSize, sizes);
     methodInfo.writeU32(total);
 
     estimatedSize = 0;
@@ -84,7 +84,7 @@ class Encoder {
       sizes[i] = decoders.get(i).classInfo.size();
       total += sizes[i];
     }
-    classInfo = new BytecodeBuffer2(estimatedSize, sizes);
+    classInfo = new DataBuffer2(estimatedSize, sizes);
     classInfo.writeU32(total);
 
     estimatedSize = 0;
@@ -95,7 +95,7 @@ class Encoder {
       sizes[i] = decoders.get(i).scriptInfo.size();
       total += sizes[i];
     }
-    scriptInfo = new BytecodeBuffer2(estimatedSize, sizes);
+    scriptInfo = new DataBuffer2(estimatedSize, sizes);
     scriptInfo.writeU32(total);
 
     estimatedSize = 0;
@@ -106,7 +106,7 @@ class Encoder {
       sizes[i] = decoders.get(i).methodBodies.size();
       total += sizes[i];
     }
-    methodBodies = new BytecodeBuffer2(estimatedSize, sizes);
+    methodBodies = new DataBuffer2(estimatedSize, sizes);
     methodBodies.writeU32(total);
 
     opcodes = new DataBuffer3(decoders, 4096);
@@ -117,14 +117,20 @@ class Encoder {
     poolIndex = index;
   }
 
-  public void toABC(FileChannel channel) throws IOException {
+  public void writeDoAbc(final FileChannel channel, final boolean asTag) throws IOException {
     final ByteBuffer buffer = history.createBuffer(metadataInfo);
-    final int filePositionBefore = (int)channel.position();
-    buffer.putShort((short)((TagTypes.DoABC2 << 6) | 63));
-    buffer.position(6);
-    buffer.putInt(1);
-    buffer.put((byte)'_');
-    buffer.put((byte)0);
+    final int filePositionBefore;
+    if (asTag) {
+      filePositionBefore = (int)channel.position();
+      buffer.putShort((short)((TagTypes.DoABC2 << 6) | 63));
+      buffer.position(6);
+      buffer.putInt(1);
+      buffer.put((byte)'_');
+      buffer.put((byte)0);
+    }
+    else {
+      filePositionBefore = -1;
+    }
 
     buffer.putShort((short)minorVersion);
     buffer.putShort((short)majorVersion);
@@ -134,6 +140,7 @@ class Encoder {
     buffer.clear();
 
     history.writeTo(channel, buffer);
+    methodInfo.writeTo(channel);
 
     metadataInfo.writeTo(buffer);
     buffer.flip();
@@ -144,10 +151,12 @@ class Encoder {
     scriptInfo.writeTo(channel);
     methodBodies.writeTo(channel);
 
-    final int size = (int)channel.position() - filePositionBefore - 2;
-    buffer.putInt(size);
-    buffer.flip();
-    channel.write(buffer, filePositionBefore + 2);
+    if (asTag) {
+      final int size = (int)channel.position() - filePositionBefore - 6;
+      buffer.putInt(size);
+      buffer.flip();
+      channel.write(buffer, filePositionBefore + 2);
+    }
   }
 
   public void methodInfo(int returnType, int[] paramTypes, int nativeName, int flags, int[] values, int[] value_kinds, int[] param_names) {
@@ -244,63 +253,41 @@ class Encoder {
     }
   }
 
-  @SuppressWarnings({"ConstantConditions"})
-  public void metadataInfo(int index, int name, int[] keys, int[] values) throws DecoderException {
+  public void metadataInfo(int index, int name, int itemCount, DataBuffer data) throws DecoderException {
     WritableDataBuffer buffer = new WritableDataBuffer(6);
     buffer.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, name));
-    if (keys == null) {
-      buffer.writeU32(0);
-    }
-    else {
-      buffer.writeU32(keys.length);
-    }
-
-    for (int i = 0, keyCount = (keys == null) ? 0 : keys.length; i < keyCount; i++) {
-      buffer.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, keys[i]));
-    }
-
-    for (int i = 0, valueCount = (values == null) ? 0 : values.length; i < valueCount; i++) {
-      buffer.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, values[i]));
+    buffer.writeU32(itemCount);
+    if (itemCount != 0) {
+      for (int j = 0; j < itemCount; j++) {
+        buffer.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, data.readU32()));
+      }
+      for (int j = 0; j < itemCount; j++) {
+        buffer.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, data.readU32()));
+      }
     }
 
     metadataInfo.addData(poolIndex, index, buffer);
   }
 
-  @SuppressWarnings({"ConstantConditions"})
-  public void startInstance(int name,
-                            int superName,
-                            boolean isDynamic,
-                            boolean isFinal,
-                            boolean isInterface,
-                            int[] interfaces,
-                            int iinit,
-                            int protectedNamespace) {
-    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
-    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, superName));
+  public void startInstance(DataBuffer in) {
+    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, in.readU32()));
+    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, in.readU32()));
 
-    int flags = 0;
-    flags = (isFinal) ? (flags | CLASS_FLAG_final) : flags;
-    flags = (!isDynamic) ? (flags | CLASS_FLAG_sealed) : flags;
-    flags = (isInterface) ? (flags | CLASS_FLAG_interface) : flags;
-    flags = (protectedNamespace != 0) ? (flags | CLASS_FLAG_protected) : flags;
+    int flags = in.readU8();
     classInfo.writeU8(flags);
-
-    if (protectedNamespace != 0) {
-      classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.NS, protectedNamespace));
+    if ((flags & CLASS_FLAG_protected) != 0) {
+      classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.NS, in.readU32()));
     }
 
-    if (interfaces == null) {
-      classInfo.writeU32(0);
-    }
-    else {
-      classInfo.writeU32(interfaces.length);
-    }
-
-    for (int i = 0, interfaceCount = interfaces == null ? 0 : interfaces.length; i < interfaceCount; i++) {
-      classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, interfaces[i]));
+    final int interfaceCount = in.readU32();
+    classInfo.writeU32(interfaceCount);
+    if (interfaceCount > 0) {
+      for (int j = 0; j < interfaceCount; j++) {
+        classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, in.readU32()));
+      }
     }
 
-    classInfo.writeU32(methodInfo.getIndex(poolIndex, iinit));
+    classInfo.writeU32(methodInfo.getIndex(poolIndex, in.readU32()));
 
     currentBuffer = classInfo;
   }
@@ -2168,7 +2155,7 @@ class Encoder {
     private final IntIntHashMap indexes;
 
     MetadataInfoByteArray(int[] sizes, int total) {
-      super(total);
+      super(total + 1);
       this.sizes = sizes;
       indexes = new IntIntHashMap(total);
     }
@@ -2206,10 +2193,10 @@ class Encoder {
     }
   }
 
-  private static class BytecodeBuffer2 extends WritableDataBuffer {
+  private static class DataBuffer2 extends WritableDataBuffer {
     private final int[] sizes;
 
-    BytecodeBuffer2(int estimatedSize, int[] sizes) {
+    DataBuffer2(int estimatedSize, int[] sizes) {
       super(estimatedSize);
       this.sizes = sizes;
     }
@@ -2219,9 +2206,7 @@ class Encoder {
       for (int i = 0; i < poolIndex; i++) {
         newIndex += sizes[i];
       }
-      newIndex += oldIndex;
-
-      return newIndex;
+      return newIndex + oldIndex;
     }
   }
 

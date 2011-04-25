@@ -9,7 +9,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.ZipException;
@@ -29,7 +28,7 @@ public class AbcFilter extends AbcEncoder {
   protected int lastWrittenPosition;
   protected FileChannel channel;
   
-  protected List<Decoder> decoders = new ArrayList<Decoder>(256);
+  protected ArrayList<Decoder> decoders = new ArrayList<Decoder>(256);
 
   public void filter(File inputFile, File out, AbcNameFilter abcNameFilter) throws IOException {
     filter(new FileInputStream(inputFile), inputFile.length(), out, abcNameFilter);
@@ -138,7 +137,7 @@ public class AbcFilter extends AbcEncoder {
           final int tagStartPosition = buffer.position();
           writeDataBeforeTag(length);
 
-          mergeDoAbc();
+          mergeDoAbc(true);
           lastWrittenPosition = tagStartPosition - (length < 63 ? 2 : 6);
           buffer.position(tagStartPosition);
 
@@ -168,15 +167,7 @@ public class AbcFilter extends AbcEncoder {
             int oldPosition = buffer.position();
             writeDataBeforeTag(length);
             buffer.position(oldPosition);
-
-            if (doAbc2(length, name)) {
-            }
-            else {
-              final int off = 4 + name.length() + 1;
-              buffer.position(buffer.position() + off /* null-terminated string */);
-              decoders.add(new Decoder(new BufferWrapper(buffer, length - off)));
-            }
-
+            doAbc2(length, name);
             buffer.position(lastWrittenPosition);
             continue;
           }
@@ -188,7 +179,13 @@ public class AbcFilter extends AbcEncoder {
     }
   }
 
-  private void mergeDoAbc() throws DecoderException, IOException {
+  protected void doAbc2(int length, String name) throws IOException, DecoderException {
+    final int off = 4 + name.length() + 1;
+    buffer.position(buffer.position() + off);
+    decoders.add(new Decoder(new BufferWrapper(buffer, length - off)));
+  }
+
+  private void mergeDoAbc(boolean asTag) throws DecoderException, IOException {
     final int abcSize = decoders.size();
     final ConstantPool[] pools = new ConstantPool[abcSize];
     for (int i = 0; i < abcSize; i++) {
@@ -267,7 +264,7 @@ public class AbcFilter extends AbcEncoder {
       }
     }
 
-    encoder.toABC(channel);
+    encoder.writeDoAbc(channel, asTag);
   }
 
   private void writeDataBeforeTag(int tagLength) throws IOException {
@@ -285,12 +282,8 @@ public class AbcFilter extends AbcEncoder {
 
     buffer.position(lastWrittenPosition);
   }
-  
-  protected boolean doAbc2(int length, String name) throws IOException, DecoderException {
-    return false;
-  }
 
-  private void filterAbcTags(AbcNameFilter abcNameFilter) throws IOException {
+  private void filterAbcTags(AbcNameFilter abcNameFilter) throws IOException, DecoderException {
     while (true) {
       int tagCodeAndLength = buffer.getShort();
       int type = tagCodeAndLength >> 6;
@@ -301,16 +294,17 @@ public class AbcFilter extends AbcEncoder {
 
       switch (type) {
         case TagTypes.End:
+          mergeDoAbc(false);
           return;
 
         case TagTypes.DoABC2:
           String name = readAbcName(buffer.position() + 4);
           if (abcNameFilter.accept(name)) {
-            buffer.position(buffer.position() - 6);
-            buffer.limit(buffer.position() + length + 6);
-            channel.write(buffer);
-
-            buffer.limit(buffer.capacity());
+            final int off = 4 + name.length() + 1;
+            buffer.position(buffer.position() + off);
+            final int abcLength = length - off;
+            decoders.add(new Decoder(new BufferWrapper(buffer, abcLength)));
+            buffer.position(buffer.position() + abcLength);
             continue;
           }
 

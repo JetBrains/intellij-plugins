@@ -32,5 +32,12 @@
       <scope>system</scope>
       <systemPath>${env.WORK_IDEA_HOME}/lib/util.jar</systemPath>
     </dependency>
+    <dependency>
+      <groupId>com.intellij</groupId>
+      <artifactId>trove4j</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>${env.WORK_IDEA_HOME}/lib/trove4j.jar</systemPath>
+    </dependency>
   </dependencies>
 </project>

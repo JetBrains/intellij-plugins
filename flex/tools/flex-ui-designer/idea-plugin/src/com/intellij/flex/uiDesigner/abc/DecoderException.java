@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.abc;
 
-public final class DecoderException extends Exception {
+import java.io.IOException;
+
+public final class DecoderException extends IOException {
   public DecoderException(String message) {
     super(message);
   }
