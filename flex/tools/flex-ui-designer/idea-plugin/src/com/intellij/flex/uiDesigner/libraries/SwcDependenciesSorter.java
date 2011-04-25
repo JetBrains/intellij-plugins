@@ -3,7 +3,10 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
 import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
-import com.intellij.flex.uiDesigner.abc.*;
+import com.intellij.flex.uiDesigner.abc.AbcFilter;
+import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSet;
+import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSetAndStartsWith;
+import com.intellij.flex.uiDesigner.abc.FlexSdkAbcInjector;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilderDriver;
@@ -15,7 +18,6 @@ import org.jetbrains.annotations.TestOnly;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -189,15 +191,9 @@ public class SwcDependenciesSorter {
     File modifiedSwf = createSwfOutFile(library);
     final long timeStamp = swfFile.getTimeStamp();
     if (timeStamp != modifiedSwf.lastModified()) {
-      final InputStream inputStream = swfFile.getInputStream();
-      try {
-        //Optimizer.optimize(inputStream, modifiedSwf);
-        //noinspection ResultOfMethodCallIgnored
-        modifiedSwf.setLastModified(timeStamp);
-      }
-      finally {
-        inputStream.close();
-      }
+      AbcFilter.mergeAbc(swfFile, modifiedSwf);
+      //noinspection ResultOfMethodCallIgnored
+      modifiedSwf.setLastModified(timeStamp);
     }
   }
 

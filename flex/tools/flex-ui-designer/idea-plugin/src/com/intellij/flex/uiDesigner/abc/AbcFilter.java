@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -34,11 +35,15 @@ public class AbcFilter extends AbcEncoder {
     filter(new FileInputStream(inputFile), inputFile.length(), out, abcNameFilter);
   }
 
-  public void filter(VirtualFile inputFile, File out, AbcNameFilter abcNameFilter) throws IOException {
+  public void filter(VirtualFile inputFile, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
     filter(inputFile.getInputStream(), inputFile.getLength(), out, abcNameFilter);
   }
 
-  private void filter(InputStream inputStream, long inputLength, File out, AbcNameFilter abcNameFilter) throws IOException {
+  public static void mergeAbc(VirtualFile inputFile, File out) throws IOException {
+    new AbcFilter().filter(inputFile, out, null);
+  }
+
+  private void filter(InputStream inputStream, long inputLength, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
     final int uncompressedBodyLength;
     final boolean compressed;
     byte[] data;
@@ -70,8 +75,6 @@ public class AbcFilter extends AbcEncoder {
 
     buffer = ByteBuffer.wrap(data);
     buffer.order(ByteOrder.LITTLE_ENDIAN);
-
-    //bufferWrapper = new BufferWrapper(buffer);
 
     // skip rect, FrameRate, FrameCount
     buffer.position((int)Math.ceil((float)(5 + ((data[0] & 0xFF) >> -(5 - 8)) * 4) / 8) + 2 + 2);
@@ -157,7 +160,7 @@ public class AbcFilter extends AbcEncoder {
 
         case TagTypes.DoABC2:
           String name = readAbcName(buffer.position() + 4);
-          if (!abcNameFilter.accept(name)) {
+          if (abcNameFilter != null && !abcNameFilter.accept(name)) {
             skipTag(length);
             continue;
           }
@@ -264,11 +267,7 @@ public class AbcFilter extends AbcEncoder {
       }
     }
 
-    ByteBuffer b = ByteBuffer.allocate(2 * 1024 * 1024);
-    b.order(ByteOrder.LITTLE_ENDIAN);
-    encoder.toABC(b);
-    b.flip();
-    channel.write(b);
+    encoder.toABC(channel);
   }
 
   private void writeDataBeforeTag(int tagLength) throws IOException {

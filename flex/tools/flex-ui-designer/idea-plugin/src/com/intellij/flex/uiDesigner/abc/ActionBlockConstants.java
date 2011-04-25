@@ -109,7 +109,6 @@ interface ActionBlockConstants {
   int OP_pushscope = 0x30;
   int OP_pushnamespace = 0x31;
   int OP_hasnext2 = 0x32;
-  int OP_pushdecimal = 0x33;
   int OP_pushdnan = 0x34;
 
   int OP_li8 = 0x35;

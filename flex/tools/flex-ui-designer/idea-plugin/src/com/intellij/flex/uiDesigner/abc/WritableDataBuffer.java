@@ -1,8 +1,8 @@
 package com.intellij.flex.uiDesigner.abc;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 class WritableDataBuffer extends DataBuffer {
   WritableDataBuffer(int preferredSize) {
@@ -10,6 +10,10 @@ class WritableDataBuffer extends DataBuffer {
     this.data = new byte[preferredSize];
     size = 0;
     position = 0;
+  }
+
+  public void writeTo(FileChannel channel) throws IOException {
+    channel.write(ByteBuffer.wrap(data, offset, size));
   }
 
   public void clear() {

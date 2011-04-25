@@ -4,7 +4,17 @@ import gnu.trove.TIntHashSet;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
-final class Decoder {
+final class Decoder extends DataBuffer {
+  public final ConstantPool constantPool;
+  public final MethodInfo methodInfo;
+  public final MetaDataInfo metadataInfo;
+  public final ClassInfo classInfo;
+  public final ScriptInfo scriptInfo;
+  public final MethodBodies methodBodies;
+  public final Opcodes opcodes;
+
+  private final DataBuffer in;
+
   public Decoder(DataBuffer in) throws DecoderException {
     in.skip(4);
     constantPool = new ConstantPool(in);
@@ -33,16 +43,6 @@ final class Decoder {
 
     this.in = in;
   }
-
-  public final ConstantPool constantPool;
-  public final MethodInfo methodInfo;
-  public final MetaDataInfo metadataInfo;
-  public final ClassInfo classInfo;
-  public final ScriptInfo scriptInfo;
-  public final MethodBodies methodBodies;
-  public final Opcodes opcodes;
-
-  private final DataBuffer in;
 
   public int position() {
     return in.position();
@@ -337,7 +337,7 @@ final class Decoder {
     }
   }
 
-  static class Traits {
+  private static class Traits {
     Traits(DataBuffer in) {
       this.in = in;
     }
@@ -1328,7 +1328,7 @@ final class Decoder {
           }
 
           default: {
-            throw new DecoderException("unknown opcode?? " + opcode);
+            throw new DecoderException("unknown opcode:" + opcode);
           }
         }
       }

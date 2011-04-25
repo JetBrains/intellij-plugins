@@ -1,6 +1,9 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
@@ -12,8 +15,6 @@ final class IndexHistory {
   public static final int NS = 4;
   public static final int NS_SET = 5;
   public static final int MULTINAME = 6;
-
-  public int total, duplicate, totalBytes, duplicateBytes;
 
   private final ConstantPool[] pools;
   private final int[] poolSizes;
@@ -74,11 +75,6 @@ final class IndexHistory {
         }
       }
     }
-
-    total = 0;
-    duplicate = 0;
-    totalBytes = 0;
-    duplicateBytes = 0;
   }
 
   void disableDebugging() {
@@ -100,7 +96,24 @@ final class IndexHistory {
     }
   }
 
-  public void writeTo(ByteBuffer buffer) {
+  public ByteBuffer createBuffer(PoolPart metadataInfo) {
+    int bufferSize = 0;
+    for (PoolPart poolPart : poolParts) {
+      if (poolPart != null && poolPart.totalBytes > bufferSize) {
+        bufferSize = poolPart.totalBytes;
+      }
+    }
+
+    if (metadataInfo.totalBytes > bufferSize) {
+      bufferSize = metadataInfo.totalBytes;
+    }
+
+    final ByteBuffer buffer = ByteBuffer.wrap(new byte[bufferSize + 5 /*u32*/]);
+    buffer.order(ByteOrder.LITTLE_ENDIAN);
+    return buffer;
+  }
+
+  public void writeTo(FileChannel channel, ByteBuffer buffer) throws IOException {
     for (PoolPart poolPart : poolParts) {
       if (poolPart == null) {
         PoolPart.writeU32(buffer, 0);
@@ -108,6 +121,10 @@ final class IndexHistory {
       else {
         poolPart.writeTo(buffer);
       }
+
+      buffer.flip();
+      channel.write(buffer);
+      buffer.clear();
     }
   }
 
@@ -238,13 +255,6 @@ final class IndexHistory {
     if (newIndex == -1) {
       newIndex = poolPart.store(dataIn, start, end);
     }
-    else {
-      duplicate++;
-      duplicateBytes += end - start;
-    }
-
-    total++;
-    totalBytes += end - start;
 
     return newIndex;
   }

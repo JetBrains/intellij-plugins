@@ -1,12 +1,10 @@
 package com.intellij.flex.uiDesigner.abc;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 class DataBuffer {
-  private final int offset;
+  protected final int offset;
 
   protected byte[] data;
   protected int position;
@@ -140,16 +138,8 @@ class DataBuffer {
     return (int)((hash >> 32) ^ hash);
   }
 
-  public void writeTo(OutputStream out) throws IOException {
-    out.write(data, offset, size);
-  }
-
-  public void writeTo(ByteBuffer buffer, int start, int end) {
+  public final void writeTo(ByteBuffer buffer, int start, int end) {
     buffer.put(data, offset + start, end - start);
-  }
-
-  public void writeTo(ByteBuffer buffer) {
-    buffer.put(data, offset, size);
   }
 
   public int minorVersion() {

@@ -7,8 +7,9 @@ import java.nio.ByteBuffer;
 class PoolPart {
   private final ObjectIntHashMap<ByteArray> map;
   private final ByteArray key = createByteArray();
-
   private final ByteArray[] list;
+
+  int totalBytes;
 
   PoolPart(int poolPartLength) {
     map = new ObjectIntHashMap<ByteArray>(poolPartLength);
@@ -29,6 +30,7 @@ class PoolPart {
     int index = map.size() + 1;
     map.put(a, index);
     list[index - 1] = a;
+    totalBytes += end - start;
     return index;
   }
 
@@ -42,24 +44,20 @@ class PoolPart {
     return map.get(key);
   }
 
-  void writeTo(ByteBuffer b) {
-    writeTo(b, 1);
+  void writeTo(ByteBuffer buffer) {
+    writeTo(buffer, 1);
   }
 
-  void writeTo(ByteBuffer b, int f) {
-    final long time = System.currentTimeMillis();
+  void writeTo(ByteBuffer buffer, int f) {
     final int size = map.size();
-    writeU32(b, size == 0 ? 0 : size + f);
+    writeU32(buffer, size == 0 ? 0 : size + f);
     for (int i = 0; i < size; i++) {
       ByteArray a = list[i];
-      a.data.writeTo(b, a.start, a.end);
+      a.data.writeTo(buffer, a.start, a.end);
     }
-   
-    System.out.print("\nf: ");
-    System.out.print(System.currentTimeMillis() - time);
   }
 
-    static void writeU32(ByteBuffer buffer, long v) {
+  static void writeU32(ByteBuffer buffer, long v) {
     if (v < 128 && v >= 0) {
       buffer.put((byte)v);
     }

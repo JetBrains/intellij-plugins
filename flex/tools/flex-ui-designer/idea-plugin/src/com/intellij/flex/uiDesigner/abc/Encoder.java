@@ -5,11 +5,12 @@ import gnu.trove.TIntArrayList;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.List;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
-@SuppressWarnings({"ConstantConditions", "deprecation"})
+@SuppressWarnings({"deprecation"})
 class Encoder {
   private IndexHistory history;
 
@@ -18,7 +19,7 @@ class Encoder {
   private boolean disableDebugging, peepHole;
 
   private BytecodeBuffer2 methodInfo;
-  private ByteArrayPool2 metadataInfo;
+  private MetadataInfoByteArray metadataInfo;
   private BytecodeBuffer2 classInfo;
   private BytecodeBuffer2 scriptInfo;
   private BytecodeBuffer2 methodBodies;
@@ -73,7 +74,7 @@ class Encoder {
       sizes[i] = decoders.get(i).metadataInfo.size();
       total += sizes[i];
     }
-    metadataInfo = new ByteArrayPool2(sizes, total);
+    metadataInfo = new MetadataInfoByteArray(sizes, total);
 
     estimatedSize = 0;
     total = 0;
@@ -116,9 +117,9 @@ class Encoder {
     poolIndex = index;
   }
 
-  public void toABC(ByteBuffer buffer) throws IOException {
-    buffer.clear();
-
+  public void toABC(FileChannel channel) throws IOException {
+    final ByteBuffer buffer = history.createBuffer(metadataInfo);
+    final int filePositionBefore = (int)channel.position();
     buffer.putShort((short)((TagTypes.DoABC2 << 6) | 63));
     buffer.position(6);
     buffer.putInt(1);
@@ -128,15 +129,25 @@ class Encoder {
     buffer.putShort((short)minorVersion);
     buffer.putShort((short)majorVersion);
 
-    history.writeTo(buffer);
-    methodInfo.writeTo(buffer);
-    metadataInfo.writeTo(buffer);
-    classInfo.writeTo(buffer);
-    scriptInfo.writeTo(buffer);
-    methodBodies.writeTo(buffer);
+    buffer.flip();
+    channel.write(buffer);
+    buffer.clear();
 
-    int size = buffer.position() - 6;
-    buffer.putInt(2, size);
+    history.writeTo(channel, buffer);
+
+    metadataInfo.writeTo(buffer);
+    buffer.flip();
+    channel.write(buffer);
+    buffer.clear();
+
+    classInfo.writeTo(channel);
+    scriptInfo.writeTo(channel);
+    methodBodies.writeTo(channel);
+
+    final int size = (int)channel.position() - filePositionBefore - 2;
+    buffer.putInt(size);
+    buffer.flip();
+    channel.write(buffer, filePositionBefore + 2);
   }
 
   public void methodInfo(int returnType, int[] paramTypes, int nativeName, int flags, int[] values, int[] value_kinds, int[] param_names) {
@@ -233,6 +244,7 @@ class Encoder {
     }
   }
 
+  @SuppressWarnings({"ConstantConditions"})
   public void metadataInfo(int index, int name, int[] keys, int[] values) throws DecoderException {
     WritableDataBuffer buffer = new WritableDataBuffer(6);
     buffer.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, name));
@@ -254,6 +266,7 @@ class Encoder {
     metadataInfo.addData(poolIndex, index, buffer);
   }
 
+  @SuppressWarnings({"ConstantConditions"})
   public void startInstance(int name,
                             int superName,
                             boolean isDynamic,
@@ -379,22 +392,24 @@ class Encoder {
     if (((kind >> 4) & TRAIT_FLAG_metadata) != 0) {
       if (metadata == null) {
         currentBuffer.writeU32(0);
-      }
-      else {
-        currentBuffer.writeU32(metadata.size());
+        return;
       }
 
-      for (int i = 0, length = metadata == null ? 0 : metadata.size(); i < length; i++) {
+      currentBuffer.writeU32(metadata.size());
+      for (int i = 0, length = metadata.size(); i < length; i++) {
         currentBuffer.writeU32(metadata.get(i));
       }
     }
   }
 
   private TIntArrayList trimMetadata(int[] metadata) {
-    TIntArrayList newMetadata = new TIntArrayList();
-    int length = metadata != null ? metadata.length : 0;
-    for (int i = 0; i < length; ++i) {
-      int new_index = metadataInfo.getIndex(poolIndex, metadata[i]);
+    if (metadata == null) {
+      return new TIntArrayList(0);
+    }
+
+    TIntArrayList newMetadata = new TIntArrayList(metadata.length);
+    for (int aMetadata : metadata) {
+      int new_index = metadataInfo.getIndex(poolIndex, aMetadata);
       if (new_index != -1) {
         newMetadata.add(new_index);
       }
@@ -594,13 +609,6 @@ class Encoder {
 
   public void OP_returnvoid() {
     if (opcodePass == 1) {
-      /*
-         if (opat(2) == OP_getlocal0 && opat(1) == OP_pushscope)
-           rewind(2);
-
-         if (opat(1) == OP_returnvalue)
-           return;
-         */
       beginop(OP_returnvoid);
     }
   }
@@ -617,28 +625,6 @@ class Encoder {
         OP_returnvoid();
         return;
       }
-
-      // eliminate dead code... maybe do this higher up?
-      /*
-         for (int i=1; i < W; i++)
-         {
-           if (opat(i) == OP_returnvalue)
-           {
-             rewind(i);
-             break;
-           }
-         }
-
-         if (	opat(4) == OP_pushundefined &&
-             opat(3) == OP_coerce_a &&
-             opat(2) == OP_setlocal1 &&
-             opat(1) == OP_getlocal1)
-         {
-           rewind(4);
-           OP_returnvoid();
-           return;
-         }
-         */
 
       beginop(OP_returnvalue);
     }
@@ -682,8 +668,6 @@ class Encoder {
       if (!disableDebugging) {
         beginop(OP_debug);
         opcodes.writeU8(di_local);
-        // FIX: is this a constant pool index? if so, we need to know the constant type...
-        // opcodes.writeU32(index);
         opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, index));
         opcodes.writeU8(slot);
         opcodes.writeU32(linenum);
@@ -702,14 +686,6 @@ class Encoder {
 
   public void OP_jump(int offset, int pos) {
     if (opcodePass == 1) {
-      /*
-         if (opat(1) == OP_jump)
-         {
-           // unreachable
-           return;
-         }
-         */
-
       beginop(OP_jump);
       opcodes.writeS24(offset);
       opcodes.mapOffsets(pos);
@@ -1237,7 +1213,7 @@ class Encoder {
       beginop(OP_lookupswitch);
       opcodes.mapOffsets(oldPos + 1);
       opcodes.writeS24(defaultPos);
-      opcodes.writeU32((casePos == null || casePos.length == 0) ? 0 : casePos.length - 1);
+      opcodes.writeU32(casePos.length == 0 ? 0 : casePos.length - 1);
       for (int i = 0, size = casePos.length; i < size; i++) {
         opcodes.mapOffsets(oldTablePos + 3 * i);
         opcodes.writeS24(casePos[i]);
@@ -2186,12 +2162,12 @@ class Encoder {
     }
   }
 
-  private static class ByteArrayPool2 extends PoolPart {
+  private static class MetadataInfoByteArray extends PoolPart {
     private int size = 0;
     private final int[] sizes;
     private final IntIntHashMap indexes;
 
-    ByteArrayPool2(int[] sizes, int total) {
+    MetadataInfoByteArray(int[] sizes, int total) {
       super(total);
       this.sizes = sizes;
       indexes = new IntIntHashMap(total);
@@ -2225,8 +2201,8 @@ class Encoder {
       return size;
     }
 
-    void writeTo(ByteBuffer b) {
-      writeTo(b, 0);
+    void writeTo(ByteBuffer buffer) {
+      writeTo(buffer, 0);
     }
   }
 
