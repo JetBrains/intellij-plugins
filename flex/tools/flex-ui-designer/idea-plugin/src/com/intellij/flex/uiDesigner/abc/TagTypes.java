@@ -12,4 +12,6 @@ interface TagTypes {
 
   int SetBackgroundColor = 9;
   int ProductInfo = 41;
+  int ScriptLimits = 65;
+  int Metadata = 77;
 }

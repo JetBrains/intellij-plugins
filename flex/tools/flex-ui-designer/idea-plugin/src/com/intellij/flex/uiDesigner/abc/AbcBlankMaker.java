@@ -7,8 +7,8 @@ import java.io.IOException;
 
 final class AbcBlankMaker {
   public static void main(String[] args) throws IOException {
-    new AbcFilter().filter(new File("abc-blank-maker/src/b/library.swf"), new File("idea-plugin/resources/B.abc"), new AbcNameFilterByEquals("_b000"));
-    //d();
+    //new AbcFilter().filter(new File("abc-blank-maker/src/b/library.swf"), new File("idea-plugin/resources/B.abc"), new AbcNameFilterByEquals("_b000"));
+    d();
 
     //u();
   }

@@ -54,6 +54,20 @@ class PoolPart {
     for (int i = 0; i < size; i++) {
       ByteArray a = list[i];
       a.data.writeTo(buffer, a.start, a.end);
+      //if (a.data.offset == 13109 && a.start >= 108 && a.end <= 201) {
+      //  System.out.print("ff");
+      //}
+
+      //if (size > 244) {
+      //  int op = a.data.position();
+      //  a.data.seek(a.start);
+      //  String s = a.data.readString(a.data.readU32());
+      //  if (s.length() > 0 && s.charAt(0) == 'E') {
+      //    System.out.print("ff");
+      //  }
+      //
+      //  a.data.seek(op);
+      //}
     }
   }
 

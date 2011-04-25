@@ -154,6 +154,8 @@ public class AbcFilter extends AbcEncoder {
         case TagTypes.SetBackgroundColor:
         case TagTypes.ProductInfo:
         case TagTypes.DebugID:
+        case TagTypes.ScriptLimits:
+        case TagTypes.Metadata:
           skipTag(length);
           continue;
 

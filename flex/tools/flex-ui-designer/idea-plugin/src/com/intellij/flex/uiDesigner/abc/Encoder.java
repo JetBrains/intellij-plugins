@@ -159,96 +159,94 @@ class Encoder {
     }
   }
 
-  public void methodInfo(int returnType, int[] paramTypes, int nativeName, int flags, int[] values, int[] value_kinds, int[] param_names) {
-    methodInfo.writeU32(paramTypes == null ? 0 : paramTypes.length);
+  public void methodInfo(DataBuffer in) throws DecoderException {
+    int paramCount = in.readU32();
+    methodInfo.writeU32(paramCount);
+    int returnType = in.readU32();
     methodInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, returnType));
 
-    for (int i = 0, paramCount = (paramTypes == null) ? 0 : paramTypes.length; i < paramCount; i++) {
-      methodInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, paramTypes[i]));
+    for (int i = 0; i < paramCount; i++) {
+      methodInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, in.readU32()));
     }
 
+    int nativeName = in.readU32();
     methodInfo.writeU32((disableDebugging) ? 0 : history.getIndex(poolIndex, IndexHistory.STRING, nativeName));
 
+    int flags = in.readU8();
     if (disableDebugging) {
       // Nuke the param names if we're getting rid of debugging info, don't want them showing
       // up in release code
       flags &= ~METHOD_HasParamNames;
     }
-
     methodInfo.writeU8(flags);
 
     if ((flags & METHOD_HasOptional) != 0) {
-      if (values == null) {
-        methodInfo.writeU32(0);
-      }
-      else {
-        methodInfo.writeU32(values.length);
-      }
-    }
-
-    for (int i = 0, optionalCount = (values == null) ? 0 : values.length; i < optionalCount; i++) {
-      int kind = -1;
-
-      switch (value_kinds[i]) {
-        case CONSTANT_Utf8:
-          kind = IndexHistory.STRING;
-          break;
-        case CONSTANT_Integer:
-          kind = IndexHistory.INT;
-          break;
-        case CONSTANT_UInteger:
-          kind = IndexHistory.UINT;
-          break;
-        case CONSTANT_Double:
-          kind = IndexHistory.DOUBLE;
-          break;
-        case CONSTANT_Namespace:
-        case CONSTANT_PrivateNamespace:
-        case CONSTANT_PackageNamespace:
-        case CONSTANT_PackageInternalNs:
-        case CONSTANT_ProtectedNamespace:
-        case CONSTANT_ExplicitNamespace:
-        case CONSTANT_StaticProtectedNs:
-          kind = IndexHistory.NS;
-          break;
-        case CONSTANT_Qname:
-        case CONSTANT_QnameA:
-        case CONSTANT_Multiname:
-        case CONSTANT_MultinameA:
-        case CONSTANT_TypeName:
-          kind = IndexHistory.MULTINAME;
-          break;
-        case CONSTANT_Namespace_Set:
-          kind = IndexHistory.NS_SET;
-          break;
-      }
-
-      int newIndex;
-
-      switch (value_kinds[i]) {
-        case 0:
-        case CONSTANT_False:
-        case CONSTANT_True:
-        case CONSTANT_Null:
-          // The index doesn't matter, as long as its non 0
-          // there are no boolean values in any cpool, instead the value will be determined by the kind byte
-          newIndex = values[i];
-          break;
-        default: {
-          if (kind == -1) {
-            System.out.println("writing MethodInfo: don't know what constant type it is... " + value_kinds[i] + "," + values[i]);
-          }
-          newIndex = history.getIndex(poolIndex, kind, values[i]);
+      int optionalCount = in.readU32();
+      methodInfo.writeU32(optionalCount);
+      for (int i = 0; i < optionalCount; i++) {
+        int value = in.readU32();
+        int kind = -1;
+        int rawKind = in.readU8();
+        switch (rawKind) {
+          case CONSTANT_Utf8:
+            kind = IndexHistory.STRING;
+            break;
+          case CONSTANT_Integer:
+            kind = IndexHistory.INT;
+            break;
+          case CONSTANT_UInteger:
+            kind = IndexHistory.UINT;
+            break;
+          case CONSTANT_Double:
+            kind = IndexHistory.DOUBLE;
+            break;
+          case CONSTANT_Namespace:
+          case CONSTANT_PrivateNamespace:
+          case CONSTANT_PackageNamespace:
+          case CONSTANT_PackageInternalNs:
+          case CONSTANT_ProtectedNamespace:
+          case CONSTANT_ExplicitNamespace:
+          case CONSTANT_StaticProtectedNs:
+            kind = IndexHistory.NS;
+            break;
+          case CONSTANT_Qname:
+          case CONSTANT_QnameA:
+          case CONSTANT_Multiname:
+          case CONSTANT_MultinameA:
+          case CONSTANT_TypeName:
+            kind = IndexHistory.MULTINAME;
+            break;
+          case CONSTANT_Namespace_Set:
+            kind = IndexHistory.NS_SET;
+            break;
         }
-      }
 
-      methodInfo.writeU32(newIndex);
-      methodInfo.writeU8(value_kinds[i]);
+        int newIndex;
+        switch (rawKind) {
+          case 0:
+          case CONSTANT_False:
+          case CONSTANT_True:
+          case CONSTANT_Null:
+            // The index doesn't matter, as long as its non 0
+            // there are no boolean values in any cpool, instead the value will be determined by the kind byte
+            newIndex = value;
+            break;
+          default: {
+            if (kind == -1) {
+              throw new DecoderException("Unknown constant type " + rawKind + " for " + value);
+            }
+            newIndex = history.getIndex(poolIndex, kind, value);
+          }
+        }
+
+        methodInfo.writeU32(newIndex);
+        methodInfo.writeU8(rawKind);
+      }
     }
-    // Nuke the param names if we're not keeping debugging around
-    if ((flags & METHOD_HasParamNames) != 0 && param_names != null) {
-      for (int i = 0, param_namesLength = param_names.length; i < param_namesLength; i++) {
-        methodInfo.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, returnType));
+
+    if ((flags & METHOD_HasParamNames) != 0 && paramCount != 0) {
+      for (int j = 0; j < paramCount; ++j) {
+        methodInfo.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, in.readU32()));
       }
     }
   }
@@ -662,11 +660,61 @@ class Encoder {
     }
   }
 
-  public void OP_debugfile(int index) {
+  public void OP_debugfile(DataBuffer in) {
+    int index = in.readU32();
     if (opcodePass == 1) {
       if (!disableDebugging) {
         beginop(OP_debugfile);
-        opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, index));
+        if (index == 0) {
+          opcodes.writeU32(0);
+        }
+
+        int insertionIndex = history.getInsertionIndex(poolIndex, IndexHistory.STRING, index);
+        int newIndex = history.getNewIndex(insertionIndex);
+        if (newIndex == 0) {
+          // E:\dev\hero_private\frameworks\projects\framework\src => _
+          int originalPosition = in.position();
+          int start = history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[index];
+          in.seek(start);
+          int stringLength = in.readU32();
+          //char[] s = new char[n];
+          //for (int j = 0; j < n; j++) {
+          //  s[j] = (char)in.data[in.position + in.offset + j];
+          //}
+          //String file = new String(s);
+
+          byte[] data = in.data;
+          int c;
+          int actualStart = -1;
+          for (int i = 0; i < stringLength; i++) {
+            c = data[in.position + in.offset + i];
+            if (c > 127) {
+              break; // supports only ASCII
+            }
+
+            if (c == ';') {
+              actualStart = in.position + i - 1;
+              int p = in.offset + actualStart;
+              data[p] = '_';
+              stringLength = stringLength - i + 1;
+              if (stringLength < 128) {
+                actualStart--;
+                data[p - 1] = (byte)stringLength;
+              }
+              else {
+                actualStart -= 2;
+                data[p - 2] = (byte)((stringLength & 0x7F) | 0x80);
+                data[p - 1] = (byte)((stringLength >> 7) & 0x7F);
+              }
+              break;
+            }
+          }
+          in.seek(originalPosition);
+
+          newIndex = history.getIndex(poolIndex, IndexHistory.STRING, index, insertionIndex, actualStart);
+        }
+
+        opcodes.writeU32(newIndex);
       }
     }
   }
@@ -1521,6 +1569,7 @@ class Encoder {
     }
   }
 
+  @SuppressWarnings({"deprecation"})
   public void OP_setglobalslot(int index) {
     if (opcodePass == 1) {
       if (opat(1) == OP_coerce_a) {
@@ -1532,6 +1581,7 @@ class Encoder {
     }
   }
 
+  @SuppressWarnings({"deprecation"})
   public void OP_getglobalslot(int index) {
     if (opcodePass == 1) {
       beginop(OP_getglobalslot);

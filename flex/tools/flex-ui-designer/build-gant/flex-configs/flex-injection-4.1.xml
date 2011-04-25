@@ -1,6 +1,7 @@
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
 	<includes>
 		<symbol>com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray</symbol>
+		<symbol>com.intellij.flex.uiDesigner.flex.FlexDocumentFactory</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.FlexModuleFactory</symbol>
 		<symbol>com.intellij.flex.uiDesigner.css.CssReaderImpl</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.ModuleManager</symbol>
@@ -16,6 +17,8 @@
 		<symbol>com.intellij.flex.uiDesigner.css.ChildStyleManager</symbol>
 		<symbol>mx.styles.StyleProtoChain</symbol>
 		<symbol>mx.styles.StyleManager</symbol>
+		<symbol>mx.managers.LayoutManager</symbol>
+		<symbol>mx.resources.ResourceManager</symbol>
 		<symbol>spark.components.WindowedApplication</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.SparkApplication</symbol>
 	</includes>
@@ -102,9 +105,7 @@
 		<symbol>mx.managers.systemClasses.ActiveWindowManager</symbol>
 		<symbol>mx.core.IUIComponent</symbol>
 		<symbol>mx.core.UIComponent</symbol>
-		<symbol>mx.resources.ResourceManager</symbol>
 		<symbol>mx.resources.IResourceManager</symbol>
-		<symbol>mx.managers.LayoutManager</symbol>
 		<symbol>mx.managers.FocusManager</symbol>
 		<symbol>mx.managers.PopUpManagerImpl</symbol>
 		<symbol>mx.core.mx_internal</symbol>

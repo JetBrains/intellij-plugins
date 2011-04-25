@@ -81,17 +81,30 @@ final class IndexHistory {
     disableDebuggingInfo = true;
   }
 
+  public int[] getRawPartPoolPositions(int poolIndex, int kind) {
+    return pools[poolIndex].positions[kind];
+  }
+
+  public int getNewIndex(int insertionIndex) {
+    return map[insertionIndex];
+  }
+
+  public int getIndex(int poolIndex, int kind, int index, int insertionIndex, int actualStart) {
+    return map[insertionIndex] = decodeOnDemand(poolIndex, kind, index, actualStart);
+  }
+
   public int getIndex(int poolIndex, int kind, int index) {
     if (index == 0) {
       return 0;
     }
     else {
-      int newIndex = calculateIndex(poolIndex, kind, index);
-      if (map[newIndex] == 0) {
-        return map[newIndex] = decodeOnDemand(poolIndex, kind, index);
+      int insertionIndex = getInsertionIndex(poolIndex, kind, index);
+      int newIndex = getNewIndex(insertionIndex);
+      if (newIndex == 0) {
+        return map[insertionIndex] = decodeOnDemand(poolIndex, kind, index, -1);
       }
       else {
-        return map[newIndex];
+        return newIndex;
       }
     }
   }
@@ -128,7 +141,7 @@ final class IndexHistory {
     }
   }
 
-  private int calculateIndex(final int poolIndex, final int kind, final int oldIndex) {
+  public int getInsertionIndex(final int poolIndex, final int kind, final int oldIndex) {
     int index = poolSizes[poolIndex];
     for (int i = kind + 1; i < 7; i++) {
       int length = pools[poolIndex].positions[i].length;
@@ -138,13 +151,13 @@ final class IndexHistory {
     return index + oldIndex - 1;
   }
 
-  private int decodeOnDemand(final int poolIndex, final int kind, final int j) {
+  private int decodeOnDemand(final int poolIndex, final int kind, final int j, int actualStart) {
     final ConstantPool pool = pools[poolIndex];
     final PoolPart poolPart = poolParts[kind];
     final int[] positions = pool.positions[kind];
     final int endPos = pool.ends[kind];
     DataBuffer dataIn = pool.in;
-    int start = positions[j];
+    int start = actualStart == -1 ? positions[j] : actualStart;
     int end = (j != positions.length - 1) ? positions[j + 1] : endPos;
     if (kind == NS) {
       final int pos = positions[j];
@@ -249,6 +262,21 @@ final class IndexHistory {
       dataIn.seek(originalPos);
       end = in_multiname.size();
       dataIn = in_multiname;
+    }
+
+    if (kind == STRING) {
+      //if (start == positions[j]) {
+      //  int op = pool.in.position();
+      //  pool.in.seek(actualStart);
+      //  String s = pool.in.readString(pool.in.readU32());
+      //  pool.in.seek(op);
+      //  if (s.length() > 0 && s.charAt(0) != '_') {
+      //  System.out.print("ff");
+      //}
+    }
+
+    if (start == 9 && end == 93) {
+      System.out.print("ff");
     }
 
     int newIndex = poolPart.contains(dataIn, start, end);

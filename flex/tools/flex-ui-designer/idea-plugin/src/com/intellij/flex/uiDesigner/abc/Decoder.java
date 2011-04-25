@@ -52,7 +52,7 @@ final class Decoder {
     }
   }
 
-  public static final class MethodInfo extends Info {
+  static final class MethodInfo extends Info {
     MethodInfo(DataBuffer in) {
       super(in);
     }
@@ -63,51 +63,14 @@ final class Decoder {
     }
 
     public void decode(int index, Encoder visitor) throws DecoderException {
-      int pos = positions[index];
       int originalPos = in.position();
-      in.seek(pos);
-
-      int paramCount = in.readU32();
-      int returnType = in.readU32();
-
-      int[] paramTypes = null;
-      if (paramCount > 0) {
-        paramTypes = new int[paramCount];
-        for (int j = 0; j < paramCount; j++) {
-          paramTypes[j] = in.readU32();
-        }
-      }
-
-      int nativeName = in.readU32();
-      int flags = in.readU8();
-      int optionalCount = ((flags & METHOD_HasOptional) != 0) ? in.readU32() : 0;
-
-      int[] values = null;
-      int[] value_kinds = null;
-      if (optionalCount > 0) {
-        values = new int[optionalCount];
-        value_kinds = new int[optionalCount];
-        for (int j = 0; j < optionalCount; j++) {
-          values[j] = in.readU32();
-          value_kinds[j] = in.readU8();
-        }
-      }
-
-      int[] paramNames = null;
-      int paramNameCount = ((flags & METHOD_HasParamNames) != 0) ? paramCount : 0;
-      if (paramNameCount > 0) {
-        paramNames = new int[paramNameCount];
-        for (int j = 0; j < paramNameCount; ++j) {
-          paramNames[j] = in.readU32();
-        }
-      }
+      in.seek(positions[index]);
+      visitor.methodInfo(in);
       in.seek(originalPos);
-
-      visitor.methodInfo(returnType, paramTypes, nativeName, flags, values, value_kinds, paramNames);
     }
   }
 
-  public static final class MetaDataInfo extends Info {
+  static final class MetaDataInfo extends Info {
     MetaDataInfo(DataBuffer in) {
       super(in);
     }
@@ -330,7 +293,7 @@ final class Decoder {
   }
 
   @SuppressWarnings({"deprecation"})
-  public static class Opcodes {
+  private static class Opcodes {
     public Opcodes(DataBuffer in) {
       this.in = in;
     }
@@ -483,9 +446,7 @@ final class Decoder {
             continue;
           }
           case OP_debugfile: {
-            int index = in.readU32(); // constant pool index...
-            // String file = constantPool.getString(index);
-            v.OP_debugfile(index);
+            v.OP_debugfile(in);
             continue;
           }
           case OP_jump: {

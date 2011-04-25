@@ -79,7 +79,7 @@ class WritableDataBuffer extends DataBuffer {
     data[size++] = (byte)(v >> 16);
   }
 
-  public void writeU32(long v) {
+  public void writeU32(int v) {
     if (v < 128 && v > -1) {
       resize(1);
       data[size++] = (byte)v;

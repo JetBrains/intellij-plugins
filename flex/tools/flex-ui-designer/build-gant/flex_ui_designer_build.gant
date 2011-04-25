@@ -93,8 +93,6 @@ private def invokeAbcBuilder(sandbox, flexVersion) {
       pathelement(path: "$sandbox/classes/production/flex-ui-designer")
       pathelement(path: "$sandbox/classes/production/util")
       pathelement(path: "$home/community/plugins/maven/maven2-server-impl/lib/maven-2.2.1-uber.jar")
-      pathelement(path: "$flexBuildHome/../idea-plugin/lib/asc.jar")
-      pathelement(path: "$flexBuildHome/../idea-plugin/lib/swfutils.jar")
     }
     arg(value: "$flexSandbox") // folder
     arg(value: "$flexVersion") // flex version
