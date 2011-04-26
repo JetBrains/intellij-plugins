@@ -59,6 +59,10 @@ public class FlashBuilderProjectLoadUtil {
   private static final String SOURCE_PATH_ATTR = "sourcePath";
   private static final String BUILD_CSS_FILES_ELEMENT = "buildCSSFiles";
   private static final String BUILD_CSS_FILE_ENTRY_ELEMENT = "buildCSSFileEntry";
+  private static final String BUILD_TARGETS_ELEMENT = "buildTargets";
+  private static final String BUILD_TARGET_ELEMENT = "buildTarget";
+  private static final String BUILD_TARGET_NAME_ATTR = "buildTargetName";
+  private static final String ANDROID_PLATFORM_ATTR_VALUE = "com.adobe.flexide.multiplatform.android.platform";
 
   private FlashBuilderProjectLoadUtil() {
   }
@@ -206,18 +210,31 @@ public class FlashBuilderProjectLoadUtil {
                                       final Element compilerElement) {
     final VirtualFile dir = dotProjectFile.getParent();
     assert dir != null;
-    if (dir.findChild(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES) == null &&
-        dir.findChild(FlashBuilderImporter.DOT_FLEX_PROPERTIES) == null) {
+
+    final Attribute useApolloConfigAttr = compilerElement.getAttribute(USE_APOLLO_CONFIG_ATTR);
+    if (useApolloConfigAttr != null && useApolloConfigAttr.getValue().equals("true")) {
+      final Element parentElement = compilerElement.getParentElement();
+      //noinspection unchecked
+      for (final Element buildTargetsElement : (Iterable<Element>)(parentElement
+                                                                     .getChildren(BUILD_TARGETS_ELEMENT, parentElement.getNamespace()))) {
+        //noinspection unchecked
+        for (final Element buildTargetElement : (Iterable<Element>)(buildTargetsElement
+                                                                      .getChildren(BUILD_TARGET_ELEMENT, parentElement.getNamespace()))) {
+          if (ANDROID_PLATFORM_ATTR_VALUE.equals(buildTargetElement.getAttributeValue(BUILD_TARGET_NAME_ATTR))) {
+            flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.MobileAIR);
+            return;
+          }
+        }
+      }
+
+      flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.AIR);
+    }
+    else if (dir.findChild(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES) == null &&
+             dir.findChild(FlashBuilderImporter.DOT_FLEX_PROPERTIES) == null) {
       flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.ActionScript);
     }
     else {
-      final Attribute useApolloConfigAttr = compilerElement.getAttribute(USE_APOLLO_CONFIG_ATTR);
-      if (useApolloConfigAttr != null && useApolloConfigAttr.getValue().equals("true")) {
-        flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.AIR);
-      }
-      else {
-        flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.Flex);
-      }
+      flashBuilderProject.setProjectType(FlashBuilderProject.ProjectType.Flex);
     }
   }
 

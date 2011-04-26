@@ -33,7 +33,14 @@ public class FlashBuilderProject {
   private Collection<String> myCssFilesToCompile = new ArrayList<String>();
 
   public enum ProjectType {
-    ActionScript, Flex, AIR
+    ActionScript,
+    Flex,
+    AIR,
+    MobileAIR {
+      public String toString() {
+        return "Mobile AIR";
+      }
+    }
   }
 
   FlashBuilderProject() {

@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
+import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -247,8 +248,11 @@ public class FlashBuilderSdkFinder {
   @Nullable
   private static Sdk createOrGetSdk(final String sdkHomePath, final FlashBuilderProject.ProjectType projectType) {
     //noinspection RedundantCast
-    final SdkType sdkType =
-      projectType == FlashBuilderProject.ProjectType.AIR ? (SdkType)AirSdkType.getInstance() : (SdkType)FlexSdkType.getInstance();
+    final SdkType sdkType = projectType == FlashBuilderProject.ProjectType.AIR
+                            ? (SdkType)AirSdkType.getInstance()
+                            : projectType == FlashBuilderProject.ProjectType.MobileAIR
+                              ? (SdkType)AirMobileSdkType.getInstance()
+                              : (SdkType)FlexSdkType.getInstance();
     return FlexSdkUtils.createOrGetSdk(sdkType, sdkHomePath);
   }
 
