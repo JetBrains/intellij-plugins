@@ -11,17 +11,10 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   private static final int SERVICE_DATA_SIZE = 4;
 
   private int lastBlockBegin;
-  private final OutputStream out;
+  private OutputStream out;
   private final List<Marker> markers = new ArrayList<Marker>();
 
-  public BlockDataOutputStream(@NotNull OutputStream out) {
-    this(out, 64 * 1024);
-  }
-
-  public BlockDataOutputStream(@NotNull OutputStream out, int size) {
-    super(size);
-    count = SERVICE_DATA_SIZE;
-
+  public void setOut(@NotNull OutputStream out) {
     String debugFilename = System.getProperty("fud.socket.dump");
     DebugOutput debugOut;
     if (debugFilename != null) {
@@ -41,6 +34,22 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     else {
       this.out = out;
     }
+  }
+
+  public void reset() {
+    count = SERVICE_DATA_SIZE;
+    lastBlockBegin = 0;
+    markers.clear();
+    this.out = null;
+  }
+
+  public BlockDataOutputStream() {
+    this(64 * 1024);
+  }
+
+  public BlockDataOutputStream(int size) {
+    super(size);
+    count = SERVICE_DATA_SIZE;
   }
   
   public OutputStream writeUnbufferedHeader(int size) throws IOException {
@@ -74,7 +83,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     }
 
     writeHeader();
-    if (count >= 8192) {
+    if (count >= 8192 && out != null) {
       flushBuffer();
     }
     else {
@@ -228,7 +237,9 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
 
   @Override
   public void close() throws IOException {
-    out.close();
+    if (out != null) {
+      out.close();
+    }
   }
 
   public ByteRange startRange() {

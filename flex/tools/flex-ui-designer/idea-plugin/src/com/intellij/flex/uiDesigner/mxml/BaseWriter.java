@@ -5,7 +5,6 @@ import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
 import com.intellij.xml.util.ColorSampleLookupValue;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -17,11 +16,16 @@ public final class BaseWriter {
 
   private int startPosition;
 
-  private BlockDataOutputStream blockOut;
-  private PrimitiveAmfOutputStream out;
+  private final BlockDataOutputStream blockOut;
+  private final PrimitiveAmfOutputStream out;
 
   private final Scope rootScope = new Scope();
   private int preallocatedId = -1;
+
+  public BaseWriter(PrimitiveAmfOutputStream out) {
+    this.out = out;
+    blockOut = out.getBlockOut();
+  }
 
   public Scope getRootScope() {
     return rootScope;
@@ -29,11 +33,6 @@ public final class BaseWriter {
 
   public PrimitiveAmfOutputStream getOut() {
     return out;
-  }
-
-  public void setOutput(@NotNull PrimitiveAmfOutputStream out) {
-    this.out = out;
-    blockOut = out.getBlockOut();
   }
 
   public BlockDataOutputStream getBlockOut() {
@@ -77,8 +76,6 @@ public final class BaseWriter {
   public void reset() {
     resetAfterMessage();
 
-    out = null;
-    blockOut = null;
     ARRAY = -1;
   }
 

@@ -23,27 +23,20 @@ import java.io.OutputStream;
 import java.util.List;
 
 public class Client implements Closable {
-  protected AmfOutputStream out;
-  protected BlockDataOutputStream blockOut;
+  protected final BlockDataOutputStream blockOut = new BlockDataOutputStream();
+  protected final AmfOutputStream out = new AmfOutputStream(blockOut);
 
-  private final MxmlWriter mxmlWriter = new MxmlWriter();
+  private final MxmlWriter mxmlWriter = new MxmlWriter(out);
 
   private final InfoList<Module, ModuleInfo> registeredModules = new InfoList<Module, ModuleInfo>();
   private final InfoList<Project, ProjectInfo> registeredProjects = new InfoList<Project, ProjectInfo>();
-
-  public Client(OutputStream out) {
-    setOutput(out);
-  }
 
   public AmfOutputStream getOutput() {
     return out;
   }
 
-  public void setOutput(OutputStream out) {
-    blockOut = new BlockDataOutputStream(out);
-    this.out = new AmfOutputStream(blockOut);
-
-    mxmlWriter.setOutput(this.out);
+  public void setOut(OutputStream out) {
+    blockOut.setOut(out);
   }
 
   public boolean isModuleRegistered(Module module) {
@@ -71,10 +64,7 @@ public class Client implements Closable {
   @Override
   // synchronized due to out, otherwise may be NPE at out.closeWithoutFlush() (meaningful primary for tests)
   public synchronized void close() throws IOException {
-    if (out == null) {
-      return;
-    }
-    blockOut = null;
+    out.reset();
 
     registeredModules.clear();
     registeredProjects.clear();
@@ -84,12 +74,7 @@ public class Client implements Closable {
     BinaryFileManager.getInstance().reset();
     LibraryManager.getInstance().reset();
 
-    try {
-      out.closeWithoutFlush();
-    }
-    finally {
-      out = null;
-    }
+    out.closeWithoutFlush();
   }
 
   public void openProject(Project project) throws IOException {
@@ -242,7 +227,7 @@ public class Client implements Closable {
     out.write(librarySetIds);
     out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
 
-    out.reset();
+    out.resetAfterMessage();
     blockOut.end();
   }
 
@@ -369,10 +354,6 @@ public class Client implements Closable {
 
   public void initStringRegistry() throws IOException {
     StringRegistry stringRegistry = ServiceManager.getService(StringRegistry.class);
-    if (stringRegistry.isEmpty()) {
-      return;
-    }
-
     beginMessage(ClientMethod.initStringRegistry);
     out.write(stringRegistry.toArray());
 

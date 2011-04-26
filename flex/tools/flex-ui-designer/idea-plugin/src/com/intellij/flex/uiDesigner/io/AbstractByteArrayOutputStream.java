@@ -15,6 +15,10 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream {
     return count;
   }
 
+  public void reset() {
+    count = 0;
+  }
+
   public void setPosition(int newPosition) {
     count = newPosition;
   }

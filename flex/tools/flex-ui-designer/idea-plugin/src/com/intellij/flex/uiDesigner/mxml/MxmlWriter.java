@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
-import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
@@ -36,23 +35,25 @@ import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PRIMITIVE;
 public class MxmlWriter {
   static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
 
-  private PrimitiveAmfOutputStream out;
+  private final PrimitiveAmfOutputStream out;
 
   private final ProblemsHolder problemsHolder = new ProblemsHolder();
-  private final BaseWriter writer = new BaseWriter();
+  private final BaseWriter writer;
   private StateWriter stateWriter;
-  private final InjectedASWriter injectedASWriter = new InjectedASWriter(writer, problemsHolder);
+  private final InjectedASWriter injectedASWriter;
 
   private XmlTextValueProvider xmlTextValueProvider;
   private XmlTagValueProvider xmlTagValueProvider;
   private final XmlAttributeValueProvider xmlAttributeValueProvider = new XmlAttributeValueProvider();
 
   private boolean hasStates;
-  private final PropertyProcessor propertyProcessor = new PropertyProcessor(injectedASWriter, writer);
+  private final PropertyProcessor propertyProcessor;
 
-  public void setOutput(PrimitiveAmfOutputStream out) {
+  public MxmlWriter(PrimitiveAmfOutputStream out) {
     this.out = out;
-    writer.setOutput(this.out);
+    writer = new BaseWriter(out);
+    injectedASWriter = new InjectedASWriter(writer, problemsHolder);
+    propertyProcessor = new PropertyProcessor(injectedASWriter, writer);
   }
 
   public Result write(@NotNull final XmlFile psiFile) throws IOException {
@@ -104,7 +105,6 @@ public class MxmlWriter {
   public void reset() {
     resetAfterMessage();
 
-    out = null;
     writer.reset();
     if (stateWriter != null) {
       stateWriter.reset();

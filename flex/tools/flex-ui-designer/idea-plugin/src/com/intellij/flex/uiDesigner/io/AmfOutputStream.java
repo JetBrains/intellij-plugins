@@ -14,15 +14,18 @@ public class AmfOutputStream extends PrimitiveAmfOutputStream {
     super(out);
   }
 
-  @Override
-  public void reset() {
+  public void resetAfterMessage() {
     if (stringTable != null) {
       stringTable.clear();
     }
     if (traitsTable != null) {
       traitsTable.clear();
     }
+  }
 
+  @Override
+  public void reset() {
+    resetAfterMessage();
     super.reset();
   }
 

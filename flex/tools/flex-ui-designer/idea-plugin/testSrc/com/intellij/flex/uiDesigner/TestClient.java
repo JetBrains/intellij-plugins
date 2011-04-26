@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 class TestClient extends Client {
-  public TestClient(OutputStream output) {
-    super(output);
+  public TestClient(OutputStream out) {
+    setOut(out);
   }
 
   public void test(String filename, String parentFilename) throws IOException {

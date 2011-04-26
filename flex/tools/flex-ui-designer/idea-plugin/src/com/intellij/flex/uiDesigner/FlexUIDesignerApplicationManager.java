@@ -41,7 +41,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public static final String DESIGNER_SWF = "designer.swf";
   public static final String DESCRIPTOR_XML = "descriptor.xml";
 
-  protected Client client;
+  protected Client client = createClient();
   public ProcessHandler adlProcessHandler;
   private Server server;
 
@@ -65,6 +65,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   public Client getClient() {
     return client;
+  }
+
+  protected Client createClient() {
+    return new Client();
   }
 
   @Override
@@ -342,26 +346,69 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     private final Module myModule;
     private final XmlFile myPsiFile;
 
+    private boolean libraryAndModuleInitialized;
+    private boolean clientOpened;
+
     public PendingOpenDocumentTask(@NotNull Project project, @NotNull Module module, @NotNull XmlFile psiFile) {
       myProject = project;
       myModule = module;
       myPsiFile = psiFile;
+
+      if (!ServiceManager.getService(StringRegistry.class).isEmpty()) {
+        try {
+          client.initStringRegistry();
+        }
+        catch (IOException e) {
+          LOG.error(e); // never can be, because socket out is null at this moment
+        }
+      }
+
+      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            initLibrarySets(myProject, myModule);
+          }
+          catch (IOException e) {
+            try {
+              server.close();
+            }
+            catch (IOException innerError) {
+              LOG.error(innerError);
+            }
+            finally {
+              serverClosed();
+            }
+            LOG.error(e);
+          }
+          catch (InitException e) {
+            LOG.error(e.getCause());
+            DocumentProblemManager.getInstance().reportWithTitle(myProject, e.getMessage());
+          }
+
+          libraryAndModuleInitialized = true;
+          if (clientOpened) {
+            openDocument();
+          }
+        }
+      });
     }
 
-    public void setOutput(OutputStream outputStream) {
-      if (client == null) {
-        client = new Client(outputStream);
-      }
-      else {
-        client.setOutput(outputStream);
-      }
+    public void setOut(OutputStream out) {
+      client.setOut(out);
     }
 
     @Override
     public void run() {
+      clientOpened = true;
+      if (libraryAndModuleInitialized) {
+        openDocument();
+      }
+    }
+
+    private void openDocument() {
       try {
-        client.initStringRegistry();
-        initLibrarySets(myProject, myModule);
+        client.flush();
         client.openDocument(myModule, myPsiFile);
         client.flush();
 
@@ -378,10 +425,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           serverClosed();
         }
         LOG.error(e);
-      }
-      catch (InitException e) {
-        LOG.error(e.getCause());
-        DocumentProblemManager.getInstance().reportWithTitle(myProject, e.getMessage());
       }
       finally {
         documentOpening = false;

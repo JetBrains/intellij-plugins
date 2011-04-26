@@ -25,10 +25,6 @@ public final class ByteArrayOutputStreamEx extends AbstractByteArrayOutputStream
     out.write(buffer, 0, count);
   }
 
-  public void reset() {
-    count = 0;
-  }
-
   public byte[] toByteArray() {
     return Arrays.copyOf(buffer, count);
   }

@@ -139,6 +139,10 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     public void setClient(TestClient client) {
       this.client = client;
     }
+
+    protected Client createClient() {
+      return client;
+    }
   }
 
   private void registerModule(ModuleInfo moduleInfo, StringRegistry.StringWriter stringWriter) throws IOException {

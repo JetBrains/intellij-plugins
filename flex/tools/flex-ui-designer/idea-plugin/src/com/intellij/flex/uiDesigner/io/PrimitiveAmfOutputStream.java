@@ -34,9 +34,7 @@ public class PrimitiveAmfOutputStream extends OutputStream {
   }
 
   void resetSizeAndPosition() {
-    if (out instanceof ByteArrayOutputStreamEx) {
-      ((ByteArrayOutputStreamEx)out).reset();
-    }
+    out.reset();
   }
 
   public AbstractByteArrayOutputStream getByteOut() {

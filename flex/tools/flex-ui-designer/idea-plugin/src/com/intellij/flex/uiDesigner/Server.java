@@ -86,7 +86,7 @@ class Server implements Runnable, Closable {
       }
     });
 
-    myPendingTask.setOutput(socketOutputStream);
+    myPendingTask.setOut(socketOutputStream);
     myPendingTask.run();
     myPendingTask = null;
   }
