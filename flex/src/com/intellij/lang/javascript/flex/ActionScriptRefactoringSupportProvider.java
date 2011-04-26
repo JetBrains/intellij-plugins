@@ -34,11 +34,6 @@ public class ActionScriptRefactoringSupportProvider extends JavascriptRefactorin
   }
 
   @Override
-  public ChangeSignatureHandler getChangeSignatureHandler() {
-    return new JSChangeSignatureHandler();
-  }
-
-  @Override
   public RefactoringActionHandler getPullUpHandler() {
     return new JSPullUpHandler();
   }

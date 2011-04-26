@@ -51,8 +51,8 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
   }
 
   @Override
-  protected boolean isShowDefaultValueColumn() {
-    return false;
+  protected String getDefaultValueColumnTitle() {
+    return null;
   }
 
   @Override
@@ -132,11 +132,11 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
 
   @Override
   protected JPanel createVisibilityPanel(JPanel subPanel) {
+    JPanel visibilityPanel = super.createVisibilityPanel(subPanel);
     if (myMethod.isConstructor()) {
-      return super.createVisibilityPanel(subPanel);
+      return visibilityPanel;
     }
 
-    JPanel visibilityPanel = super.createVisibilityPanel(subPanel);
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(visibilityPanel, BorderLayout.NORTH);
     myStaticCb = new JCheckBox(JSBundle.message("declare.static"));
