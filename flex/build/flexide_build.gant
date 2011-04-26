@@ -9,7 +9,7 @@ includeTool << Jps
 
 def product = "FlexIDE"
 
-requireProperty("buildNumber", requireProperty("build.number", "106.SNAPSHOT"))
+requireProperty("buildNumber", requireProperty("build.number", "108.SNAPSHOT"))
 setProperty("buildName", "${product}-${buildNumber}")
 setProperty("product", "${product}")
 
