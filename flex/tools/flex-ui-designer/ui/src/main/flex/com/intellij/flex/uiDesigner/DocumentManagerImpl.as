@@ -8,7 +8,11 @@ import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 import com.intellij.flex.uiDesigner.ui.DocumentContainer;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
 
+import flash.desktop.DockIcon;
+import flash.desktop.NativeApplication;
+import flash.desktop.NotificationType;
 import flash.display.DisplayObject;
+import flash.display.NativeWindow;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.EventDispatcher;
@@ -56,7 +60,17 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
     if (doOpen(documentFactory, document)) {
       documentFactory.document = document;
-      ProjectView(module.project.window.contentView).addDocument(document);
+      var w:DocumentWindow = module.project.window;
+      ProjectView(w.contentView).addDocument(document);
+      if (NativeWindow.supportsNotification) {
+        w.nativeWindow.notifyUser(NotificationType.INFORMATIONAL);
+      }
+      else {
+        var dockIcon:DockIcon = NativeApplication.nativeApplication.icon as DockIcon;
+        if (dockIcon != null) {
+          dockIcon.bounce()
+        }
+      }
     }
   }
 
