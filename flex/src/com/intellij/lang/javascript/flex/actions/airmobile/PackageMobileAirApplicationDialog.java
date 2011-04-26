@@ -1,10 +1,12 @@
-package com.intellij.lang.javascript.flex.actions.airinstaller;
+package com.intellij.lang.javascript.flex.actions.airmobile;
 
 import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.ide.passwordSafe.PasswordSafeException;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
+import com.intellij.lang.javascript.flex.actions.airinstaller.CertificateParameters;
+import com.intellij.lang.javascript.flex.actions.airinstaller.CreateCertificateDialog;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.fileChooser.FileChooser;
@@ -27,7 +29,6 @@ import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.CellEditorComponentWithBrowseButton;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -48,10 +49,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParameters.FilePathAndPathInPackage;
+import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.*;
 
-public class PackageAirInstallerDialog extends DialogWrapper {
+public class PackageMobileAirApplicationDialog extends DialogWrapper {
 
   private JPanel myMainPanel;
+
+  private JComboBox myTargetPlatformCombo;
+  private JLabel myPackageTypeLabel;
+  private JComboBox myAndroidPackageTypeCombo;
+  private JComboBox myIOSPackageTypeCombo;
 
   private LabeledComponent<FlexSdkComboBoxWithBrowseButton> myFlexSdkComponent;
   private LabeledComponent<ComboboxWithBrowseButton> myAirDescriptorComponent;
@@ -62,12 +69,12 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   private JButton myAddButton;
   private JButton myRemoveButton;
 
+  private JLabel myProvisioningProfileLabel;
+  private TextFieldWithBrowseButton myProvisioningProfileTextWithBrowse;
   private JButton myCreateCertButton;
   private JComboBox myKeystoreTypeCombo;
   private JPasswordField myKeystorePasswordField;
   private TextFieldWithBrowseButton myKeystoreFileTextWithBrowse;
-  private JCheckBox myDoNotSignCheckBox;
-  private JPanel mySigningOptionsPanel;
   private JLabel myKeyAliasLabel;
   private JTextField myKeyAliasTextField;
   private JLabel myKeyPasswordLabel;
@@ -81,31 +88,37 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   private final Project myProject;
 
   private final List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<FilePathAndPathInPackage>();
-  private static final String TITLE = "Package AIR Installation File";
+  private static final String TITLE = "Package Mobile AIR Application";
 
   private static final String MORE_OPTIONS = "More options";
   private static final String LESS_OPTIONS = "Less options";
 
-  private static final String AIR_INSTALLER_KEYSTORE_PASSWORD_KEY = "AIR_INSTALLER_KEYSTORE_PASSWORD_KEY";
-  private static final String AIR_INSTALLER_KEY_PASSWORD_KEY = "AIR_INSTALLER_KEY_PASSWORD_KEY";
+  private static final String MOBILE_AIR_PACKAGE_KEYSTORE_PASSWORD_KEY = "MOBILE_AIR_PACKAGE_KEYSTORE_PASSWORD_KEY";
+  private static final String MOBILE_AIR_PACKAGE_KEY_PASSWORD_KEY = "MOBILE_AIR_PACKAGE_KEY_PASSWORD_KEY";
 
-  public PackageAirInstallerDialog(final Project project) {
+  public PackageMobileAirApplicationDialog(final Project project) {
     super(project, true);
     myProject = project;
     setTitle(TITLE);
     setOKButtonText("Package");
+    initTargetSpecificControls();
     initAirDescriptorComponent();
     initInstallerLocationComponent();
     initTable();
     initTableButtons();
-    initSigningOptions();
     initCreateCertButton();
     initMoreOptionsHyperlinkLabel();
 
+    myProvisioningProfileTextWithBrowse
+      .addBrowseFolderListener(null, null, myProject, new FileChooserDescriptor(true, false, false, false, false, false));
+    myKeystoreFileTextWithBrowse.addBrowseFolderListener(null, null, myProject,
+                                                         new FileChooserDescriptor(true, false, false, false, false, false));
+
     loadDefaultParameters();
+    updateTargetSpecificControls();
     updateRemoveButtonState();
     updateMoreOptions();
-    updateSigningOptionsPanel();
+
     init();
   }
 
@@ -113,11 +126,17 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     return myAirDescriptorComponent.getComponent().getComboBox();
   }
 
-  private void updateSigningOptionsPanel() {
-    UIUtil.setEnabled(mySigningOptionsPanel, !myDoNotSignCheckBox.isSelected(), true);
-    if (myMoreOptionsHyperlinkLabel.isEnabled()) {
-      myMoreOptionsHyperlinkLabel.setForeground(Color.BLUE); // workaround of JLabel-related workaround at UIUtil.setEnabled(..)
-    }
+  private void updateTargetSpecificControls() {
+    final boolean isAndroid = myTargetPlatformCombo.getSelectedItem() == MobilePlatform.Android;
+    final boolean isIOS = myTargetPlatformCombo.getSelectedItem() == MobilePlatform.iOS;
+
+    myAndroidPackageTypeCombo.setVisible(isAndroid);
+    myIOSPackageTypeCombo.setVisible(isIOS);
+    myPackageTypeLabel.setLabelFor(isAndroid ? myAndroidPackageTypeCombo : myIOSPackageTypeCombo);
+
+    myProvisioningProfileLabel.setVisible(isIOS);
+    myProvisioningProfileTextWithBrowse.setVisible(isIOS);
+    myCreateCertButton.setVisible(isAndroid);
   }
 
   private void initAirDescriptorComponent() {
@@ -152,7 +171,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     try {
       final String fileName = FlexUtils.findXMLElement(airDescriptor.getInputStream(), "<application><filename>");
       if (!StringUtil.isEmpty(fileName)) {
-        myInstallerFileNameComponent.getComponent().setText(fileName + ".air");
+        myInstallerFileNameComponent.getComponent().setText(fileName + getDotExtension());
       }
     }
     catch (IOException e) {/*ignore*/}
@@ -173,7 +192,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
 
     try {
       final String contentPath = FlexUtils.findXMLElement(airDescriptor.getInputStream(), "<application><initialWindow><content>");
-      if (!StringUtil.isEmptyOrSpaces(contentPath)) {
+      if (contentPath != null && !StringUtil.isEmptyOrSpaces(contentPath)) {
         if (myFilesToPackage.isEmpty() || !myFilesToPackage.get(0).PATH_IN_PACKAGE.equals(contentPath)) {
           boolean tableRowAdded = false;
           if (module != null) {
@@ -202,10 +221,10 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   private void initInstallerLocationComponent() {
     myInstallerLocationComponent.getComponent()
       .addBrowseFolderListener(null, null, myProject, new FileChooserDescriptor(false, true, false, false, false, false) {
-          public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-            return super.isFileVisible(file, showHiddenFiles) && file.isDirectory();
-          }
-        }, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+                                 public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
+                                   return super.isFileVisible(file, showHiddenFiles) && file.isDirectory();
+                                 }
+                               }, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
   }
 
   private void initTable() {
@@ -298,22 +317,29 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     });
   }
 
-  private void initSigningOptions() {
-    myDoNotSignCheckBox.addActionListener(new ActionListener() {
+  private void initTargetSpecificControls() {
+    myTargetPlatformCombo.setModel(new DefaultComboBoxModel(MobilePlatform.values()));
+    myTargetPlatformCombo.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        updateSigningOptionsPanel();
+        updateTargetSpecificControls();
 
         final String fileName = myInstallerFileNameComponent.getComponent().getText().trim();
-        String newName = fileName.endsWith(".air")
-                         ? fileName.substring(0, fileName.length() - ".air".length())
-                         : fileName.endsWith(".airi") ? fileName.substring(0, fileName.length() - ".airi".length()) : fileName;
-        newName += myDoNotSignCheckBox.isSelected() ? ".airi" : ".air";
+        String newName = fileName.endsWith(".apk")
+                         ? fileName.substring(0, fileName.length() - ".apk".length())
+                         : fileName.endsWith(".ipa") ? fileName.substring(0, fileName.length() - ".ipa".length()) : fileName;
+        newName += getDotExtension();
         myInstallerFileNameComponent.getComponent().setText(newName);
       }
     });
 
-    myKeystoreFileTextWithBrowse
-      .addBrowseFolderListener(null, null, myProject, new FileChooserDescriptor(true, false, false, false, false, false));
+    myAndroidPackageTypeCombo.setModel(new DefaultComboBoxModel(AndroidPackageType.values()));
+    myIOSPackageTypeCombo.setModel(new DefaultComboBoxModel(IOSPackageType.values()));
+  }
+
+  private String getDotExtension() {
+    final boolean isAndroid = myTargetPlatformCombo.getSelectedItem() == MobilePlatform.Android;
+    final boolean isIOS = myTargetPlatformCombo.getSelectedItem() == MobilePlatform.iOS;
+    return isAndroid ? ".apk" : isIOS ? ".ipa" : "";
   }
 
   private void initCreateCertButton() {
@@ -406,7 +432,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
       cellEditor.stopCellEditing();
     }
 
-    if (validateInput() && packageAirInstaller()) {
+    if (validateInput() && packageMobileApplication()) {
       super.doOKAction();
     }
   }
@@ -476,30 +502,43 @@ public class PackageAirInstallerDialog extends DialogWrapper {
       }
     }
 
-    if (!myDoNotSignCheckBox.isSelected()) {
-      final String keystorePath = myKeystoreFileTextWithBrowse.getText().trim();
-      if (keystorePath.length() == 0) {
-        return "Keystore file path is empty";
+    if (myTargetPlatformCombo.getSelectedItem() == MobilePlatform.iOS) {
+      final String provisioningProfilePath = myProvisioningProfileTextWithBrowse.getText().trim();
+      if (provisioningProfilePath.length() == 0) {
+        return "Provisioning profile file path is empty";
       }
 
-      final VirtualFile keystore = LocalFileSystem.getInstance().findFileByPath(keystorePath);
-      if (keystore == null || keystore.isDirectory()) {
-        return FlexBundle.message("file.not.found", keystorePath);
+      final VirtualFile provisioningProfile = LocalFileSystem.getInstance().findFileByPath(provisioningProfilePath);
+      if (provisioningProfile == null || provisioningProfile.isDirectory()) {
+        return FlexBundle.message("file.not.found", provisioningProfilePath);
       }
+    }
 
-      if (myKeystorePasswordField.getPassword().length == 0) {
-        return "Keystore password is empty";
-      }
+    final String keystorePath = myKeystoreFileTextWithBrowse.getText().trim();
+    if (keystorePath.length() == 0) {
+      return "Keystore file path is empty";
+    }
+
+    final VirtualFile keystore = LocalFileSystem.getInstance().findFileByPath(keystorePath);
+    if (keystore == null || keystore.isDirectory()) {
+      return FlexBundle.message("file.not.found", keystorePath);
+    }
+
+    if (myKeystorePasswordField.getPassword().length == 0) {
+      return "Keystore password is empty";
     }
     return null;
   }
 
-  private AirInstallerParameters getAirInstallerParameters() {
+  private MobileAirPackageParameters getPackageParameters() {
+    final MobilePlatform mobilePlatform = (MobilePlatform)myTargetPlatformCombo.getSelectedItem();
+    final AndroidPackageType androidPackageType = (AndroidPackageType)myAndroidPackageTypeCombo.getSelectedItem();
+    final IOSPackageType iOSPackageType = (IOSPackageType)myIOSPackageTypeCombo.getSelectedItem();
     final Sdk flexSdk = myFlexSdkComponent.getComponent().getSelectedSdk();
     final String airDescriptorPath = ((String)myAirDescriptorComponent.getComponent().getComboBox().getEditor().getItem()).trim();
     final String installerFileName = myInstallerFileNameComponent.getComponent().getText().trim();
     final String installerFileLocation = myInstallerLocationComponent.getComponent().getText().trim();
-    final boolean doNotSign = myDoNotSignCheckBox.isSelected();
+    final String provisioningProfilePath = myProvisioningProfileTextWithBrowse.getText().trim();
     final String keystorePath = myKeystoreFileTextWithBrowse.getText().trim();
     final String keystoreType = (String)myKeystoreTypeCombo.getSelectedItem();
     final String keystorePassword = new String(myKeystorePasswordField.getPassword());
@@ -509,8 +548,10 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     final String provider = showingMore ? myProviderClassNameTextField.getText().trim() : "";
     final String tsa = showingMore ? myTsaUrlTextField.getText().trim() : "";
 
-    return new AirInstallerParameters(flexSdk, airDescriptorPath, installerFileName, installerFileLocation, myFilesToPackage, doNotSign,
-                                      keystorePath, keystoreType, keystorePassword, keyAlias, keyPassword, provider, tsa);
+    return new MobileAirPackageParameters(mobilePlatform, androidPackageType, iOSPackageType, flexSdk, airDescriptorPath, installerFileName,
+                                          installerFileLocation, myFilesToPackage, MobileAirUtil.getLocalHostAddress(),
+                                          MobileAirUtil.DEBUG_PORT_DEFAULT, "", provisioningProfilePath, keystorePath, keystoreType,
+                                          keystorePassword, keyAlias, keyPassword, provider, tsa);
   }
 
   private static List<String> getOutputFilePaths(final Module module) {
@@ -542,92 +583,77 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     myMoreOptionsHyperlinkLabel = new HoverHyperlinkLabel(MORE_OPTIONS);
   }
 
-  private boolean packageAirInstaller() {
-    final AirInstallerParameters parameters = getAirInstallerParameters();
+  private boolean packageMobileApplication() {
+    final MobileAirPackageParameters parameters = getPackageParameters();
     saveAsDefaultParameters(parameters);
 
-    final boolean ok = ExternalTask.runWithProgress(createAirInstallerTask(myProject, parameters), "Packaging AIR installer", TITLE);
+    final boolean ok = ExternalTask.runWithProgress(MobileAirUtil.createMobileAirPackageTask(myProject, parameters),
+                                                    FlexBundle.message("packaging.application", parameters.MOBILE_PLATFORM), TITLE);
 
     if (ok) {
-      final String message = parameters.DO_NOT_SIGN
-                             ? MessageFormat.format("Unsigned AIR package created: {0}", parameters.INSTALLER_FILE_NAME)
-                             : MessageFormat.format("AIR installation file created: {0}", parameters.INSTALLER_FILE_NAME);
+      final String message = FlexBundle.message("application.created", parameters.MOBILE_PLATFORM, parameters.INSTALLER_FILE_NAME);
       ToolWindowManager.getInstance(myProject).notifyByBalloon(ToolWindowId.PROJECT_VIEW, MessageType.INFO, message);
     }
 
     return ok;
   }
 
-  private void saveAsDefaultParameters(final AirInstallerParameters parameters) {
-    AirInstallerParameters.getInstance(myProject).loadState(parameters);
+  private void saveAsDefaultParameters(final MobileAirPackageParameters parameters) {
+    MobileAirPackageParameters.getInstance(myProject).loadState(parameters);
 
-    if (!parameters.DO_NOT_SIGN) {
-      final PasswordSafe passwordSafe = PasswordSafe.getInstance();
-      try {
-        passwordSafe.storePassword(myProject, getClass(), AIR_INSTALLER_KEYSTORE_PASSWORD_KEY, parameters.getKeystorePassword());
-        passwordSafe.storePassword(myProject, getClass(), AIR_INSTALLER_KEY_PASSWORD_KEY, parameters.getKeyPassword());
-      }
-      catch (PasswordSafeException ignore) {
-      }
+    final PasswordSafe passwordSafe = PasswordSafe.getInstance();
+    try {
+      passwordSafe.storePassword(myProject, getClass(), MOBILE_AIR_PACKAGE_KEYSTORE_PASSWORD_KEY, parameters.getKeystorePassword());
+      passwordSafe.storePassword(myProject, getClass(), MOBILE_AIR_PACKAGE_KEY_PASSWORD_KEY, parameters.getKeyPassword());
+    }
+    catch (PasswordSafeException ignore) {
     }
   }
 
   private void loadDefaultParameters() {
-    final AirInstallerParameters parameters = AirInstallerParameters.getInstance(myProject).getState();
-    if (parameters != null) {
-      if (!StringUtil.isEmpty(parameters.AIR_DESCRIPTOR_PATH)) {
-        if (!StringUtil.isEmpty(parameters.SDK_NAME)) {
-          final JComboBox combo = myFlexSdkComponent.getComponent().getComboBox();
-          for (int i = 0; i < combo.getItemCount(); i++) {
-            final Object item = combo.getItemAt(i);
-            if (item instanceof Sdk && ((Sdk)item).getName().equals(parameters.SDK_NAME)) {
-              combo.setSelectedItem(item);
-              break;
-            }
+    final MobileAirPackageParameters parameters = MobileAirPackageParameters.getInstance(myProject).getState();
+    if (!StringUtil.isEmpty(parameters.AIR_DESCRIPTOR_PATH)) {
+      myTargetPlatformCombo.setSelectedItem(parameters.MOBILE_PLATFORM);
+      myAndroidPackageTypeCombo.setSelectedItem(parameters.ANDROID_PACKAGE_TYPE);
+      myIOSPackageTypeCombo.setSelectedItem(parameters.IOS_PACKAGE_TYPE);
+
+      if (!StringUtil.isEmpty(parameters.SDK_NAME)) {
+        final JComboBox sdkCombo = myFlexSdkComponent.getComponent().getComboBox();
+        for (int i = 0; i < sdkCombo.getItemCount(); i++) {
+          final Object item = sdkCombo.getItemAt(i);
+          if (item instanceof Sdk && ((Sdk)item).getName().equals(parameters.SDK_NAME)) {
+            sdkCombo.setSelectedItem(item);
+            break;
           }
         }
+      }
 
-        myAirDescriptorComponent.getComponent().getComboBox().setSelectedItem(parameters.AIR_DESCRIPTOR_PATH);
-        myInstallerFileNameComponent.getComponent().setText(parameters.INSTALLER_FILE_NAME);
-        myInstallerLocationComponent.getComponent().setText(parameters.INSTALLER_FILE_LOCATION);
-        myFilesToPackage.clear();
-        myFilesToPackage.addAll(parameters.FILES_TO_PACKAGE);
-        myDoNotSignCheckBox.setSelected(parameters.DO_NOT_SIGN);
-        myKeystoreFileTextWithBrowse.setText(parameters.KEYSTORE_PATH);
-        myKeystoreTypeCombo.setSelectedItem(parameters.KEYSTORE_TYPE);
-        myKeyAliasTextField.setText(parameters.KEY_ALIAS);
-        myProviderClassNameTextField.setText(parameters.PROVIDER_CLASS);
-        myTsaUrlTextField.setText(parameters.TSA);
+      myAirDescriptorComponent.getComponent().getComboBox().setSelectedItem(parameters.AIR_DESCRIPTOR_PATH);
+      myInstallerFileNameComponent.getComponent().setText(parameters.INSTALLER_FILE_NAME);
+      myInstallerLocationComponent.getComponent().setText(parameters.INSTALLER_FILE_LOCATION);
+      myFilesToPackage.clear();
+      myFilesToPackage.addAll(parameters.FILES_TO_PACKAGE);
 
-        if (!parameters.DO_NOT_SIGN) {
-          try {
-            final PasswordSafe passwordSafe = PasswordSafe.getInstance();
-            myKeystorePasswordField.setText(passwordSafe.getPassword(myProject, getClass(), AIR_INSTALLER_KEYSTORE_PASSWORD_KEY));
-            myKeyPasswordField.setText(passwordSafe.getPassword(myProject, getClass(), AIR_INSTALLER_KEY_PASSWORD_KEY));
-          }
-          catch (PasswordSafeException ignored) {
-          }
+      myProvisioningProfileTextWithBrowse.setText(parameters.PROVISIONING_PROFILE_PATH);
+      myKeystoreFileTextWithBrowse.setText(parameters.KEYSTORE_PATH);
+      myKeystoreTypeCombo.setSelectedItem(parameters.KEYSTORE_TYPE);
+      myKeyAliasTextField.setText(parameters.KEY_ALIAS);
+      myProviderClassNameTextField.setText(parameters.PROVIDER_CLASS);
+      myTsaUrlTextField.setText(parameters.TSA);
 
-          if (StringUtil.isNotEmpty(parameters.KEY_ALIAS) ||
-              StringUtil.isNotEmpty(parameters.PROVIDER_CLASS) ||
-              StringUtil.isNotEmpty(parameters.TSA)) {
-            showMoreOptions(true);
-          }
-        }
+      try {
+        final PasswordSafe passwordSafe = PasswordSafe.getInstance();
+        myKeystorePasswordField.setText(passwordSafe.getPassword(myProject, getClass(), MOBILE_AIR_PACKAGE_KEYSTORE_PASSWORD_KEY));
+        myKeyPasswordField.setText(passwordSafe.getPassword(myProject, getClass(), MOBILE_AIR_PACKAGE_KEY_PASSWORD_KEY));
+      }
+      catch (PasswordSafeException ignored) {/*ignore*/}
+
+      if (StringUtil.isNotEmpty(parameters.KEY_ALIAS) ||
+          StringUtil.isNotEmpty(parameters.PROVIDER_CLASS) ||
+          StringUtil.isNotEmpty(parameters.TSA)) {
+        showMoreOptions(true);
       }
     }
-  }
-
-  private static ExternalTask createAirInstallerTask(final Project project, final AirInstallerParameters parameters) {
-    return new AdtTask(project, parameters.getFlexSdk()) {
-      protected void appendAdtOptions(List<String> command) {
-        command.add(parameters.DO_NOT_SIGN ? "-prepare" : "-package");
-        if (!parameters.DO_NOT_SIGN) {
-          appendSigningOptions(command, parameters);
-        }
-        appendPaths(command, parameters);
-      }
-    };
   }
 
   private enum Column {

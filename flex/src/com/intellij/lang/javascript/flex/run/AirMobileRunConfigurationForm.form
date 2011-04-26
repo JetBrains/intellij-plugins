@@ -145,7 +145,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="4c53d" class="javax.swing.JRadioButton" binding="myDebugViaNetworkRadioButton">
+                  <component id="4c53d" class="javax.swing.JRadioButton" binding="myDebugOverNetworkRadioButton">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -153,7 +153,7 @@
                       <text value="Net&amp;work"/>
                     </properties>
                   </component>
-                  <component id="542d3" class="javax.swing.JRadioButton" binding="myDebugViaUSBRadioButton">
+                  <component id="542d3" class="javax.swing.JRadioButton" binding="myDebugOverUSBRadioButton">
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
@@ -190,7 +190,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Debug on device via: "/>
+              <text value="Debug on device over: "/>
             </properties>
           </component>
           <component id="1dd5b" class="javax.swing.JLabel">

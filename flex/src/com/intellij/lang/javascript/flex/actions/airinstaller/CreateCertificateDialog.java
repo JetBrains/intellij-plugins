@@ -35,13 +35,13 @@ public class CreateCertificateDialog extends DialogWrapper {
   private JLabel myCountryCodeLabel;
   private JTextField myCountryCodeTextField;
 
-  static final String TITLE = "Create Certificate";
+  public static final String TITLE = "Create Certificate";
   private static final String SHOW_OPTIONAL_PARAMETERS = "Show optional parameters";
   private static final String HIDE_OPTIONAL_PARAMETERS = "Hide optional parameters";
   private final Project myProject;
   private final Sdk myFlexSdk;
 
-  protected CreateCertificateDialog(final Project project, final Sdk flexSdk, final String suggestedKeystoreFileLocation) {
+  public CreateCertificateDialog(final Project project, final Sdk flexSdk, final String suggestedKeystoreFileLocation) {
     super(project);
     myProject = project;
     myFlexSdk = flexSdk;

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.lang.javascript.flex.actions.airinstaller.PackageAirInstallerDialog">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.lang.javascript.flex.actions.airmobile.PackageMobileAirApplicationDialog">
   <grid id="27dc6" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="8" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="511" height="515"/>
+      <xy x="20" y="20" width="671" height="608"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
       <component id="d8608" class="com.intellij.openapi.ui.LabeledComponent" binding="myInstallerFileNameComponent">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <componentClass value="javax.swing.JTextField"/>
@@ -24,7 +24,7 @@
       </vspacer>
       <component id="1f65b" class="com.intellij.openapi.ui.LabeledComponent" binding="myInstallerLocationComponent">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
@@ -34,7 +34,7 @@
       <grid id="c646" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="etched" title="Files and folders to package"/>
@@ -89,7 +89,7 @@
       </grid>
       <component id="e9e54" class="com.intellij.openapi.ui.LabeledComponent" binding="myAirDescriptorComponent">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <componentClass value="com.intellij.ui.ComboboxWithBrowseButton"/>
@@ -98,13 +98,13 @@
       </component>
       <component id="d3935" class="com.intellij.openapi.ui.LabeledComponent" binding="myFlexSdkComponent" custom-create="true">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Use packaging tool from &amp;SDK"/>
         </properties>
       </component>
-      <grid id="aee85" binding="mySigningOptionsPanel" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="aee85" layout-manager="GridLayoutManager" row-count="6" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -114,7 +114,7 @@
         <children>
           <component id="e9729" class="javax.swing.JLabel">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <labelFor value="a6412"/>
@@ -123,21 +123,13 @@
           </component>
           <component id="a6412" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myKeystoreFileTextWithBrowse">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
           </component>
-          <component id="a57d6" class="javax.swing.JButton" binding="myCreateCertButton">
-            <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="&amp;Create..."/>
-            </properties>
-          </component>
           <component id="38d2a" class="javax.swing.JLabel">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <labelFor value="e8fe8"/>
@@ -146,7 +138,7 @@
           </component>
           <component id="19f5f" class="com.intellij.ui.HoverHyperlinkLabel" binding="myMoreOptionsHyperlinkLabel" custom-create="true">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="More options"/>
@@ -154,16 +146,16 @@
           </component>
           <component id="24f0" class="javax.swing.JLabel" binding="myKeyAliasLabel">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <labelFor value="97f39"/>
-              <text value="Key &amp;alias:"/>
+              <text value="Key al&amp;ias:"/>
             </properties>
           </component>
           <component id="e8fe8" class="javax.swing.JComboBox" binding="myKeystoreTypeCombo">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <minimum-size width="120" height="-1"/>
               </grid>
             </constraints>
@@ -179,16 +171,16 @@
           </component>
           <component id="8834d" class="javax.swing.JLabel">
             <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <labelFor value="821e3"/>
-              <text value="&amp;Password:"/>
+              <text value="    &amp;Password:"/>
             </properties>
           </component>
           <component id="821e3" class="javax.swing.JPasswordField" binding="myKeystorePasswordField">
             <constraints>
-              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="120" height="-1"/>
               </grid>
             </constraints>
@@ -196,7 +188,7 @@
           </component>
           <component id="97f39" class="javax.swing.JTextField" binding="myKeyAliasTextField">
             <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="120" height="-1"/>
               </grid>
             </constraints>
@@ -204,25 +196,25 @@
           </component>
           <component id="a0680" class="javax.swing.JLabel" binding="myKeyPasswordLabel">
             <constraints>
-              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <labelFor value="25354"/>
-              <text value="Pass&amp;word:"/>
+              <text value="    Pass&amp;word:"/>
             </properties>
           </component>
           <component id="25354" class="javax.swing.JPasswordField" binding="myKeyPasswordField">
             <constraints>
-              <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="120" height="-1"/>
               </grid>
             </constraints>
             <properties/>
           </component>
-          <grid id="7901" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="7901" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="5" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -263,16 +255,106 @@
               </component>
             </children>
           </grid>
+          <component id="ab872" class="javax.swing.JLabel" binding="myProvisioningProfileLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <labelFor value="967ef"/>
+              <text value="Pro&amp;visioning profile:"/>
+            </properties>
+          </component>
+          <component id="967ef" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myProvisioningProfileTextWithBrowse">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="3d692" class="javax.swing.JButton" binding="myCreateCertButton">
+            <constraints>
+              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="1" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="&amp;Create..."/>
+            </properties>
+          </component>
         </children>
       </grid>
-      <component id="7fe8b" class="javax.swing.JCheckBox" binding="myDoNotSignCheckBox">
+      <grid id="df019" layout-manager="GridLayoutManager" row-count="1" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties>
-          <text value="D&amp;o not sign (an intermediate *.airi file will be packaged)"/>
-        </properties>
-      </component>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="4c38d" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <labelFor value="552b7"/>
+              <text value="Tar&amp;get platform:"/>
+            </properties>
+          </component>
+          <component id="81c54" class="javax.swing.JLabel" binding="myPackageTypeLabel">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <labelFor value="7aa77"/>
+              <text value="    T&amp;ype:"/>
+            </properties>
+          </component>
+          <component id="7aa77" class="javax.swing.JComboBox" binding="myAndroidPackageTypeCombo">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="200" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <model>
+                <item value="debug over network"/>
+                <item value="debug over USB"/>
+                <item value="non-debug version"/>
+              </model>
+            </properties>
+          </component>
+          <component id="bf658" class="javax.swing.JComboBox" binding="myIOSPackageTypeCombo">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="200" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <model>
+                <item value="debug over network"/>
+                <item value="test without debugging"/>
+                <item value="ad hoc distribution"/>
+                <item value="App Store distribution"/>
+              </model>
+            </properties>
+          </component>
+          <hspacer id="5f477">
+            <constraints>
+              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+          <component id="552b7" class="javax.swing.JComboBox" binding="myTargetPlatformCombo">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="100" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <model>
+                <item value="Android"/>
+                <item value="iOS"/>
+              </model>
+            </properties>
+          </component>
+        </children>
+      </grid>
     </children>
   </grid>
 </form>

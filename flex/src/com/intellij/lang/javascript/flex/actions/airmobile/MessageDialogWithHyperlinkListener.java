@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.flex.actions.airinstaller;
+package com.intellij.lang.javascript.flex.actions.airmobile;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;

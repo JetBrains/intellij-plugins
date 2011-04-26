@@ -1,16 +1,18 @@
 package com.intellij.lang.javascript.flex.actions.airinstaller;
 
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.vfs.LocalFileSystem;
 
 import java.util.List;
 
-public class PackageAirInstallerAction extends AnAction {
+public class PackageAirInstallerAction extends DumbAwareAction {
 
   public void actionPerformed(AnActionEvent e) {
     new PackageAirInstallerDialog(e.getData(PlatformDataKeys.PROJECT)).show();
@@ -22,8 +24,16 @@ public class PackageAirInstallerAction extends AnAction {
   }
 
   public static boolean createCertificate(final Project project, final Sdk flexSdk, final CertificateParameters parameters) {
-    return ExternalTask.runWithProgress(createCertificateTask(project, flexSdk, parameters), "Creating certificate",
-                                        CreateCertificateDialog.TITLE);
+    final boolean ok = ExternalTask.runWithProgress(createCertificateTask(project, flexSdk, parameters), "Creating certificate",
+                                                    CreateCertificateDialog.TITLE);
+    if (ok) {
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        public void run() {
+          LocalFileSystem.getInstance().refreshAndFindFileByPath(parameters.getKeystoreFilePath());
+        }
+      });
+    }
+    return ok;
   }
 
   private static ExternalTask createCertificateTask(final Project project, final Sdk flexSdk, final CertificateParameters parameters) {

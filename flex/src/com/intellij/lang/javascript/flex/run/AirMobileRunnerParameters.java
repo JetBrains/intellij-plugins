@@ -1,11 +1,9 @@
 package com.intellij.lang.javascript.flex.run;
 
-import com.intellij.util.xmlb.annotations.Attribute;
+import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class AirMobileRunnerParameters extends AirRunnerParameters {
-
-  public static final int DEBUG_PORT_DEFAULT = 7936;
 
   public enum AirMobileRunTarget {
     Emulator, AndroidDevice, iOSDevice
@@ -67,7 +65,7 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
   private int myFullScreenWidth = 0;
   private int myFullScreenHeight = 0;
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.Network;
-  private int myUsbDebugPort = DEBUG_PORT_DEFAULT;
+  private int myUsbDebugPort = MobileAirUtil.DEBUG_PORT_DEFAULT;
 
   @NotNull
   public AirMobileRunTarget getAirMobileRunTarget() {

@@ -68,9 +68,10 @@ public abstract class AdtTask extends ExternalTask {
         relPathInPackage = relPathInPackage.substring(1);
       }
 
-      if (fullPath.endsWith("/" + relPathInPackage)) {
+      final String pathEnd = "/" + relPathInPackage;
+      if (fullPath.endsWith(pathEnd)) {
         command.add("-C");
-        command.add(FileUtil.toSystemDependentName(fullPath.substring(0, fullPath.length() - relPathInPackage.length())));
+        command.add(FileUtil.toSystemDependentName(fullPath.substring(0, fullPath.length() - pathEnd.length())));
         command.add(FileUtil.toSystemDependentName(relPathInPackage));
       }
       else {

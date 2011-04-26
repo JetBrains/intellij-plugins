@@ -109,6 +109,8 @@
                     serviceImplementation="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration"/>
     <projectService serviceInterface="com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParameters"
                     serviceImplementation="com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParameters"/>
+    <projectService serviceInterface="com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters"
+                    serviceImplementation="com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters"/>
     <consoleFilterProvider implementation="com.intellij.lang.javascript.flex.FlexStackTraceFilterProvider"/>
     <gotoSymbolContributor implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSymbolContributor"/>
     <annotator language="XML" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
@@ -211,6 +213,13 @@
             class="com.intellij.lang.javascript.flex.actions.airinstaller.PackageAirInstallerAction"
             text="Package AIR Installation File"
             icon="/com/intellij/lang/javascript/flex/actions/airdescriptor/air_descriptor_action.png">
+      <add-to-group anchor="last" group-id="FlexActionsGroup"/>
+    </action>
+
+    <action id="Flex.Package.AIR.Mobile.Application"
+            class="com.intellij.lang.javascript.flex.actions.airmobile.PackageMobileAirApplicationAction"
+            text="Package Mobile AIR Application"
+            icon="/com/intellij/lang/javascript/flex/sdk/airmobile.png">
       <add-to-group anchor="last" group-id="FlexActionsGroup"/>
     </action>
 

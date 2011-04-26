@@ -19,8 +19,8 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
-import com.intellij.lang.javascript.flex.actions.airinstaller.AndroidAirPackageParameters;
-import com.intellij.lang.javascript.flex.actions.airinstaller.MobileAirTools;
+import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters;
+import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectSettingsFactory;
@@ -73,8 +73,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunMode;
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
+import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.*;
+import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.*;
 
 /**
  * User: Maxim.Mossienko
@@ -572,14 +572,14 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     if (params.getAirMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
       final Module module = ModuleManager.getInstance(project).findModuleByName(params.getModuleName());
       assert module != null;
-      final AndroidAirPackageParameters packageParameters =
+      final MobileAirPackageParameters packageParameters =
         createAndroidPackageParams(flexSdk, swfPath, params, isDebug);
       final String apkPath = packageParameters.INSTALLER_FILE_LOCATION + "/" + packageParameters.INSTALLER_FILE_NAME;
 
-      return MobileAirTools.checkAdtVersion(module, flexSdk)
-             && MobileAirTools.ensureCertificateExists(project, flexSdk)
-             && MobileAirTools.packageApk(project, packageParameters)
-             && MobileAirTools.installApk(project, flexSdk, apkPath, applicationId);
+      return MobileAirUtil.checkAdtVersion(module, flexSdk)
+             && MobileAirUtil.ensureCertificateExists(project, flexSdk)
+             && MobileAirUtil.packageApk(project, packageParameters)
+             && MobileAirUtil.installApk(project, flexSdk, apkPath, applicationId);
     }
     else {
       assert false;
@@ -601,10 +601,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return Pair.create(null, null);
   }
 
-  private static AndroidAirPackageParameters createAndroidPackageParams(final Sdk flexSdk,
-                                                                        final String swfPath,
-                                                                        final AirMobileRunnerParameters params,
-                                                                        boolean isDebug) {
+  private static MobileAirPackageParameters createAndroidPackageParams(final Sdk flexSdk,
+                                                                       final String swfPath,
+                                                                       final AirMobileRunnerParameters params,
+                                                                       boolean isDebug) {
     String swfName = "";
     String apkName = "";
     String outputDirPath = "";
@@ -620,37 +620,30 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       new ArrayList<AirInstallerParametersBase.FilePathAndPathInPackage>();
     files.add(new AirInstallerParametersBase.FilePathAndPathInPackage(params.getAirRootDirPath() + "/" + swfPath, swfName));
 
-    return new AndroidAirPackageParameters(flexSdk,
-                                           params.getAirDescriptorPath(),
-                                           apkName,
-                                           outputDirPath,
-                                           files,
-                                           isDebug,
-                                           isDebug && params.getDebugTransport() ==
-                                                      AirMobileRunnerParameters.AirMobileDebugTransport.Network,
-                                           isDebug &&
-                                           params.getDebugTransport() == AirMobileRunnerParameters.AirMobileDebugTransport.Network
-                                           ? getHostName()
-                                           : "",
-                                           isDebug && params.getDebugTransport() == AirMobileRunnerParameters.AirMobileDebugTransport.USB,
-                                           params.getUsbDebugPort(),
-                                           "",
-                                           MobileAirTools.getTempKeystorePath(),
-                                           MobileAirTools.TEMP_KEYSTORE_TYPE,
-                                           MobileAirTools.TEMP_KEYSTORE_PASSWORD,
-                                           "",
-                                           "",
-                                           "",
-                                           "");
-  }
-
-  private static String getHostName() {
-    try {
-      return InetAddress.getLocalHost().getHostAddress();
-    }
-    catch (UnknownHostException e) {
-      return "127.0.0.1";
-    }
+    final AndroidPackageType packageType = isDebug
+                                           ? params.getDebugTransport() == AirMobileDebugTransport.Network
+                                             ? AndroidPackageType.DebugOverNetwork
+                                             : AndroidPackageType.DebugOverUSB
+                                           : AndroidPackageType.NoDebug;
+    return new MobileAirPackageParameters(MobilePlatform.Android,
+                                          packageType,
+                                          IOSPackageType.DebugOverNetwork,
+                                          flexSdk,
+                                          params.getAirDescriptorPath(),
+                                          apkName,
+                                          outputDirPath,
+                                          files,
+                                          MobileAirUtil.getLocalHostAddress(),
+                                          params.getUsbDebugPort(),
+                                          "",
+                                          "",
+                                          MobileAirUtil.getTempKeystorePath(),
+                                          MobileAirUtil.PKCS12_KEYSTORE_TYPE,
+                                          MobileAirUtil.TEMP_KEYSTORE_PASSWORD,
+                                          "",
+                                          "",
+                                          "",
+                                          "");
   }
 
   @Nullable
@@ -673,7 +666,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         assert false;
         break;
       case AndroidDevice:
-        if (MobileAirTools.launchAndroidApplication(project, flexSdk, applicationId)) {
+        if (MobileAirUtil.launchAndroidApplication(project, flexSdk, applicationId)) {
           ToolWindowManager.getInstance(project).notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.INFO,
                                                                  FlexBundle.message("android.application.launched"));
         }

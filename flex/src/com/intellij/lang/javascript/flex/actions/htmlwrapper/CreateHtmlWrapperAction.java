@@ -4,13 +4,13 @@ import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
@@ -26,7 +26,7 @@ import javax.swing.event.HyperlinkListener;
 import java.io.IOException;
 import java.util.Properties;
 
-public class CreateHtmlWrapperAction extends AnAction {
+public class CreateHtmlWrapperAction extends DumbAwareAction {
 
   public static final String HTML_WRAPPER_TEMPLATE_FILE_NAME = "index.template.html";
 

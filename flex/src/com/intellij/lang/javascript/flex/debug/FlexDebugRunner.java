@@ -9,7 +9,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.actions.airinstaller.MobileAirTools;
+import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
@@ -68,7 +68,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
 
         launchOnDevice(project, flexSdk, mobileParams, swfPathAndApplicationId.second, true);
         waitUntilCountdownStartsOnDevice(project, swfPathAndApplicationId.second);
-        MobileAirTools.forwardTcpPort(project, flexSdk, mobileParams.getUsbDebugPort());
+        MobileAirUtil.forwardTcpPort(project, flexSdk, mobileParams.getUsbDebugPort());
       }
     }
 
@@ -103,7 +103,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
   }
 
   /**
-   * While debug mobile application via USB fdb must be launched only when Android AIR app is started and shows countdown.
+   * While debug mobile application over USB fdb must be launched only when Android AIR app is started and shows countdown.
    * So this method waits for some time (3 seconds by default) as we hope that it is enough for application for startup and do not want to bother user with a dialog.
    */
   private static void waitUntilCountdownStartsOnDevice(final Project project, final String applicationId) {

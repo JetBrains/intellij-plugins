@@ -52,8 +52,8 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
   private JTextField myFullScreenWidth;
 
   private JPanel myDebugTransportPanel;
-  private JRadioButton myDebugViaNetworkRadioButton;
-  private JRadioButton myDebugViaUSBRadioButton;
+  private JRadioButton myDebugOverNetworkRadioButton;
+  private JRadioButton myDebugOverUSBRadioButton;
   private JTextField myUsbDebugPortTextField;
 
   private JTextField myFullScreenHeight;
@@ -97,8 +97,8 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
         updateDebugTransportRelatedControls();
       }
     };
-    myDebugViaNetworkRadioButton.addActionListener(debugTransportListener);
-    myDebugViaUSBRadioButton.addActionListener(debugTransportListener);
+    myDebugOverNetworkRadioButton.addActionListener(debugTransportListener);
+    myDebugOverUSBRadioButton.addActionListener(debugTransportListener);
 
     myUsbDebugPortTextField.setVisible(false); // just thought that nobody needs non-standard port, so let's UI be lighter. Remove this line on first request.
 
@@ -199,7 +199,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     final boolean enabled = !myOnEmulatorRadioButton.isSelected();
     UIUtil.setEnabled(myDebugTransportPanel, enabled, true);
     if (enabled) {
-      myUsbDebugPortTextField.setEnabled(myDebugViaUSBRadioButton.isSelected());
+      myUsbDebugPortTextField.setEnabled(myDebugOverUSBRadioButton.isSelected());
     }
   }
 
@@ -219,8 +219,8 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
       myFullScreenHeight.setText(String.valueOf(params.getFullScreenHeight()));
     }
 
-    myDebugViaNetworkRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.Network);
-    myDebugViaUSBRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.USB);
+    myDebugOverNetworkRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.Network);
+    myDebugOverUSBRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.USB);
     myUsbDebugPortTextField.setText(String.valueOf(params.getUsbDebugPort()));
 
     myAirDescriptorRadioButton.setSelected(params.getAirMobileRunMode() == AirMobileRunMode.AppDescriptor);
@@ -260,7 +260,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
       catch (NumberFormatException e) {/**/}
     }
 
-    params.setDebugTransport(myDebugViaNetworkRadioButton.isSelected()
+    params.setDebugTransport(myDebugOverNetworkRadioButton.isSelected()
                              ? AirMobileDebugTransport.Network
                              : AirMobileDebugTransport.USB);
     try {

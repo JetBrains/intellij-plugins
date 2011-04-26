@@ -1,10 +1,13 @@
-package com.intellij.lang.javascript.flex.actions.airinstaller;
+package com.intellij.lang.javascript.flex.actions.airmobile;
 
 import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
+import com.intellij.lang.javascript.flex.actions.airinstaller.AdtTask;
+import com.intellij.lang.javascript.flex.actions.airinstaller.CertificateParameters;
+import com.intellij.lang.javascript.flex.actions.airinstaller.PackageAirInstallerAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
@@ -25,21 +28,27 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class MobileAirTools {
+import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.MobilePlatform;
+
+public class MobileAirUtil {
+
+  public static final int DEBUG_PORT_DEFAULT = 7936;
 
   private static final String KEYSTORE_FILE_NAME = "idea_temp_keystore.p12";
   private static final String TEMP_CERTIFICATE_NAME = "TempCertificate";
   private static final String TEMP_KEY_TYPE = "1024-RSA";
-  public static final String TEMP_KEYSTORE_TYPE = "PKCS12";
+  public static final String PKCS12_KEYSTORE_TYPE = "PKCS12";
   public static final String TEMP_KEYSTORE_PASSWORD = "a";
   private static final Pattern ADT_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,6})*");
   private static final String ADB_RELATIVE_PATH = "/lib/android/bin/adb" + (SystemInfo.isWindows ? ".exe" : "");
 
-  private MobileAirTools() {
+  private MobileAirUtil() {
   }
 
   public static String getTempKeystorePath() {
@@ -131,34 +140,67 @@ public class MobileAirTools {
     return false;
   }
 
-  public static boolean packageApk(final Project project, final AndroidAirPackageParameters parameters) {
-    return ExternalTask.runWithProgress(createApkTask(project, parameters), "Creating Android package", "Create Android Package");
+  public static boolean packageApk(final Project project, final MobileAirPackageParameters parameters) {
+    return ExternalTask
+      .runWithProgress(createMobileAirPackageTask(project, parameters), "Creating Android package", "Create Android Package");
   }
 
-  private static ExternalTask createApkTask(final Project project, final AndroidAirPackageParameters parameters) {
+  static ExternalTask createMobileAirPackageTask(final Project project, final MobileAirPackageParameters parameters) {
     return new AdtTask(project, parameters.getFlexSdk()) {
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
         command.add("-target");
-        command.add(parameters.IS_DEBUG ? "apk-debug" : "apk");
 
-        if (parameters.IS_DEBUG) {
-          if (parameters.IS_DEBUG_CONNECT) {
-            command.add("-connect");
-            command.add(parameters.DEBUG_CONNECT_HOST);
-          }
-          else if (parameters.IS_DEBUG_LISTEN) {
-            command.add("-listen");
-            command.add(String.valueOf(parameters.DEBUG_LISTEN_PORT));
-          }
+        switch (parameters.MOBILE_PLATFORM) {
+          case Android:
+            switch (parameters.ANDROID_PACKAGE_TYPE) {
+              case DebugOverNetwork:
+                command.add("apk-debug");
+                command.add("-connect");
+                command.add(parameters.DEBUG_CONNECT_HOST);
+                break;
+              case DebugOverUSB:
+                command.add("apk-debug");
+                command.add("-listen");
+                command.add(String.valueOf(parameters.DEBUG_LISTEN_PORT));
+                break;
+              case NoDebug:
+                command.add("apk");
+                break;
+            }
+            break;
+          case iOS:
+            switch (parameters.IOS_PACKAGE_TYPE) {
+              case DebugOverNetwork:
+                command.add("ipa-debug");
+                command.add("-connect");
+                command.add(parameters.DEBUG_CONNECT_HOST);
+                break;
+              case Test:
+                command.add("ipa-test");
+                break;
+              case AdHoc:
+                command.add("ipa-ad-hoc");
+                break;
+              case AppStore:
+                command.add("ipa-app-store");
+                break;
+            }
+            break;
         }
 
-        if (parameters.AIR_DOWNLOAD_URL.length() > 0) {
+        if (parameters.MOBILE_PLATFORM == MobilePlatform.Android && parameters.AIR_DOWNLOAD_URL.length() > 0) {
           command.add("-airDownloadURL");
           command.add(parameters.AIR_DOWNLOAD_URL);
         }
 
         appendSigningOptions(command, parameters);
+
+        if (parameters.MOBILE_PLATFORM == MobilePlatform.iOS && parameters.PROVISIONING_PROFILE_PATH.length() > 0) {
+          command.add("-provisioning-profile");
+          command.add(parameters.PROVISIONING_PROFILE_PATH);
+        }
+
         appendPaths(command, parameters);
       }
     };
@@ -229,6 +271,15 @@ public class MobileAirTools {
       Messages
         .showWarningDialog(project, FlexBundle.message("adb.not.found", FileUtil.toSystemDependentName(adbPath), presentableCommand),
                            FlexBundle.message("adb.forward.title"));
+    }
+  }
+
+  public static String getLocalHostAddress() {
+    try {
+      return InetAddress.getLocalHost().getHostAddress();
+    }
+    catch (UnknownHostException e) {
+      return "";
     }
   }
 }

@@ -7,8 +7,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
-import com.intellij.util.xmlb.annotations.Transient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +42,8 @@ public class AirInstallerParameters extends AirInstallerParametersBase implement
                                 final String keyPassword,
                                 final String provider,
                                 final String tsa) {
-    super(keyAlias, installerFileName, keystorePath, keyPassword, provider, filesToPackage, tsa, installerFileLocation, keystoreType,
-          keystorePassword, flexSdk, airDescriptorPath);
+    super(flexSdk, airDescriptorPath, installerFileName, installerFileLocation, filesToPackage, keystorePath, keystoreType,
+          keystorePassword, keyAlias, keyPassword, provider, tsa);
     DO_NOT_SIGN = doNotSign;
   }
 

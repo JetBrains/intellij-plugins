@@ -9,6 +9,7 @@ import java.util.List;
 public class AirInstallerParametersBase {
   protected final Sdk myFlexSdk;
   public String AIR_DESCRIPTOR_PATH;
+  public String SDK_NAME;
   public String INSTALLER_FILE_NAME;
   public String INSTALLER_FILE_LOCATION;
   @AbstractCollection(elementTypes = {FilePathAndPathInPackage.class})
@@ -21,29 +22,31 @@ public class AirInstallerParametersBase {
   public String PROVIDER_CLASS;
   public String TSA;
 
-  public AirInstallerParametersBase(
-    final String keyAlias,
-    final String installerFileName,
-    final String keystorePath,
-    final String keyPassword,
-    final String provider,
-    final List<FilePathAndPathInPackage> filesToPackage,
-    final String tsa,
-    final String installerFileLocation,
-    final String keystoreType,
-    final String keystorePassword, final Sdk flexSdk, final String airDescriptorPath) {
-    KEY_ALIAS = keyAlias;
+  public AirInstallerParametersBase(final Sdk flexSdk,
+                                    final String airDescriptorPath,
+                                    final String installerFileName,
+                                    final String installerFileLocation,
+                                    final List<FilePathAndPathInPackage> filesToPackage,
+                                    final String keystorePath,
+                                    final String keystoreType,
+                                    final String keystorePassword,
+                                    final String keyAlias,
+                                    final String keyPassword,
+                                    final String provider,
+                                    final String tsa) {
+    myFlexSdk = flexSdk;
+    SDK_NAME = flexSdk == null ? "" : flexSdk.getName();
+    AIR_DESCRIPTOR_PATH = airDescriptorPath;
     INSTALLER_FILE_NAME = installerFileName;
-    KEYSTORE_PATH = keystorePath;
-    myKeyPassword = keyPassword;
-    PROVIDER_CLASS = provider;
-    FILES_TO_PACKAGE = filesToPackage;
-    TSA = tsa;
     INSTALLER_FILE_LOCATION = installerFileLocation;
+    FILES_TO_PACKAGE = filesToPackage;
+    KEYSTORE_PATH = keystorePath;
     KEYSTORE_TYPE = keystoreType;
     myKeystorePassword = keystorePassword;
-    myFlexSdk = flexSdk;
-    AIR_DESCRIPTOR_PATH = airDescriptorPath;
+    KEY_ALIAS = keyAlias;
+    myKeyPassword = keyPassword;
+    PROVIDER_CLASS = provider;
+    TSA = tsa;
   }
 
   @Transient
