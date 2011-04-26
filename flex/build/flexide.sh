@@ -91,7 +91,7 @@ fi
 # $AGENT="-agentlib:yjpagent$BITS=disablej2ee,sessionname=flexide"
 #fi
 
-REQUIRED_JVM_ARGS="-Xbootclasspath/a:../lib/boot.jar -Didea.platform.prefix=Flex -Didea.no.jre.check=true $AGENT $FLEXIDE_PROPERTIES_PROPERTY $REQUIRED_JVM_ARGS"
+REQUIRED_JVM_ARGS="-Xbootclasspath/a:../lib/boot.jar -Didea.platform.prefix=Flex -Didea.no.jre.check=true -Didea.paths.selector=@@system_selector@@ $AGENT $FLEXIDE_PROPERTIES_PROPERTY $REQUIRED_JVM_ARGS"
 JVM_ARGS=`tr '\n' ' ' < "$FLEXIDE_VM_OPTIONS"`
 JVM_ARGS="$JVM_ARGS $REQUIRED_JVM_ARGS"
 

@@ -31,7 +31,7 @@ IF NOT "%FLEXIDE_PROPERTIES%" == "" set FLEXIDE_PROPERTIES_PROPERTY="-Didea.prop
 SET ACC=
 FOR /F "delims=" %%i in (%FLEXIDE_HOME%\bin\flexide.exe.vmoptions) DO call %FLEXIDE_HOME%\bin\append.bat "%%i"
 
-set REQUIRED_FLEXIDE_JVM_ARGS=-Xbootclasspath/a:%FLEXIDE_HOME%/lib/boot.jar -Didea.platform.prefix=Flex -Didea.no.jre.check=true %FLEXIDE_PROPERTIES_PROPERTY% %REQUIRED_FLEXIDE_JVM_ARGS%
+set REQUIRED_FLEXIDE_JVM_ARGS=-Xbootclasspath/a:%FLEXIDE_HOME%/lib/boot.jar -Didea.platform.prefix=Flex -Didea.no.jre.check=true -Didea.paths.selector=@@system_selector@@ %FLEXIDE_PROPERTIES_PROPERTY% %REQUIRED_FLEXIDE_JVM_ARGS%
 SET JVM_ARGS=%ACC% %REQUIRED_FLEXIDE_JVM_ARGS%
 
 SET OLD_PATH=%PATH%
