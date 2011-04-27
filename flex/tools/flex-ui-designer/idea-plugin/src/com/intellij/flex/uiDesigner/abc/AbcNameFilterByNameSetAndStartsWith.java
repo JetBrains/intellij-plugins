@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.openapi.util.text.StringUtil;
+
 import java.util.Collection;
 
 public class AbcNameFilterByNameSetAndStartsWith extends AbcNameFilterByNameSet {
@@ -15,7 +17,7 @@ public class AbcNameFilterByNameSetAndStartsWith extends AbcNameFilterByNameSet 
   }
 
   @Override
-  public boolean accept(String name) {
+  public boolean accept(CharSequence name) {
     if (inclusion) {
       if (super.accept(name)) {
         return true;
@@ -26,7 +28,7 @@ public class AbcNameFilterByNameSetAndStartsWith extends AbcNameFilterByNameSet 
     }
 
     for (String s : startsWith) {
-      if (name.startsWith(s)) {
+      if (StringUtil.startsWith(name, s)) {
         return inclusion;
       }
     }

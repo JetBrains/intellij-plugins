@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
 import gnu.trove.TIntHashSet;
+import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
@@ -15,8 +16,16 @@ final class Decoder {
 
   private final DataBuffer in;
 
+  public final char[] name;
+
   public Decoder(DataBuffer in) throws DecoderException {
+    this(in, null);
+  }
+
+  public Decoder(DataBuffer in, @Nullable char[] name) throws DecoderException {
     in.skip(4);
+    this.name = name;
+
     constantPool = new ConstantPool(in);
 
     methodInfo = new MethodInfo(in);

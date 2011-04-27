@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
+import com.intellij.flex.uiDesigner.abc.AbcFilter;
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
@@ -32,9 +33,9 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
   public int inDegree;
   public int definitionCounter;
 
-  public CharSequence mxCoreFlexModuleFactoryClassName;
+  public int unresolvedDefinitionPolicy;
 
-  public final Set<CharSequence> unresolvedDefinitions = new THashSet<CharSequence>();
+  public final Set<CharSequence> unresolvedDefinitions = new THashSet<CharSequence>(AbcFilter.HASHING_STRATEGY);
   public final Set<OriginalLibrary> successors = new THashSet<OriginalLibrary>();
   public final Set<OriginalLibrary> parents = new THashSet<OriginalLibrary>();
 
@@ -50,6 +51,10 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
 
   public boolean hasUnresolvedDefinitions() {
     return !unresolvedDefinitions.isEmpty();
+  }
+
+  public boolean hasMissedDefinitions() {
+    return unresolvedDefinitions.size() != unresolvedDefinitionPolicy;
   }
 
   public boolean hasDefinitions() {

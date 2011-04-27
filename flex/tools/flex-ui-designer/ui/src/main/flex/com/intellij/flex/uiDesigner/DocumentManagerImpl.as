@@ -68,7 +68,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       else {
         var dockIcon:DockIcon = NativeApplication.nativeApplication.icon as DockIcon;
         if (dockIcon != null) {
-          dockIcon.bounce()
+          dockIcon.bounce();
         }
       }
     }
@@ -106,7 +106,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var cssReaderClass:Class = context.getClass("com.intellij.flex.uiDesigner.css.CssReaderImpl");
     var cssReader:CssReader = new cssReaderClass();
     cssReader.styleManager = context.styleManager; 
-    // FakeObjectProxy/FakeBooleanSetProxy/MergedCssStyleDeclaration  fin d in list from 0 to end, then we add in list in reverce order
+    // FakeObjectProxy/FakeBooleanSetProxy/MergedCssStyleDeclaration find in list from 0 to end, then we add in list in reverce order
     // (because the library with index 4 overrides the library with index 2)
     var librarySets:Vector.<LibrarySet> = context.librarySets;
     for (var i:int = librarySets.length - 1; i > -1; i--) {

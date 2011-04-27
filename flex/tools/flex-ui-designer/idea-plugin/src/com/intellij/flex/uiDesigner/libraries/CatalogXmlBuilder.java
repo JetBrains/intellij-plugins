@@ -107,9 +107,6 @@ class CatalogXmlBuilder implements XmlBuilder {
         library.definitionCounter++;
         processDependencies = true;
       }
-      else if (StringUtil.endsWith(value, "_mx_core_FlexModuleFactory")) {
-        library.mxCoreFlexModuleFactoryClassName = value;
-      }
       else {
         definition = null;
       }

@@ -1,7 +1,11 @@
 package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import gnu.trove.TIntObjectHashMap;
+import gnu.trove.TIntObjectIterator;
+import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
@@ -19,18 +23,22 @@ import java.util.zip.ZipException;
  * Optimized SWF (merged DoABC2) is not supported.
  */
 public class AbcFilter extends AbcEncoder {
+  public static final TObjectHashingStrategy<CharSequence> HASHING_STRATEGY = new HashingStrategy();
   private static final int PARTIAL_HEADER_LENGTH = 8;
 
-  private final char[] abcNameBuffer = new char[256];
+  protected final TransientString transientNameString = new TransientString();
   private final byte[] partialHeader = new byte[PARTIAL_HEADER_LENGTH];
 
-  public boolean replaceMainClass;
   protected int lastWrittenPosition;
   protected FileChannel channel;
   
-  protected ArrayList<Decoder> decoders = new ArrayList<Decoder>(256);
+  protected final ArrayList<Decoder> decoders = new ArrayList<Decoder>(256);
 
-  public void filter(File inputFile, File out, AbcNameFilter abcNameFilter) throws IOException {
+  private TIntObjectHashMap<ExportAsset> exportAssets;
+
+  //private
+
+  public void filter(File inputFile, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
     filter(new FileInputStream(inputFile), inputFile.length(), out, abcNameFilter);
   }
 
@@ -38,6 +46,7 @@ public class AbcFilter extends AbcEncoder {
     filter(inputFile.getInputStream(), inputFile.getLength(), out, abcNameFilter);
   }
 
+  @SuppressWarnings({"UnusedDeclaration"})
   public static void mergeAbc(VirtualFile inputFile, File out) throws IOException {
     new AbcFilter().filter(inputFile, out, null);
   }
@@ -116,7 +125,7 @@ public class AbcFilter extends AbcEncoder {
     channel.write(buffer);
   }
 
-  private void filterTags(AbcNameFilter abcNameFilter) throws IOException, DecoderException {
+  private void filterTags(AbcNameFilter abcNameFilter) throws IOException {
     lastWrittenPosition = 0;
 
     while (buffer.position() < buffer.limit()) {
@@ -133,21 +142,13 @@ public class AbcFilter extends AbcEncoder {
           channel.write(buffer);
           return;
 
-        case TagTypes.SymbolClass: {
-          final int tagStartPosition = buffer.position();
-          writeDataBeforeTag(length);
+        case TagTypes.SymbolClass:
+          processSymbolClass(length);
+          continue;
 
-          mergeDoAbc(true);
-          lastWrittenPosition = tagStartPosition - (length < 63 ? 2 : 6);
-          buffer.position(tagStartPosition);
-
-          if (replaceMainClass) {
-            lastWrittenPosition =
-              parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(lastWrittenPosition, length);
-          }
-          buffer.position(tagStartPosition + length);
-        }
-        continue;
+        case TagTypes.ExportAssets:
+          processExportAssets(length);
+          continue;
 
         case TagTypes.EnableDebugger:
         case TagTypes.EnableDebugger2:
@@ -160,8 +161,8 @@ public class AbcFilter extends AbcEncoder {
           continue;
 
         case TagTypes.DoABC2:
-          String name = readAbcName(buffer.position() + 4);
-          if (abcNameFilter != null && !abcNameFilter.accept(name)) {
+          readAbcName(buffer.position() + 4);
+          if (abcNameFilter != null && !abcNameFilter.accept(transientNameString)) {
             skipTag(length);
             continue;
           }
@@ -169,7 +170,7 @@ public class AbcFilter extends AbcEncoder {
             int oldPosition = buffer.position();
             writeDataBeforeTag(length);
             buffer.position(oldPosition);
-            doAbc2(length, name);
+            doAbc2(length);
             buffer.position(lastWrittenPosition);
             continue;
           }
@@ -181,30 +182,115 @@ public class AbcFilter extends AbcEncoder {
     }
   }
 
-  protected void doAbc2(int length, String name) throws IOException, DecoderException {
-    final int off = 4 + name.length() + 1;
-    buffer.position(buffer.position() + off);
-    decoders.add(new Decoder(new BufferWrapper(buffer, length - off)));
+  private static class ExportAsset {
+    public final int start;
+    public final int end;
+
+    private ExportAsset(int start, int end) {
+      this.start = start;
+      this.end = end;
+    }
   }
 
-  private void mergeDoAbc(boolean asTag) throws DecoderException, IOException {
-    final int abcSize = decoders.size();
-    final ConstantPool[] pools = new ConstantPool[abcSize];
-    for (int i = 0; i < abcSize; i++) {
-      pools[i] = decoders.get(i).constantPool;
+  private void processExportAssets(int length) throws IOException {
+    final int tagStartPosition = buffer.position();
+    writeDataBeforeTag(length);
+    buffer.position(tagStartPosition);
+
+    numSymbols = buffer.getShort();
+    if (numSymbols == 0) {
+      return;
     }
 
+    if (exportAssets == null) {
+      exportAssets = new TIntObjectHashMap<ExportAsset>(numSymbols);
+    }
+    else {
+      exportAssets.ensureCapacity(numSymbols);
+    }
+
+    for (int i = 0; i < numSymbols; i++) {
+      int id = buffer.getShort();
+      int start = buffer.position();
+      int end = start + skipAbcName(start) + 1;
+      if (id != 0) {
+        exportAssets.put(id, new ExportAsset(start - 2, end));
+      }
+      buffer.position(end);
+    }
+  }
+
+  private void processSymbolClass(int length) throws IOException {
+    final int tagStartPosition = buffer.position();
+    writeDataBeforeTag(length);
+    buffer.position(tagStartPosition);
+    analyzeClassAssociatedWithMainTimeline(length);
+    final boolean hasClassAssociatedWithMainTimeLine = sL != -1;
+    mergeDoAbc(true, hasClassAssociatedWithMainTimeLine);
+
+    lastWrittenPosition = tagStartPosition - (length < 63 ? 2 : 6);
+    buffer.position(lastWrittenPosition);
+    boolean hasExportsAssets = exportAssets != null && !exportAssets.isEmpty();
+    if (hasClassAssociatedWithMainTimeLine || hasExportsAssets) {
+      if (hasExportsAssets) {
+        numSymbols += exportAssets.size();
+      }
+
+      if (numSymbols == 0) {
+        lastWrittenPosition = tagStartPosition + length;
+      }
+      else {
+        encodeTagHeader(TagTypes.SymbolClass, sL);
+        buffer.putShort((short)numSymbols);
+        buffer.position(lastWrittenPosition);
+        buffer.limit(sA);
+        channel.write(buffer);
+        lastWrittenPosition = sB;
+        buffer.limit(buffer.capacity());
+
+        if (exportAssets != null) {
+          final TIntObjectIterator<ExportAsset> iterator = exportAssets.iterator();
+          for (int i = exportAssets.size(); i-- > 0; ) {
+            iterator.advance();
+            ExportAsset exportAsset = iterator.value();
+            buffer.position(exportAsset.start);
+            buffer.limit(exportAsset.end);
+            channel.write(buffer);
+          }
+
+          exportAssets.clear();
+        }
+      }
+
+      sL = -1;
+    }
+
+    decoders.clear();
+    buffer.position(tagStartPosition + length);
+  }
+
+  protected void doAbc2(int length) throws IOException {
+    final int off = 4 + transientNameString.length() + 1;
+    buffer.position(buffer.position() + off);
+    decoders.add(
+      new Decoder(new BufferWrapper(buffer, length - off), transientNameString.charAt(0) == '_' ? transientNameString.cloneChars() : null));
+  }
+
+  private void mergeDoAbc(boolean asTag, boolean hasClassAssociatedWithMainTimeLine) throws IOException {
+    final int abcSize = decoders.size();
     final Encoder encoder = new Encoder(46, 16);
     encoder.enablePeepHole();
-    encoder.configure(decoders);
-    encoder.addConstantPools(pools);
+    encoder.configure(decoders, hasClassAssociatedWithMainTimeLine ? transientNameString : null);
 
     Decoder decoder;
     // decode methodInfo...
     for (int i = 0; i < abcSize; i++) {
       decoder = decoders.get(i);
-      encoder.useConstantPool(i);
+      if (decoder == null) {
+        continue;
+      }
 
+      encoder.useConstantPool(i);
       Decoder.MethodInfo methodInfo = decoder.methodInfo;
       for (int j = 0, infoSize = methodInfo.size(); j < infoSize; j++) {
         methodInfo.decode(j, encoder);
@@ -214,8 +300,11 @@ public class AbcFilter extends AbcEncoder {
     // decode metadataInfo...
     for (int j = 0; j < abcSize; j++) {
       decoder = decoders.get(j);
-      encoder.useConstantPool(j);
+      if (decoder == null) {
+        continue;
+      }
 
+      encoder.useConstantPool(j);
       Decoder.MetaDataInfo metadataInfo = decoder.metadataInfo;
       for (int k = 0, infoSize = metadataInfo.size(); k < infoSize; k++) {
         metadataInfo.decode(k, encoder);
@@ -225,8 +314,11 @@ public class AbcFilter extends AbcEncoder {
     // decode classInfo...
     for (int j = 0; j < abcSize; j++) {
       decoder = decoders.get(j);
-      encoder.useConstantPool(j);
+      if (decoder == null) {
+        continue;
+      }
 
+      encoder.useConstantPool(j);
       Decoder.ClassInfo classInfo = decoder.classInfo;
       for (int k = 0, infoSize = classInfo.size(); k < infoSize; k++) {
         classInfo.decodeInstance(k, encoder);
@@ -235,8 +327,11 @@ public class AbcFilter extends AbcEncoder {
 
     for (int j = 0; j < abcSize; j++) {
       decoder = decoders.get(j);
-      encoder.useConstantPool(j);
+      if (decoder == null) {
+        continue;
+      }
 
+      encoder.useConstantPool(j);
       Decoder.ClassInfo classInfo = decoder.classInfo;
       for (int k = 0, infoSize = classInfo.size(); k < infoSize; k++) {
         classInfo.decodeClass(k, encoder);
@@ -246,10 +341,12 @@ public class AbcFilter extends AbcEncoder {
     // decode scripts...
     for (int j = 0; j < abcSize; j++) {
       decoder = decoders.get(j);
+      if (decoder == null) {
+        continue;
+      }
+
       encoder.useConstantPool(j);
-
       Decoder.ScriptInfo scriptInfo = decoder.scriptInfo;
-
       for (int k = 0, scriptSize = scriptInfo.size(); k < scriptSize; k++) {
         scriptInfo.decode(k, encoder);
       }
@@ -258,8 +355,11 @@ public class AbcFilter extends AbcEncoder {
     // decode method bodies...
     for (int j = 0; j < abcSize; j++) {
       decoder = decoders.get(j);
-      encoder.useConstantPool(j);
+      if (decoder == null) {
+        continue;
+      }
 
+      encoder.useConstantPool(j);
       Decoder.MethodBodies methodBodies = decoder.methodBodies;
       for (int k = 0, bodySize = methodBodies.size(); k < bodySize; k++) {
         methodBodies.decode(k, 2, encoder);
@@ -285,7 +385,7 @@ public class AbcFilter extends AbcEncoder {
     buffer.position(lastWrittenPosition);
   }
 
-  private void filterAbcTags(AbcNameFilter abcNameFilter) throws IOException, DecoderException {
+  private void filterAbcTags(AbcNameFilter abcNameFilter) throws IOException {
     while (true) {
       int tagCodeAndLength = buffer.getShort();
       int type = tagCodeAndLength >> 6;
@@ -296,16 +396,16 @@ public class AbcFilter extends AbcEncoder {
 
       switch (type) {
         case TagTypes.End:
-          mergeDoAbc(false);
+          mergeDoAbc(false, false);
           return;
 
         case TagTypes.DoABC2:
-          String name = readAbcName(buffer.position() + 4);
-          if (abcNameFilter.accept(name)) {
-            final int off = 4 + name.length() + 1;
+          readAbcName(buffer.position() + 4);
+          if (abcNameFilter.accept(transientNameString)) {
+            final int off = 4 + transientNameString.length() + 1;
             buffer.position(buffer.position() + off);
             final int abcLength = length - off;
-            decoders.add(new Decoder(new BufferWrapper(buffer, abcLength)));
+            decoders.add(new Decoder(new BufferWrapper(buffer, abcLength), null));
             buffer.position(buffer.position() + abcLength);
             continue;
           }
@@ -315,61 +415,151 @@ public class AbcFilter extends AbcEncoder {
       }
     }
   }
-  
-  private int parseSymbolClassTagAndRenameClassAssociatedWithMainTimeline(int lastWrittenPosition, int tagLength) throws IOException {
-    final int startTagPosition = buffer.position() - (tagLength >= 63 ? 6 : 2);
-    int numSymbols = buffer.getShort();
+
+  private int sL = -1;
+  private int sA;
+  private int sB;
+  private int numSymbols;
+
+  private void analyzeClassAssociatedWithMainTimeline(int tagLength) throws IOException {
+    numSymbols = buffer.getShort();
     for (int i = 0; i < numSymbols; i++) {
       int id = buffer.getShort();
       final int position = buffer.position();
-      String name = readAbcName(position);
       if (id == 0) {
-        byte[] nb = "com.intellij.flex.uiDesigner.Main".getBytes();
-        buffer.put(nb);
-        buffer.put((byte)0);
-
-        buffer.position(startTagPosition);
-        encodeTagHeader(TagTypes.SymbolClass, tagLength - (name.length() - nb.length));
-
-        buffer.position(lastWrittenPosition);
-        buffer.limit(position + nb.length + 1);
-        channel.write(buffer);
-
-        buffer.limit(buffer.capacity());
-        return position + name.length() + 1;
+        readAbcName(position);
+        numSymbols--;
+        sL = tagLength - (transientNameString.length() + 1 + 2);
+        sA = position - 2;
+        sB = position + transientNameString.length() + 1;
+        return;
       }
       else {
-        buffer.position(position + name.length() + 1);
+        if (exportAssets != null && !exportAssets.isEmpty()) {
+          exportAssets.remove(id);
+        }
+        buffer.position(position + skipAbcName(position) + 1);
       }
     }
-
-    throw new IllegalArgumentException("can't find 0 symbol");
   }
   
-  private String readAbcName(final int start) {
+  private void readAbcName(final int start) {
     int end = start;
     byte[] array = buffer.array();
     int lastSlashPosition = -1;
     byte c;
+    char[] chars = transientNameString.chars;
     int index = 0;
     while ((c = array[end++]) != 0) {
       switch (c) {
         case '/':
           lastSlashPosition = index;
-          abcNameBuffer[index] = '.';
+          chars[index] = '.';
           break;
 
         default:
-          abcNameBuffer[index] = (char)c;
+          chars[index] = (char)c;
       }
 
       index++;
     }
 
     if (lastSlashPosition != -1) {
-      abcNameBuffer[lastSlashPosition] = ':';
+      chars[lastSlashPosition] = ':';
     }
 
-    return new String(abcNameBuffer, 0, index);
+    transientNameString.hash = 0;
+    transientNameString.length = index;
+  }
+
+  private int skipAbcName(final int start) {
+    int end = start;
+    byte[] array = buffer.array();
+    while (array[++end] != 0) {
+    }
+
+    return end - start;
+  }
+
+  protected static final class TransientString implements CharSequence {
+    private final char[] chars = new char[256];
+    private int length;
+    private int hash;
+
+    @Override
+    public int length() {
+      return length;
+    }
+
+    @Override
+    public char charAt(int index) {
+      return chars[index];
+    }
+
+    @Override
+    public CharSequence subSequence(int start, int end) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj instanceof CharSequence) {
+        return StringUtil.equals(this, (CharSequence)obj);
+      }
+      else {
+        return super.equals(obj);
+      }
+    }
+
+    public char[] cloneChars() {
+      char[] clonedChars = new char[length];
+      System.arraycopy(chars, 0, clonedChars, 0, length);
+      return clonedChars;
+    }
+
+    public boolean same(char[] name) {
+      if (length != name.length) {
+        return false;
+      }
+
+      for (int i = 0; i < length; i++) {
+        if (chars[i] != name[i]) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return new String(chars, 0, length);
+    }
+
+    @Override
+    public int hashCode() {
+      int h = hash;
+      int len = length;
+      if (h == 0 && len > 0) {
+        int off = 0;
+        char[] val = chars;
+        for (int i = 0; i < len; i++) {
+          h = 31 * h + val[off++];
+        }
+        hash = h;
+      }
+      return h;
+    }
+  }
+
+  private static final class HashingStrategy implements TObjectHashingStrategy<CharSequence> {
+    @Override
+    public int computeHashCode(CharSequence object) {
+      return object.hashCode();
+    }
+
+    @Override
+    public boolean equals(CharSequence o1, CharSequence o2) {
+      return o2.equals(o1); // must be o2.equals(o1) because o1 is String (cannot equals) and o2 is TransientString
+    }
   }
 }

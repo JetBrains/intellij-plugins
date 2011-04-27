@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.ComplementSwfBuilder;
 import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,16 +29,16 @@ public class FlexSdkAbcInjector extends AbcFilter {
   }
 
   @Override
-  protected void doAbc2(int length, String name) throws IOException, DecoderException {
+  protected void doAbc2(int length) throws IOException {
     if (flexInjected) {
-      super.doAbc2(length, name);
+      super.doAbc2(length);
       return;
     }
 
-    boolean isStyleProtoChain = name.equals(STYLE_PROTO_CHAIN);
+    boolean isStyleProtoChain = StringUtil.equals(transientNameString, STYLE_PROTO_CHAIN);
     if (isStyleProtoChain) {
       final int oldPosition = buffer.position();
-      buffer.position(buffer.position() + 4 + name.length() + 1 /* null-terminated string */);
+      buffer.position(buffer.position() + 4 + transientNameString.length() + 1 /* null-terminated string */);
       parseCPoolAndRenameStyleProtoChain();
 
       // modify abcname
@@ -46,12 +47,12 @@ public class FlexSdkAbcInjector extends AbcFilter {
       buffer.position(oldPosition);
     }
 
-    super.doAbc2(length, name);
+    super.doAbc2(length);
 
     // for flex 4.5 we can inject our classes after StyleProtoChain, but for 4.1 (mx.swc is not yet extracted in this SDK version)
     // we cannot — CSSStyleDeclaration located later, so, we inject after it
     // at the same time we cannot inject after CSSStyleDeclaration for 4.5, so, injection place depends on Flex SDK version
-    if (isStyleProtoChain ? flexSdkVersion.equals("4.5") : (flexSdkVersion.equals("4.1") && name.equals("mx.styles:CSSStyleDeclaration"))) {
+    if (isStyleProtoChain ? flexSdkVersion.equals("4.5") : (flexSdkVersion.equals("4.1") && StringUtil.equals(transientNameString, "mx.styles:CSSStyleDeclaration"))) {
       flexInjected = true;
       if (injectionUrlConnection == null) {
         decoders.add(new Decoder(new DataBuffer(FileUtil.loadFileBytes(new File(

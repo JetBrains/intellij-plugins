@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.abc.*;
+import com.intellij.openapi.util.text.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,15 +12,15 @@ import java.util.Collections;
 public class ComplementSwfBuilder {
   public static void build(String rootPath, String flexVersion) throws IOException {
     final AbcNameFilter sparkInclusionNameFilter = new AbcNameFilterStartsWith("com.intellij.flex.uiDesigner.flex", true);
-    final Collection<String> airsparkDefinitions = new ArrayList<String>(1);
+    final Collection<CharSequence> airsparkDefinitions = new ArrayList<CharSequence>(1);
     airsparkDefinitions.add("spark.components:WindowedApplication");
 
     AbcNameFilterByNameSetAndStartsWith filter =
       new AbcNameFilterByNameSetAndStartsWith(Collections.<CharSequence>emptyList(), new String[]{"mx.", "spark."}) {
         @Override
-        public boolean accept(String name) {
-          return name.equals(FlexSdkAbcInjector.STYLE_PROTO_CHAIN) || name.equals("mx.styles:StyleManager") ||
-                 name.equals(FlexSdkAbcInjector.LAYOUT_MANAGER) || name.equals(FlexSdkAbcInjector.RESOURCE_MANAGER) ||
+        public boolean accept(CharSequence name) {
+          return StringUtil.startsWith(name, FlexSdkAbcInjector.STYLE_PROTO_CHAIN) || StringUtil.startsWith(name, "mx.styles:StyleManager") ||
+                 StringUtil.startsWith(name, FlexSdkAbcInjector.LAYOUT_MANAGER) || StringUtil.startsWith(name, FlexSdkAbcInjector.RESOURCE_MANAGER) ||
                  (super.accept(name) && !sparkInclusionNameFilter.accept(name) && !airsparkDefinitions.contains(name));
         }
       };
@@ -29,7 +30,7 @@ public class ComplementSwfBuilder {
     new AbcFilter().filter(source, new File(rootPath + "/complement-flex" + flexVersion + ".swf"), sparkInclusionNameFilter);
     new AbcFilter().filter(source, new File(rootPath + "/complement-air4.swf"), new AbcNameFilter() {
       @Override
-      public boolean accept(String name) {
+      public boolean accept(CharSequence name) {
         return airsparkDefinitions.contains(name);
       }
     });

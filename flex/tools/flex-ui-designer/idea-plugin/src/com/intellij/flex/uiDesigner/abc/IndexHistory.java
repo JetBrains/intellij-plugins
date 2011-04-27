@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.util.List;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
@@ -16,8 +17,7 @@ final class IndexHistory {
   public static final int NS_SET = 5;
   public static final int MULTINAME = 6;
 
-  private final ConstantPool[] pools;
-  private final int[] poolSizes;
+  private final List<Decoder> decoders;
   private final int[] map;
 
   private final PoolPart[] poolParts = new PoolPart[7];
@@ -28,15 +28,19 @@ final class IndexHistory {
   // since the name for private namespaces is not important
   private boolean disableDebuggingInfo = false;
 
-  IndexHistory(ConstantPool[] pools) {
-    this.pools = pools;
-    poolSizes = new int[pools.length];
+  IndexHistory(List<Decoder> decoders) {
+    this.decoders = decoders;
     int size = 0;
     int preferredSize = 0;
     int[] poolPartLengths = new int[7];
-    for (int i = 0, length = pools.length; i < length; i++) {
-      poolSizes[i] = i == 0 ? 0 : size;
-      final ConstantPool pool = pools[i];
+    for (int i = 0, length = decoders.size(); i < length; i++) {
+      Decoder decoder = decoders.get(i);
+      if (decoder == null) {
+        continue;
+      }
+
+      final ConstantPool pool = decoder.constantPool;
+      pool.totalSize = size;
       size += pool.size();
       preferredSize += pool.ends[MULTINAME] - pool.ends[STRING];
 
@@ -82,7 +86,7 @@ final class IndexHistory {
   }
 
   public int[] getRawPartPoolPositions(int poolIndex, int kind) {
-    return pools[poolIndex].positions[kind];
+    return decoders.get(poolIndex).constantPool.positions[kind];
   }
 
   public int getNewIndex(int insertionIndex) {
@@ -142,9 +146,10 @@ final class IndexHistory {
   }
 
   public int getInsertionIndex(final int poolIndex, final int kind, final int oldIndex) {
-    int index = poolSizes[poolIndex];
+    ConstantPool pool = decoders.get(poolIndex).constantPool;
+    int index = pool.totalSize;
     for (int i = kind + 1; i < 7; i++) {
-      int length = pools[poolIndex].positions[i].length;
+      int length = pool.positions[i].length;
       index += length == 0 ? 0 : (length - 1);
     }
 
@@ -152,7 +157,7 @@ final class IndexHistory {
   }
 
   private int decodeOnDemand(final int poolIndex, final int kind, final int j, int actualStart) {
-    final ConstantPool pool = pools[poolIndex];
+    final ConstantPool pool = decoders.get(poolIndex).constantPool;
     final PoolPart poolPart = poolParts[kind];
     final int[] positions = pool.positions[kind];
     final int endPos = pool.ends[kind];

@@ -17,7 +17,7 @@ public class AbcNameFilterByNameSet implements AbcNameFilter {
   }
 
   @Override
-  public boolean accept(String name) {
+  public boolean accept(CharSequence name) {
     return definitions.contains(name) == inclusion;
   }
 }

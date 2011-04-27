@@ -12,7 +12,6 @@ import java.util.Collection;
 public class AbcFilterTest extends TestCase {
   public void testReplaceMainClass() throws IOException {
     AbcFilter filter = new AbcFilter();
-    filter.replaceMainClass = true;
     File out = File.createTempFile("abc_", ".swf");
 //    File out = new File("/Users/develar/o.swf");
     Collection<CharSequence> unneededClasses = new ArrayList<CharSequence>(1);

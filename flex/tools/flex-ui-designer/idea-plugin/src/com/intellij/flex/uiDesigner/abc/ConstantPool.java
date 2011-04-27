@@ -9,6 +9,8 @@ class ConstantPool {
   final int[][] positions = new int[7][];
   final int[] ends = new int[7];
 
+  int totalSize;
+
   public ConstantPool(DataBuffer in) throws DecoderException {
     this.in = in;
 

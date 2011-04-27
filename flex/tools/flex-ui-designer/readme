@@ -9,3 +9,5 @@ mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.1:generate -o
 mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.1:generate -o -s build/maven-settings.xml
 
 mvn dependency:copy-dependencies && find $DEV_IDEA_HOME/flex/tools/flex-ui-designer \( -name maven-metadata-local.xml -o -name _maven.repositories \) -delete
+
+mvn compile -Prelease -Dflex.swf.uncompressed=true -o

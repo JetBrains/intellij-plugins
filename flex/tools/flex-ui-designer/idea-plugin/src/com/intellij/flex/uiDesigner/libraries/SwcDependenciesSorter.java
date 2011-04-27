@@ -66,45 +66,23 @@ public class SwcDependenciesSorter {
       new XmlBuilderDriver(VfsUtil.loadText(library.getCatalogFile())).build(catalogXmlBuilder);
       if (library.hasDefinitions() || library.hasResourceBundles()) {
         filteredLibraries.add(library);
+        if (library.hasUnresolvedDefinitions()) {
+          library.unresolvedDefinitionPolicy = library.unresolvedDefinitions.size();
+        }
       }
     }
 
     analyzeDefinitions();
     definitionMap = null;
 
-    TLinkedList<OriginalLibrary> queue = new TLinkedList<OriginalLibrary>();
-    AbcFilter filter = null;
+    final TLinkedList<OriginalLibrary> queue = new TLinkedList<OriginalLibrary>();
+    final AbcFilter filter = new AbcFilter();
     for (OriginalLibrary library : filteredLibraries) {
       if (!library.hasDefinitions()) {
         if (library.hasResourceBundles()) {
           queue.add(library);
         }
         continue;
-      }
-
-      boolean abcModified = false;
-      if (library.isFromSdk()) {
-        String path = library.getPath();
-        if (path.startsWith("framework")) {
-          abcModified = true;
-          injectFrameworkSwc(flexSdkVersion, library, libraries);
-        }
-        else if (path.startsWith("airspark")) {
-          if (library.hasUnresolvedDefinitions()) {
-            library.unresolvedDefinitions.addAll(getBadAirsparkClasses());
-          }
-          else {
-            abcModified = true;
-            removeBadClassesFromLibrary(library, getBadAirsparkClasses(), false);
-          }
-        }
-      }
-
-      if (library.mxCoreFlexModuleFactoryClassName != null && !library.hasUnresolvedDefinitions()) {
-        Collection<CharSequence> classes = new ArrayList<CharSequence>(1);
-        classes.add(library.mxCoreFlexModuleFactoryClassName);
-        abcModified = true;
-        removeBadClassesFromLibrary(library, classes, true);
       }
 
       if (library.inDegree == 0) {
@@ -115,26 +93,41 @@ public class SwcDependenciesSorter {
           queue.add(library);
         }
       }
-      else if (!abcModified && !library.unresolvedDefinitions.isEmpty()) {
-        if (filter == null) {
-          filter = new AbcFilter();
-        }
-        library.filtered = true;
-        if (DebugPathManager.IS_DEV) {
-          printCollection(library.unresolvedDefinitions,
-                          new FileWriter(new File(rootPath, library.getPath() + "_unresolvedDefinitions.txt")));
-        }
 
-        if (library.mxCoreFlexModuleFactoryClassName != null) {
-          library.unresolvedDefinitions.add(library.mxCoreFlexModuleFactoryClassName);
+      Collection<CharSequence> filteredDefinitions = null;
+      if (library.isFromSdk()) {
+        String path = library.getPath();
+        if (path.startsWith("framework")) {
+          injectFrameworkSwc(flexSdkVersion, library, libraries);
+          continue;
         }
-
-        abcModified = true;
-        filter.filter(library.getSwfFile(), createSwfOutFile(library, postfix), new AbcNameFilterByNameSet(library.unresolvedDefinitions));
+        else if (path.startsWith("airspark")) {
+          filteredDefinitions = getBadAirsparkClasses();
+          if (!library.hasMissedDefinitions() && library.unresolvedDefinitionPolicy != 0) {
+            library.unresolvedDefinitions.addAll(filteredDefinitions);
+            filteredDefinitions = library.unresolvedDefinitions;
+          }
+        }
       }
 
-      if (!abcModified) {
-        copyLibrarySwf(library);
+      if (library.hasUnresolvedDefinitions()) {
+        if (library.hasMissedDefinitions()) {
+          library.filtered = true;
+          if (DebugPathManager.IS_DEV) {
+            printCollection(library, postfix);
+          }
+        }
+
+        filteredDefinitions = library.unresolvedDefinitions;
+      }
+
+      final VirtualFile swfFile = library.getSwfFile();
+      final File modifiedSwf = library.filtered ? createSwfOutFile(library, postfix) : createSwfOutFile(library);
+      final long timeStamp = swfFile.getTimeStamp();
+      if (timeStamp != modifiedSwf.lastModified()) {
+        filter.filter(swfFile, modifiedSwf, filteredDefinitions == null ? null : new AbcNameFilterByNameSet(filteredDefinitions));
+        //noinspection ResultOfMethodCallIgnored
+        modifiedSwf.setLastModified(timeStamp);
       }
     }
 
@@ -177,24 +170,14 @@ public class SwcDependenciesSorter {
     return new File(rootPath, library.getPath() + "_" + postfix + ".swf");
   }
 
-  public static void printCollection(Set<CharSequence> set, FileWriter writer) throws IOException {
-    for (CharSequence s : set) {
+  public void printCollection(OriginalLibrary library, String postfix) throws IOException {
+    FileWriter writer = new FileWriter(new File(rootPath, library.getPath() + '_' + postfix + "_unresolvedDefinitions.txt"));
+    for (CharSequence s : library.unresolvedDefinitions) {
       writer.append(s);
       writer.append('\n');
-    } 
+    }
 
     writer.flush();
-  }
-
-  private void copyLibrarySwf(OriginalLibrary library) throws IOException {
-    VirtualFile swfFile = library.getSwfFile();
-    File modifiedSwf = createSwfOutFile(library);
-    final long timeStamp = swfFile.getTimeStamp();
-    if (timeStamp != modifiedSwf.lastModified()) {
-      AbcFilter.mergeAbc(swfFile, modifiedSwf);
-      //noinspection ResultOfMethodCallIgnored
-      modifiedSwf.setLastModified(timeStamp);
-    }
   }
 
   private void injectFrameworkSwc(String flexSdkVersion, OriginalLibrary library, List<OriginalLibrary> libraries) throws IOException {
@@ -217,7 +200,7 @@ public class SwcDependenciesSorter {
     if (library.hasUnresolvedDefinitions() ||
         timeStamp > modifiedSwf.lastModified() ||
         injectionLastModified > modifiedSwf.lastModified()) {
-      Set<CharSequence> definitions = library.hasUnresolvedDefinitions() ? library.unresolvedDefinitions : new THashSet<CharSequence>(8);
+      Set<CharSequence> definitions = library.hasUnresolvedDefinitions() ? library.unresolvedDefinitions : new THashSet<CharSequence>(8, AbcFilter.HASHING_STRATEGY);
       definitions.add("FrameworkClasses");
       definitions.add("mx.managers.systemClasses:MarshallingSupport");
       definitions.add("mx.managers:SystemManagerProxy");
@@ -237,20 +220,6 @@ public class SwcDependenciesSorter {
 
       new FlexSdkAbcInjector(flexSdkVersion, injectionUrlConnection, requiredAssetsInfo).filter(swfFile, modifiedSwf,
                              new AbcNameFilterByNameSetAndStartsWith(definitions, new String[]{"mx.managers.marshalClasses:"}));
-    }
-  }
-
-  private void removeBadClassesFromLibrary(OriginalLibrary library, Collection<CharSequence> definitions, boolean replaceMainClass)
-    throws IOException {
-    VirtualFile swfFile = library.getSwfFile();
-    File modifiedSwf = createSwfOutFile(library);
-    final long timeStamp = swfFile.getTimeStamp();
-    if (timeStamp != modifiedSwf.lastModified()) {
-      AbcFilter filter = new AbcFilter();
-      filter.replaceMainClass = replaceMainClass;
-      filter.filter(swfFile, modifiedSwf, new AbcNameFilterByNameSet(definitions));
-      //noinspection ResultOfMethodCallIgnored
-      modifiedSwf.setLastModified(timeStamp);
     }
   }
 

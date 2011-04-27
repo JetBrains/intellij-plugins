@@ -4,6 +4,7 @@ interface TagTypes {
   int End = 0;
   int DefineBitsJPEG2 = 21;
   int SymbolClass = 76;
+  int ExportAssets = 56;
   int DoABC2 = 82;
 
   int EnableDebugger = 58;

@@ -47,20 +47,18 @@ class Encoder {
     history.disableDebugging();
   }
 
-  public void addConstantPools(ConstantPool[] pools) {
-    //ConstantPool newPool = new ConstantPool(); // make room for decimal in the one we create
-    history = new IndexHistory(pools);
-    if (disableDebugging) {
-      history.disableDebugging();
-    }
-  }
-
-  public void configure(List<Decoder> decoders) {
+  public void configure(List<Decoder> decoders, AbcFilter.TransientString excludedName) {
     int estimatedSize = 0, total = 0;
     int[] sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
-      estimatedSize += decoders.get(i).methodInfo.estimatedSize;
-      sizes[i] = decoders.get(i).methodInfo.size();
+      Decoder decoder = decoders.get(i);
+      if (excludedName != null && decoder.name != null && excludedName.same(decoder.name)) {
+        decoders.set(i, null);
+        continue;
+      }
+
+      estimatedSize += decoder.methodInfo.estimatedSize;
+      sizes[i] = decoder.methodInfo.size();
       total += sizes[i];
     }
     methodInfo = new DataBuffer2(estimatedSize, sizes);
@@ -70,8 +68,13 @@ class Encoder {
     total = 0;
     sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
-      estimatedSize += decoders.get(i).metadataInfo.estimatedSize;
-      sizes[i] = decoders.get(i).metadataInfo.size();
+      Decoder decoder = decoders.get(i);
+      if (decoder == null) {
+        continue;
+      }
+
+      estimatedSize += decoder.metadataInfo.estimatedSize;
+      sizes[i] = decoder.metadataInfo.size();
       total += sizes[i];
     }
     metadataInfo = new MetadataInfoByteArray(sizes, total);
@@ -80,8 +83,13 @@ class Encoder {
     total = 0;
     sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
-      estimatedSize += decoders.get(i).classInfo.estimatedSize;
-      sizes[i] = decoders.get(i).classInfo.size();
+      Decoder decoder = decoders.get(i);
+      if (decoder == null) {
+        continue;
+      }
+
+      estimatedSize += decoder.classInfo.estimatedSize;
+      sizes[i] = decoder.classInfo.size();
       total += sizes[i];
     }
     classInfo = new DataBuffer2(estimatedSize, sizes);
@@ -91,8 +99,13 @@ class Encoder {
     total = 0;
     sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
-      estimatedSize += decoders.get(i).scriptInfo.estimatedSize;
-      sizes[i] = decoders.get(i).scriptInfo.size();
+      Decoder decoder = decoders.get(i);
+      if (decoder == null) {
+        continue;
+      }
+
+      estimatedSize += decoder.scriptInfo.estimatedSize;
+      sizes[i] = decoder.scriptInfo.size();
       total += sizes[i];
     }
     scriptInfo = new DataBuffer2(estimatedSize, sizes);
@@ -102,8 +115,13 @@ class Encoder {
     total = 0;
     sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
-      estimatedSize += decoders.get(i).methodBodies.estimatedSize;
-      sizes[i] = decoders.get(i).methodBodies.size();
+      Decoder decoder = decoders.get(i);
+      if (decoder == null) {
+        continue;
+      }
+
+      estimatedSize += decoder.methodBodies.estimatedSize;
+      sizes[i] = decoder.methodBodies.size();
       total += sizes[i];
     }
     methodBodies = new DataBuffer2(estimatedSize, sizes);
@@ -111,6 +129,11 @@ class Encoder {
 
     opcodes = new DataBuffer3(decoders, 4096);
     exceptions = new WritableDataBuffer(4096);
+
+    history = new IndexHistory(decoders);
+    if (disableDebugging) {
+      history.disableDebugging();
+    }
   }
 
   public void useConstantPool(int index) {
@@ -2261,8 +2284,8 @@ class Encoder {
   }
 
   private class DataBuffer3 extends WritableDataBuffer {
-    IntIntHashMap offsets;
-    List<Decoder> decoders;
+    final IntIntHashMap offsets;
+    final List<Decoder> decoders;
 
     DataBuffer3(List<Decoder> decoders, int estimatedSize) {
       super(estimatedSize);

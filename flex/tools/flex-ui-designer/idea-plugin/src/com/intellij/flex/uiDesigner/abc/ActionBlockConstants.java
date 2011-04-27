@@ -46,9 +46,6 @@ interface ActionBlockConstants {
   int TRAIT_FLAG_metadata = 0x04;
 
   // Class flags
-  int CLASS_FLAG_sealed = 0x01;
-  int CLASS_FLAG_final = 0x02;
-  int CLASS_FLAG_interface = 0x04;
   int CLASS_FLAG_protected = 0x08;
 
   // Method flags

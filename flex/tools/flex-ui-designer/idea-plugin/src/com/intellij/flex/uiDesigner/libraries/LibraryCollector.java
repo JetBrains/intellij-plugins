@@ -38,7 +38,8 @@ public class LibraryCollector {
            || name.equals("flex.swc") /* flex.swc is only aggregation library */
            || name.equals("servicemonitor.swc")  /* aircore contains all classes */
            || name.equals("utilities.swc")  /* flex sdk 4.1 */
-           || name.equals("core.swc") /* hero (4.5) aggregation library */;
+           || name.equals("core.swc") /* hero (4.5) aggregation library */
+           || name.equals("applicationupdater.swc") /* applicationupdater_ui contains all classes */;
   }
 
   private static boolean isGlobalLibrary(String libFileName) {

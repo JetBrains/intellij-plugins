@@ -287,7 +287,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
       String url = readUTF();
       VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(url);
       if (file == null) {
-        FlexUIDesignerApplicationManager.LOG.error("can't find file " + url);
+        FlexUIDesignerApplicationManager.LOG.error("Can't find file " + url);
       }
 
       return file;
