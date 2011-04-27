@@ -7,11 +7,14 @@ import org.flyti.plexus.PlexusManager;
 public final class ProjectUtil {
   public static function getProjectForActiveWindow():Project {
     var activeWindow:NativeWindow = NativeApplication.nativeApplication.activeWindow;
-    if (activeWindow != null) {
-      return ProjectManager(PlexusManager.instance.container.lookup(ProjectManager)).project;
+    if (activeWindow == null) {
+      var openedWindows:Array = NativeApplication.nativeApplication.openedWindows;
+      if (openedWindows.length != 0) {
+        activeWindow = openedWindows[0];
+      }
     }
 
-    return null;
+    return ProjectManager(PlexusManager.instance.container.lookup(ProjectManager)).project;
   }
 }
 }
