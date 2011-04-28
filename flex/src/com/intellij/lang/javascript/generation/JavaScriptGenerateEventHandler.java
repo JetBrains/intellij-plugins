@@ -113,10 +113,25 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
     if (params.length > 0 &&
         ((params[0] instanceof JSReferenceExpression && ((JSReferenceExpression)params[0]).getQualifier() != null) ||
          (params[0] instanceof JSLiteralExpression && ((JSLiteralExpression)params[0]).isQuotedLiteral()))) {
-      return callExpression;
+      if (params.length == 1 || params.length > 1 && isUnresolvedReference(params[1])) {
+        return callExpression;
+      }
     }
 
     return null;
+  }
+
+  private static boolean isUnresolvedReference(final JSExpression parameter) {
+    if (parameter instanceof JSReferenceExpression) {
+      final PsiElement referenceNameElement = ((JSReferenceExpression)parameter).getReferenceNameElement();
+      final ASTNode nameNode = referenceNameElement == null ? null : referenceNameElement.getNode();
+      if (nameNode != null &&
+          nameNode.getElementType() == JSTokenTypes.IDENTIFIER &&
+          ((JSReferenceExpression)parameter).resolve() == null) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -378,14 +393,9 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
           if (node != null && node.getElementType() == JSTokenTypes.COMMA) {
             handlerCallerAnchorInArgumentList = sibling;
 
-            if (params.length >= 2 &&
-                params[1] instanceof JSReferenceExpression) {
-              final PsiElement referenceNameElement = ((JSReferenceExpression)params[1]).getReferenceNameElement();
-              final ASTNode nameNode = referenceNameElement == null ? null : referenceNameElement.getNode();
-              if (nameNode != null &&
-                  nameNode.getElementType() == JSTokenTypes.IDENTIFIER &&
-                  ((JSReferenceExpression)params[1]).resolve() == null) {
-                handlerCallerAnchorInArgumentList = null;  // use current unresolved reference as event handler name
+            if (params.length >= 2) {
+              handlerCallerAnchorInArgumentList = null;
+              if (isUnresolvedReference(params[1])) {
                 eventHandlerName = ((JSReferenceExpression)params[1]).getReferencedName();
               }
             }
