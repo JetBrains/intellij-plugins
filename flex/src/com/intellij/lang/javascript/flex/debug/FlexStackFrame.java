@@ -43,6 +43,8 @@ import java.util.*;
  * @author nik
  */
 public class FlexStackFrame extends XStackFrame {
+  private static final String ANONYMOUS = "<anonymous>";
+
   private final FlexDebugProcess myDebugProcess;
   private final XSourcePosition mySourcePosition;
   @NonNls private static final String DELIM = " = ";
@@ -74,8 +76,8 @@ public class FlexStackFrame extends XStackFrame {
     commands.add(new MyDebuggerCommand("info locals", node, false, ValueType.Variable));
     //commands.add(new MyDebuggerCommand("info variables", node, false));
 
-    if (!myDebugProcess.isDebuggerFromSdk4() && mySourcePosition != null) {
-      commands.add(new DebuggerCommand("noop", CommandOutputProcessingType.SPECIAL_PROCESSING) {
+    if (mySourcePosition != null) {
+      commands.add(new DebuggerCommand("does not matter", CommandOutputProcessingType.SPECIAL_PROCESSING) {
         @Override
         public void post(FlexDebugProcess flexDebugProcess) throws IOException {
           ensureQName2IdMapLoaded();
@@ -92,30 +94,44 @@ public class FlexStackFrame extends XStackFrame {
           });
 
           if (Boolean.TRUE.equals(insideFunExpr)) {
+            // public function outer(outerArg:String):Function {
+            //     return function middle(middleArg:String):Function {
+            //         return function inner(innerArg:String):String {
+            //             return outerArg + middleArg + innerArg; // [BREAKPOINT]
+            //         }
+            //     }
+            // }
+            //
+            // info scopechain gives following:
+            // 0 = [Object 103989057, class='global']
+            // 1 = [Object 101988361, class='Object']
+            // 2 = [Object 101989657, class='<anonymous>']
+            // 3 = [Object 103989057, class='global']
+            // 4 = [Object 102001417, class='Object']
+            // 5 = [Object 102001873, class='pack::HelloFlex4/outer']
+            // 6 = [Object 106803361, class='pack::HelloFlex4']
+            // 7 = [Object 105768929, class='pack::HelloFlex4$']
+            // 8 = [Object 54750369, class='spark.components::Application$']
+            // 9 = ...
+            // Interesting for us: closures and one object after the last closure,
+            // i.e. in this case #2, #5 and #6.
+
             scopeChain = new ArrayList<String>(2);
 
-            int totalWithoutBraces = 0;
+            String firstTokenAfterLastClosure = null;
             for (String token : qName2IdMap.keySet()) {
-              int i = token.indexOf('/');
-              if (i == -1) {
-                ++totalWithoutBraces;
-                if (totalWithoutBraces > 1) break;
+              final int slashIndex = token.indexOf('/');
+              if (slashIndex != -1 || token.contains(ANONYMOUS)) {
+                final String funName = token.substring(slashIndex + 1);
+                addScopeChainElement(token, funName, resultChildren);
               }
+              else if (firstTokenAfterLastClosure == null && resultChildren.size() > 0) {
+                firstTokenAfterLastClosure = token;
+              }
+            }
 
-              String funName = token.substring(i + 1);
-
-              String id = qName2IdMap.get(token);
-              String path = "#" + validObjectId(id);
-              scopeChain.add(path);
-              final String name = "Locals of " + funName;
-              resultChildren.add(name,
-                new FlexValue(
-                  name,
-                  path,
-                  "[Object " + id + ", " + CLASS_MARKER + token + "']",
-                  null,
-                  ValueType.ScopeChainEntry
-                ));
+            if (firstTokenAfterLastClosure != null) {
+              addScopeChainElement(firstTokenAfterLastClosure, firstTokenAfterLastClosure, resultChildren);
             }
           }
           node.addChildren(resultChildren, false);
@@ -124,6 +140,15 @@ public class FlexStackFrame extends XStackFrame {
         @Override
         public String read(FlexDebugProcess flexDebugProcess) throws IOException {
           return "";
+        }
+
+        private void addScopeChainElement(final String token, final String funName, final XValueChildrenList resultChildren) {
+          final String id = qName2IdMap.get(token);
+          final String path = "#" + validObjectId(id);
+          scopeChain.add(path);
+          final String name = "Locals of " + funName;
+          final String flexValueResult = "[Object " + id + ", " + CLASS_MARKER + token + "']";
+          resultChildren.add(name, new FlexValue(name, path, flexValueResult, null, ValueType.ScopeChainEntry));
         }
       });
     }
