@@ -118,6 +118,7 @@
     <internalFileTemplate name="Mxml Component (Flex 3)"/>
     <internalFileTemplate name="Mxml Component (Flex 4)"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>
+    <liveTemplateContext implementation="com.intellij.lang.javascript.flex.MxmlTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="com.intellij.lang.javascript.ActionScriptLiveTemplatesProvider"/>
     <lang.refactoringSupport language="XML" implementationClass="com.intellij.lang.javascript.flex.MxmlRefactoringSupportProvider"/>
     <lang.refactoringSupport language="JavaScript"
