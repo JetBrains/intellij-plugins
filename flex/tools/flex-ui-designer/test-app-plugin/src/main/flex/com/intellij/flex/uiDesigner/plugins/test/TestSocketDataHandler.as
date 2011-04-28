@@ -8,13 +8,11 @@ import avmplus.USE_ITRAITS;
 import avmplus.describe;
 
 import com.intellij.flex.uiDesigner.DocumentManager;
-
 import com.intellij.flex.uiDesigner.ProjectManager;
 import com.intellij.flex.uiDesigner.SocketDataHandler;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 
 import flash.display.NativeWindow;
-
 import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.events.TimerEvent;
@@ -153,11 +151,13 @@ public class TestSocketDataHandler implements SocketDataHandler {
   }
   
   private function success():void {
+    _socket.writeByte(TestServerMethod.success);
     _socket.writeUTF("__passed__");
     _socket.flush();
   }
   
   private function fail(message:String):void {
+    _socket.writeByte(TestServerMethod.fail);
     _socket.writeUTF(message);
     _socket.flush();
   }
@@ -182,4 +182,9 @@ class TestAnnotation {
 
   public var async:Boolean;
   public var nullableDocument:Boolean;
+}
+
+final class TestServerMethod {
+  public static const success:int = 100;
+  public static const fail:int = 101;
 }

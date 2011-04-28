@@ -15,10 +15,10 @@ public final class AmfUtil {
 
     value = (value | (b & 0x7F)) << 7;
     if ((b = input.readByte() & 0xFF) < 128) {
-      return (value | b);
+      return value | b;
     }
 
-    return (((value | (b & 0x7F)) << 8) | (input.readByte() & 0xFF));
+    return ((value | (b & 0x7F)) << 8) | (input.readByte() & 0xFF);
   }
 
   public static function readUtf(input:IDataInput):String {

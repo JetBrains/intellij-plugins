@@ -36,7 +36,7 @@ public class BinaryFileManager extends EntityListManager<VirtualFile, AssetInfo>
   public int registerFile(@NotNull VirtualFile virtualFile, BinaryFileType type) throws InvalidPropertyException {
     int id = list.add(new AssetInfo(virtualFile));
     try {
-      FlexUIDesignerApplicationManager.getInstance().getClient().registerBinaryFile(id, virtualFile, type);
+      Client.getInstance().registerBinaryFile(id, virtualFile, type);
       return id;
     }
     catch (IOException e) {

@@ -1,35 +1,29 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import static com.intellij.flex.uiDesigner.DesignerTestApplicationManager.SocketTestInputHandler;
+
 abstract class MxmlWriterTestBase extends AppTestBase {
   protected TestClient client;
   protected Socket socket;
-  protected SocketInputHandlerImpl.Reader reader;
-
-  private ProcessHandler adlProcessHandler;
+  protected SocketTestInputHandler socketInputHandler;
   
   private int passedCounter;
   protected List<Library> libraries;
@@ -53,64 +47,14 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     
     return libraries;
   }
-  
-  protected File getAppRootDir() throws IOException {
-    File appRootDir;
-    if (Boolean.valueOf(System.getProperty("fud.test.debug"))) {
-      appRootDir = new File(PathManager.getHomePath() + "/testAppRoot");
-      if (!appRootDir.exists() || SystemInfo.isWindows) {
-        copySwfAndDescriptor(appRootDir);
-      }
-    }
-    else {
-      appRootDir = createTempDir("fud");
-      FileUtil.copy(new File(getFudHome() + "/app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(appRootDir,
-                                                                                                        FlexUIDesignerApplicationManager.DESIGNER_SWF));
-    }
-    return appRootDir;
-  }
 
-  private boolean adlRunned;
   protected final void runAdl() throws Exception {
-    if (adlRunned) {
-      return;
-    }
+    DesignerTestApplicationManager testApplicationManager = DesignerTestApplicationManager.getInstance();
 
-    adlRunned = true;
-    appRootDir = getAppRootDir();
-
-    final ServerSocket serverSocket = new ServerSocket(0, 1);
-    DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"), 
-                                                                                                                      System.getProperty("fud.air"));
-    adlRunConfiguration.arguments = new ArrayList<String>();
-    adlRunConfiguration.arguments.add("-p");
-    adlRunConfiguration.arguments.add(getFudHome() + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
-
-    adlRunConfiguration.arguments.add("-cdd");
-    adlRunConfiguration.arguments.add(getFudHome() + "/flex-injection/target");
-
-    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, getFudHome() + "/designer/src/main/resources/descriptor.xml",
-                                                       serverSocket.getLocalPort(), appRootDir.getPath(), new Consumer<Integer>() {
-        @Override
-        public void consume(Integer exitCode) {
-          if (exitCode != 0) {
-            try {
-              serverSocket.close();
-            }
-            catch (IOException ignored) {
-            }
-
-            fail("adl return " + exitCode);
-          }
-        }
-      });
-
-    socket = serverSocket.accept();
-    reader = new SocketInputHandlerImpl.Reader(new BufferedInputStream(socket.getInputStream()));
-    client = new TestClient(socket.getOutputStream());
-
-    changeServiceImplementation(FlexUIDesignerApplicationManager.class, MyFlexUIDesignerApplicationManager.class);
-    ((MyFlexUIDesignerApplicationManager)FlexUIDesignerApplicationManager.getInstance()).setClient(client);
+    appRootDir = testApplicationManager.getAppDir();
+    socketInputHandler = testApplicationManager.socketInputHandler;
+    socket = testApplicationManager.getSocket();
+    client = (TestClient)Client.getInstance();
 
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
     stringWriter.startChange();
@@ -127,21 +71,6 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     client.registerLibrarySet(librarySet, stringWriter);
     if (!isRequireLocalStyleHolder()) {
       registerModule(new ModuleInfo(myModule), stringWriter);
-    }
-  }
-
-  private static class MyFlexUIDesignerApplicationManager extends FlexUIDesignerApplicationManager {
-    @Override
-    public Client getClient() {
-      return client;
-    }
-
-    public void setClient(TestClient client) {
-      this.client = client;
-    }
-
-    protected Client createClient() {
-      return client;
     }
   }
 
@@ -248,7 +177,8 @@ abstract class MxmlWriterTestBase extends AppTestBase {
           tester.test(file, xmlFile, originalVFile);
           return null;
         }
-      }).get(888, TimeUnit.SECONDS);
+      }).get(8888, TimeUnit.SECONDS);
+      //}).get(8, TimeUnit.SECONDS);
     }
   }
 
@@ -264,29 +194,18 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     }
   }
   
-  protected void assertResult(String documentName, long time) throws IOException {
-    String result = reader.readUTF();
-    if (result.equals(PASSED)) {
-      if (time != -1) {
-        System.out.print(" passed (" + time + ")\n");
-        passedCounter++;
-        LOG.info(documentName + " passed");
-      }
+  protected void assertResult(String documentName) throws IOException {
+    if (socketInputHandler.isPassed()) {
+      passedCounter++;
     }
     else {
-      fail(documentName + "\n" + result);
+      fail(documentName + '\n' + socketInputHandler.getAndClearFailedMessage());
     }
   }
 
   @Override
   protected void tearDown() throws Exception {
     System.out.print("\npassed " + passedCounter + " tests.\n");
-
-    client.close();
-    reader.close();
-    socket.close();
-
-    adlProcessHandler.destroyProcess();
     
     super.tearDown();
   }
@@ -294,14 +213,18 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   private class MyTester implements Tester {
     @Override
     public void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
-      String filename = file.getNameWithoutExtension();
-      System.out.print(filename);
-      long start = System.currentTimeMillis();
+      String documentName = file.getNameWithoutExtension();
+      System.out.print(documentName + '\n');
       client.openDocument(myModule, xmlFile);
-      long time = System.currentTimeMillis() - start;
-      client.test(filename, originalFile.getParent().getName());
-      assertResult(filename, time);
+      client.test(documentName, originalFile.getParent().getName());
+      socketInputHandler.setExpectedErrorMessage(expectedErrorForDocument(documentName));
+      socketInputHandler.waitResult();
+      assertResult(documentName);
     }
+  }
+
+  protected String expectedErrorForDocument(String documentName) {
+    return null;
   }
 }
 

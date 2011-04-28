@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 public class ComplementSwfBuilder {
   public static void build(String rootPath, String flexVersion) throws IOException {
@@ -15,8 +14,11 @@ public class ComplementSwfBuilder {
     final Collection<CharSequence> airsparkDefinitions = new ArrayList<CharSequence>(1);
     airsparkDefinitions.add("spark.components:WindowedApplication");
 
+    final Collection<CharSequence> commonDefinitions = new ArrayList<CharSequence>(1);
+    commonDefinitions.add("com.intellij.flex.uiDesigner:SpecialClassForAdobeEngineers");
+
     AbcNameFilterByNameSetAndStartsWith filter =
-      new AbcNameFilterByNameSetAndStartsWith(Collections.<CharSequence>emptyList(), new String[]{"mx.", "spark."}) {
+      new AbcNameFilterByNameSetAndStartsWith(commonDefinitions, new String[]{"mx.", "spark."}) {
         @Override
         public boolean accept(CharSequence name) {
           return StringUtil.startsWith(name, FlexSdkAbcInjector.STYLE_PROTO_CHAIN) || StringUtil.startsWith(name, "mx.styles:StyleManager") ||

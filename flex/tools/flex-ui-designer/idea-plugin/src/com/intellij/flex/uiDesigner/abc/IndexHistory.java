@@ -269,21 +269,6 @@ final class IndexHistory {
       dataIn = in_multiname;
     }
 
-    if (kind == STRING) {
-      //if (start == positions[j]) {
-      //  int op = pool.in.position();
-      //  pool.in.seek(actualStart);
-      //  String s = pool.in.readString(pool.in.readU32());
-      //  pool.in.seek(op);
-      //  if (s.length() > 0 && s.charAt(0) != '_') {
-      //  System.out.print("ff");
-      //}
-    }
-
-    if (start == 9 && end == 93) {
-      System.out.print("ff");
-    }
-
     int newIndex = poolPart.contains(dataIn, start, end);
     if (newIndex == -1) {
       newIndex = poolPart.store(dataIn, start, end);

@@ -425,7 +425,7 @@ class Encoder {
     return newMetadata;
   }
 
-  public void slotTrait(int trait_kind, int name, int slotId, int type, int value, int value_kind, int[] metadata) {
+  public void slotTrait(int trait_kind, int name, int slotId, int type, int value, int value_kind, int[] metadata) throws DecoderException {
     currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
     TIntArrayList new_metadata = trimMetadata(metadata);
     if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata.size() == 0) {
@@ -482,7 +482,7 @@ class Encoder {
         break;
       default: {
         if (kind == -1) {
-          System.out.println("writing slotTrait: don't know what constant type it is... " + value_kind + "," + value);
+          throw new DecoderException("writing slotTrait: don't know what constant type it is... " + value_kind + "," + value);
         }
         newIndex = history.getIndex(poolIndex, kind, value);
       }

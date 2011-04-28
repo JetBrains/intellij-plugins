@@ -61,7 +61,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     return vFile;
   }
   
-  protected static void changeServiceImplementation(Class key, Class implementation) {
+  public static void changeServiceImplementation(Class key, Class implementation) {
     MutablePicoContainer picoContainer = (MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer();
     picoContainer.unregisterComponent(key.getName());
     picoContainer.registerComponentImplementation(key.getName(), implementation);
@@ -187,12 +187,5 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     catch (NoSuchMethodException e) {
       throw new AssertionFailedError(e.getMessage());
     }
-  }
-
-  protected static void copySwfAndDescriptor(final File rootDir) throws IOException {
-    //noinspection ResultOfMethodCallIgnored
-    rootDir.mkdirs();
-    FileUtil.copy(new File(getFudHome(), "app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(rootDir, FlexUIDesignerApplicationManager.DESIGNER_SWF));
-    FileUtil.copy(new File(getFudHome(), "designer/src/main/resources/descriptor.xml"), new File(rootDir, FlexUIDesignerApplicationManager.DESCRIPTOR_XML));
   }
 }

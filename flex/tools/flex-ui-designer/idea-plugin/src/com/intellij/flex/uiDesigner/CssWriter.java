@@ -361,7 +361,6 @@ public class CssWriter {
   }
 
   private void writeEmbed(CssFunction cssFunction) throws InvalidPropertyException {
-    //System.out.print(cssFunction.getText() + "\n");
     CssTerm[] terms = PsiTreeUtil.getChildrenOfType(PsiTreeUtil.getRequiredChildOfType(cssFunction, CssTermList.class), CssTerm.class);
     VirtualFile source = null;
     String symbol = null;

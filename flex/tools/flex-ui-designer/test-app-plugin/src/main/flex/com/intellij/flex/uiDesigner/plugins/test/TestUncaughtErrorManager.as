@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.plugins.test {
+import com.intellij.flex.uiDesigner.ServerMethod;
 import com.intellij.flex.uiDesigner.SocketManager;
 import com.intellij.flex.uiDesigner.UncaughtErrorManager;
 
@@ -29,6 +30,7 @@ public class TestUncaughtErrorManager extends UncaughtErrorManager {
   }
 
   override protected function sendMessage(message:String):void {
+    socket.writeByte(ServerMethod.showError);
     socket.writeUTF(message);
     socket.flush();
   }

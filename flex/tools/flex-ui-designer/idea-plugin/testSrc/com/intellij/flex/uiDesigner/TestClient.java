@@ -1,13 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 class TestClient extends Client {
-  public TestClient(OutputStream out) {
-    setOut(out);
-  }
-
   public void test(String filename, String parentFilename) throws IOException {
     char c = parentFilename.charAt(0);
     test(filename, c == 's' ? 1 : c == 'i' ? 2 : (c == 'c' ? 4 : 0));

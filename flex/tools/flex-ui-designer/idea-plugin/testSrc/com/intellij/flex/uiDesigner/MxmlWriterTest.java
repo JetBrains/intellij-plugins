@@ -62,21 +62,15 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
   }
 
   @Override
-  protected void assertResult(String documentName, long time) throws IOException {
-    if (documentName.equals("RuntimeErrorInMxmlRead")) {
-      assertThat(reader.readUTF(), startsWith("Error: Boo\n\tat com.intellij.flex.uiDesigner.test::LabelWithError()"));
+  protected String expectedErrorForDocument(String documentName) {
+     if (documentName.equals("RuntimeErrorInMxmlRead")) {
+      return "Error: Boo\n\tat com.intellij.flex.uiDesigner.test::LabelWithError()";
     }
     else if (documentName.equals("RuntimeError")) {
-      System.out.print("\n\nSTART IGNORE ME\n\n");
-      System.out.print(reader.readUTF());
-      super.assertResult(documentName, time);
-      //System.out.print(reader.readUTF());
-      System.out.print("\n\nEND IGNORE ME\n\n");
-      return;
+      return "Error: I am runtime error\n\tat com.intellij.flex.uiDesigner.test::DateFieldWithError/commitProperties()";
     }
 
-    super.assertResult(documentName, time);
-    assertThat(reader.available(), 0);
+    return null;
   }
 
   private String[] getTestFiles() {

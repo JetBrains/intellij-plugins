@@ -1,0 +1,215 @@
+package com.intellij.flex.uiDesigner;
+
+import com.intellij.execution.process.ProcessHandler;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.util.ShutDownTracker;
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.util.Consumer;
+import com.intellij.util.concurrency.Semaphore;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.concurrent.Callable;
+
+class DesignerTestApplicationManager {
+  private static DesignerTestApplicationManager instance;
+
+  private final ProcessHandler adlProcessHandler;
+
+  private final Socket socket;
+
+  private File appDir;
+  public final SocketTestInputHandler socketInputHandler;
+
+  private DesignerTestApplicationManager() throws IOException {
+    DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration =
+      new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"),
+                                                      System.getProperty("fud.air"));
+
+    adlRunConfiguration.arguments = new ArrayList<String>();
+    adlRunConfiguration.arguments.add("-p");
+    String fudHome = DebugPathManager.getFudHome();
+    adlRunConfiguration.arguments.add(fudHome + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
+
+    adlRunConfiguration.arguments.add("-cdd");
+    adlRunConfiguration.arguments.add(fudHome + "/flex-injection/target");
+
+    initAppRootDir();
+    final ServerSocket serverSocket = new ServerSocket(0, 1);
+    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, fudHome + "/designer/src/main/resources/descriptor.xml",
+                                                       serverSocket.getLocalPort(), appDir.getPath(), new Consumer<Integer>() {
+      @Override
+      public void consume(Integer exitCode) {
+        if (exitCode != 0) {
+          try {
+            serverSocket.close();
+          }
+          catch (IOException ignored) {
+          }
+
+          throw new AssertionError("adl return " + exitCode);
+        }
+      }
+    });
+
+    socket = serverSocket.accept();
+
+    ShutDownTracker.getInstance().registerShutdownTask(new Runnable() {
+      @Override
+      public void run() {
+        adlProcessHandler.destroyProcess();
+        try {
+          socket.close();
+        }
+        catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    });
+    
+    AppTestBase.changeServiceImplementation(Client.class, TestClient.class);
+    Client.getInstance().setOut(socket.getOutputStream());
+
+    AppTestBase.changeServiceImplementation(SocketInputHandler.class, SocketTestInputHandler.class);
+    socketInputHandler = (SocketTestInputHandler)ServiceManager.getService(SocketInputHandler.class);
+    ApplicationManager.getApplication().executeOnPooledThread(new Callable<Object>() {
+      @Override
+      public Void call() throws Exception {
+        try {
+          socketInputHandler.read(socket.getInputStream(), appDir);
+        }
+        catch (IOException e) {
+          if (!(e instanceof SocketException && socket.isClosed())) {
+            throw e;
+          }
+        }
+        return null;
+      }
+    });
+  }
+
+  public static DesignerTestApplicationManager getInstance() throws IOException {
+    if (instance == null) {
+      instance = new DesignerTestApplicationManager();
+    }
+    return instance;
+  }
+
+  public File getAppDir() {
+    return appDir;
+  }
+
+  public Socket getSocket() {
+    return socket;
+  }
+
+  public static void copySwfAndDescriptor(final File rootDir) throws IOException {
+    //noinspection ResultOfMethodCallIgnored
+    rootDir.mkdirs();
+    FileUtil.copy(new File(DebugPathManager.getFudHome(), "app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(rootDir, FlexUIDesignerApplicationManager.DESIGNER_SWF));
+    FileUtil.copy(new File(DebugPathManager.getFudHome(), "designer/src/main/resources/descriptor.xml"), new File(rootDir, FlexUIDesignerApplicationManager.DESCRIPTOR_XML));
+  }
+
+
+  private void initAppRootDir() throws IOException {
+    if (Boolean.valueOf(System.getProperty("fud.test.debug"))) {
+      appDir = new File(PathManager.getHomePath() + "/testAppRoot");
+      if (!appDir.exists() || SystemInfo.isWindows) {
+        copySwfAndDescriptor(appDir);
+      }
+    }
+    else {
+      appDir = PlatformTestCase.createTempDir("fud");
+      FileUtil.copy(new File(DebugPathManager.getFudHome() + "/app-loader/target/app-loader-1.0-SNAPSHOT.swf"),
+                    new File(appDir, FlexUIDesignerApplicationManager.DESIGNER_SWF));
+    }
+  }
+
+  protected static class SocketTestInputHandler extends SocketInputHandlerImpl {
+    public final Semaphore semaphore = new Semaphore();
+    private String expectedError;
+
+    private boolean waitingResult;
+    private String failedMessage;
+
+    private static class TestServerMethod {
+      private static final int success = 100;
+      private static final int fail = 101;
+    }
+
+    public void setExpectedErrorMessage(String message) {
+      expectedError = message;
+    }
+
+    public void waitResult() {
+      semaphore.down();
+      waitingResult = true;
+      semaphore.waitFor();
+    }
+
+    public boolean isPassed() {
+      return failedMessage == null;
+    }
+
+    public String getAndClearFailedMessage() {
+      String s = failedMessage;
+      failedMessage = null;
+      return s;
+    }
+
+    @Override
+    protected void processCommand(int command) throws IOException {
+      if (isFileBased(command)) {
+        super.processCommand(command);
+      }
+      else {
+        if (waitingResult) {
+          if (expectedError == null) {
+            waitingResult = false;
+          }
+          semaphore.up();
+        }
+        else {
+          throw new IllegalStateException("Unexpected server command " + command + ", result is not waiting");
+        }
+
+        switch (command) {
+          case ServerMethod.showError:
+            final String errorMessage = reader.readUTF();
+            if (expectedError == null) {
+              failedMessage = errorMessage;
+            }
+            else {
+              if (!errorMessage.startsWith(expectedError)) {
+                failedMessage = "Expected error message " + expectedError + ", but got " + errorMessage;
+              }
+              expectedError = null;
+            }
+            break;
+
+          case TestServerMethod.fail:
+            failedMessage = reader.readUTF();
+            break;
+
+          case TestServerMethod.success:
+            String message = reader.readUTF();
+            if (!message.equals("__passed__")) {
+              failedMessage = message;
+            }
+            break;
+
+          default:
+            throw new IllegalStateException("Unexpected server command: " + command);
+        }
+      }
+    }
+  }
+}

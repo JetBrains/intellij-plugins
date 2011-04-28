@@ -31,7 +31,11 @@ public class Client implements Closable {
   private final InfoList<Module, ModuleInfo> registeredModules = new InfoList<Module, ModuleInfo>();
   private final InfoList<Project, ProjectInfo> registeredProjects = new InfoList<Project, ProjectInfo>();
 
-  public AmfOutputStream getOutput() {
+  public static Client getInstance() {
+    return ServiceManager.getService(Client.class);
+  }
+
+  public AmfOutputStream getOut() {
     return out;
   }
 

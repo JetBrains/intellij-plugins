@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.StringBuilderSpinAllocator;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -25,68 +26,88 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
 
   private File resultReadyFile;
   private File resultFile;
+  private File appDir;
 
   protected void createReader(InputStream inputStream) {
     reader = new Reader(new BufferedInputStream(inputStream));
   }
 
   @Override
-  public void read(InputStream inputStream) throws IOException {
+  public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
+    this.appDir = appDir;
+
     createReader(inputStream);
-    readProcess:
     while (true) {
       final int command = reader.read();
-      switch (command) {
-        case -1:
-          break readProcess;
-
-        case ServerMethod.goToClass:
-          goToClass();
-          break;
-
-        case ServerMethod.getResourceBundle:
-          try {
-            getResourceBundle();
-          }
-          finally {
-            //noinspection ResultOfMethodCallIgnored
-            resultReadyFile.createNewFile();
-          }
-          break;
-
-        case ServerMethod.getBitmapData:
-          try {
-            getBitmapData();
-          }
-          finally {
-            //noinspection ResultOfMethodCallIgnored
-            resultReadyFile.createNewFile();
-          }
-          break;
-
-        case ServerMethod.openFile:
-          openFile();
-          break;
-
-        case ServerMethod.resolveExternalInlineStyleDeclarationSource:
-          ApplicationManager.getApplication().invokeLater(new ResolveExternalInlineStyleSourceAction(reader, readModule()));
-          break;
-
-        case ServerMethod.unregisterDocumentFactories:
-          unregisterDocumentFactories();
-          break;
-
-        case ServerMethod.showError:
-          showError();
-          break;
-
-        case ServerMethod.saveProjectWindowBounds:
-          ProjectWindowBounds.save(readProject(), reader);
-          break;
-
-        default:
-          throw new IllegalArgumentException("unknown client command: " + command);
+      if (command == -1) {
+        break;
       }
+      else {
+        try {
+          processCommand(command);
+        }
+        finally {
+          if (isFileBased(command)) {
+            //noinspection ResultOfMethodCallIgnored
+            resultReadyFile.createNewFile();
+          }
+        }
+      }
+    }
+  }
+
+  protected boolean isFileBased(int command) {
+    return command == ServerMethod.getResourceBundle || command == ServerMethod.getBitmapData;
+  }
+
+  protected void processCommand(int command) throws IOException {
+    switch (command) {
+      case ServerMethod.goToClass:
+        goToClass();
+        break;
+
+      case ServerMethod.getResourceBundle:
+        try {
+          getResourceBundle();
+        }
+        finally {
+          //noinspection ResultOfMethodCallIgnored
+          resultReadyFile.createNewFile();
+        }
+        break;
+
+      case ServerMethod.getBitmapData:
+        try {
+          getBitmapData();
+        }
+        finally {
+          //noinspection ResultOfMethodCallIgnored
+          resultReadyFile.createNewFile();
+        }
+        break;
+
+      case ServerMethod.openFile:
+        openFile();
+        break;
+
+      case ServerMethod.resolveExternalInlineStyleDeclarationSource:
+        ApplicationManager.getApplication().invokeLater(new ResolveExternalInlineStyleSourceAction(reader, readModule()));
+        break;
+
+      case ServerMethod.unregisterDocumentFactories:
+        unregisterDocumentFactories();
+        break;
+
+      case ServerMethod.showError:
+        showError();
+        break;
+
+      case ServerMethod.saveProjectWindowBounds:
+        ProjectWindowBounds.save(readProject(), reader);
+        break;
+
+      default:
+        throw new IllegalArgumentException("unknown client command: " + command);
     }
   }
 
@@ -104,7 +125,6 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
 
   private void initResultFile() {
     if (resultFile == null) {
-      File appDir = FlexUIDesignerApplicationManager.getInstance().getAppDir();
       resultReadyFile = new File(appDir, "d");
       resultFile = new File(appDir, "r");
       
@@ -116,7 +136,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
   private void getResourceBundle() throws IOException {
     initResultFile();
 
-    final ProjectInfo projectInfo = FlexUIDesignerApplicationManager.getInstance().getClient().getRegisteredProjects().getInfo(readEntityId());
+    final ProjectInfo projectInfo = Client.getInstance().getRegisteredProjects().getInfo(readEntityId());
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       @Override
       public void run() {
@@ -214,11 +234,11 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
   }
 
   private Module readModule() throws IOException {
-    return FlexUIDesignerApplicationManager.getInstance().getClient().getModule(readEntityId());
+    return Client.getInstance().getModule(readEntityId());
   }
 
   private Project readProject() throws IOException {
-    return FlexUIDesignerApplicationManager.getInstance().getClient().getProject(readEntityId());
+    return Client.getInstance().getProject(readEntityId());
   }
 
   private int readEntityId() throws IOException {
@@ -255,32 +275,22 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
 
     private int readUInt29() throws IOException {
       int value;
-
-      // Each byte must be treated as unsigned
-      int b = readByte() & 0xFF;
-
-      if (b < 128) {
+      int b;
+      if ((b = readByte() & 0xFF) < 128) {
         return b;
       }
 
       value = (b & 0x7F) << 7;
-      b = readByte() & 0xFF;
-
-      if (b < 128) {
+      if ((b = readByte() & 0xFF) < 128) {
         return (value | b);
       }
 
       value = (value | (b & 0x7F)) << 7;
-      b = readByte() & 0xFF;
-
-      if (b < 128) {
-        return (value | b);
+      if ((b = readByte() & 0xFF) < 128) {
+        return value | b;
       }
 
-      value = (value | (b & 0x7F)) << 8;
-      b = readByte() & 0xFF;
-
-      return (value | b);
+      return (value | (b & 0x7F)) << 8 | (readByte() & 0xFF);
     }
 
     public VirtualFile readFile() throws IOException {

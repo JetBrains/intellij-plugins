@@ -41,7 +41,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public static final String DESIGNER_SWF = "designer.swf";
   public static final String DESCRIPTOR_XML = "descriptor.xml";
 
-  protected Client client = createClient();
   public ProcessHandler adlProcessHandler;
   private Server server;
 
@@ -63,17 +62,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     return ServiceManager.getService(FlexUIDesignerApplicationManager.class);
   }
 
-  public Client getClient() {
-    return client;
-  }
-
-  protected Client createClient() {
-    return new Client();
-  }
-
   @Override
   public void dispose() {
-    closeClosable(client);
+    closeClosable(Client.getInstance());
     closeClosable(server);
 
     if (adlProcessHandler != null) {
@@ -94,9 +85,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   public void serverClosed() {
     documentOpening = false;
-    if (client != null) {
-      closeClosable(client);
-    }
+    closeClosable(Client.getInstance());
     
     Application application = ApplicationManager.getApplication();
     if (!application.isDisposed()) {
@@ -115,6 +104,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
         @Override
         public void run() {
+          Client client = Client.getInstance();
           try {
             if (!client.isModuleRegistered(module)) {
               try {
@@ -150,6 +140,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
+        Client client = Client.getInstance();
         try {
           assert client.isModuleRegistered(module);
           client.updateDocumentFactory(factoryId, module, psiFile);
@@ -301,6 +292,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
 
     final LibrarySet externalLibrarySet;
+    Client client = Client.getInstance();
     final InfoList<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
     if (!registeredProjects.contains(project)) {
       String librarySetId = project.getLocationHash();
@@ -356,7 +348,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
       if (!ServiceManager.getService(StringRegistry.class).isEmpty()) {
         try {
-          client.initStringRegistry();
+          Client.getInstance().initStringRegistry();
         }
         catch (IOException e) {
           LOG.error(e); // never can be, because socket out is null at this moment
@@ -395,7 +387,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
 
     public void setOut(OutputStream out) {
-      client.setOut(out);
+      Client.getInstance().setOut(out);
     }
 
     @Override
@@ -407,6 +399,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
 
     private void openDocument() {
+      Client client = Client.getInstance();
       try {
         client.flush();
         client.openDocument(myModule, myPsiFile);
@@ -448,6 +441,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         return;
       }
 
+      Client client = Client.getInstance();
       final InfoList<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
       if (registeredProjects.contains(project)) {
         try {

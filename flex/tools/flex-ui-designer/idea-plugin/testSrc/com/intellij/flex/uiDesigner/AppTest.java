@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.messages.MessageBusConnection;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class AppTest extends AppTestBase {
       }
     });
     
-    copySwfAndDescriptor(new File(PathManager.getSystemPath(), "flexUIDesigner"));
+    DesignerTestApplicationManager.copySwfAndDescriptor(new File(PathManager.getSystemPath(), "flexUIDesigner"));
     FlexUIDesignerApplicationManager.getInstance().openDocument(myProject, myModule, (XmlFile)myFile, false);
     await();
     return newParent;
@@ -62,8 +63,8 @@ public class AppTest extends AppTestBase {
   private void callClientAssert(String methodName) throws IOException, InterruptedException {
     info.lock = new CountDownLatch(1);
     
-    Client client = FlexUIDesignerApplicationManager.getInstance().getClient();
-    AmfOutputStream out = client.getOutput();
+    Client client = Client.getInstance();
+    AmfOutputStream out = client.getOut();
     out.write(1);
     out.writeAmfUtf(methodName, false);
     out.write(3);
@@ -135,7 +136,7 @@ public class AppTest extends AppTestBase {
     private Info info;
 
     @Override
-    public void read(InputStream inputStream) throws IOException {
+    public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
       createReader(inputStream);
       while (info.count != 0) {
         try {
