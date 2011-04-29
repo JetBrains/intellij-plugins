@@ -47,6 +47,7 @@ import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.util.io.ZipUtil;
 import org.jdom.JDOMException;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetType;
 
@@ -54,6 +55,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -202,6 +204,7 @@ public class TestUtil {
         return ModuleRootManager.getInstance(module);
     }
 
+  @NotNull
     public static List<ProblemDescriptor> runInspection(LocalInspectionTool inspection, PsiFile psiFile, Project project) {
         ProblemsHolder holder = new ProblemsHolder(InspectionManager.getInstance(project), psiFile, true);
         final PsiElementVisitor elementVisitor = inspection.buildVisitor(holder, true);
@@ -215,7 +218,8 @@ public class TestUtil {
         });
 
 
-        return holder.getResults();
+    List<ProblemDescriptor> results = holder.getResults();
+    return results == null ? Collections.<ProblemDescriptor>emptyList() : results;
     }
 
     private static File getTestDataDir() {

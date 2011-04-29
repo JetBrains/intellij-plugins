@@ -33,16 +33,15 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
-import static org.hamcrest.Matchers.*;
-import org.junit.After;
-import static org.junit.Assert.assertThat;
-import org.junit.Before;
-import org.junit.Test;
 import org.osmorc.TestUtil;
-import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacet;
+import org.osmorc.facet.OsmorcFacetConfiguration;
 
 import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TODO: for some odd reasons the PSIReference to BundleActivator is no longer resolved which makes this test fail. The
@@ -98,7 +97,8 @@ public class UnregisteredActivatorInspectionTest {
         }, "test", "test");
 
         list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
-        assertThat(list, nullValue());
+      assertTrue(list.isEmpty());
+
     }
 
     //@Test
@@ -107,7 +107,8 @@ public class UnregisteredActivatorInspectionTest {
 
         List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
 
-        assertThat(list, nullValue());
+      assertTrue(list.isEmpty());
+
     }
 
     //@Test
@@ -145,7 +146,8 @@ public class UnregisteredActivatorInspectionTest {
         }, "test", "test");
 
         list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
-        assertThat(list, nullValue());
+      assertTrue(list.isEmpty());
+
     }
 
     //@Test
@@ -162,7 +164,8 @@ public class UnregisteredActivatorInspectionTest {
 
         List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
 
-        assertThat(list, nullValue());
+      assertTrue(list.isEmpty());
+
     }
 
 

@@ -53,6 +53,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -137,7 +138,7 @@ public class MissingFinalNewlineInspectionTest {
         assertThat(psiFile.getText(), Matchers.endsWith("Bundle-Version: 1.0.0\n"));
 
         list = TestUtil.runInspection(new MissingFinalNewlineInspection(), psiFile, fixture.getProject());
-        assertThat(list, nullValue());
+        assertTrue(list.isEmpty());
     }
 
     @Test
@@ -160,7 +161,7 @@ public class MissingFinalNewlineInspectionTest {
         PsiFile psiFile = TestUtil.loadPsiFileUnderContent(fixture.getProject(), fixture.getModule().getName(), "META-INF/MANIFEST.MF");
         List<ProblemDescriptor> list = TestUtil.runInspection(new MissingFinalNewlineInspection(), psiFile, fixture.getProject());
 
-        assertThat(list, nullValue());
+      assertTrue(list.isEmpty());
     }
 
   /**
@@ -188,7 +189,7 @@ public class MissingFinalNewlineInspectionTest {
       PsiFile psiFile = TestUtil.loadPsiFileUnderContent(fixture.getProject(), fixture.getModule().getName(), "META-INF/MANIFEST.MF");
       List<ProblemDescriptor> list = TestUtil.runInspection(new MissingFinalNewlineInspection(), psiFile, fixture.getProject());
 
-      assertThat(list, nullValue());
+      assertTrue(list.isEmpty());
 
     }
 }
