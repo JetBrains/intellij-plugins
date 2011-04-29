@@ -11,10 +11,7 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSNamedElement;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -42,10 +39,7 @@ import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 public abstract class BaseJSGenerateHandler implements LanguageCodeInsightActionHandler {
   private boolean mySkipMemberChooserDialog = false;
@@ -80,7 +74,20 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
         }
       }
       else {
-        if (mySkipMemberChooserDialog || ApplicationManager.getApplication().isUnitTestMode()) {
+        final boolean unitTestMode = ApplicationManager.getApplication().isUnitTestMode();
+        if (unitTestMode) { // filter out Object members
+          Iterator<JSNamedElementNode> i = candidates.iterator();
+
+          while (i.hasNext()) {
+            final JSNamedElementNode next = i.next();
+            final PsiElement psiElement = ((JSNamedElementNode)next.getParentNodeDelegate()).getPsiElement();
+            if (psiElement instanceof JSClass &&
+                JSCommonTypeNames.OBJECT_CLASS_NAME.equals(((JSClass)psiElement).getQualifiedName())) {
+               i.remove();
+            }
+          }
+        }
+        if (mySkipMemberChooserDialog || unitTestMode) {
           selectedElements = candidates;
         }
         else {
