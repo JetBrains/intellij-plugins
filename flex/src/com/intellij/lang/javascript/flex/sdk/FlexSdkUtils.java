@@ -360,6 +360,18 @@ public class FlexSdkUtils {
           if (version.startsWith("4.1")) {
             return "2.0";
           }
+          if (version.startsWith("4.5")) {
+            // "4.5.0.17689"
+            // "4.5.0 build 17689"
+            int revision = 0;
+            try {
+              final int index = Math.max(version.lastIndexOf('.'), version.lastIndexOf(' '));
+              revision = Integer.parseInt(version.substring(index + 1));
+            }
+            catch (NumberFormatException ignore) {/*ignore*/}
+
+            return revision >= 20967 ? "2.6" : "2.5";
+          }
 
           return "2.5";
         }
