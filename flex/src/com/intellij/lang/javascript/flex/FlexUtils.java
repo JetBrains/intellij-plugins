@@ -115,7 +115,14 @@ public class FlexUtils {
       final String extension = sampleFileName.substring(sampleFileName.lastIndexOf('.'));
       final String sampleTechnology =
         sdk.getSdkType() instanceof AirMobileSdkType ? "AIRMobile" : sdk.getSdkType() instanceof AirSdkType ? "AIR" : "Flex";
-      final String suffix = ".mxml".equals(extension) && FlexSdkUtils.isFlex4Sdk(sdk) ? "_Spark" : "";
+
+      String suffix = "";
+      if (".mxml".equals(extension) && FlexSdkUtils.isFlex4Sdk(sdk)) {
+        suffix = sdk.getSdkType() instanceof AirMobileSdkType ? FlexSdkUtils.getFlexSdkRevision(sdk.getVersionString()) >= 20967
+                                                                ? "_ViewNavigator"
+                                                                : "_MobileApplication"
+                                                              : "_Spark";
+      }
 
       final String helloWorldTemplate = "HelloWorld_" + sampleTechnology + suffix + extension + ".ft";
       final InputStream stream = FlexUtils.class.getResourceAsStream(helloWorldTemplate);
