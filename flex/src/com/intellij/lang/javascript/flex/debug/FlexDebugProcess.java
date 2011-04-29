@@ -66,6 +66,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileDebugTransport;
+import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
 
 /**
  * @author Maxim.Mossienko
@@ -302,8 +303,9 @@ public class FlexDebugProcess extends XDebugProcess {
   private Process launchAir(final List<String> fdbLaunchCommand, final AirRunnerParameters airRunnerParameters, final Sdk flexSdk)
     throws IOException {
 
-    if (airRunnerParameters instanceof AirMobileRunnerParameters &&
-        ((AirMobileRunnerParameters)airRunnerParameters).getDebugTransport() == AirMobileDebugTransport.USB) {
+    if (airRunnerParameters instanceof AirMobileRunnerParameters
+        && ((AirMobileRunnerParameters)airRunnerParameters).getAirMobileRunTarget() == AirMobileRunTarget.AndroidDevice
+        && ((AirMobileRunnerParameters)airRunnerParameters).getDebugTransport() == AirMobileDebugTransport.USB) {
       fdbLaunchCommand.add("-p");
       fdbLaunchCommand.add(String.valueOf(((AirMobileRunnerParameters)airRunnerParameters).getUsbDebugPort()));
     }
