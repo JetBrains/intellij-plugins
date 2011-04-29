@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.ide.highlighter.ModuleFileType;
+import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,6 +15,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
 import com.intellij.projectImport.ProjectImportBuilder;
 import gnu.trove.THashSet;
@@ -115,6 +117,15 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     for (final FlashBuilderProject flashBuilderProject : flashBuilderProjects) {
       final String moduleFilePath =
         flashBuilderProject.getProjectRootPath() + "/" + flashBuilderProject.getName() + ModuleFileType.DOT_DEFAULT_EXTENSION;
+
+      if (LocalFileSystem.getInstance().findFileByPath(moduleFilePath) != null) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          public void run() {
+            ModuleBuilder.deleteModuleFile(moduleFilePath);
+          }
+        });
+      }
+
       final Module module = moduleModel.newModule(moduleFilePath, StdModuleTypes.JAVA);
       final ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
       rootModels.add(rootModel);
@@ -129,5 +140,4 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     });
     return modules;
   }
-
 }
