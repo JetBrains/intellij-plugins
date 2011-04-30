@@ -7,24 +7,20 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
-import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
+import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiFormatUtilBase;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNamedElement> {
+public class FlexClassMemberNode extends ProjectViewNode<JSElement> {
 
-  public SwfQualifiedNamedElementNode(Project project, JSQualifiedNamedElement element, ViewSettings settings) {
-    super(project, element, settings);
+  public FlexClassMemberNode(JSElement element, ViewSettings settings) {
+    super(element.getProject(), element, settings);
   }
 
   @Override
@@ -34,9 +30,8 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
 
   @Override
   public boolean canRepresent(Object element) {
-    JSQualifiedNamedElement value = getValue();
-    return value != null && element != null && value.getClass() == element.getClass() &&
-           Comparing.equal(value.getQualifiedName(), ((JSQualifiedNamedElement)element).getQualifiedName());
+    JSElement value = getValue();
+    return value != null && element instanceof JSElement && value.isEquivalentTo((PsiElement)element);
   }
 
   @NotNull
@@ -47,22 +42,29 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
 
   @Override
   protected void update(PresentationData presentation) {
-    presentation.setPresentableText(getValue().getName());
-    presentation.setIcons(getIcon(getValue(), Iconable.ICON_FLAG_VISIBILITY));
-  }
+    String text;
+    JSElement value = getValue();
+    if (!value.isValid()) {
+      return;
+    }
 
-  static Icon getIcon(JSElement element, int flags) {
-    if (element instanceof JSClass) {
-      return element.getIcon(flags);
+    if (value instanceof JSFunction) {
+      text = JSFormatUtil
+        .formatMethod(((JSFunction)value), PsiFormatUtilBase.SHOW_NAME |
+                                           PsiFormatUtilBase.SHOW_PARAMETERS |
+                                           PsiFormatUtilBase.SHOW_TYPE |
+                                           PsiFormatUtilBase.TYPE_AFTER,
+                      PsiFormatUtilBase.SHOW_TYPE);
     }
-    else if (element instanceof JSFunction) {
-      return JSFunctionImpl.getIcon(JSFunction.FunctionKind.SIMPLE, flags, ((JSFunction)element).getAttributeList());
+    else if (value instanceof JSVariable) {
+      text = JSFormatUtil
+        .formatField(((JSVariable)value), PsiFormatUtilBase.SHOW_NAME | PsiFormatUtilBase.SHOW_TYPE | PsiFormatUtilBase.TYPE_AFTER);
     }
-    else if (element instanceof JSVariable) {
-      return JSVariableImpl.getIcon(((JSVariable)element).getAttributeList(), flags, false);
+    else {
+      text = value.getName();
     }
-    assert false : "unexpected element: " + element;
-    return element.getIcon(flags);
+    presentation.setPresentableText(text);
+    presentation.setIcons(SwfQualifiedNamedElementNode.getIcon(value, Iconable.ICON_FLAG_VISIBILITY));
   }
 
   @Override
@@ -90,5 +92,4 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
     }
     return super.getTypeSortWeight(sortByType);
   }
-
 }

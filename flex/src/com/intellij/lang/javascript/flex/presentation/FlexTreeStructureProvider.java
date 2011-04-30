@@ -1,30 +1,31 @@
 package com.intellij.lang.javascript.flex.presentation;
 
-import com.intellij.ide.projectView.*;
+import com.intellij.ide.projectView.PresentationData;
+import com.intellij.ide.projectView.ProjectViewNode;
+import com.intellij.ide.projectView.TreeStructureProvider;
+import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
+import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSNamedElement;
-import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSNamespaceDeclaration;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
-import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.util.JSUtils;
+import com.intellij.lang.javascript.structureView.JSStructureViewElement;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: Maxim
@@ -33,17 +34,52 @@ import java.util.Collection;
  */
 public class FlexTreeStructureProvider implements TreeStructureProvider {
   public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings) {
-    ArrayList<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
-    for (final AbstractTreeNode child : children) {
-      Object o = child.getValue();
-      if (o instanceof JSFileImpl ||
-          o instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)o)) {
-        result.add(new FlexFileNode((PsiFile)o, ((ProjectViewNode)parent).getSettings()));
-        continue;
+    List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
+    if (parent instanceof SwfQualifiedNamedElementNode || parent instanceof FlexFileNode) {
+      if (((ProjectViewNode)parent).getSettings().isShowMembers()) {
+        JSQualifiedNamedElement parentElement = getElement(parent);
+        if (parentElement != null) {
+          JSStructureViewElement structureViewElement = new JSStructureViewElement(parentElement);
+          StructureViewTreeElement[] structureViewChildren = structureViewElement.getChildren(false);
+          for (StructureViewTreeElement structureViewChild : structureViewChildren) {
+            PsiElement childElement = ((JSStructureViewElement)structureViewChild).getUpToDateElement();
+            result.add(new FlexClassMemberNode((JSElement)childElement, ((ProjectViewNode)parent).getSettings()));
+          }
+        }
       }
-      result.add(child);
+    }
+    else {
+      for (final AbstractTreeNode child : children) {
+        Object o = child.getValue();
+        if (o instanceof JSFileImpl ||
+            o instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)o)) {
+          result.add(new FlexFileNode((PsiFile)o, ((ProjectViewNode)parent).getSettings()));
+          continue;
+        }
+        result.add(child);
+      }
     }
     return result;
+  }
+
+  @Nullable
+  private static JSQualifiedNamedElement getElement(AbstractTreeNode parent) {
+    if (parent instanceof SwfQualifiedNamedElementNode) {
+      return (JSQualifiedNamedElement)parent.getValue();
+    }
+    else {
+      PsiFile file = ((FlexFileNode)parent).getValue();
+      if (file instanceof JSFileImpl) {
+        JSNamedElement element = JSFileImpl.findMainDeclaredElement((JSFileImpl)file);
+        if (element instanceof JSQualifiedNamedElement) {
+          return (JSQualifiedNamedElement)element;
+        }
+      }
+      else if (file instanceof XmlFile) {
+        return XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)file);
+      }
+    }
+    return null;
   }
 
   public Object getData(Collection<AbstractTreeNode> selected, String dataName) {
@@ -112,7 +148,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider {
 
   }
 
-  public static int getElementWeight(JSNamedElement element) {
+  public static int getElementWeight(JSElement element) {
     if (element instanceof JSClass) {
       return ((JSClass)element).isInterface() ? INTERFACE_VALUE : CLASS_VALUE;
     }

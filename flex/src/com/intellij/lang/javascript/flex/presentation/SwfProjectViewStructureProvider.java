@@ -15,7 +15,6 @@ import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.text.StringUtil;
@@ -158,7 +157,7 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
       String qName = element.getQualifiedName();
       assert qName.startsWith(aPackage) : qName + " does not start with " + aPackage;
       if (StringUtil.getPackageName(qName).equals(aPackage)) {
-        classes.add(new SwfQualifiedNamedElementNode(project, element));
+        classes.add(new SwfQualifiedNamedElementNode(project, element, settings));
       }
       else {
         String subpackage =
