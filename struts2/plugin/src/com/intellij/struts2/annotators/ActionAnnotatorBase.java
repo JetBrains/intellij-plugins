@@ -15,10 +15,11 @@
 
 package com.intellij.struts2.annotators;
 
-import com.intellij.codeInsight.daemon.LineMarkerInfo;
-import com.intellij.codeInsight.daemon.LineMarkerProvider;
+import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
+import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
 import com.intellij.ide.util.PsiElementListCellRenderer;
+import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
@@ -41,24 +42,33 @@ import java.util.*;
 
 /**
  * Base class for annotating Action-Classes.
- * Provides gutter icon navigation to &lt;action&gt; declaration(s) in struts.xml and
+ * Provides gutter icon/Go To Related File-navigation to &lt;action&gt; declaration(s) in struts.xml and
  * navigation to result(s) from action methods.
  *
  * @author Yann C&eacute;bron
  */
-abstract class ActionAnnotatorBase implements LineMarkerProvider {
+abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
   private static DomElementListCellRenderer ACTION_RENDERER;
 
   private static final NotNullFunction<PathReference, Collection<? extends PsiElement>> PATH_REFERENCE_CONVERTER =
-    new NotNullFunction<PathReference, Collection<? extends PsiElement>>() {
-      @NotNull
-      @Override
-      public Collection<? extends PsiElement> fun(final PathReference pathReference) {
-        final PsiElement resolve = pathReference.resolve();
-        return resolve != null ? Collections.singletonList(resolve) : Collections.<PsiElement>emptyList();
-      }
-    };
+      new NotNullFunction<PathReference, Collection<? extends PsiElement>>() {
+        @NotNull
+        @Override
+        public Collection<? extends PsiElement> fun(final PathReference pathReference) {
+          return ContainerUtil.createMaybeSingletonList(pathReference.resolve());
+        }
+      };
+
+  private static final NotNullFunction<PathReference, Collection<? extends GotoRelatedItem>> PATH_REFERENCE_GOTO_RELATED_ITEM_PROVIDER =
+      new NotNullFunction<PathReference, Collection<? extends GotoRelatedItem>>() {
+        @NotNull
+        @Override
+        public Collection<? extends GotoRelatedItem> fun(final PathReference pathReference) {
+          final PsiElement resolve = pathReference.resolve();
+          return resolve != null ? Collections.singleton(new GotoRelatedItem(resolve)) : Collections.<GotoRelatedItem>emptyList();
+        }
+      };
 
   /**
    * Determine the Action-PsiClass.
@@ -70,23 +80,8 @@ abstract class ActionAnnotatorBase implements LineMarkerProvider {
   protected abstract PsiClass getActionPsiClass(@NotNull final PsiElement psiElement);
 
   @Override
-  public LineMarkerInfo getLineMarkerInfo(final PsiElement psiElement) {
-    return null;
-  }
-
-  @Override
-  public void collectSlowLineMarkers(final List<PsiElement> psiElements,
-                                     final Collection<LineMarkerInfo> lineMarkerInfos) {
-    if (psiElements.isEmpty()) {
-      return;
-    }
-
-    for (final PsiElement element : psiElements) {
-      annotate(element, lineMarkerInfos);
-    }
-  }
-
-  private void annotate(@NotNull final PsiElement element, @NotNull final Collection<LineMarkerInfo> lineMarkerInfos) {
+  protected void collectNavigationMarkers(final @NotNull PsiElement element,
+                                          final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos) {
     if (!(element instanceof PsiIdentifier)) return;
     final PsiClass clazz = getActionPsiClass(element.getParent());
     if (clazz == null || clazz.getNameIdentifier() != element) {
@@ -117,10 +112,11 @@ abstract class ActionAnnotatorBase implements LineMarkerProvider {
     final List<Action> actions = strutsModel.findActionsByClass(clazz);
     if (!actions.isEmpty()) {
       final NavigationGutterIconBuilder<DomElement> gutterIconBuilder =
-        NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR)
-          .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
-          .setTargets(actions).setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip"))
-          .setCellRenderer(getActionRenderer());
+          NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR,
+              NavigationGutterIconBuilder.DOM_GOTO_RELATED_ITEM_PROVIDER)
+              .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
+              .setTargets(actions).setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip"))
+              .setCellRenderer(getActionRenderer());
 
       lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(element));
     }
@@ -148,10 +144,11 @@ abstract class ActionAnnotatorBase implements LineMarkerProvider {
 
     for (final Map.Entry<PsiMethod, Set<PathReference>> entries : pathReferenceMap.entrySet()) {
       final NavigationGutterIconBuilder<PathReference> gutterIconBuilder =
-        NavigationGutterIconBuilder.create(StrutsIcons.RESULT, PATH_REFERENCE_CONVERTER)
-          .setPopupTitle(StrutsBundle.message("annotators.action.goto.result"))
-          .setTargets(entries.getValue())
-          .setTooltipTitle(StrutsBundle.message("annotators.action.goto.result.tooltip"));
+          NavigationGutterIconBuilder.create(StrutsIcons.RESULT, PATH_REFERENCE_CONVERTER,
+              PATH_REFERENCE_GOTO_RELATED_ITEM_PROVIDER)
+              .setPopupTitle(StrutsBundle.message("annotators.action.goto.result"))
+              .setTargets(entries.getValue())
+              .setTooltipTitle(StrutsBundle.message("annotators.action.goto.result.tooltip"));
 
       lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(entries.getKey()));
     }
