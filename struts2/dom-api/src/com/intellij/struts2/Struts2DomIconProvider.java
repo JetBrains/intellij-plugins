@@ -31,11 +31,10 @@ import javax.swing.*;
  *
  * @author Yann C&eacute;bron
  */
-@SuppressWarnings({"UnusedDeclaration"})
 public class Struts2DomIconProvider implements PresentationIconProvider {
 
   @Override
-  public Icon getIcon(final Object domElement, int flags) {
+  public Icon getIcon(final Object domElement, final int flags) {
     if (domElement instanceof Param) {
       return StrutsIcons.PARAM;
     }
