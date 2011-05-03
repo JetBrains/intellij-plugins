@@ -17,7 +17,6 @@ import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfigurationType;
 import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -27,6 +26,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
 import com.intellij.xdebugger.*;
@@ -34,27 +34,24 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 final class DesignerApplicationUtil {
+  private static final String versionKey = "CFBundleVersion";
+  private static final Set<String> alreadyMadeExecutable = new THashSet<String>();
+
   private static final Logger LOG = Logger.getInstance(DesignerApplicationUtil.class.getName());
   
-  // todo move to FlexSdkUtils
-  private static final String AIR_RUNTIME_RELATIVE_PATH = File.separatorChar + "runtimes" + File.separatorChar + "air" +
-                                                          File.separatorChar +
-                                                          (SystemInfo.isWindows ? "win" : (SystemInfo.isLinux ? "linux" : "mac"));
-
-  public static @Nullable AdlRunConfiguration findSuitableFlexSdk() {
-    String adlPath;
-    
+  public static @Nullable AdlRunConfiguration findSuitableFlexSdk() throws IOException {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return new AdlRunConfiguration(System.getProperty("fud.adl"), System.getProperty("fud.air"));
     }
 
+    String adlPath;
+    String runtime = findInstalledRuntime();
     for (Sdk sdk : ProjectJdkTable.getInstance().getAllJdks()) {
       SdkType sdkType = sdk.getSdkType();
       if (!(sdkType instanceof IFlexSdkType)) {
@@ -73,17 +70,9 @@ final class DesignerApplicationUtil {
         continue;
       }
 
-      final String runtime;
-      if (sdkType instanceof FlexmojosSdkType) {
-        runtime = FlexSdkUtils.getAirRuntimePathForFlexmojosSdk(sdk);
+      if (StringUtil.isEmpty(runtime)) {
+        runtime = FlexSdkUtils.getAirRuntimePath(sdk);
         if (StringUtil.isEmpty(runtime) || !new File(runtime).isDirectory()) {
-          // for Flex SDK empty runtime is legal, but not for flexmojos SDK
-          continue;
-        }
-      }
-      else {
-        runtime = null;
-        if (!new File(sdk.getHomePath() + AIR_RUNTIME_RELATIVE_PATH).exists()) {
           continue;
         }
       }
@@ -92,6 +81,45 @@ final class DesignerApplicationUtil {
     }
 
     return null;
+  }
+
+  // http://kb2.adobe.com/cps/407/kb407625.html
+  private static String findInstalledRuntime() throws IOException {
+    if (SystemInfo.isMac) {
+      String runtime = "/Library/Frameworks";
+      File info = new File(runtime, "Adobe AIR.framework/Resources/Info.plist");
+      if (info.exists() && checkMacRuntimeVersion(info)) {
+        return runtime;
+      }
+    }
+
+    return null;
+  }
+
+  private static boolean checkMacRuntimeVersion(File info) throws IOException {
+    char[] chars = FileUtil.loadFileText(info);
+    ol: for (int i = 16; i < chars.length; i++) {
+      if (chars[i] == 'k' && chars[i - 1] == '<') {
+        i += 4;
+        for (int j = 0; j < versionKey.length() && i < chars.length; ) {
+          if (versionKey.charAt(j++) != chars[i++]) {
+            i += 8;
+            continue ol;
+          }
+        }
+
+        i += 6;
+        while (i < chars.length) {
+          if (chars[i++] == '<') {
+            if (chars[i + 7] >= '2') {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    
+    return false;
   }
 
   public static void runDebugger(final Module module, final AdlRunTask task) throws ExecutionException {
@@ -230,12 +258,13 @@ final class DesignerApplicationUtil {
     return processHandler;
   }
 
-  private static final Set<String> ourAlreadyMadeExecutable = new THashSet<String>();
-
   private static synchronized void ensureExecutable(String path) throws IOException {
-    if (!SystemInfo.isWindows && !ourAlreadyMadeExecutable.contains(path)) {
-      ourAlreadyMadeExecutable.add(path);
-      Runtime.getRuntime().exec(new String[]{"chmod", "+x", path});
+    if (!SystemInfo.isWindows && !alreadyMadeExecutable.contains(path)) {
+      File file = new File(path);
+      if (!file.canExecute() && !file.setExecutable(true)) {
+        throw new IOException("ADL is not executable");
+      }
+      alreadyMadeExecutable.add(path);
     }
   }
 

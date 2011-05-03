@@ -160,23 +160,31 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   }
 
   private void run(@NotNull final Project project, @NotNull final Module module, @NotNull XmlFile psiFile, boolean debug) {
-    DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk();
-    if (adlRunConfiguration == null) {
-      final String message = FlexUIDesignerBundle.message("error.suitable.fdk.not.found", SystemInfo.isLinux ? FlexUIDesignerBundle
-        .message("error.suitable.fdk.not.found.linux") : "");
-      Messages.showErrorDialog(project, message, FlexUIDesignerBundle.message(
-        debug ? "action.FlexUIDesigner.RunDesignView.text" : "action.FlexUIDesigner.DebugDesignView.text"));
-      final ProjectJdksEditor editor = new ProjectJdksEditor(null, project, WindowManager.getInstance().suggestParentWindow(project));
-      editor.show();
-      if (editor.isOK()) {
-        adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk();
-      }
-
+    DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration;
+    try {
+      adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk();
       if (adlRunConfiguration == null) {
-        // TODO discuss: show error balloon saying 'Cannot find suitable SDK...'?
-        documentOpening = false;
-        return;
+        final String message = FlexUIDesignerBundle.message("error.suitable.fdk.not.found", SystemInfo.isLinux ? FlexUIDesignerBundle
+          .message("error.suitable.fdk.not.found.linux") : "");
+        Messages.showErrorDialog(project, message, FlexUIDesignerBundle.message(
+          debug ? "action.FlexUIDesigner.RunDesignView.text" : "action.FlexUIDesigner.DebugDesignView.text"));
+        final ProjectJdksEditor editor = new ProjectJdksEditor(null, project, WindowManager.getInstance().suggestParentWindow(project));
+        editor.show();
+        if (editor.isOK()) {
+          adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk();
+        }
+
+        if (adlRunConfiguration == null) {
+          // TODO discuss: show error balloon saying 'Cannot find suitable SDK...'?
+          documentOpening = false;
+          return;
+        }
       }
+    }
+    catch (Throwable e) {
+      LOG.error(e);
+      documentOpening = false;
+      return;
     }
 
     if (DebugPathManager.IS_DEV) {
