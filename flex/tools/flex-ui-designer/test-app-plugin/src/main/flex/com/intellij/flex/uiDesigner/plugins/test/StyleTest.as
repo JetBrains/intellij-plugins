@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.plugins.test {
-import com.intellij.flex.uiDesigner.Library;
-import com.intellij.flex.uiDesigner.LibrarySet;
-import com.intellij.flex.uiDesigner.OriginalLibrary;
+import com.intellij.flex.uiDesigner.libraries.Library;
+import com.intellij.flex.uiDesigner.libraries.LibrarySet;
+import com.intellij.flex.uiDesigner.libraries.OriginalLibrary;
 import com.intellij.flex.uiDesigner.css.CssClassCondition;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssPseudoCondition;

@@ -20,11 +20,11 @@ class TransactionableStringIntHashMap extends ObjectIntHashMap<String> {
     valueOffset = 0;
   }
 
-  public void start() {
+  public void startTransaction() {
     lastCommitedTableSize = size();
   }
 
-  public void rollback() {
+  public void rollbackTransaction() {
     if (lastCommitedTableSize != size()) {
       final int maxValue = lastCommitedTableSize + valueOffset;
       final int size = size();

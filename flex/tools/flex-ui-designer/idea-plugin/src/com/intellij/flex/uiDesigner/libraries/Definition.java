@@ -25,14 +25,16 @@ class Definition {
 
   Definition(final OriginalLibrary library) {
     this.library = library;
-    if (library.isFromSdk()) {
-      time = Long.MAX_VALUE;
-    }
   }
 
   @NotNull
   public OriginalLibrary getLibrary() {
     return library;
+  }
+
+  public void markAsUnresolved(CharSequence name) {
+    library.unresolvedDefinitions.add(name);
+    library.definitionCounter--;
   }
 
   static class UnresolvedState {

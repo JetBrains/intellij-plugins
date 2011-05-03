@@ -5,7 +5,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
-import com.intellij.flex.uiDesigner.libraries.*;
+import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -25,7 +25,9 @@ import com.intellij.util.Consumer;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -108,7 +110,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           try {
             if (!client.isModuleRegistered(module)) {
               try {
-                initLibrarySets(project, module);
+                LibraryManager.getInstance().initLibrarySets(module, appDir);
               }
               catch (InitException e) {
                 LOG.error(e.getCause());
@@ -272,66 +274,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     appFile.setLastModified(lastModified);
   }
 
-  private void initLibrarySets(@NotNull final Project project, @NotNull final Module module) throws IOException, InitException {
-    final LibraryCollector libraryCollector = new LibraryCollector();
-    final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
-    stringWriter.startChange();
-
-    final ProblemsHolder problemsHolder = new ProblemsHolder();
-    try {
-      ApplicationManager.getApplication().runReadAction(new Runnable() {
-        @Override
-        public void run() {
-          libraryCollector.collect(module, new LibraryStyleInfoCollector(project, module, stringWriter, problemsHolder));
-        }
-      });
-    }
-    catch (Throwable e) {
-      stringWriter.rollbackChange();
-      throw new InitException(e, "error.collect.libraries");
-    }
-
-    final LibrarySet externalLibrarySet;
-    Client client = Client.getInstance();
-    final InfoList<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
-    if (!registeredProjects.contains(project)) {
-      String librarySetId = project.getLocationHash();
-      try {
-        externalLibrarySet = new LibrarySet(librarySetId, ApplicationDomainCreationPolicy.ONE, new SwcDependenciesSorter(appDir)
-          .sort(libraryCollector.getExternalLibraries(), librarySetId, libraryCollector.getFlexSdkVersion()));
-      }
-      catch (Throwable e) {
-        throw new InitException(e, "error.sort.libraries");
-      }
-
-      registeredProjects.add(new ProjectInfo(project, externalLibrarySet));
-
-      client.openProject(project);
-      client.registerLibrarySet(externalLibrarySet, stringWriter);
-    }
-    else {
-      stringWriter.finishChange();
-      //noinspection UnusedAssignment
-      externalLibrarySet = registeredProjects.getInfo(project).getLibrarySet();
-      // todo merge existing libraries and new. create new custom external library set for myModule, 
-      // if we have different version of the artifact
-    }
-
-    ModuleInfo moduleInfo = new ModuleInfo(module);
-    stringWriter.startChange();
-    try {
-      ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder);
-    }
-    catch (Throwable e) {
-      stringWriter.rollbackChange();
-      throw new InitException(e, "error.collect.local.style.holders");
-    }
-
-    if (!problemsHolder.isEmpty()) {
-      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
-    }
-    client.registerModule(project, moduleInfo, new String[]{externalLibrarySet.getId()}, stringWriter);
-  }
 
   class PendingOpenDocumentTask implements Runnable {
     private final Project myProject;
@@ -359,7 +301,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         @Override
         public void run() {
           try {
-            initLibrarySets(myProject, myModule);
+            LibraryManager.getInstance().initLibrarySets(myModule, appDir);
           }
           catch (IOException e) {
             try {

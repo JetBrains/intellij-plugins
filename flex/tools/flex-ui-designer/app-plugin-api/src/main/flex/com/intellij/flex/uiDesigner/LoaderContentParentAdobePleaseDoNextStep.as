@@ -4,7 +4,7 @@ import flash.display.Sprite;
 import flash.system.Capabilities;
 import flash.system.LoaderContext;
 
-internal final class LoaderContentParentAdobePleaseDoNextStep extends Sprite {
+public final class LoaderContentParentAdobePleaseDoNextStep extends Sprite {
   private static const instance:LoaderContentParentAdobePleaseDoNextStep = new LoaderContentParentAdobePleaseDoNextStep();
 
   public static function configureContext(context:LoaderContext):void {

@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
+import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 
 public final class Module {
   public function Module(id:int, project:Project, librarySets:Vector.<LibrarySet>, localStyleHolders:Vector.<LocalStyleHolder>) {

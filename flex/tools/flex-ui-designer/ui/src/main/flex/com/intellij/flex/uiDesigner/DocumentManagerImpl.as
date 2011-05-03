@@ -5,6 +5,9 @@ import com.intellij.flex.uiDesigner.css.CssReader;
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleValueResolverImpl;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
+import com.intellij.flex.uiDesigner.libraries.Library;
+import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.flex.uiDesigner.ui.DocumentContainer;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
 
@@ -106,23 +109,27 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var cssReaderClass:Class = context.getClass("com.intellij.flex.uiDesigner.css.CssReaderImpl");
     var cssReader:CssReader = new cssReaderClass();
     cssReader.styleManager = context.styleManager; 
-    // FakeObjectProxy/FakeBooleanSetProxy/MergedCssStyleDeclaration find in list from 0 to end, then we add in list in reverce order
+    // FakeObjectProxy/FakeBooleanSetProxy/MergedCssStyleDeclaration find in list from 0 to end, then we add in list in reverse order
     // (because the library with index 4 overrides the library with index 2)
     var librarySets:Vector.<LibrarySet> = context.librarySets;
     for (var i:int = librarySets.length - 1; i > -1; i--) {
-      var libraries:Vector.<Library> = librarySets[i].libraries;
-      for (var j:int = libraries.length - 1; j > -1; j--) {
-        var library:Library = libraries[j];
-        if (library.inheritingStyles != null) {
-          inheritingStyleMapList.push(library.inheritingStyles);
-        }
+      var librarySet:LibrarySet = librarySets[i];
+      do {
+        var libraries:Vector.<Library> = librarySet.libraries;
+        for (var j:int = libraries.length - 1; j > -1; j--) {
+          var library:Library = libraries[j];
+          if (library.inheritingStyles != null) {
+            inheritingStyleMapList.push(library.inheritingStyles);
+          }
 
-        if (library.defaultsStyle != null) {
-          var virtualFile:VirtualFileImpl = VirtualFileImpl(library.file.createChild("defaults.css"));
-          virtualFile.stylesheet = library.defaultsStyle;
-          cssReader.read(library.defaultsStyle.rulesets, virtualFile);
+          if (library.defaultsStyle != null) {
+            var virtualFile:VirtualFileImpl = VirtualFileImpl(library.file.createChild("defaults.css"));
+            virtualFile.stylesheet = library.defaultsStyle;
+            cssReader.read(library.defaultsStyle.rulesets, virtualFile);
+          }
         }
       }
+      while ((librarySet = librarySet.parent) != null);
     }
 
     cssReader.finalizeRead();

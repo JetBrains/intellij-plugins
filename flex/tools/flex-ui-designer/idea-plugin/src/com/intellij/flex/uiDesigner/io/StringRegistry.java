@@ -13,13 +13,13 @@ public class StringRegistry {
   }
   
   private void startChange(StringWriter activeWriter) {
-    table.start();
+    table.startTransaction();
     assert this.activeWriter == null;
     this.activeWriter = activeWriter;
   }
   
   private void rollbackChange() {
-    table.rollback();
+    table.rollbackTransaction();
 
     resetAfterChange();
   }
@@ -157,22 +157,8 @@ public class StringRegistry {
       finishChange();
     }
 
-    public void writeTo(byte[] bytes) {
-      final int offset;
-      if (counter < 0x80) {
-        bytes[0] = (byte)counter;
-        offset = 1;
-      }
-      else if (counter < 0x4000) {
-        bytes[0] = (byte)(((counter >> 7) & 0x7F) | 0x80);
-        bytes[1] = (byte)(counter & 0x7F);
-        offset = 2;
-      }
-      else {
-        throw new IllegalArgumentException("Integer out of range: " + counter);
-      }
-
-      out.getByteArrayOut().writeTo(bytes, offset);
+    public boolean hasChanges() {
+      return counter != 0;
     }
   }
 }

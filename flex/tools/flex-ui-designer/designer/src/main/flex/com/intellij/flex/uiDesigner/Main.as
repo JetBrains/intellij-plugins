@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner{
 import cocoa.MainWindowedApplication;
 import cocoa.util.FileUtil;
 
+import com.intellij.flex.uiDesigner.libraries.QueueLoader;
 import com.intellij.flex.uiDesigner.plaf.aqua.IdeaAquaLookAndFeel;
 
 import flash.desktop.NativeApplication;

@@ -26,7 +26,6 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
   public RequiredAssetsInfo requiredAssetsInfo;
 
   private final String path;
-  private final boolean fromSdk;
 
   public boolean filtered;
 
@@ -35,18 +34,17 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
 
   public int unresolvedDefinitionPolicy;
 
-  public final Set<CharSequence> unresolvedDefinitions = new THashSet<CharSequence>(AbcFilter.HASHING_STRATEGY);
+  public final Set<CharSequence> unresolvedDefinitions = new THashSet<CharSequence>(AbcFilter.HASHING_STRATEGY);  
   public final Set<OriginalLibrary> successors = new THashSet<OriginalLibrary>();
   public final Set<OriginalLibrary> parents = new THashSet<OriginalLibrary>();
 
   // en_US => {"layout", "components"}
   public final Map<String,THashSet<String>> resourceBundles = new THashMap<String,THashSet<String>>();
 
-  public OriginalLibrary(String relativePath, VirtualFile file, boolean fromSdk) {
+  public OriginalLibrary(String relativePath, VirtualFile file) {
     super(file);
 
     this.path = relativePath;
-    this.fromSdk = fromSdk;
   }
 
   public boolean hasUnresolvedDefinitions() {
@@ -98,10 +96,6 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
     return getFile().getNameWithoutExtension();
   }
 
-  public boolean isFromSdk() {
-    return fromSdk;
-  }
-
   @Override
   public TLinkable getNext() {
     return next;
@@ -121,4 +115,6 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
   public void setPrevious(TLinkable linkable) {
     previous = linkable;
   }
+
+
 }

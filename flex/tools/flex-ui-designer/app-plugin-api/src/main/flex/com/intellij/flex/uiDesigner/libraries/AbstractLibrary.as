@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner {
+package com.intellij.flex.uiDesigner.libraries {
 [Abstract]
 internal class AbstractLibrary {
   public function AbstractLibrary(parents:Vector.<Library>) {

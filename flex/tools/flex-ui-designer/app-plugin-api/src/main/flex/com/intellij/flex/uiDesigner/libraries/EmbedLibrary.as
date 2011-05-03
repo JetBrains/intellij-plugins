@@ -1,5 +1,7 @@
-package com.intellij.flex.uiDesigner {
+package com.intellij.flex.uiDesigner.libraries {
+import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.css.Stylesheet;
+import com.intellij.flex.uiDesigner.libraries.Library;
 
 import flash.errors.IllegalOperationError;
 import flash.utils.Dictionary;

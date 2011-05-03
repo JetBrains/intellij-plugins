@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
+import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 
 import flash.system.ApplicationDomain;
 

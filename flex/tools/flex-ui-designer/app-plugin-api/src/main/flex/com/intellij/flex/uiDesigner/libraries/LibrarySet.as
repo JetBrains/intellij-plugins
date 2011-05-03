@@ -1,4 +1,5 @@
-package com.intellij.flex.uiDesigner {
+package com.intellij.flex.uiDesigner.libraries {
+import com.intellij.flex.uiDesigner.VirtualFileImpl;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.net.registerClassAlias;

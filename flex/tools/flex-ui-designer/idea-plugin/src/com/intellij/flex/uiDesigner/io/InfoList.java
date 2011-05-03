@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.io;
 import gnu.trove.THashMap;
 import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class InfoList<E,I extends InfoList.Info> {
   private final THashMap<E,I> elements = new THashMap<E,I>();
@@ -46,6 +47,11 @@ public class InfoList<E,I extends InfoList.Info> {
 
   @NotNull
   public I getInfo(E element) {
+    return elements.get(element);
+  }
+
+  @Nullable
+  public I getNullableInfo(E element) {
     return elements.get(element);
   }
 

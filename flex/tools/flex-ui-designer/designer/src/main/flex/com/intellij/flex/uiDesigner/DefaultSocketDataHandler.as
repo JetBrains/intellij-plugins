@@ -3,6 +3,8 @@ import cocoa.DocumentWindow;
 
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
+import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.flex.uiDesigner.ui.ProjectEventMap;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
 
@@ -13,7 +15,6 @@ import flash.events.Event;
 import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
-import flash.system.System;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 
@@ -116,9 +117,8 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
         stringRegistry.initStringTable(input);
         break;
 
-      case ClientMethod.gg:
-        //Server.RRR = AmfUtil.readUtf(input);
-        System.resume();
+      case ClientMethod.updateStringRegistry:
+        stringRegistry.readStringTable(input);
         break;
     }
   }
@@ -265,9 +265,9 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
 
   private function registerLibrarySet(data:IDataInput):void {
     const id:String = data.readUTFBytes(AmfUtil.readUInt29(data));
-    const parentId:int = data.readInt();
-    StringRegistry.instance.readStringTable(data);
-    var librarySet:LibrarySet = new LibrarySet(id, parentId == -1 ? null : libraryManager.getById(parentId));
+
+    var n:int = AmfUtil.readUInt29(data);
+    var librarySet:LibrarySet = new LibrarySet(id, n == 0 ? null : libraryManager.getById(data.readUTFBytes(n)));
     librarySet.readExternal(data);
     libraryManager.register(librarySet);
   }
@@ -292,8 +292,8 @@ final class ClientMethod {
   //noinspection JSUnusedGlobalSymbols
   public static const qualifyExternalInlineStyleSource:int = 8;
   public static const initStringRegistry:int = 9;
-  
-  public static const registerBitmap:int = 10;
-  public static const registerBinaryFile:int = 11;
-  public static const gg:int = 12;
+  public static const updateStringRegistry:int = 10;
+
+  public static const registerBitmap:int = 11;
+  public static const registerBinaryFile:int = 12;
 }

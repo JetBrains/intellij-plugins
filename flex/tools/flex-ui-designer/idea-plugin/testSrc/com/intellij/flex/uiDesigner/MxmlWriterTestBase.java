@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.StringRegistry;
-import com.intellij.flex.uiDesigner.libraries.*;
+import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.flex.uiDesigner.libraries.OriginalLibrary;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -12,7 +12,6 @@ import com.intellij.util.Consumer;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -22,13 +21,10 @@ import static com.intellij.flex.uiDesigner.DesignerTestApplicationManager.Socket
 
 abstract class MxmlWriterTestBase extends AppTestBase {
   protected TestClient client;
-  protected Socket socket;
   protected SocketTestInputHandler socketInputHandler;
   
   private int passedCounter;
-  protected List<Library> libraries;
-  private LibrarySet librarySet;
-  protected File appRootDir;
+  protected File appDir;
   
   protected String getRawProjectRoot() {
     return useRawProjectRoot() ? getTestPath() : null;
@@ -42,40 +38,25 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     List<OriginalLibrary> libraries = new ArrayList<OriginalLibrary>(libs.size());
     final LibraryManager libraryManager = LibraryManager.getInstance();
     for (Pair<VirtualFile, VirtualFile> pair : libs) {
-      libraries.add(libraryManager.createOriginalLibrary(pair.getFirst(), pair.getSecond(), initializer, pair.getSecond().getUserData(IS_USER_LIB) == null));
+      libraries.add(libraryManager.createOriginalLibrary(pair.getFirst(), pair.getSecond(), initializer));
     }
     
     return libraries;
   }
 
+  protected String[] getLastProblems() {
+    return DesignerTestApplicationManager.getLastProblems();
+  }
+
   protected final void runAdl() throws Exception {
     DesignerTestApplicationManager testApplicationManager = DesignerTestApplicationManager.getInstance();
 
-    appRootDir = testApplicationManager.getAppDir();
+    appDir = testApplicationManager.getAppDir();
     socketInputHandler = testApplicationManager.socketInputHandler;
-    socket = testApplicationManager.getSocket();
     client = (TestClient)Client.getInstance();
 
-    final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-    stringWriter.startChange();
-
-    ProblemsHolder problemsHolder = new ProblemsHolder();
-    libraries = new SwcDependenciesSorter(appRootDir).sort(getLibraries(new LibraryStyleInfoCollector(myProject, myModule, stringWriter,
-                                                                                                      problemsHolder)),
-                                                           myProject.getLocationHash(), getFlexVersion());
-    assertEmpty(problemsHolder.getResultList());
-
-    librarySet = new LibrarySet(myProject.getLocationHash(), ApplicationDomainCreationPolicy.ONE, libraries);
-    client.getRegisteredProjects().add(new ProjectInfo(myProject, librarySet));
-    client.openProject(myProject);
-    client.registerLibrarySet(librarySet, stringWriter);
-    if (!isRequireLocalStyleHolder()) {
-      registerModule(new ModuleInfo(myModule), stringWriter);
-    }
-  }
-
-  private void registerModule(ModuleInfo moduleInfo, StringRegistry.StringWriter stringWriter) throws IOException {
-    client.registerModule(myProject, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
+    LibraryManager.getInstance().initLibrarySets(myModule, appDir, isRequireLocalStyleHolder());
+    assertEmpty(getLastProblems());
   }
 
   protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
@@ -160,8 +141,6 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   
   protected void testFiles(final Tester tester, final int auxiliaryBorder, final VirtualFile... originalVFiles) throws Exception {
     VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles).getChildren();
-    collectLocalStyleHolders();
-
     for (int childrenLength = testVFiles.length, i = childrenLength - auxiliaryBorder; i < childrenLength; i++) {
       final VirtualFile file = testVFiles[i];
       if (!file.getName().endsWith(".mxml")) {
@@ -179,18 +158,6 @@ abstract class MxmlWriterTestBase extends AppTestBase {
         }
       }).get(8888, TimeUnit.SECONDS);
       //}).get(8, TimeUnit.SECONDS);
-    }
-  }
-
-  private void collectLocalStyleHolders() throws IOException {
-    if (isRequireLocalStyleHolder()) {
-      ModuleInfo moduleInfo = new ModuleInfo(myModule);
-      final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-      stringWriter.startChange();
-      ProblemsHolder problemsHolder = new ProblemsHolder();
-      ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, getFlexVersion(), stringWriter, problemsHolder);
-      assertEmpty(problemsHolder.getResultList());
-      registerModule(moduleInfo, stringWriter);
     }
   }
   

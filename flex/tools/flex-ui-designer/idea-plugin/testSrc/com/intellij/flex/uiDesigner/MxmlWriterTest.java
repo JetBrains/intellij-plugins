@@ -1,15 +1,11 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -26,8 +22,6 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
   }
 
   public void test45() throws Exception {
-    changeServiceImplementation(DocumentProblemManager.class, MyDocumentProblemManager.class);
-
     String testFile = System.getProperty("testFile");
     String[] files = testFile == null ? getTestFiles() : new String[]{getTestPath() + "/" + testFile + ".mxml"};
 
@@ -40,7 +34,7 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
 
     testFiles(vFiles);
     
-    String[] problems = ((MyDocumentProblemManager)DocumentProblemManager.getInstance()).getProblems();
+    String[] problems = getLastProblems();
     if (testFile != null) {
       assertThat(problems, emptyArray());
     }
@@ -93,21 +87,6 @@ public class MxmlWriterTest extends MxmlWriterTestBase {
       if (file.isDirectory()) {
         collectMxmlFiles(files, file);
       }
-    }
-  }
-
-  private static class MyDocumentProblemManager extends DocumentProblemManager {
-    private final List<String> problems = new ArrayList<String>();
-    
-    public String[] getProblems() {
-      final String[] strings = problems.toArray(new String[problems.size()]);
-      problems.clear();
-      return strings;
-    }
-    
-    @Override
-    public void report(Project project, String message, MessageType messageType) {
-      problems.add(message);
     }
   }
 }

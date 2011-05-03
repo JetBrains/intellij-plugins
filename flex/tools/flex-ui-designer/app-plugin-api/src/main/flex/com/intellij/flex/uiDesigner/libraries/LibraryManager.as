@@ -1,7 +1,7 @@
-package com.intellij.flex.uiDesigner {
+package com.intellij.flex.uiDesigner.libraries {
 import flash.utils.Dictionary;
 
-public class LibraryManager {
+public class LibraryManager implements LibrarySetLoadProgressListener {
   private const idMap:Dictionary = new Dictionary();
 
   private var loader:QueueLoader;
@@ -9,10 +9,10 @@ public class LibraryManager {
   private const resolveQueue:Dictionary = new Dictionary();
 
   public function LibraryManager() {
-    loader = new QueueLoader(completeHandler);
+    loader = new QueueLoader(this);
   }
 
-  private function completeHandler(librarySet:LibrarySet):void {
+  public function complete(librarySet:LibrarySet):void {
     var currentQueue:LoaderQueue = resolveQueue[librarySet];
     if (currentQueue != null) {
       var leftBrotherQueue:LoaderQueue;
@@ -54,7 +54,7 @@ public class LibraryManager {
     loader.load(librarySet);
   }
 
-  public function getById(id:int):LibrarySet {
+  public function getById(id:String):LibrarySet {
     return idMap[id];
   }
 
@@ -66,30 +66,36 @@ public class LibraryManager {
     return librarySets;
   }
   
-  public function remove(librartSets:Vector.<LibrarySet>):void {
-    for each (var librarySet:LibrarySet in librartSets) {
-      delete idMap[librarySet.id];
+  public function remove(librarySets:Vector.<LibrarySet>):void {
+    for each (var librarySet:LibrarySet in librarySets) {
+      do {
+        delete idMap[librarySet.id];
+      }
+      while ((librarySet = librarySet.parent) != null);
     }
   }
 
   public function resolve(librarySets:Vector.<LibrarySet>, readyHandler:Function, ...readyHandlerArguments):void {
     var queue:LoaderQueue;
     for each (var librarySet:LibrarySet in librarySets) {
-      if (librarySet.applicationDomain == null) {
-        if (queue == null) {
-          queue = new LoaderQueue(readyHandler, readyHandlerArguments);
-        }
+      do {
+        if (librarySet.applicationDomain == null) {
+          if (queue == null) {
+            queue = new LoaderQueue(readyHandler, readyHandlerArguments);
+          }
 
-        var leftBrotherQueue:LoaderQueue = resolveQueue[librarySet];
-        if (leftBrotherQueue == null) {
-          resolveQueue[librarySet] = queue;
+          var leftBrotherQueue:LoaderQueue = resolveQueue[librarySet];
+          if (leftBrotherQueue == null) {
+            resolveQueue[librarySet] = queue;
+          }
+          else {
+            queue.tail = leftBrotherQueue.tail;
+            leftBrotherQueue.tail = queue;
+          }
+          queue.size++;
         }
-        else {
-          queue.tail = leftBrotherQueue.tail;
-          leftBrotherQueue.tail = queue;
-        }
-        queue.size++;
       }
+      while ((librarySet = librarySet.parent) != null);
     }
 
     if (queue == null) {

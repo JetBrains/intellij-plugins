@@ -92,8 +92,7 @@ class CatalogXmlBuilder implements XmlBuilder {
         else {
           definition.time = Long.parseLong(mod.toString());
           if (definition.time > oldDefinition.getTime()) {
-            oldDefinition.getLibrary().definitionCounter--;
-            oldDefinition.getLibrary().unresolvedDefinitions.add(value);
+            oldDefinition.markAsUnresolved(value);
           }
           else {
             definition = null;

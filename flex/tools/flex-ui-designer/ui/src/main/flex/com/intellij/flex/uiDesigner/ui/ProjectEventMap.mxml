@@ -7,9 +7,10 @@
     import com.intellij.flex.uiDesigner.DocumentManager;
     import com.intellij.flex.uiDesigner.DocumentManagerImpl;
     import com.intellij.flex.uiDesigner.DocumentReader;
-    import com.intellij.flex.uiDesigner.LibraryManager;
+    import com.intellij.flex.uiDesigner.libraries.LibraryManager;
     import com.intellij.flex.uiDesigner.Server;
     import com.intellij.flex.uiDesigner.StatesBarManager;
+    import com.intellij.flex.uiDesigner.libraries.LibraryManager;
     import com.intellij.flex.uiDesigner.ui.styleInspector.CssRulesetPrinter;
     import com.intellij.flex.uiDesigner.ui.styleInspector.Interactor;
     import com.intellij.flex.uiDesigner.ui.styleInspector.StylePane;

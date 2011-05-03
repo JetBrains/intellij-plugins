@@ -62,8 +62,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   }
 
   private void writeHeader() {
-    int length = count - lastBlockBegin - SERVICE_DATA_SIZE;
-    IOUtil.writeInt(length, buffer, lastBlockBegin);
+    IOUtil.writeInt(count - lastBlockBegin - SERVICE_DATA_SIZE, buffer, lastBlockBegin);
   }
 
   private void flushBuffer() throws IOException {
@@ -74,6 +73,13 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
 
   public void assertStart() {
     assert count - lastBlockBegin == 4;
+  }
+
+  public void rollback() {
+    count = lastBlockBegin + SERVICE_DATA_SIZE;
+    if (!markers.isEmpty()) {
+      markers.clear();
+    }
   }
 
   // WARNING: you can't call flush after this, you must or end, or flush.

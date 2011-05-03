@@ -82,11 +82,22 @@ public class Client implements Closable {
   }
 
   public void openProject(Project project) throws IOException {
-    beginMessage(ClientMethod.openProject);
-    writeId(project);
-    out.writeAmfUtf(project.getName());
-    ProjectWindowBounds.write(project, out);
-    blockOut.end();
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.openProject);
+      writeId(project);
+      out.writeAmfUtf(project.getName());
+      ProjectWindowBounds.write(project, out);
+      hasError = false;
+    }
+    finally {
+      if (hasError) {
+        blockOut.rollback();
+      }
+      else {
+        blockOut.end();
+      }
+    }
   }
 
   private void beginMessage(ClientMethod method) {
@@ -101,12 +112,34 @@ public class Client implements Closable {
     out.flush();
   }
 
-  public void registerLibrarySet(LibrarySet librarySet, StringRegistry.StringWriter stringWriter) throws IOException {
+  public void updateStringRegistry(StringRegistry.StringWriter stringWriter) throws IOException {
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.updateStringRegistry);
+      stringWriter.writeTo(out);
+      hasError = false;
+    }
+    finally {
+      if (hasError) {
+        blockOut.rollback();
+      }
+      else {
+        blockOut.end();
+      }
+    }
+  }
+
+  public void registerLibrarySet(LibrarySet librarySet) throws IOException {
     beginMessage(ClientMethod.registerLibrarySet);
     out.writeAmfUtf(librarySet.getId());
-    out.writeInt(-1); // todo parent
-
-    stringWriter.writeTo(out);
+    
+    LibrarySet parent = librarySet.getParent();
+    if (parent == null) {
+      out.write(0);
+    }
+    else {
+      out.writeAmfUtf(parent.getId());
+    }
 
     out.write(librarySet.getApplicationDomainCreationPolicy());
     final List<Library> libraries = librarySet.getLibraries();
@@ -222,17 +255,28 @@ public class Client implements Closable {
 
   public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter)
     throws IOException {
-    beginMessage(ClientMethod.registerModule);
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.registerModule);
 
-    stringWriter.writeToIfStarted(out);
+      stringWriter.writeToIfStarted(out);
 
-    out.writeShort(registeredModules.add(moduleInfo));
-    writeId(project);
-    out.write(librarySetIds);
-    out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
+      out.writeShort(registeredModules.add(moduleInfo));
+      writeId(project);
+      out.write(librarySetIds);
+      out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
+      hasError = false;
+    }
+    finally {
+      if (hasError) {
+        blockOut.rollback();
+      }
+      else {
+        blockOut.end();
+      }
 
-    out.resetAfterMessage();
-    blockOut.end();
+      out.resetAfterMessage();
+    }
   }
 
   public void openDocument(Module module, XmlFile psiFile) throws IOException {
@@ -378,7 +422,7 @@ public class Client implements Closable {
 
   public static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, openDocument, updateDocuments,
-    qualifyExternalInlineStyleSource, initStringRegistry,
+    qualifyExternalInlineStyleSource, initStringRegistry, updateStringRegistry,
     registerBitmap, registerBinaryFile;
     
     public static final int METHOD_CLASS = 0;

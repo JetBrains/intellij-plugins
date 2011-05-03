@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner {
+package com.intellij.flex.uiDesigner.libraries {
 import cocoa.lang.Enum;
 
 public final class ApplicationDomainCreationPolicy extends Enum {

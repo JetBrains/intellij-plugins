@@ -7,9 +7,13 @@ import com.intellij.flex.uiDesigner.abc.AbcFilter;
 import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSet;
 import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSetAndStartsWith;
 import com.intellij.flex.uiDesigner.abc.FlexSdkAbcInjector;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilderDriver;
+import com.intellij.psi.search.GlobalSearchScope;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import gnu.trove.TLinkedList;
@@ -24,12 +28,17 @@ import java.util.*;
 import java.util.zip.DataFormatException;
 
 public class SwcDependenciesSorter {
-  private Map<CharSequence, Definition> definitionMap;
+  private THashMap<CharSequence, Definition> definitionMap;
 
   private final File rootPath;
+  private final Module module;
 
-  public SwcDependenciesSorter(File rootPath) {
+  private boolean useIndexForFindDefinitions;
+  private char[] fqnBuffer;
+
+  public SwcDependenciesSorter(File rootPath, Module module) {
     this.rootPath = rootPath;
+    this.module = module;
   }
 
   private static Collection<CharSequence> getBadAirsparkClasses() {
@@ -56,9 +65,11 @@ public class SwcDependenciesSorter {
     return abc.lastModified();
   }
 
-  public List<Library> sort(final List<OriginalLibrary> libraries, final String postfix, final String flexSdkVersion) throws IOException {
+  public List<Library> sort(final List<OriginalLibrary> libraries, final String postfix, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
+    useIndexForFindDefinitions = !isFromSdk;
+
     List<OriginalLibrary> filteredLibraries = new ArrayList<OriginalLibrary>(libraries.size());
-    definitionMap = new THashMap<CharSequence, Definition>();
+    definitionMap = new THashMap<CharSequence, Definition>(1024);
 
     final CatalogXmlBuilder catalogXmlBuilder = new CatalogXmlBuilder(definitionMap);
     for (OriginalLibrary library : libraries) {
@@ -72,11 +83,17 @@ public class SwcDependenciesSorter {
       }
     }
 
-    analyzeDefinitions();
+    ApplicationManager.getApplication().runReadAction(new Runnable() {
+      @Override
+      public void run() {
+        analyzeDefinitions();
+      }
+    });
+    
     definitionMap = null;
 
     final TLinkedList<OriginalLibrary> queue = new TLinkedList<OriginalLibrary>();
-    final AbcFilter filter = new AbcFilter();
+    AbcFilter filter = null;
     for (OriginalLibrary library : filteredLibraries) {
       if (!library.hasDefinitions()) {
         if (library.hasResourceBundles()) {
@@ -95,7 +112,7 @@ public class SwcDependenciesSorter {
       }
 
       Collection<CharSequence> filteredDefinitions = null;
-      if (library.isFromSdk()) {
+      if (isFromSdk) {
         String path = library.getPath();
         if (path.startsWith("framework")) {
           injectFrameworkSwc(flexSdkVersion, library, libraries);
@@ -125,6 +142,9 @@ public class SwcDependenciesSorter {
       final File modifiedSwf = library.filtered ? createSwfOutFile(library, postfix) : createSwfOutFile(library);
       final long timeStamp = swfFile.getTimeStamp();
       if (timeStamp != modifiedSwf.lastModified()) {
+        if (filter == null) {
+          filter = new AbcFilter();
+        }
         filter.filter(swfFile, modifiedSwf, filteredDefinitions == null ? null : new AbcNameFilterByNameSet(filteredDefinitions));
         //noinspection ResultOfMethodCallIgnored
         modifiedSwf.setLastModified(timeStamp);
@@ -231,6 +251,10 @@ public class SwcDependenciesSorter {
                                                !hasUnresolvedDependencies(definition, entry.getKey())))) {
         final OriginalLibrary library = definition.getLibrary();
         for (CharSequence dependencyId : definition.dependencies) {
+          if (dependencyId == null) {
+            continue;
+          }
+
           final OriginalLibrary dependencyLibrary = definitionMap.get(dependencyId).getLibrary();
           if (library != dependencyLibrary) {
             if (dependencyLibrary.successors.add(library)) {
@@ -260,15 +284,39 @@ public class SwcDependenciesSorter {
     return definitions;
   }
 
+  private GlobalSearchScope definitionSearchScope;
+
   private boolean hasUnresolvedDependencies(Definition definition, CharSequence definitionName) {
     // set before to prevent stack overflow for crossed dependencies
     definition.hasUnresolvedDependencies = Definition.UnresolvedState.NO;
 
-    for (CharSequence dependencyId : definition.dependencies) {
+    CharSequence[] dependencies = definition.dependencies;
+    for (int i = 0, dependenciesLength = dependencies.length; i < dependenciesLength; i++) {
+      CharSequence dependencyId = dependencies[i];
       final Definition dependency = definitionMap.get(dependencyId);
+      if (dependency == null && useIndexForFindDefinitions) {
+        int length = dependencyId.length();
+        if (definitionSearchScope == null) {
+          definitionSearchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
+          fqnBuffer = new char[Math.max(length, 512)];
+        }
+        else if (fqnBuffer.length < length) {
+          fqnBuffer = new char[length];
+        }
+
+        String fqn = (String)dependencyId;
+        fqn.getChars(0, length, fqnBuffer, 0);
+        fqnBuffer[fqn.lastIndexOf(':')] = '.';
+        if (JSResolveUtil.findClassByQName(new String(fqnBuffer, 0, length), definitionSearchScope) != null) {
+          dependencies[i] = null;
+          continue;
+        }
+      }
+
       if (dependency == null || dependency.hasUnresolvedDependencies == Definition.UnresolvedState.YES ||
-          (dependency.hasUnresolvedDependencies == Definition.UnresolvedState.UNKNOWN && hasUnresolvedDependencies(dependency, dependencyId))) {
-        definition.getLibrary().unresolvedDefinitions.add(definitionName);
+          (dependency.hasUnresolvedDependencies == Definition.UnresolvedState.UNKNOWN &&
+           hasUnresolvedDependencies(dependency, dependencyId))) {
+        definition.markAsUnresolved(definitionName);
         definition.hasUnresolvedDependencies = Definition.UnresolvedState.YES;
         return true;
       }

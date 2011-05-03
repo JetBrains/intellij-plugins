@@ -1,5 +1,7 @@
-package com.intellij.flex.uiDesigner {
+package com.intellij.flex.uiDesigner.libraries {
 import cocoa.util.FileUtil;
+
+import com.intellij.flex.uiDesigner.LoaderContentParentAdobePleaseDoNextStep;
 
 import flash.display.LoaderInfo;
 import flash.events.Event;
@@ -52,15 +54,14 @@ public class QueueLoader {
 
   private const queue:Vector.<LibrarySet> = new Vector.<LibrarySet>();
 
-  private var completeHandler:Function;
-  private var errorHandler:Function;
+  private var progressListener:LibrarySetLoadProgressListener;
 
   private const loaderContext:LoaderContext = new LoaderContext();
+  //noinspection JSFieldCanBeLocalInspection
   private const urlRequest:URLRequest = new URLRequest();
 
-  public function QueueLoader(completeHandler:Function, errorHandler:Function = null) {
-    this.completeHandler = completeHandler;
-    this.errorHandler = errorHandler;
+  public function QueueLoader(librarySetLoadProgressListener:LibrarySetLoadProgressListener) {
+    this.progressListener = librarySetLoadProgressListener;
 
     loaderContext.allowCodeImport = true;
     LoaderContentParentAdobePleaseDoNextStep.configureContext(loaderContext);
@@ -170,7 +171,7 @@ public class QueueLoader {
       librarySet.applicationDomain = loaderContext.applicationDomain;
       var lS:LibrarySet = librarySet;
       librarySet = null;
-      completeHandler(lS);
+      progressListener.complete(lS);
 
       if (queue.length > 0) {
         doLoadLibrarySet(queue.shift());
@@ -180,7 +181,7 @@ public class QueueLoader {
 }
 }
 
-import com.intellij.flex.uiDesigner.Library;
+import com.intellij.flex.uiDesigner.libraries.Library;
 
 import flash.display.Loader;
 

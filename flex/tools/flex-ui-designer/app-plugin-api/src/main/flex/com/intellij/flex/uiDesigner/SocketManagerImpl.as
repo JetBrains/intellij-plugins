@@ -87,9 +87,9 @@ public class SocketManagerImpl implements SocketManager {
       if (handler != null) {
         var position:int = socket.bytesAvailable + 1 /* method class size */;
         const method:int = socket.readByte();
-        //trace(clientMethodClass + ":" + method);
+        trace(clientMethodClass + ":" + method);
         handler.handleSockedData(messageSize - 2, method, socket);
-        //trace(clientMethodClass + ":" + method + " processed");
+        trace(clientMethodClass + ":" + method + " processed");
         if (messageSize != (position - socket.bytesAvailable)) {
           if (handler.pendingReadIsAllowable(method)) {
             unreadSocketRemainder = socket.bytesAvailable;

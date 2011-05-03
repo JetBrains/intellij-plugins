@@ -1,4 +1,5 @@
-package com.intellij.flex.uiDesigner {
+package com.intellij.flex.uiDesigner.libraries {
+import com.intellij.flex.uiDesigner.VirtualFile;
 import com.intellij.flex.uiDesigner.css.Stylesheet;
 
 import flash.utils.Dictionary;

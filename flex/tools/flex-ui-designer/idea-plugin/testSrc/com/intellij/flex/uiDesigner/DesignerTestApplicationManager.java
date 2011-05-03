@@ -4,6 +4,8 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -17,6 +19,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 class DesignerTestApplicationManager {
@@ -78,6 +81,8 @@ class DesignerTestApplicationManager {
     AppTestBase.changeServiceImplementation(Client.class, TestClient.class);
     Client.getInstance().setOut(socket.getOutputStream());
 
+    AppTestBase.changeServiceImplementation(DocumentProblemManager.class, MyDocumentProblemManager.class);
+
     AppTestBase.changeServiceImplementation(SocketInputHandler.class, SocketTestInputHandler.class);
     socketInputHandler = (SocketTestInputHandler)ServiceManager.getService(SocketInputHandler.class);
     ApplicationManager.getApplication().executeOnPooledThread(new Callable<Object>() {
@@ -101,6 +106,10 @@ class DesignerTestApplicationManager {
       instance = new DesignerTestApplicationManager();
     }
     return instance;
+  }
+
+  public static String[] getLastProblems() {
+    return ((MyDocumentProblemManager)DocumentProblemManager.getInstance()).getProblems();
   }
 
   public File getAppDir() {
@@ -210,6 +219,21 @@ class DesignerTestApplicationManager {
             throw new IllegalStateException("Unexpected server command: " + command);
         }
       }
+    }
+  }
+
+  static class MyDocumentProblemManager extends DocumentProblemManager {
+    private final List<String> problems = new ArrayList<String>();
+
+    public String[] getProblems() {
+      final String[] strings = problems.toArray(new String[problems.size()]);
+      problems.clear();
+      return strings;
+    }
+
+    @Override
+    public void report(Project project, String message, MessageType messageType) {
+      problems.add(message);
     }
   }
 }
