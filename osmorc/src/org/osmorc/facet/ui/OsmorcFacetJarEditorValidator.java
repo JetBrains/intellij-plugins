@@ -7,6 +7,7 @@ import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorValidator;
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.openapi.roots.ui.configuration.FacetsProvider;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
@@ -50,6 +51,9 @@ public class OsmorcFacetJarEditorValidator extends FacetEditorValidator {
           }
         });
       }
+    }
+    if (StringUtil.isEmptyOrSpaces(myJarEditorTab.getJarFileName())) {
+      return new ValidationResult("You need to specify a filename for the JAR file.");
     }
     return ValidationResult.OK;
   }
