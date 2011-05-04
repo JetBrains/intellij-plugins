@@ -132,6 +132,6 @@
 		<title>flex-injection-4.5</title>
 	</metadata>
 	<file-specs>
-		<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/Main.as</path-element>
+		<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/SpecialClassForAdobeEngineers.as</path-element>
 	</file-specs>
 </flex-config>
