@@ -64,7 +64,7 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
   private int myScreenHeight = 0;
   private int myFullScreenWidth = 0;
   private int myFullScreenHeight = 0;
-  private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.Network;
+  private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = MobileAirUtil.DEBUG_PORT_DEFAULT;
 
   @NotNull
