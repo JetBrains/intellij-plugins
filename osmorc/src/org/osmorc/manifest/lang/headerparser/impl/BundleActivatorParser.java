@@ -41,12 +41,17 @@ public class BundleActivatorParser extends AbstractHeaderParserImpl {
 
     public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
         if (headerValuePart.getParent() instanceof Clause) {
-            Module module = ModuleUtil.findModuleForPsiElement(headerValuePart);
+            final Module module = ModuleUtil.findModuleForPsiElement(headerValuePart);
             JavaClassReferenceProvider provider;
             if (module != null) {
-                provider = new JavaClassReferenceProvider(GlobalSearchScope.moduleScope(module), headerValuePart.getProject());
+                provider = new JavaClassReferenceProvider() {
+                  @Override
+                  public GlobalSearchScope getScope() {
+                    return GlobalSearchScope.moduleScope(module);
+                  }
+                };
             } else {
-                provider = new JavaClassReferenceProvider(headerValuePart.getProject());
+                provider = new JavaClassReferenceProvider();
             }
 
             provider.setOption(JavaClassReferenceProvider.EXTEND_CLASS_NAMES, new String[]{"org.osgi.framework.BundleActivator"});

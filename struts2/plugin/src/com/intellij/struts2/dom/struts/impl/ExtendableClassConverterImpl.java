@@ -85,7 +85,12 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
     // 1. "normal" JAVA classes
     final GlobalSearchScope scope = getResolveScope(psiClassGenericDomValue);
     final JavaClassReferenceProvider classReferenceProvider =
-        new JavaClassReferenceProvider(scope, context.getPsiManager().getProject());
+        new JavaClassReferenceProvider() {
+          @Override
+          public GlobalSearchScope getScope() {
+            return scope;
+          }
+        };
     if (extendClass.instantiatable()) {
       classReferenceProvider.setOption(JavaClassReferenceProvider.INSTANTIATABLE, Boolean.TRUE);
     }
