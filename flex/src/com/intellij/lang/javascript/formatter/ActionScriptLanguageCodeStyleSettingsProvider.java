@@ -79,7 +79,9 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
       consumer.showStandardOptions("BLANK_LINES_AFTER_IMPORTS",
                                    "BLANK_LINES_BEFORE_IMPORTS",
                                    "BLANK_LINES_AROUND_METHOD",
-                                   "KEEP_BLANK_LINES_IN_CODE");
+                                   "KEEP_BLANK_LINES_IN_CODE",
+                                   "BLANK_LINES_BEFORE_PACKAGE",
+                                   "BLANK_LINES_AFTER_PACKAGE");
     }
     else if (settingsType == SettingsType.WRAPPING_AND_BRACES_SETTINGS) {
       consumer.showAllStandardOptions();
@@ -98,7 +100,9 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
 
   @Override
   public CommonCodeStyleSettings getDefaultCommonSettings() {
-    return new CommonCodeStyleSettings(getLanguage());
+    CommonCodeStyleSettings commonSettings = new CommonCodeStyleSettings(getLanguage());
+    commonSettings.BLANK_LINES_AFTER_PACKAGE = 0;
+    return commonSettings;
   }
 
   public final static String GENERAL_CODE_SAMPLE =
