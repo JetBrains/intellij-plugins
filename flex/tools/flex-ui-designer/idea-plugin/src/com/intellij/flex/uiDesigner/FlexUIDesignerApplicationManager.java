@@ -3,7 +3,6 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.IOUtil;
-import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.openapi.Disposable;
@@ -392,16 +391,12 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       }
 
       Client client = Client.getInstance();
-      final InfoList<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
-      if (registeredProjects.contains(project)) {
+      if (client.getRegisteredProjects().contains(project)) {
         try {
           client.closeProject(project);
         }
         catch (IOException e) {
           LOG.error(e);
-        }
-        finally {
-          registeredProjects.remove(project);
         }
       }
     }

@@ -7,5 +7,6 @@
   <Component role="{TestSocketDataHandler}">
     <Requirement role="{ProjectManager}"/>
   </Component>
+  <Component role="{ProjectManager}" implementation="{TestProjectManager}"/>
   <Component role="{UncaughtErrorManager}" implementation="{TestUncaughtErrorManager}"/>
 </ComponentSet>

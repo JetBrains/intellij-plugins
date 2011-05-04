@@ -6,7 +6,6 @@ import flash.system.SecurityDomain;
 import flash.utils.Dictionary;
 
 import mx.core.FlexVersion;
-
 import mx.core.mx_internal;
 import mx.styles.CSSStyleDeclaration;
 import mx.styles.IStyleManager2;
@@ -14,125 +13,7 @@ import mx.styles.IStyleManager2;
 use namespace mx_internal;
 
 [Abstract]
-public class AbstractStyleManager {
-  protected static const colorNames:Object = {
-    transparent: "transparent",
-    black: 0x000000,
-    blue: 0x0000FF,
-    green: 0x008000,
-    gray: 0x808080,
-    silver: 0xC0C0C0,
-    lime: 0x00FF00,
-    olive: 0x808000,
-    white: 0xFFFFFF,
-    yellow: 0xFFFF00,
-    maroon: 0x800000,
-    navy: 0x000080,
-    red: 0xFF0000,
-    purple: 0x800080,
-    teal: 0x008080,
-    fuchsia: 0xFF00FF,
-    aqua: 0x00FFFF,
-    magenta: 0xFF00FF,
-    cyan: 0x00FFFF,
-
-    halogreen: 0x80FF4D,
-    haloblue: 0x009DFF,
-    haloorange: 0xFFB600,
-    halosilver: 0xAECAD9
-  };
-
-  private static const parentDisplayListOrSizeInvalidatingStyles:Object = {
-    baseline: true,
-    bottom: true,
-    horizontalCenter: true,
-    left: true,
-    right: true,
-    top: true,
-    verticalCenter: true
-  };
-
-  private static const sizeInvalidatingStyles:Object = {
-    alignmentBaseline: true,
-    baselineShift: true,
-    blockProgression: true,
-    borderStyle: true,
-    borderThickness: true,
-    breakOpportunity : true,
-    cffHinting: true,
-    columnCount: true,
-    columnGap: true,
-    columnWidth: true,
-    digitCase: true,
-    digitWidth: true,
-    direction: true,
-    dominantBaseline: true,
-    firstBaselineOffset: true,
-    fontAntiAliasType: true,
-    fontFamily: true,
-    fontGridFitType: true,
-    fontLookup: true,
-    fontSharpness: true,
-    fontSize: true,
-    fontStyle: true,
-    fontThickness: true,
-    fontWeight: true,
-    headerHeight: true,
-    horizontalAlign: true,
-    horizontalGap: true,
-    justificationRule: true,
-    justificationStyle: true,
-    kerning: true,
-    leading: true,
-    leadingModel: true,
-    letterSpacing: true,
-    ligatureLevel: true,
-    lineBreak: true,
-    lineHeight: true,
-    lineThrough: true,
-    locale: true,
-    marginBottom: true,
-    marginLeft: true,
-    marginRight: true,
-    marginTop: true,
-    paddingBottom: true,
-    paddingLeft: true,
-    paddingRight: true,
-    paddingTop: true,
-    paragraphEndIndent: true,
-    paragraphStartIndent: true,
-    paragraphSpaceAfter: true,
-    paragraphSpaceBefore: true,
-    renderingMode: true,
-    strokeWidth: true,
-    tabHeight: true,
-    tabWidth: true,
-    tabStops: true,
-    textAlign: true,
-    textAlignLast: true,
-    textDecoration: true,
-    textIndent: true,
-    textJustify: true,
-    textRotation: true,
-    tracking: true,
-    trackingLeft: true,
-    trackingRight: true,
-    typographicCase: true,
-    verticalAlign: true,
-    verticalGap: true,
-    whitespaceCollapse: true
-  };
-
-  private static const inheritingTextFormatStyles:Object = {
-    align: true,
-    bold: true,
-    color: true,
-    font: true,
-    indent: true,
-    italic: true,
-    size: true
-  };
-
+internal class AbstractStyleManager {
   protected var userColorNames:Dictionary;
   private var userParentDisplayListInvalidatingStyles:Dictionary;
   private var userParentSizeInvalidatingStyles:Dictionary;
@@ -326,7 +207,7 @@ public class AbstractStyleManager {
 
   //noinspection JSUnusedGlobalSymbols
   public function isInheritingTextFormatStyle(styleName:String):Boolean {
-    return inheritingTextFormatStyles[styleName] !== undefined;
+    return StyleManagerPredefinedData.inheritingTextFormatStyles[styleName] !== undefined;
   }
 
   //noinspection JSUnusedGlobalSymbols
@@ -340,7 +221,7 @@ public class AbstractStyleManager {
 
   //noinspection JSUnusedGlobalSymbols
   public function isSizeInvalidatingStyle(styleName:String):Boolean {
-    return sizeInvalidatingStyles[styleName] != undefined || (userSizeInvalidatingStyles != null && userSizeInvalidatingStyles[styleName] !== undefined);
+    return StyleManagerPredefinedData.sizeInvalidatingStyles[styleName] != undefined || (userSizeInvalidatingStyles != null && userSizeInvalidatingStyles[styleName] !== undefined);
   }
 
   //noinspection JSUnusedGlobalSymbols
@@ -354,7 +235,7 @@ public class AbstractStyleManager {
 
   //noinspection JSUnusedGlobalSymbols
   public function isParentSizeInvalidatingStyle(styleName:String):Boolean {
-    return parentDisplayListOrSizeInvalidatingStyles[styleName] != undefined || (userParentSizeInvalidatingStyles != null && userParentSizeInvalidatingStyles[styleName] !== undefined);
+    return StyleManagerPredefinedData.parentDisplayListOrSizeInvalidatingStyles[styleName] != undefined || (userParentSizeInvalidatingStyles != null && userParentSizeInvalidatingStyles[styleName] !== undefined);
   }
 
   //noinspection JSUnusedGlobalSymbols
@@ -368,7 +249,7 @@ public class AbstractStyleManager {
 
   //noinspection JSUnusedGlobalSymbols
   public function isParentDisplayListInvalidatingStyle(styleName:String):Boolean {
-    return parentDisplayListOrSizeInvalidatingStyles[styleName] != undefined || (userParentDisplayListInvalidatingStyles != null && userParentDisplayListInvalidatingStyles[styleName] !== undefined);
+    return StyleManagerPredefinedData.parentDisplayListOrSizeInvalidatingStyles[styleName] != undefined || (userParentDisplayListInvalidatingStyles != null && userParentDisplayListInvalidatingStyles[styleName] !== undefined);
   }
 
   //noinspection JSUnusedGlobalSymbols
@@ -403,7 +284,7 @@ public class AbstractStyleManager {
       c = userColorNames[normalizedColorName];
     }
     if (c === undefined) {
-      c = colorNames[normalizedColorName];
+      c = StyleManagerPredefinedData.colorNames[normalizedColorName];
       return c === undefined ? (parent != null ? parent.getColorName(colorName) : 0xffffffff) : uint(c);
     }
     else {

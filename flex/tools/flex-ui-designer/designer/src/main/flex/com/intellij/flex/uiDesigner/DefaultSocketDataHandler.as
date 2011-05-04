@@ -8,10 +8,7 @@ import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.flex.uiDesigner.ui.ProjectEventMap;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
 
-import flash.desktop.NativeApplication;
 import flash.display.BitmapData;
-import flash.display.NativeWindow;
-import flash.events.Event;
 import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
@@ -33,15 +30,11 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   
   private var bitmapDataManager:BitmapDataManager;
 
-  private var applicationExiting:Boolean;
-
   public function DefaultSocketDataHandler(libraryManager:LibraryManager, projectManager:ProjectManager, moduleManager:ModuleManager, stringRegistry:StringRegistry) {
     this.libraryManager = libraryManager;
     this.projectManager = projectManager;
     this.moduleManager = moduleManager;
     this.stringRegistry = stringRegistry;
-
-    NativeApplication.nativeApplication.addEventListener(Event.EXITING, exitingHandler);
   }
 
   private var _embedSwfManager:EmbedSwfManager;
@@ -61,14 +54,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
 
     return _embedImageManager;
   }
-
-  private var _socket:Socket;
   public function set socket(value:Socket):void {
-    _socket = value;
-  }
-
-  private function exitingHandler(event:Event):void {
-    applicationExiting = true;
   }
 
   public function handleSockedData(messageSize:int, method:int, input:IDataInput):void {
@@ -129,30 +115,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     if (input.readBoolean()) {
       projectWindowBounds = new Rectangle(input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort());
     }
-    projectManager.open(project);
-
-    var window:DocumentWindow = new DocumentWindow(new ProjectView(), project.map, null, projectWindowBounds);
-    window.nativeWindow.addEventListener(Event.CLOSING, closeHandler);
-    window.title = project.name;
-    project.window = window;
-  }
-
-  private function closeHandler(event:Event):void {
-    if (applicationExiting) {
-
-    }
-
-    var window:NativeWindow = NativeWindow(event.target);
-    var bounds:Rectangle = window.bounds;
-    var project:Project = projectManager.getByNativeWindow(window);
-
-    _socket.writeByte(ServerMethod.saveProjectWindowBounds);
-    _socket.writeShort(project.id);
-    _socket.writeShort(bounds.x);
-    _socket.writeShort(bounds.y);
-    _socket.writeShort(bounds.width);
-    _socket.writeShort(bounds.height);
-    _socket.flush();
+    projectManager.open(project, new DocumentWindow(new ProjectView(), project.map, null, projectWindowBounds));
   }
   
   private function closeProject(id:int):void {

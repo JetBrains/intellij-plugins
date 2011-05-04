@@ -107,9 +107,21 @@ public class Client implements Closable {
   }
 
   public void closeProject(Project project) throws IOException {
-    beginMessage(ClientMethod.closeProject);
-    writeId(project);
-    out.flush();
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.closeProject);
+      writeId(project);
+      hasError = false;
+    }
+    finally {
+      registeredProjects.remove(project);
+      if (hasError) {
+        blockOut.rollback();
+      }
+      else {
+        out.flush();
+      }
+    }
   }
 
   public void updateStringRegistry(StringRegistry.StringWriter stringWriter) throws IOException {

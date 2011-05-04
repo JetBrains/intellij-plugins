@@ -5,6 +5,7 @@ import flash.display.BitmapData;
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
+import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
@@ -25,7 +26,7 @@ public class Server implements ResourceBundleProvider {
     writeModuleId(module);
     socket.writeUTF(className);
     socket.flush();
-    }
+  }
 
   // navigation for inline style in external file (for example, ButtonSkin in sparkskins.swc) is not supported
   public function resolveExternalInlineStyleDeclarationSource(module:Module, parentFQN:String, elementFQN:String, targetStyleName:String, declarations:Vector.<CssDeclaration>):void {
@@ -158,6 +159,16 @@ public class Server implements ResourceBundleProvider {
     }
 
     return null;
+  }
+
+  public function saveProjectWindowBounds(project:Project, bounds:Rectangle):void {
+    socket.writeByte(ServerMethod.saveProjectWindowBounds);
+    writeProjectId(project);
+    socket.writeShort(bounds.x);
+    socket.writeShort(bounds.y);
+    socket.writeShort(bounds.width);
+    socket.writeShort(bounds.height);
+    socket.flush();
   }
 }
 }

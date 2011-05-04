@@ -34,7 +34,7 @@ public class RootStyleManager extends AbstractStyleManager implements IStyleMana
   
   public function isColorName(colorName:String):Boolean {
     var normalizedColorName:String = colorName.toLowerCase();
-    return colorNames[normalizedColorName] !== undefined || (userColorNames != null && userColorNames[normalizedColorName] !== undefined);
+    return StyleManagerPredefinedData.colorNames[normalizedColorName] !== undefined || (userColorNames != null && userColorNames[normalizedColorName] !== undefined);
   }
   
   /**

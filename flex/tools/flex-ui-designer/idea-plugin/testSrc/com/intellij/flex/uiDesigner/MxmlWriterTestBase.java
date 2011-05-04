@@ -173,6 +173,8 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   @Override
   protected void tearDown() throws Exception {
     System.out.print("\npassed " + passedCounter + " tests.\n");
+
+    client.closeProject(myProject);
     
     super.tearDown();
   }

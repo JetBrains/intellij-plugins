@@ -40,22 +40,34 @@ public final class VirtualFileImpl implements IExternalizable, VirtualFile {
   }
 
   public function createChild(name:String):VirtualFile {
-    return create2(url.charCodeAt(url.length - 1) == 47 ? (url + name) : (url + "/" + name), presentableUrl + File.separator + name);
+    var newUrl:String = url.charCodeAt(url.length - 1) == 47 ? (url + name) : (url + "/" + name);
+    var file:VirtualFileImpl = map[newUrl];
+    if (file == null) {
+      return createNew(newUrl, presentableUrl + File.separator + name);
+    }
+    else {
+      return file;
+    }
   }
 
   public static function create(input:IDataInput):VirtualFile {
     return create2(AmfUtil.readUtf(input), AmfUtil.readUtf(input));
   }
   
-  public static function create2(url:String, presentableUrl:String):VirtualFile {
+  private static function create2(url:String, presentableUrl:String):VirtualFile {
     var file:VirtualFileImpl = map[url];
     if (file == null) {
-      file = new VirtualFileImpl();
-      file._url = url;
-      file._presentableUrl = presentableUrl;
-      map[url] = file;
+      return createNew(url, presentableUrl);
     }
     
+    return file;
+  }
+
+  private static function createNew(url:String, presentableUrl:String):VirtualFileImpl {
+    var file:VirtualFileImpl = new VirtualFileImpl();
+    file._url = url;
+    file._presentableUrl = presentableUrl;
+    map[url] = file;
     return file;
   }
 

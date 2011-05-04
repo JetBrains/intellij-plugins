@@ -70,9 +70,10 @@ final class DesignerApplicationUtil {
         continue;
       }
 
-      if (StringUtil.isEmpty(runtime)) {
+      if (runtime == null) {
         runtime = FlexSdkUtils.getAirRuntimePath(sdk);
-        if (StringUtil.isEmpty(runtime) || !new File(runtime).isDirectory()) {
+        if (!checkRuntime(runtime)) {
+          runtime = null;
           continue;
         }
       }
@@ -83,12 +84,29 @@ final class DesignerApplicationUtil {
     return null;
   }
 
+  private static boolean checkRuntime(String runtimePath) throws IOException {
+    if (StringUtil.isEmpty(runtimePath)) {
+      return false;
+    }
+
+    File runtime = new File(runtimePath);
+    if (!runtime.isDirectory()) {
+      return false;
+    }
+
+    //noinspection SimplifiableIfStatement
+    if (SystemInfo.isMac) {
+      return checkMacRuntimeVersion(runtimePath);
+    }
+
+    return true;
+  }
+
   // http://kb2.adobe.com/cps/407/kb407625.html
   private static String findInstalledRuntime() throws IOException {
     if (SystemInfo.isMac) {
       String runtime = "/Library/Frameworks";
-      File info = new File(runtime, "Adobe AIR.framework/Resources/Info.plist");
-      if (info.exists() && checkMacRuntimeVersion(info)) {
+      if (checkMacRuntimeVersion(runtime)) {
         return runtime;
       }
     }
@@ -96,7 +114,12 @@ final class DesignerApplicationUtil {
     return null;
   }
 
-  private static boolean checkMacRuntimeVersion(File info) throws IOException {
+  private static boolean checkMacRuntimeVersion(String runtime) throws IOException {
+    File info = new File(runtime, "Adobe AIR.framework/Resources/Info.plist");
+    if (!info.exists()) {
+      return false;
+    }
+
     char[] chars = FileUtil.loadFileText(info);
     ol: for (int i = 16; i < chars.length; i++) {
       if (chars[i] == 'k' && chars[i - 1] == '<') {
