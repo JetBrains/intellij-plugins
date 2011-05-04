@@ -69,10 +69,14 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
   public function remove(librarySets:Vector.<LibrarySet>):void {
     for each (var librarySet:LibrarySet in librarySets) {
       do {
-        delete idMap[librarySet.id];
+        removeLibrarySet(librarySet);
       }
       while ((librarySet = librarySet.parent) != null);
     }
+  }
+
+  protected function removeLibrarySet(librarySet:LibrarySet):void {
+    delete idMap[librarySet.id];
   }
 
   public function resolve(librarySets:Vector.<LibrarySet>, readyHandler:Function, ...readyHandlerArguments):void {

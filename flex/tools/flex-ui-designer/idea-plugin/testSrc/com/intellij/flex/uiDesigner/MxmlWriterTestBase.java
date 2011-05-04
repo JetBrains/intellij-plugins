@@ -1,19 +1,13 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.libraries.LibraryManager;
-import com.intellij.flex.uiDesigner.libraries.OriginalLibrary;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.Consumer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -34,16 +28,6 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     return false;
   }
 
-  protected List<OriginalLibrary> getLibraries(Consumer<OriginalLibrary> initializer) {
-    List<OriginalLibrary> libraries = new ArrayList<OriginalLibrary>(libs.size());
-    final LibraryManager libraryManager = LibraryManager.getInstance();
-    for (Pair<VirtualFile, VirtualFile> pair : libs) {
-      libraries.add(libraryManager.createOriginalLibrary(pair.getFirst(), pair.getSecond(), initializer));
-    }
-    
-    return libraries;
-  }
-
   protected String[] getLastProblems() {
     return DesignerTestApplicationManager.getLastProblems();
   }
@@ -55,7 +39,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     socketInputHandler = testApplicationManager.socketInputHandler;
     client = (TestClient)Client.getInstance();
 
-    LibraryManager.getInstance().initLibrarySets(myModule, appDir, isRequireLocalStyleHolder());
+    testApplicationManager.initLibrarySets(myModule, isRequireLocalStyleHolder(), getFlexVersion());
     assertEmpty(getLastProblems());
   }
 

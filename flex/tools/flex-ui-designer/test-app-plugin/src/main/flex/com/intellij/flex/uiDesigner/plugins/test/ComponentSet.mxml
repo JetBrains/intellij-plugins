@@ -2,11 +2,13 @@
   <fx:Script><![CDATA[
     import com.intellij.flex.uiDesigner.ProjectManager;
     import com.intellij.flex.uiDesigner.UncaughtErrorManager;
+    import com.intellij.flex.uiDesigner.libraries.LibraryManager;
     ]]></fx:Script>
 
   <Component role="{TestSocketDataHandler}">
     <Requirement role="{ProjectManager}"/>
   </Component>
+  <Component role="{LibraryManager}" implementation="{TestLibraryManager}"/>
   <Component role="{ProjectManager}" implementation="{TestProjectManager}"/>
   <Component role="{UncaughtErrorManager}" implementation="{TestUncaughtErrorManager}"/>
 </ComponentSet>

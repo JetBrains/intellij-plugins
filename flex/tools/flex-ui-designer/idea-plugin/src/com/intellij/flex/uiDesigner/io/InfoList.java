@@ -2,11 +2,12 @@ package com.intellij.flex.uiDesigner.io;
 
 import gnu.trove.THashMap;
 import gnu.trove.TIntArrayList;
+import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class InfoList<E,I extends InfoList.Info> {
-  private final THashMap<E,I> elements = new THashMap<E,I>();
+  private final MyHashMap elements = new MyHashMap();
 
   private int counter;
   private final TIntArrayList freeIndices = new TIntArrayList();
@@ -23,6 +24,27 @@ public class InfoList<E,I extends InfoList.Info> {
   public void remove(@NotNull E element) {
     freeIndices.add(getInfo(element).id);
     elements.remove(element);
+  }
+
+  public boolean isEmpty() {
+    return elements.isEmpty();
+  }
+
+  protected class MyHashMap extends THashMap<E, I> {
+    public void removeEach(TObjectProcedure<E> procedure) {
+      Object[] set = _set;
+      for (int i = set.length; i-- > 0; ) {
+        //noinspection unchecked
+        if (set[i] != null && set[i] != REMOVED && procedure.execute((E)set[i])) {
+          freeIndices.add(_values[i].id);
+          removeAt(i);
+        }
+      }
+    }
+  }
+
+  public void remove(TObjectProcedure<E> filter) {
+    elements.removeEach(filter);
   }
 
   public boolean contains(E element) {

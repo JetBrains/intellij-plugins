@@ -120,9 +120,9 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   
   private function closeProject(id:int):void {
     var project:Project = projectManager.close(id);
-    for each (var module:Module in moduleManager.remove(project)) {
-      libraryManager.remove(module.librarySets);
-    }
+    moduleManager.remove(project, function (module:Module):void {
+                           libraryManager.remove(module.librarySets);
+                         });
   }
   
   private function registerModule(input:IDataInput):void {

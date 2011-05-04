@@ -40,10 +40,10 @@ public class LibraryManager extends EntityListManager<VirtualFile, OriginalLibra
   }
 
   public void initLibrarySets(@NotNull final Module module, final File appDir) throws IOException, InitException {
-    initLibrarySets(module, appDir, true);
+    initLibrarySets(module, appDir, true, null);
   }
 
-  public void initLibrarySets(@NotNull final Module module, final File appDir, boolean collectLocalStyleHolders)
+  public void initLibrarySets(@NotNull final Module module, final File appDir, boolean collectLocalStyleHolders, @Nullable LibrarySet sdkLibrarySet)
     throws InitException, IOException {
     final ProblemsHolder problemsHolder = new ProblemsHolder();
     final Project project = module.getProject();
@@ -73,30 +73,49 @@ public class LibraryManager extends EntityListManager<VirtualFile, OriginalLibra
       throw new InitException(e, "error.collect.libraries");
     }
 
-    final LibrarySet projectLibrarySet;
-    final LibrarySet librarySet;
+    LibrarySet librarySet = null;
     final InfoList<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
     final String projectLocationHash = project.getLocationHash();
-    if (registeredProjects.contains(project)) {
-      projectLibrarySet = registeredProjects.getInfo(project).getLibrarySet();
-      // todo merge existing libraries and new. create new custom external library set for myModule,
-      // if we have different version of the artifact
+    ProjectInfo info = registeredProjects.getNullableInfo(project);
+    if (info != null) {
+      // different flex sdk version for module
+      if (libraryCollector.sdkLibraries != null) {
+        sdkLibrarySet = createLibrarySet(Integer.toHexString(module.getName().hashCode()) + "_fdk", null, libraryCollector.sdkLibraries,
+                                         libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
+      }
+      else {
+        librarySet = info.getLibrarySet();
+      }
     }
     else {
-      projectLibrarySet = createLibrarySet(projectLocationHash + "_fdk", null, libraryCollector.sdkLibraries,
-                                           libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
-      registeredProjects.add(new ProjectInfo(project, projectLibrarySet, libraryCollector.getFlexSdk()));
+      if (sdkLibrarySet == null) {
+        sdkLibrarySet = createLibrarySet(projectLocationHash + "_fdk", null, libraryCollector.sdkLibraries,
+                                         libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
+        client.registerLibrarySet(sdkLibrarySet);
+      }
+
+      info = new ProjectInfo(project, sdkLibrarySet, libraryCollector.getFlexSdk());
+      registeredProjects.add(info);
       client.openProject(project);
-      client.registerLibrarySet(projectLibrarySet);
     }
 
     if (libraryCollector.externalLibraries.isEmpty()) {
-      librarySet = projectLibrarySet;
+      if (librarySet == null) {
+        assert sdkLibrarySet != null;
+        librarySet = sdkLibrarySet;
+        info.setLibrarySet(sdkLibrarySet);
+      }
     }
-    else {
-      librarySet = createLibrarySet(projectLocationHash, projectLibrarySet, libraryCollector.externalLibraries,
+    else if (librarySet == null) {
+      librarySet = createLibrarySet(projectLocationHash, sdkLibrarySet, libraryCollector.externalLibraries,
                                     libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), false);
       client.registerLibrarySet(librarySet);
+      info.setLibrarySet(librarySet);
+    }
+    else {
+      // todo merge existing libraries and new. create new custom external library set for myModule,
+      // if we have different version of the artifact
+      throw new UnsupportedOperationException("merge existing libraries and new");
     }
 
     ModuleInfo moduleInfo = new ModuleInfo(module);
@@ -120,6 +139,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, OriginalLibra
     }
   }
 
+  @NotNull
   private LibrarySet createLibrarySet(String id, @Nullable LibrarySet parent, List<OriginalLibrary> libraries, String flexSdkVersion,
                                       SwcDependenciesSorter swcDependenciesSorter, final boolean isFromSdk)
     throws InitException {
@@ -132,7 +152,6 @@ public class LibraryManager extends EntityListManager<VirtualFile, OriginalLibra
     }
   }
 
-  @NotNull
   public OriginalLibrary createOriginalLibrary(@NotNull final VirtualFile virtualFile, @NotNull final VirtualFile jarFile,
                                                @NotNull final Consumer<OriginalLibrary> initializer) {
     if (list.contains(jarFile)) {

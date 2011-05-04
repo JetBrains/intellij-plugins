@@ -15,6 +15,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ArrayUtil;
+import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -81,6 +82,12 @@ public class Client implements Closable {
     out.closeWithoutFlush();
   }
 
+  private void beginMessage(ClientMethod method) {
+    blockOut.assertStart();
+    out.write(ClientMethod.METHOD_CLASS);
+    out.write(method);
+  }
+
   public void openProject(Project project) throws IOException {
     boolean hasError = true;
     try {
@@ -95,18 +102,12 @@ public class Client implements Closable {
         blockOut.rollback();
       }
       else {
-        blockOut.end();
+        out.flush();
       }
     }
   }
 
-  private void beginMessage(ClientMethod method) {
-    blockOut.assertStart();
-    out.write(ClientMethod.METHOD_CLASS);
-    out.write(method);
-  }
-
-  public void closeProject(Project project) throws IOException {
+  public void closeProject(final Project project) throws IOException {
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.closeProject);
@@ -115,6 +116,18 @@ public class Client implements Closable {
     }
     finally {
       registeredProjects.remove(project);
+      if (registeredProjects.isEmpty()) {
+        registeredModules.clear();
+      }
+      else {
+        registeredModules.remove(new TObjectProcedure<Module>() {
+          @Override
+          public boolean execute(Module module) {
+            return module.getProject() == project;
+          }
+        });
+      }
+
       if (hasError) {
         blockOut.rollback();
       }

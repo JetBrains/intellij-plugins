@@ -1,9 +1,12 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.ShutDownTracker;
@@ -12,6 +15,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.Semaphore;
+import gnu.trove.THashMap;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +32,7 @@ class DesignerTestApplicationManager {
   private final ProcessHandler adlProcessHandler;
 
   private final Socket socket;
+  private final THashMap<String, LibrarySet> sdkLibrarySetCache = new THashMap<String, LibrarySet>();
 
   private File appDir;
   public final SocketTestInputHandler socketInputHandler;
@@ -101,6 +106,14 @@ class DesignerTestApplicationManager {
     });
   }
 
+  public void initLibrarySets(Module module, boolean requireLocalStyleHolder, String flexVersion) throws IOException, InitException {
+    LibrarySet sdkLibrarySet = sdkLibrarySetCache.get(flexVersion);
+    LibraryManager.getInstance().initLibrarySets(module, appDir, requireLocalStyleHolder, sdkLibrarySet);
+    if (sdkLibrarySet == null) {
+      sdkLibrarySetCache.put(flexVersion, Client.getInstance().getRegisteredProjects().getInfo(module.getProject()).getSdkLibrarySet());
+    }
+  }
+
   public static DesignerTestApplicationManager getInstance() throws IOException {
     if (instance == null) {
       instance = new DesignerTestApplicationManager();
@@ -114,10 +127,6 @@ class DesignerTestApplicationManager {
 
   public File getAppDir() {
     return appDir;
-  }
-
-  public Socket getSocket() {
-    return socket;
   }
 
   public static void copySwfAndDescriptor(final File rootDir) throws IOException {

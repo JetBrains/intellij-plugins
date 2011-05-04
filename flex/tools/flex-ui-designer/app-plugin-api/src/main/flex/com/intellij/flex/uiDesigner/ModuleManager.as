@@ -1,31 +1,31 @@
 package com.intellij.flex.uiDesigner {
-import flash.utils.Dictionary;
-
 public class ModuleManager {
-  private const idMap:Dictionary = new Dictionary();
+  private const elements:Vector.<Module> = new Vector.<Module>(8);
 
   public function register(module:Module):void {
-    assert(!(module.id in idMap));
-    idMap[module.id] = module;
+    var id:int = module.id;
+    if (id >= elements.length) {
+      elements.length += 8;
+    }
+    else {
+      assert(elements[id] == null);
+    }
+
+    elements[id] = module;
   }
 
   public function getById(id:int):Module {
-    return idMap[id];
+    return elements[id];
   }
   
-  public function remove(project:Project):Vector.<Module> {
-    var list:Vector.<Module> = new Vector.<Module>();
-    var i:int = 0;
-    for (var id:Object in idMap) {
-      var module:Module = idMap[id];
-      if (module.project == project) {
-        delete idMap[id];
-        list[i++] = module;
+  public function remove(project:Project, procedure:Function):void {
+    for (var i:int = 0, n:int = elements.length; i < n; i++) {
+      var module:Module = elements[i];
+      if (module != null && module.project == project) {
+        elements[i] = null;
+        procedure(module);
       }
     }
-    
-    list.fixed = true;
-    return list;
   }
 }
 }
