@@ -49,7 +49,7 @@ public class AppTest extends AppTestBase {
       }
     });
     
-    DesignerTestApplicationManager.copySwfAndDescriptor(new File(PathManager.getSystemPath(), "flexUIDesigner"));
+    TestDesignerApplicationManager.copySwfAndDescriptor(new File(PathManager.getSystemPath(), "flexUIDesigner"));
     FlexUIDesignerApplicationManager.getInstance().openDocument(myProject, myModule, (XmlFile)myFile, false);
     await();
     return newParent;

@@ -1,7 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.StringRegistry;
-import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
@@ -21,7 +19,6 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,7 +26,6 @@ import junit.framework.AssertionFailedError;
 import org.picocontainer.MutablePicoContainer;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -156,10 +152,10 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    StringRegistry.getInstance().reset();
+    //StringRegistry.getInstance().reset();
 
-    BinaryFileManager.getInstance().reset();
-    LibraryManager.getInstance().reset();
+    //BinaryFileManager.getInstance().reset();
+    //LibraryManager.getInstance().reset();
     
     super.tearDown();
   }

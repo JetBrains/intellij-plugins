@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-class DesignerTestApplicationManager {
-  private static DesignerTestApplicationManager instance;
+class TestDesignerApplicationManager {
+  private static TestDesignerApplicationManager instance;
 
   private final ProcessHandler adlProcessHandler;
 
@@ -37,7 +37,7 @@ class DesignerTestApplicationManager {
   private File appDir;
   public final SocketTestInputHandler socketInputHandler;
 
-  private DesignerTestApplicationManager() throws IOException {
+  private TestDesignerApplicationManager() throws IOException {
     DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration =
       new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"),
                                                       System.getProperty("fud.air"));
@@ -70,18 +70,18 @@ class DesignerTestApplicationManager {
 
     socket = serverSocket.accept();
 
-    ShutDownTracker.getInstance().registerShutdownTask(new Runnable() {
-      @Override
-      public void run() {
-        adlProcessHandler.destroyProcess();
-        try {
-          socket.close();
-        }
-        catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    });
+    //ShutDownTracker.getInstance().registerShutdownTask(new Runnable() {
+    //  @Override
+    //  public void run() {
+    //    adlProcessHandler.destroyProcess();
+    //    try {
+    //      socket.close();
+    //    }
+    //    catch (IOException e) {
+    //      e.printStackTrace();
+    //    }
+    //  }
+    //});
     
     AppTestBase.changeServiceImplementation(Client.class, TestClient.class);
     Client.getInstance().setOut(socket.getOutputStream());
@@ -114,9 +114,9 @@ class DesignerTestApplicationManager {
     }
   }
 
-  public static DesignerTestApplicationManager getInstance() throws IOException {
+  public static TestDesignerApplicationManager getInstance() throws IOException {
     if (instance == null) {
-      instance = new DesignerTestApplicationManager();
+      instance = new TestDesignerApplicationManager();
     }
     return instance;
   }

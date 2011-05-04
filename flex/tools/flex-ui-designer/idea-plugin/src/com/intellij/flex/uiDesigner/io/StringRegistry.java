@@ -57,9 +57,7 @@ public class StringRegistry {
     assert activeWriter == writer;
 
     int reference = table.get(string);
-//    Integer reference = table.get(string);
     if (reference == -1) {
-//    if (reference == null) {
       reference = table.size() + 1;
       table.put(string, reference);
       writer.counter++;

@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import static com.intellij.flex.uiDesigner.DesignerTestApplicationManager.SocketTestInputHandler;
+import static com.intellij.flex.uiDesigner.TestDesignerApplicationManager.SocketTestInputHandler;
 
 abstract class MxmlWriterTestBase extends AppTestBase {
   protected TestClient client;
@@ -29,11 +29,11 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   }
 
   protected String[] getLastProblems() {
-    return DesignerTestApplicationManager.getLastProblems();
+    return TestDesignerApplicationManager.getLastProblems();
   }
 
   protected final void runAdl() throws Exception {
-    DesignerTestApplicationManager testApplicationManager = DesignerTestApplicationManager.getInstance();
+    TestDesignerApplicationManager testApplicationManager = TestDesignerApplicationManager.getInstance();
 
     appDir = testApplicationManager.getAppDir();
     socketInputHandler = testApplicationManager.socketInputHandler;
@@ -47,7 +47,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   }
 
   /**
-   * standard impl in CodeInsightestCase is not suitable for us — in case of not null rawProjectRoot (we need test file in package), 
+   * standard impl in CodeInsightTestCase is not suitable for us — in case of not null rawProjectRoot (we need test file in package),
    * we don't need "FileUtil.copyDir(projectRoot, toDirIO);"
    * also, skip openEditorsAndActivateLast
    */
@@ -159,7 +159,7 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     System.out.print("\npassed " + passedCounter + " tests.\n");
 
     client.closeProject(myProject);
-    
+
     super.tearDown();
   }
 

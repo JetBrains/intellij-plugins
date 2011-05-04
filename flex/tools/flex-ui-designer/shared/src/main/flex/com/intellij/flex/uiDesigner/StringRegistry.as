@@ -40,9 +40,14 @@ public final class StringRegistry {
       table.fixed = true;
     }
 
-    var n:int = table.length;
-    for (; i < n; i++) {
-      table[i] = AmfUtil.readUtf(input);
+    const n:int = table.length;
+    while (i < n) {
+      //var s:String = AmfUtil.readUtf(input);
+      //if (table.indexOf(s) != -1) {
+      //  throw new IllegalOperationError(s + " already registered");
+      //}
+      //table[i++] = s;
+      table[i++] = AmfUtil.readUtf(input);
     }
   }
   
