@@ -314,7 +314,7 @@
               </xs:element>
               <xs:element type="xs:string" name="preloader">
                 <xs:annotation>
-                  <xs:documentation>specifies the default value for the Application's preloader attribute. If not specified, the default preloader value will be mx.preloaders.SparkDownloadProgressBar with -compatibility-version &gt;= 4.0 and it will be mx.preloader.DownloadProgressBar with -compatibility-version &lt; 4.0.</xs:documentation>
+                  <xs:documentation>Specifies the default value for the Application's preloader attribute. If not specified, the default preloader value is mx.preloaders.SparkDownloadProgressBar when -compatibility-version &gt;= 4.0 and mx.preloaders.DownloadProgressBar when -compatibility-version &lt; 4.0.</xs:documentation>
                 </xs:annotation>
               </xs:element>
               <xs:element type="xs:boolean" name="report-invalid-styles-as-warnings">
