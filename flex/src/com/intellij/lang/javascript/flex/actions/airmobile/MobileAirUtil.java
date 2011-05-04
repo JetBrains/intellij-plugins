@@ -45,7 +45,7 @@ public class MobileAirUtil {
   private static final String TEMP_KEY_TYPE = "1024-RSA";
   public static final String PKCS12_KEYSTORE_TYPE = "PKCS12";
   public static final String TEMP_KEYSTORE_PASSWORD = "a";
-  private static final Pattern ADT_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,6})*");
+  private static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,6})*");
   private static final String ADB_RELATIVE_PATH = "/lib/android/bin/adb" + (SystemInfo.isWindows ? ".exe" : "");
 
   private MobileAirUtil() {
@@ -87,7 +87,7 @@ public class MobileAirUtil {
               output = output.substring(prefix.length(), output.length() - suffix.length());
             }
 
-            if (ADT_VERSION_PATTERN.matcher(output).matches()) {
+            if (AIR_VERSION_PATTERN.matcher(output).matches()) {
               versionRef.set(output);
               return true;
             }
@@ -95,54 +95,152 @@ public class MobileAirUtil {
 
           return false;
         }
-      }, "Checking AIR version", "Check AIR Version");
+      }, FlexBundle.message("checking.air.version"), FlexBundle.message("check.air.version.title"));
     return versionRef.get();
   }
 
-  public static boolean checkAdtVersion(final Module module, final Sdk sdk) {
-    final String adtVersion = getAdtVersion(module.getProject(), sdk);
-    if (adtVersion != null) {
-      if (StringUtil.compareVersionNumbers(adtVersion, "2.6") >= 0) {
-        return true;
-      }
+  /**
+   * Detects AIR runtime version installed on Android device connected to the computer
+   *
+   * @return AIR runtime version or empty string if AIR is not installed on the device
+   * @throws AdtException if failed to detect AIR runtime version, for example when device is not connected
+   */
+  public static String getAirRuntimeVersionOnDevice(final Project project, final Sdk sdk) throws AdtException {
+    final Ref<String> versionRef = new Ref<String>();
 
-      final MessageDialogWithHyperlinkListener dialog =
-        new MessageDialogWithHyperlinkListener(module.getProject(),
-                                               FlexBundle.message("air.mobile.version.problem.title"),
-                                               UIUtil.getErrorIcon(),
-                                               FlexBundle.message("air.mobile.version.problem", sdk.getName(), module.getName(),
-                                                                  adtVersion));
-
-      dialog.addHyperlinkListener(new HyperlinkAdapter() {
-        protected void hyperlinkActivated(final HyperlinkEvent e) {
-          dialog.close(DialogWrapper.OK_EXIT_CODE);
-
-          final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
-          ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
-            public void run() {
-              if (module.getModuleType() instanceof FlexModuleType) {
-                projectStructureConfigurable.select(module.getName(), ProjectBundle.message("modules.classpath.title"), true);
-              }
-              else {
-                final FlexFacet facet = FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
-                if (facet != null) {
-                  projectStructureConfigurable.select(facet, true);
-                }
-              }
-            }
-          });
+    final boolean ok = ExternalTask.runWithProgress(
+      new AdtTask(project, sdk) {
+        protected void appendAdtOptions(final List<String> command) {
+          command.add("-runtimeVersion");
+          command.add("-platform");
+          command.add("android");
         }
-      });
 
-      dialog.show();
+        protected boolean checkMessages(final List<String> messages) {
+          if (messages.size() == 1) {
+            final String output = messages.get(0);
+            // No Devices Detected
+            // Failed to find package com.adobe.air
+            // 2.6.0.1912
+
+            if (output.startsWith("Failed to find package com.adobe.air")) {
+              versionRef.set("");
+              return true;
+            }
+            else if (AIR_VERSION_PATTERN.matcher(output).matches()) {
+              versionRef.set(output);
+              return true;
+            }
+          }
+
+          return false;
+        }
+      }, FlexBundle.message("checking.air.version"), FlexBundle.message("check.air.version.title"));
+
+    if (!ok) {
+      throw new AdtException();
     }
 
+    return versionRef.get();
+  }
+
+  public static boolean checkAdtVersion(final Module module, final Sdk sdk, final String adtVersion) {
+    if (StringUtil.compareVersionNumbers(adtVersion, "2.6") >= 0) {
+      return true;
+    }
+
+    final MessageDialogWithHyperlinkListener dialog =
+      new MessageDialogWithHyperlinkListener(module.getProject(),
+                                             FlexBundle.message("air.mobile.version.problem.title"),
+                                             UIUtil.getErrorIcon(),
+                                             FlexBundle.message("air.mobile.version.problem", sdk.getName(), module.getName(),
+                                                                adtVersion));
+
+    dialog.addHyperlinkListener(new HyperlinkAdapter() {
+      protected void hyperlinkActivated(final HyperlinkEvent e) {
+        dialog.close(DialogWrapper.OK_EXIT_CODE);
+
+        final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
+        ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
+          public void run() {
+            if (module.getModuleType() instanceof FlexModuleType) {
+              projectStructureConfigurable.select(module.getName(), ProjectBundle.message("modules.classpath.title"), true);
+            }
+            else {
+              final FlexFacet facet = FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
+              if (facet != null) {
+                projectStructureConfigurable.select(facet, true);
+              }
+            }
+          }
+        });
+      }
+    });
+
+    dialog.show();
     return false;
+  }
+
+  public static boolean checkAirRuntimeOnDevice(final Project project, final Sdk sdk, final String adtVersion) {
+    try {
+      final String airRuntimeVersion = getAirRuntimeVersionOnDevice(project, sdk);
+      final String adtVersionTruncated = truncateVersionString(adtVersion);
+      final String airRuntimeVersionTruncated = truncateVersionString(airRuntimeVersion);
+      if (airRuntimeVersion.isEmpty() || StringUtil.compareVersionNumbers(adtVersionTruncated, airRuntimeVersionTruncated) > 0) {
+        final String message = airRuntimeVersion.isEmpty()
+                               ? FlexBundle.message("air.runtime.not.installed", sdk.getName(), adtVersionTruncated)
+                               : FlexBundle
+                                 .message("update.air.runtime.question", airRuntimeVersionTruncated, sdk.getName(), adtVersionTruncated);
+        final int answer =
+          Messages.showYesNoDialog(project, message, FlexBundle.message("air.runtime.version.title"), Messages.getQuestionIcon());
+
+        if (answer == -1) {
+          return false;
+        }
+        else if (answer == 0) {
+          installAirRuntimeOnDevice(project, sdk, adtVersionTruncated, !airRuntimeVersion.isEmpty());
+        }
+      }
+      return true;
+    }
+    catch (AdtException ignore) {
+      return false;
+    }
+  }
+
+  private static String truncateVersionString(final String version) {
+    final int firstDotIndex = version.indexOf('.');
+    final int secondDotIndex = version.indexOf('.', firstDotIndex + 1);
+    final int thirdDotIndex = version.indexOf('.', secondDotIndex + 1);
+    return thirdDotIndex > 0 ? version.substring(0, thirdDotIndex) : version;
+  }
+
+  private static void installAirRuntimeOnDevice(final Project project,
+                                                final Sdk sdk,
+                                                final String version,
+                                                final boolean uninstallExistingBeforeInstalling) {
+    if (uninstallExistingBeforeInstalling) {
+      ExternalTask.runWithProgress(new AdtTask(project, sdk) {
+                                     protected void appendAdtOptions(final List<String> command) {
+                                       command.add("-uninstallRuntime");
+                                       command.add("-platform");
+                                       command.add("android");
+                                     }
+                                   }, FlexBundle.message("uninstalling.air.runtime"), FlexBundle.message("uninstall.air.runtime.title"));
+    }
+
+    ExternalTask.runWithProgress(new AdtTask(project, sdk) {
+                                   protected void appendAdtOptions(final List<String> command) {
+                                     command.add("-installRuntime");
+                                     command.add("-platform");
+                                     command.add("android");
+                                   }
+                                 }, FlexBundle.message("installing.air.runtime", version), FlexBundle.message("install.air.runtime.title"));
   }
 
   public static boolean packageApk(final Project project, final MobileAirPackageParameters parameters) {
     return ExternalTask
-      .runWithProgress(createMobileAirPackageTask(project, parameters), "Creating Android package", "Create Android Package");
+      .runWithProgress(createMobileAirPackageTask(project, parameters), FlexBundle.message("creating.android.package"), FlexBundle.message("create.android.package.title"));
   }
 
   static ExternalTask createMobileAirPackageTask(final Project project, final MobileAirPackageParameters parameters) {
@@ -216,7 +314,8 @@ public class MobileAirUtil {
                  command.add("-package");
                  command.add(apkPath);
                }
-             }, "Installing " + apkPath.substring(apkPath.lastIndexOf('/') + 1), "Install Android Application");
+             }, FlexBundle.message("installing.0", apkPath.substring(apkPath.lastIndexOf('/') + 1)),
+             FlexBundle.message("install.android.application.title"));
   }
 
   private static boolean uninstallAndroidApplication(final Project project, final Sdk flexSdk, final String applicationId) {
@@ -235,7 +334,7 @@ public class MobileAirUtil {
           }
           return false;
         }
-      }, "Uninstalling " + applicationId, "Uninstall Android Application");
+      }, FlexBundle.message("uninstalling.0", applicationId), FlexBundle.message("uninstall.android.application.title"));
   }
 
   public static boolean launchAndroidApplication(final Project project, final Sdk flexSdk, final String applicationId) {

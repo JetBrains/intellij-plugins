@@ -576,7 +576,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         createAndroidPackageParams(flexSdk, swfPath, params, isDebug);
       final String apkPath = packageParameters.INSTALLER_FILE_LOCATION + "/" + packageParameters.INSTALLER_FILE_NAME;
 
-      return MobileAirUtil.checkAdtVersion(module, flexSdk)
+      final String adtVersion;
+      return (adtVersion = MobileAirUtil.getAdtVersion(project, flexSdk)) != null
+             && MobileAirUtil.checkAdtVersion(module, flexSdk, adtVersion)
+             && MobileAirUtil.checkAirRuntimeOnDevice(project, flexSdk, adtVersion)
              && MobileAirUtil.ensureCertificateExists(project, flexSdk)
              && MobileAirUtil.packageApk(project, packageParameters)
              && MobileAirUtil.installApk(project, flexSdk, apkPath, applicationId);
