@@ -507,7 +507,7 @@ public class FlexStackFrame extends XStackFrame {
     }
 
     public void computePresentation(@NotNull final XValueNode node) {
-      final boolean isObject = myResult.indexOf(OBJECT_MARKER) != -1;
+      final boolean isObject = myResult.contains(OBJECT_MARKER);
       String val;
       String type = null;
       String additionalInfo = null;
@@ -686,8 +686,7 @@ public class FlexStackFrame extends XStackFrame {
             .nextToken(); // skip first token; it contains $-prefix followed by myResult: $6 = [Object 30860193, class='__AS3__.vec::Vector.<String>']
           final boolean isCollection = type != null && isCollection(type);
 
-          final List<FlexValue> ownMembers = new ArrayList<FlexValue>(tokenizer.countTokens());
-          final List<FlexValue> inheritedMembers = new ArrayList<FlexValue>(tokenizer.countTokens());
+          final LinkedHashMap<String, FlexValue> fieldNameToFlexValueMap = new LinkedHashMap<String, FlexValue>(tokenizer.countTokens());
 
           while (tokenizer.hasMoreElements()) {
             final String s = tokenizer.nextToken().trim();
@@ -709,29 +708,31 @@ public class FlexStackFrame extends XStackFrame {
             // either parameter of static function from scopechain or a field. Static functions from scopechain look like following:
             // // [Object 52571545, class='Main$/staticFunction']
             final ValueType valueType = type != null && type.indexOf('/') > -1 ? ValueType.Parameter : ValueType.Field;
-            ownMembers
-              .add(new FlexValue(fieldName, evaluatedPath, s.substring(i1 + DELIM.length()), FlexValue.this.myResult, valueType));
+            final FlexValue flexValue =
+              new FlexValue(fieldName, evaluatedPath, s.substring(i1 + DELIM.length()), FlexValue.this.myResult, valueType);
+
+            addValueCheckingDuplicates(flexValue, fieldNameToFlexValueMap);
           }
+
+          final List<FlexValue> ownMembers = new ArrayList<FlexValue>(fieldNameToFlexValueMap.values());
+          final List<FlexValue> inheritedMembers = new ArrayList<FlexValue>(fieldNameToFlexValueMap.size());
 
           if (!isCollection) {
             ApplicationManager.getApplication().runReadAction(new Runnable() {
               public void run() {
-                final JSClass jsClass =
-                  mySourcePosition == null
-                  ? null
-                  : ApplicationManager.getApplication().runReadAction(new NullableComputable<JSClass>() {
-                    public JSClass compute() {
-                      final Project project = myDebugProcess.getSession().getProject();
-                      return findJSClass(project, ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), type);
-                    }
-                  });
+                final Project project = myDebugProcess.getSession().getProject();
+                final JSClass jsClass = mySourcePosition == null
+                                        ? null
+                                        : findJSClass(project, ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), type);
 
-                final Iterator<FlexValue> iterator = ownMembers.iterator();
-                while (iterator.hasNext()) {
-                  final FlexValue flexValue = iterator.next();
-                  if (findFieldOrGetter(flexValue.myName, jsClass, false) == null) {
-                    iterator.remove();
-                    inheritedMembers.add(flexValue);
+                if (jsClass != null) {
+                  final Iterator<FlexValue> iterator = ownMembers.iterator();
+                  while (iterator.hasNext()) {
+                    final FlexValue flexValue = iterator.next();
+                    if (findFieldOrGetter(flexValue.myName, jsClass, false) == null) {
+                      iterator.remove();
+                      inheritedMembers.add(flexValue);
+                    }
                   }
                 }
               }
@@ -769,6 +770,25 @@ public class FlexStackFrame extends XStackFrame {
 
           node.addChildren(children, true);
           return CommandOutputProcessingMode.DONE;
+        }
+
+        private void addValueCheckingDuplicates(final FlexValue flexValue,
+                                                final LinkedHashMap<String, FlexValue> fieldNameToFlexValueMap) {
+          final String name = flexValue.myName;
+          FlexValue existingValue;
+
+          if ((existingValue = fieldNameToFlexValueMap.get("_" + name)) != null &&
+              existingValue.getResult().equals(flexValue.getResult())) {
+            fieldNameToFlexValueMap.remove("_" + name);
+          }
+          else if (name.startsWith("_") &&
+                   name.length() > 1 &&
+                   (existingValue = fieldNameToFlexValueMap.get(name.substring(1))) != null &&
+                   existingValue.getResult().equals(flexValue.getResult())) {
+            return;
+          }
+
+          fieldNameToFlexValueMap.put(name, flexValue);
         }
       };
 
