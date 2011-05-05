@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +29,7 @@ import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -81,9 +82,9 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
   public LocalQuickFix[] getQuickFixes(final ConvertContext context) {
     final Action action = getActionElement(context);
     final String methodName = action.getMethod().getStringValue();
-    final PsiClass actionClass = action.getActionClass().getValue();
+    final String actionClass = action.getActionClass().getStringValue();
 
-    return new LocalQuickFix[]{new CreateActionMethodQuickFix(methodName, actionClass)
+    return new LocalQuickFix[]{new CreateActionMethodQuickFix(actionClass, methodName)
     };
   }
 
@@ -104,12 +105,12 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
 
   private static class CreateActionMethodQuickFix implements LocalQuickFix {
 
+    private String actionClassName;
     private final String methodName;
-    private final PsiClass actionClass;
 
-    private CreateActionMethodQuickFix(final String methodName, final PsiClass actionClass) {
+    private CreateActionMethodQuickFix(final String actionClassName, final String methodName) {
+      this.actionClassName = actionClassName;
       this.methodName = methodName;
-      this.actionClass = actionClass;
     }
 
     @NotNull
@@ -124,10 +125,11 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
 
     public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
       try {
+        final JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
+        final PsiClass actionClass = javaPsiFacade.findClass(actionClassName, GlobalSearchScope.allScope(project));
         if (!CodeInsightUtilBase.preparePsiElementForWrite(actionClass.getContainingFile())) return;
 
-        final PsiElementFactory elementFactory = JavaPsiFacade.getInstance(project).getElementFactory();
-
+        final PsiElementFactory elementFactory = javaPsiFacade.getElementFactory();
         PsiMethod actionMethod = elementFactory.createMethodFromText("public java.lang.String " + methodName + "() throws java.lang.Exception { return \"success\"; }",
                                                                      actionClass);
 
@@ -136,7 +138,7 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
         final CodeStyleManager codestylemanager = CodeStyleManager.getInstance(project);
         actionMethod = (PsiMethod)codestylemanager.reformat(actionMethod);
 
-        final PsiMethod element = (PsiMethod)actionClass.add(actionMethod);
+        final PsiMethod element = (PsiMethod) actionClass.add(actionMethod);
 
         //noinspection ConstantConditions
         OpenSourceUtil.navigate((Navigatable)element.getBody().getNavigationElement());
