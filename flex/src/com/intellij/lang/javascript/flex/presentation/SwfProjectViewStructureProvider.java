@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -75,6 +76,10 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
 
   @Nullable
   private static PsiElement findDecompiledElement(JSQualifiedNamedElement element) {
+    if (DumbService.isDumb(element.getProject())) {
+      return null;
+    }
+
     final String qName = element.getQualifiedName();
     if (qName == null) {
       return null;
