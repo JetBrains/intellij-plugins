@@ -27,6 +27,7 @@ package org.osmorc.manifest.lang.headerparser.impl;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -41,12 +42,17 @@ public class BundleActivatorParser extends AbstractHeaderParserImpl {
 
     public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
         if (headerValuePart.getParent() instanceof Clause) {
-            Module module = ModuleUtil.findModuleForPsiElement(headerValuePart);
+            final Module module = ModuleUtil.findModuleForPsiElement(headerValuePart);
             JavaClassReferenceProvider provider;
             if (module != null) {
-                provider = new JavaClassReferenceProvider(GlobalSearchScope.moduleScope(module), headerValuePart.getProject());
+                provider = new JavaClassReferenceProvider() {
+                  @Override
+                  public GlobalSearchScope getScope(Project project) {
+                    return GlobalSearchScope.moduleScope(module);
+                  }
+                };
             } else {
-                provider = new JavaClassReferenceProvider(headerValuePart.getProject());
+                provider = new JavaClassReferenceProvider();
             }
 
             provider.setOption(JavaClassReferenceProvider.EXTEND_CLASS_NAMES, new String[]{"org.osgi.framework.BundleActivator"});
