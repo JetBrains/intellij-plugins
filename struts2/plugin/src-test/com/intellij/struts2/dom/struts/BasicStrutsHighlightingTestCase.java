@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,7 @@ public abstract class BasicStrutsHighlightingTestCase<T extends JavaModuleFixtur
    */
   protected void performHighlightingTest(@NonNls final String... strutsXmlFileNames) throws Throwable {
     createStrutsFileSet(strutsXmlFileNames);
-    final long duration = myFixture.testHighlighting(true, false, true, strutsXmlFileNames);
+    final long duration = myFixture.testHighlighting(true, false, false, strutsXmlFileNames);
 //    System.out.println(strutsXmlFileNames[0] + " = " + duration);
   }
 
