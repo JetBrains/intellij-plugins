@@ -19,6 +19,8 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.SimpleColoredComponent;
@@ -56,7 +58,7 @@ public class FlexStackFrame extends XStackFrame {
   private String myScope = UNKNOWN_SCOPE;
   private int myFrameIndex;
   @NonNls protected static final String UNKNOWN_SCOPE = "<unknown>";
-  static final String CLASS_MARKER = "class='";
+  static final String CLASS_MARKER = ", class='";
   private static final String CANNOT_EVALUATE_EXPRESSION = "Cannot evaluate expression: ";
 
   FlexStackFrame(FlexDebugProcess debugProcess, final XSourcePosition sourcePosition) {
@@ -147,7 +149,7 @@ public class FlexStackFrame extends XStackFrame {
           final String path = "#" + validObjectId(id);
           scopeChain.add(path);
           final String name = "Locals of " + funName;
-          final String flexValueResult = "[Object " + id + ", " + CLASS_MARKER + token + "']";
+          final String flexValueResult = "[Object " + id + CLASS_MARKER + token + "']";
           resultChildren.add(name, new FlexValue(name, path, flexValueResult, null, ValueType.ScopeChainEntry));
         }
       });
@@ -670,16 +672,22 @@ public class FlexStackFrame extends XStackFrame {
 
     @Override
     public void computeChildren(@NotNull final XCompositeNode node) {
-      final String str = OBJECT_MARKER;
-      final int i = myResult.indexOf(str);
+      final int i = myResult.indexOf(OBJECT_MARKER);
       if (i == -1) super.computeChildren(node);
 
-      final EvaluateCommand command = new EvaluateCommand(referenceObjectBase(i, str), null) {
+      final String type = getTypeAndAdditionalInfo(myResult).first;
+
+      final EvaluateCommand command = new EvaluateCommand(referenceObjectBase(i, OBJECT_MARKER), null) {
         @Override
         CommandOutputProcessingMode doOnTextAvailable(@NonNls final String resultS) {
           StringTokenizer tokenizer = new StringTokenizer(resultS, "\r\n");
-          String evaluationInfo = tokenizer.nextToken();
-          final List<FlexValue> result1 = new ArrayList<FlexValue>(tokenizer.countTokens());
+
+          tokenizer
+            .nextToken(); // skip first token; it contains $-prefix followed by myResult: $6 = [Object 30860193, class='__AS3__.vec::Vector.<String>']
+          final boolean isCollection = type != null && isCollection(type);
+
+          final List<FlexValue> ownMembers = new ArrayList<FlexValue>(tokenizer.countTokens());
+          final List<FlexValue> inheritedMembers = new ArrayList<FlexValue>(tokenizer.countTokens());
 
           while (tokenizer.hasMoreElements()) {
             final String s = tokenizer.nextToken().trim();
@@ -693,49 +701,85 @@ public class FlexStackFrame extends XStackFrame {
             String evaluatedPath = myExpression;
 
             if (fieldName.length() > 0 && Character.isDigit(fieldName.charAt(0))) {
-              evaluatedPath += "[\"" +fieldName + "\"]";
-            } else {
-              evaluatedPath += "." +fieldName;
+              evaluatedPath += "[\"" + fieldName + "\"]";
             }
-            final String type = getTypeAndAdditionalInfo(myResult).first;
+            else {
+              evaluatedPath += "." + fieldName;
+            }
             // either parameter of static function from scopechain or a field. Static functions from scopechain look like following:
             // // [Object 52571545, class='Main$/staticFunction']
             final ValueType valueType = type != null && type.indexOf('/') > -1 ? ValueType.Parameter : ValueType.Field;
-            result1.add(new FlexValue(fieldName, evaluatedPath, s.substring(i1 + DELIM.length()), FlexValue.this.myResult, valueType));
+            ownMembers
+              .add(new FlexValue(fieldName, evaluatedPath, s.substring(i1 + DELIM.length()), FlexValue.this.myResult, valueType));
           }
 
-          if (evaluationInfo != null && toSortNumerically(evaluationInfo)) {
-            Collections.sort(result1, myArrayElementsComparator);
+          if (!isCollection) {
+            ApplicationManager.getApplication().runReadAction(new Runnable() {
+              public void run() {
+                final JSClass jsClass =
+                  mySourcePosition == null
+                  ? null
+                  : ApplicationManager.getApplication().runReadAction(new NullableComputable<JSClass>() {
+                    public JSClass compute() {
+                      final Project project = myDebugProcess.getSession().getProject();
+                      return findJSClass(project, ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), type);
+                    }
+                  });
+
+                final Iterator<FlexValue> iterator = ownMembers.iterator();
+                while (iterator.hasNext()) {
+                  final FlexValue flexValue = iterator.next();
+                  if (findFieldOrGetter(flexValue.myName, jsClass, false) == null) {
+                    iterator.remove();
+                    inheritedMembers.add(flexValue);
+                  }
+                }
+              }
+            });
+          }
+
+          final List<FlexValue> directChildren = ownMembers.isEmpty() ? inheritedMembers : ownMembers;
+          final List<FlexValue> indirectChildren = ownMembers.isEmpty() ? Collections.<FlexValue>emptyList() : inheritedMembers;
+
+          if (isCollection) {
+            Collections.sort(directChildren, myArrayElementsComparator);
           }
 
           final XValueChildrenList children = new XValueChildrenList();
-          for (FlexValue value : result1) {
+          for (FlexValue value : directChildren) {
             children.add(value.myName, value);
           }
+
+          if (!indirectChildren.isEmpty()) {
+            final XValue inheritedNode = new XValue() {
+              public void computePresentation(@NotNull final XValueNode node) {
+                node.setPresentation((Icon)null, null, "", "Inherited members", true);
+              }
+
+              public void computeChildren(@NotNull final XCompositeNode node) {
+                final XValueChildrenList inheritedChildren = new XValueChildrenList();
+                for (FlexValue value : indirectChildren) {
+                  inheritedChildren.add(value.myName, value);
+                }
+                node.addChildren(inheritedChildren, true);
+              }
+            };
+            children.add("", inheritedNode);
+          }
+
           node.addChildren(children, true);
           return CommandOutputProcessingMode.DONE;
         }
       };
+
       myDebugProcess.sendCommand(command);
     }
 
-    private boolean toSortNumerically(String evaluationInfo) {
-      // more collection types
-      int ind = evaluationInfo.indexOf(CLASS_MARKER);
-      if (ind == -1) return false;
-      ind += CLASS_MARKER.length();
-
-      String type = "Array";
-      if(evaluationInfo.regionMatches(ind, type, 0, type.length())) return true;
-
-      type = "Vector";
-      int i = evaluationInfo.indexOf("::", ind);
-      if(evaluationInfo.regionMatches(i != -1 ? i + "::".length() : ind, type, 0, type.length())) return true;
-
-      if(evaluationInfo.indexOf("Collection") != -1) return true; // ArrayCollection
-      if(evaluationInfo.indexOf("List") != -1) return true;  // IList
-
-      return false;
+    private boolean isCollection(final @NotNull String type) {
+      return type.contains("Array") ||
+             type.contains("Vector") ||
+             type.contains("Collection") ||
+             type.contains("List");
     }
 
     private String referenceObjectBase(int i, String marker) {
@@ -805,20 +849,10 @@ public class FlexStackFrame extends XStackFrame {
       }
       else if (myValueType == ValueType.Field && myParentResult != null) {
         final String type = getTypeAndAdditionalInfo(myParentResult).first;
+        final JSClass jsClass = findJSClass(project, ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), type);
 
-        if (type != null) {
-          final String fqn = type.replace("::", ".");
-          final Module module = ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project);
-          final JavaScriptIndex jsIndex = JavaScriptIndex.getInstance(project);
-          PsiElement jsClass = JSResolveUtil.findClassByQName(fqn, jsIndex, module);
-
-          if (!(jsClass instanceof JSClass) && type.endsWith("$")) { // fdb adds '$' to class name in case of static context
-            jsClass = JSResolveUtil.findClassByQName(fqn.substring(0, fqn.length() - 1), jsIndex, module);
-          }
-
-          if (jsClass instanceof JSClass) {
-            result = calcSourcePosition(findFieldOrGetterInClassOrSupers(myName, (JSClass)jsClass, new THashSet<JSClass>()));
-          }
+        if (jsClass != null) {
+          result = calcSourcePosition(findFieldOrGetter(myName, jsClass, true));
         }
       }
       navigatable.setSourcePosition(result);
@@ -864,15 +898,54 @@ public class FlexStackFrame extends XStackFrame {
         type = inQuotes;
       }
     }
+
+    if ("[]".equals(type)) {
+      type = "Array";
+    }
+
     return Pair.create(type, additionalInfo);
   }
 
   @Nullable
-  private static JSQualifiedNamedElement findFieldOrGetterInClassOrSupers(final String name,
-                                                                          final JSClass jsClass,
-                                                                          final THashSet<JSClass> visited) {
+  private static JSClass findJSClass(final Project project, final @Nullable Module module, final String typeFromFlexValueResult) {
+    if (typeFromFlexValueResult != null && !typeFromFlexValueResult.contains("/")) {
+      final String fqn = typeFromFlexValueResult.replace("::", ".");
+      final JavaScriptIndex jsIndex = JavaScriptIndex.getInstance(project);
+      PsiElement jsClass = JSResolveUtil.findClassByQName(fqn, jsIndex, module);
+
+      if (!(jsClass instanceof JSClass) && fqn.endsWith("$")) { // fdb adds '$' to class name in case of static context
+        jsClass = JSResolveUtil.findClassByQName(fqn.substring(0, fqn.length() - 1), jsIndex, module);
+      }
+
+      if (!(jsClass instanceof JSClass) && module != null) {
+        // probably this class came from dynamically loaded module that is not in moduleWithDependenciesAndLibrariesScope(module)
+        final GlobalSearchScope scope = ProjectScope.getAllScope(project);
+        jsClass = JSResolveUtil.findClassByQName(fqn, scope);
+
+        if (!(jsClass instanceof JSClass) && fqn.endsWith("$")) {
+          jsClass = JSResolveUtil.findClassByQName(fqn.substring(0, fqn.length() - 1), scope);
+        }
+      }
+
+      return jsClass instanceof JSClass ? (JSClass)jsClass : null;
+    }
+
+    return null;
+  }
+
+  @Nullable
+  private static JSQualifiedNamedElement findFieldOrGetter(final String name,
+                                                           final JSClass jsClass,
+                                                           final boolean lookInSupers) {
+    return findFieldOrGetter(name, jsClass, lookInSupers, lookInSupers ? new THashSet<JSClass>() : Collections.<JSClass>emptySet());
+  }
+
+  @Nullable
+  private static JSQualifiedNamedElement findFieldOrGetter(final String name,
+                                                           final JSClass jsClass,
+                                                           final boolean lookInSupers,
+                                                           final Set<JSClass> visited) {
     if (visited.contains(jsClass)) return null;
-    visited.add(jsClass);
 
     final JSVariable field = jsClass.findFieldByName(name);
     if (field != null) return field;
@@ -880,10 +953,14 @@ public class FlexStackFrame extends XStackFrame {
     final JSFunction getter = jsClass.findFunctionByNameAndKind(name, JSFunction.FunctionKind.GETTER);
     if (getter != null) return getter;
 
-    for (final JSClass superClass : jsClass.getSuperClasses()) {
-      final JSQualifiedNamedElement inSuper = findFieldOrGetterInClassOrSupers(name, superClass, visited);
-      if (inSuper != null) {
-        return inSuper;
+    if (lookInSupers) {
+      visited.add(jsClass);
+
+      for (final JSClass superClass : jsClass.getSuperClasses()) {
+        final JSQualifiedNamedElement inSuper = findFieldOrGetter(name, superClass, lookInSupers, visited);
+        if (inSuper != null) {
+          return inSuper;
+        }
       }
     }
 

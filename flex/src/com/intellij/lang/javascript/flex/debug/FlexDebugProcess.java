@@ -1176,7 +1176,7 @@ public class FlexDebugProcess extends XDebugProcess {
       private String getObjectId(final FlexStackFrame.FlexValue value) {
         final String text = value.getResult();
         final String prefix = "[Object ";
-        final String suffix = ", class=";
+        final String suffix = FlexStackFrame.CLASS_MARKER;
         int suffixIndex;
         if (text.startsWith(prefix) && (suffixIndex = text.indexOf(suffix, prefix.length())) > 0) {
           try {
