@@ -98,7 +98,7 @@ class SetupFlexModuleWizardStep extends ModuleWizardStep {
   }
 
   private void updateTargetPlayerControls(final Sdk sdk) {
-    final boolean applicable = sdk != null && TargetPlayerUtils.isTargetPlayerApplicable(sdk);
+    final boolean applicable = sdk != null && TargetPlayerUtils.isTargetPlayerApplicable(sdk) && sdk.getSdkType() instanceof FlexSdkType;
     UIUtil.setEnabled(myTargetPlayerVersionForm.getMainPanel(), applicable, true);
   }
 
