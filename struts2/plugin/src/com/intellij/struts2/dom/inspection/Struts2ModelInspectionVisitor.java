@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,6 @@ package com.intellij.struts2.dom.inspection;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
-import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -84,9 +83,6 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
   }
 
   private void checkExtendableClassConverter(final GenericAttributeValue clazzAttributeValue) {
-    assert clazzAttributeValue.getConverter() instanceof ExtendableClassConverter :
-        "wrong converter " + clazzAttributeValue.getParent();
-
     final XmlElement xmlElement = DomUtil.getValueElement(clazzAttributeValue);
     if (xmlElement == null) {
       return;
@@ -95,8 +91,7 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
     final PsiReference[] psiReferences = xmlElement.getReferences();
     for (final PsiReference psiReference : psiReferences) {
       final PsiElement resolveElement = psiReference.resolve();
-      if (resolveElement != null &&
-          resolveElement instanceof PsiClass) {
+      if (resolveElement instanceof PsiClass) {
         return;
       }
     }
@@ -114,15 +109,14 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
     LocalQuickFix[] quickFixes = LocalQuickFix.EMPTY_ARRAY;
     for (final PsiReference psiReference : psiReferences) {
       if (psiReference instanceof LocalQuickFixProvider) {
-        quickFixes = ArrayUtil.mergeArrays(((LocalQuickFixProvider) psiReference).getQuickFixes(), quickFixes,
-                                           LocalQuickFix.class);
+        final LocalQuickFix[] fixes = ((LocalQuickFixProvider) psiReference).getQuickFixes();
+        if (fixes != null) {
+          quickFixes = ArrayUtil.mergeArrays(fixes, quickFixes, LocalQuickFix.class);
+        }
       }
     }
 
-    holder.createProblem(clazzAttributeValue,
-                         HighlightSeverity.ERROR,
-                         message, quickFixes);
-
+    holder.createProblem(clazzAttributeValue, message, quickFixes);
   }
 
 }
