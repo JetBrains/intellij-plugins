@@ -18,6 +18,7 @@ package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -87,7 +88,7 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
     final JavaClassReferenceProvider classReferenceProvider =
         new JavaClassReferenceProvider() {
           @Override
-          public GlobalSearchScope getScope() {
+          public GlobalSearchScope getScope(Project project) {
             return scope;
           }
         };

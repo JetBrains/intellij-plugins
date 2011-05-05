@@ -27,6 +27,7 @@ package org.osmorc.manifest.lang.headerparser.impl;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -46,7 +47,7 @@ public class BundleActivatorParser extends AbstractHeaderParserImpl {
             if (module != null) {
                 provider = new JavaClassReferenceProvider() {
                   @Override
-                  public GlobalSearchScope getScope() {
+                  public GlobalSearchScope getScope(Project project) {
                     return GlobalSearchScope.moduleScope(module);
                   }
                 };
