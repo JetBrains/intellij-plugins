@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,10 +31,7 @@ import com.intellij.struts2.dom.struts.impl.path.ResultTypeResolver;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.DomFileElement;
-import com.intellij.util.xml.DomUtil;
-import com.intellij.util.xml.GenericDomValue;
+import com.intellij.util.xml.*;
 import com.intellij.util.xml.highlighting.BasicDomElementsInspection;
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import com.intellij.util.xml.highlighting.DomHighlightingHelper;
@@ -80,13 +77,15 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
   }
 
   protected boolean shouldCheckResolveProblems(final GenericDomValue value) {
-    // we roll our own checking for "class" in S2DomModelVisitor#visitAction()
-    if (value.getConverter() instanceof ExtendableClassConverter) {
+    final Converter converter = value.getConverter();
+
+    // we roll our own checking for "class" in Struts2ModelInspectionVisitor
+    if (converter instanceof ExtendableClassConverter) {
       return false;
     }
 
     // hack for STRPL-85: suppress <param>-highlighting within <result> for certain result-types
-    if (value.getConverter() instanceof ParamNameNestedConverter) {
+    if (converter instanceof ParamNameNestedConverter) {
       final Result result = DomUtil.getParentOfType(value, Result.class, false);
       if (result != null) {
         final ResultType resultType = result.getEffectiveResultType();
@@ -103,7 +102,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     final String stringValue = value.getStringValue();
 
     // suppress <result> path
-    if (value.getConverter() instanceof StrutsPathReferenceConverter) {
+    if (converter instanceof StrutsPathReferenceConverter) {
 
       // global URLs
       if (stringValue != null &&
@@ -128,7 +127,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     }
 
     // hack for suppressing wildcard-resolving
-    return stringValue == null || StringUtil.indexOf(stringValue, '{') < 0;
+    return stringValue == null || !StringUtil.containsChar(stringValue, '{') ;
   }
 
   protected void checkDomElement(final DomElement element,
