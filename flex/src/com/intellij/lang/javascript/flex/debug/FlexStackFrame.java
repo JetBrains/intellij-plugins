@@ -909,7 +909,12 @@ public class FlexStackFrame extends XStackFrame {
   @Nullable
   private static JSClass findJSClass(final Project project, final @Nullable Module module, final String typeFromFlexValueResult) {
     if (typeFromFlexValueResult != null && !typeFromFlexValueResult.contains("/")) {
-      final String fqn = typeFromFlexValueResult.replace("::", ".");
+      final String prefix = "__AS3__.vec::";
+      final String type =
+        typeFromFlexValueResult.startsWith(prefix) ? typeFromFlexValueResult.substring(prefix.length()) : typeFromFlexValueResult;
+      final int index = type.indexOf(".<"); // Vector.<int>
+      final String fqn = (index > 0 ? type.substring(0, index) : type).replace("::", ".");
+
       final JavaScriptIndex jsIndex = JavaScriptIndex.getInstance(project);
       PsiElement jsClass = JSResolveUtil.findClassByQName(fqn, jsIndex, module);
 
