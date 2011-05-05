@@ -21,6 +21,7 @@ public class ActionScriptCharFilter extends CharFilter {
     if (element != null) language = element.getContainingFile().getLanguage();
     if (language != null && language.isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4)) {
       if (c == ' ') return Result.HIDE_LOOKUP;
+      if (prefixLength == 0 && (c == ',' || Character.isDigit(c))) return Result.HIDE_LOOKUP;
     }
     return null;
   }
