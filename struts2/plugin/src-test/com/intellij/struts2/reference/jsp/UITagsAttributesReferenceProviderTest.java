@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,7 +43,7 @@ public class UITagsAttributesReferenceProviderTest extends BasicHighlightingTest
   }
 
   public void testPathAttributes() throws Throwable {
-    myFixture.testHighlighting(true, false, true, "/jsp/paths.jsp");
+    myFixture.testHighlighting(true, false, false, "/jsp/paths.jsp");
   }
   
 }

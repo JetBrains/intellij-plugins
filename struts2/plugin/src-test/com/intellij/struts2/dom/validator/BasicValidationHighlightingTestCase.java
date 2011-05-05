@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,7 @@ public abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFi
    * @throws Throwable On any errors.
    */
   protected void performHighlightingTest(@NonNls final String validationXmlFileName) throws Throwable {
-    final long duration = myFixture.testHighlighting(true, false, true, validationXmlFileName);
+    final long duration = myFixture.testHighlighting(true, false, false, validationXmlFileName);
     //System.out.println(validationXmlFileName + " = " + duration);
   }
 

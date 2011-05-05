@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,7 +11,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package com.intellij.struts2.reference.jsp;
@@ -46,7 +45,7 @@ public class NamespaceReferenceProviderTest extends BasicHighlightingTestCase<We
 
   public void testNamespaceHighlighting() throws Throwable {
     createStrutsFileSet("struts-namespace.xml");
-    myFixture.testHighlighting(true, false, true, "/jsp/namespace-highlighting.jsp");
+    myFixture.testHighlighting(true, false, false, "/jsp/namespace-highlighting.jsp");
   }
 
   public void testNamespaceCompletionVariants() throws Throwable {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,16 +45,16 @@ public class FreemarkerIntegrationTest extends BasicHighlightingTestCase<JavaMod
 
   public void testMacroParametersResolveOnlyToParameters() throws Throwable {
     myFixture.enableInspections(new FtlInspectionToolProvider());
-    myFixture.testHighlighting(true, false, true, "MacroParametersResolveOnlyToParameters.ftl");
+    myFixture.testHighlighting(true, false, false, "MacroParametersResolveOnlyToParameters.ftl");
   }
 
   public void testStrutsCommonVariables() throws Throwable {
-    myFixture.testHighlighting(true, false, true, "StrutsCommonVariables.ftl");
+    myFixture.testHighlighting(true, false, false, "StrutsCommonVariables.ftl");
   }
 
   public void testStrutsActionToplevel() throws Throwable {
     createStrutsFileSet("StrutsActionToplevel-struts.xml");
-    myFixture.testHighlighting(true, false, true, "StrutsActionToplevel.ftl");
+    myFixture.testHighlighting(true, false, false, "StrutsActionToplevel.ftl");
   }
 
 }
