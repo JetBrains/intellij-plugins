@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.presentation;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.openapi.project.Project;
@@ -37,11 +36,7 @@ public class SwfPackageElementNode extends ProjectViewNode<String> {
 
   @Override
   public boolean contains(@NotNull VirtualFile file) {
-    AbstractTreeNode parent = getParent();
-    while (parent instanceof SwfPackageElementNode) {
-      parent = parent.getParent();
-    }
-    return ((PsiFileNode)parent).contains(file);
+    return SwfProjectViewStructureProvider.nodeContainsFile(this, file);
   }
 
   @NotNull

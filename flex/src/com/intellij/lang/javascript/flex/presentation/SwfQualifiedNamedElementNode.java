@@ -29,7 +29,7 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
 
   @Override
   public boolean contains(@NotNull VirtualFile file) {
-    return false;
+    return SwfProjectViewStructureProvider.nodeContainsFile(this, file);
   }
 
   @Override

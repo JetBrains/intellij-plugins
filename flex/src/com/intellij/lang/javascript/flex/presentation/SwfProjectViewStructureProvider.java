@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.presentation;
 
+import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.SelectableTreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
@@ -12,6 +13,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSNamespaceDeclaration;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
+import com.intellij.lang.javascript.psi.util.JSUtils;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
@@ -34,6 +37,8 @@ import java.util.*;
 
 public class SwfProjectViewStructureProvider implements SelectableTreeStructureProvider, DumbAware {
 
+  private static final Logger LOG = Logger.getInstance(SwfProjectViewStructureProvider.class.getName());
+  
   private static final Comparator<JSQualifiedNamedElement> QNAME_COMPARATOR = new Comparator<JSQualifiedNamedElement>() {
     @Override
     public int compare(JSQualifiedNamedElement o1, JSQualifiedNamedElement o2) {
@@ -55,10 +60,8 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
 
   @Override
   public PsiElement getTopLevelElement(PsiElement element) {
-    JSQualifiedNamedElement parent = PsiTreeUtil.getNonStrictParentOfType(element, JSClass.class);
-    if (parent == null) {
-      parent = PsiTreeUtil.getParentOfType(element, JSFunction.class, JSVariable.class, JSNamespaceDeclaration.class);
-    }
+    JSQualifiedNamedElement parent = PsiTreeUtil.getNonStrictParentOfType(element, JSClass.class, JSFunction.class, JSVariable.class,
+                                                                          JSNamespaceDeclaration.class);
     if (parent != null) {
       PsiFile file = parent.getContainingFile();
       if (file != null && (ActionScriptFileType.INSTANCE == file.getFileType() || FlexApplicationComponent.MXML == file.getFileType())) {
@@ -75,30 +78,46 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
     return null;
   }
 
+  /**
+   * this is is needed to allow selecting classes and members in project view
+   * @deprecated remove this method with proper check when Tree API is improved (e.g. ProjectViewNode#contains(object))
+   */
+  static boolean nodeContainsFile(ProjectViewNode node, VirtualFile file) {
+    AbstractTreeNode parent = node.getParent();
+    while (parent instanceof SwfPackageElementNode) {
+      parent = parent.getParent();
+    }
+    return ((PsiFileNode)parent).contains(file);
+  }
+
   @Nullable
   private static PsiElement findDecompiledElement(JSQualifiedNamedElement element) {
     if (DumbService.isDumb(element.getProject())) {
       return null;
     }
 
-    final String qName = element.getQualifiedName();
+    JSQualifiedNamedElement mainElement = JSUtils.getMemberContainingClass(element);
+    if (mainElement == null) {
+      mainElement = element;
+    }
+    final String qName = mainElement.getQualifiedName();
     if (qName == null) {
       return null;
     }
-    VirtualFile elementVFile = element.getContainingFile().getVirtualFile();
+    VirtualFile elementVFile = mainElement.getContainingFile().getVirtualFile();
     if (elementVFile == null) {
       return null;
     }
 
-    ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(element.getProject()).getFileIndex();
+    ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(mainElement.getProject()).getFileIndex();
 
-    GlobalSearchScope searchScope = JSResolveUtil.getSearchScope(element);
+    GlobalSearchScope searchScope = JSResolveUtil.getSearchScope(mainElement);
     Collection<JSQualifiedNamedElement> candidates =
-      StubIndex.getInstance().get(JSQualifiedElementIndex.KEY, qName.hashCode(), element.getProject(), searchScope);
+      StubIndex.getInstance().get(JSQualifiedElementIndex.KEY, qName.hashCode(), mainElement.getProject(), searchScope);
     List<OrderEntry> sourceFileEntries = projectFileIndex.getOrderEntriesForFile(elementVFile);
 
     for (JSQualifiedNamedElement candidate : candidates) {
-      if (candidate == element || !qName.equals(candidate.getQualifiedName())) {
+      if (candidate == mainElement || !qName.equals(candidate.getQualifiedName())) {
         continue;
       }
 
@@ -106,7 +125,19 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
       if (vFile != null && projectFileIndex.getClassRootForFile(vFile) != null) {
         List<OrderEntry> candidateEntries = projectFileIndex.getOrderEntriesForFile(vFile);
         if (ContainerUtil.intersects(sourceFileEntries, candidateEntries)) {
-          return candidate;
+          if (element == mainElement) {
+            return candidate;
+          }
+          else {
+            LOG.assertTrue(candidate instanceof JSClass, candidate);
+            if (element instanceof JSVariable) {
+              return ((JSClass)candidate).findFieldByName(element.getName());
+            }
+            else {
+              LOG.assertTrue(element instanceof JSFunction, element);
+              return ((JSClass)candidate).findFunctionByNameAndKind(element.getName(), ((JSFunction)element).getKind());
+            }
+          }
         }
       }
     }
