@@ -1,13 +1,12 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.flex.uiDesigner.libraries.Library;
-import com.intellij.flex.uiDesigner.libraries.OriginalLibrary;
+import java.util.Set;
 
 public class EmbedLibrary implements Library {
   private final String path;
-  public final OriginalLibrary parent;
+  public final Library parent;
 
-  public EmbedLibrary(String path, OriginalLibrary parent) {
+  public EmbedLibrary(String path, Library parent) {
     this.path = path;
     this.parent = parent;
   }
@@ -19,5 +18,15 @@ public class EmbedLibrary implements Library {
   @Override
   public String toString() {
     return path;
+  }
+
+  @Override
+  public boolean hasDefinitions() {
+    return true;
+  }
+
+  @Override
+  public Set<Library> getParents() {
+    throw new UnsupportedOperationException();
   }
 }

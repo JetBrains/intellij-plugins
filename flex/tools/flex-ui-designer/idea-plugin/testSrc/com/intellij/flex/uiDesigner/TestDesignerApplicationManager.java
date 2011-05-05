@@ -14,7 +14,6 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.util.Consumer;
-import com.intellij.util.concurrency.Semaphore;
 import gnu.trove.THashMap;
 
 import java.io.File;
@@ -35,7 +34,7 @@ class TestDesignerApplicationManager {
   private final THashMap<String, LibrarySet> sdkLibrarySetCache = new THashMap<String, LibrarySet>();
 
   private File appDir;
-  public final SocketTestInputHandler socketInputHandler;
+  public final TestSocketInputHandler socketInputHandler;
 
   private TestDesignerApplicationManager() throws IOException {
     DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration =
@@ -70,26 +69,26 @@ class TestDesignerApplicationManager {
 
     socket = serverSocket.accept();
 
-    //ShutDownTracker.getInstance().registerShutdownTask(new Runnable() {
-    //  @Override
-    //  public void run() {
-    //    adlProcessHandler.destroyProcess();
-    //    try {
-    //      socket.close();
-    //    }
-    //    catch (IOException e) {
-    //      e.printStackTrace();
-    //    }
-    //  }
-    //});
+    ShutDownTracker.getInstance().registerShutdownTask(new Runnable() {
+      @Override
+      public void run() {
+        adlProcessHandler.destroyProcess();
+        try {
+          socket.close();
+        }
+        catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    });
     
     AppTestBase.changeServiceImplementation(Client.class, TestClient.class);
     Client.getInstance().setOut(socket.getOutputStream());
 
     AppTestBase.changeServiceImplementation(DocumentProblemManager.class, MyDocumentProblemManager.class);
 
-    AppTestBase.changeServiceImplementation(SocketInputHandler.class, SocketTestInputHandler.class);
-    socketInputHandler = (SocketTestInputHandler)ServiceManager.getService(SocketInputHandler.class);
+    AppTestBase.changeServiceImplementation(SocketInputHandler.class, TestSocketInputHandler.class);
+    socketInputHandler = (TestSocketInputHandler)ServiceManager.getService(SocketInputHandler.class);
     ApplicationManager.getApplication().executeOnPooledThread(new Callable<Object>() {
       @Override
       public Void call() throws Exception {
@@ -106,11 +105,11 @@ class TestDesignerApplicationManager {
     });
   }
 
-  public void initLibrarySets(Module module, boolean requireLocalStyleHolder, String flexVersion) throws IOException, InitException {
-    LibrarySet sdkLibrarySet = sdkLibrarySetCache.get(flexVersion);
+  public void initLibrarySets(Module module, boolean requireLocalStyleHolder, String sdkName) throws IOException, InitException {
+    LibrarySet sdkLibrarySet = sdkLibrarySetCache.get(sdkName);
     LibraryManager.getInstance().initLibrarySets(module, appDir, requireLocalStyleHolder, sdkLibrarySet);
     if (sdkLibrarySet == null) {
-      sdkLibrarySetCache.put(flexVersion, Client.getInstance().getRegisteredProjects().getInfo(module.getProject()).getSdkLibrarySet());
+      sdkLibrarySetCache.put(sdkName, Client.getInstance().getRegisteredProjects().getInfo(module.getProject()).getSdkLibrarySet());
     }
   }
 
@@ -148,86 +147,6 @@ class TestDesignerApplicationManager {
       appDir = PlatformTestCase.createTempDir("fud");
       FileUtil.copy(new File(DebugPathManager.getFudHome() + "/app-loader/target/app-loader-1.0-SNAPSHOT.swf"),
                     new File(appDir, FlexUIDesignerApplicationManager.DESIGNER_SWF));
-    }
-  }
-
-  protected static class SocketTestInputHandler extends SocketInputHandlerImpl {
-    public final Semaphore semaphore = new Semaphore();
-    private String expectedError;
-
-    private boolean waitingResult;
-    private String failedMessage;
-
-    private static class TestServerMethod {
-      private static final int success = 100;
-      private static final int fail = 101;
-    }
-
-    public void setExpectedErrorMessage(String message) {
-      expectedError = message;
-    }
-
-    public void waitResult() {
-      semaphore.down();
-      waitingResult = true;
-      semaphore.waitFor();
-    }
-
-    public boolean isPassed() {
-      return failedMessage == null;
-    }
-
-    public String getAndClearFailedMessage() {
-      String s = failedMessage;
-      failedMessage = null;
-      return s;
-    }
-
-    @Override
-    protected void processCommand(int command) throws IOException {
-      if (isFileBased(command)) {
-        super.processCommand(command);
-      }
-      else {
-        if (waitingResult) {
-          if (expectedError == null) {
-            waitingResult = false;
-          }
-          semaphore.up();
-        }
-        else {
-          throw new IllegalStateException("Unexpected server command " + command + ", result is not waiting");
-        }
-
-        switch (command) {
-          case ServerMethod.showError:
-            final String errorMessage = reader.readUTF();
-            if (expectedError == null) {
-              failedMessage = errorMessage;
-            }
-            else {
-              if (!errorMessage.startsWith(expectedError)) {
-                failedMessage = "Expected error message " + expectedError + ", but got " + errorMessage;
-              }
-              expectedError = null;
-            }
-            break;
-
-          case TestServerMethod.fail:
-            failedMessage = reader.readUTF();
-            break;
-
-          case TestServerMethod.success:
-            String message = reader.readUTF();
-            if (!message.equals("__passed__")) {
-              failedMessage = message;
-            }
-            break;
-
-          default:
-            throw new IllegalStateException("Unexpected server command: " + command);
-        }
-      }
     }
   }
 

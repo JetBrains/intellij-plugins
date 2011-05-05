@@ -4,7 +4,6 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -16,7 +15,6 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -36,6 +34,7 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   private static final String BASE_PATH = "/mxml";
 
   protected String flexSdkRootPath;
+  protected Sdk sdk;
   protected final List<Pair<VirtualFile, VirtualFile>> libs = new ArrayList<Pair<VirtualFile, VirtualFile>>();
   
   @Override
@@ -68,18 +67,26 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     flexSdkRootPath = getTestDataPath() + "/sdk/" + getFlexVersion();
     doSetupFlexSdk(myModule, flexSdkRootPath, true, getFlexVersion() + ".0");
   }
+
+  protected String generateSdkName(String version, boolean air) {
+    return version + (air ? "-air-" : "-flex");
+  }
   
   private void doSetupFlexSdk(final Module module, final String flexSdkRootPath, final boolean air, final String sdkVersion) {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
-        //otherwise that brilliant javac won't compile
-        //noinspection RedundantCast
-        final Sdk sdk = FlexSdkUtils.createOrGetSdk(air ? (SdkType)AirSdkType.getInstance() : (SdkType)FlexSdkType.getInstance(),
-                                                    flexSdkRootPath);
-        assert sdk != null;
-        final SdkModificator modificator = sdk.getSdkModificator();
+        final String sdkName = generateSdkName(sdkVersion, air);
+        sdk = ProjectJdkTable.getInstance().findJdk(sdkName);
+        if (sdk == null) {
+          //noinspection RedundantCast
+          sdk = FlexSdkUtils.createOrGetSdk(air ? (SdkType)AirSdkType.getInstance() : (SdkType)FlexSdkType.getInstance(),
+                                            flexSdkRootPath);
+          assert sdk != null;
+        }
 
+        final SdkModificator modificator = sdk.getSdkModificator();
+        modificator.setName(sdkName);
         modificator.setVersionString(sdkVersion);
         modifySdk(sdk, modificator);
         modificator.commitChanges();
@@ -87,19 +94,6 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
         final ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
         rootModel.setSdk(sdk);
         rootModel.commit();
-
-        Disposer.register(module, new Disposable() {
-          @Override
-          public void dispose() {
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-              @Override
-              public void run() {
-                final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
-                projectJdkTable.removeJdk(sdk);
-              }
-            });
-          }
-        });
       }
     });
   }

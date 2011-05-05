@@ -103,6 +103,8 @@ public class QueueLoader {
     assert(_rootDomain != null);
     loaderContext.applicationDomain = new ApplicationDomain(librarySet.parent == null ? _rootDomain : librarySet.parent.applicationDomain);
     for each (var library:Library in librarySet.libraries) {
+      // reset load state (original library shared between library sets)
+      library.loadState = LoadState.UNINITIALIZED;
       if (library.parents == null) {
         loadLibrary(library);
       }

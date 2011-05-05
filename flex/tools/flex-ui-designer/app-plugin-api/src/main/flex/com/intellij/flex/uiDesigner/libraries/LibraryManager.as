@@ -1,5 +1,9 @@
 package com.intellij.flex.uiDesigner.libraries {
+import com.intellij.flex.uiDesigner.UncaughtErrorManager;
+
 import flash.utils.Dictionary;
+
+import org.flyti.plexus.PlexusManager;
 
 public class LibraryManager implements LibrarySetLoadProgressListener {
   private const idMap:Dictionary = new Dictionary();
@@ -19,7 +23,13 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
       var leftmostBrother:LoaderQueue;
       do {
         if (currentQueue.size == 1) {
-          currentQueue.apply();
+          try {
+            currentQueue.apply();
+          }
+          catch (e:Error) {
+            UncaughtErrorManager(PlexusManager.instance.container.lookup(UncaughtErrorManager)).handleError(e);
+          }
+
           if (leftBrotherQueue == null) {
             if (currentQueue.tail == null) {
               delete resolveQueue[librarySet];

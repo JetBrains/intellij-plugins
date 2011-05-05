@@ -1,25 +1,20 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
-import com.intellij.flex.uiDesigner.abc.AbcFilter;
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import gnu.trove.TLinkable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
-public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Library, TLinkable {
+public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Library {
   public static final String DEFAULTS_CSS = "defaults.css";
   private static final String CATALOG = "catalog.xml";
   private static final String SWF = "library.swf";
-
-  private TLinkable previous;
-  private TLinkable next;
 
   public byte[] inheritingStyles;
   public byte[] defaultsStyle;
@@ -27,16 +22,9 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
 
   private final String path;
 
-  public boolean filtered;
+  private boolean hasDefinitions = true;
 
-  public int inDegree;
-  public int definitionCounter;
-
-  public int unresolvedDefinitionPolicy;
-
-  public final Set<CharSequence> unresolvedDefinitions = new THashSet<CharSequence>(AbcFilter.HASHING_STRATEGY);  
-  public final Set<OriginalLibrary> successors = new THashSet<OriginalLibrary>();
-  public final Set<OriginalLibrary> parents = new THashSet<OriginalLibrary>();
+  public Collection<Library> parents;
 
   // en_US => {"layout", "components"}
   public final Map<String,THashSet<String>> resourceBundles = new THashMap<String,THashSet<String>>();
@@ -47,16 +35,17 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
     this.path = relativePath;
   }
 
-  public boolean hasUnresolvedDefinitions() {
-    return !unresolvedDefinitions.isEmpty();
-  }
-
-  public boolean hasMissedDefinitions() {
-    return unresolvedDefinitions.size() != unresolvedDefinitionPolicy;
+  public void setHasDefinitions(boolean hasDefinitions) {
+    this.hasDefinitions = hasDefinitions;
   }
 
   public boolean hasDefinitions() {
-    return definitionCounter > 0;
+    return hasDefinitions;
+  }
+
+  @Override
+  public Collection<Library> getParents() {
+    return parents;
   }
 
   public boolean hasResourceBundles() {
@@ -95,26 +84,4 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
   public String toString() {
     return getFile().getNameWithoutExtension();
   }
-
-  @Override
-  public TLinkable getNext() {
-    return next;
-  }
-
-  @Override
-  public TLinkable getPrevious() {
-    return previous;
-  }
-
-  @Override
-  public void setNext(TLinkable linkable) {
-    next = linkable;
-  }
-
-  @Override
-  public void setPrevious(TLinkable linkable) {
-    previous = linkable;
-  }
-
-
 }

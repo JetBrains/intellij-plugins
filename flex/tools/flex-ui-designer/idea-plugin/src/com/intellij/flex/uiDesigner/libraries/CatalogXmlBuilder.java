@@ -21,14 +21,14 @@ class CatalogXmlBuilder implements XmlBuilder {
   private final ArrayList<CharSequence> dependencies = new ArrayList<CharSequence>();
   private CharSequence mod;
 
-  private OriginalLibrary library;
+  private FilteredLibrary library;
   private final Map<CharSequence, Definition> definitionMap;
 
   public CatalogXmlBuilder(final Map<CharSequence, Definition> definitionMap) {
     this.definitionMap = definitionMap;
   }
 
-  public void setLibrary(OriginalLibrary library) {
+  public void setLibrary(FilteredLibrary library) {
     this.library = library;
   }
 
@@ -48,7 +48,7 @@ class CatalogXmlBuilder implements XmlBuilder {
     else if (definition != null) {
       return ProcessingOrder.TAGS_AND_ATTRIBUTES;
     }
-    else if (localName.equals("file")) {
+    else if (localName.equals("file") && library.originalLibrary.resourceBundles.isEmpty()) {
       processFiles = true;
       return ProcessingOrder.TAGS_AND_ATTRIBUTES;
     }
@@ -91,7 +91,10 @@ class CatalogXmlBuilder implements XmlBuilder {
         }
         else {
           definition.time = Long.parseLong(mod.toString());
-          if (definition.time > oldDefinition.getTime()) {
+          // todo see http://confluence.jetbrains.net/display/IDEA/Topological+sort+External+Dependencies+and+filter+unresolved+definitions last note
+          //if (definition.time > oldDefinition.getTime()) {
+          //noinspection ConstantIfStatement
+          if (false) {
             oldDefinition.markAsUnresolved(value);
           }
           else {
@@ -115,10 +118,10 @@ class CatalogXmlBuilder implements XmlBuilder {
         final int vlength = value.length();
         final int secondSlashPosition = StringUtil.lastIndexOf(value, '/', LOCALE_PREFIX_LENGTH + 2, vlength - PROPERTIES_EXTENSION_LENGTH - 1);
         final String locale = value.subSequence(LOCALE_PREFIX_LENGTH, secondSlashPosition).toString();
-        THashSet<String> bundles = library.resourceBundles.get(locale);
+        THashSet<String> bundles = library.originalLibrary.resourceBundles.get(locale);
         if (bundles == null) {
           bundles = new THashSet<String>();
-          library.resourceBundles.put(locale, bundles);
+          library.originalLibrary.resourceBundles.put(locale, bundles);
         }
         bundles.add(value.subSequence(secondSlashPosition + 1, vlength - PROPERTIES_EXTENSION_LENGTH).toString());
       }

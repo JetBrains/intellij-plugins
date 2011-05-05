@@ -68,36 +68,43 @@ public class SwcDependenciesSorter {
   public List<Library> sort(final List<OriginalLibrary> libraries, final String postfix, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
     useIndexForFindDefinitions = !isFromSdk;
 
-    List<OriginalLibrary> filteredLibraries = new ArrayList<OriginalLibrary>(libraries.size());
+    List<FilteredLibrary> filteredLibraries = new ArrayList<FilteredLibrary>(libraries.size());
     definitionMap = new THashMap<CharSequence, Definition>(1024);
 
     final CatalogXmlBuilder catalogXmlBuilder = new CatalogXmlBuilder(definitionMap);
     for (OriginalLibrary library : libraries) {
-      catalogXmlBuilder.setLibrary(library);
+      FilteredLibrary filteredLibrary = new FilteredLibrary(library);
+      catalogXmlBuilder.setLibrary(filteredLibrary);
       new XmlBuilderDriver(VfsUtil.loadText(library.getCatalogFile())).build(catalogXmlBuilder);
-      if (library.hasDefinitions() || library.hasResourceBundles()) {
-        filteredLibraries.add(library);
-        if (library.hasUnresolvedDefinitions()) {
-          library.unresolvedDefinitionPolicy = library.unresolvedDefinitions.size();
+      if (filteredLibrary.hasDefinitions() || library.hasResourceBundles()) {
+        filteredLibraries.add(filteredLibrary);
+        if (filteredLibrary.hasUnresolvedDefinitions()) {
+          filteredLibrary.unresolvedDefinitionPolicy = filteredLibrary.unresolvedDefinitions.size();
         }
       }
     }
 
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        analyzeDefinitions();
-      }
-    });
-    
+    if (isFromSdk) {
+      analyzeDefinitions();
+    }
+    else {
+      ApplicationManager.getApplication().runReadAction(new Runnable() {
+        @Override
+        public void run() {
+          analyzeDefinitions();
+        }
+      });
+    }
+
     definitionMap = null;
 
-    final TLinkedList<OriginalLibrary> queue = new TLinkedList<OriginalLibrary>();
+    final TLinkedList<FilteredLibrary> queue = new TLinkedList<FilteredLibrary>();
     AbcFilter filter = null;
-    for (OriginalLibrary library : filteredLibraries) {
+    for (FilteredLibrary library : filteredLibraries) {
       if (!library.hasDefinitions()) {
-        if (library.hasResourceBundles()) {
+        if (library.originalLibrary.hasResourceBundles()) {
           queue.add(library);
+          library.originalLibrary.setHasDefinitions(false);
         }
         continue;
       }
@@ -113,9 +120,10 @@ public class SwcDependenciesSorter {
 
       Collection<CharSequence> filteredDefinitions = null;
       if (isFromSdk) {
-        String path = library.getPath();
+        String path = library.originalLibrary.getPath();
         if (path.startsWith("framework")) {
           injectFrameworkSwc(flexSdkVersion, library, libraries);
+
           continue;
         }
         else if (path.startsWith("airspark")) {
@@ -138,8 +146,8 @@ public class SwcDependenciesSorter {
         filteredDefinitions = library.unresolvedDefinitions;
       }
 
-      final VirtualFile swfFile = library.getSwfFile();
-      final File modifiedSwf = library.filtered ? createSwfOutFile(library, postfix) : createSwfOutFile(library);
+      final VirtualFile swfFile = library.originalLibrary.getSwfFile();
+      final File modifiedSwf = library.filtered ? createSwfOutFile(library.originalLibrary, postfix) : createSwfOutFile(library.originalLibrary);
       final long timeStamp = swfFile.getTimeStamp();
       if (timeStamp != modifiedSwf.lastModified()) {
         if (filter == null) {
@@ -153,12 +161,32 @@ public class SwcDependenciesSorter {
 
     List<Library> sortedLibraries = new ArrayList<Library>(filteredLibraries.size());
     while (!queue.isEmpty()) {
-      OriginalLibrary library = queue.removeFirst();
-      assert library.hasDefinitions() || library.hasResourceBundles();
-      sortedLibraries.add(library);
+      FilteredLibrary library = queue.removeFirst();
+      assert library.hasDefinitions() || library.originalLibrary.hasResourceBundles();
 
-      if (library.defaultsStyle != null) {
-        String path = library.getPath();
+      final Collection<Library> p;
+      if (library.parents.isEmpty()) {
+        p = Collections.emptyList();
+      }
+      else {
+        p = new ArrayList<Library>(library.parents.size());
+        for (Library parent1 : library.parents) {
+          FilteredLibrary parent = (FilteredLibrary)parent1;
+          p.add(parent.filtered ? parent : parent.originalLibrary);
+        }
+      }
+
+      if (library.filtered) {
+        sortedLibraries.add(library);
+        library.parents = p;
+      }
+      else {
+        sortedLibraries.add(library.originalLibrary);
+        library.originalLibrary.parents = p;
+      }
+
+      if (library.originalLibrary.defaultsStyle != null) {
+        String path = library.originalLibrary.getPath();
         String complementName = null;
         if (path.startsWith("spark")) {
           complementName = "flex" + flexSdkVersion;
@@ -168,17 +196,18 @@ public class SwcDependenciesSorter {
         }
 
         if (complementName != null) {
-          sortedLibraries.add(new EmbedLibrary(complementName, library));
+          sortedLibraries.add(new EmbedLibrary(complementName, library.filtered ? library : library.originalLibrary));
         }
       }
 
-      for (OriginalLibrary successor : library.successors) {
+      for (FilteredLibrary successor : library.successors) {
         if (--successor.inDegree == 0) {
           queue.add(successor);
         }
       }
     }
 
+    //definitionMap = null;
     return sortedLibraries;
   }
 
@@ -190,8 +219,8 @@ public class SwcDependenciesSorter {
     return new File(rootPath, library.getPath() + "_" + postfix + ".swf");
   }
 
-  public void printCollection(OriginalLibrary library, String postfix) throws IOException {
-    FileWriter writer = new FileWriter(new File(rootPath, library.getPath() + '_' + postfix + "_unresolvedDefinitions.txt"));
+  public void printCollection(FilteredLibrary library, String postfix) throws IOException {
+    FileWriter writer = new FileWriter(new File(rootPath, library.originalLibrary.getPath() + '_' + postfix + "_unresolvedDefinitions.txt"));
     for (CharSequence s : library.unresolvedDefinitions) {
       writer.append(s);
       writer.append('\n');
@@ -200,9 +229,9 @@ public class SwcDependenciesSorter {
     writer.flush();
   }
 
-  private void injectFrameworkSwc(String flexSdkVersion, OriginalLibrary library, List<OriginalLibrary> libraries) throws IOException {
-    VirtualFile swfFile = library.getSwfFile();
-    File modifiedSwf = createSwfOutFile(library);
+  private void injectFrameworkSwc(String flexSdkVersion, FilteredLibrary library, List<OriginalLibrary> libraries) throws IOException {
+    VirtualFile swfFile = library.originalLibrary.getSwfFile();
+    File modifiedSwf = createSwfOutFile(library.originalLibrary);
     final long timeStamp = swfFile.getTimeStamp();
     
     final long injectionLastModified;
@@ -249,13 +278,13 @@ public class SwcDependenciesSorter {
       if (definition.dependencies != null && (definition.hasUnresolvedDependencies == Definition.UnresolvedState.NO ||
                                               (definition.hasUnresolvedDependencies == Definition.UnresolvedState.UNKNOWN &&
                                                !hasUnresolvedDependencies(definition, entry.getKey())))) {
-        final OriginalLibrary library = definition.getLibrary();
+        final FilteredLibrary library = definition.getLibrary();
         for (CharSequence dependencyId : definition.dependencies) {
           if (dependencyId == null) {
             continue;
           }
 
-          final OriginalLibrary dependencyLibrary = definitionMap.get(dependencyId).getLibrary();
+          final FilteredLibrary dependencyLibrary = definitionMap.get(dependencyId).getLibrary();
           if (library != dependencyLibrary) {
             if (dependencyLibrary.successors.add(library)) {
               library.inDegree++;
@@ -273,7 +302,7 @@ public class SwcDependenciesSorter {
 
   @SuppressWarnings({"UnusedDeclaration"})
   @TestOnly
-  private Map<CharSequence, Definition> getDefinitions(OriginalLibrary library) {
+  private Map<CharSequence, Definition> getDefinitions(FilteredLibrary library) {
     Map<CharSequence, Definition> definitions = new HashMap<CharSequence, Definition>();
     for (Map.Entry<CharSequence, Definition> entry : definitionMap.entrySet()) {
       if (entry.getValue().getLibrary() == library) {

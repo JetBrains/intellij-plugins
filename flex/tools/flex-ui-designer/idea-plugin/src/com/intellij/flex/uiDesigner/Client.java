@@ -171,20 +171,20 @@ public class Client implements Closable {
     out.writeShort(sizeOfOriginalLibrary(libraries));
     final LibraryManager libraryManager = LibraryManager.getInstance();
     for (Library library : libraries) {
-      final OriginalLibrary originalLibrary;
       final boolean unregisteredLibrary;
-      if (library instanceof OriginalLibrary) {
-        originalLibrary = (OriginalLibrary)library;
-        if (!originalLibrary.hasDefinitions()) {
+      final OriginalLibrary originalLibrary;
+      if (!(library instanceof EmbedLibrary)) {
+        if (!library.hasDefinitions()) {
           continue;
         }
 
+        originalLibrary = library instanceof OriginalLibrary ? (OriginalLibrary)library : ((FilteredLibrary)library).originalLibrary;
         unregisteredLibrary = !libraryManager.isRegistered(originalLibrary);
-        if (originalLibrary.filtered) {
-          out.write(unregisteredLibrary ? 2 : 3);
+        if (library instanceof OriginalLibrary) {
+          out.write(unregisteredLibrary ? 0 : 1);
         }
         else {
-          out.write(unregisteredLibrary ? 0 : 1);
+          out.write(unregisteredLibrary ? 2 : 3);
         }
       }
       else {
@@ -197,7 +197,7 @@ public class Client implements Closable {
 
       if (unregisteredLibrary) {
         out.writeShort(libraryManager.add(originalLibrary));
-        writeParents(libraries, originalLibrary);
+        writeParents(libraries, library);
         out.writeAmfUtf(originalLibrary.getPath());
         writeVirtualFile(originalLibrary.getFile(), out);
 
@@ -218,8 +218,8 @@ public class Client implements Closable {
       }
       else {
         out.writeShort(originalLibrary.getId());
-        if (originalLibrary.filtered) {
-          writeParents(libraries, originalLibrary);
+        if (library instanceof FilteredLibrary) {
+          writeParents(libraries, library);
         }
       }
     }
@@ -245,13 +245,12 @@ public class Client implements Closable {
   }
 
   // can't use standard List.indexOf, because server list contains resource libraries, but client doesn't
-  private int indexOfOriginalLibrary(List<Library> libraries, OriginalLibrary o) {
+  private int indexOfOriginalLibrary(List<Library> libraries, Library o) {
     int index = 0;
     for (Library library : libraries) {
-      if (library instanceof OriginalLibrary) {
-        final OriginalLibrary originalLibrary = (OriginalLibrary)library;
-        if (originalLibrary.hasDefinitions()) {
-          if (o == originalLibrary) {
+      if (!(library instanceof EmbedLibrary)) {
+        if (library.hasDefinitions()) {
+          if (o == library) {
             return index;
           }
           index++;
@@ -265,13 +264,13 @@ public class Client implements Closable {
     throw new IllegalArgumentException();
   }
 
-  private void writeParents(List<Library> libraries, OriginalLibrary originalLibrary) {
-    if (originalLibrary.parents.isEmpty()) {
+  private void writeParents(List<Library> libraries, Library library) {
+    if (library.getParents().isEmpty()) {
       out.write(0);
     }
     else {
-      out.write(originalLibrary.parents.size());
-      for (OriginalLibrary parent : originalLibrary.parents) {
+      out.write(library.getParents().size());
+      for (Library parent : library.getParents()) {
         // can't use parent.getId(), because parents/successors related to filtered, but not to original id
         out.writeShort(indexOfOriginalLibrary(libraries, parent));
       }

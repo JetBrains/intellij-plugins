@@ -11,11 +11,9 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import static com.intellij.flex.uiDesigner.TestDesignerApplicationManager.SocketTestInputHandler;
-
 abstract class MxmlWriterTestBase extends AppTestBase {
   protected TestClient client;
-  protected SocketTestInputHandler socketInputHandler;
+  protected TestSocketInputHandler socketInputHandler;
   
   private int passedCounter;
   protected File appDir;
@@ -39,7 +37,11 @@ abstract class MxmlWriterTestBase extends AppTestBase {
     socketInputHandler = testApplicationManager.socketInputHandler;
     client = (TestClient)Client.getInstance();
 
-    testApplicationManager.initLibrarySets(myModule, isRequireLocalStyleHolder(), getFlexVersion());
+    testApplicationManager.initLibrarySets(myModule, isRequireLocalStyleHolder(), sdk.getName());
+    assertAfterInitLibrarySets();
+  }
+
+  protected void assertAfterInitLibrarySets() {
     assertEmpty(getLastProblems());
   }
 

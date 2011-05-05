@@ -233,6 +233,11 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
 
   @Override
   public void flush() throws IOException {
+    if (out == null) {
+      end();
+      return;
+    }
+    
     if (lastBlockBegin != (count - SERVICE_DATA_SIZE)) {
       writeHeader();
       flushBuffer();
