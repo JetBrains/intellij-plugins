@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSNamespaceDeclaration;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -23,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +34,7 @@ import java.util.List;
  * Date: 17.05.2010
  * Time: 11:13:40
  */
-public class FlexTreeStructureProvider implements TreeStructureProvider {
+public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAware {
   public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings) {
     List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
     if (parent instanceof SwfQualifiedNamedElementNode || parent instanceof FlexFileNode) {
@@ -104,12 +106,14 @@ public class FlexTreeStructureProvider implements TreeStructureProvider {
 
       String className = null;
 
+      Icon icon = null;
       if (value instanceof JSFileImpl) {
         VirtualFile file = value.getVirtualFile();
         if (file != null && ProjectRootManager.getInstance(myProject).getFileIndex().getSourceRootForFile(file) != null) {
           JSNamedElement element = JSFileImpl.findMainDeclaredElement((JSFileImpl)value);
           if (element != null) {
             className = element.getName();
+            icon = element.getIcon(Iconable.ICON_FLAG_VISIBILITY | Iconable.ICON_FLAG_READ_STATUS);
           }
         }
       }
@@ -117,12 +121,13 @@ public class FlexTreeStructureProvider implements TreeStructureProvider {
         VirtualFile file = value.getVirtualFile();
         if (file != null && ProjectRootManager.getInstance(myProject).getFileIndex().getSourceRootForFile(file) != null) {
           className = file.getNameWithoutExtension();
+          icon = XmlBackedJSClassImpl.CLASS_ICON;
         }
       }
 
       if (className != null) {
         data.setPresentableText(className);
-        data.setIcons(value.getIcon(Iconable.ICON_FLAG_VISIBILITY | Iconable.ICON_FLAG_READ_STATUS));
+        data.setIcons(icon);
         return;
       }
 

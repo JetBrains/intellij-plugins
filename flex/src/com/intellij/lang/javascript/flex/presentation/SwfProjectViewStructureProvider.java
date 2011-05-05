@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class SwfProjectViewStructureProvider implements SelectableTreeStructureProvider {
+public class SwfProjectViewStructureProvider implements SelectableTreeStructureProvider, DumbAware {
 
   private static final Comparator<JSQualifiedNamedElement> QNAME_COMPARATOR = new Comparator<JSQualifiedNamedElement>() {
     @Override
