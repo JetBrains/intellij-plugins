@@ -49,11 +49,15 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
   }
 
   /**
-   * Checks whether the gutter target elements resolve to the given Action names.
+   * Checks whether the gutter target elements in the given class resolve to the given Action names.
    *
+   * @param javaFile            Path to class.
    * @param expectedActionNames Names of the actions.
    */
-  private void checkGutterActionTargetElements(@NonNls final String... expectedActionNames) {
+  private void checkGutterActionTargetElements(@NonNls final String javaFile,
+                                               @NonNls final String... expectedActionNames) {
+    myFixture.configureByFile(javaFile);
+    myFixture.doHighlighting();
     final Editor editor = myFixture.getEditor();
     final List<LineMarkerInfo> infoList = DaemonCodeAnalyzerImpl.getLineMarkers(editor.getDocument(), myProject);
     assertNotNull(infoList);
@@ -75,17 +79,14 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
 
   public void testGutterMyAction() throws Throwable {
     createStrutsFileSet("struts-actionClass.xml");
-    myFixture.configureByFile("/src/MyAction.java");
-    myFixture.doHighlighting();
-    checkGutterActionTargetElements("myActionPath");
+    checkGutterActionTargetElements("/src/MyAction.java", "myActionPath");
   }
 
 
   public void testGutterMyActionMultipleMappings() throws Throwable {
     createStrutsFileSet("struts-actionClass-multiple_mappings.xml");
-    myFixture.configureByFile("/src/MyAction.java");
-    myFixture.doHighlighting();
-    checkGutterActionTargetElements("myActionPath1", "myActionPath2", "myActionPath3");
+    checkGutterActionTargetElements("/src/MyAction.java",
+        "myActionPath1", "myActionPath2", "myActionPath3");
   }
 
 }
