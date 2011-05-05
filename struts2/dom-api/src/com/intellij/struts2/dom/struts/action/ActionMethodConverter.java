@@ -17,19 +17,16 @@ package com.intellij.struts2.dom.struts.action;
 
 import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.pom.Navigatable;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElementFactory;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -82,7 +79,7 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
   public LocalQuickFix[] getQuickFixes(final ConvertContext context) {
     final Action action = getActionElement(context);
     final String methodName = action.getMethod().getStringValue();
-    final String actionClass = action.getActionClass().getStringValue();
+    final PsiClass actionClass = action.getActionClass().getValue();
 
     return new LocalQuickFix[]{new CreateActionMethodQuickFix(actionClass, methodName)
     };
@@ -103,18 +100,18 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
   }
 
 
-  private static class CreateActionMethodQuickFix implements LocalQuickFix {
+  private static class CreateActionMethodQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
 
-    private String actionClassName;
     private final String methodName;
 
-    private CreateActionMethodQuickFix(final String actionClassName, final String methodName) {
-      this.actionClassName = actionClassName;
+    private CreateActionMethodQuickFix(final PsiClass actionClass,
+                                       final String methodName) {
+      super(actionClass);
       this.methodName = methodName;
     }
 
     @NotNull
-    public String getName() {
+    public String getText() {
       return "Create action-method '" + methodName + "'";
     }
 
@@ -123,13 +120,16 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
       return "Struts 2 Quickfixes";
     }
 
-    public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+    @Override
+    public void invoke(@NotNull final Project project,
+                       @NotNull final PsiFile psiFile,
+                       @Nullable("is null when called from inspection") final Editor editor,
+                       @NotNull final PsiElement startPsiElement, @NotNull final PsiElement endPsiElement) {
       try {
-        final JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
-        final PsiClass actionClass = javaPsiFacade.findClass(actionClassName, GlobalSearchScope.allScope(project));
+        final PsiClass actionClass = (PsiClass) startPsiElement;
         if (!CodeInsightUtilBase.preparePsiElementForWrite(actionClass.getContainingFile())) return;
 
-        final PsiElementFactory elementFactory = javaPsiFacade.getElementFactory();
+        final PsiElementFactory elementFactory = JavaPsiFacade.getInstance(project).getElementFactory();
         PsiMethod actionMethod = elementFactory.createMethodFromText("public java.lang.String " + methodName + "() throws java.lang.Exception { return \"success\"; }",
                                                                      actionClass);
 
