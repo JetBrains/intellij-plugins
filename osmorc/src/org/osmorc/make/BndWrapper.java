@@ -84,6 +84,10 @@ public class BndWrapper {
         try {
             File targetDir = new File(outputPath);
             File sourceFile = new File(VfsUtil.urlToPath(sourceJarUrl));
+            if (!sourceFile.exists() ) {
+               compileContext.addMessage(CompilerMessageCategory.WARNING, "The library " + sourceFile.getPath() + " does not exist. Please check your module settings. Ignoring missing library.", null, 0,0);
+               return null;
+            }
             if ( sourceFile.isDirectory() ) {
                 // ok it's an exploded directory, we cannot bundle it.
                 return null;  
@@ -128,7 +132,8 @@ public class BndWrapper {
             // boxes, so we better put this into the compile context as normal error message. Can't reproduce the issue
             // but i think it's stil the better way.
             // IDEA-27101
-            compileContext.addMessage(CompilerMessageCategory.ERROR,
+            // IDEA-69149 - Changed this form ERROR to WARNING, as a non-bundlified library might not be fatal (especially when importing a ton of libs from maven)
+            compileContext.addMessage(CompilerMessageCategory.WARNING,
                     OsmorcBundle.getTranslation("bundlecompiler.bundlifying.problem.message", sourceJarUrl, StacktraceUtil.stackTraceToString(e)), null, 0, 0);
 
         }
