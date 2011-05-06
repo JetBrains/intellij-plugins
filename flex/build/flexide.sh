@@ -9,18 +9,32 @@
 # Before you run Flex IDE specify the location of the
 # JDK 1.6 installation directory which will be used for running Flex IDE
 # ---------------------------------------------------------------------
+[[ `uname -s` = "Darwin" ]] && OS_TYPE="MAC" || OS_TYPE="NOT_MAC"
+
 if [ -z "$FLEXIDE_JDK" ]; then
   FLEXIDE_JDK=$JDK_HOME
-  if [ -z "$FLEXIDE_JDK" -a -e "$JAVA_HOME/lib/tools.jar" ]; then
+  # if jdk still isn't defined and JAVA_HOME looks correct. "tools.jar" isn't included in Mac OS Java bundle
+  if [ -z "$FLEXIDE_JDK" ] && ([ "$OS_TYPE" = "MAC" -a -e "$JAVA_HOME/bin/java" ] || [ -e "$JAVA_HOME/lib/tools.jar" ]); then
     FLEXIDE_JDK=$JAVA_HOME
   fi
   if [ -z "$FLEXIDE_JDK" ]; then
     # Try to get the jdk path from java binary path
     JAVA_BIN_PATH=`which java`
+
     if [ -n "$JAVA_BIN_PATH" ]; then
-      JAVA_LOCATION=`readlink -f $JAVA_BIN_PATH | xargs dirname | xargs dirname | xargs dirname`
-      if [ -x "$JAVA_LOCATION/bin/java" -a -e "$JAVA_LOCATION/lib/tools.jar" ]; then
-        FLEXIDE_JDK=$JAVA_LOCATION
+      # Mac readlink doesn't support -f option.
+      [[ "$OS_TYPE" = "MAC" ]] && CANONICALIZE_OPTION="" || CANONICALIZE_OPTION="-f"
+
+      JAVA_LOCATION=`readlink $CANONICALIZE_OPTION $JAVA_BIN_PATH | xargs dirname | xargs dirname | xargs dirname`
+      if [ "$OS_TYPE" = "MAC" ]; then
+        # Current MacOS jdk:
+	if [ -x "$JAVA_LOCATION/CurrentJDK/Home/bin/java" ]; then
+	  FLEXIDE_JDK="$JAVA_LOCATION/CurrentJDK/Home"
+	fi
+      else
+        if [ -x "$JAVA_LOCATION/bin/java" ]; then
+	  FLEXIDE_JDK="$JAVA_LOCATION"
+	fi
       fi
     fi
   fi
@@ -91,8 +105,22 @@ fi
 # $AGENT="-agentlib:yjpagent$BITS=disablej2ee,sessionname=flexide"
 #fi
 
-REQUIRED_JVM_ARGS="-Xbootclasspath/a:../lib/boot.jar -Didea.platform.prefix=Flex -Didea.no.jre.check=true -Didea.paths.selector=@@system_selector@@ $AGENT $FLEXIDE_PROPERTIES_PROPERTY $REQUIRED_JVM_ARGS"
-JVM_ARGS=`tr '\n' ' ' < "$FLEXIDE_VM_OPTIONS"`
+[[ -e $FLEXIDE_HOME/Contents/Info.plist ]] && BUNDLE_TYPE="MAC" || BUNDLE_TYPE="NOT_MAC"
+
+# If vmoptions file exists - use it
+if [ -e "$FLEXIDE_VM_OPTIONS" ]; then
+  JVM_ARGS=`tr '\n' ' ' < "$FLEXIDE_VM_OPTIONS"`
+
+  # don't extract vm options from Info.plist in mac bundle
+  INFO_PLIST_PARSER_OPTIONS=""
+else
+  [[ "$BUNDLE_TYPE" = "MAC" ]] && [[ "$BITS" == "64" ]] && INFO_PLIST_PARSER_OPTIONS=" 64" || INFO_PLIST_PARSER_OPTIONS=" 32"
+fi
+
+# In MacOS ./Contents/Info.plist describes all vm options & system properties
+[[ "$OS_TYPE" = "MAC" ]] && [[ "$BUNDLE_TYPE" = "MAC" ]] && [[ -z "$FLEXIDE_PROPERTIES_PROPERTY" ]] && MAC_IDEA_PROPERTIES="`osascript \"$FLEXIDE_BIN_HOME/info_plist_parser.scpt\"$INFO_PLIST_PARSER_OPTIONS`" || MAC_IDEA_PROPERTIES=""
+REQUIRED_JVM_ARGS="-Xbootclasspath/a:../lib/boot.jar -Didea.platform.prefix=Flex -Didea.no.jre.check=true -Didea.paths.selector=@@system_selector@@ $MAC_IDEA_PROPERTIES $AGENT $FLEXIDE_PROPERTIES_PROPERTY $REQUIRED_JVM_ARGS"
+
 JVM_ARGS="$JVM_ARGS $REQUIRED_JVM_ARGS"
 
 CLASSPATH=../lib/bootstrap.jar
