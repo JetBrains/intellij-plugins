@@ -699,7 +699,7 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
   }
 
   protected String getHelpId() {
-    return "reference.flex.package.air.installation.file";
+    return "reference.flex.package.mobile.air.application";
   }
 }
 
