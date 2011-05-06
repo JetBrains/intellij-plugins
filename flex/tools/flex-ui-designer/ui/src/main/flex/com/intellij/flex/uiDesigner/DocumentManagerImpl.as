@@ -58,7 +58,8 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       }
     }
     else if (doOpen(documentFactory, documentFactory.document)) {
-      document.container.invalidateDisplayList();
+      documentFactory.document.container.invalidateDisplayList();
+      this.document = documentFactory.document;
     }
   }
 
@@ -89,6 +90,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       documentFactory.document = document;
       var w:DocumentWindow = module.project.window;
       ProjectView(w.contentView).addDocument(document);
+      this.document = document;
       return true;
     }
     else {
@@ -108,7 +110,6 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       return false;
     }
 
-    this.document = document;
     return true;
   }
 
