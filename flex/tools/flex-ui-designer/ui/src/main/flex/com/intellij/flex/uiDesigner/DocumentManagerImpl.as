@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner {
+import cocoa.ApplicationManager;
 import cocoa.DocumentWindow;
 
 import com.intellij.flex.uiDesigner.css.CssReader;
@@ -48,7 +49,13 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
   public function open(documentFactory:DocumentFactory):void {
     if (documentFactory.document == null) {
-      libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory);
+      var context:ModuleContextEx = documentFactory.module.context;
+      if (context.librariesResolved) {
+        doOpenAfterResolveLibraries(documentFactory);
+      }
+      else {
+        libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory);
+      }
     }
     else if (doOpen(documentFactory, documentFactory.document)) {
       document.container.invalidateDisplayList();
@@ -56,6 +63,23 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory):void {
+    var module:Module = documentFactory.module;
+    module.context.librariesResolved = true;
+    if (createAndOpen(documentFactory) && !ApplicationManager.instance.unitTestMode) {
+      var w:DocumentWindow = module.project.window;
+      if (NativeWindow.supportsNotification) {
+        w.nativeWindow.notifyUser(NotificationType.INFORMATIONAL);
+      }
+      else {
+        var dockIcon:DockIcon = NativeApplication.nativeApplication.icon as DockIcon;
+        if (dockIcon != null) {
+          dockIcon.bounce(NotificationType.INFORMATIONAL);
+        }
+      }
+    }
+  }
+
+  private function createAndOpen(documentFactory:DocumentFactory):Boolean {
     var document:Document = new Document(documentFactory);
     var module:Module = documentFactory.module;
     createStyleManager(module, documentFactory);
@@ -65,15 +89,10 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       documentFactory.document = document;
       var w:DocumentWindow = module.project.window;
       ProjectView(w.contentView).addDocument(document);
-      if (NativeWindow.supportsNotification) {
-        w.nativeWindow.notifyUser(NotificationType.INFORMATIONAL);
-      }
-      else {
-        var dockIcon:DockIcon = NativeApplication.nativeApplication.icon as DockIcon;
-        if (dockIcon != null) {
-          dockIcon.bounce();
-        }
-      }
+      return true;
+    }
+    else {
+      return false;
     }
   }
 
@@ -85,7 +104,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
     }
     catch (e:Error) {
-      getUncaughtErrorManager(document.module).readDocumentErrorHandler(e);
+      UncaughtErrorManager.instance.readDocumentErrorHandler(e);
       return false;
     }
 
@@ -162,12 +181,8 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var systemManager:SystemManagerSB = new systemManagerClass();
     document.systemManager = systemManager;
     systemManager.init(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain), window.nativeWindow.stage,
-                       getUncaughtErrorManager(module), server);
+                       UncaughtErrorManager.instance, server);
     document.container = new DocumentContainer(Sprite(systemManager));
-  }
-
-  private function getUncaughtErrorManager(module:Module):UncaughtErrorManager {
-    return UncaughtErrorManager(module.project.getComponent(UncaughtErrorManager));
   }
 }
 }

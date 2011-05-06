@@ -84,7 +84,7 @@ public class Main extends MainWindowedApplication {
     socketManager.addSocketDataHandler(0, SocketDataHandler(container.lookup(DefaultSocketDataHandler)));
     socketManager.connect("localhost", port);
     
-    UncaughtErrorManager(container.lookup(UncaughtErrorManager)).listen(this);
+    UncaughtErrorManager.instance.listen(this);
     loaderInfo.uncaughtErrorEvents.removeEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);
   }
 

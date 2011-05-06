@@ -7,12 +7,18 @@ import flash.events.UncaughtErrorEvent;
 import flash.net.Socket;
 import flash.system.Capabilities;
 
+import org.flyti.plexus.PlexusManager;
+
 public class UncaughtErrorManager implements UiErrorHandler {
   protected var socket:Socket;
 
   public function UncaughtErrorManager(socketManager:SocketManager) {
     socket = socketManager.getSocket();
     assert(socket != null);
+  }
+
+  public static function get instance():UncaughtErrorManager {
+    return UncaughtErrorManager(PlexusManager.instance.container.lookup(UncaughtErrorManager));
   }
 
   public function listen(dispatcher:Sprite):void {

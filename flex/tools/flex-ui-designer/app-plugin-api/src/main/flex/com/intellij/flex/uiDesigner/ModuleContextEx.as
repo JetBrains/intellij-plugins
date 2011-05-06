@@ -7,5 +7,8 @@ public interface ModuleContextEx extends ModuleContext {
   function get project():Project;
 
   function get documentFactoryManager():DocumentFactoryManager;
+
+  function get librariesResolved():Boolean;
+  function set librariesResolved(value:Boolean):void;
 }
 }

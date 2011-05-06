@@ -85,24 +85,27 @@ public class TestSocketDataHandler implements SocketDataHandler {
       describeCache[clazz] = methodInfo;
     }
     var testAnnotation:TestAnnotation = methodInfo[method] || TestAnnotation.DEFAULT;
-
     var documentManager:DocumentManager = projectManager.project == null ? null : DocumentManager(projectManager.project.getComponent(DocumentManager));
     if (!testAnnotation.nullableDocument && documentManager != null && documentManager.document == null) {
       trace("wait document");
       IEventDispatcher(documentManager).addEventListener("documentChanged", function(event:Event):void {
         IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
-        // todo investigate, is it a problem for real code
-        // (components in user document can call systemManager.addEventListener, but our systemManager requres stage at this moment)?
-        var systemManager:SystemManagerSB = documentManager.document.systemManager;
-        if (systemManager.stage == null) {
-          systemManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
-            IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
-            test(clazz, method, testAnnotation);
-          });
-        }
-        else {
-          test(clazz, method, testAnnotation);
-        }
+        testOnSystemManagerReady(documentManager, clazz, method, testAnnotation);
+      });
+    }
+    else {
+      testOnSystemManagerReady(documentManager, clazz, method, testAnnotation);
+    }
+  }
+
+  private function testOnSystemManagerReady(documentManager:DocumentManager, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
+    // todo investigate, is it a problem for real code
+    // (components in user document can call systemManager.addEventListener, but our systemManager requires stage at this moment)?
+    var systemManager:SystemManagerSB = documentManager.document.systemManager;
+    if (systemManager.stage == null) {
+      systemManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
+        IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
+        test(clazz, method, testAnnotation);
       });
     }
     else {

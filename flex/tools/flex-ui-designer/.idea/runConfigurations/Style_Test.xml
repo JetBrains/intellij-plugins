@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="SwcDependenciesSorterTest specified" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="Style Test" type="JUnit" factoryName="JUnit">
     <extension name="coverage" enabled="false" merge="false" />
     <module name="idea-plugin" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
     <option name="PACKAGE_NAME" value="com.intellij.flex.uiDesigner" />
-    <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.SwcDependenciesSorterTest" />
+    <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.StyleTest" />
     <option name="METHOD_NAME" value="testResolveToClassWithBiggestTimestamp" />
     <option name="TEST_OBJECT" value="class" />
     <option name="VM_PARAMETERS" value="-Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.test.debug=true -Dfud.adl=$ADL$ -Dfud.air=$AIR$" />
@@ -19,16 +19,14 @@
     <envs />
     <patterns />
     <RunnerSettings RunnerId="Debug">
-      <option name="DEBUG_PORT" value="51103" />
+      <option name="DEBUG_PORT" value="64865" />
       <option name="TRANSPORT" value="0" />
       <option name="LOCAL" value="true" />
     </RunnerSettings>
     <RunnerSettings RunnerId="Profile ">
       <option name="myExternalizedOptions" value="&#10;additional-options2=onexit\=snapshot&#10;" />
     </RunnerSettings>
-    <RunnerSettings RunnerId="Run" />
     <ConfigurationWrapper RunnerId="Debug" />
-    <ConfigurationWrapper RunnerId="Run" />
     <method />
   </configuration>
 </component>

@@ -3,8 +3,6 @@ import com.intellij.flex.uiDesigner.UncaughtErrorManager;
 
 import flash.utils.Dictionary;
 
-import org.flyti.plexus.PlexusManager;
-
 public class LibraryManager implements LibrarySetLoadProgressListener {
   private const idMap:Dictionary = new Dictionary();
 
@@ -27,7 +25,7 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
             currentQueue.apply();
           }
           catch (e:Error) {
-            UncaughtErrorManager(PlexusManager.instance.container.lookup(UncaughtErrorManager)).handleError(e);
+            UncaughtErrorManager.instance.handleError(e);
           }
 
           if (leftBrotherQueue == null) {

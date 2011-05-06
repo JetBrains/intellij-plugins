@@ -168,9 +168,15 @@ public class LibraryManager extends EntityListManager<VirtualFile, OriginalLibra
 
   @Nullable
   public PropertiesFile getResourceBundleFile(String locale, String bundleName, ProjectInfo projectInfo) {
-    for (Library library : projectInfo.getLibrarySet().getLibraries()) {
-      if (library instanceof OriginalLibrary) {
-        OriginalLibrary originalLibrary = (OriginalLibrary)library;
+    LibrarySet librarySet = projectInfo.getLibrarySet();
+    do {
+      for (Library library : librarySet.getLibraries()) {
+        if (library instanceof EmbedLibrary) {
+          continue;
+        }
+
+        OriginalLibrary originalLibrary =
+          library instanceof OriginalLibrary ? (OriginalLibrary)library : ((FilteredLibrary)library).originalLibrary;
         if (originalLibrary.hasResourceBundles()) {
           final THashSet<String> bundles = originalLibrary.resourceBundles.get(locale);
           if (bundles.contains(bundleName)) {
@@ -184,6 +190,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, OriginalLibra
         }
       }
     }
+    while ((librarySet = librarySet.getParent()) != null);
 
     return null;
   }

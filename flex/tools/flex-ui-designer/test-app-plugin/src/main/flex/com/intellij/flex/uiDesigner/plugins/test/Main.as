@@ -1,4 +1,6 @@
 package com.intellij.flex.uiDesigner.plugins.test {
+import cocoa.ApplicationManager;
+
 import com.intellij.flex.uiDesigner.SocketDataHandler;
 import com.intellij.flex.uiDesigner.SocketManager;
 
@@ -14,6 +16,7 @@ public class Main extends Sprite {
 
   private function init():void {
     new ComponentSet();
+    ApplicationManager.instance.unitTestMode = false;
     var container:PlexusContainer = PlexusManager.instance.container;
     var socketManager:SocketManager = SocketManager(container.lookup(SocketManager));
     socketManager.addSocketDataHandler(TestSocketDataHandler.CLASS, SocketDataHandler(container.lookup(TestSocketDataHandler)));

@@ -16,6 +16,7 @@ class CatalogXmlBuilder implements XmlBuilder {
 
   private boolean processDependencies;
   private boolean processFiles;
+  private boolean collectResourceBundles;
 
   private Definition definition;
   private final ArrayList<CharSequence> dependencies = new ArrayList<CharSequence>();
@@ -30,6 +31,7 @@ class CatalogXmlBuilder implements XmlBuilder {
 
   public void setLibrary(FilteredLibrary library) {
     this.library = library;
+    collectResourceBundles = library.originalLibrary.resourceBundles.isEmpty();
   }
 
   @Override
@@ -48,7 +50,7 @@ class CatalogXmlBuilder implements XmlBuilder {
     else if (definition != null) {
       return ProcessingOrder.TAGS_AND_ATTRIBUTES;
     }
-    else if (localName.equals("file") && library.originalLibrary.resourceBundles.isEmpty()) {
+    else if (collectResourceBundles && localName.equals("file")) {
       processFiles = true;
       return ProcessingOrder.TAGS_AND_ATTRIBUTES;
     }
