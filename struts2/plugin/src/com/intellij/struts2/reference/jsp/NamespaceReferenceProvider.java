@@ -16,6 +16,8 @@
 package com.intellij.struts2.reference.jsp;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.*;
@@ -78,11 +80,13 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
 
     @NotNull
     public Object[] getVariants() {
-      return ContainerUtil.map2Array(strutsModel.getStrutsPackages(), new Function<StrutsPackage, Object>() {
-        public Object fun(final StrutsPackage strutsPackage) {
-          return strutsPackage.searchNamespace();
-        }
-      });
+      return ContainerUtil.map2Array(strutsModel.getStrutsPackages(), LookupElement.class,
+          new Function<StrutsPackage, LookupElement>() {
+            public LookupElement fun(final StrutsPackage strutsPackage) {
+              return LookupElementBuilder.create(strutsPackage.getXmlTag(), strutsPackage.searchNamespace())
+                  .setTypeText(strutsPackage.getName().getStringValue());
+            }
+          });
     }
 
     public String getUnresolvedMessagePattern() {
