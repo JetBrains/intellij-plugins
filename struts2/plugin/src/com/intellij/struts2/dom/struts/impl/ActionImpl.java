@@ -87,7 +87,7 @@ public abstract class ActionImpl implements Action {
 
   @NotNull
   public List<PsiMethod> getActionMethods() {
-    final PsiClass actionClass = getActionClass().getValue();
+    final PsiClass actionClass = searchActionClass();
     if (actionClass == null) {
       return Collections.emptyList();
     }
@@ -101,7 +101,7 @@ public abstract class ActionImpl implements Action {
       return null;
     }
 
-    final PsiClass actionClass = getActionClass().getValue();
+    final PsiClass actionClass = searchActionClass();
     if (actionClass == null) {
       return null;
     }

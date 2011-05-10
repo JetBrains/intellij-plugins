@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -121,9 +121,8 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
     for (final StrutsPackage strutsPackage : getStrutsPackages()) {
       for (final Action action : strutsPackage.getActions()) {
-        final PsiClass actionClassValue = action.getActionClass().getValue();
-        if (actionClassValue != null &&
-            clazz.equals(actionClassValue)) {
+        final PsiClass actionClassValue = action.searchActionClass();
+        if (Comparing.equal(clazz, actionClassValue)) {
           actionResultList.add(action);
         }
       }

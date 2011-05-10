@@ -240,8 +240,9 @@ public class StrutsApplicationComponent implements ApplicationComponent {
           final StrutsPackage strutsPackage = action.getStrutsPackage();
 
           final DocumentationBuilder builder = new DocumentationBuilder();
+          final PsiClass actionClass = action.searchActionClass();
           builder.addLine("Action", action.getName().getStringValue())
-              .addLine("Class", action.getActionClass().getStringValue())
+              .addLine("Class", actionClass != null ? actionClass.getQualifiedName() : null)
               .addLine("Method", action.getMethod().getStringValue())
               .addLine("Package", strutsPackage.getName().getStringValue())
               .addLine("Namespace", strutsPackage.searchNamespace());

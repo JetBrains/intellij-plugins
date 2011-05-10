@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -82,7 +82,7 @@ public class ActionNameCustomReferenceConverter implements CustomReferenceConver
         final Action action = invocationElement.getParentOfType(Action.class, true);
         assert action != null;
 
-        final PsiClass psiClass = action.getActionClass().getValue();
+        final PsiClass psiClass = action.searchActionClass();
         if (psiClass == null) {
           return EMPTY_ARRAY;
         }
