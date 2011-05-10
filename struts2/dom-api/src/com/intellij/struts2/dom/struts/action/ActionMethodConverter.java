@@ -72,7 +72,7 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
   public LocalQuickFix[] getQuickFixes(final ConvertContext context) {
     final Action action = getActionElement(context);
     final String methodName = action.getMethod().getStringValue();
-    final PsiClass actionClass = action.getActionClass().getValue();
+    final PsiClass actionClass = action.searchActionClass();
 
     return new LocalQuickFix[]{new CreateActionMethodQuickFix(actionClass, methodName)
     };
