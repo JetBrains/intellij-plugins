@@ -90,8 +90,8 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
 
   private static class ActionMethodReference extends PsiReferenceBase<XmlAttributeValue> implements EmptyResolveMessageProvider {
 
+    @Nullable
     private final Action action;
-
 
     private ActionMethodReference(final XmlAttributeValue xmlAttributeValue,
                                   @Nullable final Action action,
