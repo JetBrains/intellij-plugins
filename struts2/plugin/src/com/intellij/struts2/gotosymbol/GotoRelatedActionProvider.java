@@ -92,13 +92,13 @@ public class GotoRelatedActionProvider extends GotoRelatedProvider {
             actions.add(action);
           }
 
-          if (action.getActionClass() != null) {
-            final PsiClass actionClass = action.getActionClass().getValue();
-            if (actionClass != null) {
-              final PsiMethod actionMethod = action.searchActionMethod();
-              items.add(new GotoRelatedItem(actionMethod != null ? actionMethod : actionClass));
-            }
+          final PsiClass actionClass = action.searchActionClass();
+          if (actionClass == null) {
+            continue;
           }
+
+          final PsiMethod actionMethod = action.searchActionMethod();
+          items.add(new GotoRelatedItem(actionMethod != null ? actionMethod : actionClass));
         }
 
         return true;
