@@ -126,4 +126,13 @@ public interface Action extends ParamsElement {
   @NotNull
   List<PsiMethod> getActionMethods();
 
+  /**
+   * Finds the first suitable action-method with the given name.
+   *
+   * @param methodName Method name to search for.
+   * @return {@code null} if no suitable method was found.
+   */
+  @Nullable
+  PsiMethod findActionMethod(@Nullable final String methodName);
+
 }

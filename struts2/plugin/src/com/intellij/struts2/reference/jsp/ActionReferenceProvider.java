@@ -18,11 +18,12 @@ package com.intellij.struts2.reference.jsp;
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceBase;
+import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -34,7 +35,6 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.reference.TaglibUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -108,11 +108,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
       }
 
       final String methodName = getValue();
-      return ContainerUtil.find(action.getActionMethods(), new Condition<PsiMethod>() {
-        public boolean value(final PsiMethod psiMethod) {
-          return Comparing.equal(psiMethod.getName(), methodName);
-        }
-      });
+      return action.findActionMethod(methodName);
     }
 
     @NotNull

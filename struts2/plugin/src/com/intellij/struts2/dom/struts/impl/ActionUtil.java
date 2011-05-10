@@ -25,6 +25,7 @@ import com.intellij.psi.util.PropertyUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -65,9 +66,11 @@ final class ActionUtil {
    * Returns all suitable action methods for the given Action class.
    *
    * @param actionClass Action class to search for action methods.
+   * @param methodName  (Optional) Method name.
    * @return Methods suitable for action execution.
    */
-  static List<PsiMethod> findActionMethods(@NotNull final PsiClass actionClass) {
+  static List<PsiMethod> findActionMethods(@NotNull final PsiClass actionClass,
+                                           @Nullable final String methodName) {
     final Module module = ModuleUtil.findModuleForPsiElement(actionClass);
     if (module == null) {
       return Collections.emptyList();
@@ -76,13 +79,21 @@ final class ActionUtil {
     final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
 
     final PsiElementFactory psiElementFactory = JavaPsiFacade.getInstance(actionClass.getProject()).getElementFactory();
-    final PsiClassType stringType = psiElementFactory.createTypeByFQClassName(CommonClassNames.JAVA_LANG_STRING,
-                                                                              scope);
-    final PsiClassType resultType = psiElementFactory.createTypeByFQClassName("com.opensymphony.xwork2.Result",
-                                                                              scope);
+    final PsiClassType stringType =
+        psiElementFactory.createTypeByFQClassName(CommonClassNames.JAVA_LANG_STRING, scope);
+    final PsiClassType resultType =
+        psiElementFactory.createTypeByFQClassName("com.opensymphony.xwork2.Result", scope);
+
+    final boolean searchForMethod = methodName != null;
 
     final List<PsiMethod> actionMethods = new SmartList<PsiMethod>();
     for (final PsiMethod psiMethod : actionClass.getAllMethods()) {
+      final String psiMethodName = psiMethod.getName();
+
+      if (searchForMethod &&
+          !Comparing.equal(psiMethodName, methodName)) {
+        continue;
+      }
 
       if (psiMethod.isConstructor()) {
         continue;
@@ -102,7 +113,7 @@ final class ActionUtil {
       }
 
       // skip "toString()"
-      if (Comparing.equal(psiMethod.getName(), "toString")) {
+      if (Comparing.equal(psiMethodName, "toString")) {
         continue;
       }
 
@@ -118,6 +129,11 @@ final class ActionUtil {
           type instanceof PsiClassType &&
           (type.equals(stringType) || type.equals(resultType))) {
         actionMethods.add(psiMethod);
+
+        // stop on first hit when searching for name
+        if (searchForMethod) {
+          return actionMethods;
+        }
       }
 
     }

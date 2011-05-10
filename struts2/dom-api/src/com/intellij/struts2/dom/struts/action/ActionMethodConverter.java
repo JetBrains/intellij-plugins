@@ -21,15 +21,12 @@ import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.OpenSourceUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.ResolvingConverter;
@@ -60,11 +57,7 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
     }
 
     final Action action = getActionElement(context);
-    return ContainerUtil.find(action.getActionMethods(), new Condition<PsiMethod>() {
-      public boolean value(final PsiMethod psiMethod) {
-        return Comparing.equal(psiMethod.getName(), value);
-      }
-    });
+    return action.findActionMethod(value);
   }
 
 

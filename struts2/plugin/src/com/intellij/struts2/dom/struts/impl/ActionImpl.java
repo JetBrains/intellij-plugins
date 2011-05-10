@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,14 +15,11 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.strutspackage.DefaultClassRef;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomUtil;
 import com.intellij.util.xml.GenericAttributeValue;
 import org.jetbrains.annotations.NotNull;
@@ -38,12 +35,6 @@ import java.util.List;
  */
 @SuppressWarnings({"AbstractClassNeverImplemented"})
 public abstract class ActionImpl implements Action {
-
-  private static final Condition<PsiMethod> DEFAULT_ACTION_METHOD_CONDITION = new Condition<PsiMethod>() {
-    public boolean value(final PsiMethod psiMethod) {
-      return Comparing.equal(psiMethod.getName(), DEFAULT_ACTION_METHOD_NAME);
-    }
-  };
 
   public boolean matchesPath(@NotNull final String path) {
     final String myPath = getName().getStringValue();
@@ -86,7 +77,7 @@ public abstract class ActionImpl implements Action {
       return methodValue.getValue();
     }
 
-    return ContainerUtil.find(getActionMethods(), DEFAULT_ACTION_METHOD_CONDITION);
+    return findActionMethod(DEFAULT_ACTION_METHOD_NAME);
   }
 
   @NotNull
@@ -101,7 +92,22 @@ public abstract class ActionImpl implements Action {
       return Collections.emptyList();
     }
 
-    return ActionUtil.findActionMethods(actionClass);
+    return ActionUtil.findActionMethods(actionClass, null);
+  }
+
+  @Override
+  public PsiMethod findActionMethod(final String methodName) {
+    if (methodName == null) {
+      return null;
+    }
+
+    final PsiClass actionClass = getActionClass().getValue();
+    if (actionClass == null) {
+      return null;
+    }
+
+    final List<PsiMethod> actionMethods = ActionUtil.findActionMethods(actionClass, methodName);
+    return actionMethods.size() == 1 ? actionMethods.get(0) : null;
   }
 
   @Nullable
