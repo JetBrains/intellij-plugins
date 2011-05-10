@@ -83,7 +83,7 @@ public class JSChangeSignatureDetector implements LanguageChangeSignatureDetecto
         return jsChangeInfo.getMethod();
       }
     };
-    JSChangeSignatureDialog d = new JSChangeSignatureDialog(jsChangeInfo.getMethod().getProject(), descriptor, changeInfo.getMethod()) {
+    JSChangeSignatureDialog d = new JSChangeSignatureDialog(descriptor, changeInfo.getMethod()) {
       @Override
       protected void invokeRefactoring(BaseRefactoringProcessor processor) {
         revertChanges(jsChangeInfo.getMethod(), oldText);
