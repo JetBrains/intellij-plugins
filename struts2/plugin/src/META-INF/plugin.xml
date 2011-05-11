@@ -58,7 +58,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <facetType implementation="com.intellij.struts2.facet.StrutsFacetType"/>
-    <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsReferenceContributor"/>
+    <psi.referenceContributor language="XML" implementation="com.intellij.struts2.reference.StrutsReferenceContributor"/>
     <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsUITaglibReferenceContributor"/>
     <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsJQueryTaglibReferenceContributor"/>
     <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsJQueryRichtextTaglibReferenceContributor"/>
