@@ -5,6 +5,8 @@ import com.intellij.ide.actions.TemplateKindCombo;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.impl.AllFileTemplatesConfigurable;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
 import com.intellij.openapi.module.Module;
@@ -12,6 +14,7 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Icons;
@@ -123,6 +126,14 @@ public class NewFlexComponentDialog extends CreateFileFromTemplateDialog {
 
   public static JSReferenceEditor createParentComponentField(Project project, GlobalSearchScope scope) {
     return JSReferenceEditor.forClassName("", project, PARENT_COMPONENT_RECENTS_KEY, scope,
-                                null, null, FlexBundle.message("choose.parent.component.dialog.title"));
+                                null, new Condition<JSClass>() {
+        @Override
+        public boolean value(JSClass jsClass) {
+          JSAttributeList attributeList;
+          return !jsClass.isInterface() &&
+                 (attributeList = jsClass.getAttributeList()) != null &&
+                 !attributeList.hasModifier(JSAttributeList.ModifierType.FINAL);
+        }
+      }, FlexBundle.message("choose.parent.component.dialog.title"));
   }
 }
