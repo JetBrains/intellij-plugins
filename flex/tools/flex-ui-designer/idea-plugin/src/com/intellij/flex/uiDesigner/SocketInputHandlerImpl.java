@@ -110,6 +110,10 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         showError();
         break;
 
+      case ServerMethod.closeProject:
+        Client.getInstance().unregisterProject(readProject());
+        break;
+
       case ServerMethod.saveProjectWindowBounds:
         ProjectWindowBounds.save(readProject(), reader);
         break;

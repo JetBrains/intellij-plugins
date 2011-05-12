@@ -18,10 +18,6 @@ public class ResourceManager extends EventDispatcher implements IResourceManager
   private const localeMap:Object = new Dictionary();
 
   function ResourceManager(resourceBundleProvider:ResourceBundleProvider) {
-    if (instance != null) {
-      throw new IllegalOperationError("constructed already");
-    }
-
     instance = this;
     this.resourceBundleProvider = resourceBundleProvider;
   }

@@ -118,7 +118,7 @@ public class QueueLoader {
       loader.loadBytes(getFlexComplementSwfBytes(item.path), loaderContext);
     }
     else {
-      urlRequest.url = "app:/" + item.path + (item.filtered ? ".swf" : "_" + librarySet.id + ".swf");
+      urlRequest.url = "app:/" + item.path + (item.filtered ? "_" + librarySet.id + ".swf" : ".swf");
       //trace("load: " + urlRequest.url);
       loader.load(urlRequest, loaderContext);
     }
@@ -141,7 +141,7 @@ public class QueueLoader {
 
   private function loadCompleteHandler(event:Event):void {
     loadedCount++;
-    if (loadedCount < librarySet.items.length) {
+    if (loadedCount < librarySet.loadSize) {
       if (librarySet.applicationDomainCreationPolicy == ApplicationDomainCreationPolicy.MULTIPLE) {
         loaderContext.applicationDomain = new ApplicationDomain(loaderContext.applicationDomain);
       }

@@ -11,14 +11,18 @@ import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 import flash.utils.getQualifiedClassName;
 
+import org.flyti.plexus.PlexusManager;
+
 public class Server implements ResourceBundleProvider {
   private var socket:Socket;
-  private var uncaughtErrorManager:UncaughtErrorManager;
 
-  public function Server(socketManager:SocketManager, uncaughtErrorManager:UncaughtErrorManager) {
+  public function Server(socketManager:SocketManager) {
     socket = socketManager.getSocket();
-    this.uncaughtErrorManager = uncaughtErrorManager;
     assert(socket != null);
+  }
+
+  public static function get instance():Server {
+    return Server(PlexusManager.instance.container.lookup(Server));
   }
 
   public function goToClass(module:Module, className:String):void {
@@ -67,6 +71,12 @@ public class Server implements ResourceBundleProvider {
     socket.flush();
   }
 
+  public function closeProject(project:Project):void {
+    socket.writeByte(ServerMethod.closeProject);
+    writeProjectId(project);
+    socket.flush();
+  }
+
   private function writeModuleId(module:Module):void {
     socket.writeShort(module.id);
   }
@@ -112,7 +122,7 @@ public class Server implements ResourceBundleProvider {
           resultReadyFile.deleteFile();
         }
         catch (e:Error) {
-          uncaughtErrorManager.handleError(e);
+          UncaughtErrorManager.instance.handleError(e);
         }
       }
     }
@@ -145,7 +155,7 @@ public class Server implements ResourceBundleProvider {
       }
     }
     catch (e:Error) {
-      uncaughtErrorManager.handleError(e);
+      UncaughtErrorManager.instance.handleError(e);
     }
     finally {
       if (resultReadyFile.exists) {
@@ -153,7 +163,7 @@ public class Server implements ResourceBundleProvider {
           resultReadyFile.deleteFile();
         }
         catch (e:Error) {
-          uncaughtErrorManager.handleError(e);
+          UncaughtErrorManager.instance.handleError(e);
         }
       }
     }

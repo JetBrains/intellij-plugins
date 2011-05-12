@@ -1,11 +1,10 @@
 package com.intellij.flex.uiDesigner.plugins.test {
-import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
-import com.intellij.flex.uiDesigner.libraries.LibrarySet;
-import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.css.CssClassCondition;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssPseudoCondition;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
+import com.intellij.flex.uiDesigner.libraries.LibrarySet;
+import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
 
 import flash.text.engine.FontPosture;
 
@@ -31,12 +30,12 @@ public class StyleTest extends BaseTestCase {
 
   public function empty():void {
     var librarySets:Vector.<LibrarySet> = documentManager.document.module.librarySets;
-    assertThat(librarySets, [{libraries: arrayWithSize(11)}]);
+    assertThat(librarySets, [{items: arrayWithSize(9)}]);
     assertThat(librarySets, arrayWithSize(1));
-    var library:Library;
+    var library:LibrarySetItem;
     for each (var l:LibrarySetItem in librarySets[0].items) {
-      if (l is Library && l.path.indexOf("spark.") != -1) {
-        library = Library(l);
+      if (l.path.indexOf("spark.") != -1) {
+        library = l;
         break;
       }
     }

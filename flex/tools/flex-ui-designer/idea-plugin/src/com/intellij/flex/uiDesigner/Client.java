@@ -115,18 +115,7 @@ public class Client implements Closable {
       hasError = false;
     }
     finally {
-      registeredProjects.remove(project);
-      if (registeredProjects.isEmpty()) {
-        registeredModules.clear();
-      }
-      else {
-        registeredModules.remove(new TObjectProcedure<Module>() {
-          @Override
-          public boolean execute(Module module) {
-            return module.getProject() == project;
-          }
-        });
-      }
+      unregisterProject(project);
 
       if (hasError) {
         blockOut.rollback();
@@ -134,6 +123,21 @@ public class Client implements Closable {
       else {
         out.flush();
       }
+    }
+  }
+
+  public void unregisterProject(final Project project) {
+    registeredProjects.remove(project);
+    if (registeredProjects.isEmpty()) {
+      registeredModules.clear();
+    }
+    else {
+      registeredModules.remove(new TObjectProcedure<Module>() {
+        @Override
+        public boolean execute(Module module) {
+          return module.getProject() == project;
+        }
+      });
     }
   }
 
@@ -172,14 +176,17 @@ public class Client implements Closable {
     final LibraryManager libraryManager = LibraryManager.getInstance();
     for (LibrarySetItem item : items) {
       final Library library = item.library;
-      final boolean unregisteredLibrary = !libraryManager.isRegistered(library);
+      final boolean registered = libraryManager.isRegistered(library);
       int flags = item.filtered ? 1 : 0;
-      if (unregisteredLibrary) {
+      if (registered) {
         flags |= 2;
       }
       out.write(flags);
 
-      if (unregisteredLibrary) {
+      if (registered) {
+        out.writeShort(library.getId());
+      }
+      else {
         out.writeShort(libraryManager.add(library));
 
         out.writeAmfUtf(library.getPath());
@@ -199,9 +206,6 @@ public class Client implements Closable {
           out.write(1);
           out.write(library.defaultsStyle);
         }
-      }
-      else {
-        out.writeShort(library.getId());
       }
 
       writeParents(items, item);

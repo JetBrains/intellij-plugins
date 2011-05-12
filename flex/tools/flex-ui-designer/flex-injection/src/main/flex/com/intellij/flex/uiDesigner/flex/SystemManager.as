@@ -25,6 +25,7 @@ import mx.core.IFlexModule;
 import mx.core.IFlexModuleFactory;
 import mx.core.IRawChildrenContainer;
 import mx.core.IUIComponent;
+import mx.managers.ILayoutManager;
 import mx.resources.ResourceManager;
 
 flex::v4_5
@@ -70,16 +71,20 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   private const implementations:Dictionary = new Dictionary();
 
   public function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler, resourceBundleProvider:ResourceBundleProvider):void {
-    if (UIComponentGlobals.layoutManager == null) {
+    var layoutManager:LayoutManager = LayoutManager(UIComponentGlobals.layoutManager);
+    if (layoutManager == null) {
       UIComponentGlobals.designMode = true;
       UIComponentGlobals.catchCallLaterExceptions = true;
       SystemManagerGlobals.topLevelSystemManagers[0] = new TopLevelSystemManager(stage);
 
       Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManager);
-      UIComponentGlobals.layoutManager = new LayoutManager(stage.getChildAt(0), uiErrorHandler);
+      layoutManager = new LayoutManager(stage.getChildAt(0), uiErrorHandler);
+      UIComponentGlobals.layoutManager = layoutManager;
 
       new ResourceManager(resourceBundleProvider);
     }
+
+    layoutManager.waitFrame();
 
     this.uiErrorHandler = uiErrorHandler;
     addRealEventListener("initializeError", uiInitializeOrCallLaterErrorHandler);

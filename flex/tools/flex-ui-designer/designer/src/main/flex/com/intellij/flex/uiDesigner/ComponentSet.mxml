@@ -13,7 +13,11 @@
   <Component role="{EmbedImageManager}">
     <Requirement role="{Server}"/>
   </Component>
-  <Component role="{ProjectManager}"/>
+  <Component role="{ProjectManager}">
+    <Requirement role="{LibraryManager}"/>
+    <Requirement role="{ModuleManager}"/>
+  </Component>
+
   <Component role="{ModuleManager}"/>
   <Component role="{StringRegistry}"/>
   <Component role="{DocumentReader}" implementation="{MxmlReader}">
@@ -33,6 +37,5 @@
 	</Component>
   <Component role="{Server}">
 		<Requirement role="{SocketManager}"/>
-		<Requirement role="{UncaughtErrorManager}"/>
 	</Component>
 </ComponentSet>

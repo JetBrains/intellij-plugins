@@ -41,6 +41,36 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
     this.uiErrorHandler = uiErrorHandler;
   }
 
+  public function waitFrame():void {
+    waitedAFrame = false;
+  }
+
+  // // librarySet.applicationDomain.getDefinition("mx.core.UIComponentGlobals").layoutManager = null is not working
+  public static function prepareToDie():void {
+    LayoutManager(UIComponentGlobals.layoutManager).doPrepareToDie();
+    UIComponentGlobals.layoutManager = null;
+  }
+
+  private function doPrepareToDie():void {
+    if (listenersAttached) {
+      if (!waitedAFrame) {
+        displayDispatcher.removeEventListener(Event.ENTER_FRAME, waitAFrame);
+      }
+      else {
+        removeListeners();
+      }
+      listenersAttached = true;
+    }
+
+    invalidatePropertiesFlag = false;
+    invalidateClientPropertiesFlag = false;
+    invalidateSizeFlag = false;
+    invalidateDisplayListFlag = false;
+
+    currentObject = null;
+    displayDispatcher = null;
+  }
+
   //noinspection JSUnusedGlobalSymbols
   public static function getInstance():LayoutManager {
     return LayoutManager(UIComponentGlobals.layoutManager);
@@ -338,10 +368,14 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
       return;
     }
 
-    displayDispatcher.removeEventListener(Event.ENTER_FRAME, doPhasedInstantiationCallback);
-    displayDispatcher.removeEventListener(Event.RENDER, doPhasedInstantiationCallback);
+    removeListeners();
     tryDoPhasedInstantiation();
     currentObject = null;
+  }
+
+  private function removeListeners():void {
+    displayDispatcher.removeEventListener(Event.ENTER_FRAME, doPhasedInstantiationCallback);
+    displayDispatcher.removeEventListener(Event.RENDER, doPhasedInstantiationCallback);
   }
 
   private function tryDoPhasedInstantiation():void {
@@ -370,7 +404,6 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
       attachListeners();
     }
     else {
-      usePhasedInstantiation = false;
       listenersAttached = false;
       var obj:ILayoutManagerClient = ILayoutManagerClient(updateCompleteQueue.removeLargest());
       while (obj) {

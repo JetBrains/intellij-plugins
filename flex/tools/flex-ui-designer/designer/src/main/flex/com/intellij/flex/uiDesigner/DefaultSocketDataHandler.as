@@ -64,7 +64,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
         break;
       
       case ClientMethod.closeProject:
-        closeProject(input.readUnsignedShort());
+        projectManager.close(input.readUnsignedShort());
         break;
 
       case ClientMethod.registerLibrarySet:
@@ -117,14 +117,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     }
     projectManager.open(project, new DocumentWindow(new ProjectView(), project.map, null, projectWindowBounds));
   }
-  
-  private function closeProject(id:int):void {
-    var project:Project = projectManager.close(id);
-    moduleManager.remove(project, function (module:Module):void {
-                           libraryManager.remove(module.librarySets);
-                         });
-  }
-  
+
   private function registerModule(input:IDataInput):void {
     stringRegistry.readStringTable(input);
     moduleManager.register(new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()), libraryManager.idsToInstancesAndMarkAsUsed(input.readObject()), input.readObject()));

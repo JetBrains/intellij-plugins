@@ -22,6 +22,11 @@ public final class LibrarySet {
     _parent = parent;
   }
 
+  private var _loadSize:int;
+  public function get loadSize():int {
+    return _loadSize;
+  }
+
   private var _id:String;
   public function get id():String {
     return _id;
@@ -45,6 +50,7 @@ public final class LibrarySet {
   public function readExternal(input:IDataInput):void {
     _applicationDomainCreationPolicy = ApplicationDomainCreationPolicy.enumSet[input.readByte()];
     var n:int = input.readUnsignedByte();
+    _loadSize = n;
     _items = new Vector.<LibrarySetItem>(n, true);
     for (var i:int = 0; i < n; i++) {
       const flags:int = input.readByte();
@@ -74,6 +80,7 @@ public final class LibrarySet {
     }
 
     n = input.readUnsignedByte();
+    _loadSize += n;
     while (n-- > 0) {
       new LibrarySetEmbedItem(_items[input.readUnsignedByte()], AmfUtil.readUtf(input));
     }
