@@ -171,7 +171,7 @@ public class Client implements Closable {
     out.write(items.size());
     final LibraryManager libraryManager = LibraryManager.getInstance();
     for (LibrarySetItem item : items) {
-      final SwfLibrary library = item.library;
+      final Library library = item.library;
       final boolean unregisteredLibrary = !libraryManager.isRegistered(library);
       int flags = item.filtered ? 1 : 0;
       if (unregisteredLibrary) {

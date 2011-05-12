@@ -21,16 +21,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class LibraryManager extends EntityListManager<VirtualFile, SwfLibrary> {
+public class LibraryManager extends EntityListManager<VirtualFile, Library> {
   public static LibraryManager getInstance() {
     return ServiceManager.getService(LibraryManager.class);
   }
 
-  public boolean isRegistered(@NotNull SwfLibrary library) {
+  public boolean isRegistered(@NotNull Library library) {
     return list.contains(library);
   }
 
-  public int add(@NotNull SwfLibrary library) {
+  public int add(@NotNull Library library) {
     return list.add(library);
   }
 
@@ -140,7 +140,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, SwfLibrary> {
   }
 
   @NotNull
-  private LibrarySet createLibrarySet(String id, @Nullable LibrarySet parent, List<SwfLibrary> libraries, String flexSdkVersion,
+  private LibrarySet createLibrarySet(String id, @Nullable LibrarySet parent, List<Library> libraries, String flexSdkVersion,
                                       SwcDependenciesSorter swcDependenciesSorter, final boolean isFromSdk)
     throws InitException {
     try {
@@ -153,15 +153,15 @@ public class LibraryManager extends EntityListManager<VirtualFile, SwfLibrary> {
     }
   }
 
-  public SwfLibrary createOriginalLibrary(@NotNull final VirtualFile virtualFile, @NotNull final VirtualFile jarFile,
-                                               @NotNull final Consumer<SwfLibrary> initializer) {
+  public Library createOriginalLibrary(@NotNull final VirtualFile virtualFile, @NotNull final VirtualFile jarFile,
+                                               @NotNull final Consumer<Library> initializer) {
     if (list.contains(jarFile)) {
       return list.getInfo(jarFile);
     }
     else {
       final String path = virtualFile.getPath();
-      SwfLibrary library =
-        new SwfLibrary(virtualFile.getNameWithoutExtension() + "." + Integer.toHexString(path.hashCode()), jarFile);
+      Library library =
+        new Library(virtualFile.getNameWithoutExtension() + "." + Integer.toHexString(path.hashCode()), jarFile);
       initializer.consume(library);
       return library;
     }
@@ -173,7 +173,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, SwfLibrary> {
     PropertiesFile propertiesFile;
     do {
       for (LibrarySetItem item : librarySet.getItems()) {
-        SwfLibrary library = item.library;
+        Library library = item.library;
         if (library.hasResourceBundles() && (propertiesFile = getResourceBundleFile(locale, bundleName, library, projectInfo)) != null) {
           return propertiesFile;
         }
@@ -190,7 +190,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, SwfLibrary> {
     return null;
   }
 
-  private PropertiesFile getResourceBundleFile(String locale, String bundleName, SwfLibrary library, ProjectInfo projectInfo) {
+  private PropertiesFile getResourceBundleFile(String locale, String bundleName, Library library, ProjectInfo projectInfo) {
     final THashSet<String> bundles = library.resourceBundles.get(locale);
     if (!bundles.contains(bundleName)) {
       return null;

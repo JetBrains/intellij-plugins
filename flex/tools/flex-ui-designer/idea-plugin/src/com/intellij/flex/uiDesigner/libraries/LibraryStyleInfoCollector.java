@@ -18,7 +18,7 @@ import gnu.trove.THashSet;
 
 import java.util.Set;
 
-public class LibraryStyleInfoCollector implements Consumer<SwfLibrary> {
+public class LibraryStyleInfoCollector implements Consumer<Library> {
   private final Project project;
   private final Module module;
 
@@ -76,7 +76,7 @@ public class LibraryStyleInfoCollector implements Consumer<SwfLibrary> {
   }
 
   @Override
-  public void consume(SwfLibrary library) {
+  public void consume(Library library) {
     try {
       library.inheritingStyles = collectInherited(library.getFile());
     }

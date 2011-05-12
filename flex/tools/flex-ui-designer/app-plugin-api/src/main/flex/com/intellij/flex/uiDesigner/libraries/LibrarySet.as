@@ -15,7 +15,7 @@ public final class LibrarySet {
    */
   public var applicationDomain:ApplicationDomain;
 
-  private static const libraries:Vector.<SwfLibrary> = new Vector.<SwfLibrary>(16);
+  private static const libraries:Vector.<Library> = new Vector.<Library>(16);
 
   public function LibrarySet(id:String, parent:LibrarySet) {
     _id = id;
@@ -49,12 +49,12 @@ public final class LibrarySet {
     for (var i:int = 0; i < n; i++) {
       const flags:int = input.readByte();
       var libraryId:int = input.readUnsignedShort();
-      var library:SwfLibrary;
+      var library:Library;
       if ((flags & 2) != 0) {
         library = libraries[libraryId];
       }
       else {
-        library = new SwfLibrary();
+        library = new Library();
         if (libraryId >= libraries.length) {
           libraries.length = Math.max(libraries.length, libraryId) + 8;
         }

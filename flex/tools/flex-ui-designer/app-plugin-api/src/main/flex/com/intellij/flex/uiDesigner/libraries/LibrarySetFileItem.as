@@ -5,9 +5,9 @@ import com.intellij.flex.uiDesigner.css.Stylesheet;
 import flash.utils.Dictionary;
 
 public class LibrarySetFileItem extends AbstractLibrarySetItem implements LibrarySetItem {
-  private var library:SwfLibrary;
+  private var library:Library;
 
-  public function LibrarySetFileItem(library:SwfLibrary, parents:Vector.<LibrarySetItem>, filtered:Boolean) {
+  public function LibrarySetFileItem(library:Library, parents:Vector.<LibrarySetItem>, filtered:Boolean) {
     super(parents);
     this.library = library;
     _filtered = filtered;

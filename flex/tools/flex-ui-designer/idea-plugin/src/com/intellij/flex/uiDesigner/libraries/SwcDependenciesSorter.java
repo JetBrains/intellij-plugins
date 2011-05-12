@@ -81,14 +81,14 @@ public class SwcDependenciesSorter {
     return abc.lastModified();
   }
 
-  public void sort(final List<SwfLibrary> libraries, final String postfix, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
+  public void sort(final List<Library> libraries, final String postfix, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
     useIndexForFindDefinitions = !isFromSdk;
 
     List<LibrarySetItem> unsortedItems = new ArrayList<LibrarySetItem>(libraries.size());
     definitionMap = new THashMap<CharSequence, Definition>(1024);
 
     final CatalogXmlBuilder catalogXmlBuilder = new CatalogXmlBuilder(definitionMap);
-    for (SwfLibrary library : libraries) {
+    for (Library library : libraries) {
       LibrarySetItem filteredLibrary = new LibrarySetItem(library);
       catalogXmlBuilder.setLibrary(filteredLibrary);
       new XmlBuilderDriver(VfsUtil.loadText(library.getCatalogFile())).build(catalogXmlBuilder);
@@ -215,11 +215,11 @@ public class SwcDependenciesSorter {
     }
   }
 
-  private File createSwfOutFile(SwfLibrary library) {
+  private File createSwfOutFile(Library library) {
     return new File(rootPath, library.getPath() + ".swf");
   }
 
-  private File createSwfOutFile(SwfLibrary library, String postfix) {
+  private File createSwfOutFile(Library library, String postfix) {
     return new File(rootPath, library.getPath() + "_" + postfix + ".swf");
   }
 
@@ -233,7 +233,7 @@ public class SwcDependenciesSorter {
     writer.flush();
   }
 
-  private void injectFrameworkSwc(String flexSdkVersion, LibrarySetItem library, List<SwfLibrary> libraries) throws IOException {
+  private void injectFrameworkSwc(String flexSdkVersion, LibrarySetItem library, List<Library> libraries) throws IOException {
     VirtualFile swfFile = library.library.getSwfFile();
     File modifiedSwf = createSwfOutFile(library.library);
     final long timeStamp = swfFile.getTimeStamp();
@@ -265,7 +265,7 @@ public class SwcDependenciesSorter {
       definitions.add("mx.styles:StyleManagerImpl");
 
       RequiredAssetsInfo requiredAssetsInfo = new RequiredAssetsInfo();
-      for (SwfLibrary originalLibrary : libraries) {
+      for (Library originalLibrary : libraries) {
         if (originalLibrary.requiredAssetsInfo != null) {
           requiredAssetsInfo.append(originalLibrary.requiredAssetsInfo);
         }

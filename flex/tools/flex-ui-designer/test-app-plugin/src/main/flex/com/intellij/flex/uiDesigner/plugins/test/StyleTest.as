@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.plugins.test {
 import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
-import com.intellij.flex.uiDesigner.libraries.SwfLibrary;
+import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.css.CssClassCondition;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssPseudoCondition;
@@ -33,10 +33,10 @@ public class StyleTest extends BaseTestCase {
     var librarySets:Vector.<LibrarySet> = documentManager.document.module.librarySets;
     assertThat(librarySets, [{libraries: arrayWithSize(11)}]);
     assertThat(librarySets, arrayWithSize(1));
-    var library:SwfLibrary;
+    var library:Library;
     for each (var l:LibrarySetItem in librarySets[0].items) {
-      if (l is SwfLibrary && l.path.indexOf("spark.") != -1) {
-        library = SwfLibrary(l);
+      if (l is Library && l.path.indexOf("spark.") != -1) {
+        library = Library(l);
         break;
       }
     }

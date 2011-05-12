@@ -13,13 +13,13 @@ public class LibrarySetItem extends TLinkableAdaptor {
   public boolean filtered;
 
   public int unresolvedDefinitionPolicy;
-  public final SwfLibrary library;
+  public final Library library;
 
   public final Set<CharSequence> unresolvedDefinitions = new THashSet<CharSequence>(AbcFilter.HASHING_STRATEGY);
   public final Set<LibrarySetItem> successors = new THashSet<LibrarySetItem>();
   public final THashSet<LibrarySetItem> parents = new THashSet<LibrarySetItem>();
 
-  public LibrarySetItem(SwfLibrary library) {
+  public LibrarySetItem(Library library) {
     this.library = library;
   }
 

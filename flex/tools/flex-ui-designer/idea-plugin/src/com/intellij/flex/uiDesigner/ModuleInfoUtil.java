@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
-import com.intellij.flex.uiDesigner.libraries.SwfLibrary;
+import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.mxml.LocalStyleWriter;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -47,7 +47,7 @@ public class ModuleInfoUtil {
                                                           VirtualFile defaultsCss = null;
                                                           for (VirtualFile sourceRoot : ModuleRootManager.getInstance(
                                                             moduleInfo.getModule()).getSourceRoots(false)) {
-                                                            if ((defaultsCss = sourceRoot.findChild(SwfLibrary.DEFAULTS_CSS)) !=
+                                                            if ((defaultsCss = sourceRoot.findChild(Library.DEFAULTS_CSS)) !=
                                                                 null) {
                                                               break;
                                                             }
