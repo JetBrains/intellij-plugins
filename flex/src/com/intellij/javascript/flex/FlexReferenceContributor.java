@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinIntention;
+import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexMobileViewIntention;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
@@ -407,25 +408,18 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       public void registerQuickfix(final HighlightInfo info, final PsiReference reference) {
         final PsiElement element = reference.getElement();
 
-        final String classFqn;
-        final boolean isSkin;
+        final String classFqn = getTrimmedValueAndRange((XmlElement)element).first;
+        final String tagOrAttrName = element instanceof XmlAttributeValue
+                                     ? ((XmlAttribute)element.getParent()).getName()
+                                     : ((XmlTag)element).getLocalName();
 
-        if (element instanceof XmlAttributeValue) {
-          classFqn = getTrimmedValueAndRange((XmlAttributeValue)element).first;
-          isSkin = SKIN_CLASS_ATTR_NAME.equals(((XmlAttribute)element.getParent()).getName());
-        }
-        else if (element instanceof XmlTag) {
-          classFqn = ((XmlTag)element).getValue().getTrimmedText();
-          isSkin = SKIN_CLASS_ATTR_NAME.equals(((XmlTag)element).getLocalName());
-        }
-        else {
-          assert false : element;
-          classFqn = "";
-          isSkin = false;
-        }
 
         final CreateClassIntentionWithCallback intention =
-          isSkin ? new CreateFlexSkinIntention(classFqn, element) : new CreateClassOrInterfaceAction(classFqn, null, element);
+          SKIN_CLASS_ATTR_NAME.equals(tagOrAttrName)
+          ? new CreateFlexSkinIntention(classFqn, element)
+          : "firstView".equals(tagOrAttrName)
+            ? new CreateFlexMobileViewIntention(classFqn, element)
+            : new CreateClassOrInterfaceAction(classFqn, null, element);
 
         intention.setCreatedClassFqnConsumer(new Consumer<String>() {
           @Override
@@ -435,7 +429,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
             if (element instanceof XmlAttributeValue) {
               ((XmlAttribute)element.getParent()).setValue(fqn);
             }
-            else if (element instanceof XmlTag) {
+            else {
               ((XmlTag)element).getValue().setText(fqn);
             }
           }

@@ -12,7 +12,6 @@ import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
@@ -81,25 +80,20 @@ public class CreateFlexSkinDialog extends DialogWrapper {
     myHostComponentCombo.updateRecents();
     myPackageCombo.updateRecents();
 
-    final Pair<PsiDirectory, GlobalSearchScope> baseDirAndScope = getPackageScope();
-    myTargetDirectory = JSRefactoringUtil.chooseOrCreateDirectoryForClass(myModule.getProject(), myModule,
-                                                                          baseDirAndScope.second, packageName, null, baseDirAndScope.first,
-                                                                          ThreeState.UNSURE);
+    myTargetDirectory = JSRefactoringUtil.chooseOrCreateDirectoryForClass(myModule.getProject(), myModule, getPackageScope(), packageName,
+                                                                          null, myContextFile.getParent(), ThreeState.UNSURE);
     if (myTargetDirectory != null) {
       super.doOKAction();
     }
   }
 
-  private Pair<PsiDirectory, GlobalSearchScope> getPackageScope() {
-    final PsiDirectory baseDir = myContextFile.getParent();
-    GlobalSearchScope scope =
-      PlatformPackageUtil.adjustScope(baseDir, GlobalSearchScope.moduleWithDependenciesScope(myModule), false, true);
-    return Pair.create(baseDir, scope);
+  private GlobalSearchScope getPackageScope() {
+    return PlatformPackageUtil.adjustScope(myContextFile.getParent(), GlobalSearchScope.moduleWithDependenciesScope(myModule), false, true);
   }
 
   private void createUIComponents() {
     myPackageCombo = JSReferenceEditor.forPackageName(myPackageNameInitial, myModule.getProject(), DESTINATION_PACKAGE_RECENT_KEY,
-                                                      getPackageScope().second, RefactoringBundle.message("choose.destination.package"));
+                                                      getPackageScope(), RefactoringBundle.message("choose.destination.package"));
     myHostComponentCombo = createHostComponentCombo(myHostComponentInitial, myModule);
   }
 
