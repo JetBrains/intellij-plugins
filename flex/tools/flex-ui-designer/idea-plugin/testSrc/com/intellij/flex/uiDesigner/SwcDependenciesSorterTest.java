@@ -1,9 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.libraries.FilteredLibrary;
-import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
-import com.intellij.flex.uiDesigner.libraries.OriginalLibrary;
+import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
@@ -58,16 +56,14 @@ public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
     super.assertAfterInitLibrarySets();
 
     if (getName().equals("testDeleteIfAllDefitionsHaveUnresolvedDependencies")) {
-      for (Library library : client.getRegisteredProjects().getInfo(myProject).getSdkLibrarySet().getLibraries()) {
-        if (library instanceof OriginalLibrary) {
-          assertFalse(((OriginalLibrary)library).getPath().contains("spark_dmv"));
-        }
+      for (LibrarySetItem item : myLibraries()) {
+        assertFalse(item.library.getPath().contains("spark_dmv"));
       }
     }
   }
 
-  private List<Library> myLibraries() {
-    return client.getRegisteredProjects().getInfo(myProject).getSdkLibrarySet().getLibraries();
+  private List<LibrarySetItem> myLibraries() {
+    return client.getRegisteredProjects().getInfo(myProject).getSdkLibrarySet().getItems();
   }
 
   public void testDeleteIfAllDefitionsHaveUnresolvedDependencies() throws Exception {
@@ -88,17 +84,9 @@ public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
   protected void tearDown() throws Exception {
     if (appDir != null && appDir.exists()) {
       LibrarySet sdkLibrarySet = client.getRegisteredProjects().getInfo(myProject).getSdkLibrarySet();
-      for (Library library : myLibraries()) {
-        if (library instanceof OriginalLibrary) {
-          OriginalLibrary originalLibrary = (OriginalLibrary)library;
-          //noinspection ResultOfMethodCallIgnored
-          new File(appDir, originalLibrary.getPath() + ".swf").delete();
-        }
-        else if (library instanceof FilteredLibrary) {
-          OriginalLibrary originalLibrary = ((FilteredLibrary)library).originalLibrary;
-          //noinspection ResultOfMethodCallIgnored
-          new File(appDir, originalLibrary.getPath() +  "_" + sdkLibrarySet.getId()).delete();
-        }
+      for (LibrarySetItem item : myLibraries()) {
+        //noinspection ResultOfMethodCallIgnored
+        new File(appDir, item.library.getPath() + (item.filtered ? "_" + sdkLibrarySet.getId() + ".swf" : ".swf")).delete();
       }
     }
 

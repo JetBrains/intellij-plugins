@@ -22,16 +22,16 @@ class CatalogXmlBuilder implements XmlBuilder {
   private final ArrayList<CharSequence> dependencies = new ArrayList<CharSequence>();
   private CharSequence mod;
 
-  private FilteredLibrary library;
+  private LibrarySetItem library;
   private final Map<CharSequence, Definition> definitionMap;
 
   public CatalogXmlBuilder(final Map<CharSequence, Definition> definitionMap) {
     this.definitionMap = definitionMap;
   }
 
-  public void setLibrary(FilteredLibrary library) {
-    this.library = library;
-    collectResourceBundles = library.originalLibrary.resourceBundles.isEmpty();
+  public void setLibrary(LibrarySetItem item) {
+    this.library = item;
+    collectResourceBundles = item.library.resourceBundles.isEmpty();
   }
 
   @Override
@@ -120,10 +120,10 @@ class CatalogXmlBuilder implements XmlBuilder {
         final int vlength = value.length();
         final int secondSlashPosition = StringUtil.lastIndexOf(value, '/', LOCALE_PREFIX_LENGTH + 2, vlength - PROPERTIES_EXTENSION_LENGTH - 1);
         final String locale = value.subSequence(LOCALE_PREFIX_LENGTH, secondSlashPosition).toString();
-        THashSet<String> bundles = library.originalLibrary.resourceBundles.get(locale);
+        THashSet<String> bundles = library.library.resourceBundles.get(locale);
         if (bundles == null) {
           bundles = new THashSet<String>();
-          library.originalLibrary.resourceBundles.put(locale, bundles);
+          library.library.resourceBundles.put(locale, bundles);
         }
         bundles.add(value.subSequence(secondSlashPosition + 1, vlength - PROPERTIES_EXTENSION_LENGTH).toString());
       }

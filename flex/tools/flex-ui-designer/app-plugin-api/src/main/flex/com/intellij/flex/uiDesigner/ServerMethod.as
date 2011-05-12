@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner {
 public final class ServerMethod {
-  public static const goToClass:int = 0;
+  public static const goToClass:int = 10;
   public static const openFile:int = 1;
   public static const resolveExternalInlineStyleDeclarationSource:int = 2;
   

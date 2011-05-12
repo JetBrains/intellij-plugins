@@ -17,7 +17,6 @@ import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.events.TimerEvent;
 import flash.geom.Point;
-import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.utils.Dictionary;
 import flash.utils.IDataInput;
@@ -144,13 +143,10 @@ public class TestSocketDataHandler implements SocketDataHandler {
   private function getStageOffset(projectManager:ProjectManager):void {
     var nativeWindow:NativeWindow = projectManager.project.window.nativeWindow;
     var point:Point = nativeWindow.globalToScreen(new Point(0, 0));
+    _socket.writeByte(TestServerMethod.custom);
+
     _socket.writeShort(point.x);
     _socket.writeShort(point.y);
-
-    var bounds:Rectangle = nativeWindow.bounds;
-    bounds.width = 1280;
-    bounds.height = 770;
-    nativeWindow.bounds = bounds;
   }
   
   private function success():void {
@@ -190,4 +186,5 @@ class TestAnnotation {
 final class TestServerMethod {
   public static const success:int = 100;
   public static const fail:int = 101;
+  public static const custom:int = 102;
 }

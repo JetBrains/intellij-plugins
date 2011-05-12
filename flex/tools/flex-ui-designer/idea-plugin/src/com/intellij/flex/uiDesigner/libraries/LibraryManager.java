@@ -21,16 +21,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class LibraryManager extends EntityListManager<VirtualFile, OriginalLibrary> {
+public class LibraryManager extends EntityListManager<VirtualFile, SwfLibrary> {
   public static LibraryManager getInstance() {
     return ServiceManager.getService(LibraryManager.class);
   }
 
-  public boolean isRegistered(@NotNull OriginalLibrary library) {
+  public boolean isRegistered(@NotNull SwfLibrary library) {
     return list.contains(library);
   }
 
-  public int add(@NotNull OriginalLibrary library) {
+  public int add(@NotNull SwfLibrary library) {
     return list.add(library);
   }
 
@@ -140,27 +140,28 @@ public class LibraryManager extends EntityListManager<VirtualFile, OriginalLibra
   }
 
   @NotNull
-  private LibrarySet createLibrarySet(String id, @Nullable LibrarySet parent, List<OriginalLibrary> libraries, String flexSdkVersion,
+  private LibrarySet createLibrarySet(String id, @Nullable LibrarySet parent, List<SwfLibrary> libraries, String flexSdkVersion,
                                       SwcDependenciesSorter swcDependenciesSorter, final boolean isFromSdk)
     throws InitException {
     try {
-      return new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE,
-                            swcDependenciesSorter.sort(libraries, id, flexSdkVersion, isFromSdk));
+      swcDependenciesSorter.sort(libraries, id, flexSdkVersion, isFromSdk);
+      return new LibrarySet(id, parent, ApplicationDomainCreationPolicy.ONE, swcDependenciesSorter.getItems(),
+        swcDependenciesSorter.getResourceBundleOnlyitems(), swcDependenciesSorter.getEmbedItems());
     }
     catch (Throwable e) {
       throw new InitException(e, "error.sort.libraries");
     }
   }
 
-  public OriginalLibrary createOriginalLibrary(@NotNull final VirtualFile virtualFile, @NotNull final VirtualFile jarFile,
-                                               @NotNull final Consumer<OriginalLibrary> initializer) {
+  public SwfLibrary createOriginalLibrary(@NotNull final VirtualFile virtualFile, @NotNull final VirtualFile jarFile,
+                                               @NotNull final Consumer<SwfLibrary> initializer) {
     if (list.contains(jarFile)) {
       return list.getInfo(jarFile);
     }
     else {
       final String path = virtualFile.getPath();
-      OriginalLibrary library =
-        new OriginalLibrary(virtualFile.getNameWithoutExtension() + "." + Integer.toHexString(path.hashCode()), jarFile);
+      SwfLibrary library =
+        new SwfLibrary(virtualFile.getNameWithoutExtension() + "." + Integer.toHexString(path.hashCode()), jarFile);
       initializer.consume(library);
       return library;
     }
@@ -169,29 +170,37 @@ public class LibraryManager extends EntityListManager<VirtualFile, OriginalLibra
   @Nullable
   public PropertiesFile getResourceBundleFile(String locale, String bundleName, ProjectInfo projectInfo) {
     LibrarySet librarySet = projectInfo.getLibrarySet();
+    PropertiesFile propertiesFile;
     do {
-      for (Library library : librarySet.getLibraries()) {
-        if (library instanceof EmbedLibrary) {
-          continue;
+      for (LibrarySetItem item : librarySet.getItems()) {
+        SwfLibrary library = item.library;
+        if (library.hasResourceBundles() && (propertiesFile = getResourceBundleFile(locale, bundleName, library, projectInfo)) != null) {
+          return propertiesFile;
         }
+      }
 
-        OriginalLibrary originalLibrary =
-          library instanceof OriginalLibrary ? (OriginalLibrary)library : ((FilteredLibrary)library).originalLibrary;
-        if (originalLibrary.hasResourceBundles()) {
-          final THashSet<String> bundles = originalLibrary.resourceBundles.get(locale);
-          if (bundles.contains(bundleName)) {
-            //noinspection ConstantConditions
-            VirtualFile virtualFile = originalLibrary.getFile().findChild("locale").findChild(locale)
-              .findChild(bundleName + CatalogXmlBuilder.PROPERTIES_EXTENSION);
-            //noinspection ConstantConditions
-            return (PropertiesFile)PsiDocumentManager.getInstance(projectInfo.getElement())
-              .getPsiFile(FileDocumentManager.getInstance().getDocument(virtualFile));
-          }
+      for (LibrarySetItem item : librarySet.getResourceBundleOnlyitems()) {
+        if ((propertiesFile = getResourceBundleFile(locale, bundleName, item.library, projectInfo)) != null) {
+          return propertiesFile;
         }
       }
     }
     while ((librarySet = librarySet.getParent()) != null);
 
     return null;
+  }
+
+  private PropertiesFile getResourceBundleFile(String locale, String bundleName, SwfLibrary library, ProjectInfo projectInfo) {
+    final THashSet<String> bundles = library.resourceBundles.get(locale);
+    if (!bundles.contains(bundleName)) {
+      return null;
+    }
+    
+    //noinspection ConstantConditions
+    VirtualFile virtualFile = library.getFile().findChild("locale").findChild(locale).findChild(
+      bundleName + CatalogXmlBuilder.PROPERTIES_EXTENSION);
+    //noinspection ConstantConditions
+    return (PropertiesFile)PsiDocumentManager.getInstance(projectInfo.getElement()).getPsiFile(
+      FileDocumentManager.getInstance().getDocument(virtualFile));
   }
 }

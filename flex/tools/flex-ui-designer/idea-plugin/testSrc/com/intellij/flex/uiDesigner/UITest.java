@@ -10,17 +10,21 @@ import com.intellij.psi.xml.XmlFile;
 import org.flyti.roboflest.Roboflest;
 import org.flyti.roboflest.Roboflest.Assert;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
 import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
+import static com.intellij.flex.uiDesigner.TestSocketInputHandler.MessageHandler;
 import static org.hamcrest.Matchers.*;
 
 @Flex(version="4.5")
 public class UITest extends MxmlWriterTestBase {
   private static final int TEST_CLASS_ID = 5;
 
-  private final Roboflest roboflest = new Roboflest();
+  private static Roboflest roboflest;
+
+  private SocketInputHandlerImpl.Reader reader;
   
   @Override
   protected String getBasePath() {
@@ -34,11 +38,23 @@ public class UITest extends MxmlWriterTestBase {
     sdkModificator.addRoot(LocalFileSystem.getInstance().findFileByPath(flexSdkRootPath + "/src"), OrderRootType.SOURCES);
   }
 
-  private void init(XmlFile xmlFile) throws IOException {
+  private void init(XmlFile xmlFile) throws IOException, AWTException {
     client.openDocument(myModule, xmlFile);
-    client.test("getStageOffset", TEST_CLASS_ID);
 
-    //roboflest.setStageOffset(reader);
+    if (roboflest == null) {
+      roboflest = new Roboflest();
+      reader = socketInputHandler.getReader();
+      client.test("getStageOffset", TEST_CLASS_ID);
+      socketInputHandler.process(new TestSocketInputHandler.CustomMessageHandler() {
+        @Override
+        public void process() throws IOException {
+          roboflest.setStageOffset(reader);
+        }
+      });
+    }
+    else {
+      client.flush();
+    }
   }
 
   private void assertClient() throws IOException {
@@ -47,68 +63,58 @@ public class UITest extends MxmlWriterTestBase {
 
   private void assertClient(String methodName) throws IOException {
     client.test(methodName, TEST_CLASS_ID);
-    assertResult(methodName);
+    socketInputHandler.process();
   }
 
   public void testStyleNavigationToExternal() throws Exception {
-    testFile(new MyTester() {
-      @Override
-      public void test(final VirtualFile file) throws Exception {
-        interact("styleNavigation", new Assert() {
-          @Override
-          public void test() throws Exception {
-            //assertThat(reader.read(), equalTo(ServerMethod.resolveExternalInlineStyleDeclarationSource));
-            //assertThat(client.getModule(reader.readUnsignedShort()), equalTo(myModule));
+    testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.resolveExternalInlineStyleDeclarationSource) {
+        @Override
+        public void process() throws IOException {
+          assertThat(client.getModule(reader.readUnsignedShort()), equalTo(myModule));
 
-            //XmlAttribute attribute = (XmlAttribute) new ResolveExternalInlineStyleSourceAction(reader, myModule).find();
-            //assertThat(attribute.getDisplayValue(), "spark.skins.spark.ButtonBarLastButtonSkin");
-            //assertThat(attribute.getTextOffset(), 2186);
-          }
-        });
-      }
-    }, "Form.mxml");
+          XmlAttribute attribute = (XmlAttribute)new ResolveExternalInlineStyleSourceAction(reader, myModule).find();
+          assertThat(attribute.getDisplayValue(), "spark.skins.spark.ButtonBarLastButtonSkin");
+          assertThat(attribute.getTextOffset(), 2186);
+        }
+      }) {
+      }, "Form.mxml");
   }
 
   public void testStyleNavigationToSkinClass() throws Exception {
-    testFile(new MyTester() {
-      @Override
-      public void test(final VirtualFile file) throws Exception {
-        interact("styleNavigation", new Assert() {
-          @Override
-          public void test() throws Exception {
-            //assertThat(reader.read(), equalTo(ServerMethod.openFile));
-            //assertMyProject();
-            //assertThat(reader.readUTF(), file.getUrl());
-            //assertThat(reader.readInt(), 96);
-          }
-        });
-      }
-    }, "ComponentWithCustomSkin.mxml", "CustomSkin.mxml");
+    testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.openFile) {
+        @Override
+        public void process() throws IOException {
+          assertMyProject();
+          assertThat(reader.readUTF(), file.getUrl());
+          assertThat(reader.readInt(), 96);
+        }
+      }) {
+      }, "ComponentWithCustomSkin.mxml", "CustomSkin.mxml");
   }
 
   private void assertMyProject() throws IOException {
-    //assertThat(client.getProject(reader.readUnsignedShort()), equalTo(myProject));
+    assertThat(client.getProject(socketInputHandler.getReader().readUnsignedShort()), equalTo(myProject));
   }
 
-  public void testCloseDocument() throws Exception {
-    testFile(new MyTester() {
-      @Override
-      public void test(final VirtualFile file) throws Exception {
-        interact("closeDocument", new Assert() {
-          @Override
-          public void test() throws Exception {
-            //assertThat(reader.read(), ServerMethod.unregisterDocumentFactories);
-            //assertMyProject();
-            //assertThat(reader.readIntArray(), 0);
-
-            assertNotAvailable();
-
-            assertClient();
-          }
-        });
-      }
-    }, "Embed.mxml");
-  }
+  //public void testCloseDocument() throws Exception {
+  //  testFile(new MyTester() {
+  //    @Override
+  //    public void test(final VirtualFile file) throws Exception {
+  //      interact("closeDocument", new Assert() {
+  //        @Override
+  //        public void test() throws Exception {
+  //          assertThat(reader.read(), ServerMethod.unregisterDocumentFactories);
+  //          assertMyProject();
+  //          assertThat(reader.readIntArray(), 0);
+  //
+  //          assertNotAvailable();
+  //
+  //          assertClient();
+  //        }
+  //      });
+  //    }
+  //  }, "Embed.mxml");
+  //}
 
   @SuppressWarnings({"UnusedDeclaration"})
   private void interact(final Assert... asserts) throws Exception {
@@ -120,6 +126,14 @@ public class UITest extends MxmlWriterTestBase {
   }
 
   private abstract class MyTester implements Tester {
+    private final String scriptName;
+    private final UIMessageHandler messageHandler;
+
+    public MyTester(String scriptName, UIMessageHandler messageHandler) {
+      this.scriptName = scriptName;
+      this.messageHandler = messageHandler;
+    }
+
     @Override
     public final void test(VirtualFile file, XmlFile xmlFile, VirtualFile originalFile) throws Exception {
       init(xmlFile);
@@ -127,11 +141,33 @@ public class UITest extends MxmlWriterTestBase {
       assertNotAvailable();
     }
 
-    protected abstract void test(final VirtualFile file) throws Exception;
+    private void test(final VirtualFile file) throws Exception {
+      interact(scriptName, new Assert() {
+        @Override
+        public void test() throws Exception {
+          messageHandler.file = file;
+          socketInputHandler.process(messageHandler);
+        }
+      });
+    }
 
     protected void assertNotAvailable() throws InterruptedException, IOException {
       Thread.sleep(50); // wait data
-      //assertThat(reader.available(), 0);
+      assertThat(reader.available(), 0);
+    }
+  }
+
+  private abstract static class UIMessageHandler implements MessageHandler {
+    protected VirtualFile file;
+    public final int command;
+
+    public UIMessageHandler(int command) {
+      this.command = command;
+    }
+
+    @Override
+    public final int getExpectedCommand() {
+      return command;
     }
   }
 }

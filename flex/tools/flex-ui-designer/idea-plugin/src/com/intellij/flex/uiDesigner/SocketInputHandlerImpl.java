@@ -32,26 +32,22 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     reader = new Reader(new BufferedInputStream(inputStream));
   }
 
+  public void init(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
+    createReader(inputStream);
+    this.appDir = appDir;
+  }
+
   @Override
   public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
-    this.appDir = appDir;
+    init(inputStream, appDir);
+    process();
+  }
 
-    createReader(inputStream);
+  public void process() throws IOException {
     while (true) {
       final int command = reader.read();
-      if (command == -1) {
+      if (command == -1 || !safeProcessCommand(command)) {
         break;
-      }
-      else {
-        try {
-          processCommand(command);
-        }
-        finally {
-          if (isFileBased(command)) {
-            //noinspection ResultOfMethodCallIgnored
-            resultReadyFile.createNewFile();
-          }
-        }
       }
     }
   }
@@ -60,7 +56,19 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     return command == ServerMethod.getResourceBundle || command == ServerMethod.getBitmapData;
   }
 
-  protected void processCommand(int command) throws IOException {
+  protected boolean safeProcessCommand(int command) throws IOException {
+    try {
+      return processCommand(command);
+    }
+    finally {
+      if (isFileBased(command)) {
+        //noinspection ResultOfMethodCallIgnored
+        resultReadyFile.createNewFile();
+      }
+    }
+  }
+
+  protected boolean processCommand(int command) throws IOException {
     switch (command) {
       case ServerMethod.goToClass:
         goToClass();
@@ -109,6 +117,8 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
       default:
         throw new IllegalArgumentException("unknown client command: " + command);
     }
+
+    return true;
   }
 
   private void openFile() throws IOException {

@@ -15,7 +15,7 @@ public final class LibrarySet {
    */
   public var applicationDomain:ApplicationDomain;
 
-  private static const originalLibraries:Vector.<OriginalLibrary> = new Vector.<OriginalLibrary>();
+  private static const libraries:Vector.<SwfLibrary> = new Vector.<SwfLibrary>(16);
 
   public function LibrarySet(id:String, parent:LibrarySet) {
     _id = id;
@@ -37,70 +37,57 @@ public final class LibrarySet {
     return _applicationDomainCreationPolicy;
   }
 
-  private var _libraries:Vector.<Library>;
-  public function get libraries():Vector.<Library> {
-    return _libraries;
+  private var _items:Vector.<LibrarySetItem>;
+  public function get items():Vector.<LibrarySetItem> {
+    return _items;
   }
 
   public function readExternal(input:IDataInput):void {
     _applicationDomainCreationPolicy = ApplicationDomainCreationPolicy.enumSet[input.readByte()];
-    var n:int = input.readUnsignedShort();
-    _libraries = new Vector.<Library>(n, true);
-    var originalLibrary:OriginalLibrary;
-    var filteredLibrary:FilteredLibrary;
+    var n:int = input.readUnsignedByte();
+    _items = new Vector.<LibrarySetItem>(n, true);
     for (var i:int = 0; i < n; i++) {
-      const marker:int = input.readByte();
-      if (marker == 4) {
-        _libraries[i] = new EmbedLibrary(_libraries[input.readUnsignedShort()], AmfUtil.readUtf(input));
+      const flags:int = input.readByte();
+      var libraryId:int = input.readUnsignedShort();
+      var library:SwfLibrary;
+      if ((flags & 2) != 0) {
+        library = libraries[libraryId];
       }
       else {
-        var originalLibraryId:int = input.readUnsignedShort();
-        if (marker == 1) {
-          _libraries[i] = originalLibraries[originalLibraryId];
+        library = new SwfLibrary();
+        if (libraryId >= libraries.length) {
+          libraries.length = Math.max(libraries.length, libraryId) + 8;
         }
-        else {
-          var parents:Vector.<Library> = readParents(input);
-          if (marker == 0) {
-            originalLibrary = new OriginalLibrary(parents);
-            _libraries[i] = originalLibrary;
-            originalLibraries[originalLibraryId] = originalLibrary;
-            originalLibrary.readExternal(input);
-          }
-          else if (marker < 4) {
-            filteredLibrary = new FilteredLibrary(parents);
-            _libraries[i] = filteredLibrary;
-            if (marker == 2) {
-              filteredLibrary.origin = originalLibrary = new OriginalLibrary(null);
-              originalLibraries[originalLibraryId] = originalLibrary;
-              originalLibrary.readExternal(input);
-            }
-            else {
-              filteredLibrary.origin = originalLibraries[originalLibraryId];
-            }
-          }
-          else {
-            throw new ArgumentError("Unknown marker " + marker);
-          }
+        libraries[libraryId] = library;
+        library.readExternal(input);
+      }
 
-          if (parents != null) {
-            for each (var parentLibrary:Library in parents) {
-              parentLibrary.addSuccessor(marker == 0 ? originalLibrary : filteredLibrary);
-            }
-          }
+      var parents:Vector.<LibrarySetItem> = readParents(input);
+      var item:LibrarySetFileItem = new LibrarySetFileItem(library, parents, (flags & 1) != 0);
+      if (parents != null) {
+        for each (var parent:LibrarySetItem in parents) {
+          parent.addSuccessor(item);
         }
       }
+
+      _items[i] = item;
+    }
+
+    n = input.readUnsignedByte();
+    while (n-- > 0) {
+      new LibrarySetEmbedItem(_items[input.readUnsignedByte()], AmfUtil.readUtf(input));
     }
   }
 
-  private function readParents(input:IDataInput):Vector.<Library> {
+  private function readParents(input:IDataInput):Vector.<LibrarySetItem> {
     var n:int = input.readUnsignedByte();
     if (n == 0) {
       return null;
     }
 
-    var parents:Vector.<Library> = new Vector.<Library>(n, true);
+    var parents:Vector.<LibrarySetItem> = new Vector.<LibrarySetItem>(n, true);
     for (var i:int = 0; i < n; i++) {
-      parents[i] = _libraries[input.readUnsignedShort()];
+      parents[i] = _items[input.readUnsignedByte()];
     }
     return parents;
   }

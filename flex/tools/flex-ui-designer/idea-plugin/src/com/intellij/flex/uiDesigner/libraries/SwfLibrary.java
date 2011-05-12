@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
-public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Library {
+public class SwfLibrary extends InfoList.Info<VirtualFile> implements Library {
   public static final String DEFAULTS_CSS = "defaults.css";
   private static final String CATALOG = "catalog.xml";
   private static final String SWF = "library.swf";
@@ -29,7 +29,7 @@ public class OriginalLibrary extends InfoList.Info<VirtualFile> implements Libra
   // en_US => {"layout", "components"}
   public final Map<String,THashSet<String>> resourceBundles = new THashMap<String,THashSet<String>>();
 
-  public OriginalLibrary(String relativePath, VirtualFile file) {
+  public SwfLibrary(String relativePath, VirtualFile file) {
     super(file);
 
     this.path = relativePath;

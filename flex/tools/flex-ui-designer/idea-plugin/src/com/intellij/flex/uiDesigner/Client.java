@@ -167,112 +167,60 @@ public class Client implements Closable {
     }
 
     out.write(librarySet.getApplicationDomainCreationPolicy());
-    final List<Library> libraries = librarySet.getLibraries();
-    out.writeShort(sizeOfOriginalLibrary(libraries));
+    final List<LibrarySetItem> items = librarySet.getItems();
+    out.write(items.size());
     final LibraryManager libraryManager = LibraryManager.getInstance();
-    for (Library library : libraries) {
-      final boolean unregisteredLibrary;
-      final OriginalLibrary originalLibrary;
-      if (!(library instanceof EmbedLibrary)) {
-        if (!library.hasDefinitions()) {
-          continue;
-        }
-
-        originalLibrary = library instanceof OriginalLibrary ? (OriginalLibrary)library : ((FilteredLibrary)library).originalLibrary;
-        unregisteredLibrary = !libraryManager.isRegistered(originalLibrary);
-        if (library instanceof OriginalLibrary) {
-          out.write(unregisteredLibrary ? 0 : 1);
-        }
-        else {
-          out.write(unregisteredLibrary ? 2 : 3);
-        }
+    for (LibrarySetItem item : items) {
+      final SwfLibrary library = item.library;
+      final boolean unregisteredLibrary = !libraryManager.isRegistered(library);
+      int flags = item.filtered ? 1 : 0;
+      if (unregisteredLibrary) {
+        flags |= 2;
       }
-      else {
-        final EmbedLibrary embedLibrary = (EmbedLibrary)library;
-        out.write(4);
-        out.writeShort(indexOfOriginalLibrary(libraries, embedLibrary.parent));
-        out.writeAmfUtf(embedLibrary.getPath());
-        continue;
-      }
+      out.write(flags);
 
       if (unregisteredLibrary) {
-        out.writeShort(libraryManager.add(originalLibrary));
-        writeParents(libraries, library);
-        out.writeAmfUtf(originalLibrary.getPath());
-        writeVirtualFile(originalLibrary.getFile(), out);
+        out.writeShort(libraryManager.add(library));
 
-        if (originalLibrary.inheritingStyles == null) {
+        out.writeAmfUtf(library.getPath());
+        writeVirtualFile(library.getFile(), out);
+
+        if (library.inheritingStyles == null) {
           out.writeShort(0);
         }
         else {
-          out.write(originalLibrary.inheritingStyles);
+          out.write(library.inheritingStyles);
         }
 
-        if (originalLibrary.defaultsStyle == null) {
+        if (library.defaultsStyle == null) {
           out.write(0);
         }
         else {
           out.write(1);
-          out.write(originalLibrary.defaultsStyle);
+          out.write(library.defaultsStyle);
         }
       }
       else {
-        out.writeShort(originalLibrary.getId());
-        if (library instanceof FilteredLibrary) {
-          writeParents(libraries, library);
-        }
+        out.writeShort(library.getId());
       }
+
+      writeParents(items, item);
+    }
+
+    out.write(librarySet.getEmbedItems().size());
+    for (LibrarySetEmbedItem item : librarySet.getEmbedItems()) {
+      out.write(items.indexOf(item.parent));
+      out.writeAmfUtf(item.path);
     }
 
     blockOut.end();
   }
 
-  private int sizeOfOriginalLibrary(List<Library> libraries) {
-    int size = 0;
-    for (Library library : libraries) {
-      if (library instanceof OriginalLibrary) {
-        final OriginalLibrary originalLibrary = (OriginalLibrary)library;
-        if (originalLibrary.hasDefinitions()) {
-          size++;
-        }
-      }
-      else {
-        size++;
-      }
-    }
-
-    return size;
-  }
-
-  // can't use standard List.indexOf, because server list contains resource libraries, but client doesn't
-  private int indexOfOriginalLibrary(List<Library> libraries, Library o) {
-    int index = 0;
-    for (Library library : libraries) {
-      if (!(library instanceof EmbedLibrary)) {
-        if (library.hasDefinitions()) {
-          if (o == library) {
-            return index;
-          }
-          index++;
-        }
-      }
-      else {
-        index++;
-      }
-    }
-
-    throw new IllegalArgumentException();
-  }
-
-  private void writeParents(List<Library> libraries, Library library) {
-    if (library.getParents().isEmpty()) {
-      out.write(0);
-    }
-    else {
-      out.write(library.getParents().size());
-      for (Library parent : library.getParents()) {
-        // can't use parent.getId(), because parents/successors related to filtered, but not to original id
-        out.writeShort(indexOfOriginalLibrary(libraries, parent));
+  private void writeParents(List<LibrarySetItem> items, LibrarySetItem item) {
+    out.write(item.parents.size());
+    if (!item.parents.isEmpty()) {
+      for (LibrarySetItem parent : item.parents) {
+        out.write(items.indexOf(parent));
       }
     }
   }

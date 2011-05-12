@@ -4,7 +4,7 @@ import com.intellij.flex.uiDesigner.css.Stylesheet;
 
 import flash.utils.Dictionary;
 
-public interface Library {
+public interface LibrarySetItem {
   function get path():String;
 
   function get inheritingStyles():Dictionary;
@@ -12,13 +12,15 @@ public interface Library {
 
   function get file():VirtualFile;
 
-  function get parents():Vector.<Library>;
+  function get parents():Vector.<LibrarySetItem>;
 
-  function get successors():Vector.<Library>;
+  function get successors():Vector.<LibrarySetItem>;
 
-  function addSuccessor(successor:Library):void;
+  function addSuccessor(successor:LibrarySetItem):void;
 
   function get loadState():int;
   function set loadState(value:int):void;
+
+  function get filtered():Boolean;
 }
 }

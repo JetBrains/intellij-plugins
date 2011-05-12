@@ -89,20 +89,7 @@ class TestDesignerApplicationManager {
 
     AppTestBase.changeServiceImplementation(SocketInputHandler.class, TestSocketInputHandler.class);
     socketInputHandler = (TestSocketInputHandler)ServiceManager.getService(SocketInputHandler.class);
-    ApplicationManager.getApplication().executeOnPooledThread(new Callable<Object>() {
-      @Override
-      public Void call() throws Exception {
-        try {
-          socketInputHandler.read(socket.getInputStream(), appDir);
-        }
-        catch (IOException e) {
-          if (!(e instanceof SocketException && socket.isClosed())) {
-            throw e;
-          }
-        }
-        return null;
-      }
-    });
+    socketInputHandler.init(socket.getInputStream(), appDir);
   }
 
   public void initLibrarySets(Module module, boolean requireLocalStyleHolder, String sdkName) throws IOException, InitException {

@@ -1,88 +1,88 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.util.concurrency.Semaphore;
-
 import java.io.IOException;
 
 class TestSocketInputHandler extends SocketInputHandlerImpl {
-  public final Semaphore semaphore = new Semaphore();
   private String expectedError;
-
-  private boolean waitingResult;
-  private String failedMessage;
+  private MessageHandler customMessageHandler;
 
   private static class TestServerMethod {
     private static final int success = 100;
     private static final int fail = 101;
+    private static final int custom = 102;
+  }
+
+  public Reader getReader() {
+    return reader;
   }
 
   public void setExpectedErrorMessage(String message) {
     expectedError = message;
   }
 
-  public void waitResult() {
-    semaphore.down();
-    waitingResult = true;
-    semaphore.waitFor();
-  }
-
-  public boolean isPassed() {
-    return failedMessage == null;
-  }
-
-  public String getAndClearFailedMessage() {
-    String s = failedMessage;
-    failedMessage = null;
-    return s;
+  public void process(MessageHandler customMessageHandler) throws IOException {
+    this.customMessageHandler = customMessageHandler;
+    process();
+    if (this.customMessageHandler != null) {
+      throw new AssertionError("customMessageHandler must be null");
+    }
   }
 
   @Override
-  protected void processCommand(int command) throws IOException {
+  protected boolean processCommand(int command) throws IOException {
     if (isFileBased(command)) {
-      super.processCommand(command);
+      return super.processCommand(command);
     }
-    else {
-      if (waitingResult) {
+
+    switch (command) {
+      case ServerMethod.showError:
+        final String errorMessage = reader.readUTF();
         if (expectedError == null) {
-          waitingResult = false;
+          throw new IOException(errorMessage);
         }
-      }
-      else if (command != ServerMethod.showError) {
-        throw new IllegalStateException("Unexpected server command " + command + ", result is not waiting");
-      }
-
-      switch (command) {
-        case ServerMethod.showError:
-          final String errorMessage = reader.readUTF();
-          if (expectedError == null) {
-            failedMessage = errorMessage;
+        else {
+          if (!errorMessage.startsWith(expectedError)) {
+            throw new IOException("Expected error message " + expectedError + ", but got " + errorMessage);
           }
-          else {
-            if (!errorMessage.startsWith(expectedError)) {
-              failedMessage = "Expected error message " + expectedError + ", but got " + errorMessage;
-            }
-            expectedError = null;
-          }
-          break;
+          expectedError = null;
+        }
+        break;
 
-        case TestServerMethod.fail:
-          failedMessage = reader.readUTF();
-          break;
+      case TestServerMethod.fail:
+        throw new IOException(reader.readUTF());
 
-        case TestServerMethod.success:
-          String message = reader.readUTF();
-          if (!message.equals("__passed__")) {
-            failedMessage = message;
-          }
-          break;
+      case TestServerMethod.success:
+        String message = reader.readUTF();
+        if (message.equals("__passed__")) {
+          return false;
+        }
+        else {
+          throw new IOException(message);
+        }
 
-        default:
+      default:
+        if (customMessageHandler != null && customMessageHandler.getExpectedCommand() == command) {
+          customMessageHandler.process();
+          customMessageHandler = null;
+          return false;
+        }
+        else {
           throw new IllegalStateException("Unexpected server command: " + command);
-      }
+        }
+    }
 
-      if (!waitingResult) {
-        semaphore.up();
-      }
+    return true;
+  }
+
+  public static interface MessageHandler {
+    void process() throws IOException;
+    int getExpectedCommand();
+  }
+
+  public abstract static class CustomMessageHandler implements MessageHandler {
+    @Override
+    public int getExpectedCommand() {
+      return TestServerMethod.custom;
     }
   }
 }

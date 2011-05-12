@@ -68,7 +68,7 @@ public class QueueLoader {
   }
 
   private const freeLoaders:Vector.<MyLoader> = new Vector.<MyLoader>();
-  private function createLoadder(library:Library):MyLoader {
+  private function createLoadder(library:LibrarySetItem):MyLoader {
     var loader:MyLoader;
     if (freeLoaders.length == 0) {
       loader = new MyLoader();
@@ -102,25 +102,23 @@ public class QueueLoader {
     loadedCount = 0;
     assert(_rootDomain != null);
     loaderContext.applicationDomain = new ApplicationDomain(librarySet.parent == null ? _rootDomain : librarySet.parent.applicationDomain);
-    for each (var library:Library in librarySet.libraries) {
-      // reset load state (original library shared between library sets)
-      library.loadState = LoadState.UNINITIALIZED;
-      if (library.parents == null) {
-        loadLibrary(library);
+    for each (var item:LibrarySetItem in librarySet.items) {
+      if (item.parents == null) {
+        loadLibrary(item);
       }
     }
   }
 
-  private function loadLibrary(library:Library):void {
-    library.loadState = LoadState.LOADING;
-    var loader:MyLoader = createLoadder(library);
+  private function loadLibrary(item:LibrarySetItem):void {
+    item.loadState = LoadState.LOADING;
+    var loader:MyLoader = createLoadder(item);
     // *** Adobe http://juick.com/develar/896344  http://juick.com/develar/896278
-    if (library is EmbedLibrary) {
+    if (item is LibrarySetEmbedItem) {
       //trace("load: @" + library.path);
-      loader.loadBytes(getFlexComplementSwfBytes(library.path), loaderContext);
+      loader.loadBytes(getFlexComplementSwfBytes(item.path), loaderContext);
     }
     else {
-      urlRequest.url = "app:/" + library.path + (library is OriginalLibrary ? ".swf" : "_" + librarySet.id + ".swf");
+      urlRequest.url = "app:/" + item.path + (item.filtered ? ".swf" : "_" + librarySet.id + ".swf");
       //trace("load: " + urlRequest.url);
       loader.load(urlRequest, loaderContext);
     }
@@ -143,13 +141,13 @@ public class QueueLoader {
 
   private function loadCompleteHandler(event:Event):void {
     loadedCount++;
-    if (loadedCount < librarySet.libraries.length) {
+    if (loadedCount < librarySet.items.length) {
       if (librarySet.applicationDomainCreationPolicy == ApplicationDomainCreationPolicy.MULTIPLE) {
         loaderContext.applicationDomain = new ApplicationDomain(loaderContext.applicationDomain);
       }
 
       var loader:MyLoader = MyLoader(LoaderInfo(event.currentTarget).loader);
-      var loadedLibrary:Library = loader.library;
+      var loadedLibrary:LibrarySetItem = loader.library;
       loadedLibrary.loadState = LoadState.READY;
       loader.library = null;
       freeLoaders.push(loader);
@@ -157,9 +155,9 @@ public class QueueLoader {
         return;
       }
 
-      ol: for each (var library:Library in loadedLibrary.successors) {
+      ol: for each (var library:LibrarySetItem in loadedLibrary.successors) {
         if (library.loadState == LoadState.UNINITIALIZED) {
-          for each (var parentLibrary:Library in library.parents) {
+          for each (var parentLibrary:LibrarySetItem in library.parents) {
             if (parentLibrary.loadState != LoadState.READY) {
               continue ol;
             }
@@ -171,6 +169,11 @@ public class QueueLoader {
     }
     else {
       librarySet.applicationDomain = loaderContext.applicationDomain;
+      for each (var l:LibrarySetItem in librarySet.items) {
+        // reset load state (original library shared between library sets)
+        l.loadState = LoadState.UNINITIALIZED;
+      }
+
       var lS:LibrarySet = librarySet;
       librarySet = null;
       progressListener.complete(lS);
@@ -183,10 +186,10 @@ public class QueueLoader {
 }
 }
 
-import com.intellij.flex.uiDesigner.libraries.Library;
+import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
 
 import flash.display.Loader;
 
 final class MyLoader extends Loader {
-  public var library:Library;
+  public var library:LibrarySetItem;
 }

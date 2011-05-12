@@ -3,7 +3,7 @@ package com.intellij.flex.uiDesigner.libraries;
 import org.jetbrains.annotations.NotNull;
 
 class Definition {
-  private final FilteredLibrary library;
+  private final LibrarySetItem library;
 
   public CharSequence[] dependencies;
   public int hasUnresolvedDependencies = UnresolvedState.UNKNOWN;
@@ -23,12 +23,12 @@ class Definition {
     return time;
   }
 
-  Definition(final FilteredLibrary library) {
+  Definition(final LibrarySetItem library) {
     this.library = library;
   }
 
   @NotNull
-  public FilteredLibrary getLibrary() {
+  public LibrarySetItem getLibrary() {
     return library;
   }
 

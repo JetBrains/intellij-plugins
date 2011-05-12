@@ -6,7 +6,7 @@ import com.intellij.flex.uiDesigner.css.CssReader;
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleValueResolverImpl;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
-import com.intellij.flex.uiDesigner.libraries.Library;
+import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.flex.uiDesigner.ui.DocumentContainer;
@@ -135,9 +135,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     for (var i:int = librarySets.length - 1; i > -1; i--) {
       var librarySet:LibrarySet = librarySets[i];
       do {
-        var libraries:Vector.<Library> = librarySet.libraries;
+        var libraries:Vector.<LibrarySetItem> = librarySet.items;
         for (var j:int = libraries.length - 1; j > -1; j--) {
-          var library:Library = libraries[j];
+          var library:LibrarySetItem = libraries[j];
           if (library.inheritingStyles != null) {
             inheritingStyleMapList.push(library.inheritingStyles);
           }

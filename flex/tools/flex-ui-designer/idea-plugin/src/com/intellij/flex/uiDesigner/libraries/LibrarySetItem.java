@@ -4,24 +4,23 @@ import com.intellij.flex.uiDesigner.abc.AbcFilter;
 import gnu.trove.THashSet;
 import gnu.trove.TLinkableAdaptor;
 
-import java.util.Collection;
 import java.util.Set;
 
-public class FilteredLibrary extends TLinkableAdaptor implements Library {
+public class LibrarySetItem extends TLinkableAdaptor {
   public int inDegree;
   public int definitionCounter;
 
   public boolean filtered;
 
   public int unresolvedDefinitionPolicy;
-  public final OriginalLibrary originalLibrary;
+  public final SwfLibrary library;
 
   public final Set<CharSequence> unresolvedDefinitions = new THashSet<CharSequence>(AbcFilter.HASHING_STRATEGY);
-  public final Set<FilteredLibrary> successors = new THashSet<FilteredLibrary>();
-  public Collection<Library> parents = new THashSet<Library>();
+  public final Set<LibrarySetItem> successors = new THashSet<LibrarySetItem>();
+  public final THashSet<LibrarySetItem> parents = new THashSet<LibrarySetItem>();
 
-  public FilteredLibrary(OriginalLibrary originalLibrary) {
-    this.originalLibrary = originalLibrary;
+  public LibrarySetItem(SwfLibrary library) {
+    this.library = library;
   }
 
   public boolean hasUnresolvedDefinitions() {
@@ -38,11 +37,6 @@ public class FilteredLibrary extends TLinkableAdaptor implements Library {
 
   @Override
   public String toString() {
-    return originalLibrary.getFile().getNameWithoutExtension();
-  }
-
-  @Override
-  public Collection<Library> getParents() {
-    return parents;
+    return library.getFile().getNameWithoutExtension();
   }
 }

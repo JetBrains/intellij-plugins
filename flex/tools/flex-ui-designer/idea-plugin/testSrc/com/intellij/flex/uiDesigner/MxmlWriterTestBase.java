@@ -146,15 +146,6 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       //}).get(8, TimeUnit.SECONDS);
     }
   }
-  
-  protected void assertResult(String documentName) throws IOException {
-    if (socketInputHandler.isPassed()) {
-      passedCounter++;
-    }
-    else {
-      fail(documentName + '\n' + socketInputHandler.getAndClearFailedMessage());
-    }
-  }
 
   @Override
   protected void tearDown() throws Exception {
@@ -173,8 +164,8 @@ abstract class MxmlWriterTestBase extends AppTestBase {
       client.openDocument(myModule, xmlFile);
       client.test(documentName, originalFile.getParent().getName());
       socketInputHandler.setExpectedErrorMessage(expectedErrorForDocument(documentName));
-      socketInputHandler.waitResult();
-      assertResult(documentName);
+      socketInputHandler.process();
+      passedCounter++;
     }
   }
 

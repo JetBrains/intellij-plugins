@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 
 import java.awt.*;
@@ -41,6 +42,10 @@ public final class ProjectWindowBounds {
   }
 
   private static Rectangle getProjectWindowBounds(Project project) {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      return new Rectangle(0, 0, 1280, 770);
+    }
+
     PropertiesComponent d = PropertiesComponent.getInstance(project);
     try {
       return d.isValueSet(X)
