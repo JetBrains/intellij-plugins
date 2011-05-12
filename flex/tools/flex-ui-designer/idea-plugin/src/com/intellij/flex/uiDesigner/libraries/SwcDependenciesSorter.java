@@ -120,7 +120,6 @@ public class SwcDependenciesSorter {
       if (!item.hasDefinitions()) {
         if (item.library.hasResourceBundles()) {
           queue.add(item);
-          item.library.setHasDefinitions(false);
         }
         continue;
       }

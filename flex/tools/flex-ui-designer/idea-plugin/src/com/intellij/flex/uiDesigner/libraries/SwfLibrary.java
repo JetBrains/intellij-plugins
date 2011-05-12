@@ -8,10 +8,9 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
 import java.util.Map;
 
-public class SwfLibrary extends InfoList.Info<VirtualFile> implements Library {
+public class SwfLibrary extends InfoList.Info<VirtualFile> {
   public static final String DEFAULTS_CSS = "defaults.css";
   private static final String CATALOG = "catalog.xml";
   private static final String SWF = "library.swf";
@@ -22,10 +21,6 @@ public class SwfLibrary extends InfoList.Info<VirtualFile> implements Library {
 
   private final String path;
 
-  private boolean hasDefinitions = true;
-
-  public Collection<Library> parents;
-
   // en_US => {"layout", "components"}
   public final Map<String,THashSet<String>> resourceBundles = new THashMap<String,THashSet<String>>();
 
@@ -33,19 +28,6 @@ public class SwfLibrary extends InfoList.Info<VirtualFile> implements Library {
     super(file);
 
     this.path = relativePath;
-  }
-
-  public void setHasDefinitions(boolean hasDefinitions) {
-    this.hasDefinitions = hasDefinitions;
-  }
-
-  public boolean hasDefinitions() {
-    return hasDefinitions;
-  }
-
-  @Override
-  public Collection<Library> getParents() {
-    return parents;
   }
 
   public boolean hasResourceBundles() {
