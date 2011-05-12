@@ -96,25 +96,31 @@ public class UITest extends MxmlWriterTestBase {
     assertThat(client.getProject(socketInputHandler.getReader().readUnsignedShort()), equalTo(myProject));
   }
 
-  //public void testCloseDocument() throws Exception {
-  //  testFile(new MyTester() {
-  //    @Override
-  //    public void test(final VirtualFile file) throws Exception {
-  //      interact("closeDocument", new Assert() {
-  //        @Override
-  //        public void test() throws Exception {
-  //          assertThat(reader.read(), ServerMethod.unregisterDocumentFactories);
-  //          assertMyProject();
-  //          assertThat(reader.readIntArray(), 0);
-  //
-  //          assertNotAvailable();
-  //
-  //          assertClient();
-  //        }
-  //      });
-  //    }
-  //  }, "Embed.mxml");
-  //}
+  public void testCloseDocument() throws Exception {
+    testFile(new MyTester("closeDocument", new UIMessageHandler(ServerMethod.unregisterDocumentFactories) {
+        @Override
+        public void process() throws IOException {
+          assertMyProject();
+          assertThat(reader.readIntArray(), 0);
+
+          assertNotAvailable();
+
+          assertClient();
+        }
+      }) {
+      }, "Embed.mxml");
+  }
+
+  protected void assertNotAvailable() throws IOException {
+    try {
+      Thread.sleep(50); // wait data
+    }
+    catch (InterruptedException e) {
+      fail(e.getMessage());
+    }
+    
+    assertThat(reader.available(), 0);
+  }
 
   @SuppressWarnings({"UnusedDeclaration"})
   private void interact(final Assert... asserts) throws Exception {
@@ -151,10 +157,7 @@ public class UITest extends MxmlWriterTestBase {
       });
     }
 
-    protected void assertNotAvailable() throws InterruptedException, IOException {
-      Thread.sleep(50); // wait data
-      assertThat(reader.available(), 0);
-    }
+
   }
 
   private abstract static class UIMessageHandler implements MessageHandler {

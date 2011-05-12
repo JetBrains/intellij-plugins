@@ -100,8 +100,8 @@ public class TestSocketDataHandler implements SocketDataHandler {
   private function testOnSystemManagerReady(documentManager:DocumentManager, clazz:Class, method:String, testAnnotation:TestAnnotation):void {
     // todo investigate, is it a problem for real code
     // (components in user document can call systemManager.addEventListener, but our systemManager requires stage at this moment)?
-    var systemManager:SystemManagerSB = documentManager.document.systemManager;
-    if (systemManager.stage == null) {
+    var systemManager:SystemManagerSB = testAnnotation.nullableDocument ? null : documentManager.document.systemManager;
+    if (systemManager != null && systemManager.stage == null) {
       systemManager.addRealEventListener(Event.ADDED_TO_STAGE, function(event:Event):void {
         IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
         test(clazz, method, testAnnotation);

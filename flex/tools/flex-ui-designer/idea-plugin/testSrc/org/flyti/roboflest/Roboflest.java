@@ -8,13 +8,13 @@ import java.util.StringTokenizer;
 public final class Roboflest {
   private final Robot robot;
 
-  public Roboflest() throws AWTException {
-    robot = new Robot();
-    robot.setAutoDelay(700); // todo Why after this commit testStyleNavigationToExternal is failed with 300ms?
-  }
-
   private int xOffset;
   private int yOffset;
+
+  public Roboflest() throws AWTException {
+    robot = new Robot();
+    robot.setAutoDelay(800); // todo Why after this commit testStyleNavigationToExternal is failed with 300ms?
+  }
 
   public void setStageOffset(int xOffset, int yOffset) {
     this.xOffset = xOffset;
