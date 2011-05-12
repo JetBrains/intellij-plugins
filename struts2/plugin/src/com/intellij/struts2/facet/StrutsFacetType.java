@@ -45,7 +45,7 @@ import java.util.Iterator;
  */
 public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfiguration> {
   StrutsFacetType() {
-    super(StrutsFacet.FACET_TYPE_ID, "Struts2", StrutsBundle.message("struts2"), WebFacet.ID);
+    super(StrutsFacet.FACET_TYPE_ID, "Struts2", "", WebFacet.ID);
   }
 
   public static FacetType<StrutsFacet, StrutsFacetConfiguration> getInstance() {
@@ -69,6 +69,12 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
 
   public Icon getIcon() {
     return StrutsIcons.ACTION;
+  }
+
+  @NotNull
+  @Override
+  public String getPresentableName() {
+    return StrutsBundle.message("struts2");
   }
 
   @Override
