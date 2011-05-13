@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,6 @@ import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.StrutsRoot;
@@ -45,7 +44,7 @@ import java.util.Iterator;
  */
 public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfiguration> {
   StrutsFacetType() {
-    super(StrutsFacet.FACET_TYPE_ID, "Struts2", "", WebFacet.ID);
+    super(StrutsFacet.FACET_TYPE_ID, "Struts2", "Struts 2", WebFacet.ID);
   }
 
   public static FacetType<StrutsFacet, StrutsFacetConfiguration> getInstance() {
@@ -69,12 +68,6 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
 
   public Icon getIcon() {
     return StrutsIcons.ACTION;
-  }
-
-  @NotNull
-  @Override
-  public String getPresentableName() {
-    return StrutsBundle.message("struts2");
   }
 
   @Override
