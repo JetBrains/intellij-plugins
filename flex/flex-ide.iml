@@ -41,6 +41,7 @@
     <orderEntry type="module" module-name="JSInspections" />
     <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="flex-profiler" />
+    <orderEntry type="module" module-name="properties" />
   </component>
 </module>
 

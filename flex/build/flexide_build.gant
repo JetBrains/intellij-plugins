@@ -39,7 +39,7 @@ setProperty("pluginFilter", [
             "less", "sass",
             "tasks", "tasks-core", "tasks-api", "jira-connector",
             "JavaScriptDebugger", "FirefoxConnector", "ChromeConnector",
-            "flex-plugin", "flex-ui-designer", "flex-profiler"
+            "flex-plugin", "flex-ui-designer", "flex-profiler", "properties"
             ])
 
 private List platformImplementationModules() {
