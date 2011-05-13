@@ -31,7 +31,7 @@ import java.util.*;
 
 public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
 
-  public static final String[] PRIMITIVE_TYPES = ArrayUtil.join(JSCommonTypeNames.ALL, new String[]{"int", "uint"});
+  public static final String[] PRIMITIVE_TYPES = JSCommonTypeNames.ALL;
 
   private static final Logger LOG = Logger.getInstance("#com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler");
 

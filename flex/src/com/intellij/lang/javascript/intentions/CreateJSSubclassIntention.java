@@ -164,7 +164,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     }
 
     JSClass createdClass = CreateClassOrInterfaceAction
-      .createClass(templateName, className, packageName, jsClass, targetDirectory, getTitle(jsClass), new Consumer<JSClass>() {
+      .createClass(templateName, className, packageName, jsClass, targetDirectory, getTitle(jsClass), true, new Consumer<JSClass>() {
         @Override
         public void consume(final JSClass aClass) {
           if (!aClass.isInterface() && jsClass.isInterface()) {
