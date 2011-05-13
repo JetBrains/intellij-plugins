@@ -8,6 +8,9 @@
   </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="org.codehaus.plexus.component.annotations.Requirement" />
+    </list>
   </component>
   <component name="IdProvider" IDEtalkID="8461738A2FFEE3E5C39765218FB981ED" />
   <component name="JavadocGenerationManager">

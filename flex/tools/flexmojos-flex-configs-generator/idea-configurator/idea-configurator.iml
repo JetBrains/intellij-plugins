@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/target/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/target/maven-archiver" />
+      <excludeFolder url="file://$MODULE_DIR$/target/surefire" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-flex-compiler:4.0-beta-7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-threadlocaltoolkit-wrapper:4.0-beta-7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-generator-internal-compiler-iface:4.0-beta-7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-generator-api:4.0-beta-7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-shim:2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-component-annotations:1.5.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.inject:javax.inject:1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu:sisu-guice:2.9.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: aopalliance:aopalliance:1.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-bean-reflect:2.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-bean-inject:2.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-bean-locators:2.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-bean-binders:2.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-bean-scanners:2.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-bean-converters:2.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-metadata:2.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-converters:2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:2.0.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-locators:2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-classworlds:2.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-binders:2.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-scanners:2.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.ws.jaxme:jaxmejs:0.5.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:asc:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:asdoc:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:batik-all-flex:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:commons-collections:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:commons-discovery:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:commons-logging:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:compc:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:digest:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:fcsh:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:fdb:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:flex-compiler-oem:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:flex-messaging-common:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:fxgutils:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:optimizer:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:saxon9:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:swfutils:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:velocity-dep-1.4-flex:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xalan:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesImpl:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesPatch:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xmlParserAPIs:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:afe:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:aglj40:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:flex-fontkit:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:rideau:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:swcdepends:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-library:1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-core:3.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-model:3.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-settings:3.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-settings-builder:3.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-interpolation:1.14" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.plexus:plexus-sec-dispatcher:1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.plexus:plexus-cipher:1.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-repository-metadata:3.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-artifact:3.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-plugin-api:3.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.sisu:sisu-inject-plexus:2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.sisu:sisu-inject-bean:2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.sisu:sisu-guice:no_aop:2.9.4" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-model-builder:3.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.maven:maven-aether-provider:3.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.aether:aether-api:1.11" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.aether:aether-spi:1.11" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.aether:aether-util:1.11" level="project" />
+    <orderEntry type="library" name="Maven: org.sonatype.aether:aether-impl:1.11" level="project" />
+  </component>
+</module>
+

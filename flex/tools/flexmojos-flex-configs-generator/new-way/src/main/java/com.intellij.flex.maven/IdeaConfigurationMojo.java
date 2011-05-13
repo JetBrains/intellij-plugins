@@ -1,80 +1,103 @@
 package com.intellij.flex.maven;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.sonatype.flexmojos.compiler.ICommandLineConfiguration;
-import org.sonatype.flexmojos.compiler.ICompcConfiguration;
-import org.sonatype.flexmojos.compiler.command.Result;
-import org.sonatype.flexmojos.plugin.compiler.AbstractFlexCompilerMojo;
-import org.sonatype.flexmojos.plugin.compiler.CompcMojo;
-import org.sonatype.flexmojos.plugin.utilities.SourceFileResolver;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.lifecycle.internal.LifecycleExecutionPlanCalculator;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.*;
+import org.apache.maven.plugin.descriptor.MojoDescriptor;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
+import org.codehaus.plexus.classworlds.strategy.AbstractStrategy;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.List;
-
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWC;
-import static org.sonatype.flexmojos.plugin.common.FlexExtension.SWF;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
- * @author Marvin Herman Froeder (velo.br@gmail.com)
- * @extendsPlugin flexmojos-maven-plugin
- * @extendsGoal compile-swc
- * @goal generateConfig
+ * @goal generate
  * @requiresDependencyResolution compile
  * @threadSafe
  * @phase compile
  */
-public class IdeaConfigurationMojo extends CompcMojo implements ICommandLineConfiguration {
-  /**
-   * DOCME Again, undocumented by adobe
-   * <p>
-   * Equivalent to -file-specs§§§§§§§§§
-   * </p>
-   * Usage:
-   * <p/>
-   * <pre>
-   * &lt;fileSpecs&gt;
-   *   &lt;fileSpec&gt;???&lt;/fileSpec&gt;
-   *   &lt;fileSpec&gt;???&lt;/fileSpec&gt;
-   * &lt;/fileSpecs&gt;
-   * </pre>
-   *
-   * @parameter
-   */
-  private List<String> fileSpecs;
+@Component(role=IdeaConfigurationMojo.class)
+public class IdeaConfigurationMojo extends AbstractMojo {
+  @Requirement
+  private MavenPluginManager mavenPluginManager;
 
   /**
-   * DOCME Another, undocumented by adobe
-   * <p>
-   * Equivalent to -projector
-   * </p>
-   *
-   * @parameter expression="${flex.projector}"
+   * @parameter expression="${session}"
+   * @required
+   * @readonly
    */
-  private String projector;
+  @SuppressWarnings({"UnusedDeclaration"}) private MavenSession session;
 
-  @Override
-  public Result doCompile(ICompcConfiguration cfg, boolean synchronize) throws Exception {
-    throw new UnsupportedOperationException("This is not a compilation mojo");
-  }
+  /**
+   * @parameter expression="${mojoExecution}"
+   * @required
+   * @readonly
+   */
+  @SuppressWarnings({"UnusedDeclaration"}) private MojoExecution mojoExecution;
 
-  @SuppressWarnings("unchecked")
+  @Requirement
+  private BuildPluginManager pluginManager;
+
+  @Requirement
+  private LifecycleExecutionPlanCalculator lifeCycleExecutionPlanCalculator;
+
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    if (!(packaging.equals(SWC) || packaging.equals(SWF))) {
+    MavenProject project = session.getCurrentProject();
+    String packaging = project.getPackaging();
+    if (!(packaging.equals("swc") || packaging.equals("swf"))) {
       return;
+    }
+
+    Plugin flexmojosPlugin = null;
+    for (Plugin plugin : project.getBuildPlugins()) {
+      if (plugin.getGroupId().equals("org.sonatype.flexmojos") && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
+        flexmojosPlugin = plugin;
+      }
+    }
+
+    if (flexmojosPlugin == null) {
+      return;
+    }
+
+    final ClassRealm flexmojosPluginRealm;
+    MojoExecution flexmojosMojoExecution;
+    try {
+      MojoDescriptor flexmojosMojoDescriptor = pluginManager.getMojoDescriptor(flexmojosPlugin, "compile-" + packaging, project.getRemotePluginRepositories(), session.getRepositorySession());
+      flexmojosMojoExecution = new MojoExecution(flexmojosMojoDescriptor, "default-cli", MojoExecution.Source.CLI);
+      flexmojosPluginRealm = pluginManager.getPluginRealm(session, flexmojosMojoDescriptor.getPluginDescriptor());
+      lifeCycleExecutionPlanCalculator.setupMojoExecution(session, project, flexmojosMojoExecution);
+    }
+    catch (Exception e) {
+      throw new MojoExecutionException("Cannot generate flex-config", e);
+    }
+
+    Mojo mojo = null;
+    try {
+      mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
+    }
+    catch (Exception e) {
+      throw new MojoExecutionException("Cannot generate flex-config", e);
+    }
+    finally {
+      mavenPluginManager.releaseMojo(mojo, mojoExecution);
     }
 
     IdeaConfigurator configurator = new IdeaConfigurator();
     try {
-      configurator.init(project, classifier);
-      if (SWC.equals(getProjectType())) {
-        configurator.buildConfiguration(this);
+      modifyOurClassRealm(flexmojosPluginRealm);
+      configurator.init(project, (getClassifier(mojo, flexmojosPluginRealm)));
+      if ("swc".equals(packaging)) {
+        configurator.buildConfiguration(mojo, flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICompcConfiguration"));
       }
       else {
-        configurator.buildConfiguration(this, getSourceFile());
+        configurator.buildConfiguration(mojo, getSourceFileForSwf(mojo, flexmojosPluginRealm), flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICommandLineConfiguration"));
       }
     }
     catch (Exception e) {
@@ -82,89 +105,25 @@ public class IdeaConfigurationMojo extends CompcMojo implements ICommandLineConf
     }
   }
 
-  public List<String> getFileSpecs() {
-    return fileSpecs;
+  private void modifyOurClassRealm(ClassRealm flexmojosPluginRealm) throws NoSuchFieldException, IllegalAccessException {
+    final Field realm = AbstractStrategy.class.getDeclaredField("realm");
+    realm.setAccessible(true);
+    realm.set(mojoExecution.getMojoDescriptor().getPluginDescriptor().getClassRealm().getStrategy(), flexmojosPluginRealm);
   }
 
-  public String getProjector() {
-    return projector;
+  private File getSourceFileForSwf(Mojo mojo, ClassRealm flexmojosPluginRealm)
+    throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+    Method getSourceFileMethod = flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.plugin.compiler.MxmlcMojo").getDeclaredMethod(
+      "getSourceFile");
+    getSourceFileMethod.setAccessible(true);
+    return (File)getSourceFileMethod.invoke(mojo);
   }
 
-  @Override
-  public String getProjectType() {
-    return packaging;
-  }
-
-  /**
-   * The file to be compiled. The path must be relative with source folder
-   *
-   * @parameter expression="${flex.sourceFile}"
-   */
-  private String sourceFile;
-
-  protected File getSourceFile() {
-    return SourceFileResolver.resolveSourceFile(project.getCompileSourceRoots(), sourceFile, project.getGroupId(),
-                                                project.getArtifactId());
-  }
-
-  /**
-   * @parameter default-value="true"
-   */
-  @SuppressWarnings({"FieldCanBeLocal"}) private boolean useDefaultLocale = true;
-
-  @Override
-  public String[] getLocale() {
-    if (SWC.equals(getProjectType())) {
-      return super.getLocale();
-    }
-
-    if (!useDefaultLocale) {
-      return new String[]{};
-    }
-
-    String[] locales;
-    try {
-      locales = getLocale2();
-    }
-    catch (NoSuchFieldException e) {
-      throw new RuntimeException(e);
-    }
-    catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
-    }
-
-    if (locales != null) {
-      return locales;
-    }
-
-    if ("css".equalsIgnoreCase(FilenameUtils.getExtension(sourceFile))) {
-      return new String[]{};
-    }
-
-    return new String[]{toolsLocale};
-  }
-
-  public String[] getLocale2() throws NoSuchFieldException, IllegalAccessException {
-    Field localesCompiledField = AbstractFlexCompilerMojo.class.getDeclaredField("localesCompiled");
-    localesCompiledField.setAccessible(true);
-    String[] localesCompiled = (String[])localesCompiledField.get(this);
-    if (localesCompiled != null) {
-      String[] locales = new String[localesCompiled.length];
-      for (int i = 0; i < localesCompiled.length; i++) {
-        String locale = localesCompiled[i];
-        if (locale.contains(",")) {
-          locale = locale.split(",")[0];
-        }
-        locales[i] = locale;
-      }
-      return locales;
-    }
-
-    // if there are runtime locales, no need for compiled locales
-    if (getLocalesRuntime() != null) {
-      return new String[]{};
-    }
-
-    return null;
+  private String getClassifier(Mojo mojo, ClassRealm flexmojosPluginRealm)
+    throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+    Method getSourceFileMethod = flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.plugin.compiler.AbstractFlexCompilerMojo").getDeclaredMethod(
+      "getClassifier");
+    getSourceFileMethod.setAccessible(true);
+    return (String)getSourceFileMethod.invoke(mojo);
   }
 }

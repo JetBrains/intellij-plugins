@@ -9,24 +9,41 @@
   </parent>
 
   <groupId>com.intellij.flex.maven</groupId>
-  <artifactId>idea-flexmojos-aggregator</artifactId>
-  <version>1.2</version>
-  <packaging>pom</packaging>
+  <artifactId>idea-flexmojos-maven-extension</artifactId>
+  <version>1.1</version>
 
   <properties>
     <maven.version>3.0.3</maven.version>
   </properties>
 
-  <modules>
-    <module>idea-configurator</module>
-    <module>new-way</module>
-  </modules>
-
   <dependencies>
+    <dependency>
+      <groupId>org.sonatype.flexmojos</groupId>
+      <artifactId>flexmojos-maven-plugin</artifactId>
+      <version>4.0-beta-7</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
       <version>${maven.version}</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-component-metadata</artifactId>
+        <version>1.5.5</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-metadata</goal>
+              <goal>generate-test-metadata</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
