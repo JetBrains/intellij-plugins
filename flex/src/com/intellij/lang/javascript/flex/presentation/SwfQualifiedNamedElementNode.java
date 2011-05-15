@@ -4,6 +4,7 @@ import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -60,6 +61,9 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
     }
     else if (element instanceof JSVariable) {
       return JSVariableImpl.getIcon(((JSVariable)element).getAttributeList(), flags, false);
+    }
+    else if (element instanceof JSNamedElementProxy) {
+      return element.getIcon(flags);
     }
     assert false : "unexpected element: " + element;
     return element.getIcon(flags);
