@@ -369,6 +369,7 @@ def buildExe() {
     executeExternalAnt(
             "config.file": "$home/flex/build/flex-ide.exe4j",
             "output.file": "flexide.exe",
+            "system_selector" : system_selector,
             "$home/build/buildLauncher.xml")
   }
   else {
