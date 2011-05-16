@@ -32,6 +32,12 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
     super(project);
   }
 
+  public void reset() {
+    files.clear();
+    freeIndices.resetQuick();
+    fileDocumentManagerListener.unsubscribe();
+  }
+
   public void unregister(int[] ids) {
     freeIndices.ensureCapacity(freeIndices.size() + ids.length);
     for (int id : ids) {
@@ -72,9 +78,7 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
 
         @Override
         public void applicationClosed() {
-          files.clear();
-          freeIndices.resetQuick();
-          fileDocumentManagerListener.unsubscribe();
+          reset();
         }
       });
     }

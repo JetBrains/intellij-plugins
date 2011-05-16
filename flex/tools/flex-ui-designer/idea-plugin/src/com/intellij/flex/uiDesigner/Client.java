@@ -127,6 +127,8 @@ public class Client implements Closable {
   }
 
   public void unregisterProject(final Project project) {
+    DocumentFactoryManager.getInstance(project).reset();
+    
     registeredProjects.remove(project);
     if (registeredProjects.isEmpty()) {
       registeredModules.clear();
