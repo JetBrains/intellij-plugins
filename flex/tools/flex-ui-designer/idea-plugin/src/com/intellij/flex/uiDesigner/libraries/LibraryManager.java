@@ -39,11 +39,11 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     return info != null && info.getSdk() == sdk;
   }
 
-  public void initLibrarySets(@NotNull final Module module, final File appDir) throws IOException, InitException {
+  public void initLibrarySets(@NotNull final Module module, @NotNull final File appDir) throws IOException, InitException {
     initLibrarySets(module, appDir, true, null);
   }
 
-  public void initLibrarySets(@NotNull final Module module, final File appDir, boolean collectLocalStyleHolders, @Nullable LibrarySet sdkLibrarySet)
+  public void initLibrarySets(@NotNull final Module module, @NotNull final File appDir, boolean collectLocalStyleHolders, @Nullable LibrarySet sdkLibrarySet)
     throws InitException, IOException {
     final ProblemsHolder problemsHolder = new ProblemsHolder();
     final Project project = module.getProject();

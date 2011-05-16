@@ -5,7 +5,6 @@ import com.intellij.flex.uiDesigner.css.RootStyleManager;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
-import flash.display.LoaderInfo;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.display.Stage;
@@ -25,12 +24,7 @@ import mx.core.IFlexModule;
 import mx.core.IFlexModuleFactory;
 import mx.core.IRawChildrenContainer;
 import mx.core.IUIComponent;
-import mx.managers.ILayoutManager;
 import mx.resources.ResourceManager;
-
-flex::v4_5
-import mx.core.RSLData;
-
 import mx.core.Singleton;
 import mx.core.UIComponent;
 import mx.core.UIComponentGlobals;
@@ -581,10 +575,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     return this;
   }
 
-  flex::v4_5
-  public function addPreloadedRSL(loaderInfo:LoaderInfo, rsl:Vector.<RSLData>):void {
-    throw new Error("forbidden");
-  }
+
 
   // mx.managers::ISystemManagerChildManager, ChildManager, "cm.notifyStyleChangeInChildren(styleProp, true);" in CSSStyleDeclaration
   //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
@@ -706,6 +697,10 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
   public function removeRealEventListener(type:String, listener:Function):void {
     super.removeEventListener(type, listener);
+  }
+
+  flex::v4_5 {
+    include 'baseFlexModuleFactoryImpl45.as';
   }
 }
 }

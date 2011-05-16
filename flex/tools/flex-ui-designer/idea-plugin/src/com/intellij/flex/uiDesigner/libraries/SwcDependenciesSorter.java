@@ -17,6 +17,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import gnu.trove.TLinkedList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
@@ -30,7 +31,7 @@ import java.util.zip.DataFormatException;
 public class SwcDependenciesSorter {
   private THashMap<CharSequence, Definition> definitionMap;
 
-  private final File rootPath;
+  private final File appDir;
   private final Module module;
 
   private boolean useIndexForFindDefinitions;
@@ -40,8 +41,8 @@ public class SwcDependenciesSorter {
   private List<LibrarySetItem> resourceBundleOnlyitems;
   private List<LibrarySetEmbedItem> embedItems;
 
-  public SwcDependenciesSorter(File rootPath, Module module) {
-    this.rootPath = rootPath;
+  public SwcDependenciesSorter(@NotNull File appDir, @NotNull Module module) {
+    this.appDir = appDir;
     this.module = module;
   }
 
@@ -216,15 +217,15 @@ public class SwcDependenciesSorter {
   }
 
   private File createSwfOutFile(Library library) {
-    return new File(rootPath, library.getPath() + ".swf");
+    return new File(appDir, library.getPath() + ".swf");
   }
 
   private File createSwfOutFile(Library library, String postfix) {
-    return new File(rootPath, library.getPath() + "_" + postfix + ".swf");
+    return new File(appDir, library.getPath() + "_" + postfix + ".swf");
   }
 
   public void printCollection(LibrarySetItem library, String postfix) throws IOException {
-    FileWriter writer = new FileWriter(new File(rootPath, library.library.getPath() + '_' + postfix + "_unresolvedDefinitions.txt"));
+    FileWriter writer = new FileWriter(new File(appDir, library.library.getPath() + '_' + postfix + "_unresolvedDefinitions.txt"));
     for (CharSequence s : library.unresolvedDefinitions) {
       writer.append(s);
       writer.append('\n');

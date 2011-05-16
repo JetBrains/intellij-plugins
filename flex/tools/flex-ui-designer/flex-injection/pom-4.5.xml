@@ -17,7 +17,7 @@
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>framework</artifactId>
       <type>swc</type>
-      <version>4.5.0.19786</version>
+      <version>4.5.0.20967</version>
       <scope>merged</scope>
     </dependency>
   </dependencies>

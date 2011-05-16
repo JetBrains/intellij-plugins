@@ -14,10 +14,6 @@ public class LibrarySet {
   private final List<LibrarySetItem> resourceBundleOnlyitems;
   private final List<LibrarySetEmbedItem> embedItems;
 
-  public LibrarySet(String id, ApplicationDomainCreationPolicy applicationDomainCreationPolicy, List<LibrarySetItem> items, List<LibrarySetItem> resourceBundleOnlyitems, List<LibrarySetEmbedItem> embedItems) {
-    this(id, null, applicationDomainCreationPolicy, items, resourceBundleOnlyitems, embedItems);
-  }
-
   public LibrarySet(String id, @Nullable LibrarySet parent, ApplicationDomainCreationPolicy applicationDomainCreationPolicy, List<LibrarySetItem> items, List<LibrarySetItem> resourceBundleOnlyitems, List<LibrarySetEmbedItem> embedItems) {
     this.id = id;
     this.parent = parent;

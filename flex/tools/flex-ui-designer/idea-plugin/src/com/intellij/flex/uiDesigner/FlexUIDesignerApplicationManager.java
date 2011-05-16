@@ -4,7 +4,9 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.libraries.LibraryCollector;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -94,11 +96,39 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
   }
 
+  private boolean checkFlexSdkVersion(final String version) {
+    if (version == null || version.length() < 5 || version.charAt(0) < '4') {
+      return false;
+    }
+
+    if (version.charAt(0) == '4') {
+      int build = FlexSdkUtils.getFlexSdkRevision(version);
+      if (version.charAt(2) == '1') {
+        return build == 16076;
+      }
+      else if (version.charAt(2) == '5' || version.charAt(4) == '0') {
+        return build == 20967;
+      }
+    }
+
+    return true;
+  }
+
   public void openDocument(@NotNull final Project project, @NotNull final Module module, @NotNull final XmlFile psiFile, boolean debug) {
     assert !documentOpening;
+
+    final boolean appClosed = server == null || server.isClosed();
+    if (appClosed || !Client.getInstance().isModuleRegistered(module)) {
+      final String version = LibraryCollector.getFlexVersion(module);
+      if (!checkFlexSdkVersion(version)) {
+        DocumentProblemManager.getInstance().reportWithTitle(project, FlexUIDesignerBundle.message("error.fdk.not.supported", version));
+        return;
+      }
+    }
+
     documentOpening = true;
 
-    if (server == null || server.isClosed()) {
+    if (appClosed) {
       run(project, module, psiFile, debug);
     }
     else {
@@ -179,6 +209,26 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           return;
         }
       }
+
+      if (DebugPathManager.IS_DEV) {
+        final String fudHome = DebugPathManager.getFudHome();
+        final List<String> arguments = new ArrayList<String>();
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+          arguments.add("-p");
+          arguments.add(fudHome + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
+        }
+
+        arguments.add("-cdd");
+        arguments.add(fudHome + "/flex-injection/target");
+
+        adlRunConfiguration.arguments = arguments;
+      }
+
+      if (appDir == null) {
+        appDir = new File(PathManager.getSystemPath(), "flexUIDesigner");
+      }
+
+      server = new Server(new PendingOpenDocumentTask(project, module, psiFile), this);
     }
     catch (Throwable e) {
       LOG.error(e);
@@ -186,21 +236,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       return;
     }
 
-    if (DebugPathManager.IS_DEV) {
-      final String fudHome = DebugPathManager.getFudHome();
-      final List<String> arguments = new ArrayList<String>();
-      if (ApplicationManager.getApplication().isUnitTestMode()) {
-        arguments.add("-p");
-        arguments.add(fudHome + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
-      }
-      
-      arguments.add("-cdd");
-      arguments.add(fudHome + "/flex-injection/target");
-      
-      adlRunConfiguration.arguments = arguments;
-    }
-
-    server = new Server(new PendingOpenDocumentTask(project, module, psiFile), this);
     DesignerApplicationUtil.AdlRunTask task = new DesignerApplicationUtil.AdlRunTask(adlRunConfiguration) {
       @Override
       public void run() {
@@ -253,11 +288,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       projectManagerListener = new MyProjectManagerListener();
       ProjectManager.getInstance().addProjectManagerListener(projectManagerListener);
     }
-    
-    if (appDir == null) {
-      appDir = new File(PathManager.getSystemPath(), "flexUIDesigner");
-    }
-    
+
     if (DebugPathManager.IS_DEV) {
       return;
     }

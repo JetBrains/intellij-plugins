@@ -10,13 +10,9 @@ import flash.text.TextFormat;
 import flash.utils.Dictionary;
 
 import mx.core.IChildList;
-
-flex::v4_5
-import mx.core.RSLData;
-
 import mx.managers.ISystemManager;
 
-internal class TopLevelSystemManager implements ISystemManager {
+internal class TopLevelSystemManager extends BaseFlexModuleFactoryImpl implements ISystemManager {
   private var _stage:Stage;
 
   public function TopLevelSystemManager(stage:Stage) {
@@ -227,11 +223,6 @@ internal class TopLevelSystemManager implements ISystemManager {
   flex::v4_1
   public function getVisibleApplicationRect(bounds:Rectangle = null):Rectangle {
     return null;
-  }
-
-  flex::v4_5
-  public function addPreloadedRSL(loaderInfo:LoaderInfo, rsl:Vector.<RSLData>):void {
-    throw new Error("forbidden");
   }
 }
 }

@@ -4,6 +4,7 @@ interface TagTypes {
   int End = 0;
   int DefineBitsJPEG2 = 21;
   int SymbolClass = 76;
+  int FileAttributes = 69;
   int ExportAssets = 56;
   int DoABC2 = 82;
 
@@ -15,4 +16,5 @@ interface TagTypes {
   int ProductInfo = 41;
   int ScriptLimits = 65;
   int Metadata = 77;
+  int ShowFrame = 1;
 }

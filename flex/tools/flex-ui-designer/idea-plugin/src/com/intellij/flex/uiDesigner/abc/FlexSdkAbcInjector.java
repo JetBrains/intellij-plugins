@@ -52,7 +52,8 @@ public class FlexSdkAbcInjector extends AbcFilter {
     // for flex 4.5 we can inject our classes after StyleProtoChain, but for 4.1 (mx.swc is not yet extracted in this SDK version)
     // we cannot — CSSStyleDeclaration located later, so, we inject after it
     // at the same time we cannot inject after CSSStyleDeclaration for 4.5, so, injection place depends on Flex SDK version
-    if (isStyleProtoChain ? flexSdkVersion.equals("4.5") : (flexSdkVersion.equals("4.1") && StringUtil.equals(transientNameString, "mx.styles:CSSStyleDeclaration"))) {
+    //if (isStyleProtoChain ? flexSdkVersion.equals("4.5") : (flexSdkVersion.equals("4.1") && StringUtil.equals(transientNameString, "mx.styles:CSSStyleDeclaration"))) {
+    if (StringUtil.equals(transientNameString, "mx.styles:CSSStyleDeclaration")) {
       flexInjected = true;
       if (injectionUrlConnection == null) {
         decoders.add(new Decoder(new DataBuffer(FileUtil.loadFileBytes(new File(

@@ -57,8 +57,6 @@ public class QueueLoader {
   private var progressListener:LibrarySetLoadProgressListener;
 
   private const loaderContext:LoaderContext = new LoaderContext();
-  //noinspection JSFieldCanBeLocalInspection
-  private const urlRequest:URLRequest = new URLRequest();
 
   public function QueueLoader(librarySetLoadProgressListener:LibrarySetLoadProgressListener) {
     this.progressListener = librarySetLoadProgressListener;
@@ -118,9 +116,8 @@ public class QueueLoader {
       loader.loadBytes(getFlexComplementSwfBytes(item.path), loaderContext);
     }
     else {
-      urlRequest.url = "app:/" + item.path + (item.filtered ? "_" + librarySet.id + ".swf" : ".swf");
       //trace("load: " + urlRequest.url);
-      loader.load(urlRequest, loaderContext);
+      loader.load(new URLRequest("app:/" + item.path + (item.filtered ? "_" + librarySet.id + ".swf" : ".swf")), loaderContext);
     }
   }
 

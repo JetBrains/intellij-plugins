@@ -35,8 +35,7 @@ class TestDesignerApplicationManager {
   public final TestSocketInputHandler socketInputHandler;
 
   private TestDesignerApplicationManager() throws IOException {
-    DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration =
-      new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"), System.getProperty("fud.air"));
+    DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = DesignerApplicationUtil.createTestAdlRunConfiguration();
 
     adlRunConfiguration.arguments = new ArrayList<String>();
     adlRunConfiguration.arguments.add("-p");

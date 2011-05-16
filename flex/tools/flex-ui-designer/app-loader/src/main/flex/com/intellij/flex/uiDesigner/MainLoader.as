@@ -5,6 +5,7 @@ import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.IOErrorEvent;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
@@ -36,10 +37,15 @@ public class MainLoader extends Sprite {
 
     var loader:Loader = new Loader();
     loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadCompleteHandler);
+    loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
     var loaderContext:LoaderContext = new LoaderContext();
     loaderContext.allowCodeImport = true;
     loader.loadBytes(new appClass(), loaderContext);
     appClass = null;
+  }
+
+  private function loadErrorHandler(event:IOErrorEvent):void {
+    trace(event);
   }
 
   private function loadCompleteHandler(event:Event):void {

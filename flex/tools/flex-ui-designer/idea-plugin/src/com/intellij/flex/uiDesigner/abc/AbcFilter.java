@@ -36,8 +36,6 @@ public class AbcFilter extends AbcEncoder {
 
   private TIntObjectHashMap<ExportAsset> exportAssets;
 
-  //private
-
   public void filter(File inputFile, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
     filter(new FileInputStream(inputFile), inputFile.length(), out, abcNameFilter);
   }
@@ -117,8 +115,9 @@ public class AbcFilter extends AbcEncoder {
     int length = (int)channel.position();
     channel.position(0);
     buffer.clear();
-    buffer.put((byte)0x46); // write as uncompressed
-    buffer.put(partialHeader, 1, 3);
+    partialHeader[0] = 0x46; // write as uncompressed
+    //partialHeader[3] = 10; // write as uncompressed
+    buffer.put(partialHeader, 0, 4);
     buffer.putInt(length);
 
     buffer.flip();
@@ -142,6 +141,19 @@ public class AbcFilter extends AbcEncoder {
           channel.write(buffer);
           return;
 
+        case TagTypes.ShowFrame:
+          if (decoders.isEmpty()) {
+            break;
+          }
+          else {
+            final int limit = buffer.position();
+            writeDataBeforeTag(length);
+            mergeDoAbc(true, false);
+            lastWrittenPosition = limit - 2;
+            buffer.position(limit + length);
+            continue;
+          }
+
         case TagTypes.SymbolClass:
           processSymbolClass(length);
           continue;
@@ -149,6 +161,10 @@ public class AbcFilter extends AbcEncoder {
         case TagTypes.ExportAssets:
           processExportAssets(length);
           continue;
+
+        case TagTypes.FileAttributes:
+          buffer.put(buffer.position(), (byte)104); // HasMetadata = false
+          break;
 
         case TagTypes.EnableDebugger:
         case TagTypes.EnableDebugger2:
@@ -164,7 +180,6 @@ public class AbcFilter extends AbcEncoder {
           readAbcName(buffer.position() + 4);
           if (abcNameFilter != null && !abcNameFilter.accept(transientNameString)) {
             skipTag(length);
-            continue;
           }
           else {
             int oldPosition = buffer.position();
@@ -172,13 +187,11 @@ public class AbcFilter extends AbcEncoder {
             buffer.position(oldPosition);
             doAbc2(length);
             buffer.position(lastWrittenPosition);
-            continue;
           }
-
-        default:
-          buffer.position(buffer.position() + length);
-          break;
+          continue;
       }
+
+      buffer.position(buffer.position() + length);
     }
   }
 
@@ -369,14 +382,22 @@ public class AbcFilter extends AbcEncoder {
     encoder.writeDoAbc(channel, asTag);
   }
 
-  private void writeDataBeforeTag(int tagLength) throws IOException {
+  private boolean writeDataBeforeTag(int tagLength) throws IOException {
     int tagHeaderLength = tagLength < 63 ? 2 : 6;
-    buffer.limit(buffer.position() - tagHeaderLength);
+    int newLimit = buffer.position() - tagHeaderLength;
+    if (newLimit == lastWrittenPosition) {
+      lastWrittenPosition += tagLength + tagHeaderLength;
+      return false;
+    }
+
+    buffer.limit(newLimit);
     buffer.position(lastWrittenPosition);
     channel.write(buffer);
 
     lastWrittenPosition = buffer.limit() + tagLength + tagHeaderLength;
     buffer.limit(buffer.capacity());
+
+    return true;
   }
 
   private void skipTag(int tagLength) throws IOException {

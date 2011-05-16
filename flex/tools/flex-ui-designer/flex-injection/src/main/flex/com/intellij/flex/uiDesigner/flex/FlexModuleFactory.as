@@ -1,5 +1,4 @@
 package com.intellij.flex.uiDesigner.flex {
-import flash.display.LoaderInfo;
 import flash.errors.IllegalOperationError;
 import flash.system.ApplicationDomain;
 import flash.utils.Dictionary;
@@ -8,10 +7,7 @@ import mx.core.IFlexModule;
 import mx.core.IFlexModuleFactory;
 import mx.styles.IStyleManager2;
 
-flex::v4_5
-import mx.core.RSLData;
-
-public class FlexModuleFactory implements IFlexModuleFactory {
+public class FlexModuleFactory extends BaseFlexModuleFactoryImpl implements IFlexModuleFactory {
   private var _styleManager:IStyleManager2;
 
   public function FlexModuleFactory(styleManager:IStyleManager2, applicationDomain:ApplicationDomain) {
@@ -66,11 +62,6 @@ public class FlexModuleFactory implements IFlexModuleFactory {
   }
 
   public function registerImplementation(interfaceName:String, impl:Object):void {
-    throw new IllegalOperationError("unsupported");
-  }
-
-  flex::v4_5
-  public function addPreloadedRSL(loaderInfo:LoaderInfo, rsl:Vector.<RSLData>):void {
     throw new IllegalOperationError("unsupported");
   }
 

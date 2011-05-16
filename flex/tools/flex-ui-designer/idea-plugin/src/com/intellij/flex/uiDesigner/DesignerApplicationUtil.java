@@ -44,10 +44,15 @@ final class DesignerApplicationUtil {
   private static final Set<String> alreadyMadeExecutable = new THashSet<String>();
 
   private static final Logger LOG = Logger.getInstance(DesignerApplicationUtil.class.getName());
+  private static final String MAC_AIR_RUNTIME_DEFAULT_PATH = "/Library/Frameworks";
+
+  public static AdlRunConfiguration createTestAdlRunConfiguration() throws IOException {
+    return new AdlRunConfiguration("/Developer/SDKs/flex_sdk_4.5/bin/adl", MAC_AIR_RUNTIME_DEFAULT_PATH);
+  }
   
   public static @Nullable AdlRunConfiguration findSuitableFlexSdk() throws IOException {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      return new AdlRunConfiguration(System.getProperty("fud.adl"), System.getProperty("fud.air"));
+      return createTestAdlRunConfiguration();
     }
 
     String adlPath;
@@ -61,7 +66,7 @@ final class DesignerApplicationUtil {
       String version = sdk.getVersionString();
       // at least 4.1
       if (version == null || !(version.length() >= 3 &&
-                               (version.charAt(0) > '4' || (version.charAt(0) == '4' && version.charAt(2) >= '1')))) {
+                               (version.charAt(0) > '4' || (version.charAt(0) == '4' && version.charAt(2) >= '5')))) {
         continue;
       }
 
@@ -105,7 +110,7 @@ final class DesignerApplicationUtil {
   // http://kb2.adobe.com/cps/407/kb407625.html
   private static String findInstalledRuntime() throws IOException {
     if (SystemInfo.isMac) {
-      String runtime = "/Library/Frameworks";
+      String runtime = MAC_AIR_RUNTIME_DEFAULT_PATH;
       if (checkMacRuntimeVersion(runtime)) {
         return runtime;
       }
