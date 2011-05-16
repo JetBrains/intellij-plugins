@@ -7,7 +7,7 @@
     <option name="PACKAGE_NAME" value="" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
-    <option name="TEST_OBJECT" value="package" />
+    <option name="TEST_OBJECT" value="pattern" />
     <option name="VM_PARAMETERS" value="-Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.test.debug=true -Dfud.complement=$PROJECT_DIR$/flex-injection/target -Dfud.adl=$ADL$ -Dfud.air=$AIR$" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
@@ -18,10 +18,12 @@
     </option>
     <envs />
     <patterns>
-      <pattern testClass="com.intellij.flex.uiDesigner.AbcFilterTest" />
       <pattern testClass="com.intellij.flex.uiDesigner.MxmlWriterTest" />
-      <pattern testClass="com.intellij.flex.uiDesigner.ResolveExternalInlineStyleSourceActionTest" />
+      <pattern testClass="com.intellij.flex.uiDesigner.SwcDependenciesSorterTest" />
+      <pattern testClass="com.intellij.flex.uiDesigner.StyleTest" />
+      <pattern testClass="com.intellij.flex.uiDesigner.UITest" />
       <pattern testClass="com.intellij.flex.uiDesigner.AppTest" />
+      <pattern testClass="com.intellij.flex.uiDesigner.io.StringRegistryTest" />
     </patterns>
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="62696" />

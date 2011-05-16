@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import junit.framework.AssertionFailedError;
-import org.picocontainer.MutablePicoContainer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.Arrays;
 import java.util.List;
 
 abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
-  protected static final String PASSED = "__passed__";
   protected static final Key<Boolean> IS_USER_LIB = Key.create("FUD_IS_USER_LIB");
   private static final String BASE_PATH = "/mxml";
 
@@ -54,12 +52,6 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(file);
     assert vFile != null;
     return vFile;
-  }
-  
-  public static void changeServiceImplementation(Class key, Class implementation) {
-    MutablePicoContainer picoContainer = (MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer();
-    picoContainer.unregisterComponent(key.getName());
-    picoContainer.registerComponentImplementation(key.getName(), implementation);
   }
 
   @Override
@@ -142,16 +134,6 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
     Library.ModifiableModel libraryModel = model.getModuleLibraryTable().createLibrary(path).getModifiableModel();
     libraryModel.addRoot(jarFile, OrderRootType.CLASSES);
     libraryModel.commit();
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    //StringRegistry.getInstance().reset();
-
-    //BinaryFileManager.getInstance().reset();
-    //LibraryManager.getInstance().reset();
-    
-    super.tearDown();
   }
   
   protected String getFlexVersion() {

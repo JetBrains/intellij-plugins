@@ -6,6 +6,7 @@ import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import flash.desktop.NativeApplication;
 import flash.display.NativeWindow;
 import flash.events.Event;
+import flash.events.NativeWindowBoundsEvent;
 
 import org.flyti.plexus.PlexusManager;
 
@@ -45,6 +46,12 @@ public class ProjectManager {
 
   protected function addNativeWindowListeners(window:DocumentWindow):void {
     window.nativeWindow.addEventListener(Event.CLOSING, closeHandler);
+    window.nativeWindow.addEventListener(NativeWindowBoundsEvent.RESIZE, resizeHandler);
+  }
+
+  protected function removeNativeWindowListeners(nativeWindow:NativeWindow):void {
+    nativeWindow.removeEventListener(Event.CLOSING, closeHandler);
+    nativeWindow.removeEventListener(NativeWindowBoundsEvent.RESIZE, resizeHandler);
   }
   
   public function close(id:int):void {
@@ -53,7 +60,7 @@ public class ProjectManager {
 
     
     if (project.window != null) {
-      saveProjectWindowBounds(project);
+      removeNativeWindowListeners(project.window.nativeWindow);
       project.window.close();
     }
 
@@ -73,6 +80,17 @@ public class ProjectManager {
     _project = project;
   }
 
+  private function resizeHandler(event:Event):void {
+    var nativeWindow:NativeWindow = NativeWindow(event.target);
+    for (var i:int = 0, n:int = items.length; i < n; i++) {
+      var project:Project = items[i];
+      if (project.window.nativeWindow == nativeWindow) {
+        Server(PlexusManager.instance.container.lookup(Server)).saveProjectWindowBounds(project, nativeWindow.bounds);
+        return;
+      }
+    }
+  }
+
   private function closeHandler(event:Event):void {
     if (applicationExiting) {
       return;
@@ -82,7 +100,7 @@ public class ProjectManager {
     for (var i:int = 0, n:int = items.length; i < n; i++) {
       var project:Project = items[i];
       if (project.window.nativeWindow == nativeWindow) {
-        saveProjectWindowBounds(project);
+        removeNativeWindowListeners(nativeWindow);
         closeProject2(i, project);
         Server.instance.closeProject(project);
         return;
@@ -114,12 +132,6 @@ public class ProjectManager {
     }
 
     return project;
-  }
-
-  protected function saveProjectWindowBounds(project:Project):void {
-    var nativeWindow:NativeWindow = project.window.nativeWindow;
-    nativeWindow.removeEventListener(Event.CLOSING, closeHandler);
-    Server(PlexusManager.instance.container.lookup(Server)).saveProjectWindowBounds(project, nativeWindow.bounds);
   }
 }
 }

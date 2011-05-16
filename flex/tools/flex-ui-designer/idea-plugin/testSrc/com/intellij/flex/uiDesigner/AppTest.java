@@ -1,8 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.AmfOutputStream;
+import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -12,21 +12,24 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.messages.MessageBusConnection;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class AppTest extends AppTestBase {
+  private static final int APP_TEST_CLASS_ID = 3;
+
   private MessageBusConnection connection;
   private final Info info = new Info();
 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    
-    changeServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
+
+    //TestDesignerApplicationManager.changeServiceImplementation();
+    TestDesignerApplicationManager.changeServiceImplementation(Client.class, TestClient.class);
+    TestDesignerApplicationManager.changeServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
     final MySocketInputHandler socketInputHandler = (MySocketInputHandler)ServiceManager.getService(SocketInputHandler.class);
     socketInputHandler.info = info;
   }
@@ -46,44 +49,33 @@ public class AppTest extends AppTestBase {
       public void applicationClosed() {
       }
     });
-    
-    TestDesignerApplicationManager.copySwfAndDescriptor(new File(PathManager.getSystemPath(), "flexUIDesigner"));
+
     FlexUIDesignerApplicationManager.getInstance().openDocument(myProject, myModule, (XmlFile)myFile, false);
     await();
     return newParent;
   }
   
   private void await() throws InterruptedException {
-    assertTrue(info.lock.await(10, TimeUnit.SECONDS));
+    assertTrue(info.lock.await(1000, TimeUnit.SECONDS));
     //lock.await();
   }
   
   private void callClientAssert(String methodName) throws IOException, InterruptedException {
     info.lock = new CountDownLatch(1);
-    
-    Client client = Client.getInstance();
-    AmfOutputStream out = client.getOut();
-    out.write(1);
-    out.writeAmfUtf(methodName, false);
-    out.write(3);
-    
-    client.flush();
-    
+    TestClient.test(Client.getInstance(), methodName, APP_TEST_CLASS_ID);
     await();
-    
     if (info.fail.get()) {
       fail();
     }
-
     info.fail.set(false);
   }
 
   @Flex(version="4.5")
   public void testCloseAndOpenProject() throws Exception {
-    info.count = 1;
-    
     open("injectedAS/Transitions.mxml");
-    
+
+    TestClient.test(Client.getInstance(), "useRealProjectManagerBehavior", 0);
+
     FlexUIDesignerApplicationManager designerAppManager = FlexUIDesignerApplicationManager.getInstance();
     designerAppManager.projectManagerListener.projectClosed(myProject);
 
@@ -92,8 +84,6 @@ public class AppTest extends AppTestBase {
   
   @Flex(version="4.5")
   public void testUpdateDocumentOnIdeaAutoSave() throws Exception {
-    info.count = 2;
-    
     VirtualFile newParent = open("states/SetProperty.mxml");
     
     callClientAssert("wait"); // hack, wait library loaded on client
@@ -122,6 +112,11 @@ public class AppTest extends AppTestBase {
   @Override
   protected void tearDown() throws Exception {
     FlexUIDesignerApplicationManager.getInstance().dispose();
+
+    StringRegistry.getInstance().reset();
+
+    BinaryFileManager.getInstance().reset();
+    LibraryManager.getInstance().reset();
     
     if (connection != null) {
       connection.disconnect();
@@ -149,7 +144,6 @@ public class AppTest extends AppTestBase {
       finally {
         if (!result) {
           info.lock.countDown();
-          info.count--;
         }
       }
 
@@ -160,6 +154,5 @@ public class AppTest extends AppTestBase {
   private static class Info {
     private CountDownLatch lock = new CountDownLatch(1);
     private final Ref<Boolean> fail = new Ref<Boolean>(false);
-    private int count;
   }
 }

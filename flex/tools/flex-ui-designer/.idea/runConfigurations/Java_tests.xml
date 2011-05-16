@@ -18,9 +18,9 @@
     </option>
     <envs />
     <patterns>
-      <pattern testClass="com.intellij.flex.uiDesigner.AbcFilterTest" />
       <pattern testClass="com.intellij.flex.uiDesigner.ResolveExternalInlineStyleSourceActionTest" />
       <pattern testClass="com.intellij.flex.uiDesigner.SwcDependenciesSorterTest" />
+      <pattern testClass="com.intellij.flex.uiDesigner.io.StringRegistryTest" />
     </patterns>
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="64214" />

@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.*;
 
 @Flex(version="4.5")
 public class UITest extends MxmlWriterTestBase {
-  private static final int TEST_CLASS_ID = 5;
+  private static final int UI_TEST_CLASS_ID = 5;
 
   private static Roboflest roboflest;
 
@@ -44,7 +44,7 @@ public class UITest extends MxmlWriterTestBase {
     if (roboflest == null) {
       roboflest = new Roboflest();
       reader = socketInputHandler.getReader();
-      client.test("getStageOffset", TEST_CLASS_ID);
+      client.test("getStageOffset", UI_TEST_CLASS_ID);
       socketInputHandler.process(new TestSocketInputHandler.CustomMessageHandler() {
         @Override
         public void process() throws IOException {
@@ -62,7 +62,7 @@ public class UITest extends MxmlWriterTestBase {
   }
 
   private void assertClient(String methodName) throws IOException {
-    client.test(methodName, TEST_CLASS_ID);
+    client.test(methodName, UI_TEST_CLASS_ID);
     socketInputHandler.process();
   }
 

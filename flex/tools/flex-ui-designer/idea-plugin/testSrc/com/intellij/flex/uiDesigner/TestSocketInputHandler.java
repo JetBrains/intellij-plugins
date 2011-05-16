@@ -30,7 +30,7 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
 
   @Override
   protected boolean processCommand(int command) throws IOException {
-    if (isFileBased(command)) {
+    if (isFileBased(command) || command == ServerMethod.saveProjectWindowBounds) {
       return super.processCommand(command);
     }
 

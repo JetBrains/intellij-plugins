@@ -12,18 +12,16 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.util.Consumer;
 import gnu.trove.THashMap;
+import org.picocontainer.MutablePicoContainer;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 class TestDesignerApplicationManager {
   private static TestDesignerApplicationManager instance;
@@ -38,8 +36,7 @@ class TestDesignerApplicationManager {
 
   private TestDesignerApplicationManager() throws IOException {
     DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration =
-      new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"),
-                                                      System.getProperty("fud.air"));
+      new DesignerApplicationUtil.AdlRunConfiguration(System.getProperty("fud.adl"), System.getProperty("fud.air"));
 
     adlRunConfiguration.arguments = new ArrayList<String>();
     adlRunConfiguration.arguments.add("-p");
@@ -82,14 +79,30 @@ class TestDesignerApplicationManager {
       }
     });
     
-    AppTestBase.changeServiceImplementation(Client.class, TestClient.class);
+    changeServiceImplementation();
     Client.getInstance().setOut(socket.getOutputStream());
 
-    AppTestBase.changeServiceImplementation(DocumentProblemManager.class, MyDocumentProblemManager.class);
-
-    AppTestBase.changeServiceImplementation(SocketInputHandler.class, TestSocketInputHandler.class);
     socketInputHandler = (TestSocketInputHandler)ServiceManager.getService(SocketInputHandler.class);
     socketInputHandler.init(socket.getInputStream(), appDir);
+  }
+
+  static void changeServiceImplementation(Class key, Class implementation) {
+    MutablePicoContainer picoContainer = (MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer();
+    picoContainer.unregisterComponent(key.getName());
+    picoContainer.registerComponentImplementation(key.getName(), implementation);
+  }
+
+  private static boolean serviceImplementationChanged;
+  public static void changeServiceImplementation() {
+    if (serviceImplementationChanged) {
+      return;
+    }
+
+    changeServiceImplementation(Client.class, TestClient.class);
+    changeServiceImplementation(DocumentProblemManager.class, MyDocumentProblemManager.class);
+    changeServiceImplementation(SocketInputHandler.class, TestSocketInputHandler.class);
+
+    serviceImplementationChanged = true;
   }
 
   public void initLibrarySets(Module module, boolean requireLocalStyleHolder, String sdkName) throws IOException, InitException {
@@ -122,18 +135,10 @@ class TestDesignerApplicationManager {
     FileUtil.copy(new File(DebugPathManager.getFudHome(), "designer/src/main/resources/descriptor.xml"), new File(rootDir, FlexUIDesignerApplicationManager.DESCRIPTOR_XML));
   }
 
-
   private void initAppRootDir() throws IOException {
-    if (Boolean.valueOf(System.getProperty("fud.test.debug"))) {
-      appDir = new File(PathManager.getHomePath() + "/testAppRoot");
-      if (!appDir.exists() || SystemInfo.isWindows) {
-        copySwfAndDescriptor(appDir);
-      }
-    }
-    else {
-      appDir = PlatformTestCase.createTempDir("fud");
-      FileUtil.copy(new File(DebugPathManager.getFudHome() + "/app-loader/target/app-loader-1.0-SNAPSHOT.swf"),
-                    new File(appDir, FlexUIDesignerApplicationManager.DESIGNER_SWF));
+    appDir = new File(PathManager.getSystemPath(), "flexUIDesigner");
+    if (!appDir.exists() || SystemInfo.isWindows) {
+      copySwfAndDescriptor(appDir);
     }
   }
 

@@ -16,7 +16,7 @@ public class AppTest extends BaseTestCase {
     }
   }
   
-  [Test(async)]
+  [Test(async, nullableDocument)]
   public function close():void {
     assertThat(projectManager.project, nullValue());
     

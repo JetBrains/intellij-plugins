@@ -29,11 +29,11 @@ public class TestSocketDataHandler implements SocketDataHandler {
   private static const c:Vector.<Class> = new <Class>[MxmlTest, StatesTest, InjectedASTest, AppTest, StyleTest, UITest];
   private const describeCache:Dictionary = new Dictionary();
 
-  private var projectManager:ProjectManager;
+  private var projectManager:TestProjectManager;
   private var timeoutTimer:Timer;
 
   public function TestSocketDataHandler(projectManager:ProjectManager) {
-    this.projectManager = projectManager;
+    this.projectManager = TestProjectManager(projectManager);
   }
   
   private var _socket:Socket;
@@ -76,6 +76,10 @@ public class TestSocketDataHandler implements SocketDataHandler {
 
   public function handleSockedData(messageSize:int, methodNameSize:int, data:IDataInput):void {
     var method:String = data.readUTFBytes(methodNameSize);
+    if (method == "useRealProjectManagerBehavior") {
+      projectManager.useRealProjectManagerBehavior = true;
+    }
+
     var clazz:Class = c[data.readByte()];
 
     var methodInfo:Dictionary = describeCache[clazz];
