@@ -99,7 +99,7 @@ public class QueueLoader {
 
   private function doLoadLibrarySet(librarySet:LibrarySet):void {
     this.librarySet = librarySet;
-    loadedCount = 0;
+    loadedCount = librarySet.loadSize;
     assert(_rootDomain != null);
     loaderContext.applicationDomain = new ApplicationDomain(librarySet.parent == null ? _rootDomain : librarySet.parent.applicationDomain);
     for each (var item:LibrarySetItem in librarySet.items) {
@@ -140,8 +140,11 @@ public class QueueLoader {
   }
 
   private function loadCompleteHandler(event:Event):void {
-    loadedCount++;
-    if (loadedCount < librarySet.loadSize) {
+    if (librarySet == null) {
+      return; // stopped;
+    }
+
+    if (--loadedCount > 0) {
       if (librarySet.applicationDomainCreationPolicy == ApplicationDomainCreationPolicy.MULTIPLE) {
         loaderContext.applicationDomain = new ApplicationDomain(loaderContext.applicationDomain);
       }
@@ -169,10 +172,7 @@ public class QueueLoader {
     }
     else {
       librarySet.applicationDomain = loaderContext.applicationDomain;
-      for each (var l:LibrarySetItem in librarySet.items) {
-        // reset load state (original library shared between library sets)
-        l.loadState = LoadState.UNINITIALIZED;
-      }
+      resetLoadState();
 
       var lS:LibrarySet = librarySet;
       librarySet = null;
@@ -181,6 +181,21 @@ public class QueueLoader {
       if (queue.length > 0) {
         doLoadLibrarySet(queue.shift());
       }
+    }
+  }
+
+  private function resetLoadState():void {
+    for each (var l:LibrarySetItem in librarySet.items) {
+      // reset load state (original library shared between library sets)
+      l.loadState = LoadState.UNINITIALIZED;
+    }
+  }
+
+  public function stop(librarySet:LibrarySet):void {
+    if (this.librarySet == librarySet) {
+      resetLoadState();
+      this.librarySet = null;
+      queue.length = 0;
     }
   }
 }

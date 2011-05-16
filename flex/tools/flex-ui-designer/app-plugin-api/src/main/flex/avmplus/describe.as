@@ -1,5 +1,5 @@
 package avmplus {
-  public function describe(target:Class, flags:uint):Object {
+  public function describe(target:Object, flags:uint):Object {
     return describeTypeJSON(target, flags);
   }
 }

@@ -7,13 +7,13 @@
     import com.intellij.flex.uiDesigner.DocumentManager;
     import com.intellij.flex.uiDesigner.DocumentManagerImpl;
     import com.intellij.flex.uiDesigner.DocumentReader;
-    import com.intellij.flex.uiDesigner.libraries.LibraryManager;
     import com.intellij.flex.uiDesigner.Server;
     import com.intellij.flex.uiDesigner.StatesBarManager;
     import com.intellij.flex.uiDesigner.libraries.LibraryManager;
-    import com.intellij.flex.uiDesigner.ui.styleInspector.CssRulesetPrinter;
-    import com.intellij.flex.uiDesigner.ui.styleInspector.Interactor;
-    import com.intellij.flex.uiDesigner.ui.styleInspector.StylePane;
+    import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInspector;
+    import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.CssRulesetPrinter;
+    import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.Interactor;
+    import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StyleInspector;
     import com.intellij.flex.uiDesigner.ui.tools.ElementToolContainer;
     import com.intellij.flex.uiDesigner.ui.tools.ElementToolManager;
     ]]></fx:Script>
@@ -40,11 +40,15 @@
   </components>
 
   <injectors>
-    <Injectors target="{StylePane}">
+    <Injectors target="{StyleInspector}">
       <PropertyInjector source="{CssRulesetPrinter}" targetKey="rulesetPrinter"/>
       <PropertyInjector source="{ElementManager}" sourceKey="element"/>
       <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
       <PropertyInjector targetKey="pane" target="{Interactor}"/>
+    </Injectors>
+
+    <Injectors target="{PropertyInspector}">
+      <PropertyInjector source="{ElementManager}" sourceKey="element"/>
     </Injectors>
 
     <Injectors target="{ProjectView}">

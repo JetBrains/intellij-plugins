@@ -6,7 +6,7 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
   private String expectedError;
   private MessageHandler customMessageHandler;
 
-  private static class TestServerMethod {
+  protected static class TestServerMethod {
     private static final int success = 100;
     private static final int fail = 101;
     private static final int custom = 102;

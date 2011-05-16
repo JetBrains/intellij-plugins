@@ -10,7 +10,7 @@ public class TestLibraryManager extends LibraryManager {
     if (librarySet.parent != null) {
       super.removeLibrarySet(librarySet);
     }
-    else if (librarySet.applicationDomain.hasDefinition(FF)) {
+    else if (librarySet.applicationDomain != null && librarySet.applicationDomain.hasDefinition(FF)) {
       librarySet.applicationDomain.getDefinition(FF).prepareToDie();
     }
   }

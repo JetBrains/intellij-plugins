@@ -9,7 +9,8 @@ import cocoa.ui;
 
 import com.intellij.flex.uiDesigner.Document;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
-import com.intellij.flex.uiDesigner.ui.styleInspector.StylePane;
+import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInspector;
+import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StyleInspector;
 
 import flash.utils.Dictionary;
 
@@ -45,7 +46,8 @@ public class ProjectView extends AbstractComponent implements Injectable {
   ui function sidebarAdded():void {
     // todo move
     sidebar.items = new ArrayList(new <Object>[
-      new PaneItem(new ResourceMetadata("style", "Designer"), new ClassFactory(StylePane))
+      new PaneItem(new ResourceMetadata("style", "Designer"), new ClassFactory(StyleInspector)),
+      //new PaneItem(new ResourceMetadata("properties", "Designer"), new ClassFactory(PropertyInspector))
     ]);
     sidebar.selectedIndices = new <int>[0];
   }

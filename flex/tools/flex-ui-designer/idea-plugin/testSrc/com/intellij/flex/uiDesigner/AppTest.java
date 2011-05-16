@@ -11,11 +11,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.messages.MessageBusConnection;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.SocketException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -73,11 +71,11 @@ public class AppTest extends AppTestBase {
     
     await();
     
-    if (!info.result.get().equals(PASSED)) {
-      fail(info.result.get());
+    if (info.fail.get()) {
+      fail();
     }
 
-    info.result.set("");
+    info.fail.set(false);
   }
 
   @Flex(version="4.5")
@@ -131,34 +129,37 @@ public class AppTest extends AppTestBase {
     
     super.tearDown();
   }
-  
-  private static class MySocketInputHandler extends SocketInputHandlerImpl {
+
+  private static class MySocketInputHandler extends TestSocketInputHandler {
     private Info info;
 
     @Override
-    public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
-      createReader(inputStream);
-      while (info.count != 0) {
-        try {
-          info.result.set(reader.readUTF());
+    protected boolean processCommand(int command) throws IOException {
+      boolean result = true;
+      try {
+        result = super.processCommand(command);
+      }
+      catch (Throwable e) {
+        if (!(e instanceof SocketException)) {
+          LOG.error(e);
+          result = false;
+          info.fail.set(true);
         }
-        catch (IOException e) {
-          if (!(e instanceof SocketException)) {
-            LOG.error(e);
-          }
-          break;
-        }
-        finally {
+      }
+      finally {
+        if (!result) {
           info.lock.countDown();
           info.count--;
         }
       }
+
+      return true;
     }
   }
   
   private static class Info {
     private CountDownLatch lock = new CountDownLatch(1);
-    private final Ref<String> result = new Ref<String>("");
+    private final Ref<Boolean> fail = new Ref<Boolean>(false);
     private int count;
   }
 }

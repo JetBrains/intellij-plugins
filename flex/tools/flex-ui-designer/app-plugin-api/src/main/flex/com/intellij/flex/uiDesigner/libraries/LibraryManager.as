@@ -84,6 +84,7 @@ public class LibraryManager implements LibrarySetLoadProgressListener {
   }
 
   protected function removeLibrarySet(librarySet:LibrarySet):void {
+    loader.stop(librarySet);
     delete idMap[librarySet.id];
   }
 
