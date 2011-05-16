@@ -166,7 +166,7 @@ target('default': "Build artifacts") {
   }
 
   modules.each {
-    Module module = project[it] as Module
+    Module module = project.modules[it] as Module
     if (module != null) {
       project.info("Building $module.name")
       module.runtimeClasspath().each {
