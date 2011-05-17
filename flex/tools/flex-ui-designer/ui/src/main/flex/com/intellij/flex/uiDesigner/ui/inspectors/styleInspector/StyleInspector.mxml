@@ -1,4 +1,5 @@
-<Panel xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="cocoa" implements="org.flyti.plexus.Injectable, com.intellij.flex.uiDesigner.ui.styleInspector.StylePaneContext">
+<inspectors:AbstractInspector xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="cocoa" xmlns:inspectors="com.intellij.flex.uiDesigner.ui.inspectors.*"
+                              implements="com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StylePaneContext">
   <fx:Script><![CDATA[
     import cocoa.ScrollPolicy;
 
@@ -59,12 +60,6 @@
     private var _styleManager:StyleManagerEx;
     public function get styleManager():StyleManagerEx {
       return _styleManager;
-    }
-
-    override protected function skinAttachedHandler():void {
-      super.skinAttachedHandler();
-
-      list.laf = laf;
     }
 
     private function updateData(element:Object):void {
@@ -171,4 +166,4 @@
   <ScrollView horizontalScrollPolicy="{ScrollPolicy.OFF}">
     <DataGroup id="list" itemRendererFunction="itemRendererFunction"/>
   </ScrollView>
-</Panel>
+</inspectors:AbstractInspector>

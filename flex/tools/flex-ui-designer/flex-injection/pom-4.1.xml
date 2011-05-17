@@ -31,7 +31,7 @@
           <dependency>
             <groupId>com.adobe.flex</groupId>
             <artifactId>compiler</artifactId>
-            <version>4.5.0.18365</version>
+            <version>4.5.0.20968</version>
             <type>pom</type>
           </dependency>
         </dependencies>

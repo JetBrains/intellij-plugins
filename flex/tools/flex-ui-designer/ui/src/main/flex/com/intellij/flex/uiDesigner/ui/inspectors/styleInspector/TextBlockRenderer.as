@@ -1,8 +1,8 @@
-package com.intellij.flex.uiDesigner.ui.styleInspector {
+package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import cocoa.AbstractView;
 
 import com.intellij.flex.uiDesigner.css.CssRuleset;
-import com.intellij.flex.uiDesigner.ui.styleInspector.StylePaneContext;
+import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StylePaneContext;
 
 import mx.core.IDataRenderer;
 
@@ -103,7 +103,7 @@ public class TextBlockRenderer extends AbstractView implements IDataRenderer {
 
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.ui.CssElementFormat;
-import com.intellij.flex.uiDesigner.ui.styleInspector.StylePaneContext;
+import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StylePaneContext;
 
 import flash.display.Graphics;
 import flash.display.Shape;

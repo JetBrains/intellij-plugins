@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.ui.styleInspector {
+package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import flash.errors.IllegalOperationError;
 import flash.text.engine.TextBlock;
 

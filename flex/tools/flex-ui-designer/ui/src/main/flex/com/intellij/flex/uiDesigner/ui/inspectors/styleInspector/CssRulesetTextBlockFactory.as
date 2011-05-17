@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.ui.styleInspector {
+package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 
 import flash.text.engine.TextBlock;

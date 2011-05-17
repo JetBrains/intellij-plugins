@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.ui.styleInspector {
+package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import cocoa.util.StringUtil;
 import cocoa.util.TextLineUtil;
 

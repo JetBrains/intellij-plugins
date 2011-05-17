@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.ui.styleInspector {
+package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import com.intellij.flex.uiDesigner.Module;
 import com.intellij.flex.uiDesigner.Server;
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
@@ -55,7 +55,7 @@ public class Interactor {
   }
 
   //noinspection JSUnusedGlobalSymbols
-  public function set pane(value:StylePane):void {
+  public function set pane(value:StyleInspector):void {
     value.skin.addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);
     value.skin.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
     value.skin.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);

@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner.ui.styleInspector {
+package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import com.intellij.flex.uiDesigner.ui.CssElementFormat;
 
 import flash.text.engine.ContentElement;

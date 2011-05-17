@@ -32,7 +32,7 @@
       <groupId>com.adobe.flex.framework</groupId>
       <artifactId>playerglobal</artifactId>
       <type>swc</type>
-      <version>10.1</version>
+      <version>10.2</version>
     </dependency>
   </dependencies>
 
