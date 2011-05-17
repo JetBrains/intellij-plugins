@@ -3,6 +3,7 @@
  */
 package com.intellij.lang.javascript.generation;
 
+import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.util.MemberChooser;
@@ -53,6 +54,7 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
   }
 
   public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
+    if (!CodeInsightUtilBase.prepareFileForWrite(file)) return;
     final JSClass jsClass = findClass(file, editor);
     if (jsClass == null) return;
 
