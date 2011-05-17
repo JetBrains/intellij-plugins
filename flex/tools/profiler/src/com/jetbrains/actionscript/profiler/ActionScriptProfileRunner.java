@@ -9,6 +9,7 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.run.AirRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunner;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -52,7 +53,9 @@ public class ActionScriptProfileRunner implements ProgramRunner<ProfileSettings>
   }
 
   public boolean canRun(@NotNull String executorId, @NotNull RunProfile runProfile) {
-    return executorId.equals(DefaultProfilerExecutor.EXECUTOR_ID) && runProfile instanceof FlexRunConfiguration;
+    return executorId.equals(DefaultProfilerExecutor.EXECUTOR_ID) &&
+           runProfile instanceof FlexRunConfiguration &&
+           !(runProfile instanceof AirRunConfiguration);
   }
 
   public ProfileSettings createConfigurationData(ConfigurationInfoProvider configurationInfoProvider) {
