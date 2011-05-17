@@ -182,7 +182,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     final JSClass fromClass = (JSClass)source;
     final JSClass toClass = (JSClass)target;
 
-    if (JSRefactoringUtil.isInLibrarySource(fromClass) || JSResolveUtil.isObjectClass(toClass)) {
+    if (JSRefactoringUtil.isInLibrary(fromClass) || JSResolveUtil.isObjectClass(toClass)) {
       return;
     }
 

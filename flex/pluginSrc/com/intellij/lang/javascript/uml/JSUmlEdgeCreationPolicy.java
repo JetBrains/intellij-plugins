@@ -14,7 +14,7 @@ public class JSUmlEdgeCreationPolicy implements DiagramEdgeCreationPolicy<Object
     final JSClass clazz = (JSClass)source.getIdentifyingElement();
     JSAttributeList attributeList = clazz.getAttributeList();
     if (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.FINAL)) return false;
-    if (JSRefactoringUtil.isInLibrarySource(clazz)) return false;
+    if (JSRefactoringUtil.isInLibrary(clazz)) return false;
     return true;
   }
 
