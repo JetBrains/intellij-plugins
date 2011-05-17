@@ -5,9 +5,9 @@ import com.intellij.ide.passwordSafe.PasswordSafeException;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
+import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
-import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -25,26 +25,18 @@ import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.HoverHyperlinkLabel;
-import com.intellij.util.ui.AbstractTableCellEditor;
-import com.intellij.util.ui.CellEditorComponentWithBrowseButton;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParameters.FilePathAndPathInPackage;
@@ -58,9 +50,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   private LabeledComponent<JTextField> myInstallerFileNameComponent;
   private LabeledComponent<TextFieldWithBrowseButton> myInstallerLocationComponent;
 
-  private JTable myFilesToPackageTable;
-  private JButton myAddButton;
-  private JButton myRemoveButton;
+  private FilesToPackageForm myFilesToPackageForm;
 
   private JButton myCreateCertButton;
   private JComboBox myKeystoreTypeCombo;
@@ -80,7 +70,6 @@ public class PackageAirInstallerDialog extends DialogWrapper {
 
   private final Project myProject;
 
-  private final List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<FilePathAndPathInPackage>();
   private static final String TITLE = "Package AIR Installation File";
 
   private static final String MORE_OPTIONS = "More options";
@@ -96,14 +85,11 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     setOKButtonText("Package");
     initAirDescriptorComponent();
     initInstallerLocationComponent();
-    initTable();
-    initTableButtons();
     initSigningOptions();
     initCreateCertButton();
     initMoreOptionsHyperlinkLabel();
 
     loadDefaultParameters();
-    updateRemoveButtonState();
     updateMoreOptions();
     updateSigningOptionsPanel();
     init();
@@ -174,14 +160,15 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     try {
       final String contentPath = FlexUtils.findXMLElement(airDescriptor.getInputStream(), "<application><initialWindow><content>");
       if (!StringUtil.isEmptyOrSpaces(contentPath)) {
-        if (myFilesToPackage.isEmpty() || !myFilesToPackage.get(0).PATH_IN_PACKAGE.equals(contentPath)) {
+        final List<FilePathAndPathInPackage> filesToPackage = myFilesToPackageForm.getFilesToPackage();
+        if (filesToPackage.isEmpty() || !filesToPackage.get(0).PATH_IN_PACKAGE.equals(contentPath)) {
           boolean tableRowAdded = false;
           if (module != null) {
             final String fileName = FileUtil.toSystemIndependentName(contentPath).substring(contentPath.lastIndexOf("/") + 1);
 
             for (String path : getOutputFilePaths(module)) {
               if (path.endsWith("/" + fileName)) {
-                myFilesToPackage.add(0, new FilePathAndPathInPackage(FileUtil.toSystemDependentName(path), contentPath));
+                filesToPackage.add(0, new FilePathAndPathInPackage(FileUtil.toSystemDependentName(path), contentPath));
                 tableRowAdded = true;
                 break;
               }
@@ -189,10 +176,10 @@ public class PackageAirInstallerDialog extends DialogWrapper {
           }
 
           if (!tableRowAdded) {
-            myFilesToPackage.add(0, new FilePathAndPathInPackage("", contentPath));
+            filesToPackage.add(0, new FilePathAndPathInPackage("", contentPath));
           }
 
-          ((AbstractTableModel)myFilesToPackageTable.getModel()).fireTableDataChanged();
+          myFilesToPackageForm.fireDataChanged();
         }
       }
     }
@@ -202,100 +189,10 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   private void initInstallerLocationComponent() {
     myInstallerLocationComponent.getComponent()
       .addBrowseFolderListener(null, null, myProject, new FileChooserDescriptor(false, true, false, false, false, false) {
-          public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-            return super.isFileVisible(file, showHiddenFiles) && file.isDirectory();
-          }
-        }, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
-  }
-
-  private void initTable() {
-    myFilesToPackageTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); // otherwise model is not in sync with view
-    myFilesToPackageTable.setRowHeight(20);
-
-    myFilesToPackageTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        updateRemoveButtonState();
-      }
-    });
-
-    myFilesToPackageTable.setModel(new DefaultTableModel() {
-
-      public int getColumnCount() {
-        return Column.values().length;
-      }
-
-      public int getRowCount() {
-        return myFilesToPackage.size();
-      }
-
-      public String getColumnName(int column) {
-        return Column.values()[column].getColumnName();
-      }
-
-      public Class<?> getColumnClass(int column) {
-        return Column.values()[column].getColumnClass();
-      }
-
-      public Object getValueAt(int row, int column) {
-        return Column.values()[column].getValue(myFilesToPackage.get(row));
-      }
-
-      public void setValueAt(Object aValue, int row, int column) {
-        Column.values()[column].setValue(myFilesToPackage, row, aValue);
-      }
-    });
-
-    myFilesToPackageTable.getColumnModel().getColumn(0).setCellEditor(new AbstractTableCellEditor() {
-      private CellEditorComponentWithBrowseButton<JTextField> myComponent;
-
-      public Component getTableCellEditorComponent(final JTable table, Object value, boolean isSelected, int row, int column) {
-        final ActionListener listener = new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            FileChooserDescriptor d = new FileChooserDescriptor(true, true, false, true, false, false);
-
-            VirtualFile initialFile = LocalFileSystem.getInstance().findFileByPath((String)getCellEditorValue());
-            VirtualFile[] files = FileChooser.chooseFiles(myProject, d, initialFile);
-            if (files.length == 1 && files[0] != null) {
-              myComponent.getChildComponent().setText(files[0].getPresentableUrl());
-            }
-          }
-        };
-
-        myComponent = new CellEditorComponentWithBrowseButton<JTextField>(new TextFieldWithBrowseButton(listener), this);
-        myComponent.getChildComponent().setText((String)value);
-        return myComponent;
-      }
-
-      public Object getCellEditorValue() {
-        return myComponent.getChildComponent().getText();
-      }
-    });
-  }
-
-  private void initTableButtons() {
-    myAddButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        VirtualFile[] files = FileChooser.chooseFiles(myProject, new FileChooserDescriptor(true, true, false, true, false, false));
-        if (files.length == 1 && files[0] != null) {
-          myFilesToPackage.add(new FilePathAndPathInPackage(files[0].getPresentableUrl(), files[0].getName()));
-          ((AbstractTableModel)myFilesToPackageTable.getModel()).fireTableDataChanged();
-        }
-      }
-    });
-
-    myRemoveButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (myFilesToPackageTable.isEditing()) {
-          myFilesToPackageTable.getCellEditor().stopCellEditing();
-        }
-        final int[] selectedRows = myFilesToPackageTable.getSelectedRows();
-        Arrays.sort(selectedRows);
-        for (int i = selectedRows.length - 1; i >= 0; i--) {
-          myFilesToPackage.remove(selectedRows[i]);
-        }
-        ((AbstractTableModel)myFilesToPackageTable.getModel()).fireTableDataChanged();
-      }
-    });
+                                 public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
+                                   return super.isFileVisible(file, showHiddenFiles) && file.isDirectory();
+                                 }
+                               }, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
   }
 
   private void initSigningOptions() {
@@ -379,10 +276,6 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     return myMoreOptionsHyperlinkLabel.getText().contains(LESS_OPTIONS);
   }
 
-  private void updateRemoveButtonState() {
-    myRemoveButton.setEnabled(myFilesToPackageTable.getSelectedRowCount() > 0);
-  }
-
   private void updateMoreOptions() {
     final boolean showingMoreOption = isShowingMoreOptions();
     myKeyAliasLabel.setVisible(showingMoreOption);
@@ -400,11 +293,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   }
 
   protected void doOKAction() {
-    final TableCellEditor cellEditor = myFilesToPackageTable.getCellEditor();
-    if (cellEditor != null) {
-      // apply currently edited value if any
-      cellEditor.stopCellEditing();
-    }
+    myFilesToPackageForm.stopEditing();
 
     if (validateInput() && packageAirInstaller()) {
       super.doOKAction();
@@ -447,11 +336,11 @@ public class PackageAirInstallerDialog extends DialogWrapper {
       return FlexBundle.message("folder.does.not.exist", installerLocation);
     }
 
-    if (myFilesToPackage.isEmpty()) {
+    if (myFilesToPackageForm.getFilesToPackage().isEmpty()) {
       return "No files to package";
     }
 
-    for (FilePathAndPathInPackage path : myFilesToPackage) {
+    for (FilePathAndPathInPackage path : myFilesToPackageForm.getFilesToPackage()) {
       final String fullPath = FileUtil.toSystemIndependentName(path.FILE_PATH.trim());
       String relPathInPackage = FileUtil.toSystemIndependentName(path.PATH_IN_PACKAGE.trim());
       if (relPathInPackage.startsWith("/")) {
@@ -509,8 +398,9 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     final String provider = showingMore ? myProviderClassNameTextField.getText().trim() : "";
     final String tsa = showingMore ? myTsaUrlTextField.getText().trim() : "";
 
-    return new AirInstallerParameters(flexSdk, airDescriptorPath, installerFileName, installerFileLocation, myFilesToPackage, doNotSign,
-                                      keystorePath, keystoreType, keystorePassword, keyAlias, keyPassword, provider, tsa);
+    return new AirInstallerParameters(flexSdk, airDescriptorPath, installerFileName, installerFileLocation,
+                                      myFilesToPackageForm.getFilesToPackage(), doNotSign, keystorePath, keystoreType, keystorePassword,
+                                      keyAlias, keyPassword, provider, tsa);
   }
 
   private static List<String> getOutputFilePaths(final Module module) {
@@ -538,7 +428,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   private void createUIComponents() {
     myFlexSdkComponent = new LabeledComponent<FlexSdkComboBoxWithBrowseButton>();
     myFlexSdkComponent.setComponent(new FlexSdkComboBoxWithBrowseButton());
-
+    myFilesToPackageForm = new FilesToPackageForm(myProject);
     myMoreOptionsHyperlinkLabel = new HoverHyperlinkLabel(MORE_OPTIONS);
   }
 
@@ -590,8 +480,8 @@ public class PackageAirInstallerDialog extends DialogWrapper {
         myAirDescriptorComponent.getComponent().getComboBox().setSelectedItem(parameters.AIR_DESCRIPTOR_PATH);
         myInstallerFileNameComponent.getComponent().setText(parameters.INSTALLER_FILE_NAME);
         myInstallerLocationComponent.getComponent().setText(parameters.INSTALLER_FILE_LOCATION);
-        myFilesToPackage.clear();
-        myFilesToPackage.addAll(parameters.FILES_TO_PACKAGE);
+        myFilesToPackageForm.getFilesToPackage().clear();
+        myFilesToPackageForm.getFilesToPackage().addAll(parameters.FILES_TO_PACKAGE);
         myDoNotSignCheckBox.setSelected(parameters.DO_NOT_SIGN);
         myKeystoreFileTextWithBrowse.setText(parameters.KEYSTORE_PATH);
         myKeystoreTypeCombo.setSelectedItem(parameters.KEYSTORE_TYPE);
@@ -628,48 +518,6 @@ public class PackageAirInstallerDialog extends DialogWrapper {
         appendPaths(command, parameters);
       }
     };
-  }
-
-  private enum Column {
-    Path("Path to file or folder", String.class) {
-      Object getValue(final FilePathAndPathInPackage row) {
-        return row.FILE_PATH;
-      }
-
-      void setValue(final List<FilePathAndPathInPackage> myFilesToPackage, final int row, final Object value) {
-        myFilesToPackage.get(row).FILE_PATH = (String)value;
-      }
-    },
-
-    RelativePath("Its relative path in installation package", String.class) {
-      Object getValue(final FilePathAndPathInPackage row) {
-        return row.PATH_IN_PACKAGE;
-      }
-
-      void setValue(final List<FilePathAndPathInPackage> myFilePathsToPackage, final int row, final Object value) {
-        myFilePathsToPackage.get(row).PATH_IN_PACKAGE = (String)value;
-      }
-    };
-
-    private final String myColumnName;
-    private final Class myColumnClass;
-
-    private Column(final String columnName, final Class columnClass) {
-      myColumnName = columnName;
-      myColumnClass = columnClass;
-    }
-
-    public String getColumnName() {
-      return myColumnName;
-    }
-
-    private Class getColumnClass() {
-      return myColumnClass;
-    }
-
-    abstract Object getValue(FilePathAndPathInPackage row);
-
-    abstract void setValue(List<FilePathAndPathInPackage> myFilesToPackage, int row, Object value);
   }
 
   protected String getHelpId() {
