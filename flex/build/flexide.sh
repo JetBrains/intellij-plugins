@@ -105,7 +105,7 @@ fi
 # $AGENT="-agentlib:yjpagent$BITS=disablej2ee,sessionname=flexide"
 #fi
 
-[ -e $FLEXIDE_HOME/Contents/Info.plist ] && BUNDLE_TYPE="MAC" || BUNDLE_TYPE="NOT_MAC"
+[ -e "$FLEXIDE_HOME/Contents/Info.plist" ] && BUNDLE_TYPE="MAC" || BUNDLE_TYPE="NOT_MAC"
 
 # If vmoptions file exists - use it
 if [ -e "$FLEXIDE_VM_OPTIONS" ]; then
