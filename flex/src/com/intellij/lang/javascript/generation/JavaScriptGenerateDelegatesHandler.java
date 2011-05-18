@@ -228,7 +228,8 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
       }
 
       protected String buildFunctionBodyText(final String retType, final JSParameterList parameterList, final JSNamedElement element) {
-        return OverrideMethodsFix.buildDelegatingText(retType, parameterList, ((JSFunction)element), field.getName(), anchor);
+        return OverrideMethodsFix.buildDelegatingText(retType, parameterList, ((JSFunction)element), field.getName(),
+                                                      anchor != null ? anchor : myJsClass);
       }
     };
     doInvoke(project, editor, file, selected, fix);
