@@ -1,4 +1,4 @@
-<!ELEMENT AccessibilityClass EMPTY><!ELEMENT AccessibilityClass EMPTY>
+<!ELEMENT AccessibilityClass EMPTY>
 <!ATTLIST AccessibilityClass implementation CDATA #REQUIRED>
 <!ELEMENT Alternative EMPTY>
 <!ATTLIST Alternative
