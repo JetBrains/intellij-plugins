@@ -5,13 +5,13 @@ import com.intellij.ide.util.MemberChooser;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSConditionalCompileVariableReference;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
+import com.intellij.lang.javascript.validation.fixes.JSAttributeListWrapper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -23,7 +23,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.MultiMap;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -201,17 +200,13 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
                                                                      null, false, field.getName());
 
       @Override
-      protected String buildFunctionAttrText(@NonNls String attrText, JSAttributeList attributeList, JSNamedElement function) {
-        StringBuilder result = new StringBuilder();
-        JSConditionalCompileVariableReference ref = attributeList.getConditionalCompileVariableReference();
-        if (ref != null) {
-          result.append(ref.getText()).append(" ");
-        }
-        result.append("public");
-        if (field.getAttributeList().hasModifier(JSAttributeList.ModifierType.STATIC)) {
-          result.append(" static");
-        }
-        return result.toString();
+      protected void adjustAttributeList(JSAttributeListWrapper attributeListWrapper, JSNamedElement function) {
+        attributeListWrapper.overrideAccessType(JSAttributeList.AccessType.PUBLIC);
+        attributeListWrapper
+          .overrideModifier(JSAttributeList.ModifierType.STATIC, field.getAttributeList().hasModifier(JSAttributeList.ModifierType.STATIC));
+        attributeListWrapper.overrideModifiers(false, JSAttributeList.ModifierType.NATIVE, JSAttributeList.ModifierType.DYNAMIC,
+                                               JSAttributeList.ModifierType.FINAL, JSAttributeList.ModifierType.OVERRIDE,
+                                               JSAttributeList.ModifierType.VIRTUAL);
       }
 
       @Override

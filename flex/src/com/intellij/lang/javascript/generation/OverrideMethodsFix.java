@@ -3,13 +3,12 @@ package com.intellij.lang.javascript.generation;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSParameterList;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.lang.javascript.validation.fixes.JSAttributeListWrapper;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -64,21 +63,12 @@ public class OverrideMethodsFix extends BaseCreateMethodsFix<JSFunction> {
     return functionText.toString();
   }
 
-  protected String buildFunctionAttrText(String attrText, final JSAttributeList attributeList, final JSFunction function) {
-    attrText = super.buildFunctionAttrText(attrText, attributeList, function);
-    final PsiElement element = JSResolveUtil.findParent(function);
-    attrText = StringUtil.replace(attrText, "override", "").trim();
+  protected void adjustAttributeList(JSAttributeListWrapper attributeListWrapper, final JSFunction function) {
+    super.adjustAttributeList(attributeListWrapper, function);
+    attributeListWrapper.overrideModifier(JSAttributeList.ModifierType.DYNAMIC, false);
 
-    if (element instanceof JSClass && !"Object".equals(((JSClass)element).getQualifiedName())) {
-      final PsiElement typeElement = attributeList != null ? attributeList.findAccessTypeElement():null;
-      if (typeElement == null) {
-        attrText += " override";
-      } else {
-        final int index = attrText.indexOf(typeElement.getText());
-        attrText = attrText.substring(0, index) + ((index > 0)?" ":"") + "override " + attrText.substring(index);
-      }
-    }
-
-    return attrText;
+    PsiElement element = JSResolveUtil.findParent(function);
+    attributeListWrapper.overrideModifier(JSAttributeList.ModifierType.OVERRIDE,
+                                          element instanceof JSClass && !JSResolveUtil.isObjectClass((JSClass)element));
   }
 }

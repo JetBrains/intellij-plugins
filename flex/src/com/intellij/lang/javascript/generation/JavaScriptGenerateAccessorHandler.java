@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.lang.javascript.validation.fixes.CreateJSVariableIntentionAction;
+import com.intellij.lang.javascript.validation.fixes.JSAttributeListWrapper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -30,7 +31,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.RefactoringFactory;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -300,15 +300,12 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
       return " {}";
     }
 
-    protected String buildFunctionAttrText(final String attrText, final JSAttributeList attributeList, final JSVariable function) {
-      String baseText =
-        "public" + (attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.STATIC) ? " static" : "");
-
+    protected void adjustAttributeList(JSAttributeListWrapper attributeListWrapper, final JSVariable function) {
+      attributeListWrapper.overrideAccessType(JSAttributeList.AccessType.PUBLIC);
+      attributeListWrapper.removeOriginalAttributes();
       if (myMode == GenerationMode.Getter && myEventBinder != null && myEventBinder.isBindEvent()) {
-        baseText = "[Bindable(event=\"" + myEventBinder.getEventName(function.getName()) + "\")]\n" + baseText;
+        attributeListWrapper.addAttribute(JSResolveUtil.BINDABLE_ATTR_NAME, "event", myEventBinder.getEventName(function.getName()));
       }
-
-      return baseText;
     }
 
     @Override
