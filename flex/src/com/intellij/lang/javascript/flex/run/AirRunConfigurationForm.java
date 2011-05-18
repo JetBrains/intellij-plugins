@@ -56,14 +56,15 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
     myModuleComboBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         final Module module = myModulesComboboxWrapper.getSelectedModule();
-        resetAirRootDirPath(module, myRootDirectoryComponent);
+        resetAirRootDirPath(module, myRootDirectoryComponent.getComponent());
         myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
-        updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassComponent, myMainClassFilter);
+        updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassComponent.getComponent(), myMainClassFilter);
       }
     });
 
     initWhatToLaunchRadioButtons();
-    initAppDescriptorComponent(myProject, myApplicationDescriptorComponent, myModulesComboboxWrapper, myRootDirectoryComponent);
+    initAirDescriptorCombo(myProject, myApplicationDescriptorComponent.getComponent(), myModulesComboboxWrapper,
+                           myRootDirectoryComponent.getComponent());
 
     myRootDirectoryComponent.getComponent().addBrowseFolderListener("AIR Application Root Directory", null, project,
                                                                     new FileChooserDescriptor(false, true, false, false, false, false));
@@ -76,23 +77,23 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
     myDebuggerSdkCombo.showModuleSdk(true);
 
     updateControls();
-    updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassComponent, myMainClassFilter);
+    updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassComponent.getComponent(), myMainClassFilter);
   }
 
   static void updateMainClassField(final Project project,
                                    final ModulesComboboxWrapper modulesComboboxWrapper,
-                                   final LabeledComponent<JSReferenceEditor> mainClassComponent,
+                                   final JSReferenceEditor mainClassEditor,
                                    final JSClassChooserDialog.PublicInheritor mainClassFilter) {
     try {
       final Module module = FlexRunConfiguration.getAndValidateModule(project, modulesComboboxWrapper.getSelectedText());
-      mainClassComponent.getComponent().setScope(GlobalSearchScope.moduleScope(module));
+      mainClassEditor.setScope(GlobalSearchScope.moduleScope(module));
       mainClassFilter.setModule(module);
-      mainClassComponent.getComponent().setChooserBlockingMessage(null);
+      mainClassEditor.setChooserBlockingMessage(null);
     }
     catch (RuntimeConfigurationError error) {
-      mainClassComponent.getComponent().setScope(GlobalSearchScope.EMPTY_SCOPE);
+      mainClassEditor.setScope(GlobalSearchScope.EMPTY_SCOPE);
       mainClassFilter.setModule(null);
-      mainClassComponent.getComponent().setChooserBlockingMessage(error.getMessage());
+      mainClassEditor.setChooserBlockingMessage(error.getMessage());
     }
   }
 
@@ -110,18 +111,18 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
     myMainClassRadioButton.addActionListener(actionListener);
   }
 
-  static void initAppDescriptorComponent(final Project project,
-                                         final LabeledComponent<ComboboxWithBrowseButton> applicationDescriptorComponent,
-                                         final ModulesComboboxWrapper modulesComboboxWrapper,
-                                         final LabeledComponent<TextFieldWithBrowseButton> rootDirectoryComponent) {
-    applicationDescriptorComponent.getComponent()
+  static void initAirDescriptorCombo(final Project project,
+                                     final ComboboxWithBrowseButton appDescriptorComboWithBrowse,
+                                     final ModulesComboboxWrapper modulesComboboxWrapper,
+                                     final TextFieldWithBrowseButton rootDirectoryTextWithBrowse) {
+    appDescriptorComboWithBrowse
       .addBrowseFolderListener(project, new FileChooserDescriptor(true, false, false, false, false, false) {
         public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
           return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || "xml".equalsIgnoreCase(file.getExtension()));
         }
       });
 
-    final JComboBox comboBox = applicationDescriptorComponent.getComponent().getComboBox();
+    final JComboBox comboBox = appDescriptorComboWithBrowse.getComboBox();
     comboBox.setEditable(true);
 
     final String[] descriptorPaths = FlexUtils.collectAirDescriptorsForProject(project);
@@ -129,19 +130,19 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
 
     comboBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
-        if (rootDirectoryComponent.getComponent().getText().length() == 0) {
+        if (rootDirectoryTextWithBrowse.getText().length() == 0) {
           final Module module = modulesComboboxWrapper.getSelectedModule();
-          resetAirRootDirPath(module, rootDirectoryComponent);
+          resetAirRootDirPath(module, rootDirectoryTextWithBrowse);
         }
       }
     });
   }
 
-  static void resetAirRootDirPath(final Module module, final LabeledComponent<TextFieldWithBrowseButton> rootDirectoryComponent) {
+  static void resetAirRootDirPath(final Module module, final TextFieldWithBrowseButton rootDirectoryTextWithBrowse) {
     if (module != null) {
       final Collection<FlexBuildConfiguration> configs = FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(module);
       if (!configs.isEmpty()) {
-        rootDirectoryComponent.getComponent().setText(FileUtil.toSystemDependentName(configs.iterator().next().getCompileOutputPath()));
+        rootDirectoryTextWithBrowse.setText(FileUtil.toSystemDependentName(configs.iterator().next().getCompileOutputPath()));
       }
     }
   }

@@ -12,10 +12,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.ComboboxWithBrowseButton;
@@ -28,9 +27,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileDebugTransport;
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunMode;
-import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunTarget;
+import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.*;
 
 public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunConfiguration> {
 
@@ -41,6 +38,16 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
   private JPanel myMainPanel;
   private JComboBox myModuleComboBox;
 
+  private JRadioButton myMainClassRadioButton;
+  private JRadioButton myAirDescriptorRadioButton;
+  private JRadioButton myExistingPackageRadioButton;
+
+  private JSReferenceEditor myMainClassEditor;
+  private ComboboxWithBrowseButton myAirDescriptorComboWithBrowse;
+  private JLabel myRootDirLabel;
+  private TextFieldWithBrowseButton myRootDirTextWithBrowse;
+  private TextFieldWithBrowseButton myExistingPackageTextWithBrowse;
+
   private JRadioButton myOnEmulatorRadioButton;
   private JRadioButton myOnAndroidDeviceRadioButton;
   private JRadioButton myOnIOSDeviceRadioButton;
@@ -50,19 +57,20 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
   private JTextField myScreenWidth;
   private JTextField myScreenHeight;
   private JTextField myFullScreenWidth;
+  private JTextField myFullScreenHeight;
 
+  private JLabel myPackageFileNameLabel;
+  private JTextField myPackageFileNameTextField;
+  private JButton myPackagingOptionsButton;
+
+  private JLabel myDebugOverLabel;
   private JPanel myDebugTransportPanel;
   private JRadioButton myDebugOverNetworkRadioButton;
   private JRadioButton myDebugOverUSBRadioButton;
   private JTextField myUsbDebugPortTextField;
 
-  private JTextField myFullScreenHeight;
-  private JRadioButton myAirDescriptorRadioButton;
-  private JRadioButton myMainClassRadioButton;
-  private LabeledComponent<ComboboxWithBrowseButton> myApplicationDescriptorComponent;
-  private LabeledComponent<TextFieldWithBrowseButton> myRootDirectoryComponent;
-  private LabeledComponent<JSReferenceEditor> myMainClassComponent;
-  private LabeledComponent<RawCommandLineEditor> myAdlOptionsComponent;
+  private JLabel myAdlOptionsLabel;
+  private RawCommandLineEditor myAdlOptionsField;
   private FlexSdkComboBoxWithBrowseButton myDebuggerSdkCombo;
 
   public AirMobileRunConfigurationForm(final Project project) {
@@ -72,25 +80,33 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     myModuleComboBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         final Module module = myModulesComboboxWrapper.getSelectedModule();
-        AirRunConfigurationForm.resetAirRootDirPath(module, myRootDirectoryComponent);
+        AirRunConfigurationForm.resetAirRootDirPath(module, myRootDirTextWithBrowse);
         myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
-        AirRunConfigurationForm.updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassComponent, myMainClassFilter);
+        AirRunConfigurationForm.updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassEditor, myMainClassFilter);
       }
     });
 
     initWhatToLaunchRadioButtons();
-    AirRunConfigurationForm.initAppDescriptorComponent(myProject, myApplicationDescriptorComponent, myModulesComboboxWrapper,
-                                                       myRootDirectoryComponent);
 
-    myRootDirectoryComponent.getComponent().addBrowseFolderListener("AIR Application Root Directory", null, project,
-                                                                    new FileChooserDescriptor(false, true, false, false, false, false));
+    myExistingPackageTextWithBrowse.addBrowseFolderListener("AIR Mobile Package", null, myProject, new FileChooserDescriptor(true, false, false, false, false, false) {
+      @Override
+      public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
+        return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || "apk".equalsIgnoreCase(file.getExtension()));
+      }
+    });
 
-    myAdlOptionsComponent.getComponent()
-      .setDialogCaption(StringUtil.capitalizeWords(myAdlOptionsComponent.getRawText(), true));
+    AirRunConfigurationForm
+      .initAirDescriptorCombo(myProject, myAirDescriptorComboWithBrowse, myModulesComboboxWrapper, myRootDirTextWithBrowse);
+
+    myRootDirTextWithBrowse.addBrowseFolderListener("AIR Application Root Directory", null, project,
+                                                    new FileChooserDescriptor(false, true, false, false, false, false));
+    myAdlOptionsField.setDialogCaption("AIR Debug Launcher Options");
 
     initEmulatorRelatedControls();
 
     myOnIOSDeviceRadioButton.setVisible(false); // until supported
+
+    initPackagingOptionsButton();
 
     final ActionListener debugTransportListener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
@@ -100,12 +116,17 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     myDebugOverNetworkRadioButton.addActionListener(debugTransportListener);
     myDebugOverUSBRadioButton.addActionListener(debugTransportListener);
 
-    myUsbDebugPortTextField.setVisible(false); // just thought that nobody needs non-standard port, so let's UI be lighter. Remove this line on first request.
+    myUsbDebugPortTextField
+      .setVisible(false); // just thought that nobody needs non-standard port, so let's UI be lighter. Remove this line on first request.
 
     myDebuggerSdkCombo.showModuleSdk(true);
 
     updateControls();
-    AirRunConfigurationForm.updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassComponent, myMainClassFilter);
+    AirRunConfigurationForm.updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassEditor, myMainClassFilter);
+
+    myPackageFileNameLabel.setVisible(false);
+    myPackageFileNameTextField.setVisible(false);
+    myPackagingOptionsButton.setVisible(false);
   }
 
   private void initEmulatorRelatedControls() {
@@ -138,18 +159,36 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     myOnIOSDeviceRadioButton.addActionListener(targetDeviceListener);
   }
 
+  private void initPackagingOptionsButton() {
+    /*
+    myPackagingOptionsButton.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        final MobileAirPackageOptionsDialog dialog =
+          new MobileAirPackageOptionsDialog(myProject, myModulesComboboxWrapper.getSelectedModule(), getRunTarget());
+        dialog.show();
+        if (dialog.isOK()) {
+          // todo update run config
+        }
+      }
+    });
+    */
+  }
+
   private void initWhatToLaunchRadioButtons() {
     final ActionListener actionListener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
-        final Component toFocus = myAirDescriptorRadioButton.isSelected()
-                                  ? myApplicationDescriptorComponent.getComponent().getComboBox()
-                                  : myMainClassComponent.getComponent().getChildComponent();
+        final Component toFocus = myMainClassRadioButton.isSelected()
+                                  ? myMainClassEditor.getChildComponent()
+                                  : myAirDescriptorRadioButton.isSelected()
+                                    ? myAirDescriptorComboWithBrowse.getComboBox()
+                                    : myExistingPackageTextWithBrowse.getTextField();
         IdeFocusManager.getInstance(myProject).requestFocus(toFocus, true);
       }
     };
-    myAirDescriptorRadioButton.addActionListener(actionListener);
     myMainClassRadioButton.addActionListener(actionListener);
+    myAirDescriptorRadioButton.addActionListener(actionListener);
+    myExistingPackageRadioButton.addActionListener(actionListener);
   }
 
 
@@ -160,19 +199,24 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
 
 
   private void updateControls() {
-    myEmulatorCombo.setEnabled(myOnEmulatorRadioButton.isSelected());
-    UIUtil.setEnabled(myEmulatorScreenSizePanel, myOnEmulatorRadioButton.isSelected(), true);
+    myMainClassEditor.setEnabled(myMainClassRadioButton.isSelected());
+    myAirDescriptorComboWithBrowse.setEnabled(myAirDescriptorRadioButton.isSelected());
+    myRootDirLabel.setEnabled(myAirDescriptorRadioButton.isSelected());
+    myRootDirTextWithBrowse.setEnabled(myAirDescriptorRadioButton.isSelected());
+    myExistingPackageTextWithBrowse.setEnabled(myExistingPackageRadioButton.isSelected());
 
-    if (myOnEmulatorRadioButton.isSelected()) {
+    final boolean runOnEmulator = myOnEmulatorRadioButton.isSelected();
+    myEmulatorCombo.setEnabled(runOnEmulator);
+    UIUtil.setEnabled(myEmulatorScreenSizePanel, runOnEmulator, true);
+    myAdlOptionsLabel.setEnabled(runOnEmulator);
+    myAdlOptionsField.setEnabled(runOnEmulator);
+
+    if (runOnEmulator) {
       updateEmulatorRelatedControls();
     }
+
+    updatePackagingRelatedControls();
     updateDebugTransportRelatedControls();
-
-    myApplicationDescriptorComponent.setVisible(myAirDescriptorRadioButton.isSelected());
-    myRootDirectoryComponent.setVisible(myAirDescriptorRadioButton.isSelected());
-    myMainClassComponent.setVisible(myMainClassRadioButton.isSelected());
-
-    myAdlOptionsComponent.setEnabled(myOnEmulatorRadioButton.isSelected());
   }
 
   private void updateEmulatorRelatedControls() {
@@ -195,8 +239,22 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     }
   }
 
+  private void updatePackagingRelatedControls() {
+    final boolean enabled = (myMainClassRadioButton.isSelected() || myAirDescriptorRadioButton.isSelected())
+                            && !myOnEmulatorRadioButton.isSelected();
+    myPackageFileNameLabel.setEnabled(enabled);
+    myPackageFileNameTextField.setEnabled(enabled);
+    myPackagingOptionsButton.setEnabled(enabled);
+
+    if (enabled) {
+      final String fileNameLowercased = myPackageFileNameTextField.getText().toLowerCase();
+      // todo update extension apk/ipa
+    }
+  }
+
   private void updateDebugTransportRelatedControls() {
     final boolean enabled = !myOnEmulatorRadioButton.isSelected();
+    myDebugOverLabel.setEnabled(enabled);
     UIUtil.setEnabled(myDebugTransportPanel, enabled, true);
     if (enabled) {
       myUsbDebugPortTextField.setEnabled(myDebugOverUSBRadioButton.isSelected());
@@ -208,9 +266,17 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
 
     myModulesComboboxWrapper.configure(myProject, params.getModuleName());
 
+    myMainClassRadioButton.setSelected(params.getAirMobileRunMode() == AirMobileRunMode.MainClass);
+    myMainClassEditor.setText(params.getMainClassName());
+
+    myAirDescriptorRadioButton.setSelected(params.getAirMobileRunMode() == AirMobileRunMode.AppDescriptor);
+    myAirDescriptorComboWithBrowse.getComboBox().getEditor().setItem(FileUtil.toSystemDependentName(params.getAirDescriptorPath()));
+    myRootDirTextWithBrowse.setText(FileUtil.toSystemDependentName(params.getAirRootDirPath()));
+
+    myExistingPackageRadioButton.setSelected(params.getAirMobileRunMode() == AirMobileRunMode.ExistingPackage);
+    myExistingPackageTextWithBrowse.setText(FileUtil.toSystemDependentName(params.getExistingPackagePath()));
+
     myOnEmulatorRadioButton.setSelected(params.getAirMobileRunTarget() == AirMobileRunTarget.Emulator);
-    myOnAndroidDeviceRadioButton.setSelected(params.getAirMobileRunTarget() == AirMobileRunTarget.AndroidDevice);
-    myOnIOSDeviceRadioButton.setSelected(params.getAirMobileRunTarget() == AirMobileRunTarget.iOSDevice);
     myEmulatorCombo.setSelectedItem(params.getEmulator());
     if (params.getEmulator().adlAlias == null) {
       myScreenWidth.setText(String.valueOf(params.getScreenWidth()));
@@ -219,17 +285,14 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
       myFullScreenHeight.setText(String.valueOf(params.getFullScreenHeight()));
     }
 
+    myOnAndroidDeviceRadioButton.setSelected(params.getAirMobileRunTarget() == AirMobileRunTarget.AndroidDevice);
+    myOnIOSDeviceRadioButton.setSelected(params.getAirMobileRunTarget() == AirMobileRunTarget.iOSDevice);
+
     myDebugOverNetworkRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.Network);
     myDebugOverUSBRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.USB);
     myUsbDebugPortTextField.setText(String.valueOf(params.getUsbDebugPort()));
 
-    myAirDescriptorRadioButton.setSelected(params.getAirMobileRunMode() == AirMobileRunMode.AppDescriptor);
-    myMainClassRadioButton.setSelected(params.getAirMobileRunMode() == AirMobileRunMode.MainClass);
-    myApplicationDescriptorComponent.getComponent().getComboBox().getEditor()
-      .setItem(FileUtil.toSystemDependentName(params.getAirDescriptorPath()));
-    myRootDirectoryComponent.getComponent().setText(FileUtil.toSystemDependentName(params.getAirRootDirPath()));
-    myMainClassComponent.getComponent().setText(params.getMainClassName());
-    myAdlOptionsComponent.getComponent().setText(params.getAdlOptions());
+    myAdlOptionsField.setText(params.getAdlOptions());
 
     final Module module = myModulesComboboxWrapper.getSelectedModule();
     myDebuggerSdkCombo.setModuleSdk(module == null ? null : FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module));
@@ -242,14 +305,12 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     final AirMobileRunnerParameters params = config.getRunnerParameters();
 
     params.setModuleName(myModulesComboboxWrapper.getSelectedText());
-    params.setAirMobileRunTarget(myOnEmulatorRadioButton.isSelected()
-                                 ? AirMobileRunTarget.Emulator
-                                 : myOnAndroidDeviceRadioButton.isSelected()
-                                   ? AirMobileRunTarget.AndroidDevice
-                                   : AirMobileRunTarget.iOSDevice);
+    params.setAirMobileRunTarget(getRunTarget());
 
     final AirMobileRunnerParameters.Emulator emulator = (AirMobileRunnerParameters.Emulator)myEmulatorCombo.getSelectedItem();
     params.setEmulator(emulator);
+    params.setExistingPackagePath(FileUtil.toSystemIndependentName(myExistingPackageTextWithBrowse.getText().trim()));
+
     if (emulator.adlAlias == null) {
       try {
         params.setScreenWidth(Integer.parseInt(myScreenWidth.getText()));
@@ -271,15 +332,25 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     }
     catch (NumberFormatException ignore) {/*ignore*/}
 
-    params.setAirMobileRunMode(myAirDescriptorRadioButton.isSelected()
-                               ? AirMobileRunMode.AppDescriptor
-                               : AirMobileRunMode.MainClass);
+    params.setAirMobileRunMode(myMainClassRadioButton.isSelected()
+                               ? AirMobileRunMode.MainClass
+                               : myAirDescriptorRadioButton.isSelected()
+                                 ? AirMobileRunMode.AppDescriptor
+                                 : AirMobileRunMode.ExistingPackage);
     params.setAirDescriptorPath(
-      FileUtil.toSystemIndependentName((String)myApplicationDescriptorComponent.getComponent().getComboBox().getEditor().getItem()).trim());
-    params.setAirRootDirPath(FileUtil.toSystemIndependentName(myRootDirectoryComponent.getComponent().getText().trim()));
-    params.setMainClassName(myMainClassComponent.getComponent().getText().trim());
-    params.setAdlOptions(myAdlOptionsComponent.getComponent().getText().trim());
+      FileUtil.toSystemIndependentName((String)myAirDescriptorComboWithBrowse.getComboBox().getEditor().getItem()).trim());
+    params.setAirRootDirPath(FileUtil.toSystemIndependentName(myRootDirTextWithBrowse.getText().trim()));
+    params.setMainClassName(myMainClassEditor.getText().trim());
+    params.setAdlOptions(myAdlOptionsField.getText().trim());
     params.setDebuggerSdkRaw(myDebuggerSdkCombo.getSelectedSdkRaw());
+  }
+
+  private AirMobileRunTarget getRunTarget() {
+    return myOnEmulatorRadioButton.isSelected()
+           ? AirMobileRunTarget.Emulator
+           : myOnAndroidDeviceRadioButton.isSelected()
+             ? AirMobileRunTarget.AndroidDevice
+             : AirMobileRunTarget.iOSDevice;
   }
 
   protected void disposeEditor() {
@@ -288,8 +359,8 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
   private void createUIComponents() {
     myDebuggerSdkCombo = new FlexSdkComboBoxWithBrowseButton(FlexSdkComboBoxWithBrowseButton.FLEX_RELATED_SDK);
     myMainClassFilter = new JSClassChooserDialog.PublicInheritor(myProject, FlexCompilerSettingsEditor.SPRITE_CLASS_NAME, null, true);
-    myMainClassComponent = LabeledComponent.create(JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null,
-                                                                                  myMainClassFilter, ExecutionBundle
-      .message("choose.main.class.dialog.title")), "");
+    myMainClassEditor =
+      JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null, myMainClassFilter, ExecutionBundle.message(
+        "choose.main.class.dialog.title"));
   }
 }

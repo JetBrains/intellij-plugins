@@ -58,16 +58,29 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                           final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
     if (isRunOnDevice(flexRunnerParameters)) {
       final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)flexRunnerParameters;
-      final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(mobileParams);
+      final String appId;
 
-      if (!packAndInstallToDevice(project, flexSdk, mobileParams, swfPathAndApplicationId.first, swfPathAndApplicationId.second, true)) {
-        return null;
+      if (mobileParams.getAirMobileRunMode() == AirMobileRunnerParameters.AirMobileRunMode.ExistingPackage) {
+        appId = MobileAirUtil.getAppIdFromPackage(mobileParams.getExistingPackagePath());
+        if (appId == null) {
+          throw new ExecutionException("Failed to get application id for package: " + mobileParams.getExistingPackagePath());
+        }
+        if (!installToDevice(project, flexSdk, mobileParams, appId)) {
+          return null;
+        }
+      }
+      else {
+        final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(mobileParams);
+        appId = swfPathAndApplicationId.second;
+
+        if (!packAndInstallToDevice(project, flexSdk, mobileParams, swfPathAndApplicationId.first, swfPathAndApplicationId.second, true)) {
+          return null;
+        }
       }
 
       if (mobileParams.getDebugTransport() == AirMobileDebugTransport.USB) {
-
-        launchOnDevice(project, flexSdk, mobileParams, swfPathAndApplicationId.second, true);
-        waitUntilCountdownStartsOnDevice(project, swfPathAndApplicationId.second);
+        launchOnDevice(project, flexSdk, mobileParams, appId, true);
+        waitUntilCountdownStartsOnDevice(project, appId);
         MobileAirUtil.forwardTcpPort(project, flexSdk, mobileParams.getUsbDebugPort());
       }
     }

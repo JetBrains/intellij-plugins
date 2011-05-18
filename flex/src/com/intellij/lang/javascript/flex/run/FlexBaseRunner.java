@@ -297,6 +297,14 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   private static boolean checkAirParams(final AirRunnerParameters airRunnerParameters, final Sdk sdk) throws CantRunException {
+    if (airRunnerParameters instanceof AirMobileRunnerParameters &&
+        ((AirMobileRunnerParameters)airRunnerParameters).getAirMobileRunMode() == AirMobileRunMode.ExistingPackage) {
+      if (((AirMobileRunnerParameters)airRunnerParameters).getAirMobileRunTarget() == AirMobileRunTarget.Emulator) {
+        throw new CantRunException("Can't launch AIR mobile package on emulator");
+      }
+      return true;
+    }
+
     if (LocalFileSystem.getInstance().findFileByPath(airRunnerParameters.getAirDescriptorPath()) == null) {
       throw new CantRunException(
         FlexBundle.message("air.descriptor.not.found", airRunnerParameters.getAirDescriptorPath().replace('/', File.separatorChar)));
@@ -572,8 +580,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     if (params.getAirMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
       final Module module = ModuleManager.getInstance(project).findModuleByName(params.getModuleName());
       assert module != null;
-      final MobileAirPackageParameters packageParameters =
-        createAndroidPackageParams(flexSdk, swfPath, params, isDebug);
+      final MobileAirPackageParameters packageParameters = createAndroidPackageParams(flexSdk, swfPath, params, isDebug);
       final String apkPath = packageParameters.INSTALLER_FILE_LOCATION + "/" + packageParameters.INSTALLER_FILE_NAME;
 
       final String adtVersion;
@@ -591,7 +598,31 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return false;
   }
 
-  public static Pair<String, String> getSwfPathAndApplicationId(final AirRunnerParameters params) {
+  public static boolean installToDevice(final Project project,
+                                        final Sdk flexSdk,
+                                        final AirMobileRunnerParameters params,
+                                        final String applicationId) {
+    if (params.getAirMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
+      assert params.getAirMobileRunMode() == AirMobileRunMode.ExistingPackage;
+      final Module module = ModuleManager.getInstance(project).findModuleByName(params.getModuleName());
+      assert module != null;
+
+      final String adtVersion;
+      return (adtVersion = MobileAirUtil.getAdtVersion(project, flexSdk)) != null
+             && MobileAirUtil.checkAdtVersion(module, flexSdk, adtVersion)
+             && MobileAirUtil.checkAirRuntimeOnDevice(project, flexSdk, adtVersion)
+             && MobileAirUtil.installApk(project, flexSdk, params.getExistingPackagePath(), applicationId);
+    }
+    else {
+      assert false;
+    }
+
+    return false;
+  }
+
+  public static Pair<String, String> getSwfPathAndApplicationId(final AirMobileRunnerParameters params) {
+    assert params.getAirMobileRunMode() != AirMobileRunMode.ExistingPackage;
+
     final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(params.getAirDescriptorPath());
     if (descriptorFile != null) {
       try {
@@ -654,8 +685,14 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                     final Sdk flexSdk,
                                                     final AirMobileRunnerParameters params,
                                                     final boolean isDebug) {
-    final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(params);
-    return launchOnDevice(project, flexSdk, params, swfPathAndApplicationId.second, isDebug);
+    final String appId = params.getAirMobileRunMode() == AirMobileRunMode.ExistingPackage
+                         ? MobileAirUtil.getAppIdFromPackage(params.getExistingPackagePath())
+                         : getSwfPathAndApplicationId(params).second;
+    if (appId == null) {
+      Messages.showErrorDialog(project, "Failed to get application id", "Error");
+    }
+
+    return launchOnDevice(project, flexSdk, params, appId, isDebug);
   }
 
   @Nullable

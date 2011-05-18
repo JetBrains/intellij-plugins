@@ -4,6 +4,7 @@ import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.actions.airinstaller.AdtTask;
 import com.intellij.lang.javascript.flex.actions.airinstaller.CertificateParameters;
@@ -29,11 +30,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.MobilePlatform;
 
@@ -382,5 +386,28 @@ public class MobileAirUtil {
     catch (UnknownHostException e) {
       return "";
     }
+  }
+
+  @Nullable
+  public static String getAppIdFromPackage(final String packagePath) {
+    ZipFile zipFile = null;
+    try {
+      zipFile = new ZipFile(packagePath);
+      final ZipEntry entry = zipFile.getEntry("assets/META-INF/AIR/application.xml");
+      if (entry != null) {
+        return FlexUtils.findXMLElement(zipFile.getInputStream(entry), "<application><id>");
+      }
+    }
+    catch (IOException ignore) {/**/}
+    finally {
+      if (zipFile != null) {
+        try {
+          zipFile.close();
+        }
+        catch (IOException ignored) {/**/}
+      }
+    }
+
+    return null;
   }
 }

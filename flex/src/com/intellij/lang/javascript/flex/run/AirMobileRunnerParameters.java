@@ -50,7 +50,7 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
   }
 
   public enum AirMobileRunMode {
-    AppDescriptor, MainClass/*, AndroidApk*/
+    AppDescriptor, MainClass, ExistingPackage
   }
 
   public enum AirMobileDebugTransport {
@@ -59,6 +59,7 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
 
   private @NotNull AirMobileRunTarget myAirMobileRunTarget = AirMobileRunTarget.Emulator;
   private @NotNull AirMobileRunMode myAirMobileRunMode = AirMobileRunMode.AppDescriptor;
+  private @NotNull String myExistingPackagePath = "";
   private @NotNull Emulator myEmulator = Emulator.NexusOne;
   private int myScreenWidth = 0;
   private int myScreenHeight = 0;
@@ -83,6 +84,15 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
 
   public void setAirMobileRunMode(@NotNull AirMobileRunMode airMobileRunMode) {
     myAirMobileRunMode = airMobileRunMode;
+  }
+
+  @NotNull
+  public String getExistingPackagePath() {
+    return myExistingPackagePath;
+  }
+
+  public void setExistingPackagePath(@NotNull final String existingPackagePath) {
+    myExistingPackagePath = existingPackagePath;
   }
 
   @NotNull

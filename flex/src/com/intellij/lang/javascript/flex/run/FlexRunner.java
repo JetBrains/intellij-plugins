@@ -15,6 +15,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
@@ -46,16 +47,33 @@ public class FlexRunner extends FlexBaseRunner {
                                           final Sdk flexSdk,
                                           final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
     if (isRunOnDevice(flexRunnerParameters)) {
-      final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId((AirMobileRunnerParameters)flexRunnerParameters);
-      return packAndInstallToDevice(project, flexSdk, (AirMobileRunnerParameters)flexRunnerParameters, swfPathAndApplicationId.first,
-                                    swfPathAndApplicationId.second, false)
-             ? launchOnDevice(project, flexSdk, (AirMobileRunnerParameters)flexRunnerParameters, swfPathAndApplicationId.second, false)
-             : null;
+      final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)flexRunnerParameters;
+      if (mobileParams.getAirMobileRunMode() == AirMobileRunnerParameters.AirMobileRunMode.ExistingPackage) {
+        return launchExistingPackage(project, flexSdk, mobileParams);
+      }
+      else {
+        final Pair<String, String> swfPathAndApplicationId = getSwfPathAndApplicationId(mobileParams);
+        return packAndInstallToDevice(project, flexSdk, mobileParams, swfPathAndApplicationId.first,
+                                      swfPathAndApplicationId.second, false)
+               ? launchOnDevice(project, flexSdk, mobileParams, swfPathAndApplicationId.second, false)
+               : null;
+      }
     }
 
     return isRunAsAir(flexRunnerParameters)
            ? launchAir(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters)
            : launchFlex(project, executor, state, contentToReuse, env, flexSdk, flexRunnerParameters);
+  }
+
+  private static RunContentDescriptor launchExistingPackage(final Project project,
+                                                            final Sdk flexSdk,
+                                                            final AirMobileRunnerParameters mobileParams)
+    throws ExecutionException {
+    final String appId = MobileAirUtil.getAppIdFromPackage(mobileParams.getExistingPackagePath());
+    if (appId == null) {
+      throw new ExecutionException("Failed to get application id for package: " + mobileParams.getExistingPackagePath());
+    }
+    return installToDevice(project, flexSdk, mobileParams, appId) ? launchOnDevice(project, flexSdk, mobileParams, appId, false) : null;
   }
 
   @Nullable
