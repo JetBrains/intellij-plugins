@@ -640,13 +640,11 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                                        final AirMobileRunnerParameters params,
                                                                        boolean isDebug) {
     String swfName = "";
-    String apkName = "";
     String outputDirPath = "";
     final int lastSlashIndex = FileUtil.toSystemIndependentName(swfPath).lastIndexOf('/');
     final String suffix = ".swf";
     if (swfPath.toLowerCase().endsWith(suffix) && lastSlashIndex < swfPath.length() - suffix.length()) {
       swfName = swfPath.substring(lastSlashIndex + 1);
-      apkName = swfName.substring(0, swfName.length() - suffix.length()) + ".apk";
       outputDirPath = params.getAirRootDirPath() + (lastSlashIndex == -1 ? "" : "/" + swfPath.substring(0, lastSlashIndex));
     }
 
@@ -664,7 +662,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                           IOSPackageType.DebugOverNetwork,
                                           flexSdk,
                                           params.getAirDescriptorPath(),
-                                          apkName,
+                                          params.getMobilePackageFileName(),
                                           outputDirPath,
                                           files,
                                           MobileAirUtil.getLocalHostAddress(),

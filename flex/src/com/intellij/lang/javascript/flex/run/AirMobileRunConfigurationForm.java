@@ -3,10 +3,13 @@ package com.intellij.lang.javascript.flex.run;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.ModulesComboboxWrapper;
+import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
+import com.intellij.openapi.editor.event.DocumentAdapter;
+import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -14,6 +17,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -23,6 +27,7 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -86,14 +91,15 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
       }
     });
 
-    initWhatToLaunchRadioButtons();
+    initWhatToLaunchControls();
 
-    myExistingPackageTextWithBrowse.addBrowseFolderListener("AIR Mobile Package", null, myProject, new FileChooserDescriptor(true, false, false, false, false, false) {
-      @Override
-      public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
-        return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || "apk".equalsIgnoreCase(file.getExtension()));
-      }
-    });
+    myExistingPackageTextWithBrowse
+      .addBrowseFolderListener("AIR Mobile Package", null, myProject, new FileChooserDescriptor(true, false, false, false, false, false) {
+        @Override
+        public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
+          return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || "apk".equalsIgnoreCase(file.getExtension()));
+        }
+      });
 
     AirRunConfigurationForm
       .initAirDescriptorCombo(myProject, myAirDescriptorComboWithBrowse, myModulesComboboxWrapper, myRootDirTextWithBrowse);
@@ -124,8 +130,6 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     updateControls();
     AirRunConfigurationForm.updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassEditor, myMainClassFilter);
 
-    myPackageFileNameLabel.setVisible(false);
-    myPackageFileNameTextField.setVisible(false);
     myPackagingOptionsButton.setVisible(false);
   }
 
@@ -174,7 +178,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     */
   }
 
-  private void initWhatToLaunchRadioButtons() {
+  private void initWhatToLaunchControls() {
     final ActionListener actionListener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
@@ -184,11 +188,25 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
                                     ? myAirDescriptorComboWithBrowse.getComboBox()
                                     : myExistingPackageTextWithBrowse.getTextField();
         IdeFocusManager.getInstance(myProject).requestFocus(toFocus, true);
+        myPackageFileNameTextField.setText(getSuggestedPackageFileName());
       }
     };
     myMainClassRadioButton.addActionListener(actionListener);
     myAirDescriptorRadioButton.addActionListener(actionListener);
     myExistingPackageRadioButton.addActionListener(actionListener);
+
+    myMainClassEditor.addDocumentListener(new DocumentAdapter() {
+      public void documentChanged(final DocumentEvent e) {
+        myPackageFileNameTextField.setText(getSuggestedPackageFileName());
+      }
+    });
+
+    ((JTextComponent)myAirDescriptorComboWithBrowse.getComboBox().getEditor().getEditorComponent()).getDocument().addDocumentListener(
+      new com.intellij.ui.DocumentAdapter() {
+        protected void textChanged(final javax.swing.event.DocumentEvent e) {
+          myPackageFileNameTextField.setText(getSuggestedPackageFileName());
+        }
+      });
   }
 
 
@@ -288,6 +306,8 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     myOnAndroidDeviceRadioButton.setSelected(params.getAirMobileRunTarget() == AirMobileRunTarget.AndroidDevice);
     myOnIOSDeviceRadioButton.setSelected(params.getAirMobileRunTarget() == AirMobileRunTarget.iOSDevice);
 
+    myPackageFileNameTextField.setText(params.getMobilePackageFileName());
+
     myDebugOverNetworkRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.Network);
     myDebugOverUSBRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.USB);
     myUsbDebugPortTextField.setText(String.valueOf(params.getUsbDebugPort()));
@@ -299,6 +319,22 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     myDebuggerSdkCombo.setSelectedSdkRaw(params.getDebuggerSdkRaw());
 
     updateControls();
+  }
+
+  private String getSuggestedPackageFileName() {
+    if (myMainClassRadioButton.isSelected()) {
+      return myMainClassEditor.getText().trim() + ".apk";
+    }
+    else if (myAirDescriptorRadioButton.isSelected()) {
+      final String descriptorPath = getAirDescriptorPath();
+      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(descriptorPath);
+      final String fileName = descriptorPath.substring(descriptorPath.lastIndexOf('/') + 1);
+      return file == null || file.isDirectory()
+             ? FileUtil.getNameWithoutExtension(fileName) + ".apk"
+             : MobileAirUtil.getAppName(file) + ".apk";
+    }
+
+    return "";
   }
 
   protected void applyEditorTo(final AirMobileRunConfiguration config) throws ConfigurationException {
@@ -321,6 +357,8 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
       catch (NumberFormatException e) {/**/}
     }
 
+    params.setMobilePackageFileName(myPackageFileNameTextField.getText().trim());
+
     params.setDebugTransport(myDebugOverNetworkRadioButton.isSelected()
                              ? AirMobileDebugTransport.Network
                              : AirMobileDebugTransport.USB);
@@ -337,12 +375,15 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
                                : myAirDescriptorRadioButton.isSelected()
                                  ? AirMobileRunMode.AppDescriptor
                                  : AirMobileRunMode.ExistingPackage);
-    params.setAirDescriptorPath(
-      FileUtil.toSystemIndependentName((String)myAirDescriptorComboWithBrowse.getComboBox().getEditor().getItem()).trim());
+    params.setAirDescriptorPath(getAirDescriptorPath());
     params.setAirRootDirPath(FileUtil.toSystemIndependentName(myRootDirTextWithBrowse.getText().trim()));
     params.setMainClassName(myMainClassEditor.getText().trim());
     params.setAdlOptions(myAdlOptionsField.getText().trim());
     params.setDebuggerSdkRaw(myDebuggerSdkCombo.getSelectedSdkRaw());
+  }
+
+  private String getAirDescriptorPath() {
+    return FileUtil.toSystemIndependentName((String)myAirDescriptorComboWithBrowse.getComboBox().getEditor().getItem()).trim();
   }
 
   private AirMobileRunTarget getRunTarget() {

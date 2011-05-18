@@ -65,6 +65,7 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
   private int myScreenHeight = 0;
   private int myFullScreenWidth = 0;
   private int myFullScreenHeight = 0;
+  private @NotNull String myMobilePackageFileName = "";
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = MobileAirUtil.DEBUG_PORT_DEFAULT;
 
@@ -134,6 +135,15 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
 
   public void setFullScreenHeight(int fullScreenHeight) {
     myFullScreenHeight = fullScreenHeight;
+  }
+
+  @NotNull
+  public String getMobilePackageFileName() {
+    return myMobilePackageFileName;
+  }
+
+  public void setMobilePackageFileName(@NotNull final String mobilePackageFileName) {
+    myMobilePackageFileName = mobilePackageFileName;
   }
 
   @NotNull

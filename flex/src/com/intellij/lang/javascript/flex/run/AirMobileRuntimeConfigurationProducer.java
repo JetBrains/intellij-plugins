@@ -7,6 +7,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -55,6 +56,7 @@ public class AirMobileRuntimeConfigurationProducer extends RuntimeConfigurationP
       runnerParameters.setAirMobileRunMode(AirMobileRunMode.AppDescriptor);
       runnerParameters.setAirDescriptorPath(virtualFile.getPath());
       runnerParameters.setAirRootDirPath(config.getCompileOutputPath());
+      runnerParameters.setMobilePackageFileName(MobileAirUtil.getAppName(virtualFile) + ".apk");
       settings.setName(runConfiguration.suggestedName());
       return settings;
     }
@@ -69,6 +71,7 @@ public class AirMobileRuntimeConfigurationProducer extends RuntimeConfigurationP
         runnerParameters.setModuleName(module.getName());
         runnerParameters.setAirMobileRunMode(AirMobileRunMode.MainClass);
         runnerParameters.setMainClassName(jsClass.getQualifiedName());
+        runnerParameters.setMobilePackageFileName(jsClass.getName() + ".apk");
         settings.setName(runConfiguration.suggestedName());
         return settings;
       }

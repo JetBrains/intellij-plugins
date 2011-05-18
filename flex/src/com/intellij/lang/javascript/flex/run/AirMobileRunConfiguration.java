@@ -10,6 +10,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.AirMobileRunMode;
@@ -54,9 +55,11 @@ public class AirMobileRunConfiguration extends AirRunConfiguration {
     switch (params.getAirMobileRunMode()) {
       case AppDescriptor:
         checkAirDescriptorBasedConfiguration(module, params);
+        checkMobilePackageName(params);
         break;
       case MainClass:
         checkMainClassBasedConfiguration(module, params);
+        checkMobilePackageName(params);
         break;
       case ExistingPackage:
         checkExistingPackageBasedConfiguration(params);
@@ -73,6 +76,21 @@ public class AirMobileRunConfiguration extends AirRunConfiguration {
     }
 
     checkDebuggerSdk(params);
+  }
+
+  private static void checkMobilePackageName(final AirMobileRunnerParameters params) throws RuntimeConfigurationError {
+    final String fileName = params.getMobilePackageFileName();
+    if (StringUtil.isEmptyOrSpaces(fileName)) {
+      throw new RuntimeConfigurationError("Package file name not specified");
+    }
+
+    if (!fileName.toLowerCase().endsWith(".apk")) {
+      throw new RuntimeConfigurationError("Package file name must have 'apk' extension");
+    }
+
+    if (!PathUtil.isValidFileName(fileName)) {
+      throw new RuntimeConfigurationError("Invalid package file name: " + fileName);
+    }
   }
 
   private static void checkExistingPackageBasedConfiguration(final AirMobileRunnerParameters params) throws RuntimeConfigurationError {

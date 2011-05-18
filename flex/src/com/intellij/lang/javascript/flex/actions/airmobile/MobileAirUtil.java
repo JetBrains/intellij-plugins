@@ -410,4 +410,16 @@ public class MobileAirUtil {
 
     return null;
   }
+
+  public static String getAppName(final VirtualFile appDescriptor) {
+    try {
+      final String appName = FlexUtils.findXMLElement(appDescriptor.getInputStream(), "<application><name>");
+      if (StringUtil.isNotEmpty(appName)) {
+        return appName;
+      }
+    }
+    catch (IOException ignore) {/**/}
+
+    return appDescriptor.getNameWithoutExtension();
+  }
 }

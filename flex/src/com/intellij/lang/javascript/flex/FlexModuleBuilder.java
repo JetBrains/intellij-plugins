@@ -177,10 +177,11 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
   private void createAirDescriptor(final String airDescriptorFolderPath, final FlexBuildConfiguration config)
     throws ConfigurationException {
     try {
+      final String name = FileUtil.getNameWithoutExtension(config.OUTPUT_FILE_NAME);
       CreateAirDescriptorAction.createAirDescriptor(
-        new AirDescriptorParameters(myAirDescriptorFileName, airDescriptorFolderPath, FlexSdkUtils.getAirVersion(mySdk),
-                                    "samples.flex.HelloWorld", "HelloWorld", "HelloWorld", "0.1", config.OUTPUT_FILE_NAME, "HelloWorld",
-                                    400, 300, mySdk != null && mySdk.getSdkType() instanceof AirMobileSdkType));
+        new AirDescriptorParameters(myAirDescriptorFileName, airDescriptorFolderPath, FlexSdkUtils.getAirVersion(mySdk), name, name, name,
+                                    "0.0", config.OUTPUT_FILE_NAME, name, 400, 300,
+                                    mySdk != null && mySdk.getSdkType() instanceof AirMobileSdkType));
     }
     catch (IOException e) {
       throw new ConfigurationException("Failed to create AIR application descriptor\n" + e.getMessage());
@@ -210,7 +211,9 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
 
       if (myCreateAirDescriptor) {
         if (runnerParameters instanceof AirMobileRunnerParameters) {
-          ((AirMobileRunnerParameters)runnerParameters).setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.AppDescriptor);
+          final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)runnerParameters;
+          mobileParams.setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.AppDescriptor);
+          mobileParams.setMobilePackageFileName(FileUtil.getNameWithoutExtension(config.OUTPUT_FILE_NAME) + ".apk");
         }
         else {
           runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.AppDescriptor);
@@ -220,7 +223,9 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
       }
       else {
         if (runnerParameters instanceof AirMobileRunnerParameters) {
-          ((AirMobileRunnerParameters)runnerParameters).setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.MainClass);
+          final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)runnerParameters;
+          mobileParams.setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.MainClass);
+          mobileParams.setMobilePackageFileName(config.MAIN_CLASS + ".apk");
         }
         else {
           runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.MainClass);
