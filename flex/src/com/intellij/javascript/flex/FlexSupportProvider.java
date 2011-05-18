@@ -10,11 +10,14 @@ import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -37,7 +40,7 @@ public class FlexSupportProvider extends FrameworkSupportProvider {
 
   @NotNull
   public FrameworkSupportConfigurable createConfigurable(final @NotNull FrameworkSupportModel model) {
-    return new FlexSupportConfigurable();
+    return new FlexSupportConfigurable(model.getProject());
   }
 
   @Override
@@ -49,9 +52,28 @@ public class FlexSupportProvider extends FrameworkSupportProvider {
     return moduleType instanceof JavaModuleType;
   }
 
+  public static void selectSdkUsedByOtherModules(final @Nullable Project project,
+                                                 final FlexSdkComboBoxWithBrowseButton flexSdkComboWithBrowse) {
+    if (project != null) {
+      for (final Module module : ModuleManager.getInstance(project).getModules()) {
+        if (FlexUtils.isFlexModuleOrContainsFlexFacet(module)) {
+          final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+          if (sdk != null && !(sdk.getSdkType() instanceof FlexmojosSdkType)) {
+            flexSdkComboWithBrowse.setSelectedSdkRaw(sdk.getName());
+            return;
+          }
+        }
+      }
+    }
+  }
+
   private static class FlexSupportConfigurable extends FrameworkSupportConfigurable {
     private JPanel myMainPanel;
     private FlexSdkComboBoxWithBrowseButton myFlexSdkComboWithBrowse;
+
+    private FlexSupportConfigurable(final @Nullable Project project) {
+      selectSdkUsedByOtherModules(project, myFlexSdkComboWithBrowse);
+    }
 
     public JComponent getComponent() {
       return myMainPanel;

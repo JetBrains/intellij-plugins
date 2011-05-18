@@ -2,11 +2,9 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
+import com.intellij.javascript.flex.FlexSupportProvider;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
-import com.intellij.lang.javascript.flex.sdk.AirSdkType;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
+import com.intellij.lang.javascript.flex.sdk.*;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -39,6 +37,8 @@ class SetupFlexModuleWizardStep extends ModuleWizardStep {
 
   public SetupFlexModuleWizardStep(final FlexModuleBuilder moduleBuilder, final WizardContext wizardContext) {
     myModuleBuilder = moduleBuilder;
+
+    FlexSupportProvider.selectSdkUsedByOtherModules(wizardContext.getProject(), myFlexSdkComboWithBrowse);
 
     myFlexSdkComboWithBrowse.addComboboxListener(new FlexSdkComboBoxWithBrowseButton.Listener() {
       public void stateChanged() {
