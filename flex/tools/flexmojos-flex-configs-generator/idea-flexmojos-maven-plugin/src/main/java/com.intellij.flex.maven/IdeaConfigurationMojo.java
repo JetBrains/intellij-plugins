@@ -1,5 +1,6 @@
 package com.intellij.flex.maven;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.internal.LifecycleExecutionPlanCalculator;
 import org.apache.maven.model.Plugin;
@@ -47,6 +48,20 @@ public class IdeaConfigurationMojo extends AbstractMojo {
   @Requirement
   private LifecycleExecutionPlanCalculator lifeCycleExecutionPlanCalculator;
 
+  /**
+   * @parameter expression="${localRepository}"
+   * @required
+   * @readonly
+   */
+  private ArtifactRepository localRepository;
+
+  /**
+   * @parameter expression="${generateAlsoShareable}"
+   * @readonly
+   */
+  @SuppressWarnings({"UnusedDeclaration"})
+  private boolean generateAlsoShareable;
+
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     MavenProject project = session.getCurrentProject();
@@ -89,7 +104,7 @@ public class IdeaConfigurationMojo extends AbstractMojo {
       mavenPluginManager.releaseMojo(mojo, mojoExecution);
     }
 
-    IdeaConfigurator configurator = new IdeaConfigurator();
+    IdeaConfigurator configurator = generateAlsoShareable ? new ShareableFlexConfigGenerator(localRepository.getBasedir()) : new IdeaConfigurator();
     try {
       modifyOurClassRealm(flexmojosPluginRealm);
       configurator.init(project, (getClassifier(mojo, flexmojosPluginRealm)));

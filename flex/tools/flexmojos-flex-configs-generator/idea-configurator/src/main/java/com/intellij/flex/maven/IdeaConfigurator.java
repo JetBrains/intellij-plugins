@@ -17,9 +17,12 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class IdeaConfigurator {
-  private OutputStreamWriter out;
+  protected static final String PATH_ELEMENT = "path-element";
+  protected static final String FILE_SPECS = "file-specs";
 
-  private static final Map<String, String> childTagNameMap = new HashMap<String, String>(9);
+  protected OutputStreamWriter out;
+
+  private static final Map<String, String> childTagNameMap = new HashMap<String, String>(12);
 
   static {
     childTagNameMap.put("keep-as3-metadata", "name");
@@ -38,7 +41,10 @@ public class IdeaConfigurator {
   public void buildConfiguration(Mojo configuration, File sourceFile, Class configurationClass) throws Exception {
     //noinspection NullableProblems
     build(configuration, configurationClass, "\n\t", null);
-    out.append("\n\t<file-specs>\n\t\t<path-element>").append(sourceFile.getAbsolutePath()).append("</path-element>\n\t</file-specs>");
+
+    out.append("\n\t<file-specs>\n");
+    writeTag("\t\t", PATH_ELEMENT, sourceFile.getAbsolutePath(), FILE_SPECS);
+    out.append("\n\t</file-specs>");
     close();
   }
 
@@ -48,16 +54,18 @@ public class IdeaConfigurator {
     close();
   }
 
-  public void init(MavenProject project, String classifier) throws IOException {
+  protected String getConfigFilePath(MavenProject project, String classifier) {
     Build build = project.getBuild();
     StringBuilder pathBuilder = new StringBuilder(build.getDirectory()).append(File.separatorChar).append(build.getFinalName());
     if (classifier != null) {
       pathBuilder.append('-').append(classifier);
     }
-//    pathBuilder.append("-config-report.xml");
-    pathBuilder.append("-configs.xml");
+    //pathBuilder.append("-config-report.xml");
+    return pathBuilder.append("-configs.xml").toString();
+  }
 
-    File configFile = new File(pathBuilder.toString());
+  public void init(MavenProject project, String classifier) throws IOException {
+    File configFile = new File(getConfigFilePath(project, classifier));
     //noinspection ResultOfMethodCallIgnored
     configFile.getParentFile().mkdirs();
     out = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(configFile)), "utf-8");
@@ -172,7 +180,7 @@ public class IdeaConfigurator {
 //              }
             }
             else {
-              writeTag(indent, argMethodName.equals("serialNumber") ? "serial-number" : argMethodName, (String)argValue);
+              writeTag(indent, argMethodName.equals("serialNumber") ? "serial-number" : argMethodName, (String)argValue, name);
             }
           }
 
@@ -206,11 +214,11 @@ public class IdeaConfigurator {
 
           String childTagName = childTagNameMap.get(name);
           if (childTagName == null) {
-            childTagName = "path-element";
+            childTagName = PATH_ELEMENT;
           }
 
           for (Object v : values) {
-            writeTag(indent, childTagName, v.toString());
+            writeTag(indent, childTagName, v.toString(), name);
           }
           out.append(indent).append("</").append(name).append('>');
         }
@@ -227,7 +235,7 @@ public class IdeaConfigurator {
     }
   }
 
-  private void writeTag(String indent, String name, String value) throws IOException {
+  protected void writeTag(String indent, String name, String value, String parentName) throws IOException {
     out.append(indent).append("\t<").append(name).append(">").append(value).append("</").append(name).append('>');
   }
 
