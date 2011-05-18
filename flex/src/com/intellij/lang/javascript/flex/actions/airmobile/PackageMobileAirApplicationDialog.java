@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -395,6 +396,7 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
     final MobileAirPackageParameters parameters = getPackageParameters();
     saveAsDefaultParameters(parameters);
 
+    FileDocumentManager.getInstance().saveAllDocuments();
     final boolean ok = ExternalTask.runWithProgress(MobileAirUtil.createMobileAirPackageTask(myProject, parameters),
                                                     FlexBundle.message("packaging.application", parameters.MOBILE_PLATFORM), TITLE);
 

@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -358,6 +359,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     final AirInstallerParameters parameters = getAirInstallerParameters();
     saveAsDefaultParameters(parameters);
 
+    FileDocumentManager.getInstance().saveAllDocuments();
     final boolean ok = ExternalTask.runWithProgress(createAirInstallerTask(myProject, parameters), "Packaging AIR installer", TITLE);
 
     if (ok) {

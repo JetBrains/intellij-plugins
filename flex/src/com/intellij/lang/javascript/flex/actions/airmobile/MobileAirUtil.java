@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.actions.airinstaller.AdtTask;
 import com.intellij.lang.javascript.flex.actions.airinstaller.CertificateParameters;
 import com.intellij.lang.javascript.flex.actions.airinstaller.PackageAirInstallerAction;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
@@ -239,6 +240,7 @@ public class MobileAirUtil {
   }
 
   public static boolean packageApk(final Project project, final MobileAirPackageParameters parameters) {
+    FileDocumentManager.getInstance().saveAllDocuments();
     return ExternalTask
       .runWithProgress(createMobileAirPackageTask(project, parameters), FlexBundle.message("creating.android.package"), FlexBundle.message("create.android.package.title"));
   }
