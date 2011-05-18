@@ -80,8 +80,7 @@ public class CreateCertificateDialog extends DialogWrapper {
     myCountryCodeLabel.setVisible(showingOptional);
     myCountryCodeTextField.setVisible(showingOptional);
 
-    int minHeight = getContentPane().getMinimumSize().height;
-    getPeer().setSize(getPeer().getSize().width, minHeight);
+    getPeer().setSize(getPeer().getSize().width, getPeer().getPreferredSize().height);
   }
 
   private void initDefaultValues(String suggestedKeystoreFileLocation) {

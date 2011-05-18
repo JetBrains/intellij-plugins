@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
+import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -14,8 +15,8 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.*;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -24,14 +25,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.ComboboxWithBrowseButton;
-import com.intellij.ui.HoverHyperlinkLabel;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -51,29 +47,12 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   private LabeledComponent<TextFieldWithBrowseButton> myInstallerLocationComponent;
 
   private FilesToPackageForm myFilesToPackageForm;
-
-  private JButton myCreateCertButton;
-  private JComboBox myKeystoreTypeCombo;
-  private JPasswordField myKeystorePasswordField;
-  private TextFieldWithBrowseButton myKeystoreFileTextWithBrowse;
   private JCheckBox myDoNotSignCheckBox;
-  private JPanel mySigningOptionsPanel;
-  private JLabel myKeyAliasLabel;
-  private JTextField myKeyAliasTextField;
-  private JLabel myKeyPasswordLabel;
-  private JPasswordField myKeyPasswordField;
-  private JLabel myProviderClassNameLabel;
-  private JTextField myProviderClassNameTextField;
-  private JLabel myTsaUrlLabel;
-  private JTextField myTsaUrlTextField;
-  private HoverHyperlinkLabel myMoreOptionsHyperlinkLabel;
+  private SigningOptionsForm mySigningOptionsForm;
 
   private final Project myProject;
 
   private static final String TITLE = "Package AIR Installation File";
-
-  private static final String MORE_OPTIONS = "More options";
-  private static final String LESS_OPTIONS = "Less options";
 
   private static final String AIR_INSTALLER_KEYSTORE_PASSWORD_KEY = "AIR_INSTALLER_KEYSTORE_PASSWORD_KEY";
   private static final String AIR_INSTALLER_KEY_PASSWORD_KEY = "AIR_INSTALLER_KEY_PASSWORD_KEY";
@@ -85,12 +64,9 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     setOKButtonText("Package");
     initAirDescriptorComponent();
     initInstallerLocationComponent();
-    initSigningOptions();
-    initCreateCertButton();
-    initMoreOptionsHyperlinkLabel();
+    initDoNotSignCheckBox();
 
     loadDefaultParameters();
-    updateMoreOptions();
     updateSigningOptionsPanel();
     init();
   }
@@ -100,10 +76,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
   }
 
   private void updateSigningOptionsPanel() {
-    UIUtil.setEnabled(mySigningOptionsPanel, !myDoNotSignCheckBox.isSelected(), true);
-    if (myMoreOptionsHyperlinkLabel.isEnabled()) {
-      myMoreOptionsHyperlinkLabel.setForeground(Color.BLUE); // workaround of JLabel-related workaround at UIUtil.setEnabled(..)
-    }
+    mySigningOptionsForm.setEnabled(!myDoNotSignCheckBox.isSelected());
   }
 
   private void initAirDescriptorComponent() {
@@ -195,7 +168,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
                                }, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
   }
 
-  private void initSigningOptions() {
+  private void initDoNotSignCheckBox() {
     myDoNotSignCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         updateSigningOptionsPanel();
@@ -208,85 +181,8 @@ public class PackageAirInstallerDialog extends DialogWrapper {
         myInstallerFileNameComponent.getComponent().setText(newName);
       }
     });
-
-    myKeystoreFileTextWithBrowse
-      .addBrowseFolderListener(null, null, myProject, new FileChooserDescriptor(true, false, false, false, false, false));
   }
 
-  private void initCreateCertButton() {
-    myCreateCertButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        final Sdk flexSdk = myFlexSdkComponent.getComponent().getSelectedSdk();
-        if (flexSdk == null) {
-          Messages.showErrorDialog(myProject, "Flex or AIR SDK is required to create certificate", CreateCertificateDialog.TITLE);
-        }
-        else {
-          final CreateCertificateDialog dialog = new CreateCertificateDialog(myProject, flexSdk, suggestKeystoreFileLocation());
-          dialog.show();
-          if (dialog.isOK()) {
-            final CertificateParameters parameters = dialog.getCertificateParameters();
-            myKeystoreFileTextWithBrowse.setText(parameters.getKeystoreFilePath());
-            myKeystoreTypeCombo.setSelectedIndex(0);
-            myKeystorePasswordField.setText(parameters.getKeystorePassword());
-          }
-        }
-      }
-    });
-  }
-
-  private void initMoreOptionsHyperlinkLabel() {
-    myMoreOptionsHyperlinkLabel.setText(MORE_OPTIONS);
-    myMoreOptionsHyperlinkLabel.addHyperlinkListener(new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          showMoreOptions(!isShowingMoreOptions());
-
-          int preferredHeight = getContentPane().getPreferredSize().height;
-          getPeer().setSize(getPeer().getSize().width, preferredHeight);
-        }
-      }
-    });
-  }
-
-  private String suggestKeystoreFileLocation() {
-    final String airDescriptorPath = ((String)myAirDescriptorComponent.getComponent().getComboBox().getEditor().getItem()).trim();
-    if (airDescriptorPath.length() > 0) {
-      final VirtualFile airDescriptor = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
-      if (airDescriptor != null) {
-        final Module module = ModuleUtil.findModuleForFile(airDescriptor, myProject);
-        if (module != null) {
-          final VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
-          if (contentRoots.length > 0) {
-            return contentRoots[0].getPath();
-          }
-        }
-      }
-    }
-    final VirtualFile baseDir = myProject.getBaseDir();
-    return baseDir == null ? "" : baseDir.getPath();
-  }
-
-
-  private void showMoreOptions(final boolean show) {
-    myMoreOptionsHyperlinkLabel.setText(show ? LESS_OPTIONS : MORE_OPTIONS);
-    updateMoreOptions();
-  }
-
-  private boolean isShowingMoreOptions() {
-    return myMoreOptionsHyperlinkLabel.getText().contains(LESS_OPTIONS);
-  }
-
-  private void updateMoreOptions() {
-    final boolean showingMoreOption = isShowingMoreOptions();
-    myKeyAliasLabel.setVisible(showingMoreOption);
-    myKeyAliasTextField.setVisible(showingMoreOption);
-    myKeyPasswordLabel.setVisible(showingMoreOption);
-    myKeyPasswordField.setVisible(showingMoreOption);
-    myProviderClassNameLabel.setVisible(showingMoreOption);
-    myProviderClassNameTextField.setVisible(showingMoreOption);
-    myTsaUrlLabel.setVisible(showingMoreOption);
-    myTsaUrlTextField.setVisible(showingMoreOption);
-  }
 
   protected JComponent createCenterPanel() {
     return myMainPanel;
@@ -366,7 +262,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     }
 
     if (!myDoNotSignCheckBox.isSelected()) {
-      final String keystorePath = myKeystoreFileTextWithBrowse.getText().trim();
+      final String keystorePath = mySigningOptionsForm.getKeystorePath();
       if (keystorePath.length() == 0) {
         return "Keystore file path is empty";
       }
@@ -376,7 +272,7 @@ public class PackageAirInstallerDialog extends DialogWrapper {
         return FlexBundle.message("file.not.found", keystorePath);
       }
 
-      if (myKeystorePasswordField.getPassword().length == 0) {
+      if (mySigningOptionsForm.getKeystorePassword().length() == 0) {
         return "Keystore password is empty";
       }
     }
@@ -389,14 +285,13 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     final String installerFileName = myInstallerFileNameComponent.getComponent().getText().trim();
     final String installerFileLocation = myInstallerLocationComponent.getComponent().getText().trim();
     final boolean doNotSign = myDoNotSignCheckBox.isSelected();
-    final String keystorePath = myKeystoreFileTextWithBrowse.getText().trim();
-    final String keystoreType = (String)myKeystoreTypeCombo.getSelectedItem();
-    final String keystorePassword = new String(myKeystorePasswordField.getPassword());
-    final boolean showingMore = isShowingMoreOptions();
-    final String keyAlias = showingMore ? myKeyAliasTextField.getText().trim() : "";
-    final String keyPassword = showingMore ? new String(myKeyPasswordField.getPassword()) : "";
-    final String provider = showingMore ? myProviderClassNameTextField.getText().trim() : "";
-    final String tsa = showingMore ? myTsaUrlTextField.getText().trim() : "";
+    final String keystorePath = mySigningOptionsForm.getKeystorePath();
+    final String keystoreType = mySigningOptionsForm.getKeystoreType();
+    final String keystorePassword = mySigningOptionsForm.getKeystorePassword();
+    final String keyAlias = mySigningOptionsForm.getKeyAlias();
+    final String keyPassword = mySigningOptionsForm.getKeyPassword();
+    final String provider = mySigningOptionsForm.getProviderClassName();
+    final String tsa = mySigningOptionsForm.getTsaUrl();
 
     return new AirInstallerParameters(flexSdk, airDescriptorPath, installerFileName, installerFileLocation,
                                       myFilesToPackageForm.getFilesToPackage(), doNotSign, keystorePath, keystoreType, keystorePassword,
@@ -429,7 +324,34 @@ public class PackageAirInstallerDialog extends DialogWrapper {
     myFlexSdkComponent = new LabeledComponent<FlexSdkComboBoxWithBrowseButton>();
     myFlexSdkComponent.setComponent(new FlexSdkComboBoxWithBrowseButton());
     myFilesToPackageForm = new FilesToPackageForm(myProject);
-    myMoreOptionsHyperlinkLabel = new HoverHyperlinkLabel(MORE_OPTIONS);
+
+    final Computable<Module> moduleComputable = new Computable<Module>() {
+      public Module compute() {
+        final String airDescriptorPath = ((String)myAirDescriptorComponent.getComponent().getComboBox().getEditor().getItem()).trim();
+        if (airDescriptorPath.length() > 0) {
+          final VirtualFile airDescriptor = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
+          if (airDescriptor != null) {
+            return ModuleUtil.findModuleForFile(airDescriptor, myProject);
+          }
+        }
+        return null;
+      }
+    };
+
+    final Computable<Sdk> sdkComputable = new Computable<Sdk>() {
+      public Sdk compute() {
+        return myFlexSdkComponent.getComponent().getSelectedSdk();
+      }
+    };
+
+    final Runnable resizeHandler = new Runnable() {
+      public void run() {
+        getPeer().setSize(getPeer().getSize().width, getPeer().getPreferredSize().height);
+      }
+    };
+
+    mySigningOptionsForm = new SigningOptionsForm(myProject, moduleComputable, sdkComputable, resizeHandler);
+    mySigningOptionsForm.setProvisioningProfileApplicable(false);
   }
 
   private boolean packageAirInstaller() {
@@ -483,25 +405,19 @@ public class PackageAirInstallerDialog extends DialogWrapper {
         myFilesToPackageForm.getFilesToPackage().clear();
         myFilesToPackageForm.getFilesToPackage().addAll(parameters.FILES_TO_PACKAGE);
         myDoNotSignCheckBox.setSelected(parameters.DO_NOT_SIGN);
-        myKeystoreFileTextWithBrowse.setText(parameters.KEYSTORE_PATH);
-        myKeystoreTypeCombo.setSelectedItem(parameters.KEYSTORE_TYPE);
-        myKeyAliasTextField.setText(parameters.KEY_ALIAS);
-        myProviderClassNameTextField.setText(parameters.PROVIDER_CLASS);
-        myTsaUrlTextField.setText(parameters.TSA);
+        mySigningOptionsForm.setKeystorePath(parameters.KEYSTORE_PATH);
+        mySigningOptionsForm.setKeystoreType(parameters.KEYSTORE_TYPE);
+        mySigningOptionsForm.setKeyAlias(parameters.KEY_ALIAS);
+        mySigningOptionsForm.setProviderClassName(parameters.PROVIDER_CLASS);
+        mySigningOptionsForm.setTsaUrl(parameters.TSA);
 
         if (!parameters.DO_NOT_SIGN) {
           try {
             final PasswordSafe passwordSafe = PasswordSafe.getInstance();
-            myKeystorePasswordField.setText(passwordSafe.getPassword(myProject, getClass(), AIR_INSTALLER_KEYSTORE_PASSWORD_KEY));
-            myKeyPasswordField.setText(passwordSafe.getPassword(myProject, getClass(), AIR_INSTALLER_KEY_PASSWORD_KEY));
+            mySigningOptionsForm.setKeystorePassword(passwordSafe.getPassword(myProject, getClass(), AIR_INSTALLER_KEYSTORE_PASSWORD_KEY));
+            mySigningOptionsForm.setKeyPassword(passwordSafe.getPassword(myProject, getClass(), AIR_INSTALLER_KEY_PASSWORD_KEY));
           }
           catch (PasswordSafeException ignored) {
-          }
-
-          if (StringUtil.isNotEmpty(parameters.KEY_ALIAS) ||
-              StringUtil.isNotEmpty(parameters.PROVIDER_CLASS) ||
-              StringUtil.isNotEmpty(parameters.TSA)) {
-            showMoreOptions(true);
           }
         }
       }

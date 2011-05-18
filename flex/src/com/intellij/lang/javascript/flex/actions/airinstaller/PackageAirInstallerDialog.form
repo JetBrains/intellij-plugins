@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="8" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="511" height="515"/>
+      <xy x="20" y="20" width="555" height="542"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -48,167 +48,6 @@
           <text value="Use packaging tool from &amp;SDK"/>
         </properties>
       </component>
-      <grid id="aee85" binding="mySigningOptionsPanel" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="0" left="0" bottom="0" right="0"/>
-        <constraints>
-          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-        <border type="etched" title="Signing options"/>
-        <children>
-          <component id="e9729" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="a6412"/>
-              <text value="Keystore &amp;file:"/>
-            </properties>
-          </component>
-          <component id="a6412" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myKeystoreFileTextWithBrowse">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="a57d6" class="javax.swing.JButton" binding="myCreateCertButton">
-            <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="&amp;Create..."/>
-            </properties>
-          </component>
-          <component id="38d2a" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="e8fe8"/>
-              <text value="Keystore &amp;type:"/>
-            </properties>
-          </component>
-          <component id="19f5f" class="com.intellij.ui.HoverHyperlinkLabel" binding="myMoreOptionsHyperlinkLabel" custom-create="true">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="More options"/>
-            </properties>
-          </component>
-          <component id="24f0" class="javax.swing.JLabel" binding="myKeyAliasLabel">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="97f39"/>
-              <text value="Key &amp;alias:"/>
-            </properties>
-          </component>
-          <component id="e8fe8" class="javax.swing.JComboBox" binding="myKeystoreTypeCombo">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="120" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <model>
-                <item value="PKCS12"/>
-                <item value="PKCS11"/>
-                <item value="JKS"/>
-                <item value="KeychainStore"/>
-                <item value="Windows-MY"/>
-              </model>
-            </properties>
-          </component>
-          <component id="8834d" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="821e3"/>
-              <text value="&amp;Password:"/>
-            </properties>
-          </component>
-          <component id="821e3" class="javax.swing.JPasswordField" binding="myKeystorePasswordField">
-            <constraints>
-              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="120" height="-1"/>
-              </grid>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="97f39" class="javax.swing.JTextField" binding="myKeyAliasTextField">
-            <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="120" height="-1"/>
-              </grid>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="a0680" class="javax.swing.JLabel" binding="myKeyPasswordLabel">
-            <constraints>
-              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="25354"/>
-              <text value="Pass&amp;word:"/>
-            </properties>
-          </component>
-          <component id="25354" class="javax.swing.JPasswordField" binding="myKeyPasswordField">
-            <constraints>
-              <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="120" height="-1"/>
-              </grid>
-            </constraints>
-            <properties/>
-          </component>
-          <grid id="7901" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="c5577" class="javax.swing.JLabel" binding="myProviderClassNameLabel">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <labelFor value="3692b"/>
-                  <text value="P&amp;rovider class name:"/>
-                </properties>
-              </component>
-              <component id="3692b" class="javax.swing.JTextField" binding="myProviderClassNameTextField">
-                <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                </constraints>
-                <properties/>
-              </component>
-              <component id="ca687" class="javax.swing.JLabel" binding="myTsaUrlLabel">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <labelFor value="cc810"/>
-                  <text value="Time Stamping Authority &amp;URL:"/>
-                </properties>
-              </component>
-              <component id="cc810" class="javax.swing.JTextField" binding="myTsaUrlTextField">
-                <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
-                </constraints>
-                <properties/>
-              </component>
-            </children>
-          </grid>
-        </children>
-      </grid>
       <component id="7fe8b" class="javax.swing.JCheckBox" binding="myDoNotSignCheckBox">
         <constraints>
           <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -220,6 +59,11 @@
       <nested-form id="3ccc7" form-file="com/intellij/lang/javascript/flex/actions/FilesToPackageForm.form" binding="myFilesToPackageForm" custom-create="true" default-binding="true">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </nested-form>
+      <nested-form id="b081c" form-file="com/intellij/lang/javascript/flex/actions/SigningOptionsForm.form" binding="mySigningOptionsForm" custom-create="true">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
       </nested-form>
     </children>
