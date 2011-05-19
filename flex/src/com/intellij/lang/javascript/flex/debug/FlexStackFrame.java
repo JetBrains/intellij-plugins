@@ -462,12 +462,12 @@ public class FlexStackFrame extends XStackFrame {
   }
 
   class FlexValue extends XValue {
-
     private final String myName;
     private final String myExpression;
     private final String myResult;
     private @Nullable final String myParentResult;
     private final ValueType myValueType;
+    private Icon myPreferredIcon;
 
     private static final int MAX_STRING_LENGTH_TO_SHOW = XValueNode.MAX_VALUE_LENGTH;
     static final String TEXT_MARKER = " text ";
@@ -485,6 +485,10 @@ public class FlexStackFrame extends XStackFrame {
 
     String getResult() {
       return myResult;
+    }
+
+    public void setPreferredIcon(final Icon preferredIcon) {
+      myPreferredIcon = preferredIcon;
     }
 
     /**
@@ -613,7 +617,7 @@ public class FlexStackFrame extends XStackFrame {
       }
 
       val = setFullValueEvaluatorIfNeeded(node, val, false);
-      node.setPresentation(myValueType.myIcon, type, val, isObject);
+      node.setPresentation(myPreferredIcon == null ? myValueType.myIcon : myPreferredIcon, type, val, isObject);
     }
 
     private String setFullValueEvaluatorIfNeeded(final XValueNode node, String value, final boolean isXml) {
@@ -682,21 +686,39 @@ public class FlexStackFrame extends XStackFrame {
         CommandOutputProcessingMode doOnTextAvailable(@NonNls final String resultS) {
           StringTokenizer tokenizer = new StringTokenizer(resultS, "\r\n");
 
-          tokenizer
-            .nextToken(); // skip first token; it contains $-prefix followed by myResult: $6 = [Object 30860193, class='__AS3__.vec::Vector.<String>']
-          final boolean isCollection = type != null && isCollection(type);
+          // skip first token; it contains $-prefix followed by myResult: $6 = [Object 30860193, class='__AS3__.vec::Vector.<String>']
+          tokenizer.nextToken();
 
           final LinkedHashMap<String, FlexValue> fieldNameToFlexValueMap = new LinkedHashMap<String, FlexValue>(tokenizer.countTokens());
+
+          final NodeClassInfo nodeClassInfo = ApplicationManager.getApplication().runReadAction(new Computable<NodeClassInfo>() {
+            public NodeClassInfo compute() {
+              final Project project = myDebugProcess.getSession().getProject();
+              final JSClass jsClass = mySourcePosition == null
+                                      ? null
+                                      : findJSClass(project, ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), type);
+              return jsClass == null ? null : NodeClassInfo.getNodeClassInfo(jsClass);
+            }
+          });
 
           while (tokenizer.hasMoreElements()) {
             final String s = tokenizer.nextToken().trim();
             if (s.length() == 0) continue;
-            final int i1 = s.indexOf(DELIM);
-            if (i1 == -1) {
+            final int delimIndex = s.indexOf(DELIM);
+            if (delimIndex == -1) {
               FlexDebugProcess.log("Unrecognized string:" + s);
               continue;
             }
-            final String fieldName = s.substring(0, i1);
+            final String fieldName = s.substring(0, delimIndex);
+            final String result = s.substring(delimIndex + DELIM.length());
+
+            if (result.startsWith("[Setter ")) {
+              // such values do not give any useful information:
+              // [Setter 62, name='Child@3d613bb::staticSetter']
+              // [Setter 78]
+              continue;
+            }
+
             String evaluatedPath = myExpression;
 
             if (fieldName.length() > 0 && Character.isDigit(fieldName.charAt(0))) {
@@ -708,98 +730,141 @@ public class FlexStackFrame extends XStackFrame {
             // either parameter of static function from scopechain or a field. Static functions from scopechain look like following:
             // // [Object 52571545, class='Main$/staticFunction']
             final ValueType valueType = type != null && type.indexOf('/') > -1 ? ValueType.Parameter : ValueType.Field;
-            final FlexValue flexValue =
-              new FlexValue(fieldName, evaluatedPath, s.substring(i1 + DELIM.length()), FlexValue.this.myResult, valueType);
+            final FlexValue flexValue = new FlexValue(fieldName, evaluatedPath, result, FlexValue.this.myResult, valueType);
 
             addValueCheckingDuplicates(flexValue, fieldNameToFlexValueMap);
           }
 
-          final List<FlexValue> ownMembers = new ArrayList<FlexValue>(fieldNameToFlexValueMap.values());
-          final List<FlexValue> inheritedMembers = new ArrayList<FlexValue>(fieldNameToFlexValueMap.size());
+          addChildren(node, fieldNameToFlexValueMap, nodeClassInfo);
 
-          if (!isCollection) {
-            ApplicationManager.getApplication().runReadAction(new Runnable() {
-              public void run() {
-                final Project project = myDebugProcess.getSession().getProject();
-                final JSClass jsClass = mySourcePosition == null
-                                        ? null
-                                        : findJSClass(project, ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), type);
-
-                if (jsClass != null) {
-                  final Iterator<FlexValue> iterator = ownMembers.iterator();
-                  while (iterator.hasNext()) {
-                    final FlexValue flexValue = iterator.next();
-                    if (findFieldOrGetter(flexValue.myName, jsClass, false) == null) {
-                      iterator.remove();
-                      inheritedMembers.add(flexValue);
-                    }
-                  }
-                }
-              }
-            });
-          }
-
-          final List<FlexValue> directChildren = ownMembers.isEmpty() ? inheritedMembers : ownMembers;
-          final List<FlexValue> indirectChildren = ownMembers.isEmpty() ? Collections.<FlexValue>emptyList() : inheritedMembers;
-
-          if (isCollection) {
-            Collections.sort(directChildren, myArrayElementsComparator);
-          }
-
-          final XValueChildrenList children = new XValueChildrenList();
-          for (FlexValue value : directChildren) {
-            children.add(value.myName, value);
-          }
-
-          if (!indirectChildren.isEmpty()) {
-            final XValue inheritedNode = new XValue() {
-              public void computePresentation(@NotNull final XValueNode node) {
-                node.setPresentation((Icon)null, null, "", "Inherited members", true);
-              }
-
-              public void computeChildren(@NotNull final XCompositeNode node) {
-                final XValueChildrenList inheritedChildren = new XValueChildrenList();
-                for (FlexValue value : indirectChildren) {
-                  inheritedChildren.add(value.myName, value);
-                }
-                node.addChildren(inheritedChildren, true);
-              }
-            };
-            children.add("", inheritedNode);
-          }
-
-          node.addChildren(children, true);
           return CommandOutputProcessingMode.DONE;
         }
 
-        private void addValueCheckingDuplicates(final FlexValue flexValue,
-                                                final LinkedHashMap<String, FlexValue> fieldNameToFlexValueMap) {
-          final String name = flexValue.myName;
-          FlexValue existingValue;
-
-          if ((existingValue = fieldNameToFlexValueMap.get("_" + name)) != null &&
-              existingValue.getResult().equals(flexValue.getResult())) {
-            fieldNameToFlexValueMap.remove("_" + name);
-          }
-          else if (name.startsWith("_") &&
-                   name.length() > 1 &&
-                   (existingValue = fieldNameToFlexValueMap.get(name.substring(1))) != null &&
-                   existingValue.getResult().equals(flexValue.getResult())) {
-            return;
-          }
-
-          fieldNameToFlexValueMap.put(name, flexValue);
-        }
       };
 
       myDebugProcess.sendCommand(command);
     }
 
-    private boolean isCollection(final @NotNull String type) {
-      return type.contains("Array") ||
-             type.contains("Vector") ||
-             type.contains("Collection") ||
-             type.contains("List");
+    private void addValueCheckingDuplicates(final FlexValue flexValue,
+                                            final LinkedHashMap<String, FlexValue> fieldNameToFlexValueMap) {
+      final String name = flexValue.myName;
+      FlexValue existingValue;
+
+      if ((existingValue = fieldNameToFlexValueMap.get("_" + name)) != null &&
+          existingValue.getResult().equals(flexValue.getResult())) {
+        fieldNameToFlexValueMap.remove("_" + name);
+      }
+      else if (name.startsWith("_") &&
+               name.length() > 1 &&
+               (existingValue = fieldNameToFlexValueMap.get(name.substring(1))) != null &&
+               existingValue.getResult().equals(flexValue.getResult())) {
+        return;
+      }
+
+      fieldNameToFlexValueMap.put(name, flexValue);
+    }
+
+    private void addChildren(final XCompositeNode node,
+                             final LinkedHashMap<String, FlexValue> fieldNameToFlexValueMap,
+                             final NodeClassInfo nodeClassInfo) {
+      final List<FlexValue> elementsOfCollection = new LinkedList<FlexValue>();
+      final XValueChildrenList ownStaticFields = new XValueChildrenList();
+      final XValueChildrenList ownStaticProperties = new XValueChildrenList();
+      final XValueChildrenList ownFields = new XValueChildrenList();
+      final XValueChildrenList ownProperties = new XValueChildrenList();
+      final XValueChildrenList inheritedStaticFields = new XValueChildrenList();
+      final XValueChildrenList inheritedStaticProperties = new XValueChildrenList();
+      final XValueChildrenList inheritedFields = new XValueChildrenList();
+      final XValueChildrenList inheritedProperties = new XValueChildrenList();
+
+      for (final Map.Entry<String, FlexValue> entry : fieldNameToFlexValueMap.entrySet()) {
+        final String name = entry.getKey();
+        final FlexValue flexValue = entry.getValue();
+
+        if (isInteger(name)) {
+          elementsOfCollection.add(flexValue);
+          continue;
+        }
+
+        if (updateIconAndAddToListIfMatches(name, flexValue, nodeClassInfo.myOwnStaticFields, ownStaticFields) ||
+            updateIconAndAddToListIfMatches(name, flexValue, nodeClassInfo.myOwnStaticProperties, ownStaticProperties) ||
+            updateIconAndAddToListIfMatches(name, flexValue, nodeClassInfo.myOwnFields, ownFields) ||
+            updateIconAndAddToListIfMatches(name, flexValue, nodeClassInfo.myOwnProperties, ownProperties) ||
+            updateIconAndAddToListIfMatches(name, flexValue, nodeClassInfo.myInheritedStaticFields, inheritedStaticFields) ||
+            updateIconAndAddToListIfMatches(name, flexValue, nodeClassInfo.myInheritedStaticProperties, inheritedStaticProperties) ||
+            updateIconAndAddToListIfMatches(name, flexValue, nodeClassInfo.myInheritedFields, inheritedFields) ||
+            updateIconAndAddToListIfMatches(name, flexValue, nodeClassInfo.myInheritedProperties, inheritedProperties)) {
+          continue;
+        }
+
+        (nodeClassInfo.isDynamic ? ownFields : inheritedFields).add(name, flexValue);
+      }
+
+      Collections.sort(elementsOfCollection, myArrayElementsComparator);
+
+      if (inheritedStaticFields.size() + inheritedStaticProperties.size() + inheritedFields.size() + inheritedProperties.size() > 0) {
+        final XValueChildrenList inheritedNodeSingletonList =
+          getInheritedNodeSingletonList(inheritedStaticFields, inheritedStaticProperties, inheritedFields, inheritedProperties);
+        node.addChildren(inheritedNodeSingletonList, false);
+      }
+
+      node.addChildren(ownStaticFields, false);
+      node.addChildren(ownStaticProperties, false);
+      node.addChildren(ownFields, false);
+      node.addChildren(ownProperties, false);
+
+      final XValueChildrenList elementsOfCollectionList = new XValueChildrenList();
+      for (final FlexValue flexValue : elementsOfCollection) {
+        elementsOfCollectionList.add(flexValue.myName, flexValue);
+      }
+      node.addChildren(elementsOfCollectionList, false);
+
+      node.addChildren(XValueChildrenList.EMPTY, true);
+    }
+
+    private XValueChildrenList getInheritedNodeSingletonList(final XValueChildrenList inheritedStaticFields,
+                                                             final XValueChildrenList inheritedStaticProperties,
+                                                             final XValueChildrenList inheritedFields,
+                                                             final XValueChildrenList inheritedProperties) {
+      final XValue inheritedNode = new XValue() {
+        public void computePresentation(@NotNull final XValueNode node) {
+          node.setPresentation((Icon)null, null, "", "Inherited members", true);
+        }
+
+        public void computeChildren(@NotNull final XCompositeNode node) {
+          node.addChildren(inheritedStaticFields, false);
+          node.addChildren(inheritedStaticProperties, false);
+          node.addChildren(inheritedFields, false);
+          node.addChildren(inheritedProperties, true);
+        }
+      };
+
+      final XValueChildrenList inheritedSingleNodeList = new XValueChildrenList();
+      inheritedSingleNodeList.add("", inheritedNode);
+      return inheritedSingleNodeList;
+    }
+
+    private boolean updateIconAndAddToListIfMatches(final String name,
+                                                    final FlexValue flexValue,
+                                                    final Map<String, Icon> nameToIconMap,
+                                                    final XValueChildrenList list) {
+      final Icon icon = nameToIconMap.get(name);
+      if (icon != null) {
+        flexValue.setPreferredIcon(icon);
+        list.add(flexValue.myName, flexValue);
+        return true;
+      }
+      return false;
+    }
+
+    private boolean isInteger(final String s) {
+      try {
+        Integer.parseInt(s);
+        return true;
+      }
+      catch (NumberFormatException e) {
+        return false;
+      }
     }
 
     private String referenceObjectBase(int i, String marker) {
