@@ -42,6 +42,15 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:2.6" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:rb.swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:rb.swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.0.20968" level="project" />
     <orderEntry type="module" module-name="app-plugin-api" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:acocoa:swc:1.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.0.20968" level="project" />

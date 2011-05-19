@@ -2,7 +2,7 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="flex" name="Flex">
-      <configuration flex_sdk="compiler-4.5.0.18365.pom">
+      <configuration flex_sdk="compiler-4.5.0.20968.pom">
         <option name="DO_BUILD" value="true" />
         <option name="OUTPUT_TYPE" value="Library" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />
@@ -41,23 +41,17 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:acocoa:swc:1.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: flashx:textLayout:swc:2.0.192-de1" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:sparkskins:swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:rpc:swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:applicationupdater:swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:applicationupdater_ui:swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:servicemonitor:swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:rb.swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:rpc:rb.swc:4.5.0.18365" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:osmf:swc:4.5.0.18365" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:2.6" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:rb.swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:rb.swc:4.5.0.20968" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.0.20968" level="project" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:cocoa:swc:1.4-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: flashx:textLayout:swc:2.0.192-de1" level="project" />
     <orderEntry type="library" name="Maven: org.flyti:plexus:swc:1.3-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.flyti:collections:swc:1.3.5" level="project" />
     <orderEntry type="library" name="Maven: org.flyti:foundation:swc:1.2.1" level="project" />
