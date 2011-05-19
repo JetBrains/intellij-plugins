@@ -1,5 +1,6 @@
 package com.intellij.flex.maven;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.project.MavenProject;
@@ -64,7 +65,7 @@ public class IdeaConfigurator {
     return pathBuilder.append("-configs.xml").toString();
   }
 
-  public void init(MavenProject project, String classifier) throws IOException {
+  public void init(MavenSession session, MavenProject project, String classifier) throws IOException {
     File configFile = new File(getConfigFilePath(project, classifier));
     //noinspection ResultOfMethodCallIgnored
     configFile.getParentFile().mkdirs();
@@ -225,7 +226,7 @@ public class IdeaConfigurator {
       }
       else {
         out.append(indent).append('<').append(name).append('>');
-        out.append(value.toString());
+        processValue(value.toString(), name);
         out.append("</").append(name).append('>');
       }
     }
@@ -233,6 +234,10 @@ public class IdeaConfigurator {
     if (parentTagWritten && configurationName != null) {
       out.append(indent, 0, indent.length() - 1).append("</").append(configurationName).append('>');
     }
+  }
+
+  protected void processValue(String value, String name) throws IOException {
+    out.append(value);
   }
 
   protected void writeTag(String indent, String name, String value, String parentName) throws IOException {

@@ -2,18 +2,17 @@ package com.intellij.flex.maven;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.*;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.component.repository.ComponentDependency;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,17 +45,52 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
   private ArtifactRepository localRepository;
 
   private final Set<Artifact> copiedArtifacts = new HashSet<Artifact>();
+  private final Set<String> extractedConfigs = new HashSet<String>(3);
+
+  @Requirement
+  private MavenPluginManager pluginManager;
+
+  @Requirement
+  private LegacySupport legacySupport;
+
+  private static boolean compilerLibsCopied;
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     String packaging = project.getPackaging();
-    if (!(packaging.equals("swc") || packaging.equals("swf"))) {
-      return;
-    }
 
     String localRepositoryBasedir = localRepository.getBasedir();
     File localRepositoryFile = new File(localRepositoryBasedir);
     int localRepositoryBasedirLength = localRepositoryBasedir.length();
+
+    MavenSession session = legacySupport.getSession();
+    if (!compilerLibsCopied && packaging.equals("pom")) {
+      compilerLibsCopied = true;
+      
+      try {
+        PluginDescriptor pluginDescriptor = pluginManager.getPluginDescriptor(project.getPlugin("org.sonatype.flexmojos:flexmojos-maven-plugin"), session.getCurrentProject().getRemotePluginRepositories(), session.getRepositorySession());
+        final File compilerLibsDirectory = new File(outputDirectory, "../../build-gant/compiler-libs");
+        //noinspection ResultOfMethodCallIgnored
+        compilerLibsDirectory.mkdirs();
+        for (ComponentDependency dependency : pluginDescriptor.getDependencies()) {
+          if (dependency.getGroupId().equals("com.adobe.flex.compiler") && dependency.getType().equals("jar")) {
+            final String artifactId = dependency.getArtifactId();
+            if (artifactId.equals("adt") || artifactId.equals("asdoc") || artifactId.equals("digest") || artifactId.equals("fcsh") || artifactId.equals("fdb") || artifactId.equals("optimizer") || artifactId.equals("swcdepends")) {
+              continue;
+            }
+
+            Utils.copyFile(new File(localRepositoryFile, "com/adobe/flex/compiler/" + artifactId + "/" + dependency.getVersion() + "/" + artifactId + "-" + dependency.getVersion() + ".jar"), new File(compilerLibsDirectory, artifactId + ".jar"));
+          }
+        }
+      }
+      catch (Exception e) {
+        throw new MojoExecutionException("Cannot find flemxojos maven plugin", e);
+      }
+    }
+
+    if (!Utils.isFlashProject(project)) {
+      return;
+    }
 
     //noinspection ResultOfMethodCallIgnored
     outputDirectory.mkdirs();
@@ -78,46 +112,39 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
       try {
         File outFile = new File(outputDirectory, localPath);
         if (outFile.lastModified() == artifactFile.lastModified()) {
-          continue;
+          //continue;
         }
 
         //noinspection ResultOfMethodCallIgnored
         outFile.getParentFile().mkdirs();
         
-        copyFile(artifactFile, outFile);
+        Utils.copyFile(artifactFile, outFile);
 
-        if ("configs".equals(artifact.getClassifier())) {
-          FileUtils.copyDirectory(new File(artifactFile.getParentFile(), "configs_zip"), new File(outputDirectory, artifactFile.getParent().substring(localRepositoryBasedirLength) + "/configs_zip"));
+        if (("configs".equals(artifact.getClassifier()) || (artifact.getClassifier() == null && "framework".equals(artifact.getArtifactId()) && artifact.getType().equals("swc"))) && !extractedConfigs.contains(artifact.getVersion())) {
+          extractedConfigs.add(artifact.getVersion());
+          final File in = new File(artifactFile.getParentFile(), "configs_zip");
+          FileUtils.copyDirectory(in, new File(outputDirectory, artifactFile.getParent().substring(localRepositoryBasedirLength) + "/configs_zip"));
+          Utils.copyFile(new File(in, "macFonts.ser"), new File(outputDirectory, "fonts.ser"));
         }
         else if (artifact.getArtifactId().equals("playerglobal") || artifact.getArtifactId().equals("airglobal")) {
-          copyFile(artifactFile, new File(outputDirectory, artifactFile.getParent().substring(localRepositoryBasedirLength) + "/" + artifact.getArtifactId() + ".swc"));
+          Utils.copyFile(artifactFile, new File(outputDirectory, artifactFile.getParent().substring(localRepositoryBasedirLength) + "/" + artifact.getArtifactId() + ".swc"));
+        }
+        else if (artifact.getType().equals("rb.swc")) {
+          if (artifact.getClassifier() == null) {
+           Utils.copyFile(artifactFile, new File(outputDirectory, artifactFile.getPath().substring(localRepositoryBasedirLength, artifactFile.getPath().length() - ".rb.swc".length()) + "-en_US.rb.swc"));
+          }
         }
         else if (!artifact.getType().equals("pom")) {
           final String pomFilename = localPath.substring(0, localPath.length() - artifact.getType().length()) + "pom";
           File pom = new File(localRepositoryFile, pomFilename);
           if (pom.exists()) {
-            copyFile(pom, new File(outputDirectory, pomFilename));
+            Utils.copyFile(pom, new File(outputDirectory, pomFilename));
           }
         }
       }
       catch (IOException e) {
         throw new MojoExecutionException("Cannot copy", e);
       }
-    }
-  }
-
-  private void copyFile(File fromFile, File toFile) throws MojoExecutionException, IOException {
-    final FileChannel fromChannel = new FileInputStream(fromFile).getChannel();
-    final FileChannel toChannel = new FileOutputStream(toFile).getChannel();
-    try {
-      fromChannel.transferTo(0, fromFile.length(), toChannel);
-    }
-    catch (IOException e) {
-      throw new MojoExecutionException("Cannot copy", e);
-    }
-    finally {
-      fromChannel.close();
-      toChannel.close();
     }
   }
 }

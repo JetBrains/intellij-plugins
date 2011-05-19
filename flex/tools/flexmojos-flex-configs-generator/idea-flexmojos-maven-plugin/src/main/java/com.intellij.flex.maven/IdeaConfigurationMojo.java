@@ -1,6 +1,5 @@
 package com.intellij.flex.maven;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.internal.LifecycleExecutionPlanCalculator;
 import org.apache.maven.model.Plugin;
@@ -49,13 +48,6 @@ public class IdeaConfigurationMojo extends AbstractMojo {
   private LifecycleExecutionPlanCalculator lifeCycleExecutionPlanCalculator;
 
   /**
-   * @parameter expression="${localRepository}"
-   * @required
-   * @readonly
-   */
-  private ArtifactRepository localRepository;
-
-  /**
    * @parameter expression="${generateAlsoShareable}"
    * @readonly
    */
@@ -66,7 +58,7 @@ public class IdeaConfigurationMojo extends AbstractMojo {
   public void execute() throws MojoExecutionException, MojoFailureException {
     MavenProject project = session.getCurrentProject();
     String packaging = project.getPackaging();
-    if (!(packaging.equals("swc") || packaging.equals("swf"))) {
+    if (!Utils.isFlashProject(project)) {
       return;
     }
 
@@ -104,10 +96,10 @@ public class IdeaConfigurationMojo extends AbstractMojo {
       mavenPluginManager.releaseMojo(mojo, mojoExecution);
     }
 
-    IdeaConfigurator configurator = generateAlsoShareable ? new ShareableFlexConfigGenerator(localRepository.getBasedir()) : new IdeaConfigurator();
+    IdeaConfigurator configurator = generateAlsoShareable ? new ShareableFlexConfigGenerator() : new IdeaConfigurator();
     try {
       modifyOurClassRealm(flexmojosPluginRealm);
-      configurator.init(project, (getClassifier(mojo, flexmojosPluginRealm)));
+      configurator.init(session, project, getClassifier(mojo, flexmojosPluginRealm));
       if ("swc".equals(packaging)) {
         configurator.buildConfiguration(mojo, flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICompcConfiguration"));
       }
