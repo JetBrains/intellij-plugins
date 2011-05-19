@@ -60,7 +60,7 @@ private def doExecute(home, sandbox, targetFolder) {
   List<SwfDescriptor> swfDescriptors = includeFile("$flexBuildHome/flex_ui_designer_swfs_build.gant").getList();
   swfDescriptors.each {
     if (it.config.startsWith("flex-injection-") || it.config.equals("shared.xml")) {
-      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc)
+      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc, it.config.startsWith("flex-injection-"))
     }
   };
 
@@ -72,7 +72,7 @@ private def doExecute(home, sandbox, targetFolder) {
 
   swfDescriptors.each {
     if (!it.config.startsWith("flex-injection-") && !it.config.equals("shared.xml")) {
-      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc);
+      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc, false);
     }
   };
 
@@ -121,7 +121,7 @@ private def invokeAbcBuilder(sandbox, flexVersion) {
   }
 }
 
-def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc) {
+def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc, boolean debug) {
   ant.copy(file: "$flexBuildHome/flex-configs/${config}", toDir: "$flexSandbox", overwrite: "true")
 
   ant.replace(file: "$flexSandbox/${config}") {
@@ -146,5 +146,6 @@ def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc) {
       fileset(dir: "$flexBuildHome/compiler-libs");
     }
     arg(value: "-load-config=$flexSandbox/${config}")
+    arg(value: "-debug=${debug}")
   }
 }

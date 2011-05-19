@@ -9,7 +9,6 @@ import cocoa.ui;
 
 import com.intellij.flex.uiDesigner.Document;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
-import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInspector;
 import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StyleInspector;
 
 import flash.utils.Dictionary;

@@ -51,7 +51,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     if (documentFactory.document == null) {
       var context:ModuleContextEx = documentFactory.module.context;
       if (context.librariesResolved) {
-        doOpenAfterResolveLibraries(documentFactory);
+        createAndOpen(documentFactory);
       }
       else {
         libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory);

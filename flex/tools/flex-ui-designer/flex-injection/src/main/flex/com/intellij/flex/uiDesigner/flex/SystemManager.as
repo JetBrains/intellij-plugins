@@ -462,7 +462,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   }
 
   public function get isProxy():Boolean {
-    return false;
+    return true; // so, UIComponent will "keep the existing proxy", see UIComponent#get systemManager
   }
 
   public function get numModalWindows():int {
@@ -575,8 +575,6 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     return this;
   }
 
-
-
   // mx.managers::ISystemManagerChildManager, ChildManager, "cm.notifyStyleChangeInChildren(styleProp, true);" in CSSStyleDeclaration
   //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
   public function notifyStyleChangeInChildren(styleProp:String, recursive:Boolean):void {
@@ -625,7 +623,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
         listeners.push(listener);
       }
     }
-    else {
+    else if (!(type == "cursorManagerRequest" || type == "dragManagerRequest" || type == "initManagerRequest" || type == "systemManagerRequest" || type == "tooltipManagerRequest")) {
       super.addEventListener(type, listener, useCapture, priority, useWeakReference);
     }
   }

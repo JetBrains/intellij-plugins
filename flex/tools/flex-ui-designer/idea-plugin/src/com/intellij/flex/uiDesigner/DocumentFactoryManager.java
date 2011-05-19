@@ -33,11 +33,13 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
   }
 
   public void reset() {
+    if (files.isEmpty()) {
+      return;
+    }
+    
     files.clear();
     freeIndices.resetQuick();
-    if (fileDocumentManagerListener != null) {
-      fileDocumentManagerListener.unsubscribe();
-    }
+    fileDocumentManagerListener.unsubscribe();
   }
 
   public void unregister(int[] ids) {
