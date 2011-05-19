@@ -57,7 +57,6 @@ public class StyleTest extends BaseTestCase {
     assertThat(style[3], {selectors: [{subject: "spark.components.Button", conditions: [allOf(instanceOf(CssClassCondition), {value: "emphasized"})]}], declarations: [{colorName: null, name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.DefaultButtonSkin"}}]});
     
     assertThat(style[6], {selectors: [{subject: "spark.components.ComboBox", conditions: null}], declarations: [
-      {name: "dropShadowVisible", type: CssPropertyType.BOOL, value: strictlyEqualTo(true)},
       {name: "paddingBottom", type: CssPropertyType.NUMBER, value: 3},
       {name: "paddingLeft", type: CssPropertyType.NUMBER, value: 3},
       {name: "paddingRight", type: CssPropertyType.NUMBER, value: 3},

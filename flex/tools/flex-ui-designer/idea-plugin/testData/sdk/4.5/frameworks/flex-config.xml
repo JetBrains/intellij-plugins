@@ -337,95 +337,95 @@
       <!-- Framework SWC -->
 	<runtime-shared-library-path>
 		<path-element>libs/framework.swc</path-element>
-		<rsl-url>framework_4.5.0.19786.swf</rsl-url>
-		<policy-file-url></policy-file-url>
-		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.19786/framework_4.5.0.19786.swf</rsl-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.20967/framework_4.5.0.20967.swz</rsl-url>
 		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+		<rsl-url>framework_4.5.0.20967.swz</rsl-url>
+		<policy-file-url></policy-file-url>
 	</runtime-shared-library-path>
    
 	<!-- TextLayout SWC -->
       <runtime-shared-library-path>
 		<path-element>libs/textLayout.swc</path-element>
-		<rsl-url>textLayout_2.0.0.229.swf</rsl-url>
-		<policy-file-url></policy-file-url>
-		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.19786/textLayout_2.0.0.229.swf</rsl-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/tlf/2.0.0.232/textLayout_2.0.0.232.swz</rsl-url>
 		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+		<rsl-url>textLayout_2.0.0.232.swz</rsl-url>
+		<policy-file-url></policy-file-url>
 	</runtime-shared-library-path>
     
       <!-- Spark SWC-->
    	<runtime-shared-library-path>
 		<path-element>libs/spark.swc</path-element>
-		<rsl-url>spark_4.5.0.19786.swf</rsl-url>
-		<policy-file-url></policy-file-url>
-		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.19786/spark_4.5.0.19786.swf</rsl-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.20967/spark_4.5.0.20967.swz</rsl-url>
 		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+		<rsl-url>spark_4.5.0.20967.swz</rsl-url>
+		<policy-file-url></policy-file-url>
 	</runtime-shared-library-path>
 	
       <!-- Sparkskins SWC-->
    	<runtime-shared-library-path>
 		<path-element>libs/sparkskins.swc</path-element>
-		<rsl-url>sparkskins_4.5.0.19786.swf</rsl-url>
-		<policy-file-url></policy-file-url>
-		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.19786/sparkskins_4.5.0.19786.swf</rsl-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.20967/sparkskins_4.5.0.20967.swz</rsl-url>
 		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+		<rsl-url>sparkskins_4.5.0.20967.swz</rsl-url>
+		<policy-file-url></policy-file-url>
 	</runtime-shared-library-path>
 	 
 	<!-- RPC SWC -->
 	<runtime-shared-library-path>
 		<path-element>libs/rpc.swc</path-element>
-		<rsl-url>rpc_4.5.0.19786.swf</rsl-url>
-		<policy-file-url></policy-file-url>
-		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.19786/rpc_4.5.0.19786.swf</rsl-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.20967/rpc_4.5.0.20967.swz</rsl-url>
 		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+		<rsl-url>rpc_4.5.0.20967.swz</rsl-url>
+		<policy-file-url></policy-file-url>
 	</runtime-shared-library-path>
     	
       <!-- Charts SWC -->
 	<runtime-shared-library-path>
 		<path-element>libs/charts.swc</path-element>
-		<rsl-url>charts_4.5.0.19786.swf</rsl-url>
-		<policy-file-url></policy-file-url>
-		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.19786/charts_4.5.0.19786.swf</rsl-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.20967/charts_4.5.0.20967.swz</rsl-url>
 		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+		<rsl-url>charts_4.5.0.20967.swz</rsl-url>
+		<policy-file-url></policy-file-url>
 	</runtime-shared-library-path>
 
       <!-- Spark_dmv SWC -->
 	<runtime-shared-library-path>
 		<path-element>libs/spark_dmv.swc</path-element>
-		<rsl-url>spark_4.5.0.19786_4.5.0.0.swf</rsl-url>
-		<policy-file-url></policy-file-url>
-		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.19786/spark_4.5.0.19786_4.5.0.0.swf</rsl-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.20967/spark_dmv_4.5.0.20967.swz</rsl-url>
 		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+		<rsl-url>spark_dmv_4.5.0.20967.swz</rsl-url>
+		<policy-file-url></policy-file-url>
 	</runtime-shared-library-path>
 
       <!-- OSMF SWC -->
      <runtime-shared-library-path>
 		<path-element>libs/osmf.swc</path-element>
-		<rsl-url>osmf_1.0.0.16316.swf</rsl-url>
-		<policy-file-url></policy-file-url>
-		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.19786/osmf_1.0.0.16316.swf</rsl-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.20967/osmf_1.0.0.16316.swz</rsl-url>
 		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+		<rsl-url>osmf_1.0.0.16316.swz</rsl-url>
+		<policy-file-url></policy-file-url>
 	</runtime-shared-library-path>
       
       <!-- MX SWC -->
 	<runtime-shared-library-path>
 		<path-element>libs/mx/mx.swc</path-element>
-		<rsl-url>mx_4.5.0.19786.swf</rsl-url>
-		<policy-file-url></policy-file-url>
-		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.19786/mx_4.5.0.19786.swf</rsl-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.20967/mx_4.5.0.20967.swz</rsl-url>
 		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+		<rsl-url>mx_4.5.0.20967.swz</rsl-url>
+		<policy-file-url></policy-file-url>
 	</runtime-shared-library-path>
    
       <!-- Advancedgrids SWC -->
 	<runtime-shared-library-path>
 		<path-element>libs/advancedgrids.swc</path-element>
-		<rsl-url>advancedgrids_4.5.0.19786.swf</rsl-url>
-		<policy-file-url></policy-file-url>
-		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.19786/advancedgrids_4.5.0.19786.swf</rsl-url>
+		<rsl-url>http://fpdownload.adobe.com/pub/swz/flex/4.5.0.20967/advancedgrids_4.5.0.20967.swz</rsl-url>
 		<policy-file-url>http://fpdownload.adobe.com/pub/swz/crossdomain.xml</policy-file-url>
+		<rsl-url>advancedgrids_4.5.0.20967.swz</rsl-url>
+		<policy-file-url></policy-file-url>
 	</runtime-shared-library-path>
 
 	<!-- static-link-runtime-shared-libraries: statically link the libraries specified by the -runtime-shared-libraries-path option.-->
-	<static-link-runtime-shared-libraries>true</static-link-runtime-shared-libraries>
+	<static-link-runtime-shared-libraries>false</static-link-runtime-shared-libraries>
 
    <!-- target-player: specifies the version of the player the application is targeting.
                        Features requiring a later version will not be compiled into the application.

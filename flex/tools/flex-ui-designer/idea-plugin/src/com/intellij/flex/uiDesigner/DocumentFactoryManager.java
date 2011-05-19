@@ -35,7 +35,9 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
   public void reset() {
     files.clear();
     freeIndices.resetQuick();
-    fileDocumentManagerListener.unsubscribe();
+    if (fileDocumentManagerListener != null) {
+      fileDocumentManagerListener.unsubscribe();
+    }
   }
 
   public void unregister(int[] ids) {

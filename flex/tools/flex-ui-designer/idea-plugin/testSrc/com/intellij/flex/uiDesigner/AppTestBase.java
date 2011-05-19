@@ -55,9 +55,10 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   }
 
   @Override
-  protected void setUpJdk() {    
-    flexSdkRootPath = getTestDataPath() + "/sdk/" + getFlexVersion();
-    doSetupFlexSdk(myModule, flexSdkRootPath, true, getFlexVersion() + ".0");
+  protected void setUpJdk() {
+    final String flexVersion = getFlexVersion();
+    flexSdkRootPath = getTestDataPath() + "/sdk/" + flexVersion;
+    doSetupFlexSdk(myModule, flexSdkRootPath, true, flexVersion + "." + (flexVersion.equals("4.1") ? "16076" : "20967"));
   }
 
   protected String generateSdkName(String version, boolean air) {

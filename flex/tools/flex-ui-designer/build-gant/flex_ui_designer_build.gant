@@ -141,6 +141,7 @@ def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc) {
     jvmarg(value: "-Dsun.io.useCanonCaches=false")
     jvmarg(value: "-Duser.language=en")
     jvmarg(value: "-Duser.region=en")
+    jvmarg(value: "-Dflex.swf.uncompressed=true")
     classpath {
       fileset(dir: "$flexBuildHome/compiler-libs");
     }

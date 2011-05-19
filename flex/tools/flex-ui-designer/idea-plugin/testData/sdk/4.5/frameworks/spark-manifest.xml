@@ -206,6 +206,7 @@
     <!-- Special Components -->
     <component id="State" class="mx.states.State" lookupOnly="true"/>
 	<component id="AddItems" class="mx.states.AddItems" lookupOnly="true"/>
+    <component id="DataItem" class="spark.utils.DataItem"/>
 
 	<!-- airframework -->
     <component id="TitleBar" class="spark.components.windowClasses.TitleBar" lookupOnly="true"/>   
@@ -227,8 +228,8 @@
 	<component id="span" class="flashx.textLayout.elements.SpanElement" lookupOnly="true"/>
 	<component id="tab" class="flashx.textLayout.elements.TabElement" lookupOnly="true"/>
 	<component id="tcy" class="flashx.textLayout.elements.TCYElement" lookupOnly="true"/>
-	<component id="ListMarkerFormat" class="flashx.textLayout.formats.ListMarkerFormat" lookupOnly="true"/>
-	<component id="g" class="flashx.textLayout.formats.SubParagraphGroupElement" lookupOnly="true"/>
+	<component id="ListMarkerFormat" class="flashx.textLayout.formats.ListMarkerFormat" lookupOnly="true"/>			         
+	<component id="g" class="flashx.textLayout.elements.SubParagraphGroupElement" lookupOnly="true"/>
 	<component id="TextFlow" class="flashx.textLayout.elements.TextFlow" lookupOnly="true"/>
 	<component id="TextLayoutFormat" class="flashx.textLayout.formats.TextLayoutFormat" lookupOnly="true"/>
 
