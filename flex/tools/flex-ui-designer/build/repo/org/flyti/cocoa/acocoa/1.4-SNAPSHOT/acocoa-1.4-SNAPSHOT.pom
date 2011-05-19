@@ -15,7 +15,7 @@
   <dependencies>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>air-framework</artifactId>
+      <artifactId>air-framework-small</artifactId>
       <type>pom</type>
       <exclusions>
         <exclusion>

@@ -1,0 +1,4 @@
+<componentPackage>
+	<component class="com.intellij.flex.uiDesigner.test.DateFieldWithError"/>
+	<component class="com.intellij.flex.uiDesigner.test.LabelWithError"/>
+</componentPackage>

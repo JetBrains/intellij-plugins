@@ -1,0 +1,484 @@
+<?xml version="1.0"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2006-2007 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<project name="framework" default="main" basedir=".">
+
+	<echo message="Please set the environment variable ANT_OPTS to -Xmx256m"/>
+
+	<property name="FLEX_HOME" value="${basedir}/.."/>
+	<property name="locale" value="en_US"/>
+	<property name="projects.dir" value="${FLEX_HOME}/frameworks/projects"/>
+	<property name="airframework.dir" value="${projects.dir}/airframework"/>
+	<property name="airspark.dir" value="${projects.dir}/airspark"/>
+	<property name="charts.dir" value="${projects.dir}/charts"/>
+	<property name="advancedgrids.dir" value="${projects.dir}/advancedgrids"/>
+	<property name="core.dir" value="${projects.dir}/core"/>
+	<property name="framework.dir" value="${projects.dir}/framework"/>
+	<property name="halo.dir" value="${projects.dir}/halo"/>
+	<property name="rpc.dir" value="${projects.dir}/rpc"/>
+	<property name="spark.dir" value="${projects.dir}/spark"/>
+	<property name="sparkskin.dir" value="${projects.dir}/sparkskins"/>
+	<property name="spark_dmv.dir" value="${projects.dir}/spark_dmv"/>
+	<property name="authoringsupport.dir" value="${projects.dir}/authoringsupport"/>
+	<property name="wireframe.dir" value="${projects.dir}/wireframe"/>
+	<property name="compc.jvm.args" value="-Xmx384m" />
+	<property name="playerglobal.version" value="10.2"/>	
+	
+	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar"/>
+
+	<target name="main" depends="clean,framework,framework_rb,spark,spark_rb,airframework,airframework_rb,airspark,airspark_rb,rpc,rpc_rb,charts,charts_rb,advancedgrids,advancedgrids_rb,core,wireframe,sparkskins,authoringsupport,spark_dmv"/>
+
+	<target name="airframework" description="Builds libs/airframework.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="AIRFrameworkClasses" output="${basedir}/libs/air/airframework.swc" locale="" accessible="true">
+			value="10.2"
+			<namespace uri="library://ns.adobe.com/flex/mx" manifest="${airframework.dir}/manifest.xml"/>
+			<include-namespaces uri="library://ns.adobe.com/flex/mx"/>
+			<source-path path-element="${airframework.dir}/src"/>
+			<library-path/>
+			<external-library-path dir="${basedir}/libs">
+				<include name="air/airglobal.swc"/>
+				<include name="framework.swc"/>
+				<include name="mx/mx.swc"/>
+                <include name="textLayout.swc"/>
+			</external-library-path>
+			<include-file name="defaults.css" path="${airframework.dir}/defaults.css"/>
+			<include-file name="defaults-3.0.0.css" path="${airframework.dir}/defaults-3.0.0.css"/>
+			<include-file name="Assets.swf" path="${airframework.dir}/assets/Assets.swf"/>
+			<include-file name="ComputerIcon.swf" path="${airframework.dir}/assets/ComputerIcon.swf"/>
+			<include-file name="gripper_up.png" path="${airframework.dir}/assets/gripper_up.png"/>
+			<include-file name="mac_close_down.png" path="${airframework.dir}/assets/mac_close_down.png"/>
+			<include-file name="mac_close_over.png" path="${airframework.dir}/assets/mac_close_over.png"/>
+			<include-file name="mac_close_up.png" path="${airframework.dir}/assets/mac_close_up.png"/>
+			<include-file name="mac_max_dis.png" path="${airframework.dir}/assets/mac_max_dis.png"/>
+			<include-file name="mac_max_down.png" path="${airframework.dir}/assets/mac_max_down.png"/>
+			<include-file name="mac_max_over.png" path="${airframework.dir}/assets/mac_max_over.png"/>
+			<include-file name="mac_max_up.png" path="${airframework.dir}/assets/mac_max_up.png"/>
+			<include-file name="mac_min_dis.png" path="${airframework.dir}/assets/mac_min_dis.png"/>
+			<include-file name="mac_min_down.png" path="${airframework.dir}/assets/mac_min_down.png"/>
+			<include-file name="mac_min_over.png" path="${airframework.dir}/assets/mac_min_over.png"/>
+			<include-file name="mac_min_up.png" path="${airframework.dir}/assets/mac_min_up.png"/>
+			<include-file name="win_close_down.png" path="${airframework.dir}/assets/win_close_down.png"/>
+			<include-file name="win_close_over.png" path="${airframework.dir}/assets/win_close_over.png"/>
+			<include-file name="win_close_up.png" path="${airframework.dir}/assets/win_close_up.png"/>
+			<include-file name="win_max_dis.png" path="${airframework.dir}/assets/win_max_dis.png"/>
+			<include-file name="win_max_down.png" path="${airframework.dir}/assets/win_max_down.png"/>
+			<include-file name="win_max_over.png" path="${airframework.dir}/assets/win_max_over.png"/>
+			<include-file name="win_max_up.png" path="${airframework.dir}/assets/win_max_up.png"/>
+			<include-file name="win_min_dis.png" path="${airframework.dir}/assets/win_min_dis.png"/>
+			<include-file name="win_min_down.png" path="${airframework.dir}/assets/win_min_down.png"/>
+			<include-file name="win_min_over.png" path="${airframework.dir}/assets/win_min_over.png"/>
+			<include-file name="win_min_up.png" path="${airframework.dir}/assets/win_min_up.png"/>
+			<include-file name="win_restore_down.png" path="${airframework.dir}/assets/win_restore_down.png"/>
+			<include-file name="win_restore_over.png" path="${airframework.dir}/assets/win_restore_over.png"/>
+			<include-file name="win_restore_up.png" path="${airframework.dir}/assets/win_restore_up.png"/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+
+	<target name="airframework_rb" description="Builds locale/en_US/airframework_rb.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/airframework_rb.swc" locale="${locale}">
+            value="10.2"
+            <include-resource-bundles bundle="SharedResources"/>
+            <include-resource-bundles bundle="aircontrols"/>
+            <include-resource-bundles bundle="collections"/>
+            <include-resource-bundles bundle="containers"/>
+            <include-resource-bundles bundle="controls"/>
+            <include-resource-bundles bundle="core"/>
+            <include-resource-bundles bundle="effects"/>
+            <include-resource-bundles bundle="formatters"/>                        
+            <include-resource-bundles bundle="skins"/>
+			<include-resource-bundles bundle="styles"/>
+			<source-path path-element="${airframework.dir}/bundles/${locale}"/>
+			<source-path path-element="${airframework.dir}/src"/>
+			<source-path path-element="${framework.dir}/src"/>
+			<source-path path-element="${framework.dir}/bundles/${locale}"/>
+			<source-path path-element="${basedir}/projects/mx/bundles/${locale}"/>
+			<external-library-path dir="${basedir}/libs/player/${playerglobal.version}" includes="playerglobal.swc"/>
+			<library-path/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+	
+	<target name="airspark" description="Builds libs/airspark.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="AIRSparkClasses" output="${basedir}/libs/air/airspark.swc" locale="" accessible="true">
+			value="10.2"
+			<namespace uri="library://ns.adobe.com/flex/spark" manifest="${airspark.dir}/manifest.xml"/>
+			<include-namespaces uri="library://ns.adobe.com/flex/spark"/>
+			<source-path path-element="${airspark.dir}/src"/>
+			<library-path/>
+			<external-library-path dir="${basedir}/libs">
+				<include name="air/airglobal.swc"/>
+				<include name="air/airframework.swc"/>
+				<include name="framework.swc"/>
+				<include name="mx/mx.swc"/>
+                <include name="textLayout.swc"/>
+				<include name="spark.swc"/>
+			</external-library-path>
+			<include-file name="defaults.css" path="${airspark.dir}/defaults.css"/>
+			<keep-as3-metadata name="SkinPart"/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+			
+	<target name="airspark_rb" description="Builds locale/en_US/airspark_rb.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/airspark_rb.swc" locale="${locale}">
+            <include-resource-bundles bundle="core"/>
+			<source-path path-element="${framework.dir}/bundles/${locale}"/>
+			<source-path path-element="${framework.dir}/src"/>
+			<external-library-path dir="${basedir}/libs/player/${playerglobal.version}" includes="playerglobal.swc"/>
+			<library-path/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+
+	<target name="charts" description="Builds charts.swc">
+		<compc static-link-runtime-shared-libraries="true"  
+		fork="true" 
+		include-classes="ChartsClasses"
+		 output="${basedir}/libs/charts.swc" 
+		locale="" 
+		accessible="true"
+		show-deprecation-warnings="false">
+            <namespace uri="http://www.adobe.com/2006/mxml" manifest="${charts.dir}/manifest_charts.xml"/>
+			<include-namespaces uri="http://www.adobe.com/2006/mxml"/>
+			<source-path path-element="${charts.dir}/src"/>
+			<source-path path-element="${basedir}/projects/mx/src"/>
+			<library-path/>
+			<external-library-path dir="${basedir}/libs">
+                <include name="player/${playerglobal.version}/playerglobal.swc"/>
+				<include name="framework.swc"/>
+				<include name="rpc.swc"/>
+				<include name="textLayout.swc"/>
+             </external-library-path>
+			<include-file name="defaults.css" path="${charts.dir}/charts.css"/>
+			<include-file name="defaults-4.1.0.css" path="${charts.dir}/charts-4.X.0.css"/>
+			<include-file name="defaults-4.0.0.css" path="${charts.dir}/charts-4.X.0.css"/>
+			<include-file name="defaults-3.0.0.css" path="${charts.dir}/charts-3.0.0.css"/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+	
+	<target name="charts_rb" description="Builds locale/en_US/charts_rb.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/charts_rb.swc" locale="${locale}">
+            value="10.2"
+            <include-resource-bundles bundle="charts"/>
+            <source-path path-element="${charts.dir}/bundles/${locale}"/>
+			<source-path path-element="${framework.dir}/src"/>
+			<external-library-path dir="${basedir}/libs/player/${playerglobal.version}" includes="playerglobal.swc"/>
+			<library-path/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>	
+
+	<target name="advancedgrids" description="Builds advancedgrids.swc">
+		<compc static-link-runtime-shared-libraries="true"  
+		fork="true" 
+		include-classes="AdvancedDataGridClasses"
+		 output="${basedir}/libs/advancedgrids.swc" 
+		locale="" 
+		accessible="true"
+		show-deprecation-warnings="false">
+            <namespace uri="http://www.adobe.com/2006/mxml" manifest="${advancedgrids.dir}/manifest_advancedgrids.xml"/>
+			<include-namespaces uri="http://www.adobe.com/2006/mxml"/>
+			<source-path path-element="${advancedgrids.dir}/src"/>
+			<source-path path-element="${basedir}/projects/mx/src"/>
+			<library-path/>
+			<external-library-path dir="${basedir}/libs">
+                <include name="player/${playerglobal.version}/playerglobal.swc"/>
+				<include name="framework.swc"/>
+				<include name="mx/mx.swc.swc"/>
+				<include name="rpc.swc"/>
+				<include name="textLayout.swc"/>
+             </external-library-path>
+			<include-file name="defaults.css" path="${advancedgrids.dir}/data_management.css"/>
+			<include-file name="defaults-3.0.0.css" path="${advancedgrids.dir}/data_management-3.0.0.css"/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+	
+	<target name="advancedgrids_rb" description="Builds locale/en_US/advancedgrids_rb.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/advancedgrids_rb.swc" locale="${locale}">
+            value="10.2"
+            <include-resource-bundles bundle="datamanagement"/>
+            <include-resource-bundles bundle="olap"/>
+            <source-path path-element="${advancedgrids.dir}/bundles/${locale}"/>
+			<source-path path-element="${framework.dir}/src"/>
+			<external-library-path dir="${basedir}/libs/player/${playerglobal.version}" includes="playerglobal.swc"/>
+			<library-path/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>	
+
+	<target name="core" description="Builds core.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="CoreClasses" output="${basedir}/libs/core.swc" locale="" accessible="true">
+            value="10.2"
+			<source-path path-element="${core.dir}/src"/>
+			<source-path path-element="${framework.dir}/src"/>
+			 <load-config filename="${framework.dir}/framework-config.xml"/>
+			<library-path/>
+			<external-library-path dir="${basedir}/libs">
+                <include name="player/${playerglobal.version}/playerglobal.swc"/>
+				<include name="textLayout.swc"/>
+                <include name="osmf.swc"/>
+			</external-library-path>
+			<keep-as3-metadata name="Bindable"/>
+			<keep-as3-metadata name="Managed"/>
+			<keep-as3-metadata name="ChangeEvent"/>
+			<keep-as3-metadata name="NonCommittingChangeEvent"/>
+			<keep-as3-metadata name="Transient"/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+		
+	<target name="framework" description="Builds libs/framework.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="FrameworkClasses" output="${basedir}/libs/framework.swc" locale="" accessible="true">
+            value="10.2"
+			<namespace uri="library://ns.adobe.com/flex/mx" manifest="${framework.dir}/manifest.xml"/>
+		    <namespace uri="http://www.adobe.com/2006/mxml" manifest="${framework.dir}/manifest.xml"/>
+			<include-namespaces uri="library://ns.adobe.com/flex/mx"/>
+			<source-path path-element="${framework.dir}/src"/>
+			<external-library-path dir="${basedir}/libs">
+                <include name="player/${playerglobal.version}/playerglobal.swc"/>
+				<include name="textLayout.swc"/>
+                <include name="osmf.swc"/>
+			</external-library-path>
+			<load-config filename="${basedir}/flex-config.xml"/>
+			<load-config filename="${framework.dir}/framework-config.xml"/>
+			<library-path/>
+			<include-file name="defaults.css" path="${framework.dir}/defaults.css"/>
+			<include-file name="defaults-3.0.0.css" path="${framework.dir}/defaults-3.0.0.css"/>
+			<include-file name="Assets.swf" path="${framework.dir}/assets/Assets.swf"/>
+			<include-file name="assets/CalendarIcon.png" path="${framework.dir}/assets/CalendarIcon.png"/>
+			<keep-as3-metadata name="Bindable" />
+			<keep-as3-metadata name="Managed" />
+			<keep-as3-metadata name="ChangeEvent" />
+			<keep-as3-metadata name="NonCommittingChangeEvent" />
+			<keep-as3-metadata name="Transient" />			
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+
+	<target name="framework_rb" description="Builds locale/en_US/framework_rb.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/framework_rb.swc" locale="${locale}">
+            value="10.2"
+            <include-resource-bundles bundle="SharedResources"/>
+            <include-resource-bundles bundle="collections"/>
+            <include-resource-bundles bundle="controls"/>
+            <include-resource-bundles bundle="core"/>
+            <include-resource-bundles bundle="effects"/>
+            <include-resource-bundles bundle="formatters"/>
+            <include-resource-bundles bundle="logging"/>
+			<include-resource-bundles bundle="modules"/>
+            <include-resource-bundles bundle="skins"/>
+            <include-resource-bundles bundle="states"/>
+            <include-resource-bundles bundle="styles"/>
+            <include-resource-bundles bundle="utils"/>
+            <include-resource-bundles bundle="validators"/>
+			<source-path path-element="${framework.dir}/bundles/${locale}"/>
+			<source-path path-element="${framework.dir}/src"/>
+			<external-library-path dir="${basedir}/libs/player/${playerglobal.version}" includes="playerglobal.swc"/>
+			<library-path/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>	
+	
+	<target name="rpc" description="Builds libs/rpc.swc">
+		<echo file="${basedir}/version.properties" append="false">build=${build.number}</echo>
+		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="RPCClasses" output="${basedir}/libs/rpc.swc" locale="" accessible="true">
+            value="10.2"
+			<namespace uri="library://ns.adobe.com/flex/mx" manifest="${rpc.dir}/manifest.xml"/>
+			<include-file name="version.properties" path="${basedir}/version.properties"/>
+			<include-namespaces uri="library://ns.adobe.com/flex/mx"/>
+			<source-path path-element="${rpc.dir}/src"/>
+			<external-library-path dir="${basedir}/libs">
+                <include name="player/${playerglobal.version}/playerglobal.swc"/>
+				<include name="framework.swc"/>
+                <include name="textLayout.swc"/>
+                <include name="osmf.swc"/>
+			</external-library-path>
+			<library-path/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+		<delete file="${basedir}/version.properties"/>
+	</target>
+	
+	<target name="rpc_rb" description="Builds locale/en_US/rpc_rb.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/rpc_rb.swc" locale="${locale}">
+            value="10.2"
+            <include-resource-bundles bundle="collections"/>
+			<include-resource-bundles bundle="core"/>
+			<include-resource-bundles bundle="logging"/>
+			<include-resource-bundles bundle="messaging"/>
+			<include-resource-bundles bundle="rpc"/>
+			<include-resource-bundles bundle="styles"/>
+			<include-resource-bundles bundle="utils"/>
+			<source-path path-element="${rpc.dir}/bundles/${locale}"/>
+			<source-path path-element="${framework.dir}/bundles/${locale}"/>
+			<source-path path-element="${framework.dir}/src"/>
+			<external-library-path dir="${basedir}/libs/player/${playerglobal.version}" includes="playerglobal.swc"/>
+			<library-path/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+	
+	<target name="spark" description="Builds the spark.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="SparkClasses" output="${basedir}/libs/spark.swc" locale="" accessible="true">
+		    value="10.2"
+			<namespace uri="library://ns.adobe.com/flex/spark" manifest="${spark.dir}/manifest.xml"/>
+			<include-namespaces uri="library://ns.adobe.com/flex/spark"/>
+			<source-path path-element="${spark.dir}/src"/>
+			<library-path />
+			<external-library-path dir="${basedir}/libs">
+                <include name="player/${playerglobal.version}/playerglobal.swc"/>
+				<include name="framework.swc"/>
+				<include name="mx/mx.swc"/>
+                <include name="textLayout.swc"/>
+				<include name="osmf.swc"/>
+			</external-library-path>
+			<include-file name="defaults.css" path="${spark.dir}/defaults.css"/>
+			<include-file name="assets/ErrorIndicator.png" path="${spark.dir}/assets/ErrorIndicator.png"/>
+            <include-file name="assets/RequiredIndicator.png" path="${spark.dir}/assets/RequiredIndicator.png"/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+
+	<target name="spark_dmv" description="Builds the spark_dmv.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" include-classes="SparkDmvClasses" output="${basedir}/libs/spark_dmv.swc" locale="" accessible="true">
+		    value="10.2"
+			<namespace uri="library://ns.adobe.com/flex/spark" manifest="${spark_dmv.dir}/manifest_spark_dmv.xml"/>
+			<include-namespaces uri="library://ns.adobe.com/flex/spark"/>
+			<source-path path-element="${spark_dmv.dir}/src"/>
+			<library-path />
+			<external-library-path dir="${basedir}/libs">
+                <include name="player/${playerglobal.version}/playerglobal.swc"/>
+				<include name="framework.swc"/>
+				<include name="mx/mx.swc"/>
+				<include name="spark.swc"/>
+				<include name="advancedgrids.swc"/>
+                <include name="textLayout.swc"/>
+				<include name="osmf.swc"/>
+			</external-library-path>
+			<include-file name="defaults.css" path="${spark_dmv.dir}/defaults.css"/>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+	
+	<target name="spark_rb">
+		<echo message="Compiling frameworks/locale/${locale}/spark_rb.swc"/>
+		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/locale/${locale}/spark_rb.swc" locale="${locale}">
+            value="10.2"
+ 			<include-resource-bundles bundle="components"/>
+			<include-resource-bundles bundle="sparkEffects"/>
+			<include-resource-bundles bundle="layout"/>
+			<include-resource-bundles bundle="textLayout"/>
+            <include-resource-bundles bundle="osmf"/>
+			<source-path path-element="${spark.dir}/bundles/${locale}"/>
+			<source-path path-element="${spark.dir}/src"/>
+			<source-path path-element="${framework.dir}/src"/>
+			<include-libraries/>
+			<library-path/>
+           <external-library-path dir="${basedir}/libs/player/${playerglobal.version}" includes="playerglobal.swc"/>
+		   	<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+
+	
+	<target name="sparkskins" description="Builds the sparkskin.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" locale="" accessible="true" include-classes="SparkSkinsClasses"
+			   output="${basedir}/libs/sparkskins.swc">
+            <!-- If you change this, update ${local.playerglobal.version} above. -->
+			<source-path path-element="${sparkskin.dir}/src"/>
+			<library-path/>
+			<external-library-path dir="${basedir}/libs">
+                <include name="player/${playerglobal.version}/playerglobal.swc"/>
+				<include name="framework.swc"/>
+				<include name="spark.swc"/>
+				<include name="textLayout.swc"/>
+                <include name="osmf.swc"/>
+			</external-library-path>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+	    
+	<target name="authoringsupport" description="Builds authoringsupport.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/libs/authoringsupport.swc" include-classes="AuthoringSupportClasses"
+		locale="" accessible="true">
+			<source-path path-element="${authoringsupport.dir}/src"/>
+			<library-path dir="${authoringsupport.dir}/libs">
+                <include name="FlexContentHolderThumbnail.swc"/>
+            </library-path>
+			<external-library-path dir="${basedir}/libs">
+                <include name="player/${playerglobal.version}/playerglobal.swc"/>
+				<include name="framework.swc"/>
+				<include name="mx/mx.swc"/>
+				<include name="flash-integration.swc"/>
+				<include name="textLayout.swc"/>
+			</external-library-path>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+
+	<target name="wireframe" description="Builds the wireframe.swc">
+		<compc static-link-runtime-shared-libraries="true"  fork="true" output="${basedir}/themes/Wireframe/wireframe.swc">
+            <!-- If you change this, update ${local.playerglobal.version} above. -->
+            value="10.2"
+			
+			<include-classes>WireframeClasses</include-classes>
+			<source-path path-element="${wireframe.dir}/src"/>
+			<library-path/>
+            <external-library-path dir="${basedir}/libs">
+                <include name="player/${playerglobal.version}/playerglobal.swc"/>
+				<include name="framework.swc"/>
+				<include name="spark.swc"/>
+				<include name="airspark.swc"/>
+				<include name="textLayout.swc"/>
+				<include name="osmf.swc"/>
+			</external-library-path>
+			<include-file name="defaults.css" path="${wireframe.dir}/defaults.css"/>
+			<include-file name="assets/Tree_folderClosedIcon.png" path="${wireframe.dir}/assets/Tree_folderClosedIcon.png"/>
+			<include-file name="assets/Tree_folderOpenIcon.png" path="${wireframe.dir}/assets/Tree_folderOpenIcon.png"/>
+			<locale/>
+			<accessible>true</accessible>
+			<jvmarg line="${compc.jvm.args}"/>
+		</compc>
+	</target>
+		
+	<target name="clean" description="Cleans all SWCs and their resource bundles">
+		<delete failonerror="false">
+			<fileset dir="${basedir}/libs">
+				<include name="air/airframework.swc"/>
+				<include name="air/airspark.swc"/>
+				<include name="spark_dmv.swc"/>
+				<include name="charts.swc"/>
+				<include name="advancedgrids.swc"/>
+				<include name="framework.swc"/>
+				<include name="core.swc"/>
+				<include name="rpc.swc"/>
+				<include name="sparkskins.swc"/>
+				<include name="spark.swc"/>
+				<include name="authoringsupport.swc"/>
+			</fileset>
+			<fileset dir="${basedir}/locale/${locale}">
+				<include name="airframework_rb.swc"/>
+				<include name="airspark_rb.swc"/>
+				<include name="charts_rb.swc"/>
+				<include name="advancedgrids_rb.swc"/>
+				<include name="framework_rb.swc"/>
+				<include name="rpc_rb.swc"/>
+				<include name="spark_rb.swc"/>
+			</fileset>
+			<fileset dir="${basedir}/themes/Wireframe" includes="wireframe.swc"/>
+		</delete>
+	</target>
+
+</project>

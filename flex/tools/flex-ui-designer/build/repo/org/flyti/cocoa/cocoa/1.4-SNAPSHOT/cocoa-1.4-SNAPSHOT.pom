@@ -15,8 +15,13 @@
   <dependencies>
     <dependency>
       <groupId>com.adobe.flex.framework</groupId>
-      <artifactId>flex-framework</artifactId>
+      <artifactId>flex-framework-small</artifactId>
       <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>flashx</groupId>
+      <artifactId>textLayout</artifactId>
+      <type>swc</type>
     </dependency>
     <dependency>
       <groupId>org.flyti</groupId>
@@ -35,7 +40,7 @@
           <compilerWarnings>
             <show-binding-warnings>false</show-binding-warnings>
           </compilerWarnings>
-          
+
           <useResourceBundleMetadata>false</useResourceBundleMetadata>
           <localesRuntime>
             <locale>en_US</locale>

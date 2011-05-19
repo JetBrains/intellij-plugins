@@ -1,0 +1,15 @@
+def List<SwfDescriptor> getList() {
+	return [
+		new SwfDescriptor("shared.xml", "shared", true), 
+		new SwfDescriptor("flex-injection-4.1.xml", "flex-injection", false), 
+		new SwfDescriptor("flex-injection-4.5.xml", "flex-injection", false), 
+		new SwfDescriptor("app-plugin-api.xml", "app-plugin-api", true), 
+		new SwfDescriptor("ui.xml", "ui", true), 
+		new SwfDescriptor("base.xml", "plaf/base", true), 
+		new SwfDescriptor("aqua.xml", "plaf/aqua", true), 
+		new SwfDescriptor("designer.xml", "designer", false), 
+		new SwfDescriptor("app-loader.xml", "app-loader", false), 
+		new SwfDescriptor("test.xml", "test-app-plugin", false), 
+		new SwfDescriptor("test-data-libs.xml", "test-data-libs", true)
+	];
+}

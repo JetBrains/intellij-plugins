@@ -1,60 +1,63 @@
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
 	<output>@@target@@/app-loader-1.0-SNAPSHOT.swf</output>
+	<target-player>10.2</target-player>
+	<tools-locale>en_US</tools-locale>
 	<compiler>
+		<debug>true</debug>
+		<locale>
+			<locale-element>en_US</locale-element>
+		</locale>
+		<fixed-literal-vector>true</fixed-literal-vector>
 		<source-path>
 			<path-element>@@source@@/flex</path-element>
 			<path-element>@@source@@/resources</path-element>
 			<path-element>@@target@@</path-element>
 		</source-path>
+		<theme/>
+		<fonts>
+			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
+		</fonts>
+		<external-library-path>
+			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
+		</external-library-path>
+		<library-path>
+			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968.swc</path-element>
+		</library-path>
+		<accessible>false</accessible>
+		<define>
+			<name>config::useRoboflest</name>
+			<value>true</value>
+		</define>
+		<headless-server>false</headless-server>
 		<include-libraries>
 			<library>@@target@@/shared-1.0-SNAPSHOT.swc</library>
 		</include-libraries>
-		<external-library-path>
-			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/4.5.0.18365/airglobal.swc</path-element>
-		</external-library-path>
-		<fonts>
-			<local-fonts-snapshot></local-fonts-snapshot>
-		</fonts>
-		<library-path>
-			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.18365/framework-4.5.0.18365.swc</path-element>
-		</library-path>
-		<accessible>false</accessible>
-    <define>
-			<name>config::useRoboflest</name>
-			<value>false</value>
-		</define>
-		<headless-server>false</headless-server>
-		<!--<namespaces>-->
-			<!--<namespace>-->
-				<!--<uri>http://ns.adobe.com/mxml/2009</uri>-->
-				<!--<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.18365/configs_zip/mxml-2009-manifest.xml</manifest>-->
-			<!--</namespace>-->
-			<!--<namespace>-->
-				<!--<uri>library://ns.adobe.com/flex/spark</uri>-->
-				<!--<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.18365/configs_zip/spark-manifest.xml</manifest>-->
-			<!--</namespace>-->
-			<!--<namespace>-->
-				<!--<uri>library://ns.adobe.com/flex/mx</uri>-->
-				<!--<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.18365/configs_zip/mx-manifest.xml</manifest>-->
-			<!--</namespace>-->
-			<!--<namespace>-->
-				<!--<uri>http://www.adobe.com/2006/mxml</uri>-->
-				<!--<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.18365/configs_zip/mxml-manifest.xml</manifest>-->
-			<!--</namespace>-->
-		<!--</namespaces>-->
+		<namespaces>
+			<namespace>
+				<uri>http://ns.adobe.com/mxml/2009</uri>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/configs_zip/mxml-2009-manifest.xml</manifest>
+			</namespace>
+			<namespace>
+				<uri>library://ns.adobe.com/flex/spark</uri>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/configs_zip/spark-manifest.xml</manifest>
+			</namespace>
+			<namespace>
+				<uri>library://ns.adobe.com/flex/mx</uri>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/configs_zip/mx-manifest.xml</manifest>
+			</namespace>
+			<namespace>
+				<uri>http://www.adobe.com/2006/mxml</uri>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/configs_zip/mxml-manifest.xml</manifest>
+			</namespace>
+		</namespaces>
 		<warn-no-constructor>false</warn-no-constructor>
-		<fixed-literal-vector>true</fixed-literal-vector>
-		<debug>false</debug>
-		<locale/>
-		<theme/>
 	</compiler>
-	<target-player>10.1</target-player>
-	<tools-locale>en_US</tools-locale>
 	<metadata>
-		<date>17.03.11 22:04</date>
+		<language>en_US</language>
+		<date>5/19/11 1:37 PM</date>
 		<title>app-loader</title>
 	</metadata>
 	<file-specs>
-		<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/MainLoader.as</path-element>
+			<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/MainLoader.as</path-element>
 	</file-specs>
 </flex-config>

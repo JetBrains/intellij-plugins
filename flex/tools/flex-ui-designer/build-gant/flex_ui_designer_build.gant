@@ -7,6 +7,12 @@ target('default': "Build Flex UI Designer artifacts") {
   doExecute("$home", "$home/out", "$home/out/classes/production/flex-ui-designer")
 }
 
+binding.setVariable("includeFile", {String filepath ->
+  Script s = groovyShell.parse(new File(filepath))
+  s.setBinding(binding)
+  s
+})
+
 def guessHome(Script script) {
   File home = new File(script["gant.file"].substring("file:".length()))
 
@@ -27,6 +33,19 @@ def execute(home, sandbox, targetFolder) {
   doExecute(home, sandbox, targetFolder)
 }
 
+class SwfDescriptor {
+  String config;
+  String basedir;
+  boolean isSwc;
+
+  SwfDescriptor(String config, String basedir, boolean isSwc) {
+    this.config = config;
+    this.basedir = basedir;
+    this.isSwc = isSwc;
+  }
+}
+
+
 private def doExecute(home, sandbox, targetFolder) {
   flexBuildHome = "$home/flex/tools/flex-ui-designer/build-gant";
   flexSandbox = "$sandbox/ui-designer"
@@ -38,22 +57,24 @@ private def doExecute(home, sandbox, targetFolder) {
     fileset(dir: "$flexBuildHome/../build/repo")
   }
 
-  stripSwcName("airglobal") // compiler needs airglobal.swc to have exactly such name
-
-  buildFlex("shared", flexBuildHome, flexSandbox, true)
-  buildFlex("flex-injection-4.1", "flex-injection", flexBuildHome, flexSandbox, false)
-  buildFlex("flex-injection-4.5", "flex-injection", flexBuildHome, flexSandbox, false)
+  List<SwfDescriptor> swfDescriptors = includeFile("$flexBuildHome/flex_ui_designer_swfs_build.gant").getList();
+  swfDescriptors.each {
+    if (it.config.startsWith("flex-injection-") || it.config.equals("shared.xml")) {
+      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc)
+    }
+  };
 
   compileAbcBuilder(sandbox)
   invokeAbcBuilder(sandbox, "4.1")
   invokeAbcBuilder(sandbox, "4.5")
 
-  buildFlex("app-plugin-api", flexBuildHome, flexSandbox, true)
-
   buildAssets()
 
-  buildFlex("designer", flexBuildHome, flexSandbox, false)
-  buildFlex("app-loader", flexBuildHome, flexSandbox, false)
+  swfDescriptors.each {
+    if (!it.config.startsWith("flex-injection-") && !it.config.equals("shared.xml")) {
+      buildFlex(it.config, it.basedir, flexBuildHome, flexSandbox, it.isSwc);
+    }
+  };
 
   ant.copy(file: "$flexSandbox/app-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
   ant.copy(file: "$flexBuildHome/../designer/src/main/resources/descriptor.xml", todir: "$targetFolder")
@@ -100,28 +121,18 @@ private def invokeAbcBuilder(sandbox, flexVersion) {
   }
 }
 
-def stripSwcName(name) {
-  ant.move(todir: "$flexSandbox/repo") {
-    fileset(dir: "$flexSandbox/repo")
-    regexpmapper(from: "^(.*)$name.*\\.swc\$", to: "\\1${name}.swc")
-  }
-}
+def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc) {
+  ant.copy(file: "$flexBuildHome/flex-configs/${config}", toDir: "$flexSandbox", overwrite: "true")
 
-def buildFlex(appName, flexBuildHome, flexSandbox, isSwc) {
-  buildFlex(appName, appName, flexBuildHome, flexSandbox, isSwc)
-}
-
-def buildFlex(appName, srcFolderName, flexBuildHome, flexSandbox, isSwc) {
-  ant.copy(file: "$flexBuildHome/flex-configs/${appName}.xml", toDir: "$flexSandbox", overwrite: "true")
-
-  ant.replace(file: "$flexSandbox/${appName}.xml") {
+  ant.replace(file: "$flexSandbox/${config}") {
     replacefilter(token: "@@target@@", value: "$flexSandbox")
-    replacefilter(token: "@@source@@", value: "$flexBuildHome/../$srcFolderName/src/main")
+    replacefilter(token: "@@source@@", value: "$flexBuildHome/../$basedir/src/main")
     replacefilter(token: "@@repo@@", value: "$flexSandbox/repo")
+    replacefilter(token: "@@configs@@", value: "$flexBuildHome/flex-configs")
   }
 
   replacement = flexBuildHome.replaceAll("\\\\", "/") + "/../\\1/src/main"
-  ant.replaceregexp(file: "$flexSandbox/${appName}.xml", byline: "true") {
+  ant.replaceregexp(file: "$flexSandbox/${config}", byline: "true") {
     regexp(pattern: "@@source:(.*)@@")
     substitution(expression: "$replacement")
   }
@@ -131,11 +142,8 @@ def buildFlex(appName, srcFolderName, flexBuildHome, flexSandbox, isSwc) {
     jvmarg(value: "-Duser.language=en")
     jvmarg(value: "-Duser.region=en")
     classpath {
-      fileset(dir: "$flexBuildHome/libs") {
-        include(name: "*-4.5.0.18365.jar")
-      }
+      fileset(dir: "$flexBuildHome/compiler-libs");
     }
-    arg(value: "-load-config=$flexSandbox/${appName}.xml")
+    arg(value: "-load-config=$flexSandbox/${config}")
   }
-
 }

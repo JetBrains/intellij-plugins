@@ -1,32 +1,32 @@
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
-	<output>@@target@@/shared-1.0-SNAPSHOT.swc</output>
-	<compiler>
-		<source-path>
-			<path-element>@@source@@/flex</path-element>
-		</source-path>
-		<include-libraries/>
-		<external-library-path>
-			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/4.5.0.18365/airglobal.swc</path-element>
-		</external-library-path>
-		<fonts>
-			<local-fonts-snapshot></local-fonts-snapshot>
-		</fonts>
-		<library-path/>
-		<accessible>false</accessible>
-		<headless-server>false</headless-server>
-		<warn-no-constructor>false</warn-no-constructor>
-		<fixed-literal-vector>true</fixed-literal-vector>
-		<debug>true</debug>
-		<locale/>
-		<theme/>
-	</compiler>
-	<target-player>10.1</target-player>
-	<tools-locale>en_US</tools-locale>
-	<metadata>
-		<date>16.03.11 20:04</date>
-		<title>shared</title>
-	</metadata>
 	<include-sources>
 		<path-element>@@source@@/flex</path-element>
 	</include-sources>
+	<output>@@target@@/shared-1.0-SNAPSHOT.swc</output>
+	<target-player>10.2</target-player>
+	<tools-locale>en_US</tools-locale>
+	<compiler>
+		<debug>true</debug>
+		<locale/>
+		<fixed-literal-vector>true</fixed-literal-vector>
+		<source-path>
+			<path-element>@@source@@/flex</path-element>
+		</source-path>
+		<theme/>
+		<fonts>
+			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
+		</fonts>
+		<external-library-path>
+			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
+		</external-library-path>
+		<library-path/>
+		<accessible>false</accessible>
+		<headless-server>false</headless-server>
+		<include-libraries/>
+		<warn-no-constructor>false</warn-no-constructor>
+	</compiler>
+	<metadata>
+		<date>5/19/11 1:37 PM</date>
+		<title>shared</title>
+	</metadata>
 </flex-config>

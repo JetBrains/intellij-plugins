@@ -84,19 +84,6 @@
           <fixedLiteralVector>true</fixedLiteralVector>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.1</version>
-        <configuration>
-          <outputDirectory>${user.dir}/build/repo</outputDirectory>
-          <excludeGroupIds>com.intellij,org.apache,org.codehaus,org.sonatype</excludeGroupIds>
-          <useRepositoryLayout>true</useRepositoryLayout>
-          <copyPom>true</copyPom>
-          <!--<prependGroupId>true</prependGroupId>-->
-          <overWriteSnapshots>true</overWriteSnapshots>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
   

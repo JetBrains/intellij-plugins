@@ -23,60 +23,6 @@
 		<symbol>com.intellij.flex.uiDesigner.flex.SparkApplication</symbol>
 	</includes>
 	<output>@@target@@/flex-injection-4.5-1.0-SNAPSHOT.swf</output>
-	<compiler>
-		<source-path>
-			<path-element>@@source@@/flex</path-element>
-		</source-path>
-		<include-libraries/>
-		<external-library-path>
-			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/4.5.0.18365/airglobal.swc</path-element>
-		</external-library-path>
-		<fonts>
-			<local-fonts-snapshot></local-fonts-snapshot>
-		</fonts>
-		<library-path>
-			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.19786/framework-4.5.0.19786.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.0.18365/spark-4.5.0.18365.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.0.18365/airspark-4.5.0.18365.swc</path-element>
-			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.0.18365/airframework-4.5.0.18365.swc</path-element>
-		</library-path>
-		<accessible>false</accessible>
-		<define>
-			<name>flex::v4_5</name>
-			<value>true</value>
-		</define>
-		<define>
-			<name>flex::v4_1</name>
-			<value>false</value>
-		</define>
-		<headless-server>false</headless-server>
-		<!--<namespaces>-->
-			<!--<namespace>-->
-				<!--<uri>http://ns.adobe.com/mxml/2009</uri>-->
-				<!--<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.19786/configs_zip/mxml-2009-manifest.xml</manifest>-->
-			<!--</namespace>-->
-			<!--<namespace>-->
-				<!--<uri>library://ns.adobe.com/flex/spark</uri>-->
-				<!--<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.19786/configs_zip/spark-manifest.xml</manifest>-->
-			<!--</namespace>-->
-			<!--<namespace>-->
-				<!--<uri>library://ns.adobe.com/flex/mx</uri>-->
-				<!--<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.19786/configs_zip/mx-manifest.xml</manifest>-->
-			<!--</namespace>-->
-			<!--<namespace>-->
-				<!--<uri>http://www.adobe.com/2006/mxml</uri>-->
-				<!--<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.19786/configs_zip/mxml-manifest.xml</manifest>-->
-			<!--</namespace>-->
-		<!--</namespaces>-->
-		<use-resource-bundle-metadata>false</use-resource-bundle-metadata>
-		<warn-no-constructor>false</warn-no-constructor>
-		<fixed-literal-vector>true</fixed-literal-vector>
-		<debug>true</debug>
-		<locale/>
-		<theme/>
-	</compiler>
-	<target-player>10.1</target-player>
 	<externs>
 		<symbol>spark.components.Application</symbol>
 		<symbol>spark.components.Group</symbol>
@@ -126,12 +72,66 @@
 		<symbol>mx.core.IFlexModuleFactory</symbol>
 		<symbol>mx.core.Singleton</symbol>
 	</externs>
+	<target-player>10.2</target-player>
 	<tools-locale>en_US</tools-locale>
+	<compiler>
+		<debug>true</debug>
+		<locale/>
+		<fixed-literal-vector>true</fixed-literal-vector>
+		<source-path>
+			<path-element>@@source@@/flex</path-element>
+		</source-path>
+		<theme/>
+		<fonts>
+			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
+		</fonts>
+		<external-library-path>
+			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
+		</external-library-path>
+		<library-path>
+			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20967/framework-4.5.0.20967.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.0.20968/airspark-4.5.0.20968.swc</path-element>
+			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.0.20968/airframework-4.5.0.20968.swc</path-element>
+		</library-path>
+		<accessible>false</accessible>
+		<define>
+			<name>flex::v4_5</name>
+			<value>true</value>
+		</define>
+		<define>
+			<name>flex::v4_1</name>
+			<value>false</value>
+		</define>
+		<headless-server>false</headless-server>
+		<include-libraries/>
+		<namespaces>
+			<namespace>
+				<uri>http://ns.adobe.com/mxml/2009</uri>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20967/configs_zip/mxml-2009-manifest.xml</manifest>
+			</namespace>
+			<namespace>
+				<uri>library://ns.adobe.com/flex/spark</uri>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20967/configs_zip/spark-manifest.xml</manifest>
+			</namespace>
+			<namespace>
+				<uri>library://ns.adobe.com/flex/mx</uri>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20967/configs_zip/mx-manifest.xml</manifest>
+			</namespace>
+			<namespace>
+				<uri>http://www.adobe.com/2006/mxml</uri>
+				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20967/configs_zip/mxml-manifest.xml</manifest>
+			</namespace>
+		</namespaces>
+		<use-resource-bundle-metadata>false</use-resource-bundle-metadata>
+		<warn-no-constructor>false</warn-no-constructor>
+	</compiler>
 	<metadata>
-		<date>17.03.11 22:04</date>
+		<date>5/19/11 1:37 PM</date>
 		<title>flex-injection-4.5</title>
 	</metadata>
 	<file-specs>
-		<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/SpecialClassForAdobeEngineers.as</path-element>
+			<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/SpecialClassForAdobeEngineers.as</path-element>
 	</file-specs>
 </flex-config>
