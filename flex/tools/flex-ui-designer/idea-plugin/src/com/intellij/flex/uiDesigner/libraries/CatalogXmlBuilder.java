@@ -95,8 +95,7 @@ class CatalogXmlBuilder implements XmlBuilder {
           definition.time = Long.parseLong(mod.toString());
           // todo see http://confluence.jetbrains.net/display/IDEA/Topological+sort+External+Dependencies+and+filter+unresolved+definitions last note
           //if (definition.time > oldDefinition.getTime()) {
-          //noinspection ConstantIfStatement
-          if (false) {
+          if (library.library.getPath().startsWith("framework")) {
             oldDefinition.markAsUnresolved(value);
           }
           else {

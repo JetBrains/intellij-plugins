@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <name>Flex UI Designer</name>
   <description>Provides editing support for Flex UI</description>
-  <version>0.4.12</version>
+  <version>0.5</version>
   <vendor logo="/general/ijLogo.png">JetBrains</vendor>
   <idea-version since-build="106.491"/>
 
@@ -39,6 +39,11 @@
         <keyboard-shortcut first-keystroke="meta shift i" keymap="$default"/>
       </action>
       <add-to-group anchor="before" group-id="MainToolBar" relative-to-action="HelpTopics"/>
+    </group>
+
+    <group id="FlexUIDesigner.ProjectViewActions">
+      <reference ref="FlexUIDesigner.RunDesignView"/>
+      <add-to-group anchor="last" group-id="ProjectViewPopupMenuRunGroup"/>
     </group>
   </actions>
 </idea-plugin>

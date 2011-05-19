@@ -10,7 +10,9 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -30,13 +32,8 @@ public class RunDesignViewAction extends DumbAwareAction {
     final Project project = LangDataKeys.PROJECT.getData(dataContext);
     assert project != null;
 
-    Editor editor = LangDataKeys.EDITOR.getData(dataContext);
-    if (editor == null) {
-      editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-      assert editor != null;
-    }
-
-    final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+    final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project)
+      .getPsiFile(getDocument(project, dataContext, ActionPlaces.isPopupPlace(event.getPlace())));
     assert psiFile != null;
     final VirtualFile file = psiFile.getVirtualFile();
     assert file != null;
@@ -50,9 +47,10 @@ public class RunDesignViewAction extends DumbAwareAction {
     return false;
   }
 
-  public void update(final AnActionEvent event) {    
-    final boolean enabled = isEnabled(event.getDataContext()) &&!FlexUIDesignerApplicationManager.getInstance().isDocumentOpening();
-    if (ActionPlaces.isPopupPlace(event.getPlace())) {
+  public void update(final AnActionEvent event) {
+    final boolean popupPlace = ActionPlaces.isPopupPlace(event.getPlace());
+    final boolean enabled = isEnabled(event.getDataContext(), popupPlace) &&!FlexUIDesignerApplicationManager.getInstance().isDocumentOpening();
+    if (popupPlace) {
       event.getPresentation().setVisible(enabled);
     }
     else {
@@ -60,21 +58,37 @@ public class RunDesignViewAction extends DumbAwareAction {
     }
   }
 
-  private static boolean isEnabled(final DataContext dataContext) {
+  private static Document getDocument(Project project, DataContext dataContext, boolean popupPlace) {
+    if (popupPlace) {
+      final VirtualFile virtualFile = LangDataKeys.VIRTUAL_FILE.getData(dataContext);
+      if (virtualFile != null) {
+        return FileDocumentManager.getInstance().getDocument(virtualFile);
+      }
+    }
+    else {
+      Editor editor = LangDataKeys.EDITOR.getData(dataContext);
+      if (editor == null) {
+        editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+      }
+
+      return editor == null ? null : editor.getDocument();
+    }
+
+    return null;
+  }
+
+  private static boolean isEnabled(final DataContext dataContext, boolean popupPlace) {
     final Project project = LangDataKeys.PROJECT.getData(dataContext);
     if (project == null || DumbService.isDumb(project)) {
       return false;
     }
 
-    Editor editor = LangDataKeys.EDITOR.getData(dataContext);
-    if (editor == null) {
-      editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-      if (editor == null) {
-        return false;
-      }
+    final Document document = getDocument(project, dataContext, popupPlace);
+    if (document == null) {
+      return false;
     }
 
-    final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+    final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
     // TODO check MXML is valid
     if (psiFile == null || !JavaScriptSupportLoader.isFlexMxmFile(psiFile)) {
       return false;
