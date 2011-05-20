@@ -1,7 +1,6 @@
 package com.intellij.flex.maven;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.*;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
@@ -20,86 +19,73 @@ import java.util.Set;
  * @goal replicate-repo
  * @requiresDependencyResolution compile
  * @threadSafe
+ * @aggregator
  */
 @Component(role=RepositoryReplicatorMojo.class)
 public class RepositoryReplicatorMojo extends AbstractMojo {
   /**
-   * @parameter expression="${project}"
-   * @readonly
+   * @parameter expression="${session}"
    * @required
+   * @readonly
    */
-  private MavenProject project;
+  @SuppressWarnings({"UnusedDeclaration"})
+  private MavenSession session;
 
   /**
-   * @parameter expression="${outputDirectory}" expression="${outputDirectory}" default-value="${user.dir}/build/repo"
+   * @parameter expression="${outputDirectory}" expression="${outputDirectory}" default-value="build/repo"
    * @readonly
    * @required
    */
+  @SuppressWarnings({"UnusedDeclaration"})
   private File outputDirectory;
 
-  /**
-   * @parameter expression="${localRepository}"
-   * @required
-   * @readonly
-   */
-  private ArtifactRepository localRepository;
-
-  private final Set<Artifact> copiedArtifacts = new HashSet<Artifact>();
-  private final Set<String> extractedConfigs = new HashSet<String>(3);
+  private final Set<Artifact> copiedArtifacts = new HashSet<Artifact>(64);
+  private final Set<String> extractedConfigs = new HashSet<String>();
 
   @Requirement
   private MavenPluginManager pluginManager;
 
-  @Requirement
-  private LegacySupport legacySupport;
-
-  private static boolean compilerLibsCopied;
-
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    String packaging = project.getPackaging();
-
-    String localRepositoryBasedir = localRepository.getBasedir();
+    String localRepositoryBasedir = session.getLocalRepository().getBasedir();
     File localRepositoryFile = new File(localRepositoryBasedir);
     int localRepositoryBasedirLength = localRepositoryBasedir.length();
 
-    MavenSession session = legacySupport.getSession();
-    if (!compilerLibsCopied && packaging.equals("pom")) {
-      compilerLibsCopied = true;
-      
-      try {
-        PluginDescriptor pluginDescriptor = pluginManager.getPluginDescriptor(project.getPlugin("org.sonatype.flexmojos:flexmojos-maven-plugin"), session.getCurrentProject().getRemotePluginRepositories(), session.getRepositorySession());
-        final File compilerLibsDirectory = new File(outputDirectory, "../../build-gant/compiler-libs");
-        //noinspection ResultOfMethodCallIgnored
-        compilerLibsDirectory.mkdirs();
-        for (ComponentDependency dependency : pluginDescriptor.getDependencies()) {
-          if (dependency.getGroupId().equals("com.adobe.flex.compiler") && dependency.getType().equals("jar")) {
-            final String artifactId = dependency.getArtifactId();
-            if (artifactId.equals("adt") || artifactId.equals("asdoc") || artifactId.equals("digest") || artifactId.equals("fcsh") || artifactId.equals("fdb") || artifactId.equals("optimizer") || artifactId.equals("swcdepends")) {
-              continue;
-            }
-
-            Utils.copyFile(new File(localRepositoryFile, "com/adobe/flex/compiler/" + artifactId + "/" + dependency.getVersion() + "/" + artifactId + "-" + dependency.getVersion() + ".jar"), new File(compilerLibsDirectory, artifactId + ".jar"));
+    try {
+      PluginDescriptor pluginDescriptor = pluginManager.getPluginDescriptor(session.getTopLevelProject().getPlugin("org.sonatype.flexmojos:flexmojos-maven-plugin"), session.getCurrentProject().getRemotePluginRepositories(), session.getRepositorySession());
+      final File compilerLibsDirectory = new File(outputDirectory, "../../build-gant/compiler-libs");
+      //noinspection ResultOfMethodCallIgnored
+      compilerLibsDirectory.mkdirs();
+      for (ComponentDependency dependency : pluginDescriptor.getDependencies()) {
+        if (dependency.getGroupId().equals("com.adobe.flex.compiler") && dependency.getType().equals("jar")) {
+          final String artifactId = dependency.getArtifactId();
+          if (artifactId.equals("adt") || artifactId.equals("asdoc") || artifactId.equals("digest") || artifactId.equals("fcsh") || artifactId.equals("fdb") || artifactId.equals("optimizer") || artifactId.equals("swcdepends")) {
+            continue;
           }
+
+          Utils.copyFile(new File(localRepositoryFile, "com/adobe/flex/compiler/" + artifactId + "/" + dependency.getVersion() + "/" + artifactId + "-" + dependency.getVersion() + ".jar"), new File(compilerLibsDirectory, artifactId + ".jar"));
         }
       }
-      catch (Exception e) {
-        throw new MojoExecutionException("Cannot find flemxojos maven plugin", e);
-      }
     }
-
-    if (!Utils.isFlashProject(project)) {
-      return;
+    catch (Exception e) {
+      throw new MojoExecutionException("Cannot find flemxojos maven plugin", e);
     }
 
     //noinspection ResultOfMethodCallIgnored
     outputDirectory.mkdirs();
 
-    // skip projects artifacts
-    for (MavenProject referenceProject : project.getProjectReferences().values()) {
-     copiedArtifacts.add(referenceProject.getArtifact());
-    }
+    for (MavenProject project : session.getProjects()) {
+      if (!Utils.isFlashProject(project)) {
+        continue;
+      }
 
+      // skip projects artifacts
+      copiedArtifacts.add(project.getArtifact());
+      copyProjectArtifacts(localRepositoryFile, localRepositoryBasedirLength, project);
+    }
+  }
+
+  private void copyProjectArtifacts(File localRepositoryFile, int localRepositoryBasedirLength, MavenProject project) throws MojoExecutionException {
     for (Artifact artifact : project.getArtifacts()) {
       if (copiedArtifacts.contains(artifact)) {
         continue;
@@ -112,12 +98,12 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
       try {
         File outFile = new File(outputDirectory, localPath);
         if (outFile.lastModified() == artifactFile.lastModified()) {
-          //continue;
+          continue;
         }
 
         //noinspection ResultOfMethodCallIgnored
         outFile.getParentFile().mkdirs();
-        
+
         Utils.copyFile(artifactFile, outFile);
 
         if (("configs".equals(artifact.getClassifier()) || (artifact.getClassifier() == null && "framework".equals(artifact.getArtifactId()) && artifact.getType().equals("swc"))) && !extractedConfigs.contains(artifact.getVersion())) {
