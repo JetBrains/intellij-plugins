@@ -1048,7 +1048,7 @@ public class FlexDebugProcess extends XDebugProcess {
     myBreakpointsHandler.handleRunToPosition(position, this);
   }
 
-  public void sendAndProcessOneCommand(final DebuggerCommand command, final Function<Exception, Void> onException) {
+  public void sendAndProcessOneCommand(final DebuggerCommand command, final @Nullable Function<Exception, Void> onException) {
     insertCommand(command);
     try {
       processOneCommandLoop();
@@ -1166,17 +1166,17 @@ public class FlexDebugProcess extends XDebugProcess {
     }
   }
 
-  public XValueMarkerProvider<FlexStackFrame.FlexValue, String> createValueMarkerProvider() {
-    return new XValueMarkerProvider<FlexStackFrame.FlexValue, String>(FlexStackFrame.FlexValue.class) {
-      public boolean canMark(@NotNull final FlexStackFrame.FlexValue value) {
+  public XValueMarkerProvider<FlexValue, String> createValueMarkerProvider() {
+    return new XValueMarkerProvider<FlexValue, String>(FlexValue.class) {
+      public boolean canMark(@NotNull final FlexValue value) {
         return getObjectId(value) != null;
       }
 
-      public String getMarker(@NotNull final FlexStackFrame.FlexValue value) {
+      public String getMarker(@NotNull final FlexValue value) {
         return getObjectId(value);
       }
 
-      private String getObjectId(final FlexStackFrame.FlexValue value) {
+      private String getObjectId(final FlexValue value) {
         final String text = value.getResult();
         final String prefix = "[Object ";
         final String suffix = FlexStackFrame.CLASS_MARKER;

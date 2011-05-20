@@ -82,7 +82,7 @@ public class XmlObjectEvaluator {
     private String toPresentableSting(final int level) {
       final StringBuilder buffer = new StringBuilder();
 
-      final String rawText = ((FlexStackFrame.FlexValue)myValue).getResult();
+      final String rawText = ((FlexValue)myValue).getResult();
 
       if (rawText.contains(XMLLIST_MARKER)) {
         for (FakeCompositeNode child : myChildren) {
@@ -98,23 +98,23 @@ public class XmlObjectEvaluator {
       if (xmlInfoStartIndex > 0 && xmlInfoEndIndex > xmlInfoStartIndex) {
         final String xmlInfo = rawText.substring(xmlInfoStartIndex, xmlInfoEndIndex);
 
-        final boolean isElement = xmlInfo.startsWith(FlexStackFrame.FlexValue.ELEMENT_MARKER + "<") && xmlInfo.endsWith(">");
+        final boolean isElement = xmlInfo.startsWith(FlexValue.ELEMENT_MARKER + "<") && xmlInfo.endsWith(">");
         final boolean isEmptyElement = isElement && xmlInfo.endsWith("/>");
-        final boolean isText = !isElement && xmlInfo.startsWith(FlexStackFrame.FlexValue.TEXT_MARKER);
+        final boolean isText = !isElement && xmlInfo.startsWith(FlexValue.TEXT_MARKER);
 
         if (isText || isElement) {
           if (isText) {
             appendIndent(buffer, level);
-            buffer.append(xmlInfo.substring(FlexStackFrame.FlexValue.TEXT_MARKER.length()));
+            buffer.append(xmlInfo.substring(FlexValue.TEXT_MARKER.length()));
             buffer.append("\n");
           }
           else if (isEmptyElement) {
             appendIndent(buffer, level);
-            buffer.append(xmlInfo.substring(FlexStackFrame.FlexValue.ELEMENT_MARKER.length()));
+            buffer.append(xmlInfo.substring(FlexValue.ELEMENT_MARKER.length()));
             buffer.append("\n");
           }
           else {
-            final String startTag = xmlInfo.substring(FlexStackFrame.FlexValue.ELEMENT_MARKER.length());
+            final String startTag = xmlInfo.substring(FlexValue.ELEMENT_MARKER.length());
 
             final int spaceIndex = startTag.indexOf(" ");
             final String tagName = startTag.substring(1, spaceIndex > 0 ? spaceIndex : startTag.length() - 1);
