@@ -256,5 +256,8 @@
             text="Flex Component" description="Create new Flex component">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="Flex.NewActionScriptClass"/>
     </action>
+    <action id="Flex.Debugger.FilterSwfLoadUnloadMessages" class="com.intellij.lang.javascript.flex.debug.FilterSwfLoadUnloadMessagesAction"
+            text="Filter [SWF] and [UnloadSWF] messages" icon="/ant/filter.png" description="Use this toggle button to choose whether you want [SWF] and [UnloadSWF] messages to be shown in Flex debug console. Note that toggling the button doesn't change current console content, filter is applied only to new messages that will appear.">
+    </action>
   </actions>
 </idea-plugin>

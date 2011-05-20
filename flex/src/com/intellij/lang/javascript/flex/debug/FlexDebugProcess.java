@@ -21,6 +21,8 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.diagnostic.Logger;
@@ -592,16 +594,17 @@ public class FlexDebugProcess extends XDebugProcess {
     if (line.startsWith(TRACE_MARKER)) {
       myConsoleView.print(line + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
       return true;
-    } else if (line.startsWith(FAULT_MARKER) || 
-               line.startsWith("[UnloadSWF]") ||
-               line.startsWith("[SWF]")
-              ) {
+    }
+    else if (line.startsWith(FAULT_MARKER)) {
       myConsoleView.print(line + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
-
-      if (line.startsWith(FAULT_MARKER)) {
-        while(iterator.hasNext() && iterator.getNext().startsWith("at ")) {
-          myConsoleView.print(iterator.next() + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
-        }
+      while (iterator.hasNext() && iterator.getNext().startsWith("at ")) {
+        myConsoleView.print(iterator.next() + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+      }
+      return true;
+    }
+    else if (line.startsWith("[SWF]") || line.startsWith("[UnloadSWF]")) {
+      if (!FilterSwfLoadUnloadMessagesAction.isFilterEnabled(getSession().getProject())) {
+        myConsoleView.print(line + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
       }
       return true;
     }
@@ -1361,7 +1364,19 @@ public class FlexDebugProcess extends XDebugProcess {
 
       s = builder.toString();
 
-      myConsoleView.print(s, ConsoleViewContentType.SYSTEM_OUTPUT);
+      final ResponseLineIterator iterator = new ResponseLineIterator(s);
+      while (iterator.hasNext()) {
+        final String line = iterator.next();
+        if (line.startsWith("[SWF]") || line.startsWith("[UnloadSWF]")) {
+          if (!FilterSwfLoadUnloadMessagesAction.isFilterEnabled(getSession().getProject())) {
+            myConsoleView.print(line + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+          }
+        }
+        else {
+          myConsoleView.print(line + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+        }
+      }
+
       if (s.indexOf("Another Flash debugger is probably running") != -1) {
         reportProblem(s);
         getProcessHandler().detachProcess();
@@ -1463,4 +1478,8 @@ public class FlexDebugProcess extends XDebugProcess {
     return new FlexSmartStepIntoHandler(this);
   }
 
+  @Override
+  public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar, @NotNull final DefaultActionGroup topToolbar) {
+    topToolbar.addAction(ActionManager.getInstance().getAction("Flex.Debugger.FilterSwfLoadUnloadMessages"));
+  }
 }
