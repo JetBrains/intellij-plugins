@@ -48,7 +48,7 @@ public class LibraryCollector {
            || name.equals("utilities.swc")  /* flex sdk 4.1 */
            || name.equals("core.swc") /* hero (4.5) aggregation library */
            || name.equals("applicationupdater.swc") /* applicationupdater_ui contains all classes */
-           || name.equals("flash-integration.swc");
+           || name.equals("flash-integration.swc") || name.equals("authoringsupport.swc");
   }
 
   private static boolean isGlobalLibrary(String libFileName) {

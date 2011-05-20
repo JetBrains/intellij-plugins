@@ -36,8 +36,6 @@ private def doExecute(home, sandbox, targetFolder) {
     fileset(dir: "$flexBuildHome/../flex-ui-designer/build/repo")
   }
 
-  stripSwcName("airglobal") // compiler needs airglobal.swc to have exactly such name
-
   ant.copy(file: "$flexBuildHome/build-gant/base.xml", toDir: "$flexSandbox")
   ant.replace(file: "$flexSandbox/base.xml") {
     replacefilter(token: "@@repo@@", value: "$flexSandbox/repo")
@@ -53,20 +51,11 @@ def buildFlex(configName, target) {
     jvmarg(value: "-Duser.language=en")
     jvmarg(value: "-Duser.region=en")
     classpath {
-      fileset(dir: "$flexBuildHome/../flex-ui-designer/build-gant/libs") {
-        include(name: "*-4.5.0.18365.jar")
-      }
+      fileset(dir: "$flexBuildHome/../flex-ui-designer/build-gant/compiler-libs")
     }
     arg(value: "-load-config=$flexSandbox/base.xml")
     arg(value: "-load-config=$flexBuildHome/${configName}.xml")
     arg(value: "-output=$target")
-  }
-}
-
-def stripSwcName(name) {
-  ant.move(todir: "$flexSandbox/repo") {
-    fileset(dir: "$flexSandbox/repo")
-    regexpmapper(from: "^(.*)$name.*\\.swc\$", to: "\\1${name}.swc")
   }
 }
 
