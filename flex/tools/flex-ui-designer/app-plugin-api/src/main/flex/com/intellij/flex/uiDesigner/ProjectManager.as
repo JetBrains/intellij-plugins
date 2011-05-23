@@ -4,7 +4,6 @@ import cocoa.DocumentWindow;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 
 import flash.desktop.NativeApplication;
-import flash.display.NativeWindow;
 import flash.events.Event;
 import flash.events.NativeWindowBoundsEvent;
 
@@ -45,13 +44,13 @@ public class ProjectManager {
   }
 
   protected function addNativeWindowListeners(window:DocumentWindow):void {
-    window.nativeWindow.addEventListener(Event.CLOSING, closeHandler);
-    window.nativeWindow.addEventListener(NativeWindowBoundsEvent.RESIZE, resizeHandler);
+    window.addEventListener(Event.CLOSING, closeHandler);
+    window.addEventListener(NativeWindowBoundsEvent.RESIZE, resizeHandler);
   }
 
-  protected function removeNativeWindowListeners(nativeWindow:NativeWindow):void {
-    nativeWindow.removeEventListener(Event.CLOSING, closeHandler);
-    nativeWindow.removeEventListener(NativeWindowBoundsEvent.RESIZE, resizeHandler);
+  protected function removeNativeWindowListeners(window:DocumentWindow):void {
+    window.removeEventListener(Event.CLOSING, closeHandler);
+    window.removeEventListener(NativeWindowBoundsEvent.RESIZE, resizeHandler);
   }
   
   public function close(id:int):void {
@@ -60,7 +59,7 @@ public class ProjectManager {
 
     
     if (project.window != null) {
-      removeNativeWindowListeners(project.window.nativeWindow);
+      removeNativeWindowListeners(project.window);
       project.window.close();
     }
 
@@ -81,11 +80,11 @@ public class ProjectManager {
   }
 
   private function resizeHandler(event:Event):void {
-    var nativeWindow:NativeWindow = NativeWindow(event.target);
+    var window:DocumentWindow = DocumentWindow(event.target);
     for (var i:int = 0, n:int = items.length; i < n; i++) {
       var project:Project = items[i];
-      if (project.window.nativeWindow == nativeWindow) {
-        Server(PlexusManager.instance.container.lookup(Server)).saveProjectWindowBounds(project, nativeWindow.bounds);
+      if (project.window == window) {
+        Server(PlexusManager.instance.container.lookup(Server)).saveProjectWindowBounds(project, window.bounds);
         return;
       }
     }
@@ -96,11 +95,11 @@ public class ProjectManager {
       return;
     }
 
-    var nativeWindow:NativeWindow = NativeWindow(event.target);
+    var window:DocumentWindow = DocumentWindow(event.target);
     for (var i:int = 0, n:int = items.length; i < n; i++) {
       var project:Project = items[i];
-      if (project.window.nativeWindow == nativeWindow) {
-        removeNativeWindowListeners(nativeWindow);
+      if (project.window == window) {
+        removeNativeWindowListeners(window);
         closeProject2(i, project);
         Server.instance.closeProject(project);
         return;

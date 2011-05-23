@@ -145,8 +145,8 @@ public class TestSocketDataHandler implements SocketDataHandler {
   }
 
   private function getStageOffset(projectManager:ProjectManager):void {
-    var nativeWindow:NativeWindow = projectManager.project.window.nativeWindow;
-    var point:Point = nativeWindow.globalToScreen(new Point(0, 0));
+    var window:NativeWindow = projectManager.project.window;
+    var point:Point = window.globalToScreen(new Point(0, 0));
     _socket.writeByte(TestServerMethod.custom);
 
     _socket.writeShort(point.x);

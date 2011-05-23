@@ -69,7 +69,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     if (createAndOpen(documentFactory) && !ApplicationManager.instance.unitTestMode) {
       var w:DocumentWindow = module.project.window;
       if (NativeWindow.supportsNotification) {
-        w.nativeWindow.notifyUser(NotificationType.INFORMATIONAL);
+        w.notifyUser(NotificationType.INFORMATIONAL);
       }
       else {
         var dockIcon:DockIcon = NativeApplication.nativeApplication.icon as DockIcon;
@@ -181,7 +181,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var window:DocumentWindow = module.project.window;
     var systemManager:SystemManagerSB = new systemManagerClass();
     document.systemManager = systemManager;
-    systemManager.init(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain), window.nativeWindow.stage,
+    systemManager.init(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain), window.stage,
                        UncaughtErrorManager.instance, server);
     document.container = new DocumentContainer(Sprite(systemManager));
   }
