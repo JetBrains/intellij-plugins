@@ -56,15 +56,19 @@ class FlexValue extends XValue {
   private static final String VECTOR_PREFIX = "__AS3__.vec::";
 
   private static final String VECTOR = "Vector";
-  private static final String[] COLLECTION_CLASSES = {
+  private static final String[] COLLECTIONS_WITH_DIRECT_CONTENT = {
     "Array",
     VECTOR,
-    "mx.collections.ArrayList",
-    "mx.collections.AsyncListView",
     "mx.collections.ListCollectionView",
     "mx.collections.ArrayCollection",
     "mx.collections.XMLListCollection",
   };
+
+  private static final String[] COLLECTION_CLASSES = ArrayUtil.mergeArrays(
+    COLLECTIONS_WITH_DIRECT_CONTENT,
+    "mx.collections.ArrayList",
+    "mx.collections.AsyncListView"
+  );
 
   private static final Comparator<XValue> ourArrayElementsComparator = new Comparator<XValue>() {
     public int compare(XValue o1, XValue o2) {
@@ -190,6 +194,10 @@ class FlexValue extends XValue {
 
     val = setFullValueEvaluatorIfNeeded(node, val, false);
     node.setPresentation(getIcon(), type, val, isObject);
+  }
+
+  private static boolean isCollectionWithDirectContent(final String fqn) {
+    return fqn != null && ArrayUtil.contains(fqn, COLLECTIONS_WITH_DIRECT_CONTENT);
   }
 
   private static boolean isCollection(final String fqn) {
@@ -573,22 +581,31 @@ class FlexValue extends XValue {
           continue;
         }
 
-        (nodeClassInfo.isDynamic ? ownFields : inheritedFields).add(name, flexValue);
+        (nodeClassInfo.myIsDynamic ? ownFields : inheritedFields).add(name, flexValue);
       }
     }
 
     Collections.sort(elementsOfCollection, ourArrayElementsComparator);
 
+    XValueChildrenList inheritedNodeSingletonList = XValueChildrenList.EMPTY;
     if (inheritedStaticFields.size() + inheritedStaticProperties.size() + inheritedFields.size() + inheritedProperties.size() > 0) {
-      final XValueChildrenList inheritedNodeSingletonList =
-        getInheritedNodeSingletonList(inheritedStaticFields, inheritedStaticProperties, inheritedFields, inheritedProperties);
-      node.addChildren(inheritedNodeSingletonList, false);
+      inheritedNodeSingletonList = getWrappingSingletonList("Inherited members", inheritedStaticFields, inheritedStaticProperties,
+                                                            inheritedFields, inheritedProperties);
     }
 
-    node.addChildren(ownStaticFields, false);
-    node.addChildren(ownStaticProperties, false);
-    node.addChildren(ownFields, false);
-    node.addChildren(ownProperties, false);
+    if (nodeClassInfo != null && isCollectionWithDirectContent(nodeClassInfo.myFqn)) {
+      final XValueChildrenList fieldsAndPropertiesSingletonList =
+        getWrappingSingletonList("Fields and properties", inheritedNodeSingletonList, ownStaticFields, ownStaticProperties, ownFields,
+                                 ownProperties);
+      node.addChildren(fieldsAndPropertiesSingletonList, false);
+    }
+    else {
+      node.addChildren(inheritedNodeSingletonList, false);
+      node.addChildren(ownStaticFields, false);
+      node.addChildren(ownStaticProperties, false);
+      node.addChildren(ownFields, false);
+      node.addChildren(ownProperties, false);
+    }
 
     final XValueChildrenList elementsOfCollectionList = new XValueChildrenList();
     for (final FlexValue flexValue : elementsOfCollection) {
@@ -599,20 +616,17 @@ class FlexValue extends XValue {
     node.addChildren(XValueChildrenList.EMPTY, true);
   }
 
-  private static XValueChildrenList getInheritedNodeSingletonList(final XValueChildrenList inheritedStaticFields,
-                                                                  final XValueChildrenList inheritedStaticProperties,
-                                                                  final XValueChildrenList inheritedFields,
-                                                                  final XValueChildrenList inheritedProperties) {
+  private static XValueChildrenList getWrappingSingletonList(final String nodeName, final XValueChildrenList... listsToWrap) {
     final XValue inheritedNode = new XValue() {
       public void computePresentation(@NotNull final XValueNode node) {
-        node.setPresentation((Icon)null, null, "", "Inherited members", true);
+        node.setPresentation((Icon)null, null, "", nodeName, true);
       }
 
       public void computeChildren(@NotNull final XCompositeNode node) {
-        node.addChildren(inheritedStaticFields, false);
-        node.addChildren(inheritedStaticProperties, false);
-        node.addChildren(inheritedFields, false);
-        node.addChildren(inheritedProperties, true);
+        for (final XValueChildrenList list : listsToWrap) {
+          node.addChildren(list, false);
+        }
+        node.addChildren(XValueChildrenList.EMPTY, true);
       }
     };
 

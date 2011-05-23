@@ -14,7 +14,8 @@ import java.util.Map;
 
 public class NodeClassInfo {
 
-  public final boolean isDynamic;
+  public final String myFqn;
+  public final boolean myIsDynamic;
   public final Map<String, Icon> myOwnStaticFields;
   public final Map<String, Icon> myOwnStaticProperties;
   public final Map<String, Icon> myOwnFields;
@@ -24,7 +25,8 @@ public class NodeClassInfo {
   public final Map<String, Icon> myInheritedFields;
   public final Map<String, Icon> myInheritedProperties;
 
-  public NodeClassInfo(final boolean dynamic,
+  public NodeClassInfo(final String fqn,
+                       final boolean dynamic,
                        final Map<String, Icon> ownStaticFields,
                        final Map<String, Icon> ownStaticProperties,
                        final Map<String, Icon> ownFields,
@@ -33,15 +35,16 @@ public class NodeClassInfo {
                        final Map<String, Icon> inheritedStaticProperties,
                        final Map<String, Icon> inheritedFields,
                        final Map<String, Icon> inheritedProperties) {
-    isDynamic = dynamic;
-    this.myOwnStaticFields = ownStaticFields;
-    this.myOwnStaticProperties = ownStaticProperties;
-    this.myOwnFields = ownFields;
-    this.myOwnProperties = ownProperties;
-    this.myInheritedStaticFields = inheritedStaticFields;
-    this.myInheritedStaticProperties = inheritedStaticProperties;
-    this.myInheritedFields = inheritedFields;
-    this.myInheritedProperties = inheritedProperties;
+    myFqn = fqn;
+    myIsDynamic = dynamic;
+    myOwnStaticFields = ownStaticFields;
+    myOwnStaticProperties = ownStaticProperties;
+    myOwnFields = ownFields;
+    myOwnProperties = ownProperties;
+    myInheritedStaticFields = inheritedStaticFields;
+    myInheritedStaticProperties = inheritedStaticProperties;
+    myInheritedFields = inheritedFields;
+    myInheritedProperties = inheritedProperties;
   }
 
   static NodeClassInfo getNodeClassInfo(final @NotNull JSClass jsClass) {
@@ -61,8 +64,12 @@ public class NodeClassInfo {
     fillMapsForSupersRecursively(jsClass, new THashSet<JSClass>(), inheritedStaticFields, inheritedStaticProperties, inheritedFields,
                                  inheritedProperties);
 
-    return new NodeClassInfo(dynamic, ownStaticFields, ownStaticProperties, ownFields, ownProperties, inheritedStaticFields,
-                             inheritedStaticProperties, inheritedFields, inheritedProperties);
+    return new NodeClassInfo(normalizeIfVector(jsClass.getQualifiedName()), dynamic, ownStaticFields, ownStaticProperties, ownFields,
+                             ownProperties, inheritedStaticFields, inheritedStaticProperties, inheritedFields, inheritedProperties);
+  }
+
+  private static String normalizeIfVector(final String qName) {
+    return qName.startsWith("Vector$") ? "Vector" : qName;
   }
 
   private static void fillMapsForSupersRecursively(final JSClass jsClass,
