@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Icons;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
@@ -46,11 +47,24 @@ class FlexValue extends XValue {
   private Icon myPreferredIcon;
 
   private static final String OBJECT_MARKER = "Object ";
-  private static final int MAX_STRING_LENGTH_TO_SHOW = XValueNode.MAX_VALUE_LENGTH;
+  private static final String XML_TYPE = "XML";
+  private static final String XMLLIST_TYPE = "XMLList";
   static final String TEXT_MARKER = " text ";
   static final String ELEMENT_MARKER = " element ";
   private static final String ESCAPE_START = "IDEA-ESCAPE-START";
   private static final String ESCAPE_END = "IDEA-ESCAPE-END";
+  private static final String VECTOR_PREFIX = "__AS3__.vec::";
+
+  private static final String VECTOR = "Vector";
+  private static final String[] COLLECTION_CLASSES = {
+    "Array",
+    VECTOR,
+    "mx.collections.ArrayList",
+    "mx.collections.AsyncListView",
+    "mx.collections.ListCollectionView",
+    "mx.collections.ArrayCollection",
+    "mx.collections.XMLListCollection",
+  };
 
   private static final Comparator<XValue> ourArrayElementsComparator = new Comparator<XValue>() {
     public int compare(XValue o1, XValue o2) {
@@ -127,115 +141,182 @@ class FlexValue extends XValue {
     myPreferredIcon = preferredIcon;
   }
 
+  private Icon getIcon() {
+    return myPreferredIcon == null ? myValueType.myIcon : myPreferredIcon;
+  }
+
   public void computePresentation(@NotNull final XValueNode node) {
     final boolean isObject = myResult.contains(OBJECT_MARKER);
-    String val;
+    String val = myResult;
     String type = null;
     String additionalInfo = null;
 
     if (isObject) {
-      val = myResult;
-      final Pair<String, String> classNameAndAdditionalInfo = getTypeAndAdditionalInfo(myResult);
-      type = classNameAndAdditionalInfo.first;
-      additionalInfo = classNameAndAdditionalInfo.second;
+      final Pair<String, String> typeAndAdditionalInfo = getTypeAndAdditionalInfo(myResult);
+      type = typeAndAdditionalInfo.first;
+      additionalInfo = typeAndAdditionalInfo.second;
 
       if (type != null) {
         val = "[".concat(getObjectId(myResult, myResult.indexOf(OBJECT_MARKER), OBJECT_MARKER)).concat("]");
       }
     }
-    else {
-      val = myResult;
-    }
 
-    if (("XML".equals(type) || "XMLList".equals(type)) && myExpression.indexOf('=') == -1) {
+    if ((XML_TYPE.equals(type) || XMLLIST_TYPE.equals(type)) && myExpression.indexOf('=') == -1) {
       if (myDebugProcess.isDebuggerFromSdk4()) {
-        final String finalType = type;
-        final FlexStackFrame.EvaluateCommand
-          command = myFlexStackFrame.new EvaluateCommand(myExpression + ".toXMLString()", new XDebuggerEvaluator.XEvaluationCallback() {
-          public void evaluated(@NotNull XValue result) {
-            setResult(((FlexValue)result).myResult, node, finalType, isObject);
-          }
-
-          public void errorOccurred(@NotNull String errorMessage) {
-            setResult(errorMessage, node, finalType, isObject);
-          }
-
-          private void setResult(String s, XValueNode node, String finalType, boolean b) {
-            if (!node.isObsolete()) {
-              s = setFullValueEvaluatorIfNeeded(node, s, true);
-              node.setPresentation(myValueType.myIcon, finalType, s, b);
-            }
-          }
-        });
-        myDebugProcess.addPendingCommand(new CompositeDebuggerCommand(node, command), 700);
-        return;
+        scheduleToXmlStringCalculation(node, type);
+        // return; no return - show default presentation until toXmlString calculated
       }
-
       else if (myDebugProcess.isDebuggerFromSdk3()) {
-        if ("XMLList".equals(type)) {
-          node.setFullValueEvaluator(new XFullValueEvaluator(FlexBundle.message("debugger.show.full.value")) {
-            public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
-              new XmlObjectEvaluator(FlexValue.this, callback).startEvaluation();
-            }
-          });
-
-          node.setPresentation(myValueType.myIcon, type, val.concat(" "), isObject);
+        if (XMLLIST_TYPE.equals(type)) {
+          setXmlListPresentation(node, val, this);
           return;
         }
         else if (additionalInfo != null) {
-          /*
-            additionalInfo may look like following:
-            "text element content"
-            "element <root attr=\"attrValue\">"
-            "element <child/>"
-          */
-          final boolean isElement = additionalInfo.startsWith(ELEMENT_MARKER + "<") && additionalInfo.endsWith(">");
-          final boolean isEmptyElement = isElement && additionalInfo.endsWith("/>");
-          final boolean isText = !isElement && additionalInfo.startsWith(TEXT_MARKER);
-
-          if (isText || isElement) {
-            String textToShow;
-
-            if (isText) {
-              textToShow = additionalInfo.substring(TEXT_MARKER.length());
-            }
-            else if (isEmptyElement) {
-              textToShow = additionalInfo.substring(ELEMENT_MARKER.length());
-            }
-            else {
-              final String startTag = additionalInfo.substring(ELEMENT_MARKER.length());
-
-              final int spaceIndex = startTag.indexOf(" ");
-              final String tagName = startTag.substring(1, spaceIndex > 0 ? spaceIndex : startTag.length() - 1);
-              textToShow = startTag + "..." + "</" + tagName + "> ";
-              if (textToShow.length() > MAX_STRING_LENGTH_TO_SHOW) {
-                textToShow = textToShow.substring(0, MAX_STRING_LENGTH_TO_SHOW).concat("... ");
-              }
-
-              node.setFullValueEvaluator(new XFullValueEvaluator(FlexBundle.message("debugger.show.full.value")) {
-                public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
-                  new XmlObjectEvaluator(FlexValue.this, callback).startEvaluation();
-                }
-              });
-
-              node.setPresentation(myValueType.myIcon, type, textToShow, isObject);
-              return;
-            }
-
-            textToShow = setFullValueEvaluatorIfNeeded(node, textToShow, true);
-            node.setPresentation(myValueType.myIcon, type, textToShow, isObject);
-            return;
-          }
-
-          val = setFullValueEvaluatorIfNeeded(node, additionalInfo, true);
-          node.setPresentation(myValueType.myIcon, type, val, isObject);
+          setXmlPresentation(node, additionalInfo, this);
           return;
         }
+      }
+    }
+
+    final String fqn = getFqn(type);
+    if (isCollection(fqn)) {
+      if (VECTOR.equals(fqn)) {
+        scheduleVectorPresentation(node);
+      }
+      else {
+        scheduleCollectionSizePresentation(node, type, "");
       }
     }
 
     val = setFullValueEvaluatorIfNeeded(node, val, false);
-    node.setPresentation(myPreferredIcon == null ? myValueType.myIcon : myPreferredIcon, type, val, isObject);
+    node.setPresentation(getIcon(), type, val, isObject);
+  }
+
+  private static boolean isCollection(final String fqn) {
+    return fqn != null && ArrayUtil.contains(fqn, COLLECTION_CLASSES);
+  }
+
+  private void scheduleVectorPresentation(final XValueNode node) {
+    final FlexStackFrame.EvaluateCommand command =
+      myFlexStackFrame.new EvaluateCommand(myExpression + ".fixed", new XDebuggerEvaluator.XEvaluationCallback() {
+
+        public void evaluated(@NotNull XValue result) {
+          if (!node.isObsolete()) {
+            final String resultText = ((FlexValue)result).myResult;
+            final String prefix = ("true".equals(resultText) || "false".equals(resultText)) ? "fixed = " + resultText : "";
+            node.setPresentation(getIcon(), VECTOR, prefix, true);
+            scheduleCollectionSizePresentation(node, VECTOR, prefix);
+          }
+        }
+
+        public void errorOccurred(@NotNull String errorMessage) {
+        }
+      });
+
+    myDebugProcess.addPendingCommand(new CompositeDebuggerCommand(node, command), 100);
+  }
+
+  private void scheduleCollectionSizePresentation(final XValueNode node, final String type, final String prefix) {
+    final FlexStackFrame.EvaluateCommand command =
+      myFlexStackFrame.new EvaluateCommand(myExpression + ".length", new XDebuggerEvaluator.XEvaluationCallback() {
+
+        public void evaluated(@NotNull XValue result) {
+          if (!node.isObsolete()) {
+            final String resultText = ((FlexValue)result).myResult;
+            final int index = resultText.indexOf(" (0x");
+            if (index != -1) {
+              final String value = (prefix.isEmpty() ? "" : prefix + ", ") + "size = " + resultText.substring(0, index);
+              node.setPresentation(getIcon(), type, value, true);
+            }
+          }
+        }
+
+        public void errorOccurred(@NotNull String errorMessage) {
+        }
+      });
+
+    myDebugProcess.addPendingCommand(new CompositeDebuggerCommand(node, command), 100);
+  }
+
+  private static void setXmlListPresentation(final XValueNode node, final String value, final FlexValue flexValue) {
+    node.setFullValueEvaluator(new XFullValueEvaluator(FlexBundle.message("debugger.show.full.value")) {
+      public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
+        new XmlObjectEvaluator(flexValue, callback).startEvaluation();
+      }
+    });
+
+    node.setPresentation(flexValue.getIcon(), XMLLIST_TYPE, value.concat(" "), true);
+  }
+
+  private static void setXmlPresentation(final XValueNode node, final String additionalInfo, final FlexValue flexValue) {
+    /*
+      additionalInfo may look like following:
+      "text element content"
+      "element <root attr=\"attrValue\">"
+      "element <child/>"
+    */
+    final boolean isElement = additionalInfo.startsWith(ELEMENT_MARKER + "<") && additionalInfo.endsWith(">");
+    final boolean isEmptyElement = isElement && additionalInfo.endsWith("/>");
+    final boolean isText = !isElement && additionalInfo.startsWith(TEXT_MARKER);
+
+    if (isText || isElement) {
+      String textToShow;
+
+      if (isText) {
+        textToShow = additionalInfo.substring(TEXT_MARKER.length());
+      }
+      else if (isEmptyElement) {
+        textToShow = additionalInfo.substring(ELEMENT_MARKER.length());
+      }
+      else {
+        final String startTag = additionalInfo.substring(ELEMENT_MARKER.length());
+
+        final int spaceIndex = startTag.indexOf(" ");
+        final String tagName = startTag.substring(1, spaceIndex > 0 ? spaceIndex : startTag.length() - 1);
+        textToShow = startTag + "..." + "</" + tagName + "> ";
+        if (textToShow.length() > XValueNode.MAX_VALUE_LENGTH) {
+          textToShow = textToShow.substring(0, XValueNode.MAX_VALUE_LENGTH).concat("... ");
+        }
+
+        node.setFullValueEvaluator(new XFullValueEvaluator(FlexBundle.message("debugger.show.full.value")) {
+          public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
+            new XmlObjectEvaluator(flexValue, callback).startEvaluation();
+          }
+        });
+
+        node.setPresentation(flexValue.getIcon(), XML_TYPE, textToShow, true);
+        return;
+      }
+
+      textToShow = setFullValueEvaluatorIfNeeded(node, textToShow, true);
+      node.setPresentation(flexValue.getIcon(), XML_TYPE, textToShow, true);
+      return;
+    }
+
+    node.setPresentation(flexValue.getIcon(), XML_TYPE, setFullValueEvaluatorIfNeeded(node, additionalInfo, true), true);
+  }
+
+  private void scheduleToXmlStringCalculation(final XValueNode node, final String type) {
+    final FlexStackFrame.EvaluateCommand
+      command = myFlexStackFrame.new EvaluateCommand(myExpression + ".toXMLString()", new XDebuggerEvaluator.XEvaluationCallback() {
+
+      public void evaluated(@NotNull XValue result) {
+        setResult(((FlexValue)result).myResult, node, type, true);
+      }
+
+      public void errorOccurred(@NotNull String errorMessage) {
+        setResult(errorMessage, node, type, true);
+      }
+
+      private void setResult(String value, XValueNode node, String type, boolean hasChildren) {
+        if (!node.isObsolete()) {
+          value = setFullValueEvaluatorIfNeeded(node, value, true);
+          node.setPresentation(getIcon(), type, value, hasChildren);
+        }
+      }
+    });
+
+    myDebugProcess.addPendingCommand(new CompositeDebuggerCommand(node, command), 700);
   }
 
   private static String setFullValueEvaluatorIfNeeded(final XValueNode node, String value, final boolean isXml) {
@@ -244,16 +325,16 @@ class FlexValue extends XValue {
     final int lfIndex = fullValue.indexOf('\n');
     final int crIndex = fullValue.indexOf('\r');
 
-    if (fullValue.length() > MAX_STRING_LENGTH_TO_SHOW ||
+    if (fullValue.length() > XValueNode.MAX_VALUE_LENGTH ||
         lfIndex > -1 && lfIndex < fullValue.length() - 1 ||
         crIndex > -1 && crIndex < fullValue.length() - 1) {
 
       final boolean quoted = fullValue.charAt(0) == '\'' && fullValue.charAt(fullValue.length() - 1) == '\'';
       final boolean doubleQuoted = fullValue.charAt(0) == '\"' && fullValue.charAt(fullValue.length() - 1) == '\"';
 
-      if (value.length() > MAX_STRING_LENGTH_TO_SHOW) {
+      if (value.length() > XValueNode.MAX_VALUE_LENGTH) {
         final String ending = doubleQuoted ? "\" " : quoted ? "\' " : " ";
-        value = value.substring(0, MAX_STRING_LENGTH_TO_SHOW).concat("...").concat(ending);
+        value = value.substring(0, XValueNode.MAX_VALUE_LENGTH).concat("...").concat(ending);
       }
       else if (!value.endsWith(" ")) {
         value = value.concat(" ");  // just a separator between text value and hyperlink
@@ -579,6 +660,17 @@ class FlexValue extends XValue {
     return FlexStackFrame.validObjectId(s);
   }
 
+  /**
+   * Examples of type (<code>getTypeAndAdditionalInfo().first</code>) :
+   * <ul>
+   * <li><code>null</code></li>
+   * <li><code>flash.events::MouseEvent</code></li>
+   * <li><code>Main$/staticFunction</code></li>
+   * <li><code>XML</code></li>
+   * <li><code>pack.SomeClass$</code></li>
+   * <li><code>Vector.&lt;String&gt;</String></code></li>
+   * </ul>
+   */
   private static Pair<String, String> getTypeAndAdditionalInfo(final @Nullable String fdbText) {
     if (fdbText == null) return Pair.create(null, null);
 
@@ -611,18 +703,29 @@ class FlexValue extends XValue {
       type = "Array";
     }
 
+    if (type != null && type.startsWith(VECTOR_PREFIX)) {
+      type = type.substring(VECTOR_PREFIX.length());
+    }
+
     return Pair.create(type, additionalInfo);
+  }
+
+  /**
+   * Returned result can contain extra <b>$</b> after real class FQN in case of static context. For example <code>pack.Main$</code>
+   */
+  @Nullable
+  private static String getFqn(final String typeFromFlexValueResult) {
+    if (typeFromFlexValueResult != null && !typeFromFlexValueResult.contains("/")) {
+      final int index = typeFromFlexValueResult.indexOf(".<"); // Vector.<int>
+      return (index > 0 ? typeFromFlexValueResult.substring(0, index) : typeFromFlexValueResult).replace("::", ".");
+    }
+    return null;
   }
 
   @Nullable
   private static JSClass findJSClass(final Project project, final @Nullable Module module, final String typeFromFlexValueResult) {
-    if (typeFromFlexValueResult != null && !typeFromFlexValueResult.contains("/")) {
-      final String prefix = "__AS3__.vec::";
-      final String type =
-        typeFromFlexValueResult.startsWith(prefix) ? typeFromFlexValueResult.substring(prefix.length()) : typeFromFlexValueResult;
-      final int index = type.indexOf(".<"); // Vector.<int>
-      final String fqn = (index > 0 ? type.substring(0, index) : type).replace("::", ".");
-
+    final String fqn = getFqn(typeFromFlexValueResult);
+    if (fqn != null) {
       final JavaScriptIndex jsIndex = JavaScriptIndex.getInstance(project);
       PsiElement jsClass = JSResolveUtil.findClassByQName(fqn, jsIndex, module);
 
