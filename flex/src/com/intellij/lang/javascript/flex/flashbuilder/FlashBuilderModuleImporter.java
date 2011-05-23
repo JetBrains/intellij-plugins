@@ -29,6 +29,7 @@ import java.util.*;
 
 public class FlashBuilderModuleImporter {
 
+  private static final String LIBRARY_NAME_PREFIX_OLD = "Imported from Flash/Flex Builder: "; // for backward consistency
   private static final String LIBRARY_NAME_PREFIX = FlexBundle.message("flash.builder.library.prefix") + " ";
   private static final String CORE_RESOURCES_PREFS_REL_PATH =
     "/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.core.resources.prefs";
@@ -137,7 +138,7 @@ public class FlashBuilderModuleImporter {
 
   public static boolean isImportedFromFlashBuilder(final Library library) {
     final String libraryName = library.getName();
-    return libraryName != null && libraryName.startsWith(LIBRARY_NAME_PREFIX);
+    return libraryName != null && (libraryName.startsWith(LIBRARY_NAME_PREFIX_OLD) || libraryName.startsWith(LIBRARY_NAME_PREFIX));
   }
 
   private void setupRoots(final ModifiableRootModel rootModel, final FlashBuilderProject flashBuilderProject) {
