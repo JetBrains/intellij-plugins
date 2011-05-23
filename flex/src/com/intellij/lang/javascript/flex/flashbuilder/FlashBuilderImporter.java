@@ -114,9 +114,14 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
 
     final FlashBuilderModuleImporter flashBuilderModuleImporter =
       new FlashBuilderModuleImporter(project, allImportedModuleNames, sdkFinder, pathVariables);
+
+    final Set<String> moduleNames = new THashSet<String>(flashBuilderProjects.size());
+
     for (final FlashBuilderProject flashBuilderProject : flashBuilderProjects) {
-      final String moduleFilePath =
-        flashBuilderProject.getProjectRootPath() + "/" + flashBuilderProject.getName() + ModuleFileType.DOT_DEFAULT_EXTENSION;
+      final String moduleName = makeUnique(flashBuilderProject.getName(), moduleNames);
+      moduleNames.add(moduleName);
+
+      final String moduleFilePath = flashBuilderProject.getProjectRootPath() + "/" + moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION;
 
       if (LocalFileSystem.getInstance().findFileByPath(moduleFilePath) != null) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -139,5 +144,14 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
       }
     });
     return modules;
+  }
+
+  private static String makeUnique(final String name, final Set<String> moduleNames) {
+    String uniqueName = name;
+    int i = 1;
+    while (moduleNames.contains(uniqueName)) {
+      uniqueName = name + '(' + i++ + ')';
+    }
+    return uniqueName;
   }
 }
