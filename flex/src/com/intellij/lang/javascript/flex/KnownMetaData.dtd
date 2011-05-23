@@ -159,7 +159,11 @@
 >
 
 <!ATTLIST Inject name CDATA #IMPLIED> <!--Robotlegs-->
-<!ATTLIST Inject id CDATA #IMPLIED> <!--Parsley-->
+<!--Parsley-->
+<!ATTLIST Inject
+  id CDATA #IMPLIED
+  required (true|false) #IMPLIED
+>
 
 <!ELEMENT Autowire EMPTY>
 <!ATTLIST Autowire
@@ -279,4 +283,82 @@
 <!ELEMENT Theory EMPTY>
 <!ATTLIST Theory
   description CDATA #IMPLIED
+>
+
+<!-- Parsley -->
+<!ELEMENT Metadata EMPTY>
+<!ELEMENT AssignableTo EMPTY>
+<!ELEMENT InjectConstructor EMPTY>
+<!ELEMENT Factory EMPTY>
+<!ATTLIST Factory
+  method CDATA #IMPLIED
+>
+<!ELEMENT AsyncInit EMPTY>
+<!ATTLIST AsyncInit
+  completeEvent CDATA #IMPLIED
+  errorEvent CDATA #IMPLIED
+>
+<!ELEMENT Init EMPTY>
+<!ATTLIST Init
+  method CDATA #IMPLIED
+>
+<!ELEMENT Destroy EMPTY>
+<!ATTLIST Destroy
+  method CDATA #IMPLIED
+>
+<!ELEMENT ManagedEvents EMPTY>
+<!ATTLIST ManagedEvents
+  names CDATA #IMPLIED
+  scope CDATA #IMPLIED
+>
+<!ELEMENT MessageDispatcher EMPTY>
+<!ATTLIST MessageDispatcher
+  property CDATA #IMPLIED
+  scope CDATA #IMPLIED
+>
+<!ELEMENT MessageHandler EMPTY>
+<!ATTLIST MessageHandler
+  type CDATA #IMPLIED
+  messageProperties CDATA #IMPLIED
+  selector CDATA #IMPLIED
+  scope CDATA #IMPLIED
+  method CDATA #IMPLIED
+>
+<!ELEMENT MessageBinding EMPTY>
+<!ATTLIST MessageBinding
+  type CDATA #IMPLIED
+  messageProperty CDATA #IMPLIED
+  selector CDATA #IMPLIED
+  scope CDATA #IMPLIED
+  targetProperty CDATA #IMPLIED
+>
+<!ELEMENT MessageInterceptor EMPTY>
+<!ATTLIST MessageInterceptor
+  type CDATA #IMPLIED
+  selector CDATA #IMPLIED
+  scope CDATA #IMPLIED
+  method CDATA #IMPLIED
+>
+<!ELEMENT MessageError EMPTY>
+<!ATTLIST MessageError
+  type CDATA #IMPLIED
+  selector CDATA #IMPLIED
+  scope CDATA #IMPLIED
+  method CDATA #IMPLIED
+>
+<!ELEMENT ResourceBinding EMPTY>
+<!ATTLIST ResourceBinding
+  bundle CDATA #IMPLIED
+  key CDATA #IMPLIED
+  property CDATA #IMPLIED
+>
+<!ELEMENT Selector EMPTY>
+<!ELEMENT Target EMPTY>
+<!ELEMENT Internal EMPTY>
+<!ELEMENT ObjectDefinition EMPTY>
+<!ATTLIST ObjectDefinition
+  lazy (true|false) #IMPLIED
+  singleton (true|false) #IMPLIED
+  id CDATA #IMPLIED
+  order CDATA #IMPLIED
 >
