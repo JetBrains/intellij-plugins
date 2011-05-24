@@ -32,7 +32,7 @@ public class FilesToPackageForm {
   private JButton myRemoveButton;
 
   private final Project myProject;
-  private final List<FilePathAndPathInPackage> myFilesToPackage = new LinkedList<FilePathAndPathInPackage>();
+  private List<FilePathAndPathInPackage> myFilesToPackage = new LinkedList<FilePathAndPathInPackage>();
 
   private enum Column {
     Path("Path to file or folder", String.class) {
@@ -189,5 +189,10 @@ public class FilesToPackageForm {
 
   public List<FilePathAndPathInPackage> getFilesToPackage() {
     return myFilesToPackage;
+  }
+
+  public void setFilesToPackage(final List<FilePathAndPathInPackage> filePathAndPathInPackages) {
+    myFilesToPackage = filePathAndPathInPackages;
+    fireDataChanged();
   }
 }

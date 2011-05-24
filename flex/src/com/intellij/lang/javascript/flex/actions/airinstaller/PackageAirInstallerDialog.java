@@ -404,8 +404,8 @@ public class PackageAirInstallerDialog extends DialogWrapper {
         myAirDescriptorComponent.getComponent().getComboBox().setSelectedItem(parameters.AIR_DESCRIPTOR_PATH);
         myInstallerFileNameComponent.getComponent().setText(parameters.INSTALLER_FILE_NAME);
         myInstallerLocationComponent.getComponent().setText(parameters.INSTALLER_FILE_LOCATION);
-        myFilesToPackageForm.getFilesToPackage().clear();
-        myFilesToPackageForm.getFilesToPackage().addAll(parameters.FILES_TO_PACKAGE);
+        myFilesToPackageForm.setFilesToPackage(AirInstallerParametersBase.cloneList(parameters.FILES_TO_PACKAGE));
+
         myDoNotSignCheckBox.setSelected(parameters.DO_NOT_SIGN);
         mySigningOptionsForm.setKeystorePath(parameters.KEYSTORE_PATH);
         mySigningOptionsForm.setKeystoreType(parameters.KEYSTORE_TYPE);

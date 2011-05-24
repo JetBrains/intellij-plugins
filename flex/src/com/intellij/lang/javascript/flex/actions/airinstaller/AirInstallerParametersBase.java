@@ -4,6 +4,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class AirInstallerParametersBase {
@@ -64,7 +65,15 @@ public class AirInstallerParametersBase {
     return myKeystorePassword;
   }
 
-  public static class FilePathAndPathInPackage {
+  public static List<FilePathAndPathInPackage> cloneList(final List<FilePathAndPathInPackage> filesToPackage) {
+    final List<FilePathAndPathInPackage> clonedList = new LinkedList<FilePathAndPathInPackage>();
+    for (FilePathAndPathInPackage filePathAndPathInPackage : filesToPackage) {
+      clonedList.add(filePathAndPathInPackage.clone());
+    }
+    return clonedList;
+  }
+
+  public static class FilePathAndPathInPackage implements Cloneable {
     public String FILE_PATH = "";
     public String PATH_IN_PACKAGE = "";
 
@@ -74,6 +83,15 @@ public class AirInstallerParametersBase {
     public FilePathAndPathInPackage(final String filePath, final String pathInPackage) {
       FILE_PATH = filePath;
       PATH_IN_PACKAGE = pathInPackage;
+    }
+
+    protected FilePathAndPathInPackage clone() {
+      try {
+        return (FilePathAndPathInPackage)super.clone();
+      }
+      catch (CloneNotSupportedException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 }
