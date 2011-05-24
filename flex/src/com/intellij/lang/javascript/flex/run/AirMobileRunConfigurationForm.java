@@ -17,6 +17,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -323,7 +324,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
 
   private String getSuggestedPackageFileName() {
     if (myMainClassRadioButton.isSelected()) {
-      return myMainClassEditor.getText().trim() + ".apk";
+      return StringUtil.getShortName(myMainClassEditor.getText().trim()) + ".apk";
     }
     else if (myAirDescriptorRadioButton.isSelected()) {
       final String descriptorPath = getAirDescriptorPath();

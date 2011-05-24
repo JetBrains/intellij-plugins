@@ -29,6 +29,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -222,7 +223,7 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
         if (runnerParameters instanceof AirMobileRunnerParameters) {
           final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)runnerParameters;
           mobileParams.setAirMobileRunMode(AirMobileRunnerParameters.AirMobileRunMode.MainClass);
-          mobileParams.setMobilePackageFileName(config.MAIN_CLASS + ".apk");
+          mobileParams.setMobilePackageFileName(StringUtil.getShortName(config.MAIN_CLASS) + ".apk");
         }
         else {
           runnerParameters.setAirRunMode(AirRunnerParameters.AirRunMode.MainClass);
