@@ -46,7 +46,6 @@ import java.util.List;
  * Time: 12:07:16 AM
  */
 public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuilder {
-  private String myContentRootPath;
   private List<Pair<String, String>> mySourcePaths;
   private Sdk mySdk;
   private String myTargetPlayerVersion;
@@ -74,10 +73,8 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
     }
     modifiableRootModel.setSdk(mySdk);
 
-    if (myContentRootPath == null) return;
-    final VirtualFile moduleContentRoot = LocalFileSystem.getInstance().refreshAndFindFileByPath(myContentRootPath.replace('\\', '/'));
-    if (moduleContentRoot == null) return;
-    final ContentEntry contentEntry = modifiableRootModel.addContentEntry(moduleContentRoot);
+    final ContentEntry contentEntry = doAddContentEntry(modifiableRootModel);
+    if (contentEntry == null) return;
     if (mySourcePaths == null) return;
 
     final FlexBuildConfiguration config = setupFlexBuildConfiguration(module);
@@ -87,7 +84,7 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
       try {
         FlexUtils
           .setupFlexConfigFileAndSampleCode(module, config, mySdk, myCreateCustomCompilerConfig ? myCustomCompilerConfigFileName : null,
-                                            moduleContentRoot, myCreateSampleApp ? mySampleAppFileName : null, sourceRootForFlexSetup);
+                                            contentEntry.getFile(), myCreateSampleApp ? mySampleAppFileName : null, sourceRootForFlexSetup);
       }
       catch (IOException ex) {
         throw new ConfigurationException(ex.getMessage());
@@ -285,15 +282,6 @@ public class FlexModuleBuilder extends ModuleBuilder implements SourcePathsBuild
 
   public ModuleType getModuleType() {
     return FlexModuleType.getInstance();
-  }
-
-  @Nullable
-  public String getContentEntryPath() {
-    return myContentRootPath;
-  }
-
-  public void setContentEntryPath(final String moduleRootPath) {
-    myContentRootPath = moduleRootPath;
   }
 
   public List<Pair<String, String>> getSourcePaths() {
