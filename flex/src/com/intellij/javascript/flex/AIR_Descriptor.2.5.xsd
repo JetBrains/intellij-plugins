@@ -29,7 +29,7 @@
           <xs:simpleType>
             <xs:restriction base="xs:string">
               <!-- has to be of format <0-999>.<0-999>.<0-999> -->
-              <xs:pattern value='[0-9]{1,3}(\\.[0-9]{1,3}){0,2}'/>
+              <xs:pattern value='[0-9]{1,3}(\.[0-9]{1,3}){0,2}'/>
             </xs:restriction>
           </xs:simpleType>
         </xs:element>
