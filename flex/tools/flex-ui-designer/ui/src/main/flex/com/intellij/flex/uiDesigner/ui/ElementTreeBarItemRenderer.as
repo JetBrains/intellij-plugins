@@ -1,12 +1,12 @@
 package com.intellij.flex.uiDesigner.ui {
 import cocoa.plaf.LookAndFeel;
-import cocoa.plaf.TextFormatID;
+import cocoa.plaf.TextFormatId;
 import cocoa.plaf.basic.LabeledItemRenderer;
 
 public class ElementTreeBarItemRenderer extends LabeledItemRenderer {
   override public function set laf(value:LookAndFeel):void {
     super.laf = value;
-    labelHelper.textFormat = _laf.getTextFormat(TextFormatID.SMALL_SYSTEM);
+    labelHelper.textFormat = _laf.getTextFormat(TextFormatId.SMALL_SYSTEM);
   }
 
   override protected function measure():void {

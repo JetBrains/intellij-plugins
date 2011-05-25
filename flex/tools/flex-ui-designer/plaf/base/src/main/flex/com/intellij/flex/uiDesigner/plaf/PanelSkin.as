@@ -5,7 +5,7 @@ import cocoa.LabelHelper;
 import cocoa.Toolbar;
 import cocoa.View;
 import cocoa.plaf.basic.AbstractSkin;
-import cocoa.plaf.TextFormatID;
+import cocoa.plaf.TextFormatId;
 import cocoa.plaf.WindowSkin;
 
 import flash.display.DisplayObject;
@@ -64,7 +64,7 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
     }
     addChild(DisplayObject(_contentView));
 
-    labelHelper.textFormat = laf.getTextFormat(TextFormatID.SYSTEM_HIGHLIGHTED);
+    labelHelper.textFormat = laf.getTextFormat(TextFormatId.SYSTEM_HIGHLIGHTED);
 
 //    minimizeButton = createControlButton("minimize", "minimizeButton");
 //    closeSideButton = createControlButton("closeSide", "closeSideButton");

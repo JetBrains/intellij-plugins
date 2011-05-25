@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
+import cocoa.text.TextLineUtil;
 import cocoa.util.StringUtil;
-import cocoa.util.TextLineUtil;
 
 import com.intellij.flex.uiDesigner.Module;
 import com.intellij.flex.uiDesigner.css.CssCondition;

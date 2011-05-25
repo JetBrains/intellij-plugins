@@ -26,7 +26,11 @@ import org.tinytlf.layout.TinytlfSprite;
 import org.tinytlf.layout.properties.LayoutProperties;
 import org.tinytlf.util.fte.TextLineUtil;
 
-public class Interactor {
+public class
+
+
+
+Interactor {
   private static const NORMAL:int = 0;
   private static const ACTIVE:int = 1;
   

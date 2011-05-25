@@ -5,11 +5,11 @@
   <parent>
     <groupId>org.flyti</groupId>
     <artifactId>flash-forge</artifactId>
-    <version>21</version>
+    <version>24</version>
   </parent>
 
   <artifactId>foundation</artifactId>
-  <version>1.2.1</version>
+  <version>1.2.2</version>
   <packaging>swc</packaging>
 
   <dependencies>

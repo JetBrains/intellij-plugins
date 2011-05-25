@@ -1,10 +1,4 @@
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
-	<include-namespaces>
-		<uri>test</uri>
-	</include-namespaces>
-	<include-sources>
-		<path-element>@@source@@/flex</path-element>
-	</include-sources>
 	<output>@@target@@/test-data-libs.swc</output>
 	<target-player>10.2</target-player>
 	<tools-locale>en_US</tools-locale>
@@ -15,20 +9,20 @@
 		<source-path>
 			<path-element>@@source@@/flex</path-element>
 		</source-path>
-		<theme/>
-		<fonts>
-			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
-		</fonts>
+		<include-libraries/>
 		<external-library-path>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/mx/4.5.0.20968/mx-4.5.0.20968.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/playerglobal/10.2/playerglobal.swc</path-element>
 		</external-library-path>
+		<theme/>
+		<fonts>
+			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
+		</fonts>
 		<library-path/>
 		<accessible>false</accessible>
 		<headless-server>false</headless-server>
-		<include-libraries/>
 		<namespaces>
 			<namespace>
 				<uri>http://ns.adobe.com/mxml/2009</uri>
@@ -54,7 +48,13 @@
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<metadata>
-		<date>5/19/11 1:37 PM</date>
+		<date>5/25/11 5:21 PM</date>
 		<title>test-data-libs</title>
 	</metadata>
+	<include-sources>
+		<path-element>@@source@@/flex</path-element>
+	</include-sources>
+	<include-namespaces>
+		<uri>test</uri>
+	</include-namespaces>
 </flex-config>

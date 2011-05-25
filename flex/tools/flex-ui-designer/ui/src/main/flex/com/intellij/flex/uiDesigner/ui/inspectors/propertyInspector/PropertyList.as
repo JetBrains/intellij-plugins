@@ -1,26 +1,19 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
-import avmplus.HIDE_OBJECT;
-import avmplus.INCLUDE_ACCESSORS;
-import avmplus.INCLUDE_METADATA;
-import avmplus.INCLUDE_TRAITS;
-import avmplus.INCLUDE_VARIABLES;
-import avmplus.describe;
-
-import cocoa.plaf.LookAndFeel;
+import cocoa.Insets;
+import cocoa.plaf.LookAndFeelUtil;
+import cocoa.plaf.TextFormatId;
+import cocoa.tableView.TableColumn;
+import cocoa.tableView.TableView;
+import cocoa.tableView.TextTableColumn;
+import cocoa.text.TextLineRendererFactory;
 
 import com.intellij.flex.uiDesigner.ui.inspectors.AbstractTitledBlockItemRenderer;
 
-import mx.core.IDataRenderer;
+import flash.display.DisplayObject;
 
-import org.flyti.util.ArrayList;
-
-
-public class PropertyList extends AbstractTitledBlockItemRenderer implements IDataRenderer {
-  //private const dataGrid:DataGrid = new DataGrid();
-
-  public function PropertyList() {
-    //dataGrid.columns = new ArrayList(new <Object>[createGridColumn("Property"), createGridColumn("Value")]);
-  }
+public class PropertyList extends AbstractTitledBlockItemRenderer {
+  private const tableView:TableView = new TableView();
+  private var source:MyTableViewDataSource;
 
   //private function createGridColumn(headerText:String):GridColumn {
   //  var column:GridColumn = new GridColumn();
@@ -29,20 +22,7 @@ public class PropertyList extends AbstractTitledBlockItemRenderer implements IDa
   //  return column;
   //}
 
-  private const source:Vector.<Object> = new Vector.<Object>(64);
-  private var sourceItemCounter:int = 0;
-  private const sourceList:ArrayList = new ArrayList(source);
-
-  override public function set laf(value:LookAndFeel):void {
-    super.laf = value;
-    labelHelper.text = "Other";
-    //dataGrid.y = border.layoutHeight;
-  }
-
-  override protected function createChildren():void {
-    //addChild(dataGrid);
-  }
-
+  private var dataChanged:Boolean;
   private var _object:Object;
   public function get data():Object {
     return _object;
@@ -54,8 +34,72 @@ public class PropertyList extends AbstractTitledBlockItemRenderer implements IDa
     }
     
     _object = value;
+    dataChanged = true;
+    invalidateProperties();
+  }
 
-    var traits:Object = describe(value, INCLUDE_ACCESSORS | INCLUDE_VARIABLES | INCLUDE_METADATA | HIDE_OBJECT | INCLUDE_TRAITS).traits;
+  override protected function createChildren():void {
+    super.createChildren();
+
+    laf = LookAndFeelUtil.find(parent);
+    labelHelper.text = "Other";
+
+    tableView.dataSource = source = new MyTableViewDataSource();
+    tableView.minNumberOfRows = 3;
+    var insets:Insets = new Insets(2, NaN, NaN, 3);
+    var textLineRendererFactory:TextLineRendererFactory = new TextLineRendererFactory(laf.getTextFormat(TextFormatId.SMALL_SYSTEM));
+    var firstColumn:TextTableColumn = new TextTableColumn("name", textLineRendererFactory, tableView, insets);
+    firstColumn.width = 120;
+    tableView.columns = new <TableColumn>[firstColumn];
+
+    var skin:DisplayObject = DisplayObject(tableView.createView(laf));
+    skin.y = border.layoutHeight;
+    addChild(skin);
+  }
+
+  override protected function measure():void {
+    measuredHeight = border.layoutHeight + tableView.skin.getExplicitOrMeasuredHeight();
+  }
+
+  override protected function commitProperties():void {
+    super.commitProperties();
+
+    if (dataChanged) {
+      dataChanged = false;
+      source.update(_object);
+    }
+  }
+
+  override protected function updateDisplayList(w:Number, h:Number):void {
+    if (w == 0) {
+      return;
+    }
+
+    super.updateDisplayList(w, h);
+
+    tableView.skin.setActualSize(w, h - border.layoutHeight);
+  }
+}
+}
+
+import avmplus.HIDE_OBJECT;
+import avmplus.INCLUDE_ACCESSORS;
+import avmplus.INCLUDE_METADATA;
+import avmplus.INCLUDE_TRAITS;
+import avmplus.INCLUDE_VARIABLES;
+import avmplus.describe;
+
+import cocoa.tableView.TableColumn;
+import cocoa.tableView.TableViewDataSource;
+
+import flash.errors.IllegalOperationError;
+
+class MyTableViewDataSource implements TableViewDataSource {
+  private const source:Vector.<Object> = new Vector.<Object>(64);
+  private var sourceItemCounter:int = 0;
+
+  public function update(object:Object):void {
+    var traits:Object = describe(object, INCLUDE_ACCESSORS | INCLUDE_VARIABLES | INCLUDE_METADATA | HIDE_OBJECT | INCLUDE_TRAITS).traits;
     for each (var accessor:Object in traits.accessors) {
       processProperty(accessor);
     }
@@ -88,17 +132,18 @@ public class PropertyList extends AbstractTitledBlockItemRenderer implements IDa
       source.length = sourceItemCounter + 8;
     }
 
-    source[sourceItemCounter++] = name;
+    source[sourceItemCounter++] = accessor;
   }
 
-  override protected function measure():void {
-    //measuredHeight = border.layoutHeight + dataGrid.getExplicitOrMeasuredHeight();
+  public function get numberOfRows():int {
+    return sourceItemCounter;
   }
 
-  override protected function updateDisplayList(w:Number, h:Number):void {
-    super.updateDisplayList(w, h);
-
-    //dataGrid.setActualSize(w, h - border.layoutHeight);
+  public function getValue(column:TableColumn, rowIndex:int):Object {
+    throw new IllegalOperationError();
   }
-}
+
+  public function getStringValue(column:TableColumn, rowIndex:int):String {
+    return source[rowIndex][column.dataField];
+  }
 }

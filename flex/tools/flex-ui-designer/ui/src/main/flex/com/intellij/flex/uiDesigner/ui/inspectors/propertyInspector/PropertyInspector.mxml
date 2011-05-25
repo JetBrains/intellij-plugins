@@ -1,44 +1,22 @@
-<inspectors:AbstractInspector xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="cocoa" xmlns:inspectors="com.intellij.flex.uiDesigner.ui.inspectors.*">
+<Panel xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="cocoa" xmlns:s="library://ns.adobe.com/flex/spark" xmlns:propertyinspector="com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.*">
   <fx:Script><![CDATA[
     import cocoa.ScrollPolicy;
-
-    import org.flyti.util.ArrayList;
-
-    private const source:Vector.<Object> = new Vector.<Object>(1);
-    private var sourceItemCounter:int = 0;
-    private const sourceList:ArrayList = new ArrayList(source);
-
-    private const propertyList:PropertyList = new PropertyList();
-    private static const propertyListItemRendererFactory:ClassFactory = new ClassFactory(PropertyList);
-
-    private function itemRendererFunction(item:Object):IFactory {
-      return propertyListItemRendererFactory;
-    }
 
     public function set element(value:DisplayObject):void {
       updateData(value);
     }
 
     private function updateData(element:Object):void {
-      sourceItemCounter = 1;
-      if (element == null) {
-        return;
-      }
-
-      source[0] = propertyList;
-      source.length = sourceItemCounter;
-
-      if (list.dataProvider == null) {
-        list.dataProvider = sourceList;
-      }
-      else {
-        sourceList.refresh();
-      }
+      propertyList.data = element;
     }
-
     ]]></fx:Script>
 
   <ScrollView horizontalScrollPolicy="{ScrollPolicy.OFF}">
-    <DataGroup id="list" itemRendererFunction="itemRendererFunction"/>
+    <Container>
+      <layout>
+        <s:VerticalLayout horizontalAlign="justify"/>
+      </layout>
+      <propertyinspector:PropertyList id="propertyList" height="100%"/>
+    </Container>
   </ScrollView>
-</inspectors:AbstractInspector>
+</Panel>
