@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.run;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.ModulesComboboxWrapper;
+import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
@@ -32,7 +33,9 @@ import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
+import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase.FilePathAndPathInPackage;
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.*;
 
 public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunConfiguration> {
@@ -78,6 +81,8 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
   private JLabel myAdlOptionsLabel;
   private RawCommandLineEditor myAdlOptionsField;
   private FlexSdkComboBoxWithBrowseButton myDebuggerSdkCombo;
+
+  private List<AirInstallerParametersBase.FilePathAndPathInPackage> myFilesToPackage;
 
   public AirMobileRunConfigurationForm(final Project project) {
     myProject = project;
@@ -130,8 +135,6 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
 
     updateControls();
     AirRunConfigurationForm.updateMainClassField(myProject, myModulesComboboxWrapper, myMainClassEditor, myMainClassFilter);
-
-    myPackagingOptionsButton.setVisible(false);
   }
 
   private void initEmulatorRelatedControls() {
@@ -165,18 +168,22 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
   }
 
   private void initPackagingOptionsButton() {
-    /*
     myPackagingOptionsButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         final MobileAirPackageOptionsDialog dialog =
-          new MobileAirPackageOptionsDialog(myProject, myModulesComboboxWrapper.getSelectedModule(), getRunTarget());
+          new MobileAirPackageOptionsDialog(myProject, myModulesComboboxWrapper.getSelectedModule(), getRunTarget(),
+                                            (AirInstallerParametersBase.cloneList(myFilesToPackage)));
         dialog.show();
         if (dialog.isOK()) {
-          // todo update run config
+          final List<FilePathAndPathInPackage> newFilesToPackage = dialog.getFilesToPackage();
+          if (!newFilesToPackage.equals(myFilesToPackage)) {
+            myFilesToPackage = newFilesToPackage;
+            // fake change to make sure that run configuration becomes modified
+            myPackageFileNameTextField.setText(myPackageFileNameTextField.getText());
+          }
         }
       }
     });
-    */
   }
 
   private void initWhatToLaunchControls() {
@@ -308,6 +315,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     myOnIOSDeviceRadioButton.setSelected(params.getAirMobileRunTarget() == AirMobileRunTarget.iOSDevice);
 
     myPackageFileNameTextField.setText(params.getMobilePackageFileName());
+    myFilesToPackage = params.getFilesToPackage();
 
     myDebugOverNetworkRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.Network);
     myDebugOverUSBRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.USB);
@@ -359,6 +367,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     }
 
     params.setMobilePackageFileName(myPackageFileNameTextField.getText().trim());
+    params.setFilesToPackage(myFilesToPackage);
 
     params.setDebugTransport(myDebugOverNetworkRadioButton.isSelected()
                              ? AirMobileDebugTransport.Network

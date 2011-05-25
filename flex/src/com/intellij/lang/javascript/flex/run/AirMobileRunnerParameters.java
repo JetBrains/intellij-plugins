@@ -1,7 +1,13 @@
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
+import com.intellij.util.xmlb.annotations.AbstractCollection;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase.FilePathAndPathInPackage;
 
 public class AirMobileRunnerParameters extends AirRunnerParameters {
 
@@ -68,6 +74,7 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
   private @NotNull String myMobilePackageFileName = "";
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = MobileAirUtil.DEBUG_PORT_DEFAULT;
+  private List<FilePathAndPathInPackage> filesToPackage = new LinkedList<FilePathAndPathInPackage>();
 
   @NotNull
   public AirMobileRunTarget getAirMobileRunTarget() {
@@ -161,6 +168,15 @@ public class AirMobileRunnerParameters extends AirRunnerParameters {
 
   public void setUsbDebugPort(final int usbDebugPort) {
     myUsbDebugPort = usbDebugPort;
+  }
+
+  @AbstractCollection(elementTypes = {FilePathAndPathInPackage.class})
+  public List<FilePathAndPathInPackage> getFilesToPackage() {
+    return filesToPackage;
+  }
+
+  public void setFilesToPackage(final List<FilePathAndPathInPackage> filesToPackage) {
+    this.filesToPackage = filesToPackage;
   }
 
   public AirMobileRunnerParameters clone() {

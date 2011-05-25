@@ -84,7 +84,6 @@ public class FilesToPackageForm {
     updateRemoveButtonState();
   }
 
-
   private void initTable() {
     myFilesToPackageTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE); // otherwise model is not in sync with view
     myFilesToPackageTable.setRowHeight(20);
@@ -177,6 +176,10 @@ public class FilesToPackageForm {
 
   private void updateRemoveButtonState() {
     myRemoveButton.setEnabled(myFilesToPackageTable.getSelectedRowCount() > 0);
+  }
+
+  public void setPanelTitle(final String title) {
+    myMainPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title));
   }
 
   public void stopEditing() {

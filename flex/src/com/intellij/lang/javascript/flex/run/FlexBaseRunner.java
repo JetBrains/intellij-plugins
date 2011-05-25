@@ -648,9 +648,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       outputDirPath = params.getAirRootDirPath() + (lastSlashIndex == -1 ? "" : "/" + swfPath.substring(0, lastSlashIndex));
     }
 
-    final List<AirInstallerParametersBase.FilePathAndPathInPackage> files =
-      new ArrayList<AirInstallerParametersBase.FilePathAndPathInPackage>();
-    files.add(new AirInstallerParametersBase.FilePathAndPathInPackage(params.getAirRootDirPath() + "/" + swfPath, swfName));
+    final List<FilePathAndPathInPackage> files = AirInstallerParametersBase.cloneList(params.getFilesToPackage());
+    files.add(0, new FilePathAndPathInPackage(params.getAirRootDirPath() + "/" + swfPath, swfName));
 
     final AndroidPackageType packageType = isDebug
                                            ? params.getDebugTransport() == AirMobileDebugTransport.Network

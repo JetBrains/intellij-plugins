@@ -120,6 +120,10 @@ public class SigningOptionsForm {
     myMoreOptionsHyperlinkLabel = new HoverHyperlinkLabel(MORE_OPTIONS);
   }
 
+  public JPanel getMainPanel() {
+    return myMainPanel;
+  }
+
   private void showMoreOptions(final boolean show) {
     myMoreOptionsHyperlinkLabel.setText(show ? LESS_OPTIONS : MORE_OPTIONS);
     updateMoreOptions();
