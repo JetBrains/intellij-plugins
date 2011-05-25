@@ -27,7 +27,7 @@ public class FlexRunnerParameters implements Cloneable {
   private @NotNull String myHtmlOrSwfFilePath = "";
   private @NotNull String myUrlToLaunch = "http://";
   private @NotNull String myMainClassName = "";
-  private boolean myRunTrusted;
+  private boolean myRunTrusted = true;
   private @NotNull LauncherType myLauncherType = LauncherType.OSDefault;
   private @NotNull BrowsersConfiguration.BrowserFamily myBrowserFamily = BrowsersConfiguration.BrowserFamily.FIREFOX;
   private @NotNull String myPlayerPath = SystemInfo.isMac
