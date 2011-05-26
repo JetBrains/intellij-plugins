@@ -39,15 +39,18 @@ public class FlexCompilerConfigFileUtil {
   public static final String FILE_SPECS = "file-specs";
   public static final String OUTPUT = "output";
 
-
-  /**
-   * This array must contain all elements that can be used for swc compilation but can't be used for swf compilation
-   * and non-appendable elements that are added to_temp_flexunit_config.xml file by FlexCompilerHandler#generateConfigFileText() in
-   * case of using custom compiler configuration file (like "debug", "file-specs", "output")
-   */
   private static final String[] ELEMENTS_TO_REMOVE =
-    {"compute-digest", "directory", "include-classes", "include-file", "include-lookup-only", "include-namespaces", "include-sources",
-      "include-stylesheet", "debug", "file-specs", "output"};
+    {
+      // these 8 options are for SWC compilation only, not applicable for SWF compilation
+      "compute-digest", "directory", "include-classes", "include-file",
+      "include-lookup-only", "include-namespaces", "include-sources", "include-stylesheet",
+
+      // these 3 settings are non-appendable elements that are added to generated config file by FlexCompilerHandler#generateConfigFileText()
+      "debug", "file-specs", "output",
+
+      // load-externs option should not be used because it can lead to runtime errors like IDEA-70155
+      "load-externs"
+    };
 
   private FlexCompilerConfigFileUtil() {
   }
