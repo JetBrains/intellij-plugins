@@ -600,7 +600,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     }
 
     if (!sourcePathsWithLocaleToken.isEmpty() || !sourcePathsWithoutLocaleToken.isEmpty()) {
-      builder.append("\n    <source-path>");
+      builder.append("\n    <source-path append=\"true\">");
       // source paths with {locale} token should go first
       for (final String sourcePath : sourcePathsWithLocaleToken) {
         addTag(builder, "path-element", sourcePath, "\n      ");
@@ -737,7 +737,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         // folder that contains css file must be source folder and must be first in source-path list, otherwise stupid compiler says that css file must have package corresponding its path
         configTextBuilder
           .append("\n  <compiler>")
-          .append("\n    <source-path>")
+          .append("\n    <source-path append=\"true\">")
           .append("\n      <path-element>").append(cssDirPath).append("</path-element>")
           .append("\n    </source-path>")
           .append("\n  </compiler>");
@@ -916,6 +916,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     final List<String> libraryPaths = new ArrayList<String>();
     final List<String> externalLibraryPaths = new ArrayList<String>();
     final List<String> includedLibraryPaths = new ArrayList<String>();
+    final List<String> rawLibSourcePaths = new ArrayList<String>();
 
     for (final OrderEntry o : ModuleRootManager.getInstance(module).getOrderEntries()) {
 
@@ -935,7 +936,11 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
         for (VirtualFile libFile : libraryOrderEntry.getRootFiles(OrderRootType.CLASSES)) {
           libFile = getRealFile(libFile);
-          if (libFile != null && !libFile.isDirectory() && "swc".equalsIgnoreCase(libFile.getExtension())) {
+
+          if (libFile != null && libFile.isDirectory()) {
+            rawLibSourcePaths.add(libFile.getPath());
+          }
+          else if (libFile != null && !libFile.isDirectory() && "swc".equalsIgnoreCase(libFile.getExtension())) {
             // "airglobal.swc" and "playerglobal.swc" file names are hardcoded in Flex compiler
             // including libraries like "playerglobal-3.5.0.12683-9.swc" may lead to error at runtime like "VerifyError Error #1079: Native methods are not allowed in loaded code."
             // so here we just skip including such libraries in config file.
@@ -992,38 +997,19 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       }
     }
 
-    addExternalLibraryPaths(configTextBuilder, externalLibraryPaths);
-    addLibraryPaths(configTextBuilder, libraryPaths);
-    addIncludedLibraryPaths(configTextBuilder, includedLibraryPaths);
+    addPathElements(configTextBuilder, "source-path", "path-element", rawLibSourcePaths);
+    addPathElements(configTextBuilder, "external-library-path", "path-element", externalLibraryPaths);
+    addPathElements(configTextBuilder, "library-path", "path-element", libraryPaths);
+    addPathElements(configTextBuilder, "include-libraries", "library", includedLibraryPaths);
   }
 
-  private static void addExternalLibraryPaths(final StringBuilder configTextBuilder, final List<String> libraryPaths) {
-    if (!libraryPaths.isEmpty()) {
-      configTextBuilder.append("\n    <external-library-path append=\"true\">");
-      for (final String libraryPath : libraryPaths) {
-        addTag(configTextBuilder, "path-element", libraryPath, "\n      ");
+  private static void addPathElements(final StringBuilder configTextBuilder, final String enclosingElementName, final String pathElementName, final List<String> paths) {
+    if (!paths.isEmpty()) {
+      configTextBuilder.append("\n    <").append(enclosingElementName).append(" append=\"true\">");
+      for (final String path : paths) {
+        addTag(configTextBuilder, pathElementName, path, "\n      ");
       }
-      configTextBuilder.append("\n    </external-library-path>");
-    }
-  }
-
-  private static void addLibraryPaths(final StringBuilder configTextBuilder, final List<String> libraryPaths) {
-    if (!libraryPaths.isEmpty()) {
-      configTextBuilder.append("\n    <library-path append=\"true\">");
-      for (final String libraryPath : libraryPaths) {
-        addTag(configTextBuilder, "path-element", libraryPath, "\n      ");
-      }
-      configTextBuilder.append("\n    </library-path>");
-    }
-  }
-
-  private static void addIncludedLibraryPaths(final StringBuilder configTextBuilder, final List<String> libraryPaths) {
-    if (!libraryPaths.isEmpty()) {
-      configTextBuilder.append("\n    <include-libraries append=\"true\">");
-      for (final String libraryPath : libraryPaths) {
-        addTag(configTextBuilder, "library", libraryPath, "\n      ");
-      }
-      configTextBuilder.append("\n    </include-libraries>");
+      configTextBuilder.append("\n    </").append(enclosingElementName).append(">");
     }
   }
 

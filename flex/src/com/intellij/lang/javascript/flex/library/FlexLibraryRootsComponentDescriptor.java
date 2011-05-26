@@ -30,10 +30,11 @@ public class FlexLibraryRootsComponentDescriptor extends DefaultLibraryRootsComp
     }
     return super.getRootTypePresentation(type);
   }
+
   @NotNull
   public List<? extends AttachRootButtonDescriptor> createAttachButtons() {
-    return Arrays.asList(new AddSwcDescriptor(), new AddSwcDirectoriesDescriptor(), new AddSwcSourcesDescriptor(),
-                         new AddDocDescriptor(), new AddDocUrlDescriptor());
+    return Arrays.asList(new AddSwcDescriptor(), new AddSwcDirectoriesDescriptor(), new AddRawASLibraryDescriptor(),
+                         new AddSwcSourcesDescriptor(), new AddDocDescriptor(), new AddDocUrlDescriptor());
   }
 
   private static class AddSwcDescriptor extends ChooserBasedAttachRootButtonDescriptor {
@@ -82,6 +83,24 @@ public class FlexLibraryRootsComponentDescriptor extends DefaultLibraryRootsComp
 
     public String getChooserTitle(final String libraryName) {
       return FlexBundle.message("select.folder.with.swc.files");
+    }
+
+    public String getChooserDescription() {
+      return null;
+    }
+  }
+
+  private static class AddRawASLibraryDescriptor extends ChooserBasedAttachRootButtonDescriptor {
+    private AddRawASLibraryDescriptor() {
+      super(OrderRootType.CLASSES, FlexBundle.message("add.raw.actionscript.libraries.button"));
+    }
+
+    public FileChooserDescriptor createChooserDescriptor() {
+      return new FileChooserDescriptor(false, true, false, false, false, true);
+    }
+
+    public String getChooserTitle(final String libraryName) {
+      return FlexBundle.message("select.folder.with.raw.actionscript.sources");
     }
 
     public String getChooserDescription() {
