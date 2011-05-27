@@ -175,7 +175,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
       }
     }
 
-    JSVisibilityUtil.setVisibility(((JSAttributeListOwner)newClass).getAttributeList(),
+    JSVisibilityUtil.setVisibility((JSAttributeListOwner)newClass,
                                    makePublic ? JSAttributeList.AccessType.PUBLIC : JSAttributeList.AccessType.PACKAGE_LOCAL);
     myNonCodeUsages = nonCodeUsages.toArray(new NonCodeUsageInfo[nonCodeUsages.size()]);
 

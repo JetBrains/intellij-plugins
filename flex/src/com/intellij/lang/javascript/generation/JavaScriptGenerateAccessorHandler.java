@@ -342,7 +342,7 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
       }
 
       if (myMakePrivate) {
-        JSVisibilityUtil.setVisibility(jsVariable.getAttributeList(), JSAttributeList.AccessType.PRIVATE);
+        JSVisibilityUtil.setVisibility(jsVariable, JSAttributeList.AccessType.PRIVATE);
       }
     }
 
