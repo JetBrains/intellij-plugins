@@ -10,7 +10,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.xml.XmlAttribute;
 
 /**
@@ -18,7 +20,7 @@ import com.intellij.psi.xml.XmlAttribute;
  * Date: 03.09.2010
  * Time: 15:09:53
  */
-public class FlexImplicitUsageProvider implements ImplicitUsageProvider {
+public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Condition<PsiNamedElement> {
   @Override
   public boolean isImplicitUsage(PsiElement element) {
     if (element instanceof XmlAttribute &&
@@ -36,11 +38,15 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider {
       FlexUnitSupport flexUnitSupport = FlexUnitSupport.getSupport(moduleForPsiElement);
       if (flexUnitSupport != null && flexUnitSupport.isTestClass(clazz, true)) return true;
     } else if (element instanceof JSFunction) {
-      JSFunction function = (JSFunction)element;
-      Module moduleForPsiElement = ModuleUtil.findModuleForPsiElement(function);
-      FlexUnitSupport flexUnitSupport = FlexUnitSupport.getSupport(moduleForPsiElement);
-      if (flexUnitSupport != null && flexUnitSupport.isTestMethod(function)) return true;
+      if (isTestMethod((JSFunction)element)) return true;
     }
+    return false;
+  }
+
+  private static boolean isTestMethod(JSFunction function) {
+    Module moduleForPsiElement = ModuleUtil.findModuleForPsiElement(function);
+    FlexUnitSupport flexUnitSupport = FlexUnitSupport.getSupport(moduleForPsiElement);
+    if (flexUnitSupport != null && flexUnitSupport.isTestMethod(function)) return true;
     return false;
   }
 
@@ -51,6 +57,14 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider {
 
   @Override
   public boolean isImplicitWrite(PsiElement element) {
+    return false;
+  }
+
+  @Override
+  public boolean value(PsiNamedElement psiNamedElement) {
+    if (psiNamedElement instanceof JSFunction) {
+      if (isTestMethod((JSFunction)psiNamedElement)) return true;
+    }
     return false;
   }
 }

@@ -125,6 +125,7 @@
                              implementationClass="com.intellij.lang.javascript.flex.ActionScriptRefactoringSupportProvider"
                              order="before JavascriptRefactoringSupportProvider"/>
     <implicitUsageProvider implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider"/>
+    <cantBeStatic implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider" />
     <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider"/>
     <langCodeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptLanguageCodeStyleSettingsProvider"/>
 
