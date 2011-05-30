@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeInsight.CodeInsightSettings;
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate;
+import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -13,13 +13,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlComment;
 import com.intellij.util.text.CharArrayUtil;
+import org.jetbrains.annotations.NotNull;
 
-public class MxmlEnterHandler implements EnterHandlerDelegate {
-  public Result preprocessEnter(PsiFile file,
-                                Editor editor,
-                                Ref<Integer> caretOffset,
-                                Ref<Integer> caretAdvance,
-                                DataContext dataContext,
+public class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
+  public Result preprocessEnter(@NotNull PsiFile file,
+                                @NotNull Editor editor,
+                                @NotNull Ref<Integer> caretOffset,
+                                @NotNull Ref<Integer> caretAdvance,
+                                @NotNull DataContext dataContext,
                                 EditorActionHandler originalHandler) {
     int offset = caretOffset.get().intValue();
     
