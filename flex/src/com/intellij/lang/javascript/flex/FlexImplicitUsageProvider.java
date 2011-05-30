@@ -12,7 +12,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.xml.XmlAttribute;
 
 /**
@@ -20,7 +19,7 @@ import com.intellij.psi.xml.XmlAttribute;
  * Date: 03.09.2010
  * Time: 15:09:53
  */
-public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Condition<PsiNamedElement> {
+public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Condition<PsiElement> {
   @Override
   public boolean isImplicitUsage(PsiElement element) {
     if (element instanceof XmlAttribute &&
@@ -61,7 +60,7 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
   }
 
   @Override
-  public boolean value(PsiNamedElement psiNamedElement) {
+  public boolean value(PsiElement psiNamedElement) {
     if (psiNamedElement instanceof JSFunction) {
       if (isTestMethod((JSFunction)psiNamedElement)) return true;
     }
