@@ -17,7 +17,6 @@ import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfigurationType;
 import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -59,7 +58,7 @@ final class DesignerApplicationUtil {
 
     List<Sdk> sdks = new ArrayList<Sdk>();
     for (Sdk sdk: ProjectJdkTable.getInstance().getAllJdks()) {
-      if (sdk.getSdkType() instanceof IFlexSdkType && sdk.getSdkType() instanceof FlexmojosSdkType) {
+      if (sdk.getSdkType() instanceof IFlexSdkType) {
         String version = sdk.getVersionString();
         // at least 4.5
         if (version == null || !(version.length() >= 3 &&
