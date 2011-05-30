@@ -107,27 +107,10 @@ public class NewFlexComponentAction extends NewJSClassActionBase {
 
           // invoke completion for parent component
           TemplateBuilderImpl builder = new TemplateBuilderImpl(rootTag);
-          builder.replaceElement(openingNode, new MacroCallNode(new CompleteMacro()));
+          builder.replaceElement(openingNode, "openingNode", new MacroCallNode(new CompleteMacro()), true);
 
           // closing tag text should follow opening tag text
-          builder.replaceElement(closingNode, new Expression() {
-
-            @Override
-            public Result calculateResult(ExpressionContext context) {
-              final TemplateState templateState = TemplateManagerImpl.getTemplateState(context.getEditor());
-              return templateState.getVariableValue(templateState.getTemplate().getVariableNameAt(0));
-            }
-
-            @Override
-            public Result calculateQuickResult(ExpressionContext context) {
-              return calculateResult(context);
-            }
-
-            @Override
-            public LookupElement[] calculateLookupItems(ExpressionContext context) {
-              return new LookupElement[0];
-            }
-          }, false);
+          builder.replaceElement(closingNode, "closingNode", "openingNode", false);
           builder.run();
         }
       };
