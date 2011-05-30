@@ -1,5 +1,8 @@
 package com.intellij.lang.javascript.generation;
 
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.template.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -16,18 +19,16 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
-import com.intellij.lang.javascript.validation.fixes.BaseCreateFix;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -42,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
 
@@ -205,29 +207,15 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
     return initializerText.replace("'", "").replace("\"", "").replace(" ", "");
   }
 
-  private static void moveCursorInsideMethod(final Editor someEditor, final PsiElement addedElement) {
-    final Editor topEditor = InjectedLanguageUtil.getTopLevelEditor(someEditor);
-
-    final PsiElement lastElement = PsiTreeUtil.getDeepestLast(addedElement);
-    final PsiElement prevElement = lastElement.getPrevSibling();
-
-    final int offset = (prevElement != null ? prevElement : lastElement).getTextOffset();
-    final int offsetToNavigate = InjectedLanguageManager.getInstance(addedElement.getProject()).injectedToHost(addedElement, offset);
-
-    final PsiFile psiFile = addedElement.getContainingFile();
-    final PsiElement context = psiFile.getContext();
-    final PsiFile baseFile = context == null ? psiFile : context.getContainingFile();
-
-    BaseCreateFix.navigate(addedElement.getProject(), topEditor, offsetToNavigate, baseFile.getVirtualFile());
-  }
-
   public static class GenerateEventHandlerFix extends BaseCreateMethodsFix {
     private boolean inMxmlEventAttributeValue;
     private boolean inEventListenerCall;
     private PsiElement handlerCallerAnchorInArgumentList;
+    private JSReferenceExpression myExistingUnresolvedReverence;
     private boolean inEventConstantExpression;
     private JSExpressionStatement eventConstantExpression;
     private String eventHandlerName;
+    private String eventHandlerName2;
     private String methodBody;
     private String eventClassFqn;
     private boolean userCancelled;
@@ -242,6 +230,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
       inEventListenerCall = false;
       handlerCallerAnchorInArgumentList = null;
       eventHandlerName = "eventHandler";
+      eventHandlerName2 = "onEvent";
       methodBody = "";
       eventClassFqn = EVENT_BASE_CLASS_FQN;
       userCancelled = false;
@@ -271,7 +260,9 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
         inEventConstantExpression = true;
         eventConstantExpression = eventConstantInfo.first;
         eventClassFqn = eventConstantInfo.second;
-        eventHandlerName = eventConstantInfo.third + "Handler";
+        final String eventName = eventConstantInfo.third;
+        eventHandlerName = eventName + "Handler";
+        eventHandlerName2 = "on" + (eventName.isEmpty() ? "Event" : Character.toUpperCase(eventName.charAt(0)) + eventName.substring(1));
         return;
       }
 
@@ -296,38 +287,88 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
 
     public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
       if (userCancelled) return;
-      insertEventHandlerReference(editor, file);
+      final PsiElement referenceElement = insertEventHandlerReference(editor, file);
       evalAnchor(editor, file);
       final String eventClassShortName = StringUtil.getShortName(eventClassFqn);
       final String functionText =
         "private function " + eventHandlerName + "(event:" + eventClassShortName + "):void{" + methodBody + "\n}\n";
 
-      final PsiElement addedElement = doAddOneMethod(project, functionText, anchor);
-      moveCursorInsideMethod(editor, addedElement);
+      final JSFunction addedElement = (JSFunction)doAddOneMethod(project, functionText, anchor);
       ImportUtils.importAndShortenReference(eventClassFqn, addedElement, true, false);
+
+      final PsiElement templateBaseElement = referenceElement == null ? addedElement : myJsClass;
+      final TemplateBuilderImpl templateBuilder = new TemplateBuilderImpl(templateBaseElement);
+
+      final PsiElement lastElement = PsiTreeUtil.getDeepestLast(addedElement);
+      final PsiElement prevElement = lastElement.getPrevSibling();
+      templateBuilder.setEndVariableBefore((prevElement != null ? prevElement : lastElement));
+
+      templateBuilder
+        .replaceElement(addedElement.getAttributeList().findAccessTypeElement(), new MyExpression("private", "protected", "public"));
+      templateBuilder
+        .replaceElement(addedElement.findNameIdentifier().getPsi(), "handlerName", new MyExpression(eventHandlerName, eventHandlerName2),
+                        true);
+      templateBuilder
+        .replaceElement(addedElement.getParameterList().getParameters()[0].findNameIdentifier().getPsi(), new MyExpression("event", "e"));
+
+      if (referenceElement != null && referenceElement.isValid()) {
+        templateBuilder.replaceElement(referenceElement, "handlerReference", "handlerName", false);
+      }
+
+      final Editor topEditor = InjectedLanguageUtil.getTopLevelEditor(editor);
+      PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(topEditor.getDocument());
+
+      final Template template = templateBuilder.buildInlineTemplate();
+
+      final int startOffset = templateBaseElement.getTextRange().getStartOffset();
+      topEditor.getCaretModel().moveToOffset(InjectedLanguageManager.getInstance(project).injectedToHost(templateBaseElement, startOffset));
+
+      TemplateManager.getInstance(project).startTemplate(topEditor, template);
     }
 
-    private void insertEventHandlerReference(final Editor editor, final PsiFile psiFile) {
+    @Nullable
+    private PsiElement insertEventHandlerReference(final Editor editor, final PsiFile psiFile) {
       if (inMxmlEventAttributeValue) {
         final XmlAttribute xmlAttribute = getXmlAttribute(psiFile, editor);
         if (xmlAttribute != null) {
-          xmlAttribute.setValue(eventHandlerName + "(event)");
+          final String attributeValue = eventHandlerName + "(event)";
+          xmlAttribute.setValue(attributeValue);
+          final PsiLanguageInjectionHost valueElement = (PsiLanguageInjectionHost)xmlAttribute.getValueElement();
+          if (valueElement != null) {
+            final Ref<PsiElement> ref = new Ref<PsiElement>();
+            valueElement.processInjectedPsi(new PsiLanguageInjectionHost.InjectedPsiVisitor() {
+              public void visit(@NotNull final PsiFile injectedPsi, @NotNull final List<PsiLanguageInjectionHost.Shred> places) {
+                int i = injectedPsi.getText().indexOf(attributeValue);
+                if (i != -1) {
+                  ref.set(PsiTreeUtil.findElementOfClassAtOffset(injectedPsi, i, JSReferenceExpression.class, false));
+                }
+              }
+            });
+            return ref.get();
+          }
         }
       }
-      else if (inEventListenerCall && handlerCallerAnchorInArgumentList != null) {
-        PsiElement element =
-          JSChangeUtil.createJSTreeFromText(psiFile.getProject(), eventHandlerName, JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
-        if (element != null) {
-          handlerCallerAnchorInArgumentList.getParent().addAfter(element, handlerCallerAnchorInArgumentList);
-        }
-
-        if (handlerCallerAnchorInArgumentList.getNode().getElementType() != JSTokenTypes.COMMA) {
-          final PsiElement psi = JSChangeUtil.createJSTreeFromText(psiFile.getProject(), "a,b").getPsi();
-          final JSCommaExpression commaExpression = PsiTreeUtil.getChildOfType(psi, JSCommaExpression.class);
-          final LeafPsiElement comma = PsiTreeUtil.getChildOfType(commaExpression, LeafPsiElement.class);
-          if (comma != null && comma.getNode().getElementType() == JSTokenTypes.COMMA) {
-            handlerCallerAnchorInArgumentList.getParent().addAfter(comma, handlerCallerAnchorInArgumentList);
+      else if (inEventListenerCall) {
+        if (handlerCallerAnchorInArgumentList != null) {
+          PsiElement element =
+            JSChangeUtil.createJSTreeFromText(psiFile.getProject(), eventHandlerName, JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
+          PsiElement created = null;
+          if (element != null) {
+            created = handlerCallerAnchorInArgumentList.getParent().addAfter(element, handlerCallerAnchorInArgumentList);
           }
+
+          if (handlerCallerAnchorInArgumentList.getNode().getElementType() != JSTokenTypes.COMMA) {
+            final PsiElement psi = JSChangeUtil.createJSTreeFromText(psiFile.getProject(), "a,b").getPsi();
+            final JSCommaExpression commaExpression = PsiTreeUtil.getChildOfType(psi, JSCommaExpression.class);
+            final LeafPsiElement comma = PsiTreeUtil.getChildOfType(commaExpression, LeafPsiElement.class);
+            if (comma != null && comma.getNode().getElementType() == JSTokenTypes.COMMA) {
+              handlerCallerAnchorInArgumentList.getParent().addAfter(comma, handlerCallerAnchorInArgumentList);
+            }
+          }
+          return created;
+        }
+        else if (myExistingUnresolvedReverence != null) {
+          return myExistingUnresolvedReverence;
         }
       }
       else if (inEventConstantExpression) {
@@ -335,15 +376,17 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
         final PsiElement element =
           JSChangeUtil.createJSTreeFromText(psiFile.getProject(), text, JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();
         if (element != null) {
-          final PsiElement addedElement = eventConstantExpression.getParent().addBefore(element, eventConstantExpression);
-          PsiElement sibling;
-          while ((sibling = addedElement.getNextSibling()) != null && sibling != eventConstantExpression) {
-            sibling.delete();
+          final PsiElement addedElement = eventConstantExpression.replace(element);
+          final JSExpression expression = ((JSExpressionStatement)addedElement).getExpression();
+          final JSArgumentList argumentList = PsiTreeUtil.findChildOfType(expression, JSArgumentList.class);
+          final JSExpression[] arguments = argumentList == null ? JSExpression.EMPTY_ARRAY : argumentList.getArguments();
+          if (arguments.length == 2) {
+            return arguments[1];
           }
-
-          eventConstantExpression.delete();
         }
       }
+
+      return null;
     }
 
     @Nullable
@@ -378,6 +421,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
       else {
         eventHandlerName = MessageFormat.format(METHOD_NAME_PATTERN, id, eventName);
       }
+      eventHandlerName2 = "on" + (eventName.isEmpty() ? "Event" : Character.toUpperCase(eventName.charAt(0)) + eventName.substring(1));
     }
 
     private void prepareForEventListenerCall(final JSCallExpression callExpression) {
@@ -396,7 +440,8 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
             if (params.length >= 2) {
               handlerCallerAnchorInArgumentList = null;
               if (isUnresolvedReference(params[1])) {
-                eventHandlerName = ((JSReferenceExpression)params[1]).getReferencedName();
+                myExistingUnresolvedReverence = (JSReferenceExpression)params[1];
+                eventHandlerName = myExistingUnresolvedReverence.getReferencedName();
               }
             }
 
@@ -431,7 +476,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
 
       if (handlerCallerAnchorInArgumentList != null) {
         final JSExpression qualifier =
-          ((JSReferenceExpression)((JSCallExpression)callExpression).getMethodExpression()).getQualifier();
+          ((JSReferenceExpression)callExpression.getMethodExpression()).getQualifier();
         if (qualifier != null &&
             LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage())
               .isIdentifier(qualifier.getText(), null)) {
@@ -440,6 +485,34 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
         else {
           eventHandlerName = eventName + "Handler";
         }
+      }
+      eventHandlerName2 = "on" + (eventName.isEmpty() ? "Event" : Character.toUpperCase(eventName.charAt(0)) + eventName.substring(1));
+    }
+
+    private static class MyExpression extends Expression {
+      private final TextResult myResult;
+      private final LookupElement[] myLookupItems;
+
+      public MyExpression(final String... variants) {
+        myResult = new TextResult(variants[0]);
+        myLookupItems = variants.length == 1 ? LookupElement.EMPTY_ARRAY : new LookupElement[variants.length];
+        if (variants.length > 1) {
+          for (int i = 0; i < variants.length; i++) {
+            myLookupItems[i] = LookupElementBuilder.create(variants[i]);
+          }
+        }
+      }
+
+      public Result calculateResult(ExpressionContext context) {
+        return myResult;
+      }
+
+      public Result calculateQuickResult(ExpressionContext context) {
+        return myResult;
+      }
+
+      public LookupElement[] calculateLookupItems(ExpressionContext context) {
+        return myLookupItems;
       }
     }
   }
