@@ -149,7 +149,8 @@ class FlexValue extends XValue {
     return myPreferredIcon == null ? myValueType.myIcon : myPreferredIcon;
   }
 
-  public void computePresentation(@NotNull final XValueNode node) {
+  @Override
+  public void computePresentation(@NotNull XValueNode node, @NotNull XValuePlace place) {
     final boolean isObject = myResult.contains(OBJECT_MARKER);
     String val = myResult;
     String type = null;
@@ -618,7 +619,8 @@ class FlexValue extends XValue {
 
   private static XValueChildrenList getWrappingSingletonList(final String nodeName, final XValueChildrenList... listsToWrap) {
     final XValue inheritedNode = new XValue() {
-      public void computePresentation(@NotNull final XValueNode node) {
+      @Override
+      public void computePresentation(@NotNull XValueNode node, @NotNull XValuePlace place) {
         node.setPresentation((Icon)null, null, "", nodeName, true);
       }
 
