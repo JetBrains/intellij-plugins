@@ -64,7 +64,7 @@ final class DesignerApplicationUtil {
       }
 
       String version = sdk.getVersionString();
-      // at least 4.1
+      // at least 4.5
       if (version == null || !(version.length() >= 3 &&
                                (version.charAt(0) > '4' || (version.charAt(0) == '4' && version.charAt(2) >= '5')))) {
         continue;

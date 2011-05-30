@@ -10,11 +10,33 @@ import cocoa.tableView.TableColumn;
 import cocoa.tableView.TableViewDataSource;
 
 import flash.errors.IllegalOperationError;
+import flash.utils.Dictionary;
 
 import org.osflash.signals.ISignal;
 import org.osflash.signals.Signal;
 
 public class MyTableViewDataSource implements TableViewDataSource {
+  private static const excludedProperties:Dictionary = new Dictionary();
+  excludedProperties["transitions"] = true;
+  excludedProperties["activeEffects"] = true;
+  excludedProperties["styleParent"] = true;
+  excludedProperties["focusManager"] = true;
+  excludedProperties["resourceManager"] = true;
+  excludedProperties["cursorManager"] = true;
+  excludedProperties["systemManager"] = true;
+  excludedProperties["styleManager"] = true;
+  excludedProperties["parentDocument"] = true;
+  excludedProperties["moduleFactory"] = true;
+  excludedProperties["inheritingStyles"] = true;
+  excludedProperties["nonInheritingStyles"] = true;
+  excludedProperties["styleDeclaration"] = true;
+  excludedProperties["styleName"] = true;
+  excludedProperties["styleParent"] = true;
+  excludedProperties["currentState"] = true;
+  excludedProperties["focusPane"] = true;
+  excludedProperties["screen"] = true;
+  excludedProperties["transform"] = true;
+
   private const source:Vector.<Object> = new Vector.<Object>(64);
   private var sourceItemCounter:int = 0;
 
@@ -34,6 +56,8 @@ public class MyTableViewDataSource implements TableViewDataSource {
   public function update(object:Object):void {
     _object = object;
 
+    sourceItemCounter = 0;
+
     var traits:Object = describe(object, INCLUDE_ACCESSORS | INCLUDE_VARIABLES | INCLUDE_METADATA | HIDE_OBJECT | INCLUDE_TRAITS).traits;
     for each (var accessor:Object in traits.accessors) {
       processProperty(accessor);
@@ -43,9 +67,14 @@ public class MyTableViewDataSource implements TableViewDataSource {
     }
 
     source.length = sourceItemCounter;
+    source.sort(compare);
     if (_reset != null) {
       _reset.dispatch();
     }
+  }
+
+  private function compare(a:Object, b:Object):Number {
+    return a.name < b.name ? -1 : 1;
   }
 
   private function processProperty(accessor:Object):void {
@@ -59,16 +88,22 @@ public class MyTableViewDataSource implements TableViewDataSource {
       return;
     }
 
-    if (name == "focusManager" || name == "resourceManager" || name == "cursorManager" || name == "systemManager" || name == "styleManager" ||
-      name == "parent" || name == "parentDocument" || name == "screen" || name == "moduleFactory" ||
-      name == "inheritingStyles" || name == "nonInheritingStyles" || name == "styleDeclaration" || name == "styleName" ||
-      name == "focusPane" || name == "currentState" ||
-      name == "dropTarget" || name == "graphics") {
+    if (accessor.declaredBy == "mx.core::UIComponent") {
+      if (name in excludedProperties) {
+        return;
+      }
+    }
+    else if (accessor.declaredBy == "spark.components.supportClasses::SkinnableComponent") {
+      if (name == "skin") {
+        return;
+      }
+    }
+    else if (name == "dropTarget" || name == "graphics") {
       return;
     }
 
     if (sourceItemCounter > source.length) {
-      source.length = sourceItemCounter + 8;
+      source.length = sourceItemCounter + 64;
     }
 
     source[sourceItemCounter++] = accessor;

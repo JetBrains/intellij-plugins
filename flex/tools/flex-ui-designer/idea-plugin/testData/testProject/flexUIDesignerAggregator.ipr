@@ -498,26 +498,26 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/cocoa/1.4-SNAPSHOT/cocoa-1.4-SNAPSHOT-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.flyti:collections:swc:1.3.5">
+    <library name="Maven: org.flyti:collections:swc:1.3.6">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/collections/1.3.5/collections-1.3.5.swc!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/collections/1.3.6/collections-1.3.6.swc!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/collections/1.3.5/collections-1.3.5-asdoc.zip!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/collections/1.3.6/collections-1.3.6-asdoc.zip!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/collections/1.3.5/collections-1.3.5-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/collections/1.3.6/collections-1.3.6-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Maven: org.flyti:foundation:swc:1.2.1">
+    <library name="Maven: org.flyti:foundation:swc:1.2.2">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/foundation/1.2.1/foundation-1.2.1.swc!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/foundation/1.2.2/foundation-1.2.2.swc!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/foundation/1.2.1/foundation-1.2.1-asdoc.zip!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/foundation/1.2.2/foundation-1.2.2-asdoc.zip!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/foundation/1.2.1/foundation-1.2.1-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/foundation/1.2.2/foundation-1.2.2-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.flyti:plexus:swc:1.3-SNAPSHOT">
@@ -540,6 +540,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-as3/1.1.4-SNAPSHOT/hamcrest-as3-1.1.4-SNAPSHOT-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.osflash:as3-signals:swc:0.8.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/osflash/as3-signals/0.8.1/as3-signals-0.8.1.swc!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/osflash/as3-signals/0.8.1/as3-signals-0.8.1-asdoc.zip!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/osflash/as3-signals/0.8.1/as3-signals-0.8.1-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.tinytlf:as3-gestures:swc:0.1">
