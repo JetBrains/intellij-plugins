@@ -4,10 +4,7 @@ import com.intellij.ide.structureView.*;
 import com.intellij.ide.structureView.xml.XmlStructureViewBuilderProvider;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.index.JSIndexEntryBase;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
-import com.intellij.lang.javascript.index.JSNamespace;
-import com.intellij.lang.javascript.index.JavaScriptIndex;
+import com.intellij.lang.javascript.index.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
@@ -23,7 +20,6 @@ import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -60,7 +56,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     }
 
     @Override
-    protected List<StructureViewTreeElement> collectMyElements(final TIntHashSet referencedNamedIds, final JSIndexEntryBase entry,
+    protected List<StructureViewTreeElement> collectMyElements(final TIntHashSet referencedNamedIds, final JSIndexEntry entry,
                                                            final JSNamespace ns, final JavaScriptIndex index, PsiFile contextFile) {
       final List<StructureViewTreeElement> result = new ArrayList<StructureViewTreeElement>();
       final ResolveProcessor processor = new ResolveProcessor(null) {
