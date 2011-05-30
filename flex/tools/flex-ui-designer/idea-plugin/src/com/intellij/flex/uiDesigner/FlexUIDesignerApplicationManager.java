@@ -43,6 +43,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   
   public static final String DESIGNER_SWF = "designer.swf";
   public static final String DESCRIPTOR_XML = "descriptor.xml";
+  public static final String CHECK_DESCRIPTOR_XML = "check-descriptor.xml";
 
   public ProcessHandler adlProcessHandler;
   private Server server;
@@ -245,10 +246,14 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           adlProcessHandler = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/" + DESCRIPTOR_XML,
                                                       server.listen(), new Consumer<Integer>() {
               @Override
-              public void consume(Integer integer) {
+              public void consume(Integer exitCode) {
                 adlProcessHandler = null;
                 if (onAdlExit != null) {
                   ApplicationManager.getApplication().invokeLater(onAdlExit);
+                }
+
+                if (exitCode != 0) {
+                  LOG.error("ADL exited with error code " + exitCode);
                 }
 
                 documentOpening = false;
@@ -306,6 +311,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     //noinspection ResultOfMethodCallIgnored
     appDir.mkdirs();
     IOUtil.saveStream(classLoader.getResourceAsStream(DESCRIPTOR_XML), new File(appDir, DESCRIPTOR_XML));
+    IOUtil.saveStream(classLoader.getResourceAsStream(CHECK_DESCRIPTOR_XML), new File(appDir, CHECK_DESCRIPTOR_XML));
     IOUtil.saveStream(appUrlConnection.getInputStream(), appFile);
 
     //noinspection ResultOfMethodCallIgnored

@@ -10,6 +10,7 @@
       <element id="file-copy" path="$PROJECT_DIR$/app-loader/target/app-loader-1.0-SNAPSHOT.swf" output-file-name="designer.swf" />
       <element id="file-copy" path="$PROJECT_DIR$/flex-injection/target/flex-injection-4.1.abc" />
       <element id="file-copy" path="$PROJECT_DIR$/flex-injection/target/flex-injection-4.5.abc" />
+      <element id="file-copy" path="$PROJECT_DIR$/designer/src/main/resources/check-descriptor.xml" />
     </root>
   </artifact>
 </component>

@@ -1,8 +1,10 @@
 ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/app-loader/target/app-loader-1.0-SNAPSHOT.swf ~/Library/Caches/IntelliJIdea10/plugins-sandbox/system/flexUIDesigner/designer.swf
 ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/designer/src/main/resources/descriptor.xml ~/Library/Caches/IntelliJIdea10/plugins-sandbox/system/flexUIDesigner/descriptor.xml
+ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/designer/src/main/resources/check-descriptor.xml ~/Library/Caches/IntelliJIdea10/plugins-sandbox/system/flexUIDesigner/check-descriptor.xml
 
 ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/app-loader/target/app-loader-1.0-SNAPSHOT.swf ~/Library/Caches/IntelliJIdea10/plugins-sandbox/test/system/flexUIDesigner/designer.swf
 ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/designer/src/main/resources/descriptor.xml ~/Library/Caches/IntelliJIdea10/plugins-sandbox/test/system/flexUIDesigner/descriptor.xml
+ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/designer/src/main/resources/check-descriptor.xml ~/Library/Caches/IntelliJIdea10/plugins-sandbox/test/system/flexUIDesigner/check-descriptor.xml
 
 ln -sf $DEV_IDEA_HOME/flex/tools/flex-ui-designer/app-loader/target/app-loader-1.0-SNAPSHOT.swf ~/Library/Caches/IntelliJIdea10/plugins-sandbox/test/testAppRoot/designer.swf
 

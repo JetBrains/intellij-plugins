@@ -78,6 +78,7 @@ private def doExecute(home, sandbox, targetFolder) {
 
   ant.copy(file: "$flexSandbox/app-loader-1.0-SNAPSHOT.swf", tofile: "$targetFolder/designer.swf")
   ant.copy(file: "$flexBuildHome/../designer/src/main/resources/descriptor.xml", todir: "$targetFolder")
+  ant.copy(file: "$flexBuildHome/../designer/src/main/resources/check-descriptor.xml", todir: "$targetFolder")
   ant.copy(file: "$flexSandbox/flex-injection-4.1.abc", todir: "$targetFolder")
   ant.copy(file: "$flexSandbox/flex-injection-4.5.abc", todir: "$targetFolder")
 }

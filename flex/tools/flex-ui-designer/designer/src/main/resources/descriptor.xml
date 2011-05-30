@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <application xmlns="http://ns.adobe.com/air/application/2.6">
   <id>com.intellij.flex.uiDesigner.designer</id>
-  <versionNumber>0.5</versionNumber>
+  <versionNumber>0.5.3</versionNumber>
   <name>Flex UI Designer</name>
   <filename>FlexUIDesigner</filename>
   <description>Provides visual editing support for Flex UI</description>

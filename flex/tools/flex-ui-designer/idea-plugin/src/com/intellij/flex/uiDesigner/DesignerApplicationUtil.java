@@ -17,13 +17,13 @@ import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfigurationType;
 import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -34,10 +34,12 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 final class DesignerApplicationUtil {
   private static final String versionKey = "CFBundleVersion";
@@ -55,21 +57,29 @@ final class DesignerApplicationUtil {
       return createTestAdlRunConfiguration();
     }
 
+    List<Sdk> sdks = new ArrayList<Sdk>();
+    for (Sdk sdk: ProjectJdkTable.getInstance().getAllJdks()) {
+      if (sdk.getSdkType() instanceof IFlexSdkType && sdk.getSdkType() instanceof FlexmojosSdkType) {
+        String version = sdk.getVersionString();
+        // at least 4.5
+        if (version == null || !(version.length() >= 3 &&
+                                 (version.charAt(0) > '4' || (version.charAt(0) == '4' && version.charAt(2) >= '5')))) {
+          continue;
+        }
+        sdks.add(sdk);
+      }
+    }
+
+    Collections.sort(sdks, new Comparator<Sdk>() {
+      @Override
+      public int compare(Sdk o1, Sdk o2) {
+        return StringUtil.compareVersionNumbers(o2.getVersionString(), o1.getVersionString());
+      }
+    });
+
     String adlPath;
     String runtime = findInstalledRuntime();
-    for (Sdk sdk : ProjectJdkTable.getInstance().getAllJdks()) {
-      SdkType sdkType = sdk.getSdkType();
-      if (!(sdkType instanceof IFlexSdkType)) {
-        continue;
-      }
-
-      String version = sdk.getVersionString();
-      // at least 4.5
-      if (version == null || !(version.length() >= 3 &&
-                               (version.charAt(0) > '4' || (version.charAt(0) == '4' && version.charAt(2) >= '5')))) {
-        continue;
-      }
-
+    for (Sdk sdk : sdks) {
       adlPath = FlexSdkUtils.getAdlPath(sdk);
       if (StringUtil.isEmpty(adlPath) || !new File(adlPath).exists()) {
         continue;
@@ -77,10 +87,11 @@ final class DesignerApplicationUtil {
 
       if (runtime == null) {
         runtime = FlexSdkUtils.getAirRuntimePath(sdk);
-        if (!checkRuntime(runtime)) {
-          runtime = null;
-          continue;
-        }
+      }
+
+      if (!checkRuntime(adlPath, runtime)) {
+        runtime = null;
+        continue;
       }
 
       return new AdlRunConfiguration(adlPath, runtime);
@@ -89,7 +100,7 @@ final class DesignerApplicationUtil {
     return null;
   }
 
-  private static boolean checkRuntime(String runtimePath) throws IOException {
+  private static boolean checkRuntime(String adlPath, String runtimePath) throws IOException {
     if (StringUtil.isEmpty(runtimePath)) {
       return false;
     }
@@ -99,12 +110,42 @@ final class DesignerApplicationUtil {
       return false;
     }
 
-    //noinspection SimplifiableIfStatement
-    if (SystemInfo.isMac) {
-      return checkMacRuntimeVersion(runtimePath);
+    if (SystemInfo.isMac && !checkMacRuntimeVersion(runtimePath)) {
+      return false;
     }
 
-    return true;
+    List<String> command = new ArrayList<String>();
+    command.add(adlPath);
+    command.add("-runtime");
+    command.add(runtimePath);
+    command.add("-nodebug");
+    command.add("/Users/develar/workspace/idea/flex/tools/flex-ui-designer/designer/src/main/resources/check-descriptor.xml");
+
+    final Process checkProcess = new ProcessBuilder(command).start();
+    final Integer exitCode;
+    try {
+      exitCode = ApplicationManager.getApplication().executeOnPooledThread(new Callable<Integer>() {
+        @Override
+        public Integer call() throws Exception {
+          return checkProcess.waitFor();
+        }
+      }).get(5, TimeUnit.SECONDS);
+    }
+    catch (InterruptedException e) {
+      checkProcess.destroy();
+      return false;
+    }
+    catch (java.util.concurrent.ExecutionException e) {
+      LOG.error(e);
+      checkProcess.destroy();
+      return false;
+    }
+    catch (TimeoutException e) {
+      checkProcess.destroy();
+      return false;
+    }
+
+    return exitCode == 7;
   }
 
   // http://kb2.adobe.com/cps/407/kb407625.html
