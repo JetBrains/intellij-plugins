@@ -7,8 +7,8 @@ import org.flyti.plexus.Injectable;
 public class AbstractInspector extends Panel implements Injectable {
   public var list:FlexDataGroup;
 
-  override protected function skinAttachedHandler():void {
-    super.skinAttachedHandler();
+  override protected function skinAttached():void {
+    super.skinAttached();
 
     list.laf = laf;
   }

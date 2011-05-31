@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.plaf {
 import cocoa.ClassFactory;
+import cocoa.FrameInsets;
 import cocoa.Insets;
 import cocoa.TextLineInsets;
 import cocoa.border.LinearGradientBorder;
@@ -26,7 +27,7 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
 
     data["Panel"] = PanelSkin;
     data["Panel.title.b"] = LinearGradientBorder.createVWithFixedHeight(16, [0xa7c5fc, 0x7d95c0]);
-    data["Panel.b"] = RectangularBorder.create(0xffffff, 0x999999 /* idea UI 0x929292, but 0x999999 more Aqua UI */, new Insets(1, 1, 1, 1));
+    data["Panel.b"] = RectangularBorder.create(0xffffff, 0x999999 /* idea UI 0x929292, but 0x999999 more Aqua UI */, new Insets(1, 1, 1, 1), new FrameInsets(0, 15 /* hide top h line */));
 
     data["ProjectView"] = ProjectViewSkin;
     data["ProjectView.TabView"] = EditorTabViewSkin;

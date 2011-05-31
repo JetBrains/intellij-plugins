@@ -332,19 +332,13 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       myModule = module;
       myPsiFile = psiFile;
 
-      if (!ServiceManager.getService(StringRegistry.class).isEmpty()) {
-        try {
-          Client.getInstance().initStringRegistry();
-        }
-        catch (IOException e) {
-          LOG.error(e); // never can be, because socket out is null at this moment
-        }
-      }
-
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
         @Override
         public void run() {
           try {
+            if (!ServiceManager.getService(StringRegistry.class).isEmpty()) {
+              Client.getInstance().initStringRegistry();
+            }
             LibraryManager.getInstance().initLibrarySets(myModule, appDir);
           }
           catch (IOException e) {

@@ -1,9 +1,13 @@
 package com.intellij.flex.uiDesigner.plaf {
 import cocoa.Border;
+import cocoa.Component;
 import cocoa.IconButton;
 import cocoa.LabelHelper;
 import cocoa.Toolbar;
 import cocoa.View;
+import cocoa.plaf.LookAndFeel;
+import cocoa.plaf.LookAndFeelProvider;
+import cocoa.plaf.aqua.AquaLookAndFeel;
 import cocoa.plaf.basic.AbstractSkin;
 import cocoa.plaf.TextFormatId;
 import cocoa.plaf.WindowSkin;
@@ -39,6 +43,12 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
   private var _contentView:View;
   public function set contentView(value:View):void {
     _contentView = value;
+  }
+
+  override public function attach(component:Component, laf:LookAndFeel):void {
+    var panelLaF:LookAndFeel = AquaLookAndFeel(laf).createPanelLookAndFeel();
+    LookAndFeelProvider(component).laf = panelLaF;
+    super.attach(component, panelLaF);
   }
 
   override protected function createChildren():void {
@@ -103,13 +113,10 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
     var g:Graphics = graphics;
     g.clear();
 
-    var contentY:Number = titleBorder.layoutHeight;
-
-    contentBorder.frameInsets.top += contentY - 1;
     contentBorder.draw(null, g, w, h);
-    contentBorder.frameInsets.top -= contentY - 1;
+    
     g.lineStyle();
-    titleBorder.draw(null, g, w, contentY);
+    titleBorder.draw(null, g, w, titleBorder.layoutHeight);
 
     labelHelper.validate();
     labelHelper.move(3, 13);
@@ -118,7 +125,7 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
     if (_toolbar != null) {
       _toolbar.skin.setActualSize(contentWidth, 20);
     }
-    _contentView.setActualSize(contentWidth, h - contentY - contentBorder.contentInsets.height);
+    _contentView.setActualSize(contentWidth, h - contentBorder.contentInsets.height - contentBorder.frameInsets.top);
 
 //    DisplayObject(minimizeButton.skin).x = w - (17 * 2) - 1 - 3;
 //    DisplayObject(closeSideButton.skin).x = w - 17 - 3;
