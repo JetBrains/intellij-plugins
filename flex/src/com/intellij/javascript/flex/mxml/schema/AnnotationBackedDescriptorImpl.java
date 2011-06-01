@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.mxml.schema;
 
+import com.intellij.codeInsight.completion.CompletionInitializationContext;
 import com.intellij.codeInsight.daemon.Validator;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
@@ -19,7 +20,11 @@ import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.refactoring.NamesValidator;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
@@ -28,8 +33,10 @@ import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Icons;
 import com.intellij.util.Processor;
+import com.intellij.util.containers.HashSet;
 import com.intellij.util.text.StringTokenizer;
 import com.intellij.xml.*;
+import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import com.intellij.xml.util.XmlUtil;
 import gnu.trove.THashSet;
@@ -39,13 +46,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 /**
  * @author Maxim.Mossienko
  */
-public class AnnotationBackedDescriptorImpl
+public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   implements Validator<XmlElement>, AnnotationBackedDescriptor, XmlElementDescriptorAwareAboutChildren {
   private static final String[] DEFERRED_IMMEDIATE = {"deferred", "immediate"};
   private static final String[] AUTO_NEVER = {"auto", "never"};
@@ -109,12 +117,12 @@ public class AnnotationBackedDescriptorImpl
         JSAttributeNameValuePair[] values = attribute.getValues();
         percentProxy = values.length > 0 ? values[0].getSimpleValue() : "";
       }
-      
+
       if (type == null) {
         type = ClassBackedElementDescriptor.getPropertyType((JSNamedElement)originatingElement);
       }
       initFromType();
-      
+
       initRichTextContentAndCollapseWhiteSpace((JSAttributeListOwner)originatingElement);
     }
     else if (originatingElement instanceof XmlAttribute &&
@@ -143,7 +151,7 @@ public class AnnotationBackedDescriptorImpl
       }
     }
   }
-  
+
   protected AnnotationBackedDescriptorImpl(String name,
                                            ClassBackedElementDescriptor parentDescriptor,
                                            boolean predefined,
@@ -171,19 +179,19 @@ public class AnnotationBackedDescriptorImpl
     format = originalDescriptor.format;
     myAnnotationName = originalDescriptor.myAnnotationName;
     myProperty = originalDescriptor.myProperty;
-    
+
     myCollapseWhiteSpace = originalDescriptor.myCollapseWhiteSpace;
     myRichTextContent = originalDescriptor.myRichTextContent;
-    
+
     myDeferredInstance = originalDescriptor.myDeferredInstance;
-    
+
     // only function (setter/getter) may be overridden
     if (originatingElement instanceof JSFunction) {
       // mxml compiler doesn't inherit function annotations
       initRichTextContentAndCollapseWhiteSpace((JSFunction)originatingElement);
     }
   }
-  
+
   private void initRichTextContentAndCollapseWhiteSpace(JSAttributeListOwner attributeListOwner) {
     if (!myEnumerated) {
       if (contentIsArrayable()) {
@@ -397,6 +405,23 @@ public class AnnotationBackedDescriptorImpl
 
   public boolean isEnumerated() {
     return myEnumerated;
+  }
+
+  public String[] getEnumeratedValues(@Nullable final XmlElement context) {
+    if (context instanceof XmlAttribute && !myEnumerated && "id".equals(name)) {
+      // id attribute value completion
+      String value = ((XmlAttribute)context).getValue();
+      int index = value.indexOf(CompletionInitializationContext.DUMMY_IDENTIFIER);
+      value = index == -1 ? value : value.substring(0, index);
+
+      final PsiElement parent = context.getParent();
+      final String tagName = parent instanceof XmlTag ? ((XmlTag)parent).getLocalName() : null;
+      if (StringUtil.isNotEmpty(tagName)) {
+        final String[] suggestedIds = suggestIdValues(value, tagName);
+        return makeUnique(suggestedIds, getNamedElementsVisibleAt(context));
+      }
+    }
+    return super.getEnumeratedValues(context);
   }
 
   public String[] getEnumeratedValues() {
@@ -765,11 +790,11 @@ public class AnnotationBackedDescriptorImpl
   public String getPercentProxy() {
     return percentProxy;
   }
-  
+
   public boolean isStyle() {
     return myAnnotationName != null && !myScriptable && myAnnotationName.equals(FlexAnnotationNames.STYLE);
   }
-  
+
   public boolean isRichTextContent() {
     return myRichTextContent;
   }
@@ -777,15 +802,96 @@ public class AnnotationBackedDescriptorImpl
   public boolean isCollapseWhiteSpace() {
     return myCollapseWhiteSpace;
   }
-  
+
   public boolean isDeferredInstance() {
     return myDeferredInstance;
   }
-  
+
   public boolean contentIsArrayable() {
     return type != null &&
            (type.equals(JSCommonTypeNames.ARRAY_CLASS_NAME) ||
             type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) ||
             type.equals(JSCommonTypeNames.ANY_TYPE));
+  }
+
+  public static String[] suggestIdValues(final String value, final String type) {
+    final String[] typeParts = getTypeParts(type);
+    final String[] result = new String[typeParts.length];
+    for (int i = 0; i < result.length; i++) {
+      // merge written text with suggestions: "myBu" + "Button" -> "myButton"
+      final String lowercasedStart = lowercaseStart(typeParts[i]);
+      if (value.isEmpty() || lowercasedStart.startsWith(value)) {
+        result[i] = lowercasedStart;
+      }
+      else {
+        int j = 0;
+        for (; j < value.length(); j++) {
+          String s = value.substring(j);
+          if (typeParts[i].startsWith(s)) {
+            break;
+          }
+        }
+        final int commonTextLength = value.length() - j;
+        result[i] = value.substring(0, value.length() - commonTextLength) + typeParts[i];
+      }
+    }
+    return result;
+  }
+
+  private static String[] getTypeParts(final String type) {
+    // HTTPService -> HTTPService, Service
+    // ButtonBarButton -> ButtonBarButton, BarButton, Button
+    final List<String> result = new LinkedList<String>();
+
+    result.add(Character.toUpperCase(type.charAt(0)) + (type.length() > 1 ? type.substring(1) : ""));
+
+    for (int i = 1; i < type.length() - 1; i++) {
+      if (Character.isUpperCase(type.charAt(i)) && !Character.isUpperCase(type.charAt(i + 1))) {
+        result.add(type.substring(i));
+      }
+    }
+
+    return result.toArray(new String[result.size()]);
+  }
+
+  private static String lowercaseStart(final String s) {
+    // URL -> url
+    // HTTPService -> httpService
+    // ButtonBar -> buttonBar
+    int i = 0;
+    while (i < s.length() && Character.isUpperCase(s.charAt(i))) {
+      i++;
+    }
+    i = i <= 1 ? 1 : i == s.length() ? i : i - 1;
+    return s.substring(0, i).toLowerCase() + s.substring(i);
+  }
+
+  private static Set<String> getNamedElementsVisibleAt(final @NotNull PsiElement context) {
+    final Set<String> names = new HashSet<String>();
+
+    ResolveProcessor processor = new ResolveProcessor(null) {
+      public boolean execute(final PsiElement element, final ResolveState state) {
+        if (element instanceof JSNamedElement) {
+          names.add(((JSNamedElement)element).getName());
+        }
+        return true;
+      }
+    };
+
+    processor.setLocalResolve(true);
+    JSResolveUtil.treeWalkUp(processor, context, context.getParent(), context);
+    return names;
+  }
+
+  private static String[] makeUnique(final String[] names, final Set<String> existingNames) {
+    for (int i = 0; i < names.length; i++) {
+      String name = names[i];
+      int postfix = 2;
+      while (existingNames.contains(name)) {
+        name = names[i] + postfix++;
+      }
+      names[i] = name;
+    }
+    return names;
   }
 }
