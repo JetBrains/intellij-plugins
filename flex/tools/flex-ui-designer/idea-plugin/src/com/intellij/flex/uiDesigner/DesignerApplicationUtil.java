@@ -10,6 +10,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
@@ -60,9 +61,7 @@ final class DesignerApplicationUtil {
     for (Sdk sdk: ProjectJdkTable.getInstance().getAllJdks()) {
       if (sdk.getSdkType() instanceof IFlexSdkType) {
         String version = sdk.getVersionString();
-        // at least 4.5
-        if (version == null || !(version.length() >= 3 &&
-                                 (version.charAt(0) > '4' || (version.charAt(0) == '4' && version.charAt(2) >= '5')))) {
+        if (StringUtil.compareVersionNumbers(version, "4.5") < 0) {
           continue;
         }
         sdks.add(sdk);
@@ -113,12 +112,16 @@ final class DesignerApplicationUtil {
       return false;
     }
 
+    File checkDescriptorFile = new File(FlexUIDesignerApplicationManager.APP_DIR, FlexUIDesignerApplicationManager.CHECK_DESCRIPTOR_XML);
+    IOUtil.saveStream(DesignerApplicationUtil.class.getClassLoader().getResourceAsStream(
+      FlexUIDesignerApplicationManager.CHECK_DESCRIPTOR_XML), checkDescriptorFile);
+
     List<String> command = new ArrayList<String>();
     command.add(adlPath);
     command.add("-runtime");
     command.add(runtimePath);
     command.add("-nodebug");
-    command.add("/Users/develar/workspace/idea/flex/tools/flex-ui-designer/designer/src/main/resources/check-descriptor.xml");
+    command.add(checkDescriptorFile.getCanonicalPath());
 
     final Process checkProcess = new ProcessBuilder(command).start();
     final Integer exitCode;

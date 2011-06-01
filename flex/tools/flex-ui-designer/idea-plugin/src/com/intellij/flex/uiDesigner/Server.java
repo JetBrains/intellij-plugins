@@ -65,8 +65,7 @@ class Server implements Runnable, Closable {
       @Override
       public void run() {
         try {
-          ServiceManager.getService(SocketInputHandler.class).read(socket.getInputStream(),
-                                                                   FlexUIDesignerApplicationManager.getInstance().getAppDir());
+          ServiceManager.getService(SocketInputHandler.class).read(socket.getInputStream(), FlexUIDesignerApplicationManager.APP_DIR);
         }
         catch (IOException e) {
           if (!(e instanceof SocketException && socket.isClosed())) {

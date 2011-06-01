@@ -50,11 +50,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   ProjectManagerListener projectManagerListener;
 
-  public File getAppDir() {
-    return appDir;
-  }
-
-  private File appDir;
+  public static final File APP_DIR = new File(PathManager.getSystemPath(), "flexUIDesigner");
 
   private boolean documentOpening;
 
@@ -140,7 +136,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           try {
             if (!client.isModuleRegistered(module)) {
               try {
-                LibraryManager.getInstance().initLibrarySets(module, appDir);
+                LibraryManager.getInstance().initLibrarySets(module, APP_DIR);
               }
               catch (InitException e) {
                 LOG.error(e.getCause());
@@ -225,10 +221,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         adlRunConfiguration.arguments = arguments;
       }
 
-      if (appDir == null) {
-        appDir = new File(PathManager.getSystemPath(), "flexUIDesigner");
-      }
-
       server = new Server(new PendingOpenDocumentTask(project, module, psiFile), this);
     }
     catch (Throwable e) {
@@ -243,7 +235,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         try {
           copyAppFiles();
         
-          adlProcessHandler = DesignerApplicationUtil.runAdl(runConfiguration, appDir.getPath() + "/" + DESCRIPTOR_XML,
+          adlProcessHandler = DesignerApplicationUtil.runAdl(runConfiguration, APP_DIR.getPath() + "/" + DESCRIPTOR_XML,
                                                       server.listen(), new Consumer<Integer>() {
               @Override
               public void consume(Integer exitCode) {
@@ -303,15 +295,14 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     LOG.assertTrue(appUrl != null);
     final URLConnection appUrlConnection = appUrl.openConnection();
     final long lastModified = appUrlConnection.getLastModified();
-    final File appFile = new File(appDir, DESIGNER_SWF);
+    final File appFile = new File(APP_DIR, DESIGNER_SWF);
     if (appFile.lastModified() >= lastModified) {
       return;
     }
 
     //noinspection ResultOfMethodCallIgnored
-    appDir.mkdirs();
-    IOUtil.saveStream(classLoader.getResourceAsStream(DESCRIPTOR_XML), new File(appDir, DESCRIPTOR_XML));
-    IOUtil.saveStream(classLoader.getResourceAsStream(CHECK_DESCRIPTOR_XML), new File(appDir, CHECK_DESCRIPTOR_XML));
+    IOUtil.saveStream(classLoader.getResourceAsStream(DESCRIPTOR_XML), new File(APP_DIR, DESCRIPTOR_XML));
+    IOUtil.saveStream(classLoader.getResourceAsStream(CHECK_DESCRIPTOR_XML), new File(APP_DIR, CHECK_DESCRIPTOR_XML));
     IOUtil.saveStream(appUrlConnection.getInputStream(), appFile);
 
     //noinspection ResultOfMethodCallIgnored
@@ -339,7 +330,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
             if (!ServiceManager.getService(StringRegistry.class).isEmpty()) {
               Client.getInstance().initStringRegistry();
             }
-            LibraryManager.getInstance().initLibrarySets(myModule, appDir);
+            LibraryManager.getInstance().initLibrarySets(myModule, APP_DIR);
           }
           catch (IOException e) {
             try {

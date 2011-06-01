@@ -9,6 +9,8 @@ import java.io.InputStream;
 
 public final class IOUtil {
   public static void saveStream(InputStream input, File output) throws IOException {
+    //noinspection ResultOfMethodCallIgnored
+    output.getParentFile().mkdirs();
     FileOutputStream outputStream = new FileOutputStream(output);
     try {
       FileUtil.copy(input, outputStream);
