@@ -28,11 +28,11 @@ import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
-import com.intellij.tapestry.intellij.TapestryProjectSupportLoader;
 import com.intellij.tapestry.intellij.actions.safedelete.SafeDeleteProvider;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindow;
+import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory;
 import com.intellij.tapestry.intellij.util.Icons;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
@@ -450,7 +450,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
         fireTreeChangeListener();
 
         if (event.getNewLeadSelectionPath() != null) {
-          TapestryToolWindow toolWindow = myProject.getComponent(TapestryProjectSupportLoader.class).getTapestryToolWindow();
+          TapestryToolWindow toolWindow = TapestryToolWindowFactory.getToolWindow(getProject());
 
           if (toolWindow != null) {
             SimpleNode selectedNode =

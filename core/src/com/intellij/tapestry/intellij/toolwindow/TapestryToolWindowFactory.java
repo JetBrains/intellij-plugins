@@ -5,6 +5,7 @@ import com.intellij.facet.ProjectWideFacetListenersRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -13,7 +14,6 @@ import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
 import com.intellij.tapestry.intellij.util.Icons;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
-import com.intellij.tapestry.intellij.TapestryProjectSupportLoader;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 
@@ -24,6 +24,7 @@ import com.intellij.ui.content.ContentFactory;
  */
 public class TapestryToolWindowFactory implements ToolWindowFactory, Condition<Project> {
   public static final String TAPESTRY_TOOLWINDOW_ID = "Tapestry";
+  private static final Key<TapestryToolWindow> TAPESTRY_TOOL_WINDOW_KEY = Key.create("tapestry.toolWindow");
 
   public void createToolWindowContent(Project project, ToolWindow toolWindow) {
     toolWindow.setAvailable(true, null);
@@ -31,7 +32,7 @@ public class TapestryToolWindowFactory implements ToolWindowFactory, Condition<P
     Content content = ContentFactory.SERVICE.getInstance().createContent(tapestryToolWindow.getMainPanel(), "Tapestry", true);
     toolWindow.getContentManager().addContent(content);
     toolWindow.setIcon(Icons.TAPESTRY_LOGO_SMALL);
-    project.getComponent(TapestryProjectSupportLoader.class).initTapestryToolWindow(tapestryToolWindow);
+    project.putUserData(TAPESTRY_TOOL_WINDOW_KEY, tapestryToolWindow);
   }
 
   public boolean value(Project project) {
@@ -59,5 +60,10 @@ public class TapestryToolWindowFactory implements ToolWindowFactory, Condition<P
             Disposer.dispose(toolWindow.getContentManager());
           }
         });
+  }
+
+  public static TapestryToolWindow getToolWindow(Project project) {
+    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TAPESTRY_TOOLWINDOW_ID);
+    return toolWindow == null ? null : project.getUserData(TAPESTRY_TOOL_WINDOW_KEY);
   }
 }

@@ -13,7 +13,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.model.presentation.Component;
-import com.intellij.tapestry.intellij.TapestryProjectSupportLoader;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindow;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
@@ -47,7 +46,7 @@ public class TagDocumentationNavigation extends AnAction {
     if (TapestryUtils.getComponentIdentifier(tag) == null) return;
 
     ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TapestryToolWindowFactory.TAPESTRY_TOOLWINDOW_ID);
-    TapestryToolWindow metatoolWindow = project.getComponent(TapestryProjectSupportLoader.class).getTapestryToolWindow();
+    TapestryToolWindow metatoolWindow = TapestryToolWindowFactory.getToolWindow(project);
 
     Component component = TapestryUtils.getTypeOfTag(tag);
     if (component == null) return;
