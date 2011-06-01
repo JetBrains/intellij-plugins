@@ -16,7 +16,6 @@
 package jetbrains.communicator.mock;
 
 import com.intellij.util.diff.Diff;
-import com.intellij.util.diff.FilesTooBigForDiffException;
 import jetbrains.communicator.commands.FindUsersCommand;
 import jetbrains.communicator.commands.SendMessageInvoker;
 import jetbrains.communicator.core.Pico;
@@ -36,10 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.*;
 
 /**
  * @author Kir Maximov
@@ -127,13 +123,7 @@ public class MockIDEFacade implements IDEFacade {
   @Override
   public Change[] getDiff(Object[] src, Object[] dest) {
     List<MyChangeAdapter> result = new ArrayList<MyChangeAdapter>();
-    Diff.Change change = null;
-    try {
-      change = Diff.buildChanges(src, dest);
-    }
-    catch (FilesTooBigForDiffException e) {
-      return new Change[0];
-    }
+    Diff.Change change = Diff.buildChanges(src, dest);
     while (change != null) {
       result.add(new MyChangeAdapter(change));
       change = change.link;
