@@ -4,21 +4,13 @@ import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
-import com.intellij.lang.javascript.index.JSNamedElementProxy;
-import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
-import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -49,24 +41,7 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
   @Override
   protected void update(PresentationData presentation) {
     presentation.setPresentableText(getValue().getName());
-    presentation.setIcons(getIcon(getValue(), Iconable.ICON_FLAG_VISIBILITY));
-  }
-
-  static Icon getIcon(JSElement element, int flags) {
-    if (element instanceof JSClass) {
-      return element.getIcon(flags);
-    }
-    else if (element instanceof JSFunction) {
-      return JSFunctionImpl.getIcon(JSFunction.FunctionKind.SIMPLE, flags, ((JSFunction)element).getAttributeList());
-    }
-    else if (element instanceof JSVariable) {
-      return JSVariableImpl.getIcon(((JSVariable)element).getAttributeList(), flags, false);
-    }
-    else if (element instanceof JSNamedElementProxy) {
-      return element.getIcon(flags);
-    }
-    assert false : "unexpected element: " + element;
-    return element.getIcon(flags);
+    presentation.setIcons(getValue().getIcon(Iconable.ICON_FLAG_VISIBILITY));
   }
 
   @Override
