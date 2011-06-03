@@ -4,6 +4,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -21,23 +22,21 @@ import org.jetbrains.annotations.Nullable;
     storages = {@Storage(
         id = "Loomy",
         file = "$MODULE_FILE$")})
-public class TapestryModuleSupportLoader extends AbstractModuleComponent
+public class TapestryModuleSupportLoader
     implements PersistentStateComponent<TapestryModuleSupportLoader.ModuleConfiguration> {
 
   private final TapestryProject _tapestryProject;
   private ModuleConfiguration _configuration;
 
   public TapestryModuleSupportLoader(Module module) {
-    super(module);
 
     _configuration = new ModuleConfiguration();
     _tapestryProject = new TapestryProject(module, new IntellijResourceFinder(module), new IntellijJavaTypeFinder(module),
                                            new IntellijJavaTypeCreator(module));
   }
 
-  @Nullable
   public static TapestryModuleSupportLoader getInstance(Module module) {
-    return module.getComponent(TapestryModuleSupportLoader.class);
+    return ModuleServiceManager.getService(module, TapestryModuleSupportLoader.class);
   }
 
   @Nullable
@@ -45,7 +44,7 @@ public class TapestryModuleSupportLoader extends AbstractModuleComponent
     final PsiFile file = element.getContainingFile();
     if (file == null || !(file.getFileType() instanceof TmlFileType)) return null;
     Module module = ModuleUtil.findModuleForPsiElement(element);
-    return module != null ? module.getComponent(TapestryModuleSupportLoader.class) : null;
+    return module != null ? getInstance(module) : null;
   }
 
   /**
@@ -56,7 +55,7 @@ public class TapestryModuleSupportLoader extends AbstractModuleComponent
    */
   @Nullable
   public static TapestryProject getTapestryProject(@Nullable Module module) {
-    return module == null ? null : module.getComponent(TapestryModuleSupportLoader.class).getTapestryProject();
+    return module == null ? null : getInstance(module).getTapestryProject();
   }
 
   @Nullable
@@ -67,11 +66,6 @@ public class TapestryModuleSupportLoader extends AbstractModuleComponent
 
   public TapestryProject getTapestryProject() {
     return _tapestryProject;
-  }
-
-  @NotNull
-  public String getComponentName() {
-    return TapestryModuleSupportLoader.class.getName();
   }
 
   /**

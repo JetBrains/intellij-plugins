@@ -68,6 +68,7 @@
     <projectViewPane implementation="com.intellij.tapestry.intellij.view.TapestryProjectViewPane"/>
 
     <inspectionToolProvider implementation="com.intellij.tapestry.intellij.inspections.TapestryInspectionToolProvider"/>
+    <moduleService serviceImplementation="com.intellij.tapestry.intellij.TapestryModuleSupportLoader"/>
   </extensions>
 
   <actions>
@@ -125,11 +126,5 @@
       <implementation-class>com.intellij.tapestry.intellij.TapestryListenersSupportLoader</implementation-class>
     </component>
   </project-components>
-
-  <module-components>
-    <component>
-      <implementation-class>com.intellij.tapestry.intellij.TapestryModuleSupportLoader</implementation-class>
-    </component>
-  </module-components>
 
 </idea-plugin>
