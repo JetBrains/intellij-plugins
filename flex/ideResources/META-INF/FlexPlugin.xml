@@ -12,21 +12,10 @@
   <module value="com.intellij.modules.all"/>
   <xi:include href="/META-INF/ultimate.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
-  <application-components>
-    <component>
-      <implementation-class>com.intellij.util.xml.impl.JavaDomApplicationComponent</implementation-class>
-    </component>
-  </application-components>
-
   <project-components>
     <component>
       <interface-class>com.intellij.psi.JavaPsiFacade</interface-class>
       <implementation-class>com.intellij.psi.impl.JavaPsiFacadeImpl</implementation-class>
-    </component>
-
-    <component>
-      <interface-class>com.intellij.pom.java.PomJavaAspect</interface-class>
-      <implementation-class>com.intellij.pom.java.impl.PomJavaAspectImpl</implementation-class>
     </component>
   </project-components>
 
@@ -40,22 +29,30 @@
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceInterface="com.intellij.openapi.module.ModuleTypeManager"
                         serviceImplementation="com.intellij.flexIde.FlexModuleTypeManager"/>
+    <projectService serviceInterface="com.intellij.psi.impl.file.PsiDirectoryFactory"
+                    serviceImplementation="com.intellij.psi.impl.file.PsiDirectoryFactoryImpl"/>
+    <projectService serviceInterface="com.intellij.usages.impl.rules.DirectoryGroupingRule"
+                    serviceImplementation="com.intellij.usages.impl.rules.DirectoryGroupingRule"/>
+    <highlightVisitor implementation="com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitor"/>
     <fileTypeFactory implementation="com.intellij.openapi.fileTypes.impl.JavaFileTypeFactory"/>
     <applicationService serviceInterface="com.intellij.psi.JavaDirectoryService"
                         serviceImplementation="com.intellij.psi.impl.file.JavaDirectoryServiceImpl"/>
-
-    <projectService serviceInterface="com.intellij.psi.impl.file.PsiDirectoryFactory"
-                    serviceImplementation="com.intellij.psi.impl.file.PsiDirectoryFactoryImpl"/>
-
     <projectService serviceInterface="com.intellij.openapi.roots.PackageIndex"
                     serviceImplementation="com.intellij.openapi.roots.impl.ProjectPackageIndexImpl"/>
     <moduleService serviceInterface="com.intellij.openapi.roots.ModulePackageIndex"
                    serviceImplementation="com.intellij.openapi.roots.impl.ModulePackageIndexImpl"/>
+    <refactoring.copyHandler implementation="com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler"/>
+    <refactoring.moveHandler implementation="com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler"/>
+    <projectService serviceInterface="com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper"
+                    serviceImplementation="com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper"/>
+    <applicationService serviceInterface="com.intellij.codeEditor.printing.FileSeparatorProvider"
+                        serviceImplementation="com.intellij.codeEditor.printing.FileSeparatorProvider"/>
+    <applicationService serviceInterface="com.intellij.codeInsight.TargetElementUtilBase"
+                        serviceImplementation="com.intellij.codeInsight.TargetElementUtilBase"/>
+    <applicationService serviceInterface="com.intellij.profile.codeInspection.InspectionProfileManager"
+                        serviceImplementation="com.intellij.profile.codeInspection.InspectionProfileManager"/>
 
-    <projectService serviceInterface="com.intellij.usages.impl.rules.DirectoryGroupingRule"
-                    serviceImplementation="com.intellij.usages.impl.rules.DirectoryGroupingRule"/>
 
-    <highlightVisitor implementation="com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitor"/>
 
     <lang.parserDefinition language="JAVA" implementationClass="com.intellij.lang.java.JavaParserDefinition"/>
 
@@ -73,23 +70,8 @@
 
     <defaultTemplatePropertiesProvider implementation="com.intellij.ide.fileTemplates.TemplatePackagePropertyProvider"/>
 
-    <refactoring.copyHandler implementation="com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler"/>
-
-    <refactoring.moveHandler implementation="com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler" id="moveFileOrDir"/>
-
-    <projectService serviceInterface="com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper"
-                    serviceImplementation="com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper"/>
-
-    <applicationService serviceInterface="com.intellij.codeEditor.printing.FileSeparatorProvider"
-                        serviceImplementation="com.intellij.codeEditor.printing.FileSeparatorProvider"/>
-
-    <applicationService serviceInterface="com.intellij.codeInsight.TargetElementUtilBase"
-                        serviceImplementation="com.intellij.codeInsight.TargetElementUtilBase"/>
-
     <projectViewPane implementation="com.intellij.ide.projectView.impl.PackageViewPane"/>
 
-    <applicationService serviceInterface="com.intellij.profile.codeInspection.InspectionProfileManager"
-                        serviceImplementation="com.intellij.profile.codeInspection.InspectionProfileManager"/>
   </extensions>
 
 </idea-plugin>
