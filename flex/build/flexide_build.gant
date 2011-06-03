@@ -462,11 +462,13 @@ def layoutFull(String target, Set usedJars) {
       jar("resources_en.jar") {
         module("platform-resources-en")
         module("resources-en") {
-          include(name: "**/AntBundle.properties")
-          include(name: "**/CompilerBundle.properties")
-          include(name: "**/DebuggerBundle.properties")
-          include(name: "**/EvaluationFeedbackRequest.html")
-          include(name: "**/")
+          ant.patternset() {
+            include(name: "**/AntBundle.properties")
+            include(name: "**/CompilerBundle.properties")
+            include(name: "**/DebuggerBundle.properties")
+            include(name: "**/JavaErrorMessages.properties")
+            include(name: "**/EvaluationFeedbackRequest.html")
+          }
         }
         fileset(dir: "$home/flex/ideResources") {
           include(name: "**/tips/**")
