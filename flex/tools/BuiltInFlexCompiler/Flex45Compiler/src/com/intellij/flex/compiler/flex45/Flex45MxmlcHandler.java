@@ -30,7 +30,7 @@ public class Flex45MxmlcHandler extends Flex45Handler {
     final Application application;
 
     final List fileSpecs = ((CommandLineConfiguration)configuration).getFileSpecs();
-    if (fileSpecs.size() >= 0) {
+    if (fileSpecs.size() > 0) {
       final String inputFilePath = (String)fileSpecs.get(fileSpecs.size() - 1);
       application = new Application(new File(inputFilePath));
     }

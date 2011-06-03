@@ -8,7 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Common" />
-    <orderEntry type="library" name="Flex SDK 4.5.0.19786" level="project" />
+    <orderEntry type="library" name="Flex SDK 4.5" level="project" />
   </component>
 </module>
 
