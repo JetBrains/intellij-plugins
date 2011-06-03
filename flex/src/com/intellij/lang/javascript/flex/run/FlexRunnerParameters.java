@@ -31,8 +31,8 @@ public class FlexRunnerParameters implements Cloneable {
   private @NotNull LauncherType myLauncherType = LauncherType.OSDefault;
   private @NotNull BrowsersConfiguration.BrowserFamily myBrowserFamily = BrowsersConfiguration.BrowserFamily.FIREFOX;
   private @NotNull String myPlayerPath = SystemInfo.isMac
-                                         ? "/Applications/Flash Player.app/Contents/MacOS/Flash Player"
-                                         : SystemInfo.isWindows ? "FlashPlayer.exe" : "/usr/bin/flashplayer";
+                                         ? "/Applications/Flash Player Debugger.app"
+                                         : SystemInfo.isWindows ? "FlashPlayer.exe" : "/usr/bin/flashplayerdebugger";
   private @NotNull String myDebuggerSdkRaw = FlexSdkComboBoxWithBrowseButton.MODULE_SDK_KEY;
 
   public FlexRunnerParameters() {

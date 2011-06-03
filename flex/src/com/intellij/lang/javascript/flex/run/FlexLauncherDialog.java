@@ -7,7 +7,9 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,8 +29,9 @@ public class FlexLauncherDialog extends DialogWrapper {
   private final Project myProject;
 
   public FlexLauncherDialog(final Project project,
-                               final FlexRunnerParameters.LauncherType launcherType,
-                               final BrowsersConfiguration.BrowserFamily browserFamily, final String playerPath) {
+                            final FlexRunnerParameters.LauncherType launcherType,
+                            final BrowsersConfiguration.BrowserFamily browserFamily,
+                            final String playerPath) {
     super(project);
     myProject = project;
     setTitle(FlexBundle.message("launch.with.title"));
@@ -65,7 +68,14 @@ public class FlexLauncherDialog extends DialogWrapper {
 
   private void initPlayerTextWithBrowse() {
     myPlayerTextWithBrowse
-      .addBrowseFolderListener(null, null, myProject, new FileChooserDescriptor(true, false, false, false, false, false));
+      .addBrowseFolderListener(null, null, myProject,
+                               new FileChooserDescriptor(true, true, false, false, false, false) {
+                                 @Override
+                                 public boolean isFileSelectable(final VirtualFile file) {
+                                   return SystemInfo.isMac && file.isDirectory() && "app".equalsIgnoreCase(file.getExtension())
+                                          || !file.isDirectory();
+                                 }
+                               });
   }
 
   private void initControls(final FlexRunnerParameters.LauncherType launcherType,

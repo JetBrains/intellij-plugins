@@ -46,17 +46,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Maxim.Mossienko
  */
 public class FlexUtils {
+
+  @NonNls private static final Pattern INFO_PLIST_EXECUTABLE_PATTERN =
+    Pattern.compile("<key>CFBundleExecutable</key>(?:(?:\\s*)(?:<!--(?:.*)-->(?:\\s*))*)<string>(.*)</string>");
 
   private FlexUtils() {
   }
@@ -424,6 +426,19 @@ public class FlexUtils {
     });
 
     return result.get();
+  }
+
+  @Nullable
+  public static String getMacExecutable(final @NotNull String appFolderPath) {
+    try {
+      final String text = FileUtil.loadFile(new File(appFolderPath + "/Contents/Info.plist"));
+      Matcher m = INFO_PLIST_EXECUTABLE_PATTERN.matcher(text);
+      if (!m.find()) return null;
+      return appFolderPath + "/Contents/MacOS/" + m.group(1);
+    }
+    catch (IOException e) {
+      return null;
+    }
   }
 
   /**

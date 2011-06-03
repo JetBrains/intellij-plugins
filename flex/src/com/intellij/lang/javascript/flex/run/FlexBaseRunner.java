@@ -47,6 +47,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -548,13 +549,19 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         break;
 
       case Player:
+        final String playerPath = parameters.getPlayerPath();
+        final String executablePath = SystemInfo.isMac && playerPath.endsWith(".app") ? FlexUtils.getMacExecutable(playerPath) : playerPath;
         try {
-          Runtime.getRuntime().exec(new String[]{parameters.getPlayerPath(), urlOrPath});
+          if (executablePath == null) {
+            throw new IOException("failed to find application to launch with");
+          }
+
+          Runtime.getRuntime().exec(new String[]{executablePath, urlOrPath});
         }
         catch (final IOException e) {
           final Runnable runnable2 = new Runnable() {
             public void run() {
-              Messages.showErrorDialog(FlexBundle.message("cant.launch", urlOrPath, parameters.getPlayerPath(), e.getMessage()),
+              Messages.showErrorDialog(FlexBundle.message("cant.launch", urlOrPath, playerPath, e.getMessage()),
                                        CommonBundle.getErrorTitle());
             }
           };
