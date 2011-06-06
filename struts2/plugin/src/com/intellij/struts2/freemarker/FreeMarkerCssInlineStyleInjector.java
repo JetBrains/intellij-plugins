@@ -25,7 +25,7 @@ import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.css.CssSupportLoader;
+import com.intellij.psi.css.CssFileType;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public class FreeMarkerCssInlineStyleInjector implements MultiHostInjector {
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar, @NotNull final PsiElement psiElement) {
     if (CSS_ELEMENT_PATTERN.accepts(psiElement)) {
       final TextRange range = new TextRange(1, psiElement.getTextLength() - 1);
-      multiHostRegistrar.startInjecting(CssSupportLoader.CSS_FILE_TYPE.getLanguage())
+      multiHostRegistrar.startInjecting(CssFileType.INSTANCE.getLanguage())
         .addPlace("inline.style {", "}", (PsiLanguageInjectionHost) psiElement, range)
         .doneInjecting();
     }
