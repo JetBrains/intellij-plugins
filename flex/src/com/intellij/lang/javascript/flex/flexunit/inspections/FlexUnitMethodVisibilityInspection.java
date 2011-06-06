@@ -31,7 +31,8 @@ public class FlexUnitMethodVisibilityInspection extends FlexUnitMethodInspection
       final ASTNode nameIdentifier = method.findNameIdentifier();
       if (nameIdentifier != null) {
         holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testmethodvisibility.message"),
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new SetElementVisibilityFix(method, "public"));
+                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                               new SetElementVisibilityFix(method, JSAttributeList.AccessType.PUBLIC));
       }
     }
   }

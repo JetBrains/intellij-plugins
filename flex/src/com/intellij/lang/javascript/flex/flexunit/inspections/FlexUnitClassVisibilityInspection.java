@@ -29,7 +29,8 @@ public class FlexUnitClassVisibilityInspection extends FlexUnitClassInspectionBa
       final ASTNode nameIdentifier = aClass.findNameIdentifier();
       if (nameIdentifier != null) {
         holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testclassvisibility.message"),
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new SetElementVisibilityFix(aClass, "public"));
+                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                               new SetElementVisibilityFix(aClass, JSAttributeList.AccessType.PUBLIC));
       }
     }
   }
