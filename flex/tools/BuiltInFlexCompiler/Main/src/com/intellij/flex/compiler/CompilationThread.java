@@ -28,6 +28,15 @@ public class CompilationThread extends Thread {
     myLogger = logger;
   }
 
+  static {
+    // initialize static data to avoid multithreaded collisions caused by partially initialized arrays or collections
+    try {
+      Configuration.getAliases();
+      macromedia.asc.embedding.LintEvaluator.getWarningDefaults();
+    }
+    catch (Throwable t) {/*API changed*/}
+  }
+
   public void run() {
     try {
       mySdkSpecificHandler.initThreadLocals(myLogger);
