@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
-import com.intellij.psi.css.CssSupportLoader;
+import com.intellij.psi.css.CssFileType;
 import com.intellij.util.ui.tree.AbstractFileTreeTable;
 import com.intellij.util.ui.tree.LanguagePerFileConfigurable;
 import org.jetbrains.annotations.Nls;
@@ -37,7 +37,7 @@ public class CssDialectsConfigurable extends LanguagePerFileConfigurable<CssDial
 
   @Nullable
   public Icon getIcon() {
-    return CssSupportLoader.CSS_FILE_TYPE.getIcon();
+    return CssFileType.INSTANCE.getIcon();
   }
 
   @Override
@@ -75,7 +75,7 @@ public class CssDialectsConfigurable extends LanguagePerFileConfigurable<CssDial
   }
 
   public static boolean canBeConfigured(@NotNull VirtualFile file) {
-    return file.getFileType() == CssSupportLoader.CSS_FILE_TYPE;
+    return file.getFileType() == CssFileType.INSTANCE;
   }
 
   @Nullable

@@ -124,7 +124,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
               if (FlexCssUtil.isStyleNameProperty(cssDeclaration.getPropertyName())) {
                 PsiFile file = cssDeclaration.getContainingFile();
                 if (file != null) {
-                  if (file.getFileType() == CssSupportLoader.CSS_FILE_TYPE) {
+                  if (file.getFileType() == CssFileType.INSTANCE) {
                     Module module = ModuleUtil.findModuleForPsiElement(cssDeclaration);
                     return module != null && FlexUtils.isFlexModuleOrContainsFlexFacet(module);
                   }
