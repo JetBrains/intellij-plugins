@@ -54,6 +54,7 @@
 
 
 
+    <moduleType id="JAVA_MODULE" implementationClass="com.intellij.openapi.module.JavaModuleType"/>
     <lang.parserDefinition language="JAVA" implementationClass="com.intellij.lang.java.JavaParserDefinition"/>
 
     <lang.ast.factory language="JAVA" implementationClass="com.intellij.psi.impl.source.tree.JavaASTFactory"/>
