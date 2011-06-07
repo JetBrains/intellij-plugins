@@ -9,7 +9,6 @@
   </application-components>
 
   <xi:include href="/idea/RichPlatformPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <module value="com.intellij.modules.flexide"/>
   <module value="com.intellij.modules.all"/>
   <xi:include href="/META-INF/ultimate.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
@@ -28,6 +27,8 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceInterface="com.intellij.openapi.module.ModuleTypeManager"
+                        serviceImplementation="com.intellij.openapi.module.impl.ModuleTypeManagerImpl"/>
     <projectService serviceInterface="com.intellij.psi.impl.file.PsiDirectoryFactory"
                     serviceImplementation="com.intellij.psi.impl.file.PsiDirectoryFactoryImpl"/>
     <projectService serviceInterface="com.intellij.usages.impl.rules.DirectoryGroupingRule"
