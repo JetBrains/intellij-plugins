@@ -14,7 +14,7 @@
     import org.flyti.util.ArrayList;
 
     private const source:Vector.<Object> = new Vector.<Object>(1);
-    private var sourceItemCounter:int = 0;
+    private var sourceItemCounter:int;
     private const sourceList:ArrayList = new ArrayList(source);
 
     private const namespaceUnificator:NamespaceUnificator = new NamespaceUnificator();
@@ -51,7 +51,6 @@
     }
 
     public function set element(value:DisplayObject):void {
-      //_rulesetPrinter.availableWidth = PanelSkin(skin).contentWidth;
       _rulesetPrinter.availableWidth = Object(skin).contentWidth;
       _rulesetPrinter.namespaceUnificator = namespaceUnificator;
       updateData(value);
@@ -63,11 +62,21 @@
     }
 
     private function updateData(element:Object):void {
-      sourceItemCounter = 1;
       if (element == null) {
         _styleManager = null;
+        if (list.dataProvider != null) {
+          source.length = 0;
+          sourceList.refresh();
+        }
+        emptyText = "No Selection";
         return;
       }
+      else {
+        emptyText = null;
+      }
+
+      sourceItemCounter = 1;
+      source[0] = namespaceUnificator;
 
       namespaceUnificator.reset();
       _styleManager = element.styleManager;
@@ -75,7 +84,6 @@
       var collected:Dictionary = new Dictionary();
       collect(element.inheritingStyles, collected, false);
 
-      source[0] = namespaceUnificator;
       source.length = sourceItemCounter;
 
       if (list.dataProvider == null) {
@@ -161,9 +169,17 @@
     public function get rulesets():Vector.<Object> {
       return source;
     }
+
+
+    override protected function skinAttached():void {
+      super.skinAttached();
+
+      BorderedDataGroup(list).border = laf.getBorder("StyleInspector.DataGroup.b");
+    }
+
     ]]></fx:Script>
 
   <ScrollView horizontalScrollPolicy="{ScrollPolicy.OFF}">
-    <DataGroup id="list" itemRendererFunction="itemRendererFunction"/>
+    <BorderedDataGroup id="list" itemRendererFunction="itemRendererFunction"/>
   </ScrollView>
 </inspectors:AbstractInspector>

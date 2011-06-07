@@ -21,9 +21,9 @@
 			<path-element>@@repo@@/org/flyti/cocoa/cocoa/1.4-SNAPSHOT/cocoa-1.4-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/flashx/textLayout/2.0.192-de1/textLayout-2.0.192-de1.swc</path-element>
 			<path-element>@@repo@@/org/osflash/as3-signals/0.8.1/as3-signals-0.8.1.swc</path-element>
-			<path-element>@@repo@@/org/flyti/plexus/1.3-SNAPSHOT/plexus-1.3-SNAPSHOT.swc</path-element>
+			<path-element>@@repo@@/org/flyti/plexus/1.3/plexus-1.3.swc</path-element>
 			<path-element>@@repo@@/org/flyti/collections/1.3.6/collections-1.3.6.swc</path-element>
-			<path-element>@@repo@@/org/flyti/foundation/1.2.2/foundation-1.2.2.swc</path-element>
+			<path-element>@@repo@@/org/flyti/foundation/1.2.3/foundation-1.2.3.swc</path-element>
 			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/tinytlf/layouts/1.1-SNAPSHOT/layouts-1.1-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/tinytlf/core/1.1-SNAPSHOT/core-1.1-SNAPSHOT.swc</path-element>
@@ -66,7 +66,7 @@
 	</compiler>
 	<metadata>
 		<language>en_US</language>
-		<date>5/30/11 12:38 AM</date>
+		<date>6/6/11 5:43 PM</date>
 		<title>test</title>
 	</metadata>
 	<file-specs>

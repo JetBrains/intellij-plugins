@@ -43,14 +43,15 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   
   public static final String DESIGNER_SWF = "designer.swf";
   public static final String DESCRIPTOR_XML = "descriptor.xml";
-  public static final String CHECK_DESCRIPTOR_XML = "check-descriptor.xml";
+  private static final String CHECK_DESCRIPTOR_XML = "check-descriptor.xml";
 
-  public ProcessHandler adlProcessHandler;
+  private ProcessHandler adlProcessHandler;
   private Server server;
 
   ProjectManagerListener projectManagerListener;
 
   public static final File APP_DIR = new File(PathManager.getSystemPath(), "flexUIDesigner");
+  private static final String CHECK_DESCRIPTOR_PATH = APP_DIR + File.separator + CHECK_DESCRIPTOR_XML;
 
   private boolean documentOpening;
 
@@ -64,28 +65,21 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   @Override
   public void dispose() {
-    closeClosable(Client.getInstance());
-    closeClosable(server);
+    IOUtil.close(Client.getInstance());
+    IOUtil.close(server);
 
+    destroyAdlProcess();
+  }
+
+  public void destroyAdlProcess() {
     if (adlProcessHandler != null) {
       adlProcessHandler.destroyProcess();
-    }
-  }
-  
-  private static void closeClosable(Closable closable) {
-    try {
-      if (closable != null) {
-        closable.close();
-      }
-    }
-    catch (IOException e) {
-      LOG.error(e);
     }
   }
 
   public void serverClosed() {
     documentOpening = false;
-    closeClosable(Client.getInstance());
+    IOUtil.close(Client.getInstance());
     
     Application application = ApplicationManager.getApplication();
     if (!application.isDisposed()) {
@@ -188,7 +182,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   private void run(@NotNull final Project project, @NotNull final Module module, @NotNull XmlFile psiFile, boolean debug) {
     DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration;
     try {
-      adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk();
+      adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk(CHECK_DESCRIPTOR_PATH);
       if (adlRunConfiguration == null) {
         final String message = FlexUIDesignerBundle.message("error.suitable.fdk.not.found", SystemInfo.isLinux ? FlexUIDesignerBundle
           .message("error.suitable.fdk.not.found.linux") : "");
@@ -197,7 +191,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         final ProjectJdksEditor editor = new ProjectJdksEditor(null, project, WindowManager.getInstance().suggestParentWindow(project));
         editor.show();
         if (editor.isOK()) {
-          adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk();
+          adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk(CHECK_DESCRIPTOR_PATH);
         }
 
         if (adlRunConfiguration == null) {
@@ -248,7 +242,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
                   LOG.error("ADL exited with error code " + exitCode);
                 }
 
-                documentOpening = false;
+                serverClosed();
               }
             });
         }
@@ -309,7 +303,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     appFile.setLastModified(lastModified);
   }
 
-
   class PendingOpenDocumentTask implements Runnable {
     private final Project myProject;
     private final Module myModule;
@@ -333,15 +326,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
             LibraryManager.getInstance().initLibrarySets(myModule, APP_DIR);
           }
           catch (IOException e) {
-            try {
-              server.close();
-            }
-            catch (IOException innerError) {
-              LOG.error(innerError);
-            }
-            finally {
-              serverClosed();
-            }
+            IOUtil.close(server);
+            serverClosed();
             LOG.error(e);
           }
           catch (InitException e) {
@@ -379,15 +365,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).initialDocumentOpened();
       }
       catch (IOException e) {
-        try {
-          server.close();
-        }
-        catch (IOException innerError) {
-          LOG.error(innerError);
-        }
-        finally {
-          serverClosed();
-        }
+        IOUtil.close(server);
+        serverClosed();
         LOG.error(e);
       }
       finally {

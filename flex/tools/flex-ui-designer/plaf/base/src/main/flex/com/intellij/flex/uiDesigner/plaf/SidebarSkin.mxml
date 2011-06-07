@@ -13,9 +13,10 @@
     }
     ]]></fx:Script>
 
+
   <SidebarPaneLabelBar id="segmentedControl" width="20" right="2" top="0" bottom="0" lafSubkey="Sidebar">
     <layout>
-      <SegmentedControlVerticalLayout/>
+      <SegmentedControlVerticalLayout gap="6"/>
     </layout>
   </SidebarPaneLabelBar>
 

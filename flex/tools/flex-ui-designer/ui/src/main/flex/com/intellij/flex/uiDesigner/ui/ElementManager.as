@@ -37,6 +37,7 @@ public class ElementManager extends EventDispatcher implements Injectable {
     _document = value;
     if (_document == null) {
       simpleStyleClientClass = null;
+      skinClass = null;
     }
     else {
       _document.systemManager.addRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);

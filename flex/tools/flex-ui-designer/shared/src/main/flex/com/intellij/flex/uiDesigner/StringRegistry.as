@@ -17,7 +17,11 @@ public final class StringRegistry {
   
   public function initStringTable(input:IDataInput):void {
     if (table != null) {
-      throw new IllegalOperationError();
+      var m:String = "Table already created: ";
+      for each (var s:String in table) {
+        m += s + " ";
+      }
+      throw new IllegalOperationError(m);
     }
     
     table = input.readObject();

@@ -6,3 +6,7 @@ borders:
   subkey: TabLabel
   type: Scale1
   frameInsets: {top: 2}
+- key: StatusText
+  type: Scale3EdgeH
+  frameInsets: {bottom: -1}
+  contentInsets: {left: 17, right: 17, bottom: 9}

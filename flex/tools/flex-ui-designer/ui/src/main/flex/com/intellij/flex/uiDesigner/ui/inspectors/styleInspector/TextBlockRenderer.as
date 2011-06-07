@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import cocoa.AbstractView;
 
 import com.intellij.flex.uiDesigner.css.CssRuleset;
-import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StylePaneContext;
 
 import mx.core.IDataRenderer;
 

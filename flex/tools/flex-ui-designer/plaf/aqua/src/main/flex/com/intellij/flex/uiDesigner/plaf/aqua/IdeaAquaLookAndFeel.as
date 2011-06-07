@@ -27,6 +27,7 @@ public class IdeaAquaLookAndFeel extends IdeaLookAndFeel {
     data["TabLabel.PushButton"] = HUDPushButtonSkin;
 
     data["small.rightSidePopUpButtonArrows"] = smallRightSidePopUpButtonArrowsClass;
+    data["StatusBar.f"] = new TextFormat(new ElementFormat(fontDescription, 12, 0xfbfbfb));
   }
 }
 }

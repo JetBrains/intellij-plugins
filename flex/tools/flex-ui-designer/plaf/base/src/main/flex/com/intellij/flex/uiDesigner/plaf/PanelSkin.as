@@ -3,14 +3,15 @@ import cocoa.Border;
 import cocoa.Component;
 import cocoa.IconButton;
 import cocoa.LabelHelper;
+import cocoa.Panel;
 import cocoa.Toolbar;
 import cocoa.View;
 import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.LookAndFeelProvider;
-import cocoa.plaf.aqua.AquaLookAndFeel;
-import cocoa.plaf.basic.AbstractSkin;
 import cocoa.plaf.TextFormatId;
 import cocoa.plaf.WindowSkin;
+import cocoa.plaf.aqua.AquaLookAndFeel;
+import cocoa.plaf.basic.AbstractSkin;
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -23,6 +24,8 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
 
   private var titleBorder:Border;
   private var contentBorder:Border;
+
+  private var statusText:StatusText;
 
 //  private var minimizeButton:IconButton;
 //  private var closeSideButton:IconButton;
@@ -99,7 +102,7 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
     measuredMinWidth = _contentView.minWidth + contentBorder.contentInsets.width;
     measuredWidth = _contentView.getExplicitOrMeasuredWidth() + contentBorder.contentInsets.width;
 
-    var chromeH:Number = (titleBorder.layoutHeight + contentBorder.contentInsets.height) - 1;
+    var chromeH:Number = contentBorder.contentInsets.height;
     measuredMinHeight = _contentView.minHeight + chromeH;
     measuredHeight = _contentView.getExplicitOrMeasuredHeight() + chromeH;
   }
@@ -113,10 +116,26 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
     var g:Graphics = graphics;
     g.clear();
 
-    contentBorder.draw(null, g, w, h);
-    
+    contentBorder.draw(g, w, h);
     g.lineStyle();
-    titleBorder.draw(null, g, w, titleBorder.layoutHeight);
+
+    var panel:Panel = Panel(component);
+    const empty:Boolean = panel.emptyText != null;
+    if (empty) {
+      if (statusText == null) {
+        statusText = new StatusText(this, laf.getBorder("StatusText.b"), laf.getTextFormat("StatusBar.f"));
+      }
+
+      statusText.show(g, panel.emptyText, contentBorder.contentInsets, w, h);
+    }
+    else if (statusText != null) {
+      statusText.hide();
+    }
+
+    _contentView.visible = !empty;
+
+    g.lineStyle();
+    titleBorder.draw(g, w, titleBorder.layoutHeight);
 
     labelHelper.validate();
     labelHelper.move(3, 13);
@@ -125,7 +144,9 @@ public class PanelSkin extends AbstractSkin implements WindowSkin {
     if (_toolbar != null) {
       _toolbar.skin.setActualSize(contentWidth, 20);
     }
-    _contentView.setActualSize(contentWidth, h - contentBorder.contentInsets.height - contentBorder.frameInsets.top);
+    if (!empty) {
+      _contentView.setActualSize(contentWidth, h - contentBorder.contentInsets.height);
+    }
 
 //    DisplayObject(minimizeButton.skin).x = w - (17 * 2) - 1 - 3;
 //    DisplayObject(closeSideButton.skin).x = w - 17 - 3;

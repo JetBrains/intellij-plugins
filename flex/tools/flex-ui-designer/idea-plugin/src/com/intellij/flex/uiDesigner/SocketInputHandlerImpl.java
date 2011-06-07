@@ -1,6 +1,9 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.*;
+import com.intellij.flex.uiDesigner.io.Amf3Types;
+import com.intellij.flex.uiDesigner.io.AmfOutputStream;
+import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
+import com.intellij.flex.uiDesigner.io.ImageUtil;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;

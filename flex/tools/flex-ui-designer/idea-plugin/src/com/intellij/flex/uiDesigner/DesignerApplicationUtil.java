@@ -10,7 +10,6 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
@@ -52,18 +51,14 @@ final class DesignerApplicationUtil {
     return new AdlRunConfiguration("/Developer/SDKs/flex_sdk_4.5/bin/adl", MAC_AIR_RUNTIME_DEFAULT_PATH);
   }
   
-  public static @Nullable AdlRunConfiguration findSuitableFlexSdk() throws IOException {
+  public static @Nullable AdlRunConfiguration findSuitableFlexSdk(String checkDescriptorPath) throws IOException {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return createTestAdlRunConfiguration();
     }
 
-    List<Sdk> sdks = new ArrayList<Sdk>();
+    final List<Sdk> sdks = new ArrayList<Sdk>();
     for (Sdk sdk: ProjectJdkTable.getInstance().getAllJdks()) {
-      if (sdk.getSdkType() instanceof IFlexSdkType) {
-        String version = sdk.getVersionString();
-        if (StringUtil.compareVersionNumbers(version, "4.5") < 0) {
-          continue;
-        }
+      if (sdk.getSdkType() instanceof IFlexSdkType && StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") >= 0) {
         sdks.add(sdk);
       }
     }
@@ -87,7 +82,7 @@ final class DesignerApplicationUtil {
         runtime = FlexSdkUtils.getAirRuntimePath(sdk);
       }
 
-      if (!checkRuntime(adlPath, runtime)) {
+      if (!checkRuntime(adlPath, runtime, checkDescriptorPath)) {
         runtime = null;
         continue;
       }
@@ -98,7 +93,7 @@ final class DesignerApplicationUtil {
     return null;
   }
 
-  private static boolean checkRuntime(String adlPath, String runtimePath) throws IOException {
+  private static boolean checkRuntime(String adlPath, String runtimePath, String checkDescriptorPath) throws IOException {
     if (StringUtil.isEmpty(runtimePath)) {
       return false;
     }
@@ -112,16 +107,12 @@ final class DesignerApplicationUtil {
       return false;
     }
 
-    File checkDescriptorFile = new File(FlexUIDesignerApplicationManager.APP_DIR, FlexUIDesignerApplicationManager.CHECK_DESCRIPTOR_XML);
-    IOUtil.saveStream(DesignerApplicationUtil.class.getClassLoader().getResourceAsStream(
-      FlexUIDesignerApplicationManager.CHECK_DESCRIPTOR_XML), checkDescriptorFile);
-
-    List<String> command = new ArrayList<String>();
+    final List<String> command = new ArrayList<String>();
     command.add(adlPath);
     command.add("-runtime");
     command.add(runtimePath);
     command.add("-nodebug");
-    command.add(checkDescriptorFile.getCanonicalPath());
+    command.add(checkDescriptorPath);
 
     final Process checkProcess = new ProcessBuilder(command).start();
     final Integer exitCode;

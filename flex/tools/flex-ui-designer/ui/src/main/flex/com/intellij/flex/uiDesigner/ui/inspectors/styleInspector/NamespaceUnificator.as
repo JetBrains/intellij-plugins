@@ -7,9 +7,7 @@ import flash.utils.Dictionary;
 
 public class NamespaceUnificator {
   private var uriToPrefix:Dictionary;
-  
-  public var changed:Boolean;
-  
+
   private const _uriList:Vector.<String> = new Vector.<String>();
   public function get uriList():Vector.<String> {
     return _uriList;

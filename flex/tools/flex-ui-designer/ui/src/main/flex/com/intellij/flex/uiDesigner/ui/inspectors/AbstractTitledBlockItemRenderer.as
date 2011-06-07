@@ -45,7 +45,7 @@ public class AbstractTitledBlockItemRenderer extends AbstractView implements Loo
 
     var g:Graphics = graphics;
     g.clear();
-    border.draw(this, g, w, border.layoutHeight);
+    border.draw(g, w, border.layoutHeight);
   }
 }
 }

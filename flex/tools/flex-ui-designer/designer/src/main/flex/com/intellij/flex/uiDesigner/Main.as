@@ -76,6 +76,8 @@ public class Main extends MainWindowedApplication {
 
   private function connect():void {
     var container:PlexusContainer = PlexusManager.instance.container;
+
+    //throw new Error("AAAAAAAAAA!!!!!!!!!!1111111");
     
     // cache StringRegistry instance
     StringRegistry(container.lookup(StringRegistry));

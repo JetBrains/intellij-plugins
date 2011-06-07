@@ -21,13 +21,16 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
     super.initialize();
 
     data["Sidebar"] = SidebarSkin;
+    // idea UI bug, so, we use our own insets, 5 instead of 4 px bottom (and 20 px height instead of 19 px) (otherwise, text bottom edge close to border bottom edge)
     data["Sidebar.iR.tLI"] = new TextLineInsets(TextRotation.ROTATE_90, 5, 9, 9);
     data["Sidebar.iR.b.off"] = RectangularBorder.createRounded(0xf9f5f2, 0x929292, 4);
     data["Sidebar.iR.b.on"] = LinearGradientBorder.createHRounded([0xc7c6c4, 0xf5f4f4], 0, 4);
 
     data["Panel"] = PanelSkin;
-    data["Panel.title.b"] = LinearGradientBorder.createVWithFixedHeight(16, [0xa7c5fc, 0x7d95c0]);
-    data["Panel.b"] = RectangularBorder.create(0xffffff, 0x999999 /* idea UI 0x929292, but 0x999999 more Aqua UI */, new Insets(1, 1, 1, 1), new FrameInsets(0, 15 /* hide top h line */));
+    const panelTitleBorderHeight:Number = 16;
+    data["Panel.title.b"] = LinearGradientBorder.createVWithFixedHeight(panelTitleBorderHeight, [0xa7c5fc, 0x7d95c0]);
+    data["Panel.b"] = RectangularBorder.create(NaN, 0x999999 /* idea UI 0x929292, but 0x999999 more Aqua UI */, new Insets(1, panelTitleBorderHeight, 1, 1), new FrameInsets(0, panelTitleBorderHeight - 1 /* hide top h line */));
+    data["StyleInspector.DataGroup.b"] = RectangularBorder.create(0xffffff);
 
     data["ProjectView"] = ProjectViewSkin;
     data["ProjectView.TabView"] = EditorTabViewSkin;
