@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -108,7 +107,7 @@ public class ModuleInfoUtil {
 
     @Override
     public void run() {
-      final ModuleWithDependenciesScope moduleScope = new ModuleWithDependenciesScope(moduleInfo.getModule(), true, false, false, false);
+      final GlobalSearchScope moduleScope = moduleInfo.getModule().getModuleScope(false);
       final GlobalSearchScope moduleWithDependenciesAndLibrariesScope =
         moduleInfo.getModule().getModuleWithDependenciesAndLibrariesScope(false);
       if (flexSdkVersion.charAt(0) > '3') {
