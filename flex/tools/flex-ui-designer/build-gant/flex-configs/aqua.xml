@@ -62,7 +62,7 @@
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<metadata>
-		<date>6/6/11 5:43 PM</date>
+		<date>6/7/11 9:52 PM</date>
 		<title>aqua</title>
 	</metadata>
 	<include-sources>
@@ -79,6 +79,10 @@
 	<include-file>
 		<name>/popup.arrows.rightsidebutton.small.png</name>
 		<path>@@source@@/resources/popup.arrows.rightsidebutton.small.png</path>
+	</include-file>
+	<include-file>
+		<name>/StatusText.png</name>
+		<path>@@source@@/resources/StatusText.png</path>
 	</include-file>
 	<include-file>
 		<name>/TabLabel.PushButton.off.png</name>

@@ -8,6 +8,7 @@
 		<fixed-literal-vector>true</fixed-literal-vector>
 		<source-path>
 			<path-element>@@source@@/flex</path-element>
+			<path-element>@@source@@/resources</path-element>
 		</source-path>
 		<include-libraries/>
 		<external-library-path>
@@ -59,7 +60,7 @@
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<metadata>
-		<date>6/6/11 5:43 PM</date>
+		<date>6/7/11 9:52 PM</date>
 		<title>base</title>
 	</metadata>
 	<include-sources>
