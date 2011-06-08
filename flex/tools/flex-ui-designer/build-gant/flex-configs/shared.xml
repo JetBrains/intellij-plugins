@@ -1,32 +1,30 @@
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
-	<output>@@target@@/shared-1.0-SNAPSHOT.swc</output>
-	<target-player>10.2</target-player>
-	<tools-locale>en_US</tools-locale>
 	<compiler>
+		<accessible>false</accessible>
 		<debug>true</debug>
-		<locale/>
-		<fixed-literal-vector>true</fixed-literal-vector>
-		<source-path>
-			<path-element>@@source@@/flex</path-element>
-		</source-path>
-		<include-libraries/>
 		<external-library-path>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
 		</external-library-path>
-		<theme/>
+		<fixed-literal-vector>true</fixed-literal-vector>
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
+		<include-libraries/>
 		<library-path/>
-		<accessible>false</accessible>
-		<headless-server>false</headless-server>
+		<locale/>
+		<source-path>
+			<path-element>@@source@@/flex</path-element>
+		</source-path>
+		<theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
-	<metadata>
-		<date>6/7/11 9:52 PM</date>
-		<title>shared</title>
-	</metadata>
 	<include-sources>
 		<path-element>@@source@@/flex</path-element>
 	</include-sources>
+	<metadata>
+		<title>shared</title>
+	</metadata>
+	<output>@@target@@/shared-1.0-SNAPSHOT.swc</output>
+	<target-player>10.2</target-player>
+	<tools-locale>en_US</tools-locale>
 </flex-config>

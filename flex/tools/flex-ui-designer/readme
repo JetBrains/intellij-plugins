@@ -9,11 +9,11 @@ ln -s $DEV_IDEA_HOME/flex/tools/flex-ui-designer/designer/src/main/resources/che
 ln -sf $DEV_IDEA_HOME/flex/tools/flex-ui-designer/app-loader/target/app-loader-1.0-SNAPSHOT.swf ~/Library/Caches/IntelliJIdea10/plugins-sandbox/test/testAppRoot/designer.swf
 
 
-mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.3.1:generate -DgenerateAlsoShareable -o
+mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.3.2:generate -DgenerateAlsoShareable -o
 
-mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.3.1:generate -o -DgenerateAlsoShareable -s build/maven-settings.xml
+mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.3.2:generate -o -DgenerateAlsoShareable -s build/maven-settings.xml
 
-mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.3.1:replicate-repo -o -e
+mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.3.2:replicate-repo -o -e
 
 
 mvn compile -Prelease -Dflex.swf.uncompressed=true -o

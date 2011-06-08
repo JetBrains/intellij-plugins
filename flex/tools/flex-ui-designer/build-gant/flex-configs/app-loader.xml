@@ -1,37 +1,27 @@
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
-	<output>@@target@@/app-loader-1.0-SNAPSHOT.swf</output>
-	<target-player>10.2</target-player>
-	<tools-locale>en_US</tools-locale>
 	<compiler>
-		<debug>true</debug>
-		<locale>
-			<locale-element>en_US</locale-element>
-		</locale>
-		<fixed-literal-vector>true</fixed-literal-vector>
-		<source-path>
-			<path-element>@@source@@/flex</path-element>
-			<path-element>@@source@@/resources</path-element>
-			<path-element>@@target@@</path-element>
-		</source-path>
-		<include-libraries>
-			<library>@@target@@/shared-1.0-SNAPSHOT.swc</library>
-		</include-libraries>
-		<external-library-path>
-			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
-		</external-library-path>
-		<theme/>
-		<fonts>
-			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
-		</fonts>
-		<library-path>
-			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968.swc</path-element>
-		</library-path>
 		<accessible>false</accessible>
+		<debug>true</debug>
 		<define>
 			<name>config::useRoboflest</name>
 			<value>true</value>
 		</define>
-		<headless-server>false</headless-server>
+		<external-library-path>
+			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
+		</external-library-path>
+		<fixed-literal-vector>true</fixed-literal-vector>
+		<fonts>
+			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
+		</fonts>
+		<include-libraries>
+			<library>@@target@@/shared-1.0-SNAPSHOT.swc</library>
+		</include-libraries>
+		<library-path>
+			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968.swc</path-element>
+		</library-path>
+		<locale>
+			<locale-element>en_US</locale-element>
+		</locale>
 		<namespaces>
 			<namespace>
 				<uri>http://ns.adobe.com/mxml/2009</uri>
@@ -50,13 +40,21 @@
 				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/configs_zip/mxml-manifest.xml</manifest>
 			</namespace>
 		</namespaces>
+		<source-path>
+			<path-element>@@source@@/flex</path-element>
+			<path-element>@@source@@/resources</path-element>
+			<path-element>@@target@@</path-element>
+		</source-path>
+		<theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
 	<metadata>
 		<language>en_US</language>
-		<date>6/7/11 9:52 PM</date>
 		<title>app-loader</title>
 	</metadata>
+	<output>@@target@@/app-loader-1.0-SNAPSHOT.swf</output>
+	<target-player>10.2</target-player>
+	<tools-locale>en_US</tools-locale>
 	<file-specs>
 			<path-element>@@source@@/flex/com/intellij/flex/uiDesigner/MainLoader.as</path-element>
 	</file-specs>
