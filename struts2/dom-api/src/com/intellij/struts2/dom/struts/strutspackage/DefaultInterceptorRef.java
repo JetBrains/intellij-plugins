@@ -22,7 +22,7 @@ import com.intellij.util.xml.*;
 /**
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Default Interceptor Reference", iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(typeName = "Default Interceptor Reference", provider = Struts2DomIconProvider.class)
 public interface DefaultInterceptorRef extends DomElement {
 
   @Required

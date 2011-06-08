@@ -35,7 +35,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Struts Action", iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(typeName = "Struts Action", provider = Struts2DomIconProvider.class)
 public interface Action extends ParamsElement {
 
   /**

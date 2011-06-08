@@ -25,7 +25,7 @@ import com.intellij.util.xml.Required;
 /**
  * @author Yann C&eacute;bron
  */
-@Presentation(iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(provider = Struts2DomIconProvider.class)
 public interface InterceptorRef extends ParamsElement {
 
   @Required

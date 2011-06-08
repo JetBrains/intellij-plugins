@@ -26,7 +26,7 @@ import com.intellij.util.xml.*;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Global Exception Mapping", iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(typeName = "Global Exception Mapping", provider = Struts2DomIconProvider.class)
 public interface GlobalExceptionMapping extends DomElement /* ParamsElement TODO ??! */ {
 
  // @NameValue() TODO ??

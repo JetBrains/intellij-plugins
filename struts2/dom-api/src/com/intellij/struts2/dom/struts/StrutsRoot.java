@@ -33,7 +33,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
-@Presentation(typeName = "Struts Root", iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(typeName = "Struts Root", provider = Struts2DomIconProvider.class)
 public interface StrutsRoot extends DomElement {
 
   @NonNls

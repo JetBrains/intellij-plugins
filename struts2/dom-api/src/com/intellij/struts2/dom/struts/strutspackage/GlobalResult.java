@@ -30,7 +30,7 @@ import com.intellij.util.xml.*;
  * @author Yann C&eacute;bron
  */
 @Convert(StrutsPathReferenceConverter.class)
-@Presentation(typeName = "Global Result", iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(typeName = "Global Result", provider = Struts2DomIconProvider.class)
 public interface GlobalResult extends HasResultType, ParamsElement, GenericDomValue<PathReference> {
 
   @NameValue

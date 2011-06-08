@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NonNls;
  * @author Yann C&eacute;bron
  */
 @Convert(StrutsPathReferenceConverter.class)
-@Presentation(typeName = "Result", iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(typeName = "Result", provider = Struts2DomIconProvider.class)
 public interface Result extends HasResultType, ParamsElement, GenericDomValue<PathReference> {
 
   /**

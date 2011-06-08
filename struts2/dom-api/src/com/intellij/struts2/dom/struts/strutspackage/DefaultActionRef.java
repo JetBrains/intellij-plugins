@@ -25,7 +25,7 @@ import com.intellij.util.xml.*;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Default Action Reference", iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(typeName = "Default Action Reference", provider = Struts2DomIconProvider.class)
 public interface DefaultActionRef extends DomElement {
 
   // only within current package

@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Parameter", iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(typeName = "Parameter", provider = Struts2DomIconProvider.class)
 public interface Param extends DomElement {
 
   @Attribute(value = "name")

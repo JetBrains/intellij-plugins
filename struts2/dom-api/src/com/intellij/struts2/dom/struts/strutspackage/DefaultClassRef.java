@@ -26,7 +26,7 @@ import com.intellij.util.xml.*;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Default Class Reference", iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(typeName = "Default Class Reference", provider = Struts2DomIconProvider.class)
 public interface DefaultClassRef extends DomElement {
 
   @Required

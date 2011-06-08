@@ -32,7 +32,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
-@Presentation(typeName = "Struts Package", iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(typeName = "Struts Package", provider = Struts2DomIconProvider.class)
 public interface StrutsPackage extends CommonDomModelElement {
 
   String DEFAULT_NAMESPACE = "/";

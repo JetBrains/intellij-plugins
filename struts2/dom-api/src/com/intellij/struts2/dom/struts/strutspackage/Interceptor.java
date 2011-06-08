@@ -24,7 +24,7 @@ import com.intellij.util.xml.*;
 /**
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Interceptor", iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(typeName = "Interceptor", provider = Struts2DomIconProvider.class)
 public interface Interceptor extends InterceptorOrStackBase {
 
   @Attribute(value = "class")

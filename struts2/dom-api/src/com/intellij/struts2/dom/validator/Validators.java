@@ -32,7 +32,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
-@Presentation(iconProviderClass = Struts2DomIconProvider.class)
+@Presentation(provider = Struts2DomIconProvider.class)
 public interface Validators extends DomElement {
 
   @NonNls

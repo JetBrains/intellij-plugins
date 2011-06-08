@@ -15,7 +15,7 @@
 
 package com.intellij.struts2;
 
-import com.intellij.ide.presentation.PresentationIconProvider;
+import com.intellij.ide.presentation.PresentationProvider;
 import com.intellij.struts2.dom.params.Param;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -31,10 +31,10 @@ import javax.swing.*;
  *
  * @author Yann C&eacute;bron
  */
-public class Struts2DomIconProvider implements PresentationIconProvider {
+public class Struts2DomIconProvider extends PresentationProvider {
 
   @Override
-  public Icon getIcon(final Object domElement, final int flags) {
+  public Icon getIcon(final Object domElement) {
     if (domElement instanceof Param) {
       return StrutsIcons.PARAM;
     }
