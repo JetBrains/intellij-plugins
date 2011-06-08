@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.CreateFieldByMxmlAttributeFix;
+import com.intellij.lang.javascript.validation.fixes.CreateSetterByMxmlAttributeFix;
 import com.intellij.lang.javascript.validation.fixes.FixAndIntentionAction;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -43,14 +44,16 @@ public class FlexXmlExtension extends DefaultXmlExtension {
 
     // todo declaration can be XmlFile (other MXML)
     if (declaration instanceof JSClass) {
-      final FixAndIntentionAction fix1 = new CreateFieldByMxmlAttributeFix(name, attribute.getValue());
+      final String attributeValue = attribute.getValue();
+
+      final FixAndIntentionAction fix1 = new CreateFieldByMxmlAttributeFix(name, attributeValue);
       fix1.registerElementRefForFix(attribute, null);
 
-      //final FixAndIntentionAction fix2 = new CreateJSPropertyAccessorIntentionAction(name, false);
-      //fix2.registerElementRefForFix(attribute, null);
+      final FixAndIntentionAction fix2 = new CreateSetterByMxmlAttributeFix(name, attributeValue);
+      fix2.registerElementRefForFix(attribute, null);
 
       QuickFixAction.registerQuickFixAction(highlightInfo, fix1);
-      //QuickFixAction.registerQuickFixAction(highlightInfo, fix1);
+      QuickFixAction.registerQuickFixAction(highlightInfo, fix2);
     }
   }
 }
