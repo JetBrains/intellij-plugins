@@ -6,6 +6,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
+import com.intellij.lang.javascript.validation.fixes.CreateEventMetadataByMxmlAttributeFix;
 import com.intellij.lang.javascript.validation.fixes.CreateFieldByMxmlAttributeFix;
 import com.intellij.lang.javascript.validation.fixes.CreateSetterByMxmlAttributeFix;
 import com.intellij.lang.javascript.validation.fixes.FixAndIntentionAction;
@@ -52,8 +53,12 @@ public class FlexXmlExtension extends DefaultXmlExtension {
       final FixAndIntentionAction fix2 = new CreateSetterByMxmlAttributeFix(name, attributeValue);
       fix2.registerElementRefForFix(attribute, null);
 
+      final FixAndIntentionAction fix3 = new CreateEventMetadataByMxmlAttributeFix(name);
+      fix3.registerElementRefForFix(attribute, null);
+
       QuickFixAction.registerQuickFixAction(highlightInfo, fix1);
       QuickFixAction.registerQuickFixAction(highlightInfo, fix2);
+      QuickFixAction.registerQuickFixAction(highlightInfo, fix3);
     }
   }
 }
