@@ -32,18 +32,14 @@
   <actions>
     <group id="FlexUIDesigner.MainToolbarActions">
       <separator/>
-      <action id="FlexUIDesigner.RunDesignView" class="com.intellij.flex.uiDesigner.actions.RunDesignViewAction" icon="/actions/preview.png">
-        <keyboard-shortcut first-keystroke="meta i" keymap="$default"/>
-      </action>
-      <action id="FlexUIDesigner.DebugDesignView" class="com.intellij.flex.uiDesigner.actions.DebugDesignViewAction" icon="/images/preview-debug.png">
-        <keyboard-shortcut first-keystroke="meta shift i" keymap="$default"/>
-      </action>
+      <action id="FlexUIDesigner.RunDesignView" class="com.intellij.flex.uiDesigner.actions.RunDesignViewAction" icon="/actions/preview.png"/>
+      <action id="FlexUIDesigner.DebugDesignView" class="com.intellij.flex.uiDesigner.actions.DebugDesignViewAction" icon="/images/preview-debug.png"/>
       <add-to-group anchor="before" group-id="MainToolBar" relative-to-action="HelpTopics"/>
     </group>
 
-    <group id="FlexUIDesigner.ProjectViewActions">
+    <group id="FlexUIDesigner.ContextMenuActions">
       <reference ref="FlexUIDesigner.RunDesignView"/>
-      <add-to-group anchor="last" group-id="ProjectViewPopupMenuRunGroup"/>
+      <add-to-group anchor="last" group-id="RunContextPopupGroup"/>
     </group>
   </actions>
 </idea-plugin>
