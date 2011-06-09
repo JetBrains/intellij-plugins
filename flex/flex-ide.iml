@@ -42,6 +42,9 @@
     <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="flex-profiler" />
     <orderEntry type="module" module-name="properties" />
+    <orderEntry type="module" module-name="git4idea" />
+    <orderEntry type="module" module-name="ant" />
+    <orderEntry type="module" module-name="github" />
   </component>
 </module>
 
