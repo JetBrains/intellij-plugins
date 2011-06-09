@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatureDialog;
+import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatureProcessor;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.BaseRefactoringProcessor;
@@ -77,7 +78,7 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
   }
 
   @Override
-  protected BaseRefactoringProcessor createRefactoringProcessor() {
+  protected JSChangeSignatureProcessor createRefactoringProcessor() {
     return null; // ignore
   }
 
