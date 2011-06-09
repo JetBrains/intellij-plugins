@@ -16,6 +16,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.xml.TagNameReference;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.xml.DefaultXmlExtension;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -43,8 +44,7 @@ public class FlexXmlExtension extends DefaultXmlExtension {
       return;
     }
 
-    // todo declaration can be XmlFile (other MXML)
-    if (declaration instanceof JSClass) {
+    if (declaration instanceof JSClass || declaration instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((XmlFile)declaration)) {
       final String attributeValue = attribute.getValue();
 
       final FixAndIntentionAction fix1 = new CreateFieldByMxmlAttributeFix(name, attributeValue);

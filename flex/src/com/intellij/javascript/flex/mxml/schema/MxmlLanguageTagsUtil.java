@@ -73,7 +73,7 @@ public class MxmlLanguageTagsUtil {
   }
 
   static boolean isFxLibraryTag(final XmlTag tag) {
-    return tag != null && FlexPredefinedTagNames.LIBRARY.equals(tag.getLocalName()) && MXML_URI3.equals(tag.getNamespace());
+    return XmlBackedJSClassImpl.isFxLibraryTag(tag);
   }
 
   static boolean isFxDefinitionTag(final XmlTag tag) {
