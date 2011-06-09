@@ -29,7 +29,7 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
   }
 
   public function set data(value:Object):void {
-    if (value == null || value == _object) {
+    if (value == _object) {
       return;
     }
     

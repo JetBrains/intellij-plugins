@@ -49,8 +49,7 @@ public class ProjectView extends AbstractComponent implements Injectable {
       new PaneItem(new ResourceMetadata("style", "Designer"), new ClassFactory(StyleInspector)),
       new PaneItem(new ResourceMetadata("properties", "Designer"), new ClassFactory(PropertyInspector))
     ]);
-    //sidebar.selectedIndices = new <int>[0, 1];
-    sidebar.selectedIndices = new <int>[0];
+    sidebar.selectedIndices = new <int>[0, 1];
   }
 
   ui function editorTabViewAdded():void {

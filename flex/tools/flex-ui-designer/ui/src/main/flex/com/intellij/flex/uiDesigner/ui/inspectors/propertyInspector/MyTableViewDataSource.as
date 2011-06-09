@@ -9,7 +9,6 @@ import avmplus.describe;
 import cocoa.tableView.TableColumn;
 import cocoa.tableView.TableViewDataSource;
 
-import flash.errors.IllegalOperationError;
 import flash.utils.Dictionary;
 
 import org.osflash.signals.ISignal;
@@ -55,8 +54,14 @@ public class MyTableViewDataSource implements TableViewDataSource {
 
   public function update(object:Object):void {
     _object = object;
-
     sourceItemCounter = 0;
+
+    if (_object == null) {
+      if (_reset != null) {
+        _reset.dispatch();
+      }
+      return;
+    }
 
     var traits:Object = describe(object, INCLUDE_ACCESSORS | INCLUDE_VARIABLES | INCLUDE_METADATA | HIDE_OBJECT | INCLUDE_TRAITS).traits;
     for each (var accessor:Object in traits.accessors) {
