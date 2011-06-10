@@ -6,20 +6,21 @@ import com.intellij.execution.configurations.JavaCommandLineStateUtil;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
-import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.IFlexSdkType;
-import com.intellij.lang.javascript.flex.TargetPlayerUtils;
+import com.intellij.facet.FacetManager;
+import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -661,5 +662,22 @@ public class FlexSdkUtils {
       default:
         return null;
     }
+  }
+
+  public static void openModuleOrFacetConfigurable(final Module module) {
+    final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
+    ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
+      public void run() {
+        if (module.getModuleType() instanceof FlexModuleType) {
+          projectStructureConfigurable.select(module.getName(), ProjectBundle.message("modules.classpath.title"), true);
+        }
+        else {
+          final FlexFacet facet = FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
+          if (facet != null) {
+            projectStructureConfigurable.select(facet, true);
+          }
+        }
+      }
+    });
   }
 }

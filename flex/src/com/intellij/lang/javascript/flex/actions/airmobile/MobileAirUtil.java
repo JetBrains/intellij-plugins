@@ -1,21 +1,16 @@
 package com.intellij.lang.javascript.flex.actions.airmobile;
 
-import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexFacet;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.actions.airinstaller.AdtTask;
 import com.intellij.lang.javascript.flex.actions.airinstaller.CertificateParameters;
 import com.intellij.lang.javascript.flex.actions.airinstaller.PackageAirInstallerAction;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
@@ -165,20 +160,7 @@ public class MobileAirUtil {
       protected void hyperlinkActivated(final HyperlinkEvent e) {
         dialog.close(DialogWrapper.OK_EXIT_CODE);
 
-        final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
-        ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
-          public void run() {
-            if (module.getModuleType() instanceof FlexModuleType) {
-              projectStructureConfigurable.select(module.getName(), ProjectBundle.message("modules.classpath.title"), true);
-            }
-            else {
-              final FlexFacet facet = FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
-              if (facet != null) {
-                projectStructureConfigurable.select(facet, true);
-              }
-            }
-          }
-        });
+        FlexSdkUtils.openModuleOrFacetConfigurable(module);
       }
     });
 

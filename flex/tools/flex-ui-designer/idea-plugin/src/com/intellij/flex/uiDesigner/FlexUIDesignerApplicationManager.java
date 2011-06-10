@@ -2,30 +2,41 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
-import com.intellij.flex.uiDesigner.libraries.LibraryCollector;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.lang.javascript.flex.FlexFacet;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.impl.NotificationsManagerImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.event.HyperlinkEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -40,7 +51,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
                                                  FlexUIDesignerApplicationListener.class);
 
   static final Logger LOG = Logger.getInstance(FlexUIDesignerApplicationManager.class.getName());
-  
+
   public static final String DESIGNER_SWF = "designer.swf";
   public static final String DESCRIPTOR_XML = "descriptor.xml";
   private static final String CHECK_DESCRIPTOR_XML = "check-descriptor.xml";
@@ -80,14 +91,14 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public void serverClosed() {
     documentOpening = false;
     IOUtil.close(Client.getInstance());
-    
+
     Application application = ApplicationManager.getApplication();
     if (!application.isDisposed()) {
       application.getMessageBus().syncPublisher(MESSAGE_TOPIC).applicationClosed();
     }
   }
 
-  private boolean checkFlexSdkVersion(final String version) {
+  private static boolean checkFlexSdkVersion(final String version) {
     if (version == null || version.length() < 5 || version.charAt(0) < '4') {
       return false;
     }
@@ -105,14 +116,14 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     return true;
   }
 
-  public void openDocument(@NotNull final Project project, @NotNull final Module module, @NotNull final XmlFile psiFile, boolean debug) {
-    assert !documentOpening;
+  public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, boolean debug) {
+    LOG.assertTrue(!documentOpening);
 
     final boolean appClosed = server == null || server.isClosed();
     if (appClosed || !Client.getInstance().isModuleRegistered(module)) {
-      final String version = LibraryCollector.getFlexVersion(module);
-      if (!checkFlexSdkVersion(version)) {
-        DocumentProblemManager.getInstance().reportWithTitle(project, FlexUIDesignerBundle.message("error.fdk.not.supported", version));
+      Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+      if (sdk == null || !checkFlexSdkVersion(sdk.getVersionString())) {
+        reportInvalidFlexSdk(module, debug, sdk);
         return;
       }
     }
@@ -120,7 +131,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     documentOpening = true;
 
     if (appClosed) {
-      run(project, module, psiFile, debug);
+      run(module, psiFile, debug);
     }
     else {
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
@@ -134,7 +145,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
               }
               catch (InitException e) {
                 LOG.error(e.getCause());
-                DocumentProblemManager.getInstance().reportWithTitle(project, e.getMessage());
+                DocumentProblemManager.getInstance().reportWithTitle(module.getProject(), e.getMessage());
               }
             }
 
@@ -151,14 +162,39 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       });
     }
   }
-  
+
+  private static void reportInvalidFlexSdk(final Module module, boolean debug, @Nullable Sdk sdk) {
+    FlexFacet flexFacet =
+      module.getModuleType() == FlexModuleType.getInstance() ? null : FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
+    String moduleOrFacetName = FlexUtils.getPresentableName(module, flexFacet);
+    String message;
+    if (sdk == null) {
+      message = FlexUIDesignerBundle.message("module.sdk.is.not.specified", moduleOrFacetName);
+    }
+    else {
+      message = FlexUIDesignerBundle.message("module.sdk.is.not.compatible", sdk.getVersionString(), moduleOrFacetName);
+    }
+
+    showBalloon(debug, message, module.getProject(), new Consumer<String>() {
+      @Override
+      public void consume(String id) {
+        if ("edit".equals(id)) {
+          FlexSdkUtils.openModuleOrFacetConfigurable(module);
+        }
+        else {
+          LOG.error("unexpected id: " + id);
+        }
+      }
+    });
+  }
+
   public void updateDocumentFactory(final int factoryId, @NotNull final Module module, @NotNull final XmlFile psiFile) {
     assert !documentOpening;
     documentOpening = true;
     if (server == null || server.isClosed()) {
       return;
     }
-    
+
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
@@ -176,29 +212,31 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         }
       }
     });
-    
+
   }
 
-  private void run(@NotNull final Project project, @NotNull final Module module, @NotNull XmlFile psiFile, boolean debug) {
+  private void run(@NotNull final Module module, @NotNull XmlFile psiFile, boolean debug) {
     DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration;
     try {
       adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk(CHECK_DESCRIPTOR_PATH);
       if (adlRunConfiguration == null) {
-        final String message = FlexUIDesignerBundle.message("error.suitable.fdk.not.found", SystemInfo.isLinux ? FlexUIDesignerBundle
-          .message("error.suitable.fdk.not.found.linux") : "");
-        Messages.showErrorDialog(project, message, FlexUIDesignerBundle.message(
-          debug ? "action.FlexUIDesigner.RunDesignView.text" : "action.FlexUIDesigner.DebugDesignView.text"));
-        final ProjectJdksEditor editor = new ProjectJdksEditor(null, project, WindowManager.getInstance().suggestParentWindow(project));
-        editor.show();
-        if (editor.isOK()) {
-          adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk(CHECK_DESCRIPTOR_PATH);
-        }
-
-        if (adlRunConfiguration == null) {
-          // TODO discuss: show error balloon saying 'Cannot find suitable SDK...'?
-          documentOpening = false;
-          return;
-        }
+        String title = FlexUIDesignerBundle.message(
+          debug ? "action.FlexUIDesigner.DebugDesignView.text" : "action.FlexUIDesigner.RunDesignView.text");
+        String message = FlexUIDesignerBundle.message(SystemInfo.isLinux ? "no.sdk.to.launch.designer.linux" : "no.sdk.to.launch.designer");
+        showBalloon(debug, message, module.getProject(), new Consumer<String>() {
+          @Override
+          public void consume(String id) {
+            if ("edit".equals(id)) {
+              new ProjectJdksEditor(null, module.getProject(), WindowManager.getInstance().suggestParentWindow(module.getProject()))
+                .show();
+            }
+            else {
+              LOG.error("unexpected id: " + id);
+            }
+          }
+        });
+        documentOpening = false;
+        return;
       }
 
       if (DebugPathManager.IS_DEV) {
@@ -215,7 +253,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         adlRunConfiguration.arguments = arguments;
       }
 
-      server = new Server(new PendingOpenDocumentTask(project, module, psiFile), this);
+      server = new Server(new PendingOpenDocumentTask(module, psiFile), this);
     }
     catch (Throwable e) {
       LOG.error(e);
@@ -228,23 +266,23 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       public void run() {
         try {
           copyAppFiles();
-        
+
           adlProcessHandler = DesignerApplicationUtil.runAdl(runConfiguration, APP_DIR.getPath() + "/" + DESCRIPTOR_XML,
-                                                      server.listen(), new Consumer<Integer>() {
-              @Override
-              public void consume(Integer exitCode) {
-                adlProcessHandler = null;
-                if (onAdlExit != null) {
-                  ApplicationManager.getApplication().invokeLater(onAdlExit);
-                }
-
-                if (exitCode != 0) {
-                  LOG.error("ADL exited with error code " + exitCode);
-                }
-
-                serverClosed();
+                                                             server.listen(), new Consumer<Integer>() {
+            @Override
+            public void consume(Integer exitCode) {
+              adlProcessHandler = null;
+              if (onAdlExit != null) {
+                ApplicationManager.getApplication().invokeLater(onAdlExit);
               }
-            });
+
+              if (exitCode != 0) {
+                LOG.error("ADL exited with error code " + exitCode);
+              }
+
+              serverClosed();
+            }
+          });
         }
         catch (IOException e) {
           LOG.error(e);
@@ -273,7 +311,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       task.run();
     }
   }
-  
+
   private void copyAppFiles() throws IOException {
     if (projectManagerListener == null) {
       projectManagerListener = new MyProjectManagerListener();
@@ -303,16 +341,36 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     appFile.setLastModified(lastModified);
   }
 
+  private static void showBalloon(boolean debug, String text, Project project, final Consumer<String> handler) {
+    String title = FlexUIDesignerBundle.message(
+      debug ? "action.FlexUIDesigner.DebugDesignView.text" : "action.FlexUIDesigner.RunDesignView.text");
+
+    Notification notification =
+      new Notification(FlexUIDesignerBundle.message("plugin.name"), title, text, NotificationType.ERROR, new NotificationListener() {
+        @Override
+        public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+          if (event.getEventType() != HyperlinkEvent.EventType.ACTIVATED) return;
+          notification.expire();
+
+          if ("help".equals(event.getDescription())) {
+            HelpManager.getInstance().invokeHelp("flex.ui.designer.launch");
+          }
+          else {
+            handler.consume(event.getDescription());
+          }
+        }
+      });
+    NotificationsManagerImpl.notifyByBalloon(notification, NotificationDisplayType.STICKY_BALLOON, project);
+  }
+
   class PendingOpenDocumentTask implements Runnable {
-    private final Project myProject;
     private final Module myModule;
     private final XmlFile myPsiFile;
 
     private boolean libraryAndModuleInitialized;
     private boolean clientOpened;
 
-    public PendingOpenDocumentTask(@NotNull Project project, @NotNull Module module, @NotNull XmlFile psiFile) {
-      myProject = project;
+    public PendingOpenDocumentTask(@NotNull Module module, @NotNull XmlFile psiFile) {
       myModule = module;
       myPsiFile = psiFile;
 
@@ -332,7 +390,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
           catch (InitException e) {
             LOG.error(e.getCause());
-            DocumentProblemManager.getInstance().reportWithTitle(myProject, e.getMessage());
+            DocumentProblemManager.getInstance().reportWithTitle(myModule.getProject(), e.getMessage());
           }
 
           libraryAndModuleInitialized = true;

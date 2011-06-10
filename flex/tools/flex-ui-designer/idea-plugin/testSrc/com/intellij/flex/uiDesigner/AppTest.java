@@ -50,7 +50,7 @@ public class AppTest extends AppTestBase {
       }
     });
 
-    FlexUIDesignerApplicationManager.getInstance().openDocument(myProject, myModule, (XmlFile)myFile, false);
+    FlexUIDesignerApplicationManager.getInstance().openDocument(myModule, (XmlFile)myFile, false);
     await();
     return newParent;
   }
@@ -101,7 +101,7 @@ public class AppTest extends AppTestBase {
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
 
     final FlexUIDesignerApplicationManager designerApplicationManager = FlexUIDesignerApplicationManager.getInstance();
-    designerApplicationManager.openDocument(myProject, myModule, (XmlFile)myFile, false);
+    designerApplicationManager.openDocument(myModule, (XmlFile)myFile, false);
     while (designerApplicationManager.isDocumentOpening()) {
       Thread.sleep(8); // todo event about document open?
     }
