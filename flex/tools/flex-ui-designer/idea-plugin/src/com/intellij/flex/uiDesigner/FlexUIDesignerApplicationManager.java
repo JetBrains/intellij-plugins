@@ -44,8 +44,6 @@ import javax.swing.event.HyperlinkEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,15 +56,16 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   public static final String DESIGNER_SWF = "designer.swf";
   public static final String DESCRIPTOR_XML = "descriptor.xml";
-  private static final String CHECK_DESCRIPTOR_XML = "check-descriptor.xml";
+  static final String CHECK_DESCRIPTOR_XML = "check-descriptor.xml";
+
+  public static final File APP_DIR = new File(PathManager.getSystemPath(), "flexUIDesigner");
+  private static final String CHECK_DESCRIPTOR_PATH = APP_DIR + File.separator + CHECK_DESCRIPTOR_XML;
+
 
   private ProcessHandler adlProcessHandler;
   private Server server;
 
-  ProjectManagerListener projectManagerListener;
-
-  public static final File APP_DIR = new File(PathManager.getSystemPath(), "flexUIDesigner");
-  private static final String CHECK_DESCRIPTOR_PATH = APP_DIR + File.separator + CHECK_DESCRIPTOR_XML;
+  private ProjectManagerListener projectManagerListener;
 
   private boolean documentOpening;
 
@@ -324,7 +323,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   private void copyAppFiles() throws IOException {
     if (projectManagerListener == null) {
       projectManagerListener = new MyProjectManagerListener();
-      ProjectManager.getInstance().addProjectManagerListener(projectManagerListener);
+      ProjectManager.getInstance().addProjectManagerListener(projectManagerListener, ApplicationManager.getApplication());
     }
 
     if (DebugPathManager.IS_DEV) {
@@ -332,22 +331,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
 
     final ClassLoader classLoader = getClass().getClassLoader();
-    final URL appUrl = classLoader.getResource(DESIGNER_SWF);
-    LOG.assertTrue(appUrl != null);
-    final URLConnection appUrlConnection = appUrl.openConnection();
-    final long lastModified = appUrlConnection.getLastModified();
-    final File appFile = new File(APP_DIR, DESIGNER_SWF);
-    if (appFile.lastModified() >= lastModified) {
-      return;
-    }
-
-    //noinspection ResultOfMethodCallIgnored
-    IOUtil.saveStream(classLoader.getResourceAsStream(DESCRIPTOR_XML), new File(APP_DIR, DESCRIPTOR_XML));
-    IOUtil.saveStream(classLoader.getResourceAsStream(CHECK_DESCRIPTOR_XML), new File(APP_DIR, CHECK_DESCRIPTOR_XML));
-    IOUtil.saveStream(appUrlConnection.getInputStream(), appFile);
-
-    //noinspection ResultOfMethodCallIgnored
-    appFile.setLastModified(lastModified);
+    IOUtil.saveStream(classLoader.getResource(DESCRIPTOR_XML), new File(APP_DIR, DESCRIPTOR_XML));
+    IOUtil.saveStream(classLoader.getResource(DESIGNER_SWF), new File(APP_DIR, DESIGNER_SWF));
   }
 
   private static void showBalloon(boolean debug, String text, Project project, final Consumer<String> handler) {

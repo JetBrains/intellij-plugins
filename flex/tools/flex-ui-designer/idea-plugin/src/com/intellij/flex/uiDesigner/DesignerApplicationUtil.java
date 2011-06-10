@@ -10,6 +10,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
@@ -107,6 +108,9 @@ final class DesignerApplicationUtil {
       return false;
     }
 
+    IOUtil.saveStream(FlexUIDesignerApplicationManager.class.getClassLoader().getResource(
+      FlexUIDesignerApplicationManager.CHECK_DESCRIPTOR_XML), new File(checkDescriptorPath));
+
     final List<String> command = new ArrayList<String>();
     command.add(adlPath);
     command.add("-runtime");
@@ -153,6 +157,7 @@ final class DesignerApplicationUtil {
     return null;
   }
 
+  // TODO [develar] please use regexp as FlexUtils.INFO_PLIST_EXECUTABLE_PATTERN
   private static boolean checkMacRuntimeVersion(String runtime) throws IOException {
     File info = new File(runtime, "Adobe AIR.framework/Resources/Info.plist");
     if (!info.exists()) {
