@@ -17,14 +17,17 @@ package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.PsiClass;
-import com.intellij.struts2.Struts2DomIconProvider;
+import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.ExtendableClassConverter;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.Attribute;
+import com.intellij.util.xml.Convert;
+import com.intellij.util.xml.ExtendClass;
+import com.intellij.util.xml.GenericAttributeValue;
 
 /**
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Interceptor", provider = Struts2DomIconProvider.class)
+@Presentation(typeName = "Interceptor", icon = StrutsIcons.INTERCEPTOR_PATH)
 public interface Interceptor extends InterceptorOrStackBase {
 
   @Attribute(value = "class")

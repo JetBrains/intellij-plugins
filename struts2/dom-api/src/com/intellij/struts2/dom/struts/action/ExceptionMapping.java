@@ -18,13 +18,13 @@ package com.intellij.struts2.dom.struts.action;
 import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiClass;
-import com.intellij.struts2.Struts2DomIconProvider;
+import com.intellij.struts2.Struts2PresentationProvider;
 import com.intellij.util.xml.*;
 
 /**
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Exception Mapping", provider = Struts2DomIconProvider.class)
+@Presentation(typeName = "Exception Mapping", provider = Struts2PresentationProvider.class)
 public interface ExceptionMapping extends DomElement /* ParamsElement TODO ??! */ {
 
   // @NameValue  TODO ??

@@ -17,7 +17,7 @@ package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.PsiClass;
-import com.intellij.struts2.Struts2DomIconProvider;
+import com.intellij.struts2.Struts2PresentationProvider;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.xml.*;
 
@@ -26,7 +26,7 @@ import com.intellij.util.xml.*;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Default Class Reference", provider = Struts2DomIconProvider.class)
+@Presentation(typeName = "Default Class Reference", provider = Struts2PresentationProvider.class)
 public interface DefaultClassRef extends DomElement {
 
   @Required

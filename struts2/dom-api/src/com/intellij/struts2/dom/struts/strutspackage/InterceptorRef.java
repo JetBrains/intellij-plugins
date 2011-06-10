@@ -16,7 +16,7 @@
 package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.ide.presentation.Presentation;
-import com.intellij.struts2.Struts2DomIconProvider;
+import com.intellij.struts2.Struts2PresentationProvider;
 import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.GenericAttributeValue;
@@ -25,7 +25,7 @@ import com.intellij.util.xml.Required;
 /**
  * @author Yann C&eacute;bron
  */
-@Presentation(provider = Struts2DomIconProvider.class)
+@Presentation(provider = Struts2PresentationProvider.class)
 public interface InterceptorRef extends ParamsElement {
 
   @Required

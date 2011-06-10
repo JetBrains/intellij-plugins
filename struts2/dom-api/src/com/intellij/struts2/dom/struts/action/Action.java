@@ -18,7 +18,7 @@ package com.intellij.struts2.dom.struts.action;
 import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
-import com.intellij.struts2.Struts2DomIconProvider;
+import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorRef;
@@ -35,7 +35,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Struts Action", provider = Struts2DomIconProvider.class)
+@Presentation(typeName = "Struts Action", icon = StrutsIcons.ACTION_PATH)
 public interface Action extends ParamsElement {
 
   /**

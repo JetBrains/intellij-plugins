@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.validator;
 
 import com.intellij.ide.presentation.Presentation;
+import com.intellij.struts2.Struts2ValidationPresentationProvider;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
@@ -28,7 +29,9 @@ import com.intellij.util.xml.*;
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
-@Presentation(typeName = "Field Validator", icon = "/resources/icons/validation.png")
+@Presentation(typeName = "Field Validator",
+              icon = "/resources/icons/validation.png",
+              provider = Struts2ValidationPresentationProvider.class)
 public interface FieldValidator extends ParamsElement {
 
   GenericAttributeValue<String> getName();

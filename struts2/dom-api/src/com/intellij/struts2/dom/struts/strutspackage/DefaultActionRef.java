@@ -16,16 +16,19 @@
 package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.ide.presentation.Presentation;
-import com.intellij.struts2.Struts2DomIconProvider;
+import com.intellij.struts2.Struts2PresentationProvider;
 import com.intellij.struts2.dom.struts.action.Action;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.Required;
+import com.intellij.util.xml.Scope;
 
 /**
  * <code>default-action-ref</code>
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Default Action Reference", provider = Struts2DomIconProvider.class)
+@Presentation(typeName = "Default Action Reference", provider = Struts2PresentationProvider.class)
 public interface DefaultActionRef extends DomElement {
 
   // only within current package

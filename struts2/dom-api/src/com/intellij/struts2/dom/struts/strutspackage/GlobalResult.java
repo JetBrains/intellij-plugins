@@ -17,7 +17,7 @@ package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.ide.presentation.Presentation;
 import com.intellij.openapi.paths.PathReference;
-import com.intellij.struts2.Struts2DomIconProvider;
+import com.intellij.struts2.Struts2PresentationProvider;
 import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.struts2.dom.struts.HasResultType;
 import com.intellij.struts2.dom.struts.action.ResultTypeResolvingConverter;
@@ -30,7 +30,7 @@ import com.intellij.util.xml.*;
  * @author Yann C&eacute;bron
  */
 @Convert(StrutsPathReferenceConverter.class)
-@Presentation(typeName = "Global Result", provider = Struts2DomIconProvider.class)
+@Presentation(typeName = "Global Result", provider = Struts2PresentationProvider.class)
 public interface GlobalResult extends HasResultType, ParamsElement, GenericDomValue<PathReference> {
 
   @NameValue

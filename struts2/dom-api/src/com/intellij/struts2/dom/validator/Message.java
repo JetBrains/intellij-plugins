@@ -16,8 +16,12 @@
 package com.intellij.struts2.dom.validator;
 
 import com.intellij.ide.presentation.Presentation;
+import com.intellij.struts2.Struts2ValidationPresentationProvider;
 import com.intellij.struts2.dom.StrutsDomConstants;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.Namespace;
+import com.intellij.util.xml.TagValue;
 
 /**
  * <code>message</code>.
@@ -25,7 +29,9 @@ import com.intellij.util.xml.*;
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
-@Presentation(typeName = "Message", icon = "/resources/icons/message.png")
+@Presentation(typeName = "Message",
+              icon = "/resources/icons/message.png",
+              provider = Struts2ValidationPresentationProvider.class)
 public interface Message extends DomElement {
 
   GenericAttributeValue<String> getKey();

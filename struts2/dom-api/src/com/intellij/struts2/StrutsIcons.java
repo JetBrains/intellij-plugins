@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +30,24 @@ import javax.swing.*;
  */
 public final class StrutsIcons {
 
+  @NonNls
+  private static final String ICON_BASE_PATH = "/resources/icons/";
+
+  // "static" icons (DOM)
+
+  public static final String ACTION_PATH = ICON_BASE_PATH + "action.png";
+  public static final String ACTION_SMALL_PATH = ICON_BASE_PATH + "action_small.png";
+
+  public static final String INCLUDE_PATH = ICON_BASE_PATH + "import1.png";
+
+  public static final String INTERCEPTOR_PATH = ICON_BASE_PATH + "funnel.png";
+  public static final String INTERCEPTOR_STACK_PATH = ICON_BASE_PATH + "funnel_up.png";
+
+  public static final String PACKAGE_PATH = ICON_BASE_PATH + "folder_gear.png";
+  public static final String PARAM_PATH = ICON_BASE_PATH + "preferences.png";
+
+  public static final String RESULT_PATH = ICON_BASE_PATH + "arrow_right_blue.png";
+
   /**
    * Icon for struts.xml files.
    */
@@ -45,12 +63,6 @@ public final class StrutsIcons {
 
   public static final LayeredIcon STRUTS_VARIABLE_ICON = new LayeredIcon(2);
 
-  private StrutsIcons() {
-  }
-
-  @NonNls
-  private static final String ICON_BASE_PATH = "/resources/icons/";
-
   /**
    * Vertical offset for small overlay icons.
    */
@@ -61,14 +73,17 @@ public final class StrutsIcons {
    */
   private static final int OVERLAY_X_OFFSET = 8;
 
+  private StrutsIcons() {
+  }
+
   /**
-   * Loads the icon with the given name from the default icon base path.
+   * Loads the icon with the given path.
    *
-   * @param iconName Relative file name of the icon to load.
+   * @param iconPath Relative path of the icon to load.
    * @return Icon.
    */
-  private static Icon getIcon(@NonNls final String iconName) {
-    return IconLoader.getIcon(ICON_BASE_PATH + iconName);
+  private static Icon loadIcon(@NonNls final String iconPath) {
+    return IconLoader.getIcon(iconPath);
   }
 
   /**
@@ -82,14 +97,15 @@ public final class StrutsIcons {
   private static final Icon OVERLAY_DEFAULT = IconLoader.getIcon("/gutter/check.png");
 
   // struts.xml
-  public static final Icon ACTION = getIcon("action.png");
-  public static final Icon ACTION_SMALL = getIcon("action_small.png");
+  public static final Icon ACTION = loadIcon(ACTION_PATH);
+
+  public static final Icon ACTION_SMALL = loadIcon(ACTION_SMALL_PATH);
   public static final Icon EXCEPTION_MAPPING = Icons.EXCEPTION_CLASS_ICON;
-  public static final Icon INTERCEPTOR = getIcon("funnel.png");
-  public static final Icon INTERCEPTOR_STACK = getIcon("funnel_up.png");
-  public static final Icon PACKAGE = getIcon("folder_gear.png");
-  public static final Icon PARAM = getIcon("preferences.png");
-  public static final Icon RESULT = getIcon("arrow_right_blue.png");
+  public static final Icon INTERCEPTOR = loadIcon(INTERCEPTOR_PATH);
+  public static final Icon INTERCEPTOR_STACK = loadIcon(INTERCEPTOR_STACK_PATH);
+  public static final Icon PACKAGE = loadIcon(PACKAGE_PATH);
+  public static final Icon PARAM = loadIcon(PARAM_PATH);
+  public static final Icon RESULT = loadIcon(RESULT_PATH);
 
   public static final LayeredIcon GLOBAL_RESULT = new LayeredIcon(2);
   public static final LayeredIcon GLOBAL_EXCEPTION_MAPPING = new LayeredIcon(2);
@@ -99,10 +115,10 @@ public final class StrutsIcons {
   public static final LayeredIcon DEFAULT_INTERCEPTOR_REF = new LayeredIcon(2);
 
   // validation.xml
-  public static final Icon VALIDATOR_SMALL = getIcon("validation_small.png");
+  private static final Icon VALIDATOR_SMALL = loadIcon(ICON_BASE_PATH + "validation_small.png");
 
   // generic reference providers
-  public static final Icon THEME = getIcon("transform.png");
+  public static final Icon THEME = loadIcon(ICON_BASE_PATH + "transform.png");
 
   static {
     STRUTS_CONFIG_FILE_ICON.setIcon(StdFileTypes.XML.getIcon(), 0);

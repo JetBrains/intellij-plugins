@@ -16,11 +16,14 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.ide.presentation.Presentation;
-import com.intellij.struts2.Struts2DomIconProvider;
+import com.intellij.struts2.Struts2PresentationProvider;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.struts.constant.Constant;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.Namespace;
+import com.intellij.util.xml.SubTagList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +36,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
-@Presentation(typeName = "Struts Root", provider = Struts2DomIconProvider.class)
+@Presentation(typeName = "Struts Root", provider = Struts2PresentationProvider.class)
 public interface StrutsRoot extends DomElement {
 
   @NonNls
