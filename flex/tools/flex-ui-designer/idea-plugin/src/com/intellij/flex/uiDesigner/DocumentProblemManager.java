@@ -57,6 +57,7 @@ public class DocumentProblemManager {
   }
 
   public void report(final Project project, String message, MessageType messageType) {
+    // TODO [develar] please use more high-level API - merge code with FlexUIDesignerApplicationManager.showBalloon()
     final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, messageType, null).setShowCallout(false)
       .setHideOnAction(false).createBalloon();
     ApplicationManager.getApplication().invokeLater(new Runnable() {
