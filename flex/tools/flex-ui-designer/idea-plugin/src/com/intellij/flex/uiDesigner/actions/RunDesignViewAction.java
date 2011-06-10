@@ -96,6 +96,6 @@ public class RunDesignViewAction extends DumbAwareAction {
     }
 
     JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)psiFile);
-    return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, ClassBackedElementDescriptor.UI_COMPONENT_BASE_INTERFACE);
+    return jsClass != null;
   }
 }

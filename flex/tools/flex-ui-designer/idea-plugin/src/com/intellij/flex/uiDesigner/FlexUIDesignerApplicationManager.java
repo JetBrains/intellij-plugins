@@ -6,10 +6,14 @@ import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationListener;
@@ -128,6 +132,13 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       }
     }
 
+    JSClass clazz = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
+    if (!JSInheritanceUtil.isParentClass(clazz, ClassBackedElementDescriptor.UI_COMPONENT_BASE_INTERFACE)) {
+      String message = FlexUIDesignerBundle.message("component.is.not.a.visual.component", clazz.getQualifiedName());
+      showBalloon(debug, message, module.getProject(), Consumer.EMPTY_CONSUMER);
+      return;
+    }
+
     documentOpening = true;
 
     if (appClosed) {
@@ -220,8 +231,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     try {
       adlRunConfiguration = DesignerApplicationUtil.findSuitableFlexSdk(CHECK_DESCRIPTOR_PATH);
       if (adlRunConfiguration == null) {
-        String title = FlexUIDesignerBundle.message(
-          debug ? "action.FlexUIDesigner.DebugDesignView.text" : "action.FlexUIDesigner.RunDesignView.text");
         String message = FlexUIDesignerBundle.message(SystemInfo.isLinux ? "no.sdk.to.launch.designer.linux" : "no.sdk.to.launch.designer");
         showBalloon(debug, message, module.getProject(), new Consumer<String>() {
           @Override
