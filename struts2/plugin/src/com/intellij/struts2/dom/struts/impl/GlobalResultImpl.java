@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.openapi.paths.PathReference;
 import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.struts.strutspackage.GlobalResult;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
@@ -33,8 +32,7 @@ public abstract class GlobalResultImpl implements GlobalResult, LocationPresenta
   @Nullable
   @NonNls
   public String getLocation() {
-    final PathReference pathReference = getValue();
-    return pathReference != null ? pathReference.getPath() : null;
+    return getStringValue();
   }
 
   @Nullable
