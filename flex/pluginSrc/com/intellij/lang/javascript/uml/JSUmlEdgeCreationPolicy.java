@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class JSUmlEdgeCreationPolicy implements DiagramEdgeCreationPolicy<Object> {
+public class JSUmlEdgeCreationPolicy extends DiagramEdgeCreationPolicy<Object> {
 
   public boolean acceptSource(@NotNull final DiagramNode<Object> source) {
     if (!(source.getIdentifyingElement() instanceof JSClass)) return false;
