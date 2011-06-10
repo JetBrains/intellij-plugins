@@ -6,10 +6,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.openapi.actionSystem.ActionPlaces;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -29,7 +26,7 @@ public class RunDesignViewAction extends DumbAwareAction {
   @Override
   public void actionPerformed(final AnActionEvent event) {
     final DataContext dataContext = event.getDataContext();
-    final Project project = LangDataKeys.PROJECT.getData(dataContext);
+    final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
     assert project != null;
 
     final XmlFile psiFile = (XmlFile)PsiDocumentManager.getInstance(project)
@@ -40,7 +37,7 @@ public class RunDesignViewAction extends DumbAwareAction {
     final Module module = ModuleUtil.findModuleForFile(file, project);
     assert module != null;
 
-    FlexUIDesignerApplicationManager.getInstance().openDocument(project, module, psiFile, isDebug());
+    FlexUIDesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug());
   }
 
   protected boolean isDebug() {
@@ -60,13 +57,13 @@ public class RunDesignViewAction extends DumbAwareAction {
 
   private static Document getDocument(Project project, DataContext dataContext, boolean popupPlace) {
     if (popupPlace) {
-      final VirtualFile virtualFile = LangDataKeys.VIRTUAL_FILE.getData(dataContext);
+      final VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
       if (virtualFile != null) {
         return FileDocumentManager.getInstance().getDocument(virtualFile);
       }
     }
     else {
-      Editor editor = LangDataKeys.EDITOR.getData(dataContext);
+      Editor editor = PlatformDataKeys.EDITOR.getData(dataContext);
       if (editor == null) {
         editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
       }
@@ -78,7 +75,7 @@ public class RunDesignViewAction extends DumbAwareAction {
   }
 
   private static boolean isEnabled(final DataContext dataContext, boolean popupPlace) {
-    final Project project = LangDataKeys.PROJECT.getData(dataContext);
+    final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
     if (project == null || DumbService.isDumb(project)) {
       return false;
     }
