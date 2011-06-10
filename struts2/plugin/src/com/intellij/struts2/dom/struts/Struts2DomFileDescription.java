@@ -40,7 +40,7 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
 
   @Override
   public Icon getFileIcon(final int flags) {
-    return StrutsIcons.STRUTS_CONFIG_FILE_ICON;
+    return StrutsIcons.STRUTS_CONFIG_FILE;
   }
 
 }

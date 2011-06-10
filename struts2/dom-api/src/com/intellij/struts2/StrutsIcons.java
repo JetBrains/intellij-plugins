@@ -51,17 +51,17 @@ public final class StrutsIcons {
   /**
    * Icon for struts.xml files.
    */
-  public static final LayeredIcon STRUTS_CONFIG_FILE_ICON = new LayeredIcon(2);
+  public static final LayeredIcon STRUTS_CONFIG_FILE = new LayeredIcon(2);
 
   /**
    * Icon for validation.xml files.
    */
-  public static final LayeredIcon VALIDATION_CONFIG_FILE_ICON = new LayeredIcon(2);
+  public static final LayeredIcon VALIDATION_CONFIG_FILE = new LayeredIcon(2);
 
 
-  public static final LayeredIcon ACTION_CLASS_ICON = new LayeredIcon(2);
+  public static final LayeredIcon ACTION_CLASS = new LayeredIcon(2);
 
-  public static final LayeredIcon STRUTS_VARIABLE_ICON = new LayeredIcon(2);
+  public static final LayeredIcon STRUTS_VARIABLE = new LayeredIcon(2);
 
   /**
    * Vertical offset for small overlay icons.
@@ -121,17 +121,17 @@ public final class StrutsIcons {
   public static final Icon THEME = loadIcon(ICON_BASE_PATH + "transform.png");
 
   static {
-    STRUTS_CONFIG_FILE_ICON.setIcon(StdFileTypes.XML.getIcon(), 0);
-    STRUTS_CONFIG_FILE_ICON.setIcon(ACTION_SMALL, 1, 0, OVERLAY_Y_OFFSET);
+    STRUTS_CONFIG_FILE.setIcon(StdFileTypes.XML.getIcon(), 0);
+    STRUTS_CONFIG_FILE.setIcon(ACTION_SMALL, 1, 0, OVERLAY_Y_OFFSET);
 
-    VALIDATION_CONFIG_FILE_ICON.setIcon(StdFileTypes.XML.getIcon(), 0);
-    VALIDATION_CONFIG_FILE_ICON.setIcon(VALIDATOR_SMALL, 1, 0, OVERLAY_Y_OFFSET);
+    VALIDATION_CONFIG_FILE.setIcon(StdFileTypes.XML.getIcon(), 0);
+    VALIDATION_CONFIG_FILE.setIcon(VALIDATOR_SMALL, 1, 0, OVERLAY_Y_OFFSET);
 
-    ACTION_CLASS_ICON.setIcon(Icons.CLASS_ICON, 0);
-    ACTION_CLASS_ICON.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, OVERLAY_Y_OFFSET);
+    ACTION_CLASS.setIcon(Icons.CLASS_ICON, 0);
+    ACTION_CLASS.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, OVERLAY_Y_OFFSET);
 
-    STRUTS_VARIABLE_ICON.setIcon(Icons.VARIABLE_ICON, 0);
-    STRUTS_VARIABLE_ICON.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, OVERLAY_Y_OFFSET);
+    STRUTS_VARIABLE.setIcon(Icons.VARIABLE_ICON, 0);
+    STRUTS_VARIABLE.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, OVERLAY_Y_OFFSET);
 
     createGlobalIcon(GLOBAL_RESULT, RESULT);
     createGlobalIcon(GLOBAL_EXCEPTION_MAPPING, EXCEPTION_MAPPING);

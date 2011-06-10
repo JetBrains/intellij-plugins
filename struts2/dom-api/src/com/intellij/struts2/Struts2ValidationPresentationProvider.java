@@ -37,7 +37,7 @@ public class Struts2ValidationPresentationProvider extends PresentationProvider 
   public Icon getIcon(final Object o) {
 
     if (o instanceof Validators) {
-      return StrutsIcons.VALIDATION_CONFIG_FILE_ICON;
+      return StrutsIcons.VALIDATION_CONFIG_FILE;
     }
 
     return null;

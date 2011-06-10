@@ -256,7 +256,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
 
   @Nullable
   public Icon getIcon() {
-    return StrutsIcons.STRUTS_CONFIG_FILE_ICON;
+    return StrutsIcons.STRUTS_CONFIG_FILE;
   }
 
   @Nls
@@ -353,7 +353,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     ConfigFileNode(final VirtualFilePointer name, final SimpleNode parent) {
       super(parent);
       myFilePointer = name;
-      setIcons(StrutsIcons.STRUTS_CONFIG_FILE_ICON, StrutsIcons.STRUTS_CONFIG_FILE_ICON);
+      setIcons(StrutsIcons.STRUTS_CONFIG_FILE, StrutsIcons.STRUTS_CONFIG_FILE);
     }
 
     protected void doUpdate() {

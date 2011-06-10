@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.intellij.struts2;
 
 import com.intellij.ide.fileTemplates.FileTemplateDescriptor;
@@ -48,13 +49,13 @@ public class StrutsFileTemplateGroupDescriptorFactory implements FileTemplateGro
     final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor(StrutsBundle.message("struts2"),
                                                                               StrutsIcons.ACTION);
     group.addTemplate(new FileTemplateDescriptor(STRUTS_2_0_XML,
-                                                 StrutsIcons.STRUTS_CONFIG_FILE_ICON));
+                                                 StrutsIcons.STRUTS_CONFIG_FILE));
     group.addTemplate(new FileTemplateDescriptor(STRUTS_2_1_XML,
-                                                 StrutsIcons.STRUTS_CONFIG_FILE_ICON));
+                                                 StrutsIcons.STRUTS_CONFIG_FILE));
     group.addTemplate(new FileTemplateDescriptor(STRUTS_2_1_7_XML,
-                                                 StrutsIcons.STRUTS_CONFIG_FILE_ICON));
+                                                 StrutsIcons.STRUTS_CONFIG_FILE));
 
-    group.addTemplate(new FileTemplateDescriptor("validator.xml", StrutsIcons.VALIDATION_CONFIG_FILE_ICON));
+    group.addTemplate(new FileTemplateDescriptor("validator.xml", StrutsIcons.VALIDATION_CONFIG_FILE));
     return group;
   }
 

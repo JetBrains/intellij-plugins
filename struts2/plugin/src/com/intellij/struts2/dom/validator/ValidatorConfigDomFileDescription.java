@@ -42,7 +42,7 @@ public class ValidatorConfigDomFileDescription extends DomFileDescription<Valida
 
   @Override
   public Icon getFileIcon(final int flags) {
-    return StrutsIcons.VALIDATION_CONFIG_FILE_ICON;
+    return StrutsIcons.VALIDATION_CONFIG_FILE;
   }
 
 }

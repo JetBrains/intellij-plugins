@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -167,7 +167,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
                                                    new ArrayList<StrutsFileSet>(strutsFileSets)) {
 
                 public Icon getIconFor(final StrutsFileSet aValue) {
-                  return StrutsIcons.STRUTS_CONFIG_FILE_ICON;
+                  return StrutsIcons.STRUTS_CONFIG_FILE;
                 }
 
                 public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {

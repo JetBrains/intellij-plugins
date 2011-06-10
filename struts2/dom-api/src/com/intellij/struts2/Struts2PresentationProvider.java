@@ -61,7 +61,7 @@ public class Struts2PresentationProvider extends PresentationProvider {
     }
 
     if (o instanceof StrutsRoot) {
-      return StrutsIcons.STRUTS_CONFIG_FILE_ICON;
+      return StrutsIcons.STRUTS_CONFIG_FILE;
     }
 
     if (o instanceof InterceptorRef) {

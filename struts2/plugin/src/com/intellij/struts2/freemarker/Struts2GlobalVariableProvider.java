@@ -160,7 +160,7 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
 
     @Override
     public Icon getIcon(final boolean open) {
-      return StrutsIcons.STRUTS_VARIABLE_ICON;
+      return StrutsIcons.STRUTS_VARIABLE;
     }
   }
 
