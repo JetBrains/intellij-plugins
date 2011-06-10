@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import cocoa.AbstractView;
+import cocoa.plaf.Skin;
 
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 
@@ -33,7 +34,7 @@ public class TextBlockRenderer extends AbstractView implements IDataRenderer {
 
     _data = value;
     
-    var rulesetPrinter:CssRulesetPrinter = StylePaneContext(document).rulesetPrinter;
+    var rulesetPrinter:CssRulesetPrinter = StylePaneContext(Skin(parent.parent.parent).component).rulesetPrinter;
     if (textEngine == null) {
       init(rulesetPrinter.availableWidth - 10, nestLevel + 1);
       if (_blockFactory ==  CssRulesetTextBlockFactory) {
@@ -69,11 +70,12 @@ public class TextBlockRenderer extends AbstractView implements IDataRenderer {
     textContainer.scrollable = false;
     
     textEngine.blockFactory = new _blockFactory();
+    var stylePaneContext:StylePaneContext = StylePaneContext(Skin(parent.parent.parent).component);
     if (data is CssRuleset) {
-      textEngine.decor = new TextDecoration(textContainer.foregroundShape, StylePaneContext(document));
+      textEngine.decor = new TextDecoration(textContainer.foregroundShape, stylePaneContext);
     }
 
-    StylePaneContext(document).rulesetPrinter.interactor.configureTextEngine(textEngine);
+    stylePaneContext.rulesetPrinter.interactor.configureTextEngine(textEngine);
   }
   
   override protected function measure():void {

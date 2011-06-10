@@ -7,11 +7,8 @@ import flash.events.Event;
 import flash.geom.Point;
 
 import mx.core.ILayoutElement;
-import mx.core.mx_internal;
 
 import org.flyti.plexus.Injectable;
-
-use namespace mx_internal;
 
 public class ElementToolContainer extends LayoutlessContainer implements Injectable {
   private static var sharedPoint:Point = new Point();
@@ -58,7 +55,7 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
     var o:Object = element;
     var w:Number = o.getExplicitOrMeasuredWidth();
     var h:Number = o.getExplicitOrMeasuredHeight();
-    if (_width != w || _height != h) {
+    if (width != w || height != h) {
       updateSize(w, h);
     }
   }

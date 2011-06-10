@@ -81,7 +81,7 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
     
     if (closeButton == null) {
       closeButton = new PushButton();
-      closeButton.hoverable = true;
+      //closeButton.hoverable = true;
       closeButton.action = closeTab;
       closeButton.lafSubkey = "TabLabel";
       closeButtonSkin = closeButton.createView(laf);
@@ -100,7 +100,7 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
     closeButtonSkin.x = tabX - 2 - 1 - closeButtonSkin.getExplicitOrMeasuredWidth();
     
     if (closeButtonSkin.hitTestPoint(event.stageX, event.stageY)) {
-      closeButton.selected = true;
+      //closeButton.selected = true;
     }
   }
   
@@ -128,7 +128,7 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
 
   private function hideCloseButton():void {
     IUIComponent(closeButton.skin).visible = false;
-    closeButton.selected = false;
+    //closeButton.selected = false;
     closeButtonRelatedRenderer = null;
   }
 

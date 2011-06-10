@@ -65,7 +65,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   private ProcessHandler adlProcessHandler;
   private Server server;
 
-  private ProjectManagerListener projectManagerListener;
+  ProjectManagerListener projectManagerListener;
 
   private boolean documentOpening;
 

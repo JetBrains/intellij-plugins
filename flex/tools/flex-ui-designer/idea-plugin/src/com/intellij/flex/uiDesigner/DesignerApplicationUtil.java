@@ -31,6 +31,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
 import com.intellij.xdebugger.*;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,9 +41,13 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 final class DesignerApplicationUtil {
-  private static final String versionKey = "CFBundleVersion";
+  @NonNls private static final Pattern INFO_PLIST_VERSION_PATTERN =
+    Pattern.compile("<key>CFBundleVersion</key>\\s*<string>(.*)</string>");
+
   private static final Set<String> alreadyMadeExecutable = new THashSet<String>();
 
   private static final Logger LOG = Logger.getInstance(DesignerApplicationUtil.class.getName());
@@ -55,6 +60,11 @@ final class DesignerApplicationUtil {
   public static @Nullable AdlRunConfiguration findSuitableFlexSdk(String checkDescriptorPath) throws IOException {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return createTestAdlRunConfiguration();
+    }
+
+    if (!DebugPathManager.IS_DEV) {
+      IOUtil.saveStream(FlexUIDesignerApplicationManager.class.getClassLoader().getResource(
+        FlexUIDesignerApplicationManager.CHECK_DESCRIPTOR_XML), new File(checkDescriptorPath));
     }
 
     final List<Sdk> sdks = new ArrayList<Sdk>();
@@ -71,24 +81,17 @@ final class DesignerApplicationUtil {
       }
     });
 
-    String adlPath;
-    String runtime = findInstalledRuntime();
+    final String installedRuntime = findInstalledRuntime();
     for (Sdk sdk : sdks) {
-      adlPath = FlexSdkUtils.getAdlPath(sdk);
+      final String adlPath = FlexSdkUtils.getAdlPath(sdk);
       if (StringUtil.isEmpty(adlPath) || !new File(adlPath).exists()) {
         continue;
       }
 
-      if (runtime == null) {
-        runtime = FlexSdkUtils.getAirRuntimePath(sdk);
+      final String runtime = FlexSdkUtils.getAirRuntimePath(sdk);
+      if (checkRuntime(adlPath, runtime, checkDescriptorPath) || checkRuntime(adlPath, installedRuntime, checkDescriptorPath)) {
+        return new AdlRunConfiguration(adlPath, runtime);
       }
-
-      if (!checkRuntime(adlPath, runtime, checkDescriptorPath)) {
-        runtime = null;
-        continue;
-      }
-
-      return new AdlRunConfiguration(adlPath, runtime);
     }
 
     return null;
@@ -107,9 +110,6 @@ final class DesignerApplicationUtil {
     if (SystemInfo.isMac && !checkMacRuntimeVersion(runtimePath)) {
       return false;
     }
-
-    IOUtil.saveStream(FlexUIDesignerApplicationManager.class.getClassLoader().getResource(
-      FlexUIDesignerApplicationManager.CHECK_DESCRIPTOR_XML), new File(checkDescriptorPath));
 
     final List<String> command = new ArrayList<String>();
     command.add(adlPath);
@@ -157,36 +157,14 @@ final class DesignerApplicationUtil {
     return null;
   }
 
-  // TODO [develar] please use regexp as FlexUtils.INFO_PLIST_EXECUTABLE_PATTERN
   private static boolean checkMacRuntimeVersion(String runtime) throws IOException {
     File info = new File(runtime, "Adobe AIR.framework/Resources/Info.plist");
     if (!info.exists()) {
       return false;
     }
 
-    char[] chars = FileUtil.loadFileText(info);
-    ol: for (int i = 16; i < chars.length; i++) {
-      if (chars[i] == 'k' && chars[i - 1] == '<') {
-        i += 4;
-        for (int j = 0; j < versionKey.length() && i < chars.length; ) {
-          if (versionKey.charAt(j++) != chars[i++]) {
-            i += 8;
-            continue ol;
-          }
-        }
-
-        i += 6;
-        while (i < chars.length) {
-          if (chars[i++] == '<') {
-            if (chars[i + 7] >= '2') {
-              return true;
-            }
-          }
-        }
-      }
-    }
-    
-    return false;
+    Matcher m = INFO_PLIST_VERSION_PATTERN.matcher(FileUtil.loadFile(info));
+    return m.find() && StringUtil.compareVersionNumbers(m.group(1), "2.6") >= 0;
   }
 
   public static void runDebugger(final Module module, final AdlRunTask task) throws ExecutionException {

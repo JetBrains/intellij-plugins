@@ -49,6 +49,7 @@
             <configuration>
               <inputs>
                 <input>src/main/resources/assets.png</input>
+                <input>src/main/resources</input>
               </inputs>
               <output>${project.build.directory}/assets</output>
             </configuration>

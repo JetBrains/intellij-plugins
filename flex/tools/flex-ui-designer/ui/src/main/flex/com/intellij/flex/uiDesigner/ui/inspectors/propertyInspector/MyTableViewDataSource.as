@@ -35,6 +35,7 @@ public class MyTableViewDataSource implements TableViewDataSource {
   excludedProperties["focusPane"] = true;
   excludedProperties["screen"] = true;
   excludedProperties["transform"] = true;
+  excludedProperties["designLayer"] = true;
 
   private const source:Vector.<Object> = new Vector.<Object>(64);
   private var sourceItemCounter:int = 0;
@@ -100,6 +101,11 @@ public class MyTableViewDataSource implements TableViewDataSource {
     }
     else if (accessor.declaredBy == "spark.components.supportClasses::SkinnableComponent") {
       if (name == "skin") {
+        return;
+      }
+    }
+    else if (accessor.declaredBy == "spark.components::Application") {
+      if (name == "applicationDPI") {
         return;
       }
     }
