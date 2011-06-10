@@ -1,3 +1,18 @@
+/*
+ * Copyright 2011 The authors
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.intellij.struts2.structure;
 
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
@@ -6,12 +21,8 @@ import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ConstantFunction;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.DomElementsNavigationManager;
-import com.intellij.util.xml.DomService;
-import com.intellij.util.xml.DomUtil;
+import com.intellij.util.SmartList;
+import com.intellij.util.xml.*;
 import com.intellij.util.xml.highlighting.DomElementAnnotationsManager;
 import com.intellij.util.xml.highlighting.DomElementProblemDescriptor;
 import com.intellij.util.xml.highlighting.DomElementsProblemsHolder;
@@ -28,14 +39,11 @@ import java.util.List;
  */
 class StructureViewTreeElement extends DomStructureTreeElement {
 
-  private static final Function<DomElement, DomService.StructureViewMode> MY_STRUCTURE_VIEW_MODE_FUNCTION =
-          new ConstantFunction<DomElement, DomService.StructureViewMode>(DomService.StructureViewMode.SHOW);
-
   StructureViewTreeElement(@NotNull final DomElement domElement) {
     super(domElement,
-          MY_STRUCTURE_VIEW_MODE_FUNCTION,
+          new ConstantFunction<DomElement, DomService.StructureViewMode>(DomService.StructureViewMode.SHOW),
           DomElementsNavigationManager.getManager(DomUtil.getFile(domElement).getProject()).
-                  getDomElementsNavigateProvider(DomElementsNavigationManager.DEFAULT_PROVIDER_NAME));
+              getDomElementsNavigateProvider(DomElementsNavigationManager.DEFAULT_PROVIDER_NAME));
   }
 
   /**
@@ -56,7 +64,7 @@ class StructureViewTreeElement extends DomStructureTreeElement {
     }
 
     final DomElementsProblemsHolder holder = DomElementAnnotationsManager.getInstance(tag.getProject())
-            .getCachedProblemHolder(element);
+                                                                         .getCachedProblemHolder(element);
 
     final List<DomElementProblemDescriptor> problems = holder.getProblems(element, true, HighlightSeverity.ERROR);
     if (!problems.isEmpty()) {
@@ -66,12 +74,22 @@ class StructureViewTreeElement extends DomStructureTreeElement {
     return null;
   }
 
+
   public TreeElement[] getChildren() {
-    return ContainerUtil.map2Array(super.getChildren(), TreeElement.class, new Function<TreeElement, TreeElement>() {
-      public TreeElement fun(final TreeElement treeElement) {
-        return new StructureViewTreeElement(((DomStructureTreeElement) treeElement).getElement());
+    final DomElement element = getElement();
+    if (!element.isValid()) {
+      return EMPTY_ARRAY;
+    }
+
+    final List<TreeElement> result = new SmartList<TreeElement>();
+    DomUtil.acceptAvailableChildren(element, new DomElementVisitor() {
+      @Override
+      public void visitDomElement(final DomElement domElement) {
+        result.add(new StructureViewTreeElement(domElement));
       }
     });
+
+    return result.toArray(new TreeElement[result.size()]);
   }
 
   /**

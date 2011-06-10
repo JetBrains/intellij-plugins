@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,13 @@
 package com.intellij.struts2.structure;
 
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts.dom.GlobalExceptions;
+import com.intellij.struts.dom.GlobalForwards;
+import com.intellij.struts2.dom.params.Param;
+import com.intellij.struts2.dom.struts.Include;
 import com.intellij.struts2.dom.struts.StrutsRoot;
+import com.intellij.struts2.dom.struts.constant.Constant;
+import com.intellij.struts2.dom.struts.strutspackage.*;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +38,17 @@ public class StrutsStructureViewBuilderProvider extends BaseStructureViewBuilder
   protected DomFileElement getFileElement(@NotNull final XmlFile xmlFile) {
     final DomManager domManager = DomManager.getDomManager(xmlFile.getProject());
     return domManager.getFileElement(xmlFile, StrutsRoot.class);
+  }
+
+  @Override
+  protected Class[] getAlwaysPlus() {
+    return new Class[]{StrutsPackage.class, GlobalResults.class, GlobalExceptions.class, GlobalForwards.class};
+  }
+
+  @Override
+  protected Class[] getAlwaysLeaf() {
+    return new Class[]{Param.class, Constant.class, Include.class,
+        DefaultActionRef.class, DefaultClassRef.class, DefaultInterceptorRef.class};
   }
 
 }

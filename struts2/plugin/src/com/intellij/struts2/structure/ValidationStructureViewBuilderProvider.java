@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,12 @@
 package com.intellij.struts2.structure;
 
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.struts2.dom.params.Param;
+import com.intellij.struts2.dom.validator.Field;
+import com.intellij.struts2.dom.validator.FieldValidator;
+import com.intellij.struts2.dom.validator.Message;
 import com.intellij.struts2.dom.validator.Validators;
+import com.intellij.struts2.dom.validator.config.ValidatorConfig;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +38,16 @@ public class ValidationStructureViewBuilderProvider extends BaseStructureViewBui
   protected DomFileElement getFileElement(@NotNull final XmlFile xmlFile) {
     final DomManager domManager = DomManager.getDomManager(xmlFile.getProject());
     return domManager.getFileElement(xmlFile, Validators.class);
+  }
+
+  @Override
+  protected Class[] getAlwaysPlus() {
+    return new Class[]{Field.class, FieldValidator.class};
+  }
+
+  @Override
+  protected Class[] getAlwaysLeaf() {
+    return new Class[]{Param.class, Message.class, ValidatorConfig.class};
   }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,6 +43,20 @@ abstract class BaseStructureViewBuilderProvider implements XmlStructureViewBuild
   @Nullable
   protected abstract DomFileElement getFileElement(@NotNull final XmlFile xmlFile);
 
+  /**
+   * DomElement classes always having "plus" sign.
+   *
+   * @return Classes.
+   */
+  protected abstract Class[] getAlwaysPlus();
+
+  /**
+   * DomElement classes always being leaf.
+   *
+   * @return Classes.
+   */
+  protected abstract Class[] getAlwaysLeaf();
+
   @Nullable
   public StructureViewBuilder createStructureViewBuilder(@NotNull final XmlFile xmlFile) {
 
@@ -61,7 +75,7 @@ abstract class BaseStructureViewBuilderProvider implements XmlStructureViewBuild
 
       @NotNull
       public StructureViewModel createStructureViewModel() {
-        return new StructureViewTreeModel(xmlFile, fileElement.getRootElement());
+        return new StructureViewTreeModel(xmlFile, fileElement.getRootElement(), getAlwaysPlus(), getAlwaysLeaf());
       }
 
     };
