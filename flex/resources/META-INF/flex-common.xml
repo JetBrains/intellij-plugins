@@ -229,9 +229,17 @@
             text="Test Method">
       <add-to-group anchor="first" group-id="GenerateGroup"/>
     </action>
+    <action id="Generate.SetUp.Actionscript" class="com.intellij.lang.javascript.generation.JSGenerateSetUpMethodAction"
+            text="setUp()">
+      <add-to-group anchor="after" relative-to-action="Generate.TestMethod.Actionscript" group-id="GenerateGroup"/>
+    </action>
+    <action id="Generate.TearDown.Actionscript" class="com.intellij.lang.javascript.generation.JSGenerateTearDownMethodAction"
+            text="tearDown()">
+      <add-to-group anchor="after" relative-to-action="Generate.SetUp.Actionscript" group-id="GenerateGroup"/>
+    </action>
     <action id="Generate.Constructor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateConstructorAction"
             text="Constructor">
-      <add-to-group anchor="after" relative-to-action="Generate.TestMethod.Actionscript" group-id="GenerateGroup"/>
+      <add-to-group anchor="after" relative-to-action="Generate.TearDown.Actionscript" group-id="GenerateGroup"/>
     </action>
     <action id="Generate.GetAccessor.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateGetAccessorAction"
             text="Getter">
