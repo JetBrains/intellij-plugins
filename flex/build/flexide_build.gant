@@ -415,6 +415,7 @@ def buildTarGz() {
       include(name: "flexide.vmoptions")
     }
     tarfileset(dir: "$home/out/help", includes: "help.jar", prefix: "$tarRoot/help")
+    tarfileset(dir: "$home/flex/keymap", includes: "ReferenceCard.pdf", prefix: "$tarRoot/help")
     tarfileset(dir: "$home/flex/ideResources/artwork", prefix: "$tarRoot/bin") {
       include(name: "flexide.png")
     }
@@ -557,6 +558,7 @@ def layoutMac(Map args, String target) {
   layoutMacApp(target, "$home/community", args)
 
   ant.copy(file: "$home/out/help/help_mac.jar", todir: "$target/help")
+  ant.copy(file: "$home/flex/keymap/ReferenceCardForMac.pdf", todir: "$target/help")
 }
 
 def layoutWin(String target) {
@@ -581,6 +583,7 @@ def layoutWin(String target) {
   }
 
   ant.copy(file: "$home/out/help/help.jar", todir: "$target/help")
+  ant.copy(file: "$home/flex/keymap/ReferenceCard.pdf", todir: "$target/help")
   ant.copy(file: "$home/flex/build/flexide.exe.vmoptions", tofile: "$target/bin/flexide.exe.vmoptions", overwrite: true)
 }
 
