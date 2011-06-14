@@ -38,7 +38,6 @@ import com.intellij.ui.PopupHandler;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.diff.Diff;
-import com.intellij.util.diff.FilesTooBigForDiffException;
 import com.intellij.util.ui.tree.TreeUtil;
 import jetbrains.communicator.commands.FindUsersCommand;
 import jetbrains.communicator.commands.SendMessageInvoker;
@@ -278,8 +277,8 @@ public class IDEAFacade implements IDEFacade {
     try {
       change = Diff.buildChanges(src, dest);
     }
-    catch (FilesTooBigForDiffException e) {
-      LOG.info(e);
+    catch (Exception e) {
+      LOG.warn(e);
       return new Change[0];
     }
     while (change != null) {

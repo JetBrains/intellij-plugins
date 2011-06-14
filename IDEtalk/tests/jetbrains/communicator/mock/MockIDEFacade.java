@@ -16,7 +16,6 @@
 package jetbrains.communicator.mock;
 
 import com.intellij.util.diff.Diff;
-import com.intellij.util.diff.FilesTooBigForDiffException;
 import jetbrains.communicator.commands.FindUsersCommand;
 import jetbrains.communicator.commands.SendMessageInvoker;
 import jetbrains.communicator.core.Pico;
@@ -131,7 +130,7 @@ public class MockIDEFacade implements IDEFacade {
     try {
       change = Diff.buildChanges(src, dest);
     }
-    catch (FilesTooBigForDiffException e) {
+    catch (Exception e) {
       return new Change[0];
     }
     while (change != null) {
