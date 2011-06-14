@@ -18,7 +18,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -210,16 +209,12 @@ public class FlexDebugProcess extends XDebugProcess {
         myFlexUnitConnection.open(params.getPort());
       }
       catch (ExecutionException e) {
-        Notifications.Bus.notify(
-          new Notification(
-            DEBUGGER_GROUP_ID,
-            FlexBundle.message("flex.debugger.startup.error"),
-            FlexBundle.message("flexunit.startup.error", e.getMessage()),
-            NotificationType.ERROR
-          ),
-          NotificationDisplayType.STICKY_BALLOON,
-          session.getProject()
-        );
+        Notifications.Bus.notify(new Notification(
+          DEBUGGER_GROUP_ID,
+          FlexBundle.message("flex.debugger.startup.error"),
+          FlexBundle.message("flexunit.startup.error", e.getMessage()),
+          NotificationType.ERROR
+        ), session.getProject());
         myFlexUnitConnection = null;
         myPolicyFileConnection = null;
       }
@@ -1022,12 +1017,9 @@ public class FlexDebugProcess extends XDebugProcess {
   private void reportProblem(final String s) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       public void run() {
-        Notifications.Bus.notify(
-          new Notification(DEBUGGER_GROUP_ID, FlexBundle.message("flex.debugger.startup.error"), s.replace("\n", "<br>"),
-                           NotificationType.ERROR),
-          NotificationDisplayType.STICKY_BALLOON,
-          getSession().getProject()
-        );
+        Notifications.Bus
+          .notify(new Notification(DEBUGGER_GROUP_ID, FlexBundle.message("flex.debugger.startup.error"), s.replace("\n", "<br>"),
+                                   NotificationType.ERROR), getSession().getProject());
       }
     });
   }
