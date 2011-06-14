@@ -6,21 +6,24 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.stubs.JSNameIndex;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.testIntegration.TestFinder;
+import com.intellij.testIntegration.TestFinderHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class FlexUnitTestFinder implements TestFinder {
   public JSClass findSourceElement(@NotNull final PsiElement element) {
@@ -49,72 +52,64 @@ public class FlexUnitTestFinder implements TestFinder {
   @NotNull
   public Collection<PsiElement> findTestsForClass(@NotNull final PsiElement element) {
     final JSClass jsClass = findSourceElement(element);
-    final Module module = ModuleUtil.findModuleForPsiElement(element);
-    if (jsClass == null || module == null) {
+    final String className = jsClass == null ? null : jsClass.getName();
+
+    final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitSupport.getModuleAndSupport(element);
+    final Module module = moduleAndSupport == null ? null : moduleAndSupport.first;
+    final FlexUnitSupport flexUnitSupport = moduleAndSupport == null ? null : moduleAndSupport.second;
+
+    if (className == null || module == null || flexUnitSupport == null) {
       return Collections.emptyList();
     }
 
-    final String[] testPossibleNames = {jsClass.getName() + "Test", "Test" + jsClass.getName()};
+    final Collection<String> allNames = StubIndex.getInstance().getAllKeys(JSNameIndex.KEY, element.getProject());
+    final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependentsScope(module);
+    final List<Pair<? extends PsiNamedElement, Integer>> classesWithProximity = new ArrayList<Pair<? extends PsiNamedElement, Integer>>();
 
-    final GlobalSearchScope scope = GlobalSearchScope.moduleTestsWithDependentsScope(module);
-    final Collection<PsiElement> result = new ArrayList<PsiElement>();
-
-    for (final String testName : testPossibleNames) {
-      final Collection<JSQualifiedNamedElement> elements = JSResolveUtil.findElementsByName(testName, element.getProject(), scope);
-      for (final JSQualifiedNamedElement jsQualifiedNamedElement : elements) {
-        if (jsQualifiedNamedElement instanceof JSClass) {
-          result.add(jsQualifiedNamedElement);
+    for (final String possibleTestName : allNames) {
+      if (possibleTestName.contains(className)) {
+        for (final JSQualifiedNamedElement jsElement : JSResolveUtil.findElementsByName(possibleTestName, element.getProject(), scope)) {
+          if (jsElement instanceof JSClass && flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
+            classesWithProximity.add(Pair.create(jsElement, TestFinderHelper.calcTestNameProximity(className, jsElement.getName())));
+          }
         }
       }
     }
 
-    return result;
+    return TestFinderHelper.getSortedElements(classesWithProximity, true);
   }
 
   @NotNull
   public Collection<PsiElement> findClassesForTest(@NotNull final PsiElement element) {
     final JSClass jsClass = findSourceElement(element);
-    final Module module = ModuleUtil.findModuleForPsiElement(element);
-    if (jsClass == null || module == null) {
-      return Collections.emptyList();
-    }
+    final String className = jsClass == null ? null : jsClass.getName();
 
-    String possibleName = null;
-    final String name = jsClass.getName();
-    if (name != null && name.length() > "Test".length()) {
-      possibleName = name.startsWith("Test")
-                     ? name.substring("Test".length())
-                     : name.endsWith("Test") ? name.substring(0, name.length() - "Test".length()) : null;
-    }
+    final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitSupport.getModuleAndSupport(element);
+    final Module module = moduleAndSupport == null ? null : moduleAndSupport.first;
+    final FlexUnitSupport flexUnitSupport = moduleAndSupport == null ? null : moduleAndSupport.second;
 
-    if (possibleName == null) {
+    if (className == null || module == null || flexUnitSupport == null) {
       return Collections.emptyList();
     }
 
     final GlobalSearchScope scope =
       GlobalSearchScope.moduleWithDependenciesScope(module).intersectWith(GlobalSearchScope.projectProductionScope(module.getProject()));
-    final Collection<PsiElement> result = new ArrayList<PsiElement>();
 
-    final Collection<JSQualifiedNamedElement> elements = JSResolveUtil.findElementsByName(possibleName, element.getProject(), scope);
-    for (final JSQualifiedNamedElement jsQualifiedNamedElement : elements) {
-      if (jsQualifiedNamedElement instanceof JSClass) {
-        result.add(jsQualifiedNamedElement);
+    final List<Pair<? extends PsiNamedElement, Integer>> classesWithWeights = new ArrayList<Pair<? extends PsiNamedElement, Integer>>();
+    for (Pair<String, Integer> nameWithWeight : TestFinderHelper.collectPossibleClassNamesWithWeights(className)) {
+      for (final JSQualifiedNamedElement jsElement : JSResolveUtil.findElementsByName(nameWithWeight.first, module.getProject(), scope)) {
+        if (jsElement instanceof JSClass && !((JSClass)jsElement).isInterface() && !flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
+          classesWithWeights.add(new Pair<JSQualifiedNamedElement, Integer>(jsElement, nameWithWeight.second));
+        }
       }
     }
 
-    return result;
+    return TestFinderHelper.getSortedElements(classesWithWeights, false);
   }
 
   public boolean isTest(@NotNull final PsiElement element) {
-    final VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
-    final Module module = virtualFile == null ? null : ModuleUtil.findModuleForFile(virtualFile, element.getProject());
-    if (module == null || !ModuleRootManager.getInstance(module).getFileIndex().isInTestSourceContent(virtualFile)) {
-      return false;
-    }
-
     final JSClass jsClass = findSourceElement(element);
-    final String name = jsClass == null ? null : jsClass.getName();
-
-    return name != null && name.length() > "Test".length() && (name.startsWith("Test") || name.endsWith("Test"));
+    final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitSupport.getModuleAndSupport(element);
+    return jsClass != null && moduleAndSupport != null && moduleAndSupport.second.isTestClass(jsClass, true);
   }
 }
