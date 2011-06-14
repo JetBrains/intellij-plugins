@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@ package com.intellij.struts2;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.facet.FacetManager;
+import com.intellij.facet.FacetType;
 import com.intellij.javaee.JavaeeUtil;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.javaee.web.facet.WebFacetType;
@@ -169,9 +170,10 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     final RunResult<StrutsFacet> runResult = new WriteCommandAction<StrutsFacet>(myProject) {
       @Override
       protected void run(final Result<StrutsFacet> result) throws Throwable {
-        final String name = StrutsFacetType.getInstance().getPresentableName();
+        final FacetType<StrutsFacet, StrutsFacetConfiguration> strutsFacetType = StrutsFacetType.getInstance();
+        final String name = strutsFacetType.getPresentableName();
         final WebFacet webFacet = JavaeeUtil.addFacet(myModule, WebFacetType.getInstance());
-        final StrutsFacet facet = FacetManager.getInstance(myModule).addFacet(StrutsFacetType.getInstance(), name, webFacet);
+        final StrutsFacet facet = FacetManager.getInstance(myModule).addFacet(strutsFacetType, name, webFacet);
         result.setResult(facet);
       }
     }.execute();
