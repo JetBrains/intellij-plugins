@@ -557,7 +557,7 @@ def layoutMac(Map args, String target) {
 
   layoutMacApp(target, "$home/community", args)
 
-  ant.copy(file: "$home/out/help/help_mac.jar", todir: "$target/help")
+  ant.copy(file: "$home/out/help/help_mac.jar", tofile: "$target/help/help.jar")
   ant.copy(file: "$home/flex/keymap/ReferenceCardForMac.pdf", todir: "$target/help")
 }
 
