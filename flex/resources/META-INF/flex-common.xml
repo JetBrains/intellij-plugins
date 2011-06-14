@@ -131,6 +131,7 @@
 
     <treeStructureProvider implementation="com.intellij.lang.javascript.flex.presentation.SwfProjectViewStructureProvider"/>
     <writingAccessProvider implementation="com.intellij.lang.javascript.flex.FlexWritingAccessProvider"/>
+    <testFinder implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestFinder"/>
 
     <intentionAction>
       <className>com.intellij.lang.javascript.intentions.CreateJSSubclassIntention</className>
