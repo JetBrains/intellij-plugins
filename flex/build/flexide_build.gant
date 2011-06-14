@@ -414,7 +414,7 @@ def buildTarGz() {
     tarfileset(dir: "$paths.distLinux/bin", fullpath: "$tarRoot/bin/flexide.vmoptions") {
       include(name: "flexide.vmoptions")
     }
-    //tarfileset(dir: "$home/ruby/help", includes: "rubyhelp.jar", prefix: "$tarRoot/help")
+    tarfileset(dir: "$home/out/help", includes: "help.jar", prefix: "$tarRoot/help")
     tarfileset(dir: "$home/flex/ideResources/artwork", prefix: "$tarRoot/bin") {
       include(name: "flexide.png")
     }
@@ -556,7 +556,7 @@ def layoutMac(Map args, String target) {
 
   layoutMacApp(target, "$home/community", args)
 
-  //ant.copy(file: "$home/ruby/help/rubyhelp_mac.jar", tofile: "$target/help/rubyhelp.jar", failonerror: "false")
+  ant.copy(file: "$home/out/help/help_mac.jar", todir: "$target/help")
 }
 
 def layoutWin(String target) {
@@ -580,7 +580,7 @@ def layoutWin(String target) {
     replacefilter(token: "@@system_selector@@", value: system_selector)
   }
 
-  //ant.copy(file: "$home/ruby/help/rubyhelp.jar", todir: "$target/help", failonerror: "false")
+  ant.copy(file: "$home/out/help/help.jar", todir: "$target/help")
   ant.copy(file: "$home/flex/build/flexide.exe.vmoptions", tofile: "$target/bin/flexide.exe.vmoptions", overwrite: true)
 }
 
