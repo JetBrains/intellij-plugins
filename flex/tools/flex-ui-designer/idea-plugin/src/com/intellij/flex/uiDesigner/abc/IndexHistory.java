@@ -102,10 +102,10 @@ final class IndexHistory {
       return 0;
     }
     else {
-      int insertionIndex = getInsertionIndex(poolIndex, kind, index);
-      int newIndex = getNewIndex(insertionIndex);
+      int mapIndex = getMapIndex(poolIndex, kind, index);
+      int newIndex = getNewIndex(mapIndex);
       if (newIndex == 0) {
-        return map[insertionIndex] = decodeOnDemand(poolIndex, kind, index, -1);
+        return map[mapIndex] = decodeOnDemand(poolIndex, kind, index, -1);
       }
       else {
         return newIndex;
@@ -145,7 +145,7 @@ final class IndexHistory {
     }
   }
 
-  public int getInsertionIndex(final int poolIndex, final int kind, final int oldIndex) {
+  public int getMapIndex(final int poolIndex, final int kind, final int oldIndex) {
     ConstantPool pool = decoders.get(poolIndex).constantPool;
     int index = pool.totalSize;
     for (int i = kind + 1; i < 7; i++) {

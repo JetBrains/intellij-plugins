@@ -12,6 +12,8 @@ import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
 @SuppressWarnings({"deprecation"})
 class Encoder {
+  private final TIntArrayList tempMetadataList = new TIntArrayList(8);
+
   private IndexHistory history;
 
   private int majorVersion, minorVersion;
@@ -396,39 +398,35 @@ class Encoder {
     currentBuffer.writeU32(traitCount);
   }
 
-  private void encodeMetaData(int kind, TIntArrayList metadata) {
-    if (((kind >> 4) & TRAIT_FLAG_metadata) != 0) {
-      if (metadata == null) {
-        currentBuffer.writeU32(0);
-        return;
-      }
-
+  private void encodeMetaData(TIntArrayList metadata) {
+    if (metadata != null) {
       currentBuffer.writeU32(metadata.size());
       for (int i = 0, length = metadata.size(); i < length; i++) {
-        currentBuffer.writeU32(metadata.get(i));
+        currentBuffer.writeU32(metadata.getQuick(i));
       }
     }
   }
 
   private TIntArrayList trimMetadata(int[] metadata) {
     if (metadata == null) {
-      return new TIntArrayList(0);
+      return null;
     }
 
-    TIntArrayList newMetadata = new TIntArrayList(metadata.length);
+    tempMetadataList.resetQuick();
+
     for (int aMetadata : metadata) {
       int new_index = metadataInfo.getIndex(poolIndex, aMetadata);
       if (new_index != -1) {
-        newMetadata.add(new_index);
+        tempMetadataList.add(new_index);
       }
     }
-    return newMetadata;
+    return tempMetadataList.isEmpty() ? null : tempMetadataList;
   }
 
   public void slotTrait(int trait_kind, int name, int slotId, int type, int value, int value_kind, int[] metadata) throws DecoderException {
     currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
-    TIntArrayList new_metadata = trimMetadata(metadata);
-    if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata.size() == 0) {
+    TIntArrayList newMetadata = trimMetadata(metadata);
+    if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
       trait_kind = trait_kind & ~(TRAIT_FLAG_metadata << 4);
     }
     currentBuffer.writeU8(trait_kind);
@@ -493,28 +491,27 @@ class Encoder {
       currentBuffer.writeU8(value_kind);
     }
 
-    encodeMetaData(trait_kind, new_metadata);
+    encodeMetaData(newMetadata);
   }
 
   public void methodTrait(int trait_kind, int name, int dispId, int methodInfo, int[] metadata) {
     currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
     TIntArrayList new_metadata = trimMetadata(metadata);
-    if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata.size() == 0) {
+    if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata == null) {
       trait_kind = trait_kind & ~(TRAIT_FLAG_metadata << 4);
     }
     currentBuffer.writeU8(trait_kind);
 
-    //currentBuffer.writeU32(0);
     currentBuffer.writeU32(dispId);
     currentBuffer.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
 
-    encodeMetaData(trait_kind, new_metadata);
+    encodeMetaData(new_metadata);
   }
 
   public void classTrait(int kind, int name, int slotId, int classIndex, int[] metadata) {
     currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
-    TIntArrayList new_metadata = trimMetadata(metadata);
-    if (((kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata.size() == 0) {
+    TIntArrayList newMetadata = trimMetadata(metadata);
+    if (((kind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
       kind = kind & ~(TRAIT_FLAG_metadata << 4);
     }
     currentBuffer.writeU8(kind);
@@ -522,13 +519,13 @@ class Encoder {
     currentBuffer.writeU32(slotId);
     currentBuffer.writeU32(classInfo.getIndex(poolIndex, classIndex));
 
-    encodeMetaData(kind, new_metadata);
+    encodeMetaData(newMetadata);
   }
 
   public void functionTrait(int kind, int name, int slotId, int methodInfo, int[] metadata) {
     currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
-    TIntArrayList new_metadata = trimMetadata(metadata);
-    if (((kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata.size() == 0) {
+    TIntArrayList newMetadata = trimMetadata(metadata);
+    if (((kind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
       kind = kind & ~(TRAIT_FLAG_metadata << 4);
     }
     currentBuffer.writeU8(kind);
@@ -536,7 +533,7 @@ class Encoder {
     currentBuffer.writeU32(slotId);
     currentBuffer.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
 
-    encodeMetaData(kind, new_metadata);
+    encodeMetaData(newMetadata);
   }
 
   static final int W = 8;
@@ -692,7 +689,7 @@ class Encoder {
           opcodes.writeU32(0);
         }
 
-        int insertionIndex = history.getInsertionIndex(poolIndex, IndexHistory.STRING, index);
+        int insertionIndex = history.getMapIndex(poolIndex, IndexHistory.STRING, index);
         int newIndex = history.getNewIndex(insertionIndex);
         if (newIndex == 0) {
           // E:\dev\hero_private\frameworks\projects\framework\src => _

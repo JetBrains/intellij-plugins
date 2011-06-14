@@ -66,8 +66,12 @@
 		<path>@@source@@/resources/GroupItemRenderer.png</path>
 	</include-file>
 	<include-file>
-		<name>/popup.arrows.rightsidebutton.small.png</name>
-		<path>@@source@@/resources/popup.arrows.rightsidebutton.small.png</path>
+		<name>/popup.arrows.small.disabled.png</name>
+		<path>@@source@@/resources/popup.arrows.small.disabled.png</path>
+	</include-file>
+	<include-file>
+		<name>/popup.arrows.small.png</name>
+		<path>@@source@@/resources/popup.arrows.small.png</path>
 	</include-file>
 	<include-file>
 		<name>/StatusText.png</name>

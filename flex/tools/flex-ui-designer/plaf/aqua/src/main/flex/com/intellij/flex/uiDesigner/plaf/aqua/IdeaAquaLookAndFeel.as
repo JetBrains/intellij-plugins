@@ -12,8 +12,11 @@ public class IdeaAquaLookAndFeel extends IdeaLookAndFeel {
   [Embed(source="/assets", mimeType="application/octet-stream")]
   private static var assetsDataClass:Class;
 
-  [Embed(source="/popup.arrows.rightsidebutton.small.png")]
-  private static var smallRightSidePopUpButtonArrowsClass:Class;
+  [Embed(source="/popup.arrows.small.png")]
+  private static var smallArrowsClass:Class;
+
+  [Embed(source="/popup.arrows.small.disabled.png")]
+  private static var smallDisabledArrowsClass:Class;
   
   private static const SIDE_PANE_GROUP_ITEM_LABEL_FONT:TextFormat = new TextFormat(new ElementFormat(fontBoldDescription, 11, 0x38393b));
 
@@ -26,7 +29,8 @@ public class IdeaAquaLookAndFeel extends IdeaLookAndFeel {
     data[CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL] = SIDE_PANE_GROUP_ITEM_LABEL_FONT;
     data["TabLabel.PushButton"] = HUDPushButtonSkin;
 
-    data["small.rightSidePopUpButtonArrows"] = smallRightSidePopUpButtonArrowsClass;
+    data["small.arrows"] = smallArrowsClass;
+    data["small.arrows.disabled"] = smallDisabledArrowsClass;
     data["StatusBar.f"] = new TextFormat(new ElementFormat(fontDescription, 12, 0xfbfbfb));
   }
 }

@@ -48,7 +48,7 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
     tableView.minRowCount = 3;
     var insets:Insets = new Insets(2, NaN, NaN, 3);
     var textLineRendererFactory:TextLineRendererFactory = new TextLineRendererFactory(laf.getTextFormat(TextFormatId.SMALL_SYSTEM));
-    var firstColumn:TextTableColumn = new TextTableColumn("name", textLineRendererFactory, tableView, insets);
+    var firstColumn:TextTableColumn = new NameTableColumn("name", textLineRendererFactory, tableView, insets);
     firstColumn.width = 160;
     tableView.columns = new <TableColumn>[firstColumn, new ValueTableColumn(laf, textLineRendererFactory, tableView, insets)];
 

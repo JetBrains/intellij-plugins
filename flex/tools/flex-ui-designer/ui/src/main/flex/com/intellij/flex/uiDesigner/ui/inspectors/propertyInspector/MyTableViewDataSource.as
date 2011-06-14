@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
+import avmplus.HIDE_NSURI_METHODS;
 import avmplus.HIDE_OBJECT;
 import avmplus.INCLUDE_ACCESSORS;
 import avmplus.INCLUDE_METADATA;
@@ -64,7 +65,7 @@ public class MyTableViewDataSource implements TableViewDataSource {
       return;
     }
 
-    var traits:Object = describe(object, INCLUDE_ACCESSORS | INCLUDE_VARIABLES | INCLUDE_METADATA | HIDE_OBJECT | INCLUDE_TRAITS).traits;
+    var traits:Object = describe(object, INCLUDE_ACCESSORS | INCLUDE_VARIABLES | INCLUDE_METADATA | HIDE_OBJECT | INCLUDE_TRAITS | HIDE_NSURI_METHODS).traits;
     for each (var accessor:Object in traits.accessors) {
       processProperty(accessor);
     }
@@ -79,12 +80,12 @@ public class MyTableViewDataSource implements TableViewDataSource {
     }
   }
 
-  private function compare(a:Object, b:Object):Number {
+  private static function compare(a:Object, b:Object):Number {
     return a.name < b.name ? -1 : 1;
   }
 
   private function processProperty(accessor:Object):void {
-    if (accessor.uri != null || accessor.access == "writeonly") {
+    if (accessor.access == "writeonly") {
       return;
     }
 
@@ -94,23 +95,26 @@ public class MyTableViewDataSource implements TableViewDataSource {
       return;
     }
 
-    if (accessor.declaredBy == "mx.core::UIComponent") {
+    const declaredBy:String = accessor.declaredBy;
+    if (declaredBy == "mx.core::UIComponent") {
       if (name in excludedProperties) {
         return;
       }
     }
-    else if (accessor.declaredBy == "spark.components.supportClasses::SkinnableComponent") {
+    else if (declaredBy == "spark.components.supportClasses::SkinnableComponent") {
       if (name == "skin") {
         return;
       }
     }
-    else if (accessor.declaredBy == "spark.components::Application") {
+    else if (declaredBy == "spark.components::Application") {
       if (name == "applicationDPI") {
         return;
       }
     }
-    else if (name == "dropTarget" || name == "graphics") {
-      return;
+    else if (declaredBy == "flash.display::Sprite" || declaredBy == "flash.display::Shape") {
+      if (name == "dropTarget" || name == "graphics") {
+        return;
+      }
     }
 
     if (sourceItemCounter > source.length) {
