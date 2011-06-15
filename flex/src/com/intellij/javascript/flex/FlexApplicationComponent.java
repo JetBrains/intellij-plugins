@@ -74,6 +74,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements Applica
   @NonNls public static final String HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_0 = "http://ns.adobe.com/air/application/2.0";
   @NonNls public static final String HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_5 = "http://ns.adobe.com/air/application/2.5";
   @NonNls public static final String HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_6 = "http://ns.adobe.com/air/application/2.6";
+  @NonNls public static final String HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_7 = "http://ns.adobe.com/air/application/2.7";
 
   @NotNull
   public String getComponentName() {
@@ -110,6 +111,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements Applica
       registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_0, path + "/AIR_Descriptor.2.0.xsd", FlexApplicationComponent.class);
       registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_5, path + "/AIR_Descriptor.2.5.xsd", FlexApplicationComponent.class);
       registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_6, path + "/AIR_Descriptor.2.6.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_7, path + "/AIR_Descriptor.2.7.xsd", FlexApplicationComponent.class);
     }
   }
 }

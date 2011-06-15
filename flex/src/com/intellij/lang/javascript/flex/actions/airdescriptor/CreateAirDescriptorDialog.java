@@ -44,7 +44,7 @@ public class CreateAirDescriptorDialog extends DialogWrapper {
   private JTextField myApplicationWidthTextField;
   private JTextField myApplicationHeightTextField;
 
-  private static final String[] AIR_VERSIONS = new String[]{"1.0", "1.1", "1.5", "1.5.1", "1.5.2", "1.5.3", "2.0", "2.5", "2.6"};
+  private static final String[] AIR_VERSIONS = new String[]{"1.0", "1.1", "1.5", "1.5.1", "1.5.2", "1.5.3", "2.0", "2.5", "2.6", "2.7"};
   private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]{1,3}(\\.[0-9]{1,3}){0,2}");
 
   public CreateAirDescriptorDialog(final Project project) {
