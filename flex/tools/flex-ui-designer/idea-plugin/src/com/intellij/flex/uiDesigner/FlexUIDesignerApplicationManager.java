@@ -354,7 +354,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
         }
       });
-    NotificationsManagerImpl.notifyByBalloon(notification, NotificationDisplayType.STICKY_BALLOON, project);
+    notification.notify(project);
   }
 
   class PendingOpenDocumentTask implements Runnable {
