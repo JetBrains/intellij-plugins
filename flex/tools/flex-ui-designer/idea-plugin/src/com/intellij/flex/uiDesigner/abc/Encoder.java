@@ -9,6 +9,7 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
+import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.TRAIT_Method;
 
 @SuppressWarnings({"deprecation"})
 class Encoder {
@@ -292,8 +293,60 @@ class Encoder {
     metadataInfo.addData(poolIndex, index, buffer);
   }
 
+  private static final String sparkComponents = "spark.components";
+  private static final String application = "Application";
+
+  private boolean skipInitialize;
+
+  private void initIFlags(int name, DataBuffer in) {
+    in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
+
+    int constKind = in.readU8();
+    assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
+    int ns = in.readU32();
+    int namename = in.readU32();
+
+    int start = history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns];
+    in.seek(start);
+    if (in.readU8() != CONSTANT_PackageNamespace) {
+      return;
+    }
+
+    start = history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()];
+    in.seek(start);
+    if (!compare(in, sparkComponents)) {
+      return;
+    }
+
+    start = history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[namename];
+    in.seek(start);
+    skipInitialize = compare(in, application);
+  }
+
+  private boolean compare(DataBuffer in, String sparkComponents) {
+    int stringLength = in.readU32();
+
+    if (stringLength != sparkComponents.length()) {
+      return false;
+    }
+
+    for (int j = 0; j < stringLength; j++) {
+      if ((char)in.data[in.position + in.offset + j] != sparkComponents.charAt(j)) {
+        //System.out.print('"' + in.readString(stringLength) + "\"\n");
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   public void startInstance(DataBuffer in) {
-    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, in.readU32()));
+    final int name = in.readU32();
+    final int originalPos = in.position();
+    initIFlags(name, in);
+    in.seek(originalPos);
+
+    classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
     classInfo.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, in.readU32()));
 
     int flags = in.readU8();
@@ -310,13 +363,18 @@ class Encoder {
       }
     }
 
-    classInfo.writeU32(methodInfo.getIndex(poolIndex, in.readU32()));
+    final int oldIInit = in.readU32();
+    classInfo.writeU32(methodInfo.getIndex(poolIndex, oldIInit));
+    if (skipInitialize) {
+      history.addSkippedIInit(poolIndex, oldIInit);
+    }
 
     currentBuffer = classInfo;
   }
 
   public void endInstance() {
     currentBuffer = null;
+    skipInitialize = false;
   }
 
   public void startClass(int cinit) {
@@ -339,8 +397,16 @@ class Encoder {
     currentBuffer = null;
   }
 
-  public void startMethodBody(int methodInfo, int maxStack, int maxRegs, int scopeDepth, int maxScope) {
+  private final static byte[] emptyIInitMethodBody = {0x01, 0x01, 0x04, 0x05, 0x06, (byte)0xd0, 0x30, (byte)0xd0, 0x049, 0x00, 0x47, 0x00, 0x00};
+
+  public boolean startMethodBody(int methodInfo, int maxStack, int maxRegs, int scopeDepth, int maxScope) {
     methodBodies.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
+
+    if (history.isSkippedIInit(poolIndex, methodInfo)) {
+      methodBodies.write(emptyIInitMethodBody);
+      return false;
+    }
+    
     methodBodies.writeU32(maxStack);
     methodBodies.writeU32(maxRegs);
     methodBodies.writeU32(scopeDepth);
@@ -349,6 +415,8 @@ class Encoder {
     currentBuffer = methodBodies;
     opcodePass = 1;
     exPass = 1;
+
+    return true;
   }
 
   public void endMethodBody() {
@@ -363,7 +431,7 @@ class Encoder {
     }
     else if (opcodePass == 2) {
       methodBodies.writeU32(opcodes.size());
-      methodBodies.writeBytes(opcodes, 0, opcodes.size());
+      methodBodies.write(opcodes, 0, opcodes.size());
     }
   }
 
@@ -390,12 +458,12 @@ class Encoder {
       exPass++;
     }
     else if (exPass == 2) {
-      methodBodies.writeBytes(exceptions, 0, exceptions.size());
+      methodBodies.write(exceptions, 0, exceptions.size());
     }
   }
 
   public void traitCount(int traitCount) {
-    currentBuffer.writeU32(traitCount);
+    currentBuffer.writeU32(skipInitialize ? (traitCount - 1) : traitCount);
   }
 
   private void encodeMetaData(TIntArrayList metadata) {
@@ -494,7 +562,37 @@ class Encoder {
     encodeMetaData(newMetadata);
   }
 
-  public void methodTrait(int trait_kind, int name, int dispId, int methodInfo, int[] metadata) {
+  public void methodTrait(int trait_kind, int name, int dispId, int methodInfo, int[] metadata, DataBuffer in) {
+    if (skipInitialize && (trait_kind & 0x0f) == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) != 0) {
+      final int[] positions = history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME);
+      final int originalPos = in.position();
+      final int pos = positions[name];
+      in.seek(pos);
+
+      int constKind = in.readU8();
+      assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
+      int ns = in.readU32();
+      int namename = in.readU32();
+
+      int start = history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns];
+      in.seek(start);
+      if (in.readU8() == CONSTANT_PackageNamespace) {
+        start = history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()];
+        in.seek(start);
+        final String dd = dd(in);
+
+        start = history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[namename];
+        in.seek(start);
+      //System.out.print(dd(in) + "\n");
+        if (compare(in, "initialize")) {
+          in.seek(originalPos);
+          return;
+        }
+      }
+
+      in.seek(originalPos);
+    }
+
     currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
     TIntArrayList new_metadata = trimMetadata(metadata);
     if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && new_metadata == null) {
@@ -506,6 +604,15 @@ class Encoder {
     currentBuffer.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
 
     encodeMetaData(new_metadata);
+  }
+
+  private String dd(DataBuffer in) {
+    int stringLength = in.readU32();
+    char[] s = new char[stringLength];
+    for (int j = 0; j < stringLength; j++) {
+      s[j] = (char)in.data[in.position + in.offset + j];
+    }
+    return new String(s);
   }
 
   public void classTrait(int kind, int name, int slotId, int classIndex, int[] metadata) {

@@ -200,7 +200,13 @@ final class Decoder {
       int codeStart = in.position();
       in.skip(codeLength);
 
-      visitor.startMethodBody(methodInfo, maxStack, maxRegs, scopeDepth, maxScope);
+      if (!visitor.startMethodBody(methodInfo, maxStack, maxRegs, scopeDepth, maxScope)) {
+        skipExceptions(in.readU32());
+        int traitCount = in.readU32();
+        assert traitCount == 0;
+        in.seek(originalPos);
+        return;
+      }
 
       int exPos = in.position();
       for (int i = 0; i < opcodePass; i++) {
@@ -221,17 +227,24 @@ final class Decoder {
       in.seek(originalPos);
     }
 
-    private void decodeExceptions(DataBuffer in, int codeStart, Encoder visitor, int exCount) {
-      boolean hasNames = (in.minorVersion() != 15);
+    private void skipExceptions(int exCount) {
+      for (int i = 0; i < exCount; i++) {
+        in.readU32();
+        in.readU32();
+        in.readU32();
+        in.readU32();
+        in.readU32();
+      }
+    }
 
+    private void decodeExceptions(DataBuffer in, int codeStart, Encoder visitor, int exCount) {
       for (int i = 0; i < exCount; i++) {
         int start = codeStart + in.readU32();
         int end = codeStart + in.readU32();
         int target = codeStart + in.readU32();
 
         int type = in.readU32(); // multiname
-
-        int nameIndex = hasNames ? in.readU32() : 0;
+        int nameIndex = in.readU32();
 
         opcodes.addTarget(start);
         opcodes.addTarget(end);
@@ -273,7 +286,7 @@ final class Decoder {
           case TRAIT_Method:
           case TRAIT_Getter:
           case TRAIT_Setter:
-            visitor.methodTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind));
+            visitor.methodTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind), in);
             break;
           case TRAIT_Class:
             visitor.classTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind));

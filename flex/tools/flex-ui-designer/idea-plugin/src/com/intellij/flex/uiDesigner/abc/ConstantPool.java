@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import gnu.trove.TIntHashSet;
+
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 
 class ConstantPool {
@@ -8,6 +10,7 @@ class ConstantPool {
 
   final int[][] positions = new int[7][];
   final int[] ends = new int[7];
+  final TIntHashSet skipIInits = new TIntHashSet();
 
   int totalSize;
 

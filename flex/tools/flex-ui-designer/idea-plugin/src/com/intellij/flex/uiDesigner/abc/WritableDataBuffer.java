@@ -38,14 +38,21 @@ class WritableDataBuffer extends DataBuffer {
   }
 
   /**
+   * @param b DataBuffer
    * @param start - inclusive
    * @param end   - exclusive
    */
-  public void writeBytes(DataBuffer b, int start, int end) {
+  public void write(DataBuffer b, int start, int end) {
     resize(end - start);
     for (int i = start; i < end; i++) {
       data[size++] = b.data[i];
     }
+  }
+
+  public void write(byte[] bytes) {
+    resize(bytes.length);
+    System.arraycopy(bytes, 0, data, size, bytes.length);
+    size += bytes.length;
   }
 
   public void writeU8(int v) {

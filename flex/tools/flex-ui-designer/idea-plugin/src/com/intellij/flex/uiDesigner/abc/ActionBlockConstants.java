@@ -43,7 +43,8 @@ interface ActionBlockConstants {
   int TRAIT_Function = 0x05;
   int TRAIT_Const = 0x06;
 
-  int TRAIT_FLAG_metadata = 0x04;
+  int TRAIT_FLAG_Override = 0x2;
+  int TRAIT_FLAG_metadata = 0x4;
 
   // Class flags
   int CLASS_FLAG_protected = 0x08;

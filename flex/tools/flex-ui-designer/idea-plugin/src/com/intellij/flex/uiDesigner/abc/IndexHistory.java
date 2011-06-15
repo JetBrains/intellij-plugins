@@ -89,6 +89,14 @@ final class IndexHistory {
     return decoders.get(poolIndex).constantPool.positions[kind];
   }
 
+  public void addSkippedIInit(int poolIndex, int index) {
+    decoders.get(poolIndex).constantPool.skipIInits.add(index);
+  }
+
+  public boolean isSkippedIInit(int poolIndex, int index) {
+    return decoders.get(poolIndex).constantPool.skipIInits.contains(index);
+  }
+
   public int getNewIndex(int insertionIndex) {
     return map[insertionIndex];
   }
