@@ -48,6 +48,7 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
   private JLabel myPackageTypeLabel;
   private JComboBox myAndroidPackageTypeCombo;
   private JComboBox myIOSPackageTypeCombo;
+  private JCheckBox myFastPackagingCheckBox;
 
   private LabeledComponent<FlexSdkComboBoxWithBrowseButton> myFlexSdkComponent;
   private LabeledComponent<ComboboxWithBrowseButton> myAirDescriptorComponent;
@@ -90,9 +91,16 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
     myAndroidPackageTypeCombo.setVisible(isAndroid);
     myIOSPackageTypeCombo.setVisible(isIOS);
     myPackageTypeLabel.setLabelFor(isAndroid ? myAndroidPackageTypeCombo : myIOSPackageTypeCombo);
+    updateFastPackagingCheckBox();
 
     mySigningOptionsForm.setProvisioningProfileApplicable(isIOS);
     mySigningOptionsForm.setCreateCertificateButtonApplicable(isAndroid);
+  }
+
+  private void updateFastPackagingCheckBox() {
+    final IOSPackageType type = (IOSPackageType)myIOSPackageTypeCombo.getSelectedItem();
+    myFastPackagingCheckBox.setVisible(myTargetPlatformCombo.getSelectedItem() == MobilePlatform.iOS &&
+                                       (type == IOSPackageType.DebugOverNetwork || type == IOSPackageType.Test));
   }
 
   private void initAirDescriptorComponent() {
@@ -178,10 +186,10 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
   private void initInstallerLocationComponent() {
     myInstallerLocationComponent.getComponent()
       .addBrowseFolderListener(null, null, myProject, new FileChooserDescriptor(false, true, false, false, false, false) {
-                                 public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-                                   return super.isFileVisible(file, showHiddenFiles) && file.isDirectory();
-                                 }
-                               }, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+        public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
+          return super.isFileVisible(file, showHiddenFiles) && file.isDirectory();
+        }
+      }, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
   }
 
   private void initTargetSpecificControls() {
@@ -201,6 +209,12 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
 
     myAndroidPackageTypeCombo.setModel(new DefaultComboBoxModel(AndroidPackageType.values()));
     myIOSPackageTypeCombo.setModel(new DefaultComboBoxModel(IOSPackageType.values()));
+
+    myIOSPackageTypeCombo.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        updateFastPackagingCheckBox();
+      }
+    });
   }
 
   private String getDotExtension() {
@@ -331,7 +345,8 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
     final String provider = mySigningOptionsForm.getProviderClassName();
     final String tsa = mySigningOptionsForm.getTsaUrl();
 
-    return new MobileAirPackageParameters(mobilePlatform, androidPackageType, iOSPackageType, flexSdk, airDescriptorPath, installerFileName,
+    return new MobileAirPackageParameters(mobilePlatform, androidPackageType, iOSPackageType, myFastPackagingCheckBox.isSelected(),
+                                          flexSdk, airDescriptorPath, installerFileName,
                                           installerFileLocation, myFilesToPackageForm.getFilesToPackage(),
                                           MobileAirUtil.getLocalHostAddress(), MobileAirUtil.DEBUG_PORT_DEFAULT, "",
                                           provisioningProfilePath, keystorePath, keystoreType, keystorePassword, keyAlias, keyPassword,
@@ -398,7 +413,10 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
     saveAsDefaultParameters(parameters);
 
     FileDocumentManager.getInstance().saveAllDocuments();
-    final boolean ok = ExternalTask.runWithProgress(MobileAirUtil.createMobileAirPackageTask(myProject, parameters),
+
+    final String adtVersion = MobileAirUtil.getAdtVersion(myProject, parameters.getFlexSdk());
+    final boolean ok = MobileAirUtil.checkAdtVersionForPackaging(myProject, adtVersion, parameters) &&
+                       ExternalTask.runWithProgress(MobileAirUtil.createMobileAirPackageTask(myProject, parameters),
                                                     FlexBundle.message("packaging.application", parameters.MOBILE_PLATFORM), TITLE);
 
     if (ok) {
@@ -427,6 +445,7 @@ public class PackageMobileAirApplicationDialog extends DialogWrapper {
       myTargetPlatformCombo.setSelectedItem(parameters.MOBILE_PLATFORM);
       myAndroidPackageTypeCombo.setSelectedItem(parameters.ANDROID_PACKAGE_TYPE);
       myIOSPackageTypeCombo.setSelectedItem(parameters.IOS_PACKAGE_TYPE);
+      myFastPackagingCheckBox.setSelected(parameters.FAST_PACKAGING);
 
       if (!StringUtil.isEmpty(parameters.SDK_NAME)) {
         final JComboBox sdkCombo = myFlexSdkComponent.getComponent().getComboBox();

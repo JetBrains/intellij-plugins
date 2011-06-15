@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.IOSPackageType;
 import static com.intellij.lang.javascript.flex.actions.airmobile.MobileAirPackageParameters.MobilePlatform;
 
 public class MobileAirUtil {
@@ -70,32 +71,32 @@ public class MobileAirUtil {
     final Ref<String> versionRef = new Ref<String>();
 
     ExternalTask.runWithProgress(new AdtTask(project, sdk) {
-        protected void appendAdtOptions(final List<String> command) {
-          command.add("-version");
-        }
+      protected void appendAdtOptions(final List<String> command) {
+        command.add("-version");
+      }
 
-        protected boolean checkMessages(final List<String> messages) {
-          if (messages.size() == 1) {
-            String output = messages.get(0);
-            // adt version "1.5.0.7220"
-            // 2.6.0.19120
+      protected boolean checkMessages(final List<String> messages) {
+        if (messages.size() == 1) {
+          String output = messages.get(0);
+          // adt version "1.5.0.7220"
+          // 2.6.0.19120
 
-            final String prefix = "adt version \"";
-            final String suffix = "\"";
+          final String prefix = "adt version \"";
+          final String suffix = "\"";
 
-            if (output.startsWith(prefix) && output.endsWith(suffix)) {
-              output = output.substring(prefix.length(), output.length() - suffix.length());
-            }
-
-            if (AIR_VERSION_PATTERN.matcher(output).matches()) {
-              versionRef.set(output);
-              return true;
-            }
+          if (output.startsWith(prefix) && output.endsWith(suffix)) {
+            output = output.substring(prefix.length(), output.length() - suffix.length());
           }
 
-          return false;
+          if (AIR_VERSION_PATTERN.matcher(output).matches()) {
+            versionRef.set(output);
+            return true;
+          }
         }
-      }, FlexBundle.message("checking.air.version"), FlexBundle.message("check.air.version.title"));
+
+        return false;
+      }
+    }, FlexBundle.message("checking.air.version"), FlexBundle.message("check.air.version.title"));
     return versionRef.get();
   }
 
@@ -146,14 +147,14 @@ public class MobileAirUtil {
 
   public static boolean checkAdtVersion(final Module module, final Sdk sdk, final String adtVersion) {
     if (StringUtil.compareVersionNumbers(adtVersion, "2.6") >= 0) {
-      return true;
+      return true; // todo checkAdtVersionForPackaging
     }
 
     final MessageDialogWithHyperlinkListener dialog =
       new MessageDialogWithHyperlinkListener(module.getProject(),
                                              FlexBundle.message("air.mobile.version.problem.title"),
                                              UIUtil.getErrorIcon(),
-                                             FlexBundle.message("air.mobile.version.problem", sdk.getName(), module.getName(),
+                                             FlexBundle.message("run.air.mobile.version.problem", sdk.getName(), module.getName(),
                                                                 adtVersion));
 
     dialog.addHyperlinkListener(new HyperlinkAdapter() {
@@ -167,6 +168,43 @@ public class MobileAirUtil {
     dialog.show();
     return false;
   }
+
+  public static boolean checkAdtVersionForPackaging(final Project project,
+                                                    final String adtVersion,
+                                                    final MobileAirPackageParameters parameters) {
+    String errorMessageStart = null;
+    String requiredVersion = null;
+
+    if (parameters.MOBILE_PLATFORM == MobilePlatform.iOS
+        && (parameters.IOS_PACKAGE_TYPE == IOSPackageType.DebugOverNetwork || parameters.IOS_PACKAGE_TYPE == IOSPackageType.Test)
+        && parameters.FAST_PACKAGING) {
+      if (StringUtil.compareVersionNumbers(adtVersion, "2.7") < 0) {
+        requiredVersion = "2.7";
+        errorMessageStart = FlexBundle.message("air.mobile.ios.fast.packaging.requires.2.7");
+      }
+    }
+    else if (parameters.MOBILE_PLATFORM == MobilePlatform.iOS) {
+      if (StringUtil.compareVersionNumbers(adtVersion, "2.6") < 0) {
+        requiredVersion = "2.6";
+        errorMessageStart = FlexBundle.message("air.mobile.ios.packaging.requires.2.6");
+      }
+    }
+    else if (StringUtil.compareVersionNumbers(adtVersion, "2.5") < 0) {
+      requiredVersion = "2.5";
+      errorMessageStart = FlexBundle.message("air.mobile.packaging.requires.2.5");
+    }
+
+    if (errorMessageStart != null) {
+      Messages.showErrorDialog(project,
+                               FlexBundle.message("air.mobile.packaging.version.problem", errorMessageStart,
+                                                  parameters.getFlexSdk().getName(), adtVersion, requiredVersion),
+                               FlexBundle.message("air.mobile.version.problem.title"));
+      return false;
+    }
+
+    return true;
+  }
+
 
   public static boolean checkAirRuntimeOnDevice(final Project project, final Sdk sdk, final String adtVersion) {
     try {
@@ -208,27 +246,28 @@ public class MobileAirUtil {
                                                 final boolean uninstallExistingBeforeInstalling) {
     if (uninstallExistingBeforeInstalling) {
       ExternalTask.runWithProgress(new AdtTask(project, sdk) {
-                                     protected void appendAdtOptions(final List<String> command) {
-                                       command.add("-uninstallRuntime");
-                                       command.add("-platform");
-                                       command.add("android");
-                                     }
-                                   }, FlexBundle.message("uninstalling.air.runtime"), FlexBundle.message("uninstall.air.runtime.title"));
+        protected void appendAdtOptions(final List<String> command) {
+          command.add("-uninstallRuntime");
+          command.add("-platform");
+          command.add("android");
+        }
+      }, FlexBundle.message("uninstalling.air.runtime"), FlexBundle.message("uninstall.air.runtime.title"));
     }
 
     ExternalTask.runWithProgress(new AdtTask(project, sdk) {
-                                   protected void appendAdtOptions(final List<String> command) {
-                                     command.add("-installRuntime");
-                                     command.add("-platform");
-                                     command.add("android");
-                                   }
-                                 }, FlexBundle.message("installing.air.runtime", version), FlexBundle.message("install.air.runtime.title"));
+      protected void appendAdtOptions(final List<String> command) {
+        command.add("-installRuntime");
+        command.add("-platform");
+        command.add("android");
+      }
+    }, FlexBundle.message("installing.air.runtime", version), FlexBundle.message("install.air.runtime.title"));
   }
 
   public static boolean packageApk(final Project project, final MobileAirPackageParameters parameters) {
     FileDocumentManager.getInstance().saveAllDocuments();
     return ExternalTask
-      .runWithProgress(createMobileAirPackageTask(project, parameters), FlexBundle.message("creating.android.package"), FlexBundle.message("create.android.package.title"));
+      .runWithProgress(createMobileAirPackageTask(project, parameters), FlexBundle.message("creating.android.package"),
+                       FlexBundle.message("create.android.package.title"));
   }
 
   static ExternalTask createMobileAirPackageTask(final Project project, final MobileAirPackageParameters parameters) {
@@ -258,12 +297,12 @@ public class MobileAirUtil {
           case iOS:
             switch (parameters.IOS_PACKAGE_TYPE) {
               case DebugOverNetwork:
-                command.add("ipa-debug");
+                command.add(parameters.FAST_PACKAGING ? "ipa-debug-interpreter" : "ipa-debug");
                 command.add("-connect");
                 command.add(parameters.DEBUG_CONNECT_HOST);
                 break;
               case Test:
-                command.add("ipa-test");
+                command.add(parameters.FAST_PACKAGING ? "ipa-test-interpreter" : "ipa-test");
                 break;
               case AdHoc:
                 command.add("ipa-ad-hoc");
@@ -295,46 +334,46 @@ public class MobileAirUtil {
   public static boolean installApk(final Project project, final Sdk flexSdk, final String apkPath, final String applicationId) {
     return uninstallAndroidApplication(project, flexSdk, applicationId) &&
            ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
-               protected void appendAdtOptions(final List<String> command) {
-                 command.add("-installApp");
-                 command.add("-platform");
-                 command.add("android");
-                 command.add("-package");
-                 command.add(apkPath);
-               }
-             }, FlexBundle.message("installing.0", apkPath.substring(apkPath.lastIndexOf('/') + 1)),
-             FlexBundle.message("install.android.application.title"));
+             protected void appendAdtOptions(final List<String> command) {
+               command.add("-installApp");
+               command.add("-platform");
+               command.add("android");
+               command.add("-package");
+               command.add(apkPath);
+             }
+           }, FlexBundle.message("installing.0", apkPath.substring(apkPath.lastIndexOf('/') + 1)),
+                                        FlexBundle.message("install.android.application.title"));
   }
 
   private static boolean uninstallAndroidApplication(final Project project, final Sdk flexSdk, final String applicationId) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
-        protected void appendAdtOptions(final List<String> command) {
-          command.add("-uninstallApp");
-          command.add("-platform");
-          command.add("android");
-          command.add("-appid");
-          command.add(applicationId);
-        }
+      protected void appendAdtOptions(final List<String> command) {
+        command.add("-uninstallApp");
+        command.add("-platform");
+        command.add("android");
+        command.add("-appid");
+        command.add(applicationId);
+      }
 
-        protected boolean checkMessages(final List<String> messages) {
-          if (messages.isEmpty() || (messages.size() == 1 && messages.get(0).equals("Failed to find package " + applicationId))) {
-            return true;
-          }
-          return false;
+      protected boolean checkMessages(final List<String> messages) {
+        if (messages.isEmpty() || (messages.size() == 1 && messages.get(0).equals("Failed to find package " + applicationId))) {
+          return true;
         }
-      }, FlexBundle.message("uninstalling.0", applicationId), FlexBundle.message("uninstall.android.application.title"));
+        return false;
+      }
+    }, FlexBundle.message("uninstalling.0", applicationId), FlexBundle.message("uninstall.android.application.title"));
   }
 
   public static boolean launchAndroidApplication(final Project project, final Sdk flexSdk, final String applicationId) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
-        protected void appendAdtOptions(final List<String> command) {
-          command.add("-launchApp");
-          command.add("-platform");
-          command.add("android");
-          command.add("-appid");
-          command.add(applicationId);
-        }
-      }, FlexBundle.message("launching.android.application", applicationId), FlexBundle.message("launch.android.application.title"));
+      protected void appendAdtOptions(final List<String> command) {
+        command.add("-launchApp");
+        command.add("-platform");
+        command.add("android");
+        command.add("-appid");
+        command.add(applicationId);
+      }
+    }, FlexBundle.message("launching.android.application", applicationId), FlexBundle.message("launch.android.application.title"));
   }
 
   public static void forwardTcpPort(final Project project, final Sdk sdk, final int usbDebugPort) {
@@ -344,15 +383,15 @@ public class MobileAirUtil {
 
     if (adbExecutable != null) {
       ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
-          protected List<String> createCommandLine() {
-            final List<String> command = new ArrayList<String>();
-            command.add(adbExecutable.getPath());
-            command.add("forward");
-            command.add("tcp:" + usbDebugPort);
-            command.add("tcp:" + usbDebugPort);
-            return command;
-          }
-        }, presentableCommand, FlexBundle.message("adb.forward.title"));
+        protected List<String> createCommandLine() {
+          final List<String> command = new ArrayList<String>();
+          command.add(adbExecutable.getPath());
+          command.add("forward");
+          command.add("tcp:" + usbDebugPort);
+          command.add("tcp:" + usbDebugPort);
+          return command;
+        }
+      }, presentableCommand, FlexBundle.message("adb.forward.title"));
     }
     else {
       Messages

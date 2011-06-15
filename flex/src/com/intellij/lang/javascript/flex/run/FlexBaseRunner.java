@@ -666,6 +666,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return new MobileAirPackageParameters(MobilePlatform.Android,
                                           packageType,
                                           IOSPackageType.DebugOverNetwork,
+                                          true,
                                           flexSdk,
                                           params.getAirDescriptorPath(),
                                           params.getMobilePackageFileName(),

@@ -59,6 +59,7 @@ public class MobileAirPackageParameters extends AirInstallerParametersBase
   public MobilePlatform MOBILE_PLATFORM;
   public AndroidPackageType ANDROID_PACKAGE_TYPE;
   public IOSPackageType IOS_PACKAGE_TYPE;
+  public boolean FAST_PACKAGING;
   public String DEBUG_CONNECT_HOST;
   public int DEBUG_LISTEN_PORT;
   public String AIR_DOWNLOAD_URL;
@@ -69,14 +70,15 @@ public class MobileAirPackageParameters extends AirInstallerParametersBase
   }
 
   public MobileAirPackageParameters() {
-    this(MobilePlatform.Android, AndroidPackageType.DebugOverNetwork, IOSPackageType.DebugOverNetwork, null, "", "", "",
+    this(MobilePlatform.Android, AndroidPackageType.DebugOverNetwork, IOSPackageType.DebugOverNetwork, true, null, "", "", "",
          new ArrayList<FilePathAndPathInPackage>(), "", MobileAirUtil.DEBUG_PORT_DEFAULT, "", "", "", "PKCS12", "", "", "", "",
          "");
   }
 
   public MobileAirPackageParameters(final MobilePlatform mobilePlatform,
                                     final AndroidPackageType androidPackageType,
-                                    final IOSPackageType iOISPackageType,
+                                    final IOSPackageType iOSPackageType,
+                                    final boolean fastPackaging,
                                     final Sdk flexSdk,
                                     final String airDescriptorPath,
                                     final String installerFileName,
@@ -97,7 +99,8 @@ public class MobileAirPackageParameters extends AirInstallerParametersBase
           keystorePassword, keyAlias, keyPassword, provider, tsa);
     MOBILE_PLATFORM = mobilePlatform;
     ANDROID_PACKAGE_TYPE = androidPackageType;
-    IOS_PACKAGE_TYPE = iOISPackageType;
+    IOS_PACKAGE_TYPE = iOSPackageType;
+    FAST_PACKAGING = fastPackaging;
     DEBUG_CONNECT_HOST = debugConnectHost;
     DEBUG_LISTEN_PORT = debugListenPort;
     AIR_DOWNLOAD_URL = airDownloadUrl;
