@@ -123,7 +123,13 @@ public class MockIDEFacade implements IDEFacade {
   @Override
   public Change[] getDiff(Object[] src, Object[] dest) {
     List<MyChangeAdapter> result = new ArrayList<MyChangeAdapter>();
-    Diff.Change change = Diff.buildChanges(src, dest);
+    Diff.Change change = null;
+    try {
+      change = Diff.buildChanges(src, dest);
+    }
+    catch (Exception e) {
+      return new Change[0];
+    }
     while (change != null) {
       result.add(new MyChangeAdapter(change));
       change = change.link;

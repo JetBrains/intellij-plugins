@@ -40,7 +40,9 @@ public class XMLUtil {
   }
 
   public static XStream createXStream() {
-    return new XStream();
+    final XStream xStream = new XStream();
+    xStream.setClassLoader(XMLUtil.class.getClassLoader());
+    return xStream;
   }
 
   public static Object fromXml(XStream xStream, File dir, String fileName, boolean reportFailureAsError) {
