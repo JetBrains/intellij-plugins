@@ -20,9 +20,9 @@ ant.xmlproperty(file: "$home/flex/ideResources/idea/FlexApplicationInfo.xml", co
 setProperty("system_selector", "FlexIde${p("component.version.major")}0")
 
 setProperty("ch", "$home/community")
-setProperty("dryRun", true)
+setProperty("dryRun", false)
 setProperty("jdk16", guessJdk())
-setProperty("dontClean", true)
+setProperty("dontClean", false)
 
 setProperty("pluginFilter", [
             "htmltools",
@@ -153,7 +153,7 @@ target('default': "Build artifacts") {
   }
 
   if (!dryRun) {
-    //zipSources(home, paths.artifacts)
+    zipSources(home, paths.artifacts)
     reportArtifact("sources.zip")
   }
 
@@ -219,15 +219,15 @@ target('default': "Build artifacts") {
   ant.echo(message: buildName, file: "$paths.sandbox/layout/build.txt")
 
   buildSit()
-  //buildDmg()
+  buildDmg()
 
-  //layoutLinux(paths.distLinux)
-  //buildTarGz()
+  layoutLinux(paths.distLinux)
+  buildTarGz()
 
-  //buildExe()
-  //buildWinZip()
+  buildExe()
+  buildWinZip()
 
-  //buildNsis()
+  buildNsis()
 }
 
 private def buildWinZip() {
