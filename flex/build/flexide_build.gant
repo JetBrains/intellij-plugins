@@ -243,9 +243,7 @@ private def buildSit() {
   def root = isEap() ? "${buildName}.app" : "${product}-${p("component.version.major")}.${p("component.version.minor")}.app"
 
   ant.zip(zipfile: "${paths.artifacts}/${buildName}.sit") {
-    tarfileset(dir: paths.distAll, prefix: root) {
-      exclude(name: "bin/idea.properties")
-    }
+    tarfileset(dir: paths.distAll, prefix: root)
     tarfileset(dir: paths.distMac, prefix: root) {
       exclude(name: "bin/*.sh")
       exclude(name: "bin/idea.properties")
@@ -379,13 +377,41 @@ def buildExe() {
 }
 
 def layoutLinux(String target) {
-  ant.copy(file: "$home/flex/build/flexide.sh", tofile: "$target/bin/flexide.sh", overwrite: true)
+  layout(target) {
+    dir("bin") {
+      renamedFile("$home/flex/build/flexide.exe.vmoptions", "flexide.vmoptions")
+
+      fileset(dir: "$home/flex/build") {
+        include(name: "idea.properties")
+        include(name: "flexide.sh")
+      }
+      fileset(dir: "$home/flex/ideResources/artwork") {
+        include(name: "flexide.png")
+      }
+      fileset(dir: "$home/community/bin") {
+        include(name: "log.xml")
+      }
+      fileset(dir: "$home/community/bin/nix") {
+        include(name: "inspect*.sh")
+      }
+    }
+    dir("help") {
+      fileset(dir: "$home/flex/keymap") {
+        include(name: "ReferenceCard.pdf")
+      }
+      fileset(dir: "$home/out/help") {
+        include(name: "help.jar")
+      }
+    }
+  }
+
+  patchPropertiesFile(target)
+
   ant.replace(file: "$target/bin/flexide.sh") {
     replacefilter(token: "@@isEap@@", value: isEap())
     replacefilter(token: "@@system_selector@@", value: system_selector)
   }
-  ant.copy(file: "$home/flex/build/flexide.exe.vmoptions", tofile: "$target/bin/flexide.vmoptions", overwrite: true)
-  ant.fixcrlf(srcDir: "$target/bin", eol: "unix")
+  ant.fixcrlf(srcDir: "$target/bin", excludes: "*.png", eol: "unix")
 }
 
 def buildTarGz() {
@@ -393,30 +419,18 @@ def buildTarGz() {
   def tarRoot = isEap() ? "${buildName}" : "${product}-${p("component.version.major")}.${p("component.version.minor")}"
   def tarPath = "$paths.artifacts/${buildName}.tar"
   ant.tar(tarfile: tarPath) {
-    tarfileset(dir: paths.distAll, prefix: tarRoot) {
-      exclude(name: "**/*.dll")
-      exclude(name: "bin/*.sh")
-    }
+    tarfileset(dir: paths.distAll, prefix: tarRoot)
     tarfileset(dir: "$home/bin", prefix: "$tarRoot/bin") {
       include(name: "libyjpagent*.so")
     }
     tarfileset(dir: "$home/community/bin/linux", prefix: "$tarRoot/bin") {
       exclude(name: "libbreakgen*")
     }
-    tarfileset(dir: "$home/community/bin/nix", filemode: "755", prefix: "$tarRoot/bin") {
-      include(name: "inspect*.sh")
+    tarfileset(dir: "$paths.distLinux", filemode: "755", prefix: "$tarRoot") {
+      include(name: "bin/*.sh")
     }
-    tarfileset(dir: "$paths.distLinux/bin", filemode: "755", prefix: "$tarRoot/bin") {
-      include(name: "flexide.sh")
-    }
-    // TODO fsnotifier
-
-    tarfileset(dir: "$paths.distLinux/bin", fullpath: "$tarRoot/bin/flexide.vmoptions") {
-      include(name: "flexide.vmoptions")
-    }
-    //tarfileset(dir: "$home/ruby/help", includes: "rubyhelp.jar", prefix: "$tarRoot/help")
-    tarfileset(dir: "$home/flex/ideResources/artwork", prefix: "$tarRoot/bin") {
-      include(name: "flexide.png")
+    tarfileset(dir: "$paths.distLinux", prefix: "$tarRoot") {
+      exclude(name: "bin/*.sh")
     }
   }
 
@@ -505,21 +519,7 @@ def layoutFull(String target, Set usedJars) {
 
     setProperty("buildFlexToolPlugins", true)
     layouts.layoutPlugins()
-
-    dir("bin") {
-      fileset(dir: "$home/community/bin") {
-        include(name: "*.*")
-        exclude(name: "idea.properties")
-        exclude(name: "appletviewer.policy")
-      }
-      fileset(dir: "$home/flex/build") {
-        include(name: "idea.properties")
-      }
-    }
   }
-
-  patchPropertiesFile(target)
-
   return result
 }
 
@@ -543,8 +543,22 @@ def layoutMac(Map args, String target) {
   layout(target) {
     dir("bin") {
       fileset(dir: "$home/bin", includes: "*.jnilib")
+
+      fileset(dir: "$home/flex/build") {
+          include(name: "idea.properties")
+        }
+    }
+    dir("help") {
+      fileset(dir: "$home/flex/keymap") {
+        include(name: "ReferenceCardForMac.pdf")
+      }
+      renamedFile("$home/out/help/help_mac.jar", "help.jar")
     }
   }
+
+  patchPropertiesFile(target)
+
+  ant.fixcrlf(srcDir: "$target/bin", includes: "*.sh", eol: "unix")
 
   args["buildNumber"] = buildNumber
   args["executable"] = "flexide"
@@ -552,11 +566,9 @@ def layoutMac(Map args, String target) {
   args["bundle_name"] = "FlexIde"
   args["bundleIdentifier"] = "com.jetbrains.flexide"
   args["platform_prefix"] = "Flex"
-  args["idea.properties.path"] = "$home/flex/build/idea.properties"
+  args["idea.properties.path"] = "$target/bin/idea.properties"
 
   layoutMacApp(target, "$home/community", args)
-
-  //ant.copy(file: "$home/ruby/help/rubyhelp_mac.jar", tofile: "$target/help/rubyhelp.jar", failonerror: "false")
 }
 
 def layoutWin(String target) {
@@ -572,16 +584,32 @@ def layoutWin(String target) {
       }
       fileset(dir: "$home/flex/build") {
         include(name: "flexide.bat")
+        include(name: "idea.properties")
+        include(name: "flexide.exe.vmoptions")
+      }
+      fileset(dir: "$home/community/bin") {
+        include(name: "log.xml")
+      }
+    }
+    dir("help") {
+      fileset(dir: "$home/flex/keymap") {
+        include(name: "ReferenceCard.pdf")
+      }
+      fileset(dir: "$home/out/help") {
+        include(name: "help.jar")
       }
     }
   }
+
+  patchPropertiesFile(target)
 
   ant.replace(file: "$target/bin/flexide.bat") {
     replacefilter(token: "@@system_selector@@", value: system_selector)
   }
 
-  //ant.copy(file: "$home/ruby/help/rubyhelp.jar", todir: "$target/help", failonerror: "false")
-  ant.copy(file: "$home/flex/build/flexide.exe.vmoptions", tofile: "$target/bin/flexide.exe.vmoptions", overwrite: true)
+  ant.fixcrlf(file: "$target/bin/flexide.exe.vmoptions", eol: "dos")
+  ant.fixcrlf(file: "$target/bin/idea.properties", eol: "dos")
+  ant.fixcrlf(file: "$target/bin/log.xml", eol: "dos")
 }
 
 def set(Map args, String key, Object value) {

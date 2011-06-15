@@ -16,4 +16,7 @@
 
   <feedback eap-url="http://www.jetbrains.com/feedback/feedback.jsp?product=FlexIDE&amp;build=$BUILD&amp;timezone=$TIMEZONE&amp;eval=$EVAL"
             release-url="http://www.jetbrains.com/feedback/feedback.jsp?product=FlexIDE&amp;build=$BUILD&amp;timezone=$TIMEZONE&amp;eval=$EVAL"/>
+
+  <help file="help.jar" root="flexide"/>
+
 </component>
