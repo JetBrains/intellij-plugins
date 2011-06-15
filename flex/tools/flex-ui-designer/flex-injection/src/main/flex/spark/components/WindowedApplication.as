@@ -1,7 +1,5 @@
 package spark.components
 {
-import com.intellij.flex.uiDesigner.flex.SparkApplication;
-
 import flash.desktop.NativeApplication;
 import flash.display.NativeWindow;
 import flash.display.NativeWindowSystemChrome;
@@ -301,7 +299,7 @@ import spark.components.windowClasses.TitleBar;
  */
 [SkinState("disabledAndInactive")]
 
-public class WindowedApplication extends SparkApplication implements IWindow {
+public class WindowedApplication extends Application implements IWindow {
 
     /**
      *  The skin part that defines the gripper button used to resize the window.

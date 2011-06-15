@@ -84,7 +84,6 @@
             <include>mx.resources.ResourceManager</include>
 
             <include>spark.components.WindowedApplication</include>
-            <include>com.intellij.flex.uiDesigner.flex.SparkApplication</include>
           </includes>
           <externs>
             <symbol>spark.components.Application</symbol>

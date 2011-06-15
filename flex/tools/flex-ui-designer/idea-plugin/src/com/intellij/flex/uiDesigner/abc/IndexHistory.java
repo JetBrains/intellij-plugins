@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import gnu.trove.TIntObjectHashMap;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -89,12 +91,13 @@ final class IndexHistory {
     return decoders.get(poolIndex).constantPool.positions[kind];
   }
 
-  public void addSkippedIInit(int poolIndex, int index) {
-    decoders.get(poolIndex).constantPool.skipIInits.add(index);
-  }
+  public TIntObjectHashMap<byte[]> getModifiedMethodBodies(int poolIndex) {
+    final ConstantPool pool = decoders.get(poolIndex).constantPool;
+    if (pool.modifiedMethodBodies == null) {
+      pool.modifiedMethodBodies = new TIntObjectHashMap<byte[]>();
+    }
 
-  public boolean isSkippedIInit(int poolIndex, int index) {
-    return decoders.get(poolIndex).constantPool.skipIInits.contains(index);
+    return pool.modifiedMethodBodies;
   }
 
   public int getNewIndex(int insertionIndex) {

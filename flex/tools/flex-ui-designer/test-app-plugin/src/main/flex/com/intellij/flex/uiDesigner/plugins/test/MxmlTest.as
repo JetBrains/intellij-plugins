@@ -1,20 +1,20 @@
 package com.intellij.flex.uiDesigner.plugins.test {
 import flash.display.BitmapData;
+import flash.display.ColorCorrection;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.assertThat;
 import org.hamcrest.core.allOf;
-import org.hamcrest.core.anyOf;
 import org.hamcrest.core.isA;
 import org.hamcrest.core.not;
 import org.hamcrest.object.equalTo;
-import org.hamcrest.object.nullValue;
 import org.hamcrest.object.strictlyEqualTo;
 
 public class MxmlTest extends BaseTestCase {
   public function MxmlTest() {
     //noinspection ConstantIfStatementJS
     if (false) {
+      Application();
       Form();
       Embed();
       UntypedProperty();
@@ -33,6 +33,13 @@ public class MxmlTest extends BaseTestCase {
   
   public function Form():void {
     assertThat(app, {document: app});
+  }
+
+  public function Application():void {
+    var m:Object = {colorCorrection: ColorCorrection.DEFAULT};
+    assertThat(app, m);
+    app.colorCorrection = ColorCorrection.ON;
+    assertThat(app, m);
   }
   
   public function Embed():void {

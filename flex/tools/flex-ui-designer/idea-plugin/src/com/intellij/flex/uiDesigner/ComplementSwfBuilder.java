@@ -28,9 +28,9 @@ public class ComplementSwfBuilder {
       };
 
     File source = getSourceFile(rootPath, flexVersion);
-    new AbcFilter().filter(source, createAbcFile(rootPath, flexVersion), filter);
-    new AbcFilter().filter(source, new File(rootPath + "/complement-flex" + flexVersion + ".swf"), sparkInclusionNameFilter);
-    new AbcFilter().filter(source, new File(rootPath + "/complement-air4.swf"), new AbcNameFilter() {
+    new AbcFilter(false).filter(source, createAbcFile(rootPath, flexVersion), filter);
+    new AbcFilter(false).filter(source, new File(rootPath + "/complement-flex" + flexVersion + ".swf"), sparkInclusionNameFilter);
+    new AbcFilter(false).filter(source, new File(rootPath + "/complement-air4.swf"), new AbcNameFilter() {
       @Override
       public boolean accept(CharSequence name) {
         return airsparkDefinitions.contains(name);

@@ -6,9 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
+import java.awt.image.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,10 +21,8 @@ public final class ImageUtil {
     }
   };
 
-  /**
-   * ImageIO doesn't support TIFF, but Flex compiler too, so, we don't need JAI
-   */
-   public static BufferedImage getImage(final VirtualFile virtualFile, final @Nullable String mimeType) throws IOException {
+  // ImageIO doesn't support TIFF, but Flex compiler too, so, we don't need JAI
+  public static BufferedImage getImage(final VirtualFile virtualFile, final @Nullable String mimeType) throws IOException {
     final InputStream inputStream = virtualFile.getInputStream();
     final BufferedImage image;
     try {
@@ -74,10 +70,63 @@ public final class ImageUtil {
     WritableRaster raster = image.getRaster();
     final int nbands = raster.getNumBands();
     assert nbands == 3 || nbands == 4;
-    final DataBufferByte dataBuffer = (DataBufferByte)raster.getDataBuffer();
+    final int unflushedBufferLength;
+    if (raster.getDataBuffer() instanceof DataBufferByte) {
+      unflushedBufferLength = writeDataByte(image, out, byteBuffer, nbands);
+    }
+    else {
+      unflushedBufferLength = writeDataInt(image, out, byteBuffer, nbands);
+    }
+
+    if (unflushedBufferLength > 0) {
+      out.write(byteBuffer, 0, unflushedBufferLength);
+    }
+  }
+
+  private static int writeDataInt(BufferedImage image, OutputStream out, byte[] byteBuffer, int nbands) throws IOException {
+    int bufferLength = 0;
+    final DataBufferInt dataBuffer = (DataBufferInt)image.getRaster().getDataBuffer();
+    assert dataBuffer.getNumBanks() == 1;
+    int[] data = dataBuffer.getData();
+    if (nbands == 3) {
+      assert image.getType() == BufferedImage.TYPE_INT_RGB;
+      for (int i = 0, n = data.length; i < n; i += 1) {
+        int pixel = data[i];
+        byteBuffer[bufferLength++] = (byte)255;
+        byteBuffer[bufferLength++] = (byte)((pixel >> 16) & 0xff);
+        byteBuffer[bufferLength++] = (byte)((pixel >> 8) & 0xff);
+        byteBuffer[bufferLength++] = (byte)(pixel & 0xff);
+
+        if (bufferLength == MAX_BUFFER_LENGTH) {
+          out.write(byteBuffer, 0, bufferLength);
+          bufferLength = 0;
+        }
+      }
+    }
+    else {
+      assert image.getType() == BufferedImage.TYPE_INT_ARGB;
+      for (int i = 0, n = data.length; i < n; i += 1) {
+        int pixel = data[i];
+        byteBuffer[bufferLength++] = (byte)((pixel >> 24) & 0xff);
+        byteBuffer[bufferLength++] = (byte)((pixel >> 16) & 0xff);
+        byteBuffer[bufferLength++] = (byte)((pixel >> 8) & 0xff);
+        byteBuffer[bufferLength++] = (byte)(pixel & 0xff);
+
+        if (bufferLength == MAX_BUFFER_LENGTH) {
+          out.write(byteBuffer, 0, bufferLength);
+          bufferLength = 0;
+        }
+      }
+    }
+
+    return bufferLength;
+  }
+
+  private static int writeDataByte(BufferedImage image, OutputStream out, byte[] byteBuffer, int nbands) throws IOException {
+    int bufferLength = 0;
+    final DataBufferByte dataBuffer = (DataBufferByte)image.getRaster().getDataBuffer();
     assert dataBuffer.getNumBanks() == 1;
     byte[] data = dataBuffer.getData();
-    int bufferLength = 0;
     if (nbands == 3) {
       assert image.getType() == BufferedImage.TYPE_3BYTE_BGR;
       for (int i = 0, n = data.length; i < n; i += 3) {
@@ -107,8 +156,6 @@ public final class ImageUtil {
       }
     }
 
-    if (bufferLength > 0) {
-      out.write(byteBuffer, 0, bufferLength);
-    }
+    return bufferLength;
   }
 }

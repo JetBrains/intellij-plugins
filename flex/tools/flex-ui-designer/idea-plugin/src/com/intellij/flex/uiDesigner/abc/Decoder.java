@@ -50,7 +50,7 @@ final class Decoder {
     Info(DataBuffer in) {
       int pos = in.position();
       this.in = in;
-      this.positions = scan();
+      positions = scan();
       estimatedSize = in.position() - pos;
     }
 
@@ -323,23 +323,29 @@ final class Decoder {
     final DataBuffer in;
 
     private TIntHashSet targetSet;
+    private boolean targetSetExists;
 
     public void addTarget(int pos) {
       if (targetSet == null) {
         targetSet = new TIntHashSet();
       }
+      targetSetExists = true;
       targetSet.add(pos);
     }
 
     public void reset() {
-      targetSet = null;
+      if (targetSet != null) {
+        targetSet.clear();
+        targetSetExists = false;
+      }
     }
 
     public void decode(int start, int length, Encoder v) throws DecoderException {
       int originalPos = in.position();
       in.seek(start);
 
-      for (int end = start + length; in.position() < end; ) {
+      int end = start + length;
+      while (in.position() < end) {
         int pos = in.position();
         int opcode = in.readU8();
 
@@ -347,7 +353,7 @@ final class Decoder {
           addTarget(pos);
         }
 
-        if (targetSet != null && targetSet.contains(pos)) {
+        if (targetSetExists && targetSet.contains(pos)) {
           v.target(pos);
         }
 
@@ -385,8 +391,7 @@ final class Decoder {
             continue;
           }
           case OP_newcatch: {
-            int index = in.readU32();
-            v.OP_newcatch(index);
+            v.OP_newcatch(in.readU32());
             continue;
           }
           case OP_deldescendants: {
@@ -450,8 +455,7 @@ final class Decoder {
             continue;
           }
           case OP_debugline: {
-            int linenum = in.readU32();
-            v.OP_debugline(linenum);
+            v.OP_debugline(in.readU32());
             continue;
           }
           case OP_bkptline: {
@@ -486,34 +490,28 @@ final class Decoder {
             continue;
           }
           case OP_pushstring: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_pushstring(index);
+            v.OP_pushstring(in.readU32());
             continue;
           }
           case OP_pushnamespace: {
-            int index = in.readU32();
-            v.OP_pushnamespace(index);
+            v.OP_pushnamespace(in.readU32());
             continue;
           }
           case OP_pushint: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_pushint(index);
+            v.OP_pushint(in.readU32());
             continue;
           }
           case OP_pushuint: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_pushuint(index);
+            v.OP_pushuint(in.readU32());
             continue;
           }
           case OP_pushdouble: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_pushdouble(index);
+            v.OP_pushdouble(in.readU32());
             continue;
           }
 
           case OP_getlocal: {
-            int index = in.readU32();
-            v.OP_getlocal(index);
+            v.OP_getlocal(in.readU32());
             continue;
           }
           case OP_pushtrue: {
@@ -577,8 +575,7 @@ final class Decoder {
             continue;
           }
           case OP_convert_m_p: {
-            int param = in.readU32();
-            v.OP_convert_m_p(param);
+            v.OP_convert_m_p(in.readU32());
             continue;
           }
           case OP_negate: {
@@ -586,8 +583,7 @@ final class Decoder {
             continue;
           }
           case OP_negate_p: {
-            int param = in.readU32();
-            v.OP_negate_p(param);
+            v.OP_negate_p(in.readU32());
             continue;
           }
           case OP_negate_i: {
@@ -599,8 +595,7 @@ final class Decoder {
             continue;
           }
           case OP_increment_p: {
-            int param = in.readU32();
-            v.OP_increment_p(param);
+            v.OP_increment_p(in.readU32());
             continue;
           }
           case OP_increment_i: {
@@ -608,19 +603,15 @@ final class Decoder {
             continue;
           }
           case OP_inclocal: {
-            int index = in.readU32();
-            v.OP_inclocal(index);
+            v.OP_inclocal(in.readU32());
             continue;
           }
           case OP_inclocal_p: {
-            int param = in.readU32();
-            int index = in.readU32();
-            v.OP_inclocal_p(param, index);
+            v.OP_inclocal_p(in.readU32(), in.readU32());
             continue;
           }
           case OP_kill: {
-            int index = in.readU32();
-            v.OP_kill(index);
+            v.OP_kill(in.readU32());
             continue;
           }
           case OP_label: {
@@ -628,8 +619,7 @@ final class Decoder {
             continue;
           }
           case OP_inclocal_i: {
-            int index = in.readU32();
-            v.OP_inclocal_i(index);
+            v.OP_inclocal_i(in.readU32());
             continue;
           }
           case OP_decrement: {
@@ -651,14 +641,11 @@ final class Decoder {
             continue;
           }
           case OP_declocal_p: {
-            int param = in.readU32();
-            int index = in.readU32();
-            v.OP_declocal_p(param, index);
+            v.OP_declocal_p(in.readU32(), in.readU32());
             continue;
           }
           case OP_declocal_i: {
-            int index = in.readU32();
-            v.OP_declocal_i(index);
+            v.OP_declocal_i(in.readU32());
             continue;
           }
           case OP_typeof: {
@@ -722,8 +709,7 @@ final class Decoder {
             continue;
           }
           case OP_divide_p: {
-            int param = in.readU32();
-            v.OP_divide_p(param);
+            v.OP_divide_p(in.readU32());
             continue;
           }
           case OP_modulo: {
@@ -731,8 +717,7 @@ final class Decoder {
             continue;
           }
           case OP_modulo_p: {
-            int param = in.readU32();
-            v.OP_modulo_p(param);
+            v.OP_modulo_p(in.readU32());
             continue;
           }
           case OP_lshift: {
@@ -858,63 +843,49 @@ final class Decoder {
             continue;
           }
           case OP_newobject: {
-            int size = in.readU32();
-            v.OP_newobject(size);
+            v.OP_newobject(in.readU32());
             continue;
           }
           case OP_newarray: {
-            int size = in.readU32();
-            v.OP_newarray(size);
+            v.OP_newarray(in.readU32());
             continue;
           }
           // get a property using a multiname ref
           case OP_getproperty: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_getproperty(index);
+            v.OP_getproperty(in.readU32());
             continue;
           }
           // set a property using a multiname ref
           case OP_setproperty: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_setproperty(index);
+            v.OP_setproperty(in.readU32());
             continue;
           }
           // set a property using a multiname ref
           case OP_initproperty: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_initproperty(index);
+            v.OP_initproperty(in.readU32());
             continue;
           }
           case OP_getdescendants: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_getdescendants(index);
+            v.OP_getdescendants(in.readU32());
             continue;
           }
           // search the scope chain for a given property and return the object
           // that contains it.  the next instruction will usually be getpropname
           // or setpropname.
           case OP_findpropstrict: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_findpropstrict(index);
+            v.OP_findpropstrict(in.readU32());
             continue;
           }
           case OP_getlex: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_getlex(index);
+            v.OP_getlex(in.readU32());
             continue;
           }
           case OP_findproperty: {
-            // stack in:  [ns [name]]
-            // stack out: obj
-            int index = in.readU32(); // constant pool index...
-            v.OP_findproperty(index);
+            v.OP_findproperty(in.readU32());
             continue;
           }
           case OP_finddef: {
-            // stack in:
-            // stack out: obj
-            int index = in.readU32(); // constant pool index...
-            v.OP_finddef(index);
+            v.OP_finddef(in.readU32());
             continue;
           }
           case OP_nextname: {
@@ -930,126 +901,86 @@ final class Decoder {
             continue;
           }
           case OP_hasnext2: {
-            int objectRegister = in.readU32();
-            int indexRegister = in.readU32();
-            v.OP_hasnext2(objectRegister, indexRegister);
+            v.OP_hasnext2(in.readU32(), in.readU32());
             continue;
           }
           // delete property using multiname
           case OP_deleteproperty: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_deleteproperty(index);
+            v.OP_deleteproperty(in.readU32());
             continue;
           }
           case OP_setslot: {
-            int index = in.readU32();
-            v.OP_setslot(index);
+            v.OP_setslot(in.readU32());
             continue;
           }
           case OP_getslot: {
-            int index = in.readU32();
-            v.OP_getslot(index);
+            v.OP_getslot(in.readU32());
             continue;
           }
           case OP_setglobalslot: {
-            int index = in.readU32();
-            v.OP_setglobalslot(index);
+            v.OP_setglobalslot(in.readU32());
             continue;
           }
           case OP_getglobalslot: {
-            int index = in.readU32();
-            v.OP_getglobalslot(index);
+            v.OP_getglobalslot(in.readU32());
             continue;
           }
           case OP_call: {
-            int size = in.readU32();
-            v.OP_call(size);
+            v.OP_call(in.readU32());
             continue;
           }
           case OP_construct: {
-            int size = in.readU32();
-            v.OP_construct(size);
+            v.OP_construct(in.readU32());
             continue;
           }
           case OP_applytype: {
-            int size = in.readU32();
-            v.OP_applytype(size);
+            v.OP_applytype(in.readU32());
             continue;
           }
           case OP_newfunction: {
-            int id = in.readU32(); // method info...
-            v.OP_newfunction(id);
+            v.OP_newfunction(in.readU32());
             continue;
           }
           case OP_newclass: {
-            int id = in.readU32(); // class info...
-            v.OP_newclass(id);
+            v.OP_newclass(in.readU32());
             continue;
           }
           case OP_callstatic: {
-            // stack in: receiver, arg1..N
-            // stack out: result
-            int id = in.readU32(); // method info...
-            int argc = in.readU32();
-            v.OP_callstatic(id, argc);
+            v.OP_callstatic(in.readU32(), in.readU32());
             continue;
           }
           case OP_callmethod: {
-            // stack in: receiver, arg1..N
-            // stack out: result
-            int id = in.readU32(); // disp_id...
-            int argc = in.readU32();
-            v.OP_callmethod(id, argc);
+            v.OP_callmethod(in.readU32(), in.readU32());
             continue;
           }
           case OP_callproperty: {
-            // stack in: obj [ns [name]] arg1..N
-            // stack out: result
-            int index = in.readU32(); // constant pool index...
-            int argc = in.readU32();
-            v.OP_callproperty(index, argc);
+            v.OP_callproperty(in.readU32(), in.readU32());
             continue;
           }
           case OP_callproplex: {
-            // stack in: obj [ns [name]] arg1..N
-            // stack out: result
-            int index = in.readU32(); // constant pool index...
-            int argc = in.readU32();
-            v.OP_callproplex(index, argc);
+            v.OP_callproplex(in.readU32(), in.readU32());
             continue;
           }
           case OP_constructprop: {
-            // stack in: obj [ns [name]] arg1..N
-            // stack out: result
-            int index = in.readU32(); // constant pool index...
-            int argc = in.readU32();
-            v.OP_constructprop(index, argc);
+            v.OP_constructprop(in.readU32(), in.readU32());
             continue;
           }
           case OP_callsuper: {
-            // stack in: obj [ns [name]] arg1..N
-            int index = in.readU32(); // constant pool index...
-            int argc = in.readU32();
-            v.OP_callsuper(index, argc);
+            v.OP_callsuper(in.readU32(), in.readU32());
             continue;
           }
           case OP_getsuper: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_getsuper(index);
+            v.OP_getsuper(in.readU32());
             continue;
           }
           case OP_setsuper: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_setsuper(index);
+            v.OP_setsuper(in.readU32());
             continue;
           }
           // obj arg1 arg2
           //           sp
           case OP_constructsuper: {
-            // stack in:  obj arg1..N
-            // stack out:
-            int argc = in.readU32();
-            v.OP_constructsuper(argc);
+            v.OP_constructsuper(in.readU32());
             continue;
           }
           case OP_pushshort: {
@@ -1059,8 +990,7 @@ final class Decoder {
             continue;
           }
           case OP_astype: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_astype(index);
+            v.OP_astype(in.readU32());
             continue;
           }
           case OP_astypelate:
@@ -1068,10 +998,7 @@ final class Decoder {
             continue;
 
           case OP_coerce: {
-            // expects a CONSTANT_Multiname cpool index
-            // this is the ES4 implicit coersion
-            int index = in.readU32(); // constant pool index...
-            v.OP_coerce(index);
+            v.OP_coerce(in.readU32());
             continue;
           }
           case OP_coerce_b: {
@@ -1103,10 +1030,7 @@ final class Decoder {
             continue;
           }
           case OP_istype: {
-            // expects a CONSTANT_Multiname cpool index
-            // used when operator "is" RHS is a compile-time type constant
-            int index = in.readU32(); // constant pool index...
-            v.OP_istype(index);
+            v.OP_istype(in.readU32());
             continue;
           }
           case OP_istypelate: {
@@ -1114,13 +1038,11 @@ final class Decoder {
             continue;
           }
           case OP_pushbyte: {
-            int n = in.readU8();
-            v.OP_pushbyte(n);
+            v.OP_pushbyte(in.readU8());
             continue;
           }
           case OP_getscopeobject: {
-            int index = in.readU8();
-            v.OP_getscopeobject(index);
+            v.OP_getscopeobject(in.readU8());
             continue;
           }
           case OP_pushwith: {
@@ -1152,8 +1074,7 @@ final class Decoder {
             continue;
           }
           case OP_dxns: {
-            int index = in.readU32(); // constant pool index...
-            v.OP_dxns(index);
+            v.OP_dxns(in.readU32());
             continue;
           }
           case OP_dxnslate: {
@@ -1161,23 +1082,15 @@ final class Decoder {
             continue;
           }
           case OP_pushuninitialized: {
-            int id = in.readU32();
-            v.OP_pushconstant(id);
+            v.OP_pushconstant(in.readU32());
             continue;
           }
           case OP_callsupervoid: {
-            // stack in: obj [ns [name]] arg1..N
-            int index = in.readU32(); // constant pool index...
-            int argc = in.readU32();
-            v.OP_callsupervoid(index, argc);
+            v.OP_callsupervoid(in.readU32(), in.readU32());
             continue;
           }
           case OP_callpropvoid: {
-            // stack in: obj [ns [name]] arg1..N
-            // stack out: result
-            int index = in.readU32(); // constant pool index...
-            int argc = in.readU32();
-            v.OP_callpropvoid(index, argc);
+            v.OP_callpropvoid(in.readU32(), in.readU32());
             continue;
           }
           case OP_li8: {

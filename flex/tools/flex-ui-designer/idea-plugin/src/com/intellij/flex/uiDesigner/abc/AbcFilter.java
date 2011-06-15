@@ -36,17 +36,18 @@ public class AbcFilter extends AbcEncoder {
 
   private TIntObjectHashMap<ExportAsset> exportAssets;
 
+  private boolean useFlexEncoder;
+
+  public AbcFilter(boolean useFlexEncoder) {
+    this.useFlexEncoder = useFlexEncoder;
+  }
+
   public void filter(File inputFile, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
     filter(new FileInputStream(inputFile), inputFile.length(), out, abcNameFilter);
   }
 
   public void filter(VirtualFile inputFile, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
     filter(inputFile.getInputStream(), inputFile.getLength(), out, abcNameFilter);
-  }
-
-  @SuppressWarnings({"UnusedDeclaration"})
-  public static void mergeAbc(VirtualFile inputFile, File out) throws IOException {
-    new AbcFilter().filter(inputFile, out, null);
   }
 
   private void filter(InputStream inputStream, long inputLength, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
@@ -291,7 +292,7 @@ public class AbcFilter extends AbcEncoder {
 
   private void mergeDoAbc(boolean asTag, boolean hasClassAssociatedWithMainTimeLine) throws IOException {
     final int abcSize = decoders.size();
-    final Encoder encoder = new Encoder(46, 16);
+    final Encoder encoder = useFlexEncoder ? new FlexEncoder() : new Encoder();
     encoder.enablePeepHole();
     encoder.configure(decoders, hasClassAssociatedWithMainTimeLine ? transientNameString : null);
 

@@ -167,7 +167,7 @@ public class SwcDependenciesSorter {
       final long timeStamp = swfFile.getTimeStamp();
       if (timeStamp != modifiedSwf.lastModified()) {
         if (filter == null) {
-          filter = new AbcFilter();
+          filter = new AbcFilter(isFromSdk);
         }
         filter.filter(swfFile, modifiedSwf, filteredDefinitions == null ? null : new AbcNameFilterByNameSet(filteredDefinitions));
         //noinspection ResultOfMethodCallIgnored

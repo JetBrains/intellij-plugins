@@ -23,6 +23,8 @@ public class FlexSdkAbcInjector extends AbcFilter {
   private final RequiredAssetsInfo requiredAssetsInfo;
 
   public FlexSdkAbcInjector(String flexSdkVersion, URLConnection injectionUrlConnection, RequiredAssetsInfo requiredAssetsInfo) {
+    super(true);
+    
     this.flexSdkVersion = flexSdkVersion;
     this.injectionUrlConnection = injectionUrlConnection;
     this.requiredAssetsInfo = requiredAssetsInfo;
