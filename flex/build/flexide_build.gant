@@ -580,7 +580,6 @@ def layoutWin(String target) {
       fileset(dir: "$home/community/bin/win") {
         exclude(name: "breakgen*")
         exclude(name: "idea.bat")
-
       }
       fileset(dir: "$home/flex/build") {
         include(name: "flexide.bat")
@@ -607,9 +606,7 @@ def layoutWin(String target) {
     replacefilter(token: "@@system_selector@@", value: system_selector)
   }
 
-  ant.fixcrlf(file: "$target/bin/flexide.exe.vmoptions", eol: "dos")
-  ant.fixcrlf(file: "$target/bin/idea.properties", eol: "dos")
-  ant.fixcrlf(file: "$target/bin/log.xml", eol: "dos")
+  ant.fixcrlf(srcDir: "$target/bin", excludes: "*.dll *.exe", eol: "dos")
 }
 
 def set(Map args, String key, Object value) {
