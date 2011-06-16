@@ -104,6 +104,12 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       document.uiComponent = object;
       document.systemManager.setUserDocument(DisplayObject(object));
       documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
+      if (object is documentFactory.module.context.viewNavigatorApplicationBaseClass) {
+        var navigator:Object = object.navigator;
+        if (navigator != null && navigator.activeView != null && !navigator.activeView.isActive) {
+          navigator.activeView.setActive(true);
+        }
+      }
     }
     catch (e:Error) {
       UncaughtErrorManager.instance.readDocumentErrorHandler(e);
@@ -113,7 +119,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     return true;
   }
 
-  private function createStyleManager(module:Module, documentFactory:DocumentFactory):void {
+  private static function createStyleManager(module:Module, documentFactory:DocumentFactory):void {
     if (module.context.styleManager == null) {
       createStyleManagerForContext(module.context);
     }
@@ -122,7 +128,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
   
-  private function createStyleManagerForContext(context:ModuleContextEx):void {
+  private static function createStyleManagerForContext(context:ModuleContextEx):void {
     var inheritingStyleMapList:Vector.<Dictionary> = new Vector.<Dictionary>();
     var styleManagerClass:Class = context.getClass("com.intellij.flex.uiDesigner.css.RootStyleManager");
     context.styleManager = new styleManagerClass(inheritingStyleMapList, new StyleValueResolverImpl(context.applicationDomain));
@@ -156,7 +162,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     inheritingStyleMapList.fixed = true;
   }
   
-  private function createStyleManagerForModule(module:Module, documentFactory:DocumentFactory):void {
+  private static function createStyleManagerForModule(module:Module, documentFactory:DocumentFactory):void {
     var styleManagerClass:Class = module.getClass("com.intellij.flex.uiDesigner.css.ChildStyleManager");
     module.styleManager = new styleManagerClass(module.context.styleManager);
     var cssReaderClass:Class = module.getClass("com.intellij.flex.uiDesigner.css.CssReaderImpl");

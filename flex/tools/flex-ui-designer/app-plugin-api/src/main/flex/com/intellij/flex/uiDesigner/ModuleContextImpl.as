@@ -5,6 +5,8 @@ import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import flash.system.ApplicationDomain;
 
 public final class ModuleContextImpl implements ModuleContextEx {
+  private static const VIEW_NAVIGATOR_APPLICATION_BASE_FQN:String = "spark.components.supportClasses.ViewNavigatorApplicationBase";
+
   private var documentFactories:Vector.<Object>/* FlexDocumentFactory */;
   
   public function ModuleContextImpl(librarySets:Vector.<LibrarySet>, project:Project) {
@@ -90,7 +92,20 @@ public final class ModuleContextImpl implements ModuleContextEx {
 
     return _deferredInstanceFromBytesClass;
   }
-  
+
+  private var hasViewNavigatorApplicationBaseClass:int = -1;
+  private var _viewNavigatorApplicationBaseClass:Class;
+  public function get viewNavigatorApplicationBaseClass():Class {
+    if (hasViewNavigatorApplicationBaseClass == -1) {
+      hasViewNavigatorApplicationBaseClass = applicationDomain.hasDefinition(VIEW_NAVIGATOR_APPLICATION_BASE_FQN) ? 1 : 0;
+      if (hasViewNavigatorApplicationBaseClass == 1) {
+        _viewNavigatorApplicationBaseClass = getClass(VIEW_NAVIGATOR_APPLICATION_BASE_FQN);
+      }
+    }
+
+    return _viewNavigatorApplicationBaseClass;
+  }
+
   private var _deferredInstanceFromBytesVectorClass:Class;
   public function get deferredInstanceFromBytesVectorClass():Class {
     if (_deferredInstanceFromBytesVectorClass == null) {

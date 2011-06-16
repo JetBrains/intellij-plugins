@@ -26,5 +26,7 @@ public interface ModuleContext {
   function get deferredInstanceFromBytesClass():Class;
 
   function get deferredInstanceFromBytesVectorClass():Class;
+
+  function get viewNavigatorApplicationBaseClass():Class;
 }
 }

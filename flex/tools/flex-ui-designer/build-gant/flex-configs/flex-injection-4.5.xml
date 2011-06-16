@@ -121,7 +121,6 @@
 		<symbol>mx.managers.LayoutManager</symbol>
 		<symbol>mx.resources.ResourceManager</symbol>
 		<symbol>spark.components.WindowedApplication</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.SparkApplication</symbol>
 	</includes>
 	<metadata>
 		<title>flex-injection-4.5</title>
