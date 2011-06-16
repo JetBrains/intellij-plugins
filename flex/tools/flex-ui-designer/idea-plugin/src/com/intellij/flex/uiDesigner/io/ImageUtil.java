@@ -1,13 +1,15 @@
 package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import org.apache.sanselan.ImageFormat;
 import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,7 +39,7 @@ public final class ImageUtil {
     try {
       ImageReader reader = readers.next();
       // skip sanselan, we don't want it (prefer to standard sun impl)
-      if (reader.getFormatName().equals(ImageFormat.IMAGE_FORMAT_UNKNOWN.name)) {
+      if (reader.getFormatName().equals("UNKNOWN")) {
         reader = readers.next();
       }
 
