@@ -184,11 +184,11 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     flashWorkaroundByteArray.clear();
   }
   
-  private function getDocumentFactoryManager(module:Module):DocumentFactoryManager {
+  private static function getDocumentFactoryManager(module:Module):DocumentFactoryManager {
     return module.context.documentFactoryManager;
   }
   
-  private function getDocumentManager(module:Module):DocumentManager {
+  private static function getDocumentManager(module:Module):DocumentManager {
     return DocumentManager(module.project.getComponent(DocumentManager));
   }
 
@@ -207,7 +207,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     openDocumentsForFactory(documentFactory, documentManager);
   }
 
-  private function openDocumentsForFactory(documentFactory:DocumentFactory, documentManager:DocumentManager):void {
+  private static function openDocumentsForFactory(documentFactory:DocumentFactory, documentManager:DocumentManager):void {
     if (documentFactory.document != null) {
       documentManager.open(documentFactory);
     }

@@ -9,16 +9,11 @@ import flash.utils.ByteArray;
 public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedAssetManager {
   private var data:Vector.<SwfCache>;
 
-  public function isReady(id:int, symbol:String):Boolean {
-    var swfCache:SwfCache = data[id];
-    return swfCache.rootClass != null;
-  }
-
   public function get(id:int, symbol:String):Object {
     return get2(data[id], symbol);
   }
 
-  private function get2(swfCache:SwfCache, symbol:String):Object {
+  private static function get2(swfCache:SwfCache, symbol:String):Object {
     return symbol == null ? swfCache.rootClass : Class(swfCache.applicationDomain.getDefinition(symbol));
   }
   
@@ -55,7 +50,6 @@ public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedA
     var swfCache:SwfCache = new SwfCache(id);
     data[id] = swfCache;
 
-    return;
     var loader:Loader = new MyLoader(swfCache);
     addLoaderListeners(loader);
     var loaderContext:LoaderContext = new LoaderContext(false, swfCache.applicationDomain);
@@ -80,7 +74,6 @@ import flash.display.AVM1Movie;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
-import flash.display.Sprite;
 import flash.system.ApplicationDomain;
 
 final class SwfCache {
