@@ -75,8 +75,9 @@ public class MxmlWriter {
           ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor)rootTag.getDescriptor();
           assert rootTagDescriptor != null;
           final String fqn = rootTagDescriptor.getQualifiedName();
-          String replacementFqn = appClassMap.get(fqn);
-          writer.writeObjectHeader(replacementFqn == null ? fqn : replacementFqn);
+          //String replacementFqn = appClassMap.get(fqn);
+          //writer.writeObjectHeader(replacementFqn == null ? fqn : replacementFqn);
+          writer.writeObjectHeader(fqn);
           processElements(rootTag, null, false, -1, out.size() - 2);
         }
       });

@@ -3,23 +3,26 @@ package com.intellij.flex.uiDesigner.abc;
 import gnu.trove.TIntObjectHashMap;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
+import static com.intellij.flex.uiDesigner.abc.Decoder.MethodCodeDecoding;
 
 class FlexEncoder extends Encoder {
   private static final String SPARK_COMPONENTS = "spark.components";
+  private static final String SPARK_COMPONENTS_SUPPORT_CLASSES = "spark.components.supportClasses";
   private static final String APPLICATION = "Application";
   private static final String VIEW_NAVIGATOR_APPLICATION = "ViewNavigatorApplication";
   private static final String TABBED_VIEW_NAVIGATOR_APPLICATION = "TabbedViewNavigatorApplication";
   private static final String VIEW_NAVIGATOR_APPLICATION_BASE = "ViewNavigatorApplicationBase";
 
-  private final static byte[] EMPTY_I_INIT_METHOD_BODY = {0x01, 0x01, 0x04, 0x05, 0x06, (byte)0xd0, 0x30, (byte)0xd0, 0x049, 0x00, 0x47, 0x00, 0x00};
+  private final static byte[] MODIFY_INIT_METHOD_BODY_MARKER = {};
   private final static byte[] EMPTY_METHOD_BODY = {0x01, 0x02, 0x04, 0x05, 0x03, (byte)0xd0, 0x30, 0x47, 0x00, 0x00};
 
   private boolean skipColorCorrection;
   private boolean skipInitialize;
+  private boolean modifyConstructor;
 
   public void methodTrait(int trait_kind, int name, int dispId, int methodInfo, int[] metadata, DataBuffer in) {
     final int kind = trait_kind & 0x0f;
-    if (skipInitialize && ((kind == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) != 0) || kind == TRAIT_Setter)) {
+    if ((skipInitialize && kind == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) != 0) || (skipColorCorrection && kind == TRAIT_Setter)) {
       final int originalPosition = in.position();
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
 
@@ -35,7 +38,7 @@ class FlexEncoder extends Encoder {
 
         in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
         int stringLength = in.readU32();
-        if (compare(in, stringLength, "initialize")) {
+        if (skipInitialize && compare(in, stringLength, "initialize")) {
           in.seek(originalPosition);
           return;
         }
@@ -65,17 +68,20 @@ class FlexEncoder extends Encoder {
     }
 
     in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()]);
-    if (!compare(in, SPARK_COMPONENTS)) {
-      return;
+    int packageLength = in.readU32();
+    if (compare(in, packageLength, SPARK_COMPONENTS)) {
+      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+      int stringLength = in.readU32();
+      skipColorCorrection = compare(in, stringLength, APPLICATION);
+      skipInitialize = skipColorCorrection;
+      modifyConstructor = skipColorCorrection ||
+                          compare(in, stringLength, VIEW_NAVIGATOR_APPLICATION) ||
+                          compare(in, stringLength, TABBED_VIEW_NAVIGATOR_APPLICATION);
     }
-
-    in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
-    int stringLength = in.readU32();
-    skipColorCorrection = compare(in, stringLength, APPLICATION);
-    skipInitialize = skipColorCorrection ||
-                     compare(in, stringLength, VIEW_NAVIGATOR_APPLICATION) ||
-                     compare(in, stringLength, TABBED_VIEW_NAVIGATOR_APPLICATION) ||
-                     compare(in, stringLength, VIEW_NAVIGATOR_APPLICATION_BASE);
+    else if (compare(in, packageLength, SPARK_COMPONENTS_SUPPORT_CLASSES)) {
+      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+      skipInitialize = compare(in, VIEW_NAVIGATOR_APPLICATION_BASE);
+    }
   }
 
   private static boolean compare(final DataBuffer in, final String s) {
@@ -84,8 +90,8 @@ class FlexEncoder extends Encoder {
 
   @Override
   protected void instanceEnding(int oldIInit) {
-    if (skipInitialize) {
-      history.getModifiedMethodBodies(poolIndex).put(oldIInit, EMPTY_I_INIT_METHOD_BODY);
+    if (modifyConstructor) {
+      history.getModifiedMethodBodies(poolIndex).put(oldIInit, MODIFY_INIT_METHOD_BODY_MARKER);
     }
   }
 
@@ -97,7 +103,6 @@ class FlexEncoder extends Encoder {
     final int offset = in.position + in.offset;
     for (int j = stringLength - 1; j > -1; j--) {
       if ((char)in.data[offset + j] != s.charAt(j)) {
-        //System.out.print('"' + in.readString(stringLength) + "\"\n");
         return false;
       }
     }
@@ -106,29 +111,27 @@ class FlexEncoder extends Encoder {
   }
 
   @Override
-  public boolean startMethodBody(int methodInfo, int maxStack, int maxRegs, int scopeDepth, int maxScope) {
+  public int startMethodBody(int methodInfo, int maxStack, int maxRegs, int scopeDepth, int maxScope) {
     TIntObjectHashMap<byte[]> modifiedMethodBodies = history.getModifiedMethodBodies(poolIndex);
     byte[] bytes = modifiedMethodBodies == null ? null : modifiedMethodBodies.get(methodInfo);
     if (bytes == null) {
       return super.startMethodBody(methodInfo, maxStack, maxRegs, scopeDepth, maxScope);
     }
     else {
-       methodBodies.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
-      return
+      if (bytes == EMPTY_METHOD_BODY) {
+        methodBodies.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
+        methodBodies.write(bytes);
+        return MethodCodeDecoding.STOP;
+      }
+      else {
+        super.startMethodBody(methodInfo, maxStack, maxRegs, scopeDepth, maxScope);
+        // we cannot change iinit to empty body, because iinit may contains some default value for complex instance properties,
+        // so, we allow all code before constructsuper opcode.
+        return MethodCodeDecoding.STOP_AFTER_CONSTRUCT_SUPER;
+      }
     }
   }
-
-  protected boolean methodBodyStarting(int methodInfo) {
-    TIntObjectHashMap<byte[]> modifiedMethodBodies = history.getModifiedMethodBodies(poolIndex);
-    byte[] bytes = modifiedMethodBodies == null ? null : modifiedMethodBodies.get(methodInfo);
-    if (bytes != null) {
-      methodBodies.write(bytes);
-      return false;
-    }
-
-    return true;
-  }
-
+  
   @Override
   public void traitCount(int traitCount) {
     currentBuffer.writeU32(skipInitialize ? (traitCount - 1) : traitCount);
@@ -138,6 +141,7 @@ class FlexEncoder extends Encoder {
   public void endInstance() {
     super.endInstance();
     skipInitialize = false;
+    modifyConstructor = false;
     skipColorCorrection = false;
   }
 

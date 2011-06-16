@@ -41,6 +41,35 @@ public class SwcDependenciesSorter {
   private List<LibrarySetItem> resourceBundleOnlyitems;
   private List<LibrarySetEmbedItem> embedItems;
 
+  private static final Map<String,Set<CharSequence>> badClasses = new THashMap<String, Set<CharSequence>>();
+  
+  static {
+    THashSet<CharSequence> set = new THashSet<CharSequence>(2, AbcFilter.HASHING_STRATEGY);
+    set.add("AIRSparkClasses");
+    set.add("spark.components:WindowedApplication");
+    badClasses.put("airspark", set);
+
+    set = new THashSet<CharSequence>(1, AbcFilter.HASHING_STRATEGY);
+    set.add("SparkClasses");
+    badClasses.put("spark", set);
+
+    set = new THashSet<CharSequence>(1, AbcFilter.HASHING_STRATEGY);
+    set.add("MobileComponentsClasses");
+    badClasses.put("mobilecomponents", set);
+
+    set = new THashSet<CharSequence>(1, AbcFilter.HASHING_STRATEGY);
+    set.add("RPCClasses");
+    badClasses.put("rpc", set);
+
+    set = new THashSet<CharSequence>(1, AbcFilter.HASHING_STRATEGY);
+    set.add("MxClasses");
+    badClasses.put("mx", set);
+
+    set = new THashSet<CharSequence>(1, AbcFilter.HASHING_STRATEGY);
+    set.add("AIRFrameworkClasses");
+    badClasses.put("airframework", set);
+  }
+
   public SwcDependenciesSorter(@NotNull File appDir, @NotNull Module module) {
     this.appDir = appDir;
     this.module = module;
@@ -56,13 +85,6 @@ public class SwcDependenciesSorter {
 
   public List<LibrarySetItem> getResourceBundleOnlyitems() {
     return resourceBundleOnlyitems;
-  }
-
-  private static Collection<CharSequence> getBadAirsparkClasses() {
-    Collection<CharSequence> classes = new ArrayList<CharSequence>(2);
-    classes.add("AIRSparkClasses");
-    classes.add("spark.components:WindowedApplication");
-    return classes;
   }
 
   public static void main(String[] args) throws IOException, DataFormatException {
@@ -139,14 +161,16 @@ public class SwcDependenciesSorter {
         String path = item.library.getPath();
         if (path.startsWith("framework")) {
           injectFrameworkSwc(flexSdkVersion, item, libraries);
-
           continue;
         }
-        else if (path.startsWith("airspark")) {
-          filteredDefinitions = getBadAirsparkClasses();
-          if (!item.hasMissedDefinitions() && item.unresolvedDefinitionPolicy != 0) {
-            item.unresolvedDefinitions.addAll(filteredDefinitions);
-            filteredDefinitions = item.unresolvedDefinitions;
+        else {
+          int firstDotIndex = path.indexOf('.');
+          if (firstDotIndex != -1) {
+            filteredDefinitions = badClasses.get(path.substring(0, firstDotIndex));
+            if (filteredDefinitions != null && !item.hasMissedDefinitions() && item.unresolvedDefinitionPolicy != 0) {
+              item.unresolvedDefinitions.addAll(filteredDefinitions);
+              filteredDefinitions = item.unresolvedDefinitions;
+            }
           }
         }
       }

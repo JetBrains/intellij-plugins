@@ -15,6 +15,7 @@ public class MxmlTest extends BaseTestCase {
     //noinspection ConstantIfStatementJS
     if (false) {
       Application();
+      ViewNavigatorApplication();
       Form();
       Embed();
       UntypedProperty();
@@ -41,7 +42,11 @@ public class MxmlTest extends BaseTestCase {
     app.colorCorrection = ColorCorrection.ON;
     assertThat(app, m);
   }
-  
+
+  public function ViewNavigatorApplication():void {
+
+  }
+
   public function Embed():void {
     var bitmapData:BitmapData = app.getElementAt(0).source;
     var m:Matcher = allOf(equalTo(bitmapData), {transparent: false, width: 240, height: 180});

@@ -7,7 +7,7 @@ import java.nio.channels.FileChannel;
 class WritableDataBuffer extends DataBuffer {
   WritableDataBuffer(int preferredSize) {
     preferredSize = preferredSize <= 0 ? 1000 : preferredSize;
-    this.data = new byte[preferredSize];
+    data = new byte[preferredSize];
     size = 0;
     position = 0;
   }
@@ -37,22 +37,18 @@ class WritableDataBuffer extends DataBuffer {
     }
   }
 
-  /**
-   * @param b DataBuffer
-   * @param start - inclusive
-   * @param end   - exclusive
-   */
-  public void write(DataBuffer b, int start, int end) {
-    resize(end - start);
-    for (int i = start; i < end; i++) {
-      data[size++] = b.data[i];
-    }
+  public void write(DataBuffer b) {
+    write(b.data, b.size);
   }
 
   public void write(byte[] bytes) {
-    resize(bytes.length);
-    System.arraycopy(bytes, 0, data, size, bytes.length);
-    size += bytes.length;
+    write(bytes, bytes.length);
+  }
+
+  public void write(byte[] bytes, int length) {
+    resize(length);
+    System.arraycopy(bytes, 0, data, size, length);
+    size += length;
   }
 
   public void writeU8(int v) {

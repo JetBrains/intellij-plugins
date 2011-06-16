@@ -11,7 +11,7 @@ import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @Flex(version="4.5")
-public class MxmlWriterTest extends MxmlWriterTestBase {
+public class MxmlTest extends MxmlWriterTestBase {
   @Override
   protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
     if (getName().equals("test45")) {

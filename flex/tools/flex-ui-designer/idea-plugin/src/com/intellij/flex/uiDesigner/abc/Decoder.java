@@ -101,45 +101,45 @@ final class Decoder {
   public static final class ClassInfo {
     final DataBuffer in;
     final int estimatedSize;
-    private final int[] cPositions;
-    private final int[] iPositions;
-    private final Traits cTraits;
-    private final Traits iTraits;
+    private final int[] classPositions;
+    private final int[] instancePositions;
+    private final Traits classTraits;
+    private final Traits instanceTraits;
 
     ClassInfo(DataBuffer in) {
       this.in = in;
       int pos = in.position();
       int size = in.readU32();
-      iPositions = Scanner.scanInstances(in, size);
-      iTraits = new Traits(in);
-      cPositions = Scanner.scanClasses(in, size);
-      cTraits = new Traits(in);
+      instancePositions = Scanner.scanInstances(in, size);
+      instanceTraits = new Traits(in);
+      classPositions = Scanner.scanClasses(in, size);
+      classTraits = new Traits(in);
       estimatedSize = in.position() - pos;
     }
 
     public int size() {
-      return cPositions.length;
+      return classPositions.length;
     }
 
     public void decodeInstance(int index, Encoder visitor) throws DecoderException {
-      int pos = iPositions[index];
+      int pos = instancePositions[index];
       int originalPos = in.position();
       in.seek(pos);
       visitor.startInstance(in);
-      iTraits.decode(visitor);
+      instanceTraits.decode(visitor);
       visitor.endInstance();
 
       in.seek(originalPos);
     }
 
     public void decodeClass(int index, Encoder visitor) throws DecoderException {
-      int pos = cPositions[index];
+      int pos = classPositions[index];
       int originalPos = in.position();
       in.seek(pos);
 
       int cinit = in.readU32();
       visitor.startClass(cinit);
-      cTraits.decode(visitor);
+      classTraits.decode(visitor);
       visitor.endClass();
 
       in.seek(originalPos);
@@ -200,7 +200,8 @@ final class Decoder {
       int codeStart = in.position();
       in.skip(codeLength);
 
-      if (!visitor.startMethodBody(methodInfo, maxStack, maxRegs, scopeDepth, maxScope)) {
+      final int behaviour = visitor.startMethodBody(methodInfo, maxStack, maxRegs, scopeDepth, maxScope);
+      if (behaviour == MethodCodeDecoding.STOP) {
         skipExceptions(in.readU32());
         int traitCount = in.readU32();
         assert traitCount == 0;
@@ -216,7 +217,7 @@ final class Decoder {
         visitor.startExceptions(exCount);
 
         decodeExceptions(in, codeStart, visitor, exCount);
-        opcodes.decode(codeStart, codeLength, visitor);
+        opcodes.decode(codeStart, codeLength, visitor, behaviour == MethodCodeDecoding.STOP_AFTER_CONSTRUCT_SUPER);
 
         visitor.endOpcodes();
         visitor.endExceptions();
@@ -340,12 +341,12 @@ final class Decoder {
       }
     }
 
-    public void decode(int start, int length, Encoder v) throws DecoderException {
+    public void decode(int start, int length, Encoder v, boolean stopAfterConstructSuper) throws DecoderException {
       int originalPos = in.position();
       in.seek(start);
 
       int end = start + length;
-      while (in.position() < end) {
+      w : while (in.position() < end) {
         int pos = in.position();
         int opcode = in.readU8();
 
@@ -382,14 +383,12 @@ final class Decoder {
             v.OP_ifnge(offset, in.position());
             continue;
           }
-          case OP_pushscope: {
+          case OP_pushscope:
             v.OP_pushscope();
             continue;
-          }
-          case OP_newactivation: {
+          case OP_newactivation:
             v.OP_newactivation();
             continue;
-          }
           case OP_newcatch: {
             v.OP_newcatch(in.readU32());
             continue;
@@ -402,67 +401,52 @@ final class Decoder {
             v.OP_getglobalscope();
             continue;
           }
-          case OP_getlocal0: {
+          case OP_getlocal0:
             v.OP_getlocal0();
             continue;
-          }
-          case OP_getlocal1: {
+          case OP_getlocal1:
             v.OP_getlocal1();
             continue;
-          }
-          case OP_getlocal2: {
+          case OP_getlocal2:
             v.OP_getlocal2();
             continue;
-          }
-          case OP_getlocal3: {
+          case OP_getlocal3:
             v.OP_getlocal3();
             continue;
-          }
-          case OP_setlocal0: {
+          case OP_setlocal0:
             v.OP_setlocal0();
             continue;
-          }
-          case OP_setlocal1: {
+          case OP_setlocal1:
             v.OP_setlocal1();
             continue;
-          }
-          case OP_setlocal2: {
+          case OP_setlocal2:
             v.OP_setlocal2();
             continue;
-          }
-          case OP_setlocal3: {
+          case OP_setlocal3:
             v.OP_setlocal3();
             continue;
-          }
-          case OP_returnvoid: {
+          case OP_returnvoid:
             v.OP_returnvoid();
             continue;
-          }
-          case OP_returnvalue: {
+          case OP_returnvalue:
             v.OP_returnvalue();
             continue;
-          }
-          case OP_nop: {
+          case OP_nop:
             v.OP_nop();
             continue;
-          }
-          case OP_bkpt: {
+          case OP_bkpt:
             v.OP_bkpt();
             continue;
-          }
-          case OP_timestamp: {
+          case OP_timestamp:
             v.OP_timestamp();
             continue;
-          }
-          case OP_debugline: {
+          case OP_debugline:
             v.OP_debugline(in.readU32());
             continue;
-          }
-          case OP_bkptline: {
+          case OP_bkptline:
             in.readU32();
             v.OP_bkptline();
             continue;
-          }
           case OP_debug: {
             int di_local = in.readU8(); // DI_LOCAL
             int index = in.readU32(); // constant pool index...
@@ -471,57 +455,45 @@ final class Decoder {
             v.OP_debug(di_local, index, slot, linenum);
             continue;
           }
-          case OP_debugfile: {
+          case OP_debugfile:
             v.OP_debugfile(in);
             continue;
-          }
           case OP_jump: {
             int jump = in.readS24(); // readjust jump...
             addTarget(jump + in.position());
             v.OP_jump(jump, in.position());
             continue;
           }
-          case OP_pushnull: {
+          case OP_pushnull:
             v.OP_pushnull();
             continue;
-          }
-          case OP_pushundefined: {
+          case OP_pushundefined:
             v.OP_pushundefined();
             continue;
-          }
-          case OP_pushstring: {
+          case OP_pushstring:
             v.OP_pushstring(in.readU32());
             continue;
-          }
-          case OP_pushnamespace: {
+          case OP_pushnamespace:
             v.OP_pushnamespace(in.readU32());
             continue;
-          }
-          case OP_pushint: {
+          case OP_pushint:
             v.OP_pushint(in.readU32());
             continue;
-          }
-          case OP_pushuint: {
+          case OP_pushuint:
             v.OP_pushuint(in.readU32());
             continue;
-          }
-          case OP_pushdouble: {
+          case OP_pushdouble:
             v.OP_pushdouble(in.readU32());
             continue;
-          }
-
-          case OP_getlocal: {
+          case OP_getlocal:
             v.OP_getlocal(in.readU32());
             continue;
-          }
-          case OP_pushtrue: {
+          case OP_pushtrue:
             v.OP_pushtrue();
             continue;
-          }
-          case OP_pushfalse: {
+          case OP_pushfalse:
             v.OP_pushfalse();
             continue;
-          }
           case OP_pushnan: {
             v.OP_pushnan();
             continue;
@@ -554,14 +526,12 @@ final class Decoder {
             v.OP_esc_xattr();
             continue;
           }
-          case OP_checkfilter: {
+          case OP_checkfilter:
             v.OP_checkfilter();
             continue;
-          }
-          case OP_convert_d: {
+          case OP_convert_d:
             v.OP_convert_d();
             continue;
-          }
           case OP_convert_b: {
             v.OP_convert_b();
             continue;
@@ -977,12 +947,13 @@ final class Decoder {
             v.OP_setsuper(in.readU32());
             continue;
           }
-          // obj arg1 arg2
-          //           sp
-          case OP_constructsuper: {
+          case OP_constructsuper:
             v.OP_constructsuper(in.readU32());
+            if (stopAfterConstructSuper) {
+              v.OP_returnvoid();
+              break w;
+            }
             continue;
-          }
           case OP_pushshort: {
             // fixme this just pushes an integer since we dont have short atoms yet
             int n = in.readU32();
@@ -1154,5 +1125,11 @@ final class Decoder {
 
       in.seek(originalPos);
     }
+  }
+
+  interface MethodCodeDecoding {
+    int CONTINUE = 0;
+    int STOP = 1;
+    int STOP_AFTER_CONSTRUCT_SUPER = 2;
   }
 }

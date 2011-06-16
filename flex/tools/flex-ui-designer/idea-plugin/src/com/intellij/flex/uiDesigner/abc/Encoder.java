@@ -9,6 +9,7 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
+import static com.intellij.flex.uiDesigner.abc.Decoder.MethodCodeDecoding;
 
 @SuppressWarnings({"deprecation"})
 class Encoder {
@@ -359,7 +360,7 @@ class Encoder {
     currentBuffer = null;
   }
 
-  public boolean startMethodBody(int methodInfo, int maxStack, int maxRegs, int scopeDepth, int maxScope) {
+  public int startMethodBody(int methodInfo, int maxStack, int maxRegs, int scopeDepth, int maxScope) {
     methodBodies.writeU32(this.methodInfo.getIndex(poolIndex, methodInfo));
 
     methodBodies.writeU32(maxStack);
@@ -371,7 +372,7 @@ class Encoder {
     opcodePass = 1;
     exPass = 1;
 
-    return true;
+    return MethodCodeDecoding.CONTINUE;
   }
 
   public void endMethodBody() {
@@ -386,7 +387,7 @@ class Encoder {
     }
     else if (opcodePass == 2) {
       methodBodies.writeU32(opcodes.size());
-      methodBodies.write(opcodes, 0, opcodes.size());
+      methodBodies.write(opcodes);
     }
   }
 
@@ -413,7 +414,7 @@ class Encoder {
       exPass++;
     }
     else if (exPass == 2) {
-      methodBodies.write(exceptions, 0, exceptions.size());
+      methodBodies.write(exceptions);
     }
   }
 
