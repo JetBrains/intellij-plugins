@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import org.apache.sanselan.ImageFormat;
 import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
@@ -25,22 +26,29 @@ public final class ImageUtil {
   public static BufferedImage getImage(final VirtualFile virtualFile, final @Nullable String mimeType) throws IOException {
     final InputStream inputStream = virtualFile.getInputStream();
     final BufferedImage image;
+    final Iterator<ImageReader> readers;
+    if (mimeType == null) {
+      readers = ImageIO.getImageReadersBySuffix(virtualFile.getExtension());
+    }
+    else {
+     readers = ImageIO.getImageReadersByMIMEType(mimeType);
+    }
+
     try {
-      if (mimeType == null) {
-        image = ImageIO.read(inputStream);
+      ImageReader reader = readers.next();
+      // skip sanselan, we don't want it (prefer to standard sun impl)
+      if (reader.getFormatName().equals(ImageFormat.IMAGE_FORMAT_UNKNOWN.name)) {
+        reader = readers.next();
       }
-      else {
-        Iterator iter = ImageIO.getImageReadersByMIMEType(mimeType);
-        ImageReader reader = (ImageReader)iter.next();
-        ImageInputStream imageInputStream = ImageIO.createImageInputStream(inputStream);
-        reader.setInput(imageInputStream, true, true);
-        try {
-          image = reader.read(0, reader.getDefaultReadParam());
-        }
-        finally {
-          reader.dispose();
-          imageInputStream.close();
-        }
+
+      ImageInputStream imageInputStream = ImageIO.createImageInputStream(inputStream);
+      reader.setInput(imageInputStream, true, true);
+      try {
+        image = reader.read(0, reader.getDefaultReadParam());
+      }
+      finally {
+        reader.dispose();
+        imageInputStream.close();
       }
     }
     finally {
