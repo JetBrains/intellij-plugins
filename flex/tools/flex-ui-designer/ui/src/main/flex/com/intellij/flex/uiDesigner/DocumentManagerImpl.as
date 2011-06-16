@@ -104,7 +104,8 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       document.uiComponent = object;
       document.systemManager.setUserDocument(DisplayObject(object));
       documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
-      if (object is documentFactory.module.context.viewNavigatorApplicationBaseClass) {
+      var viewNavigatorApplicationBaseClass:Class = documentFactory.module.context.viewNavigatorApplicationBaseClass;
+      if (viewNavigatorApplicationBaseClass != null && object is viewNavigatorApplicationBaseClass) {
         var navigator:Object = object.navigator;
         if (navigator != null && navigator.activeView != null && !navigator.activeView.isActive) {
           navigator.activeView.setActive(true);
