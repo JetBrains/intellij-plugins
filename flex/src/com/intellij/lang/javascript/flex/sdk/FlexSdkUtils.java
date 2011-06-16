@@ -46,6 +46,7 @@ public class FlexSdkUtils {
 
   static final String EXTERNAL_LIBRARY_PATH_ELEMENT = "<flex-config><compiler><external-library-path><path-element>";
   static final String LIBRARY_PATH_ELEMENT = "<flex-config><compiler><library-path><path-element>";
+  static final String THEME_FILE_NAME = "<flex-config><compiler><theme><filename>";
   static final String LOCALE_ELEMENT = "<flex-config><compiler><locale><locale-element>";
   public static final String TARGET_PLAYER_ELEMENT = "<flex-config><target-player>";
 
@@ -120,23 +121,23 @@ public class FlexSdkUtils {
     final VirtualFile baseDir = configXmlFile.getParent();
     assert baseDir != null;
     final List<String> xmlElements =
-      Arrays.asList(EXTERNAL_LIBRARY_PATH_ELEMENT, LIBRARY_PATH_ELEMENT, LOCALE_ELEMENT, TARGET_PLAYER_ELEMENT);
+      Arrays.asList(EXTERNAL_LIBRARY_PATH_ELEMENT, LIBRARY_PATH_ELEMENT, THEME_FILE_NAME, LOCALE_ELEMENT, TARGET_PLAYER_ELEMENT);
     final Map<String, List<String>> infoFromConfigXml = FlexUtils.findXMLElements(configXmlFile.getInputStream(), xmlElements);
 
     final List<String> libRelativePaths = getLibsRelativePaths(infoFromConfigXml);
 
     for (String libRelativePath : libRelativePaths) {
-      final VirtualFile libPath = baseDir.findFileByRelativePath(libRelativePath);
-      if (libPath != null) {
-        if (libPath.isDirectory()) {
-          for (final VirtualFile libCandidate : libPath.getChildren()) {
+      final VirtualFile libFileOrDir = baseDir.findFileByRelativePath(libRelativePath);
+      if (libFileOrDir != null) {
+        if (libFileOrDir.isDirectory()) {
+          for (final VirtualFile libCandidate : libFileOrDir.getChildren()) {
             if (!libCandidate.isDirectory() && "swc".equalsIgnoreCase(libCandidate.getExtension())) {
               addSwcRoot(sdkModificator, libCandidate);
             }
           }
         }
-        else {
-          addSwcRoot(sdkModificator, libPath);
+        else if ("swc".equalsIgnoreCase(libFileOrDir.getExtension())) {
+          addSwcRoot(sdkModificator, libFileOrDir);
         }
       }
     }
@@ -163,7 +164,8 @@ public class FlexSdkUtils {
     }
 
     for (final Map.Entry<String, List<String>> entry : infoFromConfigXml.entrySet()) {
-      if (entry.getKey().equals(EXTERNAL_LIBRARY_PATH_ELEMENT) || entry.getKey().equals(LIBRARY_PATH_ELEMENT)) {
+      final String key = entry.getKey();
+      if (key.equals(EXTERNAL_LIBRARY_PATH_ELEMENT) || key.equals(LIBRARY_PATH_ELEMENT) || key.equals(THEME_FILE_NAME)) {
         for (String libPath : entry.getValue()) {
           libPath = libPath.replace(TARGET_PLAYER_MAJOR_VERSION_TOKEN, targetPlayerMajorVersion);
           libPath = libPath.replace(TARGET_PLAYER_MINOR_VERSION_TOKEN, targetPlayerMinorVersion);
