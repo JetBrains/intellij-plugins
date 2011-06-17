@@ -132,8 +132,8 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
   }
 
   @Override
-  protected JPanel createVisibilityPanel(JPanel subPanel) {
-    JPanel visibilityPanel = super.createVisibilityPanel(subPanel);
+  protected JPanel createVisibilityPanel() {
+    JPanel visibilityPanel = super.createVisibilityPanel();
     if (myMethod.isConstructor()) {
       return visibilityPanel;
     }
