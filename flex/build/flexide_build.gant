@@ -474,7 +474,12 @@ def layoutFull(String target, Set usedJars) {
         module("forms_rt")
       }
 
-      jar("resources_en.jar") {
+      jar([name: "resources_en.jar", duplicate: "preserve"]) {
+        // Flex IDE resources come first to override platform resources (using duplicate=preserve)
+        fileset(dir: "$home/flex/ideResources") {
+          include(name: "**/tips/**")
+          include(name: "**/search/**")
+        }
         module("platform-resources-en")
         module("resources-en") {
           ant.patternset() {
@@ -484,10 +489,6 @@ def layoutFull(String target, Set usedJars) {
             include(name: "**/JavaErrorMessages.properties")
             include(name: "**/EvaluationFeedbackRequest.html")
           }
-        }
-        fileset(dir: "$home/flex/ideResources") {
-          include(name: "**/tips/**")
-          include(name: "**/search/**")
         }
       }
 
