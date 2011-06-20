@@ -31,7 +31,6 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
     myTargetClass = targetClass;
 
     setTitle(JSBundle.message(forceConstructor ? "create.constructor.dialog.title" : "create.method.dialog.title"));
-    myPropagatePanel.setVisible(false);
   }
 
   static JSFunction createFakeMethod(JSClass clazz, String text, boolean inClass) {
