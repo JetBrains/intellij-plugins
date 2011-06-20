@@ -474,9 +474,7 @@ def layoutFull(String target, Set usedJars) {
         module("forms_rt")
       }
 
-      // TODO revert when JPS is fixed
-      //jar([name: "resources_en.jar", duplicate: "preserve"]) {
-      jar("resources_en.jar") {
+      jar([name: "resources_en.jar", duplicate: "preserve"]) {
         // Flex IDE resources come first to override platform resources (using duplicate=preserve)
         fileset(dir: "$home/flex/ideResources") {
           include(name: "**/tips/**")
