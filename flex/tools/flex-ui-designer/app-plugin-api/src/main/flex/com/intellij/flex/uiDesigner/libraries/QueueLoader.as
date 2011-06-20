@@ -81,7 +81,7 @@ public class QueueLoader {
     return loader;
   }
 
-  private function loadErrorHandler(event:IOErrorEvent):void {
+  private static function loadErrorHandler(event:IOErrorEvent):void {
     var f:File = File.applicationDirectory;
     trace(event.text, f.nativePath);
   }
@@ -121,7 +121,7 @@ public class QueueLoader {
     }
   }
 
-  private function getFlexComplementSwfBytes(path:String):ByteArray {
+  private static function getFlexComplementSwfBytes(path:String):ByteArray {
     var propertyNameBase:String = path.replace(".", "");
     var propertyByteName:String = propertyNameBase + "ComplementBytes";
     if (QueueLoader[propertyByteName] == null) {
@@ -173,6 +173,7 @@ public class QueueLoader {
 
       var lS:LibrarySet = librarySet;
       librarySet = null;
+      trace("library set loaded");
       progressListener.complete(lS);
 
       if (queue.length > 0) {

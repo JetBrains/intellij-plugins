@@ -1,4 +1,4 @@
-package com.intellij.flex.uiDesigner{
+package com.intellij.flex.uiDesigner {
 import cocoa.MainWindowedApplication;
 import cocoa.util.FileUtil;
 
@@ -22,6 +22,10 @@ public class Main extends MainWindowedApplication {
   private var loadedPluginCounter:int;
 
   private var port:int;
+  private var errorPort:int;
+
+  // Burn in hell, Adobe
+  SocketManagerImpl;
 
   override protected function initializeMaps():void {
     loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);
@@ -32,7 +36,7 @@ public class Main extends MainWindowedApplication {
     laf = new IdeaAquaLookAndFeel();
   }
 
-  private function uncaughtErrorHandler(event:UncaughtErrorEvent):void {
+  private static function uncaughtErrorHandler(event:UncaughtErrorEvent):void {
     trace(event.error.getStackTrace());
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -49,7 +53,7 @@ public class Main extends MainWindowedApplication {
     var deferredConnect:Boolean;
     var arguments:Array = event.arguments;
     if (arguments.length > 1) {
-      for (var i:int = 1; i < arguments.length; i += 2) {
+      for (var i:int = 2; i < arguments.length; i += 2) {
         var key:String = arguments[i];
         var value:String = arguments[i + 1];
         switch (key) {
@@ -69,6 +73,7 @@ public class Main extends MainWindowedApplication {
     }
 
     port = arguments[0];
+    errorPort = arguments[1];
     if (!deferredConnect) {
       connect();
     }
@@ -84,7 +89,7 @@ public class Main extends MainWindowedApplication {
     
     var socketManager:SocketManager = SocketManager(container.lookup(SocketManager));
     socketManager.addSocketDataHandler(0, SocketDataHandler(container.lookup(DefaultSocketDataHandler)));
-    socketManager.connect("localhost", port);
+    socketManager.connect("localhost", port, errorPort);
     
     UncaughtErrorManager.instance.listen(this);
     loaderInfo.uncaughtErrorEvents.removeEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);

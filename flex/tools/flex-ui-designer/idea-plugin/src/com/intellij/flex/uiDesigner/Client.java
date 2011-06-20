@@ -366,13 +366,6 @@ public class Client implements Closable {
     }
   }
 
-  @SuppressWarnings({"UnusedDeclaration"})
-  public static void writeAmfVirtualFile(@NotNull VirtualFile file, @NotNull AmfOutputStream out) {
-    out.write(Amf3Types.OBJECT);
-    out.writeObjectTraits("f");
-    writeVirtualFile(file, out);
-  }
-
   public static void writeVirtualFile(VirtualFile file, AmfOutputStream out) {
     out.writeAmfUtf(file.getUrl());
     out.writeAmfUtf(file.getPresentableUrl());

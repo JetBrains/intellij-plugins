@@ -2,15 +2,24 @@ package com.intellij.flex.uiDesigner {
 import flash.events.ProgressEvent;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
+import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
 registerClassAlias("s", String);
 
+/**
+ * WARNING: THIS CLASS MUST BE HERE: IntelliJ IDEA can debug classes only in designer module (and listed in Main), but not in any other, like app-plugin-api
+ */
 public class SocketManagerImpl implements SocketManager {
   protected var socket:Socket;
+  protected var errorSocket:Socket;
 
+  private var messageId:uint = uint.MAX_VALUE;
   private var deferredMessageSize:int;
   private var unreadSocketRemainder:int;
+
+  private var omitCount:int;
+  private var omitMessages:Dictionary;
 
   private const socketDataHandlers:Dictionary = new Dictionary();
   
@@ -37,7 +46,13 @@ public class SocketManagerImpl implements SocketManager {
     }
   }
 
-  public function connect(host:String, port:int):void {
+  public function connect(host:String, port:int, errorPort:int):void {
+    if (errorPort != 0) {
+      errorSocket = new Socket();
+      errorSocket.addEventListener(ProgressEvent.SOCKET_DATA, errorSocketDataHandler);
+      errorSocket.connect(host, errorPort);
+    }
+
     socket = new Socket();
     socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
     socket.connect(host, port);
@@ -50,7 +65,7 @@ public class SocketManagerImpl implements SocketManager {
   private function socketDataHandler(event:ProgressEvent):void {
     if (event != null) {
       totalBytes += event.bytesLoaded;
-      //trace("socket data handler: bytesLoaded " + event.bytesLoaded + " socket bytesAvailable " + socket.bytesAvailable + " last unread " + (socket.bytesAvailable - event.bytesLoaded));
+      trace("socket data handler: bytesLoaded " + event.bytesLoaded + " socket bytesAvailable " + socket.bytesAvailable + " last unread " + (socket.bytesAvailable - event.bytesLoaded) + " deferredMessageSize " + deferredMessageSize);
     }
     
     if (unreadSocketRemainder != 0) {
@@ -65,10 +80,26 @@ public class SocketManagerImpl implements SocketManager {
       }
     }
 
+    if (checkOmit()) {
+      return;
+    }
+
     var messageSize:int;
     while (socket.bytesAvailable > 0) {
       if (deferredMessageSize == 0) {
         messageSize = socket.readInt();
+        messageId = socket.readUnsignedInt();
+        if (omitMessages != null && messageId in omitMessages) {
+          omitCount = omitMessages[messageId];
+          delete omitMessages[messageId];
+          if (checkOmit()) {
+            return;
+          }
+          else {
+            continue;
+          }
+        }
+
         if (messageSize > socket.bytesAvailable) {
           deferredMessageSize = messageSize;
           break;
@@ -89,6 +120,7 @@ public class SocketManagerImpl implements SocketManager {
         const method:int = socket.readByte();
         trace(clientMethodClass + ":" + method);
         handler.handleSockedData(messageSize - 2, method, socket);
+        messageId = uint.MAX_VALUE;
         trace(clientMethodClass + ":" + method + " processed");
         if (messageSize != (position - socket.bytesAvailable)) {
           if (handler.pendingReadIsAllowable(method)) {
@@ -104,6 +136,43 @@ public class SocketManagerImpl implements SocketManager {
       else {
         throw new ArgumentError("unknown class: " + clientMethodClass);
       }
+    }
+  }
+
+  private function errorSocketDataHandler(event:ProgressEvent):void {
+    const invalidMessageId:uint = errorSocket.readUnsignedInt();
+    const count:uint = errorSocket.readUnsignedInt();
+    trace("error, omit: " + count + " deferredMessageSize: " + deferredMessageSize);
+    if (invalidMessageId == messageId) {
+      deferredMessageSize = 0;
+      omitCount = count;
+      if (socket.bytesAvailable > 0) {
+        socketDataHandler(null);
+      }
+    }
+    else {
+      if (omitMessages == null) {
+        omitMessages = new Dictionary();
+      }
+
+      omitMessages[invalidMessageId] = count;
+    }
+  }
+
+  private function checkOmit():Boolean {
+    if (omitCount == 0) {
+      return false;
+    }
+    
+    var r:int = omitCount - socket.bytesAvailable;
+    socket.readBytes(new ByteArray(), 0, r < 0 ? omitCount : 0);
+    if (r <= 0) {
+      omitCount = 0;
+      return false;
+    }
+    else {
+      omitCount = r;
+      return true;
     }
   }
 }

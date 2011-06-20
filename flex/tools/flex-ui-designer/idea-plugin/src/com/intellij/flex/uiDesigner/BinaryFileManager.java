@@ -33,6 +33,10 @@ public class BinaryFileManager extends EntityListManager<VirtualFile, AssetInfo>
     return list.add(new AssetInfo(virtualFile, mimeType));
   }
 
+  public void remove(@NotNull VirtualFile virtualFile) {
+    list.remove(virtualFile);
+  }
+
   public int registerFile(@NotNull VirtualFile virtualFile, BinaryFileType type) throws InvalidPropertyException {
     int id = list.add(new AssetInfo(virtualFile));
     try {

@@ -31,6 +31,8 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
   private File resultFile;
   private File appDir;
 
+  private DataOutputStream errorOut;
+
   protected void createReader(InputStream inputStream) {
     reader = new Reader(new BufferedInputStream(inputStream));
   }
@@ -42,8 +44,24 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
 
   @Override
   public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
+    resultReadyFile = new File(appDir, "d");
+    if (resultReadyFile.exists()) {
+      //noinspection ResultOfMethodCallIgnored
+      resultReadyFile.delete();
+    }
+
     init(inputStream, appDir);
     process();
+  }
+
+  @Override
+  public DataOutputStream getErrorOut() {
+    return errorOut;
+  }
+
+  @Override
+  public void setErrorOut(OutputStream out) {
+    errorOut = new DataOutputStream(new BufferedOutputStream(out));
   }
 
   public void process() throws IOException {
@@ -140,13 +158,10 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     });
   }
 
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   private void initResultFile() {
     if (resultFile == null) {
-      resultReadyFile = new File(appDir, "d");
       resultFile = new File(appDir, "r");
-      
-      resultFile.deleteOnExit();
-      resultReadyFile.deleteOnExit();
     }
   }
 

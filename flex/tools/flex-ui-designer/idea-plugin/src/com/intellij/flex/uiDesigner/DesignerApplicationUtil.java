@@ -266,13 +266,11 @@ final class DesignerApplicationUtil {
     }
   }
 
-  public static ProcessHandler runAdl(AdlRunConfiguration adlRunConfiguration, String descriptor, int port,
-                               final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
-    return runAdl(adlRunConfiguration, descriptor, port, null, adlExitHandler);
+  public static ProcessHandler runAdl(AdlRunConfiguration runConfiguration, String descriptor, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
+    return runAdl(runConfiguration, descriptor, null, adlExitHandler);
   }
 
-  public static ProcessHandler runAdl(AdlRunConfiguration runConfiguration, String descriptor, int port, @Nullable String root,
-                               final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
+  public static ProcessHandler runAdl(AdlRunConfiguration runConfiguration, String descriptor, @Nullable String root, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     ensureExecutable(runConfiguration.adlPath);
 
     List<String> command = new ArrayList<String>();
@@ -292,9 +290,8 @@ final class DesignerApplicationUtil {
       command.add(root);
     }
 
-    command.add("--");
-    command.add(String.valueOf(port));
     if (runConfiguration.arguments != null) {
+      command.add("--");
       command.addAll(runConfiguration.arguments);
     }
 

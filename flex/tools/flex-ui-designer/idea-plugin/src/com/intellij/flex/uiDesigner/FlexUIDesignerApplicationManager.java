@@ -6,19 +6,13 @@ import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
-import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.impl.NotificationsManagerImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -60,7 +54,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   public static final File APP_DIR = new File(PathManager.getSystemPath(), "flexUIDesigner");
   private static final String CHECK_DESCRIPTOR_PATH = APP_DIR + File.separator + CHECK_DESCRIPTOR_XML;
-
 
   private ProcessHandler adlProcessHandler;
   private Server server;
@@ -129,13 +122,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         reportInvalidFlexSdk(module, debug, sdk);
         return;
       }
-    }
-
-    JSClass clazz = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
-    if (!JSInheritanceUtil.isParentClass(clazz, ClassBackedElementDescriptor.UI_COMPONENT_BASE_INTERFACE)) {
-      String message = FlexUIDesignerBundle.message("component.is.not.a.visual.component", clazz.getQualifiedName());
-      showBalloon(debug, message, module.getProject(), Consumer.EMPTY_CONSUMER);
-      return;
     }
 
     documentOpening = true;
@@ -247,9 +233,15 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         return;
       }
 
+      final List<String> arguments = new ArrayList<String>();
+
+      server = new Server(new PendingOpenDocumentTask(module, psiFile), this);
+      arguments.add(String.valueOf(server.listen()));
+      arguments.add(String.valueOf(server.errorListen()));
+
       if (DebugPathManager.IS_DEV) {
         final String fudHome = DebugPathManager.getFudHome();
-        final List<String> arguments = new ArrayList<String>();
+
         if (ApplicationManager.getApplication().isUnitTestMode()) {
           arguments.add("-p");
           arguments.add(fudHome + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
@@ -257,11 +249,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
         arguments.add("-cdd");
         arguments.add(fudHome + "/flex-injection/target");
-
-        adlRunConfiguration.arguments = arguments;
       }
 
-      server = new Server(new PendingOpenDocumentTask(module, psiFile), this);
+      adlRunConfiguration.arguments = arguments;
     }
     catch (Throwable e) {
       LOG.error(e);
@@ -275,8 +265,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         try {
           copyAppFiles();
 
-          adlProcessHandler = DesignerApplicationUtil.runAdl(runConfiguration, APP_DIR.getPath() + "/" + DESCRIPTOR_XML,
-                                                             server.listen(), new Consumer<Integer>() {
+          adlProcessHandler = DesignerApplicationUtil.runAdl(runConfiguration, APP_DIR.getPath() + "/" + DESCRIPTOR_XML, new Consumer<Integer>() {
             @Override
             public void consume(Integer exitCode) {
               adlProcessHandler = null;

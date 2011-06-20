@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
-  private static final int SERVICE_DATA_SIZE = 4;
+  private static final int SERVICE_DATA_SIZE = 8;
 
   private int lastBlockBegin;
   private OutputStream out;
   private final List<Marker> markers = new ArrayList<Marker>();
+
+  private int messageCounter;
 
   public void setOut(@NotNull OutputStream out) {
     String debugFilename = System.getProperty("fud.socket.dump");
@@ -40,7 +42,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     count = SERVICE_DATA_SIZE;
     lastBlockBegin = 0;
     markers.clear();
-    this.out = null;
+    out = null;
   }
 
   public BlockDataOutputStream() {
@@ -52,17 +54,15 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     count = SERVICE_DATA_SIZE;
   }
   
-  public OutputStream writeUnbufferedHeader(int size) throws IOException {
-    out.write((size >>> 24) & 0xFF);
-    out.write((size >>> 16) & 0xFF);
-    out.write((size >>> 8) & 0xFF);
-    out.write(size & 0xFF);
-    
-    return out;
+  public UnbufferedOutput writeUnbufferedHeader(int size) throws IOException {
+    IOUtil.writeInt(size, out);
+    IOUtil.writeInt(messageCounter, out);
+    return new UnbufferedOutput(out, messageCounter++);
   }
 
   private void writeHeader() {
     IOUtil.writeInt(count - lastBlockBegin - SERVICE_DATA_SIZE, buffer, lastBlockBegin);
+    IOUtil.writeInt(messageCounter++, buffer, lastBlockBegin + 4);
   }
 
   private void flushBuffer() throws IOException {
@@ -72,7 +72,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
   }
 
   public void assertStart() {
-    assert count - lastBlockBegin == 4;
+    assert count - lastBlockBegin == SERVICE_DATA_SIZE;
   }
 
   public void rollback() {
@@ -134,7 +134,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       AuditorOutput auditorOutput = null;
       if (out instanceof AuditorOutput) {
         auditorOutput = (AuditorOutput)out;
-        auditorOutput.watchCount = 0;
+        auditorOutput.written = 0;
       }
 
       for (Marker marker : markers) {
@@ -162,8 +162,8 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
       }
 
       if (auditorOutput != null) {
-        assert auditorOutput.watchCount == (count - insertPosition);
-        auditorOutput.watchCount = -1;
+        assert auditorOutput.written == (count - insertPosition);
+        auditorOutput.written = -1;
       }
     }
 
@@ -326,52 +326,6 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     public void close() throws IOException {
       fileOut.close();
       super.close();
-    }
-  }
-
-  private static class AuditorOutput extends OutputStream {
-    private final OutputStream out;
-    private int watchCount = -1;
-
-    private AuditorOutput(OutputStream out) {
-      this.out = out;
-    }
-
-    @Override
-    public void write(int b) throws IOException {
-      if (watchCount != -1) {
-        watchCount++;
-      }
-
-      out.write(b);
-    }
-
-    @Override
-    public void write(byte[] b) throws IOException {
-      if (watchCount != -1) {
-        watchCount += b.length;
-      }
-
-      out.write(b);
-    }
-
-    @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-      if (watchCount != -1) {
-        watchCount += len;
-      }
-
-      out.write(b, off, len);
-    }
-
-    @Override
-    public void flush() throws IOException {
-      out.flush();
-    }
-
-    @Override
-    public void close() throws IOException {
-      out.close();
     }
   }
 }

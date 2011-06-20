@@ -38,6 +38,11 @@ class TestDesignerApplicationManager {
     DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = DesignerApplicationUtil.createTestAdlRunConfiguration();
 
     adlRunConfiguration.arguments = new ArrayList<String>();
+
+    final ServerSocket serverSocket = new ServerSocket(0, 1);
+    adlRunConfiguration.arguments.add(String.valueOf(serverSocket.getLocalPort()));
+    adlRunConfiguration.arguments.add(String.valueOf(0));
+
     adlRunConfiguration.arguments.add("-p");
     String fudHome = DebugPathManager.getFudHome();
     adlRunConfiguration.arguments.add(fudHome + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
@@ -46,9 +51,8 @@ class TestDesignerApplicationManager {
     adlRunConfiguration.arguments.add(fudHome + "/flex-injection/target");
 
     initAppRootDir();
-    final ServerSocket serverSocket = new ServerSocket(0, 1);
-    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, fudHome + "/designer/src/main/resources/descriptor.xml",
-                                                       serverSocket.getLocalPort(), appDir.getPath(), new Consumer<Integer>() {
+
+    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, fudHome + "/designer/src/main/resources/descriptor.xml", appDir.getPath(), new Consumer<Integer>() {
       @Override
       public void consume(Integer exitCode) {
         if (exitCode != 0) {

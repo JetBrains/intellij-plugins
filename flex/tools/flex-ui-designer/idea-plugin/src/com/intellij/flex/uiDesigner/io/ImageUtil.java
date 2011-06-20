@@ -79,8 +79,15 @@ public final class ImageUtil {
 
     WritableRaster raster = image.getRaster();
     final int nbands = raster.getNumBands();
-    assert nbands == 3 || nbands == 4;
+    if (!(nbands == 3 || nbands == 4)) {
+      throw new IOException();
+    }
+
     final int unflushedBufferLength;
+    if (raster.getDataBuffer().getNumBanks() != 1) {
+      throw new IOException();
+    }
+
     if (raster.getDataBuffer() instanceof DataBufferByte) {
       unflushedBufferLength = writeDataByte(image, out, byteBuffer, nbands);
     }
@@ -96,10 +103,12 @@ public final class ImageUtil {
   private static int writeDataInt(BufferedImage image, OutputStream out, byte[] byteBuffer, int nbands) throws IOException {
     int bufferLength = 0;
     final DataBufferInt dataBuffer = (DataBufferInt)image.getRaster().getDataBuffer();
-    assert dataBuffer.getNumBanks() == 1;
     int[] data = dataBuffer.getData();
     if (nbands == 3) {
-      assert image.getType() == BufferedImage.TYPE_INT_RGB;
+      if (image.getType() != BufferedImage.TYPE_INT_RGB) {
+        throw new IOException();
+      }
+
       for (int i = 0, n = data.length; i < n; i += 1) {
         int pixel = data[i];
         byteBuffer[bufferLength++] = (byte)255;
@@ -114,7 +123,10 @@ public final class ImageUtil {
       }
     }
     else {
-      assert image.getType() == BufferedImage.TYPE_INT_ARGB;
+      if (image.getType() != BufferedImage.TYPE_INT_ARGB) {
+        throw new IOException();
+      }
+
       for (int i = 0, n = data.length; i < n; i += 1) {
         int pixel = data[i];
         byteBuffer[bufferLength++] = (byte)((pixel >> 24) & 0xff);
@@ -135,10 +147,12 @@ public final class ImageUtil {
   private static int writeDataByte(BufferedImage image, OutputStream out, byte[] byteBuffer, int nbands) throws IOException {
     int bufferLength = 0;
     final DataBufferByte dataBuffer = (DataBufferByte)image.getRaster().getDataBuffer();
-    assert dataBuffer.getNumBanks() == 1;
     byte[] data = dataBuffer.getData();
     if (nbands == 3) {
-      assert image.getType() == BufferedImage.TYPE_3BYTE_BGR;
+      if (image.getType() != BufferedImage.TYPE_3BYTE_BGR) {
+        throw new IOException();
+      }
+
       for (int i = 0, n = data.length; i < n; i += 3) {
         byteBuffer[bufferLength++] = (byte)255;
         byteBuffer[bufferLength++] = (byte)(data[i + 2] & 0xff);
@@ -152,7 +166,10 @@ public final class ImageUtil {
       }
     }
     else {
-      assert image.getType() == BufferedImage.TYPE_4BYTE_ABGR;
+      if (image.getType() != BufferedImage.TYPE_4BYTE_ABGR) {
+        throw new IOException();
+      }
+
       for (int i = 0, n = data.length; i < n; i += 4) {
         byteBuffer[bufferLength++] = (byte)(data[i] & 0xff);
         byteBuffer[bufferLength++] = (byte)(data[i + 3] & 0xff);

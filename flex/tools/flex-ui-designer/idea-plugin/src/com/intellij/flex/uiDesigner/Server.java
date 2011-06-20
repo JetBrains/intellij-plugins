@@ -16,6 +16,7 @@ class Server implements Runnable, Closable {
   private static final Logger LOG = Logger.getInstance(Server.class.getName());
 
   private ServerSocket serverSocket;
+
   private FlexUIDesignerApplicationManager.PendingOpenDocumentTask pendingTask;
 
   private Socket socket;
@@ -33,6 +34,28 @@ class Server implements Runnable, Closable {
 
     ApplicationManager.getApplication().executeOnPooledThread(this);
     int port = serverSocket.getLocalPort();
+    assert port != -1;
+    return port;
+  }
+
+  public int errorListen() throws IOException {
+    final ServerSocket errorServerSocket = new ServerSocket(0, 1);
+
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          Socket errorSocket = errorServerSocket.accept();
+          errorServerSocket.close();
+          ServiceManager.getService(SocketInputHandler.class).setErrorOut(errorSocket.getOutputStream());
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
+      }
+    });
+
+    int port = errorServerSocket.getLocalPort();
     assert port != -1;
     return port;
   }

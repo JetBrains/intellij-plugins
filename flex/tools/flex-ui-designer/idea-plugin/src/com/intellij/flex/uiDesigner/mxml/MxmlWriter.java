@@ -23,7 +23,6 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.*;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,12 +34,6 @@ import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PRIMITIVE;
 
 public class MxmlWriter {
   static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
-
-  private static final THashMap<String, String> appClassMap = new THashMap<String, String>();
-  static {
-    appClassMap.put("spark.components.ViewNavigatorApplication", "com.intellij.flex.uiDesigner.flex.ViewNavigatorApplication");
-    appClassMap.put("spark.components.TabbedViewNavigatorApplication", "com.intellij.flex.uiDesigner.flex.TabbedViewNavigatorApplication");
-  }
 
   private final PrimitiveAmfOutputStream out;
 
@@ -495,7 +488,7 @@ public class MxmlWriter {
 
   private int writeProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
                             boolean cssDeclarationSourceDefined, Context context) {
-    final int beforePosition = out.size();
+    final int beforePosition = writer.getBlockOut().size();
     try {
       ValueWriter valueWriter = propertyProcessor.process(element, valueProvider, descriptor, context);
       if (valueWriter == null) {

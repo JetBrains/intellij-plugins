@@ -1,11 +1,11 @@
 <VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx">
-  <HGroup>
-    <Image source="@Embed('/background.jpg')"/>
-    <Image source="@Embed(source='/background.jpg')"/>
-  </HGroup>
+  <!--<HGroup>-->
+    <!--<Image source="@Embed('/background.jpg')"/>-->
+    <!--<Image source="@Embed(source='/background.jpg')"/>-->
+  <!--</HGroup>-->
 
   <BitmapImage source="@Embed(source='/background.p-n-g', mimeType='image/png')"/>
-  <BitmapImage source="@Embed(source='/adventchildren_logo_notext_png.png')"/>
+  <!--<BitmapImage source="@Embed(source='/adventchildren_logo_notext_png.png')"/>-->
 
-  <mx:SWFLoader source="@Embed('anim.swf', symbol='myMC')"/>
+  <!--<mx:SWFLoader source="@Embed('anim.swf', symbol='myMC')"/>-->
 </VGroup>

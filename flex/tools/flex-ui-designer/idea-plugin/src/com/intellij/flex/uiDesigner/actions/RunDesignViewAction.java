@@ -6,7 +6,10 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -96,6 +99,6 @@ public class RunDesignViewAction extends DumbAwareAction {
     }
 
     JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)psiFile);
-    return jsClass != null;
+    return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, ClassBackedElementDescriptor.UI_COMPONENT_BASE_INTERFACE);
   }
 }

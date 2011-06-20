@@ -6,6 +6,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
@@ -54,15 +55,22 @@ public final class IOUtil {
   }
 
   public static void writeInt(final int v, final byte[] bytes, int offset) {
-    bytes[offset++] = (byte)((v >>> 24) & 0xFF);
-    bytes[offset++] = (byte)((v >>> 16) & 0xFF);
-    bytes[offset++] = (byte)((v >>> 8) & 0xFF);
-    bytes[offset] = (byte)(v & 0xFF);
+    bytes[offset++] = (byte)((v >>> 24) & 0xff);
+    bytes[offset++] = (byte)((v >>> 16) & 0xff);
+    bytes[offset++] = (byte)((v >>> 8) & 0xff);
+    bytes[offset] = (byte)(v & 0xff);
   }
 
   public static void writeShort(final int v, final byte[] bytes, int offset) {
     bytes[offset++] = (byte)((v >>> 8) & 0xFF);
     bytes[offset] = (byte)(v & 0xFF);
+  }
+
+  public static void writeInt(final int v, final OutputStream out) throws IOException {
+    out.write((v >>> 24) & 0xff);
+    out.write((v >>> 16) & 0xff);
+    out.write((v >>> 8) & 0xff);
+    out.write(v & 0xff);
   }
 
   public static void close(Closable closable) {
