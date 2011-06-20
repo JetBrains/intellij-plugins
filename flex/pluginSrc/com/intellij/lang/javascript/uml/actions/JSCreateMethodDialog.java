@@ -27,7 +27,7 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
   private JCheckBox myStaticCb;
 
   public JSCreateMethodDialog(final JSClass targetClass, final JSFunction method, boolean forceConstructor) {
-    super(targetClass.getProject(), method, forceConstructor, method);
+    super(method, forceConstructor, method);
     myTargetClass = targetClass;
 
     setTitle(JSBundle.message(forceConstructor ? "create.constructor.dialog.title" : "create.method.dialog.title"));
