@@ -30,7 +30,7 @@
     <applicationService serviceInterface="com.intellij.openapi.module.ModuleTypeManager"
                         serviceImplementation="com.intellij.openapi.module.impl.ModuleTypeManagerImpl"/>
     <projectService serviceInterface="com.intellij.psi.impl.file.PsiDirectoryFactory"
-                    serviceImplementation="com.intellij.psi.impl.file.PsiDirectoryFactoryImpl"/>
+                    serviceImplementation="com.intellij.flexIde.PsiPackageFactoryImpl"/>
     <projectService serviceInterface="com.intellij.usages.impl.rules.DirectoryGroupingRule"
                     serviceImplementation="com.intellij.usages.impl.rules.DirectoryGroupingRule"/>
     <highlightVisitor implementation="com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitor"/>
