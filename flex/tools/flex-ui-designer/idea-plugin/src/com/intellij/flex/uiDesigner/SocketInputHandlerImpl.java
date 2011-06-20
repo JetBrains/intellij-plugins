@@ -38,18 +38,18 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
   }
 
   public void init(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
+    resultReadyFile = new File(appDir, "d");
+    if (resultReadyFile.exists()) {
+      //noinspection ResultOfMethodCallIgnored
+      resultReadyFile.delete();
+    }
+    
     createReader(inputStream);
     this.appDir = appDir;
   }
 
   @Override
   public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
-    resultReadyFile = new File(appDir, "d");
-    if (resultReadyFile.exists()) {
-      //noinspection ResultOfMethodCallIgnored
-      resultReadyFile.delete();
-    }
-
     init(inputStream, appDir);
     process();
   }

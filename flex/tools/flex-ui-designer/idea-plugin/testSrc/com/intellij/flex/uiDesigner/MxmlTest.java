@@ -84,7 +84,7 @@ public class MxmlTest extends MxmlWriterTestBase {
         files.add(parent.getPath() + "/" + name);
       }
       File file = new File(parent, name);
-      if (file.isDirectory()) {
+      if (file.isDirectory() && !name.equals("mobile")) {
         collectMxmlFiles(files, file);
       }
     }
