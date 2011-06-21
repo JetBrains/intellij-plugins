@@ -1,14 +1,14 @@
 JetBrains Technology Preview License Agreement
 
-IMPORTANT! READ CAREFULLY: THIS IS A LEGAL AGREEMENT WHICH COVERS YOUR USE OF UNRELEASED SOFTWARE PROVIDED BY JETBRAINS S.R.O. (?LICENSOR?) REFERENCED HEREIN AS JETBRAINS TECHNOLOGY. BY DOWNLOADING, INSTALLING, COPYING, SAVING ON YOUR COMPUTER, OR OTHERWISE USING JETBRAINS TECHNOLOGY, YOU (EITHER AN INDIVIDUAL OR AN ENTITY) ARE BECOMING A PARTY TO THIS AGREEMENT AND YOU ARE CONSENTING TO BE BOUND BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
+IMPORTANT! READ CAREFULLY: THIS IS A LEGAL AGREEMENT WHICH COVERS YOUR USE OF UNRELEASED SOFTWARE PROVIDED BY JETBRAINS S.R.O. ("LICENSOR") REFERENCED HEREIN AS JETBRAINS TECHNOLOGY. BY DOWNLOADING, INSTALLING, COPYING, SAVING ON YOUR COMPUTER, OR OTHERWISE USING JETBRAINS TECHNOLOGY, YOU (EITHER AN INDIVIDUAL OR AN ENTITY) ARE BECOMING A PARTY TO THIS AGREEMENT AND YOU ARE CONSENTING TO BE BOUND BY ALL THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 
 IF YOU DO NOT AGREE TO THE TERMS AND CONDITIONS OF THIS AGREEMENT, YOU SHOULD NOT DOWNLOAD, INSTALL AND USE JETBRAINS TECHNOLOGY.
 
 1. DEFINITIONS
 
-(a) ?Evaluation Period? means a period of time beginning on the date of the first launch of JetBrains Technology on Your computer and automatically ending on the date set by JetBrains in JetBrains Technology (?System Date?) or otherwise as stated in Section 5 hereunder.
+(a) "Evaluation Period" means a period of time beginning on the date of the first launch of JetBrains Technology on Your computer and automatically ending on the date set by JetBrains in JetBrains Technology ("System Date") or otherwise as stated in Section 5 hereunder.
 
-(b) ?JetBrains Technology? means the current build of a preview version of the software program known as JetBrains Flex IDE which is not generally available, including its documentation, any modifications, and any Third Party Software.
+(b) "JetBrains Technology" means the current build of a preview version of the software program known as JetBrains Flex IDE which is not generally available, including its documentation, any modifications, and any Third Party Software.
 
 (c) Third Party Software means software programs that are owned and licensed by parties other than Licensor and that either integrated with or made part of JetBrains Technology. 
 
@@ -30,7 +30,7 @@ IF YOU DO NOT AGREE TO THE TERMS AND CONDITIONS OF THIS AGREEMENT, YOU SHOULD NO
 
 (iii) continue using JetBrains Technology upon termination of this Agreement as set forth in Section 5 herein.
 
-(d) You can provide Your feedback, suggestions or ideas concerning the functionality and performance of JetBrains Technology (collectively, ?Feedback?) to Licensor. You agree that Your Feedback will automatically become the property of Licensor and may be used by Licensor to improve JetBrains Technology or other Licensor?s products. Licensor shall have a non-exclusive, perpetual, irrevocable, royalty-free, worldwide right and license to use, reproduce, disclose, sublicense, distribute, modify, and otherwise exploit Feedback without restriction. No obligation is assumed or may be implied on Licensor by receipt, examination or use of Feedback. For the avoidance of any doubt, this Section 2(d) does not apply to any Third Party Software.
+(d) You can provide Your feedback, suggestions or ideas concerning the functionality and performance of JetBrains Technology (collectively, "Feedback") to Licensor. You agree that Your Feedback will automatically become the property of Licensor and may be used by Licensor to improve JetBrains Technology or other Licensor's products. Licensor shall have a non-exclusive, perpetual, irrevocable, royalty-free, worldwide right and license to use, reproduce, disclose, sublicense, distribute, modify, and otherwise exploit Feedback without restriction. No obligation is assumed or may be implied on Licensor by receipt, examination or use of Feedback. For the avoidance of any doubt, this Section 2(d) does not apply to any Third Party Software.
 
 (e) You acknowledge that Licensor shall be under no obligation to provide technical support or upgrades for JetBrains Technology. 
   
@@ -46,7 +46,7 @@ REGARDLESS OF WHETHER ANY REMEDY SET FORTH HEREIN FAILS OF ITS ESSENTIAL PURPOSE
 
 5. TERMINATION
  
-(a) This Agreement shall terminate upon the earlier of (a) expiration of Evaluation Period based on the System Date; (b) public release of any production version of JetBrains Technology; (c) uninstalling of JetBrains Technology by You, or (c) termination by Licensor, in its sole discretion, upon notice on Licensor?s website.
+(a) This Agreement shall terminate upon the earlier of (a) expiration of Evaluation Period based on the System Date; (b) public release of any production version of JetBrains Technology; (c) uninstalling of JetBrains Technology by You, or (c) termination by Licensor, in its sole discretion, upon notice on Licensor's website.
 
 (b) JetBrains Technology contains a feature that will automatically disable JetBrains Technology on the System Date. Licensee may not disable, destroy, or remove this feature of JetBrains Technology.
 
