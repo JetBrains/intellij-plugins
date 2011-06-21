@@ -3,6 +3,7 @@ import cocoa.CheckBox;
 import cocoa.Insets;
 import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.Skin;
+import cocoa.plaf.basic.ButtonSkinInteraction;
 import cocoa.tableView.TableView;
 import cocoa.tableView.TextLineLinkedListEntry;
 import cocoa.tableView.TextTableColumn;
@@ -47,8 +48,24 @@ public class ValueTableColumn extends TextTableColumn {
     }
   }
 
+  public function findEntry(rowIndex:int):TextLineLinkedListEntry {
+    var entry:TextLineLinkedListEntry = cells.head;
+    do {
+      if (entry.rowIndex == rowIndex) {
+        return entry;
+      }
+    }
+    while ((entry = entry.next) != null);
+
+    return null;
+  }
+
+  public function getDescription(rowIndex:int):Object {
+    return dataSource.getObjectValue(this, rowIndex);
+  }
+
   override protected function createEntry(rowIndex:int, x:Number, y:Number):TextLineLinkedListEntry {
-    var description:Object = dataSource.getObjectValue(this, rowIndex);
+    var description:Object = getDescription(rowIndex);
     var type:String = description.type;
     var object:Object = dataSource.object;
     var text:String;
@@ -56,9 +73,9 @@ public class ValueTableColumn extends TextTableColumn {
     var newEntry:TextLineLinkedListEntry;
     var createTextLine:Boolean = true;
 
-    var v:*;
     var enumeration:String = description.enumeration;
     var editable:Boolean = description.editable;
+    var v:*;
     try {
       v = object[description.name];
     }
@@ -144,6 +161,7 @@ public class ValueTableColumn extends TextTableColumn {
       newEntry = enumeration == null ? TextLineLinkedListEntry.create(line) : createEntryForEnumeration(line, editable, y, x);
     }
 
+    newEntry.rowIndex = rowIndex;
     return newEntry;
   }
 
@@ -164,6 +182,7 @@ public class ValueTableColumn extends TextTableColumn {
     var skin:Skin = checkbox.skin;
     if (skin == null) {
       skin = checkbox.createView(laf);
+      ButtonSkinInteraction(skin).deletegateInteraction();
       skin.validateNow();
       skin.setActualSize(skin.getExplicitOrMeasuredWidth(), skin.getExplicitOrMeasuredHeight());
     }
@@ -210,57 +229,6 @@ public class ValueTableColumn extends TextTableColumn {
       textLineRendererFactory.container.removeChild(DisplayObject(CheckBoxLinkedListEntry.pool1[i].checkbox.skin));
     }
     CheckBoxLinkedListEntry.oldPoolSize1 = CheckBoxLinkedListEntry.poolSize1;
-
-    //for (var j:int = 0; j < com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.TextLineAndDisplayObjectLinkedListEntry.poolSize1; j++) {
-    //  if (com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.TextLineAndDisplayObjectLinkedListEntry.pool1[j].displayObject.parent != null) {
-    //    throw new IllegalOperationError();
-    //  }
-    //}
-    //
-    //for (j = 0; j < CheckBoxLinkedListEntry.poolSize1; j++) {
-    //  if (DisplayObject(CheckBoxLinkedListEntry.pool1[j].checkbox.skin).parent != null) {
-    //    throw new IllegalOperationError();
-    //  }
-    //}
   }
 }
-}
-
-import cocoa.CheckBox;
-import cocoa.tableView.TextLineLinkedListEntry;
-
-class CheckBoxLinkedListEntry extends TextLineLinkedListEntry {
-  internal static const pool1:Vector.<CheckBoxLinkedListEntry> = new Vector.<CheckBoxLinkedListEntry>(32, true);
-  internal static var poolSize1:int;
-
-  internal static var oldPoolSize1:int;
-
-  public var checkbox:CheckBox;
-
-  function CheckBoxLinkedListEntry(selected:Boolean) {
-    checkbox = new CheckBox();
-    checkbox.selected = selected;
-
-    super(null);
-  }
-
-  public static function create(selected:Boolean):CheckBoxLinkedListEntry {
-    if (poolSize1 == 0) {
-      return new CheckBoxLinkedListEntry(selected);
-    }
-    else {
-      var entry:CheckBoxLinkedListEntry = pool1[--poolSize1];
-      entry.checkbox.selected = selected;
-      return entry;
-    }
-  }
-
-  override public function addToPool():void {
-    if (poolSize1 == pool1.length) {
-      pool1.fixed = false;
-      pool1.length = poolSize1 << 1;
-      pool1.fixed = true;
-    }
-    pool1[poolSize1++] = this;
-  }
 }

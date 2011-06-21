@@ -26,11 +26,7 @@ import org.tinytlf.layout.TinytlfSprite;
 import org.tinytlf.layout.properties.LayoutProperties;
 import org.tinytlf.util.fte.TextLineUtil;
 
-public class
-
-
-
-Interactor {
+public class Interactor {
   private static const NORMAL:int = 0;
   private static const ACTIVE:int = 1;
   
@@ -66,6 +62,7 @@ Interactor {
     value.skin.addEventListener(MouseEvent.ROLL_OUT, mouseRollOutHandler);
   }
 
+  //noinspection JSMethodCanBeStatic
   public function configureTextEngine(textEngine:FlexTextEngine):void {
     if (fakeInteractor == null) {
       fakeInteractor = new FakeInteractor();
@@ -74,6 +71,7 @@ Interactor {
     textEngine.interactor = fakeInteractor;
   }
 
+  // mouse move is not enough
   private function mouseRollOutHandler(event:MouseEvent):void {
     if (state == ACTIVE && !outUpHandlerAdded) {
       updateState(NORMAL);

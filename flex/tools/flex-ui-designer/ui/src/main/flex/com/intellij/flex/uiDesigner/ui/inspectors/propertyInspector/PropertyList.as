@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.Insets;
 import cocoa.plaf.LookAndFeelUtil;
+import cocoa.plaf.TableViewSkin;
 import cocoa.plaf.TextFormatId;
 import cocoa.tableView.TableColumn;
 import cocoa.tableView.TableView;
@@ -14,6 +15,9 @@ import flash.display.DisplayObject;
 public class PropertyList extends AbstractTitledBlockItemRenderer {
   private const tableView:TableView = new TableView();
   private var source:MyTableViewDataSource;
+
+  private var interactor:Interactor;
+  private var modifier:Modifier;
 
   //private function createGridColumn(headerText:String):GridColumn {
   //  var column:GridColumn = new GridColumn();
@@ -55,6 +59,9 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
     var skin:DisplayObject = DisplayObject(tableView.createView(laf));
     skin.y = border.layoutHeight;
     addChild(skin);
+
+    modifier = new Modifier();
+    interactor = new Interactor(tableView, modifier);
   }
 
   override protected function measure():void {
@@ -67,6 +74,8 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
     if (dataChanged) {
       dataChanged = false;
       source.update(_object);
+
+      modifier.object = _object;
     }
   }
 
