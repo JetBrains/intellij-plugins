@@ -360,6 +360,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
         @Override
         public void run() {
+          LibraryManager.getInstance().garbageCollection(APP_DIR);
+
           try {
             if (!ServiceManager.getService(StringRegistry.class).isEmpty()) {
               Client.getInstance().initStringRegistry();

@@ -29,6 +29,9 @@ import java.util.*;
 import java.util.zip.DataFormatException;
 
 public class SwcDependenciesSorter {
+  static final long ABC_FILTER_LAST_MODIFIED = 1308650823L * 1000L;
+  static final String SWF_EXTENSION = ".swf";
+
   private THashMap<CharSequence, Definition> definitionMap;
 
   private final File appDir;
@@ -189,7 +192,7 @@ public class SwcDependenciesSorter {
       final VirtualFile swfFile = item.library.getSwfFile();
       final File modifiedSwf = item.filtered ? createSwfOutFile(item.library, postfix) : createSwfOutFile(item.library);
       final long timeStamp = swfFile.getTimeStamp();
-      if (timeStamp != modifiedSwf.lastModified()) {
+      if (timeStamp != modifiedSwf.lastModified() || timeStamp < ABC_FILTER_LAST_MODIFIED) {
         if (filter == null) {
           filter = new AbcFilter(isFromSdk);
         }
@@ -241,11 +244,11 @@ public class SwcDependenciesSorter {
   }
 
   private File createSwfOutFile(Library library) {
-    return new File(appDir, library.getPath() + ".swf");
+    return new File(appDir, library.getPath() + SWF_EXTENSION);
   }
 
   private File createSwfOutFile(Library library, String postfix) {
-    return new File(appDir, library.getPath() + "_" + postfix + ".swf");
+    return new File(appDir, library.getPath() + "_" + postfix + SWF_EXTENSION);
   }
 
   public void printCollection(LibrarySetItem library, String postfix) throws IOException {

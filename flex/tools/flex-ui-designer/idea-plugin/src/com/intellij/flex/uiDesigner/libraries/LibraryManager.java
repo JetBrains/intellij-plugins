@@ -39,6 +39,18 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     return info != null && info.getSdk() == sdk;
   }
 
+  public void garbageCollection(@NotNull final File appDir) {
+    for (String path : appDir.list()) {
+      if (path.endsWith(SwcDependenciesSorter.SWF_EXTENSION)) {
+        File item = new File(appDir, path);
+        if (item.lastModified() < SwcDependenciesSorter.ABC_FILTER_LAST_MODIFIED) {
+          //noinspection ResultOfMethodCallIgnored
+          item.delete();
+        }
+      }
+    }
+  }
+
   public void initLibrarySets(@NotNull final Module module, @NotNull final File appDir) throws IOException, InitException {
     initLibrarySets(module, appDir, true, null);
   }
