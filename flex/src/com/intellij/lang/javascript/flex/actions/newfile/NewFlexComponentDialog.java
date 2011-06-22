@@ -17,7 +17,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +46,7 @@ public class NewFlexComponentDialog extends CreateFileFromTemplateDialog {
     myProject = project;
     myDirectory = directory;
 
-    myUpDownHint.setIcon(Icons.UP_DOWN_ARROWS);
+    myUpDownHint.setIcon(PlatformIcons.UP_DOWN_ARROWS);
     myKindLabel.setLabelFor(myKindCombo.getChildComponent());
     myKindCombo.registerUpDownHint(myNameField);
 

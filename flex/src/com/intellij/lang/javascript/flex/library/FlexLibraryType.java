@@ -10,7 +10,7 @@ import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent;
 import com.intellij.openapi.roots.libraries.ui.LibraryPropertiesEditor;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.ui.configuration.FacetsProvider;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -48,7 +48,7 @@ public class FlexLibraryType extends LibraryType<DummyLibraryProperties> {
 
   @Override
   public Icon getIcon() {
-    return Icons.LIBRARY_ICON;    // TODO: change icon to Flex specific only when automatic library converters are done
+    return PlatformIcons.LIBRARY_ICON;    // TODO: change icon to Flex specific only when automatic library converters are done
   }
 
   public LibraryRootsComponentDescriptor createLibraryRootsComponentDescriptor() {

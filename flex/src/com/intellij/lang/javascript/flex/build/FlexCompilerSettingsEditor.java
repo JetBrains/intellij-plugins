@@ -27,7 +27,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Function;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
@@ -276,10 +276,10 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
       }
     });
 
-    myLocaleTextFieldWithBrowse.setButtonIcon(Icons.OPEN_EDIT_DIALOG_ICON);
-    myConditionalCompilationDefinitionsTextWithBrowse.setButtonIcon(Icons.OPEN_EDIT_DIALOG_ICON);
-    myCustomNamespacesTextWithBrowse.setButtonIcon(Icons.OPEN_EDIT_DIALOG_ICON);
-    myCssFilesTextWithBrowse.setButtonIcon(Icons.OPEN_EDIT_DIALOG_ICON);
+    myLocaleTextFieldWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
+    myConditionalCompilationDefinitionsTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
+    myCustomNamespacesTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
+    myCssFilesTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
 
     myIdeBuilderOffLabel.setIcon(UIUtil.getBalloonInformationIcon());
   }

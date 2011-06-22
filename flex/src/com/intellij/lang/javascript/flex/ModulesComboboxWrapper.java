@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.EventDispatcher;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,7 +109,7 @@ public class ModulesComboboxWrapper {
         setIcon(module.getModuleType().getNodeIcon(false));
       }
       else if (myShowErrorIcon) {
-        setIcon(Icons.ERROR_INTRODUCTION_ICON);
+        setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
       }
       return this;
     }

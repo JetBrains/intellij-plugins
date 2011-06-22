@@ -13,7 +13,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.ElementBase;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -49,7 +49,7 @@ public class FlexIconProvider extends IconProvider {
       final PsiFile psiFile = element.getContainingFile();
       final VirtualFile vFile = psiFile == null ? null : psiFile.getVirtualFile();
       if (vFile != null && CompilerManager.getInstance(element.getProject()).isExcludedFromCompilation(vFile)) {
-        icon = new LayeredIcon(icon, Icons.EXCLUDED_FROM_COMPILE_ICON);
+        icon = new LayeredIcon(icon, PlatformIcons.EXCLUDED_FROM_COMPILE_ICON);
       }
     }
 

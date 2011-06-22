@@ -7,7 +7,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -48,8 +48,8 @@ public class SwfPackageElementNode extends ProjectViewNode<String> {
   @Override
   protected void update(PresentationData presentation) {
     presentation.setPresentableText(myDisplayText);
-    presentation.setOpenIcon(Icons.PACKAGE_OPEN_ICON);
-    presentation.setClosedIcon(Icons.PACKAGE_ICON);
+    presentation.setOpenIcon(PlatformIcons.PACKAGE_OPEN_ICON);
+    presentation.setClosedIcon(PlatformIcons.PACKAGE_ICON);
   }
 
   @Override

@@ -21,7 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
@@ -100,11 +100,11 @@ class FlexValue extends XValue {
   };
 
   static enum ValueType {
-    This(Icons.CLASS_ICON),
-    Parameter(Icons.PARAMETER_ICON),
-    Variable(Icons.VARIABLE_ICON),
-    Field(Icons.FIELD_ICON),
-    ScopeChainEntry(Icons.CLASS_INITIALIZER),
+    This(PlatformIcons.CLASS_ICON),
+    Parameter(PlatformIcons.PARAMETER_ICON),
+    Variable(PlatformIcons.VARIABLE_ICON),
+    Field(PlatformIcons.FIELD_ICON),
+    ScopeChainEntry(PlatformIcons.CLASS_INITIALIZER),
     Other(null);
 
     private @Nullable final Icon myIcon;

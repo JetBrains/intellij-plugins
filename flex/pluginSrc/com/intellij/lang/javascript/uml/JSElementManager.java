@@ -16,6 +16,7 @@
 
 package com.intellij.lang.javascript.uml;
 
+import com.intellij.diagram.AbstractDiagramElementManager;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -46,8 +47,7 @@ import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.diagram.AbstractDiagramElementManager;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -330,6 +330,6 @@ public class JSElementManager extends AbstractDiagramElementManager<Object> {
         return ElementBase.buildRowIcon(JSFunctionImpl.CONSTRUCTOR_ICON, method.getAttributeList().getAccessType().getIcon());
       }
     }
-    return element instanceof Iconable ? ((Iconable)element).getIcon(0) : Icons.ERROR_INTRODUCTION_ICON;
+    return element instanceof Iconable ? ((Iconable)element).getIcon(0) : PlatformIcons.ERROR_INTRODUCTION_ICON;
   }
 }

@@ -11,10 +11,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.UIBundle;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 
 /**
  * @author Konstantin Bulenkov
@@ -22,7 +20,7 @@ import com.intellij.util.Icons;
  */
 public class JSCreateFieldAction extends NewJSMemberActionBase {
   public JSCreateFieldAction() {
-    super(JSBundle.message("new.field.action.text"), JSBundle.message("new.field.action.description"), Icons.FIELD_ICON);
+    super(JSBundle.message("new.field.action.text"), JSBundle.message("new.field.action.description"), PlatformIcons.FIELD_ICON);
   }
 
   @Override

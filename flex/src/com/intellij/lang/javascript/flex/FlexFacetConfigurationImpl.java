@@ -26,7 +26,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
@@ -265,7 +265,7 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
             setIcon(((Sdk)value).getSdkType().getIcon());
           }
           else {
-            setIcon(Icons.ERROR_INTRODUCTION_ICON);
+            setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
           }
           return this;
         }

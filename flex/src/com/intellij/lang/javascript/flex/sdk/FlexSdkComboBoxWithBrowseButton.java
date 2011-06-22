@@ -14,7 +14,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -75,11 +75,11 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
           if (sdk == null) {
             if (sdkCombo.isEnabled()) {
               setText("<html><font color='red'>Module SDK [not set]</font></html>");
-              setIcon(Icons.ERROR_INTRODUCTION_ICON);
+              setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
             }
             else {
               setText("Module SDK [not set]");
-              setIcon(IconLoader.getDisabledIcon(Icons.ERROR_INTRODUCTION_ICON));
+              setIcon(IconLoader.getDisabledIcon(PlatformIcons.ERROR_INTRODUCTION_ICON));
             }
           }
           else {
@@ -90,11 +90,11 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
         else if (value instanceof String) {
           if (sdkCombo.isEnabled()) {
             setText("<html><font color='red'>" + value + " [Invalid]</font></html>");
-            setIcon(Icons.ERROR_INTRODUCTION_ICON);
+            setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
           }
           else {
             setText(value + " [Invalid]");
-            setIcon(IconLoader.getDisabledIcon(Icons.ERROR_INTRODUCTION_ICON));
+            setIcon(IconLoader.getDisabledIcon(PlatformIcons.ERROR_INTRODUCTION_ICON));
           }
         }
         else if (value instanceof Sdk) {

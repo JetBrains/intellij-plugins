@@ -16,10 +16,10 @@
 
 package com.intellij.lang.javascript.uml;
 
+import com.intellij.diagram.DiagramNodeBase;
 import com.intellij.diagram.DiagramProvider;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.diagram.DiagramNodeBase;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -34,7 +34,7 @@ public class JSPackageNode extends DiagramNodeBase<Object> {
   }
 
   public Icon getIcon() {
-    return Icons.PACKAGE_ICON;
+    return PlatformIcons.PACKAGE_ICON;
   }
 
   @NotNull
