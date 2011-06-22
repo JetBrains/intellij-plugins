@@ -104,8 +104,11 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       if (version.charAt(2) == '1') {
         return build == 16076;
       }
-      else if (version.charAt(2) == '5' || version.charAt(4) == '0') {
+      else if (version.charAt(2) == '5' && version.charAt(4) == '0') {
         return build == 20967;
+      }
+      else {
+        return version.charAt(2) >= '5';
       }
     }
 
