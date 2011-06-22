@@ -31,7 +31,7 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.css.CssFileType;
 import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.text.StringTokenizer;
@@ -764,11 +764,11 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
   public Icon getIcon() {
     if (myProperty) {
-      return Icons.PROPERTY_ICON;
+      return PlatformIcons.PROPERTY_ICON;
     }
     if (myAnnotationName == null) return null;
     if (myAnnotationName.equals(FlexAnnotationNames.EVENT)) {
-      return Icons.EXCEPTION_CLASS_ICON;
+      return PlatformIcons.EXCEPTION_CLASS_ICON;
     }
     if (myAnnotationName.equals(FlexAnnotationNames.STYLE)) {
       return CssFileType.ICON;
