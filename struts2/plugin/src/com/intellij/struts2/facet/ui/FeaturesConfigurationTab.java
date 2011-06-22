@@ -27,7 +27,7 @@ import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import com.intellij.struts2.facet.StrutsFacetLibrariesValidatorDescription;
 import com.intellij.struts2.facet.StrutsFrameworkSupportProvider;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -106,7 +106,7 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
 
   @Nullable
   public Icon getIcon() {
-    return Icons.TASK_ICON;
+    return PlatformIcons.TASK_ICON;
   }
 
   @Nls
