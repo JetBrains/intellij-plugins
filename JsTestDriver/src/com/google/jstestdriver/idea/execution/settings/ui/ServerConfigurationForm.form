@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.google.jstestdriver.idea.execution.settings.ui.ServerConfigurationForm">
+  <grid id="27dc6" binding="myRootComponent" layout-manager="GridBagLayout">
+    <constraints>
+      <xy x="20" y="20" width="494" height="100"/>
+    </constraints>
+    <properties/>
+    <border type="none" title="Server"/>
+    <children>
+      <grid id="57463" layout-manager="GridBagLayout">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <enabled value="true"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="6b766" class="javax.swing.JTextField" binding="myServerAddress">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="9"/>
+              </grid>
+              <gridbag weightx="1.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <enabled value="false"/>
+            </properties>
+          </component>
+          <component id="8d5e5" class="javax.swing.JRadioButton" binding="myRunningInIDERadioButton" default-binding="true">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="97" height="32"/>
+              </grid>
+              <gridbag weightx="0.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <selected value="true"/>
+              <text value="&amp;Running in IDE"/>
+            </properties>
+          </component>
+          <component id="3b872" class="javax.swing.JRadioButton" binding="myAtAddressRadioButton" default-binding="true">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="79" height="9"/>
+              </grid>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <horizontalAlignment value="2"/>
+              <selected value="false"/>
+              <text value="&amp;At address:"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <component id="8ecac" class="javax.swing.JButton" binding="myTestConnectionButton" default-binding="true">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="5" left="0" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="&amp;Test Connection"/>
+        </properties>
+      </component>
+      <component id="d115c" class="javax.swing.JLabel" binding="myTestConnectionResult">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <gridbag top="5" left="7" bottom="0" right="0" weightx="1.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <horizontalTextPosition value="2"/>
+          <text value=" ResultOfTestConnection"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+  <buttonGroups>
+    <group name="configLocationButtonGroup">
+      <member id="4561f"/>
+      <member id="cf885"/>
+    </group>
+    <group name="serverButtonGroup">
+      <member id="8d5e5"/>
+      <member id="3b872"/>
+    </group>
+    <group name="configLocationButtonGroup">
+      <member id="59f3c"/>
+      <member id="7f403"/>
+    </group>
+    <group name="configLocationButtonGroup">
+      <member id="7bc27"/>
+      <member id="47b09"/>
+    </group>
+  </buttonGroups>
+</form>
