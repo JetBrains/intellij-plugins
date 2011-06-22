@@ -1,13 +1,14 @@
 package com.intellij.tapestry.intellij.util;
 
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.PlatformIcons;
 
 import javax.swing.*;
 
 /**
  * Icons used by Loomy.
  */
-public abstract class Icons extends com.intellij.util.Icons implements com.intellij.tapestry.core.util.Icons {
+public abstract class Icons implements com.intellij.tapestry.core.util.Icons, PlatformIcons {
 
     public static final Icon REFRESH = IconLoader.getIcon("/actions/sync.png");
 

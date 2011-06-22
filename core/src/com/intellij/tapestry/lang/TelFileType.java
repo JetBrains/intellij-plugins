@@ -1,7 +1,7 @@
 package com.intellij.tapestry.lang;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +38,6 @@ public class TelFileType extends LanguageFileType {
 
   @Nullable
   public Icon getIcon() {
-    return Icons.CUSTOM_FILE_ICON;
+    return PlatformIcons.CUSTOM_FILE_ICON;
   }
 }
