@@ -3,6 +3,7 @@ import cocoa.MainWindowedApplication;
 import cocoa.util.FileUtil;
 
 import com.intellij.flex.uiDesigner.libraries.QueueLoader;
+import com.intellij.flex.uiDesigner.plaf.ProjectViewSkin;
 import com.intellij.flex.uiDesigner.plaf.aqua.IdeaAquaLookAndFeel;
 
 import flash.desktop.NativeApplication;
@@ -25,7 +26,19 @@ public class Main extends MainWindowedApplication {
   private var errorPort:int;
 
   // Burn in hell, Adobe
-  SocketManagerImpl;
+  //SocketManagerImpl;
+  // Burn in hell, Adobe
+  // Burn in hell, Adobe
+  // Burn in hell, Adobe
+  // Burn in hell, Adobe
+  // Burn in hell, Adobe
+  // Burn in hell, Adobe
+  // Burn in hell, Adobe
+  // Burn in hell, Adobe
+  // Burn in hell, Adobe
+  // Burn in hell, Adobe
+  // Burn in hell, Adobe
+  //ProjectViewSkin;
 
   override protected function initializeMaps():void {
     loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);

@@ -1,5 +1,6 @@
 <LocalEventMap xmlns="plexus" xmlns:fx="http://ns.adobe.com/mxml/2009">
   <fx:Script><![CDATA[
+    import cocoa.CollectionView;
     import cocoa.SegmentedControl;
     import cocoa.tabView.TabView;
 
@@ -20,6 +21,9 @@
 
   <components>
     <Component role="{ElementManager}"/>
+    <Component role="{ElementTreeBarManager}">
+      <Requirement role="{ElementManager}"/>
+    </Component>
     <Component role="{DocumentFactoryManager}">
       <Requirement role="{Server}"/>
     </Component>
@@ -74,7 +78,7 @@
     <Injectors target="{SegmentedControl}" targetId="statesBar">
       <PropertySetter role="{StatesBarManager}" targetKey="presentation"/>
     </Injectors>
-    <Injectors target="{SegmentedControl}" targetId="elementTreeBar">
+    <Injectors target="{CollectionView}" targetId="elementTreeBar">
       <PropertySetter role="{ElementTreeBarManager}" targetKey="presentation"/>
     </Injectors>
     <Injectors target="{StatesBarManager}">

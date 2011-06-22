@@ -1,23 +1,22 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.Insets;
-import cocoa.tableView.TableView;
-import cocoa.tableView.TextTableColumn;
-import cocoa.text.TextLineRendererFactory;
+import cocoa.tableView.TextRendererManager;
+import cocoa.text.TextFormat;
 
 import flash.text.engine.TextLine;
 
-public class NameTableColumn extends TextTableColumn {
-  public function NameTableColumn(dataField:String, rendererFactory:TextLineRendererFactory, tableView:TableView, textInsets:Insets) {
-    super(dataField, rendererFactory, tableView, textInsets);
+public class NameRendererManager extends TextRendererManager {
+  public function NameRendererManager(textFormat:TextFormat, textInsets:Insets) {
+    super(textFormat, textInsets);
   }
 
-  override protected function createTextLine(rowIndex:int):TextLine {
-    var description:Object = tableView.dataSource.getObjectValue(this, rowIndex);
+  override protected function createTextLine(itemIndex:int, w:Number):TextLine {
+    var description:Object = _dataSource.getObjectValue(itemIndex);
     if (!("editable" in description)) {
       prepareDescription(description);
     }
 
-    return textLineRendererFactory.create(description.name, actualWidth, description.editable ? null : ValueTableColumn.stringDisabled);
+    return textLineRendererFactory.create(_container, description.name, w, description.editable ? textFormat.format : ValueRendererManager.stringDisabled);
   }
 
   private static function prepareDescription(description:Object):void {

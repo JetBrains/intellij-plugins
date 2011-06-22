@@ -65,7 +65,7 @@ public class SocketManagerImpl implements SocketManager {
   private function socketDataHandler(event:ProgressEvent):void {
     if (event != null) {
       totalBytes += event.bytesLoaded;
-      trace("socket data handler: bytesLoaded " + event.bytesLoaded + " socket bytesAvailable " + socket.bytesAvailable + " last unread " + (socket.bytesAvailable - event.bytesLoaded) + " deferredMessageSize " + deferredMessageSize);
+      //trace("socket data handler: bytesLoaded " + event.bytesLoaded + " socket bytesAvailable " + socket.bytesAvailable + " last unread " + (socket.bytesAvailable - event.bytesLoaded) + " deferredMessageSize " + deferredMessageSize);
     }
     
     if (unreadSocketRemainder != 0) {

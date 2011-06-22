@@ -83,7 +83,7 @@ public class Interactor {
   }
 
   private function findEntry():TextLineLinkedListEntry {
-    return ValueTableColumn(tableView.columns[1]).findEntry(currentRowIndex);
+    return ValueRendererManager(tableView.columns[1]).findEntry(currentRowIndex);
   }
 
   private function stageMouseUpHandler(event:MouseEvent):void {
@@ -107,7 +107,7 @@ public class Interactor {
     if (rowIndex == currentRowIndex && columnIndex == currentColumnIndex) {
       entry.interaction.mouseUpHandler(event);
 
-      modifier.applyBoolean(ValueTableColumn(tableView.columns[columnIndex]).getDescription(rowIndex), entry.checkbox.selected);
+      modifier.applyBoolean(ValueRendererManager(tableView.columns[columnIndex]).getDescription(rowIndex), entry.checkbox.selected);
     }
 
     resetCurrentIndices();

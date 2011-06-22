@@ -28,5 +28,7 @@ public interface ModuleContext {
   function get deferredInstanceFromBytesVectorClass():Class;
 
   function get viewNavigatorApplicationBaseClass():Class;
+
+  function getClassIfExists(fqn:String):Class;
 }
 }

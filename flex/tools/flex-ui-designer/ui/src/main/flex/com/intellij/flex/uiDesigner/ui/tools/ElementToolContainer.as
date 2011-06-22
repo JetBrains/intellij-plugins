@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner.ui.tools {
 import cocoa.Insets;
 import cocoa.LayoutlessContainer;
 
-import flash.display.Sprite;
+import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.geom.Point;
 
@@ -14,7 +14,7 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
   private static var sharedPoint:Point = new Point();
   
   private var insets:Insets;
-  private var element:Sprite;
+  private var element:DisplayObject;
   
   private var oldX:Number;
   private var oldY:Number;
@@ -34,7 +34,7 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
   }
 
   public function attach(untypedElement:Object):void {
-    this.element = Sprite(untypedElement);
+    this.element = DisplayObject(untypedElement);
     element.addEventListener(Event.RENDER, renderHandler);
     
     moveHandler();

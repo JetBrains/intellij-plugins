@@ -24,7 +24,7 @@
     <content url="file://$MODULE_DIR$/idea-plugin/testData/resolveExternalInlineStyle">
       <sourceFolder url="file://$MODULE_DIR$/idea-plugin/testData/resolveExternalInlineStyle" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="4.5.0 AIR with mobile components" jdkType="AIR SDK Type" />
+    <orderEntry type="jdk" jdkName="flex 4.5.1 AIR" jdkType="AIR SDK Type" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="test-data-libs" />
   </component>

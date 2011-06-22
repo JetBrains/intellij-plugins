@@ -75,6 +75,9 @@
                 <class>**.TextInput</class>
                 <class>**.TextArea</class>
                 <class>**.*TextView</class>
+                
+                <class>**.CollectionView</class>
+                <class>**.CollectionHorizontalLayout</class>
 
                 <class>**.*ApplicationImpl</class>
                 <class>**.ViewStack</class>
@@ -113,6 +116,7 @@
               </includes>
               <excludes>
                 <class>cocoa.plaf.basic.scrollbar.*</class>
+                <class>cocoa.tableView.TableColumn</class>
               </excludes>
               <names>
                 <class>

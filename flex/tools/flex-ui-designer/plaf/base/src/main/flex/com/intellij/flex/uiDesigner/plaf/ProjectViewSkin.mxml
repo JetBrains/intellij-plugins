@@ -6,8 +6,6 @@
     import cocoa.Insets;
     import cocoa.plaf.TabViewSkin;
 
-    import com.intellij.flex.uiDesigner.ui.*;
-
     import mx.core.IUIComponent;
 
     override protected function createChildren():void {
@@ -55,7 +53,12 @@
       <BarLayout padding="5" gap="12"/>
     </layout>
     <SegmentedControl id="statesBar"/>
-    <SegmentedControl id="elementTreeBar" itemRenderer="com.intellij.flex.uiDesigner.ui.ElementTreeBarItemRenderer"/>
+
+    <CollectionView id="elementTreeBar" width="100%">
+      <layout>
+        <CollectionHorizontalLayout height="20" gap="5"/>
+      </layout>
+    </CollectionView>
   </Toolbar>
   <tools:ElementToolContainer id="elementToolContainer"/>
 

@@ -1,12 +1,11 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.Insets;
 import cocoa.plaf.LookAndFeelUtil;
-import cocoa.plaf.TableViewSkin;
 import cocoa.plaf.TextFormatId;
 import cocoa.tableView.TableColumn;
+import cocoa.tableView.TableColumnImpl;
 import cocoa.tableView.TableView;
-import cocoa.tableView.TextTableColumn;
-import cocoa.text.TextLineRendererFactory;
+import cocoa.text.TextFormat;
 
 import com.intellij.flex.uiDesigner.ui.inspectors.AbstractTitledBlockItemRenderer;
 
@@ -48,13 +47,14 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
     laf = LookAndFeelUtil.find(parent);
     labelHelper.text = "Other";
 
-    tableView.dataSource = source = new MyTableViewDataSource();
+    var dataSource:MyTableViewDataSource = new MyTableViewDataSource();
+    tableView.dataSource = source = dataSource;
     tableView.minRowCount = 3;
     var insets:Insets = new Insets(2, NaN, NaN, 3);
-    var textLineRendererFactory:TextLineRendererFactory = new TextLineRendererFactory(laf.getTextFormat(TextFormatId.SMALL_SYSTEM));
-    var firstColumn:TextTableColumn = new NameTableColumn("name", textLineRendererFactory, tableView, insets);
+    var textFormat:TextFormat = laf.getTextFormat(TextFormatId.SMALL_SYSTEM);
+    var firstColumn:TableColumn = new TableColumnImpl(tableView, "name", new NameRendererManager(textFormat, insets));
     firstColumn.width = 160;
-    tableView.columns = new <TableColumn>[firstColumn, new ValueTableColumn(laf, textLineRendererFactory, tableView, insets)];
+    tableView.columns = new <TableColumn>[firstColumn, new TableColumnImpl(tableView, null, new ValueRendererManager(laf, textFormat, insets, dataSource))];
 
     var skin:DisplayObject = DisplayObject(tableView.createView(laf));
     skin.y = border.layoutHeight;

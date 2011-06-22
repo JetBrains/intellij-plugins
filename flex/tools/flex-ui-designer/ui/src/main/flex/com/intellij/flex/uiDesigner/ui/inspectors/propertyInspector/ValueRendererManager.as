@@ -4,10 +4,9 @@ import cocoa.Insets;
 import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.Skin;
 import cocoa.plaf.basic.ButtonSkinInteraction;
-import cocoa.tableView.TableView;
 import cocoa.tableView.TextLineLinkedListEntry;
-import cocoa.tableView.TextTableColumn;
-import cocoa.text.TextLineRendererFactory;
+import cocoa.tableView.TextRendererManager;
+import cocoa.text.TextFormat;
 import cocoa.util.StringUtil;
 
 import flash.display.DisplayObject;
@@ -17,7 +16,7 @@ import flash.text.engine.FontPosture;
 import flash.text.engine.FontWeight;
 import flash.text.engine.TextLine;
 
-public class ValueTableColumn extends TextTableColumn {
+public class ValueRendererManager extends TextRendererManager {
   private static const FONT_DESCRIPTION:FontDescription = new FontDescription("Monaco, Consolas");
   private static const FONT_DESCRIPTION_ITALIC:FontDescription = new FontDescription("Monaco, Consolas", FontWeight.NORMAL, FontPosture.ITALIC);
   private static const DISABLED_COLOR:uint = 0x808080;
@@ -29,19 +28,18 @@ public class ValueTableColumn extends TextTableColumn {
   private static const staticField:ElementFormat = new ElementFormat(FONT_DESCRIPTION_ITALIC, 11, 0x660e7a);
   private static const staticFieldDisabled:ElementFormat = new ElementFormat(FONT_DESCRIPTION_ITALIC, 11, DISABLED_COLOR);
 
-  private var dataSource:MyTableViewDataSource;
-
   private var laf:LookAndFeel;
+  private var myDataSource:MyTableViewDataSource;
 
   private static var arrowsFactory:TextLineAndDisplayObjectLinkedListEntryFactory;
   private static var disabledArrowsFactory:TextLineAndDisplayObjectLinkedListEntryFactory;
 
-  public function ValueTableColumn(laf:LookAndFeel, rendererFactory:TextLineRendererFactory, tableView:TableView, textInsets:Insets) {
+  public function ValueRendererManager(laf:LookAndFeel, textFormat:TextFormat, textInsets:Insets, dataSource:MyTableViewDataSource) {
     this.laf = laf;
+    myDataSource = dataSource;
 
-    super(null, rendererFactory, tableView, textInsets);
+    super(textFormat, textInsets);
 
-    dataSource = MyTableViewDataSource(tableView.dataSource);
     if (arrowsFactory == null) {
       arrowsFactory = new TextLineAndDisplayObjectLinkedListEntryFactory(laf.getClass("small.arrows"));
       disabledArrowsFactory = new TextLineAndDisplayObjectLinkedListEntryFactory(laf.getClass("small.arrows.disabled"));
@@ -61,13 +59,13 @@ public class ValueTableColumn extends TextTableColumn {
   }
 
   public function getDescription(rowIndex:int):Object {
-    return dataSource.getObjectValue(this, rowIndex);
+    return _dataSource.getObjectValue(rowIndex);
   }
 
-  override protected function createEntry(rowIndex:int, x:Number, y:Number):TextLineLinkedListEntry {
+  override protected function createEntry(rowIndex:int, x:Number, y:Number, w:Number, h:Number):TextLineLinkedListEntry {
     var description:Object = getDescription(rowIndex);
     var type:String = description.type;
-    var object:Object = dataSource.object;
+    var object:Object = myDataSource.object;
     var text:String;
     var customElementFormat:ElementFormat;
     var newEntry:TextLineLinkedListEntry;
@@ -148,31 +146,31 @@ public class ValueTableColumn extends TextTableColumn {
 
     var line:TextLine;
     if (createTextLine) {
-      if (!editable && customElementFormat == null) {
-        customElementFormat = stringDisabled;
+      if (customElementFormat == null) {
+        customElementFormat = editable ? textFormat.format : stringDisabled;
       }
 
-      line = textLineRendererFactory.create(text, actualWidth, customElementFormat);
+      line = textLineRendererFactory.create(_container, text, w, customElementFormat);
       line.x = x + textInsets.left;
-      line.y = y + tableView.rowHeight - textInsets.bottom;
+      line.y = y + h - textInsets.bottom;
     }
 
     if (newEntry == null) {
-      newEntry = enumeration == null ? TextLineLinkedListEntry.create(line) : createEntryForEnumeration(line, editable, y, x);
+      newEntry = enumeration == null ? TextLineLinkedListEntry.create(line) : createEntryForEnumeration(line, editable, y, x, w);
     }
 
     newEntry.rowIndex = rowIndex;
     return newEntry;
   }
 
-  private function createEntryForEnumeration(line:TextLine, editable:Boolean, y:Number, x:Number):TextLineLinkedListEntry {
+  private function createEntryForEnumeration(line:TextLine, editable:Boolean, y:Number, x:Number, w:Number):TextLineLinkedListEntry {
     var e:TextLineAndDisplayObjectLinkedListEntry = editable ? arrowsFactory.create(line) : disabledArrowsFactory.create(line);
     var displayObject:DisplayObject = e.displayObject;
-    if (displayObject.parent != textLineRendererFactory.container) {
-      textLineRendererFactory.container.addChild(displayObject);
+    if (displayObject.parent != _container) {
+      _container.addChild(displayObject);
     }
     displayObject.y = y + 2;
-    displayObject.x = x + actualWidth - displayObject.width - 4;
+    displayObject.x = x + w - displayObject.width - 4;
     return e;
   }
 
@@ -190,8 +188,8 @@ public class ValueTableColumn extends TextTableColumn {
     skin.enabled = editable;
 
     var displayObject:DisplayObject = DisplayObject(skin);
-    if (displayObject.parent != textLineRendererFactory.container) {
-      textLineRendererFactory.container.addChild(displayObject);
+    if (displayObject.parent != _container) {
+      _container.addChild(displayObject);
     }
     else {
       skin.invalidateDisplayList();
@@ -203,8 +201,8 @@ public class ValueTableColumn extends TextTableColumn {
     return e;
   }
 
-  override public function postLayout():void {
-    super.postLayout();
+  override public function postLayout(finalPass:Boolean):void {
+    super.postLayout(finalPass);
 
     clearOurPools();
   }
@@ -221,12 +219,12 @@ public class ValueTableColumn extends TextTableColumn {
   }
 
   private function clearOurPools():void {
-    arrowsFactory.finalizeReused(textLineRendererFactory.container);
-    disabledArrowsFactory.finalizeReused(textLineRendererFactory.container);
+    arrowsFactory.finalizeReused(_container);
+    disabledArrowsFactory.finalizeReused(_container);
 
     //var c:Class = CheckBoxLinkedListEntry;
     for (var i:int = CheckBoxLinkedListEntry.oldPoolSize1, n:int = CheckBoxLinkedListEntry.poolSize1; i < n; i++) {
-      textLineRendererFactory.container.removeChild(DisplayObject(CheckBoxLinkedListEntry.pool1[i].checkbox.skin));
+      _container.removeChild(DisplayObject(CheckBoxLinkedListEntry.pool1[i].checkbox.skin));
     }
     CheckBoxLinkedListEntry.oldPoolSize1 = CheckBoxLinkedListEntry.poolSize1;
   }

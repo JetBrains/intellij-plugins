@@ -7,15 +7,13 @@ import avmplus.INCLUDE_TRAITS;
 import avmplus.INCLUDE_VARIABLES;
 import avmplus.describe;
 
+import cocoa.tableView.AbstractCollectionViewDataSource;
 import cocoa.tableView.TableColumn;
 import cocoa.tableView.TableViewDataSource;
 
 import flash.utils.Dictionary;
 
-import org.osflash.signals.ISignal;
-import org.osflash.signals.Signal;
-
-public class MyTableViewDataSource implements TableViewDataSource {
+public class MyTableViewDataSource extends AbstractCollectionViewDataSource implements TableViewDataSource {
   private static const excludedProperties:Dictionary = new Dictionary();
   excludedProperties["transitions"] = true;
   excludedProperties["activeEffects"] = true;
@@ -39,19 +37,10 @@ public class MyTableViewDataSource implements TableViewDataSource {
   excludedProperties["designLayer"] = true;
 
   private const source:Vector.<Object> = new Vector.<Object>(64);
-  private var sourceItemCounter:int = 0;
 
   private var _object:Object;
   public function get object():Object {
     return _object;
-  }
-
-  private var _reset:ISignal;
-  public function get reset():ISignal {
-    if (_reset == null) {
-      _reset = new Signal();
-    }
-    return _reset;
   }
 
   public function update(object:Object):void {
