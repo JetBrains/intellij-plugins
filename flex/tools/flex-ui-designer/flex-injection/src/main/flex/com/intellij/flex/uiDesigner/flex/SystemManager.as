@@ -8,6 +8,7 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.display.Stage;
+import flash.events.Event;
 import flash.events.EventPhase;
 import flash.events.MouseEvent;
 import flash.geom.Point;
@@ -21,10 +22,8 @@ import mx.core.FlexGlobals;
 import mx.core.IChildList;
 import mx.core.IFlexDisplayObject;
 import mx.core.IFlexModule;
-import mx.core.IFlexModuleFactory;
 import mx.core.IRawChildrenContainer;
 import mx.core.IUIComponent;
-import mx.resources.ResourceManager;
 import mx.core.Singleton;
 import mx.core.UIComponent;
 import mx.core.UIComponentGlobals;
@@ -44,8 +43,10 @@ import mx.managers.SystemManagerGlobals;
 import mx.managers.ToolTipManagerImpl;
 import mx.managers.systemClasses.ActiveWindowManager;
 import mx.modules.ModuleManagerGlobals;
+import mx.resources.ResourceManager;
 import mx.styles.ISimpleStyleClient;
 import mx.styles.IStyleClient;
+import mx.styles.StyleManager;
 
 use namespace mx_internal;
 
@@ -58,7 +59,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   private static const TOOL_TIP_MANAGER_FQN:String = "mx.managers::IToolTipManager2";
   internal static const SYSTEM_MANAGER_CHILD_MANAGER:String = "mx.managers::ISystemManagerChildManager";
 
-  private var flexModuleFactory:IFlexModuleFactory;
+  private var flexModuleFactory:FlexModuleFactory;
 
   private var uiErrorHandler:UiErrorHandler;
 
@@ -84,7 +85,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     addRealEventListener("initializeError", uiInitializeOrCallLaterErrorHandler);
     addRealEventListener("callLaterError", uiInitializeOrCallLaterErrorHandler);
 
-    flexModuleFactory = IFlexModuleFactory(moduleFactory);
+    flexModuleFactory = FlexModuleFactory(moduleFactory);
 
     //  if not null — ModuleManagerGlobals class is shareable for this Document
     if (ModuleManagerGlobals.managerSingleton == null) {
@@ -345,7 +346,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   }
 
   public function setUserDocument(object:DisplayObject):void {
-    removeProxyMouseEventHandlers();
+    removeEventHandlers();
     
     if (_document != null) {
       removeRawChild(_document);
@@ -361,8 +362,14 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
       _explicitDocumentSize.width = documentUI.explicitWidth;
       _explicitDocumentSize.height = documentUI.explicitHeight;
     }
-
-    addRawChildAt(object, 0);
+    
+    try {
+      StyleManager.tempStyleManagerForTalentAdobeEngineers = flexModuleFactory.styleManager;
+      addRawChildAt(object, 0);
+    }
+    finally {
+      StyleManager.tempStyleManagerForTalentAdobeEngineers = null;
+    }
   }
 
   private const _explicitDocumentSize:Rectangle = new Rectangle();
@@ -580,41 +587,44 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   public function notifyStyleChangeInChildren(styleProp:String, recursive:Boolean):void {
   }
 
-  private var proxiedMouseListeners:Dictionary;
-  private var proxiedMouseListenersInCapture:Dictionary;
+  private var proxiedListeners:Dictionary;
+  private var proxiedListenersInCapture:Dictionary;
 
   override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0,
                                             useWeakReference:Boolean = false):void {
     if (type == MouseEvent.CLICK || type == MouseEvent.MOUSE_DOWN || type == MouseEvent.MOUSE_UP || type == MouseEvent.MOUSE_MOVE ||
       type == MouseEvent.MOUSE_OVER || type == MouseEvent.MOUSE_OUT || type == MouseEvent.ROLL_OUT || type == MouseEvent.ROLL_OVER ||
-      type == MouseEvent.MIDDLE_CLICK || type == MouseEvent.MOUSE_WHEEL) {
+      type == MouseEvent.MIDDLE_CLICK || type == MouseEvent.MOUSE_WHEEL ||
+      type == FlexEvent.RENDER || type == FlexEvent.ENTER_FRAME) {
 
       var map:Dictionary;
       if (useCapture) {
-        if (proxiedMouseListenersInCapture == null) {
-          proxiedMouseListenersInCapture = new Dictionary();
+        if (proxiedListenersInCapture == null) {
+          proxiedListenersInCapture = new Dictionary();
         }
-        map = proxiedMouseListenersInCapture;
+        map = proxiedListenersInCapture;
       }
       else {
-        if (proxiedMouseListeners == null) {
-          proxiedMouseListeners = new Dictionary();
+        if (proxiedListeners == null) {
+          proxiedListeners = new Dictionary();
         }
-        map = proxiedMouseListeners;
+        map = proxiedListeners;
       }
 
-      var listeners:Vector.<Function> = map[type];
+      const rawType:String = getRawEventType(type);
+
+      var listeners:Vector.<Function> = map[rawType];
       if (listeners == null) {
         listeners = new Vector.<Function>();
-        map[type] = listeners;
+        map[rawType] = listeners;
       }
 
       if (listeners.length == 0) {
         if (useCapture) {
-          stage.addEventListener(type, proxyMouseEventHandler, true);
+          stage.addEventListener(rawType, proxyEventHandler, true);
         }
         else {
-          stage.addEventListener(type, proxyMouseEventHandler);
+          stage.addEventListener(rawType, proxyEventHandler);
         }
       }
 
@@ -628,15 +638,27 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     }
   }
 
+  private static function getRawEventType(type:String):String {
+    if (type == FlexEvent.RENDER) {
+      return Event.RENDER;
+    }
+    else if (type == FlexEvent.ENTER_FRAME) {
+      return Event.ENTER_FRAME;
+    }
+    else {
+      return type;
+    }
+  }
+
   override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
     var map:Dictionary;
     if (useCapture) {
-      if (proxiedMouseListeners != null) {
-        map = proxiedMouseListenersInCapture;
+      if (proxiedListeners != null) {
+        map = proxiedListenersInCapture;
       }
     }
-    else if (proxiedMouseListeners != null) {
-      map = proxiedMouseListeners;
+    else if (proxiedListeners != null) {
+      map = proxiedListeners;
     }
 
     var listeners:Vector.<Function> = map == null ? null : map[type];
@@ -653,19 +675,19 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
     listeners.splice(index, 1);
     if (listeners.length == 0) {
-      //trace("REMOVED proxyMouseEventHandler", useCapture);
-      stage.removeEventListener(type, proxyMouseEventHandler, useCapture);
+      //trace("REMOVED proxyEventHandler", useCapture);
+      stage.removeEventListener(getRawEventType(type), proxyEventHandler, useCapture);
     }
   }
 
-  private function proxyMouseEventHandler(event:MouseEvent):void {
-    //trace("EXECUTED", event, event.eventPhase == EventPhase.CAPTURING_PHASE);
+  private function proxyEventHandler(event:Event):void {
+    trace("EXECUTED", event, event.eventPhase == EventPhase.CAPTURING_PHASE);
     var listeners:Vector.<Function>;
     if (event.eventPhase == EventPhase.CAPTURING_PHASE) {
-      listeners = proxiedMouseListenersInCapture[event.type];
+      listeners = proxiedListenersInCapture[event.type];
     }
     else {
-      listeners = proxiedMouseListeners[event.type];
+      listeners = proxiedListeners[event.type];
     }
 
     for each (var listener:Function in listeners.slice() /* copy, because may be removed in removeEventListener (side effect by call listener) */) {
@@ -673,17 +695,17 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     }
   }
 
-  public function removeProxyMouseEventHandlers():void {
+  public function removeEventHandlers():void {
     if (stage != null) {
-      removeProxyMouseEventHandlers2(proxiedMouseListeners, false);
-      removeProxyMouseEventHandlers2(proxiedMouseListenersInCapture, true);
+      removeProxyEventHandlers2(proxiedListeners, false);
+      removeProxyEventHandlers2(proxiedListenersInCapture, true);
     }
   }
 
-  private function removeProxyMouseEventHandlers2(map:Dictionary, useCapture:Boolean):void {
+  private function removeProxyEventHandlers2(map:Dictionary, useCapture:Boolean):void {
     if (map != null) {
       for (var type:String in map) {
-        stage.removeEventListener(type, proxyMouseEventHandler, useCapture);
+        stage.removeEventListener(type, proxyEventHandler, useCapture);
         map[type].length = 0;
       }
     }

@@ -29,7 +29,7 @@ public class DocumentFactoryManager {
     var factory:DocumentFactory = document.documentFactory;
     factory.document = null;
     if (document.systemManager != null) {
-      document.systemManager.removeProxyMouseEventHandlers();
+      document.systemManager.removeEventHandlers();
     }
 
     var deleted:Vector.<int> = new Vector.<int>();

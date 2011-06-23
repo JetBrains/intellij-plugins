@@ -160,8 +160,6 @@
     </TileGroup>
   </HGroup>
 
-  <!--<VideoPlayer source="rtmp://fmsexamples.adobe.com/vod/mp4:_cs4promo_1000.f4v" width="350" height="250" loop="false" autoPlay="false"/>-->
-
   <!-- explicit content after contiguous child elements serving as the default property value -->
   <name>Test Group</name>
 </Group>

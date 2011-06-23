@@ -12,7 +12,7 @@
     <content url="file://$MODULE_DIR$/../../mxml/mx">
       <sourceFolder url="file://$MODULE_DIR$/../../mxml/mx" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="flex 4.5.1 small with mx" jdkType="Flex SDK Type" />
+    <orderEntry type="jdk" jdkName="flex 4.5.1 small with mx and osmf" jdkType="Flex SDK Type" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

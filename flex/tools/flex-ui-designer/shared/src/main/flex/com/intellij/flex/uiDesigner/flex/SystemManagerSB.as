@@ -21,6 +21,6 @@ public interface SystemManagerSB {
 
   function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler, resourceBundleProvider:ResourceBundleProvider):void;
 
-  function removeProxyMouseEventHandlers():void;
+  function removeEventHandlers():void;
 }
 }
