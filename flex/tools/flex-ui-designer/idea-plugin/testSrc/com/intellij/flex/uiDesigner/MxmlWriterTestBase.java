@@ -12,6 +12,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 abstract class MxmlWriterTestBase extends AppTestBase {
+  protected static final String SPARK_COMPONENTS_FILE = "SparkComponents.mxml";
+  
   protected TestClient client;
   protected TestSocketInputHandler socketInputHandler;
   
@@ -151,9 +153,12 @@ abstract class MxmlWriterTestBase extends AppTestBase {
   protected void tearDown() throws Exception {
     System.out.print("\npassed " + passedCounter + " tests.\n");
 
-    client.closeProject(myProject);
-
-    super.tearDown();
+    try {
+      client.closeProject(myProject);
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   private class MyTester implements Tester {

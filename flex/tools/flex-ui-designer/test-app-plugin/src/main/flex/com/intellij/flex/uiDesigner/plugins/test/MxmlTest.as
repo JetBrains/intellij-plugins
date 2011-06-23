@@ -14,9 +14,10 @@ public class MxmlTest extends BaseTestCase {
   public function MxmlTest() {
     //noinspection ConstantIfStatementJS
     if (false) {
-      Application();
+      SparkApplication();
       ViewNavigatorApplication();
-      Form();
+      SparkComponents();
+      MxComponents();
       Embed();
       UntypedProperty();
       ClassProperty();
@@ -32,11 +33,15 @@ public class MxmlTest extends BaseTestCase {
     }
   }
   
-  public function Form():void {
+  public function SparkComponents():void {
     assertThat(app, {document: app});
   }
 
-  public function Application():void {
+  public function MxComponents():void {
+    assertThat(app, {document: app});
+  }
+
+  public function SparkApplication():void {
     var m:Object = {colorCorrection: ColorCorrection.DEFAULT};
     assertThat(app, m);
     app.colorCorrection = ColorCorrection.ON;

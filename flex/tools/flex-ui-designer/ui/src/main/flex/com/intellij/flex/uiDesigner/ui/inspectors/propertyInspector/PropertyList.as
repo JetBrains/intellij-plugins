@@ -14,8 +14,6 @@ import flash.display.DisplayObject;
 public class PropertyList extends AbstractTitledBlockItemRenderer {
   private const tableView:TableView = new TableView();
   private var source:MyTableViewDataSource;
-
-  private var interactor:Interactor;
   private var modifier:Modifier;
 
   //private function createGridColumn(headerText:String):GridColumn {
@@ -54,14 +52,15 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
     var textFormat:TextFormat = laf.getTextFormat(TextFormatId.SMALL_SYSTEM);
     var firstColumn:TableColumn = new TableColumnImpl(tableView, "name", new NameRendererManager(textFormat, insets));
     firstColumn.width = 160;
-    tableView.columns = new <TableColumn>[firstColumn, new TableColumnImpl(tableView, null, new ValueRendererManager(laf, textFormat, insets, dataSource))];
+    var valueRendererManager:ValueRendererManager = new ValueRendererManager(laf, textFormat, insets, dataSource);
+    tableView.columns = new <TableColumn>[firstColumn, new TableColumnImpl(tableView, null, valueRendererManager)];
 
     var skin:DisplayObject = DisplayObject(tableView.createView(laf));
     skin.y = border.layoutHeight;
     addChild(skin);
 
     modifier = new Modifier();
-    interactor = new Interactor(tableView, modifier);
+    new Interactor(tableView, modifier, valueRendererManager);
   }
 
   override protected function measure():void {

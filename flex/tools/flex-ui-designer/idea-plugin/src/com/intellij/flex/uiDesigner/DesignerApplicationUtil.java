@@ -54,7 +54,7 @@ final class DesignerApplicationUtil {
   private static final String MAC_AIR_RUNTIME_DEFAULT_PATH = "/Library/Frameworks";
 
   public static AdlRunConfiguration createTestAdlRunConfiguration() throws IOException {
-    return new AdlRunConfiguration("/Developer/SDKs/flex_sdk_4.5/bin/adl", MAC_AIR_RUNTIME_DEFAULT_PATH);
+    return new AdlRunConfiguration("/Developer/SDKs/flex_4.5.1/bin/adl", MAC_AIR_RUNTIME_DEFAULT_PATH);
   }
   
   public static @Nullable AdlRunConfiguration findSuitableFlexSdk(String checkDescriptorPath) throws IOException {
@@ -303,7 +303,10 @@ final class DesignerApplicationUtil {
   private static synchronized void ensureExecutable(String path) throws IOException {
     if (!SystemInfo.isWindows && !alreadyMadeExecutable.contains(path)) {
       File file = new File(path);
-      if (!file.canExecute() && !file.setExecutable(true)) {
+      if (!file.exists()) {
+        throw new IOException("ADL not found " + file.getPath());
+      }
+      else if (!file.canExecute() && !file.setExecutable(true)) {
         throw new IOException("ADL is not executable");
       }
       alreadyMadeExecutable.add(path);

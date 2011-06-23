@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.zip.DataFormatException;
 
 public class SwcDependenciesSorter {
-  static final long ABC_FILTER_LAST_MODIFIED = 1308650823L * 1000L;
+  static final long ABC_FILTER_LAST_MODIFIED = 1308821940L * 1000L;
   static final String SWF_EXTENSION = ".swf";
 
   private THashMap<CharSequence, Definition> definitionMap;

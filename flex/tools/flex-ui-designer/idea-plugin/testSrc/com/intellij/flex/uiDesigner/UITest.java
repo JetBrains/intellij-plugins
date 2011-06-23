@@ -66,7 +66,7 @@ public class UITest extends MxmlWriterTestBase {
     socketInputHandler.process();
   }
 
-  public void testStyleNavigationToExternal() throws Exception {
+  public void _testStyleNavigationToExternal() throws Exception {
     testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.resolveExternalInlineStyleDeclarationSource) {
         @Override
         public void process() throws IOException {
@@ -77,10 +77,10 @@ public class UITest extends MxmlWriterTestBase {
           assertThat(attribute.getTextOffset(), 2186);
         }
       }) {
-      }, "Form.mxml");
+      }, SPARK_COMPONENTS_FILE);
   }
 
-  public void testStyleNavigationToSkinClass() throws Exception {
+  public void _testStyleNavigationToSkinClass() throws Exception {
     testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.openFile) {
         @Override
         public void process() throws IOException {
@@ -156,8 +156,6 @@ public class UITest extends MxmlWriterTestBase {
         }
       });
     }
-
-
   }
 
   private abstract static class UIMessageHandler implements MessageHandler {

@@ -6,6 +6,7 @@ import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
 import static com.intellij.flex.uiDesigner.abc.Decoder.MethodCodeDecoding;
 
 class FlexEncoder extends Encoder {
+  private static final String MX_CORE = "mx.core";
   private static final String SPARK_COMPONENTS = "spark.components";
   private static final String SPARK_COMPONENTS_SUPPORT_CLASSES = "spark.components.supportClasses";
   private static final String APPLICATION = "Application";
@@ -69,14 +70,20 @@ class FlexEncoder extends Encoder {
 
     in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()]);
     int packageLength = in.readU32();
-    if (compare(in, packageLength, SPARK_COMPONENTS)) {
+    boolean mxCore = false;
+    if (compare(in, packageLength, SPARK_COMPONENTS) || (mxCore = compare(in, packageLength, MX_CORE))) {
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
       int stringLength = in.readU32();
-      skipColorCorrection = compare(in, stringLength, APPLICATION);
-      skipInitialize = skipColorCorrection;
-      modifyConstructor = skipColorCorrection ||
-                          compare(in, stringLength, VIEW_NAVIGATOR_APPLICATION) ||
-                          compare(in, stringLength, TABBED_VIEW_NAVIGATOR_APPLICATION);
+      skipInitialize = compare(in, stringLength, APPLICATION);
+      if (mxCore) {
+        modifyConstructor = skipInitialize;
+      }
+      else {
+        skipColorCorrection = skipInitialize;
+        modifyConstructor = skipInitialize ||
+                            compare(in, stringLength, VIEW_NAVIGATOR_APPLICATION) ||
+                            compare(in, stringLength, TABBED_VIEW_NAVIGATOR_APPLICATION);
+      }
     }
     else if (compare(in, packageLength, SPARK_COMPONENTS_SUPPORT_CLASSES)) {
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);

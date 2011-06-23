@@ -1,0 +1,76 @@
+<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/mx" xmlns:s="library://ns.adobe.com/flex/spark">
+  <TabNavigator width="200" height="200">
+    <s:NavigatorContent label="Tab 1">
+      <s:layout>
+        <s:BasicLayout/>
+      </s:layout>
+      <s:Rect width="20" height="20" top="0" left="0">
+        <s:stroke>
+          <s:SolidColorStroke weight="1" color="0x880000"/>
+        </s:stroke>
+        <s:fill>
+          <s:SolidColor alpha="1" color="0x008800"/>
+        </s:fill>
+      </s:Rect>
+      <s:Button label="Button" top="0" right="0"/>
+      <s:CheckBox label="CheckBox" bottom="0" left="0"/>
+      <s:TextInput text="TextInput" bottom="0" right="0" width="60"/>
+
+      <ColorPicker selectedColor="0xffffff"/>
+    </s:NavigatorContent>
+    <s:NavigatorContent label="Tab 2">
+      <s:layout>
+        <s:VerticalLayout/>
+      </s:layout>
+      <s:Rect width="20" height="20" top="0" left="0">
+        <s:stroke>
+          <s:SolidColorStroke weight="1" color="0x880000"/>
+        </s:stroke>
+        <s:fill>
+          <s:SolidColor alpha="1" color="0x008800"/>
+        </s:fill>
+      </s:Rect>
+      <s:Button label="Button" top="0" right="0"/>
+      <s:CheckBox label="CheckBox" bottom="0" left="0"/>
+      <s:TextInput text="TextInput" bottom="0" right="0" width="60"/>
+    </s:NavigatorContent>
+    <s:NavigatorContent label="Tab 3">
+      <s:Scroller width="100%" height="100%">
+        <s:Group>
+          <s:layout>
+            <s:HorizontalLayout/>
+          </s:layout>
+
+          <s:Rect width="20" height="20" top="0" left="0">
+            <s:stroke>
+              <s:SolidColorStroke weight="1" color="0x880000"/>
+            </s:stroke>
+            <s:fill>
+              <s:SolidColor alpha="1" color="0x008800"/>
+            </s:fill>
+          </s:Rect>
+          <s:Button label="Button" top="0" right="0"/>
+          <s:CheckBox label="CheckBox" bottom="0" left="0"/>
+          <s:TextInput text="TextInput" bottom="0" right="0" width="60"/>
+        </s:Group>
+      </s:Scroller>
+    </s:NavigatorContent>
+  </TabNavigator>
+
+  <s:VGroup>
+      <TabBar dataProvider="{myViewStack}"/>
+      <ViewStack id="myViewStack" borderStyle="solid">
+        <s:NavigatorContent id="search" label="Search">
+          <Label text="Search Screen"/>
+        </s:NavigatorContent>
+
+        <s:NavigatorContent id="custInfo" label="Customer Info">
+          <Label text="Customer Info"/>
+        </s:NavigatorContent>
+
+        <s:NavigatorContent id="accountInfo" label="Account Info">
+          <Label text="Account Info"/>
+        </s:NavigatorContent>
+      </ViewStack>
+    </s:VGroup>
+</Application>

@@ -41,7 +41,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
 
   public void garbageCollection(@NotNull final File appDir) {
     for (String path : appDir.list()) {
-      if (path.endsWith(SwcDependenciesSorter.SWF_EXTENSION)) {
+      if (path.endsWith(SwcDependenciesSorter.SWF_EXTENSION) && !path.equals(FlexUIDesignerApplicationManager.DESIGNER_SWF)) {
         File item = new File(appDir, path);
         if (item.lastModified() < SwcDependenciesSorter.ABC_FILTER_LAST_MODIFIED) {
           //noinspection ResultOfMethodCallIgnored

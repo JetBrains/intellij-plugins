@@ -12,17 +12,17 @@ public class Interactor {
 
   private var modifier:Modifier;
 
-  private var tableView:TableView;
   private var tableSkin:TableViewSkin;
 
   private var currentRowIndex:int;
   private var currentColumnIndex:int;
 
   private var isOver:Boolean;
+  private var valueRendererManager:ValueRendererManager;
 
-  public function Interactor(tableView:TableView, modifier:Modifier) {
-    this.tableView = tableView;
+  public function Interactor(tableView:TableView, modifier:Modifier, valueRendererManager:ValueRendererManager) {
     this.modifier = modifier;
+    this.valueRendererManager = valueRendererManager;
 
     tableSkin = TableViewSkin(tableView.skin);
     tableSkin.bodyHitArea.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
@@ -83,7 +83,7 @@ public class Interactor {
   }
 
   private function findEntry():TextLineLinkedListEntry {
-    return ValueRendererManager(tableView.columns[1]).findEntry(currentRowIndex);
+    return valueRendererManager.findEntry(currentRowIndex);
   }
 
   private function stageMouseUpHandler(event:MouseEvent):void {
@@ -107,7 +107,7 @@ public class Interactor {
     if (rowIndex == currentRowIndex && columnIndex == currentColumnIndex) {
       entry.interaction.mouseUpHandler(event);
 
-      modifier.applyBoolean(ValueRendererManager(tableView.columns[columnIndex]).getDescription(rowIndex), entry.checkbox.selected);
+      modifier.applyBoolean(valueRendererManager.getDescription(rowIndex), entry.checkbox.selected);
     }
 
     resetCurrentIndices();

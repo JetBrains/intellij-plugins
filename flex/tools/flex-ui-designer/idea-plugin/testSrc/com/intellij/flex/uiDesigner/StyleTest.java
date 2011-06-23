@@ -27,7 +27,7 @@ public class StyleTest extends MxmlWriterTestBase {
   @Flex(version="4.1", requireLocalStyleHolder=true)
   // see mx.controls.ButtonBar line 528 in flex sdk 4.1
   public void testMxButtonBar41WithLocalStyleHolder() throws Exception {
-    testFile("../mxml/Form.mxml", "StyleTag.mxml");
+    testFile("../mxml/mx/MxComponents.mxml", "StyleTag.mxml");
   }
   
   @Flex(requireLocalStyleHolder=true)

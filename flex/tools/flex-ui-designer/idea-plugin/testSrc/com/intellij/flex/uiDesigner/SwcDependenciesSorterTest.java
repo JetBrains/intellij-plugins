@@ -67,17 +67,17 @@ public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
   }
 
   public void testDeleteIfAllDefitionsHaveUnresolvedDependencies() throws Exception {
-    testFile("Form.mxml");
+    testFile(SPARK_COMPONENTS_FILE);
   }
   
   @SuppressWarnings({"UnusedDeclaration"})
   @Flex(version="4.1")
   public void _TODO_testDelete() throws Exception {
-    testFile("Form.mxml");
+    testFile(SPARK_COMPONENTS_FILE);
   }
 
   public void testResolveToClassWithBiggestTimestamp() throws Exception {
-    testFile("Form.mxml");
+    testFile(SPARK_COMPONENTS_FILE);
   }
 
   @Override
