@@ -18,6 +18,7 @@ public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
     mySpaceBeforeTypeRefColonCheckBox.setVisible(true);
     myNamingConventionsPane.setVisible(true);
     myFormattingOptionsPane.setVisible(true);
+    myIndentPackageChildren.setVisible(true);
   }
 
   @Override
