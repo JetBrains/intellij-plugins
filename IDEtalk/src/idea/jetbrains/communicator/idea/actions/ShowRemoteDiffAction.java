@@ -45,8 +45,7 @@ public class ShowRemoteDiffAction extends BaseEditorPopup {
       return;
     }
 
-    ShowDiffCommand command = ((ShowDiffCommand)
-        Pico.getCommandManager().getCommand(ShowDiffCommand.class, BaseAction.getContainer(editor.getProject())));
+    ShowDiffCommand command = Pico.getCommandManager().getCommand(ShowDiffCommand.class, BaseAction.getContainer(editor.getProject()));
     command.setUser(user);
     command.setVFile(vFile);
     command.execute();

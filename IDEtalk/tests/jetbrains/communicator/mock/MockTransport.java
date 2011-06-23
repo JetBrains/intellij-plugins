@@ -67,7 +67,7 @@ public class MockTransport extends NullTransport {
     result.add(UserImpl.create("user", NAME));
     result.add(UserImpl.create("user1", NAME));
     result.add(UserImpl.create("user2", NAME));
-    return (User[]) result.toArray(new User[result.size()]);
+    return result.toArray(new User[result.size()]);
   }
 
   @Override
