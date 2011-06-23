@@ -143,7 +143,7 @@ internal class EditorTabLabelRenderer extends LabeledItemRenderer {
     g.lineTo(rightX - 1, HEIGHT);
   }
   
-  private function drawRect(g:Graphics, leftX:Number, topY:Number, rightX:Number, bottomY:Number, isLast:Boolean):void {
+  private static function drawRect(g:Graphics, leftX:Number, topY:Number, rightX:Number, bottomY:Number, isLast:Boolean):void {
     g.lineTo(leftX, topY + ARC_SIZE);
     g.curveTo(leftX, topY, leftX + ARC_SIZE, topY);
 

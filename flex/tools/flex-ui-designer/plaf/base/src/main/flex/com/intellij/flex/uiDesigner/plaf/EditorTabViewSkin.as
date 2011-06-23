@@ -71,9 +71,6 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
         return;
       }
     }
-    else if (closeButton != null && event.target == closeButton.skin) {
-      trace("ddeddAA SS!!$#");
-    }
     
     if (closeButtonRelatedRenderer == null) {
       return;
@@ -100,7 +97,7 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
     closeButtonSkin.x = tabX - 2 - 1 - closeButtonSkin.getExplicitOrMeasuredWidth();
     
     if (closeButtonSkin.hitTestPoint(event.stageX, event.stageY)) {
-      //closeButton.selected = true;
+      //ButtonSkinInteraction(closeButton.skin)
     }
   }
   

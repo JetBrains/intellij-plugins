@@ -15,6 +15,7 @@ public class MxmlTest extends BaseTestCase {
     //noinspection ConstantIfStatementJS
     if (false) {
       SparkApplication();
+      SparkComponentsDependOnMx();
       ViewNavigatorApplication();
       SparkComponents();
       MxComponents();
@@ -34,6 +35,10 @@ public class MxmlTest extends BaseTestCase {
   }
   
   public function SparkComponents():void {
+    assertThat(app, {document: app});
+  }
+
+  public function SparkComponentsDependOnMx():void {
     assertThat(app, {document: app});
   }
 
