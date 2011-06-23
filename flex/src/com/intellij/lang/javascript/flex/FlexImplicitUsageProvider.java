@@ -6,6 +6,10 @@ import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitSupport;
 import com.intellij.lang.javascript.flex.run.FlexRuntimeConfigurationProducer;
 import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.module.Module;
@@ -38,6 +42,9 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
       if (flexUnitSupport != null && flexUnitSupport.isTestClass(clazz, true)) return true;
     } else if (element instanceof JSFunction) {
       if (isTestMethod((JSFunction)element)) return true;
+      if (isAnnotatedByUnknownAttribute((JSAttributeListOwner)element)) return true;
+    } else if (element instanceof JSVariable) {
+      if (isAnnotatedByUnknownAttribute((JSAttributeListOwner)element)) return true;
     }
     return false;
   }
@@ -63,7 +70,22 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
   public boolean value(PsiElement psiNamedElement) {
     if (psiNamedElement instanceof JSFunction) {
       if (isTestMethod((JSFunction)psiNamedElement)) return true;
+      if (isAnnotatedByUnknownAttribute((JSAttributeListOwner)psiNamedElement)) return true;
     }
+
+    return false;
+  }
+
+  private static boolean isAnnotatedByUnknownAttribute(JSAttributeListOwner namedElement) {
+    JSAttributeList attributeList = namedElement.getAttributeList();
+    if (attributeList != null) {
+      JSAttribute[] attributes = attributeList.getAttributes();
+      for(JSAttribute a:attributes) {
+        if ("Deprecated".equals(a.getName())) continue;
+        return true;
+      }
+    }
+
     return false;
   }
 }
