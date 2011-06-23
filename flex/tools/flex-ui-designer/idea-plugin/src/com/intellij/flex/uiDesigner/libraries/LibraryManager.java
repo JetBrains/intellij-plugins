@@ -55,7 +55,8 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     initLibrarySets(module, appDir, true, null);
   }
 
-  public void initLibrarySets(@NotNull final Module module, @NotNull final File appDir, boolean collectLocalStyleHolders, @Nullable LibrarySet sdkLibrarySet)
+  // sdkLibrarySet for test only
+  public void initLibrarySets(@NotNull final Module module, @NotNull final File appDir, boolean collectLocalStyleHolders, @Nullable LibrarySet librarySet)
     throws InitException, IOException {
     final ProblemsHolder problemsHolder = new ProblemsHolder();
     final Project project = module.getProject();
@@ -85,41 +86,37 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
       throw new InitException(e, "error.collect.libraries");
     }
 
-    LibrarySet librarySet = null;
     final InfoList<Project, ProjectInfo> registeredProjects = client.getRegisteredProjects();
     final String projectLocationHash = project.getLocationHash();
     ProjectInfo info = registeredProjects.getNullableInfo(project);
-    if (info != null) {
-      // different flex sdk version for module
-      if (libraryCollector.sdkLibraries != null) {
-        sdkLibrarySet = createLibrarySet(Integer.toHexString(module.getName().hashCode()) + "_fdk", null, libraryCollector.sdkLibraries,
+    final boolean isNewProject = info == null;
+    if (isNewProject) {
+      if (librarySet == null) {
+        librarySet = createLibrarySet(projectLocationHash + "_fdk", null, libraryCollector.sdkLibraries,
                                          libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
-      }
-      else {
-        librarySet = info.getLibrarySet();
-      }
-    }
-    else {
-      if (sdkLibrarySet == null) {
-        sdkLibrarySet = createLibrarySet(projectLocationHash + "_fdk", null, libraryCollector.sdkLibraries,
-                                         libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
-        client.registerLibrarySet(sdkLibrarySet);
+        client.registerLibrarySet(librarySet);
       }
 
-      info = new ProjectInfo(project, sdkLibrarySet, libraryCollector.getFlexSdk());
+      info = new ProjectInfo(project, librarySet, libraryCollector.getFlexSdk());
       registeredProjects.add(info);
       client.openProject(project);
     }
-
-    if (libraryCollector.externalLibraries.isEmpty()) {
-      if (librarySet == null) {
-        assert sdkLibrarySet != null;
-        librarySet = sdkLibrarySet;
-        info.setLibrarySet(sdkLibrarySet);
+    else {
+      // different flex sdk version for module
+      if (libraryCollector.sdkLibraries != null) {
+        librarySet = createLibrarySet(Integer.toHexString(module.getName().hashCode()) + "_fdk", null, libraryCollector.sdkLibraries,
+                                         libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
+        client.registerLibrarySet(librarySet);
       }
     }
-    else if (librarySet == null) {
-      librarySet = createLibrarySet(projectLocationHash, sdkLibrarySet, libraryCollector.externalLibraries,
+
+    if (libraryCollector.externalLibraries.isEmpty()) {
+      if (!isNewProject && librarySet == null) {
+        librarySet = info.getLibrarySet();
+      }
+    }
+    else if (isNewProject) {
+      librarySet = createLibrarySet(projectLocationHash, librarySet, libraryCollector.externalLibraries,
                                     libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), false);
       client.registerLibrarySet(librarySet);
       info.setLibrarySet(librarySet);

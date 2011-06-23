@@ -73,4 +73,6 @@
         </s:NavigatorContent>
       </ViewStack>
     </s:VGroup>
+
+  <TextArea width="100" height="33"/>
 </Application>
