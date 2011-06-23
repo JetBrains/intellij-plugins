@@ -158,7 +158,7 @@ public class JSElementManager extends AbstractDiagramElementManager<Object> {
       if (elements.isEmpty()) {
         return PsiElement.EMPTY_ARRAY;
       }
-      else if (!(clazz instanceof JSClassImpl) || ((JSClassImpl)clazz).getStub() == null) {
+      else if (!(clazz instanceof JSClassImpl) || clazz.getStub() == null) {
         // this sort causes parsing in order to get ast node offset but
         // when we have class on stub our fields / functions already in natural order
         // TODO once we have stubs for xmlbackedclass we should update the code
