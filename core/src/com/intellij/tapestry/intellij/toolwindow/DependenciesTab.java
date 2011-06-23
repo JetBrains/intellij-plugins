@@ -6,19 +6,19 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
-import com.intellij.ui.treeStructure.actions.CollapseAllAction;
-import com.intellij.ui.treeStructure.actions.ExpandAllAction;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.presentation.InjectedElement;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
+import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.toolwindow.nodes.*;
-import com.intellij.tapestry.intellij.util.Icons;
+import com.intellij.ui.treeStructure.actions.CollapseAllAction;
+import com.intellij.ui.treeStructure.actions.ExpandAllAction;
+import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -233,7 +233,7 @@ public class DependenciesTab {
     public class NavigateToElementAction extends AnAction {
 
         public NavigateToElementAction() {
-            super("Navigate to Element", "Navigate to the selected element class", Icons.NAVIGATE);
+            super("Navigate to Element", "Navigate to the selected element class", TapestryIcons.NAVIGATE);
         }
 
         /**
@@ -270,7 +270,7 @@ public class DependenciesTab {
     private class NavigateToUsageAction extends AnAction {
 
         public NavigateToUsageAction() {
-            super("Navigate to Usage", "Navigate to part of code where the selected element is used", Icons.REFERENCE);
+            super("Navigate to Usage", "Navigate to part of code where the selected element is used", TapestryIcons.REFERENCE);
         }
 
         /**

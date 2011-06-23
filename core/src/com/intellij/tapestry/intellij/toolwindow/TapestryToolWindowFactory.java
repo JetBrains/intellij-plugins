@@ -10,9 +10,9 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetType;
-import com.intellij.tapestry.intellij.util.Icons;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
@@ -31,7 +31,7 @@ public class TapestryToolWindowFactory implements ToolWindowFactory, Condition<P
     TapestryToolWindow tapestryToolWindow = new TapestryToolWindow(project);
     Content content = ContentFactory.SERVICE.getInstance().createContent(tapestryToolWindow.getMainPanel(), "Tapestry", true);
     toolWindow.getContentManager().addContent(content);
-    toolWindow.setIcon(Icons.TAPESTRY_LOGO_SMALL);
+    toolWindow.setIcon(TapestryIcons.TAPESTRY_LOGO_SMALL);
     project.putUserData(TAPESTRY_TOOL_WINDOW_KEY, tapestryToolWindow);
   }
 

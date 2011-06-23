@@ -1,8 +1,8 @@
 package com.intellij.tapestry.intellij.toolwindow;
 
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
+import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.toolwindow.nodes.*;
-import com.intellij.tapestry.intellij.util.Icons;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -20,34 +20,34 @@ public class DependenciesTreeCellRenderer extends DefaultTreeCellRenderer {
         if (value instanceof DependenciesRootNode) {
             switch (((PresentationLibraryElement) ((DefaultMutableTreeNode) value).getUserObject()).getElementType()) {
                 case PAGE:
-                    setIcon(Icons.PAGE);
+                    setIcon(TapestryIcons.PAGE);
                     return this;
                 case COMPONENT:
-                    setIcon(Icons.COMPONENT);
+                    setIcon(TapestryIcons.COMPONENT);
                     return this;
                 case MIXIN:
-                    setIcon(Icons.MIXIN);
+                    setIcon(TapestryIcons.MIXIN);
                     return this;
             }
         }
 
         if (value instanceof EmbeddedComponentsNode) {
-            setIcon(Icons.COMPONENTS);
+            setIcon(TapestryIcons.COMPONENTS);
             return this;
         }
 
         if (value instanceof InjectedPagesNode) {
-            setIcon(Icons.PAGES);
+            setIcon(TapestryIcons.PAGES);
             return this;
         }
 
         if (value instanceof EmbeddedComponentNode) {
-            setIcon(Icons.COMPONENT);
+            setIcon(TapestryIcons.COMPONENT);
             return this;
         }
 
         if (value instanceof InjectedPageNode) {
-            setIcon(Icons.PAGE);
+            setIcon(TapestryIcons.PAGE);
             return this;
         }
 

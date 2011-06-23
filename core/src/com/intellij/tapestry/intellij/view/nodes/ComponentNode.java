@@ -4,14 +4,13 @@ import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClassOwner;
-import com.intellij.psi.PsiJavaFile;
-import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
+import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
-import com.intellij.tapestry.intellij.util.Icons;
+import com.intellij.ui.treeStructure.SimpleNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class ComponentNode extends TapestryNode {
     public ComponentNode(PresentationLibraryElement component, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(component, new PresentationData(component.getElementClass().getName(), component.getElementClass().getName(), Icons.COMPONENT, Icons.COMPONENT, null));
+        init(component, new PresentationData(component.getElementClass().getName(), component.getElementClass().getName(), TapestryIcons.COMPONENT, TapestryIcons.COMPONENT, null));
     }
 
     /**

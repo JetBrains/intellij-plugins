@@ -12,11 +12,11 @@ import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
-import com.intellij.tapestry.intellij.util.Icons;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.view.TapestryProjectViewPane;
 import com.intellij.tapestry.lang.TmlFileType;
 import com.intellij.ui.treeStructure.SimpleNode;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.TreeSet;
@@ -29,7 +29,8 @@ public class PackageNode extends TapestryNode {
         super(module, treeBuilder);
         _library = library;
 
-        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), Icons.PACKAGE_ICON, Icons.PACKAGE_ICON, null));
+        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), PlatformIcons.PACKAGE_ICON,
+                                                PlatformIcons.PACKAGE_ICON, null));
     }
 
     public PackageNode(PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {

@@ -5,10 +5,10 @@ import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.model.Library;
-import com.intellij.tapestry.intellij.util.Icons;
+import com.intellij.tapestry.core.util.TapestryIcons;
+import com.intellij.ui.treeStructure.SimpleNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class ExternalLibraryNode extends TapestryNode {
     public ExternalLibraryNode(Library library, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(library, new PresentationData(library.getId(), library.getId(), Icons.LIBRARY, Icons.LIBRARY, null));
+        init(library, new PresentationData(library.getId(), library.getId(), TapestryIcons.LIBRARY, TapestryIcons.LIBRARY, null));
     }
 
     /**

@@ -14,7 +14,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.tapestry.core.TapestryConstants;
-import com.intellij.tapestry.intellij.util.Icons;
+import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.lang.TmlFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +54,7 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
 
   @Override
   public Icon getIcon() {
-    return Icons.TAPESTRY_LOGO_SMALL;
+    return TapestryIcons.TAPESTRY_LOGO_SMALL;
   }
 
   @Override

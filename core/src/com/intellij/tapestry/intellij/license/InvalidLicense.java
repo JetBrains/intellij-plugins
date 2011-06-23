@@ -2,7 +2,7 @@ package com.intellij.tapestry.intellij.license;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.tapestry.intellij.util.Icons;
+import com.intellij.tapestry.core.util.TapestryIcons;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -29,7 +29,7 @@ public class InvalidLicense extends DialogWrapper {
         setTitle("Loomy License");
 
         //Para alterar
-        _image.setIcon(new ImageIcon(Icons.class.getResource("/com/intellij/tapestry/core/icons/g5004.png")));
+        _image.setIcon(TapestryIcons.LOOMY_LOGO);
 
         _textPane.setText(_textPane.getText().replace("${message}", message));
 

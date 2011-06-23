@@ -1,17 +1,17 @@
 package com.intellij.tapestry.intellij.lang;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.JspHighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.XmlHighlighterColors;
-import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
-import com.intellij.tapestry.intellij.util.Icons;
+import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.lang.TmlHighlighter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +68,7 @@ public class TemplateColorSettingsPage implements ColorSettingsPage {
   }
 
   public Icon getIcon() {
-    return Icons.TAPESTRY_LOGO_SMALL;
+    return TapestryIcons.TAPESTRY_LOGO_SMALL;
   }
 
   @NotNull

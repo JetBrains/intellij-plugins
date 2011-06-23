@@ -2,7 +2,7 @@ package com.intellij.tapestry.lang;
 
 import com.intellij.ide.highlighter.XmlLikeFileType;
 import com.intellij.tapestry.core.TapestryConstants;
-import com.intellij.tapestry.intellij.util.Icons;
+import com.intellij.tapestry.core.util.TapestryIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -36,6 +36,6 @@ public class TmlFileType extends XmlLikeFileType {
   }
 
   public Icon getIcon() {
-    return Icons.TAPESTRY_LOGO_SMALL;
+    return TapestryIcons.TAPESTRY_LOGO_SMALL;
   }
 }

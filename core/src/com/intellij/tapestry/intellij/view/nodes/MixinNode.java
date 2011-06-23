@@ -4,12 +4,11 @@ import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClassOwner;
-import com.intellij.psi.PsiJavaFile;
-import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.tapestry.core.model.presentation.Mixin;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
+import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
-import com.intellij.tapestry.intellij.util.Icons;
+import com.intellij.ui.treeStructure.SimpleNode;
 
 /**
  * A Mixin node.
@@ -19,7 +18,7 @@ public class MixinNode extends TapestryNode {
     public MixinNode(PresentationLibraryElement mixin, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(mixin, new PresentationData(mixin.getName(), mixin.getName(), Icons.MIXIN, Icons.MIXIN, null));
+        init(mixin, new PresentationData(mixin.getName(), mixin.getName(), TapestryIcons.MIXIN, TapestryIcons.MIXIN, null));
     }
 
     /**

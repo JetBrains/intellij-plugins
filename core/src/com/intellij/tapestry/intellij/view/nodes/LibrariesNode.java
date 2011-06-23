@@ -3,11 +3,11 @@ package com.intellij.tapestry.intellij.view.nodes;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
-import com.intellij.ui.treeStructure.SimpleNode;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
-import com.intellij.tapestry.intellij.util.Icons;
+import com.intellij.ui.treeStructure.SimpleNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class LibrariesNode extends TapestryNode {
     public LibrariesNode(Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init("Libraries", new PresentationData("Libraries", "Libraries", Icons.LIBRARY, Icons.LIBRARY, null));
+        init("Libraries", new PresentationData("Libraries", "Libraries", TapestryIcons.LIBRARY, TapestryIcons.LIBRARY, null));
     }
 
     /**

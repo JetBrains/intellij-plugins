@@ -27,13 +27,13 @@ import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
+import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.actions.safedelete.SafeDeleteProvider;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindow;
 import com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory;
-import com.intellij.tapestry.intellij.util.Icons;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.intellij.view.actions.GroupElementFilesToggleAction;
@@ -202,7 +202,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
    * {@inheritDoc}
    */
   public Icon getIcon() {
-    return Icons.TAPESTRY_LOGO_SMALL;
+    return TapestryIcons.TAPESTRY_LOGO_SMALL;
   }//getIcon
 
   /**
