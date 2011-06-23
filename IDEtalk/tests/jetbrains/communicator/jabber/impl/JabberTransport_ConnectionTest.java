@@ -599,7 +599,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
       }
     };
 
-    IDEtalkEvent event = (IDEtalkEvent) myEvents.get(1);
+    IDEtalkEvent event = myEvents.get(1);
     assertTrue("Expect message Event", event instanceof MessageEvent);
     assertEquals("Expect message text", body, ((MessageEvent) event).getMessage());
     assertEquals("Should remember threadId for incoming messages", "someThreadId", myTransport.getThreadId(mySelf));
@@ -632,7 +632,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
       }
     };
 
-    IDEtalkEvent event = (IDEtalkEvent) myEvents.get(1);
+    IDEtalkEvent event = myEvents.get(1);
     assertTrue("Expect message Event for unknown provider", event instanceof MessageEvent);
     assertEquals("Expect message text", "some text", ((MessageEvent) event).getMessage());
   }

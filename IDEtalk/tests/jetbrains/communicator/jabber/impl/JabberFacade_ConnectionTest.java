@@ -220,7 +220,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
         return roster.getEntry(bob).getGroups().size() > 0;
       }
     };
-    assertEquals("Bad Group", "someGroup", ((RosterGroup) roster.getEntry(bob).getGroups().iterator().next()).getName());
+    assertEquals("Bad Group", "someGroup", roster.getEntry(bob).getGroups().iterator().next().getName());
   }
 
   public void testPresenceAfterConnection() throws Throwable {

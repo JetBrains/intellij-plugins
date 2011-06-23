@@ -51,7 +51,7 @@ public class EquinoxRunConfigurationConverter extends ProjectConverter {
 
         @Override
         public boolean isConversionNeeded(RunManagerSettings runManagerSettings) {
-            for (Element element : (Collection<? extends Element>) runManagerSettings.getRunConfigurations()) {
+            for (Element element : runManagerSettings.getRunConfigurations()) {
                 final String confType = element.getAttributeValue("type");
                 if (EQUINOX_RUN_CONFIGURATION_TYPE.equals(confType)) {
                     return true;

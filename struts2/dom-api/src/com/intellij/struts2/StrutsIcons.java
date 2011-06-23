@@ -18,7 +18,7 @@ package com.intellij.struts2;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
@@ -100,7 +100,7 @@ public final class StrutsIcons {
   public static final Icon ACTION = loadIcon(ACTION_PATH);
 
   public static final Icon ACTION_SMALL = loadIcon(ACTION_SMALL_PATH);
-  public static final Icon EXCEPTION_MAPPING = Icons.EXCEPTION_CLASS_ICON;
+  public static final Icon EXCEPTION_MAPPING = PlatformIcons.EXCEPTION_CLASS_ICON;
   public static final Icon INTERCEPTOR = loadIcon(INTERCEPTOR_PATH);
   public static final Icon INTERCEPTOR_STACK = loadIcon(INTERCEPTOR_STACK_PATH);
   public static final Icon PACKAGE = loadIcon(PACKAGE_PATH);
@@ -127,17 +127,17 @@ public final class StrutsIcons {
     VALIDATION_CONFIG_FILE.setIcon(StdFileTypes.XML.getIcon(), 0);
     VALIDATION_CONFIG_FILE.setIcon(VALIDATOR_SMALL, 1, 0, OVERLAY_Y_OFFSET);
 
-    ACTION_CLASS.setIcon(Icons.CLASS_ICON, 0);
+    ACTION_CLASS.setIcon(PlatformIcons.CLASS_ICON, 0);
     ACTION_CLASS.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, OVERLAY_Y_OFFSET);
 
-    STRUTS_VARIABLE.setIcon(Icons.VARIABLE_ICON, 0);
+    STRUTS_VARIABLE.setIcon(PlatformIcons.VARIABLE_ICON, 0);
     STRUTS_VARIABLE.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, OVERLAY_Y_OFFSET);
 
     createGlobalIcon(GLOBAL_RESULT, RESULT);
     createGlobalIcon(GLOBAL_EXCEPTION_MAPPING, EXCEPTION_MAPPING);
 
     createDefaultIcon(DEFAULT_ACTION_REF, ACTION);
-    createDefaultIcon(DEFAULT_CLASS_REF, Icons.CLASS_ICON);
+    createDefaultIcon(DEFAULT_CLASS_REF, PlatformIcons.CLASS_ICON);
     createDefaultIcon(DEFAULT_INTERCEPTOR_REF, INTERCEPTOR);
   }
 

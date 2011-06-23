@@ -41,7 +41,7 @@ public class OpenFileActionTest extends BaseTestCase {
     super.setUp();
 
     myIdeFacadeMock = mock(IDEFacade.class);
-    Pico.getInstance().registerComponentInstance(IDEFacade.class, (IDEFacade)myIdeFacadeMock.proxy());
+    Pico.getInstance().registerComponentInstance(IDEFacade.class, myIdeFacadeMock.proxy());
 
     myViewFilesPanel = new ViewFilesPanel(null, null, (IDEFacade) myIdeFacadeMock.proxy());
     myUser = new MockUser();

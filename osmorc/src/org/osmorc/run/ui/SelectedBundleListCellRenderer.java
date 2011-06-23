@@ -25,7 +25,7 @@
 
 package org.osmorc.run.ui;
 
-import com.intellij.util.Icons;
+import com.intellij.util.PlatformIcons;
 import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
@@ -47,7 +47,7 @@ public class SelectedBundleListCellRenderer extends DefaultListCellRenderer
     SelectedBundle selectedBundle = (SelectedBundle) value;
     if (selectedBundle.isModule())
     {
-      component.setIcon(Icons.OPENED_MODULE_GROUP_ICON);
+      component.setIcon(PlatformIcons.OPENED_MODULE_GROUP_ICON);
     }
     else if (selectedBundle.getBundleType() == SelectedBundle.BundleType.FrameworkBundle)
     {
@@ -55,7 +55,7 @@ public class SelectedBundleListCellRenderer extends DefaultListCellRenderer
     }
     else
     {
-      component.setIcon(Icons.JAR_ICON);
+      component.setIcon(PlatformIcons.JAR_ICON);
     }
     component.setText(value.toString());
     return component;
