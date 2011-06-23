@@ -41,7 +41,7 @@ public class IntellijMethodParameterTest extends BaseTestCase {
 
         assert methodParameter.getType() instanceof IJavaPrimitiveType;
 
-        assert ((IJavaPrimitiveType) methodParameter.getType()).getName().equals("int");
+        assert methodParameter.getType().getName().equals("int");
     }
 
     @Test(dataProvider = JAVA_MODULE_FIXTURE_PROVIDER)
