@@ -51,6 +51,13 @@ import mx.styles.StyleManager;
 use namespace mx_internal;
 
 public class SystemManager extends Sprite implements ISystemManager, SystemManagerSB, IFocusManagerContainer {
+  private static const skippedEvents:Dictionary = new Dictionary();
+  skippedEvents.cursorManagerRequest = true;
+  skippedEvents.dragManagerRequest = true;
+  skippedEvents.initManagerRequest = true;
+  skippedEvents.systemManagerRequest = true;
+  skippedEvents.tooltipManagerRequest = true;
+  
   // offset due: 0 child of system manager is application
   internal static const OFFSET:int = 1;
 
@@ -633,7 +640,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
         listeners.push(listener);
       }
     }
-    else if (!(type == "cursorManagerRequest" || type == "dragManagerRequest" || type == "initManagerRequest" || type == "systemManagerRequest" || type == "tooltipManagerRequest")) {
+    else if (!(type in skippedEvents)) {
       super.addEventListener(type, listener, useCapture, priority, useWeakReference);
     }
   }
@@ -651,19 +658,12 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   }
 
   override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
-    var map:Dictionary;
-    if (useCapture) {
-      if (proxiedListeners != null) {
-        map = proxiedListenersInCapture;
-      }
-    }
-    else if (proxiedListeners != null) {
-      map = proxiedListeners;
-    }
-
+    var map:Dictionary = useCapture ? proxiedListenersInCapture : proxiedListeners;
     var listeners:Vector.<Function> = map == null ? null : map[type];
     if (listeners == null) {
-      super.removeEventListener(type, listener, useCapture);
+      if (!(type in skippedEvents)) {
+        super.removeEventListener(type, listener, useCapture);
+      }
       return;
     }
 
@@ -681,7 +681,9 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   }
 
   private function proxyEventHandler(event:Event):void {
-    trace("EXECUTED", event, event.eventPhase == EventPhase.CAPTURING_PHASE);
+    //if (event.type != MouseEvent.MOUSE_MOVE) {
+      //trace("EXECUTED", event, event.eventPhase == EventPhase.CAPTURING_PHASE);
+    //}
     var listeners:Vector.<Function>;
     if (event.eventPhase == EventPhase.CAPTURING_PHASE) {
       listeners = proxiedListenersInCapture[event.type];
