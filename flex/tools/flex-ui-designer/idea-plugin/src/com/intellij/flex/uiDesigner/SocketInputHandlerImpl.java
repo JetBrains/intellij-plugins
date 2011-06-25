@@ -235,25 +235,28 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
   }
 
   private void showError() throws IOException {
-    final String message;
+    final String userMessage = reader.readUTF();
+    final String message = reader.readUTF();
+    final String logMessage;
+    Project project = null;
     if (reader.readBoolean()) {
       StringBuilder builder = StringBuilderSpinAllocator.alloc();
       try {
-        Project project = readProject();
+        project = readProject();
         final VirtualFile file = DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort());
-        builder.append(reader.readUTF());
+        builder.append(message);
         builder.append("\nFile: ").append(file.getPath()).append("\nFile content: \n").append(LoadTextUtil.loadText(file));
-        message = builder.toString();
+        logMessage = builder.toString();
       }
       finally {
         StringBuilderSpinAllocator.dispose(builder);
       }
     }
     else {
-      message = reader.readUTF();
+      logMessage = message;
     }
 
-    FlexUIDesignerApplicationManager.LOG.error(message, new Throwable() {
+    FlexUIDesignerApplicationManager.LOG.error(logMessage, new Throwable() {
       @Override
       public void printStackTrace(PrintStream s) {
       }
@@ -263,6 +266,10 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         return this;
       }
     });
+
+    if (!userMessage.isEmpty()) {
+      DocumentProblemManager.getInstance().report(project, userMessage + "<br><br>" + message);
+    }
   }
 
   private Module readModule() throws IOException {

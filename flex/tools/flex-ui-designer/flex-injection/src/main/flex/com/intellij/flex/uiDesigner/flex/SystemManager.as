@@ -24,6 +24,8 @@ import mx.core.IFlexDisplayObject;
 import mx.core.IFlexModule;
 import mx.core.IRawChildrenContainer;
 import mx.core.IUIComponent;
+import mx.core.IVisualElement;
+import mx.core.IVisualElementContainer;
 import mx.core.Singleton;
 import mx.core.UIComponent;
 import mx.core.UIComponentGlobals;
@@ -51,6 +53,8 @@ import mx.styles.StyleManager;
 use namespace mx_internal;
 
 public class SystemManager extends Sprite implements ISystemManager, SystemManagerSB, IFocusManagerContainer {
+  private static const INITIALIZE_ERROR_EVENT_TYPE:String = "initializeError";
+
   private static const skippedEvents:Dictionary = new Dictionary();
   skippedEvents.cursorManagerRequest = true;
   skippedEvents.dragManagerRequest = true;
@@ -89,7 +93,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     layoutManager.waitFrame();
 
     this.uiErrorHandler = uiErrorHandler;
-    addRealEventListener("initializeError", uiInitializeOrCallLaterErrorHandler);
+    addRealEventListener(INITIALIZE_ERROR_EVENT_TYPE, uiInitializeOrCallLaterErrorHandler);
     addRealEventListener("callLaterError", uiInitializeOrCallLaterErrorHandler);
 
     flexModuleFactory = FlexModuleFactory(moduleFactory);
@@ -132,7 +136,35 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   }
 
   private function uiInitializeOrCallLaterErrorHandler(event:DynamicEvent):void {
-    uiErrorHandler.handleUiError(event.error, event.source);
+    var source:Object = event.source;
+    const isInitError:Boolean = event.type == INITIALIZE_ERROR_EVENT_TYPE;
+    uiErrorHandler.handleUiError(event.error, source, source == null ? null : "Can't " + (isInitError ? "initialize" : "call callLater handler") + " " + source.toString());
+
+    if (isInitError) {
+      var visualElement:IVisualElement = source as IVisualElement;
+      if (visualElement != null) {
+        if (visualElement is ILayoutManagerClient) {
+          ILayoutManagerClient(visualElement).nestLevel = 0; // skip from layout
+        }
+
+        var visualElementContainer:IVisualElementContainer = visualElement.parent as IVisualElementContainer;
+        if (visualElementContainer != null) {
+          // cannot remove right now, because we cannot cancel all other actions executed by Group after addDisplayObjectToDisplayList
+          // (as example, notifyListeners may dispatch ElementExistenceEvent.ELEMENT_ADD)
+          removeInvalidVisualElementLater(visualElement, visualElementContainer);
+        }
+        else {
+          visualElement.parent.removeChild(DisplayObject(visualElement));
+        }
+      }
+    }
+  }
+
+  private static function removeInvalidVisualElementLater(visualElement:IVisualElement,
+                                                          visualElementContainer:IVisualElementContainer):void {
+    UIComponent(visualElementContainer).callLater(function ():void {
+      visualElementContainer.removeElement(visualElement);
+    });
   }
 
   private var _document:DisplayObject;

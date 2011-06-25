@@ -31,6 +31,7 @@ public class MxmlTest extends BaseTestCase {
       InvalidColorName();
       RuntimeError();
       CannotFindDefaultProperty();
+      AbstractClass();
     }
   }
   
@@ -132,6 +133,10 @@ public class MxmlTest extends BaseTestCase {
 
   public function CannotFindDefaultProperty():void {
     assertThat(app, [{fill: null}, {text: 2}]);
+  }
+
+  public function AbstractClass():void {
+    assertThat(app, [{label: "before invalid control"}, {label: "after invalid control"}]);
   }
 }
 }

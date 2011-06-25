@@ -56,15 +56,15 @@ public class UncaughtErrorManager implements UiErrorHandler {
     sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : error.message);
   }
 
-  public function handleUiError(error:Error, object:Object):void {
-    sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : Error(error).message);
+  public function handleUiError(error:Error, object:Object, userMessage:String):void {
+    sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : Error(error).message, userMessage);
   }
 
   public function readDocumentErrorHandler(error:Error):void {
     sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : error.message);
   }
 
-  protected function sendMessage(message:String):void {
+  protected function sendMessage(message:String, userMessage:String = null):void {
     var projectId:int = -1;
     var documentFactoryId:int = -1;
     try {
@@ -81,12 +81,17 @@ public class UncaughtErrorManager implements UiErrorHandler {
     }
 
     socket.writeByte(ServerMethod.showError);
+
+    socket.writeUTF(userMessage == null ? "" : userMessage);
+    socket.writeUTF(message);
+
     socket.writeBoolean(documentFactoryId != -1);
+
     if (documentFactoryId != -1) {
       socket.writeShort(projectId);
       socket.writeShort(documentFactoryId);
     }
-    socket.writeUTF(message);
+
     socket.flush();
   }
 }

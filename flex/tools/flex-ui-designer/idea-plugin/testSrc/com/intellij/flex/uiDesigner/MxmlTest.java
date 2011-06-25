@@ -42,7 +42,8 @@ public class MxmlTest extends MxmlWriterTestBase {
       assertThat(problems,
                  m("Unresolved variable unresolvedData"),
                  m("Invalid color name invalidcolorname"),
-                 m("Default property not found for Rect (line: 2)"));
+                 m("Default property not found for Rect (line: 2)"),
+                 m("spark.components.supportClasses.TrackBase is abstract class"));
     }
   }
 

@@ -12,7 +12,7 @@ import mx.managers.layoutClasses.PriorityQueue;
 
 use namespace mx_internal;
 
-public class LayoutManager extends EventDispatcher implements ILayoutManager {
+  public class LayoutManager extends EventDispatcher implements ILayoutManager {
   private var uiErrorHandler:UiErrorHandler;
   private var displayDispatcher:DisplayObject;
 
@@ -131,10 +131,18 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
     while (obj) {
       if (obj.nestLevel) {
         currentObject = obj;
-        obj.validateProperties();
-        if (!obj.updateCompletePendingFlag) {
-          updateCompleteQueue.addObject(obj, obj.nestLevel);
-          obj.updateCompletePendingFlag = true;
+        try {
+          obj.validateProperties();
+
+          if (!obj.updateCompletePendingFlag) {
+            updateCompleteQueue.addObject(obj, obj.nestLevel);
+            obj.updateCompletePendingFlag = true;
+          }
+        }
+        catch (e:Error) {
+          uiErrorHandler.handleUiError(e, obj, "Can't validate properties " + obj);
+          invalidateSizeQueue.removeChild(obj);
+          invalidateDisplayListQueue.removeChild(obj);
         }
       }
 
@@ -152,10 +160,17 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
     while (obj) {
       if (obj.nestLevel) {
         currentObject = obj;
-        obj.validateSize();
-        if (!obj.updateCompletePendingFlag) {
-          updateCompleteQueue.addObject(obj, obj.nestLevel);
-          obj.updateCompletePendingFlag = true;
+        try {
+          obj.validateSize();
+
+          if (!obj.updateCompletePendingFlag) {
+            updateCompleteQueue.addObject(obj, obj.nestLevel);
+            obj.updateCompletePendingFlag = true;
+          }
+        }
+        catch (e:Error) {
+          uiErrorHandler.handleUiError(e, currentObject, "Can't validate size " + obj);
+          invalidateDisplayListQueue.removeChild(obj);
         }
       }
 
@@ -172,10 +187,16 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
     while (obj) {
       if (obj.nestLevel) {
         currentObject = obj;
-        obj.validateDisplayList();
-        if (!obj.updateCompletePendingFlag) {
-          updateCompleteQueue.addObject(obj, obj.nestLevel);
-          obj.updateCompletePendingFlag = true;
+        try {
+          obj.validateDisplayList();
+
+          if (!obj.updateCompletePendingFlag) {
+            updateCompleteQueue.addObject(obj, obj.nestLevel);
+            obj.updateCompletePendingFlag = true;
+          }
+        }
+        catch (e:Error) {
+          uiErrorHandler.handleUiError(e, currentObject, "Can't validate display list " + obj);
         }
       }
 
@@ -334,7 +355,7 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
       }
     }
     catch (e:Error) {
-      uiErrorHandler.handleUiError(e, obj);
+      uiErrorHandler.handleUiError(e, obj, "Can't validate " + obj);
     }
 
     currentObject = lastCurrentObject;
@@ -383,7 +404,7 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
       doPhasedInstantiation();
     }
     catch (e:Error) {
-      uiErrorHandler.handleUiError(e, currentObject);
+      uiErrorHandler.handleUiError(e, currentObject, currentObject == null ? null : "Can't do phased instantiation " + currentObject);
     }
   }
 

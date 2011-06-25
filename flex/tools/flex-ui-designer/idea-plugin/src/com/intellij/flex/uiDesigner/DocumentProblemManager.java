@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.util.StringBuilderSpinAllocator;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +24,13 @@ public class DocumentProblemManager {
   }
 
   public void report(final Project project, String message) {
-    report(project, message, MessageType.ERROR);
+    StringBuilder builder = StringBuilderSpinAllocator.alloc();
+    try {
+      report(project, appendTitle(builder).append("<p>").append(message).append("</p></html>").toString(), MessageType.ERROR);
+    }
+    finally {
+      StringBuilderSpinAllocator.dispose(builder);
+    }
   }
 
   public void report(Project project, ProblemsHolder problems) {
@@ -37,27 +44,24 @@ public class DocumentProblemManager {
       for (String problem : problems) {
         builder.append("<li>").append(problem).append("</li>");
       }
-      builder.append("</ul></html>");
-      report(project, builder.toString());
+      builder.append("</ul>").append("</html>");
+      report(project, builder.toString(), MessageType.ERROR);
     }
     finally {
       StringBuilderSpinAllocator.dispose(builder);
     }
   }
 
-  public void reportWithTitle(final Project project, String message) {
-    @SuppressWarnings({"MismatchedQueryAndUpdateOfStringBuilder"})
-    StringBuilder builder = StringBuilderSpinAllocator.alloc();
-    try {
-      report(project, appendTitle(builder).append("<p>").append(message).append("</p></html>").toString());
-    }
-    finally {
-      StringBuilderSpinAllocator.dispose(builder);
-    }
-  }
+  // Notification.notify is not suitable for us —
+  // 1) it is not suitable for content with <ul> tags (due to <p> around message, see NotificationsUtil.buildHtml)
+  // 2) it is buggy — balloon disappeared while user selects message text
+  // 3) in any case, event log cannot show our message, may be due to <ul> tags?
+  // todo fix platform Notification impl or how use it correctly?
+  public void report(@Nullable final Project project, String message, MessageType messageType) {
+    //Notification notification = new Notification(FlexUIDesignerBundle.message("plugin.name"),
+    //  title == null ? FlexUIDesignerBundle.message("plugin.name") : title, message, NotificationType.ERROR);
+    //notification.notify(project);
 
-  public void report(final Project project, String message, MessageType messageType) {
-    // TODO [develar] please use more high-level API - merge code with FlexUIDesignerApplicationManager.showBalloon()
     final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, messageType, null).setShowCallout(false)
       .setHideOnAction(false).createBalloon();
     ApplicationManager.getApplication().invokeLater(new Runnable() {

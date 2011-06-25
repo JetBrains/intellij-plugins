@@ -144,7 +144,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
               }
               catch (InitException e) {
                 LOG.error(e.getCause());
-                DocumentProblemManager.getInstance().reportWithTitle(module.getProject(), e.getMessage());
+                DocumentProblemManager.getInstance().report(module.getProject(), e.getMessage());
               }
             }
 
@@ -378,7 +378,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
           catch (InitException e) {
             LOG.error(e.getCause());
-            DocumentProblemManager.getInstance().reportWithTitle(myModule.getProject(), e.getMessage());
+            DocumentProblemManager.getInstance().report(myModule.getProject(), e.getMessage());
           }
 
           libraryAndModuleInitialized = true;

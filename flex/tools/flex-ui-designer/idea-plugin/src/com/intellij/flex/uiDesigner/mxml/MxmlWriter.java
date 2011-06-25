@@ -28,11 +28,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.IGNORE;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PRIMITIVE;
 
 public class MxmlWriter {
+  private static final Pattern FLEX_SDK_ABSTRACT_CLASSES = Pattern.compile("^(mx|spark)\\.(.*)?[^\\.]+Classes\\.[^.]+$");
+
   static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
 
   private final PrimitiveAmfOutputStream out;
@@ -300,6 +303,10 @@ public class MxmlWriter {
 
             continue;
           }
+          else if (isAbstract(classBackedDescriptor)) {
+            problemsHolder.add(classBackedDescriptor.getQualifiedName() + " is abstract class");
+            continue;
+          }
 
           if (closeObjectLevel == 0) {
             closeObjectLevel = processDefaultProperty(parent, createValueProvider(tag));
@@ -355,6 +362,10 @@ public class MxmlWriter {
       out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
       closeObjectLevel--;
     }
+  }
+
+  private boolean isAbstract(ClassBackedElementDescriptor classBackedDescriptor) {
+    return FLEX_SDK_ABSTRACT_CLASSES.matcher(classBackedDescriptor.getQualifiedName()).matches();
   }
 
   private void processClassBackedSubTag(XmlTag tag, ClassBackedElementDescriptor descriptor, @Nullable Context parentContext,
