@@ -562,12 +562,7 @@ public class AbcFilter extends AbcEncoder {
       int h = hash;
       int len = length;
       if (h == 0 && len > 0) {
-        int off = 0;
-        char[] val = chars;
-        for (int i = 0; i < len; i++) {
-          h = 31 * h + val[off++];
-        }
-        hash = h;
+        hash = h = StringUtil.stringHashCode(chars, 0, len);
       }
       return h;
     }
