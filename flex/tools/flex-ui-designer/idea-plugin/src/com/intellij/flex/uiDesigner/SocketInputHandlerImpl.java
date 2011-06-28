@@ -119,6 +119,10 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         openFile();
         break;
 
+      case ServerMethod.openDocument:
+        openDocument();
+        break;
+
       case ServerMethod.resolveExternalInlineStyleDeclarationSource:
         ApplicationManager.getApplication().invokeLater(new ResolveExternalInlineStyleSourceAction(reader, readModule()));
         break;
@@ -147,18 +151,25 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
   }
 
   private void openFile() throws IOException {
-    final Project project = readProject();
-    final OpenFileDescriptor openFileDescriptor = new OpenFileDescriptor(project, reader.readFile(), reader.readInt());
+    navigateToFile(new OpenFileDescriptor(readProject(), reader.readFile(), reader.readInt()));
+  }
+
+  private void openDocument() throws IOException {
+    Project project = readProject();
+    navigateToFile(new OpenFileDescriptor(project, DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort()),
+      reader.readInt()));
+  }
+
+  private void navigateToFile(final OpenFileDescriptor openFileDescriptor) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
         openFileDescriptor.navigate(true);
-        ProjectUtil.focusProjectWindow(project, true);
+        ProjectUtil.focusProjectWindow(openFileDescriptor.getProject(), true);
       }
     });
   }
 
-  @SuppressWarnings("ResultOfMethodCallIgnored")
   private void initResultFile() {
     if (resultFile == null) {
       resultFile = new File(appDir, "r");

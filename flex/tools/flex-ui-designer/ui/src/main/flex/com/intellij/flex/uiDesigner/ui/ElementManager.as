@@ -1,9 +1,18 @@
 package com.intellij.flex.uiDesigner.ui {
-import com.intellij.flex.uiDesigner.Document;
+import cocoa.Component;
 
+import com.intellij.flex.uiDesigner.Document;
+import com.intellij.flex.uiDesigner.DocumentFactoryManager;
+
+import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
+import flash.display.InteractiveObject;
 import flash.events.Event;
 import flash.events.EventDispatcher;
+import flash.events.IEventDispatcher;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.ui.Keyboard;
 
 import org.flyti.plexus.Injectable;
 
@@ -52,9 +61,29 @@ public class ElementManager extends EventDispatcher implements Injectable {
     element = null;
   }
 
+  public function registerKeyboardEventHandler(eventDispatcher:IEventDispatcher):void {
+    if (eventDispatcher is Component) {
+      eventDispatcher = Component(eventDispatcher).skin;
+    }
+    
+    eventDispatcher.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+  }
+
+  private function keyDownHandler(event:KeyboardEvent):void {
+    if (_element != null && event.keyCode == Keyboard.F4 && !event.altKey && !event.ctrlKey && !event.shiftKey &&
+        (event.target == _element ||
+         (_element is DisplayObjectContainer && DisplayObjectContainer(_element).contains(DisplayObject(event.target))))) {
+      DocumentFactoryManager(_document.module.project.getComponent(DocumentFactoryManager)).jumpToObjectDeclaration(_element, _document);
+    }
+  }
+
   private function mouseDownHandler(event:MouseEvent):void {
     var object:Object = findComponent(event.target);
     if (_element != object) {
+      if (object is InteractiveObject) {
+        InteractiveObject(object).stage.focus = InteractiveObject(object);
+        trace(InteractiveObject(object).stage.focus, object);
+      }
       element = object;
     }
   }

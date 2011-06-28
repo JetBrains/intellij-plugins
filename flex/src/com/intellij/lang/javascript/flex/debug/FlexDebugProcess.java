@@ -86,7 +86,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private Alarm myOutputAlarm;
 
   private final String myDebuggerVersion;
-  private final String mySdkLocation;
+  protected final String mySdkLocation;
 
   @NonNls static final String RESOLVED_BREAKPOINT_MARKER = "Resolved breakpoint ";
   @NonNls static final String BREAKPOINT_MARKER = "Breakpoint ";
@@ -110,9 +110,9 @@ public class FlexDebugProcess extends XDebugProcess {
   private Map<String, String> myQName2IdMap;
 
   private boolean myFileIdIsUpToDate = false;
-  private final BidirectionalMap<String, String> myFilePathToIdMap = new BidirectionalMap<String, String>();
-  private final Map<String, Collection<String>> myFileNameToPathsMap = new THashMap<String, Collection<String>>();
-  private final Map<String, Collection<VirtualFile>> myFileNameToFilesMap = new THashMap<String, Collection<VirtualFile>>();
+  protected final BidirectionalMap<String, String> myFilePathToIdMap = new BidirectionalMap<String, String>();
+  protected final Map<String, Collection<String>> myFileNameToPathsMap = new THashMap<String, Collection<String>>();
+  protected final Map<String, Collection<VirtualFile>> myFileNameToFilesMap = new THashMap<String, Collection<VirtualFile>>();
 
   private String myFdbLaunchCommand;
 
@@ -606,7 +606,7 @@ public class FlexDebugProcess extends XDebugProcess {
     return false;
   }
 
-  private static <K, T> void addToMap(final Map<K, Collection<T>> map, final K key, final T valueCollectionElement) {
+  protected static <K, T> void addToMap(final Map<K, Collection<T>> map, final K key, final T valueCollectionElement) {
     Collection<T> valueCollection = map.get(key);
     if (valueCollection == null) {
       valueCollection = new ArrayList<T>(1);
@@ -618,42 +618,44 @@ public class FlexDebugProcess extends XDebugProcess {
     }
   }
 
-  private void ensureFilePathToIdMapIsUpToDate() {
+  protected void ensureFilePathToIdMapIsUpToDate() {
     if (myFileIdIsUpToDate) return; // this calculation is VERY costly
     sendAndProcessOneCommand(new DebuggerCommand("show files", CommandOutputProcessingType.SPECIAL_PROCESSING, VMState.SUSPENDED, VMState.SUSPENDED) {
       @Override
       CommandOutputProcessingMode onTextAvailable(@NonNls String s) {
-        StringTokenizer tokenizer = new StringTokenizer(s, "\r\n");
-
-        while (tokenizer.hasMoreTokens()) {
-          String line = tokenizer.nextToken();
-          int spaceIndex = line.indexOf(' ');
-          int commaPos = line.indexOf(',');
-
-          if (spaceIndex == -1 || commaPos == -1) {
-            log("Unexpected string format:"+line);
-            continue;
-          }
-
-          String id = line.substring(0, spaceIndex);
-          String fullPath = line.substring(spaceIndex + 1, commaPos).replace(File.separatorChar, '/');
-
-          int markerIndex = fullPath.indexOf("/frameworks/projects/");
-          if (markerIndex != -1 && fullPath.indexOf("/src/", markerIndex) > 0) {
-            fullPath = mySdkLocation + fullPath.substring(markerIndex);
-          }
-
-          String shortName = line.substring(commaPos + 2);
-          myFilePathToIdMap.put(fullPath, id);
-          addToMap(myFileNameToPathsMap, shortName, fullPath);
-        }
+        processShowFilesResult(new StringTokenizer(s, "\r\n"));
         return CommandOutputProcessingMode.DONE;
       }
     }, null);
     myFileIdIsUpToDate = true;
   }
 
-  String resolveFileReference(VirtualFile file) {
+  protected void processShowFilesResult(StringTokenizer tokenizer) {
+    while (tokenizer.hasMoreTokens()) {
+      String line = tokenizer.nextToken();
+      int spaceIndex = line.indexOf(' ');
+      int commaPos = line.indexOf(',');
+
+      if (spaceIndex == -1 || commaPos == -1) {
+        log("Unexpected string format:" + line);
+        continue;
+      }
+
+      String id = line.substring(0, spaceIndex);
+      String fullPath = line.substring(spaceIndex + 1, commaPos).replace(File.separatorChar, '/');
+
+      int markerIndex = fullPath.indexOf("/frameworks/projects/");
+      if (markerIndex != -1 && fullPath.indexOf("/src/", markerIndex) > 0) {
+        fullPath = mySdkLocation + fullPath.substring(markerIndex);
+      }
+
+      String shortName = line.substring(commaPos + 2);
+      myFilePathToIdMap.put(fullPath, id);
+      addToMap(myFileNameToPathsMap, shortName, fullPath);
+    }
+  }
+
+  protected String resolveFileReference(VirtualFile file) {
     String marker;
     String id = myFilePathToIdMap.get(file.getPresentableUrl().replace(File.separatorChar, '/'));
 
@@ -667,7 +669,7 @@ public class FlexDebugProcess extends XDebugProcess {
     return marker;
   }
 
-  String getFileId(final String filePath) {
+  protected String getFileId(final String filePath) {
     ensureFilePathToIdMapIsUpToDate();
     return myFilePathToIdMap.get(filePath);
   }
@@ -884,7 +886,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
   }
 
-  static void log(@NonNls String s) {
+  protected static void log(@NonNls String s) {
     s = System.currentTimeMillis() + " " + s;
     if (doSimpleTracing) System.out.println(s);
     if (LOG.isDebugEnabled()) LOG.debug(s);

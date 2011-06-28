@@ -8,7 +8,7 @@ public class Modifier {
   public function applyBoolean(description:Object, value:Boolean):void {
     var propertyName:String = description.name;
 
-    _object[propertyName] = value;
+    _object[propertyName ] = value;
   }
 }
 }

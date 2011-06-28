@@ -1,4 +1,6 @@
 package com.intellij.flex.uiDesigner {
+import flash.errors.IllegalOperationError;
+
 public class DocumentFactoryManager {
   private const factories:Vector.<DocumentFactory> = new Vector.<DocumentFactory>();
   
@@ -67,6 +69,16 @@ public class DocumentFactoryManager {
     assert(id != -1);
     deleted[deleted.length] = id;
     return id;
+  }
+
+  public function jumpToObjectDeclaration(object:Object, document:Document):void {
+    var factory:DocumentFactory = document.documentFactory;
+    var textOffset:int = factory.getObjectDeclarationPosition(object);
+    if (textOffset == -1) {
+      trace("Can't find document for object");
+    }
+
+    server.openDocument(factory.module, factory, textOffset);
   }
 }
 }

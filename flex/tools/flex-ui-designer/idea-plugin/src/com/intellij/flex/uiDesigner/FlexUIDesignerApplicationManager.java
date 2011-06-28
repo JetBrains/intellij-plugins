@@ -375,10 +375,12 @@ public class FlexUIDesignerApplicationManager implements Disposable {
             IOUtil.close(server);
             serverClosed();
             LOG.error(e);
+            return;
           }
           catch (InitException e) {
             LOG.error(e.getCause());
             DocumentProblemManager.getInstance().report(myModule.getProject(), e.getMessage());
+            return;
           }
 
           libraryAndModuleInitialized = true;

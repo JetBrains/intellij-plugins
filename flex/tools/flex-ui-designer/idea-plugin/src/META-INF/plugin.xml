@@ -32,8 +32,12 @@
   <actions>
     <group id="FlexUIDesigner.MainToolbarActions">
       <separator/>
-      <action id="FlexUIDesigner.RunDesignView" class="com.intellij.flex.uiDesigner.actions.RunDesignViewAction" icon="/actions/preview.png"/>
-      <action id="FlexUIDesigner.DebugDesignView" class="com.intellij.flex.uiDesigner.actions.DebugDesignViewAction" icon="/images/preview-debug.png"/>
+      <action id="FlexUIDesigner.RunDesignView" class="com.intellij.flex.uiDesigner.actions.RunDesignViewAction" icon="/actions/preview.png">
+        <keyboard-shortcut first-keystroke="meta i" keymap="Mac OS X"/>
+      </action>
+      <action id="FlexUIDesigner.DebugDesignView" class="com.intellij.flex.uiDesigner.actions.DebugDesignViewAction" icon="/images/preview-debug.png">
+        <keyboard-shortcut first-keystroke="meta i" keymap="Mac OS X"/>
+      </action>
       <add-to-group anchor="before" group-id="MainToolBar" relative-to-action="HelpTopics"/>
     </group>
 

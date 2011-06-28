@@ -44,7 +44,7 @@ public class DocumentContainer extends AbstractView {
     drawDocumentBackground(_documentSysteManager.graphics, actualDocumentWidth, actualDocumentHeight);
   }
 
-  private function drawDocumentBackground(g:Graphics, w:Number, h:Number):void {
+  private static function drawDocumentBackground(g:Graphics, w:Number, h:Number):void {
     g.clear();
     g.lineStyle(1, 0x999999); // intellij idea 0x515151, but it looks bad
     g.beginBitmapFill(gridBitmapData);

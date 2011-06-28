@@ -19,7 +19,7 @@ class Encoder {
 
   private int majorVersion, minorVersion;
   protected int poolIndex;
-  private int opcodePass;
+  protected int opcodePass;
   private int exPass;
   private boolean disableDebugging, peepHole;
 
@@ -28,7 +28,7 @@ class Encoder {
   private DataBuffer2 classInfo;
   private DataBuffer2 scriptInfo;
   protected DataBuffer2 methodBodies;
-  private DataBuffer3 opcodes;
+  protected DataBuffer3 opcodes;
   private WritableDataBuffer exceptions;
 
   protected WritableDataBuffer currentBuffer;
@@ -712,55 +712,15 @@ class Encoder {
         if (index == 0) {
           opcodes.writeU32(0);
         }
-
-        int insertionIndex = history.getMapIndex(poolIndex, IndexHistory.STRING, index);
-        int newIndex = history.getNewIndex(insertionIndex);
-        if (newIndex == 0) {
-          // E:\dev\hero_private\frameworks\projects\framework\src => _
-          int originalPosition = in.position();
-          int start = history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[index];
-          in.seek(start);
-          int stringLength = in.readU32();
-          //char[] s = new char[n];
-          //for (int j = 0; j < n; j++) {
-          //  s[j] = (char)in.data[in.position + in.offset + j];
-          //}
-          //String file = new String(s);
-
-          byte[] data = in.data;
-          int c;
-          int actualStart = -1;
-          for (int i = 0; i < stringLength; i++) {
-            c = data[in.position + in.offset + i];
-            if (c > 127) {
-              break; // supports only ASCII
-            }
-
-            if (c == ';') {
-              actualStart = in.position + i - 1;
-              int p = in.offset + actualStart;
-              data[p] = '_';
-              stringLength = stringLength - i + 1;
-              if (stringLength < 128) {
-                actualStart--;
-                data[p - 1] = (byte)stringLength;
-              }
-              else {
-                actualStart -= 2;
-                data[p - 2] = (byte)((stringLength & 0x7F) | 0x80);
-                data[p - 1] = (byte)((stringLength >> 7) & 0x7F);
-              }
-              break;
-            }
-          }
-          in.seek(originalPosition);
-
-          newIndex = history.getIndex(poolIndex, IndexHistory.STRING, index, insertionIndex, actualStart);
+        else {
+          writeDebugFile(in, index);
         }
-
-        opcodes.writeU32(newIndex);
       }
     }
+  }
+
+  protected void writeDebugFile(DataBuffer in, int oldIndex) {
+    opcodes.writeU32(history.getIndex(poolIndex, IndexHistory.STRING, oldIndex));
   }
 
   public void OP_jump(int offset, int pos) {
@@ -2304,7 +2264,7 @@ class Encoder {
     }
   }
 
-  private class DataBuffer3 extends WritableDataBuffer {
+  protected class DataBuffer3 extends WritableDataBuffer {
     final IntIntHashMap offsets;
     final List<Decoder> decoders;
 

@@ -20,7 +20,6 @@ import flash.utils.Dictionary;
 
 import mx.core.FlexGlobals;
 import mx.core.IChildList;
-import mx.core.IFlexDisplayObject;
 import mx.core.IFlexModule;
 import mx.core.IRawChildrenContainer;
 import mx.core.IUIComponent;
@@ -34,9 +33,6 @@ import mx.effects.EffectManager;
 import mx.events.DynamicEvent;
 import mx.events.FlexEvent;
 import mx.managers.DragManagerImpl;
-import mx.managers.FocusManager;
-import mx.managers.IFocusManager;
-import mx.managers.IFocusManagerContainer;
 import mx.managers.ILayoutManagerClient;
 import mx.managers.ISystemManager;
 import mx.managers.LayoutManager;
@@ -52,7 +48,7 @@ import mx.styles.StyleManager;
 
 use namespace mx_internal;
 
-public class SystemManager extends Sprite implements ISystemManager, SystemManagerSB, IFocusManagerContainer {
+public class SystemManager extends Sprite implements ISystemManager, SystemManagerSB {
   private static const INITIALIZE_ERROR_EVENT_TYPE:String = "initializeError";
 
   private static const skippedEvents:Dictionary = new Dictionary();
@@ -596,29 +592,6 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
       fakeTransform = new Transform(new Shape());
     }
     return fakeTransform;
-  }
-
-  private var _focusManager:FocusManager;
-  public function get focusManager():IFocusManager {
-    if (_focusManager == null) {
-      _focusManager = new FocusManager(this);
-    }
-    
-    return _focusManager;
-  }
-
-  public function set focusManager(value:IFocusManager):void {
-  }
-
-  public function get defaultButton():IFlexDisplayObject {
-    return null;
-  }
-
-  public function set defaultButton(value:IFlexDisplayObject):void {
-  }
-
-  public function get systemManager():ISystemManager {
-    return this;
   }
 
   // mx.managers::ISystemManagerChildManager, ChildManager, "cm.notifyStyleChangeInChildren(styleProp, true);" in CSSStyleDeclaration

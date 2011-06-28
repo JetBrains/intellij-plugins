@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public final class BaseWriter {
   int ARRAY = -1;
+  int P_FUD_POSITION = -1;
 
   private final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
 
@@ -77,10 +78,12 @@ public final class BaseWriter {
     resetAfterMessage();
 
     ARRAY = -1;
+    P_FUD_POSITION = -1;
   }
 
   private void initNames() {
     ARRAY = getNameReference("array");
+    P_FUD_POSITION = getNameReference("$fud_position");
   }
 
   public void resetAfterMessage() {
@@ -129,16 +132,6 @@ public final class BaseWriter {
 
   public void write(String classOrPropertyName) {
     stringWriter.write(classOrPropertyName, out);
-  }
-
-  @SuppressWarnings({"UnusedDeclaration"})
-  public void writeNullable(String classOrPropertyName) {
-    stringWriter.writeNullable(classOrPropertyName, out);
-  }
-
-  @SuppressWarnings({"UnusedDeclaration"})
-  public void writeProperty(String propertyName, String value) {
-    writeProperty(getNameReference(propertyName), value);
   }
 
   public void writeProperty(int propertyNameReference, String value) {
@@ -215,11 +208,6 @@ public final class BaseWriter {
     out.writeUInt29(propertyName);
     out.write(PropertyClassifier.FIXED_ARRAY);
     out.write(size);
-  }
-
-  @SuppressWarnings({"UnusedDeclaration"})
-  public void writeObjectHeader(int propertyName, String className) {
-    writeObjectHeader(propertyName, getNameReference(className));
   }
 
   public void writeObjectHeader(int propertyName, int className) {

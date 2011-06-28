@@ -1,18 +1,19 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.compiler.options.CompileStepBeforeRun;
-import com.intellij.execution.*;
-import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionManager;
+import com.intellij.execution.RunManagerEx;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.flex.uiDesigner.debug.MyFlexBaseRunner;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
-import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfigurationType;
@@ -29,10 +30,8 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
-import com.intellij.xdebugger.*;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -180,55 +179,12 @@ final class DesignerApplicationUtil {
       runTask.setEnabled(false);
     }
 
-    // we need SILENTLY_DETACH_ON_CLOSE, but RunContentManagerImpl provides only ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, so, 
-    // we override destroyProcess as detachProcess
-    final FlexBaseRunner runner = new FlexBaseRunner() {
-      @Override
-      protected RunContentDescriptor doLaunch(final Project project, final Executor executor, RunProfileState state,
-                                              RunContentDescriptor contentToReuse, final ExecutionEnvironment env, final Sdk flexSdk,
-                                              final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
-        return XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
-          @NotNull
-          public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
-            try {
-              return new FlexDebugProcess(session, flexSdk, flexRunnerParameters) {
-                @Override
-                public void stop() {
-                  if (DebugPathManager.IS_DEV) {
-                    super.stop();
-                  }
-                }
-
-                @Override
-                protected ProcessHandler doGetProcessHandler() {
-                  return new MyDefaultDebugProcessHandler();
-                }
-              };
-            }
-            catch (IOException e) {
-              throw new ExecutionException(e.getMessage(), e);
-            }
-          }
-        }).getRunContentDescriptor();
-      }
-
-      @Override
-      @NotNull
-      public String getRunnerId() {
-        return "FlexDebugRunnerForDesignView";
-      }
-
-      @Override
-      public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-        return true;
-      }
-    };
-
+    final FlexBaseRunner runner = new MyFlexBaseRunner();
     final DefaultDebugExecutor executor = new DefaultDebugExecutor();
     runner.execute(executor, new ExecutionEnvironment(runner, settings, module.getProject()), new ProgramRunner.Callback() {
       @Override
       public void processStarted(final RunContentDescriptor descriptor) {
-        final MyDefaultDebugProcessHandler processHandler = (MyDefaultDebugProcessHandler)descriptor.getProcessHandler();
+        final MyFlexBaseRunner.MyDefaultDebugProcessHandler processHandler = (MyFlexBaseRunner.MyDefaultDebugProcessHandler)descriptor.getProcessHandler();
         assert processHandler != null;
         //noinspection deprecation
         processHandler.putUserData(ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, true);
@@ -247,22 +203,6 @@ final class DesignerApplicationUtil {
         task.run();
       }
     });
-  }
-  
-  private static class MyDefaultDebugProcessHandler extends DefaultDebugProcessHandler {
-    @Override
-    public void destroyProcess() {
-      if (DebugPathManager.IS_DEV) {
-        super.destroyProcess();
-      }
-      else {
-        detachProcess();
-      }
-    }
-    
-    private void myDestroyProcess() {
-      super.destroyProcess();
-    }
   }
 
   public static ProcessHandler runAdl(AdlRunConfiguration runConfiguration, String descriptor, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {

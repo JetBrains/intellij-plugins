@@ -164,9 +164,12 @@ public class MxmlWriter {
 
     Context context = null;
     ByteRange dataRange = null;
-    // if state specific property before includeIn, state override data range wil be added before object data range, so, 
+    // if state specific property before includeIn, state override data range wil be added before object data range, so,
     // we keep current index and insert at the specified position
     final int dataRangeIndex = out.getBlockOut().getNextMarkerIndex();
+
+    out.writeUInt29(writer.P_FUD_POSITION);
+    out.writeUInt29(parent.getTextOffset());
 
     for (final XmlAttribute attribute : parent.getAttributes()) {
       XmlAttributeDescriptor attributeDescriptor = attribute.getDescriptor();

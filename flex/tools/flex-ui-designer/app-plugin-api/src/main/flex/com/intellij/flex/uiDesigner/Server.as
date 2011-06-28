@@ -64,6 +64,14 @@ public class Server implements ResourceBundleProvider {
     socket.flush();
   }
 
+  public function openDocument(module:Module, factory:DocumentFactory, textOffset:int):void {
+    socket.writeByte(ServerMethod.openDocument);
+    writeProjectId(module.project);
+    socket.writeShort(factory.id);
+    socket.writeInt(textOffset);
+    socket.flush();
+  }
+
   public function unregisterDocumentFactories(module:Module, deleted:Vector.<int>):void {
     socket.writeByte(ServerMethod.unregisterDocumentFactories);
     writeProjectId(module.project);

@@ -1,4 +1,12 @@
-<?xml version="1.0"?>
-<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
-  <Label text="uuuuu" width="50%" color="invalidColorName"/>
-</Group>
+<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <ButtonBar>
+    <ArrayCollection>
+      <fx:String>MPS</fx:String>
+      <fx:String>dotTrace</fx:String>
+      <fx:String>dotCover</fx:String>
+      <fx:String>ColdFusion</fx:String>
+      <fx:Number>23424</fx:Number>
+      <fx:Boolean>false</fx:Boolean>
+    </ArrayCollection>
+  </ButtonBar>
+</Application>

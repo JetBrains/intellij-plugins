@@ -57,6 +57,7 @@
 
     <Injectors target="{ProjectView}">
       <PropertyInjector source="{DocumentFactoryManager}" targetKey="documentFactoryManager"/>
+      <MethodInvoker role="{ElementManager}" method="registerKeyboardEventHandler" arguments="{currentEvent.instance}"/>
     </Injectors>
     
     <Injectors target="{TabView}" targetId="editorTabView">

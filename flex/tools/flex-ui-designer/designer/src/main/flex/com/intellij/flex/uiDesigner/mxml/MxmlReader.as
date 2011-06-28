@@ -186,6 +186,10 @@ public final class MxmlReader implements DocumentReader {
     }
     else {
       object = new clazz();
+      if (propertyName == "$fud_position") {
+        context.registerObjectDeclarationPosition(object, AmfUtil.readUInt29(input));
+        propertyName = stringRegistry.read(input);
+      }
     }
 
     if (reference != 0) {

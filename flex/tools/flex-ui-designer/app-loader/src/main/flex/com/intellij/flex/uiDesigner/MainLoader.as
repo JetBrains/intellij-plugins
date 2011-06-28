@@ -6,6 +6,7 @@ import flash.display.LoaderInfo;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
+import flash.events.KeyboardEvent;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
@@ -42,9 +43,11 @@ public class MainLoader extends Sprite {
     loaderContext.allowCodeImport = true;
     loader.loadBytes(new appClass(), loaderContext);
     appClass = null;
+
+    addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
   }
 
-  private function loadErrorHandler(event:IOErrorEvent):void {
+  private static function loadErrorHandler(event:IOErrorEvent):void {
     trace(event);
   }
 
@@ -52,6 +55,10 @@ public class MainLoader extends Sprite {
     var loader:Loader = LoaderInfo(event.currentTarget).loader;
     addChild(loader.getChildAt(0));
     loader.contentLoaderInfo.applicationDomain.getDefinition("com.intellij.flex.uiDesigner.libraries.QueueLoader")["rootDomain"] = ApplicationDomain.currentDomain;
+  }
+
+  private function keyDownHandler(event:KeyboardEvent):void {
+    trace(stage.focus, event);
   }
 }
 }
