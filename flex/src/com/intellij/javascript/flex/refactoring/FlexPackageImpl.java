@@ -133,15 +133,14 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
     @Override
     @Nullable
     public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
+      if (!(element instanceof FlexPackageImpl)) {
+        return null;
+      }
       if (location instanceof UsageViewLongNameLocation) {
-        if (element instanceof FlexPackageImpl) {
-          return JSBundle.message("package.description", ((FlexPackageImpl)element).getQualifiedName());
-        }
+        return JSBundle.message("package.description", ((FlexPackageImpl)element).getQualifiedName());
       }
       else if (location instanceof UsageViewShortNameLocation) {
-        if (element instanceof FlexPackageImpl) {
-          return StringUtil.notNullize(((FlexPackageImpl)element).getName());
-        }
+        return StringUtil.notNullize(((FlexPackageImpl)element).getName());
       }
       else if (location instanceof UsageViewTypeLocation) {
         return JSBundle.message("javascript.language.term.package");
