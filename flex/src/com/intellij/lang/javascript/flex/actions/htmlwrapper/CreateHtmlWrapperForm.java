@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.actions.htmlwrapper;
 
+import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
@@ -22,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -217,7 +217,7 @@ public class CreateHtmlWrapperForm {
       }
     });
 
-    myModuleComboBox.setRenderer(new ModulesComboboxWrapper.CellRenderer(false));
+    myModuleComboBox.setRenderer(new ModulesComboboxWrapper.CellRenderer(myModuleComboBox.getRenderer(), false));
 
     final Module[] modules = ModuleManager.getInstance(project).getModules();
     final Module[] modulesWithNullDefault = new Module[modules.length + 1];
@@ -237,14 +237,13 @@ public class CreateHtmlWrapperForm {
   }
 
   private void setupHtmlWrapperTypeComboBox() {
-    myHtmlWrapperTypeComboBox.setRenderer(new DefaultListCellRenderer() {
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    myHtmlWrapperTypeComboBox.setRenderer(new ListCellRendererWrapper<VirtualFile>(myHtmlWrapperTypeComboBox.getRenderer()) {
+      @Override
+      public void customize(JList list, VirtualFile value, int index, boolean selected, boolean hasFocus) {
         if (value != null) {
-          setText(((VirtualFile)value).getName());
+          setText(value.getName());
           setIcon(ourHtmlWrapperTypeIcon);
         }
-        return this;
       }
     });
 

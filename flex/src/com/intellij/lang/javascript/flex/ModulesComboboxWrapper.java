@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex;
 
+import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -11,15 +12,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.EventListener;
 
 public class ModulesComboboxWrapper {
-
   public interface Listener extends EventListener {
-    public void moduleChanged();
+    void moduleChanged();
   }
 
   private final JComboBox myComboBox;
@@ -35,7 +34,7 @@ public class ModulesComboboxWrapper {
       }
     });
 
-    myComboBox.setRenderer(new CellRenderer(true));
+    myComboBox.setRenderer(new CellRenderer(myComboBox.getRenderer(), true));
   }
 
   public void configure(Project project, final @Nullable String selectedModuleName) {
@@ -93,16 +92,16 @@ public class ModulesComboboxWrapper {
     myDispatcher.addListener(listener);
   }
 
-  public static class CellRenderer extends DefaultListCellRenderer {
+  public static class CellRenderer extends ListCellRendererWrapper {
     private final boolean myShowErrorIcon;
 
-    public CellRenderer(boolean showErrorIcon) {
+    public CellRenderer(ListCellRenderer original, boolean showErrorIcon) {
+      super(original);
       myShowErrorIcon = showErrorIcon;
     }
 
     @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-      super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
       if (value instanceof Module) {
         final Module module = (Module)value;
         setText(module.getName());
@@ -111,8 +110,6 @@ public class ModulesComboboxWrapper {
       else if (myShowErrorIcon) {
         setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
       }
-      return this;
     }
   }
-
 }

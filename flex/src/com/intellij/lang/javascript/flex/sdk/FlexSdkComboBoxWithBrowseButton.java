@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.ide.DataManager;
+import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -18,7 +19,6 @@ import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
-
   public interface Listener {
     void stateChanged();
   }
@@ -67,9 +66,9 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     rebuildSdkListAndSelectSdk(null); // if SDKs exist first will be selected automatically
 
     final JComboBox sdkCombo = getComboBox();
-    sdkCombo.setRenderer(new DefaultListCellRenderer() {
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+    sdkCombo.setRenderer(new ListCellRendererWrapper(sdkCombo.getRenderer()) {
+      @Override
+      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
         if (value instanceof ModuleSdk) {
           final Sdk sdk = ((ModuleSdk)value).mySdk;
           if (sdk == null) {
@@ -109,7 +108,6 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
             setText("[none]");
           }
         }
-        return this;
       }
     });
 
@@ -139,7 +137,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     });
   }
 
-  private void rebuildSdkListAndSelectSdk(final Sdk selectedSdk) {
+  private void rebuildSdkListAndSelectSdk(@Nullable final Sdk selectedSdk) {
     final String previousSelectedSdkName = getSelectedSdkRaw();
     final List<Object> sdkList = new ArrayList<Object>();
 

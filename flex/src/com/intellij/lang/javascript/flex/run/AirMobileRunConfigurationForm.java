@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.ModulesComboboxWrapper;
 import com.intellij.lang.javascript.flex.actions.airinstaller.AirInstallerParametersBase;
@@ -39,7 +40,6 @@ import static com.intellij.lang.javascript.flex.actions.airinstaller.AirInstalle
 import static com.intellij.lang.javascript.flex.run.AirMobileRunnerParameters.*;
 
 public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunConfiguration> {
-
   private final Project myProject;
   private ModulesComboboxWrapper myModulesComboboxWrapper;
   private JSClassChooserDialog.PublicInheritor myMainClassFilter;
@@ -140,9 +140,10 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
   private void initEmulatorRelatedControls() {
     myEmulatorCombo.setModel(new DefaultComboBoxModel(AirMobileRunnerParameters.Emulator.values()));
 
-    myEmulatorCombo.setRenderer(new DefaultListCellRenderer() {
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        return super.getListCellRendererComponent(list, ((AirMobileRunnerParameters.Emulator)value).name, index, isSelected, cellHasFocus);
+    myEmulatorCombo.setRenderer(new ListCellRendererWrapper<AirMobileRunnerParameters.Emulator>(myEmulatorCombo.getRenderer()) {
+      @Override
+      public void customize(JList list, Emulator value, int index, boolean selected, boolean hasFocus) {
+        setText(value.name);
       }
     });
 
@@ -272,10 +273,10 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     myPackageFileNameTextField.setEnabled(enabled);
     myPackagingOptionsButton.setEnabled(enabled);
 
-    if (enabled) {
-      final String fileNameLowercased = myPackageFileNameTextField.getText().toLowerCase();
-      // todo update extension apk/ipa
-    }
+    //if (enabled) {
+    //  final String fileNameLowercased = myPackageFileNameTextField.getText().toLowerCase();
+    //  // todo update extension apk/ipa
+    //}
   }
 
   private void updateDebugTransportRelatedControls() {

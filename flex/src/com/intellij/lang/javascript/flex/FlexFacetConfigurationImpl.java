@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.facet.Facet;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ui.*;
+import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
@@ -257,9 +258,9 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
         myFlexSdkName = "";
       }
 
-      myFlexSdkComboBox.setRenderer(new DefaultListCellRenderer() {
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-          super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+      myFlexSdkComboBox.setRenderer(new ListCellRendererWrapper(myFlexSdkComboBox.getRenderer()) {
+        @Override
+        public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
           if (value instanceof Sdk) {
             setText(((Sdk)value).getName());
             setIcon(((Sdk)value).getSdkType().getIcon());
@@ -267,7 +268,6 @@ public class FlexFacetConfigurationImpl extends FlexFacetConfiguration {
           else {
             setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
           }
-          return this;
         }
       });
 
