@@ -27,7 +27,7 @@
       </component>
       <component id="3680d" class="javax.swing.JLabel">
         <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="4" hsize-policy="0" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="settings.libbundle.manifest"/>
@@ -99,7 +99,7 @@
               </component>
             </children>
           </toolbar>
-          <scrollpane class="com.intellij.ui.components.JBScrollPane" id="69844">
+          <scrollpane id="69844" class="com.intellij.ui.components.JBScrollPane">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -148,7 +148,9 @@
       </component>
       <grid id="9e6" binding="_manifestEntriesHolder" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
-          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="200" height="200"/>
+          </grid>
         </constraints>
         <properties/>
         <border type="none"/>
