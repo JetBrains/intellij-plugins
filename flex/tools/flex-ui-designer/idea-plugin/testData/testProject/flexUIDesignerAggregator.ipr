@@ -293,12 +293,12 @@
       <module fileurl="file://$PROJECT_DIR$/abc-builder-maven-plugin.iml" filepath="$PROJECT_DIR$/abc-builder-maven-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app-loader.iml" filepath="$PROJECT_DIR$/app-loader.iml" />
       <module fileurl="file://$PROJECT_DIR$/app-plugin-api.iml" filepath="$PROJECT_DIR$/app-plugin-api.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../plaf/aqua/aqua.iml" filepath="$PROJECT_DIR$/../../../plaf/aqua/aqua.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../plaf/base/base.iml" filepath="$PROJECT_DIR$/../../../plaf/base/base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../plaf/aqua/aqua.iml" filepath="$PROJECT_DIR$/../../../plaf/aqua/aqua.iml" group="plafAggregator and modules" />
+      <module fileurl="file://$PROJECT_DIR$/../../../plaf/base/base.iml" filepath="$PROJECT_DIR$/../../../plaf/base/base.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/designer.iml" filepath="$PROJECT_DIR$/designer.iml" />
       <module fileurl="file://$PROJECT_DIR$/flex-injection.iml" filepath="$PROJECT_DIR$/flex-injection.iml" />
       <module fileurl="file://$PROJECT_DIR$/flexUIDesignerAggregator.iml" filepath="$PROJECT_DIR$/flexUIDesignerAggregator.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../plaf/plafAggregator.iml" filepath="$PROJECT_DIR$/../../../plaf/plafAggregator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../plaf/plafAggregator.iml" filepath="$PROJECT_DIR$/../../../plaf/plafAggregator.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/shared.iml" filepath="$PROJECT_DIR$/shared.iml" />
       <module fileurl="file://$PROJECT_DIR$/test.iml" filepath="$PROJECT_DIR$/test.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../../test-data-libs/test-data-libs.iml" filepath="$PROJECT_DIR$/../../../test-data-libs/test-data-libs.iml" />
@@ -489,11 +489,9 @@
       </CLASSES>
       <JAVADOC>
         <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/cocoa/1.4-SNAPSHOT/cocoa-1.4-SNAPSHOT-asdoc.zip!/" />
-        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/cocoa/1.4-SNAPSHOT/cocoa-1.4-SNAPSHOT-en_US.rb-asdoc.zip!/" />
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/cocoa/1.4-SNAPSHOT/cocoa-1.4-SNAPSHOT-sources.jar!/" />
-        <root url="jar://$MAVEN_REPOSITORY$/org/flyti/cocoa/cocoa/1.4-SNAPSHOT/cocoa-1.4-SNAPSHOT-en_US.rb-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.flyti.cocoa:cocoa:swc:1.4-SNAPSHOT">

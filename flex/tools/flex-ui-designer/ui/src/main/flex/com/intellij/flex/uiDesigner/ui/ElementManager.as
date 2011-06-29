@@ -1,15 +1,9 @@
 package com.intellij.flex.uiDesigner.ui {
-import cocoa.Component;
-
 import com.intellij.flex.uiDesigner.Document;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 
-import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
-import flash.display.InteractiveObject;
 import flash.events.Event;
 import flash.events.EventDispatcher;
-import flash.events.IEventDispatcher;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.ui.Keyboard;
@@ -42,6 +36,7 @@ public class ElementManager extends EventDispatcher implements Injectable {
 
     if (_document != null) {
       _document.systemManager.removeRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+      _document.systemManager.removeRealEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
     }
 
     _document = value;
@@ -52,6 +47,7 @@ public class ElementManager extends EventDispatcher implements Injectable {
     }
     else {
       _document.systemManager.addRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+      _document.systemManager.addRealEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 
       skinClass = _document.module.getClass("spark.components.supportClasses.Skin");
       iUIComponentClass = _document.module.getClass("mx.core.IUIComponent");
@@ -61,18 +57,8 @@ public class ElementManager extends EventDispatcher implements Injectable {
     element = null;
   }
 
-  public function registerKeyboardEventHandler(eventDispatcher:IEventDispatcher):void {
-    if (eventDispatcher is Component) {
-      eventDispatcher = Component(eventDispatcher).skin;
-    }
-    
-    eventDispatcher.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
-  }
-
   private function keyDownHandler(event:KeyboardEvent):void {
-    if (_element != null && event.keyCode == Keyboard.F4 && !event.altKey && !event.ctrlKey && !event.shiftKey &&
-        (event.target == _element ||
-         (_element is DisplayObjectContainer && DisplayObjectContainer(_element).contains(DisplayObject(event.target))))) {
+    if (_element != null && event.keyCode == Keyboard.F4 && !event.altKey && !event.ctrlKey && !event.shiftKey) {
       DocumentFactoryManager(_document.module.project.getComponent(DocumentFactoryManager)).jumpToObjectDeclaration(_element, _document);
     }
   }
@@ -80,10 +66,10 @@ public class ElementManager extends EventDispatcher implements Injectable {
   private function mouseDownHandler(event:MouseEvent):void {
     var object:Object = findComponent(event.target);
     if (_element != object) {
-      if (object is InteractiveObject) {
-        InteractiveObject(object).stage.focus = InteractiveObject(object);
-        trace(InteractiveObject(object).stage.focus, object);
-      }
+      //if (object is InteractiveObject) {
+      //  InteractiveObject(object).stage.focus = InteractiveObject(object);
+      //  trace(InteractiveObject(object).stage.focus, object);
+      //}
       element = object;
     }
   }

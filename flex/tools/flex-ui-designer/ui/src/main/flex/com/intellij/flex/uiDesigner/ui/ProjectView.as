@@ -54,8 +54,18 @@ public class ProjectView extends AbstractComponent implements Injectable {
 
   ui function editorTabViewAdded():void {
     editorTabView.items = editorPanes;
+    editorTabView.selectionChanged.add(editorTabSelectionChanged);
     
     editorPanes.addEventListener(CollectionEvent.COLLECTION_CHANGE, editorPanesChangeHandler, false, -1);
+  }
+
+  private static function editorTabSelectionChanged(oldItem:DocumentPaneItem, newItem:DocumentPaneItem):void {
+    if (oldItem != null) {
+      oldItem.document.systemManager.deactivated();
+    }
+    if (newItem != null) {
+      newItem.document.systemManager.activated();
+    }
   }
 
   override protected function get primaryLaFKey():String {
@@ -82,7 +92,7 @@ import cocoa.pane.PaneItem;
 
 import com.intellij.flex.uiDesigner.Document;
 
-class DocumentPaneItem extends PaneItem {
+final class DocumentPaneItem extends PaneItem {
   private var _document:Document;
   public function get document():Document {
     return _document;

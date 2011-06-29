@@ -14,13 +14,20 @@ public interface SystemManagerSB {
   
   function getDefinitionByName(name:String):Object;
 
-  function addRealEventListener(type:String, listener:Function):void;
+  function addRealEventListener(type:String, listener:Function, useCapture:Boolean = false):void;
   function removeRealEventListener(type:String, listener:Function):void;
 
   function get stage():Stage;
 
-  function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler, resourceBundleProvider:ResourceBundleProvider):void;
+  function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler, resourceBundleProvider:ResourceBundleProvider,
+                mainFocusManager:MainFocusManagerSB):void;
 
   function removeEventHandlers():void;
+
+  function added():void;
+
+  function deactivated():void;
+
+  function activated():void;
 }
 }

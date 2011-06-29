@@ -25,6 +25,8 @@ import flash.utils.Dictionary;
 public class DocumentManagerImpl extends EventDispatcher implements DocumentManager {
   private var libraryManager:LibraryManager;
 
+  private var mainFocusManager:MainFocusManager;
+
   private var documentReader:DocumentReader;
   private var server:Server;
 
@@ -188,8 +190,13 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var window:DocumentWindow = module.project.window;
     var systemManager:SystemManagerSB = new systemManagerClass();
     document.systemManager = systemManager;
+
+    if (mainFocusManager == null) {
+      mainFocusManager = new MainFocusManager(window.stage);
+    }
+
     systemManager.init(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain), window.stage,
-                       UncaughtErrorManager.instance, server);
+                       UncaughtErrorManager.instance, server, mainFocusManager);
     document.container = new DocumentContainer(Sprite(systemManager));
   }
 }

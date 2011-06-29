@@ -39,6 +39,8 @@ public class Main extends MainWindowedApplication {
   // Burn in hell, Adobe
   // Burn in hell, Adobe
   ElementManager;
+  MainFocusManager;
+  DocumentManagerImpl;
   //SocketManagerImpl;
   // Burn in hell, Adobe
   // Burn in hell, Adobe

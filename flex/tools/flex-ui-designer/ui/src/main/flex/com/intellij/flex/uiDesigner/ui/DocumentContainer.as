@@ -25,6 +25,7 @@ public class DocumentContainer extends AbstractView {
     _documentSysteManager.x = 16;
     _documentSysteManager.y = 16;
     addDisplayObject(_documentSysteManager);
+    SystemManagerSB(_documentSysteManager).added();
   }
 
   override protected function updateDisplayList(w:Number, h:Number):void {

@@ -20,6 +20,7 @@ import flash.utils.Dictionary;
 
 import mx.core.FlexGlobals;
 import mx.core.IChildList;
+import mx.core.IFlexDisplayObject;
 import mx.core.IFlexModule;
 import mx.core.IRawChildrenContainer;
 import mx.core.IUIComponent;
@@ -33,6 +34,8 @@ import mx.effects.EffectManager;
 import mx.events.DynamicEvent;
 import mx.events.FlexEvent;
 import mx.managers.DragManagerImpl;
+import mx.managers.IFocusManager;
+import mx.managers.IFocusManagerContainer;
 import mx.managers.ILayoutManagerClient;
 import mx.managers.ISystemManager;
 import mx.managers.LayoutManager;
@@ -48,7 +51,8 @@ import mx.styles.StyleManager;
 
 use namespace mx_internal;
 
-public class SystemManager extends Sprite implements ISystemManager, SystemManagerSB {
+// must be IFocusManagerContainer, it only way how UIComponent can find focusManager (see UIComponent.focusManager)
+public class SystemManager extends Sprite implements ISystemManager, SystemManagerSB, IFocusManagerContainer {
   private static const INITIALIZE_ERROR_EVENT_TYPE:String = "initializeError";
 
   private static const skippedEvents:Dictionary = new Dictionary();
@@ -71,8 +75,11 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   private var uiErrorHandler:UiErrorHandler;
 
   private const implementations:Dictionary = new Dictionary();
+  private var mainFocusManager:MainFocusManagerSB;
 
-  public function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler, resourceBundleProvider:ResourceBundleProvider):void {
+  public function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler, resourceBundleProvider:ResourceBundleProvider,
+                       mainFocusManager:MainFocusManagerSB):void {
+    this.mainFocusManager = mainFocusManager;
     var layoutManager:LayoutManager = LayoutManager(UIComponentGlobals.layoutManager);
     if (layoutManager == null) {
       UIComponentGlobals.designMode = true;
@@ -111,9 +118,13 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     Singleton.registerClass("mx.managers::IHistoryManager", HistoryManagerImpl);
     Singleton.registerClass("mx.managers::IBrowserManager", BrowserManagerImpl);
 
+    Singleton.registerClass("mx.managers::IBrowserManager", BrowserManagerImpl);
+
     if (ApplicationDomain.currentDomain.hasDefinition("mx.core::TextFieldFactory")) {
       Singleton.registerClass("mx.core::ITextFieldFactory", Class(getDefinitionByName("mx.core::TextFieldFactory")));
     }
+
+    _focusManager = new DocumentFocusManager(this);
 
     // investigate, how we can add support for custom components — patch EffectManager or use IntellIJ IDEA index for effect annotations (the same as compiler — CompilationUnit)
     EffectManager.registerEffectTrigger("addedEffect", "added");
@@ -392,6 +403,10 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     // but we can not set it in SystemManager, because it wants UIComponent (for style)
     FlexGlobals.topLevelApplication = object;
 
+    if (object is UIComponent) {
+      UIComponent(object).focusManager = _focusManager;
+    }
+
     if (object is IUIComponent) {
       var documentUI:IUIComponent = IUIComponent(_document);
       _explicitDocumentSize.width = documentUI.explicitWidth;
@@ -405,6 +420,18 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     finally {
       StyleManager.tempStyleManagerForTalentAdobeEngineers = null;
     }
+  }
+
+  public function added():void {
+    _focusManager.activate();
+  }
+
+  public function activated():void {
+    mainFocusManager.activeDocumentFocusManager = _focusManager;
+  }
+
+  public function deactivated():void {
+    mainFocusManager.activeDocumentFocusManager = null;
   }
 
   private const _explicitDocumentSize:Rectangle = new Rectangle();
@@ -718,8 +745,8 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     }
   }
 
-  public function addRealEventListener(type:String, listener:Function):void {
-    super.addEventListener(type, listener);
+  public function addRealEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
+    super.addEventListener(type, listener, useCapture);
   }
 
   public function removeRealEventListener(type:String, listener:Function):void {
@@ -728,6 +755,27 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
   flex::v4_5 {
     include 'baseFlexModuleFactoryImpl45.as';
+  }
+
+  private var _focusManager:DocumentFocusManager;
+  public function get focusManager():IFocusManager {
+    return _focusManager;
+  }
+
+  public function set focusManager(value:IFocusManager):void {
+    trace("skip illegal set focus manager");
+  }
+
+  public function get defaultButton():IFlexDisplayObject {
+    return null;
+  }
+
+  public function set defaultButton(value:IFlexDisplayObject):void {
+    trace("skip illegal set defaultButton");
+  }
+
+  public function get systemManager():ISystemManager {
+    return this;
   }
 }
 }
