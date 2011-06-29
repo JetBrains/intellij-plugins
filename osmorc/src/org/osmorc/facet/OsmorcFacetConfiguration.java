@@ -283,6 +283,9 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    */
   @NotNull
   public String getJarFileName() {
+    if (myOutputPathType == null) {
+      return "";
+    }
     switch (myOutputPathType) {
       case CompilerOutputPath:
       case OsgiOutputPath:
@@ -305,6 +308,9 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    */
   @NotNull
   public String getJarFilePath() {
+    if ( myOutputPathType == null ) {
+      return "";
+    }
     switch (myOutputPathType) {
       case CompilerOutputPath:
       case OsgiOutputPath:
