@@ -42,6 +42,7 @@ import org.osmorc.facet.ui.OsmorcFacetJAREditorTab;
 import org.osmorc.facet.ui.OsmorcFacetManifestGenerationEditorTab;
 import org.osmorc.settings.ProjectSettings;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -275,6 +276,53 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
         return nullSafeLocation;
     }
   }
+
+  /**
+   * Returns the file name of the jar file.
+   * @return the file name of the jar file.
+   */
+  @NotNull
+  public String getJarFileName() {
+    switch (myOutputPathType) {
+      case CompilerOutputPath:
+      case OsgiOutputPath:
+      case SpecificOutputPath:
+        String completeOutputPath = getJarFileLocation();
+
+        File f = new File(completeOutputPath);
+        return f.getName();
+      default:
+        // not initialized
+        return getJarFileLocation();
+    }
+  }
+
+
+  /**
+   * Returns the path where the jar file name should be stored (excluding the jar's name).
+   *
+   * @return the path name where the jar file is to be stored..
+   */
+  @NotNull
+  public String getJarFilePath() {
+    switch (myOutputPathType) {
+      case CompilerOutputPath:
+      case OsgiOutputPath:
+      case SpecificOutputPath:
+        String completeOutputPath = getJarFileLocation();
+        File f = new File(completeOutputPath);
+        String parent = f.getParent();
+        if ( parent == null ) {
+          return "";
+        }
+        return parent;
+      default:
+        // not initialized
+        return "";
+    }
+  }
+
+
 
   /**
    * Sethes the location of the jar file

@@ -41,6 +41,7 @@ import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -144,8 +145,19 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
       }
 
         // Fix for IDEA-66235 - inherit jar filename from maven
-        String jarFileName = mavenProject.getFinalName() + ".jar";
-        conf.setJarFileLocation(jarFileName, OsmorcFacetConfiguration.OutputPathType.CompilerOutputPath );
+      String jarFileName = mavenProject.getFinalName() + ".jar";
+
+      // FiX for IDEA-67088, preserve existing output path settings on reimport.
+      switch (conf.getOutputPathType()) {
+        case OsgiOutputPath:
+          conf.setJarFileLocation(jarFileName, OsmorcFacetConfiguration.OutputPathType.OsgiOutputPath);
+          break;
+        case SpecificOutputPath:
+          conf.setJarFileLocation(new File(conf.getJarFilePath() , jarFileName).getPath(), OsmorcFacetConfiguration.OutputPathType.SpecificOutputPath);
+          break;
+        default:
+          conf.setJarFileLocation(jarFileName, OsmorcFacetConfiguration.OutputPathType.CompilerOutputPath);
+      }
     }
   }
 

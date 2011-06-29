@@ -354,7 +354,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
         myJarOutputPathChooser.setText("");
         return;
       }
-      myJarOutputPathChooser.setText(file.getPath().replace(File.separatorChar, '/'));
+      myJarOutputPathChooser.setText(file.getPath());
     }
   }
 
@@ -375,15 +375,13 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   public void apply() {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
     String fileLocation = getSelectedOutputPath();
-    fileLocation = fileLocation.replace('\\', '/');
-    String jarFileName = myJarFileTextField.getText();
+    String jarFileName = getJarFileName();
 
 
     OsmorcFacetConfiguration.OutputPathType pathType = getSelectedOutputPathType();
     // Build a complete path if the user wants to put the file into some specific path.
     if (pathType == SpecificOutputPath) {
-      String completeOutputPath = fileLocation + "/" + jarFileName;
-      completeOutputPath = completeOutputPath.replaceAll("//*", "/");
+      String completeOutputPath = new File(fileLocation, jarFileName).getPath();
       configuration.setJarFileLocation(completeOutputPath, pathType);
     }
     else {
@@ -394,6 +392,10 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
 
     configuration.setAdditionalJARContents(myAdditionalJARContentsTableModel.getAdditionalContents());
     myModified = false;
+  }
+
+  public String getJarFileName() {
+    return myJarFileTextField.getText();
   }
 
   String getSelectedOutputPath() {
@@ -410,28 +412,15 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
 
   public void reset() {
     OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
-    String completeOutputPath = configuration.getJarFileLocation();
     OsmorcFacetConfiguration.OutputPathType outputPathType = configuration.getOutputPathType();
     myPlaceInCompilerOutputPathRadioButton.setSelected(outputPathType == CompilerOutputPath);
     myPlaceInProjectWideRadioButton.setSelected(outputPathType == OsgiOutputPath);
     myPlaceInThisPathRadioButton.setSelected(outputPathType == SpecificOutputPath);
 
-    // split into name and path
-    completeOutputPath = completeOutputPath.replace('\\', '/');
-    int idx = completeOutputPath.lastIndexOf('/');
-    String path;
-    String name;
-    if (idx != -1) {
-      path = completeOutputPath.substring(0, idx);
-      name = completeOutputPath.substring(idx + 1);
-    }
-    else {
-      path = "";
-      name = completeOutputPath;
-    }
-    myJarFileTextField.setText(name);
+
+    myJarFileTextField.setText(configuration.getJarFileName());
     if (outputPathType == SpecificOutputPath) {
-      myJarOutputPathChooser.setText(path);
+      myJarOutputPathChooser.setText(configuration.getJarFilePath());
     }
     else {
       myJarOutputPathChooser.setText("");

@@ -25,14 +25,21 @@
 
 package org.osmorc.settings;
 
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
+import org.osmorc.facet.OsmorcFacet;
+import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 
 import javax.swing.*;
@@ -52,6 +59,7 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
   private JCheckBox createFrameworkInstanceModule;
   private JComboBox defaultManifestFileLocation;
   private TextFieldWithBrowseButton bundleOutputPath;
+  private JButton applyToAllButton;
   private Project myProject;
 
   public ProjectSettingsEditorComponent(Project project) {
@@ -84,6 +92,13 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
         onOutputPathSelect();
       }
     });
+
+    applyToAllButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        onApplyToAllClick();
+      }
+    });
     ApplicationSettings.getInstance().addApplicationSettingsListener(this);
   }
 
@@ -98,6 +113,35 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
       bundleOutputPath.setText(virtualFiles[0].getPath());
     }
   }
+
+
+  private void onApplyToAllClick() {
+    final Application application = ApplicationManager.getApplication();
+    application.runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        Module[] modules = ModuleManager.getInstance(myProject).getModules();
+        for (Module module : modules) {
+          OsmorcFacet facet = OsmorcFacet.getInstance(module);
+          if (facet != null) {
+            OsmorcFacetConfiguration facetConfiguration = facet.getConfiguration();
+            facetConfiguration
+              .setJarFileLocation(facetConfiguration.getJarFileName(), OsmorcFacetConfiguration.OutputPathType.OsgiOutputPath);
+          }
+        }
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            Messages.showMessageDialog(myProject, "The output path has been applied to all OSGi facets in the current project.",
+                                       "Output path applied",
+                                       Messages.getInformationIcon());
+
+          }
+        });
+      }
+    });
+  }
+
 
   public void applyTo(ProjectSettings settings) {
     settings.setCreateFrameworkInstanceModule(createFrameworkInstanceModule.isSelected());
