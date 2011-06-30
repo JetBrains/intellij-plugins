@@ -139,12 +139,10 @@ public class Server implements ResourceBundleProvider {
     throw new Error("Burn in hell, Adobe.");
   }
 
-  public function getResourceBundle(locale:String, bundleName:String):Dictionary {
+  public function getResourceBundle(project:Object, locale:String, bundleName:String):Dictionary {
     try {
       socket.writeByte(ServerMethod.getResourceBundle);
-      var project:Project = ProjectUtil.getProjectForActiveWindow();
-      // todo MUST BE MODULE
-      writeProjectId(project);
+      writeProjectId(Project(project));
       socket.writeUTF(locale);
       socket.writeUTF(bundleName);
       socket.flush();

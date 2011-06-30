@@ -102,8 +102,11 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
   }
   
   private function closeTab():void {
-    if (closeButtonRelatedRenderer.selected && segmentedControl.dataProvider.length == 1) {
-      closeButtonRelatedRenderer.clearSelected(this);
+    if (closeButtonRelatedRenderer.selected) {
+      if (segmentedControl.dataProvider.length == 1) {
+        closeButtonRelatedRenderer.clearSelected(this);
+      }
+      closeButtonRelatedRenderer.clearSelectedLabel();
     }
     
     segmentedControl.dataProvider.removeItemAt(closeButtonRelatedRenderer.itemIndex);

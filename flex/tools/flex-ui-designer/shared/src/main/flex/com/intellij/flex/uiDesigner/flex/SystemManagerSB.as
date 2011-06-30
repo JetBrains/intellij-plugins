@@ -19,7 +19,7 @@ public interface SystemManagerSB {
 
   function get stage():Stage;
 
-  function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler, resourceBundleProvider:ResourceBundleProvider,
+  function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,
                 mainFocusManager:MainFocusManagerSB):void;
 
   function removeEventHandlers():void;
@@ -29,5 +29,9 @@ public interface SystemManagerSB {
   function deactivated():void;
 
   function activated():void;
+
+  function get sharedInitialized():Boolean;
+
+  function initShared(stage:Stage, project:Object, resourceBundleProvider:ResourceBundleProvider):void;
 }
 }

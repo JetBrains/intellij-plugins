@@ -80,23 +80,26 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   private const implementations:Dictionary = new Dictionary();
   private var mainFocusManager:MainFocusManagerSB;
 
-  public function init(moduleFactory:Object, stage:Stage, uiErrorHandler:UiErrorHandler, resourceBundleProvider:ResourceBundleProvider,
-                       mainFocusManager:MainFocusManagerSB):void {
-    this.mainFocusManager = mainFocusManager;
+  public function get sharedInitialized():Boolean {
+    return UIComponentGlobals.layoutManager != null;
+  }
+
+  public function initShared(stage:Stage, project:Object, resourceBundleProvider:ResourceBundleProvider):void {
+    UIComponentGlobals.designMode = true;
+    UIComponentGlobals.catchCallLaterExceptions = true;
+    SystemManagerGlobals.topLevelSystemManagers[0] = new TopLevelSystemManager(stage);
+
+    Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManager);
     var layoutManager:LayoutManager = LayoutManager(UIComponentGlobals.layoutManager);
-    if (layoutManager == null) {
-      UIComponentGlobals.designMode = true;
-      UIComponentGlobals.catchCallLaterExceptions = true;
-      SystemManagerGlobals.topLevelSystemManagers[0] = new TopLevelSystemManager(stage);
+    layoutManager = new LayoutManager(stage.getChildAt(0), uiErrorHandler);
+    UIComponentGlobals.layoutManager = layoutManager;
 
-      Singleton.registerClass(LAYOUT_MANAGER_FQN, LayoutManager);
-      layoutManager = new LayoutManager(stage.getChildAt(0), uiErrorHandler);
-      UIComponentGlobals.layoutManager = layoutManager;
+    new ResourceManager(project, resourceBundleProvider);
+  }
 
-      new ResourceManager(resourceBundleProvider);
-    }
-
-    layoutManager.waitFrame();
+  public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler, mainFocusManager:MainFocusManagerSB):void {
+    this.mainFocusManager = mainFocusManager;
+    LayoutManager(UIComponentGlobals.layoutManager).waitFrame();
 
     this.uiErrorHandler = uiErrorHandler;
     addRealEventListener(INITIALIZE_ERROR_EVENT_TYPE, uiInitializeOrCallLaterErrorHandler);

@@ -64,6 +64,10 @@ internal class EditorTabLabelRenderer extends LabeledItemRenderer {
     tabViewSkin.borderShape.graphics.clear();
     labelHelper.container = null;
   }
+
+  public function clearSelectedLabel():void {
+    labelHelper.container = null;
+  }
   
   private function drawSelected(tabViewSkin:EditorTabViewSkin, w:Number):void {
     labelHelper.container = tabViewSkin;
