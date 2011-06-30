@@ -51,8 +51,11 @@ import mx.styles.StyleManager;
 
 use namespace mx_internal;
 
-// must be IFocusManagerContainer, it only way how UIComponent can find focusManager (see UIComponent.focusManager)
+// must be IFocusManagerContainer, it is only way how UIComponent can find focusManager (see UIComponent.focusManager)
 public class SystemManager extends Sprite implements ISystemManager, SystemManagerSB, IFocusManagerContainer {
+  // link
+  ElementUtil;
+
   private static const INITIALIZE_ERROR_EVENT_TYPE:String = "initializeError";
 
   private static const skippedEvents:Dictionary = new Dictionary();

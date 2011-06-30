@@ -2,7 +2,7 @@
   <fx:Script><![CDATA[
     import cocoa.ScrollPolicy;
 
-    public function set element(value:DisplayObject):void {
+    public function set element(value:Object):void {
       updateData(value);
     }
 

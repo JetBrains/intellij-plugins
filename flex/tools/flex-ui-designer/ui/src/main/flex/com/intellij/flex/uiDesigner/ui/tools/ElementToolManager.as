@@ -3,7 +3,7 @@ import org.flyti.plexus.Injectable;
 
 public class ElementToolManager implements Injectable {
   private var tools:Vector.<Tool> = new <Tool>[new SelectionKnobsTool()];
-  
+
   private var _toolContainer:ElementToolContainer;
   public function set toolContainer(value:ElementToolContainer):void {
     assert(_toolContainer == null);

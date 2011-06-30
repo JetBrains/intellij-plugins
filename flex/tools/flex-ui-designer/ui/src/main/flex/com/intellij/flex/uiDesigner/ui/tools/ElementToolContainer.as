@@ -1,8 +1,8 @@
 package com.intellij.flex.uiDesigner.ui.tools {
-import cocoa.Insets;
 import cocoa.LayoutlessContainer;
 
-import flash.display.DisplayObject;
+import com.intellij.flex.uiDesigner.Document;
+
 import flash.events.Event;
 import flash.geom.Point;
 
@@ -12,16 +12,18 @@ import org.flyti.plexus.Injectable;
 
 public class ElementToolContainer extends LayoutlessContainer implements Injectable {
   private static var sharedPoint:Point = new Point();
-  
-  private var insets:Insets;
-  private var element:DisplayObject;
-  
-  private var oldX:Number;
-  private var oldY:Number;
+
+  private var element:Object;
 
   public function ElementToolContainer() {
     includeInLayout = false;
     mouseEnabled = false;
+  }
+
+  private var elementUtilClass:Class;
+  //noinspection JSUnusedGlobalSymbols
+  public function set elementDocument(value:Document):void {
+    elementUtilClass = value == null ? null : value.module.getClass("com.intellij.flex.uiDesigner.flex.ElementUtil");
   }
   
   private var _elementLayoutChangeListeners:Vector.<ElementLayoutChangeListener>;
@@ -29,56 +31,53 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
     _elementLayoutChangeListeners = value;
   }
 
-  public function setOffset(insets:Insets):void {
-    this.insets = insets;
-  }
+  //public function setOffset(insets:Insets):void {
+  //  this.insets = insets;
+  //}
 
   public function attach(untypedElement:Object):void {
-    this.element = DisplayObject(untypedElement);
-    element.addEventListener(Event.RENDER, renderHandler);
-    
-    moveHandler();
+    this.element = untypedElement;
+    addEventListener(Event.RENDER, renderHandler);
 
-    var w:Number = untypedElement.getExplicitOrMeasuredWidth();
-    var h:Number = untypedElement.getExplicitOrMeasuredHeight();
-    updateSize(w, h);
+    getPosition();
+    updatePosition();
+
+    elementUtilClass["getSize"](element, sharedPoint);
+    updateSize(sharedPoint.x, sharedPoint.y);
   }
 
   private function renderHandler(event:Event):void {
-    sharedPoint.x = element.x;
-    sharedPoint.y = element.y;
-    
-    if (oldX != sharedPoint.x || oldY != sharedPoint.y) {
-      moveHandler();
+    getPosition();
+    if (x != sharedPoint.x) {
+      x = sharedPoint.x;
     }
-    
-    var o:Object = element;
-    var w:Number = o.getExplicitOrMeasuredWidth();
-    var h:Number = o.getExplicitOrMeasuredHeight();
-    if (width != w || height != h) {
-      updateSize(w, h);
+    if (y != sharedPoint.y) {
+      y = sharedPoint.y;
+    }
+
+    elementUtilClass["getSize"](element, sharedPoint);
+    if (width != sharedPoint.x || height != sharedPoint.y) {
+      updateSize(sharedPoint.x, sharedPoint.y);
     }
   }
   
   public function detach():void {
-    element.removeEventListener(Event.RENDER, renderHandler);
+    removeEventListener(Event.RENDER, renderHandler);
     element = null;
   }
 
-  private function moveHandler():void {
-    sharedPoint.x = element.x;
-    sharedPoint.y = element.y;
-    
-    oldX = sharedPoint.x;
-    oldY = sharedPoint.y;
-   
+  private function getPosition():void {
+    elementUtilClass["getPosition"](element, sharedPoint);
+
     sharedPoint = element.parent.localToGlobal(sharedPoint);
     sharedPoint = parent.globalToLocal(sharedPoint);
-    
+  }
+
+  private function updatePosition():void {
     x = sharedPoint.x;
     y = sharedPoint.y;
   }
-  
+
   private function updateSize(w:Number, h:Number):void {
     setActualSize(w, h);
     for each (var elementLayoutChangeListener:ElementLayoutChangeListener in _elementLayoutChangeListeners) {

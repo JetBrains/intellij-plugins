@@ -12,8 +12,6 @@ import org.flyti.plexus.Injectable;
 
 public class ElementManager extends EventDispatcher implements Injectable {
   private var skinClass:Class;
-  private var iUIComponentClass:Class;
-  private var skinnableContainerClass:Class;
 
   private var _element:Object;
   [Bindable(event="elementChanged")]
@@ -42,18 +40,14 @@ public class ElementManager extends EventDispatcher implements Injectable {
     _document = value;
     if (_document == null) {
       skinClass = null;
-      iUIComponentClass = null;
-      skinnableContainerClass = null;
     }
     else {
       _document.systemManager.addRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
       _document.systemManager.addRealEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
 
       skinClass = _document.module.getClass("spark.components.supportClasses.Skin");
-      iUIComponentClass = _document.module.getClass("mx.core.IUIComponent");
-      skinnableContainerClass = _document.module.context.getClassIfExists("spark.components.SkinnableContainer");
     }
-    
+
     element = null;
   }
 
@@ -64,7 +58,7 @@ public class ElementManager extends EventDispatcher implements Injectable {
   }
 
   private function mouseDownHandler(event:MouseEvent):void {
-    var object:Object = findComponent(event.target);
+    var object:Object = findComponent(event);
     if (_element != object) {
       //if (object is InteractiveObject) {
       //  InteractiveObject(object).stage.focus = InteractiveObject(object);
@@ -74,30 +68,12 @@ public class ElementManager extends EventDispatcher implements Injectable {
     }
   }
 
-  private function findComponent(object:Object):Object {
-    while (object != null && (object is skinClass || !(object is iUIComponentClass))) {
-      object = object.parent;
-    }
-
-    if (object == null) {
-      return null;
-    }
-
-    var document:Object;
-    while ((document = object.document) is skinClass &&
-            (skinnableContainerClass == null || !("hostComponent" in document) || !(document.hostComponent is skinnableContainerClass))) {
-      object = document.parent;
-    }
-
-    //if (object != null && object.parent is skinClass) {
-    //  object = object.parent.parent;
-    //}
-
-    return object;
+  private function findComponent(event:MouseEvent):Object {
+    return _document.module.getClass("com.intellij.flex.uiDesigner.flex.ElementUtil")["getObjectUnderPoint"](_document.systemManager.stage, event.stageX, event.stageY);
   }
 
   public function isSkin(element:Object):Boolean {
     return element is skinClass;
   }
 }
-}
+} 

@@ -32,6 +32,7 @@ public class MxmlTest extends BaseTestCase {
       RuntimeError();
       CannotFindDefaultProperty();
       AbstractClass();
+      MouseSelectionTest();
     }
   }
   
@@ -137,6 +138,9 @@ public class MxmlTest extends BaseTestCase {
 
   public function AbstractClass():void {
     assertThat(app, [{label: "before invalid control"}, {label: "after invalid control"}]);
+  }
+
+  public function MouseSelectionTest():void {
   }
 }
 }

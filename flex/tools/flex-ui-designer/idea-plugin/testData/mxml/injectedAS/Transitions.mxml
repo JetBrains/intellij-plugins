@@ -38,6 +38,23 @@
            width.Two="200" height.Two="210"
            click="currentState='Two'">
       <Label fontSize="24" text="Two"/>
+      <Rect width="100%" height="50">
+        <fill>
+          <RadialGradient>
+            <GradientEntry color="0xcccccc" ratio="0.00" alpha="0.5"/>
+            <GradientEntry color="0x999999" ratio="0.33" alpha="0.5"/>
+            <GradientEntry color="0x666666" ratio="0.66" alpha="0.5"/>
+          </RadialGradient>
+        </fill>
+        <stroke>
+          <LinearGradientStroke weight="4">
+            <GradientEntry color="0xc5c551" ratio="0.00" alpha="0.5"/>
+            <GradientEntry color="0xfefe24" ratio="0.33" alpha="0.5"/>
+            <GradientEntry color="0xecec21" ratio="0.66" alpha="0.5"/>
+          </LinearGradientStroke>
+        </stroke>
+      </Rect>
+
     </Panel>
 
     <Panel id="p3" title="Three"

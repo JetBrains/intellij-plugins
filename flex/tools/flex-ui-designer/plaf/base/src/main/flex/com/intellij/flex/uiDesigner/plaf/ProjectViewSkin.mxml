@@ -36,7 +36,7 @@
       var editorTabViewContentInsets:Insets = TabViewSkin(editorTabViewUI).contentInsets;
       editorToolbar.skin.setActualSize(editorTabViewWidth - editorTabViewContentInsets.width, 25);
 
-      elementToolContainer.setOffset(editorTabViewContentInsets);
+      //elementToolContainer.setOffset(editorTabViewContentInsets);
 
       var g:Graphics = graphics;
       g.clear();

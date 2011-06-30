@@ -1,0 +1,91 @@
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:s="cocoa.*">
+  <ToggleButton label="Toggle me"/>
+  <CheckBox label="Check mef"/>
+  <ComboBox>
+    <ArrayCollection>
+      <fx:String>RubyMine</fx:String>
+    </ArrayCollection>
+  </ComboBox>
+  <ButtonBar>
+    <ArrayCollection>
+      <fx:String>MPS</fx:String>
+    </ArrayCollection>
+  </ButtonBar>
+
+  <DataGroup itemRenderer="spark.components.ButtonBarButton">
+    <ArrayCollection>
+      <fx:String>Flash</fx:String>
+    </ArrayCollection>
+    <layout>
+      <ButtonBarHorizontalLayout/>
+    </layout>
+  </DataGroup>
+
+  <Group width="200">
+    <Rect width="200" height="50">
+      <fill>
+        <RadialGradient>
+          <GradientEntry color="0xcccccc" ratio="0.00" alpha="0.5"/>
+          <GradientEntry color="0x999999" ratio="0.33" alpha="0.5"/>
+          <GradientEntry color="0x666666" ratio="0.66" alpha="0.5"/>
+        </RadialGradient>
+      </fill>
+      <stroke>
+        <LinearGradientStroke weight="4">
+          <GradientEntry color="0xc5c551" ratio="0.00" alpha="0.5"/>
+          <GradientEntry color="0xfefe24" ratio="0.33" alpha="0.5"/>
+          <GradientEntry color="0xecec21" ratio="0.66" alpha="0.5"/>
+        </LinearGradientStroke>
+      </stroke>
+    </Rect>
+  </Group>
+
+  <NumericStepper id="nstepper1" value="6" stepSize="2" maximum="100"/>
+  <BorderContainer borderColor="blue" borderWeight="2" borderStyle="inset" borderVisible="true" cornerRadius="4" dropShadowVisible="true" borderAlpha="0.5" backgroundColor="#6666ff" horizontalCenter="0"/>
+
+  <TileGroup horizontalGap="1" verticalGap="1">
+    <Button label="1" width="50" height="50"/>
+    <Button label="2" width="50" height="50"/>
+  </TileGroup>
+
+  <mx:TextArea width="100" height="33"/>
+
+  <Panel title="One" width="100" height="100">
+    <Rect width="100%" height="100%">
+      <fill>
+        <SolidColor color="gray"/>
+      </fill>
+    </Rect>
+    <Label fontSize="24" text="Content"/>
+  </Panel>
+
+  <Panel title="One" width="100" height="100">
+    <Rect width="100%" height="100%">
+      <fill>
+        <SolidColor color="gray"/>
+      </fill>
+    </Rect>
+    <Rect left="10" bottom="10" width="100%" height="100%">
+      <fill>
+        <SolidColor color="green"/>
+      </fill>
+    </Rect>
+  </Panel>
+
+  <mx:TabNavigator width="200" height="200">
+    <NavigatorContent label="Tab 1">
+      <layout>
+        <BasicLayout/>
+      </layout>
+      <Rect width="20" height="20" top="0" left="0">
+        <stroke>
+          <SolidColorStroke weight="1" color="0x880000"/>
+        </stroke>
+        <fill>
+          <SolidColor alpha="1" color="0x008800"/>
+        </fill>
+      </Rect>
+      <Button label="Button" top="0" right="0"/>
+    </NavigatorContent>
+  </mx:TabNavigator>
+</VGroup>
