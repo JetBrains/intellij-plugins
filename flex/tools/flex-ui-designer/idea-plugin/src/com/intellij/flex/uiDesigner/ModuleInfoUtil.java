@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -107,7 +108,20 @@ public class ModuleInfoUtil {
 
     @Override
     public void run() {
-      final GlobalSearchScope moduleScope = moduleInfo.getModule().getModuleScope(false);
+      GlobalSearchScope moduleScope;
+      // todo delete after idea 10.5 support will be discontinued
+      try {
+        moduleScope = moduleInfo.getModule().getModuleScope(false);
+      }
+      catch (NoSuchMethodError e) {
+        try {
+          moduleScope = ModuleWithDependenciesScope.class.getConstructor(Module.class, boolean.class, boolean.class, boolean.class, boolean.class).newInstance(moduleInfo.getModule(), true, false, false, false);
+        }
+        catch (Exception er) {
+          throw new RuntimeException(er);
+        }
+      }
+      
       final GlobalSearchScope moduleWithDependenciesAndLibrariesScope =
         moduleInfo.getModule().getModuleWithDependenciesAndLibrariesScope(false);
       if (flexSdkVersion.charAt(0) > '3') {

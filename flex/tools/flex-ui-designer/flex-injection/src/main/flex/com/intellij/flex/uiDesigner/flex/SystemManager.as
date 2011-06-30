@@ -84,7 +84,8 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     return UIComponentGlobals.layoutManager != null;
   }
 
-  public function initShared(stage:Stage, project:Object, resourceBundleProvider:ResourceBundleProvider):void {
+  public function initShared(stage:Stage, project:Object, resourceBundleProvider:ResourceBundleProvider,
+                             uiErrorHandler:UiErrorHandler):void {
     UIComponentGlobals.designMode = true;
     UIComponentGlobals.catchCallLaterExceptions = true;
     SystemManagerGlobals.topLevelSystemManagers[0] = new TopLevelSystemManager(stage);

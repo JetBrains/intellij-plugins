@@ -32,6 +32,7 @@ public interface SystemManagerSB {
 
   function get sharedInitialized():Boolean;
 
-  function initShared(stage:Stage, project:Object, resourceBundleProvider:ResourceBundleProvider):void;
+  function initShared(stage:Stage, project:Object, resourceBundleProvider:ResourceBundleProvider,
+                      uiErrorHandler:UiErrorHandler):void;
 }
 }

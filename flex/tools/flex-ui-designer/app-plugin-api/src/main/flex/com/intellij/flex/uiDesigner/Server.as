@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
 
 import flash.display.BitmapData;
+import flash.errors.IllegalOperationError;
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
@@ -141,6 +142,11 @@ public class Server implements ResourceBundleProvider {
 
   public function getResourceBundle(project:Object, locale:String, bundleName:String):Dictionary {
     try {
+      if (resultReadyFile.exists) {
+        UncaughtErrorManager.instance.handleError(new IllegalOperationError("resultReadyFile file exists. Why? http://youtrack.jetbrains.net/issue/IDEA-71568"));
+        resultReadyFile.deleteFile();
+      }
+
       socket.writeByte(ServerMethod.getResourceBundle);
       writeProjectId(Project(project));
       socket.writeUTF(locale);

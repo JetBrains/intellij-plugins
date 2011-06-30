@@ -15,6 +15,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.StringBuilderSpinAllocator;
@@ -186,7 +187,33 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         try {
           PropertiesFile resourceBundleFile =
             LibraryManager.getInstance().getResourceBundleFile(reader.readUTF(), reader.readUTF(), projectInfo);
-          FileOutputStream fileOut = new FileOutputStream(resultFile);
+
+          FileOutputStream fileOut = null;
+          // IDEA-71568
+          if (SystemInfo.isWindows) {
+            for (int i = 0; i < 2; i++) {
+              try {
+                fileOut = new FileOutputStream(resultFile);
+                break;
+              }
+              catch (FileNotFoundException e) {
+                try {
+                  Thread.sleep(10);
+                }
+                catch (InterruptedException ignored) {
+                }
+              }
+            }
+
+            if (fileOut == null) {
+              FlexUIDesignerApplicationManager.LOG.error("fileOut null due to FileNotFoundException");
+              return;
+            }
+          }
+          else {
+            fileOut = new FileOutputStream(resultFile);
+          }
+
           try {
             if (resourceBundleFile == null) {
               fileOut.write(Amf3Types.NULL);

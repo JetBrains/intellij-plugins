@@ -3,7 +3,7 @@
   <description>Provides editing support for Flex UI (currently, only view)</description>
   <version>0.5.5</version>
   <vendor logo="/general/ijLogo.png">JetBrains</vendor>
-  <idea-version since-build="108.465"/>
+  <idea-version since-build="107.322"/>
 
   <resource-bundle>messages.FlexUIDesignerBundle</resource-bundle>
 
