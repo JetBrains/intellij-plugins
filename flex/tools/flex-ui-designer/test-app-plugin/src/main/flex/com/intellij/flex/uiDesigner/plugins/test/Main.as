@@ -1,5 +1,5 @@
 package com.intellij.flex.uiDesigner.plugins.test {
-import cocoa.ApplicationManager;
+import org.jetbrains.ApplicationManager;
 
 import com.intellij.flex.uiDesigner.SocketDataHandler;
 import com.intellij.flex.uiDesigner.SocketManager;

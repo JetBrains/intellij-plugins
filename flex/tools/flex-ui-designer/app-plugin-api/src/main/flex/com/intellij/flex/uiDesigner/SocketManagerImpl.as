@@ -7,9 +7,6 @@ import flash.utils.Dictionary;
 
 registerClassAlias("s", String);
 
-/**
- * WARNING: THIS CLASS MUST BE HERE: IntelliJ IDEA can debug classes only in designer module (and listed in Main), but not in any other, like app-plugin-api
- */
 public class SocketManagerImpl implements SocketManager {
   protected var socket:Socket;
   protected var errorSocket:Socket;

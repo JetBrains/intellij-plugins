@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml {
 import com.intellij.flex.uiDesigner.BitmapDataManager;
 import com.intellij.flex.uiDesigner.DocumentFactory;
+import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.ModuleContext;
@@ -362,7 +363,7 @@ public final class MxmlReader implements DocumentReader {
     var id:int = AmfUtil.readUInt29(input);
     var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {
-      var documentFactory:DocumentFactory = ModuleContextEx(moduleContext).documentFactoryManager.get2(id, DocumentFactory(context));
+      var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance(ModuleContextEx(moduleContext).project).get2(id, DocumentFactory(context));
       factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContext(documentFactory, this, styleManager));
       moduleContext.putDocumentFactory(id, factory);
     }

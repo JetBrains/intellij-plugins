@@ -11,7 +11,7 @@
   <HGroup gap="33">
     <VGroup>
       <Button label="Hello"/>
-      <Button label="Go">
+      <Button label="Go" enabled="false">
         <fontSize>30</fontSize>
       </Button>
       <ToggleButton label="Toggle me"/>

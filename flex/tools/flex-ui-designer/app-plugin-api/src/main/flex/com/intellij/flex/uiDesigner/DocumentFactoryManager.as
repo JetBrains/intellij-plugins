@@ -1,6 +1,4 @@
 package com.intellij.flex.uiDesigner {
-import flash.errors.IllegalOperationError;
-
 public class DocumentFactoryManager {
   private const factories:Vector.<DocumentFactory> = new Vector.<DocumentFactory>();
   
@@ -8,6 +6,10 @@ public class DocumentFactoryManager {
 
   public function DocumentFactoryManager(server:Server) {
     this.server = server;
+  }
+
+  public static function getInstance(project:Project):DocumentFactoryManager {
+    return DocumentFactoryManager(project.getComponent(DocumentFactoryManager));
   }
 
   public function get(id:int):DocumentFactory {
@@ -71,14 +73,24 @@ public class DocumentFactoryManager {
     return id;
   }
 
-  public function jumpToObjectDeclaration(object:Object, document:Document):void {
+  //noinspection JSMethodCanBeStatic
+  public function findElementAddress(object:Object, document:Document):ElementAddress {
     var factory:DocumentFactory = document.documentFactory;
     var textOffset:int = factory.getObjectDeclarationPosition(object);
     if (textOffset == -1) {
       trace("Can't find document for object");
+      return null;
     }
+    else {
+      return new ElementAddress(factory, textOffset);
+    }
+  }
 
-    server.openDocument(factory.module, factory, textOffset);
+  public function jumpToObjectDeclaration(object:Object, document:Document):void {
+    var elementAddress:ElementAddress = findElementAddress(object, document);
+    if (elementAddress != null) {
+      server.openDocument(elementAddress.factory.module, elementAddress.factory, elementAddress.offset);
+    }
   }
 }
 }

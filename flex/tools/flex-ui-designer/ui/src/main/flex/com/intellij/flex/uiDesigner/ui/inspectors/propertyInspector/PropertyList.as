@@ -14,7 +14,6 @@ import flash.display.DisplayObject;
 public class PropertyList extends AbstractTitledBlockItemRenderer {
   private const tableView:TableView = new TableView();
   private var source:MyTableViewDataSource;
-  private var modifier:Modifier;
 
   //private function createGridColumn(headerText:String):GridColumn {
   //  var column:GridColumn = new GridColumn();
@@ -24,17 +23,17 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
   //}
 
   private var dataChanged:Boolean;
-  private var _object:Object;
+  private var _element:Object;
   public function get data():Object {
-    return _object;
+    return _element;
   }
 
   public function set data(value:Object):void {
-    if (value == _object) {
+    if (value == _element) {
       return;
     }
     
-    _object = value;
+    _element = value;
     dataChanged = true;
     invalidateProperties();
   }
@@ -59,8 +58,7 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
     skin.y = border.layoutHeight;
     addChild(skin);
 
-    modifier = new Modifier();
-    new Interactor(tableView, modifier, valueRendererManager);
+    new Interactor(tableView, valueRendererManager);
   }
 
   override protected function measure():void {
@@ -72,9 +70,7 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
 
     if (dataChanged) {
       dataChanged = false;
-      source.update(_object);
-
-      modifier.object = _object;
+      source.update(_element);
     }
   }
 
@@ -89,4 +85,3 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
   }
 }
 }
-

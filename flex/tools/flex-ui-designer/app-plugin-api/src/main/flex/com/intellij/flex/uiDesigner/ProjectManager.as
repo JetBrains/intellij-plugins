@@ -7,7 +7,7 @@ import flash.desktop.NativeApplication;
 import flash.events.Event;
 import flash.events.NativeWindowBoundsEvent;
 
-import org.flyti.plexus.PlexusManager;
+import org.jetbrains.actionSystem.DataManager;
 
 public class ProjectManager {
   private const items:Vector.<Project> = new Vector.<Project>(2);
@@ -41,6 +41,8 @@ public class ProjectManager {
     addNativeWindowListeners(window);
     window.title = project.name;
     project.window = window;
+
+    DataManager.instance.registerDataContext(window.stage, new ProjectDataContext(project));
   }
 
   protected function addNativeWindowListeners(window:DocumentWindow):void {
@@ -57,7 +59,7 @@ public class ProjectManager {
     var project:Project = items[id];
     assert(project != null);
 
-    
+    DataManager.instance.unregisterDataContext(project.window.stage);
     if (project.window != null) {
       removeNativeWindowListeners(project.window);
       project.window.close();
@@ -84,7 +86,7 @@ public class ProjectManager {
     for (var i:int = 0, n:int = items.length; i < n; i++) {
       var project:Project = items[i];
       if (project.window == window) {
-        Server(PlexusManager.instance.container.lookup(Server)).saveProjectWindowBounds(project, window.bounds);
+        Server.instance.saveProjectWindowBounds(project, window.bounds);
         return;
       }
     }
@@ -100,6 +102,7 @@ public class ProjectManager {
       var project:Project = items[i];
       if (project.window == window) {
         removeNativeWindowListeners(window);
+        DataManager.instance.unregisterDataContext(window.stage);
         closeProject2(i, project);
         Server.instance.closeProject(project);
         return;
@@ -133,4 +136,35 @@ public class ProjectManager {
     return project;
   }
 }
+}
+
+import com.intellij.flex.uiDesigner.DocumentManager;
+import com.intellij.flex.uiDesigner.ElementManager;
+import com.intellij.flex.uiDesigner.PlatformDataKeys;
+import com.intellij.flex.uiDesigner.Project;
+
+import org.jetbrains.actionSystem.DataContext;
+
+class ProjectDataContext implements DataContext {
+  private var project:Project;
+
+  public function ProjectDataContext(project:Project) {
+    this.project = project;
+  }
+
+  public function getData(dataId:String):* {
+    switch (dataId) {
+      case PlatformDataKeys.PROJECT.name:
+        return project;
+
+      case PlatformDataKeys.DOCUMENT.name:
+        return DocumentManager(project.getComponent(DocumentManager)).document;
+
+      case PlatformDataKeys.ELEMENT.name:
+        return ElementManager(project.getComponent(ElementManager)).element;
+
+      default:
+        return null;
+    }
+  }
 }

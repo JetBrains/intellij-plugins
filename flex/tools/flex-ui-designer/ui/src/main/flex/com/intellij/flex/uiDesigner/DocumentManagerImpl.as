@@ -1,5 +1,5 @@
 package com.intellij.flex.uiDesigner {
-import cocoa.ApplicationManager;
+import org.jetbrains.ApplicationManager;
 import cocoa.DocumentWindow;
 
 import com.intellij.flex.uiDesigner.css.CssReader;

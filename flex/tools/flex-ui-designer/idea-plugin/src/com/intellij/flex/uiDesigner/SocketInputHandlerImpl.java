@@ -10,7 +10,12 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.lang.properties.psi.Property;
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.module.Module;
@@ -18,6 +23,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,11 +153,66 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         ProjectWindowBounds.save(readProject(), reader);
         break;
 
+      case ServerMethod.SET_PROPERTY:
+        setProperty();
+        break;
+
       default:
         throw new IllegalArgumentException("unknown client command: " + command);
     }
 
     return true;
+  }
+
+  private void setProperty() throws IOException {
+    Project project = readProject();
+    final VirtualFile file = DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort());
+    Document document = FileDocumentManager.getInstance().getDocument(file);
+    assert document != null;
+    final XmlFile psiFile;
+    AccessToken token = ReadAction.start();
+    try {
+      psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
+    }
+    finally {
+      token.finish();
+    }
+
+    assert psiFile != null;
+    final XmlTag rootTag = psiFile.getRootTag();
+    assert rootTag != null;
+    final int offset = reader.readInt() - rootTag.getStartOffsetInParent();
+
+    final String name = reader.readUTF();
+    final String value;
+    switch (reader.read()) {
+      case Amf3Types.TRUE:
+        value = "true";
+        break;
+
+      case Amf3Types.FALSE:
+        value = "false";
+        break;
+
+      default:
+        throw new IllegalArgumentException("unknown value type");
+    }
+
+    final XmlTag tag = PsiTreeUtil.getParentOfType(rootTag.findElementAt(offset), XmlTag.class);
+    assert tag != null;
+
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        AccessToken token = WriteAction.start();
+        try {
+          tag.setAttribute(name, value);
+        }
+        finally {
+          token.finish();
+        }
+      }
+    });
   }
 
   private void openFile() throws IOException {

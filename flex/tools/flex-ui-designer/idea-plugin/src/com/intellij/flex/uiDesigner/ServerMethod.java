@@ -15,4 +15,6 @@ final class ServerMethod {
 
   public static final int getResourceBundle = 7;
   public static final int getBitmapData = 8;
+
+  public static final int SET_PROPERTY = 12;
 }

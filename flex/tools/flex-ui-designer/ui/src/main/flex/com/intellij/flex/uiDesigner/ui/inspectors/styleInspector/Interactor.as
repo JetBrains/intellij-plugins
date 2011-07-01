@@ -1,10 +1,10 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
+import com.intellij.flex.uiDesigner.ElementManager;
 import com.intellij.flex.uiDesigner.Module;
 import com.intellij.flex.uiDesigner.Server;
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.ui.CssElementFormat;
-import com.intellij.flex.uiDesigner.ui.ElementManager;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;

@@ -19,9 +19,6 @@ import org.flyti.plexus.PlexusManager;
 
 registerClassAlias("lsh", LocalStyleHolder);
 
-/**
- * WARNING: THIS CLASS MUST BE HERE: IntelliJ IDEA can debug classes only in designer module, but not in any other, like app-plugin-api
- */
 public class DefaultSocketDataHandler implements SocketDataHandler {
   private var projectManager:ProjectManager;
   private var libraryManager:LibraryManager;
@@ -185,7 +182,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   }
   
   private static function getDocumentFactoryManager(module:Module):DocumentFactoryManager {
-    return module.context.documentFactoryManager;
+    return DocumentFactoryManager.getInstance(module.project);
   }
   
   private static function getDocumentManager(module:Module):DocumentManager {

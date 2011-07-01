@@ -1,9 +1,12 @@
 <ComponentSet xmlns="plexus" xmlns:fx="http://ns.adobe.com/mxml/2009">
   <fx:Script><![CDATA[
-    import cocoa.ApplicationManager;
-
     import com.intellij.flex.uiDesigner.libraries.LibraryManager;
     import com.intellij.flex.uiDesigner.mxml.MxmlReader;
+    import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.Modifier;
+
+    import org.jetbrains.ApplicationManager;
+    import org.jetbrains.actionSystem.DataManager;
+    import org.jetbrains.actionSystem.DataManagerImpl;
     ]]></fx:Script>
   
   <Component role="{ApplicationManager}"/>
@@ -38,4 +41,10 @@
   <Component role="{Server}">
 		<Requirement role="{SocketManager}"/>
 	</Component>
+
+  <Component role="{Modifier}">
+    <Requirement role="{SocketManager}"/>
+  </Component>
+
+  <Component role="{DataManager}" implementation="{DataManagerImpl}"/>
 </ComponentSet>

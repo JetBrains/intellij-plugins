@@ -30,7 +30,7 @@ public class TestUncaughtErrorManager extends UncaughtErrorManager {
   }
 
   override protected function sendMessage(message:String, uiMessage:String = null):void {
-    socket.writeByte(ServerMethod.showError);
+    socket.writeByte(ServerMethod.SHOW_ERROR);
     socket.writeUTF(message);
     socket.flush();
   }

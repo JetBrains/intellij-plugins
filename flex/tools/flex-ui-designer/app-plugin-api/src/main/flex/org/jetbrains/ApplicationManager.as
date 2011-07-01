@@ -1,4 +1,4 @@
-package cocoa {
+package org.jetbrains {
 import org.flyti.plexus.PlexusManager;
 
 public final class ApplicationManager {

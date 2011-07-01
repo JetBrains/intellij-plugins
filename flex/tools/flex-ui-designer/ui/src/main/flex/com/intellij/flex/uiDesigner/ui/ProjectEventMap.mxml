@@ -8,6 +8,7 @@
     import com.intellij.flex.uiDesigner.DocumentManager;
     import com.intellij.flex.uiDesigner.DocumentManagerImpl;
     import com.intellij.flex.uiDesigner.DocumentReader;
+    import com.intellij.flex.uiDesigner.ElementManager;
     import com.intellij.flex.uiDesigner.Server;
     import com.intellij.flex.uiDesigner.StatesBarManager;
     import com.intellij.flex.uiDesigner.libraries.LibraryManager;

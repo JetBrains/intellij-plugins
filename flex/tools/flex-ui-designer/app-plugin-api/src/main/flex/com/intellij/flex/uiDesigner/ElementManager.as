@@ -1,7 +1,4 @@
-package com.intellij.flex.uiDesigner.ui {
-import com.intellij.flex.uiDesigner.Document;
-import com.intellij.flex.uiDesigner.DocumentFactoryManager;
-
+package com.intellij.flex.uiDesigner {
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.KeyboardEvent;

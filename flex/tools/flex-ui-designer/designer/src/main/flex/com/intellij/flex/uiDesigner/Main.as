@@ -5,7 +5,7 @@ import cocoa.util.FileUtil;
 import com.intellij.flex.uiDesigner.libraries.QueueLoader;
 import com.intellij.flex.uiDesigner.plaf.ProjectViewSkin;
 import com.intellij.flex.uiDesigner.plaf.aqua.IdeaAquaLookAndFeel;
-import com.intellij.flex.uiDesigner.ui.ElementManager;
+import com.intellij.flex.uiDesigner.ElementManager;
 
 import flash.desktop.NativeApplication;
 import flash.display.Loader;

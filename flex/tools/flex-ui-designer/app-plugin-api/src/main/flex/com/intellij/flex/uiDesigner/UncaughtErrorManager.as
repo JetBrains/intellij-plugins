@@ -80,7 +80,7 @@ public class UncaughtErrorManager implements UiErrorHandler {
     catch (ignored:Error) {
     }
 
-    socket.writeByte(ServerMethod.showError);
+    socket.writeByte(ServerMethod.SHOW_ERROR);
 
     socket.writeUTF(userMessage == null ? "" : userMessage);
     socket.writeUTF(message);

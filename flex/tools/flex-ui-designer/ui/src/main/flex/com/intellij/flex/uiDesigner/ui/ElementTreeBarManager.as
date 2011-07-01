@@ -8,6 +8,7 @@ import cocoa.plaf.basic.CollectionHorizontalLayout;
 import cocoa.tableView.AbstractCollectionViewDataSource;
 import cocoa.tableView.TextRendererManager;
 
+import com.intellij.flex.uiDesigner.ElementManager;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 
 import flash.display.DisplayObjectContainer;

@@ -14,10 +14,6 @@ public final class ModuleContextImpl implements ModuleContextEx {
     _project = project;
   }
 
-  public function get documentFactoryManager():DocumentFactoryManager {
-    return DocumentFactoryManager(project.getComponent(DocumentFactoryManager));
-  }
-
   private var _librariesResolved:Boolean;
   public function get librariesResolved():Boolean {
     return _librariesResolved;

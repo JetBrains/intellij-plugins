@@ -4,13 +4,18 @@ import cocoa.plaf.basic.ButtonSkinInteraction;
 import cocoa.tableView.TableView;
 import cocoa.tableView.TextLineLinkedListEntry;
 
+import com.intellij.flex.uiDesigner.PlatformDataKeys;
+import com.intellij.flex.uiDesigner.Project;
+
+import flash.display.DisplayObject;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
+import org.jetbrains.actionSystem.DataContext;
+import org.jetbrains.actionSystem.DataManager;
+
 public class Interactor {
   private static var sharedPoint:Point;
-
-  private var modifier:Modifier;
 
   private var tableSkin:TableViewSkin;
 
@@ -20,8 +25,7 @@ public class Interactor {
   private var isOver:Boolean;
   private var valueRendererManager:ValueRendererManager;
 
-  public function Interactor(tableView:TableView, modifier:Modifier, valueRendererManager:ValueRendererManager) {
-    this.modifier = modifier;
+  public function Interactor(tableView:TableView, valueRendererManager:ValueRendererManager) {
     this.valueRendererManager = valueRendererManager;
 
     tableSkin = TableViewSkin(tableView.skin);
@@ -107,7 +111,8 @@ public class Interactor {
     if (rowIndex == currentRowIndex && columnIndex == currentColumnIndex) {
       entry.interaction.mouseUpHandler(event);
 
-      modifier.applyBoolean(valueRendererManager.getDescription(rowIndex), entry.checkbox.selected);
+      var dataContext:DataContext = DataManager.instance.getDataContext(DisplayObject(tableSkin));
+      Modifier(Project(PlatformDataKeys.PROJECT.getData(dataContext)).getComponent(Modifier)).applyBoolean(valueRendererManager.getDescription(rowIndex), entry.checkbox.selected, dataContext);
     }
 
     resetCurrentIndices();

@@ -27,7 +27,7 @@ public class Server implements ResourceBundleProvider {
   }
 
   public function goToClass(module:Module, className:String):void {
-    socket.writeByte(ServerMethod.goToClass);
+    socket.writeByte(ServerMethod.GO_TO_CLASS);
     writeModuleId(module);
     socket.writeUTF(className);
     socket.flush();
@@ -35,7 +35,7 @@ public class Server implements ResourceBundleProvider {
 
   // navigation for inline style in external file (for example, ButtonSkin in sparkskins.swc) is not supported
   public function resolveExternalInlineStyleDeclarationSource(module:Module, parentFQN:String, elementFQN:String, targetStyleName:String, declarations:Vector.<CssDeclaration>):void {
-    socket.writeByte(ServerMethod.resolveExternalInlineStyleDeclarationSource);
+    socket.writeByte(ServerMethod.RESOLVE_EXTERNAL_INLINE_STYLE_DECLARATION_SOURCE);
     writeModuleId(module);
     socket.writeUTF(parentFQN);
     socket.writeUTF(elementFQN);
@@ -58,7 +58,7 @@ public class Server implements ResourceBundleProvider {
   }
 
   public function openFile(module:Module, uri:String, textOffset:int):void {
-    socket.writeByte(ServerMethod.openFile);
+    socket.writeByte(ServerMethod.OPEN_FILE);
     writeProjectId(module.project);
     socket.writeUTF(uri);
     socket.writeInt(textOffset);
@@ -66,7 +66,7 @@ public class Server implements ResourceBundleProvider {
   }
 
   public function openDocument(module:Module, factory:DocumentFactory, textOffset:int):void {
-    socket.writeByte(ServerMethod.openDocument);
+    socket.writeByte(ServerMethod.OPEN_DOCUMENT);
     writeProjectId(module.project);
     socket.writeShort(factory.id);
     socket.writeInt(textOffset);
@@ -74,14 +74,14 @@ public class Server implements ResourceBundleProvider {
   }
 
   public function unregisterDocumentFactories(module:Module, deleted:Vector.<int>):void {
-    socket.writeByte(ServerMethod.unregisterDocumentFactories);
+    socket.writeByte(ServerMethod.UNREGISTER_DOCUMENT_FACTORIES);
     writeProjectId(module.project);
     socket.writeObject(deleted);
     socket.flush();
   }
 
   public function closeProject(project:Project):void {
-    socket.writeByte(ServerMethod.closeProject);
+    socket.writeByte(ServerMethod.CLOSE_PROJECT);
     writeProjectId(project);
     socket.flush();
   }
@@ -102,7 +102,7 @@ public class Server implements ResourceBundleProvider {
 
   public function getBitmapData(id:int):BitmapData {
     try {
-      socket.writeByte(ServerMethod.getBitmapData);
+      socket.writeByte(ServerMethod.GET_BITMAP_DATA);
       socket.writeShort(id);
       socket.flush();
 
@@ -147,7 +147,7 @@ public class Server implements ResourceBundleProvider {
         resultReadyFile.deleteFile();
       }
 
-      socket.writeByte(ServerMethod.getResourceBundle);
+      socket.writeByte(ServerMethod.GET_RESOURCE_BUNDLE);
       writeProjectId(Project(project));
       socket.writeUTF(locale);
       socket.writeUTF(bundleName);
@@ -184,7 +184,7 @@ public class Server implements ResourceBundleProvider {
   }
 
   public function saveProjectWindowBounds(project:Project, bounds:Rectangle):void {
-    socket.writeByte(ServerMethod.saveProjectWindowBounds);
+    socket.writeByte(ServerMethod.SAVE_PROJECT_WINDOW_BOUNDS);
     writeProjectId(project);
     socket.writeShort(bounds.x);
     socket.writeShort(bounds.y);
