@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSRecursiveElementVisitor;
 import com.intellij.lang.javascript.psi.JSReturnStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.validation.fixes.SetMethodReturnTypeFix;
+import com.intellij.lang.javascript.validation.fixes.ChangeTypeFix;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
@@ -43,16 +43,16 @@ public class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspection
       final ASTNode nameIdentifier = method.findNameIdentifier();
       if (nameIdentifier != null) {
 
-        LocalQuickFix[] fix = canFix(method) ? new LocalQuickFix[]{new SetMethodReturnTypeFix("void", method.getName())} : LocalQuickFix.EMPTY_ARRAY;
+        LocalQuickFix[] fix = canFix(method)
+                              ? new LocalQuickFix[]{
+          new ChangeTypeFix(method, "void", "javascript.fix.set.method.return.type")} : LocalQuickFix.EMPTY_ARRAY;
         holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testmethodreturntype.message"),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fix);
       }
     }
   }
 
-  private boolean canFix(JSFunction method) {
-    if (!SetMethodReturnTypeFix.isAvailable(method)) return false;
-
+  private static boolean canFix(JSFunction method) {
     final NonVoidReturnVisitor visitor = new NonVoidReturnVisitor(method);
     method.acceptChildren(visitor);
     return !visitor.hasNonVoidReturns();
