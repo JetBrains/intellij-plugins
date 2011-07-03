@@ -76,10 +76,13 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
   @NotNull
   @Override
   public String getDemoText() {
-    return "%{boolArray[123] == true ? this : 'nothing'}\n" +
+    return "%{booleanArray[3] == true ? this : 'nothing'}" +
         "\n" +
-        "%{ 1 shl 3 && 3 > 5}" +
-        "%{myAction.methodCall()}";
+        "%{ 1 shl 3 && 3 gt 5}" +
+        "\n" +
+        "%{myAction.method()}"+
+        "\n" +
+        "%{#myBigInteger * 452H}";
   }
 
   @Override
