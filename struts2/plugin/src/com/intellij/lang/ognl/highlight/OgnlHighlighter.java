@@ -15,7 +15,6 @@
 
 package com.intellij.lang.ognl.highlight;
 
-import com.intellij.lang.ognl.lexer.OgnlLexer;
 import com.intellij.lang.ognl.psi.OgnlTokenTypes;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.HighlighterColors;
@@ -23,6 +22,7 @@ import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
+import com.intellij.psi.StringEscapesTokenTypes;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
   @NotNull
   @Override
   public Lexer getHighlightingLexer() {
-    return new OgnlLexer();
+    return new OgnlHighlightingLexer();
   }
 
   @NotNull
@@ -112,6 +112,10 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
     SyntaxHighlighterBase.fillMap(keys1, OgnlTokenTypes.NUMBERS, NUMBER);
     SyntaxHighlighterBase.fillMap(keys1, OgnlTokenTypes.TEXT, STRING);
 
+    // string/character escape sequences
+    keys1.put(StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN, SyntaxHighlighterColors.VALID_STRING_ESCAPE);
+    keys1.put(StringEscapesTokenTypes.INVALID_CHARACTER_ESCAPE_TOKEN, SyntaxHighlighterColors.INVALID_STRING_ESCAPE);
+    keys1.put(StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN, SyntaxHighlighterColors.INVALID_STRING_ESCAPE);
 
     // braces
     keys1.put(OgnlTokenTypes.LBRACKET, BRACKETS);
