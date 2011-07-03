@@ -1,0 +1,11 @@
+OgnlFile:ColonMissing.ognl
+  ConditionalExpression
+    BooleanLiteral
+      PsiElement(TRUE_KEYWORD)('true')
+    PsiWhiteSpace(' ')
+    PsiElement(QUESTION)('?')
+    PsiWhiteSpace(' ')
+    BooleanLiteral
+      PsiElement(FALSE_KEYWORD)('false')
+    PsiErrorElement:':' expected
+      <empty list>

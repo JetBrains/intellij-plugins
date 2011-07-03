@@ -1,0 +1,11 @@
+OgnlFile:MissingClosingRightParenthesis.ognl
+  ParenthesizedExpression
+    PsiElement(()('(')
+    BinaryExpression
+      IntegerLiteral
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiElement(PLUS)('+')
+      IntegerLiteral
+        PsiElement(INTEGER_LITERAL)('2')
+    PsiErrorElement:')' expected
+      <empty list>

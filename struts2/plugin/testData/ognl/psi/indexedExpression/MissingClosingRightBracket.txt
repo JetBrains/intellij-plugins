@@ -1,0 +1,9 @@
+OgnlFile:MissingClosingRightBracket.ognl
+  IndexedExpression
+    ReferenceExpression
+      PsiElement(IDENTIFIER)('abc')
+    PsiElement([)('[')
+    IntegerLiteral
+      PsiElement(INTEGER_LITERAL)('12')
+    PsiErrorElement:']' expected
+      <empty list>

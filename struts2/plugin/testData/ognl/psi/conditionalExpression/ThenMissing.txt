@@ -1,0 +1,8 @@
+OgnlFile:ThenMissing.ognl
+  ConditionalExpression
+    BooleanLiteral
+      PsiElement(TRUE_KEYWORD)('true')
+    PsiWhiteSpace(' ')
+    PsiElement(QUESTION)('?')
+    PsiErrorElement:'then' expression expected
+      <empty list>

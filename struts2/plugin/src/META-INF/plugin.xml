@@ -58,10 +58,15 @@
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <facetType implementation="com.intellij.struts2.facet.StrutsFacetType"/>
-    <psi.referenceContributor language="XML" implementation="com.intellij.struts2.reference.StrutsReferenceContributor"/>
-    <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsUITaglibReferenceContributor"/>
-    <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsJQueryTaglibReferenceContributor"/>
-    <psi.referenceContributor implementation="com.intellij.struts2.reference.StrutsJQueryRichtextTaglibReferenceContributor"/>
+
+    <psi.referenceContributor language="XML"
+                              implementation="com.intellij.struts2.reference.StrutsReferenceContributor"/>
+    <psi.referenceContributor
+        implementation="com.intellij.struts2.reference.StrutsUITaglibReferenceContributor"/>
+    <psi.referenceContributor
+        implementation="com.intellij.struts2.reference.StrutsJQueryTaglibReferenceContributor"/>
+    <psi.referenceContributor
+        implementation="com.intellij.struts2.reference.StrutsJQueryRichtextTaglibReferenceContributor"/>
 
     <iconProvider implementation="com.intellij.struts2.Struts2IconProvider"/>
 
@@ -180,11 +185,13 @@
 
 
     <!-- JAVA -->
-    <codeInsight.lineMarkerProvider language="JAVA" implementationClass="com.intellij.struts2.annotators.ActionJavaAnnotator"/>
+    <codeInsight.lineMarkerProvider language="JAVA"
+                                    implementationClass="com.intellij.struts2.annotators.ActionJavaAnnotator"/>
 
 
     <!-- JSP -->
-    <codeInsight.lineMarkerProvider language="JSP" implementationClass="com.intellij.struts2.annotators.JspActionAnnotator"/>
+    <codeInsight.lineMarkerProvider language="JSP"
+                                    implementationClass="com.intellij.struts2.annotators.JspActionAnnotator"/>
 
     <javaee.web.customServletReferenceProvider
         implementation="com.intellij.struts2.reference.jsp.ActionLinkReferenceProvider"/>
@@ -192,6 +199,21 @@
 
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibCssInlineStyleInjector"/>
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibJavaScriptInjector"/>
+
+
+    <!-- OGNL Language -->
+    <fileTypeFactory implementation="com.intellij.lang.ognl.OgnlFileTypeFactory"/>
+    <lang.parserDefinition language="OGNL"
+                           implementationClass="com.intellij.lang.ognl.OgnlParserDefinition"/>
+    <lang.braceMatcher language="OGNL"
+                       implementationClass="com.intellij.lang.ognl.highlight.OgnlBraceMatcher"/>
+    <quoteHandler fileType="OGNL" className="com.intellij.lang.ognl.highlight.OgnlQuoteHandler"/>
+    <lang.documentationProvider language="OGNL"
+                                implementationClass="com.intellij.lang.ognl.OgnlDocumentationProvider"/>
+    <completion.contributor language="OGNL"
+                            implementationClass="com.intellij.lang.ognl.completion.OgnlKeywordCompletionContributor"/>
+
+    <colorSettingsPage implementation="com.intellij.lang.ognl.highlight.OgnlColorSettingsPage"/>
 
   </extensions>
 
