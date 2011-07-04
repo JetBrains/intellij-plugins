@@ -21,7 +21,7 @@ public class DefaultProfilerExecutor extends Executor {
   private static final Icon ICON;
 
   static {
-    Icon icon = IconLoader.findIcon("/actions/profuleCPU.png");
+    Icon icon = IconLoader.findIcon("/actions/profuleCPU.png", DefaultProfilerExecutor.class, true);
     if (icon == null) icon = IconLoader.findIcon("/actions/profileCPU.png");
     ICON = icon;
   }
