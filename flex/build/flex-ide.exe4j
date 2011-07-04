@@ -41,7 +41,7 @@
         maxVersion=""
         preferredVM=""
         allowBetaVM="true"
-        jdkOnly="true">
+        jdkOnly="false">
     <searchSequence>
       <envVar name="IDEA_JDK"/>
       <directory location="./jre"/>
@@ -54,7 +54,6 @@
       <archive location="lib/log4j.jar" failOnError="true"/>
       <archive location="lib/jdom.jar" failOnError="true"/>
       <archive location="lib/extensions.jar" failOnError="true"/>
-      <archive location="${EXE4J_JVM_HOME}\..\lib\tools.jar" failOnError="true"/> <!--TODO-->
     </classPath>
     <nativeLibraryDirectories>
       <directory name="./bin"/>
