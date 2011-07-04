@@ -15,7 +15,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ArrayUtil;
-import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -134,9 +133,9 @@ public class Client implements Closable {
       registeredModules.clear();
     }
     else {
-      registeredModules.remove(new TObjectProcedure<Module>() {
+      registeredModules.remove(new InfoList.Filter<Module, ModuleInfo>() {
         @Override
-        public boolean execute(Module module) {
+        public boolean execute(Module module, ModuleInfo info) {
           return module.getProject() == project;
         }
       });
@@ -263,7 +262,7 @@ public class Client implements Closable {
     FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
     assert virtualFile != null;
     if (documentFileManager.isRegistered(virtualFile) && ArrayUtil.indexOf(fileDocumentManager.getUnsavedDocuments(),
-                                                                           fileDocumentManager.getDocument(virtualFile)) != -1) {
+      fileDocumentManager.getDocument(virtualFile)) != -1) {
       updateDocumentFactory(documentFileManager.getId(virtualFile), module, psiFile);
       return;
     }

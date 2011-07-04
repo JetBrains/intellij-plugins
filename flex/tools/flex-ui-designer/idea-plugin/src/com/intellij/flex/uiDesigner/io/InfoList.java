@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.io;
 
 import gnu.trove.THashMap;
 import gnu.trove.TIntArrayList;
-import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,19 +30,26 @@ public class InfoList<E,I extends InfoList.Info> {
   }
 
   protected class MyHashMap extends THashMap<E, I> {
-    public void removeEach(TObjectProcedure<E> procedure) {
+    public void removeEach(Filter<E, I> filter) {
       Object[] set = _set;
       for (int i = set.length; i-- > 0; ) {
-        //noinspection unchecked
-        if (set[i] != null && set[i] != REMOVED && procedure.execute((E)set[i])) {
-          freeIndices.add(_values[i].id);
-          removeAt(i);
+        if (set[i] != null && set[i] != REMOVED) {
+          I value = _values[i];
+          //noinspection unchecked
+          if (filter.execute((E)set[i], value)) {
+            freeIndices.add(value.id);
+            removeAt(i);
+          }
         }
       }
     }
   }
 
-  public void remove(TObjectProcedure<E> filter) {
+  public interface Filter<E, I> {
+    public boolean execute(E key, I value);
+  }
+
+  public void remove(Filter<E, I> filter) {
     elements.removeEach(filter);
   }
 

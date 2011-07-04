@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.AppTopics;
+import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.editor.Document;
@@ -14,19 +15,18 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
-import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DocumentFactoryManager extends AbstractProjectComponent {
-  private final List<VirtualFile> files = new ArrayList<VirtualFile>();
-  private final TIntArrayList freeIndices = new TIntArrayList();
+  private final InfoList<VirtualFile, DocumentInfo> files = new InfoList<VirtualFile, DocumentInfo>();
   
   private MyFileDocumentManagerListener fileDocumentManagerListener;
   private MessageBusConnection flexUIDesignerApplicationManagerConnection;
+
+  private boolean isSubscribed;
 
   public DocumentFactoryManager(Project project) {
     super(project);
@@ -38,16 +38,23 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
     }
     
     files.clear();
-    freeIndices.resetQuick();
     fileDocumentManagerListener.unsubscribe();
+    isSubscribed = false;
   }
 
-  public void unregister(int[] ids) {
-    freeIndices.ensureCapacity(freeIndices.size() + ids.length);
-    for (int id : ids) {
-      files.set(id,  null);
-      freeIndices.add(id);
-    }
+  public void unregister(final int[] ids) {
+    files.remove(new InfoList.Filter<VirtualFile, DocumentInfo>() {
+      @Override
+      public boolean execute(VirtualFile key, DocumentInfo value) {
+        for (int id : ids) {
+          if (value.getId() == id) {
+            return true;
+          }
+        }
+
+        return false;
+      }
+    });
   }
 
   public static DocumentFactoryManager getInstance(@NotNull Project project) {
@@ -66,6 +73,8 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
   }
 
   private void listenChages() {
+    assert !isSubscribed;
+    isSubscribed = true;
     if (fileDocumentManagerListener == null) {
       fileDocumentManagerListener = new MyFileDocumentManagerListener();
     }
@@ -109,8 +118,8 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
         return;
       }
       
-      int id = files.indexOf(file);
-      if (id == -1) {
+      DocumentInfo info = files.getNullableInfo(file);
+      if (info == null) {
         return;
       }
       
@@ -129,43 +138,53 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
         return;
       }
 
-      flexUIDesignerApplicationManager.updateDocumentFactory(id, module, psiFile);
+      if (info.psiModificationStamp == psiFile.getModificationStamp()) {
+        info.psiModificationStamp = -1;
+        return;
+      }
+
+      flexUIDesignerApplicationManager.updateDocumentFactory(info.getId(), module, psiFile);
     }
   }
 
   public boolean isRegistered(VirtualFile virtualFile) {
-    return files.indexOf(virtualFile) != -1;
+    return files.contains(virtualFile);
   }
-  
+
   public int getId(VirtualFile virtualFile) {
     return getId(virtualFile, null, null);
   }
   
   public int getId(VirtualFile virtualFile, @Nullable XmlFile psiFile, @Nullable List<XmlFile> unregisteredDocumentFactories) {
-    int id = files.indexOf(virtualFile);
-    if (id == -1) {
-      if (freeIndices.isEmpty()) {
-        if (files.isEmpty()) {
-          listenChages();
-        }
-        
-        id = files.size();
-        files.add(virtualFile);
-      }
-      else {
-        id = freeIndices.remove(freeIndices.size() - 1);
-        files.set(id, virtualFile);
-      }
-      
-      if (unregisteredDocumentFactories != null) {
-        unregisteredDocumentFactories.add(psiFile);
-      }
+    DocumentInfo info = files.getNullableInfo(virtualFile);
+    if (info != null) {
+      return info.getId();
     }
-    
-    return id;
+
+    if (!isSubscribed) {
+      listenChages();
+    }
+
+    if (unregisteredDocumentFactories != null) {
+      unregisteredDocumentFactories.add(psiFile);
+    }
+
+    return files.add(new DocumentInfo(virtualFile));
   }
 
   public @NotNull VirtualFile getFile(int id) {
-    return files.get(id);
+    return files.getElement(id);
+  }
+
+  public @NotNull DocumentInfo getInfo(int id) {
+    return files.getInfo(id);
+  }
+
+  public  static class DocumentInfo extends InfoList.Info<VirtualFile> {
+    public long psiModificationStamp;
+    
+    public DocumentInfo(@NotNull VirtualFile element) {
+      super(element);
+    }
   }
 }

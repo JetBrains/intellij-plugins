@@ -166,8 +166,8 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
 
   private void setProperty() throws IOException {
     Project project = readProject();
-    final VirtualFile file = DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort());
-    Document document = FileDocumentManager.getInstance().getDocument(file);
+    final DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance(project).getInfo(reader.readUnsignedShort());
+    Document document = FileDocumentManager.getInstance().getDocument(info.getElement());
     assert document != null;
     final XmlFile psiFile;
     AccessToken token = ReadAction.start();
@@ -207,6 +207,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         AccessToken token = WriteAction.start();
         try {
           tag.setAttribute(name, value);
+          info.psiModificationStamp = psiFile.getModificationStamp();
         }
         finally {
           token.finish();
