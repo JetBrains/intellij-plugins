@@ -1,18 +1,25 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.ProjectTopics;
 import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.lang.properties.psi.PropertiesFile;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.Consumer;
+import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +62,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     initLibrarySets(module, appDir, true, null);
   }
 
-  // sdkLibrarySet for test only
+  // librarySet for test only
   public void initLibrarySets(@NotNull final Module module, @NotNull final File appDir, boolean collectLocalStyleHolders, @Nullable LibrarySet librarySet)
     throws InitException, IOException {
     final ProblemsHolder problemsHolder = new ProblemsHolder();
@@ -127,7 +134,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
       throw new UnsupportedOperationException("merge existing libraries and new");
     }
 
-    ModuleInfo moduleInfo = new ModuleInfo(module);
+    final ModuleInfo moduleInfo = new ModuleInfo(module);
     if (collectLocalStyleHolders) {
       stringWriter.startChange();
       try {
@@ -146,6 +153,22 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     if (!problemsHolder.isEmpty()) {
       DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
     }
+
+    module.getMessageBus().connect(moduleInfo).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
+      @Override
+      public void beforeRootsChange(ModuleRootEvent event) {
+      }
+
+      @Override
+      public void rootsChanged(ModuleRootEvent event) {
+        Notification notification =
+          new Notification(FlexUIDesignerBundle.message("plugin.name"), FlexUIDesignerBundle.message("plugin.name"),
+            "Listen library changes is not yet supported. Please, reopen project.",
+            NotificationType.WARNING);
+        //notification.notify(project);
+        Notifications.Bus.notify(notification, project);
+      }
+    });
   }
 
   @NotNull

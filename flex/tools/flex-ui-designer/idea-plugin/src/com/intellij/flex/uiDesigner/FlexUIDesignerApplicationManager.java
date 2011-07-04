@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.ProjectTopics;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.facet.FacetManager;
@@ -10,8 +11,10 @@ import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.notification.*;
-import com.intellij.notification.impl.NotificationsManagerImpl;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -21,13 +24,11 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectBundle;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.ProjectManagerListener;
+import com.intellij.openapi.project.*;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.xml.XmlFile;
@@ -120,7 +121,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public void openDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, boolean debug) {
     LOG.assertTrue(!documentOpening);
 
-    final boolean appClosed = server == null || server.isClosed();
+    final boolean appClosed = isAppClosed();
     if (appClosed || !Client.getInstance().isModuleRegistered(module)) {
       Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
       if (sdk == null || !checkFlexSdkVersion(sdk.getVersionString())) {
@@ -162,6 +163,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         }
       });
     }
+  }
+
+  private boolean isAppClosed() {
+    return server == null || server.isClosed();
   }
 
   private static void reportInvalidFlexSdk(final Module module, boolean debug, @Nullable Sdk sdk) {
@@ -211,7 +216,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public void updateDocumentFactory(final int factoryId, @NotNull final Module module, @NotNull final XmlFile psiFile) {
     assert !documentOpening;
     documentOpening = true;
-    if (server == null || server.isClosed()) {
+    if (isAppClosed()) {
       return;
     }
 
@@ -287,6 +292,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       @Override
       public void run() {
         try {
+          if (projectManagerListener == null) {
+            attachApplicationLevelListeners();
+          }
+
           copyAppFiles();
 
           adlProcessHandler = DesignerApplicationUtil.runAdl(runConfiguration, APP_DIR.getPath() + "/" + DESCRIPTOR_XML, new Consumer<Integer>() {
@@ -333,12 +342,22 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
   }
 
-  private void copyAppFiles() throws IOException {
-    if (projectManagerListener == null) {
-      projectManagerListener = new MyProjectManagerListener();
-      ProjectManager.getInstance().addProjectManagerListener(projectManagerListener, ApplicationManager.getApplication());
-    }
+  private void attachApplicationLevelListeners() {
+    projectManagerListener = new MyProjectManagerListener();
+    ProjectManager.getInstance().addProjectManagerListener(projectManagerListener, ApplicationManager.getApplication());
 
+    ApplicationManager.getApplication().getMessageBus().connect(ApplicationManager.getApplication())
+      .subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
+        @Override
+        public void moduleRemoved(Project project, Module module) {
+          if (!isAppClosed() || Client.getInstance().isModuleRegistered(module)) {
+            Client.getInstance().unregisterModule(module);
+          }
+        }
+      });
+  }
+
+  private void copyAppFiles() throws IOException {
     if (DebugPathManager.IS_DEV) {
       return;
     }
@@ -457,7 +476,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
     @Override
     public void projectClosed(Project project) {
-      if (server == null || server.isClosed()) {
+      if (isAppClosed()) {
         return;
       }
 

@@ -27,7 +27,7 @@ public class Library extends InfoList.Info<VirtualFile> {
   public Library(String relativePath, VirtualFile file) {
     super(file);
 
-    this.path = relativePath;
+    path = relativePath;
   }
 
   public boolean hasResourceBundles() {

@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.flex.uiDesigner.io.AmfOutputable;
 import com.intellij.flex.uiDesigner.io.InfoList;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModuleInfo extends InfoList.Info<Module> {
+public class ModuleInfo extends InfoList.Info<Module> implements Disposable {
   private List<LocalStyleHolder> localStyleHolders;
 
   public ModuleInfo(Module module) {
@@ -31,6 +32,11 @@ public class ModuleInfo extends InfoList.Info<Module> {
     }
 
     localStyleHolders.add(localStyleHolder);
+  }
+
+  @Override
+  public void dispose() {
+    // need only for message bus connections
   }
 }
 

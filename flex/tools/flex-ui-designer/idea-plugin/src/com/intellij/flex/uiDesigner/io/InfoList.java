@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.io;
 
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 import gnu.trove.THashMap;
 import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +12,16 @@ public class InfoList<E,I extends InfoList.Info> {
 
   private int counter;
   private final TIntArrayList freeIndices = new TIntArrayList();
-  
+  private final boolean infoIsDisposable;
+
+  public InfoList() {
+    this(false);
+  }
+
+  public InfoList(boolean infoIsDisposable) {
+    this.infoIsDisposable = infoIsDisposable;
+  }
+
   public int add(@NotNull I info) {
     assert info.id == -1;
 
@@ -21,7 +32,11 @@ public class InfoList<E,I extends InfoList.Info> {
   }
 
   public void remove(@NotNull E element) {
-    freeIndices.add(getInfo(element).id);
+    final I info = getInfo(element);
+    if (infoIsDisposable) {
+      Disposer.dispose((Disposable)info);
+    }
+    freeIndices.add(info.id);
     elements.remove(element);
   }
 
@@ -35,6 +50,11 @@ public class InfoList<E,I extends InfoList.Info> {
       for (int i = set.length; i-- > 0; ) {
         if (set[i] != null && set[i] != REMOVED) {
           I value = _values[i];
+
+          if (infoIsDisposable) {
+            Disposer.dispose((Disposable)value);
+          }
+
           //noinspection unchecked
           if (filter.execute((E)set[i], value)) {
             freeIndices.add(value.id);
@@ -99,6 +119,12 @@ public class InfoList<E,I extends InfoList.Info> {
   }
 
   public void clear() {
+    if (infoIsDisposable) {
+      for (I info : elements.values()) {
+        Disposer.dispose((Disposable)info);
+      }
+    }
+
     elements.clear();
     counter = 0;
     freeIndices.resetQuick();

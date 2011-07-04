@@ -28,7 +28,7 @@ public class Client implements Closable {
 
   private final MxmlWriter mxmlWriter = new MxmlWriter(out);
 
-  private final InfoList<Module, ModuleInfo> registeredModules = new InfoList<Module, ModuleInfo>();
+  private final InfoList<Module, ModuleInfo> registeredModules = new InfoList<Module, ModuleInfo>(true);
   private final InfoList<Project, ProjectInfo> registeredProjects = new InfoList<Project, ProjectInfo>();
 
   public static Client getInstance() {
@@ -114,13 +114,16 @@ public class Client implements Closable {
       hasError = false;
     }
     finally {
-      unregisterProject(project);
-
-      if (hasError) {
-        blockOut.rollback();
+      try {
+        if (hasError) {
+          blockOut.rollback();
+        }
+        else {
+          out.flush();
+        }
       }
-      else {
-        out.flush();
+      finally {
+        unregisterProject(project);
       }
     }
   }
@@ -140,6 +143,11 @@ public class Client implements Closable {
         }
       });
     }
+  }
+
+  public void unregisterModule(final Module module) {
+    registeredModules.remove(module);
+    // todo close related documents
   }
 
   public void updateStringRegistry(StringRegistry.StringWriter stringWriter) throws IOException {
