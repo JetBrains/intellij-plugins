@@ -45,6 +45,8 @@ public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(JSBundle.message("javascript.local.variable"), ECMAL4Highlighter.ECMAL4_LOCAL_VARIABLE),
       new AttributesDescriptor(JSBundle.message("javascript.global.variable"), ECMAL4Highlighter.ECMAL4_GLOBAL_VARIABLE),
       new AttributesDescriptor(JSBundle.message("javascript.global.function"), ECMAL4Highlighter.ECMAL4_GLOBAL_FUNCTION),
+      new AttributesDescriptor(JSBundle.message("javascript.class"), ECMAL4Highlighter.ECMAL4_CLASS),
+      new AttributesDescriptor(JSBundle.message("javascript.interface"), ECMAL4Highlighter.ECMAL4_INTERFACE),
       new AttributesDescriptor(JSBundle.message("javascript.instance.member.function"), ECMAL4Highlighter.ECMAL4_INSTANCE_MEMBER_FUNCTION),
       new AttributesDescriptor(JSBundle.message("javascript.instance.member.variable"), ECMAL4Highlighter.ECMAL4_INSTANCE_MEMBER_VARIABLE),
       new AttributesDescriptor(JSBundle.message("javascript.static.member.function"), ECMAL4Highlighter.ECMAL4_STATIC_MEMBER_FUNCTION),
@@ -81,6 +83,8 @@ public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("instance_func", ECMAL4Highlighter.ECMAL4_INSTANCE_MEMBER_FUNCTION);
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("static_func", ECMAL4Highlighter.ECMAL4_STATIC_MEMBER_FUNCTION);
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("static_var", ECMAL4Highlighter.ECMAL4_STATIC_MEMBER_VARIABLE);
+    ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("class", ECMAL4Highlighter.ECMAL4_CLASS);
+    ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("interface", ECMAL4Highlighter.ECMAL4_INTERFACE);
   }
 
   private final static String DEMO_TEXT =
@@ -89,8 +93,9 @@ public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
     "function foo() : int {return 0;}\n" +
     "\n" +
     "package {\n" +
+    "import mx.messaging.messages.IMessage;\n" +
     "\n" +
-    "public class HighlightingSample {\n" +
+    "public class HighlightingSample implements IMessage {\n" +
     "    public var field : int;\n" +
     "    public static var shared : String;\n" +
     "\n" +
@@ -152,7 +157,8 @@ public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
   public String getDemoText() {
     return DEMO_TEXT.
       replace("[Meta(name=\"abc\", type=\"def\")]", "_META_").
-      replaceAll("(public|class|function|package|return|var|static)", "<keyword>$1</keyword>").
+      replaceAll("(public|class|function|package|return|var|static|import)", "<keyword>$1</keyword>").
+      replaceAll("([\\w\\.]*IMessage)", "<interface>$1</interface>").
       replace("(url :", "(<parameter>url</parameter> :").
       replace("url.", "<parameter>url</parameter>.").
       replaceAll("(\".*\")", "<string>$1</string>").
@@ -186,6 +192,9 @@ public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
       replace("replace", "<instance_func>replace</instance_func>").
       replace("adjustUrl", "<static_func>adjustUrl</static_func>").
       replace("shared", "<static_var>shared</static_var>").
+      replace(" HighlightingSample ", " <class>HighlightingSample</class> ").
+      replace("String", "<class>String</class>").
+      replace("Array", "<class>Array</class>").
       replace("_META_", "<meta>[Meta(name=\"abc\", type=\"def\")]</meta>");
   }
 
