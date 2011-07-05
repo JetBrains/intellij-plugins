@@ -72,20 +72,26 @@
     </Rect>
   </Panel>
 
-  <mx:TabNavigator width="200" height="200">
-    <NavigatorContent label="Tab 1">
-      <layout>
-        <BasicLayout/>
-      </layout>
-      <Rect width="20" height="20" top="0" left="0">
-        <stroke>
-          <SolidColorStroke weight="1" color="0x880000"/>
-        </stroke>
-        <fill>
-          <SolidColor alpha="1" color="0x008800"/>
-        </fill>
-      </Rect>
-      <Button label="Button" top="0" right="0"/>
-    </NavigatorContent>
-  </mx:TabNavigator>
+  <HGroup gap="100">
+    <mx:TabNavigator width="200" height="200">
+      <NavigatorContent label="Tab 1">
+        <layout>
+          <BasicLayout/>
+        </layout>
+        <Rect width="20" height="20" top="0" left="0">
+          <stroke>
+            <SolidColorStroke weight="1" color="0x880000"/>
+          </stroke>
+          <fill>
+            <SolidColor alpha="1" color="0x008800"/>
+          </fill>
+        </Rect>
+        <Button label="Button" top="0" right="0"/>
+      </NavigatorContent>
+    </mx:TabNavigator>
+
+    <mx:Panel>
+      <mx:Button/>
+    </mx:Panel>
+  </HGroup>
 </VGroup>

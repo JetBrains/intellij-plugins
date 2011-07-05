@@ -2,7 +2,7 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="flex" name="Flex">
-      <configuration flex_sdk="compiler-4.5.0.20968.pom">
+      <configuration>
         <option name="DO_BUILD" value="true" />
         <option name="OUTPUT_TYPE" value="Library" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />

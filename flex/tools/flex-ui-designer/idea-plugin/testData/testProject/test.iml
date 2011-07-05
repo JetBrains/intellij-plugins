@@ -2,7 +2,7 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="flex" name="Flex">
-      <configuration flex_sdk="compiler-4.5.0.20968.pom">
+      <configuration>
         <option name="DO_BUILD" value="true" />
         <option name="OUTPUT_TYPE" value="Application" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />
@@ -53,10 +53,9 @@
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.0.20968" level="project" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:cocoa:swc:1.4-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: flashx:textLayout:swc:2.0.192-de1" level="project" />
-    <orderEntry type="library" name="Maven: org.osflash:as3-signals:swc:0.8.1" level="project" />
-    <orderEntry type="library" name="Maven: org.flyti:plexus:swc:1.4-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.flyti:collections:swc:1.3.6" level="project" />
-    <orderEntry type="library" name="Maven: org.flyti:foundation:swc:1.2.3" level="project" />
+    <orderEntry type="library" name="Maven: org.flyti:plexus:swc:1.3-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.flyti:collections:swc:1.3.5" level="project" />
+    <orderEntry type="library" name="Maven: org.flyti:foundation:swc:1.2.1" level="project" />
     <orderEntry type="module" module-name="shared" />
     <orderEntry type="library" name="Maven: org.tinytlf:layouts:swc:1.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1-SNAPSHOT" level="project" />

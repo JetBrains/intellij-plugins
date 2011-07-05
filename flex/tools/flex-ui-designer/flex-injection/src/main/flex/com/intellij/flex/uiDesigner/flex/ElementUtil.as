@@ -8,10 +8,10 @@ import flash.system.ApplicationDomain;
 import mx.core.ILayoutElement;
 import mx.core.IUIComponent;
 import mx.core.IVisualElement;
+import mx.core.UIComponent;
 
 import spark.components.Group;
 import spark.components.supportClasses.Skin;
-import spark.core.DisplayObjectSharingMode;
 import spark.core.IGraphicElement;
 
 public final class ElementUtil {
@@ -42,7 +42,9 @@ public final class ElementUtil {
       skinnableContainerClass = Class(currentDomain.getDefinition(SPARK_COMPONENTS_SKINNABLECONTAINER));
     }
 
-    while (object != null && ((object is Skin || (uiTextFieldClass != null && object is uiTextFieldClass)) || !(object is IVisualElement))) {
+    while (object != null &&
+            (object is Skin || (uiTextFieldClass != null && object is uiTextFieldClass) || !(object is IVisualElement) ||
+            Object(object).constructor == UIComponent) /* mx skins — if object concrete type equals UIComponent, so, it is skin part */) {
       object = object.parent;
     }
 
