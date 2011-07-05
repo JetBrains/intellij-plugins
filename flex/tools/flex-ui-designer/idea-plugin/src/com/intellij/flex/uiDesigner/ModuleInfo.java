@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.flex.uiDesigner.io.AmfOutputable;
-import com.intellij.flex.uiDesigner.io.InfoList;
+import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModuleInfo extends InfoList.Info<Module> implements Disposable {
+public class ModuleInfo extends Info<Module> implements Disposable {
   private List<LocalStyleHolder> localStyleHolders;
 
   public ModuleInfo(Module module) {

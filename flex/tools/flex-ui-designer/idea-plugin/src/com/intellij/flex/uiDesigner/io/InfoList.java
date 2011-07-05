@@ -8,23 +8,34 @@ import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InfoList<E,I extends InfoList.Info<E>> {
-  private final MyHashMap elements = new MyHashMap();
-
-  private int counter;
+public class InfoList<E,I extends Info<E>> {
   private final TIntArrayList freeIndices = new TIntArrayList();
+  private final MyHashMap<E,I> elements;
   private final boolean infoIsDisposable;
+  private int counter;
 
   public InfoList() {
     this(false);
   }
 
   public InfoList(boolean infoIsDisposable) {
+    elements = new MyHashMap<E, I>();
     this.infoIsDisposable = infoIsDisposable;
   }
 
+  private class MyHashMap<K, V> extends THashMap<K, V> {
+    @Override
+    protected void removeAt(int index) {
+      if (infoIsDisposable) {
+        Disposer.dispose((Disposable)_values[index]);
+      }
+      freeIndices.add(((Info)_values[index]).getId());
+      super.removeAt(index);
+    }
+  }
+
   public int add(@NotNull I info) {
-    assert info.id == -1;
+    assert info.getId() == -1;
 
     info.id = freeIndices.isEmpty() ? counter++ : freeIndices.remove(freeIndices.size() - 1);
 
@@ -38,17 +49,6 @@ public class InfoList<E,I extends InfoList.Info<E>> {
 
   public boolean isEmpty() {
     return elements.isEmpty();
-  }
-
-  private class MyHashMap extends THashMap<E, I> {
-    @Override
-    protected void removeAt(int index) {
-      if (infoIsDisposable) {
-        Disposer.dispose((Disposable)_values[index]);
-      }
-      freeIndices.add(_values[index].id);
-      super.removeAt(index);
-    }
   }
 
   public void remove(TObjectObjectProcedure<E, I> filter) {
@@ -109,22 +109,5 @@ public class InfoList<E,I extends InfoList.Info<E>> {
     elements.clear();
     counter = 0;
     freeIndices.resetQuick();
-  }
-
-  public static class Info<E> {
-    private int id = -1;
-    protected final E element;
-
-    public Info(@NotNull E element) {
-      this.element = element;
-    }
-
-    public int getId() {
-      return id;
-    }
-
-    public E getElement() {
-      return element;
-    }
   }
 }

@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
-import com.intellij.flex.uiDesigner.io.InfoList;
+import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public class Library extends InfoList.Info<VirtualFile> {
+public class Library extends Info<VirtualFile> {
   public static final String DEFAULTS_CSS = "defaults.css";
   private static final String CATALOG = "catalog.xml";
   private static final String SWF = "library.swf";

@@ -1,12 +1,12 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.InfoList;
+import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
 
-public class ProjectInfo extends InfoList.Info<Project> {
+public class ProjectInfo extends Info<Project> {
   private final LibrarySet sdkLibrarySet;
   private LibrarySet librarySet;
 

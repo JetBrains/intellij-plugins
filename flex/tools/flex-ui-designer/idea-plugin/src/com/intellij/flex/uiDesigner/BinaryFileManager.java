@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.InfoList;
+import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,7 @@ public class BinaryFileManager extends EntityListManager<VirtualFile, AssetInfo>
   }
 }
 
-class AssetInfo extends InfoList.Info<VirtualFile> {
+class AssetInfo extends Info<VirtualFile> {
   public final String mimeType;
 
   public AssetInfo(VirtualFile element) {

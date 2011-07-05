@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.AppTopics;
+import com.intellij.flex.uiDesigner.io.Info;
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
@@ -49,11 +50,11 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
       public boolean execute(VirtualFile key, DocumentInfo value) {
         for (int id : ids) {
           if (value.getId() == id) {
-            return true;
+            return false;
           }
         }
 
-        return false;
+        return true;
       }
     });
   }
@@ -181,7 +182,7 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
     return files.getInfo(id);
   }
 
-  public  static class DocumentInfo extends InfoList.Info<VirtualFile> {
+  public  static class DocumentInfo extends Info<VirtualFile> {
     public long psiModificationStamp;
     
     public DocumentInfo(@NotNull VirtualFile element) {

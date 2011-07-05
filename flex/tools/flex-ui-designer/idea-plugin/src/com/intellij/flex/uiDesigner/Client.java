@@ -140,7 +140,7 @@ public class Client implements Closable {
       registeredModules.remove(new TObjectObjectProcedure<Module, ModuleInfo>() {
         @Override
         public boolean execute(Module module, ModuleInfo info) {
-          return module.getProject() == project;
+          return module.getProject() != project;
         }
       });
     }
