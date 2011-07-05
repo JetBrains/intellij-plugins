@@ -9,16 +9,20 @@ import mx.core.ILayoutElement;
 import mx.core.IUIComponent;
 import mx.core.IVisualElement;
 import mx.core.UIComponent;
+import mx.core.mx_internal;
 
 import spark.components.Group;
 import spark.components.supportClasses.Skin;
 import spark.core.IGraphicElement;
+
+use namespace mx_internal;
 
 public final class ElementUtil {
   private static const sharedPoint:Point = new Point();
   private static const MX_CORE_UITEXTFIELD:String = "mx.core.UITextField";
   private static const SPARK_COMPONENTS_SKINNABLECONTAINER:String = "spark.components.SkinnableContainer";
 
+  //noinspection JSUnusedGlobalSymbols
   public static function getObjectUnderPoint(stage:Stage, stageX:Number, stageY:Number):Object {
     sharedPoint.x = stageX;
 		sharedPoint.y = stageY;
@@ -97,6 +101,7 @@ public final class ElementUtil {
     return group != null && group.contains(DisplayObject(uiComponent));
   }
 
+  //noinspection JSUnusedGlobalSymbols
   public static function getSize(element:Object, result:Point):void {
     var layoutElement:ILayoutElement = element as ILayoutElement;
     if (layoutElement != null) {
@@ -117,7 +122,8 @@ public final class ElementUtil {
     }
   }
 
-  public static function getPosition(element:Object, result:Point):void {
+  //noinspection JSUnusedGlobalSymbols
+  public static function getPosition(element:Object, result:Point):Point {
     var layoutElement:ILayoutElement = element as ILayoutElement;
     if (layoutElement != null) {
       result.x = layoutElement.getLayoutBoundsX();
@@ -128,6 +134,9 @@ public final class ElementUtil {
       result.x = displayObject.x;
       result.y = displayObject.y;
     }
+
+    // IDEA-71787, mx Button in mx Panel — actual parent is not Panel, but FlexSprite
+    return (element is UIComponent ? UIComponent(element).$parent : element.parent).localToGlobal(result);
   }
 }
 }

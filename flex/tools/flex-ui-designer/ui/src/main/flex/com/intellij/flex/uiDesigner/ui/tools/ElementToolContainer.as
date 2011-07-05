@@ -67,10 +67,7 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
   }
 
   private function getPosition():void {
-    elementUtilClass["getPosition"](element, sharedPoint);
-
-    sharedPoint = element.parent.localToGlobal(sharedPoint);
-    sharedPoint = parent.globalToLocal(sharedPoint);
+    sharedPoint = parent.globalToLocal(elementUtilClass["getPosition"](element, sharedPoint));
   }
 
   private function updatePosition():void {
