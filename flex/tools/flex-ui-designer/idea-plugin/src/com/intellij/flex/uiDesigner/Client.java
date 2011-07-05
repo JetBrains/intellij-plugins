@@ -15,6 +15,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ArrayUtil;
+import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -136,7 +137,7 @@ public class Client implements Closable {
       registeredModules.clear();
     }
     else {
-      registeredModules.remove(new InfoList.Filter<Module, ModuleInfo>() {
+      registeredModules.remove(new TObjectObjectProcedure<Module, ModuleInfo>() {
         @Override
         public boolean execute(Module module, ModuleInfo info) {
           return module.getProject() == project;

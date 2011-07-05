@@ -19,7 +19,6 @@ import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.Consumer;
-import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

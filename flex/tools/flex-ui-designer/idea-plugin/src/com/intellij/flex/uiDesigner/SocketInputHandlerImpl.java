@@ -14,27 +14,37 @@ import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.wm.FocusCommand;
+import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.openapi.wm.IdeFrame;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.ui.AppIcon;
 import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 
 public class SocketInputHandlerImpl implements SocketInputHandler {
+  private static final Logger LOG = Logger.getInstance(SocketInputHandlerImpl.class.getName());
+
   protected Reader reader;
 
   private File resultReadyFile;
@@ -87,9 +97,15 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     return command == ServerMethod.getResourceBundle || command == ServerMethod.getBitmapData;
   }
 
-  protected boolean safeProcessCommand(int command) throws IOException {
+  private boolean safeProcessCommand(int command) throws IOException {
     try {
       return processCommand(command);
+    }
+    catch (RuntimeException e) {
+      LOG.error(e);
+    }
+    catch (AssertionError e) {
+      LOG.error(e);
     }
     finally {
       if (isFileBased(command)) {
@@ -97,6 +113,8 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         resultReadyFile.createNewFile();
       }
     }
+
+    return true;
   }
 
   protected boolean processCommand(int command) throws IOException {
@@ -106,23 +124,11 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         break;
 
       case ServerMethod.getResourceBundle:
-        try {
-          getResourceBundle();
-        }
-        finally {
-          //noinspection ResultOfMethodCallIgnored
-          resultReadyFile.createNewFile();
-        }
+        getResourceBundle();
         break;
 
       case ServerMethod.getBitmapData:
-        try {
-          getBitmapData();
-        }
-        finally {
-          //noinspection ResultOfMethodCallIgnored
-          resultReadyFile.createNewFile();
-        }
+        getBitmapData();
         break;
 
       case ServerMethod.openFile:
@@ -231,10 +237,32 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
       @Override
       public void run() {
         openFileDescriptor.navigate(true);
-        ProjectUtil.focusProjectWindow(openFileDescriptor.getProject(), true);
+        focusProjectWindow(openFileDescriptor.getProject(), true);
       }
     });
   }
+
+  public static void focusProjectWindow(final Project p, boolean executeIfAppInactive) {
+    FocusCommand cmd = new FocusCommand() {
+      @Override
+      public ActionCallback run() {
+        JFrame f = WindowManager.getInstance().getFrame(p);
+        if (f != null) {
+          f.toFront();
+          f.requestFocus();
+        }
+        return new ActionCallback.Done();
+      }
+    };
+
+    if (executeIfAppInactive) {
+      AppIcon.getInstance().requestFocus((IdeFrame)WindowManager.getInstance().getFrame(p));
+      cmd.run();
+    } else {
+      IdeFocusManager.getInstance(p).requestFocus(cmd, false);
+    }
+  }
+
 
   private void initResultFile() {
     if (resultFile == null) {

@@ -28,7 +28,6 @@ import com.intellij.openapi.project.*;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.xml.XmlFile;

@@ -9,6 +9,7 @@ import flash.events.IOErrorEvent;
 import flash.events.KeyboardEvent;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
+import flash.utils.setInterval;
 
 import org.flyti.roboflest.roboflest;
 
@@ -26,6 +27,8 @@ public class MainLoader extends Sprite {
   private static const icon32:Class;
 
   public function MainLoader() {
+    setInterval(debugTickler, 1500);
+    
     var application:NativeApplication = NativeApplication.nativeApplication;
     application.autoExit = false;
     if (NativeApplication.supportsDockIcon) {
@@ -50,7 +53,7 @@ public class MainLoader extends Sprite {
   private static function loadErrorHandler(event:IOErrorEvent):void {
     trace(event);
   }
-
+;
   private function loadCompleteHandler(event:Event):void {
     var loader:Loader = LoaderInfo(event.currentTarget).loader;
     addChild(loader.getChildAt(0));
@@ -59,6 +62,12 @@ public class MainLoader extends Sprite {
 
   private function keyDownHandler(event:KeyboardEvent):void {
     trace(stage.focus, event);
+  }
+
+  //noinspection JSMethodCanBeStatic
+  private function debugTickler():void {
+    // We need some bytes of code in order to have a place to break.
+    var i:int = 0;
   }
 }
 }

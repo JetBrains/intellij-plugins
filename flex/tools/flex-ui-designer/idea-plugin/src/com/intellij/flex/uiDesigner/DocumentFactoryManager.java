@@ -15,6 +15,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
+import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,8 +44,8 @@ public class DocumentFactoryManager extends AbstractProjectComponent {
   }
 
   public void unregister(final int[] ids) {
-    files.remove(new InfoList.Filter<VirtualFile, DocumentInfo>() {
-      @Override
+    files.remove(new TObjectObjectProcedure<VirtualFile, DocumentInfo>() {
+      //@Override
       public boolean execute(VirtualFile key, DocumentInfo value) {
         for (int id : ids) {
           if (value.getId() == id) {

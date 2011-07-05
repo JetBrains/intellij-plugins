@@ -4,10 +4,11 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import gnu.trove.THashMap;
 import gnu.trove.TIntArrayList;
+import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InfoList<E,I extends InfoList.Info> {
+public class InfoList<E,I extends InfoList.Info<E>> {
   private final MyHashMap elements = new MyHashMap();
 
   private int counter;
@@ -26,17 +27,12 @@ public class InfoList<E,I extends InfoList.Info> {
     assert info.id == -1;
 
     info.id = freeIndices.isEmpty() ? counter++ : freeIndices.remove(freeIndices.size() - 1);
-    //noinspection unchecked
-    elements.put((E)info.element, info);
+
+    elements.put(info.element, info);
     return info.id;
   }
 
   public void remove(@NotNull E element) {
-    final I info = getInfo(element);
-    if (infoIsDisposable) {
-      Disposer.dispose((Disposable)info);
-    }
-    freeIndices.add(info.id);
     elements.remove(element);
   }
 
@@ -44,33 +40,19 @@ public class InfoList<E,I extends InfoList.Info> {
     return elements.isEmpty();
   }
 
-  protected class MyHashMap extends THashMap<E, I> {
-    public void removeEach(Filter<E, I> filter) {
-      Object[] set = _set;
-      for (int i = set.length; i-- > 0; ) {
-        if (set[i] != null && set[i] != REMOVED) {
-          I value = _values[i];
-
-          if (infoIsDisposable) {
-            Disposer.dispose((Disposable)value);
-          }
-
-          //noinspection unchecked
-          if (filter.execute((E)set[i], value)) {
-            freeIndices.add(value.id);
-            removeAt(i);
-          }
-        }
+  private class MyHashMap extends THashMap<E, I> {
+    @Override
+    protected void removeAt(int index) {
+      if (infoIsDisposable) {
+        Disposer.dispose((Disposable)_values[index]);
       }
+      freeIndices.add(_values[index].id);
+      super.removeAt(index);
     }
   }
 
-  public interface Filter<E, I> {
-    public boolean execute(E key, I value);
-  }
-
-  public void remove(Filter<E, I> filter) {
-    elements.removeEach(filter);
+  public void remove(TObjectObjectProcedure<E, I> filter) {
+    elements.retainEntries(filter);
   }
 
   public boolean contains(E element) {
@@ -85,8 +67,7 @@ public class InfoList<E,I extends InfoList.Info> {
   public E getElement(int id) {
     for (I info : elements.values()) {
       if (info.id == id) {
-        //noinspection unchecked
-        return (E)info.element;
+        return info.element;
       }
     }
 
