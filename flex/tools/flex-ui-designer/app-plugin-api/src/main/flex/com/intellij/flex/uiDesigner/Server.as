@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
 
 import flash.display.BitmapData;
-import flash.errors.IllegalOperationError;
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
@@ -101,6 +100,7 @@ public class Server implements ResourceBundleProvider {
   private static var flashWorkaroundByteArray:ByteArray;
 
   public function getBitmapData(id:int):BitmapData {
+    preCheckSyncMessaging();
     try {
       socket.writeByte(ServerMethod.GET_BITMAP_DATA);
       socket.writeShort(id);
@@ -125,15 +125,11 @@ public class Server implements ResourceBundleProvider {
         fileStream.close();
       }
     }
+    catch (e:Error) {
+      UncaughtErrorManager.instance.handleError(e);
+    }
     finally {
-      if (resultReadyFile.exists) {
-        try {
-          resultReadyFile.deleteFile();
-        }
-        catch (e:Error) {
-          UncaughtErrorManager.instance.handleError(e);
-        }
-      }
+      postCheckSyncMessaging();
     }
 
     //noinspection UnreachableCodeJS
@@ -141,12 +137,8 @@ public class Server implements ResourceBundleProvider {
   }
 
   public function getResourceBundle(project:Object, locale:String, bundleName:String):Dictionary {
+    preCheckSyncMessaging();
     try {
-      if (resultReadyFile.exists) {
-        UncaughtErrorManager.instance.handleError(new IllegalOperationError("resultReadyFile file exists. Why? http://youtrack.jetbrains.net/issue/IDEA-71568"));
-        resultReadyFile.deleteFile();
-      }
-
       socket.writeByte(ServerMethod.GET_RESOURCE_BUNDLE);
       writeProjectId(Project(project));
       socket.writeUTF(locale);
@@ -170,17 +162,29 @@ public class Server implements ResourceBundleProvider {
       UncaughtErrorManager.instance.handleError(e);
     }
     finally {
-      if (resultReadyFile.exists) {
-        try {
-          resultReadyFile.deleteFile();
-        }
-        catch (e:Error) {
-          UncaughtErrorManager.instance.handleError(e);
-        }
-      }
+      postCheckSyncMessaging();
     }
 
     return null;
+  }
+
+  private function preCheckSyncMessaging():void {
+    // windows only issue
+    // http://youtrack.jetbrains.net/issue/IDEA-71568
+    if (resultReadyFile.exists) {
+      resultReadyFile.deleteFile();
+    }
+  }
+
+  private function postCheckSyncMessaging():void {
+    if (resultReadyFile.exists) {
+      try {
+        resultReadyFile.deleteFile();
+      }
+      catch (e:Error) {
+        UncaughtErrorManager.instance.handleError(e);
+      }
+    }
   }
 
   public function saveProjectWindowBounds(project:Project, bounds:Rectangle):void {
