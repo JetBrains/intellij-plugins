@@ -187,7 +187,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
           varAttributes.hasModifier(JSAttributeList.ModifierType.STATIC) &&
           varAttributes.getAccessType() == JSAttributeList.AccessType.PUBLIC &&
           StringUtil.isQuotedString(text)) {
-        return Trinity.create(expressionStatement, ((JSClass)qualifierResolve).getQualifiedName(), StringUtil.stripQuotesAroundValue(text));
+        return Trinity.create(expressionStatement, ((JSClass)qualifierResolve).getQualifiedName(), initializerToPartialMethodName(text));
       }
     }
 
@@ -204,7 +204,9 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
   }
 
   private static String initializerToPartialMethodName(final String initializerText) {
-    return initializerText.replace("'", "").replace("\"", "").replace(" ", "");
+    final String unquoted = StringUtil.stripQuotesAroundValue(initializerText);
+    final int dotIndex = unquoted.lastIndexOf('.');
+    return unquoted.substring(dotIndex + 1).replaceAll("[^\\p{Alnum}]", "_");
   }
 
   public static class GenerateEventHandlerFix extends BaseCreateMethodsFix {
