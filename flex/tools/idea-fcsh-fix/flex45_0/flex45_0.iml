@@ -12,6 +12,15 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
+          <root url="jar://$FLEX_SDK_4.5$/lib/asc.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
           <root url="jar://$FLEX_SDK_4.5$/lib/mxmlc.jar!/" />
         </CLASSES>
         <JAVADOC />

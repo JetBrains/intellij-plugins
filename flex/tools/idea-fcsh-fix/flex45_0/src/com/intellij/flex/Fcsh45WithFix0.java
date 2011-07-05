@@ -10,7 +10,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Original file can be found at:
-// svn://opensource.adobe.com/svn/opensource/flex/sdk/trunk/modules/compiler/src/java/flex2/tools/Fcsh.java (revision 15269)
+// svn://opensource.adobe.com/svn/opensource/flex/sdk/trunk/modules/compiler/src/java/flex2/tools/Fcsh.java (revision 21499)
 
 package com.intellij.flex;
 
@@ -108,6 +108,8 @@ public class Fcsh45WithFix0 extends Tool
 
     private static void process(String s)
     {
+        macromedia.asc.util.ContextStatics.omitTrace = false; // reset to initial state
+
         LocalizationManager l10n = ThreadLocalToolkit.getLocalizationManager();
 
         if (s.startsWith("mxmlc"))
@@ -439,8 +441,8 @@ public class Fcsh45WithFix0 extends Tool
             }
 
             // validate CompilationUnits in FileSpec and SourcePath
-            if (CompilerAPI.validateCompilationUnits(s.fileSpec, s.sourceList, s.sourcePath, s.bundlePath, s.resources,
-                                                     swcContext, s.classes, s.perCompileData, recompile, configuration) > 0)
+            if (recompile || CompilerAPI.validateCompilationUnits(s.fileSpec, s.sourceList, s.sourcePath, s.bundlePath, s.resources,
+                                                                  swcContext, s.classes, s.perCompileData, configuration) > 0)
             {
                 Map licenseMap = configuration.getLicensesConfiguration().getLicenseMap();
 
@@ -466,7 +468,8 @@ public class Fcsh45WithFix0 extends Tool
                 List<CompilationUnit> units = CompilerAPI.compile(s.fileSpec, s.sourceList, s.classes.values(),
                                                                   s.sourcePath, s.resources, s.bundlePath, swcContext,
                                                                   symbolTable, mappings, configuration, compilers,
-                                                                  new CompcPreLink(rbFiles, configuration.getIncludeResourceBundles()),
+                                                                  new CompcPreLink(rbFiles, configuration.getIncludeResourceBundles(),
+                                                                		  false),
                                                                   licenseMap, new ArrayList<Source>());
 
                 if (benchmark != null)
@@ -593,9 +596,9 @@ public class Fcsh45WithFix0 extends Tool
             }
 
             // validate CompilationUnits in FileSpec and SourcePath
-            if (CompilerAPI.validateCompilationUnits(s.fileSpec, s.sourceList, s.sourcePath, s.bundlePath, s.resources,
-                                                            swcContext, s.perCompileData,
-                                                            recompile, configuration) > 0)
+            if (recompile || CompilerAPI.validateCompilationUnits(s.fileSpec, s.sourceList, s.sourcePath, s.bundlePath, s.resources,
+                                                                  swcContext, s.perCompileData,
+                                                                  configuration) > 0)
             {
                 Map licenseMap = configuration.getLicensesConfiguration().getLicenseMap();
 
@@ -748,7 +751,7 @@ public class Fcsh45WithFix0 extends Tool
                 VirtualFile projector = ((CommandLineConfiguration) s.configuration).getProjector();
                 PostLink postLink = null;
 
-                if (s.configuration.optimize() && !s.configuration.generateDebugTags())
+                if (s.configuration.optimize() && !s.configuration.debug())
                 {
                     postLink = new PostLink(s.configuration);
                 }
@@ -944,7 +947,7 @@ public class Fcsh45WithFix0 extends Tool
             Map licenseMap = configuration.getLicensesConfiguration().getLicenseMap();
             PostLink postLink = null;
 
-            if (configuration.optimize() && !configuration.generateDebugTags())
+            if (configuration.optimize() && !configuration.debug())
             {
                 postLink = new PostLink(configuration);
             }
@@ -1188,7 +1191,8 @@ public class Fcsh45WithFix0 extends Tool
             List<CompilationUnit> units = CompilerAPI.compile(s.fileSpec, s.sourceList, s.classes.values(), s.sourcePath,
                                                               s.resources, s.bundlePath, swcContext, symbolTable,
                                                               mappings, configuration, compilers,
-                                                              new CompcPreLink(rbFiles, configuration.getIncludeResourceBundles()),
+                                                              new CompcPreLink(rbFiles, configuration.getIncludeResourceBundles(),
+                                                            		  false),
                                                               licenseMap, new ArrayList<Source>());
 
             if (benchmark != null)

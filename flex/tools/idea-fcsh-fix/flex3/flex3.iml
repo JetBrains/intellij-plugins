@@ -7,8 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="launcher" />
     <orderEntry type="module" module-name="common" />
+    <orderEntry type="module" module-name="launcher" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
