@@ -208,8 +208,6 @@
     <lang.braceMatcher language="OGNL"
                        implementationClass="com.intellij.lang.ognl.highlight.OgnlBraceMatcher"/>
     <quoteHandler fileType="OGNL" className="com.intellij.lang.ognl.highlight.OgnlQuoteHandler"/>
-    <lang.documentationProvider language="OGNL"
-                                implementationClass="com.intellij.lang.ognl.OgnlDocumentationProvider"/>
     <completion.contributor language="OGNL"
                             implementationClass="com.intellij.lang.ognl.completion.OgnlKeywordCompletionContributor"/>
 

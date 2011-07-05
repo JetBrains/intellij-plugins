@@ -18,8 +18,8 @@ package com.intellij.lang.ognl.completion;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.ognl.psi.OgnlStringLiteral;
+import com.intellij.lang.ognl.psi.OgnlVariableExpression;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.ognl.psi.OgnlKeyword.*;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
+import static com.intellij.patterns.StandardPatterns.not;
+import static com.intellij.patterns.StandardPatterns.or;
 
 /**
  * @author Yann C&eacute;bron
@@ -40,11 +42,15 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
       TRUE, FALSE, NULL, INSTANCEOF
   };
 
-  private static final PsiElementPattern.Capture<PsiElement> STRING_LITERAL = psiElement().inside(OgnlStringLiteral.class);
+  private static final PsiElementPattern.Capture<PsiElement> STRING_LITERAL =
+      psiElement().inside(OgnlStringLiteral.class);
+
+  private static final PsiElementPattern.Capture<PsiElement> VARIABLE_EXPRESSION =
+      psiElement().inside(OgnlVariableExpression.class);
 
   public OgnlKeywordCompletionContributor() {
     extend(CompletionType.BASIC,
-           PlatformPatterns.not(STRING_LITERAL),
+           not(or(STRING_LITERAL, VARIABLE_EXPRESSION)),
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull final CompletionParameters completionParameters,

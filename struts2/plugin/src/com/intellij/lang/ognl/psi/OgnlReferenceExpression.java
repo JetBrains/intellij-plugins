@@ -15,13 +15,16 @@
 
 package com.intellij.lang.ognl.psi;
 
+import com.intellij.ide.projectView.PresentationData;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.PsiType;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,6 +34,19 @@ public class OgnlReferenceExpression extends OgnlExpressionBase {
 
   public OgnlReferenceExpression(@NotNull final ASTNode node) {
     super(node);
+  }
+
+  @Override
+  public ItemPresentation getPresentation() {
+    return new PresentationData(getIdentifier().getText(),
+                                null,
+                                PlatformIcons.PARAMETER_ICON,
+                                PlatformIcons.PARAMETER_ICON,
+                                null);
+  }
+
+  private PsiElement getIdentifier() {
+    return findNotNullChildByType(OgnlTokenTypes.IDENTIFIER);
   }
 
   @Override

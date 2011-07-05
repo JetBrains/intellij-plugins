@@ -17,7 +17,9 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.ide.projectView.PresentationData;
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -27,7 +29,7 @@ import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * {@code #varName"}.
+ * {@code "#varName"}.
  *
  * @author Yann C&eacute;bron
  */
@@ -38,8 +40,27 @@ public class OgnlVariableExpression extends OgnlExpressionBase {
   }
 
   @Override
+  public ItemPresentation getPresentation() {
+    return new PresentationData(getIdentifier().getText(),
+                                null,
+                                PlatformIcons.VARIABLE_ICON,
+                                PlatformIcons.VARIABLE_ICON,
+                                null);
+  }
+
+  private PsiElement getIdentifier() {
+    return findNotNullChildByType(OgnlTokenTypes.IDENTIFIER);
+  }
+
+  @NotNull
+  @Override
+  public PsiReference[] getReferences() {
+    return new PsiReference[]{getReference()};
+  }
+
+  @Override
   public PsiReference getReference() {
-    return new PsiReferenceBase<OgnlExpressionBase>(this, TextRange.from(0, getTextLength())) {
+    return new PsiReferenceBase<OgnlExpressionBase>(this, TextRange.from(1, getTextLength() - 1)) {
       @Override
       public PsiElement resolve() {
         return myElement;

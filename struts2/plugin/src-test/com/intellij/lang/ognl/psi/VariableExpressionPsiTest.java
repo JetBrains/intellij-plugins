@@ -26,17 +26,21 @@ public class VariableExpressionPsiTest extends PsiTestCase {
 
   public void testVariableReference() {
     final OgnlVariableExpression expression = parse("#exp");
+    assertEquals("exp", expression.getPresentation().getPresentableText());
+
     final PsiReference reference = expression.getReference();
     assertNotNull(reference);
-    assertEquals("#exp", reference.getCanonicalText());
+    assertEquals("exp", reference.getCanonicalText());
     assertEquals(expression.getNavigationElement(), reference.resolve());
   }
 
   public void testVariableThis() {
     final OgnlVariableExpression expression = parse("#this");
+    assertEquals("this", expression.getPresentation().getPresentableText());
+
     final PsiReference reference = expression.getReference();
     assertNotNull(reference);
-    assertEquals("#this", reference.getCanonicalText());
+    assertEquals("this", reference.getCanonicalText());
     assertEquals(expression.getNavigationElement(), reference.resolve());
   }
 
