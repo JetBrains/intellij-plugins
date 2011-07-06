@@ -27,8 +27,6 @@ public class MainLoader extends Sprite {
   private static const icon32:Class;
 
   public function MainLoader() {
-    setInterval(debugTickler, 1500);
-    
     var application:NativeApplication = NativeApplication.nativeApplication;
     application.autoExit = false;
     if (NativeApplication.supportsDockIcon) {
@@ -37,6 +35,7 @@ public class MainLoader extends Sprite {
     
     config::useRoboflest {
       roboflest();
+      setInterval(debugTickler, 1500);
     }
 
     var loader:Loader = new Loader();
@@ -65,6 +64,7 @@ public class MainLoader extends Sprite {
   }
 
   //noinspection JSMethodCanBeStatic
+  config::useRoboflest
   private function debugTickler():void {
     // We need some bytes of code in order to have a place to break.
     var i:int = 0;

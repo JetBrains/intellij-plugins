@@ -1,10 +1,10 @@
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
 	<compiler>
 		<accessible>false</accessible>
-		<debug>true</debug>
+		<debug>false</debug>
 		<define>
 			<name>config::useRoboflest</name>
-			<value>true</value>
+			<value>false</value>
 		</define>
 		<external-library-path>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
