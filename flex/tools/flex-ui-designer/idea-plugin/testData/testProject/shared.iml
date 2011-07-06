@@ -2,7 +2,7 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="flex" name="Flex">
-      <configuration>
+      <configuration flex_sdk="compiler-4.5.0.20968.pom">
         <option name="DO_BUILD" value="true" />
         <option name="OUTPUT_TYPE" value="Library" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />
@@ -40,6 +40,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.framework:airglobal:swc:2.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.framework:airglobal:swc:2.6" level="project" />
   </component>
 </module>

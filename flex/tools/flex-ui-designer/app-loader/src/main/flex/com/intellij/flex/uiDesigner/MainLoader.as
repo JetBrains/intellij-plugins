@@ -35,7 +35,7 @@ public class MainLoader extends Sprite {
     
     config::useRoboflest {
       roboflest();
-      setInterval(debugTickler, 1500);
+      setInterval(debugTickler, 10000);
     }
 
     var loader:Loader = new Loader();
@@ -66,7 +66,6 @@ public class MainLoader extends Sprite {
   //noinspection JSMethodCanBeStatic
   config::useRoboflest
   private function debugTickler():void {
-    // We need some bytes of code in order to have a place to break.
     var i:int = 0;
   }
 }

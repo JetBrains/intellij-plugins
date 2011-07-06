@@ -184,7 +184,7 @@ final class DesignerApplicationUtil {
     runner.execute(executor, new ExecutionEnvironment(runner, settings, module.getProject()), new ProgramRunner.Callback() {
       @Override
       public void processStarted(final RunContentDescriptor descriptor) {
-        final MyFlexBaseRunner.MyDefaultDebugProcessHandler processHandler = (MyFlexBaseRunner.MyDefaultDebugProcessHandler)descriptor.getProcessHandler();
+        final ProcessHandler processHandler = descriptor.getProcessHandler();
         assert processHandler != null;
         //noinspection deprecation
         processHandler.putUserData(ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, true);
@@ -196,7 +196,7 @@ final class DesignerApplicationUtil {
               ExecutionManager.getInstance(project).getContentManager().removeRunContent(executor, descriptor);
             }
             
-            processHandler.myDestroyProcess();
+            processHandler.destroyProcess();
           }
         }
         );

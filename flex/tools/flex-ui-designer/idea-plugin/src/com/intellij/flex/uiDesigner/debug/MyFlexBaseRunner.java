@@ -4,7 +4,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.DebugPathManager;
@@ -14,7 +13,10 @@ import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.util.StringBuilderSpinAllocator;
-import com.intellij.xdebugger.*;
+import com.intellij.xdebugger.XDebugProcess;
+import com.intellij.xdebugger.XDebugProcessStarter;
+import com.intellij.xdebugger.XDebugSession;
+import com.intellij.xdebugger.XDebuggerManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -52,22 +54,6 @@ public class MyFlexBaseRunner extends FlexBaseRunner {
     return true;
   }
 
-  public static class MyDefaultDebugProcessHandler extends DefaultDebugProcessHandler {
-    @Override
-    public void destroyProcess() {
-      if (DebugPathManager.IS_DEV) {
-        super.destroyProcess();
-      }
-      else {
-        detachProcess();
-      }
-    }
-
-    public void myDestroyProcess() {
-      super.destroyProcess();
-    }
-  }
-
   private static class MyFlexDebugProcess extends FlexDebugProcess {
     public MyFlexDebugProcess(XDebugSession session, Sdk flexSdk, FlexRunnerParameters flexRunnerParameters) throws IOException {
       super(session, flexSdk, flexRunnerParameters);
@@ -78,11 +64,6 @@ public class MyFlexBaseRunner extends FlexBaseRunner {
       if (DebugPathManager.IS_DEV) {
         super.stop();
       }
-    }
-
-    @Override
-    protected ProcessHandler doGetProcessHandler() {
-      return new MyDefaultDebugProcessHandler();
     }
   }
 
