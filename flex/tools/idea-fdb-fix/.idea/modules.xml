@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/common/common.iml" filepath="$PROJECT_DIR$/common/common.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea_fdb_3_fix/idea_fdb_3_fix.iml" filepath="$PROJECT_DIR$/idea_fdb_3_fix/idea_fdb_3_fix.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea_fdb_4.0.0.14159_fix/idea_fdb_4.0.0.14159_fix.iml" filepath="$PROJECT_DIR$/idea_fdb_4.0.0.14159_fix/idea_fdb_4.0.0.14159_fix.iml" />
+      <module fileurl="file://$PROJECT_DIR$/idea_fdb_4.5.0.20967_fix/idea_fdb_4.5.0.20967_fix.iml" filepath="$PROJECT_DIR$/idea_fdb_4.5.0.20967_fix/idea_fdb_4.5.0.20967_fix.iml" />
     </modules>
   </component>
 </project>

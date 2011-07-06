@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="idea-fdb-4.5.0.20967-fix">
+    <output-path>$PROJECT_DIR$/../../lib</output-path>
+    <root id="archive" name="idea-fdb-4.5.0.20967-fix.jar">
+      <element id="module-output" name="common" />
+      <element id="module-output" name="idea_fdb_4.5.0.20967_fix" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/idea_fdb_4.5.0.20967_fix/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>

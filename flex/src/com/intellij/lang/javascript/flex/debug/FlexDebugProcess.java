@@ -229,8 +229,13 @@ public class FlexDebugProcess extends XDebugProcess {
     if (isDebuggerFromSdk3()) {
       classpath = FlexUtils.getPathToBundledJar("idea-fdb-3-fix.jar") + File.pathSeparator + classpath;
     }
-    else if (isDebuggerFromSdk4() && (myDebuggerVersion.contains("14159") || myDebuggerVersion.contains("16076"))) {
-      classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.0.0.14159-fix.jar") + File.pathSeparator + classpath;
+    else if (isDebuggerFromSdk4()) {
+      if (myDebuggerVersion.contains("14159") || myDebuggerVersion.contains("16076")) {
+        classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.0.0.14159-fix.jar") + File.pathSeparator + classpath;
+      }
+      else if (myDebuggerVersion.contains("20967") || myDebuggerVersion.contains("21328")) {
+        classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.5.0.20967-fix.jar") + File.pathSeparator + classpath;
+      }
     }
 
     final List<String> fdbLaunchCommand =
