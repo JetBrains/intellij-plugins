@@ -5,8 +5,10 @@ import flex2.compiler.common.Configuration;
 import flex2.tools.oem.Application;
 import flex2.tools.oem.Builder;
 import flex2.tools.oem.Library;
+import flex2.tools.oem.Report;
 
 import java.io.File;
+import java.io.FileWriter;
 
 public class CompilationThread extends Thread {
 
@@ -47,6 +49,11 @@ public class CompilationThread extends Thread {
       builder.setLogger(myLogger);
       builder.setPathResolver(SdkFilesResolver.INSTANCE);
 
+      final String linkReportFileName = configuration.getLinkReportFileName();
+      if (linkReportFileName != null) {
+        builder.getConfiguration().keepLinkReport(true);
+      }
+
       final long outputFileSize;
       final boolean omitTrace = mySdkSpecificHandler.omitTrace(configuration);
 
@@ -63,6 +70,16 @@ public class CompilationThread extends Thread {
       if (outputFileSize > 0) {
         final File outputFile = (builder instanceof Application) ? ((Application)builder).getOutput() : ((Library)builder).getOutput();
         myLogger.log(outputFile.getCanonicalPath() + " (" + outputFileSize + " bytes)");
+
+        if (linkReportFileName != null) {
+          final File linkReportFile = new File(linkReportFileName);
+          FlexCompilerUtil.ensureFileCanBeCreated(linkReportFile);
+
+          final Report report = builder.getReport();
+          final FileWriter writer = new FileWriter(linkReportFile);
+          report.writeLinkReport(writer);
+          writer.close();
+        }
       }
       //else {
       //  myLogger.log(ERROR_MARKER + "Compilation failed");
