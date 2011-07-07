@@ -77,6 +77,9 @@
           <forms/>
         </constraints>
         <properties/>
+        <clientProperties>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+        </clientProperties>
         <border type="none" title="Manifest file location (relative to module root)"/>
         <children>
           <component id="70cf9" class="javax.swing.JRadioButton" binding="_useProjectDefaultManifestFileLocation">
@@ -159,6 +162,9 @@
           <forms/>
         </constraints>
         <properties/>
+        <clientProperties>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+        </clientProperties>
         <border type="none" title="Bnd file location"/>
         <children>
           <component id="8cb2f" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_bndFile">
@@ -189,6 +195,9 @@
           <forms/>
         </constraints>
         <properties/>
+        <clientProperties>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+        </clientProperties>
         <border type="none" title="Bundlor file location"/>
         <children>
           <component id="f2475" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="_bundlorFile">

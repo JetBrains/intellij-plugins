@@ -28,6 +28,9 @@
         </constraints>
         <properties/>
         <border type="none" title-resource-bundle="org/osmorc/i18n/OsmorcBundle" title-key="faceteditor.bundlesettings"/>
+<clientProperties>
+  <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+</clientProperties>
         <children>
           <component id="bc774" class="javax.swing.JLabel" binding="_bundleSymbolicNameLabel">
             <constraints>

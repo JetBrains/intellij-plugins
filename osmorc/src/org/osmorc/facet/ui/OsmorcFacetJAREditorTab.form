@@ -170,6 +170,9 @@
           <forms/>
         </constraints>
         <properties/>
+        <clientProperties>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+        </clientProperties>
         <border type="etched" title="Additional JAR Contents"/>
         <children>
           <scrollpane id="5798f" class="com.intellij.ui.components.JBScrollPane">

@@ -219,6 +219,9 @@
               <forms defaultalign-horz="false"/>
             </constraints>
             <properties/>
+            <clientProperties>
+              <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+            </clientProperties>
             <border type="etched" title="Runtime Directory"/>
             <children>
               <component id="a6290" class="javax.swing.JRadioButton" binding="osmorcControlledRadioButton" default-binding="true">
