@@ -200,8 +200,7 @@ target('default': "Build artifacts") {
 
   usedJars.add("$home/community/lib/looks-2.2.2.jar")
 
-  // TODO searchable options should be built with all-modules classpath
-  //buildSearchableOptions()
+  buildSearchableOptions()
 
   wireBuildDate(buildNumber)
   LayoutInfo layoutInfo = layoutFull(paths.distAll, usedJars)
@@ -292,13 +291,13 @@ def buildSearchableOptions() {
   ant.copy(file: "$home/build/idea.license", todir: paths.ideaSystem)
   //ant.copy(file: "$home/build/rubymine.license", todir: paths.ideaSystem)
   ant.java(classname: "com.intellij.idea.Main", fork: "true") {
-    jvmarg(line: "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9887 -ea -Xmx250m -Didea.home.path=$home -Didea.system.path=${paths.ideaSystem} -Didea.config.path=${paths.ideaConfig} -Didea.platform.prefix=Flex -Didea.no.jre.check=true")
+    jvmarg(line: "-ea -Xmx250m -Didea.home.path=$home -Didea.system.path=${paths.ideaSystem} -Didea.config.path=${paths.ideaConfig} -Didea.platform.prefix=Flex -Didea.no.jre.check=true")
     jvmarg(value: "-Xbootclasspath/a:${boot.output}")
     arg(line: "traverseUI ${dest_dir}/searchableOptions.xml")
 
     classpath() {
       pathelement(location: "$ch/lib/junit.jar")
-      project["main"].runtimeClasspath().each {
+      project["flex-ide"].runtimeClasspath().each {
         pathelement(location: it)
       }
       pathelement(location: "${jdkHome}/lib/tools.jar")
