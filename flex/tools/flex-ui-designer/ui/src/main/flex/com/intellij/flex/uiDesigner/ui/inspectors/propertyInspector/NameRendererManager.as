@@ -1,8 +1,9 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.Insets;
-import cocoa.tableView.TextRendererManager;
+import cocoa.renderer.TextRendererManager;
 import cocoa.text.TextFormat;
 
+import flash.display.DisplayObjectContainer;
 import flash.text.engine.TextLine;
 
 public class NameRendererManager extends TextRendererManager {
@@ -10,7 +11,7 @@ public class NameRendererManager extends TextRendererManager {
     super(textFormat, textInsets);
   }
 
-  override protected function createTextLine(itemIndex:int, w:Number):TextLine {
+  override protected function createTextLine(textLineContainer:DisplayObjectContainer,itemIndex:int,w:Number):TextLine {
     var description:Object = _dataSource.getObjectValue(itemIndex);
     if (!("editable" in description)) {
       prepareDescription(description);

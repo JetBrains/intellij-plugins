@@ -1,13 +1,14 @@
 package com.intellij.flex.uiDesigner.plaf {
 import cocoa.Insets;
+import cocoa.ListViewModifiableDataSource;
 import cocoa.PushButton;
 import cocoa.plaf.basic.AbstractTabViewSkin;
+import cocoa.tabView.TabView;
 
 import flash.display.Sprite;
 import flash.events.MouseEvent;
 import flash.text.engine.TextLine;
 
-import mx.core.IInvalidating;
 import mx.core.IUIComponent;
 
 internal class EditorTabViewSkin extends AbstractTabViewSkin {
@@ -33,8 +34,8 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
     _borderShape.mouseChildren = false;
     addDisplayObject(_borderShape);
     
-    segmentedControl.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
-    segmentedControl.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
+    tabBar.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
+    tabBar.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
     
     _borderShape.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
     _borderShape.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
@@ -47,14 +48,14 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
   override protected function updateDisplayList(w:Number, h:Number):void {
     super.updateDisplayList(w, h);
 
-    const selectedIndex:int = segmentedControl.selectedIndex;
+    const selectedIndex:int = tabBar.selectedIndex;
     if (selectedIndex != -1) {
-      IInvalidating(segmentedControl.getElementAt(selectedIndex)).invalidateDisplayList();
+      //IInvalidating(segmentedControl.getElementAt(selectedIndex)).invalidateDisplayList();
     }
   }
 
   private function mouseOverHandler(event:MouseEvent):void {
-    if (segmentedControl.dataProvider.length == 0) {
+    if (dataSource.empty) {
       return;
     }
     
@@ -63,7 +64,7 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
       closeButtonRelatedRenderer = EditorTabLabelRenderer(event.target);
     }
     else if (event.target == _borderShape) {
-      closeButtonRelatedRenderer = EditorTabLabelRenderer(segmentedControl.getElementAt(segmentedControl.selectedIndex));
+      //closeButtonRelatedRenderer = EditorTabLabelRenderer(segmentedControl.getElementAt(segmentedControl.selectedIndex));
       if (event.localX < closeButtonRelatedRenderer.x || event.localX > (closeButtonRelatedRenderer.x + closeButtonRelatedRenderer.getExplicitOrMeasuredWidth()) ||
           (event.localY + 2 /* selected tab label has top offset -2 (height 22 instead of 20 for unseleted tab label) */) < closeButtonRelatedRenderer.y ||
           (event.localY - 4 /* 1 top stripe border stroke + 2 white background stripe + 1 bottom stripe border stroke */) >
@@ -100,16 +101,20 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
       //ButtonSkinInteraction(closeButton.skin)
     }
   }
-  
+
+  private function get dataSource():ListViewModifiableDataSource {
+    return ListViewModifiableDataSource(TabView(component).dataSource);
+  }
+
   private function closeTab():void {
     if (closeButtonRelatedRenderer.selected) {
-      if (segmentedControl.dataProvider.length == 1) {
+      if (tabBar.dataSource.itemCount == 1) {
         closeButtonRelatedRenderer.clearSelected(this);
       }
       closeButtonRelatedRenderer.clearSelectedLabel();
     }
-    
-    segmentedControl.dataProvider.removeItemAt(closeButtonRelatedRenderer.itemIndex);
+
+    dataSource.removeItemAt(closeButtonRelatedRenderer.itemIndex);
     
     hideCloseButton();
   }

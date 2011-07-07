@@ -1,11 +1,15 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.CheckBox;
 import cocoa.Insets;
+import cocoa.plaf.ButtonSkinInteraction;
 import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.Skin;
-import cocoa.plaf.basic.ButtonSkinInteraction;
-import cocoa.tableView.TextLineLinkedListEntry;
-import cocoa.tableView.TextRendererManager;
+import cocoa.renderer.CheckBoxEntry;
+import cocoa.renderer.CheckBoxEntryFactory;
+import cocoa.renderer.TextLineAndDisplayObjectEntry;
+import cocoa.renderer.TextLineAndDisplayObjectEntryFactory;
+import cocoa.renderer.TextLineEntry;
+import cocoa.renderer.TextRendererManager;
 import cocoa.text.TextFormat;
 import cocoa.util.StringUtil;
 
@@ -31,8 +35,9 @@ public class ValueRendererManager extends TextRendererManager {
   private var laf:LookAndFeel;
   private var myDataSource:MyTableViewDataSource;
 
-  private static var arrowsFactory:TextLineAndDisplayObjectLinkedListEntryFactory;
-  private static var disabledArrowsFactory:TextLineAndDisplayObjectLinkedListEntryFactory;
+  private static var arrowsFactory:TextLineAndDisplayObjectEntryFactory;
+  private static var disabledArrowsFactory:TextLineAndDisplayObjectEntryFactory;
+  private static var checkBoxFactory:CheckBoxEntryFactory;
 
   public function ValueRendererManager(laf:LookAndFeel, textFormat:TextFormat, textInsets:Insets, dataSource:MyTableViewDataSource) {
     this.laf = laf;
@@ -41,15 +46,20 @@ public class ValueRendererManager extends TextRendererManager {
     super(textFormat, textInsets);
 
     if (arrowsFactory == null) {
-      arrowsFactory = new TextLineAndDisplayObjectLinkedListEntryFactory(laf.getClass("small.arrows"));
-      disabledArrowsFactory = new TextLineAndDisplayObjectLinkedListEntryFactory(laf.getClass("small.arrows.disabled"));
+      arrowsFactory = new TextLineAndDisplayObjectEntryFactory(laf.getClass("small.arrows"));
+      disabledArrowsFactory = new TextLineAndDisplayObjectEntryFactory(laf.getClass("small.arrows.disabled"));
+      checkBoxFactory = new CheckBoxEntryFactory();
     }
+
+    registerEntryFactory(arrowsFactory);
+    registerEntryFactory(disabledArrowsFactory);
+    registerEntryFactory(checkBoxFactory);
   }
 
-  public function findEntry(rowIndex:int):TextLineLinkedListEntry {
-    var entry:TextLineLinkedListEntry = cells.head;
+  public function findEntry(itemIndex:int):TextLineEntry {
+    var entry:TextLineEntry = cells.head;
     do {
-      if (entry.rowIndex == rowIndex) {
+      if (entry.itemIndex == itemIndex) {
         return entry;
       }
     }
@@ -62,13 +72,13 @@ public class ValueRendererManager extends TextRendererManager {
     return _dataSource.getObjectValue(rowIndex);
   }
 
-  override protected function createEntry(rowIndex:int, x:Number, y:Number, w:Number, h:Number):TextLineLinkedListEntry {
-    var description:Object = getDescription(rowIndex);
+  override protected function createEntry(itemIndex:int, x:Number, y:Number, w:Number, h:Number):TextLineEntry {
+    var description:Object = getDescription(itemIndex);
     var type:String = description.type;
     var object:Object = myDataSource.object;
     var text:String;
     var customElementFormat:ElementFormat;
-    var newEntry:TextLineLinkedListEntry;
+    var newEntry:TextLineEntry;
     var createTextLine:Boolean = true;
 
     var enumeration:String = description.enumeration;
@@ -97,7 +107,7 @@ public class ValueRendererManager extends TextRendererManager {
             customElementFormat = func;
           }
           else if (text.length == 0) {
-            newEntry = TextLineLinkedListEntry.create(null);
+            newEntry = TextLineEntry.create(null);
             createTextLine = false;
           }
           break;
@@ -156,15 +166,15 @@ public class ValueRendererManager extends TextRendererManager {
     }
 
     if (newEntry == null) {
-      newEntry = enumeration == null ? TextLineLinkedListEntry.create(line) : createEntryForEnumeration(line, editable, y, x, w);
+      newEntry = enumeration == null ? TextLineEntry.create(line) : createEntryForEnumeration(line, editable, y, x, w);
     }
 
-    newEntry.rowIndex = rowIndex;
+    newEntry.itemIndex = itemIndex;
     return newEntry;
   }
 
-  private function createEntryForEnumeration(line:TextLine, editable:Boolean, y:Number, x:Number, w:Number):TextLineLinkedListEntry {
-    var e:TextLineAndDisplayObjectLinkedListEntry = editable ? arrowsFactory.create(line) : disabledArrowsFactory.create(line);
+  private function createEntryForEnumeration(line:TextLine, editable:Boolean, y:Number, x:Number, w:Number):TextLineEntry {
+    var e:TextLineAndDisplayObjectEntry = editable ? arrowsFactory.create(line) : disabledArrowsFactory.create(line);
     var displayObject:DisplayObject = e.displayObject;
     if (displayObject.parent != _container) {
       _container.addChild(displayObject);
@@ -174,8 +184,8 @@ public class ValueRendererManager extends TextRendererManager {
     return e;
   }
 
-  private function createEntryForBoolean(value:Boolean, editable:Boolean, x:Number, y:Number):CheckBoxLinkedListEntry {
-    var e:CheckBoxLinkedListEntry = CheckBoxLinkedListEntry.create(value);
+  private function createEntryForBoolean(value:Boolean, editable:Boolean, x:Number, y:Number):CheckBoxEntry {
+    var e:CheckBoxEntry = checkBoxFactory.create(value);
     var checkbox:CheckBox = e.checkbox;
     var skin:Skin = checkbox.skin;
     if (skin == null) {
@@ -199,34 +209,6 @@ public class ValueRendererManager extends TextRendererManager {
     displayObject.y = y + 1;
 
     return e;
-  }
-
-  override public function postLayout(finalPass:Boolean):void {
-    super.postLayout(finalPass);
-
-    clearOurPools();
-  }
-
-  override public function reuse(rowCountDelta:int, finalPass:Boolean):void {
-    arrowsFactory.preReuse();
-    disabledArrowsFactory.preReuse();
-    CheckBoxLinkedListEntry.oldPoolSize1 = CheckBoxLinkedListEntry.poolSize1;
-    super.reuse(rowCountDelta, finalPass);
-
-    if (finalPass) {
-      clearOurPools();
-    }
-  }
-
-  private function clearOurPools():void {
-    arrowsFactory.finalizeReused(_container);
-    disabledArrowsFactory.finalizeReused(_container);
-
-    //var c:Class = CheckBoxLinkedListEntry;
-    for (var i:int = CheckBoxLinkedListEntry.oldPoolSize1, n:int = CheckBoxLinkedListEntry.poolSize1; i < n; i++) {
-      _container.removeChild(DisplayObject(CheckBoxLinkedListEntry.pool1[i].checkbox.skin));
-    }
-    CheckBoxLinkedListEntry.oldPoolSize1 = CheckBoxLinkedListEntry.poolSize1;
   }
 }
 }

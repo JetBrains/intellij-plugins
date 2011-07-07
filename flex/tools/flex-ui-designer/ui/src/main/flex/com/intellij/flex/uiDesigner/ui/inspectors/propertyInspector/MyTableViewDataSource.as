@@ -7,7 +7,7 @@ import avmplus.INCLUDE_TRAITS;
 import avmplus.INCLUDE_VARIABLES;
 import avmplus.describe;
 
-import cocoa.tableView.AbstractCollectionViewDataSource;
+import cocoa.AbstractCollectionViewDataSource;
 import cocoa.tableView.TableColumn;
 import cocoa.tableView.TableViewDataSource;
 
@@ -45,7 +45,7 @@ public class MyTableViewDataSource extends AbstractCollectionViewDataSource impl
 
   public function update(object:Object):void {
     _object = object;
-    sourceItemCounter = 0;
+    _itemCount = 0;
 
     if (_object == null) {
       if (_reset != null) {
@@ -62,7 +62,7 @@ public class MyTableViewDataSource extends AbstractCollectionViewDataSource impl
       processProperty(variable);
     }
 
-    source.length = sourceItemCounter;
+    source.length = _itemCount;
     source.sort(compare);
     if (_reset != null) {
       _reset.dispatch();
@@ -106,15 +106,11 @@ public class MyTableViewDataSource extends AbstractCollectionViewDataSource impl
       }
     }
 
-    if (sourceItemCounter > source.length) {
-      source.length = sourceItemCounter + 64;
+    if (_itemCount > source.length) {
+      source.length = _itemCount + 64;
     }
 
-    source[sourceItemCounter++] = accessor;
-  }
-
-  public function get rowCount():int {
-    return sourceItemCounter;
+    source[_itemCount++] = accessor;
   }
 
   public function getObjectValue(column:TableColumn, rowIndex:int):Object {

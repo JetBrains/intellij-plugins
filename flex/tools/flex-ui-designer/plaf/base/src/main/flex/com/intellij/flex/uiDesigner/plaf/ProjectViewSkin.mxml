@@ -54,11 +54,11 @@
     </layout>
     <SegmentedControl id="statesBar"/>
 
-    <CollectionView id="elementTreeBar" width="100%">
+    <SegmentedControl id="elementTreeBar" width="100%">
       <layout>
-        <CollectionHorizontalLayout height="20" gap="5"/>
+        <ListHorizontalLayout height="20" gap="5"/>
       </layout>
-    </CollectionView>
+    </SegmentedControl>
   </Toolbar>
   <tools:ElementToolContainer id="elementToolContainer"/>
 

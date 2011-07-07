@@ -1,8 +1,9 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
+import cocoa.plaf.ButtonSkinInteraction;
 import cocoa.plaf.TableViewSkin;
-import cocoa.plaf.basic.ButtonSkinInteraction;
+import cocoa.renderer.CheckBoxEntry;
+import cocoa.renderer.TextLineEntry;
 import cocoa.tableView.TableView;
-import cocoa.tableView.TextLineLinkedListEntry;
 
 import com.intellij.flex.uiDesigner.PlatformDataKeys;
 import com.intellij.flex.uiDesigner.Project;
@@ -40,8 +41,8 @@ public class Interactor {
     currentRowIndex = tableSkin.getRowIndexAt(event.localY);
     currentColumnIndex = tableSkin.getColumnIndexAt(event.localX);
     if (currentColumnIndex == 1) {
-      var entry:TextLineLinkedListEntry = findEntry();
-      if (entry is CheckBoxLinkedListEntry) {
+      var entry:TextLineEntry = findEntry();
+      if (entry is CheckBoxEntry) {
         var skin:ButtonSkinInteraction = getButtonSkinInteraction();
         if (!skin.enabled) {
           resetCurrentIndices();
@@ -86,7 +87,7 @@ public class Interactor {
     }
   }
 
-  private function findEntry():TextLineLinkedListEntry {
+  private function findEntry():TextLineEntry {
     return valueRendererManager.findEntry(currentRowIndex);
   }
 
@@ -107,7 +108,7 @@ public class Interactor {
     var rowIndex:int = tableSkin.getRowIndexAt(sharedPoint.y);
     var columnIndex:int = tableSkin.getColumnIndexAt(sharedPoint.x);
 
-    var entry:CheckBoxLinkedListEntry = CheckBoxLinkedListEntry(findEntry());
+    var entry:CheckBoxEntry = CheckBoxEntry(findEntry());
     if (rowIndex == currentRowIndex && columnIndex == currentColumnIndex) {
       entry.interaction.mouseUpHandler(event);
 
@@ -119,7 +120,7 @@ public class Interactor {
   }
 
   private function getButtonSkinInteraction():ButtonSkinInteraction {
-    return CheckBoxLinkedListEntry(findEntry()).interaction;
+    return CheckBoxEntry(findEntry()).interaction;
   }
 }
 }

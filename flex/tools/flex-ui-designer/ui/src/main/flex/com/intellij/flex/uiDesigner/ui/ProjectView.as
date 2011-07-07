@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.ui {
 import cocoa.AbstractComponent;
 import cocoa.ClassFactory;
 import cocoa.pane.PaneItem;
+import cocoa.pane.PaneViewDataSource;
 import cocoa.resources.ResourceMetadata;
 import cocoa.sidebar.Sidebar;
 import cocoa.tabView.TabView;
@@ -14,12 +15,7 @@ import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StyleInspector;
 
 import flash.utils.Dictionary;
 
-import mx.events.CollectionEvent;
-import mx.events.CollectionEventKind;
-
 import org.flyti.plexus.Injectable;
-import org.flyti.util.ArrayList;
-import org.flyti.util.List;
 
 use namespace ui;
 
@@ -32,7 +28,7 @@ public class ProjectView extends AbstractComponent implements Injectable {
   ui var sidebar:Sidebar;
   ui var editorTabView:TabView;
 
-  private const editorPanes:List = new ArrayList();
+  private const editorPanes:PaneViewDataSource = new PaneViewDataSource(new Vector.<PaneItem>());
   
   private var _documentFactoryManager:DocumentFactoryManager;
   public function set documentFactoryManager(value:DocumentFactoryManager):void {
@@ -45,7 +41,7 @@ public class ProjectView extends AbstractComponent implements Injectable {
 
   ui function sidebarAdded():void {
     // todo move
-    sidebar.items = new ArrayList(new <Object>[
+    sidebar.dataSource = new PaneViewDataSource(new <PaneItem>[
       new PaneItem(new ResourceMetadata("style", "Designer"), new ClassFactory(StyleInspector)),
       new PaneItem(new ResourceMetadata("properties", "Designer"), new ClassFactory(PropertyInspector))
     ]);
@@ -53,10 +49,10 @@ public class ProjectView extends AbstractComponent implements Injectable {
   }
 
   ui function editorTabViewAdded():void {
-    editorTabView.items = editorPanes;
+    editorTabView.dataSource = editorPanes;
     editorTabView.selectionChanged.add(editorTabSelectionChanged);
     
-    editorPanes.addEventListener(CollectionEvent.COLLECTION_CHANGE, editorPanesChangeHandler, false, -1);
+    editorPanes.itemRemoved.add(editorPaneRemoved);
   }
 
   private static function editorTabSelectionChanged(oldItem:DocumentPaneItem, newItem:DocumentPaneItem):void {
@@ -76,14 +72,13 @@ public class ProjectView extends AbstractComponent implements Injectable {
     var paneItem:DocumentPaneItem = new DocumentPaneItem(document);
     paneItem.localizedTitle = document.file.name.substring(0, document.file.name.lastIndexOf("."));
 
-    document.tabIndex = editorPanes.size;
+    document.tabIndex = editorPanes.itemCount;
     editorPanes.addItem(paneItem);
   }
 
-  private function editorPanesChangeHandler(event:CollectionEvent):void {
-    if (event.kind == CollectionEventKind.REMOVE) {
-      _documentFactoryManager.unregister(DocumentPaneItem(event.items[0]).document);
-    }
+  //noinspection JSUnusedLocalSymbols
+  private function editorPaneRemoved(item:DocumentPaneItem, index:int):void {
+    _documentFactoryManager.unregister(item.document);
   }
 }
 }

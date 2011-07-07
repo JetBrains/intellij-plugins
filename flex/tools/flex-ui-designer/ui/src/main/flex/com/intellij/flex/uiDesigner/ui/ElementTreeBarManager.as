@@ -1,23 +1,21 @@
 package com.intellij.flex.uiDesigner.ui {
-import cocoa.CollectionView;
-import cocoa.CollectionViewDataSource;
+import cocoa.AbstractCollectionViewDataSource;
 import cocoa.Insets;
+import cocoa.ListViewDataSource;
+import cocoa.SegmentedControl;
 import cocoa.plaf.LookAndFeelUtil;
 import cocoa.plaf.TextFormatId;
-import cocoa.plaf.basic.CollectionHorizontalLayout;
-import cocoa.tableView.AbstractCollectionViewDataSource;
-import cocoa.tableView.TextRendererManager;
+import cocoa.renderer.InteractiveTextRendererManager;
 
 import com.intellij.flex.uiDesigner.ElementManager;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 
-import flash.display.DisplayObjectContainer;
 import flash.errors.IllegalOperationError;
 import flash.utils.getQualifiedClassName;
 
 import org.flyti.plexus.Injectable;
 
-public class ElementTreeBarManager extends AbstractCollectionViewDataSource implements Injectable, CollectionViewDataSource {
+public class ElementTreeBarManager extends AbstractCollectionViewDataSource implements Injectable, ListViewDataSource {
   private const source:Vector.<String> = new Vector.<String>(8);
 
   private var elementManager:ElementManager;
@@ -32,17 +30,17 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
     }
     
     if (value == null) {
-      _presentation.hidden = true;
+      //_presentation.hidden = true;
       return;
     }
 
     update(value);
 
-    _presentation.hidden = false;
+    //_presentation.hidden = false;
   }
 
-  private var _presentation:CollectionView;
-  public function set presentation(value:CollectionView):void {
+  private var _presentation:SegmentedControl;
+  public function set presentation(value:SegmentedControl):void {
     if (_presentation == value) {
       return;
     }
@@ -51,11 +49,11 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
     _presentation.dataSource = this;
 
     var insets:Insets = new Insets(2, NaN, NaN, 3);
-    CollectionHorizontalLayout(_presentation.layout).rendererManager = new TextRendererManager(LookAndFeelUtil.find(DisplayObjectContainer(_presentation.skin)).getTextFormat(TextFormatId.SMALL_SYSTEM), insets);
+    _presentation.rendererManager = new InteractiveTextRendererManager(LookAndFeelUtil.find(_presentation).getTextFormat(TextFormatId.SMALL_SYSTEM), insets);
   }
 
   public function update(object:Object):void {
-    sourceItemCounter = 0;
+    _itemCount = 0;
 
     if (object == null) {
       if (_reset != null) {
@@ -71,11 +69,11 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
       }
 
       var qualifiedClassName:String = getQualifiedClassName(element);
-      source[sourceItemCounter++] = qualifiedClassName.substr(qualifiedClassName.lastIndexOf("::") + 2);
+      source[_itemCount++] = qualifiedClassName.substr(qualifiedClassName.lastIndexOf("::") + 2);
     }
     while (!((element = element.parent) is SystemManagerSB));
 
-    source.length = sourceItemCounter;
+    source.length = _itemCount;
     if (_reset != null) {
       _reset.dispatch();
     }
@@ -86,7 +84,7 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
   }
 
   public function getStringValue(itemIndex:int):String {
-    return source[sourceItemCounter - 1 - itemIndex];
+    return source[_itemCount - 1 - itemIndex];
   }
 }
 }
