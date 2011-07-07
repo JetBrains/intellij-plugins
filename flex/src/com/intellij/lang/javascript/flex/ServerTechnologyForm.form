@@ -6,6 +6,9 @@
       <xy x="20" y="20" width="428" height="111"/>
     </constraints>
     <properties/>
+    <clientProperties>
+      <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+    </clientProperties>
     <border type="etched" title="Server Technology"/>
     <children>
       <component id="7557e" class="com.intellij.openapi.ui.LabeledComponent" binding="myPathToServicesConfigXmlComponent" default-binding="true">

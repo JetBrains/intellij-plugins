@@ -6,6 +6,9 @@
       <xy x="20" y="20" width="500" height="144"/>
     </constraints>
     <properties/>
+    <clientProperties>
+      <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+    </clientProperties>
     <border type="etched" title="Files and folders to package"/>
     <children>
       <scrollpane id="13ded" class="com.intellij.ui.components.JBScrollPane">

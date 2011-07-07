@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.TableUtil;
 import com.intellij.ui.table.JBTable;
 import com.intellij.util.ui.AbstractTableCellEditor;
@@ -179,7 +180,7 @@ public class FilesToPackageForm {
   }
 
   public void setPanelTitle(final String title) {
-    myMainPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), title));
+    myMainPanel.setBorder(IdeBorderFactory.createTitledBorder(title));
   }
 
   public void stopEditing() {

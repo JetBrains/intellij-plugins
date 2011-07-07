@@ -6,6 +6,9 @@
       <xy x="20" y="20" width="551" height="221"/>
     </constraints>
     <properties/>
+    <clientProperties>
+      <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+    </clientProperties>
     <border type="etched" title="Signing options"/>
     <children>
       <component id="71be" class="javax.swing.JLabel">
