@@ -285,15 +285,15 @@ private def buildNsis() {
 }
 
 def buildSearchableOptions() {
-  def dest_dir = "${project["platform-resources"].output}/search"
   project.stage("searchable options")
+  def dest_dir = "$paths.sandbox/searchableoptions"
   ant.mkdir(dir: "${dest_dir}/search")
   ant.copy(file: "$home/build/idea.license", todir: paths.ideaSystem)
   //ant.copy(file: "$home/build/rubymine.license", todir: paths.ideaSystem)
   ant.java(classname: "com.intellij.idea.Main", fork: "true") {
     jvmarg(line: "-ea -Xmx250m -Didea.home.path=$home -Didea.system.path=${paths.ideaSystem} -Didea.config.path=${paths.ideaConfig} -Didea.platform.prefix=Flex -Didea.no.jre.check=true")
     jvmarg(value: "-Xbootclasspath/a:${boot.output}")
-    arg(line: "traverseUI ${dest_dir}/searchableOptions.xml")
+    arg(line: "traverseUI ${dest_dir}/search/searchableOptions.xml")
 
     classpath() {
       pathelement(location: "$ch/lib/junit.jar")
@@ -303,7 +303,7 @@ def buildSearchableOptions() {
       pathelement(location: "${jdkHome}/lib/tools.jar")
     }
   }
-  ant.available(file: "${dest_dir}/searchableOptions.xml", property: "searchableoptions.exists");
+  ant.available(file: "${dest_dir}/search/searchableOptions.xml", property: "searchableoptions.exists");
   ant.fail(unless: "searchableoptions.exists", message: "${product} searchable options were not built.")
 }
 
@@ -457,6 +457,7 @@ def layoutFull(String target, Set usedJars) {
           module(it) {
             exclude(name: "**/common/**.rb")
             exclude(name: "**/tips/**")
+            exclude(name: "**/search/**")
           }
         }
         zipfileset(src: "${home}/lib/client-api.jar")
@@ -477,8 +478,8 @@ def layoutFull(String target, Set usedJars) {
         // Flex IDE resources come first to override platform resources (using duplicate=preserve)
         fileset(dir: "$home/flex/ideResources") {
           include(name: "**/tips/**")
-          include(name: "**/search/**")
         }
+        fileset(dir: "$paths.sandbox/searchableoptions")
         module("platform-resources-en")
         module("resources-en") {
           ant.patternset() {
