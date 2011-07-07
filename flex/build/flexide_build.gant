@@ -457,7 +457,7 @@ def layoutFull(String target, Set usedJars) {
           module(it) {
             exclude(name: "**/common/**.rb")
             exclude(name: "**/tips/**")
-            exclude(name: "**/search/**")
+            exclude(name: "/search/**")
           }
         }
         zipfileset(src: "${home}/lib/client-api.jar")
