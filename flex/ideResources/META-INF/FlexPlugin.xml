@@ -74,6 +74,8 @@
 
     <projectViewPane implementation="com.intellij.ide.projectView.impl.PackageViewPane"/>
 
+    <fileIconProvider implementation="com.intellij.flexIde.FlexIdeIconProvider"/>
+
   </extensions>
 
 </idea-plugin>
