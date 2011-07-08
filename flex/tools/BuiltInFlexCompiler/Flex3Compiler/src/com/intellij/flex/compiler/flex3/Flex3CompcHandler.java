@@ -1,8 +1,6 @@
 package com.intellij.flex.compiler.flex3;
 
 import com.intellij.flex.compiler.FlexCompilerUtil;
-import com.intellij.flex.compiler.SdkSpecificHandler;
-import flex2.compiler.Logger;
 import flex2.compiler.common.Configuration;
 import flex2.compiler.common.DefaultsConfigurator;
 import flex2.compiler.config.ConfigurationBuffer;

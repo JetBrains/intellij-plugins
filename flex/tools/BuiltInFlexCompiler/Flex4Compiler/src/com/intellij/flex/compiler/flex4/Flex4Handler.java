@@ -1,5 +1,6 @@
 package com.intellij.flex.compiler.flex4;
 
+import com.intellij.flex.compiler.FlexCompilerUtil;
 import com.intellij.flex.compiler.SdkSpecificHandler;
 import flash.localization.LocalizationManager;
 import flash.localization.ResourceBundleLocalizer;
@@ -143,7 +144,8 @@ public abstract class Flex4Handler extends SdkSpecificHandler {
     oemConfig.showDeprecationWarnings(cc.showDeprecationWarnings());
     oemConfig.showShadowedDeviceFontWarnings(cc.showShadowedDeviceFontWarnings());
     oemConfig.showUnusedTypeSelectorWarnings(cc.showUnusedTypeSelectorWarnings());
-    oemConfig.setSourcePath(toFiles(cc.getSourcePath()));    // CHANGES HERE
+    oemConfig.setSourcePath(FlexCompilerUtil.getPathsWithLocaleToken(cc.getUnexpandedSourcePath(), toFiles(cc.getSourcePath()),
+                                                                     cc.getLocales()));      // CHANGES HERE
     oemConfig.enableStrictChecking(cc.strict());
     oemConfig.setTheme(toFiles(cc.getThemeFiles()));
     oemConfig.useResourceBundleMetaData(cc.useResourceBundleMetadata());

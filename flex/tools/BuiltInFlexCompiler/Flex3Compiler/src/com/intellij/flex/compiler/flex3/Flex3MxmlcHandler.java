@@ -1,34 +1,20 @@
 package com.intellij.flex.compiler.flex3;
 
 import com.intellij.flex.compiler.FlexCompilerUtil;
-import com.intellij.flex.compiler.SdkSpecificHandler;
-import flash.localization.LocalizationManager;
-import flash.localization.ResourceBundleLocalizer;
-import flex2.compiler.API;
-import flex2.compiler.Logger;
-import flex2.compiler.common.*;
+import flex2.compiler.common.Configuration;
+import flex2.compiler.common.DefaultsConfigurator;
 import flex2.compiler.config.ConfigurationBuffer;
 import flex2.compiler.config.ConfigurationException;
-import flex2.compiler.io.FileUtil;
-import flex2.compiler.io.LocalFile;
-import flex2.compiler.io.VirtualFile;
 import flex2.compiler.util.ThreadLocalToolkit;
 import flex2.tools.CommandLineConfiguration;
-import flex2.tools.LicensesConfiguration;
-import flex2.tools.ToolsConfiguration;
 import flex2.tools.oem.Application;
 import flex2.tools.oem.Builder;
 import flex2.tools.oem.internal.OEMConfiguration;
-import macromedia.asc.embedding.ConfigVar;
-import macromedia.asc.util.ObjectList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class Flex3MxmlcHandler extends Flex3Handler {
 
