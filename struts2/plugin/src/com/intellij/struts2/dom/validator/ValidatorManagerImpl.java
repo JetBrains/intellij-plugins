@@ -87,8 +87,12 @@ public class ValidatorManagerImpl extends ValidatorManager {
     if (StringUtil.compareVersionNumbers(version, "2.0.8") == 1) {
       final XmlFile defaultValidatorFile = findDefaultValidatorsFile(module);
       if (defaultValidatorFile != null) {
-        final List<ValidatorConfig> defaultValidators =
-            getValidatorsConfigFileElement(defaultValidatorFile).getRootElement().getValidatorConfigs();
+        final DomFileElement<ValidatorsConfig> fileElement = getValidatorsConfigFileElement(defaultValidatorFile);
+        if (fileElement == null) {
+          return validatorConfigs;
+        }
+
+        final List<ValidatorConfig> defaultValidators = fileElement.getRootElement().getValidatorConfigs();
 
         final List<ValidatorConfig> allValidatorConfigs = new ArrayList<ValidatorConfig>(defaultValidators);
         allValidatorConfigs.addAll(validatorConfigs); // custom overrides defaults
