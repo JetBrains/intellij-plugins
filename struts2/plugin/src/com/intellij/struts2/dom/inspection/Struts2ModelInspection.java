@@ -93,7 +93,8 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
           return false; // error
         }
 
-        if (ResultTypeResolver.isChainOrRedirectType(resultType.getName().getStringValue())) {
+        final String resultTypeValue = resultType.getName().getStringValue();
+        if (resultTypeValue != null && ResultTypeResolver.isChainOrRedirectType(resultTypeValue)) {
           return false;
         }
       }
