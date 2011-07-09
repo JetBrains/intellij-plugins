@@ -356,26 +356,33 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       setIcons(StrutsIcons.STRUTS_CONFIG_FILE, StrutsIcons.STRUTS_CONFIG_FILE);
     }
 
+    @Override
+    public boolean isAlwaysLeaf() {
+      return true;
+    }
+
     protected void doUpdate() {
       final VirtualFile file = myFilePointer.getFile();
       if (file != null) {
-        renderFile(SimpleTextAttributes.REGULAR_ATTRIBUTES,
+        renderFile(file,
+                   SimpleTextAttributes.REGULAR_ATTRIBUTES,
                    SimpleTextAttributes.GRAYED_ATTRIBUTES,
                    null);
       } else {
-        renderFile(SimpleTextAttributes.ERROR_ATTRIBUTES,
+        renderFile(file,
+                   SimpleTextAttributes.ERROR_ATTRIBUTES,
                    SimpleTextAttributes.ERROR_ATTRIBUTES,
                    StrutsBundle.message("facet.fileset.filenotfound"));
       }
     }
 
-    private void renderFile(final SimpleTextAttributes main,
+    private void renderFile(final VirtualFile file,
+                            final SimpleTextAttributes main,
                             final SimpleTextAttributes full,
                             @Nullable final String toolTip) {
       final PresentationData presentation = getPresentation();
       presentation.addText(new ColoredFragment(myFilePointer.getFileName(), toolTip, main));
 
-      final VirtualFile file = myFilePointer.getFile();
       if (file != null) {
         presentation.addText(new ColoredFragment(" (" + file.getPath() + ")", toolTip, full));
       }
@@ -391,4 +398,5 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   public String getHelpTopic() {
     return "reference.settings.project.structure.facets.struts2.facet";
   }
+
 }
