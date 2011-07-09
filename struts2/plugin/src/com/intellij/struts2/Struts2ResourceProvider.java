@@ -55,19 +55,6 @@ public class Struts2ResourceProvider implements StandardResourceProvider {
     addDTDResource(StrutsConstants.VALIDATOR_CONFIG_DTD_URI,
                    StrutsConstants.VALIDATOR_CONFIG_DTD_ID,
                    "xwork-validator-config-1.0.dtd", registrar);
-
-
-    addDTDResource(StrutsConstants.TILES_2_0_DTD_URI_STRUTS,
-                   StrutsConstants.TILES_2_0_DTD_ID,
-                   "struts-tiles-config_2_0.dtd", registrar);
-
-    addDTDResource(StrutsConstants.TILES_2_0_DTD_URI,
-                   StrutsConstants.TILES_2_0_DTD_ID,
-                   "tiles-config_2_0.dtd", registrar);
-
-    addDTDResource(StrutsConstants.TILES_2_1_DTD_URI,
-                   StrutsConstants.TILES_2_1_DTD_ID,
-                   "tiles-config_2_1.dtd", registrar);
   }
 
   /**
