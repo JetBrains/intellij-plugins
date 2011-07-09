@@ -317,15 +317,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         presentationData.setTooltip(StrutsBundle.message("facet.fileset.nofiles.attached"));
       } else {
         presentationData.addText(name, getPlainAttributes());
-        presentationData.addText(" (" + fileSet.getFiles().size() + ")",
-                                 SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
+        presentationData.setLocationString("" + fileSet.getFiles().size());
       }
-
-      if (fileSet.isAutodetected()) {
-        presentationData.addText(StrutsBundle.message("facet.fileset.autodetected"),
-                                 SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
-      }
-
     }
 
     public SimpleNode[] getChildren() {
@@ -365,28 +358,21 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     protected void doUpdate() {
       final VirtualFile file = myFilePointer.getFile();
       if (file != null) {
-        renderFile(file,
-                   getPlainAttributes(),
-                   SimpleTextAttributes.GRAYED_ATTRIBUTES,
-                   null);
+        renderFile(file, getPlainAttributes(), null);
       } else {
-        renderFile(file,
-                   getErrorAttributes(),
-                   getErrorAttributes(),
-                   StrutsBundle.message("facet.fileset.filenotfound"));
+        renderFile(file, getErrorAttributes(), StrutsBundle.message("facet.fileset.filenotfound"));
       }
     }
 
     private void renderFile(final VirtualFile file,
-                            final SimpleTextAttributes main,
-                            final SimpleTextAttributes path,
+                            final SimpleTextAttributes textAttributes,
                             @Nullable final String toolTip) {
       final PresentationData presentation = getPresentation();
       presentation.setTooltip(toolTip);
-      presentation.addText(myFilePointer.getFileName(), main);
+      presentation.addText(myFilePointer.getFileName(), textAttributes);
 
       if (file != null) {
-        presentation.addText(" (" + file.getPath() + ")", path);
+        presentation.setLocationString(file.getPath());
       }
     }
 
