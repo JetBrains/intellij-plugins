@@ -47,7 +47,8 @@ public class FreeMarkerCssInlineStyleInjector implements MultiHostInjector {
       .withParent(psiElement(FtlNameValuePair.class).with(new PatternCondition<FtlNameValuePair>("S2 taglib CSS Attributes") {
         @Override
         public boolean accepts(@NotNull final FtlNameValuePair ftlNameValuePair, final ProcessingContext processingContext) {
-          return Arrays.binarySearch(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES, ftlNameValuePair.getName()) > -1;
+          final String name = ftlNameValuePair.getName();
+          return name != null && Arrays.binarySearch(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES, ftlNameValuePair.getName()) > -1;
         }
       }))
       .withSuperParent(3, psiElement(FtlMacro.class).with(FreemarkerInjectionConstants.TAGLIB_PREFIX));
