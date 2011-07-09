@@ -43,25 +43,37 @@ public class StrutsVersionDetector {
 
   @Nullable
   public static String detectStrutsVersion(@NotNull final Module module) {
-    final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
-    final JavaPsiFacade psiManager = JavaPsiFacade.getInstance(module.getProject());
     try {
-      final ZipFile zipFile = getStrutsJar(scope, psiManager);
+      final ZipFile zipFile = getStrutsJar(module);
       if (zipFile == null) {
         return null;
       }
+
       final ZipEntry zipEntry = zipFile.getEntry("META-INF/maven/org.apache.struts/struts2-core/pom.properties");
       if (zipEntry == null) {
         return null;
       }
+
       final InputStream inputStream = zipFile.getInputStream(zipEntry);
       final Properties properties = new Properties();
       properties.load(inputStream);
       return properties.getProperty("version");
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       return null;
     }
+  }
+
+  @Nullable
+  private static ZipFile getStrutsJar(final Module module) throws IOException {
+    final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
+    final JavaPsiFacade psiManager = JavaPsiFacade.getInstance(module.getProject());
+
+    final VirtualFile virtualFile = getStrutsClass(scope, psiManager);
+    if (virtualFile == null || !(virtualFile.getFileSystem() instanceof JarFileSystem)) {
+      return null;
+    }
+
+    return JarFileSystem.getInstance().getJarFile(virtualFile);
   }
 
   @Nullable
@@ -70,20 +82,13 @@ public class StrutsVersionDetector {
     if (psiClass == null) {
       return null;
     }
+
     final PsiFile psiFile = psiClass.getContainingFile();
     if (psiFile == null) {
       return null;
     }
-    return psiFile.getVirtualFile();
-  }
 
-  @Nullable
-  private static ZipFile getStrutsJar(final GlobalSearchScope scope, final JavaPsiFacade psiManager) throws IOException {
-    final VirtualFile virtualFile = getStrutsClass(scope, psiManager);
-    if (virtualFile == null || !(virtualFile.getFileSystem() instanceof JarFileSystem)) {
-      return null;
-    }
-    return JarFileSystem.getInstance().getJarFile(virtualFile);
+    return psiFile.getVirtualFile();
   }
 
 }
