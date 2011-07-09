@@ -348,6 +348,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
 
 
   private static final class ConfigFileNode extends SimpleNode {
+
     private final VirtualFilePointer myFilePointer;
 
     ConfigFileNode(final VirtualFilePointer name, final SimpleNode parent) {
@@ -381,10 +382,11 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
                             final SimpleTextAttributes full,
                             @Nullable final String toolTip) {
       final PresentationData presentation = getPresentation();
-      presentation.addText(new ColoredFragment(myFilePointer.getFileName(), toolTip, main));
+      presentation.setTooltip(toolTip);
+      presentation.addText(myFilePointer.getFileName(),  main);
 
       if (file != null) {
-        presentation.addText(new ColoredFragment(" (" + file.getPath() + ")", toolTip, full));
+        presentation.addText(" (" + file.getPath() + ")", full);
       }
     }
 
