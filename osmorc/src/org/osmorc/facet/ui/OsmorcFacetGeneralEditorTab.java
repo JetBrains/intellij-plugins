@@ -31,6 +31,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -149,7 +150,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
         VirtualFile currentFile = findFileInContentRoots(_manifestFileChooser.getText(), _module);
 
         VirtualFile[] result = FileChooser.chooseFiles(_editorContext.getProject(),
-                new FileChooserDescriptor(true, true, false, false, false, false), currentFile);
+                FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(), currentFile);
 
         if (result.length == 1) {
             VirtualFile manifestFileLocation = result[0]; //file.getVirtualFile();
