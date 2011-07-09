@@ -114,7 +114,12 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
         return null;
       }
 
-      final WebFacet webFacet = WebUtil.getWebFacet(context.getPsiElement());
+      final PsiAnnotationMemberValue annotationMemberValue = context.getPsiElement();
+      if (annotationMemberValue == null) {
+        return null;
+      }
+
+      final WebFacet webFacet = WebUtil.getWebFacet(annotationMemberValue);
       if (webFacet == null) {
         return null;
       }
