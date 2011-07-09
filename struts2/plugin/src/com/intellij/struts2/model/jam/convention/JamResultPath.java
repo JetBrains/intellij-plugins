@@ -31,6 +31,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
+import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.jsp.WebDirectoryElement;
@@ -58,7 +59,12 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
   private static final JamConverter<Property> PROPERTY_CONVERTER = new JamSimpleReferenceConverter<Property>() {
 
     private Collection<Property> getStrutsProperties(final JamAttributeElement context) {
-      final Module module = ModuleUtil.findModuleForPsiElement(context.getPsiElement());
+      final PsiAnnotationMemberValue annotationMemberValue = context.getPsiElement();
+      if (annotationMemberValue == null) {
+        return Collections.emptyList();
+      }
+
+      final Module module = ModuleUtil.findModuleForPsiElement(annotationMemberValue);
       if (module == null) {
         return Collections.emptyList();
       }

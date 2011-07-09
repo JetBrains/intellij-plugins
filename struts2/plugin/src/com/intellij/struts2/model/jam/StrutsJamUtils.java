@@ -38,6 +38,10 @@ public final class StrutsJamUtils {
   @Nullable
   public static StrutsModel getStrutsModel(final JamAttributeElement attributeElement) {
     final PsiElement value = attributeElement.getPsiElement();
+    if (value == null) {
+      return null;
+    }
+
     final StrutsManager instance = StrutsManager.getInstance(value.getProject());
     return instance.getCombinedModel(ModuleUtil.findModuleForPsiElement(value));
   }
