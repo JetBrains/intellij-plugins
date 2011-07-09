@@ -313,17 +313,17 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       final String name = mySet.getName();
 
       if (fileSet.getFiles().isEmpty()) {
-        presentationData.addText(new ColoredFragment(name, StrutsBundle.message("facet.fileset.nofiles.attached"),
-                                                     getErrorAttributes()));
+        presentationData.addText(name, getErrorAttributes());
+        presentationData.setTooltip(StrutsBundle.message("facet.fileset.nofiles.attached"));
       } else {
-        presentationData.addText(new ColoredFragment(name, getPlainAttributes()));
-        presentationData.addText(new ColoredFragment(" (" + fileSet.getFiles().size() + ")",
-                                                     SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES));
+        presentationData.addText(name, getPlainAttributes());
+        presentationData.addText(" (" + fileSet.getFiles().size() + ")",
+                                 SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
       }
 
       if (fileSet.isAutodetected()) {
-        presentationData.addText(new ColoredFragment(StrutsBundle.message("facet.fileset.autodetected"),
-                                                     SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES));
+        presentationData.addText(StrutsBundle.message("facet.fileset.autodetected"),
+                                 SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
       }
 
     }
@@ -366,27 +366,27 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       final VirtualFile file = myFilePointer.getFile();
       if (file != null) {
         renderFile(file,
-                   SimpleTextAttributes.REGULAR_ATTRIBUTES,
+                   getPlainAttributes(),
                    SimpleTextAttributes.GRAYED_ATTRIBUTES,
                    null);
       } else {
         renderFile(file,
-                   SimpleTextAttributes.ERROR_ATTRIBUTES,
-                   SimpleTextAttributes.ERROR_ATTRIBUTES,
+                   getErrorAttributes(),
+                   getErrorAttributes(),
                    StrutsBundle.message("facet.fileset.filenotfound"));
       }
     }
 
     private void renderFile(final VirtualFile file,
                             final SimpleTextAttributes main,
-                            final SimpleTextAttributes full,
+                            final SimpleTextAttributes path,
                             @Nullable final String toolTip) {
       final PresentationData presentation = getPresentation();
       presentation.setTooltip(toolTip);
-      presentation.addText(myFilePointer.getFileName(),  main);
+      presentation.addText(myFilePointer.getFileName(), main);
 
       if (file != null) {
-        presentation.addText(" (" + file.getPath() + ")", full);
+        presentation.addText(" (" + file.getPath() + ")", path);
       }
     }
 
