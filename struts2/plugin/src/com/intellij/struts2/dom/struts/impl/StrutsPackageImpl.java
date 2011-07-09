@@ -41,6 +41,7 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
     StrutsPackage currentPackage = this;
     while (currentPackage != null) {
       if (DomUtil.hasXml(currentPackage.getNamespace())) {
+        //noinspection ConstantConditions
         return currentPackage.getNamespace().getStringValue();
       }
       currentPackage = currentPackage.getExtends().getValue();
