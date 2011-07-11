@@ -10,6 +10,7 @@
   
   <properties>
     <config.useRoboflest>true</config.useRoboflest>
+    <config.fdbWorkaround>true</config.fdbWorkaround>
   </properties>
 
   <name>Flex UI Designer Aggregator</name>
@@ -103,6 +104,7 @@
       <id>release</id>
       <properties>
         <config.useRoboflest>false</config.useRoboflest>
+        <config.fdbWorkaround>false</config.fdbWorkaround>
       </properties>
       <build>
         <plugins>

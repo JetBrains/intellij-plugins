@@ -1,11 +1,13 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.MainWindowedApplication;
+import cocoa.SegmentedControl;
+import cocoa.renderer.InteractiveBorderRendererManager;
+import cocoa.renderer.TextRendererManager;
 import cocoa.util.FileUtil;
 
 import com.intellij.flex.uiDesigner.libraries.QueueLoader;
 import com.intellij.flex.uiDesigner.plaf.ProjectViewSkin;
 import com.intellij.flex.uiDesigner.plaf.aqua.IdeaAquaLookAndFeel;
-import com.intellij.flex.uiDesigner.ElementManager;
 
 import flash.desktop.NativeApplication;
 import flash.display.Loader;
@@ -20,40 +22,45 @@ import org.flyti.plexus.PlexusManager;
 
 public class Main extends MainWindowedApplication {
   private var invoked:Boolean;
-  // can not load until all plugins are loaded —  as a plugin can override a component used to.
+  // cannot load until all plugins are loaded — plugin can override a component used to.
   private var loadedPluginCounter:int;
 
   private var port:int;
   private var errorPort:int;
 
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  ElementManager;
-  MainFocusManager;
-  DocumentManagerImpl;
-  //SocketManagerImpl;
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  // Burn in hell, Adobe
-  //ProjectViewSkin;
+  config::fdbWorkaround {
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    ElementManager;
+    MainFocusManager;
+    DocumentManagerImpl;
+    SegmentedControl;
+    InteractiveBorderRendererManager;
+    TextRendererManager;
+    ProjectViewSkin;
+    //SocketManagerImpl;
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+    // Burn in hell, Adobe
+  }
 
   override protected function initializeMaps():void {
     loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);

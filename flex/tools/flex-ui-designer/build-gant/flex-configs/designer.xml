@@ -2,6 +2,10 @@
 	<compiler>
 		<accessible>false</accessible>
 		<debug>false</debug>
+		<define>
+			<name>config::fdbWorkaround</name>
+			<value>false</value>
+		</define>
 		<external-library-path>
 			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
@@ -61,6 +65,7 @@
 		<source-path>
 			<path-element>@@source@@/flex</path-element>
 			<path-element>@@source@@/resources</path-element>
+			<path-element>@@target@@</path-element>
 		</source-path>
 		<theme/>
 		<warn-no-constructor>false</warn-no-constructor>

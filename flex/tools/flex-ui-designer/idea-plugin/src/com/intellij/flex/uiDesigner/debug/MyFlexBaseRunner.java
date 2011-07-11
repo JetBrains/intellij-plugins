@@ -115,6 +115,12 @@ public class MyFlexBaseRunner extends FlexBaseRunner {
           String libName = line.substring(beginIndex, endIndex);
           fullPath = "/Users/develar/.m2/repository/com/adobe/flex/framework/" + libName + "/4.5.0.20968/" + libName + "-4.5.0.20968-sources.jar!" + line.substring(endIndex + "src".length() + 1, commaPos);
         }
+        else if (line.startsWith("/Users/develar/workspace/cocoa", spaceIndex + 1)) {
+          final int beginIndex = "/Users/develar/workspace/cocoa/".length() + spaceIndex + 1;
+          final int endIndex = line.indexOf('/', beginIndex + 2);
+          String libName = line.substring(beginIndex, endIndex);
+          fullPath = "/Users/develar/.m2/repository/org/flyti/cocoa/" + libName + "/1.4-SNAPSHOT/" + libName + "-1.4-SNAPSHOT-sources.jar!" + line.substring(endIndex + "src/main/flex".length() + 1, commaPos);
+        }
         else {
           fullPath = line.substring(spaceIndex + 1, commaPos).replace(File.separatorChar, '/');
         }

@@ -1,12 +1,16 @@
 package com.intellij.flex.uiDesigner.plaf {
+import cocoa.Border;
 import cocoa.ClassFactory;
 import cocoa.FrameInsets;
 import cocoa.Insets;
 import cocoa.TextLineInsets;
 import cocoa.border.LinearGradientBorder;
 import cocoa.border.RectangularBorder;
+import cocoa.border.StatefulBorderImpl;
 import cocoa.plaf.Placement;
+import cocoa.plaf.RendererManagerFactory;
 import cocoa.plaf.aqua.AquaLookAndFeel;
+import cocoa.renderer.InteractiveBorderRendererManager;
 
 import flash.text.engine.TextRotation;
 
@@ -20,11 +24,10 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
   override protected function initialize():void {
     super.initialize();
 
-    data["Sidebar"] = SidebarSkin;
     // idea UI bug, so, we use our own insets, 5 instead of 4 px bottom (and 20 px height instead of 19 px) (otherwise, text bottom edge close to border bottom edge)
-    data["Sidebar.iR.tLI"] = new TextLineInsets(TextRotation.ROTATE_90, 5, 9, 9);
-    data["Sidebar.iR.b.off"] = RectangularBorder.createRounded(0xf9f5f2, 0x929292, 4);
-    data["Sidebar.iR.b.on"] = LinearGradientBorder.createHRounded([0xc7c6c4, 0xf5f4f4], 0, 4);
+    data["Sidebar.tabBar.rendererManager"] = new RendererManagerFactory(InteractiveBorderRendererManager, this, "Sidebar.tabBar");
+    data["Sidebar.tabBar.textLineInsets"] = new TextLineInsets(TextRotation.ROTATE_90, 5, 9, 9);
+    data["Sidebar.tabBar.b"] = new StatefulBorderImpl(new <Border>[RectangularBorder.createRounded(0xf9f5f2, 0x929292, 4), LinearGradientBorder.createHRounded([0xc7c6c4, 0xf5f4f4], 0, 4)]);
 
     data["Panel"] = PanelSkin;
     const panelTitleBorderHeight:Number = 16;
@@ -34,12 +37,13 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
 
     data["ProjectView"] = ProjectViewSkin;
     data["ProjectView.TabView"] = EditorTabViewSkin;
-    data["ProjectView.TabView.segmentedControl.iR"] = new ClassFactory(EditorTabLabelRenderer);
-    data["ProjectView.TabView.segmentedControl.iR.tLI"] = new TextLineInsets(null, 15, 10, 10);
-    data["ProjectView.TabView.segmentedControl.iR.b.off"] = RectangularBorder.create(NaN, NaN);
-    data["ProjectView.TabView.segmentedControl.iR.b.on"] = RectangularBorder.create(NaN, NaN);
-    data["ProjectView.TabView.segmentedControl.gap"] = 0;
-    data["ProjectView.TabView.segmentedControl.placement"] = Placement.PAGE_START_LINE_START;
+    data["ProjectView.TabView.tabBar.iR"] = new ClassFactory(EditorTabLabelRenderer);
+    data["ProjectView.TabView.tabBar.iR.b.off"] = RectangularBorder.create(NaN, NaN);
+    data["ProjectView.TabView.tabBar.iR.b.on"] = RectangularBorder.create(NaN, NaN);
+    data["ProjectView.TabView.tabBar.gap"] = 0;
+    data["ProjectView.TabView.tabBar.rendererManager"] = new RendererManagerFactory(EditorTabBarRendererManager, this, "ProjectView.TabView.tabBar");
+    data["ProjectView.TabView.tabBar.placement"] = Placement.PAGE_START_LINE_START;
+    data["ProjectView.TabView.tabBar.interactor"] = data["TabView.tabBar.interactor"];
 
     data["Toolbar.b"] = null;
 

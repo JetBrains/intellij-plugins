@@ -47,12 +47,14 @@ public class ProjectManager {
 
   protected function addNativeWindowListeners(window:DocumentWindow):void {
     window.addEventListener(Event.CLOSING, closeHandler);
-    window.addEventListener(NativeWindowBoundsEvent.RESIZE, resizeHandler);
+    window.addEventListener(NativeWindowBoundsEvent.RESIZE, resizeOrMoveHandler);
+    window.addEventListener(NativeWindowBoundsEvent.MOVE, resizeOrMoveHandler);
   }
 
   protected function removeNativeWindowListeners(window:DocumentWindow):void {
     window.removeEventListener(Event.CLOSING, closeHandler);
-    window.removeEventListener(NativeWindowBoundsEvent.RESIZE, resizeHandler);
+    window.removeEventListener(NativeWindowBoundsEvent.RESIZE, resizeOrMoveHandler);
+    window.removeEventListener(NativeWindowBoundsEvent.MOVE, resizeOrMoveHandler);
   }
   
   public function close(id:int):void {
@@ -81,7 +83,7 @@ public class ProjectManager {
     _project = project;
   }
 
-  private function resizeHandler(event:Event):void {
+  private function resizeOrMoveHandler(event:Event):void {
     var window:DocumentWindow = DocumentWindow(event.target);
     for (var i:int = 0, n:int = items.length; i < n; i++) {
       var project:Project = items[i];

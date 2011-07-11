@@ -34,4 +34,22 @@
       <classifier>en_US</classifier>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.sonatype.flexmojos</groupId>
+        <artifactId>flexmojos-maven-plugin</artifactId>
+        <configuration>
+          <additionalSourcePath>../designer/target</additionalSourcePath>
+          <defines combine.children="append">
+            <property>
+              <name>config::fdbWorkaround</name>
+              <value>${config.fdbWorkaround}</value>
+            </property>
+          </defines>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
