@@ -123,8 +123,9 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
     List<FormatFixer> formatters = new ArrayList<FormatFixer>();
     //JSRefactoringUtil.addRemovalFormatters(mySourceClass, myMembersToMove, Condition.TRUE, Condition.TRUE, postponedFormatters);
 
+    JSClass targetClass = myElement instanceof JSClass ? (JSClass)myElement : null;
     JSRefactoringUtil.fixOutgoingReferences(myElement, importsInTargetFile, namespacesInTargetFile, Collections.singletonList(
-      ((JSAttributeListOwner)myElement)), null, false, false);
+      ((JSAttributeListOwner)myElement)), targetClass, false, false);
 
     myElement.setName(myClassName);
     Collection<UsageInfo> usagesToProcess = new ArrayList<UsageInfo>(Arrays.asList(usages));
