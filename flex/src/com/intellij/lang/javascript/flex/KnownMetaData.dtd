@@ -155,14 +155,13 @@
 <!ATTLIST Inject
   source CDATA #IMPLIED
   destination CDATA #IMPLIED
-  twoWay (true|false) #IMPLIED
->
-
-<!ATTLIST Inject name CDATA #IMPLIED> <!--Robotlegs-->
-<!--Parsley-->
-<!ATTLIST Inject
-  id CDATA #IMPLIED
   required (true|false) #IMPLIED
+  bind (true|false) #IMPLIED
+  twoWay (true|false) #IMPLIED
+
+  name CDATA #IMPLIED
+
+  id CDATA #IMPLIED
 >
 
 <!ELEMENT Autowire EMPTY>
@@ -179,8 +178,19 @@
   stopImmediatePropagation (true|false) #IMPLIED
 >
 <!ELEMENT Dispatcher EMPTY>
+<!ATTLIST Dispatcher
+  scope (global|local) #IMPLIED
+>
 <!ELEMENT PostConstruct EMPTY>
+<!ATTLIST PostConstruct
+  order CDATA #IMPLIED
+>
 <!ELEMENT PreDestroy EMPTY>
+<!ATTLIST PreDestroy
+  order CDATA #IMPLIED
+>
+<!ELEMENT ViewAdded EMPTY>
+<!ELEMENT ViewRemoved EMPTY>
 
 <!--Spring ActionScript-->
 <!ELEMENT Autowired EMPTY>
@@ -193,8 +203,14 @@
 
 <!ELEMENT EventHandler EMPTY>
 <!ATTLIST EventHandler
-  name CDATA #IMPLIED
+  event CDATA #IMPLIED
+  scope (global|local) #IMPLIED
   properties CDATA #IMPLIED
+  priority CDATA #IMPLIED
+  useCapture (true|false) #IMPLIED
+  stopPropagation (true|false) #IMPLIED
+  stopImmediatePropagation (true|false) #IMPLIED
+  name CDATA #IMPLIED
   clazz CDATA #IMPLIED
 >
 
