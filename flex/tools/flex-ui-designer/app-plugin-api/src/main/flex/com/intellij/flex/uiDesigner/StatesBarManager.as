@@ -1,12 +1,14 @@
 package com.intellij.flex.uiDesigner {
-import cocoa.DataControl;
+import cocoa.AbstractCollectionViewDataSource;
+import cocoa.ListViewDataSource;
+import cocoa.SegmentedControl;
+
+import flash.errors.IllegalOperationError;
 
 import org.flyti.plexus.Injectable;
-import org.flyti.util.ArrayList;
 
-public class StatesBarManager implements Injectable {
-  private const source:Vector.<Object> = new Vector.<Object>();
-  private const sourceList:ArrayList = new ArrayList(source);
+public class StatesBarManager extends AbstractCollectionViewDataSource implements Injectable, ListViewDataSource {
+  private const source:Vector.<String> = new Vector.<String>();
   
   public function get states():Array {
     return _document.uiComponent.states;
@@ -35,37 +37,48 @@ public class StatesBarManager implements Injectable {
     var documentStates:Array = states;
     _presentation.hidden = documentStates.length < 2;
     if (!_presentation.hidden) {
-      updateStates(documentStates);
+      update(documentStates);
       var currentState:Object = _document.uiComponent.currentState;
-      _presentation.selectedIndex = (currentState == null || currentState == "") ? 0 : sourceList.getItemIndex(currentState);
+      _presentation.selectedIndex = (currentState == null || currentState == "") ? 0 : source.indexOf(currentState);
     }
   }
 
-  private var _presentation:DataControl;
-  public function set presentation(value:DataControl):void {
+  private var _presentation:SegmentedControl;
+  public function set presentation(value:SegmentedControl):void {
     if (_presentation != null) {
-      _presentation.action = null;
+      _presentation.selectionChanged.remove(selectionChanged);
     }
 
     _presentation = value;
 
     if (_presentation != null) {
-      _presentation.action = changeHandler;
-      _presentation.items = sourceList;
+      _presentation.dataSource = this;
+      _presentation.selectionChanged.add(selectionChanged);
     }
   }
   
-  private function updateStates(rawStates:Array):void {
-    source.length = rawStates.length;
-    for (var i:int = 0, n:int = rawStates.length; i < n; i++) {
+  private function update(rawStates:Array):void {
+    _itemCount = rawStates.length;
+    source.length = _itemCount;
+    for (var i:int = 0; i < _itemCount; i++) {
       source[i] = rawStates[i].name;
     }
 
-    sourceList.refresh();
+    if (_reset != null) {
+      _reset.dispatch();
+    }
   }
 
-  private function changeHandler(item:String):void {
-    _document.uiComponent.currentState = item;
+  private function selectionChanged(oldIndex:int, newIndex:int):void {
+    _document.uiComponent.currentState = getStringValue(newIndex);
+  }
+
+  public function getObjectValue(itemIndex:int):Object {
+    throw new IllegalOperationError();
+  }
+
+  public function getStringValue(itemIndex:int):String {
+    return source[itemIndex];
   }
 }
 }

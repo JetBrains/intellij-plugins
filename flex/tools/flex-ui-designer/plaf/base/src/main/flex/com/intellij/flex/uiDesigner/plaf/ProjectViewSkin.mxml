@@ -52,9 +52,9 @@
     <layout>
       <BarLayout padding="5" gap="12"/>
     </layout>
-    <SegmentedControl id="statesBar"/>
+    <SegmentedControl stupidMxmlId="statesBar"/>
 
-    <SegmentedControl id="elementTreeBar" width="100%">
+    <SegmentedControl stupidMxmlId="elementTreeBar" lafKey="ElementTreeBar" width="100%">
       <layout>
         <ListHorizontalLayout height="20" gap="5"/>
       </layout>

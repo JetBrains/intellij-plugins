@@ -56,11 +56,7 @@ public class ElementManager extends EventDispatcher implements Injectable {
 
   private function mouseDownHandler(event:MouseEvent):void {
     var object:Object = findComponent(event);
-    if (_element != object) {
-      //if (object is InteractiveObject) {
-      //  InteractiveObject(object).stage.focus = InteractiveObject(object);
-      //  trace(InteractiveObject(object).stage.focus, object);
-      //}
+    if (object != _element) {
       element = object;
     }
   }

@@ -53,7 +53,8 @@ public final class ElementUtil {
     }
 
     var uiComponent:IUIComponent = object as IUIComponent;
-    if (uiComponent != null) {
+    // IDEA-71968, Skin as root document
+    if (uiComponent != null && uiComponent.document != null && !(uiComponent.document.parent is SystemManagerSB)) {
       var document:Object;
       while ((document = uiComponent.document) is Skin && !isSkinnableContainerContent(skinnableContainerClass, document, uiComponent)) {
         object = document.parent;

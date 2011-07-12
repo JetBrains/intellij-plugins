@@ -227,9 +227,7 @@
   </component>
   <component name="libraryTable">
     <library name="Maven: com.adobe.flex.framework:airframework:rb.swc:4.5.0.20968">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.0.20968/airframework-4.5.0.20968-en_US.rb.swc!/" />
-      </CLASSES>
+      <CLASSES />
       <JAVADOC>
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airframework/4.5.0.20968/airframework-4.5.0.20968-asdoc.zip!/" />
       </JAVADOC>
@@ -260,9 +258,7 @@
       </SOURCES>
     </library>
     <library name="Maven: com.adobe.flex.framework:airspark:rb.swc:4.5.0.20968">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.0.20968/airspark-4.5.0.20968-en_US.rb.swc!/" />
-      </CLASSES>
+      <CLASSES />
       <JAVADOC>
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/airspark/4.5.0.20968/airspark-4.5.0.20968-asdoc.zip!/" />
       </JAVADOC>
@@ -282,9 +278,7 @@
       </SOURCES>
     </library>
     <library name="Maven: com.adobe.flex.framework:framework:rb.swc:4.5.0.20968">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968-en_US.rb.swc!/" />
-      </CLASSES>
+      <CLASSES />
       <JAVADOC>
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968-asdoc.zip!/" />
       </JAVADOC>
@@ -326,9 +320,7 @@
       </SOURCES>
     </library>
     <library name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.0.20968">
-      <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968-en_US.rb.swc!/" />
-      </CLASSES>
+      <CLASSES />
       <JAVADOC>
         <root url="jar://$MAVEN_REPOSITORY$/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968-asdoc.zip!/" />
       </JAVADOC>

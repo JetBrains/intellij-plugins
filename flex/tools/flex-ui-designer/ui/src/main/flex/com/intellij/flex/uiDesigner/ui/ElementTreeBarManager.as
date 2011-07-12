@@ -1,11 +1,7 @@
 package com.intellij.flex.uiDesigner.ui {
 import cocoa.AbstractCollectionViewDataSource;
-import cocoa.Insets;
 import cocoa.ListViewDataSource;
 import cocoa.SegmentedControl;
-import cocoa.plaf.LookAndFeelUtil;
-import cocoa.plaf.TextFormatId;
-import cocoa.renderer.InteractiveTextRendererManager;
 
 import com.intellij.flex.uiDesigner.ElementManager;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
@@ -28,15 +24,19 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
     if (_presentation == null) {
       return;
     }
+
+    if (_presentation.rendererManager == null) {
+
+    }
     
     if (value == null) {
-      //_presentation.hidden = true;
+      _presentation.hidden = true;
       return;
     }
 
     update(value);
 
-    //_presentation.hidden = false;
+    _presentation.hidden = false;
   }
 
   private var _presentation:SegmentedControl;
@@ -47,9 +47,6 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
 
     _presentation = value;
     _presentation.dataSource = this;
-
-    var insets:Insets = new Insets(2, NaN, NaN, 3);
-    _presentation.rendererManager = new InteractiveTextRendererManager(LookAndFeelUtil.find(_presentation).getTextFormat(TextFormatId.SMALL_SYSTEM), insets);
   }
 
   public function update(object:Object):void {

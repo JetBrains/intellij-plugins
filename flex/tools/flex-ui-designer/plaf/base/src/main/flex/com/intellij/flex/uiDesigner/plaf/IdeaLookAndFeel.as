@@ -28,6 +28,9 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
     data["Sidebar.tabBar.textLineInsets"] = new TextLineInsets(TextRotation.ROTATE_90, 5, 9, 9);
     data["Sidebar.tabBar.b"] = new StatefulBorderImpl(new <Border>[RectangularBorder.createRounded(0xf9f5f2, 0x929292, 4), LinearGradientBorder.createHRounded([0xc7c6c4, 0xf5f4f4], 0, 4)]);
 
+    data["ElementTreeBar.rendererManager"] = new ElementTreeBarRMF();
+    data["ElementTreeBar.interactor"] = data["SegmentedControl.interactor"];
+
     data["Panel"] = PanelSkin;
     const panelTitleBorderHeight:Number = 16;
     data["Panel.title.b"] = LinearGradientBorder.createVWithFixedHeight(panelTitleBorderHeight, [0xa7c5fc, 0x7d95c0]);
@@ -47,4 +50,18 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
     data["Editor.Toolbar.b"] = RectangularBorder.create(0xeeeeee);
   }
 }
+}
+
+import cocoa.ClassFactory;
+import cocoa.Insets;
+import cocoa.renderer.InteractiveTextRendererManager;
+
+final class ElementTreeBarRMF extends ClassFactory {
+  function ElementTreeBarRMF() {
+     super(null);
+   }
+
+  override public function newInstance():* {
+    return new InteractiveTextRendererManager(null, new Insets(2, 0, 0, 3));
+  }
 }

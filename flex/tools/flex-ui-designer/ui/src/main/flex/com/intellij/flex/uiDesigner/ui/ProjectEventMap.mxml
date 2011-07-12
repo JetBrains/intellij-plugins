@@ -80,7 +80,7 @@
     <Injectors target="{SegmentedControl}" targetId="statesBar">
       <PropertySetter role="{StatesBarManager}" targetKey="presentation"/>
     </Injectors>
-    <Injectors target="{CollectionView}" targetId="elementTreeBar">
+    <Injectors target="{SegmentedControl}" targetId="elementTreeBar">
       <PropertySetter role="{ElementTreeBarManager}" targetKey="presentation"/>
     </Injectors>
     <Injectors target="{StatesBarManager}">
