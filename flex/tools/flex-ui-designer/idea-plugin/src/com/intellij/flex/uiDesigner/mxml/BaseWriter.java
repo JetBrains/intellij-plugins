@@ -249,7 +249,7 @@ public final class BaseWriter {
       }
       value = value.substring(1);
     }
-    else if (value.charAt(0) == '0') {
+    else if (value.charAt(0) == '0' && value.length() > 2 && value.charAt(1) == 'x') {
       if (isPrimitiveStyle) {
         out.write(CssPropertyType.COLOR_INT);
       }

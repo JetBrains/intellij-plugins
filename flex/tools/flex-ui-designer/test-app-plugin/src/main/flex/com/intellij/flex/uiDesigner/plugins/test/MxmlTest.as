@@ -33,6 +33,7 @@ public class MxmlTest extends BaseTestCase {
       CannotFindDefaultProperty();
       AbstractClass();
       MouseSelectionTest();
+      ColorEquals0();
     }
   }
   
@@ -141,6 +142,10 @@ public class MxmlTest extends BaseTestCase {
   }
 
   public function MouseSelectionTest():void {
+  }
+
+  public function ColorEquals0():void {
+    assertThat(app, [{color: 0}]);
   }
 }
 }
