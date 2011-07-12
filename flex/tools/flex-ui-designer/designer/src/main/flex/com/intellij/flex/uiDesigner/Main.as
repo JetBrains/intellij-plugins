@@ -1,11 +1,14 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.MainWindowedApplication;
 import cocoa.SegmentedControl;
+import cocoa.bar.SingleSelectionBar;
+import cocoa.layout.ListHorizontalLayout;
 import cocoa.renderer.InteractiveBorderRendererManager;
 import cocoa.renderer.TextRendererManager;
 import cocoa.util.FileUtil;
 
 import com.intellij.flex.uiDesigner.libraries.QueueLoader;
+import com.intellij.flex.uiDesigner.plaf.EditorTabBarRendererManager;
 import com.intellij.flex.uiDesigner.plaf.ProjectViewSkin;
 import com.intellij.flex.uiDesigner.plaf.aqua.IdeaAquaLookAndFeel;
 
@@ -48,6 +51,9 @@ public class Main extends MainWindowedApplication {
     InteractiveBorderRendererManager;
     TextRendererManager;
     ProjectViewSkin;
+    EditorTabBarRendererManager;
+    ListHorizontalLayout;
+    SingleSelectionBar;
     //SocketManagerImpl;
     // Burn in hell, Adobe
     // Burn in hell, Adobe

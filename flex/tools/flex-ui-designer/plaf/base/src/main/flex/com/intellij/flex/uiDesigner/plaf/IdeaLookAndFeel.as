@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.plaf {
 import cocoa.Border;
-import cocoa.ClassFactory;
 import cocoa.FrameInsets;
 import cocoa.Insets;
 import cocoa.TextLineInsets;
@@ -37,9 +36,6 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
 
     data["ProjectView"] = ProjectViewSkin;
     data["ProjectView.TabView"] = EditorTabViewSkin;
-    data["ProjectView.TabView.tabBar.iR"] = new ClassFactory(EditorTabLabelRenderer);
-    data["ProjectView.TabView.tabBar.iR.b.off"] = RectangularBorder.create(NaN, NaN);
-    data["ProjectView.TabView.tabBar.iR.b.on"] = RectangularBorder.create(NaN, NaN);
     data["ProjectView.TabView.tabBar.gap"] = 0;
     data["ProjectView.TabView.tabBar.rendererManager"] = new RendererManagerFactory(EditorTabBarRendererManager, this, "ProjectView.TabView.tabBar");
     data["ProjectView.TabView.tabBar.placement"] = Placement.PAGE_START_LINE_START;

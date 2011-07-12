@@ -56,18 +56,6 @@ public class ValueRendererManager extends TextRendererManager {
     registerEntryFactory(checkBoxFactory);
   }
 
-  public function findEntry(itemIndex:int):TextLineEntry {
-    var entry:TextLineEntry = cells.head;
-    do {
-      if (entry.itemIndex == itemIndex) {
-        return entry;
-      }
-    }
-    while ((entry = entry.next) != null);
-
-    return null;
-  }
-
   public function getDescription(rowIndex:int):Object {
     return _dataSource.getObjectValue(rowIndex);
   }
