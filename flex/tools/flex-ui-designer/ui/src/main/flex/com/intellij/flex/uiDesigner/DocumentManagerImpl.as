@@ -46,7 +46,13 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     if (value != document) {
       _document = value;
       dispatchEvent(new Event("documentChanged"));
+      adjustElementSelection();
     }
+  }
+
+  // IDEA-71781, IDEA-71779
+  private function adjustElementSelection():void {
+    ElementManager(_document.module.project.getComponent(ElementManager)).element = null;
   }
 
   public function open(documentFactory:DocumentFactory):void {
@@ -60,8 +66,8 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       }
     }
     else if (doOpen(documentFactory, documentFactory.document)) {
-      documentFactory.document.container.invalidateDisplayList();
-      this.document = documentFactory.document;
+      adjustElementSelection();
+      document.container.invalidateDisplayList();
     }
   }
 

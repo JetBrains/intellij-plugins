@@ -48,11 +48,15 @@
 
   <Toolbar id="toolbar" height="28"/>
   <TabView id="editorTabView" lafSubkey="ProjectView"/>
-  <Toolbar id="editorToolbar" height="25" lafSubkey="Editor">
+  <Toolbar id="editorToolbar" height="25" lafSubkey="Editor" small="true">
     <layout>
       <BarLayout padding="5" gap="12"/>
     </layout>
-    <SegmentedControl stupidMxmlId="statesBar"/>
+    <SegmentedControl stupidMxmlId="statesBar">
+      <layout>
+        <ListHorizontalLayout height="20" gap="1"/>
+      </layout>
+    </SegmentedControl>
 
     <SegmentedControl stupidMxmlId="elementTreeBar" lafKey="ElementTreeBar" width="100%">
       <layout>
