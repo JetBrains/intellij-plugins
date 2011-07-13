@@ -4,6 +4,10 @@ import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.actions.airdescriptor.CreateAirDescriptorAction;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
@@ -20,6 +24,8 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.sun.tools.internal.xjc.model.CAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -54,17 +60,16 @@ public class CreateHtmlWrapperAction extends DumbAwareAction {
             FlexModuleBuilder.createFlexRunConfiguration(project, htmlFile);
           }
 
-          final ToolWindowManager manager = ToolWindowManager.getInstance(project);
-          manager.notifyByBalloon(ToolWindowId.PROJECT_VIEW, MessageType.INFO,
-                                  FlexBundle.message("file.created", htmlFile.getName()), null,
-                                  new HyperlinkListener() {
-                                    public void hyperlinkUpdate(final HyperlinkEvent e) {
+          CreateAirDescriptorAction.NOTIFICATION_GROUP.createNotification("", FlexBundle.message("file.created", htmlFile.getName()),
+                                                                          NotificationType.INFORMATION, new NotificationListener() {
+            @Override
+            public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
                                       if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && htmlFile.isValid()) {
                                         FileEditorManager.getInstance(project)
                                           .openTextEditor(new OpenFileDescriptor(project, htmlFile), true);
                                       }
                                     }
-                                  });
+                                  }).notify(project);
         }
         else {
           Messages.showErrorDialog(project, FlexBundle.message("html.wrapper.creation.failed", ""), FlexBundle.message("error.title"));

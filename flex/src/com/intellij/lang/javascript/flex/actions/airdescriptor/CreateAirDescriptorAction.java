@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.actions.airdescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.notification.*;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
@@ -21,6 +22,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -30,6 +32,7 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 public class CreateAirDescriptorAction extends DumbAwareAction {
+  public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup("Flex messages", ToolWindowId.PROJECT_VIEW, false);
 
   public void actionPerformed(AnActionEvent e) {
     final Project project = e.getData(PlatformDataKeys.PROJECT);
@@ -39,17 +42,16 @@ public class CreateAirDescriptorAction extends DumbAwareAction {
       try {
         final VirtualFile descriptorFile = createAirDescriptor(dialog.getAirDescriptorParameters());
 
-        final ToolWindowManager manager = ToolWindowManager.getInstance(project);
-        manager.notifyByBalloon(ToolWindowId.PROJECT_VIEW, MessageType.INFO,
-                                FlexBundle.message("file.created", descriptorFile.getName()), null,
-                                new HyperlinkListener() {
-                                  public void hyperlinkUpdate(HyperlinkEvent e) {
+        NOTIFICATION_GROUP.createNotification("", FlexBundle.message("file.created", descriptorFile.getName()),
+                                              NotificationType.INFORMATION, new NotificationListener() {
+          @Override
+          public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
                                     if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && descriptorFile.isValid()) {
                                       FileEditorManager.getInstance(project)
                                         .openTextEditor(new OpenFileDescriptor(project, descriptorFile), true);
                                     }
                                   }
-                                });
+                                }).notify(project);
       }
       catch (IOException ex) {
         Messages.showErrorDialog(project, FlexBundle.message("air.descriptor.creation.failed", ex.getMessage()),
