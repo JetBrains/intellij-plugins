@@ -43,8 +43,9 @@ public class FlexUnitClassInProductSourceInspection extends FlexUnitClassInspect
     if (!ProjectRootManager.getInstance(aClass.getProject()).getFileIndex().isInTestSourceContent(file)) {
       final ASTNode nameIdentifier = aClass.findNameIdentifier();
       if (nameIdentifier != null) {
+        LocalQuickFix[] fixes = holder.isOnTheFly() ? new LocalQuickFix[]{new MoveClassFix(aClass)} : LocalQuickFix.EMPTY_ARRAY;
         holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testclassinproductsource.message"),
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING, new MoveClassFix(aClass));
+                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixes);
       }
     }
   }
