@@ -81,7 +81,7 @@ public class MxmlTest extends MxmlWriterTestBase {
       if (name.charAt(0) == '.') {
         // skip
       }
-      else if (name.endsWith(".mxml") && !name.startsWith("TestApp.") && !name.startsWith("Constructor.")) {
+      else if (name.endsWith(".mxml") && !name.startsWith("T.") && !name.startsWith("TestApp.") && !name.startsWith("Constructor.")) {
         files.add(parent.getPath() + "/" + name);
       }
       File file = new File(parent, name);

@@ -148,7 +148,7 @@ public class ValueRendererManager extends TextRendererManager {
         customElementFormat = editable ? textFormat.format : stringDisabled;
       }
 
-      line = textLineRendererFactory.create(_container, text, w, customElementFormat);
+      line = textLineRendererFactory.create(textLineContainer, text, w, customElementFormat);
       line.x = x + textInsets.left;
       line.y = y + h - textInsets.bottom;
     }

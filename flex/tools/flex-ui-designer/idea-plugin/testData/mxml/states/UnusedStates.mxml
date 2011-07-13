@@ -1,4 +1,4 @@
-<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns="library://ns.adobe.com/flex/spark">
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
   <states>
     <State name="Register"/>
   </states>
@@ -8,14 +8,6 @@
       <VerticalLayout/>
     </layout>
 
-    <mx:Form>
-      <mx:FormItem label="Username:">
-        <TextInput/>
-      </mx:FormItem>
-
-      <mx:FormItem label="Password:">
-        <TextInput/>
-      </mx:FormItem>
-    </mx:Form>
+    <Button label="You"/>
   </Panel>
 </Group>

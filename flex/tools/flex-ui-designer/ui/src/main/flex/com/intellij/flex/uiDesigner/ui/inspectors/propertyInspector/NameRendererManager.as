@@ -11,13 +11,13 @@ public class NameRendererManager extends TextRendererManager {
     super(textFormat, textInsets);
   }
 
-  override protected function createTextLine(textLineContainer:DisplayObjectContainer,itemIndex:int,w:Number):TextLine {
+  override protected function createTextLine(itemIndex:int, w:Number):TextLine {
     var description:Object = _dataSource.getObjectValue(itemIndex);
     if (!("editable" in description)) {
       prepareDescription(description);
     }
 
-    return textLineRendererFactory.create(_container, description.name, w, description.editable ? textFormat.format : ValueRendererManager.stringDisabled);
+    return textLineRendererFactory.create(textLineContainer, description.name, w, description.editable ? textFormat.format : ValueRendererManager.stringDisabled);
   }
 
   private static function prepareDescription(description:Object):void {

@@ -343,6 +343,7 @@ public class StatesTest extends BaseTestCase {
   }
 
   public function IDEA_72004():void {
+    setState("up");
     assertThat(app, [{width: 40}]);
   }
 }

@@ -57,7 +57,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
   }
 
   private function drawSelected(itemIndex:int, x:Number, w:Number):void {
-    var g:Graphics = textLineContainer.graphics;
+    var g:Graphics = _textLineContainer.graphics;
     g.clear();
 
     g.lineStyle(1, IdeaLookAndFeel.BORDER_COLOR);
