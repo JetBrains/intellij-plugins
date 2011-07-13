@@ -488,7 +488,11 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   @Override
-  public LocalQuickFix[] getQuickFixesForUnknownProperty(@NotNull String propertyName, @NotNull PsiElement context) {
+  public LocalQuickFix[] getQuickFixesForUnknownProperty(@NotNull String propertyName, @NotNull PsiElement context, boolean isOnTheFly) {
+    if (!isOnTheFly) {
+      return LocalQuickFix.EMPTY_ARRAY;
+    }
+
     final VirtualFile vFile = checkForQuickFixAndGetVFile(context);
     if (vFile == null) {
       return LocalQuickFix.EMPTY_ARRAY;
@@ -516,7 +520,13 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   @Override
-  public LocalQuickFix[] getQuickFixesForUnknownSimpleSelector(@NotNull String selectorName, @NotNull PsiElement context) {
+  public LocalQuickFix[] getQuickFixesForUnknownSimpleSelector(@NotNull String selectorName,
+                                                               @NotNull PsiElement context,
+                                                               boolean isOnTheFly) {
+    if (!isOnTheFly) {
+      return LocalQuickFix.EMPTY_ARRAY;
+    }
+
     final VirtualFile vFile = checkForQuickFixAndGetVFile(context);
     if (vFile == null) {
       return LocalQuickFix.EMPTY_ARRAY;
