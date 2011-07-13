@@ -1,7 +1,9 @@
 package mx.styles {
 import com.intellij.flex.uiDesigner.flex.FlexModuleFactory;
 
+import mx.core.IFlexModule;
 import mx.core.IFlexModuleFactory;
+import mx.managers.LayoutManager;
 
 public class StyleManager {
   public static const NOT_A_COLOR:uint = 0xFFFFFFFF;
@@ -10,7 +12,16 @@ public class StyleManager {
   public static var tempStyleManagerForTalentAdobeEngineers:IStyleManager2;
   
   public static function getStyleManager(moduleFactory:IFlexModuleFactory):IStyleManager2 {
-    return moduleFactory == null ? tempStyleManagerForTalentAdobeEngineers : FlexModuleFactory(moduleFactory).styleManager;
+    if (moduleFactory != null) {
+      return FlexModuleFactory(moduleFactory).styleManager;
+    }
+    else if (tempStyleManagerForTalentAdobeEngineers != null) {
+      return tempStyleManagerForTalentAdobeEngineers;
+    }
+    else {
+      // IDEA-71741
+      return FlexModuleFactory(IFlexModule(LayoutManager.getInstance().getCurrentObject()).moduleFactory).styleManager;
+    }
   }
 }
 }

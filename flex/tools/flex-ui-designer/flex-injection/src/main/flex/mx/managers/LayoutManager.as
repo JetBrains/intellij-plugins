@@ -12,7 +12,7 @@ import mx.managers.layoutClasses.PriorityQueue;
 
 use namespace mx_internal;
 
-  public class LayoutManager extends EventDispatcher implements ILayoutManager {
+public class LayoutManager extends EventDispatcher implements ILayoutManager {
   private var uiErrorHandler:UiErrorHandler;
   private var displayDispatcher:DisplayObject;
 
@@ -39,6 +39,10 @@ use namespace mx_internal;
   public function LayoutManager(displayDispatcher:DisplayObject, uiErrorHandler:UiErrorHandler):void {
     this.displayDispatcher = displayDispatcher;
     this.uiErrorHandler = uiErrorHandler;
+  }
+
+  public function getCurrentObject():Object {
+    return currentObject;
   }
 
   public function waitFrame():void {
@@ -132,13 +136,13 @@ use namespace mx_internal;
       if (obj.nestLevel) {
         currentObject = obj;
         try {
-          obj.validateProperties();
+        obj.validateProperties();
 
-          if (!obj.updateCompletePendingFlag) {
-            updateCompleteQueue.addObject(obj, obj.nestLevel);
-            obj.updateCompletePendingFlag = true;
-          }
+        if (!obj.updateCompletePendingFlag) {
+          updateCompleteQueue.addObject(obj, obj.nestLevel);
+          obj.updateCompletePendingFlag = true;
         }
+      }
         catch (e:Error) {
           uiErrorHandler.handleUiError(e, obj, "Can't validate properties " + obj);
           invalidateSizeQueue.removeChild(obj);
@@ -161,13 +165,13 @@ use namespace mx_internal;
       if (obj.nestLevel) {
         currentObject = obj;
         try {
-          obj.validateSize();
+        obj.validateSize();
 
-          if (!obj.updateCompletePendingFlag) {
-            updateCompleteQueue.addObject(obj, obj.nestLevel);
-            obj.updateCompletePendingFlag = true;
-          }
+        if (!obj.updateCompletePendingFlag) {
+          updateCompleteQueue.addObject(obj, obj.nestLevel);
+          obj.updateCompletePendingFlag = true;
         }
+      }
         catch (e:Error) {
           uiErrorHandler.handleUiError(e, currentObject, "Can't validate size " + obj);
           invalidateDisplayListQueue.removeChild(obj);
@@ -188,13 +192,13 @@ use namespace mx_internal;
       if (obj.nestLevel) {
         currentObject = obj;
         try {
-          obj.validateDisplayList();
+        obj.validateDisplayList();
 
-          if (!obj.updateCompletePendingFlag) {
-            updateCompleteQueue.addObject(obj, obj.nestLevel);
-            obj.updateCompletePendingFlag = true;
-          }
+        if (!obj.updateCompletePendingFlag) {
+          updateCompleteQueue.addObject(obj, obj.nestLevel);
+          obj.updateCompletePendingFlag = true;
         }
+      }
         catch (e:Error) {
           uiErrorHandler.handleUiError(e, currentObject, "Can't validate display list " + obj);
         }
@@ -217,61 +221,93 @@ use namespace mx_internal;
     var oldTargetLevel:int = targetLevel;
 
     try {
-      // the theory here is that most things that get validated are deep in the tree
-      // and so there won't be nested calls to validateClient.  However if there is,
-      // we don't want to have a more sophisticated scheme of keeping track
-      // of dirty flags at each level that is being validated, but we definitely
-      // do not want to keep scanning the queues unless we're pretty sure that
-      // something might be dirty so we just say that if something got dirty
-      // during this call at a deeper nesting than the first call to validateClient
-      // then we'll scan the queues.  So we only change targetLevel if we're the
-      // outer call to validateClient and only that call restores it.
-      if (targetLevel == int.MAX_VALUE) {
-        targetLevel = target.nestLevel;
-      }
+    //  the theory here is that most things that get validated are deep in the tree
+    // and so there won't be nested calls to validateClient.  However if there is,
+    // we don't want to have a more sophisticated scheme of keeping track
+    // of dirty flags at each level that is being validated, but we definitely
+    // do not want to keep scanning the queues unless we're pretty sure that
+    // something might be dirty so we just say that if something got dirty
+    // during this call at a deeper nesting than the first call to validateClient
+    // then we'll scan the queues.  So we only change targetLevel if we're the
+    // outer call to validateClient and only that call restores it.
+    if (targetLevel == int.MAX_VALUE) {
+      targetLevel = target.nestLevel;
+    }
 
-      while (!done) {
-        // assume we won't find anything
-        done = true;
+    while (!done) {
+      // assume we won't find anything
+      done = true;
 
-        // Keep traversing the invalidatePropertiesQueue until we've reached the end.
-        // More elements may get added to the queue while we're in this loop, or a
-        // a recursive call to this function may remove elements from the queue while
-        // we're in this loop.
-        obj = ILayoutManagerClient(invalidatePropertiesQueue.removeSmallestChild(target));
-        while (obj) {
-          // trace("LayoutManager calling validateProperties() on " + Object(obj) + " " + DisplayObject(obj).width + " " + DisplayObject(obj).height);
+      // Keep traversing the invalidatePropertiesQueue until we've reached the end.
+      // More elements may get added to the queue while we're in this loop, or a
+      // a recursive call to this function may remove elements from the queue while
+      // we're in this loop.
+      obj = ILayoutManagerClient(invalidatePropertiesQueue.removeSmallestChild(target));
+      while (obj) {
+        // trace("LayoutManager calling validateProperties() on " + Object(obj) + " " + DisplayObject(obj).width + " " + DisplayObject(obj).height);
 
-          if (obj.nestLevel) {
-            currentObject = obj;
-            obj.validateProperties();
-            if (!obj.updateCompletePendingFlag) {
-              updateCompleteQueue.addObject(obj, obj.nestLevel);
-              obj.updateCompletePendingFlag = true;
-            }
+        if (obj.nestLevel) {
+          currentObject = obj;
+          obj.validateProperties();
+          if (!obj.updateCompletePendingFlag) {
+            updateCompleteQueue.addObject(obj, obj.nestLevel);
+            obj.updateCompletePendingFlag = true;
           }
-
-          // Once we start, don't stop.
-          obj = ILayoutManagerClient(invalidatePropertiesQueue.removeSmallestChild(target));
         }
 
-        if (invalidatePropertiesQueue.isEmpty()) {
-          invalidatePropertiesFlag = false;
-          invalidateClientPropertiesFlag = false;
+        // Once we start, don't stop.
+        obj = ILayoutManagerClient(invalidatePropertiesQueue.removeSmallestChild(target));
+      }
+
+      if (invalidatePropertiesQueue.isEmpty()) {
+        invalidatePropertiesFlag = false;
+        invalidateClientPropertiesFlag = false;
+      }
+
+      obj = ILayoutManagerClient(invalidateSizeQueue.removeLargestChild(target));
+      while (obj) {
+        // trace("LayoutManager calling validateSize() on " + Object(obj));
+
+        if (obj.nestLevel) {
+          currentObject = obj;
+          obj.validateSize();
+          if (!obj.updateCompletePendingFlag) {
+            updateCompleteQueue.addObject(obj, obj.nestLevel);
+            obj.updateCompletePendingFlag = true;
+          }
+        }
+
+        if (invalidateClientPropertiesFlag) {
+          // did any properties get invalidated while validating size?
+          obj = ILayoutManagerClient(invalidatePropertiesQueue.removeSmallestChild(target));
+          if (obj) {
+            // re-queue it. we'll pull it at the beginning of the loop
+            invalidatePropertiesQueue.addObject(obj, obj.nestLevel);
+            done = false;
+            break;
+          }
         }
 
         obj = ILayoutManagerClient(invalidateSizeQueue.removeLargestChild(target));
-        while (obj) {
-          // trace("LayoutManager calling validateSize() on " + Object(obj));
+      }
 
+      if (invalidateSizeQueue.isEmpty()) {
+        invalidateSizeFlag = false;
+        invalidateClientSizeFlag = false;
+      }
+
+      if (!skipDisplayList) {
+        obj = ILayoutManagerClient(invalidateDisplayListQueue.removeSmallestChild(target));
+        while (obj) {
           if (obj.nestLevel) {
             currentObject = obj;
-            obj.validateSize();
+            obj.validateDisplayList();
             if (!obj.updateCompletePendingFlag) {
               updateCompleteQueue.addObject(obj, obj.nestLevel);
               obj.updateCompletePendingFlag = true;
             }
           }
+          // trace("LayoutManager return from validateDisplayList on " + Object(obj) + " " + DisplayObject(obj).width + " " + DisplayObject(obj).height);
 
           if (invalidateClientPropertiesFlag) {
             // did any properties get invalidated while validating size?
@@ -284,75 +320,43 @@ use namespace mx_internal;
             }
           }
 
-          obj = ILayoutManagerClient(invalidateSizeQueue.removeLargestChild(target));
-        }
+          if (invalidateClientSizeFlag) {
+            obj = ILayoutManagerClient(invalidateSizeQueue.removeLargestChild(target));
+            if (obj) {
+              // re-queue it. we'll pull it at the beginning of the loop
+              invalidateSizeQueue.addObject(obj, obj.nestLevel);
+              done = false;
+              break;
+            }
+          }
 
-        if (invalidateSizeQueue.isEmpty()) {
-          invalidateSizeFlag = false;
-          invalidateClientSizeFlag = false;
-        }
-
-        if (!skipDisplayList) {
+          // Once we start, don't stop.
           obj = ILayoutManagerClient(invalidateDisplayListQueue.removeSmallestChild(target));
-          while (obj) {
-            if (obj.nestLevel) {
-              currentObject = obj;
-              obj.validateDisplayList();
-              if (!obj.updateCompletePendingFlag) {
-                updateCompleteQueue.addObject(obj, obj.nestLevel);
-                obj.updateCompletePendingFlag = true;
-              }
-            }
-            // trace("LayoutManager return from validateDisplayList on " + Object(obj) + " " + DisplayObject(obj).width + " " + DisplayObject(obj).height);
+        }
 
-            if (invalidateClientPropertiesFlag) {
-              // did any properties get invalidated while validating size?
-              obj = ILayoutManagerClient(invalidatePropertiesQueue.removeSmallestChild(target));
-              if (obj) {
-                // re-queue it. we'll pull it at the beginning of the loop
-                invalidatePropertiesQueue.addObject(obj, obj.nestLevel);
-                done = false;
-                break;
-              }
-            }
-
-            if (invalidateClientSizeFlag) {
-              obj = ILayoutManagerClient(invalidateSizeQueue.removeLargestChild(target));
-              if (obj) {
-                // re-queue it. we'll pull it at the beginning of the loop
-                invalidateSizeQueue.addObject(obj, obj.nestLevel);
-                done = false;
-                break;
-              }
-            }
-
-            // Once we start, don't stop.
-            obj = ILayoutManagerClient(invalidateDisplayListQueue.removeSmallestChild(target));
-          }
-
-          if (invalidateDisplayListQueue.isEmpty()) {
-            invalidateDisplayListFlag = false;
-          }
+        if (invalidateDisplayListQueue.isEmpty()) {
+          invalidateDisplayListFlag = false;
         }
       }
+    }
 
-      if (oldTargetLevel == int.MAX_VALUE) {
-        targetLevel = int.MAX_VALUE;
-        if (!skipDisplayList) {
+    if (oldTargetLevel == int.MAX_VALUE) {
+      targetLevel = int.MAX_VALUE;
+      if (!skipDisplayList) {
+        obj = ILayoutManagerClient(updateCompleteQueue.removeLargestChild(target));
+        while (obj) {
+          if (!obj.initialized) {
+            obj.initialized = true;
+          }
+
+          if (obj.hasEventListener(FlexEvent.UPDATE_COMPLETE)) {
+            obj.dispatchEvent(new FlexEvent(FlexEvent.UPDATE_COMPLETE));
+          }
+          obj.updateCompletePendingFlag = false;
           obj = ILayoutManagerClient(updateCompleteQueue.removeLargestChild(target));
-          while (obj) {
-            if (!obj.initialized) {
-              obj.initialized = true;
-            }
-
-            if (obj.hasEventListener(FlexEvent.UPDATE_COMPLETE)) {
-              obj.dispatchEvent(new FlexEvent(FlexEvent.UPDATE_COMPLETE));
-            }
-            obj.updateCompletePendingFlag = false;
-            obj = ILayoutManagerClient(updateCompleteQueue.removeLargestChild(target));
-          }
         }
       }
+    }
     }
     catch (e:Error) {
       uiErrorHandler.handleUiError(e, obj, "Can't validate " + obj);
@@ -401,7 +405,7 @@ use namespace mx_internal;
 
   private function tryDoPhasedInstantiation():void {
     try {
-      doPhasedInstantiation();
+    doPhasedInstantiation();
     }
     catch (e:Error) {
       uiErrorHandler.handleUiError(e, currentObject, currentObject == null ? null : "Can't do phased instantiation " + currentObject);
