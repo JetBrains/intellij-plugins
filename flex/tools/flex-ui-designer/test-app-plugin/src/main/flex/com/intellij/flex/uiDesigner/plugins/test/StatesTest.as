@@ -56,6 +56,7 @@ public class StatesTest extends BaseTestCase {
       SetProperty();
       LoginForm();
       IncludeInAfterStateSpecificProperty();
+      IDEA_72004();
     }
   }
 
@@ -339,6 +340,10 @@ public class StatesTest extends BaseTestCase {
     
     setState(B);
     assertThat(app, [{text: B}]);
+  }
+
+  public function IDEA_72004():void {
+    assertThat(app, [{width: 40}]);
   }
 }
 }

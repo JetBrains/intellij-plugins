@@ -14,6 +14,7 @@ class AddItems extends OverrideBase {
     this.autoDestruction = autoDestruction;
     itemDeferredInstances = new ArrayList<DynamicObjectContext>();
     itemDeferredInstances.add(itemDeferredInstance);
+    itemDeferredInstance.overrideUserCount++;
   }
 
   @Override

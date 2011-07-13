@@ -14,6 +14,9 @@
       <entry name="?*.dtd" />
       <entry name="?*.tld" />
       <entry name="?*.ftl" />
+      <entry name="?*.js" />
+      <entry name="?*.css" />
+      <entry name="?*.swf" />
     </wildcardResourcePatterns>
     <annotationProcessing enabled="false" useClasspath="true" />
   </component>
@@ -144,9 +147,9 @@
       <module fileurl="file://$PROJECT_DIR$/plafAggregator.iml" filepath="$PROJECT_DIR$/plafAggregator.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/shared.iml" filepath="$PROJECT_DIR$/shared.iml" />
       <module fileurl="file://$PROJECT_DIR$/test.iml" filepath="$PROJECT_DIR$/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test-data/test-data.iml" filepath="$PROJECT_DIR$/test-data/test-data.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-data-libs.iml" filepath="$PROJECT_DIR$/test-data-libs.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-mx/test-mx.iml" filepath="$PROJECT_DIR$/test-mx/test-mx.iml" group="plafAggregator and modules" />
-      <module fileurl="file://$PROJECT_DIR$/test-project.iml" filepath="$PROJECT_DIR$/test-project.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/ui.iml" filepath="$PROJECT_DIR$/ui.iml" />
     </modules>
   </component>

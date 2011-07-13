@@ -9,6 +9,8 @@ class DynamicObjectContext extends Context {
   private boolean written;
   private boolean immediateCreation;
 
+  int overrideUserCount;
+
   DynamicObjectContext(int id, Scope parentScope) {
     this.parentScope = parentScope;
     this.id = id;

@@ -215,7 +215,7 @@ class StateWriter {
     writer.getOut().writeUInt29(VALUE);
     writer.getOut().write(PropertyClassifier.PROPERTY);
 
-    int type = 0;
+    int type;
     try {
       type = valueWriter.write(writer.getOut(), writer, false);
     }
@@ -370,6 +370,11 @@ class StateWriter {
       out.writeUInt29(instance.id);
     }
     else {
+      // IDEA-72004
+      if (instance.overrideUserCount > 0) {
+        writer.getObjectId(instance);
+      }
+
       if (instance.id == -1) {
         writeDeferredInstanceKind(ObjectMetadata.NEVER_REFERRED, instance);
       }

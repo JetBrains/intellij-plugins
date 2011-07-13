@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import org.jetbrains.annotations.Nullable;
+
 abstract class Context {
   protected StaticObjectContext backSibling;
   protected Scope parentScope;
@@ -33,7 +35,7 @@ abstract class Context {
     return deferredInstanceFromObjectReference;
   }
 
-  public void setDeferredInstanceFromObjectReference(DeferredInstanceFromObjectReference value) {
+  public void setDeferredInstanceFromObjectReference(@Nullable DeferredInstanceFromObjectReference value) {
     assert deferredInstanceFromObjectReference == null || value == null;
     deferredInstanceFromObjectReference = value;
   }
