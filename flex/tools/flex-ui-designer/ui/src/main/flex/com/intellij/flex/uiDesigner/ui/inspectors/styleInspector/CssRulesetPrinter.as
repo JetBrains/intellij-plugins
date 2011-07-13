@@ -90,7 +90,7 @@ public class CssRulesetPrinter {
     }
   }
 
-  private function printFileSource(ruleset:CssRuleset):TextBlock {
+  private static function printFileSource(ruleset:CssRuleset):TextBlock {
     var block:TextBlock = TextBlockUtil.checkOut();
     var lp:LayoutProperties = new LayoutProperties();
     lp.constraint = new FloatConstraint(TextFloat.RIGHT);
@@ -133,7 +133,7 @@ public class CssRulesetPrinter {
     return new GroupElement(elements);
   }
   
-  private function appendText(text:String, elements:Vector.<ContentElement>, elementsCounter:int):int {
+  private static function appendText(text:String, elements:Vector.<ContentElement>, elementsCounter:int):int {
     var lastElement:TextElement = TextElement(elements[elementsCounter - 1]);
     if (lastElement.userData == null) {
       lastElement.replaceText(lastElement.text.length, lastElement.text.length, text);
@@ -331,12 +331,12 @@ public class CssRulesetPrinter {
     return new GroupElement(content);
   }
 
-  private function intColorToHex(color:uint):String {
+  private static function intColorToHex(color:uint):String {
     var s:String = color.toString(16);
     return "#" + s + StringUtil.repeat("0", 6 - s.length);
   }
 
-  private function printClassReference(contentIndex:int, name:String):Vector.<ContentElement> {
+  private static function printClassReference(contentIndex:int, name:String):Vector.<ContentElement> {
     var content:Vector.<ContentElement> = new Vector.<ContentElement>(contentIndex + 6, true);
     content[contentIndex++] = new TextElement("ClassReference", CssElementFormat.func);
     content[contentIndex++] = new TextElement("(", CssElementFormat.defaultText);

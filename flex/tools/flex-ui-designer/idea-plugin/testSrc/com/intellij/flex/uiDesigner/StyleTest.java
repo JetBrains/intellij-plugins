@@ -16,7 +16,7 @@ public class StyleTest extends MxmlWriterTestBase {
   }
   
   public void testLibraryCssDefaults() throws Exception {
-    testFile("empty.mxml");
+    testFile("emptyForCheckLibrariesCssDefaults.mxml");
   }
   
   @Flex(requireLocalStyleHolder=true)

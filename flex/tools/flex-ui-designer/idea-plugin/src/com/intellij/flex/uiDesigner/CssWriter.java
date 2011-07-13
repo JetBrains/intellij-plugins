@@ -18,6 +18,7 @@ import com.intellij.psi.css.*;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.CssUtil;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlToken;
 import com.intellij.xml.XmlElementDescriptor;
@@ -111,7 +112,12 @@ public class CssWriter {
         declarationVectorWriter.rollbackLastIteration();
       }
 
-      declarationVectorWriter.writeTo(rulesetOut);
+      if (!declarationVectorWriter.isEmpty()) {
+        declarationVectorWriter.writeTo(rulesetOut);
+      }
+      else {
+        rulesetVectorWriter.rollbackLastIteration();
+      }
     }
 
     PrimitiveAmfOutputStream outputForCustomData = rulesetVectorWriter.getOutputForCustomData();
@@ -231,8 +237,7 @@ public class CssWriter {
         break;
 
       case 'N':
-        propertyOut.write(CssPropertyType.NUMBER);
-        propertyOut.writeAmfDouble(value.getText());
+        writeNumberValue(value);
         break;
 
       case 'C':
@@ -257,6 +262,30 @@ public class CssWriter {
         propertyOut.writeAmfInt(0);
         break;
     }
+  }
+
+  // In Flex css number cannot be hex (#ddassad, allowable only for Color)
+  private void writeNumberValue(final CssTermList value) {
+    propertyOut.write(CssPropertyType.NUMBER);
+
+    CssTerm term = (CssTerm)value.getFirstChild();
+    //noinspection ConstantConditions
+    ASTNode node = term.getFirstChild().getNode();
+    final IElementType elementType = node.getElementType();
+    boolean isNegative = false;
+    if (elementType == CssElementTypes.CSS_NUMBER_TERM) {
+      node = node.getFirstChildNode();
+      // todo honor unit, IDEA-72089
+    }
+    else if (elementType == CssElementTypes.CSS_MINUS) {
+      isNegative = true;
+      node = node.getTreeNext().getFirstChildNode();
+    }
+    else {
+      throw new IllegalArgumentException("unknown number value type " + elementType);
+    }
+
+    IOUtil.writeAmfIntOrDouble(propertyOut, node.getChars(), isNegative);
   }
 
   @SuppressWarnings({"ConstantConditions"})

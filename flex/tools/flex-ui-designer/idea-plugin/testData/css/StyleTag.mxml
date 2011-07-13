@@ -51,6 +51,16 @@
       fontThickness: 200;
     }
 
+    .positiveNumberPxUnitAndNegativeNumberWithoutUnit {
+      fontSize: 28px;
+      textIndent: -10;
+    }
+
+    .positiveHexNumberPxUnitAndNegativeNumberWithoutUnit {
+      fontSize: 28px;
+      textIndent: -100;
+    }
+
   </fx:Style>
 
   <layout>
@@ -69,5 +79,10 @@
     <BorderContainer styleName="bbb">
       <Button label="id pseudo class ancestor" id="ddd" styleName="aa"/>
     </BorderContainer>
+  </VGroup>
+
+  <VGroup>
+    <!-- must be RichText for test textIndent -->
+    <RichText text="H__________________________|" styleName="positiveNumberPxUnitAndNegativeNumberWithoutUnit"/>
   </VGroup>
 </Application>

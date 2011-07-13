@@ -62,4 +62,8 @@ public class CustomVectorWriter implements ByteProvider {
     out.writeUInt29((length << 1) | 1);
     out.write(1);
   }
+
+  public boolean isEmpty() {
+    return counter == 0;
+  }
 }

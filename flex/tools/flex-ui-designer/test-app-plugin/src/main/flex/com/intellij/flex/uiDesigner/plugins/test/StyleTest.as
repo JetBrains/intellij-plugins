@@ -18,7 +18,7 @@ public class StyleTest extends BaseTestCase {
   public function StyleTest() {
     //noinspection ConstantIfStatementJS
     if (false) {
-      empty();
+      emptyForCheckLibrariesCssDefaults();
       StyleTag();
       StyleTagWithSource();
       ComponentWithCustomSkin();
@@ -28,7 +28,7 @@ public class StyleTest extends BaseTestCase {
     }
   }
 
-  public function empty():void {
+  public function emptyForCheckLibrariesCssDefaults():void {
     var librarySets:Vector.<LibrarySet> = documentManager.document.module.librarySets;
     assertThat(librarySets, [{items: arrayWithSize(9)}]);
     assertThat(librarySets, arrayWithSize(1));
@@ -80,7 +80,8 @@ public class StyleTest extends BaseTestCase {
         {label: "disabled (pseudo) ancestor", enabled: false, fontSize: 22, fontStyle: FontPosture.ITALIC, color: 0xffc0cb},
         {label: "pseudo class ancestor", styleName: "aa", fontSize: 22, fontStyle: FontPosture.NORMAL, color: 0x008000},
         allOf({styleName: "bbb"}, [mouseDown({label: "id pseudo class ancestor", id: "ddd", styleName: "aa", fontSize: 28, fontStyle: FontPosture.NORMAL, fontFamily: "_typewriter", fontThickness: 200, color: 0x8b4513}, {color: 0x0000ff})])
-      ]
+      ],
+      [{text: "H__________________________|", fontSize: 28, textIndent: -100}]
     ]);
   }
   

@@ -35,13 +35,15 @@ public class ProblemsHolder {
       error = e.getMessage();
       final String prefix = "For input string: \"";
       if (error.startsWith(prefix)) {
-        error = error.substring(prefix.length(), error.charAt(error.length() - 1) == '"' ? error.length() - 1 : error.length());
+        error = FlexUIDesignerBundle.message("error.write.property.numeric.value",
+          error.substring(prefix.length(), error.charAt(error.length() - 1) == '"' ? error.length() - 1 : error.length()), propertyName);
       }
     }
     else {
       error = FlexUIDesignerBundle.message("error.write.property", propertyName);
-      LOG.error(e);
     }
+
+    LOG.error(e);
 
     problems.add(error);
   }
