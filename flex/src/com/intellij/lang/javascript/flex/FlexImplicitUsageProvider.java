@@ -28,22 +28,24 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
   public boolean isImplicitUsage(PsiElement element) {
     if (element instanceof XmlAttribute &&
         ((XmlAttribute)element).isNamespaceDeclaration() &&
-        JavaScriptSupportLoader.MXML_URI3.equals(((XmlAttribute)element).getValue())) {
+        JavaScriptSupportLoader.isLanguageNamespace(((XmlAttribute)element).getValue())) {
       return true;
     }
 
     if (element instanceof JSClass) {
       JSClass clazz = (JSClass)element;
-      Module moduleForPsiElement = ModuleUtil.findModuleForPsiElement(clazz);
-      if (FlexRuntimeConfigurationProducer.isAcceptedMainClass(clazz, moduleForPsiElement, true)) return true;
+      Module module = ModuleUtil.findModuleForPsiElement(clazz);
+      if (FlexRuntimeConfigurationProducer.isAcceptedMainClass(clazz, module, true)) return true;
       if (JSInheritanceUtil.isParentClass(clazz, FlexCompilerSettingsEditor.MODULE_BASE_CLASS_NAME)) return true;
 
-      FlexUnitSupport flexUnitSupport = FlexUnitSupport.getSupport(moduleForPsiElement);
+      FlexUnitSupport flexUnitSupport = FlexUnitSupport.getSupport(module);
       if (flexUnitSupport != null && flexUnitSupport.isTestClass(clazz, true)) return true;
-    } else if (element instanceof JSFunction) {
+    }
+    else if (element instanceof JSFunction) {
       if (isTestMethod((JSFunction)element)) return true;
       if (isAnnotatedByUnknownAttribute((JSAttributeListOwner)element)) return true;
-    } else if (element instanceof JSVariable) {
+    }
+    else if (element instanceof JSVariable) {
       if (isAnnotatedByUnknownAttribute((JSAttributeListOwner)element)) return true;
     }
     return false;
@@ -80,7 +82,7 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
     JSAttributeList attributeList = namedElement.getAttributeList();
     if (attributeList != null) {
       JSAttribute[] attributes = attributeList.getAttributes();
-      for(JSAttribute a:attributes) {
+      for (JSAttribute a : attributes) {
         if ("Deprecated".equals(a.getName())) continue;
         return true;
       }
