@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -26,7 +27,6 @@ import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.*;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -508,7 +508,7 @@ class FlexValue extends XValue {
       final JSClass jsClass = findJSClass(project, ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), type);
 
       if (jsClass != null) {
-        result = calcSourcePosition(findFieldOrGetter(myName, jsClass, true));
+        result = calcSourcePosition(JSInheritanceUtil.findMember(myName, jsClass, true, JSFunction.FunctionKind.GETTER, true));
       }
     }
     navigatable.setSourcePosition(result);
@@ -760,40 +760,6 @@ class FlexValue extends XValue {
       }
 
       return jsClass instanceof JSClass ? (JSClass)jsClass : null;
-    }
-
-    return null;
-  }
-
-  @Nullable
-  private static JSQualifiedNamedElement findFieldOrGetter(final String name,
-                                                           final JSClass jsClass,
-                                                           final boolean lookInSupers) {
-    return findFieldOrGetter(name, jsClass, lookInSupers, lookInSupers ? new THashSet<JSClass>() : Collections.<JSClass>emptySet());
-  }
-
-  @Nullable
-  private static JSQualifiedNamedElement findFieldOrGetter(final String name,
-                                                           final JSClass jsClass,
-                                                           final boolean lookInSupers,
-                                                           final Set<JSClass> visited) {
-    if (visited.contains(jsClass)) return null;
-
-    final JSVariable field = jsClass.findFieldByName(name);
-    if (field != null) return field;
-
-    final JSFunction getter = jsClass.findFunctionByNameAndKind(name, JSFunction.FunctionKind.GETTER);
-    if (getter != null) return getter;
-
-    if (lookInSupers) {
-      visited.add(jsClass);
-
-      for (final JSClass superClass : jsClass.getSuperClasses()) {
-        final JSQualifiedNamedElement inSuper = findFieldOrGetter(name, superClass, lookInSupers, visited);
-        if (inSuper != null) {
-          return inSuper;
-        }
-      }
     }
 
     return null;

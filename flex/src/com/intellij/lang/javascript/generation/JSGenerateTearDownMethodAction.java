@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.generation;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitSupport;
+import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.editor.Editor;
@@ -11,9 +12,8 @@ import org.jetbrains.annotations.NotNull;
 public class JSGenerateTearDownMethodAction extends GenerateFlexUnitMethodActionBase {
 
   protected void buildTemplate(final Template template, final JSClass jsClass) {
-    if (JSInheritanceUtil.isParentClass(jsClass, FlexUnitSupport.FLEX_UNIT_1_TESTCASE_CLASS)) {
-      template.addTextSegment("[After]\npublic override function tearDown():void{\n");
-      template.addTextSegment("super.tearDown();");
+    if (JSInheritanceUtil.findMember("tearDown", jsClass, false, JSFunction.FunctionKind.SIMPLE, true) != null) {
+      template.addTextSegment("[After]\npublic override function tearDown():void{\nsuper.tearDown();");
       template.addEndVariable();
       template.addTextSegment("\n}");
     }

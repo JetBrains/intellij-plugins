@@ -132,6 +132,8 @@
     <treeStructureProvider implementation="com.intellij.lang.javascript.flex.presentation.SwfProjectViewStructureProvider"/>
     <writingAccessProvider implementation="com.intellij.lang.javascript.flex.FlexWritingAccessProvider"/>
     <testFinder implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestFinder"/>
+    <testCreator language="JavaScript" implementationClass="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestCreator"/>
+    <testCreator language="XML" implementationClass="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestCreator"/>
     <codeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptCodeStyleSettingsProvider"/>
     <colorSettingsPage implementation="com.intellij.lang.javascript.highlighting.ActionScriptColorsAndFontsPage"/>
 

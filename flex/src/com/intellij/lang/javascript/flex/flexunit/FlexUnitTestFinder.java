@@ -26,7 +26,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class FlexUnitTestFinder implements TestFinder {
+
   public JSClass findSourceElement(@NotNull final PsiElement element) {
+    return findContextClass(element);
+  }
+
+  static JSClass findContextClass(final PsiElement element) {
     if (FlexUnitSupport.getModuleAndSupport(element) == null) {
       return null;
     }
