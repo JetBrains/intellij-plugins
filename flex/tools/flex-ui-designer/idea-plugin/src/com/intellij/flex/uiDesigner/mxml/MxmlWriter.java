@@ -38,6 +38,11 @@ public class MxmlWriter {
 
   static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
 
+  private static final String ICONTAINER = "mx.core.IContainer";
+  private static final String ACCORDION = "mx.containers.Accordion";
+  private static final String VIEW_STACK = "mx.container.ViewStack";
+  private static final String INAVIGATOR_CONTENT = "mx.core.INavigatorContent";
+
   private final PrimitiveAmfOutputStream out;
 
   private final ProblemsHolder problemsHolder = new ProblemsHolder();
@@ -278,7 +283,7 @@ public class MxmlWriter {
       if (child instanceof XmlText) {
         if (!containsOnlyWhitespace(child)) {
           if (closeObjectLevel == 0) {
-            closeObjectLevel = processDefaultProperty(parent, createValueProvider((XmlText)child));
+            closeObjectLevel = processDefaultProperty(parent, createValueProvider((XmlText)child), null);
             if (closeObjectLevel == -1) {
               closeObjectLevel = 0;
               continue;
@@ -299,11 +304,6 @@ public class MxmlWriter {
             if (descriptor.getQualifiedName().equals(FlexPredefinedTagNames.DECLARATIONS)) {
               injectedASWriter.readDeclarations(this, tag);
             }
-            /*else if (descriptor.getQualifiedName().equals(FlexPredefinedTagNames.STYLE)) {
-              assert localStyleWriter == null;
-              localStyleWriter = new LocalStyleWriter();
-              localStyleWriter.write(tag);
-            }*/
 
             continue;
           }
@@ -313,7 +313,7 @@ public class MxmlWriter {
           }
 
           if (closeObjectLevel == 0) {
-            closeObjectLevel = processDefaultProperty(parent, createValueProvider(tag));
+            closeObjectLevel = processDefaultProperty(parent, createValueProvider(tag), classBackedDescriptor);
             if (closeObjectLevel == -1) {
               closeObjectLevel = 0;
               continue;
@@ -368,7 +368,7 @@ public class MxmlWriter {
     }
   }
 
-  private boolean isAbstract(ClassBackedElementDescriptor classBackedDescriptor) {
+  private static boolean isAbstract(ClassBackedElementDescriptor classBackedDescriptor) {
     return FLEX_SDK_ABSTRACT_CLASSES.matcher(classBackedDescriptor.getQualifiedName()).matches();
   }
 
@@ -392,23 +392,67 @@ public class MxmlWriter {
     }
   }
 
-  private int processDefaultProperty(XmlTag tag, XmlElementValueProvider valueProvider) {
+  private int getLineNumber(XmlTag tag) {
+    return getDocument(tag).getLineNumber(tag.getTextOffset()) + 1;
+  }
+
+  private static boolean isHaloNavigator(String className, JSClass jsClass) {
+    return className.equals(ACCORDION) ||
+           className.equals(VIEW_STACK) ||
+           JSInheritanceUtil.isParentClass(jsClass, ACCORDION) ||
+           JSInheritanceUtil.isParentClass(jsClass, VIEW_STACK);
+  }
+
+  // childDescriptor will be null if child is XmlText
+  private int processDefaultProperty(XmlTag tag, XmlElementValueProvider valueProvider, @Nullable ClassBackedElementDescriptor childDescriptor) {
     ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)tag.getDescriptor();
     assert descriptor != null;
     AnnotationBackedDescriptor defaultDescriptor = descriptor.getDefaultPropertyDescriptor();
     if (defaultDescriptor == null) {
-      if (JSInheritanceUtil.isParentClass((JSClass)descriptor.getDeclaration(), "mx.core.IContainer")) {
+      final JSClass jsClass = (JSClass)descriptor.getDeclaration();
+      final String className = descriptor.getQualifiedName();
+      final boolean isDirectContainerImpl = className.equals(ICONTAINER);
+      if (isDirectContainerImpl || JSInheritanceUtil.isParentClass(jsClass, ICONTAINER)) {
+        if (childDescriptor == null) {
+          problemsHolder.add(FlexUIDesignerBundle.message("error.initializer.cannot.be.represented.in.text", tag.getName(),
+            getLineNumber(tag)));
+          return -1;
+        }
+
+        if (!isDirectContainerImpl && isHaloNavigator(className, jsClass) &&
+            !JSInheritanceUtil.isParentClass((JSClass)childDescriptor.getDeclaration(), INAVIGATOR_CONTENT)) {
+          problemsHolder.add(FlexUIDesignerBundle.message("error.children.must.be", tag.getName(), INAVIGATOR_CONTENT, getLineNumber(tag)));
+          return -1;
+        }
+
         writer.write("0");
         out.write(PropertyClassifier.MX_CONTAINER_CHILDREN);
         return 1;
       }
       else {
         // http://youtrack.jetbrains.net/issue/IDEA-66565
-        problemsHolder.add(FlexUIDesignerBundle.message("error.default.property.not.found", tag.getName(),
-                                                  getDocument(tag).getLineNumber(tag.getTextOffset()) + 1));
+        problemsHolder.add(FlexUIDesignerBundle.message("error.default.property.not.found", tag.getName(), getLineNumber(tag)));
       }
     }
     else {
+      if (defaultDescriptor.getType().equals(JSCommonTypeNames.ARRAY_CLASS_NAME) && defaultDescriptor.getArrayType() != null) {
+        final String elementType = defaultDescriptor.getArrayType();
+        final boolean isString = elementType.equals(JSCommonTypeNames.STRING_CLASS_NAME);
+        if (isString) {
+          if (childDescriptor != null && !childDescriptor.getQualifiedName().equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
+            problemsHolder.add(FlexUIDesignerBundle.message("error.children.must.be", tag.getName(), elementType, getLineNumber(tag)));
+            return -1;
+          }
+        }
+        else {
+          if (childDescriptor == null) {
+            problemsHolder.add(
+              FlexUIDesignerBundle.message("error.initializer.cannot.be.represented.in.text", tag.getName(), getLineNumber(tag)));
+            return -1;
+          }
+        }
+      }
+
       writer.write(defaultDescriptor.getName());
       out.write(PropertyClassifier.PROPERTY);
       if (defaultDescriptor.isDeferredInstance()) {

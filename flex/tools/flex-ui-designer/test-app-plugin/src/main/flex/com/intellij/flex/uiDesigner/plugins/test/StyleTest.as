@@ -81,7 +81,7 @@ public class StyleTest extends BaseTestCase {
         {label: "pseudo class ancestor", styleName: "aa", fontSize: 22, fontStyle: FontPosture.NORMAL, color: 0x008000},
         allOf({styleName: "bbb"}, [mouseDown({label: "id pseudo class ancestor", id: "ddd", styleName: "aa", fontSize: 28, fontStyle: FontPosture.NORMAL, fontFamily: "_typewriter", fontThickness: 200, color: 0x8b4513}, {color: 0x0000ff})])
       ],
-      [{text: "H__________________________|", fontSize: 28, textIndent: -100}]
+      [{text: "H__________________________|", fontSize: 28, textIndent: -10}]
     ]);
   }
   

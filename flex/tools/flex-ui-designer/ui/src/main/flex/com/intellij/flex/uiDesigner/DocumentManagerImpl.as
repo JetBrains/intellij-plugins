@@ -46,7 +46,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     if (value != document) {
       _document = value;
       dispatchEvent(new Event("documentChanged"));
-      adjustElementSelection();
+      if (_document != null) {
+        adjustElementSelection();
+      }
     }
   }
 

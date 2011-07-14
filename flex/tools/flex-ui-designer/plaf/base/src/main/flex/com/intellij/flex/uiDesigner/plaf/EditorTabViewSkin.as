@@ -8,8 +8,10 @@ import cocoa.plaf.basic.AbstractTabViewSkin;
 import cocoa.tabView.TabView;
 
 import flash.display.Sprite;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.text.engine.TextLine;
+import flash.ui.Keyboard;
 
 import mx.core.IUIComponent;
 
@@ -43,6 +45,14 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
     
     _borderShape.addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
     _borderShape.addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
+
+    addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+  }
+
+  private function keyDownHandler(event:KeyboardEvent):void {
+    if (event.keyCode == Keyboard.W && event.controlKey) {
+      ListViewModifiableDataSource(TabView(component).dataSource).removeItemAt(TabView(component).dataSource.itemCount - 1);
+    }
   }
   
   override protected function measure():void {

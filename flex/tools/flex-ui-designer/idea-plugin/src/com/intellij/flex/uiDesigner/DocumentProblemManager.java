@@ -20,13 +20,13 @@ public class DocumentProblemManager {
   }
 
   private static StringBuilder appendTitle(StringBuilder builder) {
-    return builder.append("<html><b>").append(FlexUIDesignerBundle.message("plugin.name")).append("</b>");
+    return builder.append("<b>").append(FlexUIDesignerBundle.message("plugin.name")).append("</b>");
   }
 
   public void report(final Project project, String message) {
     StringBuilder builder = StringBuilderSpinAllocator.alloc();
     try {
-      report(project, appendTitle(builder).append("<p>").append(message).append("</p></html>").toString(), MessageType.ERROR);
+      report(project, appendTitle(builder).append("<p>").append(message).append("</p>").toString(), MessageType.ERROR);
     }
     finally {
       StringBuilderSpinAllocator.dispose(builder);
@@ -44,7 +44,7 @@ public class DocumentProblemManager {
       for (String problem : problems) {
         builder.append("<li>").append(problem).append("</li>");
       }
-      builder.append("</ul>").append("</html>");
+      builder.append("</ul>");
       report(project, builder.toString(), MessageType.ERROR);
     }
     finally {

@@ -44,6 +44,10 @@ public class ElementManager extends EventDispatcher implements Injectable {
 
       skinClass = _document.module.getClass("spark.components.supportClasses.Skin");
     }
+
+    if (_document == null) {
+      element = null;
+    }
   }
 
   private function keyDownHandler(event:KeyboardEvent):void {

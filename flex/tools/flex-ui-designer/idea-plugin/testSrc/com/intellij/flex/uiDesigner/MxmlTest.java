@@ -40,6 +40,7 @@ public class MxmlTest extends MxmlWriterTestBase {
     }
     else {
       assertThat(problems,
+                 "<b>Flex UI Designer</b><ul><li>Initializer for Group cannot be represented in text (line: 2)</li><li>Initializer for mx:Container cannot be represented in text (line: 5)</li><li>Children of mx:Accordion must be mx.core.INavigatorContent (line: 8)</li></ul>",
                  m("Unresolved variable unresolvedData"),
                  m("Invalid color name invalidcolorname"),
                  m("Default property not found for Rect (line: 2)"),
@@ -48,7 +49,7 @@ public class MxmlTest extends MxmlWriterTestBase {
   }
 
   private static String m(String message) {
-    return "<html><b>Flex UI Designer</b><ul><li>" + message + "</li></ul></html>";
+    return "<b>Flex UI Designer</b><ul><li>" + message + "</li></ul>";
   }
 
   @Flex(version="4.1")
