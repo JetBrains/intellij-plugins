@@ -35,6 +35,7 @@ public class MxmlTest extends BaseTestCase {
       MouseSelectionTest();
       ColorEquals0();
       ChildrenTypeCheck();
+      CustomComponent();
     }
   }
   
@@ -151,6 +152,10 @@ public class MxmlTest extends BaseTestCase {
 
   public function ChildrenTypeCheck():void {
     assertThat(app, [[], [], []]);
+  }
+
+  public function CustomComponent():void {
+    assertThat(app, []);
   }
 }
 }

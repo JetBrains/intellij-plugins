@@ -17,14 +17,18 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.*;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.PropertyKey;
 
 import java.io.IOException;
 import java.util.List;
@@ -238,7 +242,7 @@ public class MxmlWriter {
             }
             if (type < PRIMITIVE) {
               writer.getBlockOut().setPosition(beforePosition);
-              problemsHolder.add(FlexUIDesignerBundle.message("error.unknown.attribute.value.type", descriptor.getType()));
+              addProblem("error.unknown.attribute.value.type", descriptor.getType());
             }
           }
         }
@@ -308,7 +312,7 @@ public class MxmlWriter {
             continue;
           }
           else if (isAbstract(classBackedDescriptor)) {
-            problemsHolder.add(classBackedDescriptor.getQualifiedName() + " is abstract class");
+            addProblem("error.abstract.class", classBackedDescriptor.getQualifiedName());
             continue;
           }
 
@@ -375,11 +379,26 @@ public class MxmlWriter {
   private void processClassBackedSubTag(XmlTag tag, ClassBackedElementDescriptor descriptor, @Nullable Context parentContext,
                                         boolean isArray) {
     if (!writeIfPrimitive(tag, descriptor, isArray)) {
+      if (isProjectComponent(descriptor)) {
+        addProblem("error.custom.component.are.not.supported", tag.getLocalName(), getLineNumber(tag));
+        return;
+      }
+
       int childDataPosition = out.size();
       writer.write(descriptor.getQualifiedName());
       processElements(tag, parentContext, hasStates && isArray && parentContext != null, childDataPosition, 
       out.getByteOut().allocate(2));
     }
+  }
+
+  private boolean isProjectComponent(ClassBackedElementDescriptor descriptor) {
+    final JSClass jsClass = (JSClass)descriptor.getDeclaration();
+    assert jsClass != null;
+    PsiFile psiFile = jsClass.getContainingFile();
+    VirtualFile virtualFile = psiFile.getVirtualFile();
+    assert virtualFile != null;
+    final Module module = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().getModuleForFile(virtualFile);
+    return module != null;
   }
 
   void processPropertyTagValue(XmlTag parent, @Nullable Context parentContext, boolean isArray) {
@@ -418,6 +437,10 @@ public class MxmlWriter {
            JSInheritanceUtil.isParentClass(jsClass, VIEW_STACK);
   }
 
+  private void addProblem(@PropertyKey(resourceBundle = FlexUIDesignerBundle.BUNDLE) String key, Object... params) {
+    problemsHolder.add(FlexUIDesignerBundle.message(key, params));
+  }
+
   // childDescriptor will be null if child is XmlText
   private int processDefaultProperty(XmlTag tag, XmlElementValueProvider valueProvider, @Nullable ClassBackedElementDescriptor childDescriptor) {
     ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)tag.getDescriptor();
@@ -429,14 +452,13 @@ public class MxmlWriter {
       final boolean isDirectContainerImpl = className.equals(ICONTAINER);
       if (isDirectContainerImpl || JSInheritanceUtil.isParentClass(jsClass, ICONTAINER)) {
         if (childDescriptor == null) {
-          problemsHolder.add(FlexUIDesignerBundle.message("error.initializer.cannot.be.represented.in.text", tag.getName(),
-            getLineNumber(tag)));
+          addProblem("error.initializer.cannot.be.represented.in.text", tag.getLocalName(), getLineNumber(tag));
           return -1;
         }
 
         if (!isDirectContainerImpl && isHaloNavigator(className, jsClass) &&
             !JSInheritanceUtil.isParentClass((JSClass)childDescriptor.getDeclaration(), INAVIGATOR_CONTENT)) {
-          problemsHolder.add(FlexUIDesignerBundle.message("error.children.must.be", tag.getName(), INAVIGATOR_CONTENT, getLineNumber(tag)));
+          addProblem("error.children.must.be", tag.getLocalName(), INAVIGATOR_CONTENT, getLineNumber(tag));
           return -1;
         }
 
@@ -446,7 +468,7 @@ public class MxmlWriter {
       }
       else {
         // http://youtrack.jetbrains.net/issue/IDEA-66565
-        problemsHolder.add(FlexUIDesignerBundle.message("error.default.property.not.found", tag.getName(), getLineNumber(tag)));
+        addProblem("error.default.property.not.found", tag.getLocalName(), getLineNumber(tag));
       }
     }
     else {
@@ -455,14 +477,13 @@ public class MxmlWriter {
         final boolean isString = elementType.equals(JSCommonTypeNames.STRING_CLASS_NAME);
         if (isString) {
           if (childDescriptor != null && !childDescriptor.getQualifiedName().equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
-            problemsHolder.add(FlexUIDesignerBundle.message("error.children.must.be", tag.getName(), elementType, getLineNumber(tag)));
+            addProblem("error.children.must.be", tag.getLocalName(), elementType, getLineNumber(tag));
             return -1;
           }
         }
         else {
           if (childDescriptor == null) {
-            problemsHolder.add(
-              FlexUIDesignerBundle.message("error.initializer.cannot.be.represented.in.text", tag.getName(), getLineNumber(tag)));
+            addProblem("error.initializer.cannot.be.represented.in.text", tag.getLocalName(), getLineNumber(tag));
             return -1;
           }
         }

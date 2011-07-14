@@ -25,12 +25,13 @@ public class MxmlTest extends MxmlWriterTestBase {
     String testFile = System.getProperty("testFile");
     String[] files = testFile == null ? getTestFiles() : new String[]{getTestPath() + "/" + testFile + ".mxml"};
 
-    final VirtualFile[] vFiles = new VirtualFile[files.length + 1];
+    final VirtualFile[] vFiles = new VirtualFile[files.length + 2];
     for (int i = 0; i < files.length; i++) {
       vFiles[i] = getVFile(files[i]);
     }
     
     vFiles[files.length] = getVFile(getTestPath() + "/anim.swf");
+    vFiles[files.length + 1] = getVFile(getTestPath() + "/MyButtonCustomComponent.as");
 
     testFiles(vFiles);
     
@@ -40,11 +41,12 @@ public class MxmlTest extends MxmlWriterTestBase {
     }
     else {
       assertThat(problems,
-                 "<b>Flex UI Designer</b><ul><li>Initializer for Group cannot be represented in text (line: 2)</li><li>Initializer for mx:Container cannot be represented in text (line: 5)</li><li>Children of mx:Accordion must be mx.core.INavigatorContent (line: 8)</li></ul>",
-                 m("Unresolved variable unresolvedData"),
-                 m("Invalid color name invalidcolorname"),
-                 m("Default property not found for Rect (line: 2)"),
-                 m("spark.components.supportClasses.TrackBase is abstract class"));
+        "<b>Flex UI Designer</b><ul><li>Initializer for Group cannot be represented in text (line: 2)</li><li>Initializer for Container cannot be represented in text (line: 5)</li><li>Children of Accordion must be mx.core.INavigatorContent (line: 8)</li></ul>",
+        m("Unresolved variable unresolvedData"),
+        m("Invalid color name invalidcolorname"),
+        m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-71298\">Project components are not supported</a>, skip MyButtonCustomComponent (line: 2)"),
+        m("Default property not found for Rect (line: 2)"),
+        m("spark.components.supportClasses.TrackBase is abstract class"));
     }
   }
 

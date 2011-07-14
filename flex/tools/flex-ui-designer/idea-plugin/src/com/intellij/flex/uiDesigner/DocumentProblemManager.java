@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +63,7 @@ public class DocumentProblemManager {
     //  title == null ? FlexUIDesignerBundle.message("plugin.name") : title, message, NotificationType.ERROR);
     //notification.notify(project);
 
-    final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, messageType, null).setShowCallout(false)
+    final Balloon balloon = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(message, messageType, new BrowserHyperlinkListener()).setShowCallout(false)
       .setHideOnAction(false).createBalloon();
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
