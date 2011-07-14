@@ -392,6 +392,21 @@ public class MxmlWriter {
     }
   }
 
+  void processDeclarations(XmlTag parent) {
+    for (XmlTag tag : parent.getSubTags()) {
+      ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)tag.getDescriptor();
+      assert descriptor != null;
+      if (descriptor.isPredefined()) {
+        // todo IDEA-72123
+        continue;
+      }
+
+      processClassBackedSubTag(tag, descriptor, null, true);
+    }
+
+    out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
+  }
+
   private int getLineNumber(XmlTag tag) {
     return getDocument(tag).getLineNumber(tag.getTextOffset()) + 1;
   }

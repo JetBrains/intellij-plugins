@@ -103,7 +103,7 @@ class InjectedASWriter {
 
   public void readDeclarations(MxmlWriter mxmlWriter, XmlTag tag) {
     declarationsRange = writer.getBlockOut().startRange();
-    mxmlWriter.processPropertyTagValue(tag, null, true);
+    mxmlWriter.processDeclarations(tag);
     writer.getBlockOut().endRange(declarationsRange);
   }
 

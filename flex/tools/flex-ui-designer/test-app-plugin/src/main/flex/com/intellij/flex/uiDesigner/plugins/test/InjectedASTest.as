@@ -30,10 +30,11 @@ public class InjectedASTest extends BaseTestCase {
       ArrayOfPrimitives();
       UnresolvedVariableInScriptAsArrayItem();
       Constructor();
+      Model();
     }
   }
   
-  private function mouseDown(target:Object):void {
+  private static function mouseDown(target:Object):void {
     IEventDispatcher(target).dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN));
   }
   
@@ -105,7 +106,9 @@ public class InjectedASTest extends BaseTestCase {
   }
 
   public function Constructor():void {
+  }
 
+  public function Model():void {
   }
 }
 }
