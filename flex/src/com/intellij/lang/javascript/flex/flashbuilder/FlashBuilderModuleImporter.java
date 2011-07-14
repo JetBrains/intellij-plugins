@@ -161,24 +161,21 @@ public class FlashBuilderModuleImporter {
       for (final String _sourcePath : sourcePaths) {
         final String sourcePath = getAbsolutePathWithLinksHandled(flashBuilderProject, _sourcePath);
         final String sourceUrl = VfsUtil.pathToUrl(sourcePath);
-        try {
-          if (FileUtil.isAncestor(new File(mainContentEntryUrl), new File(sourceUrl), false)) {
-            mainContentEntry.addSourceFolder(sourceUrl, false);
-          }
-          else {
-            for (final ContentEntry otherContentEntry : otherContentEntries) {
-              if (FileUtil.isAncestor(new File(mainContentEntryUrl), new File(sourceUrl), false)) {
-                otherContentEntry.addSourceFolder(sourceUrl, false);
-                continue OUTER;
-              }
-            }
-
-            final ContentEntry newContentEntry = rootModel.addContentEntry(sourceUrl);
-            newContentEntry.addSourceFolder(sourceUrl, false);
-            otherContentEntries.add(newContentEntry);
-          }
+        if (FileUtil.isAncestor(new File(mainContentEntryUrl), new File(sourceUrl), false)) {
+          mainContentEntry.addSourceFolder(sourceUrl, false);
         }
-        catch (IOException e) {/* never thrown */}
+        else {
+          for (final ContentEntry otherContentEntry : otherContentEntries) {
+            if (FileUtil.isAncestor(new File(mainContentEntryUrl), new File(sourceUrl), false)) {
+              otherContentEntry.addSourceFolder(sourceUrl, false);
+              continue OUTER;
+            }
+          }
+
+          final ContentEntry newContentEntry = rootModel.addContentEntry(sourceUrl);
+          newContentEntry.addSourceFolder(sourceUrl, false);
+          otherContentEntries.add(newContentEntry);
+        }
       }
     }
   }
