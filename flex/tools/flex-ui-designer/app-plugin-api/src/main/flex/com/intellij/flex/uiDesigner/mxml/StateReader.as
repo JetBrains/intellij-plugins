@@ -21,6 +21,7 @@ internal final class StateReader {
       state.context = reader.factoryContext;
       states[i] = state;
     }
+    object.currentState = states[0].name; // as mxml compiler does
     object.states = states;
   }
   

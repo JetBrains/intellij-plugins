@@ -182,7 +182,8 @@ public class MxmlWriter {
           }
           else if (allowIncludeInExludeFrom) {
             String name = descriptor.getName();
-            if (name.equals(FlexStateElementNames.INCLUDE_IN)) {
+            boolean excludeFrom = false;
+            if (name.equals(FlexStateElementNames.INCLUDE_IN) || (excludeFrom = name.equals(FlexStateElementNames.EXCLUDE_FROM))) {
               if (context == null) {
                 context = writer.createDynamicObjectStateContext();
               }
@@ -191,7 +192,7 @@ public class MxmlWriter {
               dataRange = out.getBlockOut().startRange(dataPosition, dataRangeIndex);
               ((DynamicObjectContext)context).setDataRange(dataRange);
 
-              stateWriter.includeIn(attribute.getValueElement(), parentContext, (DynamicObjectContext)context);
+              stateWriter.includeInOrExcludeFrom(attribute.getValueElement(), parentContext, (DynamicObjectContext)context, excludeFrom);
             }
             else if (name.equals(FlexStateElementNames.ITEM_CREATION_POLICY)) {
               if (attribute.getValue().charAt(0) == 'i') {

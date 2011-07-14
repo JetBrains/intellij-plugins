@@ -7,7 +7,6 @@ class State {
   private final int index;
 
   String name;
-//  String[] groups;
 
   final TLinkedList<OverrideBase> overrides = new TLinkedList<OverrideBase>();
   private final StateWriter stateWriter;

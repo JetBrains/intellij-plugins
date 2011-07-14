@@ -40,7 +40,7 @@ class StateWriter {
   private int DEFERRED_INSTANCE_FROM_OBJECT_REFERENCE;
   private int ADD_ITEMS;
 
-  private final List<State> states = new ArrayList<State>();
+  private final ArrayList<State> states = new ArrayList<State>();
   private final Map<String, List<State>> nameToState = new THashMap<String, List<State>>();
   private BaseWriter writer;
 
@@ -85,6 +85,7 @@ class StateWriter {
     initNames();
 
     XmlTag[] tags = parentTag.getSubTags();
+    states.ensureCapacity(tags.length);
     for (XmlTag tag : tags) {
       State state = new State(this, states.size());
       states.add(state);
@@ -127,23 +128,42 @@ class StateWriter {
     }
   }
 
-  public void includeIn(XmlAttributeValue xmlAttributeValue, Context parentContext, DynamicObjectContext context) {
-    for (PsiReference reference : xmlAttributeValue.getReferences()) {
-      // currently, all references in includeIn/exludeFrom attribute value are StateReference, so, we skip instanceof StateReference
-      for (State state : nameToState.get(reference.getCanonicalText())) {
-        // lazy reset state.activeAddItems
-        AddItems override = state.getValidActiveAddItems(parentContext, autoItemDestruction);
-        if (override != null) {
-          override.getItemDeferredInstances().add(context);
-        }
-        else {
-          state.addAddItems(createAddItems(context, parentContext, autoItemDestruction), parentContext, pendingFirstSetProperty);
-        }
+  public void includeInOrExcludeFrom(XmlAttributeValue xmlAttributeValue, Context parentContext, DynamicObjectContext context, boolean excludeFrom) {
+    // currently, all references in includeIn/exludeFrom attribute value are StateReference, so, we skip instanceof StateReference
+    final PsiReference[] references = xmlAttributeValue.getReferences();
+    if (excludeFrom) {
+      includeIn(parentContext, context, computeIncludedStates(references));
+    }
+    else {
+      for (PsiReference reference : references) {
+        includeIn(parentContext, context, nameToState.get(reference.getCanonicalText()));
       }
     }
 
     autoItemDestruction = false;
     pendingFirstSetProperty = null;
+  }
+
+  private List<State> computeIncludedStates(final PsiReference[] references) {
+    final ArrayList<State> includedStates = new ArrayList<State>(states);
+    for (PsiReference reference : references) {
+      includedStates.removeAll(nameToState.get(reference.getCanonicalText()));
+    }
+
+    return includedStates;
+  }
+
+  private void includeIn(Context parentContext, DynamicObjectContext context, List<State> includedStates) {
+    for (State state : includedStates) {
+      // lazy reset state.activeAddItems
+      AddItems override = state.getValidActiveAddItems(parentContext, autoItemDestruction);
+      if (override != null) {
+        override.getItemDeferredInstances().add(context);
+      }
+      else {
+        state.addAddItems(createAddItems(context, parentContext, autoItemDestruction), parentContext, pendingFirstSetProperty);
+      }
+    }
   }
 
   AddItems createAddItems(DynamicObjectContext context, Context parentContext, boolean autoDestruction) {

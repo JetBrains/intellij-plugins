@@ -57,6 +57,7 @@ public class StatesTest extends BaseTestCase {
       LoginForm();
       IncludeInAfterStateSpecificProperty();
       IDEA_72004();
+      ExcludeFrom();
     }
   }
 
@@ -343,8 +344,15 @@ public class StatesTest extends BaseTestCase {
   }
 
   public function IDEA_72004():void {
-    setState("up");
+    app.validateNow();
     assertThat(app, [{width: 40}]);
+  }
+
+  public function ExcludeFrom():void {
+    app.validateNow();
+    assertThat(app, [{text: "U"}]);
+    setState(A);
+    assertThat(app, []);
   }
 }
 }
