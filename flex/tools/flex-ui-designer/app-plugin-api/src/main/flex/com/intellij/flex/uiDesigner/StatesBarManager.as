@@ -58,13 +58,14 @@ public class StatesBarManager extends AbstractCollectionViewDataSource implement
   }
   
   private function update(rawStates:Array):void {
+    const wasEmpty:Boolean = empty;
     _itemCount = rawStates.length;
     source.length = _itemCount;
     for (var i:int = 0; i < _itemCount; i++) {
       source[i] = rawStates[i].name;
     }
 
-    if (_reset != null) {
+    if (!wasEmpty && _reset != null) {
       _reset.dispatch();
     }
   }

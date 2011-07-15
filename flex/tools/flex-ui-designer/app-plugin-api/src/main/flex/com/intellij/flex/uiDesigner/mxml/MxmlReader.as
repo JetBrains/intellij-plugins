@@ -120,7 +120,7 @@ public final class MxmlReader implements DocumentReader {
     this.moduleContext = documentReaderContext.moduleContext;
     this.styleManager = styleManager;
     this.context = documentReaderContext;
-    var object:Object = readObject(stringRegistry.read(input));
+    var object:Object = readObject(stringRegistry.read(input), true);
     stateReader.read(this, input, object);
     injectedASReader.read(input, this);
 
@@ -176,7 +176,7 @@ public final class MxmlReader implements DocumentReader {
     }
   }
 
-  internal function readObject(className:String):Object {
+  internal function readObject(className:String, setDocument:Boolean = false):Object {
     var clazz:Class = Class(moduleContext.applicationDomain.getDefinition(className));
     var reference:int = input.readUnsignedShort();
     var propertyName:String = stringRegistry.read(input);
@@ -187,6 +187,10 @@ public final class MxmlReader implements DocumentReader {
     }
     else {
       object = new clazz();
+      if (setDocument) {
+        // perfomance, early set document, avoid recursive set later (see UIComponent.document setter)
+        object.document = object;
+      }
       if (propertyName == "$fud_position") {
         context.registerObjectDeclarationPosition(object, AmfUtil.readUInt29(input));
         propertyName = stringRegistry.read(input);

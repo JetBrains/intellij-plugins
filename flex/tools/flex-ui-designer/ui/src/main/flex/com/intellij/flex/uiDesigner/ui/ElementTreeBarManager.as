@@ -4,16 +4,13 @@ import cocoa.ListViewDataSource;
 import cocoa.SegmentedControl;
 
 import com.intellij.flex.uiDesigner.ElementManager;
-import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 
 import flash.errors.IllegalOperationError;
-import flash.utils.getQualifiedClassName;
 
 import org.flyti.plexus.Injectable;
 
 public class ElementTreeBarManager extends AbstractCollectionViewDataSource implements Injectable, ListViewDataSource {
   private const source:Vector.<String> = new Vector.<String>(8);
-
   private var elementManager:ElementManager;
 
   public function ElementTreeBarManager(elementManager:ElementManager) {
@@ -25,10 +22,6 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
       return;
     }
 
-    if (_presentation.rendererManager == null) {
-
-    }
-    
     if (value == null) {
       _presentation.hidden = true;
       return;
@@ -59,17 +52,7 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
       return;
     }
 
-    var element:Object = object;
-    do {
-      if (elementManager.isSkin(element)) {
-        continue;
-      }
-
-      var qualifiedClassName:String = getQualifiedClassName(element);
-      source[_itemCount++] = qualifiedClassName.substr(qualifiedClassName.lastIndexOf("::") + 2);
-    }
-    while (!((element = element.parent) is SystemManagerSB));
-
+    _itemCount = elementManager.fillBreadcrumbs(object, source);
     source.length = _itemCount;
     if (_reset != null) {
       _reset.dispatch();

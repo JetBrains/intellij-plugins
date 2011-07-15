@@ -34,5 +34,7 @@ public interface SystemManagerSB {
 
   function initShared(stage:Stage, project:Object, resourceBundleProvider:ResourceBundleProvider,
                       uiErrorHandler:UiErrorHandler):void;
+
+  function get elementUtil():ElementUtil;
 }
 }

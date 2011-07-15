@@ -58,7 +58,7 @@
       </layout>
     </SegmentedControl>
 
-    <SegmentedControl stupidMxmlId="elementTreeBar" lafKey="ElementTreeBar" width="100%">
+    <SegmentedControl stupidMxmlId="elementTreeBar" lafKey="ElementTreeBar">
       <layout>
         <ListHorizontalLayout height="20" gap="5"/>
       </layout>

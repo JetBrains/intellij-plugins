@@ -4,6 +4,7 @@ import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.geom.Point;
 import flash.system.ApplicationDomain;
+import flash.utils.getQualifiedClassName;
 
 import mx.core.ILayoutElement;
 import mx.core.IUIComponent;
@@ -17,15 +18,22 @@ import spark.core.IGraphicElement;
 
 use namespace mx_internal;
 
-public final class ElementUtil {
+internal final class ElementUtilImpl implements ElementUtil {
   private static const sharedPoint:Point = new Point();
   private static const MX_CORE_UITEXTFIELD:String = "mx.core.UITextField";
-  private static const SPARK_COMPONENTS_SKINNABLECONTAINER:String = "spark.components.SkinnableContainer";
+  private static const SKINNABLE_CONTAINER:String = "spark.components.SkinnableContainer";
 
-  //noinspection JSUnusedGlobalSymbols
-  public static function getObjectUnderPoint(stage:Stage, stageX:Number, stageY:Number):Object {
+  private static var _instance:ElementUtilImpl;
+  internal static function get instance():ElementUtil {
+    if (_instance == null) {
+      _instance = new ElementUtilImpl();
+    }
+    return _instance;
+  }
+
+  public function getObjectUnderPoint(stage:Stage, stageX:Number, stageY:Number):Object {
     sharedPoint.x = stageX;
-		sharedPoint.y = stageY;
+    sharedPoint.y = stageY;
 
     var objectsUnderPoint:Array = stage.getObjectsUnderPoint(sharedPoint);
     if (objectsUnderPoint.length == 0) {
@@ -41,41 +49,31 @@ public final class ElementUtil {
       uiTextFieldClass = Class(currentDomain.getDefinition(MX_CORE_UITEXTFIELD));
     }
 
-    var skinnableContainerClass:Class;
-    if (currentDomain.hasDefinition(SPARK_COMPONENTS_SKINNABLECONTAINER)) {
-      skinnableContainerClass = Class(currentDomain.getDefinition(SPARK_COMPONENTS_SKINNABLECONTAINER));
-    }
-
     while (object != null &&
-            (object is Skin || (uiTextFieldClass != null && object is uiTextFieldClass) || !(object is IVisualElement) ||
+           (object is Skin || (uiTextFieldClass != null && object is uiTextFieldClass) || !(object is IVisualElement) ||
             Object(object).constructor == UIComponent) /* mx skins — if object concrete type equals UIComponent, so, it is skin part */) {
       object = object.parent;
     }
 
     var uiComponent:IUIComponent = object as IUIComponent;
-    // IDEA-71968, Skin as root document
-    if (uiComponent != null && uiComponent.document != null && !(uiComponent.document.parent is SystemManagerSB)) {
-      var document:Object;
-      while ((document = uiComponent.document) is Skin && !isSkinnableContainerContent(skinnableContainerClass, document, uiComponent)) {
-        object = document.parent;
-        if ((uiComponent = object as IUIComponent) == null) {
-          break;
-        }
-      }
+    if (uiComponent != null && !(object == topObjectUnderPoint && object is Group && isRootDocument(uiComponent.document))) {
+      var skinnableContainerClass:Class = getSkinnableContainerClass();
+      object = skipSkinChrome(uiComponent, skinnableContainerClass);
     }
 
-    // if we click on IGraphicElement and group shares it's display object, our event target will be grop instead of IGraphicElement and getObjectsUnderPoint never return this IGraphicElement,
+    // if we click on IGraphicElement and group shares it's display object, our event target will be group instead of IGraphicElement and getObjectsUnderPoint never return this IGraphicElement,
     // so, we need find IGraphicElement by mouse click point
     if (object is Group) {
       var group:Group = Group(object);
       var local:Point = group.globalToLocal(sharedPoint);
       var numElements:int = group.numElements;
       // can share display object? we cannot check layeringMode (private)
-      if (numElements > 0 && group.scrollRect == null && (group.blendMode == BlendMode.NORMAL || group.blendMode == "auto") && (group.alpha == 0 || group.alpha == 1)) {
+      if (numElements > 0 && group.scrollRect == null && (group.blendMode == BlendMode.NORMAL || group.blendMode == "auto") &&
+          (group.alpha == 0 || group.alpha == 1)) {
         // from end to begin, according to flash player layering
         for (var i:int = numElements - 1; i > -1; i--) {
           var graphicElement:IGraphicElement = group.getElementAt(i) as IGraphicElement;
-          // topObjectUnderPoint will be spark.components.supportClasses.InvalidatingSprite
+          // topObjectUnderPoint will be spark.components.supportClasses.InvalidatingSprite or this group
           if (graphicElement != null && graphicElement.displayObject == topObjectUnderPoint) {
             const ex:Number = graphicElement.getLayoutBoundsX();
             if (local.x >= ex && local.x <= (ex + graphicElement.getLayoutBoundsWidth())) {
@@ -92,6 +90,38 @@ public final class ElementUtil {
     return object;
   }
 
+  private static function isRootDocument(document:Object):Boolean {
+    return document is Skin && "hostComponent" in document && document.hostComponent.document.parent is SystemManagerSB;
+  }
+
+  private static function skipSkinChrome(object:IUIComponent, skinnableContainerClass:Class):DisplayObject {
+    var document:Object;
+    var uiComponent:IUIComponent = object;
+    while (documentIsSkin((document = uiComponent.document)) &&
+           !isSkinnableContainerContent(skinnableContainerClass, document, uiComponent)) {
+      object = document.parent;
+      if ((uiComponent = object as IUIComponent) == null) {
+        break;
+      }
+    }
+
+    return DisplayObject(object);
+  }
+
+  private static function getSkinnableContainerClass():Class {
+    var skinnableContainerClass:Class;
+    var currentDomain:ApplicationDomain = ApplicationDomain.currentDomain;
+    if (currentDomain.hasDefinition(SKINNABLE_CONTAINER)) {
+      skinnableContainerClass = Class(currentDomain.getDefinition(SKINNABLE_CONTAINER));
+    }
+    return skinnableContainerClass;
+  }
+
+  // IDEA-71968, Skin as root document
+  private static function documentIsSkin(object:Object):Boolean {
+    return object is Skin && !(Skin(object).parent is SystemManagerSB);
+  }
+
   // see Panel title="One" in MouseSelectionTest. click on panel title — select panel, but click on panel content element Label — select this Label
   private static function isSkinnableContainerContent(skinnableContainerClass:Class, document:Object, uiComponent:IUIComponent):Boolean {
     if (skinnableContainerClass == null || !("hostComponent" in document) || !(document.hostComponent is skinnableContainerClass)) {
@@ -99,11 +129,27 @@ public final class ElementUtil {
     }
 
     var group:Group = document.hostComponent.contentGroup;
-    return group != null && group.contains(DisplayObject(uiComponent));
+    return group != null && group != uiComponent && group.contains(DisplayObject(uiComponent));
   }
 
-  //noinspection JSUnusedGlobalSymbols
-  public static function getSize(element:Object, result:Point):void {
+  public function fillBreadcrumbs(element:Object, source:Vector.<String>):int {
+    var count:int;
+    var skinnableContainerClass:Class = getSkinnableContainerClass();
+    do {
+      var uiComponent:IUIComponent = element as IUIComponent;
+      if (uiComponent != null) {
+        element = skipSkinChrome(uiComponent, skinnableContainerClass);
+      }
+
+      var qualifiedClassName:String = getQualifiedClassName(element);
+      source[count++] = qualifiedClassName.substr(qualifiedClassName.lastIndexOf("::") + 2);
+    }
+    while (!((element = element.parent) is SystemManagerSB));
+
+    return count;
+  }
+
+  public function getSize(element:Object, result:Point):void {
     var layoutElement:ILayoutElement = element as ILayoutElement;
     if (layoutElement != null) {
       result.x = layoutElement.getLayoutBoundsWidth();
@@ -123,8 +169,7 @@ public final class ElementUtil {
     }
   }
 
-  //noinspection JSUnusedGlobalSymbols
-  public static function getPosition(element:Object, result:Point):Point {
+  public function getPosition(element:Object, result:Point):Point {
     var layoutElement:ILayoutElement = element as ILayoutElement;
     if (layoutElement != null) {
       result.x = layoutElement.getLayoutBoundsX();

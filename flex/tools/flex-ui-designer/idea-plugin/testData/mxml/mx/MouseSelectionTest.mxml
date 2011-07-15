@@ -94,4 +94,6 @@
       <mx:Button/>
     </mx:Panel>
   </HGroup>
+
+  <!--<BorderContainer skinClass="{CustomSkin}">-->
 </VGroup>

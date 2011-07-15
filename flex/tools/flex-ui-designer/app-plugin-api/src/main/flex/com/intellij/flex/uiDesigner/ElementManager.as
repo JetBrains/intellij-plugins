@@ -8,8 +8,6 @@ import flash.ui.Keyboard;
 import org.flyti.plexus.Injectable;
 
 public class ElementManager extends EventDispatcher implements Injectable {
-  private var skinClass:Class;
-
   private var _element:Object;
   [Bindable(event="elementChanged")]
   public function get element():Object {
@@ -35,17 +33,12 @@ public class ElementManager extends EventDispatcher implements Injectable {
     }
 
     _document = value;
-    if (_document == null) {
-      skinClass = null;
-    }
-    else {
+
+    if (_document != null) {
       _document.systemManager.addRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
       _document.systemManager.addRealEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
-
-      skinClass = _document.module.getClass("spark.components.supportClasses.Skin");
     }
-
-    if (_document == null) {
+    else {
       element = null;
     }
   }
@@ -64,11 +57,11 @@ public class ElementManager extends EventDispatcher implements Injectable {
   }
 
   private function findComponent(event:MouseEvent):Object {
-    return _document.module.getClass("com.intellij.flex.uiDesigner.flex.ElementUtil")["getObjectUnderPoint"](_document.systemManager.stage, event.stageX, event.stageY);
+    return _document.systemManager.elementUtil.getObjectUnderPoint(_document.systemManager.stage, event.stageX, event.stageY);
   }
 
-  public function isSkin(element:Object):Boolean {
-    return element is skinClass;
+  public function fillBreadcrumbs(element:Object, source:Vector.<String>):int {
+    return _document.systemManager.elementUtil.fillBreadcrumbs(element, source);
   }
 }
 } 

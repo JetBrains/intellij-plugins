@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.ui.tools {
 import cocoa.LayoutlessContainer;
 
 import com.intellij.flex.uiDesigner.Document;
+import com.intellij.flex.uiDesigner.flex.ElementUtil;
 
 import flash.events.Event;
 import flash.geom.Point;
@@ -20,10 +21,10 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
     mouseEnabled = false;
   }
 
-  private var elementUtilClass:Class;
+  private var elementUtil:ElementUtil;
   //noinspection JSUnusedGlobalSymbols
   public function set elementDocument(value:Document):void {
-    elementUtilClass = value == null ? null : value.module.getClass("com.intellij.flex.uiDesigner.flex.ElementUtil");
+    elementUtil = value == null ? null : value.systemManager.elementUtil;
   }
   
   private var _elementLayoutChangeListeners:Vector.<ElementLayoutChangeListener>;
@@ -42,7 +43,7 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
     getPosition();
     updatePosition();
 
-    elementUtilClass["getSize"](element, sharedPoint);
+    elementUtil.getSize(element, sharedPoint);
     updateSize(sharedPoint.x, sharedPoint.y);
   }
 
@@ -55,7 +56,7 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
       y = sharedPoint.y;
     }
 
-    elementUtilClass["getSize"](element, sharedPoint);
+    elementUtil.getSize(element, sharedPoint);
     if (width != sharedPoint.x || height != sharedPoint.y) {
       updateSize(sharedPoint.x, sharedPoint.y);
     }
@@ -67,7 +68,7 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
   }
 
   private function getPosition():void {
-    sharedPoint = parent.globalToLocal(elementUtilClass["getPosition"](element, sharedPoint));
+    sharedPoint = parent.globalToLocal(elementUtil.getPosition(element, sharedPoint));
   }
 
   private function updatePosition():void {

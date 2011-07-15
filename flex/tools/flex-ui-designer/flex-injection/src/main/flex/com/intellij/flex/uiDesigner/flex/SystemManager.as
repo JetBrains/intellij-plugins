@@ -54,7 +54,7 @@ use namespace mx_internal;
 // must be IFocusManagerContainer, it is only way how UIComponent can find focusManager (see UIComponent.focusManager)
 public class SystemManager extends Sprite implements ISystemManager, SystemManagerSB, IFocusManagerContainer {
   // link
-  ElementUtil;
+  ElementUtilImpl;
 
   private static const INITIALIZE_ERROR_EVENT_TYPE:String = "initializeError";
 
@@ -79,6 +79,10 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
   private const implementations:Dictionary = new Dictionary();
   private var mainFocusManager:MainFocusManagerSB;
+
+  public function get elementUtil():ElementUtil {
+    return ElementUtilImpl.instance;
+  }
 
   public function get sharedInitialized():Boolean {
     return UIComponentGlobals.layoutManager != null;
