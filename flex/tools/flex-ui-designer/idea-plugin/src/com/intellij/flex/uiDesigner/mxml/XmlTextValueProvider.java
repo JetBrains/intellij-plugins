@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlText;
 
@@ -23,6 +24,11 @@ class XmlTextValueProvider implements XmlElementValueProvider {
   @Override
   public XmlElement getInjectedHost() {
     // only tag or attribute may be queried
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public JSClass getJsClass() {
     throw new UnsupportedOperationException();
   }
 }

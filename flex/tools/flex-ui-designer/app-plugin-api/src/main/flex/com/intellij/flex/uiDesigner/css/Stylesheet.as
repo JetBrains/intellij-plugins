@@ -58,8 +58,12 @@ public final class Stylesheet {
             declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, AmfUtil.readUtf(input));
             break;
 
+          case 11:
+            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, stringRegistry.readNotNull(input));
+            break;
+
           case 4:
-            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, new ClassReferenceImpl(stringRegistry.read(input)));
+            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, new ClassReferenceImpl(stringRegistry.readNotNull(input)));
             break;
           
           case 7:
@@ -76,7 +80,7 @@ public final class Stylesheet {
             break;
 
           default:
-            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, type == CssPropertyType.COLOR_STRING ? stringRegistry.read(input) : null, input.readObject());
+            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, type == CssPropertyType.COLOR_STRING ? stringRegistry.readNotNull(input) : null, input.readObject());
             break;
         }
       }

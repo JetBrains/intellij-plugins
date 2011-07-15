@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -8,6 +9,17 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 public final class InjectionUtil {
   public static boolean isSwf(VirtualFile source, String mimeType) {
     return mimeType == null ? source.getName().endsWith(".swf") : mimeType.equals("application/x-shockwave-flash");
+  }
+
+  public static JSClass getJsClassFromPackageAndLocalClassNameReferences(PsiReference[] references) {
+    if (references.length > 0) {
+      PsiElement element = references[references.length - 1].resolve();
+      if (element instanceof JSClass) {
+        return (JSClass)element;
+      }
+    }
+
+    return null;
   }
 
   public static VirtualFile getReferencedFile(PsiElement element, ProblemsHolder problemsHolder, boolean resolveToFirstIfMulti) {

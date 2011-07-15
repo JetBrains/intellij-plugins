@@ -226,8 +226,31 @@ public class CssWriter {
           propertyOut.write(CssPropertyType.NULL);
         }
         else {
-          propertyOut.write(CssPropertyType.STRING);
-          propertyOut.writeAmfUtf(StringUtil.stripQuotesAroundValue(value.getText()));
+          //noinspection ConstantConditions
+          ASTNode node = value.getFirstChild().getFirstChild().getNode();
+          final boolean stripQuotes;
+          if (node.getElementType() == CssElementTypes.CSS_STRING) {
+            stripQuotes = true;
+            node = node.getFirstChildNode();
+          }
+          else { // CssElementTypes.CSS_IDENT
+            stripQuotes = false;
+          }
+
+          final CharSequence chars = node.getChars();
+          if (info.getEnumeration() == null) {
+            propertyOut.write(CssPropertyType.STRING);
+            if (stripQuotes) {
+              propertyOut.writeAmfUtf(chars, false, 1, chars.length() - 1);
+            }
+            else {
+              propertyOut.writeAmfUtf(chars);
+            }
+          }
+          else {
+            propertyOut.write(CssPropertyType.STRING_REFERENCE);
+            stringWriter.write(stripQuotes ? chars.subSequence(1, chars.length() - 1).toString() : chars.toString(), propertyOut);
+          }
         }
         break;
 

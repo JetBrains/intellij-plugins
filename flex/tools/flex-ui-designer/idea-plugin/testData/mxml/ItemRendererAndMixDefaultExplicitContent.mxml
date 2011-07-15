@@ -1,16 +1,16 @@
 <VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
-  <List itemRenderer="ProjectMxmlItemRenderer">
-    <ArrayCollection>
-      <fx:String>MPS</fx:String>
-      <fx:String>dotTrace</fx:String>
-      <fx:String>ColdFusion</fx:String>
-    </ArrayCollection>
-    <!--<itemRenderer>-->
-      <!--<fx:Component>-->
-        <!--<Label text="Text for all renderers"/>-->
-      <!--</fx:Component>-->
-    <!--</itemRenderer>-->
-  </List>
+  <!--<List itemRenderer="ProjectMxmlItemRenderer">-->
+    <!--<ArrayCollection>-->
+      <!--<fx:String>MPS</fx:String>-->
+      <!--<fx:String>dotTrace</fx:String>-->
+      <!--<fx:String>ColdFusion</fx:String>-->
+    <!--</ArrayCollection>-->
+    <!--&lt;!&ndash;<itemRenderer>&ndash;&gt;-->
+      <!--&lt;!&ndash;<fx:Component>&ndash;&gt;-->
+        <!--&lt;!&ndash;<Label text="Text for all renderers"/>&ndash;&gt;-->
+      <!--&lt;!&ndash;</fx:Component>&ndash;&gt;-->
+    <!--&lt;!&ndash;</itemRenderer>&ndash;&gt;-->
+  <!--</List>-->
   
   <DataGroup itemRenderer="spark.components.ButtonBarButton">
     <ArrayCollection>

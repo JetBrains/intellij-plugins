@@ -16,5 +16,6 @@ public final class CssPropertyType {
 
   public static final int NULL = 7;
   public static final int STRING = 8;
+  public static final int STRING_REFERENCE = 11;
   public static final int NUMBER = 9;
 }

@@ -64,6 +64,10 @@ public final class StringRegistry {
     const ref:int = AmfUtil.readUInt29(input);
     return ref == 0 ? null : table[ref - 1];
   }
+
+  public function readNotNull(input:IDataInput):String {
+    return table[AmfUtil.readUInt29(input) - 1];
+  }
   
   public function getTable():Vector.<String> {
     return table;

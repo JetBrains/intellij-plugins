@@ -13,9 +13,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -154,26 +152,10 @@ class PropertyProcessor {
   }
 
   private int getSkinProjectClassDocumentFactoryId(XmlElementValueProvider valueProvider) throws InvalidPropertyException {
-    JSClass jsClass = getJsClass(valueProvider);
+    JSClass jsClass = valueProvider.getJsClass();
     return jsClass != null ? getSkinProjectClassDocumentFactoryId(jsClass, valueProvider) : -1;
   }
 
-  @Nullable
-  private static JSClass getJsClass(XmlElementValueProvider valueProvider) {
-    XmlElement injectedHost = valueProvider.getInjectedHost();
-    if (injectedHost != null) {
-      PsiReference[] references = injectedHost.getReferences();
-      if (references.length > 0) {
-        PsiElement element = references[references.length - 1].resolve();
-        if (element instanceof JSClass) {
-          return (JSClass)element;
-        }
-      }
-    }
-
-    return null;
-  }
-  
   private int getSkinProjectClassDocumentFactoryId(JSClass jsClass, XmlElementValueProvider valueProvider) throws InvalidPropertyException {
     PsiFile psiFile = jsClass.getContainingFile();
     VirtualFile virtualFile = psiFile.getVirtualFile();
@@ -317,7 +299,7 @@ class PropertyProcessor {
         }
       }
 
-      JSClass jsClass = getJsClass(valueProvider);
+      JSClass jsClass = valueProvider.getJsClass();
       if (jsClass == null) {
         throw new InvalidPropertyException("error.unresolved.class", valueProvider.getTrimmed());
       }

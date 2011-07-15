@@ -1,7 +1,9 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.google.common.base.CharMatcher;
+import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
@@ -48,6 +50,12 @@ class XmlTagValueProvider implements XmlElementValueProvider {
   @Override
   public XmlElement getInjectedHost() {
     return getInjectedHost(tag);
+  }
+
+  @Override
+  @Nullable
+  public JSClass getJsClass() {
+    return InjectionUtil.getJsClassFromPackageAndLocalClassNameReferences(tag.getReferences());
   }
 
   @Nullable

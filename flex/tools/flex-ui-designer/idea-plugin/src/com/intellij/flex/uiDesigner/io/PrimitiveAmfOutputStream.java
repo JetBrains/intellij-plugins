@@ -85,16 +85,19 @@ public class PrimitiveAmfOutputStream extends OutputStream {
     }
   }
 
-  public void writeAmfUtf(String s) {
+  public void writeAmfUtf(final CharSequence s) {
     writeAmfUtf(s, false);
   }
 
-  public final void writeAmfUtf(CharSequence s, boolean shiftLength) {
-    final int strlen = s.length();
+  public final void writeAmfUtf(final CharSequence s, final boolean shiftLength) {
+    writeAmfUtf(s, shiftLength, 0, s.length());
+  }
+
+  public final void writeAmfUtf(final CharSequence s, final boolean shiftLength, final int offset, final int strlen) {
     int utflen = 0;
     int c;
 
-    for (int i = 0; i < strlen; i++) {
+    for (int i = offset; i < strlen; i++) {
       c = s.charAt(i);
       if ((c >= 0x0001) && (c <= 0x007F)) {
         utflen++;
@@ -111,7 +114,7 @@ public class PrimitiveAmfOutputStream extends OutputStream {
 
     int count = out.size();
     final byte[] bytes = out.getBuffer(utflen);
-    for (int i = 0; i < strlen; i++) {
+    for (int i = offset; i < strlen; i++) {
       c = s.charAt(i);
       if (c <= 0x007F) {
         bytes[count++] = (byte)c;
