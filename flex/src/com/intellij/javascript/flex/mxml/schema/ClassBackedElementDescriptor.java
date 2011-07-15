@@ -103,6 +103,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   @NonNls
   static final String IFACTORY_SHORT_CLASS_NAME = "IFactory";
   public static final String UI_COMPONENT_BASE_INTERFACE = "mx.core.IUIComponent";
+  private static final String PRIMITIVE_GRAPHIC_ELEMENT_BASE_CLASS = "spark.primitives.supportClasses.GraphicElement";
 
   ClassBackedElementDescriptor(String name, String _classname, CodeContext _context, Project _project) {
     this(name, _classname,_context,_project, false, null);
@@ -119,11 +120,6 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     predefined = _predefined;
     iconPath = _iconPath;
     name = _name;
-
-    if (XmlBackedJSClassImpl.COMPONENT_TAG_NAME.equals(_name) && JavaScriptSupportLoader.isLanguageNamespace(_context.namespace)) {
-      defaultPropertyDescriptor = new AnnotationBackedDescriptorImpl("any", this, true, UI_COMPONENT_BASE_INTERFACE, null, null);
-      defaultPropertyDescriptorInitialized = true;
-    }
   }
 
   public String getQualifiedName() {
@@ -180,7 +176,11 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     final boolean isComponentTag = MxmlLanguageTagsUtil.isComponentTag(_context);
     boolean includeProperties = (parentDescriptor == this) && !isComponentTag;
 
-    if (parentDescriptor.getDefaultPropertyDescriptor() != null && parentDescriptor.defaultPropertyDescriptor.getType() != null) {
+    if (isComponentTag) {
+      ContainerUtil.addAll(resultList, getElementDescriptorsInheritedFromGivenType(UI_COMPONENT_BASE_INTERFACE));
+      ContainerUtil.addAll(resultList, getElementDescriptorsInheritedFromGivenType(PRIMITIVE_GRAPHIC_ELEMENT_BASE_CLASS));
+    }
+    else if (parentDescriptor.getDefaultPropertyDescriptor() != null && parentDescriptor.defaultPropertyDescriptor.getType() != null) {
       final PsiElement contextParent = _context.getParent();
       if (contextParent instanceof XmlDocument && JavaScriptSupportLoader.isLanguageNamespace(_context.getNamespace())) {
         // Predefined tags like <fx:Declaration/> can be children of a tag with [DefaultProperty] annotation if this tag is root tag in the mxml file
@@ -196,7 +196,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
                                        ? getElementDescriptorsInheritedFromGivenType(type)
                                        : context.getAllDescriptors());
 
-      if (!isComponentTag && JavaScriptSupportLoader.isLanguageNamespace(context.namespace)){
+      if (JavaScriptSupportLoader.isLanguageNamespace(context.namespace)) {
         ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.SCRIPT, (XmlTag)null), resultList);
         ContainerUtil.addIfNotNull(context.getElementDescriptor(CodeContext.REPARENT_TAG_NAME, (XmlTag)null), resultList);
 
@@ -245,7 +245,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   @Nullable
-  public XmlElementDescriptor getElementDescriptor(final XmlTag childTag, XmlTag contextTag) {
+  public XmlElementDescriptor getElementDescriptor(final XmlTag childTag, final XmlTag contextTag) {
     if (XmlBackedJSClassImpl.isTagThatAllowsAnyXmlContent(contextTag)) {
       return new AnyXmlElementWithAnyChildrenDescriptor();
     }
@@ -275,7 +275,12 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
     final XmlElementDescriptor parentDescriptor = contextTag.getDescriptor();
 
-    if (getDefaultPropertyDescriptor() != null && defaultPropertyDescriptor.getType() != null) {
+    if (MxmlLanguageTagsUtil.isComponentTag(contextTag)) {
+      final XmlElementDescriptor checkedDescriptor = checkValidDescriptorAccordingToType(UI_COMPONENT_BASE_INTERFACE, descriptor);
+      return checkedDescriptor != null ? checkedDescriptor
+                                       : checkValidDescriptorAccordingToType(PRIMITIVE_GRAPHIC_ELEMENT_BASE_CLASS, descriptor);
+    }
+    else if (getDefaultPropertyDescriptor() != null && defaultPropertyDescriptor.getType() != null) {
       if (descriptor instanceof ClassBackedElementDescriptor && ((ClassBackedElementDescriptor)descriptor).predefined) {
         final PsiElement contextParent = contextTag.getParent();
         if (contextParent instanceof XmlDocument) {
@@ -1022,7 +1027,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         return true;
       }
 
-      if ((descriptor.getDefaultPropertyDescriptor() != null && descriptor.defaultPropertyDescriptor.getType() != null)) {
+      if (MxmlLanguageTagsUtil.isComponentTag(context) ||
+          (descriptor.getDefaultPropertyDescriptor() != null && descriptor.defaultPropertyDescriptor.getType() != null)) {
         return true;
       }
 
