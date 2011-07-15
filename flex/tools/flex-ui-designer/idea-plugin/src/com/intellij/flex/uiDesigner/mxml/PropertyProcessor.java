@@ -18,6 +18,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -37,7 +38,6 @@ class PropertyProcessor {
   private final BaseWriter writer;
 
   private String name;
-  private boolean isSkinProjectClass;
   private boolean isEffect;
   private boolean isStyle;
 
@@ -79,7 +79,7 @@ class PropertyProcessor {
   }
 
   public ValueWriter process(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, 
-                             Context context) {
+                             Context context) throws InvalidPropertyException {
     if (descriptor.isPredefined()) {
       LOG.error("unknown language element " + descriptor.getName());
       return null;
@@ -145,31 +145,36 @@ class PropertyProcessor {
   
   private SkinProjectClassValueWriter getSkinProjectClassValueWriter(int skinProjectClassDocumentFactoryId) {
     if (skinProjectClassDocumentFactoryId != -1) {
-      isSkinProjectClass = true;
       name = "skinFactory";
-      return new SkinProjectClassValueWriter(skinProjectClassDocumentFactoryId, writer);
+      return new SkinProjectClassValueWriter(skinProjectClassDocumentFactoryId);
     }
     else {
       return null;
     }
   }
 
-  private int getSkinProjectClassDocumentFactoryId(XmlElementValueProvider valueProvider) {
+  private int getSkinProjectClassDocumentFactoryId(XmlElementValueProvider valueProvider) throws InvalidPropertyException {
+    JSClass jsClass = getJsClass(valueProvider);
+    return jsClass != null ? getSkinProjectClassDocumentFactoryId(jsClass, valueProvider) : -1;
+  }
+
+  @Nullable
+  private static JSClass getJsClass(XmlElementValueProvider valueProvider) {
     XmlElement injectedHost = valueProvider.getInjectedHost();
     if (injectedHost != null) {
       PsiReference[] references = injectedHost.getReferences();
       if (references.length > 0) {
         PsiElement element = references[references.length - 1].resolve();
         if (element instanceof JSClass) {
-          return getSkinProjectClassDocumentFactoryId((JSClass)element, valueProvider);
+          return (JSClass)element;
         }
       }
     }
 
-    return -1;
+    return null;
   }
   
-  private int getSkinProjectClassDocumentFactoryId(JSClass jsClass, XmlElementValueProvider valueProvider) {
+  private int getSkinProjectClassDocumentFactoryId(JSClass jsClass, XmlElementValueProvider valueProvider) throws InvalidPropertyException {
     PsiFile psiFile = jsClass.getContainingFile();
     VirtualFile virtualFile = psiFile.getVirtualFile();
     assert virtualFile != null;
@@ -180,7 +185,7 @@ class PropertyProcessor {
       }
     }
     else if (inSourceContent) {
-      LOG.warn("support only mxml-based skin: " + valueProvider.getTrimmed());
+      throw new InvalidPropertyException("error.support.only.mxml.based.component", valueProvider.getTrimmed());
     }
     
     return -1;
@@ -191,16 +196,12 @@ class PropertyProcessor {
     if (unregisteredDocumentFactories != null && !unregisteredDocumentFactories.isEmpty()) {
       unregisteredDocumentFactories.clear();
     }
-    isSkinProjectClass = false;
     isEffect = false;
   }
 
   private class ValueWriterImpl implements ValueWriter {
     private final XmlElementValueProvider valueProvider;
     private final AnnotationBackedDescriptor descriptor;
-
-    private static final int SKIN_INT_PROJECT = 1;
-    private static final int EFFECT = 1 << 1;
 
     public ValueWriterImpl(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
       this.valueProvider = valueProvider;
@@ -211,9 +212,9 @@ class PropertyProcessor {
     public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
       final String type = descriptor.getType();
       if (isStyle) {
-        int flags = isSkinProjectClass ? SKIN_INT_PROJECT : 0;
+        int flags = 0;
         if (isEffect()) {
-          flags |= EFFECT;
+          flags |= StyleFlags.EFFECT;
           out.write(flags);
           out.write(Amf3Types.OBJECT);
           return COMPLEX_STYLE;
@@ -248,7 +249,7 @@ class PropertyProcessor {
       else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
         writeUntypedPropertyValue(valueProvider, descriptor);
       }
-      else if (type.equals("mx.core.IFactory")) {
+      else if (type.equals(FlexClassNames.IFACTORY)) {
         writeClassFactory(valueProvider);
       }
       else {
@@ -307,14 +308,27 @@ class PropertyProcessor {
       }
     }
 
-    private void writeClassFactory(XmlElementValueProvider valueProvider) {
-      String className = valueProvider.getTrimmed();
+    private void writeClassFactory(XmlElementValueProvider valueProvider) throws InvalidPropertyException {
+      if (valueProvider instanceof XmlTagValueProvider) {
+        XmlTag tag = ((XmlTagValueProvider)valueProvider).getTag();
+        XmlTag[] subTags = tag.getSubTags();
+        if (subTags.length > 0) {
+          throw new InvalidPropertyException("error.inner.component.are.not.supported");
+        }
+      }
+
+      JSClass jsClass = getJsClass(valueProvider);
+      if (jsClass == null) {
+        throw new InvalidPropertyException("error.unresolved.class", valueProvider.getTrimmed());
+      }
+      
+      String className = jsClass.getQualifiedName();
       int reference = classFactoryMap.get(className);
       if (reference == -1) {
         reference = writer.getRootScope().referenceCounter++;
         classFactoryMap.put(className, reference);
 
-        writer.writeConstructorHeader("mx.core.ClassFactory", reference);
+        writer.writeConstructorHeader(FlexClassNames.CLASS_FACTORY, reference);
         writer.writeClass(className);
       }
       else {

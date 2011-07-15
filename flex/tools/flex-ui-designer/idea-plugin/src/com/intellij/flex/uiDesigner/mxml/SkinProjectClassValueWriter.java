@@ -4,20 +4,19 @@ import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 
 class SkinProjectClassValueWriter extends AbstractPrimitiveValueWriter {
   private final int reference;
-  private final BaseWriter writer;
 
-  public SkinProjectClassValueWriter(int reference, BaseWriter writer) {
+  public SkinProjectClassValueWriter(int reference) {
     this.reference = reference;
-    this.writer = writer;
   }
 
   @Override
   protected int getStyleFlags() {
-    return 1;
+    return StyleFlags.SKIN_IN_PROJECT;
   }
 
   @Override
   protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) {
-    this.writer.writeDocumentFactoryReference(reference);
+    out.writeUInt29(reference); // MxmlReader knows about AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE
+    writer.writeDocumentFactoryReference(reference);
   }
 }

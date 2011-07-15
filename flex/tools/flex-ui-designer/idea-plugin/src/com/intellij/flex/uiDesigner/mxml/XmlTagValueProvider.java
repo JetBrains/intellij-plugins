@@ -15,6 +15,10 @@ import org.jetbrains.annotations.Nullable;
 class XmlTagValueProvider implements XmlElementValueProvider {
   private XmlTag tag;
 
+  public XmlTag getTag() {
+    return tag;
+  }
+
   public void setTag(XmlTag tag) {
     this.tag = tag;
   }
@@ -46,9 +50,8 @@ class XmlTagValueProvider implements XmlElementValueProvider {
     return getInjectedHost(tag);
   }
 
-  public static
   @Nullable
-  XmlElement getInjectedHost(XmlTag tag) {
+  public static XmlElement getInjectedHost(XmlTag tag) {
     // support <tag>{v}...</tag> or <tag>__PsiWhiteSpace__{v}...</tag>
     // <tag><span>ssss</span> {v}...</tag> is not supported
     for (XmlTagChild child : tag.getValue().getChildren()) {

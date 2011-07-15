@@ -42,11 +42,6 @@ public class MxmlWriter {
 
   static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
 
-  private static final String ICONTAINER = "mx.core.IContainer";
-  private static final String ACCORDION = "mx.containers.Accordion";
-  private static final String VIEW_STACK = "mx.container.ViewStack";
-  private static final String INAVIGATOR_CONTENT = "mx.core.INavigatorContent";
-
   private final PrimitiveAmfOutputStream out;
 
   private final ProblemsHolder problemsHolder = new ProblemsHolder();
@@ -277,7 +272,7 @@ public class MxmlWriter {
 
   private static boolean containsOnlyWhitespace(XmlTagChild child) {
     PsiElement firstChild = child.getFirstChild();
-    return firstChild == child.getLastChild() && firstChild != null && firstChild instanceof PsiWhiteSpace;
+    return firstChild == child.getLastChild() && (firstChild == null || firstChild instanceof PsiWhiteSpace);
   }
 
   private void processSubTags(final XmlTag parent, final @Nullable Context context, final @Nullable Context parentContext,
@@ -431,10 +426,10 @@ public class MxmlWriter {
   }
 
   private static boolean isHaloNavigator(String className, JSClass jsClass) {
-    return className.equals(ACCORDION) ||
-           className.equals(VIEW_STACK) ||
-           JSInheritanceUtil.isParentClass(jsClass, ACCORDION) ||
-           JSInheritanceUtil.isParentClass(jsClass, VIEW_STACK);
+    return className.equals(FlexClassNames.ACCORDION) ||
+           className.equals(FlexClassNames.VIEW_STACK) ||
+           JSInheritanceUtil.isParentClass(jsClass, FlexClassNames.ACCORDION) ||
+           JSInheritanceUtil.isParentClass(jsClass, FlexClassNames.VIEW_STACK);
   }
 
   private void addProblem(@PropertyKey(resourceBundle = FlexUIDesignerBundle.BUNDLE) String key, Object... params) {
@@ -449,16 +444,16 @@ public class MxmlWriter {
     if (defaultDescriptor == null) {
       final JSClass jsClass = (JSClass)descriptor.getDeclaration();
       final String className = descriptor.getQualifiedName();
-      final boolean isDirectContainerImpl = className.equals(ICONTAINER);
-      if (isDirectContainerImpl || JSInheritanceUtil.isParentClass(jsClass, ICONTAINER)) {
+      final boolean isDirectContainerImpl = className.equals(FlexClassNames.ICONTAINER);
+      if (isDirectContainerImpl || JSInheritanceUtil.isParentClass(jsClass, FlexClassNames.ICONTAINER)) {
         if (childDescriptor == null) {
           addProblem("error.initializer.cannot.be.represented.in.text", tag.getLocalName(), getLineNumber(tag));
           return -1;
         }
 
         if (!isDirectContainerImpl && isHaloNavigator(className, jsClass) &&
-            !JSInheritanceUtil.isParentClass((JSClass)childDescriptor.getDeclaration(), INAVIGATOR_CONTENT)) {
-          addProblem("error.children.must.be", tag.getLocalName(), INAVIGATOR_CONTENT, getLineNumber(tag));
+            !JSInheritanceUtil.isParentClass((JSClass)childDescriptor.getDeclaration(), FlexClassNames.INAVIGATOR_CONTENT)) {
+          addProblem("error.children.must.be", tag.getLocalName(), FlexClassNames.INAVIGATOR_CONTENT, getLineNumber(tag));
           return -1;
         }
 

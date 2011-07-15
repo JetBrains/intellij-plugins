@@ -221,7 +221,7 @@ public final class MxmlReader implements DocumentReader {
           var textOffset:int = AmfUtil.readUInt29(input);
           var flags:int = input.readUnsignedByte();
           if ((flags & 1) != 0) {
-            readSkinFactory(inlineCssDeclarationSource, textOffset);
+            inlineCssDeclarationSource.declarations.push(new CssSkinClassDeclaration(readDocumentFactory(), textOffset));
             continue;
           }
 
@@ -355,12 +355,6 @@ public final class MxmlReader implements DocumentReader {
     }
 
     return object;
-  }
-
-  private function readSkinFactory(inlineCssDeclarationSource:CssRuleset, textOffset:int):void {
-    input.readBoolean();
-    var declaration:CssSkinClassDeclaration = new CssSkinClassDeclaration(readDocumentFactory(), textOffset);
-    inlineCssDeclarationSource.declarations.push(declaration);
   }
 
   private function readDocumentFactory():Object {
