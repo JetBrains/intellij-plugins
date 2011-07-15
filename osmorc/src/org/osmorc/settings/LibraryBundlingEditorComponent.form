@@ -39,10 +39,10 @@
           <grid row="0" column="0" row-span="4" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <border type="none" title-resource-bundle="org/osmorc/i18n/OsmorcBundle" title-key="settings.libbundle.settings"/>
-<clientProperties>
-  <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
-</clientProperties>
+        <clientProperties>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+        </clientProperties>
+        <border type="none"/>
         <children>
           <toolbar id="aa3dc">
             <constraints>
@@ -102,7 +102,7 @@
               </component>
             </children>
           </toolbar>
-          <scrollpane class="com.intellij.ui.components.JBScrollPane" id="69844">
+          <scrollpane id="69844" class="com.intellij.ui.components.JBScrollPane">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
