@@ -308,7 +308,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
   private void installIconBlinker(final ToolWindow toolWindow) {
     final LocalMessageDispatcher dispatcher = getLocalDispatcher();
 
-    myIconBlinker = new Timer(UIUtil.BLINK_DELAY, new IconBlinker(dispatcher, toolWindow));
+    myIconBlinker = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk icon blinker",UIUtil.BLINK_DELAY, new IconBlinker(dispatcher, toolWindow));
 
     myIconBlinker.start();
   }

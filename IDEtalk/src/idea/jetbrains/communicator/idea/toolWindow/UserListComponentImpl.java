@@ -19,6 +19,7 @@ import com.intellij.concurrency.JobScheduler;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.messager.Callout;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ui.*;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.IDEtalkAdapter;
@@ -34,11 +35,13 @@ import jetbrains.communicator.ide.UserListComponent;
 import jetbrains.communicator.idea.IdeaLocalMessage;
 import jetbrains.communicator.idea.UserTreeRenderer;
 import jetbrains.communicator.util.*;
+import jetbrains.communicator.util.UIUtil;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.picocontainer.Disposable;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -77,7 +80,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
     myLocalMessageDispatcher = localMessageDispatcher;
     myUserModel = userModel;
 
-    myTimer4Renderer = new Timer(200, new ActionListener() {
+    myTimer4Renderer = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk renderer",200, new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (myLocalMessageDispatcher.hasUsersWithMessages()) {
           myRefreshCounter ++;

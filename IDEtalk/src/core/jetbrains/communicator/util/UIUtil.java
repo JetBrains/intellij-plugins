@@ -152,7 +152,7 @@ public class UIUtil {
   }
 
   public static void requestFocus(final Component c) {
-    Timer timer = new Timer(150, new ActionListener() {
+    Timer timer = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk request focus",150, new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         c.requestFocus();
       }
