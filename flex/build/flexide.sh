@@ -14,7 +14,7 @@
 if [ -z "$FLEXIDE_JDK" ]; then
   FLEXIDE_JDK=$JDK_HOME
   # if jdk still isn't defined and JAVA_HOME looks correct. "tools.jar" isn't included in Mac OS Java bundle
-  if [ -z "$FLEXIDE_JDK" ] && ([ "$OS_TYPE" = "MAC" -a -e "$JAVA_HOME/bin/java" ] || [ -e "$JAVA_HOME/lib/tools.jar" ]); then
+  if [ -z "$FLEXIDE_JDK" ] && ([ "$OS_TYPE" = "MAC" -a -x "$JAVA_HOME/bin/java" ] || [ -f "$JAVA_HOME/lib/tools.jar" ]); then
     FLEXIDE_JDK=$JAVA_HOME
   fi
 
@@ -113,10 +113,10 @@ fi
 # $AGENT="-agentlib:yjpagent$BITS=disablej2ee,sessionname=flexide"
 #fi
 
-[ -e "$FLEXIDE_HOME/Contents/Info.plist" ] && BUNDLE_TYPE="MAC" || BUNDLE_TYPE="NOT_MAC"
+[ -f "$FLEXIDE_HOME/Contents/Info.plist" ] && BUNDLE_TYPE="MAC" || BUNDLE_TYPE="NOT_MAC"
 
 # If vmoptions file exists - use it
-if [ -e "$FLEXIDE_VM_OPTIONS" ]; then
+if [ -r "$FLEXIDE_VM_OPTIONS" ]; then
   JVM_ARGS=`tr '\n' ' ' < "$FLEXIDE_VM_OPTIONS"`
 
   # don't extract vm options from Info.plist in mac bundle
