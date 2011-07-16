@@ -56,9 +56,9 @@ internal final class ElementUtilImpl implements ElementUtil {
     }
 
     var uiComponent:IUIComponent = object as IUIComponent;
-    if (uiComponent != null && !(object == topObjectUnderPoint && object is Group && isRootDocument(uiComponent.document))) {
+    if (uiComponent != null) {
       var skinnableContainerClass:Class = getSkinnableContainerClass();
-      object = skipSkinChrome(uiComponent, skinnableContainerClass);
+      object = skipSkinChrome(uiComponent, skinnableContainerClass, false);
     }
 
     // if we click on IGraphicElement and group shares it's display object, our event target will be group instead of IGraphicElement and getObjectsUnderPoint never return this IGraphicElement,
@@ -90,15 +90,13 @@ internal final class ElementUtilImpl implements ElementUtil {
     return object;
   }
 
-  private static function isRootDocument(document:Object):Boolean {
-    return document is Skin && "hostComponent" in document && document.hostComponent.document.parent is SystemManagerSB;
-  }
-
-  private static function skipSkinChrome(object:IUIComponent, skinnableContainerClass:Class):DisplayObject {
+  // for element tree bar strict must be true — isSkinnableContainerContent for contentGroup itself must return false,
+  // but for getObjectUnderPoint must return true, because we need to find IGraphicElements
+  private static function skipSkinChrome(object:IUIComponent, skinnableContainerClass:Class, strict:Boolean):DisplayObject {
     var document:Object;
     var uiComponent:IUIComponent = object;
     while (documentIsSkin((document = uiComponent.document)) &&
-           !isSkinnableContainerContent(skinnableContainerClass, document, uiComponent)) {
+           !isSkinnableContainerContent(skinnableContainerClass, document, uiComponent, strict)) {
       object = document.parent;
       if ((uiComponent = object as IUIComponent) == null) {
         break;
@@ -123,13 +121,13 @@ internal final class ElementUtilImpl implements ElementUtil {
   }
 
   // see Panel title="One" in MouseSelectionTest. click on panel title — select panel, but click on panel content element Label — select this Label
-  private static function isSkinnableContainerContent(skinnableContainerClass:Class, document:Object, uiComponent:IUIComponent):Boolean {
+  private static function isSkinnableContainerContent(skinnableContainerClass:Class, document:Object, uiComponent:IUIComponent, strict:Boolean):Boolean {
     if (skinnableContainerClass == null || !("hostComponent" in document) || !(document.hostComponent is skinnableContainerClass)) {
       return false;
     }
 
     var group:Group = document.hostComponent.contentGroup;
-    return group != null && group != uiComponent && group.contains(DisplayObject(uiComponent));
+    return group != null && (!strict || group != uiComponent) && group.contains(DisplayObject(uiComponent));
   }
 
   public function fillBreadcrumbs(element:Object, source:Vector.<String>):int {
@@ -138,7 +136,7 @@ internal final class ElementUtilImpl implements ElementUtil {
     do {
       var uiComponent:IUIComponent = element as IUIComponent;
       if (uiComponent != null) {
-        element = skipSkinChrome(uiComponent, skinnableContainerClass);
+        element = skipSkinChrome(uiComponent, skinnableContainerClass, true);
       }
 
       var qualifiedClassName:String = getQualifiedClassName(element);

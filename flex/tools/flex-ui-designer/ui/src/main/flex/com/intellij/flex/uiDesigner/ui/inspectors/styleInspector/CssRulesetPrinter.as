@@ -325,7 +325,7 @@ public class CssRulesetPrinter {
     content[0] = textElement;
     content[1] = new TextElement(": ", CssElementFormat.defaultText);
     if (contentIndex != -1) {
-      content[contentIndex + 1] = new TextElement(";", CssElementFormat.defaultText);
+      content[contentIndex] = new TextElement(";", CssElementFormat.defaultText);
     }
     return new GroupElement(content);
   }
