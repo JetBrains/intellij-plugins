@@ -4,6 +4,7 @@ import cocoa.ItemMouseSelectionMode;
 import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.TextFormatId;
 import cocoa.renderer.InteractiveGraphicsRendererManager;
+import cocoa.renderer.TextLineAndDisplayObjectEntry;
 
 import flash.display.GradientType;
 import flash.display.Graphics;
@@ -11,6 +12,7 @@ import flash.display.GraphicsGradientFill;
 import flash.display.GraphicsSolidFill;
 import flash.display.GraphicsStroke;
 import flash.display.IGraphicsData;
+import flash.display.Shape;
 import flash.geom.Matrix;
 import flash.text.engine.TextLine;
 
@@ -20,7 +22,6 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
   private static const RIGHT_BLOCK_COLOR:uint = 0xc0c0c0;
 
   private static const ARC_SIZE:Number = 4;
-  private static const HEIGHT:Number = 20;
 
   private static const inactiveStroke:GraphicsStroke = new GraphicsStroke(1);
   inactiveStroke.fill = new GraphicsSolidFill(0x808080);
@@ -34,17 +35,25 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     super(laf.getTextFormat(TextFormatId.SYSTEM), new Insets(7, 0, 0, 5));
   }
 
-
   override public function get mouseSelectionMode():int {
     return ItemMouseSelectionMode.DOWN;
   }
 
   override protected function computeCreatingRendererSize(w:Number, h:Number, line:TextLine):void {
-    _lastCreatedRendererWidth = Math.round(line.textWidth) + (1 + 6 + 1 + 2 + 16 + 2);
+    _lastCreatedRendererDimension = Math.round(line.textWidth) + (1 + 6 + 1 + 2 + 16 + 2);
   }
 
   override public function setSelected(itemIndex:int, value:Boolean):void {
-    super.setSelecting(itemIndex, value);
+    var entry:TextLineAndDisplayObjectEntry = findEntry2(itemIndex);
+    if (value) {
+      drawSelected(itemIndex, entry.displayObject.x, entry.line.userData);
+    }
+    else {
+      var shape:Shape = Shape(entry.displayObject);
+      var g:Graphics = shape.graphics;
+      g.clear();
+      drawNotSelected(g, entry.line.userData, itemIndex);
+    }
   }
 
   override protected function drawEntry(itemIndex:int, g:Graphics, w:Number, h:Number, x:Number, y:Number):void {
@@ -63,7 +72,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     g.lineStyle(1, IdeaLookAndFeel.BORDER_COLOR);
     g.beginFill(0xffffff);
 
-    const bottomY:Number = HEIGHT + 0.5;
+    const bottomY:Number = _fixedRendererDimension + 0.5;
     const leftX:Number = x + 0.5;
     g.moveTo(0.5, 24.5);
     if (x != 0) {
@@ -85,7 +94,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
   }
 
   private function drawNotSelected(g:Graphics, w:Number, itemIndex:int):void {
-    sharedMatrix.createGradientBox(w - 1, HEIGHT - 1, Math.PI / 2, 0.5, 0.5);
+    sharedMatrix.createGradientBox(w - 1, _fixedRendererDimension - 1, Math.PI / 2, 0.5, 0.5);
     g.drawGraphicsData(graphicsData);
 
     var rightX:Number = w - 0.5;
@@ -95,7 +104,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
 
     const topY:Number = 0.5;
     var leftX:Number;
-    const bottomY:Number = HEIGHT + 0.5;
+    const bottomY:Number = _fixedRendererDimension + 0.5;
     if (itemIndex == 0) {
       leftX = 0.5;
       g.moveTo(leftX, bottomY);
@@ -123,7 +132,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
 
     g.lineStyle(1, RIGHT_BLOCK_COLOR);
     g.moveTo(rightX - 1, ARC_SIZE - 1);
-    g.lineTo(rightX - 1, HEIGHT);
+    g.lineTo(rightX - 1, _fixedRendererDimension);
   }
 
   private static function drawRect(g:Graphics, leftX:Number, topY:Number, rightX:Number, bottomY:Number, isLast:Boolean):void {
@@ -140,6 +149,15 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
       g.lineTo(rightX, bottomY - ARC_SIZE);
       g.curveTo(rightX, bottomY, rightX + ARC_SIZE, bottomY);
     }
+  }
+
+  public function tabViewSizeChanged(selectedIndex:int, w:Number, h:Number):void {
+    if (_textLineContainer.width == w && _textLineContainer.height == (h + 2 /* selected render height > not-selected render by 2px*/)) {
+      return;
+    }
+
+    var entry:TextLineAndDisplayObjectEntry = findEntry2(selectedIndex);
+    drawSelected(selectedIndex, entry.displayObject.x, entry.line.userData);
   }
 }
 }

@@ -6,6 +6,7 @@ import cocoa.TextLineInsets;
 import cocoa.border.LinearGradientBorder;
 import cocoa.border.RectangularBorder;
 import cocoa.border.StatefulBorderImpl;
+import cocoa.layout.ListLayoutFactory;
 import cocoa.plaf.Placement;
 import cocoa.plaf.RendererManagerFactory;
 import cocoa.plaf.aqua.AquaLookAndFeel;
@@ -18,7 +19,7 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
   /**
    * see com.intellij.util.ui.UIUtil
    */
-  public static const BORDER_COLOR:int = 0xaaaaaa;
+  public static const BORDER_COLOR:int = 0xc0c0c0;
   
   override protected function initialize():void {
     super.initialize();
@@ -30,6 +31,7 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
 
     data["ElementTreeBar.rendererManager"] = new ElementTreeBarRMF();
     data["ElementTreeBar.interactor"] = data["SegmentedControl.interactor"];
+    data["ElementTreeBar.layout"] = new ListLayoutFactory(20, 5);
 
     data["Panel"] = PanelSkin;
     const panelTitleBorderHeight:Number = 16;
@@ -39,7 +41,7 @@ public class IdeaLookAndFeel extends AquaLookAndFeel {
 
     data["ProjectView"] = ProjectViewSkin;
     data["ProjectView.TabView"] = EditorTabViewSkin;
-    data["ProjectView.TabView.tabBar.gap"] = 0;
+    data["ProjectView.TabView.tabBar.layout"] = new ListLayoutFactory(20, 0);
     data["ProjectView.TabView.tabBar.rendererManager"] = new RendererManagerFactory(EditorTabBarRendererManager, this, "ProjectView.TabView.tabBar");
     data["ProjectView.TabView.tabBar.placement"] = Placement.PAGE_START_LINE_START;
     data["ProjectView.TabView.tabBar.interactor"] = data["TabView.tabBar.interactor"];

@@ -2,8 +2,6 @@ package com.intellij.flex.uiDesigner.plaf {
 import cocoa.Insets;
 import cocoa.ListViewModifiableDataSource;
 import cocoa.PushButton;
-import cocoa.SelectionMode;
-import cocoa.layout.ListHorizontalLayout;
 import cocoa.plaf.basic.AbstractTabViewSkin;
 import cocoa.tabView.TabView;
 
@@ -32,8 +30,6 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
   
   override protected function createChildren():void {
     super.createChildren();
-
-    ListHorizontalLayout(tabBar.layout).height = 20;
 
     assert(_borderShape == null);
     _borderShape = new Sprite();
@@ -64,7 +60,7 @@ internal class EditorTabViewSkin extends AbstractTabViewSkin {
 
     const selectedIndex:int = tabBar.selectedIndex;
     if (selectedIndex != -1) {
-      //IInvalidating(segmentedControl.getElementAt(selectedIndex)).invalidateDisplayList();
+      EditorTabBarRendererManager(tabBar.rendererManager).tabViewSizeChanged(selectedIndex, w, h);
     }
   }
 

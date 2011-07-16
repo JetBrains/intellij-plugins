@@ -28,8 +28,8 @@
       var sidebarUI:IUIComponent = sidebar.skin;
       sidebarUI.y = topToolbarHeight;
       editorTabViewUI.y = topToolbarHeight;
-      var sidebarWidth:Number = sidebarUI.getExplicitOrMeasuredWidth();
-      var editorTabViewWidth:Number = sidebarUI.x = w - sidebarWidth;
+      const sidebarWidth:Number = sidebarUI.getExplicitOrMeasuredWidth();
+      const editorTabViewWidth:Number = sidebarUI.x = w - sidebarWidth;
       sidebarUI.setActualSize(sidebarWidth, h - topToolbarHeight);
       editorTabViewUI.setActualSize(editorTabViewWidth, h - topToolbarHeight);
 
@@ -52,17 +52,8 @@
     <layout>
       <BarLayout padding="5" gap="12"/>
     </layout>
-    <SegmentedControl stupidMxmlId="statesBar">
-      <layout>
-        <ListHorizontalLayout height="20" gap="1"/>
-      </layout>
-    </SegmentedControl>
-
-    <SegmentedControl stupidMxmlId="elementTreeBar" lafKey="ElementTreeBar">
-      <layout>
-        <ListHorizontalLayout height="20" gap="5"/>
-      </layout>
-    </SegmentedControl>
+    <SegmentedControl stupidMxmlId="statesBar"/>
+    <SegmentedControl stupidMxmlId="elementTreeBar" lafKey="ElementTreeBar"/>
   </Toolbar>
   <tools:ElementToolContainer id="elementToolContainer"/>
 
