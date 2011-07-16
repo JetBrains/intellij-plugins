@@ -307,9 +307,8 @@ public class CssRulesetPrinter {
         break;
       
       case CssPropertyType.CLEARED:
-        content = new Vector.<ContentElement>(contentIndex + 1, true);
+        content = new Vector.<ContentElement>(contentIndex + 2, true);
         content[contentIndex++] = new TextElement("cleared", CssElementFormat.func);
-        contentIndex = -1;
               
         linkableStyle = false;
         break;
@@ -326,7 +325,7 @@ public class CssRulesetPrinter {
     content[0] = textElement;
     content[1] = new TextElement(": ", CssElementFormat.defaultText);
     if (contentIndex != -1) {
-      content[contentIndex++] = new TextElement(";", CssElementFormat.defaultText);
+      content[contentIndex + 1] = new TextElement(";", CssElementFormat.defaultText);
     }
     return new GroupElement(content);
   }

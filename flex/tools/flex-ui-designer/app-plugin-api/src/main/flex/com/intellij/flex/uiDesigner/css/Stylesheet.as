@@ -59,7 +59,7 @@ public final class Stylesheet {
             break;
 
           case 11:
-            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, stringRegistry.readNotNull(input));
+            declarations[i] = CssDeclarationImpl.create2(CssPropertyType.STRING, name, textOffset, null, stringRegistry.readNotNull(input));
             break;
 
           case 4:

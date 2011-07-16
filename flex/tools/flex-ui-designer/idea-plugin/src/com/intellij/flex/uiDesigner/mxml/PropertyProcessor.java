@@ -110,8 +110,8 @@ class PropertyProcessor {
     }
     else if (valueWriter != null) {
       if (valueWriter instanceof ClassValueWriter && isSkinClass(descriptor)) {
-        SkinProjectClassValueWriter skinProjectClassValueWriter = getSkinProjectClassValueWriter(getSkinProjectClassDocumentFactoryId(
-          ((ClassValueWriter)valueWriter).getJsClas(), valueProvider));
+        SkinProjectClassValueWriter skinProjectClassValueWriter =
+          getSkinProjectClassValueWriter(getProjectComponentFactoryId(((ClassValueWriter)valueWriter).getJsClas(), valueProvider));
         if (skinProjectClassValueWriter != null) {
           return skinProjectClassValueWriter;
         }
@@ -153,10 +153,10 @@ class PropertyProcessor {
 
   private int getSkinProjectClassDocumentFactoryId(XmlElementValueProvider valueProvider) throws InvalidPropertyException {
     JSClass jsClass = valueProvider.getJsClass();
-    return jsClass != null ? getSkinProjectClassDocumentFactoryId(jsClass, valueProvider) : -1;
+    return jsClass != null ? getProjectComponentFactoryId(jsClass, valueProvider) : -1;
   }
 
-  private int getSkinProjectClassDocumentFactoryId(JSClass jsClass, XmlElementValueProvider valueProvider) throws InvalidPropertyException {
+  private int getProjectComponentFactoryId(JSClass jsClass, XmlElementValueProvider valueProvider) throws InvalidPropertyException {
     PsiFile psiFile = jsClass.getContainingFile();
     VirtualFile virtualFile = psiFile.getVirtualFile();
     assert virtualFile != null;
@@ -299,22 +299,28 @@ class PropertyProcessor {
         }
       }
 
+      String className = valueProvider.getTrimmed();
+      int reference = classFactoryMap.get(className);
+      if (reference != -1) {
+        writer.writeObjectReference(reference);
+        return;
+      }
+
       JSClass jsClass = valueProvider.getJsClass();
       if (jsClass == null) {
         throw new InvalidPropertyException("error.unresolved.class", valueProvider.getTrimmed());
       }
-      
-      String className = jsClass.getQualifiedName();
-      int reference = classFactoryMap.get(className);
-      if (reference == -1) {
+
+      final int projectComponentFactoryId = getProjectComponentFactoryId(jsClass, valueProvider);
+      if (projectComponentFactoryId != -1) {
+        writer.writeDocumentFactoryReference(projectComponentFactoryId);
+      }
+      else {
         reference = writer.getRootScope().referenceCounter++;
         classFactoryMap.put(className, reference);
 
         writer.writeConstructorHeader(FlexClassNames.CLASS_FACTORY, reference);
         writer.writeClass(className);
-      }
-      else {
-        writer.writeObjectReference(reference);
       }
     }
   }

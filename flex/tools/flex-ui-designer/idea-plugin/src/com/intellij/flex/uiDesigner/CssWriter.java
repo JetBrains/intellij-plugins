@@ -192,13 +192,14 @@ public class CssWriter {
 
   private void writePropertyValue(CssTermList value, FlexStyleIndexInfo info) throws InvalidPropertyException {
     final String type = info.getType();
+    ASTNode node;
     assert type != null;
     switch (type.charAt(0)) {
       case 'u':
         final String format = info.getFormat();
         assert format != null;
         if (format.equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
-          // http://youtrack.jetbrains.net/issue/IDEA-59632
+          // IDEA-59632
           if (value.getText().equals("0")) {
             propertyOut.write(CssPropertyType.NUMBER);
             propertyOut.writeAmfInt(0);
@@ -209,58 +210,36 @@ public class CssWriter {
           }
         }
         else {
-          propertyOut.write(CssPropertyType.NUMBER);
-          propertyOut.writeAmfInt(value.getText());
+          writeNumberValue(value, true);
         }
         break;
 
       case 'i':
-        propertyOut.write(CssPropertyType.NUMBER);
-        propertyOut.writeAmfInt(value.getText());
+        writeNumberValue(value, true);
         break;
 
       case 'S':
         // special case: ClassReference(null);
         //noinspection ConstantConditions
-        if (value.getFirstChild().getFirstChild().getNode().getElementType() == CssElementTypes.CSS_FUNCTION) {
+        node = value.getFirstChild().getFirstChild().getNode();
+        if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
           propertyOut.write(CssPropertyType.NULL);
         }
         else {
-          //noinspection ConstantConditions
-          ASTNode node = value.getFirstChild().getFirstChild().getNode();
-          final boolean stripQuotes;
-          if (node.getElementType() == CssElementTypes.CSS_STRING) {
-            stripQuotes = true;
-            node = node.getFirstChildNode();
-          }
-          else { // CssElementTypes.CSS_IDENT
-            stripQuotes = false;
-          }
-
-          final CharSequence chars = node.getChars();
-          if (info.getEnumeration() == null) {
-            propertyOut.write(CssPropertyType.STRING);
-            if (stripQuotes) {
-              propertyOut.writeAmfUtf(chars, false, 1, chars.length() - 1);
-            }
-            else {
-              propertyOut.writeAmfUtf(chars);
-            }
-          }
-          else {
-            propertyOut.write(CssPropertyType.STRING_REFERENCE);
-            stringWriter.write(stripQuotes ? chars.subSequence(1, chars.length() - 1).toString() : chars.toString(), propertyOut);
-          }
+          writeStringValue(node, info);
         }
         break;
 
       case 'B':
         propertyOut.write(CssPropertyType.BOOL);
-        propertyOut.write(value.getText().charAt(0) == 't' ? Amf3Types.TRUE : Amf3Types.FALSE);
+        //noinspection ConstantConditions
+        node = value.getFirstChild().getFirstChild().getNode();
+        assert node.getElementType() == CssElementTypes.CSS_IDENT;
+        propertyOut.write(node.getChars().charAt(0) == 't' ? Amf3Types.TRUE : Amf3Types.FALSE);
         break;
 
       case 'N':
-        writeNumberValue(value);
+        writeNumberValue(value, false);
         break;
 
       case 'C':
@@ -287,13 +266,42 @@ public class CssWriter {
     }
   }
 
-  // In Flex css number cannot be hex (#ddassad, allowable only for Color)
-  private void writeNumberValue(final CssTermList value) {
-    propertyOut.write(CssPropertyType.NUMBER);
+  private void writeBooleanValue(final CssTermList value, final FlexStyleIndexInfo info) {
 
-    CssTerm term = (CssTerm)value.getFirstChild();
+  }
+
+  private void writeStringValue(ASTNode node, final FlexStyleIndexInfo info) {
+    final boolean stripQuotes;
+    if (node.getElementType() == CssElementTypes.CSS_STRING) {
+      stripQuotes = true;
+      node = node.getFirstChildNode();
+    }
+    else {
+      stripQuotes = false;
+    }
+
+    final CharSequence chars = node.getChars();
+    if (info.getEnumeration() == null) {
+      propertyOut.write(CssPropertyType.STRING);
+      if (stripQuotes) {
+        propertyOut.writeAmfUtf(chars, false, 1, chars.length() - 1);
+      }
+      else {
+        propertyOut.writeAmfUtf(chars);
+      }
+    }
+    else {
+      propertyOut.write(CssPropertyType.STRING_REFERENCE);
+      stringWriter.write(stripQuotes ? chars.subSequence(1, chars.length() - 1).toString() : chars.toString(), propertyOut);
+    }
+  }
+
+  // In Flex css number cannot be hex (#ddassad, allowable only for Color)
+  private void writeNumberValue(final CssTermList value, final boolean isInt) {
+    propertyOut.write(CssPropertyType.NUMBER);
+    
     //noinspection ConstantConditions
-    ASTNode node = term.getFirstChild().getNode();
+    ASTNode node = value.getFirstChild().getFirstChild().getNode();
     final IElementType elementType = node.getElementType();
     boolean isNegative = false;
     if (elementType == CssElementTypes.CSS_NUMBER_TERM) {
@@ -308,7 +316,7 @@ public class CssWriter {
       throw new IllegalArgumentException("unknown number value type " + elementType);
     }
 
-    IOUtil.writeAmfIntOrDouble(propertyOut, node.getChars(), isNegative);
+    IOUtil.writeAmfIntOrDouble(propertyOut, node.getChars(), isNegative, isInt);
   }
 
   @SuppressWarnings({"ConstantConditions"})

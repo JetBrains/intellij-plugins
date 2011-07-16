@@ -96,8 +96,9 @@ public final class IOUtil {
     }
   }
 
-  public static void writeAmfIntOrDouble(final PrimitiveAmfOutputStream out, final CharSequence value, final boolean isNegative) {
-    if (StringUtil.indexOf(value, '.') == -1) {
+  public static void writeAmfIntOrDouble(final PrimitiveAmfOutputStream out, final CharSequence value,
+                                         final boolean isNegative, final boolean isInt) {
+    if (isInt || StringUtil.indexOf(value, '.') == -1) {
       out.writeAmfInt(parseInt(value, isNegative, 10));
     }
     else {
