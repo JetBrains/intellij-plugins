@@ -79,7 +79,7 @@ public class MxmlTest extends BaseTestCase {
   public function ItemRendererAndMixDefaultExplicitContent():void {
     var buttonBarButtonClass:Class = documentManager.document.module.context.getClass("spark.components.ButtonBarButton");
     var m:Object = {itemRenderer: {generator: buttonBarButtonClass}};
-    assertThat(app, [{itemRenderer: {className: "ProjectMxmlItemRenderer"}}, m, m]);
+    assertThat(app, [{}, {itemRenderer: {className: "ProjectMxmlItemRenderer"}}, m, m]);
   }
 
   public function WindowedApplication():void {

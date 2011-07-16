@@ -295,7 +295,7 @@ class PropertyProcessor {
         XmlTag tag = ((XmlTagValueProvider)valueProvider).getTag();
         XmlTag[] subTags = tag.getSubTags();
         if (subTags.length > 0) {
-          throw new InvalidPropertyException("error.inner.component.are.not.supported");
+          throw new InvalidPropertyException("error.inline.component.are.not.supported", MxmlUtil.getLineNumber(tag));
         }
       }
 

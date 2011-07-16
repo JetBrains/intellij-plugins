@@ -16,13 +16,11 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.*;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
@@ -34,6 +32,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.intellij.flex.uiDesigner.mxml.MxmlUtil.getLineNumber;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.IGNORE;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PRIMITIVE;
 
@@ -156,12 +155,6 @@ public class MxmlWriter {
     return xmlAttributeValueProvider;
   }
 
-  // about id http://opensource.adobe.com/wiki/display/flexsdk/id+property+in+MXML+2009
-  private static boolean isIdLanguageIdAttribute(XmlAttribute attribute) {
-    String ns = attribute.getNamespace();
-    return ns.length() == 0 || ns.equals(JavaScriptSupportLoader.MXML_URI3);
-  }
-
   private void processElements(final XmlTag parent, final @Nullable Context parentContext, final boolean allowIncludeInExludeFrom,
                                final int dataPosition, final int referencePosition) {
     boolean cssDeclarationSourceDefined = false;
@@ -214,7 +207,7 @@ public class MxmlWriter {
             }
           }
         }
-        else if (descriptor.hasIdType() && isIdLanguageIdAttribute(attribute)) {
+        else if (descriptor.hasIdType() && MxmlUtil.isIdLanguageIdAttribute(attribute)) {
           String explicitId = attribute.getValue();
           writer.writeIdProperty(explicitId);
           injectedASWriter.processObjectWithExplicitId(explicitId, context);
@@ -270,17 +263,12 @@ public class MxmlWriter {
     }
   }
 
-  private static boolean containsOnlyWhitespace(XmlTagChild child) {
-    PsiElement firstChild = child.getFirstChild();
-    return firstChild == child.getLastChild() && (firstChild == null || firstChild instanceof PsiWhiteSpace);
-  }
-
   private void processSubTags(final XmlTag parent, final @Nullable Context context, final @Nullable Context parentContext,
                               boolean cssDeclarationSourceDefined) {
     int closeObjectLevel = 0;
     for (XmlTagChild child : parent.getValue().getChildren()) {
       if (child instanceof XmlText) {
-        if (!containsOnlyWhitespace(child)) {
+        if (!MxmlUtil.containsOnlyWhitespace(child)) {
           if (closeObjectLevel == 0) {
             closeObjectLevel = processDefaultProperty(parent, createValueProvider((XmlText)child), null);
             if (closeObjectLevel == -1) {
@@ -414,6 +402,10 @@ public class MxmlWriter {
         // todo IDEA-72123
         continue;
       }
+      else if (MxmlUtil.isComponentLanguageTag(tag)) {
+        // todo IDEA-72151
+        continue;
+      }
 
       processClassBackedSubTag(tag, descriptor, null, true);
     }
@@ -421,9 +413,6 @@ public class MxmlWriter {
     out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
   }
 
-  private int getLineNumber(XmlTag tag) {
-    return getDocument(tag).getLineNumber(tag.getTextOffset()) + 1;
-  }
 
   private static boolean isHaloNavigator(String className, JSClass jsClass) {
     return className.equals(FlexClassNames.ACCORDION) ||
@@ -563,14 +552,8 @@ public class MxmlWriter {
     return true;
   }
 
-  private Document getDocument(@NotNull PsiElement element) {
-    VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
-    assert virtualFile != null;
-    return FileDocumentManager.getInstance().getDocument(virtualFile);
-  }
-
   private void defineInlineCssDeclaration(@NotNull PsiElement element) {
-    Document document = getDocument(element);
+    Document document = MxmlUtil.getDocument(element);
     int textOffset = element.getTextOffset();
     out.writeUInt29(textOffset);
     out.writeUInt29(document.getLineNumber(textOffset));
