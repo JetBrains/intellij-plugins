@@ -439,7 +439,7 @@ def buildTarGz() {
 }
 
 def layoutFull(String target, Set usedJars) {
-  def implementationModules = [platformImplementationModules(), "flex-ide", "resources", "platform-resources"].flatten()
+  def implementationModules = [platformImplementationModules(), "flex-ide"].flatten()
 
   def result = layout(target) {
     dir("lib") {
@@ -466,7 +466,21 @@ def layoutFull(String target, Set usedJars) {
 
       jar("bootstrap.jar") { module("bootstrap")}
       jar("resources.jar") {
-        //module("platform-resources")
+        module("platform-resources") {
+          exclude(name: "**/FileTypeManager.xml")
+        }
+        module("resources") {
+          exclude(name: "**/preview/**")
+          exclude(name: "**/JavaActions.xml")
+          exclude(name: "**/JBuilderKeymap.xml")
+          exclude(name: "**/Palette2.xml")
+          exclude(name: "**/PropertiesComponent.xml")
+          exclude(name: "**/IdeaPlugin.xml")
+          exclude(name: "**/javadoc/**")
+          exclude(name: "**/liveTemplates/**")
+          exclude(name: "**/ClassTemplateManager.xml")
+          exclude(name: "**/DebuggerSettings.xml")
+        }
         module("colorSchemes")
       }
 
