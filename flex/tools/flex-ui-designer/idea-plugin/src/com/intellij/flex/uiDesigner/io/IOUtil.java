@@ -99,7 +99,7 @@ public final class IOUtil {
   public static void writeAmfIntOrDouble(final PrimitiveAmfOutputStream out, final CharSequence value,
                                          final boolean isNegative, final boolean isInt) {
     if (isInt || StringUtil.indexOf(value, '.') == -1) {
-      out.writeAmfInt(parseInt(value, isNegative, 10));
+      out.writeAmfInt(parseInt(value, 0, isNegative, 10));
     }
     else {
       final double v = Double.parseDouble(value.toString());
@@ -115,10 +115,10 @@ public final class IOUtil {
    * Permission to use, copy, modify, and distribute this software is
    * freely granted, provided that this notice is preserved.
    */
-  private static int parseInt(final CharSequence value, final boolean isNegative, final int radix) {
+  public static int parseInt(final CharSequence value, final int start, final boolean isNegative, final int radix) {
     final int end = value.length();
     int result = 0; // Accumulates negatively (avoid MIN_VALUE overflow).
-    int i = 0;
+    int i = start;
     for (; i < end; i++) {
       char c = value.charAt(i);
       int digit = (c <= '9') ? c - '0'
@@ -127,7 +127,7 @@ public final class IOUtil {
       if ((digit >= 0) && (digit < radix)) {
         int newResult = result * radix - digit;
         if (newResult > result) {
-          throw new NumberFormatException("Overflow parsing " + value.subSequence(0, end));
+          throw new NumberFormatException("Overflow parsing " + value.subSequence(start, end));
         }
         result = newResult;
       }
@@ -137,11 +137,42 @@ public final class IOUtil {
     }
     // Requires one valid digit character and checks for opposite overflow.
     if ((result == 0) && ((end == 0) || (value.charAt(i - 1) != '0'))) {
-      throw new NumberFormatException("Invalid integer representation for " + value.subSequence(0, end));
+      throw new NumberFormatException("Invalid integer representation for " + value.subSequence(start, end));
     }
     if ((result == Integer.MIN_VALUE) && !isNegative) {
-      throw new NumberFormatException("Overflow parsing " + value.subSequence(0, end));
+      throw new NumberFormatException("Overflow parsing " + value.subSequence(start, end));
     }
+    return isNegative ? result : -result;
+  }
+
+  public static long parseLong(final CharSequence value, final int start, final boolean isNegative, final int radix) {
+    final int end = value.length();
+    long result = 0; // Accumulates negatively (avoid MIN_VALUE overflow).
+    int i = start;
+    for (; i < end; i++) {
+      char c = value.charAt(i);
+      int digit = (c <= '9') ? c - '0'
+                             : ((c <= 'Z') && (c >= 'A')) ? c - 'A' + 10
+                                                          : ((c <= 'z') && (c >= 'a')) ? c - 'a' + 10 : -1;
+      if ((digit >= 0) && (digit < radix)) {
+        long newResult = result * radix - digit;
+        if (newResult > result) {
+          throw new NumberFormatException("Overflow parsing " + value.subSequence(start, end));
+        }
+        result = newResult;
+      }
+      else {
+        break;
+      }
+    }
+    // Requires one valid digit character and checks for opposite overflow.
+    if ((result == 0) && ((end == 0) || (value.charAt(i - 1) != '0'))) {
+      throw new NumberFormatException("Invalid integer representation for " + value.subSequence(start, end));
+    }
+    if ((result == Long.MIN_VALUE) && !isNegative) {
+      throw new NumberFormatException("Overflow parsing " + value.subSequence(start, end));
+    }
+
     return isNegative ? result : -result;
   }
 }

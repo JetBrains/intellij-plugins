@@ -215,7 +215,7 @@ class PropertyProcessor {
       else if (type.equals(JSCommonTypeNames.BOOLEAN_CLASS_NAME)) {
         out.writeAmfBoolean(valueProvider.getTrimmed());
       }
-      else if (type.equals(AsCommonTypeNames.INT) || type.equals(AsCommonTypeNames.UINT)) {
+      else if (type.equals(JSCommonTypeNames.INT_TYPE_NAME) || type.equals(JSCommonTypeNames.UINT_TYPE_NAME)) {
         String format = descriptor.getFormat();
         if (format != null && format.equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
           writer.writeColor(valueProvider.getTrimmed(), isStyle);
@@ -231,7 +231,7 @@ class PropertyProcessor {
       else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
         writeUntypedPropertyValue(valueProvider, descriptor);
       }
-      else if (type.equals(FlexClassNames.IFACTORY)) {
+      else if (type.equals(FlexCommonTypeNames.IFACTORY)) {
         writeClassFactory(valueProvider);
       }
       else {
@@ -319,7 +319,7 @@ class PropertyProcessor {
         reference = writer.getRootScope().referenceCounter++;
         classFactoryMap.put(className, reference);
 
-        writer.writeConstructorHeader(FlexClassNames.CLASS_FACTORY, reference);
+        writer.writeConstructorHeader(FlexCommonTypeNames.CLASS_FACTORY, reference);
         writer.writeClass(className);
       }
     }

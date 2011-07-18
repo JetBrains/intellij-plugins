@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.css;
 
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import org.jetbrains.annotations.NotNull;
@@ -13,6 +14,7 @@ public class FlexStyleIndexInfo {
   private final String myAttributeName;
   private final String myInherit;
   private final String myType;
+  private final String myArrayType;
   private final String myFormat;
   private final String myEnumeration;
   private final boolean myInClass;
@@ -21,6 +23,7 @@ public class FlexStyleIndexInfo {
                             @NotNull String attributeName,
                             @NotNull String inherit,
                             @Nullable String type,
+                            @Nullable String arrayType,
                             @Nullable String format,
                             @Nullable String enumeration,
                             boolean inClass) {
@@ -28,6 +31,7 @@ public class FlexStyleIndexInfo {
     myAttributeName = attributeName;
     myInherit = inherit;
     myType = type;
+    myArrayType = arrayType;
     myFormat = format;
     myEnumeration = enumeration;
     myInClass = inClass;
@@ -41,6 +45,11 @@ public class FlexStyleIndexInfo {
   @Nullable
   public String getType() {
     return myType;
+  }
+
+  @Nullable
+  public String getArrayType() {
+    return myArrayType;
   }
 
   public boolean isInClass() {
@@ -58,9 +67,10 @@ public class FlexStyleIndexInfo {
     String inherit = getValue(attribute, "inherit");
     if (inherit == null) inherit = "no";
     String type = getValue(attribute, "type");
+    String arrayType = JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type) ? getValue(attribute, "arrayType") : null;
     String format = getValue(attribute, "format");
     String enumeration = getValue(attribute, "enumeration");
-    return new FlexStyleIndexInfo(className, name, inherit, type, format, enumeration, inClass);
+    return new FlexStyleIndexInfo(className, name, inherit, type, arrayType, format, enumeration, inClass);
   }
 
   public String getEnumeration() {

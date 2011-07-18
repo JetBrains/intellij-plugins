@@ -1,11 +1,13 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.*;
+import com.intellij.flex.uiDesigner.mxml.AsCommonTypeNames;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -192,82 +194,118 @@ public class CssWriter {
 
   private void writePropertyValue(CssTermList value, FlexStyleIndexInfo info) throws InvalidPropertyException {
     final String type = info.getType();
-    ASTNode node;
+    //noinspection ConstantConditions
+    final ASTNode node = value.getFirstChild().getFirstChild().getNode();
     assert type != null;
-    switch (type.charAt(0)) {
-      case 'u':
-        final String format = info.getFormat();
-        assert format != null;
-        if (format.equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
-          // IDEA-59632
-          if (value.getText().equals("0")) {
-            propertyOut.write(CssPropertyType.NUMBER);
-            propertyOut.writeAmfInt(0);
-          }
-          else {
-            propertyOut.write(CssPropertyType.COLOR_INT);
-            writeColor(value);
-          }
+    if (type.equals(JSCommonTypeNames.UINT_TYPE_NAME)) {
+      final String format = info.getFormat();
+      assert format != null;
+      if (format.equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
+        // IDEA-59632
+        if (value.getText().equals("0")) {
+          propertyOut.write(CssPropertyType.NUMBER);
+          propertyOut.writeAmfInt(0);
         }
         else {
-          writeNumberValue(value, true);
+          propertyOut.write(CssPropertyType.COLOR_INT);
+          writeColor(value);
         }
-        break;
-
-      case 'i':
-        writeNumberValue(value, true);
-        break;
-
-      case 'S':
-        // special case: ClassReference(null);
-        //noinspection ConstantConditions
-        node = value.getFirstChild().getFirstChild().getNode();
-        if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
-          propertyOut.write(CssPropertyType.NULL);
-        }
-        else {
-          writeStringValue(node, info);
-        }
-        break;
-
-      case 'B':
-        propertyOut.write(CssPropertyType.BOOL);
-        //noinspection ConstantConditions
-        node = value.getFirstChild().getFirstChild().getNode();
-        assert node.getElementType() == CssElementTypes.CSS_IDENT;
-        propertyOut.write(node.getChars().charAt(0) == 't' ? Amf3Types.TRUE : Amf3Types.FALSE);
-        break;
-
-      case 'N':
-        writeNumberValue(value, false);
-        break;
-
-      case 'C':
-        // Class, brokenImageSkin: Embed(source="Assets.swf",symbol="__brokenImage"); or brokenImageBorderSkin: ClassReference("mx.skins.halo.BrokenImageBorderSkin");
-        // or ClassReference(null);
-        //noinspection ConstantConditions
-        writeFunctionValue((CssFunction)value.getFirstChild().getFirstChild());
-        break;
-
-      case 'O': // Object, like baselineShift
-        writeUndefinedPropertyValue(value);
-        break;
-
-//      case 'A': // Array
-      // todo support as for writeUndefinedPropertyValue
-//        break;
-
-      default:
-//        throw new IllegalArgumentException("unknown property type: " + info.getType() + " and format: " + info.getFormat());
-        // todo support custom type: mx.graphics.IFill, fill: #000000
-        propertyOut.write(CssPropertyType.NUMBER);
-        propertyOut.writeAmfInt(0);
-        break;
+      }
+      else {
+        writeNumberValue(node, true);
+      }
     }
+    else if (type.equals(JSCommonTypeNames.INT_TYPE_NAME)) {
+      writeNumberValue(node, true);
+    }
+    else if (type.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
+      writeNumberValue(node, false);
+    }
+    else if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
+      // special case: ClassReference(null);
+      if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
+        propertyOut.write(CssPropertyType.NULL);
+      }
+      else {
+        writeStringValue(node, info);
+      }
+    }
+    else if (type.equals(JSCommonTypeNames.BOOLEAN_CLASS_NAME)) {
+      writeBooleanValue(node);
+    }
+    else if (type.equals(AsCommonTypeNames.CLASS)) {
+      // Class, brokenImageSkin: Embed(source="Assets.swf",symbol="__brokenImage"); or brokenImageBorderSkin: ClassReference("mx.skins.halo.BrokenImageBorderSkin");
+      // or ClassReference(null);
+      //noinspection ConstantConditions
+      writeFunctionValue((CssFunction)value.getFirstChild().getFirstChild());
+    }
+    else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
+      writeUndefinedPropertyValue(value);
+    }
+    else if (type.equals(JSCommonTypeNames.ARRAY_CLASS_NAME)) {
+      final String arrayType = info.getArrayType();
+      boolean isInt;
+      if (arrayType == null) {
+        writeUndefinedPropertyValue(value);
+      }
+      else if ((isInt = (arrayType.equals(JSCommonTypeNames.INT_TYPE_NAME) || arrayType.equals(JSCommonTypeNames.UINT_TYPE_NAME))) ||
+               arrayType.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
+        propertyOut.write(CssPropertyType.ARRAY_OF_NUMBER);
+        CssTerm[] terms = PsiTreeUtil.getChildrenOfType(value, CssTerm.class);
+        assert terms != null;
+        declarationVectorWriter.writeArrayValueHeader(terms.length);
+        writeNumberTerms(terms, isInt);
+      }
+      else {
+        LOG.warn("unknown arrayType: " + arrayType + " " + info.getAttributeName());
+        writeUndefinedPropertyValue(value);
+      }
+    }
+    else {
+      LOG.warn("unknown type: " + type + " " + info.getAttributeName());
+      writeUndefinedPropertyValue(value);
+    }
+
+//    switch (type.charAt(0)) {
+//
+//      default:
+////        throw new IllegalArgumentException("unknown property type: " + info.getType() + " and format: " + info.getFormat());
+//        // todo support custom type: mx.graphics.IFill, fill: #000000
+//        propertyOut.write(CssPropertyType.NUMBER);
+//        propertyOut.writeAmfInt(0);
+//        break;
+//    }
   }
 
-  private void writeBooleanValue(final CssTermList value, final FlexStyleIndexInfo info) {
+  private void writeBooleanValue(ASTNode node) {
+    final int amfType;
+    if (node.getElementType() == CssElementTypes.CSS_IDENT) {
+      amfType = node.getChars().charAt(0) == 't' ? Amf3Types.TRUE : Amf3Types.FALSE;
+    }
+    else {
+      assert node.getElementType() == CssElementTypes.CSS_STRING;
+      node = node.getFirstChildNode();
+      // IDEA-72194
+      final CharSequence chars = node.getChars();
+      if (cssStringEquals(chars, "true")) {
+        amfType = Amf3Types.TRUE;
+      }
+      else if (cssStringEquals(chars, "false")) {
+        amfType = Amf3Types.FALSE;
+      }
+      else {
+        propertyOut.write(CssPropertyType.STRING);
+        writeCssStringToken(chars);
+        return;
+      }
+    }
 
+    propertyOut.write(CssPropertyType.BOOL);
+    propertyOut.write(amfType);
+  }
+
+  private static boolean cssStringEquals(CharSequence chars, CharSequence value) {
+    return chars.length() == (value.length() + 2) && StringUtil.startsWith(chars, 1, value);
   }
 
   private void writeStringValue(ASTNode node, final FlexStyleIndexInfo info) {
@@ -284,7 +322,7 @@ public class CssWriter {
     if (info.getEnumeration() == null) {
       propertyOut.write(CssPropertyType.STRING);
       if (stripQuotes) {
-        propertyOut.writeAmfUtf(chars, false, 1, chars.length() - 1);
+        writeCssStringToken(chars);
       }
       else {
         propertyOut.writeAmfUtf(chars);
@@ -296,12 +334,20 @@ public class CssWriter {
     }
   }
 
-  // In Flex css number cannot be hex (#ddassad, allowable only for Color)
-  private void writeNumberValue(final CssTermList value, final boolean isInt) {
-    propertyOut.write(CssPropertyType.NUMBER);
-    
-    //noinspection ConstantConditions
-    ASTNode node = value.getFirstChild().getFirstChild().getNode();
+  private void writeCssStringToken(CharSequence chars) {
+    propertyOut.writeAmfUtf(chars, false, 1, chars.length() - 1);
+  }
+
+  private void writeNumberValue(ASTNode node, final boolean isInt) {
+    writeNumberValue(node, isInt, true);
+  }
+
+  // In Flex css number cannot be hex (#ddaabb, allowable only for Color)
+  private void writeNumberValue(ASTNode node, final boolean isInt, boolean writeCssTypeMarker) {
+    if (writeCssTypeMarker) {
+      propertyOut.write(CssPropertyType.NUMBER);
+    }
+
     final IElementType elementType = node.getElementType();
     boolean isNegative = false;
     if (elementType == CssElementTypes.CSS_NUMBER_TERM) {
@@ -311,6 +357,16 @@ public class CssWriter {
     else if (elementType == CssElementTypes.CSS_MINUS) {
       isNegative = true;
       node = node.getTreeNext().getFirstChildNode();
+    }
+    else if (elementType == CssElementTypes.CSS_HASH) {
+      final CharSequence chars = node.getChars();
+      if (chars.length() > (1 + 6)) {
+        propertyOut.writeAmfUInt(IOUtil.parseLong(chars, 1, false, 16));
+      }
+      else {
+        propertyOut.writeAmfUInt(IOUtil.parseInt(chars, 1, false, 16));
+      }
+      return;
     }
     else {
       throw new IllegalArgumentException("unknown number value type " + elementType);
@@ -339,7 +395,12 @@ public class CssWriter {
     propertyOut.writeAmfUInt(color.getRGB());
   }
 
-  // 5
+  /**
+   * If there is no descriptor (FlexCssPropertyDescriptor) for property, then:
+   * 1) property is outdated and unused, but it have forgotten remove it
+   * 2) developer is too lazy
+   * 5
+   */
   private void writeUndefinedPropertyValue(CssTermList value) throws InvalidPropertyException {
     CssTerm[] terms = PsiTreeUtil.getChildrenOfType(value, CssTerm.class);
     assert terms != null && terms.length > 0;
@@ -347,7 +408,6 @@ public class CssWriter {
     if (termType == CssTermTypes.COLOR) {
       // todo test for CSS_FUNCTION — rgb()
       if (terms.length == 1) {
-        // todo form of color: function, hex, name, string
         propertyOut.write(CssPropertyType.COLOR_INT);
         writeColor(value);
       }
@@ -360,7 +420,8 @@ public class CssWriter {
       }
     }
     else if (termType == CssTermTypes.IDENT) {
-      @SuppressWarnings({"ConstantConditions"}) ASTNode node = value.getFirstChild().getFirstChild().getNode();
+      //noinspection ConstantConditions
+      final ASTNode node = value.getFirstChild().getFirstChild().getNode();
       if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
         writeFunctionValue((CssFunction)node);
       }
@@ -389,18 +450,17 @@ public class CssWriter {
       else {
         propertyOut.write(CssPropertyType.NUMBER);
       }
-      for (CssTerm nTerm : terms) {
-        String v = nTerm.getText();
-        if (v.indexOf('.') == -1) {
-          propertyOut.writeAmfInt(Integer.valueOf(v));
-        }
-        else {
-          propertyOut.writeAmfDouble(v);
-        }
-      }
+      writeNumberTerms(terms, false);
     }
     else {
       throw new IllegalArgumentException("unknown css term type: " + termType);
+    }
+  }
+
+  private void writeNumberTerms(CssTerm[] terms, boolean isInt) {
+    for (CssTerm nTerm : terms) {
+      //noinspection ConstantConditions
+      writeNumberValue(nTerm.getFirstChild().getNode(), isInt, false);
     }
   }
 

@@ -45,7 +45,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
   public static final ID<String, Set<FlexStyleIndexInfo>> INDEX_ID = ID.create("js.style.index");
 
-  private static final int VERSION = 14;
+  private static final int VERSION = 15;
 
   private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();
 
@@ -58,6 +58,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
         writeUTF(out, info.getAttributeName());
         writeUTF(out, info.getInherit());
         writeUTF(out, info.getType());
+        writeUTF(out, info.getArrayType());
         writeUTF(out, info.getFormat());
         writeUTF(out, info.getEnumeration());
         out.writeBoolean(info.isInClass());
@@ -75,10 +76,11 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
         String inherit = readUTF(in);
         assert inherit != null;
         String type = readUTF(in);
+        String arrayType = readUTF(in);
         String format = readUTF(in);
         String enumeration = readUTF(in);
         boolean inClass = in.readBoolean();
-        result.add(new FlexStyleIndexInfo(className, attributeName, inherit, type, format, enumeration, inClass));
+        result.add(new FlexStyleIndexInfo(className, attributeName, inherit, type, arrayType, format, enumeration, inClass));
       }
       return result;
     }

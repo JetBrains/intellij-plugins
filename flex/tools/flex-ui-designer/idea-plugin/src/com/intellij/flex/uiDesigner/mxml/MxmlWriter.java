@@ -415,10 +415,10 @@ public class MxmlWriter {
 
 
   private static boolean isHaloNavigator(String className, JSClass jsClass) {
-    return className.equals(FlexClassNames.ACCORDION) ||
-           className.equals(FlexClassNames.VIEW_STACK) ||
-           JSInheritanceUtil.isParentClass(jsClass, FlexClassNames.ACCORDION) ||
-           JSInheritanceUtil.isParentClass(jsClass, FlexClassNames.VIEW_STACK);
+    return className.equals(FlexCommonTypeNames.ACCORDION) ||
+           className.equals(FlexCommonTypeNames.VIEW_STACK) ||
+           JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.ACCORDION) ||
+           JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.VIEW_STACK);
   }
 
   private void addProblem(@PropertyKey(resourceBundle = FlexUIDesignerBundle.BUNDLE) String key, Object... params) {
@@ -433,16 +433,16 @@ public class MxmlWriter {
     if (defaultDescriptor == null) {
       final JSClass jsClass = (JSClass)descriptor.getDeclaration();
       final String className = descriptor.getQualifiedName();
-      final boolean isDirectContainerImpl = className.equals(FlexClassNames.ICONTAINER);
-      if (isDirectContainerImpl || JSInheritanceUtil.isParentClass(jsClass, FlexClassNames.ICONTAINER)) {
+      final boolean isDirectContainerImpl = className.equals(FlexCommonTypeNames.ICONTAINER);
+      if (isDirectContainerImpl || JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.ICONTAINER)) {
         if (childDescriptor == null) {
           addProblem("error.initializer.cannot.be.represented.in.text", tag.getLocalName(), getLineNumber(tag));
           return -1;
         }
 
         if (!isDirectContainerImpl && isHaloNavigator(className, jsClass) &&
-            !JSInheritanceUtil.isParentClass((JSClass)childDescriptor.getDeclaration(), FlexClassNames.INAVIGATOR_CONTENT)) {
-          addProblem("error.children.must.be", tag.getLocalName(), FlexClassNames.INAVIGATOR_CONTENT, getLineNumber(tag));
+            !JSInheritanceUtil.isParentClass((JSClass)childDescriptor.getDeclaration(), FlexCommonTypeNames.INAVIGATOR_CONTENT)) {
+          addProblem("error.children.must.be", tag.getLocalName(), FlexCommonTypeNames.INAVIGATOR_CONTENT, getLineNumber(tag));
           return -1;
         }
 

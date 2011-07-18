@@ -4,6 +4,7 @@ import cocoa.ItemMouseSelectionMode;
 import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.TextFormatId;
 import cocoa.renderer.InteractiveGraphicsRendererManager;
+import cocoa.renderer.LayeringMode;
 import cocoa.renderer.TextLineAndDisplayObjectEntry;
 
 import flash.display.GradientType;
@@ -25,14 +26,17 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
 
   private static const inactiveStroke:GraphicsStroke = new GraphicsStroke(1);
   inactiveStroke.fill = new GraphicsSolidFill(0x808080);
-  private static const inactiveFill:GraphicsGradientFill = new GraphicsGradientFill(GradientType.LINEAR, [0xffffff, 0xeeeeee], [1, 1],
-                                                                                    [0, 255], sharedMatrix);
+  private static const inactiveFill:GraphicsGradientFill = new GraphicsGradientFill(GradientType.LINEAR, [0xffffff, 0xeeeeee], [1, 1], [0, 255], sharedMatrix);
 
-  private static const graphicsData:Vector.<IGraphicsData> = new <IGraphicsData>[inactiveStroke, inactiveFill];
-  private static const graphicsData2:Vector.<IGraphicsData> = new <IGraphicsData>[inactiveStroke];
+  private static const inactiveStrokeAndFillData:Vector.<IGraphicsData> = new <IGraphicsData>[inactiveStroke, inactiveFill];
+  private static const inactiveStrokeData:Vector.<IGraphicsData> = new <IGraphicsData>[inactiveStroke];
 
   public function EditorTabBarRendererManager(laf:LookAndFeel, lafKey:String) {
     super(laf.getTextFormat(TextFormatId.SYSTEM), new Insets(7, 0, 0, 5));
+  }
+
+  override protected function get layeringMode():int {
+    return LayeringMode.DESCENDING_ORDER;
   }
 
   override public function get mouseSelectionMode():int {
@@ -45,13 +49,12 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
 
   override public function setSelected(itemIndex:int, value:Boolean):void {
     var entry:TextLineAndDisplayObjectEntry = findEntry2(itemIndex);
+    var g:Graphics = Shape(entry.displayObject).graphics;
+    g.clear();
     if (value) {
       drawSelected(itemIndex, entry.displayObject.x, entry.line.userData);
     }
     else {
-      var shape:Shape = Shape(entry.displayObject);
-      var g:Graphics = shape.graphics;
-      g.clear();
       drawNotSelected(g, entry.line.userData, itemIndex);
     }
   }
@@ -95,12 +98,12 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
 
   private function drawNotSelected(g:Graphics, w:Number, itemIndex:int):void {
     sharedMatrix.createGradientBox(w - 1, _fixedRendererDimension - 1, Math.PI / 2, 0.5, 0.5);
-    g.drawGraphicsData(graphicsData);
+    g.drawGraphicsData(inactiveStrokeAndFillData);
 
     var rightX:Number = w - 0.5;
-    if (!isLast(itemIndex) && /* leftFromSelection*/ itemIndex == (_selectionModel.selectedIndex - 1)) {
-      rightX += ARC_SIZE + 1;
-    }
+    //if (!isLast(itemIndex) && /* leftFromSelection*/ itemIndex == (_selectionModel.selectedIndex - 1)) {
+    //  rightX += ARC_SIZE + 1;
+    //}
 
     const topY:Number = 0.5;
     var leftX:Number;
@@ -115,7 +118,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
       g.moveTo(leftX, bottomY);
       g.lineStyle();
       g.lineTo(leftX, topY);
-      g.drawGraphicsData(graphicsData2);
+      g.drawGraphicsData(inactiveStrokeData);
       g.lineTo(rightX - ARC_SIZE, topY);
       g.curveTo(rightX, topY, rightX, topY + ARC_SIZE);
       g.lineTo(rightX, bottomY);
@@ -125,7 +128,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     g.endFill();
 
     if (itemIndex != 0) {
-      g.drawGraphicsData(graphicsData2);
+      g.drawGraphicsData(inactiveStrokeData);
       g.moveTo(- (ARC_SIZE + 1), topY);
       g.lineTo(0.5, topY);
     }

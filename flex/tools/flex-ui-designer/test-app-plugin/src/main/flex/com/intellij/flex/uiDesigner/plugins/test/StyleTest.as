@@ -38,6 +38,9 @@ public class StyleTest extends BaseTestCase {
         library = l;
         break;
       }
+      else if (l.path.indexOf("framework.") == 0) {
+        checkFrameworkDefaultsCss(l);
+      }
     }
     
     var inherited:Array = "listStylePosition,lineHeight,direction,fontSize,symbolColor,lineThrough,rollOverColor,leadingModel,typographicCase,trackingRight,chromeColor,cffHinting,paragraphEndIndent,unfocusedTextSelectionColor,paragraphSpaceAfter,contentBackgroundAlpha,justificationRule,wordSpacing,textIndent,textShadowAlpha,fontFamily,paragraphSpaceBefore,listAutoPadding,listStyleType,fontStyle,downColor,alternatingItemColors,touchDelay,textAlpha,focusColor,fontWeight,inactiveTextSelectionColor,trackingLeft,whiteSpaceCollapse,alignmentBaseline,kerning,accentColor,dominantBaseline,tabStops,contentBackgroundColor,ligatureLevel,selectionColor,textRotation,textShadowColor,textJustify,digitCase,textDecoration,fontLookup,blockProgression,breakOpportunity,justificationStyle,clearFloats,leading,color,firstBaselineOffset,letterSpacing,paragraphStartIndent,textAlign,baselineShift,digitWidth,textAlignLast,renderingMode,locale,focusedTextSelectionColor,caretColor".split(",");    
@@ -50,13 +53,13 @@ public class StyleTest extends BaseTestCase {
     }
     assertThat(inherited.length, i);
 
-    var style:Vector.<CssRuleset> = library.defaultsStyle.rulesets;
-    assertThat(style.length, 42);
-    assertThat(style[0], {selectors: [{subject: "spark.components.Application", conditions: null}], declarations: [{colorName: null, type: CssPropertyType.COLOR_INT, value: 0xffffff}, {name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.ApplicationSkin"}}]});
-    assertThat(style[2], {selectors: [{subject: "spark.components.Button", conditions: null, ancestor: null}], declarations: [{colorName: null, name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.ButtonSkin"}}]});
-    assertThat(style[3], {selectors: [{subject: "spark.components.Button", conditions: [allOf(instanceOf(CssClassCondition), {value: "emphasized"})]}], declarations: [{colorName: null, name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.DefaultButtonSkin"}}]});
+    var rulesets:Vector.<CssRuleset> = library.defaultsStyle.rulesets;
+    assertThat(rulesets.length, 42);
+    assertThat(rulesets[0], {selectors: [{subject: "spark.components.Application", conditions: null}], declarations: [{colorName: null, type: CssPropertyType.COLOR_INT, value: 0xffffff}, {name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.ApplicationSkin"}}]});
+    assertThat(rulesets[2], {selectors: [{subject: "spark.components.Button", conditions: null, ancestor: null}], declarations: [{colorName: null, name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.ButtonSkin"}}]});
+    assertThat(rulesets[3], {selectors: [{subject: "spark.components.Button", conditions: [allOf(instanceOf(CssClassCondition), {value: "emphasized"})]}], declarations: [{colorName: null, name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.DefaultButtonSkin"}}]});
     
-    assertThat(style[6], {selectors: [{subject: "spark.components.ComboBox", conditions: null}], declarations: [
+    assertThat(rulesets[6], {selectors: [{subject: "spark.components.ComboBox", conditions: null}], declarations: [
       {name: "paddingBottom", type: CssPropertyType.NUMBER, value: 3},
       {name: "paddingLeft", type: CssPropertyType.NUMBER, value: 3},
       {name: "paddingRight", type: CssPropertyType.NUMBER, value: 3},
@@ -64,8 +67,15 @@ public class StyleTest extends BaseTestCase {
       {colorName: null, name: "skinClass", type: CssPropertyType.CLASS_REFERENCE, value: {className: "spark.skins.spark.ComboBoxSkin"}}
     ]});
     
-    assertThat(style[28], {selectors: [{subject: "spark.components.supportClasses.SkinnableTextBase", conditions: [allOf(instanceOf(CssPseudoCondition), {value: "normalWithPrompt"})], ancestor: null}]});
-    assertThat(style[29], {selectors: [{subject: "spark.components.supportClasses.SkinnableTextBase", conditions: [allOf(instanceOf(CssPseudoCondition), {value: "disabledWithPrompt"})], ancestor: null}]});
+    assertThat(rulesets[28], {selectors: [{subject: "spark.components.supportClasses.SkinnableTextBase", conditions: [allOf(instanceOf(CssPseudoCondition), {value: "normalWithPrompt"})], ancestor: null}]});
+    assertThat(rulesets[29], {selectors: [{subject: "spark.components.supportClasses.SkinnableTextBase", conditions: [allOf(instanceOf(CssPseudoCondition), {value: "disabledWithPrompt"})], ancestor: null}]});
+  }
+
+  private static function checkFrameworkDefaultsCss(library:LibrarySetItem):void {
+    var rulesets:Vector.<CssRuleset> = library.defaultsStyle.rulesets;
+    assertThat(rulesets.length, 7);
+    assertThat(rulesets[0].declarations[59], {name: "highlightAlphas", type: CssPropertyType.ARRAY_OF_NUMBER, value: [0.3, 0]});
+    assertThat(rulesets[0].declarations[72], {name: "kerning", type: CssPropertyType.STRING, value: "default"});
   }
 
   public function StyleTag():void {

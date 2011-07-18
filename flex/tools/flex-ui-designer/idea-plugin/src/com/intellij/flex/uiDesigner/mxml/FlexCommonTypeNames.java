@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-public interface FlexClassNames {
+public interface FlexCommonTypeNames {
   String IFACTORY = "mx.core.IFactory";
   String ICONTAINER = "mx.core.IContainer";
   String ACCORDION = "mx.containers.Accordion";

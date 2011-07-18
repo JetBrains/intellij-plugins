@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -23,11 +22,12 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.project.*;
+import com.intellij.openapi.project.ModuleAdapter;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
-import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.xml.XmlFile;
@@ -184,29 +184,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       @Override
       public void consume(String id) {
         if ("edit".equals(id)) {
-          //FlexSdkUtils.openModuleOrFacetConfigurable(module);
-          openModuleOrFacetConfigurable(module);
+          FlexSdkUtils.openModuleOrFacetConfigurable(module);
         }
         else {
           LOG.error("unexpected id: " + id);
-        }
-      }
-    });
-  }
-
-  // todo delete after idea 10.5 support will be discontinued
-  public static void openModuleOrFacetConfigurable(final Module module) {
-    final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
-    ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
-      public void run() {
-        if (module.getModuleType() instanceof FlexModuleType) {
-          projectStructureConfigurable.select(module.getName(), ProjectBundle.message("modules.classpath.title"), true);
-        }
-        else {
-          final FlexFacet facet = FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
-          if (facet != null) {
-            projectStructureConfigurable.select(facet, true);
-          }
         }
       }
     });
@@ -385,8 +366,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
         }
       });
-    //notification.notify(project);
-    Notifications.Bus.notify(notification, project);
+    notification.notify(project);
   }
 
   class PendingOpenDocumentTask implements Runnable {
