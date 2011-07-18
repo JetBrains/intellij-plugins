@@ -35,7 +35,6 @@
     <projectService serviceInterface="com.intellij.usages.impl.rules.DirectoryGroupingRule"
                     serviceImplementation="com.intellij.usages.impl.rules.DirectoryGroupingRule"/>
     <highlightVisitor implementation="com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitor"/>
-    <fileTypeFactory implementation="com.intellij.openapi.fileTypes.impl.JavaFileTypeFactory"/>
     <applicationService serviceInterface="com.intellij.psi.JavaDirectoryService"
                         serviceImplementation="com.intellij.psi.impl.file.JavaDirectoryServiceImpl"/>
     <projectService serviceInterface="com.intellij.openapi.roots.PackageIndex"
@@ -56,9 +55,6 @@
 
 
     <moduleType id="JAVA_MODULE" implementationClass="com.intellij.openapi.module.JavaModuleType"/>
-    <lang.parserDefinition language="JAVA" implementationClass="com.intellij.lang.java.JavaParserDefinition"/>
-
-    <lang.ast.factory language="JAVA" implementationClass="com.intellij.psi.impl.source.tree.JavaASTFactory"/>
 
     <iconProvider implementation="com.intellij.psi.impl.JavaDirectoryIconProvider"/>
     <moduleExtension implementation="com.intellij.openapi.roots.impl.CompilerModuleExtensionImpl"/>

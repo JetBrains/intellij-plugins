@@ -458,6 +458,7 @@ def layoutFull(String target, Set usedJars) {
             exclude(name: "**/common/**.rb")
             exclude(name: "**/tips/**")
             exclude(name: "/search/**")
+            exclude(name: "**/FileTypeManager.xml")
           }
         }
         zipfileset(src: "${home}/lib/client-api.jar")
@@ -482,6 +483,9 @@ def layoutFull(String target, Set usedJars) {
           exclude(name: "**/DebuggerSettings.xml")
         }
         module("colorSchemes")
+        module("flex-ide") {
+          include(name: "**/FileTypeManager.xml")
+        }
       }
 
       jar("forms_rt.jar") {
