@@ -126,9 +126,21 @@
           sourceItemCounter--;
         }
         else {
-          source[allocatedGroupItemIndex] = createGroupItem(DisplayObjectContainer(styleDeclarationProxy is NonSharedStyleDeclarationProxy
-                                                                                     ? NonSharedStyleDeclarationProxy(styleDeclarationProxy)
-            .owner : null));
+          var sd:NonSharedStyleDeclarationProxy = styleDeclarationProxy as NonSharedStyleDeclarationProxy;
+          // if we have multi global (IDEA-72159), we must show it in one group (only one "Global" group item)
+          if (sd != null) {
+            source[allocatedGroupItemIndex] = createGroupItem(DisplayObjectContainer(sd.owner));
+          }
+          else {
+            var globalItem:StyleDeclarationGroupItem = createGroupItem(null);
+            if (source.indexOf(globalItem) == -1) {
+              source[allocatedGroupItemIndex] = globalItem;
+            }
+            else {
+              source[allocatedGroupItemIndex] = source[allocatedGroupItemIndex + 1];
+              sourceItemCounter--;
+            }
+          }
         }
       }
 
@@ -159,7 +171,7 @@
       return item;
     }
 
-    private function itemRendererFunction(item:Object):IFactory {
+    private static function itemRendererFunction(item:Object):IFactory {
       return item is StyleDeclarationGroupItem ? groupItemRendererFactory : (item is NamespaceUnificator ? namespaceListRendererFactory
         : cssDeclarationItemRendererFactory);
     }
