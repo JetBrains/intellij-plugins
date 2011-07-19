@@ -149,7 +149,7 @@
       <module fileurl="file://$PROJECT_DIR$/test.iml" filepath="$PROJECT_DIR$/test.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-data/test-data.iml" filepath="$PROJECT_DIR$/test-data/test-data.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-data-libs.iml" filepath="$PROJECT_DIR$/test-data-libs.iml" />
-      <module fileurl="file://$PROJECT_DIR$/test-mx/test-mx.iml" filepath="$PROJECT_DIR$/test-mx/test-mx.iml" group="plafAggregator and modules" />
+      <module fileurl="file://$PROJECT_DIR$/test-mx/test-mx.iml" filepath="$PROJECT_DIR$/test-mx/test-mx.iml" />
       <module fileurl="file://$PROJECT_DIR$/ui.iml" filepath="$PROJECT_DIR$/ui.iml" />
     </modules>
   </component>

@@ -59,7 +59,7 @@ public class ChildStyleManager extends AbstractStyleManager implements IStyleMan
   }
 
   public function setRootDeclaration(rootDeclaration:CssStyleDeclaration):void {
-    rootStyleDeclarationProxy = new NonSharedStyleDeclarationProxy(null, rootStyleDeclarationProxy, rootDeclaration);
+    rootStyleDeclarationProxy = new NonSharedStyleDeclarationProxy(null, _parent.rootStyleDeclarationProxy, rootDeclaration);
   }
 }
 }

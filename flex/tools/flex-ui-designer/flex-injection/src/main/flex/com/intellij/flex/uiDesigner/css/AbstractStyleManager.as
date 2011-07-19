@@ -24,7 +24,7 @@ internal class AbstractStyleManager {
   
   private var pseudoCssStates:Dictionary;
   
-  protected var rootStyleDeclarationProxy:StyleDeclarationProxy;
+  internal var rootStyleDeclarationProxy:StyleDeclarationProxy;
   
   //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
   public function set inheritingStyles(value:Object):void {

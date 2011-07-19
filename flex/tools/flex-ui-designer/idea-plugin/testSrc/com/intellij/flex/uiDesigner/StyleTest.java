@@ -34,6 +34,11 @@ public class StyleTest extends MxmlWriterTestBase {
   public void testStyleTagWithSource() throws Exception {
     testFile("StyleTagWithSource.mxml", "externalCss.css");
   }
+
+  @Flex(requireLocalStyleHolder=true)
+  public void testApplicationLevelGlobalSelector() throws Exception {
+    testFile("ApplicationLevelGlobalSelector.mxml");
+  }
   
   public void testComponentWithCustomSkin() throws Exception {
     testFiles(new String[]{"ComponentWithCustomSkin.mxml", "ComponentWithCustomSkinInPackage.mxml", "ComponentWithCustomSkinAsBinding.mxml"}, "CustomSkin.mxml", "testPackage/CustomSkinInPackage.mxml");

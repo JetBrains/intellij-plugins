@@ -1,0 +1,9 @@
+<Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <fx:Style>
+    global {
+      fontSize: 14;
+      fontStyle: italic;
+    }
+  </fx:Style>
+  <TextArea text="Hello"/>
+</Application>

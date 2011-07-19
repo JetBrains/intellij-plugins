@@ -55,7 +55,7 @@ public class RootStyleManager extends AbstractStyleManager implements IStyleMana
   }
 
   public function setRootDeclaration(rootDeclaration:CssStyleDeclaration):void {
-    // logically, this is Immutable, but certainly there is flex-application that adds on the fly a global anything - this is wrong, but it is a reality
+    // logically, this is Immutable, but there is flex-application that adds on the fly a global anything - this is wrong, but it is a reality
     rootStyleDeclarationProxy = new StyleDeclarationProxy(rootDeclaration);
   }
 }

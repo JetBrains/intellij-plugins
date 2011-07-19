@@ -25,6 +25,7 @@ public class StyleTest extends BaseTestCase {
       ComponentWithCustomSkinInPackage();
       ComponentWithCustomSkinAsBinding();
       LibraryWithDefaultsCss();
+      ApplicationLevelGlobalSelector();
     }
   }
 
@@ -114,6 +115,10 @@ public class StyleTest extends BaseTestCase {
   
   public function LibraryWithDefaultsCss():void {
     assertThat(app, [{color: 0xff0000}]);
+  }
+
+  public function ApplicationLevelGlobalSelector():void {
+    assertThat(app, {fontSize: 14, fontStyle: FontPosture.ITALIC});
   }
 }
 }
