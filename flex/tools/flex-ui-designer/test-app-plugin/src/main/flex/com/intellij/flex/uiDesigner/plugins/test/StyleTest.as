@@ -21,6 +21,7 @@ public class StyleTest extends BaseTestCase {
       emptyForCheckLibrariesCssDefaults();
       StyleTag();
       StyleTagWithSource();
+      StyleTagWithSourceAsRelativePath();
       ComponentWithCustomSkin();
       ComponentWithCustomSkinInPackage();
       ComponentWithCustomSkinAsBinding();
@@ -99,6 +100,11 @@ public class StyleTest extends BaseTestCase {
   
   public function StyleTagWithSource():void {
     assertThat(appContent, [{fontStyle: FontPosture.ITALIC}]);
+  }
+
+  public function StyleTagWithSourceAsRelativePath():void {
+    // IDEA-72154
+    StyleTagWithSource();
   }
   
   public function ComponentWithCustomSkin():void {

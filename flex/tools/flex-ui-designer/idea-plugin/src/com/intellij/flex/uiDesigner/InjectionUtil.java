@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.impl.JSFileReference;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import org.jetbrains.annotations.Nullable;
 
 public final class InjectionUtil {
   public static boolean isSwf(VirtualFile source, String mimeType) {
@@ -22,7 +23,14 @@ public final class InjectionUtil {
     return null;
   }
 
+  @Nullable
   public static VirtualFile getReferencedFile(PsiElement element, ProblemsHolder problemsHolder, boolean resolveToFirstIfMulti) {
+    final PsiFileSystemItem psiFile = getReferencedPsiFile(element, problemsHolder, resolveToFirstIfMulti);
+    return psiFile == null ? null : psiFile.getVirtualFile();
+  }
+
+  @Nullable
+  public static PsiFileSystemItem getReferencedPsiFile(PsiElement element, ProblemsHolder problemsHolder, boolean resolveToFirstIfMulti) {
     final PsiReference[] references = element.getReferences();
     final JSFileReference fileReference;
     int i = references.length - 1;
@@ -57,7 +65,7 @@ public final class InjectionUtil {
       problemsHolder.add(FlexUIDesignerBundle.message("error.embed.source.is.directory", fileReference.getText()));
     }
     else {
-      return psiFile.getVirtualFile();
+      return psiFile;
     }
 
     return null;

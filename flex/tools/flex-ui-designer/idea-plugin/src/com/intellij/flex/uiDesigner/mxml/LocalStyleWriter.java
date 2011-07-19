@@ -1,13 +1,12 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.CssWriter;
+import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
+import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.module.Module;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.css.CssFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlAttribute;
@@ -42,11 +41,13 @@ public class LocalStyleWriter {
     if (source != null) {
       XmlAttributeValue valueElement = source.getValueElement();
       if (valueElement != null) {
-        PsiReference reference = valueElement.getReference();
-        if (reference != null) {
-          PsiElement element = reference.resolve();
-          if (element != null && element instanceof CssFile) {
-            cssFile = (CssFile)element;
+        final PsiFileSystemItem psiFile = InjectionUtil.getReferencedPsiFile(valueElement, problemsHolder, true);
+        if (psiFile != null) {
+          if (psiFile instanceof CssFile) {
+            cssFile = (CssFile)psiFile;
+          }
+          else {
+            problemsHolder.add(FlexUIDesignerBundle.message("error.embed.source.is.not.css.file", psiFile.getName()));
           }
         }
       }

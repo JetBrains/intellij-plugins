@@ -35,6 +35,11 @@ public class StyleTest extends MxmlWriterTestBase {
     testFile("StyleTagWithSource.mxml", "externalCss.css");
   }
 
+  @Flex(requireLocalStyleHolder = true)
+  public void testStyleTagWithSourceAsRelativePath() throws Exception {
+    testFile("StyleTagWithSourceAsRelativePath.mxml", "externalCss.css");
+  }
+
   @Flex(requireLocalStyleHolder=true)
   public void testApplicationLevelGlobalSelector() throws Exception {
     testFile("ApplicationLevelGlobalSelector.mxml");
