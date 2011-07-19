@@ -17,7 +17,7 @@ public class ActionScriptCodeStyleSettingsConfigurable extends CodeStyleAbstract
 
   @Override
   protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
-    return new ActionScriptCodeStylePanel(settings);
+    return new ActionScriptCodeStyleMainPanel(settings);
   }
 
   @Override
