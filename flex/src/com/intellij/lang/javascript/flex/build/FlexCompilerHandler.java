@@ -759,18 +759,20 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       .append("\n  <compiler>")
       .append("\n    <debug>").append(String.valueOf(debug)).append("</debug>");
 
+    final List<String> locales = new LinkedList<String>();
+
     if (!customConfigFileUsed && config.USE_LOCALE_SETTINGS) {
-      final String[] localesArray = config.LOCALE.split(",");
-      final List<String> locales = new ArrayList<String>(localesArray.length);
-      for (final String locale : localesArray) {
+      for (final String locale : config.LOCALE.split(",")) {
         locales.add(locale.trim());
       }
+
+      // in generated config file we put only locales set in respective field of Advanced tab and do not parse Additional compiler options here
       addLocales(configTextBuilder, locales);
-      addSourcePath(module, configTextBuilder, locales, config.getType() == FlexBuildConfiguration.Type.FlexUnit);
     }
-    else {
-      addSourcePath(module, configTextBuilder, config.getType() == FlexBuildConfiguration.Type.FlexUnit);
-    }
+
+    // when adding source paths we respect locales set both in UI and in Additional compiler options
+    locales.addAll(FlexUtils.getOptionValues(config.ADDITIONAL_COMPILER_OPTIONS, "locale", "compiler.locale"));
+    addSourcePath(module, configTextBuilder, locales, config.getType() == FlexBuildConfiguration.Type.FlexUnit);
 
     handleModuleDependencies(module, configTextBuilder, config.getType() == FlexBuildConfiguration.Type.FlexUnit, cssFilePath != null);
 

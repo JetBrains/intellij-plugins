@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.application.options.PathMacrosImpl;
+import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetType;
 import com.intellij.facet.ModifiableFacetModel;
@@ -625,5 +626,40 @@ public class FlexUtils {
       folder = "/flex/lib/";
     }
     return FileUtil.toSystemDependentName(PathManager.getHomePath() + folder + filename);
+  }
+
+  public static List<String> getOptionValues(final String commandLine, final String... optionAndAliases) {
+    if (StringUtil.isEmpty(commandLine)) {
+      return Collections.emptyList();
+    }
+
+    final List<String> result = new LinkedList<String>();
+
+    for (CommandLineTokenizer tokenizer = new CommandLineTokenizer(commandLine); tokenizer.hasMoreTokens(); ) {
+      final String token = tokenizer.nextToken();
+      for (String option : optionAndAliases) {
+        if (token.startsWith("-" + option + "=") || token.startsWith("-" + option + "+=")) {
+          result.addAll(StringUtil.split(token.substring(token.indexOf("=") + 1), ","));
+        }
+        else if (token.equals("-" + option) && tokenizer.countTokens() > 0) {
+          if (tokenizer.countTokens() > 0) {
+            String nextToken;
+            while (tokenizer.hasMoreTokens() && canBeCompilerOptionValue(nextToken = tokenizer.peekNextToken())) {
+              tokenizer.nextToken(); // advance tokenizer position
+              result.add(nextToken);
+            }
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  public static boolean canBeCompilerOptionValue(final String text) {
+    if (text.startsWith("-")) {  // option or negative number
+      return text.length() > 1 && Character.isDigit(text.charAt(1));
+    }
+    return !text.startsWith("+");
   }
 }

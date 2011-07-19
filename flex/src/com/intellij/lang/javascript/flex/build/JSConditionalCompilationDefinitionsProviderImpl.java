@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Ref;
@@ -178,20 +179,18 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
             }
           }
         }
-        else if (token.equals("-" + option)) {
-          if (stringTokenizer.countTokens() >= 2) {
-            final String name = stringTokenizer.peekNextToken();
-            if (name.matches(FlexCompiler.CONDITIONAL_COMPILATION_VARIABLE_PATTERN)) {
+        else if (token.equals("-" + option) && stringTokenizer.countTokens() >= 2) {
+          final String name = stringTokenizer.peekNextToken();
+          if (name.matches(FlexCompiler.CONDITIONAL_COMPILATION_VARIABLE_PATTERN)) {
+            stringTokenizer.nextToken(); // advance tokenizer position
+            final String value = stringTokenizer.peekNextToken();
+            if (FlexUtils.canBeCompilerOptionValue(value)) {
               stringTokenizer.nextToken(); // advance tokenizer position
-              final String value = stringTokenizer.peekNextToken();
-              if (isOptionValue(value)) {
-                stringTokenizer.nextToken(); // advance tokenizer position
 
-                final ConditionalCompilationDefinition definition = new ConditionalCompilationDefinition();
-                definition.NAME = name;
-                definition.VALUE = value;
-                result.add(definition);
-              }
+              final ConditionalCompilationDefinition definition = new ConditionalCompilationDefinition();
+              definition.NAME = name;
+              definition.VALUE = value;
+              result.add(definition);
             }
           }
         }
@@ -199,12 +198,5 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
     }
 
     return result;
-  }
-
-  private static boolean isOptionValue(final String text) {
-    if (text.startsWith("-")) {  // option or negative number
-      return text.length() > 1 && Character.isDigit(text.charAt(1));
-    }
-    return !text.startsWith("+");
   }
 }
