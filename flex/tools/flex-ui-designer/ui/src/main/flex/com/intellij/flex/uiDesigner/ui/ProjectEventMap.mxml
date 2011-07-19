@@ -1,6 +1,5 @@
 <LocalEventMap xmlns="plexus" xmlns:fx="http://ns.adobe.com/mxml/2009">
   <fx:Script><![CDATA[
-    import cocoa.CollectionView;
     import cocoa.SegmentedControl;
     import cocoa.tabView.TabView;
 
@@ -61,7 +60,6 @@
     </Injectors>
     
     <Injectors target="{TabView}" targetId="editorTabView">
-      <PropertyInjector source="{DocumentManager}" sourceKey="document.tabIndex" targetKey="selectedIndex" nullValue="-1"/>
       <PropertyInjector sourceKey="selectedItem.document" target="{DocumentManager}"/>
     </Injectors>
     

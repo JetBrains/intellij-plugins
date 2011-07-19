@@ -3,8 +3,6 @@ import cocoa.AbstractCollectionViewDataSource;
 import cocoa.ListViewDataSource;
 import cocoa.SegmentedControl;
 
-import flash.errors.IllegalOperationError;
-
 import org.flyti.plexus.Injectable;
 
 public class StatesBarManager extends AbstractCollectionViewDataSource implements Injectable, ListViewDataSource {
@@ -69,16 +67,20 @@ public class StatesBarManager extends AbstractCollectionViewDataSource implement
     }
   }
 
-  private function selectionChanged(oldIndex:int, newIndex:int):void {
-    _document.uiComponent.currentState = getStringValue(newIndex);
+  private function selectionChanged(oldItem:String, newItem:String, oldIndex:int, newIndex:int):void {
+    _document.uiComponent.currentState = newItem;
   }
 
   public function getObjectValue(itemIndex:int):Object {
-    throw new IllegalOperationError();
+    return getStringValue(itemIndex);
   }
 
   public function getStringValue(itemIndex:int):String {
     return source[itemIndex];
+  }
+
+  public function getItemIndex(object:Object):int {
+    return source.indexOf(object);
   }
 }
 }

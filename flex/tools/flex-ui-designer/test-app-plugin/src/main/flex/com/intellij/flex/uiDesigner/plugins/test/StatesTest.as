@@ -18,9 +18,6 @@ import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.strictlyEqualTo;
 import org.hamcrest.text.containsString;
 
-//noinspection ReservedWordAsName
-
-//noinspection ReservedWordAsName
 public class StatesTest extends BaseTestCase {
   private var stateManager:StatesBarManager;
   

@@ -99,8 +99,10 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     if (doOpen(documentFactory, document)) {
       documentFactory.document = document;
       var w:DocumentWindow = module.project.window;
-      ProjectView(w.contentView).addDocument(document);
+      var projectView:ProjectView = ProjectView(w.contentView);
+      projectView.addDocument(document);
       this.document = document;
+      projectView.selectEditorTab(document);
       return true;
     }
     else {

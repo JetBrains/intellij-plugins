@@ -32,9 +32,9 @@ public class MyTableViewDataSource extends AbstractCollectionViewDataSource impl
   excludedProperties["styleParent"] = true;
   excludedProperties["currentState"] = true;
   excludedProperties["focusPane"] = true;
-  excludedProperties["screen"] = true;
-  excludedProperties["transform"] = true;
-  excludedProperties["designLayer"] = true;
+  excludedProperties.screen = true;
+  excludedProperties.transform = true;
+  excludedProperties.designLayer = true;
 
   private const source:Vector.<Object> = new Vector.<Object>(64);
 

@@ -66,5 +66,9 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
   public function getStringValue(itemIndex:int):String {
     return source[_itemCount - 1 - itemIndex];
   }
+
+  public function getItemIndex(object:Object):int {
+    return source.indexOf(object);
+  }
 }
 }

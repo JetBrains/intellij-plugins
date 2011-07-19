@@ -7,15 +7,13 @@ import mx.styles.CSSStyleDeclaration;
 import mx.styles.IStyleManager2;
 
 public class RootStyleManager extends AbstractStyleManager implements IStyleManager2, StyleManagerEx {
-  private var inheritingStyleMapList:Vector.<Dictionary>;
   private var inheritingStyleFakeProxyObject:FakeBooleanSetProxy;
   
   public function RootStyleManager(inheritingStyleMapList:Vector.<Dictionary>, styleValueResolver:StyleValueResolver):void {
-    this.inheritingStyleMapList = inheritingStyleMapList;
     inheritingStyleFakeProxyObject = new FakeBooleanSetProxy(inheritingStyleMapList);
 
     _styleValueResolver = styleValueResolver;
-    
+
     _instance = this;
   }
   

@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.plaf.aqua {
 import cocoa.plaf.LookAndFeelUtil;
-import cocoa.plaf.aqua.PushButtonSkin;
 import cocoa.text.TextFormat;
 
 import com.intellij.flex.uiDesigner.plaf.IdeaLookAndFeel;
@@ -27,11 +26,19 @@ public class IdeaAquaLookAndFeel extends IdeaLookAndFeel {
     assetsDataClass = null;
     
     data[CustomTextFormatId.SIDE_PANE_GROUP_ITEM_LABEL] = SIDE_PANE_GROUP_ITEM_LABEL_FONT;
-    data["TabLabel.PushButton"] = PushButtonSkin;
+    data["TabLabel.PushButton"] = PBS;
 
     data["small.arrows"] = smallArrowsClass;
     data["small.arrows.disabled"] = smallDisabledArrowsClass;
     data["StatusBar.f"] = new TextFormat(new ElementFormat(fontDescription, 12, 0xfbfbfb));
   }
 }
+}
+
+import cocoa.plaf.aqua.PushButtonSkin;
+
+class PBS extends PushButtonSkin {
+  override protected function get hoverable():Boolean {
+    return true;
+  }
 }

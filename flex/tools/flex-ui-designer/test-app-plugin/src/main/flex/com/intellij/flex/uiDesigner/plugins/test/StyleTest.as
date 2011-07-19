@@ -80,6 +80,7 @@ public class StyleTest extends BaseTestCase {
 
   public function StyleTag():void {
     const normalFontSize:int = appContent.getStyle("fontSize");
+    //noinspection JSUnusedGlobalSymbols
     assertThat(appContent, [
       {label: "myFontStyle", id: "myButton", styleName: "myFontStyle", fontSize: 15, fontStyle: FontPosture.ITALIC, color: 0x9933FF, backgroundColor: strictlyEqualTo(undefined)},
       {label: "emphasized", emphasized: true, fontSize: normalFontSize, fontStyle: FontPosture.ITALIC, color: 0},

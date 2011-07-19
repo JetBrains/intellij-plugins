@@ -28,7 +28,8 @@ public class ProjectView extends AbstractComponent implements Injectable {
   ui var sidebar:Sidebar;
   ui var editorTabView:TabView;
 
-  private const editorPanes:PaneViewDataSource = new PaneViewDataSource(new Vector.<PaneItem>());
+  private const editorTabsSource:Vector.<PaneItem> = new Vector.<PaneItem>();
+  private const editorPanes:PaneViewDataSource = new PaneViewDataSource(editorTabsSource);
   
   private var _documentFactoryManager:DocumentFactoryManager;
   public function set documentFactoryManager(value:DocumentFactoryManager):void {
@@ -72,8 +73,21 @@ public class ProjectView extends AbstractComponent implements Injectable {
     var paneItem:DocumentPaneItem = new DocumentPaneItem(document);
     paneItem.localizedTitle = document.file.name.substring(0, document.file.name.lastIndexOf("."));
 
-    document.tabIndex = editorPanes.itemCount;
     editorPanes.addItem(paneItem);
+  }
+
+  public function selectEditorTab(document:Document):void {
+    var index:int = -1;
+    for (var i:int = 0; i < editorTabsSource.length; i++) {
+      if (DocumentPaneItem(editorTabsSource[i]).document == document) {
+        index = i;
+        break;
+      }
+    }
+
+    if (index != -1) {
+      editorTabView.selectedIndex = index;
+    }
   }
 
   //noinspection JSUnusedLocalSymbols
