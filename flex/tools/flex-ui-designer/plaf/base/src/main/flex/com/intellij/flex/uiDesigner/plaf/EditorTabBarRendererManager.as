@@ -70,7 +70,7 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     if (closeButton == null) {
       closeButton = new PushButton();
       entry.components[0] = closeButton;
-      closeButton.setAction(closeTab, itemIndex);
+      closeButton.setAction(closeTab, entry);
       closeButton.lafSubkey = "TabLabel";
     }
 
@@ -102,8 +102,8 @@ public class EditorTabBarRendererManager extends InteractiveGraphicsRendererMana
     }
   }
 
-  private function closeTab(itemIndex:int):void {
-    EditorTabViewSkin(_container.parent).closeTab(itemIndex);
+  private function closeTab(entry:TextLineAndDisplayObjectEntry):void {
+    EditorTabViewSkin(_container.parent).closeTab(entry.itemIndex);
   }
 
   override public function setSelected(itemIndex:int, relatedIndex:int, value:Boolean):void {
