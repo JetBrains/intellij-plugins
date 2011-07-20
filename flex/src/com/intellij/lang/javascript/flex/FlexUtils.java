@@ -463,14 +463,14 @@ public class FlexUtils {
     return module.getModuleType() instanceof FlexModuleType || FacetManager.getInstance(module).getFacetByType(FlexFacet.ID) != null;
   }
 
-  public static String getFlexCompilerWorkDirPath(final Project project, final Sdk flexSdk) {
+  public static String getFlexCompilerWorkDirPath(final Project project, final @Nullable Sdk flexSdk) {
     final VirtualFile baseDir = project.getBaseDir();
     return FlexSdkUtils.isFlex2Sdk(flexSdk) || FlexSdkUtils.isFlex3_0Sdk(flexSdk)
            ? getTempFlexConfigsDirPath() // avoid problems with spaces in temp dir path (fcsh from Flex SDK 2 is not patched)
            : (baseDir == null ? "" : baseDir.getPath());
   }
 
-  public static VirtualFile getFlexCompilerWorkDir(final Project project, final Sdk flexSdk) {
+  public static VirtualFile getFlexCompilerWorkDir(final Project project, final @Nullable Sdk flexSdk) {
     return LocalFileSystem.getInstance().findFileByPath(getFlexCompilerWorkDirPath(project, flexSdk));
   }
 

@@ -35,7 +35,7 @@ public class FlexCompilationManager {
 
   private final Graph<Module> myModuleGraph;
   private boolean myCompilationFinished;
-  private final ModuleToRelatedFilesCache myModuleToRelatedFilesCache;
+  private final FlexCompilerDependenciesCache myCompilerDependenciesCache;
 
   private static final String OUT_OF_MEMORY = "java.lang.OutOfMemoryError";
   private static final String JAVA_HEAP_SPACE = "Java heap space";
@@ -52,7 +52,7 @@ public class FlexCompilationManager {
 
     myModuleGraph = ModuleCompilerUtil.createModuleGraph(ModuleManager.getInstance(context.getProject()).getModules());
     myCompilationFinished = false;
-    myModuleToRelatedFilesCache = FlexCompilerHandler.getInstance(context.getProject()).getModuleToRelatedFilesCache();
+    myCompilerDependenciesCache = FlexCompilerHandler.getInstance(context.getProject()).getCompilerDependenciesCache();
   }
 
   public void compile() {
@@ -150,7 +150,7 @@ public class FlexCompilationManager {
         if (task.getConfig().getType() == FlexBuildConfiguration.Type.Default) {
           final Module module = task.getModule();
           if (task.isCompilationFailed()) {
-            myModuleToRelatedFilesCache.markModuleAndDependentModulesDirty(module);
+            myCompilerDependenciesCache.markModuleAndDependentModulesDirty(module);
           }
           else if (areAllModuleCompilationsSuccessful(module)) {
             final Collection<List<VirtualFile>> allConfigFiles = new ArrayList<List<VirtualFile>>();
@@ -162,7 +162,7 @@ public class FlexCompilationManager {
 
             //noinspection SynchronizeOnThis
             synchronized (this) {
-              myModuleToRelatedFilesCache.cacheModuleWithDependencies(myCompileContext, module, allConfigFiles);
+              myCompilerDependenciesCache.cacheModuleWithDependencies(myCompileContext, module, allConfigFiles);
             }
           }
         }
@@ -259,7 +259,7 @@ public class FlexCompilationManager {
 
         if (taskToStart.getConfig().getType() == FlexBuildConfiguration.Type.Default &&
             isMake() &&
-            myModuleToRelatedFilesCache.isNothingChangedSincePreviousCompilation(taskToStart.getModule())) {
+            myCompilerDependenciesCache.isNothingChangedSincePreviousCompilation(taskToStart.getModule())) {
           addMessage(taskToStart, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.skipped.because.nothing.changed"),
                      null, -1, -1);
           taskToStart.cancel();

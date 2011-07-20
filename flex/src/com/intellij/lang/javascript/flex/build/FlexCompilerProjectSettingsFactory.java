@@ -113,7 +113,7 @@ public class FlexCompilerProjectSettingsFactory implements CompilerSettingsFacto
 
     public void apply() throws ConfigurationException {
       final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(myProject);
-      flexCompilerHandler.getModuleToRelatedFilesCache().clear();
+      flexCompilerHandler.getCompilerDependenciesCache().clear();
 
       if (isImportantModified()) {
         flexCompilerHandler.quitCompilerShell();

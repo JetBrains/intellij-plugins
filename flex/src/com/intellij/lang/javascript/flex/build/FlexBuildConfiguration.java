@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.ProjectTopics;
 import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -7,14 +8,14 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
-import com.intellij.openapi.roots.*;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.CompilerModuleExtension;
+import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.intellij.ProjectTopics;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -131,31 +132,12 @@ public class FlexBuildConfiguration implements ModuleComponent, PersistentStateC
   }
 
   public void initComponent() {
-    myModule.getMessageBus().connect(myModule).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
-      String[] oldSourceRootUrls = ModuleRootManager.getInstance(myModule).getSourceRootUrls();
-      List<String> oldOrderEntryUrls = new ArrayList<String>();
-
-      {
-        addUrlsToTrackIfChanged(oldOrderEntryUrls);
-      }
-
-      public void beforeRootsChange(final ModuleRootEvent event) {
-      }
-
-      public void rootsChanged(final ModuleRootEvent event) {
-        final String[] sourceRootUrls = ModuleRootManager.getInstance(myModule).getSourceRootUrls();
-        final List<String> orderEntryUrls = new ArrayList<String>();
-
-        addUrlsToTrackIfChanged(orderEntryUrls);
-        if (!Comparing.equal(oldSourceRootUrls, sourceRootUrls) || !Comparing.haveEqualElements(oldOrderEntryUrls, orderEntryUrls)) {
-          FlexCompilerHandler.getInstance(myModule.getProject()).getModuleToRelatedFilesCache()
-            .markModuleAndDependentModulesDirty(myModule);
+    if (myModule.getModuleType() instanceof FlexModuleType) {
+      myModule.getMessageBus().connect(myModule).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
+        public void beforeRootsChange(final ModuleRootEvent event) {
         }
 
-        oldSourceRootUrls = sourceRootUrls;
-        oldOrderEntryUrls = orderEntryUrls;
-
-        if (myModule.getModuleType() instanceof FlexModuleType) {
+        public void rootsChanged(final ModuleRootEvent event) {
           final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
           TargetPlayerUtils.updateTargetPlayerIfMajorOrMinorVersionDiffers(FlexBuildConfiguration.this, sdk);
 
@@ -166,25 +148,8 @@ public class FlexBuildConfiguration implements ModuleComponent, PersistentStateC
             moduleEditor.moduleCountChanged();
           }
         }
-      }
-
-      private void addUrlsToTrackIfChanged(final List<String> orderEntryUrls) {
-        final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
-        for (final OrderEntry orderEntry : rootManager.getOrderEntries()) {
-          if (orderEntry instanceof LibraryOrderEntry) {
-            for (final String _url : ((LibraryOrderEntry)orderEntry).getRootUrls(OrderRootType.CLASSES)) {
-              final String url = _url.toLowerCase();
-              if (url.endsWith(".swc") || url.endsWith(".swc!/")) {
-                orderEntryUrls.add(_url);
-              }
-            }
-          }
-          else if (orderEntry instanceof ModuleOrderEntry) {
-            orderEntryUrls.add(((ModuleOrderEntry)orderEntry).getModuleName());
-          }
-        }
-      }
-    });
+      });
+    }
   }
 
   public void disposeComponent() {
@@ -261,18 +226,19 @@ public class FlexBuildConfiguration implements ModuleComponent, PersistentStateC
   }
 
   public String getOutputFileFullPath() {
-    return getCompileOutputPath() + "/" +  OUTPUT_FILE_NAME;
+    return getCompileOutputPath() + "/" + OUTPUT_FILE_NAME;
   }
 
   public static Collection<FlexBuildConfiguration> getConfigForFlexModuleOrItsFlexFacets(final Module module) {
     final Collection<FlexBuildConfiguration> configurations = new ArrayList<FlexBuildConfiguration>();
-     if (module.getModuleType() instanceof FlexModuleType) {
+    if (module.getModuleType() instanceof FlexModuleType) {
       configurations.add(getInstance(module));
-    } else {
+    }
+    else {
       final Collection<FlexFacet> flexFacets = FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID);
-       for (FlexFacet flexFacet : flexFacets) {
-         configurations.add(getInstance(flexFacet));
-       }
+      for (FlexFacet flexFacet : flexFacets) {
+        configurations.add(getInstance(flexFacet));
+      }
     }
     return configurations;
   }

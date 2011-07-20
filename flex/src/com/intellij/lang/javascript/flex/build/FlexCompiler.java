@@ -61,7 +61,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (items.length > 0 && context.isRebuild()) {
       final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
       flexCompilerHandler.quitCompilerShell();
-      flexCompilerHandler.getModuleToRelatedFilesCache().clear();
+      flexCompilerHandler.getCompilerDependenciesCache().clear();
     }
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       public void run() {

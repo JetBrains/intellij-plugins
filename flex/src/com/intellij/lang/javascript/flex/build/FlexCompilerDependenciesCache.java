@@ -9,14 +9,13 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleFileIndex;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.*;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -28,18 +27,14 @@ import java.util.regex.Pattern;
  * This cache is used to skip module compilation if nothing has changed since last successful compilation.
  * Module is either Flex module or Java module with Flex facets.
  */
-public class ModuleToRelatedFilesCache {
+public class FlexCompilerDependenciesCache {
+
+  private final Project myProject;
+  public final Map<Module, ModuleDependencies> myModuleToDependenciesCache = new THashMap<Module, ModuleDependencies>();
+  private final Set<VirtualFile> myDirtyFiles = new THashSet<VirtualFile>();
 
   private static final Pattern OUTPUT_FILE_IS_UP_TO_DATE =
     Pattern.compile("(\\[.*\\] )?(.+) is up-to-date and does not have to be rebuilt.");
-
-  private final Project myProject;
-  /**
-   * Presence of module in this map means that nothing was changed since last compilation.
-   * If the file that module depends on is a directory then it is handled recursively.
-   * For example adding sdk root to this cache is enough to handle compilation dependency on all sdk files.
-   */
-  public final Map<Module, Set<VirtualFile>> myModuleToRelatedFiles = new THashMap<Module, Set<VirtualFile>>();
 
   private static final String OUTPUT_FILE_TAG = "<flex-config><output>";
 
@@ -52,43 +47,41 @@ public class ModuleToRelatedFilesCache {
       // "<flex-config><output>"   intentionally excluded, because already handled
     };
 
-
-  public ModuleToRelatedFilesCache(final Project project) {
+  public FlexCompilerDependenciesCache(final Project project) {
     myProject = project;
   }
 
   public void clear() {
-    myModuleToRelatedFiles.clear();
+    myModuleToDependenciesCache.clear();
+    myDirtyFiles.clear();
   }
 
   public boolean isNothingChangedSincePreviousCompilation(final Module module) {
-    return myModuleToRelatedFiles.containsKey(module);
+    clearDirtyModules();
+    return myModuleToDependenciesCache.containsKey(module);
   }
 
   public void markModuleAndDependentModulesDirty(final Module module) {
-    if (myModuleToRelatedFiles.remove(module) != null) {
+    if (myModuleToDependenciesCache.remove(module) != null) {
       clearForDependentModules(module);
     }
   }
 
-  public void markDependentModulesDirty(final VirtualFile file) {
-    if (myModuleToRelatedFiles.isEmpty()) return;
-
-    clearModulesIfSourceRoot(file);
-    clearModulesThatDependOnFile(file);
+  public void addDirtyFile(final VirtualFile file) {
+    myDirtyFiles.add(file);
   }
 
   public void cacheModuleWithDependencies(final CompileContext context,
                                           final Module module,
                                           final Collection<List<VirtualFile>> allConfigFiles) {
-    myModuleToRelatedFiles.remove(module);
+    myModuleToDependenciesCache.remove(module);
     for (List<VirtualFile> configFiles : allConfigFiles) {
       cacheModuleWithDependencies(context, module, configFiles, true);
     }
   }
 
   public void cacheModuleWithDependencies(final CompileContext context, final Module module, final List<VirtualFile> configFiles) {
-    myModuleToRelatedFiles.remove(module);
+    myModuleToDependenciesCache.remove(module);
     cacheModuleWithDependencies(context, module, configFiles, false);
   }
 
@@ -96,33 +89,35 @@ public class ModuleToRelatedFilesCache {
                                            final Module module,
                                            final List<VirtualFile> configFiles,
                                            final boolean append) {
+    clearDirtyModules();
+
     final VirtualFile outputFile = getOutputFile(context.getMessages(CompilerMessageCategory.INFORMATION), configFiles);
     if (outputFile != null) {
-      final HashSet<VirtualFile> dependencies = new HashSet<VirtualFile>();
-      dependencies.add(outputFile);
+      final HashSet<VirtualFile> fileDependencies = new HashSet<VirtualFile>();
+      fileDependencies.add(outputFile);
       final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
       if (sdk != null) {
-        dependencies.add(sdk.getHomeDirectory());
+        fileDependencies.add(sdk.getHomeDirectory());
       }
 
       for (VirtualFile configFile : configFiles) {
-        dependencies.add(configFile);
-        dependencies.addAll(getDependenciesExceptSourceRootsFromConfigFile(module, configFile));
+        fileDependencies.add(configFile);
+        fileDependencies.addAll(getDependenciesExceptSourceRootsFromConfigFile(module, configFile));
       }
 
-      appendCssAndRespectiveSwfFiles(dependencies, module);
+      appendCssAndRespectiveSwfFiles(fileDependencies, module);
 
       if (append) {
-        final Set<VirtualFile> files = myModuleToRelatedFiles.get(module);
-        if (files == null) {
-          myModuleToRelatedFiles.put(module, dependencies);
+        final ModuleDependencies dependencies = myModuleToDependenciesCache.get(module);
+        if (dependencies  == null) {
+          myModuleToDependenciesCache.put(module, ModuleDependencies.create(module, fileDependencies));
         }
         else {
-          files.addAll(dependencies);
+          dependencies.myFiles.addAll(fileDependencies);
         }
       }
       else {
-        myModuleToRelatedFiles.put(module, dependencies);
+        myModuleToDependenciesCache.put(module, ModuleDependencies.create(module, fileDependencies));
       }
     }
   }
@@ -154,12 +149,12 @@ public class ModuleToRelatedFilesCache {
   }
 
   private void clearForDependentModules(final Module module) {
-    if (!myModuleToRelatedFiles.isEmpty()) {
+    if (!myModuleToDependenciesCache.isEmpty()) {
 
       final Runnable runnable = new Runnable() {
         public void run() {
           for (Module dependentModule : ModuleUtil.getAllDependentModules(module)) {
-            if (myModuleToRelatedFiles.remove(dependentModule) != null) {
+            if (myModuleToDependenciesCache.remove(dependentModule) != null) {
               clearForDependentModules(dependentModule);
             }
           }
@@ -257,6 +252,44 @@ public class ModuleToRelatedFilesCache {
     return result;
   }
 
+  private void clearDirtyModules() {
+    clearModulesWithChangedRoots();
+    clearModulesWithDirtyFiles();
+    myDirtyFiles.clear();
+  }
+
+  private void clearModulesWithChangedRoots() {
+    final Collection<Module> modulesToClear = new LinkedList<Module>();
+
+    for (final Map.Entry<Module, ModuleDependencies> entry : myModuleToDependenciesCache.entrySet()) {
+      final Module module = entry.getKey();
+      final ModuleDependencies dependencies = entry.getValue();
+
+      final String[] sourceRootUrls = ModuleRootManager.getInstance(module).getSourceRootUrls();
+      final Collection<String> orderEntryUrls = ModuleDependencies.getOrderEntryUrls(ModuleRootManager.getInstance(module));
+
+      if (!Comparing.equal(dependencies.mySourceRootUrls, sourceRootUrls) ||
+          !Comparing.haveEqualElements(dependencies.myOrderEntryUrls, orderEntryUrls)) {
+        modulesToClear.add(module);
+      }
+    }
+
+    for (Module module : modulesToClear) {
+      markModuleAndDependentModulesDirty(module);
+    }
+  }
+
+  private void clearModulesWithDirtyFiles() {
+    for (final VirtualFile file : myDirtyFiles) {
+      if (myModuleToDependenciesCache.isEmpty()) {
+        break;
+      }
+
+      clearModulesIfSourceRoot(file);
+      clearModulesThatDependOnFile(file);
+    }
+  }
+
   private void clearModulesIfSourceRoot(final VirtualFile file) {
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
     final Module module = fileIndex.getModuleForFile(file);
@@ -268,15 +301,18 @@ public class ModuleToRelatedFilesCache {
     }
   }
 
-  private void clearModulesThatDependOnFile(final VirtualFile file) {
+  private void clearModulesThatDependOnFile(final VirtualFile dirtyFile) {
     final Collection<Module> modulesToClear = new ArrayList<Module>();
-    for (Map.Entry<Module, Set<VirtualFile>> entry : myModuleToRelatedFiles.entrySet()) {
-      final Set<VirtualFile> files = entry.getValue();
-      for (VirtualFile dependencyFile : files) {
-        if (dependencyFile.equals(file) ||
-            (dependencyFile.isDirectory() && VfsUtil.isAncestor(dependencyFile, file, false)) ||
-            (file.isDirectory() && VfsUtil.isAncestor(file, dependencyFile, false))) {
-          modulesToClear.add(entry.getKey());
+
+    for (final Map.Entry<Module, ModuleDependencies> entry : myModuleToDependenciesCache.entrySet()) {
+      final Module module = entry.getKey();
+      final ModuleDependencies dependencies = entry.getValue();
+
+      for (final VirtualFile file : dependencies.myFiles) {
+        if (file.equals(dirtyFile) ||
+            (file.isDirectory() && VfsUtil.isAncestor(file, dirtyFile, false)) ||
+            (dirtyFile.isDirectory() && VfsUtil.isAncestor(dirtyFile, file, false))) {
+          modulesToClear.add(module);
           break;
         }
       }
@@ -284,6 +320,43 @@ public class ModuleToRelatedFilesCache {
 
     for (Module module : modulesToClear) {
       markModuleAndDependentModulesDirty(module);
+    }
+  }
+
+  private static class ModuleDependencies {
+    private final Set<VirtualFile> myFiles;
+    private final String[] mySourceRootUrls;
+    private final Collection<String> myOrderEntryUrls;
+
+    private ModuleDependencies(final Set<VirtualFile> files, final String[] sourceRootUrls, final Collection<String> orderEntryUrls) {
+      myFiles = files;
+      mySourceRootUrls = sourceRootUrls;
+      myOrderEntryUrls = orderEntryUrls;
+    }
+
+    public static ModuleDependencies create(final Module module, final HashSet<VirtualFile> fileDependencies) {
+      final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
+      return new ModuleDependencies(fileDependencies, rootManager.getSourceRootUrls(), getOrderEntryUrls(rootManager));
+    }
+
+    private static Collection<String> getOrderEntryUrls(final ModuleRootManager rootManager) {
+      final Collection<String> result = new LinkedList<String>();
+
+      for (final OrderEntry orderEntry : rootManager.getOrderEntries()) {
+        if (orderEntry instanceof LibraryOrderEntry) {
+          for (final String _url : ((LibraryOrderEntry)orderEntry).getRootUrls(OrderRootType.CLASSES)) {
+            final String url = _url.toLowerCase();
+            if (url.endsWith(".swc") || url.endsWith(".swc!/")) {
+              result.add(_url);
+            }
+          }
+        }
+        else if (orderEntry instanceof ModuleOrderEntry) {
+          result.add(((ModuleOrderEntry)orderEntry).getModuleName());
+        }
+      }
+
+      return result;
     }
   }
 }

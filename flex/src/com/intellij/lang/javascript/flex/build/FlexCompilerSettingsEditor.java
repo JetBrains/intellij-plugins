@@ -441,7 +441,7 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
 
     final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(myModule.getProject());
     flexCompilerHandler.quitCompilerShell();
-    flexCompilerHandler.getModuleToRelatedFilesCache().markModuleAndDependentModulesDirty(myModule);
+    flexCompilerHandler.getCompilerDependenciesCache().markModuleAndDependentModulesDirty(myModule);
 
     config.DO_BUILD = myUseIDEBuilderCheckBox.isSelected();
     config.OUTPUT_TYPE = getOutputType();

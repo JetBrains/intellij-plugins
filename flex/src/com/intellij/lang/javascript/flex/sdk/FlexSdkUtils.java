@@ -503,17 +503,17 @@ public class FlexSdkUtils {
     }
   }
 
-  public static boolean isFlex2Sdk(final Sdk flexSdk) {
+  public static boolean isFlex2Sdk(final @Nullable Sdk flexSdk) {
     final String version = flexSdk == null ? null : flexSdk.getVersionString();
     return version != null && (version.startsWith("2.") || version.startsWith("3.0 Moxie"));
   }
 
-  public static boolean isFlex3_0Sdk(final Sdk flexSdk) {
+  public static boolean isFlex3_0Sdk(final @Nullable Sdk flexSdk) {
     final String version = flexSdk == null ? null : flexSdk.getVersionString();
     return version != null && version.startsWith("3.0");
   }
 
-  public static boolean isFlex4Sdk(final Sdk flexSdk) {
+  public static boolean isFlex4Sdk(final @Nullable Sdk flexSdk) {
     final String version = flexSdk == null ? null : flexSdk.getVersionString();
     return version != null && version.startsWith("4.");
   }
