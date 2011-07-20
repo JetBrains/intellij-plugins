@@ -19,7 +19,6 @@ public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
     myNamingConventionsPane.setVisible(true);
     myFormattingOptionsPane.setVisible(true);
     myIndentPackageChildren.setVisible(true);
-    mySpaceAfterDotsInRestParamBox.setVisible(true);
   }
 
   @Override
@@ -41,13 +40,6 @@ public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
            "}" +
            "varName = val" + semiColon + "\n" +
            "}\n" +
-           "\n" +
-           "    function sum(...args) {\n" +
-           "        for (var i:uint = 0; i < args.length; i++) {\n" +
-           "            trace(args[i]);\n" +
-           "        }\n" +
-           "    }" +
-           "\n" +
            "}";
   }
 

@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.formatter;
 
 import com.intellij.lang.Language;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
@@ -74,6 +75,18 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                                    "SPACE_WITHIN_METHOD_PARENTHESES",
                                    "SPACE_WITHIN_SWITCH_PARENTHESES",
                                    "SPACE_WITHIN_WHILE_PARENTHESES");
+      consumer
+        .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_BEFORE_PROPERTY_COLON",
+                          JSBundle.message("space.before.name.value.separator"),
+                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+      consumer
+        .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_AFTER_PROPERTY_COLON",
+                          JSBundle.message("space.after.name.value.separator"),
+                          CodeStyleSettingsCustomizable.SPACES_OTHER);
+      consumer
+        .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_AFTER_DOTS_IN_REST_PARAMETER",
+                          "After '...' in rest parameter",
+                          CodeStyleSettingsCustomizable.SPACES_OTHER);
     }
     else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
       consumer.showStandardOptions("BLANK_LINES_AFTER_IMPORTS",
@@ -115,9 +128,8 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
     "class Foo {\n" +
     "public function foo(x:int, z) {\n" +
     "var arr = [\"zero\", \"one\"];\n" +
-    "for (var i:int = 0; i < x; i++) {\n" +
+    "var x = {0:\"zero\", 1:\"one\"};\n" +
     "var y = (x ^ 0x123) << 2;\n" +
-    "}\n" +
     "var k = x > 15 ? 1 : 2;\n" +
     "do {\n" +
     "try {\n" +
@@ -146,8 +158,14 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
     "}\n" +
     "} while (x < 0);\n" +
     "}\n" +
-    "}\n" +
     "\n" +
+    "    function sum(...args) {\n" +
+    "        for (var i:uint = 0; i < args.length; i++) {\n" +
+    "            trace(args[i]);\n" +
+    "        }\n" +
+    "    }" +
+    "\n" +
+    "}\n" +
     "}";
 
   public final static String WRAPPING_CODE_SAMPLE =
