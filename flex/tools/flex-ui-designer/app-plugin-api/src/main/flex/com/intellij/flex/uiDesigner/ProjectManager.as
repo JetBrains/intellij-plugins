@@ -154,7 +154,7 @@ class ProjectDataContext implements DataContext {
     this.project = project;
   }
 
-  public function getData(dataId:String):* {
+  public function getData(dataId:String):Object {
     switch (dataId) {
       case PlatformDataKeys.PROJECT.name:
         return project;

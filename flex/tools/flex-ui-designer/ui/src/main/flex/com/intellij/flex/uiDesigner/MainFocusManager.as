@@ -5,11 +5,14 @@ import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.events.FocusEvent;
+import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFieldType;
 import flash.ui.Keyboard;
 
 public class MainFocusManager implements MainFocusManagerSB {
+  //private var lastFocus:IFocusManagerComponent;
+
   public function MainFocusManager(stage:Stage) {
     init(stage);
   }
@@ -18,9 +21,17 @@ public class MainFocusManager implements MainFocusManagerSB {
     stage.addEventListener(FocusEvent.MOUSE_FOCUS_CHANGE, mouseFocusChangeHandler);
     stage.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, keyFocusChangeHandler);
 
+    stage.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+
     stage.nativeWindow.addEventListener(Event.ACTIVATE, windowActivateHandler);
 
     stage.stageFocusRect = false;
+  }
+
+  private function mouseDownHandler(event:MouseEvent):void {
+    if (_activeDocumentFocusManager != null && _activeDocumentFocusManager.handleMouseDown(event)) {
+        lastFocus = null;
+      }
   }
 
   private var _activeDocumentFocusManager:DocumentFocusManagerSB;

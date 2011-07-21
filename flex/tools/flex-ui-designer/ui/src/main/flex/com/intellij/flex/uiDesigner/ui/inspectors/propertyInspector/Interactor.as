@@ -3,12 +3,15 @@ import cocoa.plaf.ButtonSkinInteraction;
 import cocoa.plaf.TableViewSkin;
 import cocoa.renderer.CheckBoxEntry;
 import cocoa.renderer.TextLineEntry;
+import cocoa.tableView.TableColumn;
 import cocoa.tableView.TableView;
 
 import com.intellij.flex.uiDesigner.PlatformDataKeys;
 import com.intellij.flex.uiDesigner.Project;
 
 import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.events.FocusEvent;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
@@ -30,34 +33,53 @@ public class Interactor {
     this.valueRendererManager = valueRendererManager;
 
     tableSkin = TableViewSkin(tableView.skin);
-    tableSkin.bodyHitArea.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
+    var bodyHitArea:Sprite = tableSkin.bodyHitArea;
+    bodyHitArea.mouseChildren = false;
+    bodyHitArea.doubleClickEnabled = true;
+    bodyHitArea.addEventListener(MouseEvent.MOUSE_DOWN, mouseEventHandler);
+    bodyHitArea.addEventListener(MouseEvent.DOUBLE_CLICK, mouseEventHandler);
   }
 
-  private function mouseDownHandler(event:MouseEvent):void {
-    //if (element != null) {
-    //  mouseDownOnElement = true;
-    //}
-
+  private function mouseEventHandler(event:MouseEvent):void {
     currentRowIndex = tableSkin.getRowIndexAt(event.localY);
     currentColumnIndex = tableSkin.getColumnIndexAt(event.localX);
     if (currentColumnIndex == 1) {
       var entry:TextLineEntry = findEntry();
-      if (entry is CheckBoxEntry) {
-        var skin:ButtonSkinInteraction = getButtonSkinInteraction();
-        if (!skin.enabled) {
-          resetCurrentIndices();
-          return;
+      if (event.type == MouseEvent.MOUSE_DOWN) {
+        if (entry is CheckBoxEntry) {
+          mouseDownOnButton(event);
         }
-        
-        skin.mouseDownHandler(event);
-
-        isOver = true;
-
-        tableSkin.bodyHitArea.stage.addEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler);
-        tableSkin.bodyHitArea.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
-        tableSkin.bodyHitArea.addEventListener(MouseEvent.ROLL_OUT, mouseRollOutHandler);
+      }
+      else if (event.type == MouseEvent.DOUBLE_CLICK) {
+        var tableView:TableView = TableView(tableSkin.component);
+        var tableColumn:TableColumn = tableView.columns[currentColumnIndex];
+        if (tableColumn.rendererManager == valueRendererManager) {
+          var editor:Sprite = valueRendererManager.createEditor(currentRowIndex, entry, tableColumn.actualWidth, tableView.rowHeight);
+          if (editor == null) {
+            return;
+          }
+          
+          editor.addEventListener(FocusEvent.FOCUS_OUT, editor_focusOutHandler);
+          //doubleClickHandler(event);
+        }
       }
     }
+  }
+
+  private function mouseDownOnButton(event:MouseEvent):void {
+    var skin:ButtonSkinInteraction = getButtonSkinInteraction();
+    if (!skin.enabled) {
+      resetCurrentIndices();
+      return;
+    }
+
+    skin.mouseDownHandler(event);
+
+    isOver = true;
+
+    tableSkin.bodyHitArea.stage.addEventListener(MouseEvent.MOUSE_UP, stageMouseUpHandler);
+    tableSkin.bodyHitArea.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
+    tableSkin.bodyHitArea.addEventListener(MouseEvent.ROLL_OUT, mouseRollOutHandler);
   }
 
   private function mouseRollOutHandler(event:MouseEvent):void {
@@ -121,6 +143,14 @@ public class Interactor {
 
   private function getButtonSkinInteraction():ButtonSkinInteraction {
     return CheckBoxEntry(findEntry()).interaction;
+  }
+
+  private function doubleClickHandler(event:MouseEvent):void {
+
+  }
+
+  private function editor_focusOutHandler(event:FocusEvent):void {
+    trace(event);
   }
 }
 }

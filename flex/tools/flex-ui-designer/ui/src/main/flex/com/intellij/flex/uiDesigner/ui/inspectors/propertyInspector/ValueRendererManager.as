@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.CheckBox;
 import cocoa.Insets;
+import cocoa.TextInput;
 import cocoa.plaf.ButtonSkinInteraction;
 import cocoa.plaf.LookAndFeel;
 import cocoa.plaf.Skin;
@@ -10,15 +11,23 @@ import cocoa.renderer.TextLineAndDisplayObjectEntry;
 import cocoa.renderer.TextLineAndDisplayObjectEntryFactory;
 import cocoa.renderer.TextLineEntry;
 import cocoa.renderer.TextRendererManager;
+import cocoa.tableView.TableColumn;
+import cocoa.tableView.TableView;
+import cocoa.text.EditableTextView;
 import cocoa.text.TextFormat;
+import cocoa.ui;
 import cocoa.util.StringUtil;
 
 import flash.display.DisplayObject;
+import flash.display.Sprite;
+import flash.events.KeyboardEvent;
 import flash.text.engine.ElementFormat;
 import flash.text.engine.FontDescription;
 import flash.text.engine.FontPosture;
 import flash.text.engine.FontWeight;
 import flash.text.engine.TextLine;
+
+use namespace ui;
 
 public class ValueRendererManager extends TextRendererManager {
   private static const FONT_DESCRIPTION:FontDescription = new FontDescription("Monaco, Consolas");
@@ -56,8 +65,8 @@ public class ValueRendererManager extends TextRendererManager {
     registerEntryFactory(checkBoxFactory);
   }
 
-  public function getDescription(rowIndex:int):Object {
-    return _dataSource.getObjectValue(rowIndex);
+  public function getDescription(itemIndex:int):Object {
+    return _dataSource.getObjectValue(itemIndex);
   }
 
   override protected function createEntry(itemIndex:int, x:Number, y:Number, w:Number, h:Number):TextLineEntry {
@@ -150,7 +159,7 @@ public class ValueRendererManager extends TextRendererManager {
 
       line = textLineRendererFactory.create(textLineContainer, text, w, customElementFormat);
       line.x = x + textInsets.left;
-      line.y = y + h - textInsets.bottom;
+      line.y = (y + h) - textInsets.bottom;
     }
 
     if (newEntry == null) {
@@ -197,6 +206,39 @@ public class ValueRendererManager extends TextRendererManager {
     displayObject.y = y + 1;
 
     return e;
+  }
+
+  public function createEditor(itemIndex:int, entry:TextLineEntry, w:Number, h:Number):Sprite {
+    var description:Object = getDescription(itemIndex);
+    if (description.type != "String") {
+      return null;
+    }
+
+    var textInput:TextInput = new TextInput();
+    textInput.text = myDataSource.object[description.name];
+    var skin:Skin = textInput.createView(laf);
+
+    var displayObject:DisplayObject = DisplayObject(skin);
+    displayObject.x = entry.line.x - textInsets.left;
+    displayObject.width = w;
+
+    _container.addChild(displayObject);
+    _container.mouseChildren = true;
+    skin.validateNow();
+    var textInputHeight:Number = skin.getExplicitOrMeasuredHeight();
+    skin.setActualSize(skin.getExplicitOrMeasuredWidth(), textInputHeight);
+
+    displayObject.y = ((entry.line.y + textInsets.bottom) - h) - Math.round((textInputHeight - h) / 2);
+
+    var textField:EditableTextView = textInput.textDisplay;
+    _container.stage.focus = textField;
+    textField.selectAll();
+
+    return textField;
+  }
+
+  public function closeEditor(editor:Sprite):void {
+    _container.removeChild(editor);
   }
 }
 }

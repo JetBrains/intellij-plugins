@@ -15,13 +15,6 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
   private const tableView:TableView = new TableView();
   private var source:MyTableViewDataSource;
 
-  //private function createGridColumn(headerText:String):GridColumn {
-  //  var column:GridColumn = new GridColumn();
-  //  column.headerText = headerText;
-  //  //column.dataField = dataField;
-  //  return column;
-  //}
-
   private var dataChanged:Boolean;
   private var _element:Object;
   public function get data():Object {

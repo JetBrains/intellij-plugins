@@ -33,6 +33,7 @@ public class DocumentFocusManager extends OnDemandEventDispatcher implements IFo
   private var lastFocus:IFocusManagerComponent;
   private var calculateCandidates:Boolean = true;
 
+  //noinspection JSMismatchedCollectionQueryUpdate
   private var focusableObjects:Vector.<IFocusManagerComponent>;
   private var focusableCandidates:Vector.<IFocusManagerComponent>;
 
@@ -42,7 +43,6 @@ public class DocumentFocusManager extends OnDemandEventDispatcher implements IFo
 
   public function activate():void {
     systemManager.addRealEventListener(FocusEvent.FOCUS_IN, focusInHandler, true);
-    systemManager.addRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
     systemManager.addRealEventListener(MouseEvent.MOUSE_DOWN, mouseDownCaptureHandler, true);
     systemManager.addRealEventListener(KeyboardEvent.KEY_DOWN, defaultButtonKeyHandler);
     systemManager.addRealEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler, true);
@@ -576,31 +576,26 @@ public class DocumentFocusManager extends OnDemandEventDispatcher implements IFo
     //}
   }
 
-  private function mouseDownHandler(event:MouseEvent):void {
+  public function handleMouseDown(event:MouseEvent):Boolean {
     var o:DisplayObject = getTopLevelFocusTarget(InteractiveObject(event.target));
     if (o == null) {
-      return;
+      return false;
     }
 
     // trace("FocusManager mouseDownHandler on " + o);
 
-    // Make sure the containing component gets notified.
-    // As the note above says, we don't set focus to a TextField ever
-    // because the player already did and took care of where
-    // the insertion point is, and we also don't call setfocus
-    // on a component that last the last focused object unless
-    // the last action was just to activate the player and didn't
-    // involve tabbing or clicking on a component
+    // We don't set focus to a TextField ever because the player already did and took care of where
+    // the insertion point is, and we also don't call setfocus on a component that last the last focused object unless
+    // the last action was just to activate the player and didn't involve tabbing or clicking on a component
     if ((o != lastFocus) && !(o is TextField)) {
       setFocus(IFocusManagerComponent(o));
-    }
-    else if (lastFocus) {
-      // trace("FM: skipped setting focus to " + _lastFocus);
     }
 
     if (hasEventListener("mouseDownFM")) {
       dispatchEvent(new FocusEvent("mouseDownFM", false, false, InteractiveObject(o)));
     }
+
+    return true;
   }
 
   private function mouseDownCaptureHandler(event:MouseEvent):void {
@@ -608,20 +603,18 @@ public class DocumentFocusManager extends OnDemandEventDispatcher implements IFo
   }
 
   private function getTopLevelFocusTarget(o:InteractiveObject):InteractiveObject {
+    const hasEventListenerForOverride:Boolean = hasEventListener("getTopLevelFocusTarget");
     while (o != systemManager) {
       if (o is IFocusManagerComponent && IFocusManagerComponent(o).focusEnabled && IFocusManagerComponent(o).mouseFocusEnabled &&
           (o is IUIComponent ? IUIComponent(o).enabled : true)) {
         return o;
       }
 
-      if (hasEventListener("getTopLevelFocusTarget")) {
-        if (!dispatchEvent(new FocusEvent("getTopLevelFocusTarget", false, true, o.parent))) {
-          return null;
-        }
+      if (hasEventListenerForOverride && !dispatchEvent(new FocusEvent("getTopLevelFocusTarget", false, true, o.parent))) {
+        return null;
       }
 
-      o = o.parent;
-      if (o == null) {
+      if ((o = o.parent) == null) {
         break;
       }
     }
