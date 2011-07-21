@@ -112,46 +112,40 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
     MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>();
 
     final Collection<PsiElement> filesToMove = Arrays.asList(myElementsToMove);
+    JSVisibilityUtil.Options options = new JSVisibilityUtil.Options();
     for (PsiElement file : filesToMove) {
-      file.putUserData(JSVisibilityUtil.OVERRIDE_PACKAGE, myTargetPackage);
+      options.overridePackage(file, myTargetPackage);
     }
 
-    try {
-      for (UsageInfo usage : usages) {
-        final PsiElement element = usage.getElement();
-        if (!(element instanceof JSReferenceExpression)) {
-          continue;
-        }
-
-        if (CommonRefactoringUtil.isAncestor(element, filesToMove)) {
-          continue;
-        }
-
-        JSReferenceExpression refExpr = (JSReferenceExpression)element;
-        final PsiElement resolved = refExpr.resolve();
-        if (!(resolved instanceof JSQualifiedNamedElement)) {
-          continue;
-        }
-
-        PsiElement containingClass = null;
-        if (resolved instanceof JSFunction &&
-            ((JSFunction)resolved).isConstructor() &&
-            myElements.contains(containingClass = resolved.getParent()) || myElements.contains(resolved)) {
-
-          JSRefactoringConflictsUtil
-            .checkAccessibility((JSAttributeListOwner)resolved, (JSClass)containingClass, null, refExpr, conflicts, true);
-        }
+    for (UsageInfo usage : usages) {
+      final PsiElement element = usage.getElement();
+      if (!(element instanceof JSReferenceExpression)) {
+        continue;
       }
 
-      for (PsiElement fileToMove : filesToMove) {
-        JSRefactoringConflictsUtil.checkOutgoingReferencesAccessibility(fileToMove, filesToMove, null, true, conflicts,
-                                                                        Conditions.<PsiElement>alwaysTrue());
+      if (CommonRefactoringUtil.isAncestor(element, filesToMove)) {
+        continue;
+      }
+
+      JSReferenceExpression refExpr = (JSReferenceExpression)element;
+      final PsiElement resolved = refExpr.resolve();
+      if (!(resolved instanceof JSQualifiedNamedElement)) {
+        continue;
+      }
+
+      PsiElement containingClass = null;
+      if (resolved instanceof JSFunction &&
+          ((JSFunction)resolved).isConstructor() &&
+          myElements.contains(containingClass = resolved.getParent()) || myElements.contains(resolved)) {
+
+        JSRefactoringConflictsUtil
+          .checkAccessibility((JSAttributeListOwner)resolved, (JSClass)containingClass, null, refExpr, conflicts, true, options);
       }
     }
-    finally {
-      for (PsiElement file : filesToMove) {
-        file.putUserData(JSVisibilityUtil.OVERRIDE_PACKAGE, null);
-      }
+
+    for (PsiElement fileToMove : filesToMove) {
+      JSRefactoringConflictsUtil.checkOutgoingReferencesAccessibility(fileToMove, filesToMove, null, true, conflicts,
+                                                                      Conditions.<PsiElement>alwaysTrue(), options);
     }
 
     // TODO module conflicts

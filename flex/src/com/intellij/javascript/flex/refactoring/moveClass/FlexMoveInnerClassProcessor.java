@@ -203,15 +203,11 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
   private MultiMap<PsiElement, String> detectConflicts() {
     MultiMap<PsiElement, String> result = new MultiMap<PsiElement, String>();
-    myElement.getContainingFile().putUserData(JSVisibilityUtil.OVERRIDE_PACKAGE, myPackageName);
 
-    try {
-      JSRefactoringConflictsUtil.checkOutgoingReferencesAccessibility(myElement, Collections.singletonList(myElement), null, true, result,
-                                                                      Conditions.<PsiElement>alwaysTrue());
-    }
-    finally {
-      myElement.getContainingFile().putUserData(JSVisibilityUtil.OVERRIDE_PACKAGE, null);
-    }
+    JSVisibilityUtil.Options options = new JSVisibilityUtil.Options();
+    options.overridePackage(myElement, myPackageName);
+    JSRefactoringConflictsUtil.checkOutgoingReferencesAccessibility(myElement, Collections.singletonList(myElement), null, true, result,
+                                                                    Conditions.<PsiElement>alwaysTrue(), options);
     return result;
   }
 
