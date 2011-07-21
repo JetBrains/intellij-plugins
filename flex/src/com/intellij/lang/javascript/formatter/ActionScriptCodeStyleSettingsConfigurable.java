@@ -22,6 +22,6 @@ public class ActionScriptCodeStyleSettingsConfigurable extends CodeStyleAbstract
 
   @Override
   public String getHelpTopic() {
-    return "reference.settingsdialog.codestyle.javascript";
+    return "reference.settingsdialog.codestyle.actionscript";
   }
 }
