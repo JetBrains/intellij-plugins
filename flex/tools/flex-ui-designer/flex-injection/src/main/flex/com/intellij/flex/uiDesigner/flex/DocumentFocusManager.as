@@ -55,12 +55,13 @@ public class DocumentFocusManager extends OnDemandEventDispatcher implements IFo
   public function deactivate():void {
   }
 
-  public function restoreFocusToLastControl():void {
+  public function restoreFocusToLastControl():InteractiveObject {
     if (lastFocus != null) {
       setFocus(lastFocus);
+      return null;
     }
     else {
-      systemManager.stage.focus = systemManager;
+      return systemManager;
     }
   }
 
