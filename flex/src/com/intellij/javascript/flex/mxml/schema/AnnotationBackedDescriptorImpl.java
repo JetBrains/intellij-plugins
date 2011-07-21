@@ -59,6 +59,12 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   private static final String[] AUTO_NEVER = {"auto", "never"};
   private static final String[] E4X_XML = {"e4x", "xml"};
   private static final String[] TRUE_FALSE = {"true", "false"};
+  private static final String CLEAR_DIRECTIVE = "@Clear()";
+  private static final String I_STYLE_CLIENT_CLASS = "mx.styles.IStyleClient";
+  // lowercased values listed in flash.css.Descriptor class from Flex compiler
+  private static final String[] COLOR_ALIASES = {"black", "blue", "green", "gray", "silver", "lime", "olive", "white", "yellow", "maroon",
+    "magenta", "navy", "red", "purple", "teal", "fuchsia", "aqua", "cyan", "halogreen", "haloblue", "haloorange", "halosilver"};
+
   protected final String name;
   protected final ClassBackedElementDescriptor parentDescriptor;
 
@@ -524,6 +530,10 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
     if (value.indexOf('{') != -1) return null; // dynamic values
 
+    if (myAnnotationName != null && CLEAR_DIRECTIVE.equals(value)) {
+      return checkClearDirectiveContext(context);
+    }
+
     if (isEnumerated()) {
       boolean inEnumeration = false;
 
@@ -554,7 +564,11 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
             Integer.parseInt(value.substring(startWithSharp ? 1 : 2), 16);
           }
         }
-        else if (!"Color".equals(format) || (value != null && value.length() > 0 && !Character.isLetter(value.charAt(0)))) {
+        else {
+          if ("Color".equals(format) && !StringUtil.isEmptyOrSpaces(value) && !value.isEmpty() && !Character.isDigit(value.charAt(0))) {
+            return checkColorAlias(value);
+          }
+
           if (uint) {
             final long l = Long.parseLong(value);
             if (l < 0 || l > 0xFFFFFFFFL) {
@@ -583,6 +597,37 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       catch (NumberFormatException ex) {
         return FlexBundle.message("flex.invalid.number.value");
       }
+    }
+    return null;
+  }
+
+  @Nullable
+  private static String checkColorAlias(final String s) {
+    if (!ArrayUtil.contains(s.toLowerCase(), COLOR_ALIASES)) {
+      return FlexBundle.message("unknown.color.error", s);
+    }
+    return null;
+  }
+
+  @Nullable
+  private static String checkClearDirectiveContext(final XmlElement context) {
+    final PsiElement attributeOrTag = context instanceof XmlAttributeValue ? context.getParent() : context;
+    final String name = attributeOrTag instanceof XmlAttribute
+                        ? ((XmlAttribute)attributeOrTag).getName() : attributeOrTag instanceof XmlTag
+                                                                     ? ((XmlTag)attributeOrTag).getName() : null;
+    if (name != null && !name.contains(".")) {
+      return FlexBundle.message("clear.directive.state.specific.error");
+    }
+
+    final PsiElement parent = attributeOrTag.getParent();
+    final XmlElementDescriptor descriptor = parent instanceof XmlTag ? ((XmlTag)parent).getDescriptor() : null;
+    final PsiElement declaration = descriptor instanceof ClassBackedElementDescriptor ? descriptor.getDeclaration() : null;
+    final PsiElement iStyleClient = JSResolveUtil.findClassByQName(I_STYLE_CLIENT_CLASS, attributeOrTag);
+
+    if (!(declaration instanceof JSClass) || !(iStyleClient instanceof JSClass)
+        || !JSResolveUtil.checkClassHasParentOfAnotherOne((JSClass)JSResolveUtil.unwrapProxy(declaration),
+                                                          (JSClass)JSResolveUtil.unwrapProxy(iStyleClient), null)) {
+      return FlexBundle.message("clear.directive.IStyleClient.error");
     }
     return null;
   }
@@ -712,7 +757,16 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     }
 
     final String message = validateValue(context, value);
-    if (message != null) host.addMessage(context, message, ValidationHost.ERROR);
+    if (message != null) {
+      PsiElement errorElement = context;
+      if (context instanceof XmlTag) {
+        final XmlText[] textElements = ((XmlTag)context).getValue().getTextElements();
+        if (textElements.length == 1 && !StringUtil.isEmptyOrSpaces(textElements[0].getText())) {
+          errorElement = textElements[0];
+        }
+      }
+      host.addMessage(errorElement, message, ValidationHost.ERROR);
+    }
 
     if (context instanceof XmlTag &&
         FlexStateElementNames.STATES.equals(((XmlTag)context).getLocalName()) &&
