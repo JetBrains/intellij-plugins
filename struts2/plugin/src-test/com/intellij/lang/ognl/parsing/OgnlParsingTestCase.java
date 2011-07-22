@@ -15,7 +15,7 @@
 
 package com.intellij.lang.ognl.parsing;
 
-import com.intellij.lang.ognl.OgnlFileType;
+import com.intellij.lang.ognl.OgnlParserDefinition;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.testFramework.ParsingTestCase;
 import org.jetbrains.annotations.NonNls;
@@ -30,12 +30,12 @@ import java.io.File;
 public abstract class OgnlParsingTestCase extends ParsingTestCase {
 
   protected OgnlParsingTestCase(@NonNls final String dataPath) {
-    super(dataPath, OgnlFileType.INSTANCE.getDefaultExtension());
+    super(dataPath, "ognl", new OgnlParserDefinition());
   }
 
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath().replace(File.separatorChar, '/') + "/contrib/struts2/plugin/testData/ognl";
+    return PathManager.getHomePath().replace(File.separatorChar, '/') + "/contrib/struts2/plugin/testData/ognl/psi";
   }
 
 }
