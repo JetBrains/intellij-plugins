@@ -51,6 +51,7 @@ public class StrutsFilesTree extends CheckboxTreeBase {
 
   public StrutsFilesTree() {
     super(new CheckboxTreeCellRendererBase() {
+
       public void customizeRenderer(final JTree tree,
                                     final Object value,
                                     final boolean selected,
@@ -58,7 +59,7 @@ public class StrutsFilesTree extends CheckboxTreeBase {
                                     final boolean leaf,
                                     final int row,
                                     final boolean hasFocus) {
-
+        if (!(value instanceof DefaultMutableTreeNode)) return;
         final ColoredTreeCellRenderer renderer = getTextRenderer();
         final Object object = ((DefaultMutableTreeNode) value).getUserObject();
         if (object instanceof Module) {
