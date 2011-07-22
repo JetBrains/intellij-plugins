@@ -46,7 +46,7 @@
         </constraints>
         <properties/>
         <clientProperties>
-          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactoryBoldWithIndent"/>
         </clientProperties>
         <border type="etched" title="Launch">
           <title-color color="-16777216"/>
@@ -119,7 +119,7 @@
         </constraints>
         <properties/>
         <clientProperties>
-          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactoryBoldWithIndent"/>
         </clientProperties>
         <border type="etched" title="Options"/>
         <children>

@@ -46,7 +46,7 @@
         </constraints>
         <properties/>
         <clientProperties>
-          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactoryBoldWithIndent"/>
         </clientProperties>
         <border type="etched" title="Launch"/>
         <children>
@@ -133,7 +133,7 @@
         </constraints>
         <properties/>
         <clientProperties>
-          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactoryBoldWithIndent"/>
         </clientProperties>
         <border type="etched" title="Options"/>
         <children>
@@ -272,7 +272,7 @@
         </constraints>
         <properties/>
         <clientProperties>
-          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory"/>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactoryBoldWithIndent"/>
         </clientProperties>
         <border type="etched" title="Run on"/>
         <children>
