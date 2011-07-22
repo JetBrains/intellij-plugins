@@ -112,7 +112,7 @@ public class MainFocusManager implements MainFocusManagerSB {
       }
     }
 
-    NativeWindow(event.currentTarget).stage.focus = lastFocus || suggestedFocus;
+    NativeWindow(event.currentTarget).stage.focus = lastFocus.focusObject || suggestedFocus;
   }
 }
 }
