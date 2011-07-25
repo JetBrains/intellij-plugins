@@ -24,9 +24,9 @@ import com.intellij.jam.reflect.*;
 import com.intellij.javaee.model.common.CommonModelElement;
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
-import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.PropertiesUtil;
 import com.intellij.lang.properties.psi.PropertiesFile;
+import com.intellij.lang.properties.psi.Property;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Comparing;
@@ -34,7 +34,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiAnnotationMemberValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiModifierListOwner;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.jsp.WebDirectoryElement;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ElementPresentationManager;
@@ -57,9 +56,9 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
   /**
    * Resolves to property in {@code struts.properties}.
    */
-  private static final JamConverter<IProperty> PROPERTY_CONVERTER = new JamSimpleReferenceConverter<IProperty>() {
+  private static final JamConverter<Property> PROPERTY_CONVERTER = new JamSimpleReferenceConverter<Property>() {
 
-    private Collection<IProperty> getStrutsProperties(final JamAttributeElement context) {
+    private Collection<Property> getStrutsProperties(final JamAttributeElement context) {
       final PsiAnnotationMemberValue annotationMemberValue = context.getPsiElement();
       if (annotationMemberValue == null) {
         return Collections.emptyList();
@@ -71,32 +70,32 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
       }
 
       final PropertiesFile strutsPropertiesFile = PropertiesUtil.getPropertiesFile("struts", module, null);
-      return strutsPropertiesFile != null ? strutsPropertiesFile.getProperties() : Collections.<IProperty>emptyList();
+      return strutsPropertiesFile != null ? strutsPropertiesFile.getProperties() : Collections.<Property>emptyList();
     }
 
     @Override
-    public IProperty fromString(@Nullable final String s, final JamStringAttributeElement<IProperty> context) {
+    public Property fromString(@Nullable final String s, final JamStringAttributeElement<Property> context) {
       if (s == null) {
         return null;
       }
 
-      final Collection<IProperty> properties = getStrutsProperties(context);
-      return ContainerUtil.find(properties, new Condition<IProperty>() {
-        public boolean value(final IProperty property) {
+      final Collection<Property> properties = getStrutsProperties(context);
+      return ContainerUtil.find(properties, new Condition<Property>() {
+        public boolean value(final Property property) {
           return Comparing.equal(property.getName(), s);
         }
       });
     }
 
     @Override
-    public Collection<IProperty> getVariants(final JamStringAttributeElement<IProperty> context) {
+    public Collection<Property> getVariants(final JamStringAttributeElement<Property> context) {
       return getStrutsProperties(context);
     }
 
     @NotNull
     @Override
-    protected LookupElement createLookupElementFor(@NotNull final IProperty target) {
-      return LookupElementBuilder.create((PsiNamedElement)target.getPsiElement())
+    protected LookupElement createLookupElementFor(@NotNull final Property target) {
+      return LookupElementBuilder.create(target)
         .setIcon(ElementPresentationManager.getIcon(target))
         .setTailText("=" + target.getValue(), true);
     }
@@ -139,7 +138,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
   private static final JamStringAttributeMeta.Single<WebDirectoryElement> VALUE_ATTRIBUTE =
     JamAttributeMeta.singleString("value", VALUE_CONVERTER);
 
-  private static final JamStringAttributeMeta.Single<IProperty> PROPERTY_ATTRIBUTE =
+  private static final JamStringAttributeMeta.Single<Property> PROPERTY_ATTRIBUTE =
     JamAttributeMeta.singleString("property", PROPERTY_CONVERTER);
 
   private static final JamAnnotationMeta RESULT_PATH_META =
@@ -180,7 +179,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
    *
    * @return JAM-Attribute.
    */
-  public JamStringAttributeElement<IProperty> getProperty() {
+  public JamStringAttributeElement<Property> getProperty() {
     return RESULT_PATH_META.getAttribute(getOwner(), PROPERTY_ATTRIBUTE);
   }
 
