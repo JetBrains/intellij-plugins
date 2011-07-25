@@ -15,11 +15,9 @@
 
 package com.intellij.struts2.annotators;
 
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
-import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.codeInsight.navigation.NavigationGutterIconRenderer;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.BasicHighlightingTestCase;
@@ -56,16 +54,13 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
    */
   private void checkGutterActionTargetElements(@NonNls final String javaFile,
                                                @NonNls final String... expectedActionNames) {
-    myFixture.configureByFile(javaFile);
-    myFixture.doHighlighting();
-    final Editor editor = myFixture.getEditor();
-    final List<LineMarkerInfo> infoList = DaemonCodeAnalyzerImpl.getLineMarkers(editor.getDocument(), myProject);
-    assertNotNull(infoList);
-
-    final LineMarkerInfo markerInfo = infoList.get(0);
-    final GutterIconNavigationHandler navigationHandler = markerInfo.getNavigationHandler();
+    final GutterIconRenderer gutterIconRenderer = myFixture.findGutter(javaFile);
+    assertNotNull(gutterIconRenderer);
+    final LineMarkerInfo lineMarkerInfo = ((LineMarkerInfo.LineMarkerGutterIconRenderer) gutterIconRenderer).getLineMarkerInfo();
+    final NavigationGutterIconRenderer navigationHandler = (NavigationGutterIconRenderer) lineMarkerInfo.getNavigationHandler();
     assertNotNull(navigationHandler);
-    final List<PsiElement> targetElements = ((NavigationGutterIconRenderer) navigationHandler).getTargetElements();
+
+    final List<PsiElement> targetElements = navigationHandler.getTargetElements();
 
     final Set<String> foundActionNames = new HashSet<String>();
     for (final PsiElement psiElement : targetElements) {
@@ -86,7 +81,7 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
   public void testGutterMyActionMultipleMappings() throws Throwable {
     createStrutsFileSet("struts-actionClass-multiple_mappings.xml");
     checkGutterActionTargetElements("/src/MyAction.java",
-        "myActionPath1", "myActionPath2", "myActionPath3");
+                                    "myActionPath1", "myActionPath2", "myActionPath3");
   }
 
 }
