@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.model.jam.convention;
 
-import com.intellij.lang.properties.psi.Property;
+import com.intellij.lang.properties.IProperty;
 import com.intellij.psi.jsp.WebDirectoryElement;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
    */
   public void testResolveActionProperty() throws Exception {
     final JamResultPath jamResultPath = getClassJam("jam.ActionProperty", JamResultPath.META_CLASS);
-    final Property property = jamResultPath.getProperty().getValue();
+    final IProperty property = jamResultPath.getProperty().getValue();
     assertNotNull(property);
     assertEquals("myProperty1", property.getName());
   }
