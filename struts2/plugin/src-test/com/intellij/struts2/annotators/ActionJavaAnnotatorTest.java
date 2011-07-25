@@ -15,18 +15,13 @@
 
 package com.intellij.struts2.annotators;
 
-import com.intellij.codeInsight.daemon.LineMarkerInfo;
-import com.intellij.codeInsight.navigation.NavigationGutterIconRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.BasicHighlightingTestCase;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Tests for {@link ActionJavaAnnotator}
@@ -54,22 +49,15 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
    */
   private void checkGutterActionTargetElements(@NonNls final String javaFile,
                                                @NonNls final String... expectedActionNames) {
-    final GutterIconRenderer gutterIconRenderer = myFixture.findGutter(javaFile);
-    assertNotNull(gutterIconRenderer);
-    final LineMarkerInfo lineMarkerInfo = ((LineMarkerInfo.LineMarkerGutterIconRenderer) gutterIconRenderer).getLineMarkerInfo();
-    final NavigationGutterIconRenderer navigationHandler = (NavigationGutterIconRenderer) lineMarkerInfo.getNavigationHandler();
-    assertNotNull(navigationHandler);
+    final GutterIconRenderer renderer = myFixture.findGutter(javaFile);
+    assertNotNull(renderer);
 
-    final List<PsiElement> targetElements = navigationHandler.getTargetElements();
-
-    final Set<String> foundActionNames = new HashSet<String>();
-    for (final PsiElement psiElement : targetElements) {
-      assertInstanceOf(psiElement, XmlTag.class);
-      final String actionName = ((XmlTag) psiElement).getAttributeValue("name");
-      foundActionNames.add(actionName);
-    }
-
-    assertSameElements(foundActionNames, expectedActionNames);
+    AnnotatorTestUtils.checkGutterTargets(renderer, new Function<PsiElement, String>() {
+      @Override
+      public String fun(final PsiElement psiElement) {
+        return ((XmlTag) psiElement).getAttributeValue("name");
+      }
+    }, expectedActionNames);
   }
 
   public void testGutterMyAction() throws Throwable {

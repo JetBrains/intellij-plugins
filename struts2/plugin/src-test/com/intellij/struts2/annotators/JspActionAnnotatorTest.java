@@ -15,19 +15,14 @@
 
 package com.intellij.struts2.annotators;
 
-import com.intellij.codeInsight.daemon.LineMarkerInfo;
-import com.intellij.codeInsight.navigation.NavigationGutterIconRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Test for {@link JspActionAnnotator}
@@ -68,22 +63,13 @@ public class JspActionAnnotatorTest extends BasicHighlightingTestCase<WebModuleF
                                                      @NonNls final String... expectedActionNames) {
     final GutterIconRenderer gutterIconRenderer = myFixture.findGutter(jspFile);
     assertNotNull(gutterIconRenderer);
-    final LineMarkerInfo lineMarkerInfo = ((LineMarkerInfo.LineMarkerGutterIconRenderer) gutterIconRenderer).getLineMarkerInfo();
-    final NavigationGutterIconRenderer navigationHandler = (NavigationGutterIconRenderer) lineMarkerInfo.getNavigationHandler();
-    assertNotNull(navigationHandler);
-
-    final List<PsiElement> targetElements = navigationHandler.getTargetElements();
-
-    final Set<String> foundActionNames = new HashSet<String>();
-    for (final PsiElement psiElement : targetElements) {
-      assertInstanceOf(psiElement, PsiMethod.class);
-      final String actionName = ((PsiMethod) psiElement).getName();
-      foundActionNames.add(actionName);
-    }
-
-    assertSameElements(foundActionNames, expectedActionNames);
+    AnnotatorTestUtils.checkGutterTargets(gutterIconRenderer, new Function<PsiElement, String>() {
+      @Override
+      public String fun(final PsiElement psiElement) {
+        return ((PsiMethod) psiElement).getName();
+      }
+    }, expectedActionNames);
   }
-
 
   public void testGutterActionAttribute() throws Throwable {
     createStrutsFileSet("struts-actionClass.xml");
