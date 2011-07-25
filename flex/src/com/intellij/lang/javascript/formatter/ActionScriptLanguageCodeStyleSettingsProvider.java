@@ -6,7 +6,12 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Rustam Vishnyakov
@@ -36,45 +41,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
   @Override
   public void customizeSettings(@NotNull CodeStyleSettingsCustomizable consumer, @NotNull SettingsType settingsType) {
     if (settingsType == SettingsType.SPACING_SETTINGS) {
-      consumer.showStandardOptions("SPACE_AFTER_COLON",
-                                   "SPACE_AFTER_COMMA",
-                                   "SPACE_AFTER_QUEST",
-                                   "SPACE_AROUND_ADDITIVE_OPERATORS",
-                                   "SPACE_AROUND_ASSIGNMENT_OPERATORS",
-                                   "SPACE_AROUND_BITWISE_OPERATORS",
-                                   "SPACE_AROUND_BITWISE_OPERATORS",
-                                   "SPACE_AROUND_EQUALITY_OPERATORS",
-                                   "SPACE_AROUND_LOGICAL_OPERATORS",
-                                   "SPACE_AROUND_MULTIPLICATIVE_OPERATORS",
-                                   "SPACE_AROUND_RELATIONAL_OPERATORS",
-                                   "SPACE_BEFORE_CATCH_LBRACE",
-                                   "SPACE_BEFORE_CLASS_LBRACE",
-                                   "SPACE_BEFORE_COLON",
-                                   "SPACE_BEFORE_COMMA",
-                                   "SPACE_BEFORE_ELSE_LBRACE",
-                                   "SPACE_BEFORE_FINALLY_LBRACE",
-                                   "SPACE_BEFORE_FOR_LBRACE",
-                                   "SPACE_BEFORE_FOR_PARENTHESES",
-                                   "SPACE_BEFORE_IF_LBRACE",
-                                   "SPACE_BEFORE_IF_PARENTHESES",
-                                   "SPACE_BEFORE_METHOD_CALL_PARENTHESES",
-                                   "SPACE_BEFORE_METHOD_LBRACE",
-                                   "SPACE_BEFORE_METHOD_PARENTHESES",
-                                   "SPACE_BEFORE_QUEST",
-                                   "SPACE_BEFORE_SEMICOLON",
-                                   "SPACE_BEFORE_SWITCH_LBRACE",
-                                   "SPACE_BEFORE_SWITCH_PARENTHESES",
-                                   "SPACE_BEFORE_TRY_LBRACE",
-                                   "SPACE_BEFORE_TYPE",
-                                   "SPACE_BEFORE_WHILE_LBRACE",
-                                   "SPACE_BEFORE_WHILE_PARENTHESES",
-                                   "SPACE_WITHIN_CATCH_PARENTHESES",
-                                   "SPACE_WITHIN_FOR_PARENTHESES",
-                                   "SPACE_WITHIN_IF_PARENTHESES",
-                                   "SPACE_WITHIN_METHOD_CALL_PARENTHESES",
-                                   "SPACE_WITHIN_METHOD_PARENTHESES",
-                                   "SPACE_WITHIN_SWITCH_PARENTHESES",
-                                   "SPACE_WITHIN_WHILE_PARENTHESES");
+      consumer.showStandardOptions(JSLanguageCodeStyleSettingsProvider.STANDARD_SPACING_OPTIONS);
       consumer
         .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_BEFORE_PROPERTY_COLON",
                           JSBundle.message("space.before.name.value.separator"),
@@ -89,15 +56,26 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
     }
     else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
-      consumer.showStandardOptions("BLANK_LINES_AFTER_IMPORTS",
-                                   "BLANK_LINES_BEFORE_IMPORTS",
-                                   "BLANK_LINES_AROUND_METHOD",
-                                   "KEEP_BLANK_LINES_IN_CODE",
-                                   "BLANK_LINES_BEFORE_PACKAGE",
-                                   "BLANK_LINES_AFTER_PACKAGE");
+      List<String> blankLinesOptions = new ArrayList<String>();
+      blankLinesOptions.addAll(Arrays.asList(JSLanguageCodeStyleSettingsProvider.STANDARD_BLANK_LINES_OPTIONS));
+      blankLinesOptions.addAll(Arrays.asList("BLANK_LINES_AFTER_IMPORTS",
+                                             "BLANK_LINES_BEFORE_IMPORTS",
+                                             "BLANK_LINES_AROUND_METHOD",
+                                             "KEEP_BLANK_LINES_IN_CODE",
+                                             "BLANK_LINES_BEFORE_PACKAGE",
+                                             "BLANK_LINES_AFTER_PACKAGE"));
+      consumer.showStandardOptions(ArrayUtil.toStringArray(blankLinesOptions));
     }
     else if (settingsType == SettingsType.WRAPPING_AND_BRACES_SETTINGS) {
-      consumer.showAllStandardOptions();
+      List<String> wrappingOptions = new ArrayList<String>();
+      wrappingOptions.addAll(Arrays.asList(JSLanguageCodeStyleSettingsProvider.STANDARD_WRAPPING_OPTIONS));
+      wrappingOptions.addAll(Arrays.asList("CLASS_BRACE_STYLE",
+                                           "EXTENDS_LIST_WRAP",
+                                           "ALIGN_MULTILINE_EXTENDS_LIST",
+                                           "EXTENDS_KEYWORD_WRAP"));
+      consumer.showStandardOptions(ArrayUtil.toStringArray(wrappingOptions));
+      consumer.renameStandardOption("ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE", JSBundle.message("js.array.new.line.after.left.bracket"));
+      consumer.renameStandardOption("ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE", JSBundle.message("js.array.new.line.before.right.bracket"));
     }
   }
 
