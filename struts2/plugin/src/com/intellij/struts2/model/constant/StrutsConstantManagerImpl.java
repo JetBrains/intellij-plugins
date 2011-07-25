@@ -20,8 +20,8 @@ import com.intellij.javaee.model.xml.web.Filter;
 import com.intellij.javaee.model.xml.web.WebApp;
 import com.intellij.javaee.web.WebUtil;
 import com.intellij.javaee.web.facet.WebFacet;
+import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.PropertiesUtil;
-import com.intellij.lang.properties.psi.Property;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -159,9 +159,9 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     final Module module = ModuleUtil.findModuleForPsiElement(context);
 
     // collect all properties with matching key
-    final List<Property> properties =
-        ContainerUtil.findAll(PropertiesUtil.findPropertiesByKey(project, name), new Condition<Property>() {
-          public boolean value(final Property property) {
+    final List<IProperty> properties =
+        ContainerUtil.findAll(PropertiesUtil.findPropertiesByKey(project, name), new Condition<IProperty>() {
+          public boolean value(final IProperty property) {
             return Comparing.equal(property.getKey(), name);
           }
         });
@@ -170,9 +170,9 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     String value = null;
 
     // 1. default.properties from struts2-core.jar
-    final Property strutsDefaultProperty = ContainerUtil.find(properties, new Condition<Property>() {
-      public boolean value(final Property property) {
-        final VirtualFile virtualFile = property.getContainingFile().getVirtualFile();
+    final IProperty strutsDefaultProperty = ContainerUtil.find(properties, new Condition<IProperty>() {
+      public boolean value(final IProperty property) {
+        final VirtualFile virtualFile = property.getPropertiesFile().getVirtualFile();
         return virtualFile != null &&
                virtualFile.getFileSystem() instanceof JarFileSystem &&
                StringUtil.endsWith(virtualFile.getPath(), STRUTS_DEFAULT_PROPERTIES) &&
@@ -204,9 +204,9 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     }
 
     // 3. struts.properties in current module
-    final Property strutsProperty = ContainerUtil.find(properties, new Condition<Property>() {
-      public boolean value(final Property property) {
-        final VirtualFile virtualFile = property.getContainingFile().getVirtualFile();
+    final IProperty strutsProperty = ContainerUtil.find(properties, new Condition<IProperty>() {
+      public boolean value(final IProperty property) {
+        final VirtualFile virtualFile = property.getPropertiesFile().getVirtualFile();
         return virtualFile != null &&
                Comparing.equal(virtualFile.getName(), STRUTS_PROPERTIES_FILENAME) &&
                ModuleUtil.moduleContainsFile(module, virtualFile, false);
