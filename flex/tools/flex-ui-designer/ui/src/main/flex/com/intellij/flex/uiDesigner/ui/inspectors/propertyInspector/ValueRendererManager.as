@@ -11,32 +11,31 @@ import cocoa.renderer.TextLineAndDisplayObjectEntry;
 import cocoa.renderer.TextLineAndDisplayObjectEntryFactory;
 import cocoa.renderer.TextLineEntry;
 import cocoa.renderer.TextRendererManager;
-import cocoa.tableView.TableColumn;
-import cocoa.tableView.TableView;
 import cocoa.text.EditableTextView;
 import cocoa.text.TextFormat;
 import cocoa.ui;
 import cocoa.util.StringUtil;
 
+import com.intellij.flex.uiDesigner.ui.CssElementFormat;
+
 import flash.display.DisplayObject;
+import flash.display.InteractiveObject;
 import flash.display.Sprite;
-import flash.events.KeyboardEvent;
 import flash.text.engine.ElementFormat;
 import flash.text.engine.FontDescription;
 import flash.text.engine.FontPosture;
-import flash.text.engine.FontWeight;
 import flash.text.engine.TextLine;
 
 use namespace ui;
 
 public class ValueRendererManager extends TextRendererManager {
-  private static const FONT_DESCRIPTION:FontDescription = new FontDescription("Monaco, Consolas");
-  private static const FONT_DESCRIPTION_ITALIC:FontDescription = new FontDescription("Monaco, Consolas", FontWeight.NORMAL, FontPosture.ITALIC);
+  private static const FONT_DESCRIPTION_ITALIC:FontDescription = adobePleaseSetFontPostureBeforeAnyUsage();
+
   private static const DISABLED_COLOR:uint = 0x808080;
-  internal static const stringDisabled:ElementFormat = new ElementFormat(FONT_DESCRIPTION, 11, DISABLED_COLOR);
-  private static const identifier:ElementFormat = new ElementFormat(FONT_DESCRIPTION, 11, 0x000080);
+  internal static const stringDisabled:ElementFormat = new ElementFormat(CssElementFormat.MONOSPACED_FONT_DESCRIPTION, 11, DISABLED_COLOR);
+  private static const identifier:ElementFormat = new ElementFormat(CssElementFormat.MONOSPACED_FONT_DESCRIPTION, 11, 0x000080);
   private static const func:ElementFormat = identifier;
-  private static const numberFormat:ElementFormat = new ElementFormat(FONT_DESCRIPTION, 11, 0x0000ff);
+  private static const numberFormat:ElementFormat = new ElementFormat(CssElementFormat.MONOSPACED_FONT_DESCRIPTION, 11, 0x0000ff);
   private static const numberFormatDisabled:ElementFormat = stringDisabled;
   private static const staticField:ElementFormat = new ElementFormat(FONT_DESCRIPTION_ITALIC, 11, 0x660e7a);
   private static const staticFieldDisabled:ElementFormat = new ElementFormat(FONT_DESCRIPTION_ITALIC, 11, DISABLED_COLOR);
@@ -47,6 +46,12 @@ public class ValueRendererManager extends TextRendererManager {
   private static var arrowsFactory:TextLineAndDisplayObjectEntryFactory;
   private static var disabledArrowsFactory:TextLineAndDisplayObjectEntryFactory;
   private static var checkBoxFactory:CheckBoxEntryFactory;
+
+  private static function adobePleaseSetFontPostureBeforeAnyUsage():FontDescription {
+    var fontDescription:FontDescription = CssElementFormat.MONOSPACED_FONT_DESCRIPTION.clone();
+    fontDescription.fontPosture = FontPosture.ITALIC;
+    return fontDescription;
+  }
 
   public function ValueRendererManager(laf:LookAndFeel, textFormat:TextFormat, textInsets:Insets, dataSource:MyTableViewDataSource) {
     this.laf = laf;
@@ -233,11 +238,10 @@ public class ValueRendererManager extends TextRendererManager {
     var textField:EditableTextView = textInput.textDisplay;
     _container.stage.focus = textField;
     textField.selectAll();
-
     return textField;
   }
 
-  public function closeEditor(editor:Sprite):void {
+  public function closeEditor(editor:InteractiveObject):void {
     _container.removeChild(editor);
   }
 }

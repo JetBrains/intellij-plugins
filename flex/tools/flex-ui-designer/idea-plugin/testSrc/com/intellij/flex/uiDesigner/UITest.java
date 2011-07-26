@@ -19,7 +19,7 @@ import static com.intellij.flex.uiDesigner.TestSocketInputHandler.MessageHandler
 import static org.hamcrest.Matchers.*;
 
 @Flex(version="4.5")
-public class UITest extends MxmlWriterTestBase {
+public class UITest extends MxmlTestBase {
   private static final int UI_TEST_CLASS_ID = 5;
 
   private static Roboflest roboflest;

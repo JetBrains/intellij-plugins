@@ -5,7 +5,7 @@ import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.NonNls;
 
 @Flex(version="4.5")
-public class StyleTest extends MxmlWriterTestBase {
+public class StyleTest extends MxmlTestBase {
   @Override
   protected String getBasePath() {
     return "/css";

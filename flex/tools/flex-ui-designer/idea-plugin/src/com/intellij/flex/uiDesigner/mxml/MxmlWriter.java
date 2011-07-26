@@ -54,6 +54,7 @@ public class MxmlWriter {
 
   private boolean hasStates;
   private final PropertyProcessor propertyProcessor;
+  private boolean requireCallResetAfterMessage;
 
   public MxmlWriter(PrimitiveAmfOutputStream out) {
     this.out = out;
@@ -64,6 +65,7 @@ public class MxmlWriter {
 
   public Result write(@NotNull final XmlFile psiFile) throws IOException {
     try {
+      requireCallResetAfterMessage = true;
       writer.beginMessage();
 
       ApplicationManager.getApplication().runReadAction(new Runnable() {
@@ -96,6 +98,7 @@ public class MxmlWriter {
       return new Result(propertyProcessor.getUnregisteredDocumentFactories(), problemsHolder);
     }
     finally {
+      requireCallResetAfterMessage = false;
       resetAfterMessage();
     }
   }
@@ -111,7 +114,9 @@ public class MxmlWriter {
   }
 
   public void reset() {
-    resetAfterMessage();
+    if (requireCallResetAfterMessage) {
+      resetAfterMessage();
+    }
 
     writer.reset();
     if (stateWriter != null) {

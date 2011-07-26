@@ -46,7 +46,7 @@
   </ButtonBar>
 
   <HGroup>
-    <Label text="Label 1" fontSize="20"/>
+    <Label text="Label 1" fontSize="20" tabFocusEnabled="false"/>
     <TextInput width="100"/>
   </HGroup>
   <Group width="100%">

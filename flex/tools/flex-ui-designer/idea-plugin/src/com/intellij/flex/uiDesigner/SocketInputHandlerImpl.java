@@ -424,6 +424,9 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     if (reader != null) {
       reader.close();
     }
+    if (errorOut != null) {
+      errorOut.close();
+    }
   }
 
   static class Reader extends DataInputStream {

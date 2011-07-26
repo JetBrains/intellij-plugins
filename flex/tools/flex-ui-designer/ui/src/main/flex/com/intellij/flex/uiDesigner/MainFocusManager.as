@@ -71,7 +71,7 @@ public class MainFocusManager implements MainFocusManagerSB {
     }
 
   private static function mouseFocusChangeHandler(event:FocusEvent):void {
-      if (event.isDefaultPrevented()) {
+    if (event.isDefaultPrevented()) {
       return;
     }
 
@@ -80,8 +80,8 @@ public class MainFocusManager implements MainFocusManagerSB {
       return;
     }
 
-    var tf:TextField = event.relatedObject as TextField;
-    if (tf != null && (tf.type == TextFieldType.INPUT || tf.selectable)) {
+    var textField:TextField = event.relatedObject as TextField;
+    if (textField != null && (textField.type == TextFieldType.INPUT || textField.selectable)) {
       return; // pass it on
     }
 
@@ -97,7 +97,6 @@ public class MainFocusManager implements MainFocusManagerSB {
     if (event.keyCode == Keyboard.TAB && !event.isDefaultPrevented()) {
       //setFocusToNextObject(event);
 
-      // if we changed focus or if we're the main app eat the event
       event.preventDefault();
     }
   }
@@ -112,7 +111,13 @@ public class MainFocusManager implements MainFocusManagerSB {
       }
     }
 
-    NativeWindow(event.currentTarget).stage.focus = lastFocus.focusObject || suggestedFocus;
+    var stage:Stage = NativeWindow(event.currentTarget).stage;
+    if (lastFocus != null) {
+      stage.focus = lastFocus.focusObject;
+    }
+    else if (suggestedFocus != null) {
+      stage.focus = suggestedFocus;
+    }
   }
 }
 }

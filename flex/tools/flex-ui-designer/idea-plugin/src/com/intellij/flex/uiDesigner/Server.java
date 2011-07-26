@@ -16,17 +16,12 @@ class Server implements Runnable, Closable {
   private static final Logger LOG = Logger.getInstance(Server.class.getName());
 
   private ServerSocket serverSocket;
-
-  private FlexUIDesignerApplicationManager.PendingOpenDocumentTask pendingTask;
-
   private Socket socket;
 
-  private FlexUIDesignerApplicationManager applicationManager;
+  private FlexUIDesignerApplicationManager.FirstOpenDocumentTask pendingTask;
 
-  public Server(@NotNull final FlexUIDesignerApplicationManager.PendingOpenDocumentTask pendingTask,
-                FlexUIDesignerApplicationManager applicationManager) {
+  public Server(@NotNull final FlexUIDesignerApplicationManager.FirstOpenDocumentTask pendingTask) {
     this.pendingTask = pendingTask;
-    this.applicationManager = applicationManager;
   }
 
   public int listen() throws IOException {
@@ -64,17 +59,21 @@ class Server implements Runnable, Closable {
     try {
       socket = serverSocket.accept();
       serverSocket.close();
-      pendingTask.setOut(socket.getOutputStream());
+      serverSocket = null;
+      Client.getInstance().setOut(socket.getOutputStream());
     }
     catch (IOException e) {
-      LOG.error(e);
-      IOUtil.close(socket);
-      pendingTask = null;
-      applicationManager.destroyAdlProcess();
+      // if null, so, already closed via close()
+      if (pendingTask != null) {
+        LOG.error(e);
+        IOUtil.close(socket);
+        pendingTask.clientSocketNotAccepted();
+        pendingTask = null;
+      }
       return;
     }
 
-    pendingTask.run();
+    pendingTask.clientOpened();
     pendingTask = null;
 
     try {
@@ -91,8 +90,14 @@ class Server implements Runnable, Closable {
   }
 
   public void close() throws IOException {
-    IOUtil.close(ServiceManager.getService(SocketInputHandler.class));
-    IOUtil.close(socket);
+    if (serverSocket == null) {
+      IOUtil.close(ServiceManager.getService(SocketInputHandler.class));
+      IOUtil.close(socket);
+    }
+    else {
+      pendingTask = null;
+      IOUtil.close(serverSocket);
+    }
   }
 
   public boolean isClosed() {

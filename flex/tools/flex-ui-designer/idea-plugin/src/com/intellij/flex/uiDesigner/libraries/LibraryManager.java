@@ -7,7 +7,6 @@ import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -46,6 +45,11 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
   }
 
   public void garbageCollection(@NotNull final File appDir) {
+    File garbageCollected = new File(appDir, "garbageCollected");
+    if (garbageCollected.lastModified() >= SwcDependenciesSorter.ABC_FILTER_LAST_MODIFIED) {
+      return;
+    }
+
     for (String path : appDir.list()) {
       if (path.endsWith(SwcDependenciesSorter.SWF_EXTENSION) && !path.equals(FlexUIDesignerApplicationManager.DESIGNER_SWF)) {
         File item = new File(appDir, path);
@@ -55,6 +59,9 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
         }
       }
     }
+
+    //noinspection ResultOfMethodCallIgnored
+    garbageCollected.setLastModified(SwcDependenciesSorter.ABC_FILTER_LAST_MODIFIED);
   }
 
   public void initLibrarySets(@NotNull final Module module, @NotNull final File appDir) throws IOException, InitException {
@@ -160,12 +167,9 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
 
       @Override
       public void rootsChanged(ModuleRootEvent event) {
-        Notification notification =
-          new Notification(FlexUIDesignerBundle.message("plugin.name"), FlexUIDesignerBundle.message("plugin.name"),
+        new Notification(FlexUIDesignerBundle.message("plugin.name"), FlexUIDesignerBundle.message("plugin.name"),
             "Listen library changes is not yet supported. Please, reopen project.",
-            NotificationType.WARNING);
-        //notification.notify(project);
-        Notifications.Bus.notify(notification, project);
+            NotificationType.WARNING).notify(project);
       }
     });
   }

@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.plaf.ButtonSkinInteraction;
 import cocoa.plaf.TableViewSkin;
+import cocoa.plaf.basic.TableViewInteractor;
 import cocoa.renderer.CheckBoxEntry;
 import cocoa.renderer.TextLineEntry;
 import cocoa.tableView.TableColumn;
@@ -10,6 +11,7 @@ import com.intellij.flex.uiDesigner.PlatformDataKeys;
 import com.intellij.flex.uiDesigner.Project;
 
 import flash.display.DisplayObject;
+import flash.display.InteractiveObject;
 import flash.display.Sprite;
 import flash.events.FocusEvent;
 import flash.events.MouseEvent;
@@ -18,7 +20,7 @@ import flash.geom.Point;
 import org.jetbrains.actionSystem.DataContext;
 import org.jetbrains.actionSystem.DataManager;
 
-public class Interactor {
+public class Interactor extends TableViewInteractor {
   private static var sharedPoint:Point;
 
   private var tableSkin:TableViewSkin;
@@ -34,8 +36,7 @@ public class Interactor {
 
     tableSkin = TableViewSkin(tableView.skin);
     var bodyHitArea:Sprite = tableSkin.bodyHitArea;
-    bodyHitArea.mouseChildren = false;
-    bodyHitArea.doubleClickEnabled = true;
+    register(tableView);
     bodyHitArea.addEventListener(MouseEvent.MOUSE_DOWN, mouseEventHandler);
     bodyHitArea.addEventListener(MouseEvent.DOUBLE_CLICK, mouseEventHandler);
   }
@@ -54,13 +55,10 @@ public class Interactor {
         var tableView:TableView = TableView(tableSkin.component);
         var tableColumn:TableColumn = tableView.columns[currentColumnIndex];
         if (tableColumn.rendererManager == valueRendererManager) {
-          var editor:Sprite = valueRendererManager.createEditor(currentRowIndex, entry, tableColumn.actualWidth, tableView.rowHeight);
-          if (editor == null) {
-            return;
+          openedEditor = valueRendererManager.createEditor(currentRowIndex, entry, tableColumn.actualWidth, tableView.rowHeight);
+          if (openedEditor != null) {
+            registerEditor();
           }
-          
-          editor.addEventListener(FocusEvent.FOCUS_OUT, editor_focusOutHandler);
-          //doubleClickHandler(event);
         }
       }
     }
@@ -145,12 +143,10 @@ public class Interactor {
     return CheckBoxEntry(findEntry()).interaction;
   }
 
-  private function doubleClickHandler(event:MouseEvent):void {
+  override protected function closeEditor(commit:Boolean):void {
+    super.closeEditor(commit);
 
-  }
-
-  private function editor_focusOutHandler(event:FocusEvent):void {
-    trace(event);
+    valueRendererManager.closeEditor(openedEditor);
   }
 }
 }

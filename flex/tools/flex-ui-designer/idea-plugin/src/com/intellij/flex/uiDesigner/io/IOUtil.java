@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
@@ -86,6 +87,17 @@ public final class IOUtil {
   }
 
   public static void close(Socket socket) {
+    if (socket != null) {
+      try {
+        socket.close();
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
+    }
+  }
+
+  public static void close(ServerSocket socket) {
     if (socket != null) {
       try {
         socket.close();
