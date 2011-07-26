@@ -7,7 +7,7 @@
   <about url="/artwork/flexide_about.png"/>
   <icon size32="/artwork/flexide.png" size16="/artwork/flexide16.png" size32opaque="/artwork/flexide_wbg.png" size12="/artwork/flexide12.png"/>
   <package code="__PACKAGE_CODE__"/>
-  <names product="Flex IDE" fullname="JetBrains Flex IDE"/>
+  <names product="Flex IDE" fullname="JetBrains Flex IDE" script="flexx"/>
 
   <welcome-screen caption-url="/artwork/flexideWelcomeCaption.png" slogan-url="/artwork/flexideDevelopSlogan.png"/>
  
@@ -18,5 +18,4 @@
             release-url="http://www.jetbrains.com/feedback/feedback.jsp?product=FlexIDE&amp;build=$BUILD&amp;timezone=$TIMEZONE&amp;eval=$EVAL"/>
 
   <help file="help.jar" root="flexide"/>
-
 </component>
