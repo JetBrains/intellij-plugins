@@ -29,17 +29,12 @@ import javax.swing.*;
  */
 public class ValidatorDomFileDescription extends DomFileDescription<Validators> {
 
-  private static final String[] VALIDATOR_NAMESPACES = new String[]{StrutsConstants.VALIDATOR_1_00_DTD_URI,
-                                                                    StrutsConstants.VALIDATOR_1_00_DTD_ID,
-                                                                    StrutsConstants.VALIDATOR_1_02_DTD_URI,
-                                                                    StrutsConstants.VALIDATOR_1_02_DTD_ID};
-
   public ValidatorDomFileDescription() {
     super(Validators.class, Validators.TAG_NAME);
   }
 
   protected void initializeFileDescription() {
-    registerNamespacePolicy(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY, VALIDATOR_NAMESPACES);
+    registerNamespacePolicy(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY, StrutsConstants.VALIDATOR_DTDS);
   }
 
   @Override

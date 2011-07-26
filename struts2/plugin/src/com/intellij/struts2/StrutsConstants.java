@@ -87,9 +87,9 @@ public final class StrutsConstants {
    */
   @NonNls
   public static final String[] STRUTS_DTDS = {
-    STRUTS_2_0_DTD_ID, STRUTS_2_0_DTD_URI,
-    STRUTS_2_1_DTD_ID, STRUTS_2_1_DTD_URI,
-    STRUTS_2_1_7_DTD_URI, STRUTS_2_1_7_DTD_ID
+      STRUTS_2_0_DTD_ID, STRUTS_2_0_DTD_URI,
+      STRUTS_2_1_DTD_ID, STRUTS_2_1_DTD_URI,
+      STRUTS_2_1_7_DTD_URI, STRUTS_2_1_7_DTD_ID
   };
 
   @NonNls
@@ -101,6 +101,17 @@ public final class StrutsConstants {
   public static final String VALIDATOR_1_02_DTD_URI = "http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd";
   @NonNls
   public static final String VALIDATOR_1_02_DTD_ID = "-//OpenSymphony Group//XWork Validator 1.0.2//EN";
+
+  /**
+   * All XXX-validation.xml DTD-IDs/URIs.
+   */
+  @NonNls
+  public static final String[] VALIDATOR_DTDS = {
+      VALIDATOR_1_00_DTD_URI,
+      VALIDATOR_1_00_DTD_ID,
+      VALIDATOR_1_02_DTD_URI,
+      VALIDATOR_1_02_DTD_ID
+  };
 
   @NonNls
   public static final String VALIDATOR_CONFIG_DTD_URI = "http://www.opensymphony.com/xwork/xwork-validator-config-1.0.dtd";
@@ -125,7 +136,7 @@ public final class StrutsConstants {
    */
   @NonNls
   public static final String[] TAGLIB_STRUTS_UI_CSS_ATTRIBUTES =
-    new String[]{"buttonCssStyle", "cssErrorStyle", "cssStyle", "doubleCssStyle"};
+      new String[]{"buttonCssStyle", "cssErrorStyle", "cssStyle", "doubleCssStyle"};
 
   /**
    * Struts jQuery-plugin taglib URI.

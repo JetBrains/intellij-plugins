@@ -46,27 +46,36 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
    * struts.xml pattern.
    */
   private static final ElementPattern<XmlAttributeValue> STRUTS_XML =
-    xmlAttributeValue()
-      .inVirtualFile(virtualFile().ofType(StdFileTypes.XML))
-      .withSuperParent(2, xmlTag().withNamespace(string().oneOf(StrutsConstants.STRUTS_DTDS)));
+      xmlAttributeValue()
+          .inVirtualFile(virtualFile().ofType(StdFileTypes.XML))
+          .withSuperParent(2, xmlTag().withNamespace(string().oneOf(StrutsConstants.STRUTS_DTDS)));
+
+  private static final ElementPattern<XmlAttributeValue> VALIDATION_XML =
+      xmlAttributeValue()
+          .inVirtualFile(virtualFile().ofType(StdFileTypes.XML))
+          .withSuperParent(2, xmlTag().withNamespace(string().oneOf(StrutsConstants.VALIDATOR_DTDS)));
 
   /**
    * web.xml: match inside {@code <filter>}-element with S2-Filter.
    */
   private static final XmlElementPattern.Capture WEB_XML_STRUTS_FILTER =
-    withDom(domElement().
-      withParent(domElement(ParamValue.class).
-      withParent(domElement(Filter.class).
-      withChild("filter-class", genericDomValue().withValue(
-      or(psiClass().inheritorOf(false, StrutsConstants.STRUTS_2_0_FILTER_CLASS),
-         psiClass().inheritorOf(false, StrutsConstants.STRUTS_2_1_FILTER_CLASS)
-
-      )))))
-    );
+      withDom(domElement().
+          withParent(domElement(ParamValue.class).
+              withParent(domElement(Filter.class).
+                  withChild("filter-class", genericDomValue().withValue(
+                      or(psiClass().inheritorOf(false, StrutsConstants.STRUTS_2_0_FILTER_CLASS),
+                         psiClass().inheritorOf(false, StrutsConstants.STRUTS_2_1_FILTER_CLASS)
+                        )
+                                                                       )
+                           )
+                        )
+                    )
+             );
 
   public void registerReferenceProviders(final PsiReferenceRegistrar registrar) {
     registerWebXml(registrar);
     registerStrutsXmlTags(registrar);
+    registerValidationXmlTags(registrar);
   }
 
   /**
@@ -74,27 +83,40 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
    *
    * @param registrar Registrar.
    */
-  private static void registerWebXml(final PsiReferenceRegistrar registrar) {
+  private void registerWebXml(final PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(
-      xmlTag().withLocalName("param-name").and(WEB_XML_STRUTS_FILTER),
-      new WebXmlStrutsConstantNameReferenceProvider());
+        xmlTag().withLocalName("param-name").and(WEB_XML_STRUTS_FILTER),
+        new WebXmlStrutsConstantNameReferenceProvider());
 
     registrar.registerReferenceProvider(
-      xmlTag().withLocalName("param-value").and(WEB_XML_STRUTS_FILTER),
-      new WebXmlStrutsConstantValueReferenceProvider());
+        xmlTag().withLocalName("param-value").and(WEB_XML_STRUTS_FILTER),
+        new WebXmlStrutsConstantValueReferenceProvider());
   }
 
-  private static void registerStrutsXmlTags(final PsiReferenceRegistrar registrar) {
+  private void registerStrutsXmlTags(final PsiReferenceRegistrar registrar) {
 
     // <result> "name" common values
     registrar.registerReferenceProvider(
-      and(
-        xmlAttributeValue()
-          .withLocalName("name")
-          .withSuperParent(2, xmlTag().withLocalName("result")),
-        STRUTS_XML
-      ),
-      new StaticStringValuesReferenceProvider("error", "input", "login", "success"));
+        and(
+            xmlAttributeValue()
+                .withLocalName("name")
+                .withSuperParent(2, xmlTag().withLocalName("result")),
+            STRUTS_XML
+           ),
+        new StaticStringValuesReferenceProvider("error", "input", "login", "success"));
+  }
+
+  private void registerValidationXmlTags(final PsiReferenceRegistrar registrar) {
+
+    // <message> "key"
+    registrar.registerReferenceProvider(
+        and(
+            xmlAttributeValue()
+                .withLocalName("key")
+                .withSuperParent(2, xmlTag().withLocalName("message")),
+            VALIDATION_XML
+           ),
+        new WrappedPropertiesReferenceProvider());
   }
 
 }
