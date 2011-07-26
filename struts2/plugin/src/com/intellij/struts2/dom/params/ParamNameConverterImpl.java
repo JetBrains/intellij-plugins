@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,8 +20,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.beanProperties.BeanProperty;
+import com.intellij.struts2.reference.common.BeanPropertyPathReference;
+import com.intellij.struts2.reference.common.BeanPropertyPathReferenceSet;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.GenericAttributeValue;
+import com.intellij.util.xml.GenericDomValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,15 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Converter for {@link Param#getName()}.
- * <p/>
- * Based on Spring plugin.
- *
  * @author Yann C&eacute;bron
  */
-public class ParamNameNestedConverter extends Converter<List<BeanProperty>>
-    implements CustomReferenceConverter<List<BeanProperty>> {
-
+public class ParamNameConverterImpl extends ParamNameConverter {
 
   public List<BeanProperty> fromString(@Nullable final String s, final ConvertContext convertContext) {
     if (s == null) {
@@ -45,7 +44,7 @@ public class ParamNameNestedConverter extends Converter<List<BeanProperty>>
     }
 
     final GenericAttributeValue<List<BeanProperty>> value = (GenericAttributeValue<List<BeanProperty>>) convertContext.getInvocationElement();
-    final ParamNameReference[] references = createReferences(value, value.getXmlAttributeValue(), convertContext);
+    final BeanPropertyPathReference[] references = createReferences(value, value.getXmlAttributeValue(), convertContext);
     if (references.length < 1) {
       return null;
     }
@@ -62,40 +61,17 @@ public class ParamNameNestedConverter extends Converter<List<BeanProperty>>
     return list;
   }
 
-  public String toString(@Nullable final List<BeanProperty> beanProperties, final ConvertContext convertContext) {
-    return null;
-  }
-
   @NotNull
-  public ParamNameReference[] createReferences(final GenericDomValue<List<BeanProperty>> listGenericDomValue,
+  public BeanPropertyPathReference[] createReferences(final GenericDomValue<List<BeanProperty>> listGenericDomValue,
                                                final PsiElement psiElement,
                                                final ConvertContext convertContext) {
     final DomElement paramsElement = getEnclosingElement(convertContext);
     if (paramsElement == null) {
-      return ParamNameReference.EMPTY_REFERENCE;
+      return BeanPropertyPathReference.EMPTY_REFERENCE;
     }
 
     final PsiClass rootPsiClass = getRootParamsClass(paramsElement);
-    return new ParamNameReferenceSet(psiElement, rootPsiClass).getPsiReferences();
-  }
-
-  /**
-   * Gets the enclosing parent element.
-   *
-   * @param context Current context.
-   * @return Parent element or <code>null</code> if none found (should not happen in valid XML).
-   */
-  @Nullable
-  private static DomElement getEnclosingElement(final ConvertContext context) {
-    final DomElement current = context.getInvocationElement();
-    final DomElement parent = current.getParent();
-    return parent != null ? parent.getParent() : null;
-  }
-
-  @Nullable
-  private static PsiClass getRootParamsClass(@NotNull final DomElement paramsElement) {
-    assert paramsElement instanceof ParamsElement : "parent not ParamsElement: " + paramsElement;
-    return ((ParamsElement) paramsElement).getParamsClass();
+    return new BeanPropertyPathReferenceSet(psiElement, rootPsiClass).getPsiReferences();
   }
 
 }

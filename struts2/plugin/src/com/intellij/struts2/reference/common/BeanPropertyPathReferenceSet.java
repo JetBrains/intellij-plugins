@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.dom.params;
+package com.intellij.struts2.reference.common;
 
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiClass;
@@ -24,29 +24,29 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Holds one or multiple {@link ParamNameReference}s denoting the full path to a param's property.
+ * Holds one or multiple {@link BeanPropertyPathReference}s denoting the full path to a bean property.
  * <p/>
  * Based on Spring plugin.
  *
  * @author Yann C&eacute;bron
  */
-class ParamNameReferenceSet extends ReferenceSetBase<ParamNameReference> {
+public class BeanPropertyPathReferenceSet extends ReferenceSetBase<BeanPropertyPathReference> {
 
   private final PsiClass beanClass;
 
-  ParamNameReferenceSet(@NotNull final PsiElement psiElement, @Nullable final PsiClass beanClass) {
+  public BeanPropertyPathReferenceSet(@NotNull final PsiElement psiElement, @Nullable final PsiClass beanClass) {
     super(psiElement);
     this.beanClass = beanClass;
   }
 
   @NotNull
-  protected ParamNameReference createReference(final TextRange range, final int index) {
-    return new ParamNameReference(this, range, index);
+  protected BeanPropertyPathReference createReference(final TextRange range, final int index) {
+    return new BeanPropertyPathReference(this, range, index);
   }
 
   @Override
-  public ParamNameReference[] getPsiReferences() {
-    return ArrayUtil.toObjectArray(getReferences(), ParamNameReference.class);
+  public BeanPropertyPathReference[] getPsiReferences() {
+    return ArrayUtil.toObjectArray(getReferences(), BeanPropertyPathReference.class);
   }
 
   @Nullable

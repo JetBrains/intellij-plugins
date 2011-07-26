@@ -21,7 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.ExtendableClassConverter;
-import com.intellij.struts2.dom.params.ParamNameNestedConverter;
+import com.intellij.struts2.dom.params.ParamNameConverter;
 import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.struts2.dom.struts.HasResultType;
 import com.intellij.struts2.dom.struts.StrutsRoot;
@@ -85,7 +85,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     }
 
     // hack for STRPL-85: suppress <param>-highlighting within <result> for certain result-types
-    if (converter instanceof ParamNameNestedConverter) {
+    if (converter instanceof ParamNameConverter) {
       final Result result = DomUtil.getParentOfType(value, Result.class, false);
       if (result != null) {
         final ResultType resultType = result.getEffectiveResultType();

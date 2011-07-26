@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.params;
 
 import com.intellij.ide.presentation.Presentation;
+import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.util.xml.*;
 
@@ -32,8 +33,8 @@ public interface Param extends DomElement {
   @Attribute(value = "name")
   @Required
   @NameValue
-  @Convert(ParamNameNestedConverter.class)
-  GenericAttributeValue<List<ParamNameReference>> getName();
+  @Convert(ParamNameConverter.class)
+  GenericAttributeValue<List<BeanProperty>> getName();
 
   @TagValue
   @Required

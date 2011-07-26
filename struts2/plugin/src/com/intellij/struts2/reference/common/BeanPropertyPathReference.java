@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.dom.params;
+package com.intellij.struts2.reference.common;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -33,23 +33,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 /**
- * Provides to (part) of param-name.
+ * Provides (part of) path to bean property.
  * <p/>
  * Based on Spring plugin.
  *
  * @author Yann C&eacute;bron
  */
-class ParamNameReference extends PsiReferenceBase<PsiElement>
+public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     implements PsiPolyVariantReference, EmptyResolveMessageProvider, LocalQuickFixProvider {
 
-  public static final ParamNameReference[] EMPTY_REFERENCE = new ParamNameReference[0];
+  public static final BeanPropertyPathReference[] EMPTY_REFERENCE = new BeanPropertyPathReference[0];
 
-  private final ParamNameReferenceSet referenceSet;
+  private final BeanPropertyPathReferenceSet referenceSet;
   private final int index;
 
-  ParamNameReference(final ParamNameReferenceSet referenceSet,
-                     final TextRange range,
-                     final int index) {
+  BeanPropertyPathReference(final BeanPropertyPathReferenceSet referenceSet,
+                            final TextRange range,
+                            final int index) {
     super(referenceSet.getElement(), range, true);
     this.referenceSet = referenceSet;
     this.index = index;
@@ -83,9 +83,9 @@ class ParamNameReference extends PsiReferenceBase<PsiElement>
       assert propertyType != null;
 
       final LookupElementBuilder variant =
-        LookupElementBuilder.create(propertyName)
-          .setIcon(member.getIcon(Iconable.ICON_FLAG_OPEN))
-          .setTypeText(propertyType.getPresentableText());
+          LookupElementBuilder.create(propertyName)
+                              .setIcon(member.getIcon(Iconable.ICON_FLAG_OPEN))
+                              .setTypeText(propertyType.getPresentableText());
       variants[i++] = variant;
     }
 
@@ -144,7 +144,7 @@ class ParamNameReference extends PsiReferenceBase<PsiElement>
   private PsiMethod resolveProperty(@NotNull final PsiClass psiClass, final String propertyName) {
     final boolean isLast = isLast();
     final PsiMethod method = isLast ? PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
-                             PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
+        PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
     return method == null || !method.hasModifierProperty(PsiModifier.PUBLIC) ? null : method;
   }
 

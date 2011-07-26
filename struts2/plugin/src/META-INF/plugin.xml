@@ -121,6 +121,8 @@
                    implementationClass="com.intellij.struts2.dom.struts.impl.path.StrutsPathReferenceConverterImpl"/>
     <dom.converter interfaceClass="com.intellij.struts2.dom.struts.UnknownHandlerRefConverter"
                    implementationClass="com.intellij.struts2.dom.struts.impl.UnknownHandlerRefConverterImpl"/>
+    <dom.converter interfaceClass="com.intellij.struts2.dom.params.ParamNameConverter"
+                   implementationClass="com.intellij.struts2.dom.params.ParamNameConverterImpl"/>
 
     <annotator language="XML" implementationClass="com.intellij.struts2.annotators.StrutsFileSetCheckingAnnotator"/>
     <compiler.inspectionValidator implementation="com.intellij.struts2.dom.inspection.Struts2ModelValidator"/>
