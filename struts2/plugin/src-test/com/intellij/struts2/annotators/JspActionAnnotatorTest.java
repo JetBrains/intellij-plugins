@@ -15,21 +15,14 @@
 
 package com.intellij.struts2.annotators;
 
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
-import com.intellij.codeInsight.daemon.LineMarkerInfo;
-import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
-import com.intellij.codeInsight.navigation.NavigationGutterIconRenderer;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Test for {@link JspActionAnnotator}
@@ -63,42 +56,31 @@ public class JspActionAnnotatorTest extends BasicHighlightingTestCase<WebModuleF
   /**
    * Checks whether the gutter target elements resolve to the given Action names.
    *
+   * @param jspFile             JSP file to check.
    * @param expectedActionNames Names of the actions.
    */
-  private void checkGutterActionMethodTargetElements(@NonNls final String... expectedActionNames) {
-    final Editor editor = myFixture.getEditor();
-    final List<LineMarkerInfo> infoList = DaemonCodeAnalyzerImpl.getLineMarkers(editor.getDocument(), myProject);
-    assertNotNull(infoList);
-    assertSize(1, infoList);
-
-    final LineMarkerInfo markerInfo = infoList.get(0);
-    final GutterIconNavigationHandler navigationHandler = markerInfo.getNavigationHandler();
-    assertNotNull(navigationHandler);
-    final List<PsiElement> targetElements = ((NavigationGutterIconRenderer) navigationHandler).getTargetElements();
-
-    final Set<String> foundActionNames = new HashSet<String>();
-    for (final PsiElement psiElement : targetElements) {
-      assertInstanceOf(psiElement, PsiMethod.class);
-      final String actionName = ((PsiMethod) psiElement).getName();
-      foundActionNames.add(actionName);
-    }
-
-    assertSameElements(foundActionNames, expectedActionNames);
+  private void checkGutterActionMethodTargetElements(@NonNls final String jspFile,
+                                                     @NonNls final String... expectedActionNames) {
+    final GutterIconRenderer gutterIconRenderer = myFixture.findGutter(jspFile);
+    assertNotNull(gutterIconRenderer);
+    AnnotatorTestUtils.checkGutterTargets(gutterIconRenderer, new Function<PsiElement, String>() {
+      @Override
+      public String fun(final PsiElement psiElement) {
+        return ((PsiMethod) psiElement).getName();
+      }
+    }, expectedActionNames);
   }
-
 
   public void testGutterActionAttribute() throws Throwable {
     createStrutsFileSet("struts-actionClass.xml");
-    myFixture.configureByFile("/jsp/test_gutter_action_attribute.jsp");
-    myFixture.doHighlighting();
-    checkGutterActionMethodTargetElements("validActionMethod");
+    checkGutterActionMethodTargetElements("/jsp/test_gutter_action_attribute.jsp",
+                                          "validActionMethod");
   }
 
   public void testGutterNameAttribute() throws Throwable {
     createStrutsFileSet("struts-actionClass.xml");
-    myFixture.configureByFile("/jsp/test_gutter_name_attribute.jsp");
-    myFixture.doHighlighting();
-    checkGutterActionMethodTargetElements("validActionMethod");
+    checkGutterActionMethodTargetElements("/jsp/test_gutter_name_attribute.jsp",
+                                          "validActionMethod");
   }
 
 }
