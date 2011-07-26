@@ -14,7 +14,7 @@ import java.util.List;
 @State(
   name = "AirInstallerParameters",
   storages = {
-    @Storage(id = "other", file = "$WORKSPACE_FILE$")
+    @Storage( file = "$WORKSPACE_FILE$")
   }
 )
 public class AirInstallerParameters extends AirInstallerParametersBase implements PersistentStateComponent<AirInstallerParameters> {

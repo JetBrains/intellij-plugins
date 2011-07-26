@@ -16,8 +16,8 @@ import java.util.List;
 @State(
     name = "CssDialectMappings",
     storages = {
-        @Storage(id = "default", file = "$PROJECT_FILE$"),
-        @Storage(id = "dir", file = "$PROJECT_CONFIG_DIR$/cssdialects.xml", scheme = StorageScheme.DIRECTORY_BASED)
+        @Storage( file = "$PROJECT_FILE$"),
+        @Storage( file = "$PROJECT_CONFIG_DIR$/cssdialects.xml", scheme = StorageScheme.DIRECTORY_BASED)
 })
 public class CssDialectMappings extends LanguagePerFileMappings<CssDialect> {
   public static CssDialectMappings getInstance(final Project project) {

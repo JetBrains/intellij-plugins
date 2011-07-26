@@ -34,7 +34,6 @@ import java.util.List;
   name = "Flex.Build.Configuration",
   storages = {
     @Storage(
-      id = "default",
       file = "$MODULE_FILE$"
     )
   }

@@ -15,7 +15,7 @@ import java.util.List;
 @State(
   name = "MobileAirPackageParameters",
   storages = {
-    @Storage(id = "other", file = "$WORKSPACE_FILE$")
+    @Storage( file = "$WORKSPACE_FILE$")
   }
 )
 public class MobileAirPackageParameters extends AirInstallerParametersBase
