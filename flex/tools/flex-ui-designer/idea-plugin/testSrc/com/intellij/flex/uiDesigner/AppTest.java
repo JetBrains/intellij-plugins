@@ -10,13 +10,13 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.messages.MessageBusConnection;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
+@Flex(version="4.5")
 public class AppTest extends AppTestBase {
   private static final int APP_TEST_CLASS_ID = 3;
 
@@ -27,7 +27,6 @@ public class AppTest extends AppTestBase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    //TestDesignerApplicationManager.changeServiceImplementation();
     TestDesignerApplicationManager.changeServiceImplementation(Client.class, TestClient.class);
     TestDesignerApplicationManager.changeServiceImplementation(SocketInputHandler.class, MySocketInputHandler.class);
     final MySocketInputHandler socketInputHandler = (MySocketInputHandler)ServiceManager.getService(SocketInputHandler.class);
@@ -37,12 +36,13 @@ public class AppTest extends AppTestBase {
   private VirtualFile open(String relativeFile) throws IOException, InterruptedException {
     VirtualFile newParent = configureByFiles(null, getVFile(getTestPath() + "/" + relativeFile));
 
+    info.semaphore.down();
     assert connection == null;
     connection = ApplicationManager.getApplication().getMessageBus().connect();
     connection.subscribe(FlexUIDesignerApplicationManager.MESSAGE_TOPIC, new FlexUIDesignerApplicationListener() {
       @Override
       public void initialDocumentOpened() {
-        info.lock.countDown();
+        info.semaphore.up();
       }
 
       @Override
@@ -56,12 +56,12 @@ public class AppTest extends AppTestBase {
   }
   
   private void await() throws InterruptedException {
-    assertTrue(info.lock.await(1000, TimeUnit.SECONDS));
-    //lock.await();
+    //assertTrue(info.semaphore.waitFor(7000));
+    info.semaphore.waitForUnsafe();
   }
   
   private void callClientAssert(String methodName) throws IOException, InterruptedException {
-    info.lock = new CountDownLatch(1);
+    info.semaphore.down();
     TestClient.test(Client.getInstance(), methodName, APP_TEST_CLASS_ID);
     await();
     if (info.fail.get()) {
@@ -70,19 +70,15 @@ public class AppTest extends AppTestBase {
     info.fail.set(false);
   }
 
-  @Flex(version="4.5")
   public void testCloseAndOpenProject() throws Exception {
     open("injectedAS/Transitions.mxml");
-
-    TestClient.test(Client.getInstance(), "useRealProjectManagerBehavior", 0);
 
     FlexUIDesignerApplicationManager designerAppManager = FlexUIDesignerApplicationManager.getInstance();
     designerAppManager.projectManagerListener.projectClosed(myProject);
 
     callClientAssert("close");
   }
-  
-  @Flex(version="4.5")
+
   public void testUpdateDocumentOnIdeaAutoSave() throws Exception {
     VirtualFile newParent = open("states/SetProperty.mxml");
     
@@ -111,18 +107,21 @@ public class AppTest extends AppTestBase {
   
   @Override
   protected void tearDown() throws Exception {
-    FlexUIDesignerApplicationManager.getInstance().dispose();
+    try {
+      FlexUIDesignerApplicationManager.getInstance().dispose();
 
-    StringRegistry.getInstance().reset();
+      StringRegistry.getInstance().reset();
 
-    BinaryFileManager.getInstance().reset();
-    LibraryManager.getInstance().reset();
-    
-    if (connection != null) {
-      connection.disconnect();
+      BinaryFileManager.getInstance().reset();
+      LibraryManager.getInstance().reset();
+
+      if (connection != null) {
+        connection.disconnect();
+      }
     }
-    
-    super.tearDown();
+    finally {
+      super.tearDown();
+    }
   }
 
   private static class MySocketInputHandler extends TestSocketInputHandler {
@@ -143,7 +142,7 @@ public class AppTest extends AppTestBase {
       }
       finally {
         if (!result) {
-          info.lock.countDown();
+          info.semaphore.up();
         }
       }
 
@@ -152,7 +151,7 @@ public class AppTest extends AppTestBase {
   }
   
   private static class Info {
-    private CountDownLatch lock = new CountDownLatch(1);
+    private final Semaphore semaphore = new Semaphore();
     private final Ref<Boolean> fail = new Ref<Boolean>(false);
   }
 }

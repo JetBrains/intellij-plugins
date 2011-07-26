@@ -303,9 +303,28 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         LOG.error("ADL exited with error code " + exitCode);
       }
 
-      Disposer.dispose(appParentDisposable);
-      appParentDisposable = null;
+      notifyAboutAppClosed();
+      dispose();
     }
+  }
+
+  private void notifyAboutAppClosed() {
+    try {
+      Application application = ApplicationManager.getApplication();
+      if (!application.isDisposed()) {
+        application.getMessageBus().syncPublisher(MESSAGE_TOPIC).applicationClosed();
+      }
+    }
+    finally {
+      if (appParentDisposable != null) {
+        disposeAppParentDisposable();
+      }
+    }
+  }
+
+  private void disposeAppParentDisposable() {
+    Disposer.dispose(appParentDisposable);
+    appParentDisposable = null;
   }
 
   class FirstOpenDocumentTask extends Task.Backgroundable {
@@ -348,7 +367,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         client.openDocument(module, psiFile);
         client.flush();
 
-        ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).initialDocumentOpened();
         semaphore.up();
       }
       catch (IOException e) {
@@ -474,6 +492,16 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
       semaphore.down();
       semaphore.waitFor();
+
+      // Why in test mode ProgressManager.run() doesn't call onCancel/onSuccess?
+      if (isHeadless()) {
+        if (indicator.isCanceled()) {
+          onCancel();
+        }
+        else {
+          onSuccess();
+        }
+      }
     }
 
     private void runInitializeLibrariesAndModuleThread() {
@@ -515,8 +543,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
 
     private void cancel() {
-      semaphore.up();
       indicator.cancel();
+      semaphore.up();
 
       if (adlExitCode != -1) {
         notifyUser(debug, FlexUIDesignerBundle.message("cannot.launch.designer", adlExitCode), module);
@@ -530,19 +558,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       }
       finally {
         documentOpening = false;
-
-        try {
-          Application application = ApplicationManager.getApplication();
-          if (!application.isDisposed()) {
-            application.getMessageBus().syncPublisher(MESSAGE_TOPIC).applicationClosed();
-          }
-        }
-        finally {
-          if (appParentDisposable != null) {
-            Disposer.dispose(appParentDisposable);
-            appParentDisposable = null;
-          }
-        }
+        notifyAboutAppClosed();
       }
     }
 
@@ -550,6 +566,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     public void onSuccess() {
       documentOpening = false;
       adlProcessHandler.adlExitHandler = new AdlExitHandler();
+      ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).initialDocumentOpened();
     }
   }
 

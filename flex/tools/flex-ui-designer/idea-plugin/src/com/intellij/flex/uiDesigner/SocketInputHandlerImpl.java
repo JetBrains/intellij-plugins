@@ -57,7 +57,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     reader = new Reader(new BufferedInputStream(inputStream));
   }
 
-  public void init(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
+  public void init(@NotNull InputStream inputStream, @NotNull File appDir) {
     resultReadyFile = new File(appDir, "d");
     if (resultReadyFile.exists()) {
       //noinspection ResultOfMethodCallIgnored

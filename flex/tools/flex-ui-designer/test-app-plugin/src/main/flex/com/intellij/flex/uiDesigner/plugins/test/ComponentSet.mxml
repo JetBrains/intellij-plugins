@@ -9,6 +9,5 @@
     <Requirement role="{ProjectManager}"/>
   </Component>
   <Component role="{LibraryManager}" implementation="{TestLibraryManager}"/>
-  <Component role="{ProjectManager}" implementation="{TestProjectManager}"/>
   <Component role="{UncaughtErrorManager}" implementation="{TestUncaughtErrorManager}"/>
 </ComponentSet>
