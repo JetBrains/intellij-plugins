@@ -142,8 +142,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
 
   @Nullable
   private PsiMethod resolveProperty(@NotNull final PsiClass psiClass, final String propertyName) {
-    final boolean isLast = isLast();
-    final PsiMethod method = isLast ? PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
+    final PsiMethod method = isLast() ? PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
         PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
     return method == null || !method.hasModifierProperty(PsiModifier.PUBLIC) ? null : method;
   }
