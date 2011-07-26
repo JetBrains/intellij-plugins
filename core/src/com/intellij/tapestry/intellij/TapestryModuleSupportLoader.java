@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 @State(
     name = "Loomy",
     storages = {@Storage(
-        id = "Loomy",
         file = "$MODULE_FILE$")})
 public class TapestryModuleSupportLoader
     implements PersistentStateComponent<TapestryModuleSupportLoader.ModuleConfiguration> {

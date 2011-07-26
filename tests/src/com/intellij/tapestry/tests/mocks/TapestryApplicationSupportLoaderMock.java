@@ -8,7 +8,6 @@ import com.intellij.tapestry.intellij.TapestryApplicationSupportLoader;
         name = "Loomy",
         storages = {
         @Storage(
-                id = "Loomy",
                 file = "$APP_CONFIG$/loomy.xml"
         )}
 )

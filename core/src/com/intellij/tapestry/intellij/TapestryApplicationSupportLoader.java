@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 @State(
     name = "Loomy",
     storages = {@Storage(
-        id = "Loomy",
         file = "$APP_CONFIG$/tapestry.xml")})
 public class TapestryApplicationSupportLoader implements ApplicationComponent {
 
