@@ -17,20 +17,14 @@ package com.intellij.struts2.dom.params;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.beanProperties.BeanProperty;
-import com.intellij.struts2.reference.common.BeanPropertyPathReference;
 import com.intellij.struts2.reference.common.BeanPropertyPathReferenceSet;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.util.xml.GenericDomValue;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,39 +32,22 @@ import java.util.List;
  */
 public class ParamNameConverterImpl extends ParamNameConverter {
 
-  public List<BeanProperty> fromString(@Nullable final String s, final ConvertContext convertContext) {
-    if (s == null) {
-      return null;
-    }
-
-    final GenericAttributeValue<List<BeanProperty>> value = (GenericAttributeValue<List<BeanProperty>>) convertContext.getInvocationElement();
-    final BeanPropertyPathReference[] references = createReferences(value, value.getXmlAttributeValue(), convertContext);
-    if (references.length < 1) {
-      return null;
-    }
-
-    final ResolveResult[] results = references[references.length - 1].multiResolve(false);
-    final ArrayList<BeanProperty> list = new ArrayList<BeanProperty>(results.length);
-    for (final ResolveResult result : results) {
-      final PsiMethod method = (PsiMethod) result.getElement();
-      if (method != null) {
-        final BeanProperty beanProperty = BeanProperty.createBeanProperty(method);
-        ContainerUtil.addIfNotNull(beanProperty, list);
-      }
-    }
-    return list;
+  @Override
+  protected PsiClass findBeanPropertyClass(@NotNull final DomElement domElement) {
+    assert domElement instanceof ParamsElement : "parent not ParamsElement: " + domElement;
+    return ((ParamsElement) domElement).getParamsClass();
   }
 
   @NotNull
-  public BeanPropertyPathReference[] createReferences(final GenericDomValue<List<BeanProperty>> listGenericDomValue,
-                                               final PsiElement psiElement,
-                                               final ConvertContext convertContext) {
-    final DomElement paramsElement = getEnclosingElement(convertContext);
+  public PsiReference[] createReferences(final GenericDomValue<List<BeanProperty>> listGenericDomValue,
+                                         final PsiElement psiElement,
+                                         final ConvertContext convertContext) {
+    final DomElement paramsElement = findEnclosingTag(convertContext);
     if (paramsElement == null) {
-      return BeanPropertyPathReference.EMPTY_REFERENCE;
+      return PsiReference.EMPTY_ARRAY;
     }
 
-    final PsiClass rootPsiClass = getRootParamsClass(paramsElement);
+    final PsiClass rootPsiClass = findBeanPropertyClass(paramsElement);
     return new BeanPropertyPathReferenceSet(psiElement, rootPsiClass).getPsiReferences();
   }
 

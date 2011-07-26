@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,17 +13,15 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.dom.params;
+package com.intellij.struts2.dom.validator;
 
 import com.intellij.struts2.dom.BeanPropertyPathConverterBase;
 
 /**
- * Converter for {@link Param#getName()}.
- * <p/>
- * Based on Spring plugin.
+ * Converter for {@link com.intellij.struts2.dom.validator.Field#getName()}.
  *
  * @author Yann C&eacute;bron
  */
-public abstract class ParamNameConverter extends BeanPropertyPathConverterBase {
+public abstract class FieldNameConverter extends BeanPropertyPathConverterBase {
 
 }

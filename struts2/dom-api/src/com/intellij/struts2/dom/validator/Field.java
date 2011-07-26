@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.validator;
 
 import com.intellij.ide.presentation.Presentation;
+import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.struts2.Struts2ValidationPresentationProvider;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.util.xml.*;
@@ -34,8 +35,11 @@ import java.util.List;
               provider = Struts2ValidationPresentationProvider.class)
 public interface Field extends DomElement {
 
+  @Attribute(value = "name")
   @Required
-  GenericAttributeValue<String> getName();
+  @NameValue
+  @Convert(FieldNameConverter.class)
+  GenericAttributeValue<List<BeanProperty>> getName();
 
   @SubTagList("field-validator")
   @NotNull

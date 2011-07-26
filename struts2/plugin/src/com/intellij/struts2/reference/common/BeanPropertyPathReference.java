@@ -42,8 +42,6 @@ import java.util.Map;
 public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     implements PsiPolyVariantReference, EmptyResolveMessageProvider, LocalQuickFixProvider {
 
-  public static final BeanPropertyPathReference[] EMPTY_REFERENCE = new BeanPropertyPathReference[0];
-
   private final BeanPropertyPathReferenceSet referenceSet;
   private final int index;
 

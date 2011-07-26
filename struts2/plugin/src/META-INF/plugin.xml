@@ -172,6 +172,8 @@
     <dom.implementation interfaceClass="com.intellij.struts2.dom.validator.Validator"
                         implementationClass="com.intellij.struts2.dom.validator.impl.ValidatorImpl"/>
 
+    <dom.converter interfaceClass="com.intellij.struts2.dom.validator.FieldNameConverter"
+                   implementationClass="com.intellij.struts2.dom.validator.impl.FieldNameConverterImpl"/>
     <dom.converter interfaceClass="com.intellij.struts2.dom.validator.config.ValidatorConfigResolveConverter"
                    implementationClass="com.intellij.struts2.dom.validator.impl.ValidatorConfigResolveConverterImpl"/>
 
