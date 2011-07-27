@@ -82,8 +82,6 @@ public class AppTest extends AppTestBase {
   public void testUpdateDocumentOnIdeaAutoSave() throws Exception {
     VirtualFile newParent = open("states/SetProperty.mxml");
     
-    callClientAssert("wait"); // hack, wait library loaded on client
-    
     VirtualFile virtualFile = newParent.getChildren()[0];
     final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -99,7 +97,8 @@ public class AppTest extends AppTestBase {
     final FlexUIDesignerApplicationManager designerApplicationManager = FlexUIDesignerApplicationManager.getInstance();
     designerApplicationManager.openDocument(myModule, (XmlFile)myFile, false);
     while (designerApplicationManager.isDocumentOpening()) {
-      Thread.sleep(8); // todo event about document open?
+      Thread.sleep(8); // todo event about document opened
+      // ?
     }
     
     callClientAssert(getTestName(false));

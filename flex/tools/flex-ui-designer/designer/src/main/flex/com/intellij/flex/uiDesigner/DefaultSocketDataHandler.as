@@ -51,6 +51,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
 
     return _embedImageManager;
   }
+
   public function set socket(value:Socket):void {
   }
 
@@ -193,7 +194,13 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
     projectManager.project = module.project;
-    getDocumentManager(module).open(documentFactory);
+
+    var documentOpened:Function;
+    if (input.readBoolean()) {
+      documentOpened = Server.instance.documentOpened;
+    }
+
+    getDocumentManager(module).open(documentFactory, documentOpened);
   }
   
   private function updateDocuments(input:IDataInput):void {

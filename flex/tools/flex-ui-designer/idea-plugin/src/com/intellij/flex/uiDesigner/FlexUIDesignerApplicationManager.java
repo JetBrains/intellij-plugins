@@ -3,7 +3,9 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.ProjectTopics;
 import com.intellij.execution.ExecutionException;
 import com.intellij.facet.FacetManager;
+import com.intellij.flex.uiDesigner.io.ErrorSocketManager;
 import com.intellij.flex.uiDesigner.io.IOUtil;
+import com.intellij.flex.uiDesigner.io.MessageSocketManager;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.lang.javascript.flex.FlexFacet;
@@ -36,6 +38,7 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.Semaphore;
+import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,13 +66,14 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   private static final String CHECK_DESCRIPTOR_PATH = APP_DIR + File.separator + CHECK_DESCRIPTOR_XML;
 
   private MyOSProcessHandler adlProcessHandler;
-  private Server server;
 
   ProjectManagerListener projectManagerListener;
 
   private boolean documentOpening;
 
   private Disposable appParentDisposable;
+
+
 
   private static class ParentDisposable implements Disposable {
     @Override
@@ -100,10 +104,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   public void dispose() {
     try {
       IOUtil.close(Client.getInstance());
-      IOUtil.close(server);
     }
     finally {
-      server = null;
       destroyAdlProcess();
     }
   }
@@ -183,7 +185,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
   }
 
   private boolean isAppClosed() {
-    return server == null || server.isClosed();
+    return adlProcessHandler == null;
   }
 
   private static void reportInvalidFlexSdk(final Module module, boolean debug, @Nullable Sdk sdk) {
@@ -327,7 +329,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     appParentDisposable = null;
   }
 
-  class FirstOpenDocumentTask extends Task.Backgroundable {
+  public class FirstOpenDocumentTask extends Task.Backgroundable {
     private final Module module;
     private final XmlFile psiFile;
     private final boolean debug;
@@ -364,14 +366,23 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       Client client = Client.getInstance();
       try {
         client.flush();
-        client.openDocument(module, psiFile);
+
+        final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(appParentDisposable);
+        connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentOpenedListener() {
+          @Override
+          public void documentOpened() {
+            connection.disconnect();
+            semaphore.up();
+          }
+        });
+
+        client.openDocument(module, psiFile, true);
         client.flush();
 
-        semaphore.up();
+        indicator.setText(FlexUIDesignerBundle.message("load.libraries"));
       }
       catch (IOException e) {
         LOG.error(e);
-        IOUtil.close(server);
         cancel();
       }
     }
@@ -405,10 +416,11 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
         runInitializeLibrariesAndModuleThread();
 
+        appParentDisposable = new ParentDisposable();
+
         final List<String> arguments = new ArrayList<String>();
-        server = new Server(this);
-        arguments.add(String.valueOf(server.listen()));
-        arguments.add(String.valueOf(server.errorListen()));
+        arguments.add(String.valueOf(new MessageSocketManager(this).listen()));
+        arguments.add(String.valueOf(new ErrorSocketManager()));
 
         if (DebugPathManager.IS_DEV) {
           final String fudHome = DebugPathManager.getFudHome();
@@ -431,9 +443,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       final AdlRunTask task = new AdlRunTask(adlRunConfiguration) {
         @Override
         public void run() {
+          checkCanceled();
+          indicator.setText(FlexUIDesignerBundle.message("copy.app.files"));
           try {
-            checkCanceled();
-            indicator.setText(FlexUIDesignerBundle.message("copy.app.files"));
             copyAppFiles();
             checkCanceled();
 
@@ -458,18 +470,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
           catch (IOException e) {
             LOG.error(e);
-            if (clientOpened) {
-              try {
-                server.close();
-              }
-              catch (IOException ignored) {
-              }
-            }
+            cancel();
           }
         }
       };
-
-      appParentDisposable = new ParentDisposable();
 
       if (debug) {
         adlRunConfiguration.debug = true;

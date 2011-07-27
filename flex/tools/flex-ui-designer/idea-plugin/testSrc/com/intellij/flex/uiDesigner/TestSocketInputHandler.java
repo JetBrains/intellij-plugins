@@ -30,12 +30,12 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
 
   @Override
   protected boolean processCommand(int command) throws IOException {
-    if (isFileBased(command) || command == ServerMethod.saveProjectWindowBounds) {
+    if (isFileBased(command) || command == ServerMethod.SAVE_PROJECT_WINDOW_BOUNDS || command == ServerMethod.DOCUMENT_OPENED) {
       return super.processCommand(command);
     }
 
     switch (command) {
-      case ServerMethod.showError:
+      case ServerMethod.SHOW_ERROR:
         final String errorMessage = reader.readUTF();
         if (expectedError == null) {
           throw new IOException(errorMessage);

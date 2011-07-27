@@ -97,17 +97,6 @@ public final class IOUtil {
     }
   }
 
-  public static void close(ServerSocket socket) {
-    if (socket != null) {
-      try {
-        socket.close();
-      }
-      catch (IOException e) {
-        LOG.error(e);
-      }
-    }
-  }
-
   public static void writeAmfIntOrDouble(final PrimitiveAmfOutputStream out, final CharSequence value,
                                          final boolean isNegative, final boolean isInt) {
     if (isInt || StringUtil.indexOf(value, '.') == -1) {

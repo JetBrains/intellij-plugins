@@ -67,7 +67,7 @@ public class UITest extends MxmlTestBase {
   }
 
   public void _testStyleNavigationToExternal() throws Exception {
-    testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.resolveExternalInlineStyleDeclarationSource) {
+    testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.RESOLVE_EXTERNAL_INLINE_STYLE_DECLARATION_SOURCE) {
         @Override
         public void process() throws IOException {
           assertThat(client.getModule(reader.readUnsignedShort()), equalTo(myModule));
@@ -81,7 +81,7 @@ public class UITest extends MxmlTestBase {
   }
 
   public void _testStyleNavigationToSkinClass() throws Exception {
-    testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.openFile) {
+    testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.OPEN_FILE) {
         @Override
         public void process() throws IOException {
           assertMyProject();
@@ -97,7 +97,7 @@ public class UITest extends MxmlTestBase {
   }
 
   public void testCloseDocument() throws Exception {
-    testFile(new MyTester("closeDocument", new UIMessageHandler(ServerMethod.unregisterDocumentFactories) {
+    testFile(new MyTester("closeDocument", new UIMessageHandler(ServerMethod.UNREGISTER_DOCUMENT_FACTORIES) {
         @Override
         public void process() throws IOException {
           assertMyProject();
