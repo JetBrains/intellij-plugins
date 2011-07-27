@@ -349,7 +349,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
     public void clientOpened() {
       clientOpened = true;
-      indicator.checkCanceled();
+      checkCanceled();
       if (libraryAndModuleInitialized) {
         openDocument();
       }
@@ -432,10 +432,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         @Override
         public void run() {
           try {
-            indicator.checkCanceled();
+            checkCanceled();
             indicator.setText(FlexUIDesignerBundle.message("copy.app.files"));
             copyAppFiles();
-            indicator.checkCanceled();
+            checkCanceled();
 
             if (projectManagerListener == null) {
               attachApplicationLevelListeners();
@@ -509,7 +509,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         public void run() {
           indicator.setText(FlexUIDesignerBundle.message("delete.old.libraries"));
           LibraryManager.getInstance().garbageCollection(APP_DIR);
-          indicator.checkCanceled();
+          checkCanceled();
 
           try {
             if (!StringRegistry.getInstance().isEmpty()) {
@@ -530,7 +530,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
 
           libraryAndModuleInitialized = true;
-          indicator.checkCanceled();
+          checkCanceled();
           if (clientOpened) {
             openDocument();
           }
@@ -539,6 +539,13 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
         }
       });
+    }
+
+    private void checkCanceled() {
+      if (indicator.isCanceled()) {
+        semaphore.up();
+        indicator.checkCanceled();
+      }
     }
 
     private void cancel() {

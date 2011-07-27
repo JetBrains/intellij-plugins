@@ -93,7 +93,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     }
   }
 
-  protected boolean isFileBased(int command) {
+  protected static boolean isFileBased(int command) {
     return command == ServerMethod.getResourceBundle || command == ServerMethod.getBitmapData;
   }
 
@@ -200,6 +200,10 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         value = "false";
         break;
 
+      case Amf3Types.STRING:
+        value = reader.readUTF();
+        break;
+
       default:
         throw new IllegalArgumentException("unknown value type");
     }
@@ -232,7 +236,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
       reader.readInt()));
   }
 
-  private void navigateToFile(final OpenFileDescriptor openFileDescriptor) {
+  private static void navigateToFile(final OpenFileDescriptor openFileDescriptor) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {

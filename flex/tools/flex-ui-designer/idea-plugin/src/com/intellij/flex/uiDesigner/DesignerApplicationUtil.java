@@ -171,8 +171,8 @@ final class DesignerApplicationUtil {
 
   public static void runDebugger(final Module module, final AdlRunTask task) throws ExecutionException {
     RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
-    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("FlexUIDesigner", FlexRunConfigurationType.getFactory());
-    final FlexRunnerParameters runnerParameters = ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters();
+    RunnerAndConfigurationSettings settings = runManager.createConfiguration("FlexUIDesigner", FlexRunConfigurationType.getFactory());
+    FlexRunnerParameters runnerParameters = ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters();
     runnerParameters.setRunMode(FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer);
 
     final CompileStepBeforeRun.MakeBeforeRunTask runTask =

@@ -112,7 +112,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     if (input.readBoolean()) {
       projectWindowBounds = new Rectangle(input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort());
     }
-    projectManager.open(project, new DocumentWindow(new ProjectView(), project.map, null, projectWindowBounds));
+    projectManager.open(project, new DocumentWindow(new ProjectView(), project.map, projectWindowBounds, new MainFocusManager()));
   }
 
   private function registerModule(input:IDataInput):void {

@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.CheckBox;
+import cocoa.DocumentWindow;
+import cocoa.Focusable;
 import cocoa.Insets;
 import cocoa.TextInput;
 import cocoa.plaf.ButtonSkinInteraction;
@@ -215,7 +217,7 @@ public class ValueRendererManager extends TextRendererManager {
 
   public function createEditor(itemIndex:int, entry:TextLineEntry, w:Number, h:Number):Sprite {
     var description:Object = getDescription(itemIndex);
-    if (description.type != "String") {
+    if (description.type != "String" || !description.editable) {
       return null;
     }
 
@@ -236,13 +238,24 @@ public class ValueRendererManager extends TextRendererManager {
     displayObject.y = ((entry.line.y + textInsets.bottom) - h) - Math.round((textInputHeight - h) / 2);
 
     var textField:EditableTextView = textInput.textDisplay;
-    _container.stage.focus = textField;
-    textField.selectAll();
+    DocumentWindow(_container.stage.nativeWindow).focusManager.setFocus(Focusable(skin));
     return textField;
   }
 
   public function closeEditor(editor:InteractiveObject):void {
-    _container.removeChild(editor);
+    _container.removeChild(editor.parent);
+    _container.mouseChildren = false;
+  }
+
+  public function closeEditorAndCommit(editor:InteractiveObject, value:String, entry:TextLineEntry, w:Number):void {
+    closeEditor(editor);
+
+    var line:TextLine = entry.line;
+    var lineX:Number = line.x;
+    var lineY:Number = line.y;
+    textLineRendererFactory.recreate(line, textLineContainer, value, w, textFormat.format);
+    line.x = lineX;
+    line.y = lineY;
   }
 }
 }

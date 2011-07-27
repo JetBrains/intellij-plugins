@@ -1,4 +1,6 @@
 package com.intellij.flex.uiDesigner {
+import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
+
 import org.jetbrains.ApplicationManager;
 import cocoa.DocumentWindow;
 
@@ -24,8 +26,6 @@ import flash.utils.Dictionary;
 
 public class DocumentManagerImpl extends EventDispatcher implements DocumentManager {
   private var libraryManager:LibraryManager;
-
-  private var mainFocusManager:MainFocusManager;
 
   private var documentReader:DocumentReader;
   private var server:Server;
@@ -201,15 +201,11 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var systemManager:SystemManagerSB = new systemManagerClass();
     document.systemManager = systemManager;
 
-    if (mainFocusManager == null) {
-      mainFocusManager = new MainFocusManager(window.stage);
-    }
-
     if (!systemManager.sharedInitialized) {
       systemManager.initShared(window.stage, module.project, server, UncaughtErrorManager.instance);
     }
     systemManager.init(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
-                       mainFocusManager);
+                       MainFocusManagerSB(module.project.window.focusManager));
     document.container = new DocumentContainer(Sprite(systemManager));
   }
 }
