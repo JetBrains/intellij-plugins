@@ -11,10 +11,9 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.flex.uiDesigner.debug.MyFlexBaseRunner;
+import com.intellij.flex.uiDesigner.debug.FlexRunner;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
-import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfigurationType;
 import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
@@ -175,7 +174,6 @@ final class DesignerApplicationUtil {
     final RunnerAndConfigurationSettings settings = runManager.createConfiguration("FlexUIDesigner", FlexRunConfigurationType.getFactory());
     final FlexRunnerParameters runnerParameters = ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters();
     runnerParameters.setRunMode(FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer);
-    runnerParameters.setModuleName(module.getName());
 
     final CompileStepBeforeRun.MakeBeforeRunTask runTask =
       runManager.getBeforeRunTask(settings.getConfiguration(), CompileStepBeforeRun.ID);
@@ -183,15 +181,12 @@ final class DesignerApplicationUtil {
       runTask.setEnabled(false);
     }
 
-    final FlexBaseRunner runner = new MyFlexBaseRunner();
     final DefaultDebugExecutor executor = new DefaultDebugExecutor();
-    runner.execute(executor, new ExecutionEnvironment(runner, settings, module.getProject()), new ProgramRunner.Callback() {
+    ProgramRunner.Callback callback = new ProgramRunner.Callback() {
       @Override
       public void processStarted(final RunContentDescriptor descriptor) {
         final ProcessHandler processHandler = descriptor.getProcessHandler();
         assert processHandler != null;
-        //noinspection deprecation
-        processHandler.putUserData(ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, true);
         if (FlexUIDesignerApplicationManager.getInstance().disposeOnApplicationClosed(new Disposable() {
           @Override
           public void dispose() {
@@ -212,7 +207,10 @@ final class DesignerApplicationUtil {
           task.run();
         }
       }
-    });
+    };
+
+    final FlexRunner runner = new FlexRunner(callback, module);
+    runner.execute(executor, new ExecutionEnvironment(runner, settings, module.getProject()));
   }
 
   public static MyOSProcessHandler runAdl(AdlRunConfiguration runConfiguration, String descriptor, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {

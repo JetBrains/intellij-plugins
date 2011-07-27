@@ -4,12 +4,16 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.DebugPathManager;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
-import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
+import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.util.StringBuilderSpinAllocator;
@@ -23,24 +27,44 @@ import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-// we need SILENTLY_DETACH_ON_CLOSE, but RunContentManagerImpl provides only ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, so,
-// we override destroyProcess as detachProcess
-public class MyFlexBaseRunner extends FlexBaseRunner {
-  @Override
-  protected RunContentDescriptor doLaunch(final Project project, final Executor executor, RunProfileState state,
-                                          RunContentDescriptor contentToReuse, final ExecutionEnvironment env, final Sdk flexSdk,
-                                          final FlexRunnerParameters flexRunnerParameters) throws ExecutionException {
-    return XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
-      @NotNull
-      public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
-        try {
-          return DebugPathManager.IS_DEV ? new MyFlexDebugProcessAbleToResolveFileDebugId(session, flexSdk, flexRunnerParameters) : new MyFlexDebugProcess(session, flexSdk, flexRunnerParameters);
-        }
-        catch (IOException e) {
-          throw new ExecutionException(e.getMessage(), e);
-        }
-      }
-    }).getRunContentDescriptor();
+// we need SILENTLY_DETACH_ON_CLOSE, but RunContentManagerImpl provides only ProcessHandler.SILENTLY_DESTROY_ON_CLOSE
+public class FlexRunner extends GenericProgramRunner {
+  private final Callback callback;
+  private Module module;
+
+  public FlexRunner(Callback callback, Module module) {
+    this.callback = callback;
+    this.module = module;
+  }
+
+  protected RunContentDescriptor doExecute(final Project project, final Executor executor, final RunProfileState state,
+                                           final RunContentDescriptor contentToReuse, final ExecutionEnvironment env)
+      throws ExecutionException {
+    final FlexRunnerParameters flexRunnerParameters = ((FlexRunConfiguration)env.getRunProfile()).getRunnerParameters();
+    final Sdk flexSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
+    module = null;
+
+    RunContentDescriptor runContentDescriptor = XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse,
+        new XDebugProcessStarter() {
+          @NotNull
+          public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
+            try {
+              return DebugPathManager.IS_DEV
+                     ? new MyFlexDebugProcessAbleToResolveFileDebugId(callback, session, flexSdk, flexRunnerParameters)
+                     : new MyFlexDebugProcess(callback, session, flexSdk, flexRunnerParameters);
+            }
+            catch (IOException e) {
+              throw new ExecutionException(e.getMessage(), e);
+            }
+          }
+        }).getRunContentDescriptor();
+
+    ProcessHandler processHandler = runContentDescriptor.getProcessHandler();
+    assert processHandler != null;
+    //noinspection deprecation
+    processHandler.putUserData(ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, true);
+
+    return runContentDescriptor;
   }
 
   @Override
@@ -55,8 +79,12 @@ public class MyFlexBaseRunner extends FlexBaseRunner {
   }
 
   private static class MyFlexDebugProcess extends FlexDebugProcess {
-    public MyFlexDebugProcess(XDebugSession session, Sdk flexSdk, FlexRunnerParameters flexRunnerParameters) throws IOException {
+    private final Callback callback;
+
+    public MyFlexDebugProcess(Callback callback, XDebugSession session, Sdk flexSdk,
+                              FlexRunnerParameters flexRunnerParameters) throws IOException {
       super(session, flexSdk, flexRunnerParameters);
+      this.callback = callback;
     }
 
     @Override
@@ -65,12 +93,17 @@ public class MyFlexBaseRunner extends FlexBaseRunner {
         super.stop();
       }
     }
+
+    @Override
+    protected void notifyFdbWaitingForPlayerStateReached() {
+      callback.processStarted(getSession().getRunContentDescriptor());
+    }
   }
 
-  private class MyFlexDebugProcessAbleToResolveFileDebugId extends MyFlexDebugProcess {
-    public MyFlexDebugProcessAbleToResolveFileDebugId(XDebugSession session, Sdk flexSdk, FlexRunnerParameters flexRunnerParameters)
+  private static class MyFlexDebugProcessAbleToResolveFileDebugId extends MyFlexDebugProcess {
+    public MyFlexDebugProcessAbleToResolveFileDebugId(Callback callback, XDebugSession session, Sdk flexSdk, FlexRunnerParameters flexRunnerParameters)
       throws IOException {
-      super(session, flexSdk, flexRunnerParameters);
+      super(callback, session, flexSdk, flexRunnerParameters);
     }
 
     @Override

@@ -473,7 +473,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
       if (debug) {
         adlRunConfiguration.debug = true;
-        // FlexBaseRunner call FileDocumentManager.getInstance().saveAllDocuments(), must be in EDT
         ApplicationManager.getApplication().invokeLater(new Runnable() {
           @Override
           public void run() {
