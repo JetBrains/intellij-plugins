@@ -17,6 +17,7 @@ package com.intellij.struts2.reference;
 
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.struts2.StrutsConstants;
+import com.intellij.struts2.reference.jsp.ActionPropertyReferenceProvider;
 import com.intellij.struts2.reference.jsp.NamespaceReferenceProvider;
 import com.intellij.struts2.reference.jsp.ThemeReferenceProvider;
 import org.jetbrains.annotations.NonNls;
@@ -34,32 +35,32 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
    */
   @NonNls
   private static final String[] TAGLIB_UI_FORM_TAGS = new String[]{
-    "a",
-    "checkbox",
-    "checkboxlist",
-    "combobox",
-    "component",
-    "debug",
-    "div",
-    "doubleselect",
-    "head",
-    "fielderror",
-    "file",
-    "form",
-    "hidden",
-    "inputtransferselect",
-    "label",
-    "optiontransferselect",
-    "optgroup",
-    "password",
-    "radio",
-    "reset",
-    "select",
-    "submit",
-    "textarea",
-    "textfield",
-    "token",
-    "updownselect"
+      "a",
+      "checkbox",
+      "checkboxlist",
+      "combobox",
+      "component",
+      "debug",
+      "div",
+      "doubleselect",
+      "head",
+      "fielderror",
+      "file",
+      "form",
+      "hidden",
+      "inputtransferselect",
+      "label",
+      "optiontransferselect",
+      "optgroup",
+      "password",
+      "radio",
+      "reset",
+      "select",
+      "submit",
+      "textarea",
+      "textfield",
+      "token",
+      "updownselect"
   };
 
   @NotNull
@@ -156,6 +157,10 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
                  "form");
     registerBoolean("validate", registrar, "form");
 
+    // <param>
+    registerTags(new ActionPropertyReferenceProvider(),
+                 "name", registrar,
+                 "param");
 
     // <property>
     registerBoolean("escape", registrar, "property");
@@ -179,7 +184,7 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
                  "submit");
 
     // <text>
-    registerTags(wrappedPropertiesProvider, "name",registrar, "text");
+    registerTags(wrappedPropertiesProvider, "name", registrar, "text");
     registerBoolean("searchValueStack", registrar, "text");
 
     // <url>
