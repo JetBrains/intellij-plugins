@@ -135,7 +135,6 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
 
   };
 
-
   private static final JamStringAttributeMeta.Single<WebDirectoryElement> VALUE_ATTRIBUTE =
     JamAttributeMeta.singleString("value", VALUE_CONVERTER);
 
