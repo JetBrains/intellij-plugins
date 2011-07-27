@@ -47,7 +47,6 @@ import java.util.EventListener;
 @State(
   name = "Osmorc",
   storages = {@Storage(
-    id = "other",
     file = "$PROJECT_FILE$")})
 public class ProjectSettings implements PersistentStateComponent<ProjectSettings> {
 

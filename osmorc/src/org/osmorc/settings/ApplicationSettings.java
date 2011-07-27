@@ -50,7 +50,6 @@ import java.util.List;
 @State(
   name = "Osmorc",
   storages = {@Storage(
-    id = "Osmorc",
     file = "$APP_CONFIG$/osmorc.xml")})
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
   private List<FrameworkInstanceDefinition> _frameworkInstanceDefinitions = new ArrayList<FrameworkInstanceDefinition>();
