@@ -48,7 +48,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
   BeanPropertyPathReference(final BeanPropertyPathReferenceSet referenceSet,
                             final TextRange range,
                             final int index) {
-    super(referenceSet.getElement(), range, true);
+    super(referenceSet.getElement(), range, referenceSet.isSoft());
     this.referenceSet = referenceSet;
     this.index = index;
   }
