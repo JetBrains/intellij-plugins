@@ -17,8 +17,7 @@ package com.intellij.struts2.dom;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiPolyVariantReference;
-import com.intellij.psi.ResolveResult;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.*;
@@ -30,7 +29,7 @@ import java.util.List;
 
 /**
  * DOM-Converter for resolving path to (nested) bean property.
- *
+ * <p/>
  * See {@code BeanPropertyPathReference}.
  *
  * @author Yann C&eacute;bron
@@ -58,16 +57,10 @@ public abstract class BeanPropertyPathConverterBase extends Converter<List<BeanP
 
     final GenericAttributeValue<List<BeanProperty>> value = (GenericAttributeValue<List<BeanProperty>>) convertContext.getInvocationElement();
     // always BeanPropertyPathReference
-    final PsiPolyVariantReference[] references =
-        (PsiPolyVariantReference[]) createReferences(value, value.getXmlAttributeValue(), convertContext);
-    if (references.length < 1) {
-      return null;
-    }
-
-    final ResolveResult[] results = references[references.length - 1].multiResolve(false);
-    final ArrayList<BeanProperty> list = new ArrayList<BeanProperty>(results.length);
-    for (final ResolveResult result : results) {
-      final PsiMethod method = (PsiMethod) result.getElement();
+    final PsiReference[] references = createReferences(value, value.getXmlAttributeValue(), convertContext);
+    final ArrayList<BeanProperty> list = new ArrayList<BeanProperty>(references.length);
+    for (final PsiReference reference : references) {
+      final PsiMethod method = (PsiMethod) reference.resolve();
       if (method != null) {
         final BeanProperty beanProperty = BeanProperty.createBeanProperty(method);
         ContainerUtil.addIfNotNull(beanProperty, list);

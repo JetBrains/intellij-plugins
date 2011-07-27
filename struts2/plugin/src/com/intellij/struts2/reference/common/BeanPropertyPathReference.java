@@ -40,7 +40,7 @@ import java.util.Map;
  * @author Yann C&eacute;bron
  */
 public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
-    implements PsiPolyVariantReference, EmptyResolveMessageProvider, LocalQuickFixProvider {
+    implements EmptyResolveMessageProvider, LocalQuickFixProvider {
 
   private final BeanPropertyPathReferenceSet referenceSet;
   private final int index;
@@ -58,8 +58,12 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
   }
 
   public PsiMethod resolve() {
-    final ResolveResult[] resolveResults = multiResolve(false);
-    return (PsiMethod) (resolveResults.length == 1 ? resolveResults[0].getElement() : null);
+    final PsiClass psiClass = getPsiClass();
+    if (psiClass == null) {
+      return null;
+    }
+
+    return resolveProperty(psiClass, getValue());
   }
 
   @NotNull
@@ -88,21 +92,6 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     }
 
     return variants;
-  }
-
-  @NotNull
-  public ResolveResult[] multiResolve(final boolean incompleteCode) {
-    final PsiClass psiClass = getPsiClass();
-    if (psiClass == null) {
-      return ResolveResult.EMPTY_ARRAY;
-    }
-
-    final PsiMethod method = resolveProperty(psiClass, getValue());
-    if (method == null) {
-      return ResolveResult.EMPTY_ARRAY;
-    }
-
-    return new ResolveResult[]{new PsiElementResolveResult(method)};
   }
 
   public String getUnresolvedMessagePattern() {
