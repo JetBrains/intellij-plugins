@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2009 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,29 +15,15 @@
 
 package com.intellij.struts2.dom.params;
 
-import com.intellij.ide.presentation.Presentation;
-import com.intellij.psi.impl.beanProperties.BeanProperty;
-import com.intellij.struts2.StrutsIcons;
-import com.intellij.util.xml.*;
-
-import java.util.List;
+import com.intellij.struts2.dom.BeanPropertyPathConverterBase;
 
 /**
- * <code>param</code>
+ * Converter for {@link Param#getName()}.
+ * <p/>
+ * Based on Spring plugin.
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Parameter", icon = StrutsIcons.PARAM_PATH)
-public interface Param extends DomElement {
-
-  @Attribute(value = "name")
-  @Required
-  @NameValue
-  @Convert(ParamNameConverter.class)
-  GenericAttributeValue<List<BeanProperty>> getName();
-
-  @TagValue
-  @Required
-  String getValue();
+public abstract class ParamNameConverter extends BeanPropertyPathConverterBase {
 
 }

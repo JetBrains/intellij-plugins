@@ -16,7 +16,7 @@
     <message>anything</message>
   </validator>
 
-  <validator type="<error>INVALID_VALUE</error>">
+  <validator type="<error descr="Cannot resolve validator 'INVALID_VALUE'">INVALID_VALUE</error>">
     <message>anything</message>
   </validator>
 
@@ -27,10 +27,10 @@
   </validator>
 
 
-  <!-- FIELD ==================================================== -->
+  <!-- FIELD, see MyAction.java ==================================================== -->
 
   <!-- "type" -->
-  <field name="ANYTHING_FIX_ME">
+  <field name="myField">
     <field-validator type="required">
       <message>anything</message>
     </field-validator>
@@ -41,13 +41,21 @@
   </field>
 
   <!-- nested <param> -->
-
-  <field name="ANYTHING_FIX_ME">
+  <field name="<error>myBooleanField</error>"> <!-- duplicate with below -->
     <field-validator type="fieldexpression">
       <param name="expression">ANYTHING_FIX_ME</param>
-      <param name="<error>INVALID_VALUE</error>">anything</param>
+      <param name="<error descr="Cannot resolve property 'INVALID_VALUE'">INVALID_VALUE</error>"></param>
       <message>anything</message>
     </field-validator>
+  </field>
+
+
+  <!-- duplicate <field> "name" -->
+  <field name="<error descr="Field with such name already exists">myBooleanField</error>">
+  </field>
+
+  <!-- non-existing property in MyAction -->
+  <field name="<error descr="Cannot resolve property 'INVALID_VALUE'">INVALID_VALUE</error>">
   </field>
 
 </validators>

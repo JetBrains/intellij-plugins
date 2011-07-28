@@ -13,31 +13,15 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.dom.params;
+package com.intellij.struts2.dom.validator;
 
-import com.intellij.ide.presentation.Presentation;
-import com.intellij.psi.impl.beanProperties.BeanProperty;
-import com.intellij.struts2.StrutsIcons;
-import com.intellij.util.xml.*;
-
-import java.util.List;
+import com.intellij.struts2.dom.BeanPropertyPathConverterBase;
 
 /**
- * <code>param</code>
+ * Converter for {@link com.intellij.struts2.dom.validator.Field#getName()}.
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Parameter", icon = StrutsIcons.PARAM_PATH)
-public interface Param extends DomElement {
-
-  @Attribute(value = "name")
-  @Required
-  @NameValue
-  @Convert(ParamNameConverter.class)
-  GenericAttributeValue<List<BeanProperty>> getName();
-
-  @TagValue
-  @Required
-  String getValue();
+public abstract class FieldNameConverter extends BeanPropertyPathConverterBase {
 
 }

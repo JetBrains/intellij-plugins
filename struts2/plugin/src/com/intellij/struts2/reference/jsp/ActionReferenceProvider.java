@@ -25,7 +25,6 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.StrutsIcons;
@@ -83,8 +82,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
       return null;
     }
 
-    final XmlAttribute namespaceAttribute = tag.getAttribute("namespace");
-    return namespaceAttribute != null ? namespaceAttribute.getValue() : null;
+    return tag.getAttributeValue("namespace");
   }
 
 

@@ -22,7 +22,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.IdRefReference;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
@@ -73,23 +72,7 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
   /**
    * Wrapped .properties key reference (disable in facet settings).
    */
-  protected final PsiReferenceProvider wrappedPropertiesProvider;
-
-  protected StrutsTaglibReferenceContributorBase() {
-    final PsiReferenceProvider propertiesProvider =
-      CommonReferenceProviderTypes.PROPERTIES_FILE_KEY_PROVIDER.getProvider();
-    wrappedPropertiesProvider = new PsiReferenceProvider() {
-      @NotNull
-      @Override
-      public PsiReference[] getReferencesByElement(final @NotNull PsiElement psiElement,
-                                                   final @NotNull ProcessingContext processingContext) {
-        final StrutsFacet facet = StrutsFacet.getInstance(psiElement);
-        return facet != null && !facet.getConfiguration().isPropertiesKeysDisabled() ?
-               propertiesProvider.getReferencesByElement(psiElement, processingContext) : PsiReference.EMPTY_ARRAY;
-      }
-    };
-
-  }
+  protected final PsiReferenceProvider wrappedPropertiesProvider = new WrappedPropertiesReferenceProvider();
 
   /**
    * Reference to HTML element's "id" with additional pseudo-IDs.

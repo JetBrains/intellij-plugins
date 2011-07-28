@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.intellij.struts2.dom.params;
+package com.intellij.struts2.reference.common;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
@@ -33,24 +33,22 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 /**
- * Provides to (part) of param-name.
+ * Provides (part of) path to bean property.
  * <p/>
  * Based on Spring plugin.
  *
  * @author Yann C&eacute;bron
  */
-class ParamNameReference extends PsiReferenceBase<PsiElement>
-    implements PsiPolyVariantReference, EmptyResolveMessageProvider, LocalQuickFixProvider {
+public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
+    implements EmptyResolveMessageProvider, LocalQuickFixProvider {
 
-  public static final ParamNameReference[] EMPTY_REFERENCE = new ParamNameReference[0];
-
-  private final ParamNameReferenceSet referenceSet;
+  private final BeanPropertyPathReferenceSet referenceSet;
   private final int index;
 
-  ParamNameReference(final ParamNameReferenceSet referenceSet,
-                     final TextRange range,
-                     final int index) {
-    super(referenceSet.getElement(), range, true);
+  BeanPropertyPathReference(final BeanPropertyPathReferenceSet referenceSet,
+                            final TextRange range,
+                            final int index) {
+    super(referenceSet.getElement(), range, referenceSet.isSoft());
     this.referenceSet = referenceSet;
     this.index = index;
   }
@@ -60,8 +58,12 @@ class ParamNameReference extends PsiReferenceBase<PsiElement>
   }
 
   public PsiMethod resolve() {
-    final ResolveResult[] resolveResults = multiResolve(false);
-    return (PsiMethod) (resolveResults.length == 1 ? resolveResults[0].getElement() : null);
+    final PsiClass psiClass = getPsiClass();
+    if (psiClass == null) {
+      return null;
+    }
+
+    return resolveProperty(psiClass, getValue());
   }
 
   @NotNull
@@ -83,28 +85,13 @@ class ParamNameReference extends PsiReferenceBase<PsiElement>
       assert propertyType != null;
 
       final LookupElementBuilder variant =
-        LookupElementBuilder.create(propertyName)
-          .setIcon(member.getIcon(Iconable.ICON_FLAG_OPEN))
-          .setTypeText(propertyType.getPresentableText());
+          LookupElementBuilder.create(propertyName)
+                              .setIcon(member.getIcon(Iconable.ICON_FLAG_OPEN))
+                              .setTypeText(propertyType.getPresentableText());
       variants[i++] = variant;
     }
 
     return variants;
-  }
-
-  @NotNull
-  public ResolveResult[] multiResolve(final boolean incompleteCode) {
-    final PsiClass psiClass = getPsiClass();
-    if (psiClass == null) {
-      return ResolveResult.EMPTY_ARRAY;
-    }
-
-    final PsiMethod method = resolveProperty(psiClass, getValue());
-    if (method == null) {
-      return ResolveResult.EMPTY_ARRAY;
-    }
-
-    return new ResolveResult[]{new PsiElementResolveResult(method)};
   }
 
   public String getUnresolvedMessagePattern() {
@@ -142,9 +129,8 @@ class ParamNameReference extends PsiReferenceBase<PsiElement>
 
   @Nullable
   private PsiMethod resolveProperty(@NotNull final PsiClass psiClass, final String propertyName) {
-    final boolean isLast = isLast();
-    final PsiMethod method = isLast ? PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
-                             PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
+    final PsiMethod method = isLast() ? PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
+        PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
     return method == null || !method.hasModifierProperty(PsiModifier.PUBLIC) ? null : method;
   }
 

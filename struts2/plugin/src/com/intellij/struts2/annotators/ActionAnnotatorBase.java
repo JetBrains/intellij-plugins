@@ -122,11 +122,11 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
     }
 
 
-    // annotate action-methods with result(s)
+    // annotate action-methods of *this* class with result(s)
     final Map<PsiMethod, Set<PathReference>> pathReferenceMap = new HashMap<PsiMethod, Set<PathReference>>();
     for (final Action action : actions) {
       final PsiMethod method = action.searchActionMethod();
-      if (method == null) {
+      if (method == null || !clazz.equals(method.getContainingClass())) {
         continue;
       }
 
