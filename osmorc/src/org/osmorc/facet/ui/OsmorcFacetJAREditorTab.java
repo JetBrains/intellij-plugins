@@ -28,10 +28,7 @@ package org.osmorc.facet.ui;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.FacetValidatorsManager;
-import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDialog;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
+import com.intellij.openapi.fileChooser.*;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.FileTypes;
@@ -208,7 +205,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     if (row > -1) {
       Pair<String, String> additionalJARContent = myAdditionalJARContentsTableModel.getAdditionalJARContent(row);
       Project project = myEditorContext.getProject();
-      FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, true, false, false);
+      FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleLocalFileDescriptor();
       descriptor.setTitle("Choose source file or folder");
       FileChooserDialog fileChooserDialog = FileChooserFactory.getInstance().createFileChooser(descriptor, project);
       VirtualFile preselectedPath = LocalFileSystem.getInstance().findFileByPath(additionalJARContent.getFirst());
@@ -248,7 +245,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
 
   private void onAddAdditionalJARContent() {
     Project project = myEditorContext.getProject();
-    FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, true, false, true);
+    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createAllButJarContentsDescriptor();
     descriptor.setTitle("Choose source file or folder");
     FileChooserDialog fileChooserDialog = FileChooserFactory.getInstance().createFileChooser(descriptor, project);
     VirtualFile rootFolder = null;
@@ -343,11 +340,10 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     VirtualFile preselectedFile =
       StringUtil.isNotEmpty(currentFile) ? LocalFileSystem.getInstance().findFileByPath(currentFile) : moduleCompilerOutputPath;
 
-    FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
+    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
     descriptor.setTitle("Select bundle output directory");
-    VirtualFile[] virtualFiles = FileChooser.chooseFiles(myEditorContext.getProject(), descriptor, preselectedFile);
-    if (virtualFiles.length == 1) {
-      VirtualFile file = virtualFiles[0];
+    VirtualFile file = FileChooser.chooseFile(myEditorContext.getProject(), descriptor, preselectedFile);
+    if (file != null) {
       if (VfsUtil.isAncestor(moduleCompilerOutputPath, file, false)) {
         Messages.showErrorDialog(myEditorContext.getProject(),
                                  OsmorcBundle.getTranslation("faceteditor.jar.cannot.be.in.output.path"), OsmorcBundle.getTranslation("error"));

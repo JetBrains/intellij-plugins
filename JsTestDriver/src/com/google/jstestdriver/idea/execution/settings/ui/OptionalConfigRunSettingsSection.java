@@ -3,7 +3,7 @@ package com.google.jstestdriver.idea.execution.settings.ui;
 import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.util.ObjectUtils;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import org.jetbrains.annotations.NotNull;
 
@@ -166,7 +166,7 @@ class OptionalConfigRunSettingsSection extends AbstractRunSettingsSection {
                     "Select JsTestDriver configuration file",
                     "",
                     creationContext.getProject(),
-                    new FileChooserDescriptor(true, false, false, false, false, false)
+                    FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
                 );
 
                 JPanel panel = new JPanel(new GridBagLayout());

@@ -2,7 +2,7 @@ package com.google.jstestdriver.idea.execution.settings.ui;
 
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.util.ObjectUtils;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,7 +56,7 @@ class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
           "Select directory",
           "All JsTestDriver configuration files in this folder will be executed",
           creationContext.getProject(),
-          new FileChooserDescriptor(false, true, false, false, false, false)
+          FileChooserDescriptorFactory.createSingleFolderDescriptor()
       );
       panel.add(myDirectoryTextFieldWithBrowseButton, c);
     }
