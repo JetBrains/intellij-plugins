@@ -8,8 +8,8 @@ import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.psi.PropertiesFile;
-import com.intellij.lang.properties.psi.Property;
 import com.intellij.openapi.application.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -332,11 +332,11 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
         final AmfOutputStream out = new AmfOutputStream(new ByteArrayOutputStreamEx(4 * 1024));
         // todo Embed, ClassReference, but idea doesn't support it too
-        List<Property> properties = resourceBundleFile.getProperties();
+        List<IProperty> properties = resourceBundleFile.getProperties();
         out.write(Amf3Types.DICTIONARY);
         out.writeUInt29((properties.size() << 1) | 1);
         out.write(0);
-        for (Property property : properties) {
+        for (IProperty property : properties) {
           out.write(property.getUnescapedKey());
           out.write(property.getUnescapedValue());
         }
