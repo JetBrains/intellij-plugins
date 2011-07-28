@@ -121,25 +121,30 @@ public class FlexRunner extends GenericProgramRunner {
         String id = line.substring(0, spaceIndex);
         String fullPath;
         if (line.charAt(spaceIndex + 1) == '$') {
-          int firstSlashIndex = line.indexOf('/');
-          StringBuilder builder = StringBuilderSpinAllocator.alloc();
-          try {
-            boolean isBackSlash = firstSlashIndex == -1;
-            if (isBackSlash) {
-              firstSlashIndex = line.indexOf('\\');
-            }
-            builder.append(mySdkLocation).append("/frameworks/projects/").append(line, spaceIndex + 2, firstSlashIndex).append("/src/");
-            if (isBackSlash) {
-              builder.append(line.substring(firstSlashIndex + 1, commaPos).replace('\\', '/'));
-            }
-            else {
-              builder.append(line, firstSlashIndex + 1, commaPos);
-            }
-
-            fullPath = builder.toString();
+          if (line.indexOf("$framework/mx/styles/StyleProtoChain.as", spaceIndex) != -1) {
+            fullPath = DebugPathManager.getFudHome() + "/flex-injection/src/main/flex/mx/styles/StyleProtoChain.as";
           }
-          finally {
-            StringBuilderSpinAllocator.dispose(builder);
+          else {
+            int firstSlashIndex = line.indexOf('/');
+            StringBuilder builder = StringBuilderSpinAllocator.alloc();
+            try {
+              boolean isBackSlash = firstSlashIndex == -1;
+              if (isBackSlash) {
+                firstSlashIndex = line.indexOf('\\');
+              }
+              builder.append(mySdkLocation).append("/frameworks/projects/").append(line, spaceIndex + 2, firstSlashIndex).append("/src/");
+              if (isBackSlash) {
+                builder.append(line.substring(firstSlashIndex + 1, commaPos).replace('\\', '/'));
+              }
+              else {
+                builder.append(line, firstSlashIndex + 1, commaPos);
+              }
+
+              fullPath = builder.toString();
+            }
+            finally {
+              StringBuilderSpinAllocator.dispose(builder);
+            }
           }
         }
         else if (line.startsWith("/Users/develar/workspace/flex_sdk_4.5_modified", spaceIndex + 1)) {

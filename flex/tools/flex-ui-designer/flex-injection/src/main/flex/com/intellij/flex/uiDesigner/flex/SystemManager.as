@@ -42,7 +42,6 @@ import mx.managers.LayoutManager;
 import mx.managers.PopUpManagerImpl;
 import mx.managers.SystemManagerGlobals;
 import mx.managers.ToolTipManagerImpl;
-import mx.managers.systemClasses.ActiveWindowManager;
 import mx.modules.ModuleManagerGlobals;
 import mx.resources.ResourceManager;
 import mx.styles.ISimpleStyleClient;
@@ -100,42 +99,18 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     UIComponentGlobals.layoutManager = layoutManager;
 
     new ResourceManager(project, resourceBundleProvider);
-  }
-
-  public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler, mainFocusManager:MainFocusManagerSB):void {
-    this.mainFocusManager = mainFocusManager;
-    LayoutManager(UIComponentGlobals.layoutManager).waitFrame();
-
-    this.uiErrorHandler = uiErrorHandler;
-    addRealEventListener(INITIALIZE_ERROR_EVENT_TYPE, uiInitializeOrCallLaterErrorHandler);
-    addRealEventListener("callLaterError", uiInitializeOrCallLaterErrorHandler);
-
-    flexModuleFactory = FlexModuleFactory(moduleFactory);
-
-    //  if not null — ModuleManagerGlobals class is shareable for this Document
-    if (ModuleManagerGlobals.managerSingleton == null) {
-      ModuleManagerGlobals.managerSingleton = new ModuleManager(flexModuleFactory);
-    }
+    ModuleManagerGlobals.managerSingleton = new ModuleManager();
 
     Singleton.registerClass(POP_UP_MANAGER_FQN, PopUpManagerImpl);
     Singleton.registerClass(TOOL_TIP_MANAGER_FQN, ToolTipManagerImpl);
-
-    implementations["mx.managers::IActiveWindowManager"] = new ActiveWindowManager();
-    implementations[SYSTEM_MANAGER_CHILD_MANAGER] = this;
-
     Singleton.registerClass("mx.styles::IStyleManager2", RootStyleManager);
     Singleton.registerClass("mx.resources::IResourceManager", ResourceManager);
     Singleton.registerClass("mx.managers::IDragManager", DragManagerImpl);
     Singleton.registerClass("mx.managers::IHistoryManager", HistoryManagerImpl);
     Singleton.registerClass("mx.managers::IBrowserManager", BrowserManagerImpl);
-
-    Singleton.registerClass("mx.managers::IBrowserManager", BrowserManagerImpl);
-
     if (ApplicationDomain.currentDomain.hasDefinition("mx.core::TextFieldFactory")) {
       Singleton.registerClass("mx.core::ITextFieldFactory", Class(getDefinitionByName("mx.core::TextFieldFactory")));
     }
-
-    _focusManager = new DocumentFocusManager(this);
 
     // investigate, how we can add support for custom components — patch EffectManager or use IntellIJ IDEA index for effect annotations (the same as compiler — CompilationUnit)
     EffectManager.registerEffectTrigger("addedEffect", "added");
@@ -151,6 +126,20 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     EffectManager.registerEffectTrigger("rollOutEffect", "rollOut");
     EffectManager.registerEffectTrigger("rollOverEffect", "rollOver");
     EffectManager.registerEffectTrigger("showEffect", "show");
+  }
+
+  public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler, mainFocusManager:MainFocusManagerSB):void {
+    this.mainFocusManager = mainFocusManager;
+    this.uiErrorHandler = uiErrorHandler;
+
+    LayoutManager(UIComponentGlobals.layoutManager).waitFrame();
+
+    addRealEventListener(INITIALIZE_ERROR_EVENT_TYPE, uiInitializeOrCallLaterErrorHandler);
+    addRealEventListener("callLaterError", uiInitializeOrCallLaterErrorHandler);
+
+    flexModuleFactory = FlexModuleFactory(moduleFactory);
+    implementations[SYSTEM_MANAGER_CHILD_MANAGER] = this;
+    _focusManager = new DocumentFocusManager(this);
   }
 
   private function uiInitializeOrCallLaterErrorHandler(event:DynamicEvent):void {

@@ -61,5 +61,9 @@ public class ChildStyleManager extends AbstractStyleManager implements IStyleMan
   public function setRootDeclaration(rootDeclaration:CssStyleDeclaration):void {
     rootStyleDeclarationProxy = new NonSharedStyleDeclarationProxy(null, _parent.rootStyleDeclarationProxy, rootDeclaration);
   }
+
+  public function get typeHierarchyCache():Object {
+    return _parent.typeHierarchyCache;
+  }
 }
 }

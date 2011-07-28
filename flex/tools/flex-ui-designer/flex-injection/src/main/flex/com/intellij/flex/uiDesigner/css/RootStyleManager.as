@@ -58,5 +58,10 @@ public class RootStyleManager extends AbstractStyleManager implements IStyleMana
     // logically, this is Immutable, but there is flex-application that adds on the fly a global anything - this is wrong, but it is a reality
     rootStyleDeclarationProxy = new StyleDeclarationProxy(rootDeclaration);
   }
+
+  private const _typeHierarchyCache:Dictionary = new Dictionary();
+  public function get typeHierarchyCache():Object {
+    return _typeHierarchyCache;
+  }
 }
 }

@@ -12,17 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LocalCssWriter extends CssWriter {
-  private final List<XmlFile> unregisteredDocumentFactories = new ArrayList<XmlFile>();
+  private final List<XmlFile> unregisteredDocumentReferences;
 
-  public LocalCssWriter(StringRegistry.StringWriter stringWriter) {
+  public LocalCssWriter(StringRegistry.StringWriter stringWriter, List<XmlFile> unregisteredDocumentReferences) {
     super(stringWriter);
+    this.unregisteredDocumentReferences = unregisteredDocumentReferences;
   }
 
   @Override
   protected void writeClassReference(JSClass jsClass, FlexStyleIndexInfo info) throws InvalidPropertyException {
     final int projectComponentFactoryId;
-    if (info != null && info.getAttributeName().equals("skinClass")) {
-      projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(jsClass, unregisteredDocumentFactories);
+    if (false && info != null && info.getAttributeName().equals("skinClass")) {
+      projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(jsClass, unregisteredDocumentReferences);
     }
     else if (InjectionUtil.isProjectComponent(jsClass)) {
       throw new InvalidPropertyException("class.reference.in.css.support.only.skin.class", jsClass.getQualifiedName());

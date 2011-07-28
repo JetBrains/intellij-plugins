@@ -15,6 +15,7 @@ import com.intellij.psi.css.CssFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,9 +26,10 @@ public class StyleTagWriter {
   private final CssWriter cssWriter;
   private final ProblemsHolder problemsHolder;
 
-  public StyleTagWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder) {
+  public StyleTagWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder,
+      List<XmlFile> unregisteredDocumentReferences) {
     this.problemsHolder = problemsHolder;
-    cssWriter = new LocalCssWriter(stringWriter);
+    cssWriter = new LocalCssWriter(stringWriter, unregisteredDocumentReferences);
   }
 
   public byte[] write(XmlTag tag, Module module) {

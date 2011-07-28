@@ -57,7 +57,7 @@
     }
 
     #IDEA_72072 {
-      skinClass: ClassReference("testPackage.CustomSkinInPackage");
+      /*skinClass: ClassReference("testPackage.CustomSkinInPackage");*/
     }
   </fx:Style>
 

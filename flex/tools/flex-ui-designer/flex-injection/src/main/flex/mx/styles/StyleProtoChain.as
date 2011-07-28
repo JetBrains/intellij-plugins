@@ -1,14 +1,22 @@
 package mx.styles {
+import avmplus.HIDE_OBJECT;
+import avmplus.INCLUDE_BASES;
+import avmplus.INCLUDE_TRAITS;
+import avmplus.describe;
+
 import com.intellij.flex.uiDesigner.css.AbstractCssStyleDeclaration;
 import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.InlineCssStyleDeclaration;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
+
+import flash.utils.getQualifiedClassName;
 
 import mx.core.IFlexModule;
 import mx.core.IInvalidating;
 import mx.core.IUITextField;
 import mx.core.mx_internal;
 import mx.effects.EffectManager;
+import mx.utils.NameUtil;
 
 use namespace mx_internal;
 
@@ -16,7 +24,88 @@ public class StyleProtoChain {
   public static const STYLE_UNINITIALIZED:Object = {};
 
   public static function getClassStyleDeclarations(object:IStyleClient):Array {
-    return FtyleProtoChain.getClassStyleDeclarations(object);
+    var styleManager:IStyleManager2 = getStyleManager(object);
+    const qualified:Boolean = styleManager.qualifiedTypeSelectors;
+    const className:String = qualified ? getQualifiedClassName(object) : object.className;
+    var classDecls:Array;
+
+    const hasAdvancedSelectors:Boolean = styleManager.hasAdvancedSelectors();
+    if (!hasAdvancedSelectors && (classDecls = styleManager.typeSelectorCache[className]) != null) {
+      return classDecls;
+    }
+
+    classDecls = [];
+
+    var advancedObject:IAdvancedStyleClient = object as IAdvancedStyleClient;
+    var typeHierarchy:TypeHierarchyCacheItem = getTypeHierarchy(object, styleManager, qualified);
+    var types:Vector.<String> = typeHierarchy.chain;
+    var typeCount:int = types.length;
+    // Loop over the type hierarchy starting at the base type and work down the chain of subclasses.
+    for (var i:int = typeCount - 1; i >= 0; i--) {
+      var type:String = types[i];
+      if (hasAdvancedSelectors && advancedObject != null) {
+        var decls:Array = styleManager.getStyleDeclarations(type);
+        if (decls != null) {
+          classDecls = classDecls.concat(matchStyleDeclarations(decls, advancedObject));
+        }
+      }
+      else {
+        var decl:CSSStyleDeclaration = styleManager.getMergedStyleDeclaration(type);
+        if (decl != null) {
+          classDecls.push(decl);
+        }
+      }
+    }
+
+    if (hasAdvancedSelectors && advancedObject != null) {
+      // Advanced selectors may result in more than one match per type so
+      // we sort based on specificity, but we preserve the declaration order for equal selectors.
+      return sortOnSpecificity(classDecls);
+    }
+    else {
+      // Cache the simple type declarations for this class
+      styleManager.typeSelectorCache[className] = classDecls;
+      return classDecls;
+    }
+  }
+
+  private static function matchStyleDeclarations(declarations:Array, object:IAdvancedStyleClient):Array // of CSSStyleDeclaration
+  {
+    var matchingDecls:Array = [];
+
+    // Find the subset of declarations that match this component
+    for each (var decl:CSSStyleDeclaration in declarations) {
+      if (decl.matchesStyleClient(object)) {
+        matchingDecls.push(decl);
+      }
+    }
+
+    return matchingDecls;
+  }
+
+  private static function sortOnSpecificity(decls:Array):Array // of CSSStyleDeclaration
+  {
+    var len:Number = decls.length;
+    var tmp:CSSStyleDeclaration;
+
+    if (len <= 1) {
+      return decls;
+    }
+
+    for (var i:int = 1; i < len; i++) {
+      for (var j:int = i; j > 0; j--) {
+        if (decls[j].specificity < decls[j - 1].specificity) {
+          tmp = decls[j];
+          decls[j] = decls[j - 1];
+          decls[j - 1] = tmp;
+        }
+        else {
+          break;
+        }
+      }
+    }
+
+    return decls;
   }
 
   public static function initProtoChain(object:IStyleClient):void {
@@ -39,7 +128,8 @@ public class StyleProtoChain {
   }
 
   public static function matchesCSSType(object:IAdvancedStyleClient, cssType:String):Boolean {
-    return FtyleProtoChain.matchesCSSType(object, cssType);
+    var styleManager:IStyleManager2 = getStyleManager(object);
+    return getTypeHierarchy(object, styleManager, styleManager.qualifiedTypeSelectors)[cssType];
   }
 
   public static function getMatchingStyleDeclarations(object:IAdvancedStyleClient, styleDeclarations:Array = null):Array {
@@ -92,5 +182,66 @@ public class StyleProtoChain {
 
     return getStyleManager(curObj);
   }
+
+  // our impl doesn't require ApplicationDomain
+  private static function getTypeHierarchy(object:IStyleClient, styleManager:IStyleManager2, qualified:Boolean = true):TypeHierarchyCacheItem {
+    var className:String = getQualifiedClassName(object);
+    var hierarchy:TypeHierarchyCacheItem = TypeHierarchyCacheItem(styleManager.typeHierarchyCache[className]);
+    if (hierarchy != null) {
+      return hierarchy;
+    }
+
+    hierarchy = new TypeHierarchyCacheItem();
+    if (isStopClass(className)) {
+      hierarchy.chain = new Vector.<String>(0, true);
+    }
+    else {
+      var bases:Array = describe(object, INCLUDE_BASES | HIDE_OBJECT | INCLUDE_TRAITS).traits.bases;
+      className = normalizeClassName(className, qualified);
+      hierarchy[className] = true;
+      if (bases.length == 1 /* last element always is Object */ || isStopClass(bases[0])) {
+        hierarchy.chain = new <String>[className];
+      }
+      else {
+        var n:int = bases.length - 1;
+        var chain:Vector.<String> = new Vector.<String>(n + 1);
+        chain[0] = className;
+        for (var i:int = 0; i < n;) {
+          className = bases[i];
+          if (!isStopClass(className)) {
+            className = normalizeClassName(className, qualified);
+            chain[++i] = className;
+            hierarchy[className] = true;
+          }
+          else {
+            break;
+          }
+        }
+
+        chain.length = i + 1;
+        chain.fixed = true;
+        hierarchy.chain = chain;
+      }
+    }
+
+    styleManager.typeHierarchyCache[className] = hierarchy;
+    return hierarchy;
+  }
+
+  private static function normalizeClassName(className:String, qualified:Boolean):String {
+    return qualified ? className.replace("::", ".") : NameUtil.getUnqualifiedClassName(className);
+  }
+
+  private static function isStopClass(value:String):Boolean {
+    return value == "mx.core::UIComponent" ||
+           value == "mx.core::UITextField" ||
+           value == "mx.graphics.baseClasses::GraphicElement";
+  }
 }
+}
+
+import flash.utils.Dictionary;
+
+final dynamic class TypeHierarchyCacheItem extends Dictionary {
+  private var chain:Vector.<String>;
 }

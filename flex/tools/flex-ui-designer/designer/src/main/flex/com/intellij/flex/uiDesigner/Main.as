@@ -8,6 +8,9 @@ import cocoa.renderer.InteractiveBorderRendererManager;
 import cocoa.renderer.TextRendererManager;
 import cocoa.util.FileUtil;
 
+import com.intellij.flex.uiDesigner.css.Stylesheet;
+import com.intellij.flex.uiDesigner.libraries.Library;
+
 import com.intellij.flex.uiDesigner.libraries.QueueLoader;
 import com.intellij.flex.uiDesigner.plaf.EditorTabBarRendererManager;
 import com.intellij.flex.uiDesigner.plaf.ProjectViewSkin;
@@ -60,7 +63,8 @@ public class Main extends MainWindowedApplication {
     Container;
     SocketManagerImpl;
     DefaultSocketDataHandler;
-    // Burn in hell, Adobe
+    Stylesheet;
+    Library;
     // Burn in hell, Adobe
     // Burn in hell, Adobe
     // Burn in hell, Adobe

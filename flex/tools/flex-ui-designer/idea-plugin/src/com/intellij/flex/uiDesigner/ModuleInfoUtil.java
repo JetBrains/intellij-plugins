@@ -30,7 +30,7 @@ import java.util.List;
 
 public class ModuleInfoUtil {
   public static void collectLocalStyleHolders(final ModuleInfo moduleInfo, final String flexSdkVersion,
-                                              final StringRegistry.StringWriter stringWriter, final ProblemsHolder problemsHolder) {
+      final StringRegistry.StringWriter stringWriter, final ProblemsHolder problemsHolder, List<XmlFile> unregisteredDocumentReferences) {
     final Module module = moduleInfo.getModule();
     final FlexBuildConfiguration flexBuildConfiguration;
     if (module.getModuleType() instanceof FlexModuleType) {
@@ -45,10 +45,10 @@ public class ModuleInfoUtil {
     AccessToken token = ReadAction.start();
     try {
       if (FlexBuildConfiguration.APPLICATION.equals(flexBuildConfiguration.OUTPUT_TYPE)) {
-        collectApplicationLocalStyle(moduleInfo, flexSdkVersion, problemsHolder, stringWriter);
+        collectApplicationLocalStyle(moduleInfo, flexSdkVersion, problemsHolder, stringWriter, unregisteredDocumentReferences);
       }
       else {
-        collectLibraryLocalStyle(module, moduleInfo, stringWriter, problemsHolder);
+        collectLibraryLocalStyle(module, moduleInfo, stringWriter, problemsHolder, unregisteredDocumentReferences);
       }
     }
     finally {
@@ -57,7 +57,7 @@ public class ModuleInfoUtil {
   }
 
   private static void collectLibraryLocalStyle(Module module, ModuleInfo moduleInfo, StringRegistry.StringWriter stringWriter,
-      ProblemsHolder problemsHolder) {
+      ProblemsHolder problemsHolder, List<XmlFile> unregisteredDocumentReferences) {
     VirtualFile defaultsCss = null;
     for (VirtualFile sourceRoot : ModuleRootManager.getInstance(moduleInfo.getModule()).getSourceRoots(false)) {
       if ((defaultsCss = sourceRoot.findChild(Library.DEFAULTS_CSS)) != null) {
@@ -67,12 +67,12 @@ public class ModuleInfoUtil {
 
     if (defaultsCss != null) {
       moduleInfo.addLocalStyleHolder(
-          new LocalStyleHolder(defaultsCss, new LocalCssWriter(stringWriter).write(defaultsCss, module, problemsHolder)));
+          new LocalStyleHolder(defaultsCss, new LocalCssWriter(stringWriter, unregisteredDocumentReferences).write(defaultsCss, module, problemsHolder)));
     }
   }
 
   private static void collectApplicationLocalStyle(final ModuleInfo moduleInfo, String flexSdkVersion, final ProblemsHolder problemsHolder,
-      StringRegistry.StringWriter stringWriter) {
+      StringRegistry.StringWriter stringWriter, List<XmlFile> unregisteredDocumentReferences) {
     final GlobalSearchScope moduleWithDependenciesAndLibrariesScope =
         moduleInfo.getModule().getModuleWithDependenciesAndLibrariesScope(false);
 
@@ -95,7 +95,7 @@ public class ModuleInfoUtil {
       return;
     }
 
-    final StyleTagWriter localStyleWriter = new StyleTagWriter(stringWriter, problemsHolder);
+    final StyleTagWriter localStyleWriter = new StyleTagWriter(stringWriter, problemsHolder, unregisteredDocumentReferences);
     final Processor<JSClass> processor = new Processor<JSClass>() {
       @Override
       public boolean process(JSClass jsClass) {

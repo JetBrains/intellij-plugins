@@ -1,6 +1,4 @@
 package com.intellij.flex.uiDesigner.css {
-import com.intellij.flex.uiDesigner.DocumentFactory;
-import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
@@ -98,16 +96,17 @@ public final class Stylesheet {
   private static function readSkinClass(textOffset:int, input:IDataInput):CssDeclaration {
     var id:int = AmfUtil.readUInt29(input);
 
-    var factory:Object = moduleContext.getDocumentFactory(id);
-        if (factory == null) {
-          var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance(ModuleContextEx(moduleContext).project).get(id);
-          factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContext(documentFactory, this, styleManager));
-          moduleContext.putDocumentFactory(id, factory);
-        }
-
-        return factory;
-
-    new CssSkinClassDeclaration(readDocumentFactory(), textOffset)
+    //var factory:Object = moduleContext.getDocumentFactory(id);
+    //    if (factory == null) {
+    //      var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance(ModuleContextEx(moduleContext).project).get(id);
+    //      factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContext(documentFactory, this, styleManager));
+    //      moduleContext.putDocumentFactory(id, factory);
+    //    }
+    //
+    //    return factory;
+    //
+    //new CssSkinClassDeclaration(readDocumentFactory(), textOffset)
+    return null;
   }
 
   private static function readSimpleSelectors(data:IDataInput, stringRegistry:StringRegistry):CssSelector {

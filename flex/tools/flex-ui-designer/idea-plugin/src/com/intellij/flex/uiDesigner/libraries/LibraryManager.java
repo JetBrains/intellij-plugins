@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("MethodMayBeStatic")
@@ -142,11 +144,12 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     }
 
     final ModuleInfo moduleInfo = new ModuleInfo(module);
+    final List<XmlFile> unregisteredDocumentReferences = new ArrayList<XmlFile>();
     if (collectLocalStyleHolders) {
       // client.registerModule finalize it
       stringWriter.startChange();
       try {
-        ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder);
+        ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder, unregisteredDocumentReferences);
       }
       catch (Throwable e) {
         stringWriter.rollbackChange();

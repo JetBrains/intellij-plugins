@@ -55,12 +55,6 @@ internal class AbstractStyleManager {
     throw new IllegalOperationError("forbidden");
   }
 
-  private var _typeHierarchyCache:Dictionary = new Dictionary();
-  //noinspection JSUnusedGlobalSymbols
-  public function get typeHierarchyCache():Object {
-    return _typeHierarchyCache;
-  }
-
   //noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
   public function set typeHierarchyCache(value:Object):void {
     throw new IllegalOperationError("forbidden");
