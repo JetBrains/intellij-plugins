@@ -288,7 +288,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   }
 
-  private static Sdk getDebuggerSdk(final FlexRunnerParameters flexRunnerParameters, final Sdk flexSdk) throws IOException {
+  public static Sdk getDebuggerSdk(final FlexRunnerParameters flexRunnerParameters, final Sdk flexSdk) throws IOException {
     final String debuggerSdkRaw = flexRunnerParameters.getDebuggerSdkRaw();
     if (debuggerSdkRaw.equals(FlexSdkComboBoxWithBrowseButton.MODULE_SDK_KEY)) {
       return flexSdk;

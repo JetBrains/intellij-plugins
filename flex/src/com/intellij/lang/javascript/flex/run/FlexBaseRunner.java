@@ -24,6 +24,7 @@ import com.intellij.lang.javascript.flex.actions.airmobile.MobileAirUtil;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectSettingsFactory;
+import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.debug.FlexDebugRunner;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
@@ -49,6 +50,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -102,12 +104,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       throw new CantRunException(FlexBundle.message("cannot.find.flex.sdk"));
     }
 
+    final boolean isDebug = this instanceof FlexDebugRunner;
     final boolean ok = isRunAsAir(flexRunnerParameters)
-                       ? checkAirParams((AirRunnerParameters)flexRunnerParameters, flexSdk)
+                       ? checkAirParams((AirRunnerParameters)flexRunnerParameters, flexSdk, isDebug)
                        : checkFlexParams(module, flexRunnerParameters);
 
     if (ok) {
-      final boolean isDebug = this instanceof FlexDebugRunner;
       if (isDebug) {
         checkDebugInfoEnabled((FlexRunConfiguration)runProfile);
       }
@@ -297,12 +299,33 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     catch (IOException e) {/**/}
   }
 
-  private static boolean checkAirParams(final AirRunnerParameters airRunnerParameters, final Sdk sdk) throws CantRunException {
-    if (airRunnerParameters instanceof AirMobileRunnerParameters &&
-        ((AirMobileRunnerParameters)airRunnerParameters).getAirMobileRunMode() == AirMobileRunMode.ExistingPackage) {
-      if (((AirMobileRunnerParameters)airRunnerParameters).getAirMobileRunTarget() == AirMobileRunTarget.Emulator) {
-        throw new CantRunException("Can't launch AIR mobile package on emulator");
+  private static boolean checkAirParams(final AirRunnerParameters airRunnerParameters, final Sdk sdk, final boolean isDebug)
+    throws CantRunException {
+
+    if (airRunnerParameters instanceof AirMobileRunnerParameters) {
+      final AirMobileRunnerParameters mobileParams = (AirMobileRunnerParameters)airRunnerParameters;
+      if (mobileParams.getAirMobileRunMode() == AirMobileRunMode.ExistingPackage) {
+        if (mobileParams.getAirMobileRunTarget() == AirMobileRunTarget.Emulator) {
+          throw new CantRunException("Can't launch AIR mobile package on emulator");
+        }
       }
+
+      if (isDebug && mobileParams.getAirMobileRunTarget() == AirMobileRunTarget.AndroidDevice &&
+          mobileParams.getDebugTransport() == AirMobileDebugTransport.USB) {
+        try {
+          final Sdk debugSdk = FlexDebugProcess.getDebuggerSdk(mobileParams, sdk);
+          final String version = debugSdk.getVersionString();
+          if (StringUtil.isNotEmpty(version) &&
+              Character.isDigit(version.charAt(0)) &&    // ignore "unknown" version
+              StringUtil.compareVersionNumbers(version, "4.5") < 0) {
+            throw new CantRunException(FlexBundle.message("debugger.from.sdk.does.not.support.usb", debugSdk.getName()));
+          }
+        }
+        catch (IOException e) {
+          throw new CantRunException(e.getMessage());
+        }
+      }
+
       return true;
     }
 
