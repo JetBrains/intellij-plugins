@@ -196,5 +196,10 @@ public class Server implements ResourceBundleProvider {
     socket.writeShort(bounds.height);
     socket.flush();
   }
+
+  public function documentOpened():void {
+    socket.writeByte(ServerMethod.DOCUMENT_OPENED);
+    socket.flush();
+  }
 }
 }

@@ -29,11 +29,11 @@ public class TestSocketDataHandler implements SocketDataHandler {
   private static const c:Vector.<Class> = new <Class>[MxmlTest, StatesTest, InjectedASTest, AppTest, StyleTest, UITest];
   private const describeCache:Dictionary = new Dictionary();
 
-  private var projectManager:TestProjectManager;
+  private var projectManager:ProjectManager;
   private var timeoutTimer:Timer;
 
   public function TestSocketDataHandler(projectManager:ProjectManager) {
-    this.projectManager = TestProjectManager(projectManager);
+    this.projectManager = projectManager;
   }
   
   private var _socket:Socket;
@@ -41,7 +41,7 @@ public class TestSocketDataHandler implements SocketDataHandler {
     _socket = value;
   }
   
-  private function collectTestAnnotation(clazz:Class):Dictionary {
+  private static function collectTestAnnotation(clazz:Class):Dictionary {
     var methodInfo:Dictionary = new Dictionary();
     var methods:Array = describe(clazz, INCLUDE_METHODS | INCLUDE_METADATA | HIDE_OBJECT | HIDE_NSURI_METHODS | INCLUDE_TRAITS | USE_ITRAITS).traits.methods;
     var className:String = getQualifiedClassName(clazz);
@@ -76,9 +76,6 @@ public class TestSocketDataHandler implements SocketDataHandler {
 
   public function handleSockedData(messageSize:int, methodNameSize:int, data:IDataInput):void {
     var method:String = data.readUTFBytes(methodNameSize);
-    if (method == "useRealProjectManagerBehavior") {
-      projectManager.useRealProjectManagerBehavior = true;
-    }
 
     var clazz:Class = c[data.readByte()];
 

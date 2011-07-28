@@ -19,7 +19,7 @@ import static com.intellij.flex.uiDesigner.TestSocketInputHandler.MessageHandler
 import static org.hamcrest.Matchers.*;
 
 @Flex(version="4.5")
-public class UITest extends MxmlWriterTestBase {
+public class UITest extends MxmlTestBase {
   private static final int UI_TEST_CLASS_ID = 5;
 
   private static Roboflest roboflest;
@@ -67,7 +67,7 @@ public class UITest extends MxmlWriterTestBase {
   }
 
   public void _testStyleNavigationToExternal() throws Exception {
-    testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.resolveExternalInlineStyleDeclarationSource) {
+    testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.RESOLVE_EXTERNAL_INLINE_STYLE_DECLARATION_SOURCE) {
         @Override
         public void process() throws IOException {
           assertThat(client.getModule(reader.readUnsignedShort()), equalTo(myModule));
@@ -81,7 +81,7 @@ public class UITest extends MxmlWriterTestBase {
   }
 
   public void _testStyleNavigationToSkinClass() throws Exception {
-    testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.openFile) {
+    testFile(new MyTester("styleNavigation", new UIMessageHandler(ServerMethod.OPEN_FILE) {
         @Override
         public void process() throws IOException {
           assertMyProject();
@@ -97,7 +97,7 @@ public class UITest extends MxmlWriterTestBase {
   }
 
   public void testCloseDocument() throws Exception {
-    testFile(new MyTester("closeDocument", new UIMessageHandler(ServerMethod.unregisterDocumentFactories) {
+    testFile(new MyTester("closeDocument", new UIMessageHandler(ServerMethod.UNREGISTER_DOCUMENT_FACTORIES) {
         @Override
         public void process() throws IOException {
           assertMyProject();

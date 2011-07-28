@@ -3,7 +3,6 @@ import cocoa.Insets;
 import cocoa.renderer.TextRendererManager;
 import cocoa.text.TextFormat;
 
-import flash.display.DisplayObjectContainer;
 import flash.text.engine.TextLine;
 
 public class NameRendererManager extends TextRendererManager {
@@ -46,6 +45,10 @@ public class NameRendererManager extends TextRendererManager {
           break;
         }
       }
+    }
+
+    if (description.name == "uid" && description.declaredBy == "mx.core::UIComponent") {
+      readOnly = true;
     }
 
     description.editable = !readOnly;

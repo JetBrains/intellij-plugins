@@ -4,27 +4,21 @@
     <module name="idea-plugin" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
-    <option name="PACKAGE_NAME" value="" />
+    <option name="PACKAGE_NAME" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
-    <option name="TEST_OBJECT" value="pattern" />
+    <option name="TEST_OBJECT" value="directory" />
     <option name="VM_PARAMETERS" value="-Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.test.debug=true -Dfud.complement=$PROJECT_DIR$/flex-injection/target" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ENV_VARIABLES" />
     <option name="PASS_PARENT_ENVS" value="true" />
     <option name="TEST_SEARCH_SCOPE">
-      <value defaultName="singleModule" />
+      <value defaultName="moduleWithDependencies" />
     </option>
     <envs />
-    <patterns>
-      <pattern testClass="com.intellij.flex.uiDesigner.MxmlTest" />
-      <pattern testClass="com.intellij.flex.uiDesigner.SwcDependenciesSorterTest" />
-      <pattern testClass="com.intellij.flex.uiDesigner.StyleTest" />
-      <pattern testClass="com.intellij.flex.uiDesigner.UITest" />
-      <pattern testClass="com.intellij.flex.uiDesigner.AppTest" />
-      <pattern testClass="com.intellij.flex.uiDesigner.io.StringRegistryTest" />
-    </patterns>
+    <dir value="$PROJECT_DIR$/idea-plugin/testSrc" />
+    <patterns />
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="62696" />
       <option name="TRANSPORT" value="0" />

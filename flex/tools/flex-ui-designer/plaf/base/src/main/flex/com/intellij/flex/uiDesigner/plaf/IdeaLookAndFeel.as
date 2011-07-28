@@ -64,6 +64,16 @@ final class ElementTreeBarRMF extends ClassFactory {
    }
 
   override public function newInstance():* {
-    return new InteractiveTextRendererManager(null, new Insets(2, 0, 0, 3));
+    return new ElementTreeBarRM(new Insets(2, 0, 0, 3));
+  }
+}
+
+class ElementTreeBarRM extends InteractiveTextRendererManager {
+  public function ElementTreeBarRM(insets:Insets) {
+    super(null, insets);
+  }
+
+  override public function getItemIndexAt(x:Number, y:Number):int {
+    return 0;
   }
 }

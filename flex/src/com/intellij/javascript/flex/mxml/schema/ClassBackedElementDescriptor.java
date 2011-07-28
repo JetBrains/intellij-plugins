@@ -157,7 +157,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         return getElementDescriptorsInheritedFromGivenType(type);
       }
 
-      if (ClassBackedElementDescriptor.IFACTORY_SHORT_CLASS_NAME.equals(className(type)) &&
+      if (IFACTORY_SHORT_CLASS_NAME.equals(className(type)) &&
           JavaScriptSupportLoader.isLanguageNamespace(context.namespace)) {
         final XmlElementDescriptor descriptor = context.getElementDescriptor(FlexNameAlias.COMPONENT_TYPE_NAME, (XmlTag)null);
         return descriptor == null ? EMPTY_ARRAY : new XmlElementDescriptor[]{descriptor};
@@ -860,7 +860,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     //}
   }
 
-  private ASTNode refToImplementsNode(XmlTag tag) {
+  private static ASTNode refToImplementsNode(XmlTag tag) {
     return tag.getAttribute("implements").getValueElement().getChildren()[1].getNode();
   }
 
@@ -886,7 +886,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
           try {
             return new ImageIcon(new URL(VfsUtil.fixIDEAUrl(relativeFile.getUrl())));
           }
-          catch (MalformedURLException e) {}
+          catch (MalformedURLException ignored) {}
         }
       }
     }
@@ -965,8 +965,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         do {
           AnnotationBackedDescriptor descriptor = getDefaultPropertyDescriptor(jsClass);
           if (descriptor == null) {
-            final JSClass[] superClasses = jsClass.getSuperClasses();
-            jsClass = superClasses.length > 0 ? superClasses[0] : null;
+            jsClass = ArrayUtil.getFirstElement(jsClass.getSuperClasses());
           }
           else {
             defaultPropertyDescriptor = descriptor;

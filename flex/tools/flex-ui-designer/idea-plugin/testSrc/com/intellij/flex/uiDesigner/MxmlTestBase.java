@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-abstract class MxmlWriterTestBase extends AppTestBase {
+abstract class MxmlTestBase extends AppTestBase {
   protected static final String SPARK_COMPONENTS_FILE = "SparkComponents.mxml";
   
   protected TestClient client;

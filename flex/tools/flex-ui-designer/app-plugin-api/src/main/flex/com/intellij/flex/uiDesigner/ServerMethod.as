@@ -16,5 +16,7 @@ public final class ServerMethod {
   public static const GET_BITMAP_DATA:int = 8;
 
   public static const SET_PROPERTY:int = 12;
+
+  public static const DOCUMENT_OPENED:int = 13;
 }
 }

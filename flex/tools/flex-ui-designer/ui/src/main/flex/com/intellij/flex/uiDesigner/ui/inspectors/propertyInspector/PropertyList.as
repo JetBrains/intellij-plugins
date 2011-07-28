@@ -51,7 +51,7 @@ public class PropertyList extends AbstractTitledBlockItemRenderer {
     skin.y = border.layoutHeight;
     addChild(skin);
 
-    new Interactor(tableView, valueRendererManager);
+    new PropertyTableInteractor(tableView, valueRendererManager);
   }
 
   override protected function measure():void {

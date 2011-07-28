@@ -84,15 +84,25 @@ public class InfoList<E,I extends Info<E>> {
     return elements.get(element);
   }
 
-  @NotNull
-  public I getInfo(int id) {
+  @Nullable
+  public I getNullableInfo(int id) {
     for (I info : elements.values()) {
       if (info.id == id) {
         return info;
       }
     }
 
-    throw new IllegalArgumentException("Element is not registered for id " + id);
+    return null;
+  }
+
+  @NotNull
+  public I getInfo(int id) {
+    I result = getNullableInfo(id);
+    if (result == null) {
+      throw new IllegalArgumentException("Element is not registered for id " + id);
+    }
+
+    return result;
   }
 
   public int getId(E element) {

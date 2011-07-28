@@ -1,26 +1,26 @@
 package com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector {
 import cocoa.plaf.ButtonSkinInteraction;
 import cocoa.plaf.TableViewSkin;
+import cocoa.plaf.basic.TableViewInteractor;
 import cocoa.renderer.CheckBoxEntry;
 import cocoa.renderer.TextLineEntry;
 import cocoa.tableView.TableColumn;
 import cocoa.tableView.TableView;
+import cocoa.text.EditableTextView;
+import cocoa.util.SharedPoint;
 
 import com.intellij.flex.uiDesigner.PlatformDataKeys;
 import com.intellij.flex.uiDesigner.Project;
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-import flash.events.FocusEvent;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import org.jetbrains.actionSystem.DataContext;
 import org.jetbrains.actionSystem.DataManager;
 
-public class Interactor {
-  private static var sharedPoint:Point;
-
+public class PropertyTableInteractor extends TableViewInteractor {
   private var tableSkin:TableViewSkin;
 
   private var currentRowIndex:int;
@@ -29,20 +29,30 @@ public class Interactor {
   private var isOver:Boolean;
   private var valueRendererManager:ValueRendererManager;
 
-  public function Interactor(tableView:TableView, valueRendererManager:ValueRendererManager) {
+  public function PropertyTableInteractor(tableView:TableView, valueRendererManager:ValueRendererManager) {
     this.valueRendererManager = valueRendererManager;
 
     tableSkin = TableViewSkin(tableView.skin);
     var bodyHitArea:Sprite = tableSkin.bodyHitArea;
-    bodyHitArea.mouseChildren = false;
-    bodyHitArea.doubleClickEnabled = true;
+    register(tableView);
     bodyHitArea.addEventListener(MouseEvent.MOUSE_DOWN, mouseEventHandler);
     bodyHitArea.addEventListener(MouseEvent.DOUBLE_CLICK, mouseEventHandler);
   }
 
   private function mouseEventHandler(event:MouseEvent):void {
-    currentRowIndex = tableSkin.getRowIndexAt(event.localY);
-    currentColumnIndex = tableSkin.getColumnIndexAt(event.localX);
+    var x:Number = event.localX;
+    var y:Number = event.localY;
+    if (event.target != tableSkin.bodyHitArea) {
+      var point:Point = SharedPoint.point;
+      point.x = event.stageX;
+      point.y = event.stageY;
+      point = tableSkin.bodyHitArea.globalToLocal(point);
+      x = point.x;
+      y = point.y;
+    }
+
+    currentRowIndex = tableSkin.getRowIndexAt(y);
+    currentColumnIndex = tableSkin.getColumnIndexAt(x);
     if (currentColumnIndex == 1) {
       var entry:TextLineEntry = findEntry();
       if (event.type == MouseEvent.MOUSE_DOWN) {
@@ -54,13 +64,10 @@ public class Interactor {
         var tableView:TableView = TableView(tableSkin.component);
         var tableColumn:TableColumn = tableView.columns[currentColumnIndex];
         if (tableColumn.rendererManager == valueRendererManager) {
-          var editor:Sprite = valueRendererManager.createEditor(currentRowIndex, entry, tableColumn.actualWidth, tableView.rowHeight);
-          if (editor == null) {
-            return;
+          openedEditor = valueRendererManager.createEditor(currentRowIndex, entry, tableColumn.actualWidth, tableView.rowHeight);
+          if (openedEditor != null) {
+            registerEditor();
           }
-          
-          editor.addEventListener(FocusEvent.FOCUS_OUT, editor_focusOutHandler);
-          //doubleClickHandler(event);
         }
       }
     }
@@ -118,17 +125,13 @@ public class Interactor {
     tableSkin.bodyHitArea.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoveHandler);
     tableSkin.bodyHitArea.removeEventListener(MouseEvent.ROLL_OUT, mouseRollOutHandler);
 
-    if (sharedPoint == null) {
-      sharedPoint = new Point(event.stageX, event.stageY);
-    }
-    else {
-      sharedPoint.x = event.stageX;
-      sharedPoint.y = event.stageY;
-    }
+    var point:Point = SharedPoint.point;
+    point.x = event.stageX;
+    point.y = event.stageY;
 
-    sharedPoint = tableSkin.bodyHitArea.globalToLocal(sharedPoint);
-    var rowIndex:int = tableSkin.getRowIndexAt(sharedPoint.y);
-    var columnIndex:int = tableSkin.getColumnIndexAt(sharedPoint.x);
+    point = tableSkin.bodyHitArea.globalToLocal(point);
+    var rowIndex:int = tableSkin.getRowIndexAt(point.y);
+    var columnIndex:int = tableSkin.getColumnIndexAt(point.x);
 
     var entry:CheckBoxEntry = CheckBoxEntry(findEntry());
     if (rowIndex == currentRowIndex && columnIndex == currentColumnIndex) {
@@ -145,12 +148,28 @@ public class Interactor {
     return CheckBoxEntry(findEntry()).interaction;
   }
 
-  private function doubleClickHandler(event:MouseEvent):void {
+  override protected function closeEditor(commit:Boolean):void {
+    super.closeEditor(commit);
 
-  }
+    var value:String;
+    var entry:TextLineEntry;
+    if (commit) {
+      entry = findEntry();
+      value = EditableTextView(openedEditor).text;
+      var tableView:TableView = TableView(tableSkin.component);
+      var tableColumn:TableColumn = tableView.columns[currentColumnIndex];
+      valueRendererManager.closeEditorAndCommit(openedEditor, value, entry, tableColumn.actualWidth);
+    }
+    else {
+      valueRendererManager.closeEditor(openedEditor);
+    }
 
-  private function editor_focusOutHandler(event:FocusEvent):void {
-    trace(event);
+    openedEditor = null;
+
+    if (commit) {
+      var dataContext:DataContext = DataManager.instance.getDataContext(DisplayObject(tableSkin));
+      Modifier(Project(PlatformDataKeys.PROJECT.getData(dataContext)).getComponent(Modifier)).applyString(valueRendererManager.getDescription(currentRowIndex), value, dataContext);
+    }
   }
 }
 }

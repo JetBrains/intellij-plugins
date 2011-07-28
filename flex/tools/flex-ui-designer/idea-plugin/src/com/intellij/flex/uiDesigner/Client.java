@@ -266,6 +266,10 @@ public class Client implements Closable {
   }
 
   public void openDocument(Module module, XmlFile psiFile) throws IOException {
+    openDocument(module, psiFile, false);
+  }
+
+  public void openDocument(Module module, XmlFile psiFile, boolean notifyOpened) throws IOException {
     DocumentFactoryManager documentFileManager = DocumentFactoryManager.getInstance(module.getProject());
     VirtualFile virtualFile = psiFile.getVirtualFile();
     FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
@@ -280,6 +284,7 @@ public class Client implements Closable {
     beginMessage(ClientMethod.openDocument);
     writeId(module);
     out.writeShort(factoryId);
+    out.write(notifyOpened);
   }
   
   public void updateDocumentFactory(int factoryId, Module module, XmlFile psiFile) throws IOException {

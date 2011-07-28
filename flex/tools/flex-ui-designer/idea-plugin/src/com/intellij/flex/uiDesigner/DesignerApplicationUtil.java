@@ -11,14 +11,14 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.flex.uiDesigner.debug.MyFlexBaseRunner;
+import com.intellij.flex.uiDesigner.debug.FlexRunner;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
-import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfigurationType;
 import com.intellij.lang.javascript.flex.run.FlexRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -141,6 +141,9 @@ final class DesignerApplicationUtil {
       return false;
     }
 
+    if (exitCode == 6) {
+      LOG.error("Check descriptor file cannot be found " + checkDescriptorPath);
+    }
     return exitCode == 7;
   }
 
@@ -168,10 +171,9 @@ final class DesignerApplicationUtil {
 
   public static void runDebugger(final Module module, final AdlRunTask task) throws ExecutionException {
     RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
-    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("FlexUIDesigner", FlexRunConfigurationType.getFactory());
-    final FlexRunnerParameters runnerParameters = ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters();
+    RunnerAndConfigurationSettings settings = runManager.createConfiguration("FlexUIDesigner", FlexRunConfigurationType.getFactory());
+    FlexRunnerParameters runnerParameters = ((FlexRunConfiguration)settings.getConfiguration()).getRunnerParameters();
     runnerParameters.setRunMode(FlexRunnerParameters.RunMode.ConnectToRunningFlashPlayer);
-    runnerParameters.setModuleName(module.getName());
 
     final CompileStepBeforeRun.MakeBeforeRunTask runTask =
       runManager.getBeforeRunTask(settings.getConfiguration(), CompileStepBeforeRun.ID);
@@ -179,37 +181,43 @@ final class DesignerApplicationUtil {
       runTask.setEnabled(false);
     }
 
-    final FlexBaseRunner runner = new MyFlexBaseRunner();
     final DefaultDebugExecutor executor = new DefaultDebugExecutor();
-    runner.execute(executor, new ExecutionEnvironment(runner, settings, module.getProject()), new ProgramRunner.Callback() {
+    ProgramRunner.Callback callback = new ProgramRunner.Callback() {
       @Override
       public void processStarted(final RunContentDescriptor descriptor) {
         final ProcessHandler processHandler = descriptor.getProcessHandler();
         assert processHandler != null;
-        //noinspection deprecation
-        processHandler.putUserData(ProcessHandler.SILENTLY_DESTROY_ON_CLOSE, true);
-        task.onAdlExit(new Runnable() {
+        if (FlexUIDesignerApplicationManager.getInstance().disposeOnApplicationClosed(new Disposable() {
           @Override
-          public void run() {
-            Project project = module.getProject();
+          public void dispose() {
+            final Project project = module.getProject();
             if (!project.isDisposed()) {
-              ExecutionManager.getInstance(project).getContentManager().removeRunContent(executor, descriptor);
+              ApplicationManager.getApplication().invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                  ExecutionManager.getInstance(project).getContentManager().removeRunContent(executor, descriptor);
+                }
+              });
             }
-            
+
             processHandler.destroyProcess();
           }
+        })) {
+
+          task.run();
         }
-        );
-        task.run();
       }
-    });
+    };
+
+    final FlexRunner runner = new FlexRunner(callback, module);
+    runner.execute(executor, new ExecutionEnvironment(runner, settings, module.getProject()));
   }
 
-  public static ProcessHandler runAdl(AdlRunConfiguration runConfiguration, String descriptor, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
+  public static MyOSProcessHandler runAdl(AdlRunConfiguration runConfiguration, String descriptor, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     return runAdl(runConfiguration, descriptor, null, adlExitHandler);
   }
 
-  public static ProcessHandler runAdl(AdlRunConfiguration runConfiguration, String descriptor, @Nullable String root, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
+  public static MyOSProcessHandler runAdl(AdlRunConfiguration runConfiguration, String descriptor, @Nullable String root, final @Nullable Consumer<Integer> adlExitHandler) throws IOException {
     ensureExecutable(runConfiguration.adlPath);
 
     List<String> command = new ArrayList<String>();
@@ -234,7 +242,7 @@ final class DesignerApplicationUtil {
       command.addAll(runConfiguration.arguments);
     }
 
-    OSProcessHandler processHandler = new MyOSProcessHandler(command, adlExitHandler);
+    MyOSProcessHandler processHandler = new MyOSProcessHandler(command, adlExitHandler);
     processHandler.startNotify();
     return processHandler;
   }
@@ -266,20 +274,15 @@ final class DesignerApplicationUtil {
   }
 
   public static abstract class AdlRunTask implements Runnable {
-    protected Runnable onAdlExit;
     protected final DesignerApplicationUtil.AdlRunConfiguration runConfiguration;
 
     public AdlRunTask(AdlRunConfiguration runConfiguration) {
       this.runConfiguration = runConfiguration;
     }
-
-    public void onAdlExit(Runnable runnable) {
-      onAdlExit = runnable;
-    }
   }
 
-  private static class MyOSProcessHandler extends OSProcessHandler {
-    private Consumer<Integer> adlExitHandler;
+  static class MyOSProcessHandler extends OSProcessHandler {
+    public Consumer<Integer> adlExitHandler;
 
     public MyOSProcessHandler(List<String> command, Consumer<Integer> adlExitHandler) throws IOException {
       super(new ProcessBuilder(command).start(), null);

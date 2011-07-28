@@ -41,5 +41,29 @@ public class Modifier {
     socket.writeByte(value ? Amf3Types.TRUE : Amf3Types.FALSE);
     socket.flush();
   }
+
+  public function applyString(description:Object, value:String, dataContext:DataContext):void {
+    var project:Project = PlatformDataKeys.PROJECT.getData(dataContext);
+    var document:Document = PlatformDataKeys.DOCUMENT.getData(dataContext);
+    var element:Object = PlatformDataKeys.ELEMENT.getData(dataContext);
+    var elementAddress:ElementAddress = DocumentFactoryManager.getInstance(project).findElementAddress(element, document);
+    if (elementAddress == null) {
+      return;
+    }
+
+    var propertyName:String = description.name;
+    element[propertyName ] = value;
+
+    var socket:Socket = socketManager.getSocket();
+    socket.writeByte(ServerMethod.SET_PROPERTY);
+    socket.writeShort(document.module.project.id);
+    socket.writeShort(elementAddress.factory.id);
+    socket.writeInt(elementAddress.offset);
+
+    socket.writeUTF(propertyName);
+    socket.writeByte(Amf3Types.STRING);
+    socket.writeUTF(value);
+    socket.flush();
+  }
 }
 }

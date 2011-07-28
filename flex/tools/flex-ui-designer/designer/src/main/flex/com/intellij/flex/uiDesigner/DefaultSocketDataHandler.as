@@ -51,6 +51,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
 
     return _embedImageManager;
   }
+
   public function set socket(value:Socket):void {
   }
 
@@ -112,7 +113,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     if (input.readBoolean()) {
       projectWindowBounds = new Rectangle(input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort());
     }
-    projectManager.open(project, new DocumentWindow(new ProjectView(), project.map, null, projectWindowBounds));
+    projectManager.open(project, new DocumentWindow(new ProjectView(), project.map, projectWindowBounds, new MainFocusManager()));
   }
 
   private function registerModule(input:IDataInput):void {
@@ -193,7 +194,13 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var documentFactory:DocumentFactory = getDocumentFactoryManager(module).get(input.readUnsignedShort());
     projectManager.project = module.project;
-    getDocumentManager(module).open(documentFactory);
+
+    var documentOpened:Function;
+    if (input.readBoolean()) {
+      documentOpened = Server.instance.documentOpened;
+    }
+
+    getDocumentManager(module).open(documentFactory, documentOpened);
   }
   
   private function updateDocuments(input:IDataInput):void {

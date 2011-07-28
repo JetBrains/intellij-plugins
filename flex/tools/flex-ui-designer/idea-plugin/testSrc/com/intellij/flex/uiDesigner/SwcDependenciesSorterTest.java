@@ -13,7 +13,7 @@ import java.io.File;
 import java.util.List;
 
 @Flex(version="4.5")
-public class SwcDependenciesSorterTest extends MxmlWriterTestBase {
+public class SwcDependenciesSorterTest extends MxmlTestBase {
   @Override
   protected String generateSdkName(String version, boolean air) {
     return getName();

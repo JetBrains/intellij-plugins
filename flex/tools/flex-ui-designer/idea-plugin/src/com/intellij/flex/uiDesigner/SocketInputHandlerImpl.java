@@ -8,12 +8,9 @@ import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.psi.PropertiesFile;
-import com.intellij.lang.properties.psi.Property;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.application.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -42,7 +39,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 
-public class SocketInputHandlerImpl implements SocketInputHandler {
+public class SocketInputHandlerImpl extends SocketInputHandler {
   private static final Logger LOG = Logger.getInstance(SocketInputHandlerImpl.class.getName());
 
   protected Reader reader;
@@ -57,7 +54,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     reader = new Reader(new BufferedInputStream(inputStream));
   }
 
-  public void init(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
+  public void init(@NotNull InputStream inputStream, @NotNull File appDir) {
     resultReadyFile = new File(appDir, "d");
     if (resultReadyFile.exists()) {
       //noinspection ResultOfMethodCallIgnored
@@ -93,8 +90,8 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
     }
   }
 
-  protected boolean isFileBased(int command) {
-    return command == ServerMethod.getResourceBundle || command == ServerMethod.getBitmapData;
+  protected static boolean isFileBased(int command) {
+    return command == ServerMethod.GET_RESOURCE_BUNDLE || command == ServerMethod.GET_BITMAP_DATA;
   }
 
   private boolean safeProcessCommand(int command) throws IOException {
@@ -119,48 +116,55 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
 
   protected boolean processCommand(int command) throws IOException {
     switch (command) {
-      case ServerMethod.goToClass:
+      case ServerMethod.GO_TO_CLASS:
         goToClass();
         break;
 
-      case ServerMethod.getResourceBundle:
+      case ServerMethod.GET_RESOURCE_BUNDLE:
         getResourceBundle();
         break;
 
-      case ServerMethod.getBitmapData:
+      case ServerMethod.GET_BITMAP_DATA:
         getBitmapData();
         break;
 
-      case ServerMethod.openFile:
+      case ServerMethod.OPEN_FILE:
         openFile();
         break;
 
-      case ServerMethod.openDocument:
+      case ServerMethod.OPEN_DOCUMENT:
         openDocument();
         break;
 
-      case ServerMethod.resolveExternalInlineStyleDeclarationSource:
+      case ServerMethod.RESOLVE_EXTERNAL_INLINE_STYLE_DECLARATION_SOURCE:
         ApplicationManager.getApplication().invokeLater(new ResolveExternalInlineStyleSourceAction(reader, readModule()));
         break;
 
-      case ServerMethod.unregisterDocumentFactories:
+      case ServerMethod.UNREGISTER_DOCUMENT_FACTORIES:
         unregisterDocumentFactories();
         break;
 
-      case ServerMethod.showError:
+      case ServerMethod.SHOW_ERROR:
         showError();
         break;
 
-      case ServerMethod.closeProject:
+      case ServerMethod.CLOSE_PROJECT:
         Client.getInstance().unregisterProject(readProject());
         break;
 
-      case ServerMethod.saveProjectWindowBounds:
+      case ServerMethod.SAVE_PROJECT_WINDOW_BOUNDS:
         ProjectWindowBounds.save(readProject(), reader);
         break;
 
       case ServerMethod.SET_PROPERTY:
         setProperty();
+        break;
+
+      case ServerMethod.DOCUMENT_OPENED:
+        Application application = ApplicationManager.getApplication();
+        if (!application.isDisposed()) {
+          application.getMessageBus().syncPublisher(MESSAGE_TOPIC).documentOpened();
+        }
         break;
 
       default:
@@ -200,6 +204,10 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
         value = "false";
         break;
 
+      case Amf3Types.STRING:
+        value = reader.readUTF();
+        break;
+
       default:
         throw new IllegalArgumentException("unknown value type");
     }
@@ -232,7 +240,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
       reader.readInt()));
   }
 
-  private void navigateToFile(final OpenFileDescriptor openFileDescriptor) {
+  private static void navigateToFile(final OpenFileDescriptor openFileDescriptor) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -273,68 +281,78 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
   private void getResourceBundle() throws IOException {
     initResultFile();
 
-    final ProjectInfo projectInfo = Client.getInstance().getRegisteredProjects().getInfo(readEntityId());
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          PropertiesFile resourceBundleFile =
-            LibraryManager.getInstance().getResourceBundleFile(reader.readUTF(), reader.readUTF(), projectInfo);
+    final int projectId = readEntityId();
+    final String locale = reader.readUTF();
+    final String bundleName = reader.readUTF();
 
-          FileOutputStream fileOut = null;
-          // IDEA-71568
-          if (SystemInfo.isWindows) {
-            for (int i = 0; i < 2; i++) {
-              try {
-                fileOut = new FileOutputStream(resultFile);
-                break;
-              }
-              catch (FileNotFoundException e) {
-                try {
-                  Thread.sleep(10);
-                }
-                catch (InterruptedException ignored) {
-                }
-              }
-            }
+    final ProjectInfo projectInfo = Client.getInstance().getRegisteredProjects().getNullableInfo(projectId);
+    if (projectInfo == null) {
+      // project may be closed, but client is not closed yet (AppTest#testCloseAndOpenProject)
+      LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find project with id " + projectId);
+      return;
+    }
 
-            if (fileOut == null) {
-              FlexUIDesignerApplicationManager.LOG.error("fileOut null due to FileNotFoundException");
-              return;
-            }
-          }
-          else {
-            fileOut = new FileOutputStream(resultFile);
-          }
+    AccessToken token = ReadAction.start();
+    try {
 
+      PropertiesFile resourceBundleFile =
+          LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, projectInfo);
+
+      FileOutputStream fileOut = null;
+      // IDEA-71568
+      if (SystemInfo.isWindows) {
+        for (int i = 0; i < 2; i++) {
           try {
-            if (resourceBundleFile == null) {
-              fileOut.write(Amf3Types.NULL);
-              return;
-            }
-
-            final AmfOutputStream out = new AmfOutputStream(new ByteArrayOutputStreamEx(4 * 1024));
-            // todo Embed, ClassReference, but idea doesn't support it too
-            List<Property> properties = resourceBundleFile.getProperties();
-            out.write(Amf3Types.DICTIONARY);
-            out.writeUInt29((properties.size() << 1) | 1);
-            out.write(0);
-            for (Property property : properties) {
-              out.write(property.getUnescapedKey());
-              out.write(property.getUnescapedValue());
-            }
-
-            out.getByteArrayOut().writeTo(fileOut);
+            fileOut = new FileOutputStream(resultFile);
+            break;
           }
-          finally {
-            fileOut.close();
+          catch (FileNotFoundException e) {
+            try {
+              Thread.sleep(10);
+            }
+            catch (InterruptedException ignored) {
+            }
           }
         }
-        catch (IOException e) {
-          FlexUIDesignerApplicationManager.LOG.error(e);
+
+        if (fileOut == null) {
+          LOG.error("fileOut null due to FileNotFoundException");
+          return;
         }
       }
-    });
+      else {
+        fileOut = new FileOutputStream(resultFile);
+      }
+
+      try {
+        if (resourceBundleFile == null) {
+          fileOut.write(Amf3Types.NULL);
+          return;
+        }
+
+        final AmfOutputStream out = new AmfOutputStream(new ByteArrayOutputStreamEx(4 * 1024));
+        // todo Embed, ClassReference, but idea doesn't support it too
+        List<IProperty> properties = resourceBundleFile.getProperties();
+        out.write(Amf3Types.DICTIONARY);
+        out.writeUInt29((properties.size() << 1) | 1);
+        out.write(0);
+        for (IProperty property : properties) {
+          out.write(property.getUnescapedKey());
+          out.write(property.getUnescapedValue());
+        }
+
+        out.getByteArrayOut().writeTo(fileOut);
+      }
+      finally {
+        fileOut.close();
+      }
+    }
+    catch (IOException e) {
+      LOG.error(e);
+    }
+    finally {
+      token.finish();
+    }
   }
 
   private void getBitmapData() throws IOException {
@@ -387,7 +405,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
       logMessage = message;
     }
 
-    FlexUIDesignerApplicationManager.LOG.error(logMessage, new Throwable() {
+    LOG.error(logMessage, new Throwable() {
       @Override
       public void printStackTrace(PrintStream s) {
       }
@@ -423,6 +441,9 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
   public void close() throws IOException {
     if (reader != null) {
       reader.close();
+    }
+    if (errorOut != null) {
+      errorOut.close();
     }
   }
 
@@ -467,7 +488,7 @@ public class SocketInputHandlerImpl implements SocketInputHandler {
       String url = readUTF();
       VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(url);
       if (file == null) {
-        FlexUIDesignerApplicationManager.LOG.error("Can't find file " + url);
+        LOG.error("Can't find file " + url);
       }
 
       return file;

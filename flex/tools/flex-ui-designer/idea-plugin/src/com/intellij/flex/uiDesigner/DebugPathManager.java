@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -13,7 +14,8 @@ public final class DebugPathManager {
   private static String fudHome;
   
   public final static boolean IS_DEV = System.getProperty("fud.dev") != null || isUnitTestMode();
-  
+  private static final String FLEX_TOOLS_FLEX_UI_DESIGNER = "/flex/tools/flex-ui-designer";
+
   private static boolean isUnitTestMode() {
     Application app = ApplicationManager.getApplication();
     return app == null || app.isUnitTestMode();
@@ -28,7 +30,11 @@ public final class DebugPathManager {
     if (fudHome == null) {
       if (isUnitTestMode()) {
         ideaHome = getRootByClass(PathManager.class);
-        fudHome = ideaHome + "/flex/tools/flex-ui-designer";
+        if (ideaHome == null) {
+          ideaHome = System.getProperty("user.dir");
+          ideaHome = ideaHome.substring(0, ideaHome.length() - FLEX_TOOLS_FLEX_UI_DESIGNER.length());
+        }
+        fudHome = ideaHome + FLEX_TOOLS_FLEX_UI_DESIGNER;
       }
       else {
         fudHome = System.getProperty("fud.home");
@@ -39,18 +45,20 @@ public final class DebugPathManager {
     return fudHome;
   }
 
-  private static
-  @NotNull
-  String getRootByClass(Class aClass) {
+  @Nullable
+  private static String getRootByClass(Class aClass) {
     String rootPath = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
     File root = new File(rootPath).getAbsoluteFile();
     do {
-      root = new File(root.getParent()).getAbsoluteFile();
+      final String parent = root.getParent();
+      if (parent == null) {
+        return null;
+      }
+      root = new File(parent).getAbsoluteFile();
     }
     while (root != null && !isIdeaHome(root));
 
-    assert root != null;
-    return root.getAbsolutePath();
+    return root == null ? null : root.getAbsolutePath();
   }
 
   private static boolean isIdeaHome(final File root) {

@@ -1342,6 +1342,17 @@ public class FlexDebugProcess extends XDebugProcess {
     }
   }
 
+  protected void notifyFdbWaitingForPlayerStateReached() {
+    if (connectToRunningFlashPlayerMode) {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        public void run() {
+          final ToolWindowManager manager = ToolWindowManager.getInstance(getSession().getProject());
+          manager.notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, FlexBundle.message("flash.player.right.click.debugger"));
+        }
+      });
+    }
+  }
+
   class StartDebuggingCommand extends DebuggerCommand {
 
     StartDebuggingCommand() {
@@ -1390,14 +1401,7 @@ public class FlexDebugProcess extends XDebugProcess {
       if (s.indexOf(WAITING_PLAYER_MARKER) != -1) {
         fdbWaitingForPlayerStateReached = true;
         getSession().rebuildViews();
-        if (connectToRunningFlashPlayerMode) {
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
-            public void run() {
-              final ToolWindowManager manager = ToolWindowManager.getInstance(getSession().getProject());
-              manager.notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, FlexBundle.message("flash.player.right.click.debugger"));
-            }
-          });
-        }
+        notifyFdbWaitingForPlayerStateReached();
 
         try {
           launchDebuggedApplication();

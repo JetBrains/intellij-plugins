@@ -1,14 +1,14 @@
 package com.intellij.flex.uiDesigner {
-import org.jetbrains.ApplicationManager;
 import cocoa.DocumentWindow;
 
 import com.intellij.flex.uiDesigner.css.CssReader;
 import com.intellij.flex.uiDesigner.css.LocalStyleHolder;
 import com.intellij.flex.uiDesigner.css.StyleValueResolverImpl;
+import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
-import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
+import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
 import com.intellij.flex.uiDesigner.ui.DocumentContainer;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
 
@@ -22,10 +22,10 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
 
+import org.jetbrains.ApplicationManager;
+
 public class DocumentManagerImpl extends EventDispatcher implements DocumentManager {
   private var libraryManager:LibraryManager;
-
-  private var mainFocusManager:MainFocusManager;
 
   private var documentReader:DocumentReader;
   private var server:Server;
@@ -57,14 +57,14 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     ElementManager(_document.module.project.getComponent(ElementManager)).element = null;
   }
 
-  public function open(documentFactory:DocumentFactory):void {
+  public function open(documentFactory:DocumentFactory, documentOpened:Function = null):void {
     if (documentFactory.document == null) {
       var context:ModuleContextEx = documentFactory.module.context;
       if (context.librariesResolved) {
         createAndOpen(documentFactory);
       }
       else {
-        libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory);
+        libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory, documentOpened);
       }
     }
     else if (doOpen(documentFactory, documentFactory.document)) {
@@ -73,9 +73,14 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory):void {
+  private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory, documentOpened:Function):void {
     var module:Module = documentFactory.module;
     module.context.librariesResolved = true;
+
+    if (documentOpened != null) {
+      documentOpened();
+    }
+    
     if (createAndOpen(documentFactory) && !ApplicationManager.instance.unitTestMode) {
       var w:DocumentWindow = module.project.window;
       if (NativeWindow.supportsNotification) {
@@ -201,15 +206,11 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var systemManager:SystemManagerSB = new systemManagerClass();
     document.systemManager = systemManager;
 
-    if (mainFocusManager == null) {
-      mainFocusManager = new MainFocusManager(window.stage);
-    }
-
     if (!systemManager.sharedInitialized) {
       systemManager.initShared(window.stage, module.project, server, UncaughtErrorManager.instance);
     }
     systemManager.init(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
-                       mainFocusManager);
+                       MainFocusManagerSB(module.project.window.focusManager));
     document.container = new DocumentContainer(Sprite(systemManager));
   }
 }

@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.codeInspection.LocalInspectionTool;
 import js.JSDaemonAnalyzerTestCase;
 import js.JSTestUtils;
 
@@ -16,7 +17,7 @@ abstract class FlexUIDesignerBaseTestCase extends JSDaemonAnalyzerTestCase {
   protected static String getFudHome() {
     return DebugPathManager.getFudHome();
   }
-  
+
   @Override
   protected String getExtension() {
     return "mxml";
@@ -29,6 +30,12 @@ abstract class FlexUIDesignerBaseTestCase extends JSDaemonAnalyzerTestCase {
 
   @Override
   protected void setUpJdk() {
-    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), DebugPathManager.getIdeaHome() + "/plugins/JavaScriptLanguage/testData/flex_highlighting/MockGumboSdk", false);
+    JSTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(),
+        DebugPathManager.getIdeaHome() + "/plugins/JavaScriptLanguage/testData/flex_highlighting/MockGumboSdk", false);
+  }
+
+  @Override
+  protected LocalInspectionTool[] configureLocalInspectionTools() {
+    return new LocalInspectionTool[]{};
   }
 }
