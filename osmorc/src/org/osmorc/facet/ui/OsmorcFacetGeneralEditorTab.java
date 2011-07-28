@@ -30,7 +30,6 @@ import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
@@ -149,25 +148,21 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
         VirtualFile[] roots = getContentRoots(_module);
         VirtualFile currentFile = findFileInContentRoots(_manifestFileChooser.getText(), _module);
 
-        VirtualFile[] result = FileChooser.chooseFiles(_editorContext.getProject(),
-                FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(), currentFile);
+        VirtualFile manifestFileLocation = FileChooser.chooseFile(_editorContext.getProject(),
+                                                    FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(), currentFile);
 
-        if (result.length == 1) {
-            VirtualFile manifestFileLocation = result[0]; //file.getVirtualFile();
-            if (manifestFileLocation != null) {
-                for (VirtualFile root : roots) {
-                    String relativePath = VfsUtil
-                            .getRelativePath(manifestFileLocation, root, File.separatorChar);
-                    if (relativePath != null) {
-                        // okay, it resides inside one of our content roots, so far so good.
-                        if (manifestFileLocation.isDirectory()) {
-                            // its a folder, so add "MANIFEST.MF" to it as a default.
-                            relativePath += "/MANIFEST.MF";
-                        }
-
-                        _manifestFileChooser.setText(relativePath);
-                        break;
+        if (manifestFileLocation != null) {
+            for (VirtualFile root : roots) {
+                String relativePath = VfsUtil.getRelativePath(manifestFileLocation, root, File.separatorChar);
+                if (relativePath != null) {
+                    // okay, it resides inside one of our content roots, so far so good.
+                    if (manifestFileLocation.isDirectory()) {
+                        // its a folder, so add "MANIFEST.MF" to it as a default.
+                        relativePath += "/MANIFEST.MF";
                     }
+
+                    _manifestFileChooser.setText(relativePath);
+                    break;
                 }
             }
         }
@@ -195,12 +190,11 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
     VirtualFile[] roots = getContentRoots(_module);
     VirtualFile currentFile = findFileInContentRoots(field.getText(), _module);
 
-    VirtualFile[] result = FileChooser.chooseFiles(_editorContext.getProject(),
-            new FileChooserDescriptor(true, false, false, false, false, false), currentFile);
+    VirtualFile fileLocation = FileChooser.chooseFile(_editorContext.getProject(),
+                                                FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), currentFile);
 
 
-    if (result.length == 1) {
-        VirtualFile fileLocation = result[0];
+    if (fileLocation != null) {
         for (VirtualFile root : roots) {
             String relativePath = VfsUtil
                     .getRelativePath(fileLocation, root, File.separatorChar);

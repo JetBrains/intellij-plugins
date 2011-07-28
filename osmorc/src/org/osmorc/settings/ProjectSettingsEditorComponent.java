@@ -28,7 +28,7 @@ package org.osmorc.settings;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -107,10 +107,10 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     if (preselect == null) {
       preselect = myProject.getBaseDir();
     }
-    VirtualFile[] virtualFiles =
-      FileChooser.chooseFiles(myProject, new FileChooserDescriptor(false, true, false, false, false, false), preselect);
-    if (virtualFiles.length > 0) {
-      bundleOutputPath.setText(virtualFiles[0].getPath());
+    VirtualFile virtualFile =
+      FileChooser.chooseFile(myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor(), preselect);
+    if (virtualFile != null) {
+      bundleOutputPath.setText(virtualFile.getPath());
     }
   }
 

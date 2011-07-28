@@ -4,7 +4,7 @@ import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.google.jstestdriver.idea.util.TextChangeListener;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import org.jetbrains.annotations.NotNull;
 
@@ -72,7 +72,7 @@ class JsFileRunSettingsSection extends AbstractRunSettingsSection {
           "Select JavaScript test file",
           "",
           creationContext.getProject(),
-          new FileChooserDescriptor(true, false, false, false, false, false)
+          FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
       );
       panel.add(myJsFileTextFieldWithBrowseButton, c);
       label.setLabelFor(myJsFileTextFieldWithBrowseButton);
