@@ -191,7 +191,7 @@
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="US&amp;B"/>
+                      <text value="US&amp;B, port:"/>
                     </properties>
                   </component>
                   <component id="5165e" class="javax.swing.JTextField" binding="myUsbDebugPortTextField">
@@ -200,9 +200,7 @@
                         <preferred-size width="40" height="-1"/>
                       </grid>
                     </constraints>
-                    <properties>
-                      <visible value="true"/>
-                    </properties>
+                    <properties/>
                   </component>
                 </children>
               </grid>

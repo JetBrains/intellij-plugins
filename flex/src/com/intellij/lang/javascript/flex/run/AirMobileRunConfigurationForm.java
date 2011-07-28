@@ -129,9 +129,6 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
     myDebugOverNetworkRadioButton.addActionListener(debugTransportListener);
     myDebugOverUSBRadioButton.addActionListener(debugTransportListener);
 
-    myUsbDebugPortTextField
-      .setVisible(false); // just thought that nobody needs non-standard port, so let's UI be lighter. Remove this line on first request.
-
     myDebuggerSdkCombo.showModuleSdk(true);
 
     updateControls();
