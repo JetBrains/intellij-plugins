@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -72,7 +73,7 @@ public class CreateAirDescriptorDialog extends DialogWrapper {
   private void initDescriptorFileLocationTextWithBrowse() {
     myDescriptorFileLocationTextWithBrowse.setText(suggestDirPathToCreateDescriptorIn());
     myDescriptorFileLocationTextWithBrowse.addBrowseFolderListener("Choose location for AIR application descriptor", "", myProject,
-                                                                   new FileChooserDescriptor(false, true, false, false, false, false));
+                                                                   FileChooserDescriptorFactory.createSingleFolderDescriptor());
   }
 
   private String suggestDirPathToCreateDescriptorIn() {

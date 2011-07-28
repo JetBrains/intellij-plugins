@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.lang.javascript.flex.actions.airinstaller.CertificateParameters;
 import com.intellij.lang.javascript.flex.actions.airinstaller.CreateCertificateDialog;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -61,9 +61,9 @@ public class SigningOptionsForm {
     myResizeHandler = resizeHandler;
 
     myProvisioningProfileTextWithBrowse.addBrowseFolderListener(null, null, myProject,
-                                                                new FileChooserDescriptor(true, false, false, false, false, false));
+                                                                FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
     myKeystoreFileTextWithBrowse
-      .addBrowseFolderListener(null, null, myProject, new FileChooserDescriptor(true, false, false, false, false, false));
+      .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
 
     initCreateCertButton();
     initMoreOptionsHyperlinkLabel();
