@@ -1,6 +1,8 @@
-package com.intellij.flex.uiDesigner;
+package com.intellij.flex.uiDesigner.css;
 
+import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.*;
+import com.intellij.flex.uiDesigner.mxml.AmfExtendedTypes;
 import com.intellij.flex.uiDesigner.mxml.AsCommonTypeNames;
 import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider;
@@ -8,6 +10,7 @@ import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -24,17 +27,18 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlToken;
 import com.intellij.xml.XmlElementDescriptor;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
 public class CssWriter {
   private static final Logger LOG = Logger.getInstance(CssWriter.class.getName());
 
-  private PrimitiveAmfOutputStream propertyOut;
+  protected PrimitiveAmfOutputStream propertyOut;
   private final CustomVectorWriter rulesetVectorWriter = new CustomVectorWriter();
   private final CustomVectorWriter declarationVectorWriter = new CustomVectorWriter();
 
-  private final StringRegistry.StringWriter stringWriter;
+  protected final StringRegistry.StringWriter stringWriter;
 
   private ProblemsHolder problemsHolder;
 
@@ -224,7 +228,7 @@ public class CssWriter {
     else if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
       // special case: ClassReference(null);
       if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
-        propertyOut.write(CssPropertyType.NULL);
+        propertyOut.write(Amf3Types.NULL);
       }
       else {
         writeStringValue(node, info);
@@ -237,7 +241,7 @@ public class CssWriter {
       // Class, brokenImageSkin: Embed(source="Assets.swf",symbol="__brokenImage"); or brokenImageBorderSkin: ClassReference("mx.skins.halo.BrokenImageBorderSkin");
       // or ClassReference(null);
       //noinspection ConstantConditions
-      writeFunctionValue((CssFunction)value.getFirstChild().getFirstChild());
+      writeFunctionValue((CssFunction)value.getFirstChild().getFirstChild(), info);
     }
     else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
       writeUndefinedPropertyValue(value);
@@ -294,7 +298,7 @@ public class CssWriter {
         amfType = Amf3Types.FALSE;
       }
       else {
-        propertyOut.write(CssPropertyType.STRING);
+        propertyOut.write(Amf3Types.STRING);
         writeCssStringToken(chars);
         return;
       }
@@ -320,7 +324,7 @@ public class CssWriter {
 
     final CharSequence chars = node.getChars();
     if (info.getEnumeration() == null) {
-      propertyOut.write(CssPropertyType.STRING);
+      propertyOut.write(Amf3Types.STRING);
       if (stripQuotes) {
         writeCssStringToken(chars);
       }
@@ -329,7 +333,7 @@ public class CssWriter {
       }
     }
     else {
-      propertyOut.write(CssPropertyType.STRING_REFERENCE);
+      propertyOut.write(AmfExtendedTypes.STRING_REFERENCE);
       stringWriter.write(stripQuotes ? chars.subSequence(1, chars.length() - 1).toString() : chars.toString(), propertyOut);
     }
   }
@@ -375,20 +379,6 @@ public class CssWriter {
     IOUtil.writeAmfIntOrDouble(propertyOut, node.getChars(), isNegative, isInt);
   }
 
-  @SuppressWarnings({"ConstantConditions"})
-  private void writeClassReference(ASTNode node) {
-    ASTNode valueNode = node.findChildByType(CssElementTypes.CSS_TERM_LIST).getFirstChildNode().getFirstChildNode();
-    // ClassReference(null);
-    if (valueNode instanceof XmlToken) {
-      assert valueNode.getText().equals("null");
-      propertyOut.write(CssPropertyType.NULL);
-    }
-    else {
-      propertyOut.write(CssPropertyType.CLASS_REFERENCE);
-      stringWriter.write(((CssString)valueNode).getValue(), propertyOut);
-    }
-  }
-
   private void writeColor(PsiElement value) {
     Color color = CssUtil.getColor(value);
     assert color != null;
@@ -423,7 +413,7 @@ public class CssWriter {
       //noinspection ConstantConditions
       final ASTNode node = value.getFirstChild().getFirstChild().getNode();
       if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
-        writeFunctionValue((CssFunction)node);
+        writeFunctionValue((CssFunction)node, null);
       }
       else {
         assert terms.length == 1;
@@ -437,7 +427,7 @@ public class CssWriter {
           propertyOut.write(Amf3Types.FALSE);
         }
         else {
-          propertyOut.write(CssPropertyType.STRING);
+          propertyOut.write(Amf3Types.STRING);
           propertyOut.writeAmfUtf(StringUtil.stripQuotesAroundValue(v));
         }
       }
@@ -464,11 +454,11 @@ public class CssWriter {
     }
   }
 
-  private void writeFunctionValue(CssFunction cssFunction) throws InvalidPropertyException {
+  private void writeFunctionValue(CssFunction cssFunction, @Nullable FlexStyleIndexInfo info) throws InvalidPropertyException {
     String functionName = cssFunction.getFunctionName();
     switch (functionName.charAt(0)) {
       case 'C':
-        writeClassReference((ASTNode)cssFunction);
+        writeClassReference((ASTNode)cssFunction, info);
         break;
 
       case 'E':
@@ -478,6 +468,31 @@ public class CssWriter {
       default:
         throw new IllegalArgumentException("unknown function: " + functionName);
     }
+  }
+
+  private void writeClassReference(ASTNode node, FlexStyleIndexInfo info) throws InvalidPropertyException {
+    @SuppressWarnings("ConstantConditions")
+    ASTNode valueNode = node.findChildByType(CssElementTypes.CSS_TERM_LIST).getFirstChildNode().getFirstChildNode();
+    // ClassReference(null);
+    if (valueNode instanceof XmlToken) {
+      assert valueNode.getText().equals("null");
+      propertyOut.write(Amf3Types.NULL);
+    }
+    else {
+      CssString cssString = (CssString)valueNode;
+      JSClass jsClass = InjectionUtil.getJsClassFromPackageAndLocalClassNameReferences(cssString);
+      if (jsClass == null) {
+        final CharSequence chars = valueNode.getFirstChildNode().getChars();
+        throw new InvalidPropertyException("error.unresolved.class", chars.subSequence(1, chars.length() - 1));
+      }
+
+      writeClassReference(jsClass, info);
+    }
+  }
+
+  protected void writeClassReference(JSClass jsClass, FlexStyleIndexInfo info) throws InvalidPropertyException {
+    propertyOut.write(AmfExtendedTypes.CLASS_REFERENCE);
+    stringWriter.write(jsClass.getQualifiedName(), propertyOut);
   }
 
   private void writeEmbed(CssFunction cssFunction) throws InvalidPropertyException {

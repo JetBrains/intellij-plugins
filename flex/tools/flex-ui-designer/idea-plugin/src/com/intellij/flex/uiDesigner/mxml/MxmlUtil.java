@@ -6,10 +6,9 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.xml.XmlTagChild;
+import com.intellij.psi.xml.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 final class MxmlUtil {
   static Document getDocument(@NotNull PsiElement element) {
@@ -35,5 +34,21 @@ final class MxmlUtil {
   static boolean containsOnlyWhitespace(XmlTagChild child) {
     PsiElement firstChild = child.getFirstChild();
     return firstChild == child.getLastChild() && (firstChild == null || firstChild instanceof PsiWhiteSpace);
+  }
+
+  @Nullable
+  public static XmlElement getInjectedHost(XmlTag tag) {
+    // support <tag>{v}...</tag> or <tag>__PsiWhiteSpace__{v}...</tag>
+    // <tag><span>ssss</span> {v}...</tag> is not supported
+    for (XmlTagChild child : tag.getValue().getChildren()) {
+      if (child instanceof XmlText) {
+        return child;
+      }
+      else if (!(child instanceof PsiWhiteSpace)) {
+        return null;
+      }
+    }
+
+    return null;
   }
 }

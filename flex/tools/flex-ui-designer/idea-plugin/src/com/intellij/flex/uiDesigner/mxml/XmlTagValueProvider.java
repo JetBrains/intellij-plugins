@@ -4,7 +4,6 @@ import com.google.common.base.CharMatcher;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlTagChild;
@@ -49,29 +48,13 @@ class XmlTagValueProvider implements XmlElementValueProvider {
 
   @Override
   public XmlElement getInjectedHost() {
-    return getInjectedHost(tag);
+    return MxmlUtil.getInjectedHost(tag);
   }
 
   @Override
   @Nullable
   public JSClass getJsClass() {
-    return InjectionUtil.getJsClassFromPackageAndLocalClassNameReferences(tag.getReferences());
-  }
-
-  @Nullable
-  public static XmlElement getInjectedHost(XmlTag tag) {
-    // support <tag>{v}...</tag> or <tag>__PsiWhiteSpace__{v}...</tag>
-    // <tag><span>ssss</span> {v}...</tag> is not supported
-    for (XmlTagChild child : tag.getValue().getChildren()) {
-      if (child instanceof XmlText) {
-        return child;
-      }
-      else if (!(child instanceof PsiWhiteSpace)) {
-        return null;
-      }
-    }
-
-    return null;
+    return InjectionUtil.getJsClassFromPackageAndLocalClassNameReferences(tag);
   }
 
   static CharSequence getDisplay(XmlTag tag) {

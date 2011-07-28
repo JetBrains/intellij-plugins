@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.CssPropertyType;
+import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
@@ -237,7 +237,7 @@ public final class BaseWriter {
   }
 
   public void writeClass(String className) {
-    out.write(AmfExtendedTypes.CLASS);
+    out.write(AmfExtendedTypes.CLASS_REFERENCE);
     write(className);
   }
 

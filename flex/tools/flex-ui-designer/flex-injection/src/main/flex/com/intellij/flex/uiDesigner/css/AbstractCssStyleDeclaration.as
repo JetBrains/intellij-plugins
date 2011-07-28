@@ -18,8 +18,8 @@ public class AbstractCssStyleDeclaration extends CSSStyleDeclaration implements 
 
   override mx_internal function addStyleToProtoChain(chain:Object, target:DisplayObject, filterMap:Object = null):Object {
     if (filterMap != null) {
-      for (var n:Object in filterMap) {
-        if (n != filterMap[n]) {
+      for (var k:Object in filterMap) {
+        if (k != filterMap[k]) {
           throw new ArgumentError("filterMap with unequal key and name is not supported");
         }
       }

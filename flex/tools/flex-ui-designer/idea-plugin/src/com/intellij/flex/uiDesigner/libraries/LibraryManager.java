@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+@SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager extends EntityListManager<VirtualFile, Library> {
   public static LibraryManager getInstance() {
     return ServiceManager.getService(LibraryManager.class);
@@ -142,19 +143,18 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
 
     final ModuleInfo moduleInfo = new ModuleInfo(module);
     if (collectLocalStyleHolders) {
+      // client.registerModule finalize it
       stringWriter.startChange();
       try {
         ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder);
-        client.registerModule(project, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
       }
       catch (Throwable e) {
         stringWriter.rollbackChange();
         throw new InitException(e, "error.collect.local.style.holders");
       }
     }
-    else {
-      client.registerModule(project, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
-    }
+
+    client.registerModule(project, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
 
     if (!problemsHolder.isEmpty()) {
       DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
@@ -175,8 +175,8 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
   }
 
   @NotNull
-  private LibrarySet createLibrarySet(String id, @Nullable LibrarySet parent, List<Library> libraries, String flexSdkVersion,
-                                      SwcDependenciesSorter swcDependenciesSorter, final boolean isFromSdk)
+  private static LibrarySet createLibrarySet(String id, @Nullable LibrarySet parent, List<Library> libraries, String flexSdkVersion,
+      SwcDependenciesSorter swcDependenciesSorter, final boolean isFromSdk)
     throws InitException {
     try {
       swcDependenciesSorter.sort(libraries, id, flexSdkVersion, isFromSdk);
@@ -202,6 +202,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     }
   }
 
+  @SuppressWarnings("MethodMayBeStatic")
   @Nullable
   public PropertiesFile getResourceBundleFile(String locale, String bundleName, ProjectInfo projectInfo) {
     LibrarySet librarySet = projectInfo.getLibrarySet();
@@ -225,17 +226,17 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     return null;
   }
 
-  private PropertiesFile getResourceBundleFile(String locale, String bundleName, Library library, ProjectInfo projectInfo) {
+  private static PropertiesFile getResourceBundleFile(String locale, String bundleName, Library library, ProjectInfo projectInfo) {
     final THashSet<String> bundles = library.resourceBundles.get(locale);
     if (!bundles.contains(bundleName)) {
       return null;
     }
-    
+
     //noinspection ConstantConditions
-    VirtualFile virtualFile = library.getFile().findChild("locale").findChild(locale).findChild(
-      bundleName + CatalogXmlBuilder.PROPERTIES_EXTENSION);
+    VirtualFile virtualFile = library.getFile().findChild("locale").findChild(locale)
+        .findChild(bundleName + CatalogXmlBuilder.PROPERTIES_EXTENSION);
     //noinspection ConstantConditions
-    return (PropertiesFile)PsiDocumentManager.getInstance(projectInfo.getElement()).getPsiFile(
-      FileDocumentManager.getInstance().getDocument(virtualFile));
+    return (PropertiesFile)PsiDocumentManager.getInstance(projectInfo.getElement())
+        .getPsiFile(FileDocumentManager.getInstance().getDocument(virtualFile));
   }
 }

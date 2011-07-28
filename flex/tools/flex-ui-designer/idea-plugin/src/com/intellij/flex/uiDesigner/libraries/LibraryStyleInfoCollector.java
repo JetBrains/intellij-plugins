@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.flex.uiDesigner.CssWriter;
+import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;

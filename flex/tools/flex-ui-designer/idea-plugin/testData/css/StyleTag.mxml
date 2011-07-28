@@ -48,7 +48,7 @@
       fontStyle: normal;
       fontSize: 28;
       fontFamily: "_typewriter";
-      fontThickness: 200;
+      fontThickness: 200; /* yes, Button doesn't support this style, but we check that it is remains in runtime getStyle() */
     }
 
     .positiveNumberPxUnitAndNegativeNumberWithoutUnit {
@@ -56,11 +56,9 @@
       textIndent: -10;
     }
 
-    .positiveHexNumberPxUnitAndNegativeNumberWithoutUnit {
-      fontSize: 28px;
-      textIndent: -100;
+    #IDEA_72072 {
+      skinClass: ClassReference("testPackage.CustomSkinInPackage");
     }
-
   </fx:Style>
 
   <layout>
@@ -85,4 +83,6 @@
     <!-- must be RichText for test textIndent -->
     <RichText text="H__________________________|" styleName="positiveNumberPxUnitAndNegativeNumberWithoutUnit"/>
   </VGroup>
+
+  <BorderContainer id="IDEA_72072" width="50" height="50"/>
 </Application>

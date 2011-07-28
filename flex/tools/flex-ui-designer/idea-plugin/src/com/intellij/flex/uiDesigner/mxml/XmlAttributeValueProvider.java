@@ -32,6 +32,6 @@ class XmlAttributeValueProvider implements XmlElementValueProvider {
   @Nullable
   public JSClass getJsClass() {
     //noinspection ConstantConditions
-    return InjectionUtil.getJsClassFromPackageAndLocalClassNameReferences(attribute.getValueElement().getReferences());
+    return InjectionUtil.getJsClassFromPackageAndLocalClassNameReferences(attribute.getValueElement());
   }
 }

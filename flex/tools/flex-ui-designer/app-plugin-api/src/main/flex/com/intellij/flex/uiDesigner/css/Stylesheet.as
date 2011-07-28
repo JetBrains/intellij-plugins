@@ -1,5 +1,8 @@
 package com.intellij.flex.uiDesigner.css {
+import com.intellij.flex.uiDesigner.DocumentFactory;
+import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.StringRegistry;
+import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.utils.Dictionary;
@@ -54,19 +57,19 @@ public final class Stylesheet {
         var textOffset:int = AmfUtil.readUInt29(input);
         var type:int = input.readByte();
         switch (type) {
-          case 8:
+          case CssPropertyType.STRING:
             declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, AmfUtil.readUtf(input));
             break;
 
-          case 11:
+          case AmfExtendedTypes.STRING_REFERENCE:
             declarations[i] = CssDeclarationImpl.create2(CssPropertyType.STRING, name, textOffset, null, stringRegistry.readNotNull(input));
             break;
 
-          case 4:
-            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, new ClassReferenceImpl(stringRegistry.readNotNull(input)));
+          case AmfExtendedTypes.CLASS_REFERENCE:
+            declarations[i] = CssDeclarationImpl.create2(CssPropertyType.CLASS_REFERENCE, name, textOffset, null, new ClassReferenceImpl(stringRegistry.readNotNull(input)));
             break;
           
-          case 7:
+          case CssPropertyType.NULL:
             declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, null);
             break;
 
@@ -79,6 +82,10 @@ public final class Stylesheet {
             CssEmbedImageDeclaration(declarations[i] = CssEmbedImageDeclaration.create(name, textOffset, AmfUtil.readUInt29(input)));
             break;
 
+          case AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE:
+            declarations[i] = readSkinClass(textOffset, input);
+            break;
+
           default:
             declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, type == CssPropertyType.COLOR_STRING ? stringRegistry.readNotNull(input) : null, input.readObject());
             break;
@@ -86,6 +93,21 @@ public final class Stylesheet {
       }
       ruleset.declarations = declarations;
     }
+  }
+
+  private static function readSkinClass(textOffset:int, input:IDataInput):CssDeclaration {
+    var id:int = AmfUtil.readUInt29(input);
+
+    var factory:Object = moduleContext.getDocumentFactory(id);
+        if (factory == null) {
+          var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance(ModuleContextEx(moduleContext).project).get(id);
+          factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContext(documentFactory, this, styleManager));
+          moduleContext.putDocumentFactory(id, factory);
+        }
+
+        return factory;
+
+    new CssSkinClassDeclaration(readDocumentFactory(), textOffset)
   }
 
   private static function readSimpleSelectors(data:IDataInput, stringRegistry:StringRegistry):CssSelector {

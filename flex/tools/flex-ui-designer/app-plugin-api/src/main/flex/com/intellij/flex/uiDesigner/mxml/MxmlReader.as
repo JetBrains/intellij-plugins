@@ -4,10 +4,10 @@ import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
+import com.intellij.flex.uiDesigner.EmbedSwfManager;
 import com.intellij.flex.uiDesigner.ModuleContext;
 import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.StringRegistry;
-import com.intellij.flex.uiDesigner.EmbedSwfManager;
 import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
@@ -18,6 +18,7 @@ import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
+import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.display.BitmapData;
@@ -30,11 +31,9 @@ import flash.utils.IDataInput;
 
 public final class MxmlReader implements DocumentReader {
   private static const FLEX_EVENT_CLASS_NAME:String = "mx.events.FlexEvent";
-  
-  private static const CLASS_MARKER:int = 43;
+
   private static const COLOR_STYLE_MARKER:int = 42;
-  private static const STRING_REFERENCE:int = 44;
- 
+
   private var input:IDataInput;
   
   private var stringRegistry:StringRegistry;
@@ -156,7 +155,7 @@ public final class MxmlReader implements DocumentReader {
   
   private function readConstructor(objectClass:Class):Object {
     switch (input.readByte()) {
-      case CLASS_MARKER:
+      case AmfExtendedTypes.CLASS_REFERENCE:
         return new objectClass(moduleContext.applicationDomain.getDefinition(stringRegistry.read(input)));
 
       case PropertyClassifier.VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES:
@@ -319,7 +318,7 @@ public final class MxmlReader implements DocumentReader {
           propertyHolder[propertyName] = o;
           break;
         
-        case Amf3Types.DOCUMENT_FACTORY_REFERENCE:
+        case AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE:
           propertyHolder[propertyName] = readDocumentFactory();
           break;
         
@@ -331,11 +330,11 @@ public final class MxmlReader implements DocumentReader {
           readSwfData(propertyHolder, propertyName);
           break;
         
-        case STRING_REFERENCE:
+        case AmfExtendedTypes.STRING_REFERENCE:
           propertyHolder[propertyName] = stringRegistry.read(input);
           break;
         
-        case CLASS_MARKER:
+        case AmfExtendedTypes.CLASS_REFERENCE:
           propertyHolder[propertyName] = moduleContext.applicationDomain.getDefinition(stringRegistry.read(input));
           break;
 

@@ -1,12 +1,16 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.CssWriter;
 import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
+import com.intellij.flex.uiDesigner.css.CssWriter;
+import com.intellij.flex.uiDesigner.css.LocalCssWriter;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.openapi.module.Module;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.css.CssFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlAttribute;
@@ -17,25 +21,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class LocalStyleWriter {
-  private byte[] data;
+public class StyleTagWriter {
   private final CssWriter cssWriter;
   private final ProblemsHolder problemsHolder;
 
-  public LocalStyleWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder) {
+  public StyleTagWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder) {
     this.problemsHolder = problemsHolder;
-    cssWriter = new CssWriter(stringWriter);
+    cssWriter = new LocalCssWriter(stringWriter);
   }
 
-  public
-  @NotNull
-  byte[] getData() {
-    return data;
-  }
-
-  public boolean write(XmlTag tag, Module module) {
-    data = null;
-
+  public byte[] write(XmlTag tag, Module module) {
     CssFile cssFile = null;
     XmlAttribute source = tag.getAttribute("source");
     if (source != null) {
@@ -53,7 +48,7 @@ public class LocalStyleWriter {
       }
     }
     else {
-      PsiElement host = XmlTagValueProvider.getInjectedHost(tag);
+      PsiElement host = MxmlUtil.getInjectedHost(tag);
       if (host != null) {
         InjectedPsiVisitor visitor = new InjectedPsiVisitor(host);
         InjectedLanguageUtil.enumerate(host, visitor);
@@ -61,12 +56,7 @@ public class LocalStyleWriter {
       }
     }
 
-    if (cssFile == null) {
-      return false;
-    }
-
-    data = cssWriter.write(cssFile, module, problemsHolder);
-    return true;
+    return cssFile == null ? null : cssWriter.write(cssFile, module, problemsHolder);
   }
 
   private static class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor {
@@ -79,9 +69,8 @@ public class LocalStyleWriter {
       this.host = host;
     }
 
-    public
     @Nullable
-    CssFile getCssFile() {
+    public CssFile getCssFile() {
       return cssFile;
     }
 

@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.DocumentFactoryManager;
+import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ObjectIntHashMap;
@@ -11,9 +11,6 @@ import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -111,7 +108,7 @@ class PropertyProcessor {
     else if (valueWriter != null) {
       if (valueWriter instanceof ClassValueWriter && isSkinClass(descriptor)) {
         SkinProjectClassValueWriter skinProjectClassValueWriter =
-          getSkinProjectClassValueWriter(getProjectComponentFactoryId(((ClassValueWriter)valueWriter).getJsClas(), valueProvider));
+          getSkinProjectClassValueWriter(getProjectComponentFactoryId(((ClassValueWriter)valueWriter).getJsClas()));
         if (skinProjectClassValueWriter != null) {
           return skinProjectClassValueWriter;
         }
@@ -153,24 +150,11 @@ class PropertyProcessor {
 
   private int getSkinProjectClassDocumentFactoryId(XmlElementValueProvider valueProvider) throws InvalidPropertyException {
     JSClass jsClass = valueProvider.getJsClass();
-    return jsClass != null ? getProjectComponentFactoryId(jsClass, valueProvider) : -1;
+    return jsClass != null ? getProjectComponentFactoryId(jsClass) : -1;
   }
 
-  private int getProjectComponentFactoryId(JSClass jsClass, XmlElementValueProvider valueProvider) throws InvalidPropertyException {
-    PsiFile psiFile = jsClass.getContainingFile();
-    VirtualFile virtualFile = psiFile.getVirtualFile();
-    assert virtualFile != null;
-    boolean inSourceContent = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().isInSourceContent(virtualFile);
-    if (psiFile instanceof XmlFile) {
-      if (inSourceContent) {
-        return DocumentFactoryManager.getInstance(psiFile.getProject()).getId(virtualFile, (XmlFile)psiFile, unregisteredDocumentFactories);
-      }
-    }
-    else if (inSourceContent) {
-      throw new InvalidPropertyException("error.support.only.mxml.based.component", valueProvider.getTrimmed());
-    }
-    
-    return -1;
+  private int getProjectComponentFactoryId(JSClass jsClass) throws InvalidPropertyException {
+    return InjectionUtil.getProjectComponentFactoryId(jsClass, unregisteredDocumentFactories);
   }
 
   public void reset() {
@@ -311,16 +295,16 @@ class PropertyProcessor {
         throw new InvalidPropertyException("error.unresolved.class", valueProvider.getTrimmed());
       }
 
-      final int projectComponentFactoryId = getProjectComponentFactoryId(jsClass, valueProvider);
-      if (projectComponentFactoryId != -1) {
-        writer.writeDocumentFactoryReference(projectComponentFactoryId);
-      }
-      else {
+      final int projectComponentFactoryId = getProjectComponentFactoryId(jsClass);
+      if (projectComponentFactoryId == -1) {
         reference = writer.getRootScope().referenceCounter++;
         classFactoryMap.put(className, reference);
 
         writer.writeConstructorHeader(FlexCommonTypeNames.CLASS_FACTORY, reference);
         writer.writeClass(className);
+      }
+      else {
+        writer.writeDocumentFactoryReference(projectComponentFactoryId);
       }
     }
   }

@@ -12,8 +12,7 @@ public final class Amf3Types {
   public static const BYTE_ARRAY:int = 12;
   
   public static const OBJECT_REFERENCE:int = 45;
-  public static const DOCUMENT_FACTORY_REFERENCE:int = 46;
-  
+
   public static const BITMAP:int = 47;
   public static const SWF:int = 48;
 }
