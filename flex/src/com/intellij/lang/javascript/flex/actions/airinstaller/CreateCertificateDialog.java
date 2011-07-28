@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.actions.airinstaller;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -52,7 +52,7 @@ public class CreateCertificateDialog extends DialogWrapper {
     updateControls();
 
     myKeystoreFileLocationTextWithBrowse
-      .addBrowseFolderListener(null, null, project, new FileChooserDescriptor(false, true, false, false, false, false));
+      .addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     myOptionalParametersHyperlinkLabel.addHyperlinkListener(new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {

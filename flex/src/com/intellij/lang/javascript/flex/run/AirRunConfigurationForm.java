@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -67,7 +68,7 @@ public class AirRunConfigurationForm extends SettingsEditor<AirRunConfiguration>
                            myRootDirectoryComponent.getComponent());
 
     myRootDirectoryComponent.getComponent().addBrowseFolderListener("AIR Application Root Directory", null, project,
-                                                                    new FileChooserDescriptor(false, true, false, false, false, false));
+                                                                    FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     myAdlOptionsComponent.getComponent()
       .setDialogCaption(StringUtil.capitalizeWords(myAdlOptionsComponent.getRawText(), true));

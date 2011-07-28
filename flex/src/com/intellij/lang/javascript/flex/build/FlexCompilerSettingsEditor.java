@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleConfigurationEditor;
@@ -183,11 +184,11 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
 
     myModuleSpecificOutputPathTextField
       .addBrowseFolderListener(FlexBundle.message("flex.choose.output.directory"), null, myModule.getProject(),
-                               new FileChooserDescriptor(false, true, false, false, false, false));
+                               FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     myModuleSpecificOutputPathForTestsTextField
       .addBrowseFolderListener(FlexBundle.message("flex.choose.test.output.directory"), null, myModule.getProject(),
-                               new FileChooserDescriptor(false, true, false, false, false, false));
+                               FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     myConfigureResourcePatternsButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
@@ -210,11 +211,11 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
 
     myFacetSpecificOutputPathTextField
       .addBrowseFolderListener(FlexBundle.message("flex.choose.output.directory"), null, myModule.getProject(),
-                               new FileChooserDescriptor(false, true, false, false, false, false));
+                               FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     myFacetSpecificOutputPathForTestsTextField
       .addBrowseFolderListener(FlexBundle.message("flex.choose.test.output.directory"), null, myModule.getProject(),
-                               new FileChooserDescriptor(false, true, false, false, false, false));
+                               FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     myLocaleCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {

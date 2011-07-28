@@ -131,9 +131,9 @@ public class FilesToPackageForm {
             FileChooserDescriptor d = new FileChooserDescriptor(true, true, false, true, false, false);
 
             VirtualFile initialFile = LocalFileSystem.getInstance().findFileByPath((String)getCellEditorValue());
-            VirtualFile[] files = FileChooser.chooseFiles(myProject, d, initialFile);
-            if (files.length == 1 && files[0] != null) {
-              myComponent.getChildComponent().setText(files[0].getPresentableUrl());
+            VirtualFile file = FileChooser.chooseFile(myProject, d, initialFile);
+            if (file != null) {
+              myComponent.getChildComponent().setText(file.getPresentableUrl());
             }
           }
         };

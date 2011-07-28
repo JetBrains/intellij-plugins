@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -111,7 +112,7 @@ public class AirMobileRunConfigurationForm extends SettingsEditor<AirMobileRunCo
       .initAirDescriptorCombo(myProject, myAirDescriptorComboWithBrowse, myModulesComboboxWrapper, myRootDirTextWithBrowse);
 
     myRootDirTextWithBrowse.addBrowseFolderListener("AIR Application Root Directory", null, project,
-                                                    new FileChooserDescriptor(false, true, false, false, false, false));
+                                                    FileChooserDescriptorFactory.createSingleFolderDescriptor());
     myAdlOptionsField.setDialogCaption("AIR Debug Launcher Options");
 
     initEmulatorRelatedControls();

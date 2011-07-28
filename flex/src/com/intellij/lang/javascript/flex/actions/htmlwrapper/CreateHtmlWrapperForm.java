@@ -4,7 +4,7 @@ import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -257,7 +257,7 @@ public class CreateHtmlWrapperForm {
 
   private void setupHtmlWrapperFileLocationTextField(final Project project) {
     myHtmlWrapperFileLocationTextWithBrowse.addBrowseFolderListener("Choose location for HTML wrapper", "", project,
-                                                                    new FileChooserDescriptor(false, true, false, false, false, false),
+                                                                    FileChooserDescriptorFactory.createSingleFolderDescriptor(),
                                                                     new TextComponentAccessor<JTextField>() {
                                                                       public String getText(final JTextField textField) {
                                                                         return textField.getText();

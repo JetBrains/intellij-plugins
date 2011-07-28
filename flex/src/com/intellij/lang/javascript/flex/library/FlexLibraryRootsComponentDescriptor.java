@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.ui.Util;
 import com.intellij.openapi.roots.JavadocOrderRootType;
@@ -96,7 +97,7 @@ public class FlexLibraryRootsComponentDescriptor extends DefaultLibraryRootsComp
     }
 
     public FileChooserDescriptor createChooserDescriptor() {
-      return new FileChooserDescriptor(false, true, false, false, false, true);
+      return FileChooserDescriptorFactory.createMultipleFoldersDescriptor();
     }
 
     public String getChooserTitle(final String libraryName) {
