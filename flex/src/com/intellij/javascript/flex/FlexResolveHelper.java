@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.css.CssString;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -119,6 +120,10 @@ public class FlexResolveHelper implements JSResolveHelper {
       }
     }
     return true;
+  }
+
+  public boolean isAdequatePlaceForImport(final PsiElement place) {
+    return place instanceof CssString;
   }
 
   public static boolean processAllMxmlAndFxgFiles(final GlobalSearchScope scope,
