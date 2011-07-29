@@ -579,8 +579,6 @@ public class MxmlWriter {
         if (!cssDeclarationSourceDefined) {
           defineInlineCssDeclaration(element);
         }
-  
-        out.writeUInt29(element.getTextOffset());
       }
       else {
         out.write(PropertyClassifier.PROPERTY);

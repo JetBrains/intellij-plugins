@@ -100,12 +100,6 @@ class PropertyProcessor {
     else if (typeName.equals(FlexAnnotationNames.EVENT) /* skip event handlers */) {
       return null;
     }
-    else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME)) {
-      // IDEA-72366
-      if (name.equals("baseline")) {
-
-      }
-    }
 
     ValueWriter valueWriter = injectedASWriter.processProperty(valueProvider, name, type, isStyle, context);
     if (valueWriter == InjectedASWriter.IGNORE) {

@@ -5,6 +5,9 @@ import flash.utils.Dictionary;
 import flash.utils.getQualifiedClassName;
 
 public class CssRuleset {
+  public static const TEXT_OFFSET_UNDEFINED:int = -1;
+  public static const GUESS_TEXT_OFFSET_BY_PARENT:int = -2;
+
   public static function create(line:int, textOffset:int):CssRuleset {
      var ruleset:CssRuleset = new CssRuleset();
     ruleset._line = line;
@@ -45,7 +48,7 @@ public class CssRuleset {
     return _line;
   }
 
-  protected var _textOffset:int = -1;
+  protected var _textOffset:int = CssRuleset.TEXT_OFFSET_UNDEFINED;
   public function get textOffset():int {
     return _textOffset;
   }

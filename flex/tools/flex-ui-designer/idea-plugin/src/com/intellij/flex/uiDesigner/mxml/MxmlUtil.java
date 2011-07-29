@@ -13,15 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 final class MxmlUtil {
-  static THashSet<String> anchorStyles = new THashSet<String>();
-  static {
-    anchorStyles.add("baseline");
-    anchorStyles.add("bottom");
-    anchorStyles.add("horizontalCenter");
-    anchorStyles.add("baseline");
-    anchorStyles.add("baseline");
-  }
-
   static Document getDocument(@NotNull PsiElement element) {
     VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
     assert virtualFile != null;

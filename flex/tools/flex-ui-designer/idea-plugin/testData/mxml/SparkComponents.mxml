@@ -102,7 +102,8 @@
         </ArrayCollection>
       </List>
     </HGroup>
-    <BorderContainer borderColor="blue" borderWeight="2" borderStyle="inset" borderVisible="true" cornerRadius="4" dropShadowVisible="true" borderAlpha="0.5" backgroundColor="#6666ff" horizontalCenter="0"/>
+    <!-- horizontalCenter must be first, test IDEA-72366 and IDEA-72631 -->
+    <BorderContainer horizontalCenter="0" borderColor="blue" borderWeight="2" borderStyle="inset" borderVisible="true" cornerRadius="4" dropShadowVisible="true" borderAlpha="0.5" backgroundColor="#6666ff"/>
   </Group>
 
   <HGroup gap="20">

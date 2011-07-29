@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 final class ServerMethod {
   public static final int GO_TO_CLASS = 10;
   public static final int OPEN_FILE = 1;
+  public static final int OPEN_FILE_AND_FIND_XML_ATTRIBUTE_OR_TAG = 14;
   public static final int OPEN_DOCUMENT = 11;
   public static final int RESOLVE_EXTERNAL_INLINE_STYLE_DECLARATION_SOURCE = 2;
 

@@ -28,6 +28,7 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.AppIcon;
@@ -132,6 +133,10 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         openFile();
         break;
 
+      case ServerMethod.OPEN_FILE_AND_FIND_XML_ATTRIBUTE_OR_TAG:
+        openFileAndFindXmlAttributeOrTag();
+        break;
+
       case ServerMethod.OPEN_DOCUMENT:
         openDocument();
         break;
@@ -174,21 +179,27 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     return true;
   }
 
-  private void setProperty() throws IOException {
-    Project project = readProject();
-    final DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance(project).getInfo(reader.readUnsignedShort());
-    Document document = FileDocumentManager.getInstance().getDocument(info.getElement());
+  @NotNull
+  private static XmlFile virtualFileToXmlFile(Project project, VirtualFile virtualFile) {
+    Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
     assert document != null;
     final XmlFile psiFile;
     AccessToken token = ReadAction.start();
     try {
       psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
+      assert psiFile != null;
     }
     finally {
       token.finish();
     }
 
-    assert psiFile != null;
+    return psiFile;
+  }
+
+  private void setProperty() throws IOException {
+    Project project = readProject();
+    final DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance(project).getInfo(reader.readUnsignedShort());
+    final XmlFile psiFile = virtualFileToXmlFile(project, info.getElement());
     final XmlTag rootTag = psiFile.getRootTag();
     assert rootTag != null;
     final int offset = reader.readInt() - rootTag.getStartOffsetInParent();
@@ -232,6 +243,35 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   private void openFile() throws IOException {
     navigateToFile(new OpenFileDescriptor(readProject(), reader.readFile(), reader.readInt()));
+  }
+
+  private void openFileAndFindXmlAttributeOrTag() throws IOException {
+    Project project = readProject();
+    VirtualFile file = reader.readFile();
+    int parentTextOffset = reader.readInt();
+
+    final String name = reader.readUTF();
+
+    final XmlFile psiFile = virtualFileToXmlFile(project, file);
+    final XmlTag rootTag = psiFile.getRootTag();
+    assert rootTag != null;
+
+    final XmlTag parentTag = PsiTreeUtil.getParentOfType(rootTag.findElementAt(parentTextOffset - rootTag.getStartOffsetInParent()),
+        XmlTag.class);
+    assert parentTag != null;
+
+    XmlAttribute attribute = parentTag.getAttribute(name);
+    final int offset;
+    if (attribute != null) {
+      offset = attribute.getTextOffset();
+    }
+    else {
+      XmlTag tag = parentTag.findFirstSubTag(name);
+      assert tag != null;
+      offset = tag.getTextOffset();
+    }
+
+    navigateToFile(new OpenFileDescriptor(project, file, offset));
   }
 
   private void openDocument() throws IOException {

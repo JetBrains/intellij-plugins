@@ -64,6 +64,15 @@ public class Server implements ResourceBundleProvider {
     socket.flush();
   }
 
+  public function openFileAndFindXmlAttributeOrTag(module:Module, uri:String, textOffset:int, elementName:String):void {
+      socket.writeByte(ServerMethod.OPEN_FILE_AND_FIND_XML_ATTRIBUTE_OR_TAG);
+      writeProjectId(module.project);
+      socket.writeUTF(uri);
+      socket.writeInt(textOffset);
+      socket.writeUTF(elementName);
+      socket.flush();
+    }
+
   public function openDocument(module:Module, factory:DocumentFactory, textOffset:int):void {
     socket.writeByte(ServerMethod.OPEN_DOCUMENT);
     writeProjectId(module.project);

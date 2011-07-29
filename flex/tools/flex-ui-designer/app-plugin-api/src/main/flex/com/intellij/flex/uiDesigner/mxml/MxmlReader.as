@@ -10,6 +10,7 @@ import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
+import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.css.CssSkinClassDeclaration;
 import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.StyleDeclarationProxy;
@@ -188,6 +189,7 @@ public final class MxmlReader implements DocumentReader {
     var reference:int = input.readUnsignedShort();
     var propertyName:String = stringRegistry.read(input);
     var object:Object;
+    var objectDeclarationTextOffset:int;
     if (propertyName == "1") {
       object = readConstructor(clazz);
       propertyName = null;
@@ -199,7 +201,8 @@ public final class MxmlReader implements DocumentReader {
         object.document = object;
       }
       if (propertyName == "$fud_position") {
-        context.registerObjectDeclarationPosition(object, AmfUtil.readUInt29(input));
+        objectDeclarationTextOffset = AmfUtil.readUInt29(input);
+        context.registerObjectDeclarationPosition(object, objectDeclarationTextOffset);
         propertyName = stringRegistry.read(input);
       }
     }
@@ -213,8 +216,10 @@ public final class MxmlReader implements DocumentReader {
 
     const hasDeferredSetStyles:Boolean = "deferredSetStyles" in object;
     var deferredSetStyleProxy:DeferredSetStyleProxy;
+    var explicitInlineCssDeclarationSourceCreated:Boolean;
     if (hasDeferredSetStyles) {
       deferredSetStyleProxy = createDeferredSetStyleProxy();
+      deferredSetStyleProxy.objectDeclarationTextOffset = objectDeclarationTextOffset;
       object.deferredSetStyles = deferredSetStyleProxy;
     }
     
@@ -230,20 +235,26 @@ public final class MxmlReader implements DocumentReader {
           if (deferredSetStyleProxy == null) {
             deferredSetStyleProxy = createDeferredSetStyleProxy();
           }
-
+            
           if (deferredSetStyleProxy.inlineCssDeclarationSource == null) {
-            deferredSetStyleProxy.inlineCssDeclarationSource = InlineCssRuleset.createInline(AmfUtil.readUInt29(input),
-                AmfUtil.readUInt29(input), context.file);
+            explicitInlineCssDeclarationSourceCreated = true;
+            deferredSetStyleProxy.inlineCssDeclarationSource = InlineCssRuleset.createInline(
+                AmfUtil.readUInt29(input), AmfUtil.readUInt29(input), context.file);
+          }
+          else if (!explicitInlineCssDeclarationSourceCreated) {
+            explicitInlineCssDeclarationSourceCreated = true;
+            // skip line and text offset
+            AmfUtil.readUInt29(input);
+            AmfUtil.readUInt29(input);
           }
 
-          var textOffset:int = AmfUtil.readUInt29(input);
-          var flags:int = input.readUnsignedByte();
+          const flags:int = input.readUnsignedByte();
           if ((flags & 1) != 0) {
-            deferredSetStyleProxy.inlineCssDeclarationSource.declarations.push(new CssSkinClassDeclaration(readDocumentFactory(), textOffset));
+            deferredSetStyleProxy.inlineCssDeclarationSource.declarations.push(new CssSkinClassDeclaration(readDocumentFactory(), CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT));
             continue;
           }
 
-          cssPropertyDescriptor = CssDeclarationImpl.create(propertyName, textOffset);
+          cssPropertyDescriptor = CssDeclarationImpl.create(propertyName, CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT);
           deferredSetStyleProxy.inlineCssDeclarationSource.declarations.push(cssPropertyDescriptor);
           propertyHolder = cssPropertyDescriptor;
           if ((flags & 2) != 0) {
@@ -556,13 +567,14 @@ use namespace flash_proxy;
 final class DeferredSetStyleProxy extends Proxy {
   internal var file:VirtualFile;
   internal var inlineCssDeclarationSource:CssRuleset;
+  internal var objectDeclarationTextOffset:int;
 
   override flash_proxy function setProperty(name:*, value:*):void {
     if (inlineCssDeclarationSource == null) {
-      inlineCssDeclarationSource = InlineCssRuleset.createInline(0, 0, file);
+      inlineCssDeclarationSource = InlineCssRuleset.createInline(0, objectDeclarationTextOffset, file);
     }
 
-    var cssDeclaration:CssDeclarationImpl = CssDeclarationImpl.create(name, 0);
+    var cssDeclaration:CssDeclarationImpl = CssDeclarationImpl.create(name, CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT);
     cssDeclaration.value = value;
     inlineCssDeclarationSource.declarations.push(cssDeclaration);
   }

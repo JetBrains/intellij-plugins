@@ -73,8 +73,6 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   private Disposable appParentDisposable;
 
-
-
   private static class ParentDisposable implements Disposable {
     @Override
     public void dispose() {

@@ -38,10 +38,8 @@ class FlexEncoder extends Encoder {
     try {
       int[] positions = history.getRawPartPoolPositions(poolIndex, IndexHistory.NS);
       for (int i = 0, positionsLength = positions.length; i < positionsLength; i++) {
-        int position = positions[i];
-        in.seek(position);
-        int nsKind = in.readU8();
-        if (nsKind == CONSTANT_PackageNamespace) {
+        in.seek(positions[i]);
+        if (in.readU8() == CONSTANT_PackageNamespace) {
           in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()]);
           int stringLength = in.readU32();
           // magic, I don't know, cannot find info in AVM spec
