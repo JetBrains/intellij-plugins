@@ -4,44 +4,50 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
 public final class DebugPathManager {
-  private static String ideaHome;
-  private static String fudHome;
-  
-  public final static boolean IS_DEV = System.getProperty("fud.dev") != null || isUnitTestMode();
   private static final String FLEX_TOOLS_FLEX_UI_DESIGNER = "/flex/tools/flex-ui-designer";
 
-  private static boolean isUnitTestMode() {
+  public final static boolean IS_DEV;
+
+  private static String ideaHome;
+  private static String fudHome;
+
+  static {
     Application app = ApplicationManager.getApplication();
-    return app == null || app.isUnitTestMode();
+    if (app == null) {
+      IS_DEV = true; // e.g. SwcDependenciesSorter.main() is running
+    }
+    else if (app.isUnitTestMode()) {
+      IS_DEV = true;
+    }
+    else {
+      IS_DEV = !"jar".equals(DebugPathManager.class.getResource("").getProtocol());
+    }
+
+    if (app != null && app.isUnitTestMode()) {
+      // classpath contains classes from the IDEA project
+      ideaHome = getRootByClass(DebugPathManager.class);
+      fudHome = ideaHome + FLEX_TOOLS_FLEX_UI_DESIGNER;
+    }
+    else {
+      // classpath contains classes from plugins sandbox
+      fudHome = System.getProperty("fud.home");
+      if (fudHome == null) {
+        throw new IllegalStateException("Please define 'fud.home' to point to 'IDEA" + FLEX_TOOLS_FLEX_UI_DESIGNER + "' folder");
+      }
+      ideaHome = null; // we need it only in tests
+    }
   }
 
   public static String getIdeaHome() {
-    getFudHome();
     return ideaHome;
   }
 
   public static String getFudHome() {
-    if (fudHome == null) {
-      if (isUnitTestMode()) {
-        ideaHome = getRootByClass(PathManager.class);
-        if (ideaHome == null) {
-          ideaHome = System.getProperty("user.dir");
-          ideaHome = ideaHome.substring(0, ideaHome.length() - FLEX_TOOLS_FLEX_UI_DESIGNER.length());
-        }
-        fudHome = ideaHome + FLEX_TOOLS_FLEX_UI_DESIGNER;
-      }
-      else {
-        fudHome = System.getProperty("fud.home");
-        assert fudHome != null;
-      }
-    }
-
     return fudHome;
   }
 
