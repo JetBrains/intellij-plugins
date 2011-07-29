@@ -696,6 +696,10 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     }
 
     if (arrayElementType != null) {
+      if (isVectorType(type) && isVectorDescriptor(descriptor)) {
+        return descriptor;
+      }
+
       return ClassBackedElementDescriptor.checkValidDescriptorAccordingToType(arrayElementType, descriptor);
     }
 
@@ -719,6 +723,17 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       }
     }
     return descriptor;
+  }
+
+  private static boolean isVectorType(final String type) {
+    return type != null &&
+           (type.equals(JSCommonTypeNames.VECTOR_CLASS_NAME) || type.startsWith(JSCommonTypeNames.VECTOR_CLASS_NAME + ".<"));
+  }
+
+  private static boolean isVectorDescriptor(final XmlElementDescriptor descriptor) {
+    return descriptor instanceof ClassBackedElementDescriptor &&
+           JSCommonTypeNames.VECTOR_CLASS_NAME.equals(descriptor.getName()) &&
+           JavaScriptSupportLoader.MXML_URI3.equals(((ClassBackedElementDescriptor)descriptor).context.namespace);
   }
 
   public XmlAttributeDescriptor[] getAttributesDescriptors(final @Nullable XmlTag context) {
