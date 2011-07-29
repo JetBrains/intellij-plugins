@@ -459,7 +459,7 @@ public class CodeContext {
     predefinedTags.add(FlexPredefinedTagNames.STYLE);
     predefinedTags.add(FlexPredefinedTagNames.METADATA);
 
-    if (JavaScriptSupportLoader.isFlex4Namespace(codeContext.namespace)) {
+    if (JavaScriptSupportLoader.MXML_URI3.equals(codeContext.namespace)) {
       predefinedTags.add(FlexPredefinedTagNames.DECLARATIONS);
       predefinedTags.add(XmlBackedJSClassImpl.PRIVATE_TAG_NAME);
       predefinedTags.add(FlexPredefinedTagNames.LIBRARY);
@@ -501,7 +501,7 @@ public class CodeContext {
     bindingDescriptor.addPredefinedMemberDescriptor(
       new AnnotationBackedDescriptorImpl(FlexReferenceContributor.DESTINATION_ATTR_NAME, bindingDescriptor, true, null, null, null));
 
-    if (JavaScriptSupportLoader.isFlex4Namespace(codeContext.namespace)) {
+    if (JavaScriptSupportLoader.MXML_URI3.equals(codeContext.namespace)) {
       bindingDescriptor.addPredefinedMemberDescriptor(
       new AnnotationBackedDescriptorImpl(TWO_WAY_ATTR_NAME, bindingDescriptor, true, null, null, null));
     }

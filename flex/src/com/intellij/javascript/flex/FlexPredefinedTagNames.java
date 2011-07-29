@@ -10,4 +10,5 @@ public interface FlexPredefinedTagNames {
   String METADATA = "Metadata";
   String BINDING = "Binding";
   String LIBRARY = "Library";
+  String DESIGN_LAYER = "DesignLayer";
 }

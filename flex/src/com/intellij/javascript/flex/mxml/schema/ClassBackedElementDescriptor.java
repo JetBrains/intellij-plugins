@@ -265,7 +265,9 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       return null;
     }
 
-    if (MxmlLanguageTagsUtil.isFxReparentTag(childTag) || MxmlLanguageTagsUtil.isScriptTag(childTag)) {
+    if (MxmlLanguageTagsUtil.isFxReparentTag(childTag) ||
+        MxmlLanguageTagsUtil.isScriptTag(childTag) ||
+        MxmlLanguageTagsUtil.isDesignLayerTag(childTag)) {
       return descriptor;
     }
 

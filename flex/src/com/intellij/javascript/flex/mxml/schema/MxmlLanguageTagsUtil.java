@@ -92,6 +92,10 @@ public class MxmlLanguageTagsUtil {
     return tag != null && FlexPredefinedTagNames.SCRIPT.equals(tag.getLocalName()) && isLanguageNamespace(tag.getNamespace());
   }
 
+  public static boolean isDesignLayerTag(final XmlTag tag) {
+    return tag != null && FlexPredefinedTagNames.DESIGN_LAYER.equals(tag.getLocalName()) && MXML_URI3.equals(tag.getNamespace());
+  }
+
   public static boolean isLanguageTagAllowedUnderRootTag(final XmlTag tag) {
     return tag != null &&
            (MXML_URI3.equals(tag.getNamespace()) || MXML_URI.equals(tag.getNamespace())) &&
