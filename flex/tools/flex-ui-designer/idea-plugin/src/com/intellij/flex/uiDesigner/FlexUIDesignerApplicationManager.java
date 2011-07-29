@@ -60,7 +60,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   public static final String DESIGNER_SWF = "designer.swf";
   public static final String DESCRIPTOR_XML = "descriptor.xml";
-  static final String CHECK_DESCRIPTOR_XML = "check-descriptor.xml";
+  private static final String CHECK_DESCRIPTOR_XML = "check-descriptor.xml";
 
   public static final File APP_DIR = new File(PathManager.getSystemPath(), "flexUIDesigner");
   private static final String CHECK_DESCRIPTOR_PATH = APP_DIR + File.separator + CHECK_DESCRIPTOR_XML;
@@ -265,6 +265,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     final ClassLoader classLoader = getClass().getClassLoader();
     IOUtil.saveStream(classLoader.getResource(DESCRIPTOR_XML), new File(APP_DIR, DESCRIPTOR_XML));
     IOUtil.saveStream(classLoader.getResource(DESIGNER_SWF), new File(APP_DIR, DESIGNER_SWF));
+    IOUtil.saveStream(classLoader.getResource(CHECK_DESCRIPTOR_XML), new File(APP_DIR, CHECK_DESCRIPTOR_XML));
   }
 
   private static String getOpenActionTitle(boolean debug) {

@@ -61,11 +61,6 @@ final class DesignerApplicationUtil {
       return createTestAdlRunConfiguration();
     }
 
-    if (!DebugPathManager.IS_DEV) {
-      IOUtil.saveStream(FlexUIDesignerApplicationManager.class.getClassLoader().getResource(
-        FlexUIDesignerApplicationManager.CHECK_DESCRIPTOR_XML), new File(checkDescriptorPath));
-    }
-
     final List<Sdk> sdks = new ArrayList<Sdk>();
     for (Sdk sdk: ProjectJdkTable.getInstance().getAllJdks()) {
       if (sdk.getSdkType() instanceof IFlexSdkType && StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") >= 0) {
