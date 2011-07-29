@@ -282,7 +282,7 @@ final class Decoder {
             if (valueID != 0) {
               value_kind = in.readU8();
             }
-            visitor.slotTrait(kind, name, slotID, typeID, valueID, value_kind, decodeMetaData(kind));
+            visitor.slotTrait(kind, name, slotID, typeID, valueID, value_kind, decodeMetaData(kind), in);
             break;
           case TRAIT_Method:
           case TRAIT_Getter:

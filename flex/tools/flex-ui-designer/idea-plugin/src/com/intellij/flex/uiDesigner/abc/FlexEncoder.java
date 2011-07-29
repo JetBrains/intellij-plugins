@@ -10,6 +10,7 @@ class FlexEncoder extends Encoder {
   private static final String SPARK_COMPONENTS = "spark.components";
   private static final String SPARK_COMPONENTS_SUPPORT_CLASSES = "spark.components.supportClasses";
   private static final String APPLICATION = "Application";
+  private static final String UI_COMPONENT = "UIComponent";
   private static final String VIEW_NAVIGATOR_APPLICATION = "ViewNavigatorApplication";
   private static final String TABBED_VIEW_NAVIGATOR_APPLICATION = "TabbedViewNavigatorApplication";
   private static final String VIEW_NAVIGATOR_APPLICATION_BASE = "ViewNavigatorApplicationBase";
@@ -20,6 +21,9 @@ class FlexEncoder extends Encoder {
   private boolean skipColorCorrection;
   private boolean skipInitialize;
   private boolean modifyConstructor;
+
+  private boolean modifyAccessModifierDeferredSetStyles;
+
   private final byte[] debugBasepath;
 
   public FlexEncoder(String inputFilename) {
@@ -29,9 +33,64 @@ class FlexEncoder extends Encoder {
     inputFilename.getBytes(0, inputFilename.length(), debugBasepath, 1);
   }
 
+  private int findPublicNamespace(DataBuffer in) {
+    final int originalPosition = in.position();
+    try {
+      int[] positions = history.getRawPartPoolPositions(poolIndex, IndexHistory.NS);
+      for (int i = 0, positionsLength = positions.length; i < positionsLength; i++) {
+        int position = positions[i];
+        in.seek(position);
+        int nsKind = in.readU8();
+        if (nsKind == CONSTANT_PackageNamespace) {
+          in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()]);
+          int stringLength = in.readU32();
+          // magic, I don't know, cannot find info in AVM spec
+          // but ns with kind CONSTANT_PackageNamespace is public and ns with empty name is current public in current class
+          if (stringLength == 0) {
+            return i;
+          }
+        }
+      }
+
+      throw new IllegalArgumentException();
+    }
+    finally {
+      in.seek(originalPosition);
+    }
+  }
+
+  @Override
+  protected void writeSlotTraitName(int name, int trait_kind, DataBuffer in) {
+    if (modifyAccessModifierDeferredSetStyles && ((trait_kind & 0x0f) == TRAIT_Var)) {
+      final int originalPosition = in.position();
+      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
+      int constKind = in.readU8();
+      assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
+      int ns = in.readU32();
+      int localName = in.readU32();
+      in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns]);
+      int nsKind = in.readU8();
+      if (nsKind == CONSTANT_PrivateNamespace) {
+        in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
+        if (compare(in, in.readU32(), "deferredSetStyles")) {
+          currentBuffer.writeU32(history.getIndexWithSpecifiedNsRaw(poolIndex, name, findPublicNamespace(in)));
+          in.seek(originalPosition);
+          modifyAccessModifierDeferredSetStyles = false;
+          return;
+        }
+      }
+
+      in.seek(originalPosition);
+    }
+    
+    super.writeSlotTraitName(name, trait_kind, in);
+  }
+  
   public void methodTrait(int trait_kind, int name, int dispId, int methodInfo, int[] metadata, DataBuffer in) {
     final int kind = trait_kind & 0x0f;
-    if ((skipInitialize && kind == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) != 0) || (skipColorCorrection && kind == TRAIT_Setter)) {
+    if ((skipInitialize && kind == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) != 0) ||
+        (skipColorCorrection && kind == TRAIT_Setter) ||
+        (modifyAccessModifierDeferredSetStyles && kind == TRAIT_Var)) {
       final int originalPosition = in.position();
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
 
@@ -41,7 +100,8 @@ class FlexEncoder extends Encoder {
       int localName = in.readU32();
 
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns]);
-      if (in.readU8() == CONSTANT_PackageNamespace) {
+      int nsKind = in.readU8();
+      if (nsKind == CONSTANT_PackageNamespace) {
         in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()]);
         skipString(in);
 
@@ -63,13 +123,13 @@ class FlexEncoder extends Encoder {
   }
 
   @Override
-  protected void instanceStarting(int name, DataBuffer in) {
+  protected void instanceStarting(final int name, final DataBuffer in) {
     in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
 
-    int constKind = in.readU8();
+    final int constKind = in.readU8();
     assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
-    int ns = in.readU32();
-    int localName = in.readU32();
+    final int ns = in.readU32();
+    final int localName = in.readU32();
 
     in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns]);
     if (in.readU8() != CONSTANT_PackageNamespace) {
@@ -77,7 +137,7 @@ class FlexEncoder extends Encoder {
     }
 
     in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()]);
-    int packageLength = in.readU32();
+    final int packageLength = in.readU32();
     boolean mxCore = false;
     if (compare(in, packageLength, SPARK_COMPONENTS) || (mxCore = compare(in, packageLength, MX_CORE))) {
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
@@ -85,6 +145,7 @@ class FlexEncoder extends Encoder {
       skipInitialize = compare(in, stringLength, APPLICATION);
       if (mxCore) {
         modifyConstructor = skipInitialize;
+        modifyAccessModifierDeferredSetStyles = compare(in, stringLength, UI_COMPONENT);
       }
       else {
         skipColorCorrection = skipInitialize;
@@ -158,10 +219,11 @@ class FlexEncoder extends Encoder {
     skipInitialize = false;
     modifyConstructor = false;
     skipColorCorrection = false;
+    modifyAccessModifierDeferredSetStyles = false;
   }
 
   @SuppressWarnings("UnusedDeclaration")
-  private char[] readChars(DataBuffer in) {
+  private static char[] readChars(DataBuffer in) {
     final int stringLength = in.readU32();
     char[] chars = new char[stringLength];
     final int offset = in.position + in.offset;
@@ -172,13 +234,13 @@ class FlexEncoder extends Encoder {
     return chars;
   }
 
-  private void skipString(DataBuffer in) {
+  private static void skipString(DataBuffer in) {
     int stringLength = in.readU32();
     in.seek(in.position() + stringLength);
   }
 
   @SuppressWarnings("UnusedDeclaration")
-  private String dd(DataBuffer in) {
+  private static String dd(DataBuffer in) {
     int stringLength = in.readU32();
     char[] s = new char[stringLength];
     for (int j = 0; j < stringLength; j++) {

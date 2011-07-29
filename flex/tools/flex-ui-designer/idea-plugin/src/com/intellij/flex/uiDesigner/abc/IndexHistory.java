@@ -105,7 +105,11 @@ final class IndexHistory {
   }
 
   public int getIndex(int poolIndex, int kind, int index, int insertionIndex, int actualStart) {
-    return map[insertionIndex] = decodeOnDemand(poolIndex, kind, index, actualStart);
+    return map[insertionIndex] = decodeOnDemand(poolIndex, kind, index, actualStart, -1);
+  }
+
+  public int getIndexWithSpecifiedNsRaw(int poolIndex, int index, int actuaNsRaw) {
+    return map[getMapIndex(poolIndex, IndexHistory.MULTINAME, index)] = decodeOnDemand(poolIndex, IndexHistory.MULTINAME, index, -1, actuaNsRaw);
   }
 
   public int getIndex(int poolIndex, int kind, int index) {
@@ -116,7 +120,7 @@ final class IndexHistory {
       int mapIndex = getMapIndex(poolIndex, kind, index);
       int newIndex = getNewIndex(mapIndex);
       if (newIndex == 0) {
-        return map[mapIndex] = decodeOnDemand(poolIndex, kind, index, -1);
+        return map[mapIndex] = decodeOnDemand(poolIndex, kind, index, -1, -1);
       }
       else {
         return newIndex;
@@ -167,7 +171,7 @@ final class IndexHistory {
     return index + oldIndex - 1;
   }
 
-  private int decodeOnDemand(final int poolIndex, final int kind, final int j, int actualStart) {
+  private int decodeOnDemand(final int poolIndex, final int kind, final int j, final int actualStart, final int actuaNsRaw) {
     final ConstantPool pool = decoders.get(poolIndex).constantPool;
     final PoolPart poolPart = poolParts[kind];
     final int[] positions = pool.positions[kind];
@@ -231,7 +235,15 @@ final class IndexHistory {
       switch (constKind) {
         case CONSTANT_Qname:
         case CONSTANT_QnameA: {
-          in_multiname.writeU32(getIndex(poolIndex, NS, dataIn.readU32()));
+          final int ns;
+          if (actuaNsRaw != -1) {
+            dataIn.readU32();
+            ns = actuaNsRaw;
+          }
+          else {
+            ns = dataIn.readU32();
+          }
+          in_multiname.writeU32(getIndex(poolIndex, NS, ns));
           in_multiname.writeU32(getIndex(poolIndex, STRING, dataIn.readU32()));
           break;
         }

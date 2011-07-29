@@ -560,8 +560,8 @@ public class MxmlWriter {
   private void defineInlineCssDeclaration(@NotNull PsiElement element) {
     Document document = MxmlUtil.getDocument(element);
     int textOffset = element.getTextOffset();
+    out.writeUInt29(document.getLineNumber(textOffset) + 1);
     out.writeUInt29(textOffset);
-    out.writeUInt29(document.getLineNumber(textOffset));
   }
 
   private int writeProperty(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
@@ -577,7 +577,7 @@ public class MxmlWriter {
       if (propertyProcessor.isStyle()) {
         out.write(PropertyClassifier.STYLE);
         if (!cssDeclarationSourceDefined) {
-          defineInlineCssDeclaration(element.getParent());
+          defineInlineCssDeclaration(element);
         }
   
         out.writeUInt29(element.getTextOffset());

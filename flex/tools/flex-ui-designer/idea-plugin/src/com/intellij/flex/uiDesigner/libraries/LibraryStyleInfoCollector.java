@@ -45,26 +45,26 @@ public class LibraryStyleInfoCollector implements Consumer<Library> {
     final GlobalSearchScope searchScope = GlobalSearchScope.fileScope(project, libraryFile);
     final THashSet<String> uniqueGuard = new THashSet<String>();
     fileBasedIndex.processAllKeys(FlexStyleIndex.INDEX_ID, new Processor<String>() {
-        @Override
-        public boolean process(String dataKey) {
-          fileBasedIndex
-            .processValues(FlexStyleIndex.INDEX_ID, dataKey, libraryFile, new FileBasedIndex.ValueProcessor<Set<FlexStyleIndexInfo>>() {
-                @Override
-                public boolean process(VirtualFile file, Set<FlexStyleIndexInfo> value) {
-                  final FlexStyleIndexInfo firstInfo = value.iterator().next();
-                  if (firstInfo.getInherit().charAt(0) == 'y' && uniqueGuard.add(firstInfo.getAttributeName())) {
-                    bytes.writeUInt29(stringWriter.getReference(firstInfo.getAttributeName()) - 1);
-                  }
-
-                  // If the property is defined in the library — we it consider that unique for all library — we make an assumption that 
-                  // may not be in a class stylePName be inherited, and another class of the same library not inherited
-                  return false;
+      @Override
+      public boolean process(String dataKey) {
+        fileBasedIndex.processValues(FlexStyleIndex.INDEX_ID, dataKey, libraryFile,
+            new FileBasedIndex.ValueProcessor<Set<FlexStyleIndexInfo>>() {
+              @Override
+              public boolean process(VirtualFile file, Set<FlexStyleIndexInfo> value) {
+                final FlexStyleIndexInfo firstInfo = value.iterator().next();
+                if (firstInfo.getInherit().charAt(0) == 'y' && uniqueGuard.add(firstInfo.getAttributeName())) {
+                  bytes.writeUInt29(stringWriter.getReference(firstInfo.getAttributeName()) - 1);
                 }
-              }, searchScope);
 
-          return true;
-        }
-      }, project);
+                // If the property is defined in the library — we it consider that unique for all library — we make an assumption that
+                // may not be in a class stylePName be inherited, and another class of the same library not inherited
+                return false;
+              }
+            }, searchScope);
+
+        return true;
+      }
+    }, project);
 
     if (uniqueGuard.size() == 0) {
       return null;

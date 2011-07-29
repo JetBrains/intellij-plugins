@@ -4,6 +4,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.InfoList;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -15,6 +16,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
@@ -23,13 +25,15 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager extends EntityListManager<VirtualFile, Library> {
+  private static final String ABC_FILTER_VERSION = "4";
+  private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
+
   public static LibraryManager getInstance() {
     return ServiceManager.getService(LibraryManager.class);
   }
@@ -48,23 +52,19 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
   }
 
   public void garbageCollection(@NotNull final File appDir) {
-    File garbageCollected = new File(appDir, "garbageCollected");
-    if (garbageCollected.lastModified() >= SwcDependenciesSorter.ABC_FILTER_LAST_MODIFIED) {
+    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+    if (ABC_FILTER_VERSION.equals(propertiesComponent.getValue(ABC_FILTER_VERSION_VALUE_NAME))) {
       return;
     }
 
     for (String path : appDir.list()) {
       if (path.endsWith(SwcDependenciesSorter.SWF_EXTENSION) && !path.equals(FlexUIDesignerApplicationManager.DESIGNER_SWF)) {
-        File item = new File(appDir, path);
-        if (item.lastModified() < SwcDependenciesSorter.ABC_FILTER_LAST_MODIFIED) {
-          //noinspection ResultOfMethodCallIgnored
-          item.delete();
-        }
+        //noinspection ResultOfMethodCallIgnored
+        new File(appDir, path).delete();
       }
     }
 
-    //noinspection ResultOfMethodCallIgnored
-    garbageCollected.setLastModified(SwcDependenciesSorter.ABC_FILTER_LAST_MODIFIED);
+    propertiesComponent.setValue(ABC_FILTER_VERSION_VALUE_NAME, ABC_FILTER_VERSION);
   }
 
   public void initLibrarySets(@NotNull final Module module, @NotNull final File appDir) throws IOException, InitException {

@@ -10,7 +10,6 @@ import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
-import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.css.CssSkinClassDeclaration;
 import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.StyleDeclarationProxy;
@@ -54,6 +53,21 @@ public final class MxmlReader implements DocumentReader {
     this.stringRegistry = stringRegistry;
     this.bitmapDataManager = bitmapDataManager;
     this.swfDataManager = swfDataManager;
+  }
+
+  private const deferredSetStyleProxyPool:Vector.<DeferredSetStyleProxy> = new Vector.<DeferredSetStyleProxy>();
+
+  private function createDeferredSetStyleProxy():DeferredSetStyleProxy {
+    var deferredSetStyleProxy:DeferredSetStyleProxy;
+    if (deferredSetStyleProxyPool.length == 0) {
+      deferredSetStyleProxy = new DeferredSetStyleProxy();
+    }
+    else {
+      deferredSetStyleProxy = deferredSetStyleProxyPool.pop();
+    }
+
+    deferredSetStyleProxy.file = context.file;
+    return deferredSetStyleProxy;
   }
 
   internal function getClass(name:String):Class {
@@ -196,9 +210,15 @@ public final class MxmlReader implements DocumentReader {
       }
       objectTable[reference - 1] = object;
     }
+
+    const hasDeferredSetStyles:Boolean = "deferredSetStyles" in object;
+    var deferredSetStyleProxy:DeferredSetStyleProxy;
+    if (hasDeferredSetStyles) {
+      deferredSetStyleProxy = createDeferredSetStyleProxy();
+      object.deferredSetStyles = deferredSetStyleProxy;
+    }
     
     var propertyHolder:Object = object;
-    var inlineCssDeclarationSource:CssRuleset;
     var cssPropertyDescriptor:CssDeclarationImpl;
     var o:Object;
     for (; propertyName != null; propertyName = stringRegistry.read(input)) {      
@@ -207,21 +227,25 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case PropertyClassifier.STYLE:
-          if (inlineCssDeclarationSource == null) {
-            inlineCssDeclarationSource = InlineCssRuleset.createInline(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input), context.file);
+          if (deferredSetStyleProxy == null) {
+            deferredSetStyleProxy = createDeferredSetStyleProxy();
+          }
+
+          if (deferredSetStyleProxy.inlineCssDeclarationSource == null) {
+            deferredSetStyleProxy.inlineCssDeclarationSource = InlineCssRuleset.createInline(AmfUtil.readUInt29(input),
+                AmfUtil.readUInt29(input), context.file);
           }
 
           var textOffset:int = AmfUtil.readUInt29(input);
           var flags:int = input.readUnsignedByte();
           if ((flags & 1) != 0) {
-            inlineCssDeclarationSource.declarations.push(new CssSkinClassDeclaration(readDocumentFactory(), textOffset));
+            deferredSetStyleProxy.inlineCssDeclarationSource.declarations.push(new CssSkinClassDeclaration(readDocumentFactory(), textOffset));
             continue;
           }
 
           cssPropertyDescriptor = CssDeclarationImpl.create(propertyName, textOffset);
-          inlineCssDeclarationSource.declarations.push(cssPropertyDescriptor);
+          deferredSetStyleProxy.inlineCssDeclarationSource.declarations.push(cssPropertyDescriptor);
           propertyHolder = cssPropertyDescriptor;
-
           if ((flags & 2) != 0) {
             moduleContext.effectManagerClass[new QName(getMxNs(), "setStyle")](propertyName, object);
           }
@@ -342,11 +366,21 @@ public final class MxmlReader implements DocumentReader {
       }
     }
 
-    if (inlineCssDeclarationSource != null) {
-      clazz = moduleContext.inlineCssStyleDeclarationClass;
-      object.styleDeclaration = new clazz(inlineCssDeclarationSource, moduleContext.styleManager.styleValueResolver);
+    if (deferredSetStyleProxy != null) {
+      if (deferredSetStyleProxy.inlineCssDeclarationSource != null) {
+        object.styleDeclaration = new moduleContext.inlineCssStyleDeclarationClass(deferredSetStyleProxy.inlineCssDeclarationSource,
+            moduleContext.styleManager.styleValueResolver);
+      }
+
+      deferredSetStyleProxy.inlineCssDeclarationSource = null;
+      deferredSetStyleProxy.file = null;
+      deferredSetStyleProxyPool.push(deferredSetStyleProxy);
     }
 
+    if (hasDeferredSetStyles) {
+      object.deferredSetStyles = null;
+    }
+    
     return object;
   }
 
@@ -493,6 +527,14 @@ public final class MxmlReader implements DocumentReader {
 }
 }
 
+import com.intellij.flex.uiDesigner.VirtualFile;
+import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
+import com.intellij.flex.uiDesigner.css.CssRuleset;
+import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
+
+import flash.utils.Proxy;
+import flash.utils.flash_proxy;
+
 class PropertyClassifier {
   public static const PROPERTY:int = 0;
 
@@ -506,4 +548,22 @@ class PropertyClassifier {
   public static const VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES:int = 7;
 
   public static const FIXED_ARRAY:int = 8;
+}
+
+use namespace flash_proxy;
+
+// IDEA-72366
+final class DeferredSetStyleProxy extends Proxy {
+  internal var file:VirtualFile;
+  internal var inlineCssDeclarationSource:CssRuleset;
+
+  override flash_proxy function setProperty(name:*, value:*):void {
+    if (inlineCssDeclarationSource == null) {
+      inlineCssDeclarationSource = InlineCssRuleset.createInline(0, 0, file);
+    }
+
+    var cssDeclaration:CssDeclarationImpl = CssDeclarationImpl.create(name, 0);
+    cssDeclaration.value = value;
+    inlineCssDeclarationSource.declarations.push(cssDeclaration);
+  }
 }

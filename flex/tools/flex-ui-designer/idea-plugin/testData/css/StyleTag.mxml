@@ -84,5 +84,5 @@
     <RichText text="H__________________________|" styleName="positiveNumberPxUnitAndNegativeNumberWithoutUnit"/>
   </VGroup>
 
-  <BorderContainer id="IDEA_72072" width="50" height="50"/>
+  <!--<BorderContainer id="IDEA_72072" width="50" height="50"/>-->
 </Application>

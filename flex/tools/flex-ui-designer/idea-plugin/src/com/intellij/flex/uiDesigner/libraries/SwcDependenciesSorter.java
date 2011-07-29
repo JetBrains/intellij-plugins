@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.zip.DataFormatException;
 
 public class SwcDependenciesSorter {
-  static final long ABC_FILTER_LAST_MODIFIED = 1309247826L * 1000L;
   static final String SWF_EXTENSION = ".swf";
 
   private THashMap<CharSequence, Definition> definitionMap;
@@ -192,7 +191,7 @@ public class SwcDependenciesSorter {
       final VirtualFile swfFile = item.library.getSwfFile();
       final File modifiedSwf = item.filtered ? createSwfOutFile(item.library, postfix) : createSwfOutFile(item.library);
       final long timeStamp = swfFile.getTimeStamp();
-      if (timeStamp != modifiedSwf.lastModified() || timeStamp < ABC_FILTER_LAST_MODIFIED) {
+      if (timeStamp != modifiedSwf.lastModified()) {
         if (filter == null) {
           filter = new AbcFilter(isFromSdk);
         }

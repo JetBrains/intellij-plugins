@@ -40,8 +40,7 @@ public class InlineCssRuleset extends CssRuleset {
     list.fixed = true;
     return ruleset;
   }
-  
-  
+
   override public function get inline():Boolean {
     return true;
   }

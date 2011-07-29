@@ -447,8 +447,12 @@ class Encoder {
     return tempMetadataList.isEmpty() ? null : tempMetadataList;
   }
 
-  public void slotTrait(int trait_kind, int name, int slotId, int type, int value, int value_kind, int[] metadata) throws DecoderException {
+  protected void writeSlotTraitName(int name, int trait_kind, DataBuffer in) {
     currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
+  }
+
+  public void slotTrait(int trait_kind, int name, int slotId, int type, int value, int value_kind, int[] metadata, DataBuffer in) throws DecoderException {
+    writeSlotTraitName(name, trait_kind, in);
     TIntArrayList newMetadata = trimMetadata(metadata);
     if (((trait_kind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
       trait_kind = trait_kind & ~(TRAIT_FLAG_metadata << 4);
