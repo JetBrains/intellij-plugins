@@ -426,14 +426,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         arguments.add(String.valueOf(new ErrorSocketManager().listen()));
 
         if (DebugPathManager.IS_DEV) {
-          final String fudHome = DebugPathManager.getFudHome();
-          if (ApplicationManager.getApplication().isUnitTestMode()) {
-            arguments.add("-p");
-            arguments.add(fudHome + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
-          }
-
-          arguments.add("-cdd");
-          arguments.add(fudHome + "/flex-injection/target");
+          addTestPlugin(arguments);
         }
 
         adlRunConfiguration.arguments = arguments;
@@ -614,4 +607,17 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     public void projectClosing(Project project) {
     }
   }
+
+  static void addTestPlugin(List<String> arguments) {
+    final String fudHome = DebugPathManager.getFudHome();
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      arguments.add("-p");
+      arguments.add(fudHome + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
+    }
+
+    arguments.add("-cdd");
+    arguments.add(fudHome + "/flex-injection/target");
+  }
+
+
 }

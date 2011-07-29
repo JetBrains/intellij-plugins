@@ -38,19 +38,14 @@ class TestDesignerApplicationManager {
     adlRunConfiguration.arguments.add(String.valueOf(serverSocket.getLocalPort()));
     adlRunConfiguration.arguments.add(String.valueOf(0));
 
-    adlRunConfiguration.arguments.add("-p");
-    String fudHome = DebugPathManager.getFudHome();
-    adlRunConfiguration.arguments.add(fudHome + "/test-app-plugin/target/test-1.0-SNAPSHOT.swf");
-
-    adlRunConfiguration.arguments.add("-cdd");
-    adlRunConfiguration.arguments.add(fudHome + "/flex-injection/target");
-
+    FlexUIDesignerApplicationManager.addTestPlugin(adlRunConfiguration.arguments);
     FlexUIDesignerApplicationManager.copyAppFiles();
 
-    adlProcessHandler = DesignerApplicationUtil.runAdl(adlRunConfiguration, fudHome + "/designer/src/main/resources/descriptor.xml",
-                                                       FlexUIDesignerApplicationManager.APP_DIR.getPath(), new Consumer<Integer>() {
-      @Override
-      public void consume(Integer exitCode) {
+    adlProcessHandler =
+      DesignerApplicationUtil.runAdl(adlRunConfiguration, DebugPathManager.getFudHome() + "/designer/src/main/resources/descriptor.xml",
+                                     FlexUIDesignerApplicationManager.APP_DIR.getPath(), new Consumer<Integer>() {
+        @Override
+        public void consume(Integer exitCode) {
         if (exitCode != 0) {
           try {
             serverSocket.close();
@@ -77,7 +72,7 @@ class TestDesignerApplicationManager {
         }
       }
     });
-    
+
     changeServiceImplementation();
     Client.getInstance().setOut(socket.getOutputStream());
 
