@@ -41,7 +41,7 @@ public class CssReaderImpl implements CssReader {
       }
     }
     
-    declaration = new MergedCssStyleDeclaration(selector, ruleset, StyleManagerEx(_styleManager));
+    declaration = new MergedCssStyleDeclaration(selector, ruleset, StyleManagerEx(_styleManager).styleValueResolver);
     if (!isDescendantSelector) {
       if (selector.conditions == null) {
         if (rootStyleDeclaration == null && selector.subject == "global") {

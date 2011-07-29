@@ -1,13 +1,11 @@
 package com.intellij.flex.uiDesigner.flex {
 import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
-import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 
 public final class DeferredInstanceFromBytesContext {
-  public function DeferredInstanceFromBytesContext(readerContext:DocumentReaderContext, reader:DocumentReader, styleManager:StyleManagerEx) {
+  public function DeferredInstanceFromBytesContext(readerContext:DocumentReaderContext, reader:DocumentReader) {
     _readerContext = readerContext;
     _reader = reader;
-    _styleManager = styleManager;
   }
 
   private var _readerContext:DocumentReaderContext;
@@ -18,11 +16,6 @@ public final class DeferredInstanceFromBytesContext {
   private var _reader:DocumentReader;
   public function get reader():DocumentReader {
     return _reader;
-  }
-  
-  private var _styleManager:StyleManagerEx;
-  public function get styleManager():StyleManagerEx {
-    return _styleManager;
   }
 }
 }

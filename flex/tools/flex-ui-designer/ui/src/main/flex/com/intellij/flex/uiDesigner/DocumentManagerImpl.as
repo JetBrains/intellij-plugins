@@ -117,7 +117,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
   private function doOpen(documentFactory:DocumentFactory, document:Document):Boolean {
     try {
-      var object:Object = documentReader.read(documentFactory.data, documentFactory, document.styleManager);
+      var object:Object = documentReader.read(documentFactory.data, documentFactory);
       document.uiComponent = object;
       document.systemManager.setUserDocument(DisplayObject(object));
       documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
@@ -195,7 +195,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       }
     }
 
-    cssReader.read(suitableLocalStyleHolder.getStylesheet().rulesets, suitableLocalStyleHolder.file);
+    cssReader.read(suitableLocalStyleHolder.getStylesheet(ModuleManager(module.project.getComponent(ModuleManager))).rulesets, suitableLocalStyleHolder.file);
     cssReader.finalizeRead();
   }
 

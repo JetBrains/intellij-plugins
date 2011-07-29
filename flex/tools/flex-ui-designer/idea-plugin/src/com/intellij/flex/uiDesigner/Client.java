@@ -392,8 +392,12 @@ public class Client implements Closable {
     blockOut.end();
   }
 
+  public void writeId(Module module, PrimitiveAmfOutputStream out) {
+    out.writeShort(registeredModules.getId(module));
+  }
+
   private void writeId(Module module) {
-    writeId(registeredModules.getId(module));
+    writeId(module, out);
   }
 
   private void writeId(Project project) {

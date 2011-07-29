@@ -17,7 +17,7 @@ public final class FlexDocumentFactory implements IFactory, ClassReference {
   }
 
   public function newInstance():* {
-    return context.reader.read(source.data, context.readerContext, context.styleManager);
+    return context.reader.read(source.data, context.readerContext);
   }
 }
 }

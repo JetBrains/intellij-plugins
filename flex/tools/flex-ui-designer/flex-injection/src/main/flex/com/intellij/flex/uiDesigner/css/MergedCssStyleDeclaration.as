@@ -12,8 +12,8 @@ public class MergedCssStyleDeclaration extends AbstractCssStyleDeclaration imple
   private var _rulesets:Vector.<CssRuleset>;
   private var mySelector:CssSelector;
  
-  public function MergedCssStyleDeclaration(selector:CssSelector, ruleset:CssRuleset, styleManager:StyleManagerEx) {
-    super(styleManager);
+  public function MergedCssStyleDeclaration(selector:CssSelector, ruleset:CssRuleset, styleValueResolver:StyleValueResolver) {
+    super(styleValueResolver);
 
     if (ruleset != null) {
       _rulesets = new Vector.<CssRuleset>(1);
@@ -23,8 +23,8 @@ public class MergedCssStyleDeclaration extends AbstractCssStyleDeclaration imple
     mySelector = selector;
   }
   
-  public static function mergeDeclarations(selector:String, style:MergedCssStyleDeclaration, parentStyle:MergedCssStyleDeclaration, styleManager:StyleManagerEx):MergedCssStyleDeclaration {
-    var merged:MergedCssStyleDeclaration = new MergedCssStyleDeclaration(new CssSelector(selector, null, null, null, null), null, styleManager);
+  public static function mergeDeclarations(selector:String, style:MergedCssStyleDeclaration, parentStyle:MergedCssStyleDeclaration, styleValueResolver:StyleValueResolver):MergedCssStyleDeclaration {
+    var merged:MergedCssStyleDeclaration = new MergedCssStyleDeclaration(new CssSelector(selector, null, null, null, null), null, styleValueResolver);
     merged._rulesets = style._rulesets.concat(parentStyle._rulesets);
     merged._rulesets.fixed = true;
     return merged;
@@ -43,7 +43,7 @@ public class MergedCssStyleDeclaration extends AbstractCssStyleDeclaration imple
     for each (var ruleset:CssRuleset in _rulesets) {
       v = ruleset.declarationMap[styleProp];
       if (v !== undefined) {
-        return styleManager.styleValueResolver.resolve(v);
+        return styleValueResolver.resolve(v);
       }
     }
     

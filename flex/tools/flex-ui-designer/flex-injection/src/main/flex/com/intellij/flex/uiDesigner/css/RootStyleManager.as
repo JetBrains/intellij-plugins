@@ -3,6 +3,8 @@ import com.intellij.flex.uiDesigner.util.FakeBooleanSetProxy;
 
 import flash.utils.Dictionary;
 
+import mx.core.Singleton;
+
 import mx.styles.CSSStyleDeclaration;
 import mx.styles.IStyleManager2;
 
@@ -15,6 +17,9 @@ public class RootStyleManager extends AbstractStyleManager implements IStyleMana
     _styleValueResolver = styleValueResolver;
 
     _instance = this;
+
+    // todo IDEA-72345 temp hack see mx.styles.CSSStyleDeclaration
+    Singleton.registerClass("mx.styles::IStyleManager2", RootStyleManager);
   }
   
   private static var _instance:AbstractStyleManager;

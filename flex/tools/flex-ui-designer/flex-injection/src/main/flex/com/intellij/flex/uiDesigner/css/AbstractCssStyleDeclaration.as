@@ -3,17 +3,16 @@ import flash.display.DisplayObject;
 
 import mx.core.mx_internal;
 import mx.styles.CSSStyleDeclaration;
-import mx.styles.IStyleManager2;
 
 use namespace mx_internal;
 
 [Abstract]
 public class AbstractCssStyleDeclaration extends CSSStyleDeclaration implements CssStyleDeclaration {
-  protected var styleManager:StyleManagerEx;
+  protected var styleValueResolver:StyleValueResolver;
 
-  public function AbstractCssStyleDeclaration(styleManager:StyleManagerEx) {
-    this.styleManager = styleManager;
-    super(null, IStyleManager2(styleManager), false);
+  public function AbstractCssStyleDeclaration(styleValueResolver:StyleValueResolver) {
+    this.styleValueResolver = styleValueResolver;
+    super(null, null, false);
   }
 
   override mx_internal function addStyleToProtoChain(chain:Object, target:DisplayObject, filterMap:Object = null):Object {

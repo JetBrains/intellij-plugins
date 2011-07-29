@@ -14,7 +14,6 @@ import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.css.CssSkinClassDeclaration;
 import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.StyleDeclarationProxy;
-import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
 import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
@@ -45,7 +44,6 @@ public final class MxmlReader implements DocumentReader {
 
   private var moduleContext:ModuleContext;
   internal var context:DocumentReaderContext;
-  private var styleManager:StyleManagerEx;
 
   private var deferredMxContainers:Vector.<DisplayObjectContainer>;
   internal var objectTable:Vector.<Object>;
@@ -68,13 +66,11 @@ public final class MxmlReader implements DocumentReader {
     var objectTableSize:int = readObjectTableSize();
 
     this.moduleContext = factoryContext.readerContext.moduleContext;
-    this.styleManager = factoryContext.styleManager;
     this.context = factoryContext.readerContext;
     var object:Object = readObject(stringRegistry.read(input));
     assert(this.factoryContext == null && objectTableSize == (objectTable == null ? 0 : objectTable.length));
 
     this.moduleContext = null;
-    this.styleManager = null;
     this.context = null;
     this.input = null;
     
@@ -111,20 +107,18 @@ public final class MxmlReader implements DocumentReader {
     return objectTableSize;
   }
 
-  public function read(input:IDataInput, documentReaderContext:DocumentReaderContext, styleManager:StyleManagerEx):Object {
+  public function read(input:IDataInput, documentReaderContext:DocumentReaderContext):Object {
     this.input = input;
     
     const objectTableSize:int = readObjectTableSize();
 
     this.moduleContext = documentReaderContext.moduleContext;
-    this.styleManager = styleManager;
     this.context = documentReaderContext;
     var object:Object = readObject(stringRegistry.read(input), true);
     stateReader.read(this, input, object);
     injectedASReader.read(input, this);
 
     this.moduleContext = null;
-    this.styleManager = null;
     this.context = null;
 
     if (objectTableSize != 0) {
@@ -350,7 +344,7 @@ public final class MxmlReader implements DocumentReader {
 
     if (inlineCssDeclarationSource != null) {
       clazz = moduleContext.inlineCssStyleDeclarationClass;
-      object.styleDeclaration = new clazz(inlineCssDeclarationSource, styleManager);
+      object.styleDeclaration = new clazz(inlineCssDeclarationSource, moduleContext.styleManager.styleValueResolver);
     }
 
     return object;
@@ -361,7 +355,7 @@ public final class MxmlReader implements DocumentReader {
     var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {
       var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance(ModuleContextEx(moduleContext).project).get2(id, DocumentFactory(context));
-      factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContext(documentFactory, this, styleManager));
+      factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContext(documentFactory, this));
       moduleContext.putDocumentFactory(id, factory);
     }
     
@@ -380,7 +374,7 @@ public final class MxmlReader implements DocumentReader {
 
   private function getOrCreateFactoryContext():DeferredInstanceFromBytesContext {
     if (factoryContext == null) {
-      factoryContext = new DeferredInstanceFromBytesContext(context, this, styleManager);
+      factoryContext = new DeferredInstanceFromBytesContext(context, this);
     }
     
     return factoryContext;

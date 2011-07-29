@@ -1,13 +1,11 @@
 package com.intellij.flex.uiDesigner {
-import com.intellij.flex.uiDesigner.flex.*;
-import com.intellij.flex.uiDesigner.DocumentReaderContext;
-import com.intellij.flex.uiDesigner.css.StyleManagerEx;
+import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
 
 import flash.system.ApplicationDomain;
 import flash.utils.IDataInput;
 
 public interface DocumentReader {
-  function read(input:IDataInput, documentReaderContext:DocumentReaderContext, styleManager:StyleManagerEx):Object;
+  function read(input:IDataInput, documentReaderContext:DocumentReaderContext):Object;
   
   function read2(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object;
 

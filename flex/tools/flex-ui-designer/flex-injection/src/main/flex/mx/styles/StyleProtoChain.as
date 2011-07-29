@@ -110,7 +110,7 @@ public class StyleProtoChain {
 
   public static function initProtoChain(object:IStyleClient):void {
     if (object.styleDeclaration != null && !(object.styleDeclaration is AbstractCssStyleDeclaration)) {
-      object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInlineWithFactory(object.styleDeclaration.defaultFactory), StyleManagerEx(getStyleManager(object)));
+      object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInlineWithFactory(object.styleDeclaration.defaultFactory), StyleManagerEx(getStyleManager(object)).styleValueResolver);
     }
     return FtyleProtoChain.initProtoChain(object);
   }
@@ -147,7 +147,7 @@ public class StyleProtoChain {
     var styleManager:IStyleManager2 = getStyleManager(object);
     var isProtoChainInitialized:Boolean = object.inheritingStyles != STYLE_UNINITIALIZED;
     if (object.styleDeclaration == null) {
-      object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInline(styleProp, newValue), StyleManagerEx(styleManager));
+      object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInline(styleProp, newValue), StyleManagerEx(styleManager).styleValueResolver);
       if (isProtoChainInitialized) {
         object.regenerateStyleCache(styleManager.isInheritingStyle(styleProp));
       }

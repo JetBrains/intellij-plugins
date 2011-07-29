@@ -51,7 +51,7 @@ public class ChildStyleManager extends AbstractStyleManager implements IStyleMan
       return style;
     }
     
-    return MergedCssStyleDeclaration.mergeDeclarations(selector, style, parentStyle, this);
+    return MergedCssStyleDeclaration.mergeDeclarations(selector, style, parentStyle, styleValueResolver);
   }
   
   override public function get stylesRoot():Object {

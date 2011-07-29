@@ -6,10 +6,10 @@ use namespace mx_internal;
 public class InlineCssStyleDeclaration extends AbstractCssStyleDeclaration {
   private var _ruleset:CssRuleset;
 
-  public function InlineCssStyleDeclaration(ruleset:CssRuleset, styleManager:StyleManagerEx) {
+  public function InlineCssStyleDeclaration(ruleset:CssRuleset, styleValueResolver:StyleValueResolver) {
     _ruleset = ruleset;
 
-    super(styleManager);
+    super(styleValueResolver);
   }
 
   public function get ruleset():CssRuleset {
@@ -19,7 +19,7 @@ public class InlineCssStyleDeclaration extends AbstractCssStyleDeclaration {
   override public function getStyle(styleProp:String):* {
     var v:CssDeclaration = _ruleset.declarationMap[styleProp];
     if (v != null && v.value !== undefined) {
-      return styleManager.styleValueResolver.resolve(v);
+      return styleValueResolver.resolve(v);
     }
 
     return undefined;

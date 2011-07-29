@@ -1,14 +1,16 @@
 package com.intellij.flex.uiDesigner.css;
 
+import com.intellij.flex.uiDesigner.Client;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.mxml.AmfExtendedTypes;
 import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.psi.xml.XmlFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LocalCssWriter extends CssWriter {
@@ -22,7 +24,7 @@ public class LocalCssWriter extends CssWriter {
   @Override
   protected void writeClassReference(JSClass jsClass, FlexStyleIndexInfo info) throws InvalidPropertyException {
     final int projectComponentFactoryId;
-    if (false && info != null && info.getAttributeName().equals("skinClass")) {
+    if (info != null && info.getAttributeName().equals("skinClass")) {
       projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(jsClass, unregisteredDocumentReferences);
     }
     else if (InjectionUtil.isProjectComponent(jsClass)) {
@@ -38,6 +40,10 @@ public class LocalCssWriter extends CssWriter {
     else {
       propertyOut.write(AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE);
       propertyOut.writeUInt29(projectComponentFactoryId);
+
+      @SuppressWarnings("ConstantConditions")
+      Module moduleForFile = ModuleUtil.findModuleForFile(jsClass.getContainingFile().getVirtualFile(), jsClass.getProject());
+      Client.getInstance().writeId(moduleForFile, propertyOut);
     }
   }
 }

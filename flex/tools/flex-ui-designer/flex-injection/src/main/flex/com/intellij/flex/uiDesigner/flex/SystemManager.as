@@ -103,7 +103,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
     Singleton.registerClass(POP_UP_MANAGER_FQN, PopUpManagerImpl);
     Singleton.registerClass(TOOL_TIP_MANAGER_FQN, ToolTipManagerImpl);
-    Singleton.registerClass("mx.styles::IStyleManager2", RootStyleManager);
+    //Singleton.registerClass("mx.styles::IStyleManager2", RootStyleManager);
     Singleton.registerClass("mx.resources::IResourceManager", ResourceManager);
     Singleton.registerClass("mx.managers::IDragManager", DragManagerImpl);
     Singleton.registerClass("mx.managers::IHistoryManager", HistoryManagerImpl);
