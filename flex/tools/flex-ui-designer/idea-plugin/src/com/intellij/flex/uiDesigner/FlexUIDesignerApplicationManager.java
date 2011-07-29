@@ -91,7 +91,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
   public boolean disposeOnApplicationClosed(Disposable disposable) {
     if (appParentDisposable == null) {
-      disposable.dispose();
+      Disposer.dispose(disposable);
       return false;
     }
     else {
@@ -307,7 +307,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       }
 
       notifyAboutAppClosed();
-      dispose();
+      Disposer.dispose(FlexUIDesignerApplicationManager.this);
     }
   }
 
@@ -565,7 +565,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     @Override
     public void onCancel() {
       try {
-        dispose();
+        Disposer.dispose(FlexUIDesignerApplicationManager.this);
       }
       finally {
         documentOpening = false;
