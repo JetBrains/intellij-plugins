@@ -420,7 +420,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
         final List<String> arguments = new ArrayList<String>();
         arguments.add(String.valueOf(new MessageSocketManager(this).listen()));
-        arguments.add(String.valueOf(new ErrorSocketManager()));
+        arguments.add(String.valueOf(new ErrorSocketManager().listen()));
 
         if (DebugPathManager.IS_DEV) {
           final String fudHome = DebugPathManager.getFudHome();
