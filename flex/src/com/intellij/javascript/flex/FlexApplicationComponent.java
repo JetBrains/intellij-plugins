@@ -6,6 +6,7 @@ import com.intellij.javascript.flex.mxml.schema.FlexMxmlNSDescriptor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.MxmlFileType;
+import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
@@ -112,6 +113,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements Applica
       registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_5, path + "/AIR_Descriptor.2.5.xsd", FlexApplicationComponent.class);
       registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_6, path + "/AIR_Descriptor.2.6.xsd", FlexApplicationComponent.class);
       registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_7, path + "/AIR_Descriptor.2.7.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(JSAttributeImpl.URN_FLEX_META, path + "/KnownMetaData.dtd", getClass());
     }
   }
 }

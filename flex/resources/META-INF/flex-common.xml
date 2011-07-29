@@ -92,7 +92,6 @@
     <projectOpenProcessor id="FlashBuilderOpenProcessor"
                           implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderOpenProcessor"
                           order="before EclipseProjectOpenProcessor"/>
-    <standardResourceProvider implementation="com.intellij.lang.javascript.flex.InternalResourceProvider"/>
 
     <css.elementDescriptorProvider implementation="com.intellij.javascript.flex.css.FlexCssElementDescriptorProvider"/>
     <css.classOrIdUsagesProvider implementation="com.intellij.javascript.flex.css.FlexClassOrIdUsagesProvider"/>
