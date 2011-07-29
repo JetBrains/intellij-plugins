@@ -2,4 +2,12 @@
   <Button label="before invalid control"/>
   <TrackBase/>
   <Button label="after invalid control"/>
+  <DataGrid id="dg" horizontalCenter="0" verticalCenter="0">
+    <columns>
+      <ArrayList>
+        <GridColumn dataField="foo" headerText="Foo"/>
+        <GridColumn dataField="bar" headerText="Bar"/>
+      </ArrayList>
+    </columns>
+  </DataGrid>
 </VGroup>
