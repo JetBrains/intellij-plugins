@@ -142,7 +142,25 @@ public class PrimitiveAmfOutputStream extends OutputStream {
   }
 
   public void writeAmfInt(String v) {
-    writeAmfUInt(Integer.parseInt(v, 10));
+    final int radix;
+    if (v.charAt(0) == '#') {
+      radix = 16;
+      v = v.substring(1);
+    }
+    else if (v.charAt(0) == '0' && v.length() > 2 && v.charAt(1) == 'x') {
+      v = v.substring(2);
+      radix = 16;
+    }
+    else {
+      radix = 10;
+    }
+
+    if (v.length() > 6) {
+      writeAmfUInt(Long.parseLong(v, radix));
+    }
+    else {
+      writeAmfUInt(Integer.parseInt(v, radix));
+    }
   }
 
   public void writeAmfUInt(int v) {
