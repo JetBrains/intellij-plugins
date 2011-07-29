@@ -1157,19 +1157,19 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       descriptor = myPredefinedDescriptors.get(attributeName);
     }
 
-    if (descriptor == null && IMPLEMENTS_ATTR_NAME.equals(attributeName) && context != null && context.getParent() instanceof XmlDocument) {
-      descriptor = new AnnotationBackedDescriptorImpl(IMPLEMENTS_ATTR_NAME, this, true, null, null, null);
-    }
-    else if (descriptor == null &&
-             XmlBackedJSClassImpl.CLASS_NAME_ATTRIBUTE_NAME.equals(attributeName) &&
-             MxmlLanguageTagsUtil.isComponentTag(context)) {
-      descriptor = new ClassNameAttributeDescriptor(this);
-    }
-    else if (predefined) {
-      return descriptor;
-    }
-    else if (!FlexMxmlLanguageAttributeNames.ID.equals(attributeName) && isDynamicClass(element) && ! MxmlLanguageTagsUtil.isXmlOrXmlListTag(context)) {
-      return new AnyXmlAttributeDescriptor(attributeName);
+    if (descriptor == null) {
+      if (IMPLEMENTS_ATTR_NAME.equals(attributeName) && context != null && context.getParent() instanceof XmlDocument) {
+        descriptor = new AnnotationBackedDescriptorImpl(IMPLEMENTS_ATTR_NAME, this, true, null, null, null);
+      }
+      else if (XmlBackedJSClassImpl.CLASS_NAME_ATTRIBUTE_NAME.equals(attributeName) && MxmlLanguageTagsUtil.isComponentTag(context)) {
+        descriptor = new ClassNameAttributeDescriptor(this);
+      }
+      else if (!predefined &&
+               !FlexMxmlLanguageAttributeNames.ID.equals(attributeName) &&
+               !MxmlLanguageTagsUtil.isXmlOrXmlListTag(context) &&
+               isDynamicClass(element)) {
+        return new AnyXmlAttributeDescriptor(attributeName);
+      }
     }
 
     return descriptor;

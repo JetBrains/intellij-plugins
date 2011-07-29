@@ -15,9 +15,9 @@ import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.resolve.SwcCatalogXmlUtil;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -64,7 +64,7 @@ public class CodeContext {
   private static final String XMLNODE_CLASS = "flash.xml.XMLNode";
 
   final static String[] GUMBO_ATTRIBUTES = {FlexStateElementNames.INCLUDE_IN, FlexStateElementNames.EXCLUDE_FROM,
-                                            FlexStateElementNames.ITEM_CREATION_POLICY, FlexStateElementNames.ITEM_DESTRUCTION_POLICY};
+    FlexStateElementNames.ITEM_CREATION_POLICY, FlexStateElementNames.ITEM_DESTRUCTION_POLICY};
 
   // Component name to descriptor
   private final Map<String, ClassBackedElementDescriptor> myNameToDescriptorsMap;
@@ -79,7 +79,7 @@ public class CodeContext {
     if (JavaScriptSupportLoader.isLanguageNamespace(namespace)) {
       addPredefinedTags(this);
 
-    // XML and XMLList language tags represent respective classes, so they must not be marked as 'predefined'
+      // XML and XMLList language tags represent respective classes, so they must not be marked as 'predefined'
       myNameToDescriptorsMap.put(XmlBackedJSClassImpl.XML_TAG_NAME, createXmlTagDescriptor(this, XML_CLASS));
       myNameToDescriptorsMap.put(XmlBackedJSClassImpl.XMLLIST_TAG_NAME,
                                  new ClassBackedElementDescriptor(XmlBackedJSClassImpl.XMLLIST_TAG_NAME, this, module.getProject(), false));
@@ -87,14 +87,19 @@ public class CodeContext {
   }
 
   private void putDescriptor(final String name, final ClassBackedElementDescriptor descriptor, final boolean addGumboAttributesIfNeeded) {
-    if (JavaScriptSupportLoader.isLanguageNamespace(namespace) && (XmlBackedJSClassImpl.XML_TAG_NAME.equals(name) || XmlBackedJSClassImpl
-      .XMLLIST_TAG_NAME.equals(name))) {
-      // XML and XMLList are added via #addXmlRelatedTags(CodeContext)
+    if (JavaScriptSupportLoader.isLanguageNamespace(namespace) &&
+        (XmlBackedJSClassImpl.XML_TAG_NAME.equals(name) || XmlBackedJSClassImpl.XMLLIST_TAG_NAME.equals(name))) {
+      // XML and XMLList are added in constructor
       return;
     }
 
-    // The most correct way is not to check sdk but to check language level of current mxml file. But it is impossible because CodeContext is not per file.
-    if (addGumboAttributesIfNeeded && FlexSdkUtils.isFlex4Sdk(FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module))) {
+    if (JavaScriptSupportLoader.MXML_URI3.equals(namespace) && JSCommonTypeNames.VECTOR_CLASS_NAME.equals(name)) {
+      final AnnotationBackedDescriptorImpl typeDescriptor = new AnnotationBackedDescriptorImpl("type", descriptor, true, null, null, null);
+      typeDescriptor.setRequired(true);
+      descriptor.addPredefinedMemberDescriptor(typeDescriptor);
+    }
+    else if (addGumboAttributesIfNeeded && FlexSdkUtils.isFlex4Sdk(FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module))) {
+      // The most correct way is not to check sdk but to check language level of current mxml file. But it is impossible because CodeContext is not per file.
       for (String gumboAttr : GUMBO_ATTRIBUTES) {
         descriptor.addPredefinedMemberDescriptor(new AnnotationBackedDescriptorImpl(gumboAttr, descriptor, true, null, null, null));
       }
@@ -264,7 +269,7 @@ public class CodeContext {
   }
 
   private static void handleFileDependency(Module module, Map<String, CodeContext> contextsOfModule, VirtualFile file) {
-    if (file.getFileType() == StdFileTypes.ARCHIVE && "swc".equalsIgnoreCase(file.getExtension())) {
+    if (file.getFileType() == FileTypes.ARCHIVE && "swc".equalsIgnoreCase(file.getExtension())) {
       final VirtualFile local = file.getFileSystem() instanceof JarFileSystem
                                 ? file : JarFileSystem.getInstance().getJarRootForLocalFile(file);
       if (local == null) return;
@@ -503,7 +508,7 @@ public class CodeContext {
 
     if (JavaScriptSupportLoader.MXML_URI3.equals(codeContext.namespace)) {
       bindingDescriptor.addPredefinedMemberDescriptor(
-      new AnnotationBackedDescriptorImpl(TWO_WAY_ATTR_NAME, bindingDescriptor, true, null, null, null));
+        new AnnotationBackedDescriptorImpl(TWO_WAY_ATTR_NAME, bindingDescriptor, true, null, null, null));
     }
 
     codeContext.putDescriptor(FlexPredefinedTagNames.BINDING, bindingDescriptor, false);

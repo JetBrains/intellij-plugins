@@ -92,6 +92,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   private boolean myCollapseWhiteSpace;
 
   private final boolean myDeferredInstance;
+  private boolean myIsRequired = false;
 
   protected AnnotationBackedDescriptorImpl(String _name,
                                            ClassBackedElementDescriptor _parentDescriptor,
@@ -388,8 +389,12 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     if ("Function".equals(type)) myScriptable = true;
   }
 
+  public void setRequired(final boolean isRequired) {
+    myIsRequired = isRequired;
+  }
+
   public boolean isRequired() {
-    return false;
+    return myIsRequired;
   }
 
   public boolean isFixed() {
