@@ -15,6 +15,10 @@ import java.net.URLConnection;
 public final class IOUtil {
   private static final Logger LOG = Logger.getInstance(IOUtil.class.getName());
 
+  public static void saveStream(File source, File target) throws IOException {
+    saveStream(source.toURI().toURL(), target);
+  }
+
   public static void saveStream(URL source, File target) throws IOException {
     final URLConnection sourceConnection = source.openConnection();
     long sourceLastModified = sourceConnection.getLastModified();

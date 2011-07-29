@@ -255,15 +255,19 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         });
   }
 
-  private void copyAppFiles() throws IOException {
+  static void copyAppFiles() throws IOException {
     if (DebugPathManager.IS_DEV) {
-      return;
+      File home = new File(DebugPathManager.getFudHome());
+      IOUtil.saveStream(new File(home, "app-loader/target/app-loader-1.0-SNAPSHOT.swf"), new File(APP_DIR, DESIGNER_SWF));
+      IOUtil.saveStream(new File(home, "designer/src/main/resources/descriptor.xml"), new File(APP_DIR, DESCRIPTOR_XML));
+      IOUtil.saveStream(new File(home, "designer/src/main/resources/check-descriptor.xml"), new File(APP_DIR, CHECK_DESCRIPTOR_XML));
     }
-
-    final ClassLoader classLoader = getClass().getClassLoader();
-    IOUtil.saveStream(classLoader.getResource(DESCRIPTOR_XML), new File(APP_DIR, DESCRIPTOR_XML));
-    IOUtil.saveStream(classLoader.getResource(DESIGNER_SWF), new File(APP_DIR, DESIGNER_SWF));
-    IOUtil.saveStream(classLoader.getResource(CHECK_DESCRIPTOR_XML), new File(APP_DIR, CHECK_DESCRIPTOR_XML));
+    else {
+      final ClassLoader classLoader = FlexUIDesignerApplicationManager.class.getClassLoader();
+      IOUtil.saveStream(classLoader.getResource(DESCRIPTOR_XML), new File(APP_DIR, DESCRIPTOR_XML));
+      IOUtil.saveStream(classLoader.getResource(DESIGNER_SWF), new File(APP_DIR, DESIGNER_SWF));
+      IOUtil.saveStream(classLoader.getResource(CHECK_DESCRIPTOR_XML), new File(APP_DIR, CHECK_DESCRIPTOR_XML));
+    }
   }
 
   private static String getOpenActionTitle(boolean debug) {
