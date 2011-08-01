@@ -41,7 +41,7 @@
   <depends optional="true" config-file="struts2-tiles.xml">StrutsAssistant</depends>
   <depends optional="true" config-file="struts2-velocity.xml">com.intellij.velocity</depends>
 
-  <vendor url="http://strutsidea.blogspot.com/" email="yann.cebron@googlemail.com">Yann Cébron</vendor>
+  <vendor url="http://strutsidea.blogspot.com" email="yann.cebron@googlemail.com">Yann Cébron</vendor>
 
   <!-- published extension points -->
   <extensionPoints>
