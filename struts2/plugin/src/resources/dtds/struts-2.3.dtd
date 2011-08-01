@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ * $Id: struts-2.0.dtd 651946 2008-04-27 13:41:38Z apetrelli $
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+-->
+<!-- START SNIPPET: strutsDtd -->
+
+<!--
+   Struts configuration DTD.
+   Use the following DOCTYPE
+
+   <!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+-->
+
+<!ELEMENT struts ((package|include|bean|constant)*, unknown-handler-stack?)>
+<!ATTLIST struts
+    order CDATA #IMPLIED
+>
+
+<!ELEMENT package (result-types?, interceptors?, default-interceptor-ref?, default-action-ref?, default-class-ref?, global-results?, global-exception-mappings?, action*)>
+<!ATTLIST package
+    name CDATA #REQUIRED
+    extends CDATA #IMPLIED
+    namespace CDATA #IMPLIED
+    abstract CDATA #IMPLIED
+    strict-method-invocation CDATA #IMPLIED
+    externalReferenceResolver NMTOKEN #IMPLIED
+>
+
+<!ELEMENT result-types (result-type+)>
+
+<!ELEMENT result-type (param*)>
+<!ATTLIST result-type
+    name CDATA #REQUIRED
+    class CDATA #REQUIRED
+    default (true|false) "false"
+>
+
+<!ELEMENT interceptors (interceptor|interceptor-stack)+>
+
+<!ELEMENT interceptor (param*)>
+<!ATTLIST interceptor
+    name CDATA #REQUIRED
+    class CDATA #REQUIRED
+>
+
+<!ELEMENT interceptor-stack (interceptor-ref*)>
+<!ATTLIST interceptor-stack
+    name CDATA #REQUIRED
+>
+
+<!ELEMENT interceptor-ref (param*)>
+<!ATTLIST interceptor-ref
+    name CDATA #REQUIRED
+>
+
+<!ELEMENT default-interceptor-ref (#PCDATA)>
+<!ATTLIST default-interceptor-ref
+    name CDATA #REQUIRED
+>
+
+<!ELEMENT default-action-ref (#PCDATA)>
+<!ATTLIST default-action-ref
+    name CDATA #REQUIRED
+>
+
+<!ELEMENT default-class-ref (#PCDATA)>
+<!ATTLIST default-class-ref
+    class CDATA #REQUIRED
+>
+
+<!ELEMENT global-results (result+)>
+
+<!ELEMENT global-exception-mappings (exception-mapping+)>
+
+<!ELEMENT action ((param|result|interceptor-ref|exception-mapping)*,allowed-methods?)>
+<!ATTLIST action
+    name CDATA #REQUIRED
+    class CDATA #IMPLIED
+    method CDATA #IMPLIED
+    converter CDATA #IMPLIED
+>
+
+<!ELEMENT param (#PCDATA)>
+<!ATTLIST param
+    name CDATA #REQUIRED
+>
+
+<!ELEMENT result (#PCDATA|param)*>
+<!ATTLIST result
+    name CDATA #IMPLIED
+    type CDATA #IMPLIED
+>
+
+<!ELEMENT exception-mapping (#PCDATA|param)*>
+<!ATTLIST exception-mapping
+    name CDATA #IMPLIED
+    exception CDATA #REQUIRED
+    result CDATA #REQUIRED
+>
+
+<!ELEMENT allowed-methods (#PCDATA)>
+
+<!ELEMENT include (#PCDATA)>
+<!ATTLIST include
+    file CDATA #REQUIRED
+>
+
+<!ELEMENT bean (#PCDATA)>
+<!ATTLIST bean
+    type CDATA #IMPLIED
+    name CDATA #IMPLIED
+    class CDATA #REQUIRED
+    scope CDATA #IMPLIED
+    static CDATA #IMPLIED
+    optional CDATA #IMPLIED
+>
+
+<!ELEMENT constant (#PCDATA)>
+<!ATTLIST constant
+    name CDATA #REQUIRED
+    value CDATA #REQUIRED
+>
+
+<!ELEMENT unknown-handler-stack (unknown-handler-ref*)>
+<!ELEMENT unknown-handler-ref (#PCDATA)>
+<!ATTLIST unknown-handler-ref
+    name CDATA #REQUIRED
+>
+
+<!-- END SNIPPET: strutsDtd -->
+

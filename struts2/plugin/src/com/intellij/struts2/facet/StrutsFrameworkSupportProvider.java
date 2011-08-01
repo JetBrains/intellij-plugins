@@ -107,8 +107,12 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
         }
 
         String template = StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_0_XML;
-        final boolean is2_1_X = VersionComparatorUtil.compare(version.getVersionName(), "2.1") > 0;
-        if (is2_1_X) {
+        final boolean is2_1orNewer = VersionComparatorUtil.compare(version.getVersionName(), "2.1") > 0;
+
+        final boolean is2_3orNewer = VersionComparatorUtil.compare(version.getVersionName(), "2.3") > 0;
+        if (is2_3orNewer) {
+          template = StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_3_XML;
+        } else if (is2_1orNewer) {
           final boolean is2_1_7X = VersionComparatorUtil.compare(version.getVersionName(), "2.1.7") > 0;
           template = is2_1_7X ?
               StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_1_7_XML :
@@ -153,7 +157,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
               final Filter strutsFilter = webApp.addFilter();
               strutsFilter.getFilterName().setStringValue("struts2");
 
-              @NonNls final String filterClass = is2_1_X ?
+              @NonNls final String filterClass = is2_1orNewer ?
                   StrutsConstants.STRUTS_2_1_FILTER_CLASS :
                   StrutsConstants.STRUTS_2_0_FILTER_CLASS;
               strutsFilter.getFilterClass().setStringValue(filterClass);

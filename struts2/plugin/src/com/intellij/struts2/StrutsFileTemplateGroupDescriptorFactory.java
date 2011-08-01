@@ -45,6 +45,11 @@ public class StrutsFileTemplateGroupDescriptorFactory implements FileTemplateGro
   @NonNls
   public static final String STRUTS_2_1_7_XML = "struts_2_1_7.xml";
 
+  /**
+   * Template for {@code >=2.3}.
+   */
+  public static final String STRUTS_2_3_XML = "struts_2_3.xml";
+
   public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
     final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor(StrutsBundle.message("struts2"),
                                                                               StrutsIcons.ACTION);
@@ -53,6 +58,8 @@ public class StrutsFileTemplateGroupDescriptorFactory implements FileTemplateGro
     group.addTemplate(new FileTemplateDescriptor(STRUTS_2_1_XML,
                                                  StrutsIcons.STRUTS_CONFIG_FILE));
     group.addTemplate(new FileTemplateDescriptor(STRUTS_2_1_7_XML,
+                                                 StrutsIcons.STRUTS_CONFIG_FILE));
+    group.addTemplate(new FileTemplateDescriptor(STRUTS_2_3_XML,
                                                  StrutsIcons.STRUTS_CONFIG_FILE));
 
     group.addTemplate(new FileTemplateDescriptor("validator.xml", StrutsIcons.VALIDATION_CONFIG_FILE));

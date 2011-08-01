@@ -43,6 +43,10 @@ public class Struts2ResourceProvider implements StandardResourceProvider {
                    StrutsConstants.STRUTS_2_1_7_DTD_ID,
                    "struts-2.1.7.dtd", registrar);
 
+    addDTDResource(StrutsConstants.STRUTS_2_3_DTD_URI,
+                   StrutsConstants.STRUTS_2_3_DTD_ID,
+                   "struts-2.3.dtd", registrar);
+
 
     addDTDResource(StrutsConstants.VALIDATOR_1_00_DTD_URI,
                    StrutsConstants.VALIDATOR_1_00_DTD_ID,
