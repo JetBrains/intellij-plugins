@@ -696,7 +696,8 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     }
 
     if (arrayElementType != null) {
-      if (isVectorType(type) && isVectorDescriptor(descriptor)) {
+      if (isVectorType(type) && isVectorDescriptor(descriptor) ||
+          JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type) && isArrayDescriptor(descriptor)) {
         return descriptor;
       }
 
@@ -733,6 +734,12 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   private static boolean isVectorDescriptor(final XmlElementDescriptor descriptor) {
     return descriptor instanceof ClassBackedElementDescriptor &&
            JSCommonTypeNames.VECTOR_CLASS_NAME.equals(descriptor.getName()) &&
+           JavaScriptSupportLoader.MXML_URI3.equals(((ClassBackedElementDescriptor)descriptor).context.namespace);
+  }
+
+  private static boolean isArrayDescriptor(final XmlElementDescriptor descriptor) {
+    return descriptor instanceof ClassBackedElementDescriptor &&
+           JSCommonTypeNames.ARRAY_CLASS_NAME.equals(descriptor.getName()) &&
            JavaScriptSupportLoader.MXML_URI3.equals(((ClassBackedElementDescriptor)descriptor).context.namespace);
   }
 
