@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.flex {
 import com.intellij.flex.uiDesigner.ResourceBundleProvider;
 import com.intellij.flex.uiDesigner.UiErrorHandler;
-import com.intellij.flex.uiDesigner.css.RootStyleManager;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -10,13 +9,14 @@ import flash.display.Sprite;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.events.EventPhase;
-import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.geom.Transform;
 import flash.system.ApplicationDomain;
 import flash.text.TextFormat;
 import flash.utils.Dictionary;
+
+import mx.core.EmbeddedFontRegistry;
 
 import mx.core.FlexGlobals;
 import mx.core.IChildList;
@@ -111,6 +111,8 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     if (ApplicationDomain.currentDomain.hasDefinition("mx.core::TextFieldFactory")) {
       Singleton.registerClass("mx.core::ITextFieldFactory", Class(getDefinitionByName("mx.core::TextFieldFactory")));
     }
+
+    Singleton.registerClass("mx.core::IEmbeddedFontRegistry", EmbeddedFontRegistry);
 
     // investigate, how we can add support for custom components — patch EffectManager or use IntellIJ IDEA index for effect annotations (the same as compiler — CompilationUnit)
     EffectManager.registerEffectTrigger("addedEffect", "added");
@@ -500,7 +502,12 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   }
 
   public function callInContext(fn:Function, thisArg:Object, argArray:Array, returns:Boolean = true):* {
-    return null;
+    if (returns) {
+      return fn.apply(thisArg, argArray);
+    }
+    else {
+      fn.apply(thisArg, argArray);
+    }
   }
 
   public function create(... params):Object {
@@ -631,49 +638,38 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
   override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0,
                                             useWeakReference:Boolean = false):void {
-    if (type == MouseEvent.CLICK || type == MouseEvent.MOUSE_DOWN || type == MouseEvent.MOUSE_UP || type == MouseEvent.MOUSE_MOVE ||
-      type == MouseEvent.MOUSE_OVER || type == MouseEvent.MOUSE_OUT || type == MouseEvent.ROLL_OUT || type == MouseEvent.ROLL_OVER ||
-      type == MouseEvent.MIDDLE_CLICK || type == MouseEvent.MOUSE_WHEEL ||
-      type == FlexEvent.RENDER || type == FlexEvent.ENTER_FRAME) {
-
-      var map:Dictionary;
-      if (useCapture) {
-        if (proxiedListenersInCapture == null) {
-          proxiedListenersInCapture = new Dictionary();
-        }
-        map = proxiedListenersInCapture;
-      }
-      else {
-        if (proxiedListeners == null) {
-          proxiedListeners = new Dictionary();
-        }
-        map = proxiedListeners;
-      }
-
-      const rawType:String = getRawEventType(type);
-
-      var listeners:Vector.<Function> = map[rawType];
-      if (listeners == null) {
-        listeners = new Vector.<Function>();
-        map[rawType] = listeners;
-      }
-
-      if (listeners.length == 0) {
-        if (useCapture) {
-          stage.addEventListener(rawType, proxyEventHandler, true);
-        }
-        else {
-          stage.addEventListener(rawType, proxyEventHandler);
-        }
-      }
-
-      if (listeners.indexOf(listener) == -1) {
-        //trace("ADDED", type,  useCapture);
-        listeners.push(listener);
-      }
+    if (type in skippedEvents) {
+      return;
     }
-    else if (!(type in skippedEvents)) {
-      super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+
+    var map:Dictionary;
+    if (useCapture) {
+      if (proxiedListenersInCapture == null) {
+        proxiedListenersInCapture = new Dictionary();
+      }
+      map = proxiedListenersInCapture;
+    }
+    else {
+      if (proxiedListeners == null) {
+        proxiedListeners = new Dictionary();
+      }
+      map = proxiedListeners;
+    }
+
+    const rawType:String = getRawEventType(type);
+    var listeners:Vector.<Function> = map[rawType];
+    if (listeners == null) {
+      listeners = new Vector.<Function>();
+      map[rawType] = listeners;
+    }
+
+    if (listeners.length == 0) {
+      stage.addEventListener(rawType, proxyEventHandler, useCapture);
+    }
+
+    if (listeners.indexOf(listener) == -1) {
+      //trace("ADDED", type, useCapture);
+      listeners.push(listener);
     }
   }
 

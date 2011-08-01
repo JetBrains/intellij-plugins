@@ -22,7 +22,7 @@ class FlexEncoder extends Encoder {
   private boolean skipInitialize;
   private boolean modifyConstructor;
 
-  private boolean modifyAccessModifierDeferredSetStyles;
+  private String modifyAccessModifier;
 
   private final byte[] debugBasepath;
 
@@ -58,8 +58,9 @@ class FlexEncoder extends Encoder {
   }
 
   @Override
+  // new String(in.data, in.position + in.offset, stringLength)
   protected void writeSlotTraitName(int name, int trait_kind, DataBuffer in) {
-    if (modifyAccessModifierDeferredSetStyles && ((trait_kind & 0x0f) == TRAIT_Var)) {
+    if (modifyAccessModifier != null && ((trait_kind & 0x0f) == TRAIT_Var)) {
       final int originalPosition = in.position();
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
       int constKind = in.readU8();
@@ -70,10 +71,11 @@ class FlexEncoder extends Encoder {
       int nsKind = in.readU8();
       if (nsKind == CONSTANT_PrivateNamespace) {
         in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
-        if (compare(in, in.readU32(), "deferredSetStyles")) {
+        int stringLength = in.readU32();
+        if (modifyAccessModifier != null && compare(in, stringLength, modifyAccessModifier)) {
           currentBuffer.writeU32(history.getIndexWithSpecifiedNsRaw(poolIndex, name, findPublicNamespace(in)));
           in.seek(originalPosition);
-          modifyAccessModifierDeferredSetStyles = false;
+          modifyAccessModifier = null;
           return;
         }
       }
@@ -87,8 +89,7 @@ class FlexEncoder extends Encoder {
   public void methodTrait(int trait_kind, int name, int dispId, int methodInfo, int[] metadata, DataBuffer in) {
     final int kind = trait_kind & 0x0f;
     if ((skipInitialize && kind == TRAIT_Method && ((trait_kind >> 4) & TRAIT_FLAG_Override) != 0) ||
-        (skipColorCorrection && kind == TRAIT_Setter) ||
-        (modifyAccessModifierDeferredSetStyles && kind == TRAIT_Var)) {
+        (skipColorCorrection && kind == TRAIT_Setter)) {
       final int originalPosition = in.position();
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.MULTINAME)[name]);
 
@@ -100,9 +101,6 @@ class FlexEncoder extends Encoder {
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns]);
       int nsKind = in.readU8();
       if (nsKind == CONSTANT_PackageNamespace) {
-        in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[in.readU32()]);
-        skipString(in);
-
         in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
         int stringLength = in.readU32();
         if (skipInitialize && compare(in, stringLength, "initialize")) {
@@ -130,7 +128,8 @@ class FlexEncoder extends Encoder {
     final int localName = in.readU32();
 
     in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.NS)[ns]);
-    if (in.readU8() != CONSTANT_PackageNamespace) {
+    int nsKind = in.readU8();
+    if (nsKind != CONSTANT_PackageNamespace) {
       return;
     }
 
@@ -142,8 +141,12 @@ class FlexEncoder extends Encoder {
       int stringLength = in.readU32();
       skipInitialize = compare(in, stringLength, APPLICATION);
       if (mxCore) {
-        modifyConstructor = skipInitialize;
-        modifyAccessModifierDeferredSetStyles = compare(in, stringLength, UI_COMPONENT);
+        if (skipInitialize) {
+          modifyConstructor = skipInitialize;
+        }
+        else if (compare(in, stringLength, UI_COMPONENT)) {
+          modifyAccessModifier = "deferredSetStyles";
+        }
       }
       else {
         skipColorCorrection = skipInitialize;
@@ -156,6 +159,19 @@ class FlexEncoder extends Encoder {
       in.seek(history.getRawPartPoolPositions(poolIndex, IndexHistory.STRING)[localName]);
       skipInitialize = compare(in, VIEW_NAVIGATOR_APPLICATION_BASE);
     }
+  }
+
+  @Override
+  public void startClass(int cinit, int index, DataBuffer in) {
+    super.startClass(cinit, index, in);
+    // class traits in scripts — after class_info (class_info contains traits_info), so, we cannot check class name
+    modifyAccessModifier = "staticHandlersAdded";
+  }
+
+  @Override
+  public void endClass() {
+    super.endClass();
+    modifyAccessModifier = null;
   }
 
   private static boolean compare(final DataBuffer in, final String s) {
@@ -217,7 +233,7 @@ class FlexEncoder extends Encoder {
     skipInitialize = false;
     modifyConstructor = false;
     skipColorCorrection = false;
-    modifyAccessModifierDeferredSetStyles = false;
+    modifyAccessModifier = null;
   }
 
   @SuppressWarnings("UnusedDeclaration")
@@ -230,11 +246,6 @@ class FlexEncoder extends Encoder {
     }
 
     return chars;
-  }
-
-  private static void skipString(DataBuffer in) {
-    int stringLength = in.readU32();
-    in.seek(in.position() + stringLength);
   }
 
   @SuppressWarnings("UnusedDeclaration")

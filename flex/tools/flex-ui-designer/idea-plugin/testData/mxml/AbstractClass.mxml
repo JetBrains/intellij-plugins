@@ -2,6 +2,7 @@
   <Button label="before invalid control"/>
   <TrackBase/>
   <Button label="after invalid control"/>
+  <!-- IDEA-72611 -->
   <DataGrid id="dg" horizontalCenter="0" verticalCenter="0">
     <columns>
       <ArrayList>

@@ -26,7 +26,12 @@ public class FlexModuleFactory extends BaseFlexModuleFactoryImpl implements IFle
   }
 
   public function callInContext(fn:Function, thisArg:Object, argArray:Array, returns:Boolean = true):* {
-    throw new IllegalOperationError("unsupported");
+    if (returns) {
+      return fn.apply(thisArg, argArray);
+    }
+    else {
+      fn.apply(thisArg, argArray);
+    }
   }
 
   public function create(... params):Object {

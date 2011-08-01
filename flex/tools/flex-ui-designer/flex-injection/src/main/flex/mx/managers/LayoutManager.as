@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.UiErrorHandler;
 import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.EventDispatcher;
+import flash.utils.getDefinitionByName;
 
 import mx.core.UIComponentGlobals;
 import mx.core.mx_internal;
@@ -36,9 +37,16 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
 
   private var currentObject:ILayoutManagerClient;
 
+  private var fteTextFieldClass:Object;
+
   public function LayoutManager(displayDispatcher:DisplayObject, uiErrorHandler:UiErrorHandler):void {
     this.displayDispatcher = displayDispatcher;
     this.uiErrorHandler = uiErrorHandler;
+
+    fteTextFieldClass = getDefinitionByName("mx.core.FTETextField") as Class;
+    if (fteTextFieldClass != null) {
+      fteTextFieldClass.staticHandlersAdded = true;
+    }
   }
 
   public function getCurrentObject():Object {
@@ -405,7 +413,11 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
 
   private function tryDoPhasedInstantiation():void {
     try {
-    doPhasedInstantiation();
+      doPhasedInstantiation();
+
+      if (fteTextFieldClass != null) {
+        fteTextFieldClass.staticRenderHandler(null);
+      }
     }
     catch (e:Error) {
       uiErrorHandler.handleUiError(e, currentObject, currentObject == null ? null : "Can't do phased instantiation " + currentObject);

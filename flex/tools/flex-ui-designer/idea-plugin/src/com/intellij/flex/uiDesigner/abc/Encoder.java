@@ -340,7 +340,7 @@ class Encoder {
     currentBuffer = null;
   }
 
-  public void startClass(int cinit) {
+  public void startClass(int cinit, int index, DataBuffer in) {
     classInfo.writeU32(methodInfo.getIndex(poolIndex, cinit));
 
     currentBuffer = classInfo;
@@ -536,7 +536,7 @@ class Encoder {
     encodeMetaData(new_metadata);
   }
 
-  public void classTrait(int kind, int name, int slotId, int classIndex, int[] metadata) {
+  public void classTrait(int kind, int name, int slotId, int classInfoIndex, int[] metadata, DataBuffer in) {
     currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
     TIntArrayList newMetadata = trimMetadata(metadata);
     if (((kind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
@@ -545,7 +545,7 @@ class Encoder {
     currentBuffer.writeU8(kind);
 
     currentBuffer.writeU32(slotId);
-    currentBuffer.writeU32(classInfo.getIndex(poolIndex, classIndex));
+    currentBuffer.writeU32(classInfo.getIndex(poolIndex, classInfoIndex));
 
     encodeMetaData(newMetadata);
   }

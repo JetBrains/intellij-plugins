@@ -138,7 +138,7 @@ final class Decoder {
       in.seek(pos);
 
       int cinit = in.readU32();
-      visitor.startClass(cinit);
+      visitor.startClass(cinit, index, in);
       classTraits.decode(visitor);
       visitor.endClass();
 
@@ -290,7 +290,7 @@ final class Decoder {
             visitor.methodTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind), in);
             break;
           case TRAIT_Class:
-            visitor.classTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind));
+            visitor.classTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind), in);
             break;
           case TRAIT_Function:
             visitor.functionTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind));

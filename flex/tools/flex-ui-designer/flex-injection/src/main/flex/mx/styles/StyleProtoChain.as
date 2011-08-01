@@ -9,6 +9,8 @@ import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 import com.intellij.flex.uiDesigner.css.InlineCssStyleDeclaration;
 import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 
+import flash.errors.IllegalOperationError;
+
 import flash.utils.getQualifiedClassName;
 
 import mx.core.IFlexModule;
@@ -112,7 +114,12 @@ public class StyleProtoChain {
     if (object.styleDeclaration != null && !(object.styleDeclaration is AbstractCssStyleDeclaration)) {
       object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInlineWithFactory(object.styleDeclaration.defaultFactory), StyleManagerEx(getStyleManager(object)).styleValueResolver);
     }
-    return FtyleProtoChain.initProtoChain(object);
+
+    FtyleProtoChain.initProtoChain(object);
+
+    if (object.inheritingStyles == StyleProtoChain.STYLE_UNINITIALIZED) {
+      throw new IllegalOperationError("Internal error while init proto chain");
+    }
   }
 
   public static function initProtoChainForUIComponentStyleName(obj:IStyleClient):void {
