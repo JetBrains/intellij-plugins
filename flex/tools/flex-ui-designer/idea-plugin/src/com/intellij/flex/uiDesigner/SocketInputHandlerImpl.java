@@ -326,17 +326,19 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     final String bundleName = reader.readUTF();
 
     final ProjectInfo projectInfo = Client.getInstance().getRegisteredProjects().getNullableInfo(projectId);
-    if (projectInfo == null) {
-      // project may be closed, but client is not closed yet (AppTest#testCloseAndOpenProject)
-      LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find project with id " + projectId);
-      return;
-    }
 
     AccessToken token = ReadAction.start();
     try {
 
-      PropertiesFile resourceBundleFile =
-          LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, projectInfo);
+      PropertiesFile resourceBundleFile;
+      if (projectInfo == null) {
+        // project may be closed, but client is not closed yet (AppTest#testCloseAndOpenProject)
+        LOG.warn("Skip getResourceBundle(" + locale + ", " + bundleName + ") due to cannot find project with id " + projectId);
+        resourceBundleFile = null;
+      }
+      else {
+        resourceBundleFile = LibraryManager.getInstance().getResourceBundleFile(locale, bundleName, projectInfo);
+      }
 
       FileOutputStream fileOut = null;
       // IDEA-71568
