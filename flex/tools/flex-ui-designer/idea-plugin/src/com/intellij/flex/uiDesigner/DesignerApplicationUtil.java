@@ -12,7 +12,6 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.debug.FlexRunner;
-import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfigurationType;
@@ -53,7 +52,7 @@ final class DesignerApplicationUtil {
   private static final String MAC_AIR_RUNTIME_DEFAULT_PATH = "/Library/Frameworks";
 
   public static AdlRunConfiguration createTestAdlRunConfiguration() throws IOException {
-    return new AdlRunConfiguration("/Developer/SDKs/flex_4.5.1/bin/adl", MAC_AIR_RUNTIME_DEFAULT_PATH);
+    return new AdlRunConfiguration(DebugPathManager.ADL_EXECUTABLE, DebugPathManager.ADL_RUNTIME);
   }
   
   public static @Nullable AdlRunConfiguration findSuitableFlexSdk(String checkDescriptorPath) throws IOException {
