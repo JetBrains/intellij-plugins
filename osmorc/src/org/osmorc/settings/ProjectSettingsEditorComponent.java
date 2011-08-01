@@ -32,6 +32,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -220,5 +221,9 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     boolean modified = myModified;
     refreshFrameworkInstanceCombobox();
     myModified = modified;
+  }
+
+  private void createUIComponents() {
+    defaultManifestFileLocation = new ComboBox();
   }
 }
