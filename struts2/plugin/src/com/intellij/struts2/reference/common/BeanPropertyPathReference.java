@@ -73,7 +73,8 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
       return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
-    final Map<String, PsiMethod> properties = PropertyUtil.getAllProperties(psiClass, true, !isLast());
+    final Map<String, PsiMethod> properties =
+        PropertyUtil.getAllProperties(psiClass, true, !isLast() || referenceSet.isSupportsReadOnlyProperties());
 
     final Object[] variants = new Object[properties.size()];
     int i = 0;
@@ -129,8 +130,14 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
 
   @Nullable
   private PsiMethod resolveProperty(@NotNull final PsiClass psiClass, final String propertyName) {
-    final PsiMethod method = isLast() ? PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
-        PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
+    final PsiMethod method;
+    if (referenceSet.isSupportsReadOnlyProperties()) {
+      method = PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
+    } else {
+      method = isLast() ?
+          PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
+          PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
+    }
     return method == null || !method.hasModifierProperty(PsiModifier.PUBLIC) ? null : method;
   }
 

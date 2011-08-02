@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -30,6 +31,7 @@ import com.intellij.struts2.reference.common.BeanPropertyPathReferenceSet;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,10 +43,20 @@ import java.util.List;
  */
 public class ActionPropertyReferenceProvider extends PsiReferenceProvider {
 
+  private final boolean supportsReadOnlyProperties;
+
+  public ActionPropertyReferenceProvider(final boolean supportsReadOnlyProperties) {
+    this.supportsReadOnlyProperties = supportsReadOnlyProperties;
+  }
+
   @NotNull
   @Override
   public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
                                                @NotNull final ProcessingContext processingContext) {
+    if (TaglibUtil.isDynamicExpression(((XmlAttributeValue) psiElement).getValue())) {
+      return PsiReference.EMPTY_ARRAY;
+    }
+
     final XmlTag tag = PsiTreeUtil.getParentOfType(psiElement, XmlTag.class);
     assert tag != null;
 
@@ -71,17 +83,21 @@ public class ActionPropertyReferenceProvider extends PsiReferenceProvider {
     }
 
     final Action action = actions.get(0);
-    return new BeanPropertyPathReferenceSet(psiElement, action.searchActionClass()) {
+    return new BeanPropertyPathReferenceSet(psiElement, action.searchActionClass(), supportsReadOnlyProperties) {
+
+      // TODO CTOR creates references eagerly, so we have to subclass here
       @Override
       public boolean isSoft() {
-        return false;  // TODO CTOR creates references eagerly, so we have to subclass
+        return false;
       }
+
     }.getPsiReferences();
   }
 
   @NonNls
   private static final String[] TAGS_WITH_ACTION_ATTRIBUTE = new String[]{"action", "form", "reset", "submit", "url"};
 
+  @Nullable
   private static XmlTag findEnclosingTag(@NotNull final XmlTag xmlTag,
                                          @NotNull final String namespacePrefix) {
     final XmlTag tag = PsiTreeUtil.getParentOfType(xmlTag, XmlTag.class);

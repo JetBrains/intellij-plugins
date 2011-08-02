@@ -14,11 +14,12 @@
  */
 package com.intellij.struts2.reference;
 
+import org.hamcrest.core.Is;
+import org.junit.Test;
+
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import org.hamcrest.core.Is;
 import static org.junit.Assert.assertThat;
-import org.junit.Test;
 
 /**
  * @author Yann C&eacute;bron
@@ -28,9 +29,10 @@ public class TaglibUtilTest {
   @Test
   public void isDynamicExpression() {
     assertFalse(TaglibUtil.isDynamicExpression(""));
-    assertFalse(TaglibUtil.isDynamicExpression("any%{"));
 
     assertTrue(TaglibUtil.isDynamicExpression("%{any"));
+    assertTrue(TaglibUtil.isDynamicExpression("any%{"));
+    assertTrue(TaglibUtil.isDynamicExpression("{ 'one', 'two' }"));
   }
 
   @Test

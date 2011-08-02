@@ -48,7 +48,7 @@ public class ParamNameConverterImpl extends ParamNameConverter {
     }
 
     final PsiClass rootPsiClass = findBeanPropertyClass(paramsElement);
-    return new BeanPropertyPathReferenceSet(psiElement, rootPsiClass).getPsiReferences();
+    return new BeanPropertyPathReferenceSet(psiElement, rootPsiClass, false).getPsiReferences();
   }
 
 }

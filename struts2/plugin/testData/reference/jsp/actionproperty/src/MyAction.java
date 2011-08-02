@@ -3,6 +3,8 @@ public class MyAction {
   private String myField;
   private boolean myBooleanField;
 
+  private List readonlyList;
+
   public String getMyField() {
     return myField;
   }
@@ -17,6 +19,10 @@ public class MyAction {
 
   public void setMyBooleanField(boolean myBooleanField) {
     this.myBooleanField = myBooleanField;
+  }
+
+  public List getReadonlyList() {
+    return readonlyList;
   }
 
 }

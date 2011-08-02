@@ -33,10 +33,14 @@ import org.jetbrains.annotations.Nullable;
 public class BeanPropertyPathReferenceSet extends ReferenceSetBase<BeanPropertyPathReference> {
 
   private final PsiClass beanClass;
+  private final boolean supportsReadOnlyProperties;
 
-  public BeanPropertyPathReferenceSet(@NotNull final PsiElement psiElement, @Nullable final PsiClass beanClass) {
+  public BeanPropertyPathReferenceSet(@NotNull final PsiElement psiElement,
+                                      @Nullable final PsiClass beanClass,
+                                      final boolean supportsReadOnlyProperties) {
     super(psiElement);
     this.beanClass = beanClass;
+    this.supportsReadOnlyProperties = supportsReadOnlyProperties;
   }
 
   @NotNull
@@ -52,6 +56,10 @@ public class BeanPropertyPathReferenceSet extends ReferenceSetBase<BeanPropertyP
   @Nullable
   public PsiClass getBeanClass() {
     return beanClass;
+  }
+
+  public boolean isSupportsReadOnlyProperties() {
+    return supportsReadOnlyProperties;
   }
 
 }

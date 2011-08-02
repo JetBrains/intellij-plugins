@@ -1,5 +1,6 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 
+<%-- <s:param> --%>
 <s:action name="myAction">
   <b>something else between</b>
   <s:param name="myField"/>

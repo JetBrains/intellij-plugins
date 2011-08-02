@@ -17,7 +17,6 @@ package com.intellij.struts2.reference;
 
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.struts2.StrutsConstants;
-import com.intellij.struts2.reference.jsp.ActionPropertyReferenceProvider;
 import com.intellij.struts2.reference.jsp.NamespaceReferenceProvider;
 import com.intellij.struts2.reference.jsp.ThemeReferenceProvider;
 import org.jetbrains.annotations.NonNls;
@@ -63,6 +62,22 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
       "updownselect"
   };
 
+  private static final String[] TAGLIB_UI_FORM_INPUT_TAGS = new String[]{
+      "checkbox",
+      "checkboxlist",
+      "combobox",
+      "doubleselect",
+      "file",
+      "inputtransferselect",
+      "optiontransferselect",
+      "password",
+      "radio",
+      "select",
+      "textarea",
+      "textfield",
+      "updownselect"
+  };
+
   @NotNull
   @Override
   protected String getNamespace() {
@@ -83,6 +98,13 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
                  "labelposition", registrar,
                  TAGLIB_UI_FORM_TAGS);
 
+    registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
+                 "name", registrar,
+                 TAGLIB_UI_FORM_INPUT_TAGS);
+    registerTags(ACTION_READONLY_PROPERTY_REFERENCE_PROVIDER,
+                 "list", registrar,
+                 "doubleselect", "inputtransferselect", "optiontransferselect", "select", "updownselect");
+
     registerBoolean("required", registrar, TAGLIB_UI_FORM_TAGS);
 
     registerTags(new StaticStringValuesReferenceProvider(false, "left", "right"),
@@ -91,6 +113,14 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
 
     // elements with "readonly"
     registerBoolean("readonly", registrar, "combobox", "password", "textarea", "textfield");
+
+    // selection elements with "emptyOption"|"multiple"
+    registerBoolean("emptyOption",
+                    registrar,
+                    "doubleselect", "inputtransferselect", "optiontransferselect", "select", "updownselect");
+    registerBoolean("multiple",
+                    registrar,
+                    "doubleselect", "inputtransferselect", "optiontransferselect", "select", "updownselect");
 
     // elements with "action"
     registerTags(ACTION_REFERENCE_PROVIDER,
@@ -124,7 +154,7 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
                  "tooltipCssClass", registrar,
                  TAGLIB_UI_FORM_TAGS);
 
-    // *transfer-tags with additional CSS
+    // *transfer/double-tags
     registerTags(CSS_CLASS_PROVIDER,
                  "buttonCssClass", registrar,
                  "inputtransferselect", "optiontransferselect");
@@ -132,6 +162,17 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
     registerTags(CSS_CLASS_PROVIDER,
                  "doubleCssClass", registrar,
                  "inputtransferselect", "optiontransferselect");
+
+    registerBoolean("doubleEmptyOption",
+                    registrar,
+                    "doubleselect", "inputtransferselect", "optiontransferselect");
+
+    registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
+                 "doubleName", registrar,
+                 "doubleselect", "optiontransferselect");
+    registerTags(ACTION_READONLY_PROPERTY_REFERENCE_PROVIDER,
+                 "doubleList", registrar,
+                 "doubleselect", "optiontransferselect");
 
     // specific tags ---------------------------------------------------------------------------------------------------
 
@@ -158,17 +199,13 @@ public class StrutsUITaglibReferenceContributor extends StrutsTaglibReferenceCon
     registerBoolean("validate", registrar, "form");
 
     // <param>
-    registerTags(new ActionPropertyReferenceProvider(),
+    registerTags(ACTION_PROPERTY_REFERENCE_PROVIDER,
                  "name", registrar,
                  "param");
 
     // <property>
     registerBoolean("escape", registrar, "property");
     registerBoolean("escapeJavaScript", registrar, "property");
-
-    // <select>
-    registerBoolean("emptyOption", registrar, "select");
-    registerBoolean("multiple", registrar, "select");
 
     // <set>
     registerTags(new StaticStringValuesReferenceProvider(false, "application", "session", "request", "page", "action"),

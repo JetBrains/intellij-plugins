@@ -35,13 +35,13 @@ public final class TaglibUtil {
 
   /**
    * Checks whether the given attribute value is a dynamic expression.
-   * Currently only checks for OGNL ("%{EXPRESSION}").
+   * Currently only checks for OGNL.
    *
    * @param attributeValue The attribute value to check.
    * @return true if yes, false otherwise.
    */
   public static boolean isDynamicExpression(@NotNull @NonNls final String attributeValue) {
-    return StringUtil.startsWith(attributeValue, "%{");
+    return StringUtil.startsWith(attributeValue, "%{") || StringUtil.containsChar(attributeValue, '{');
   }
 
   /**

@@ -22,6 +22,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.css.impl.util.CssInHtmlClassOrIdReferenceProvider;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.IdRefReference;
 import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.struts2.reference.jsp.ActionPropertyReferenceProvider;
 import com.intellij.struts2.reference.jsp.ActionReferenceProvider;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
@@ -42,19 +43,25 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  */
 public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceContributor {
 
-  protected static final CssInHtmlClassOrIdReferenceProvider CSS_CLASS_PROVIDER = new CssInHtmlClassOrIdReferenceProvider();
+  protected static final PsiReferenceProvider CSS_CLASS_PROVIDER = new CssInHtmlClassOrIdReferenceProvider();
 
-  protected static final StaticStringValuesReferenceProvider BOOLEAN_VALUE_REFERENCE_PROVIDER =
-    new StaticStringValuesReferenceProvider(false, "false", "true");
+  protected static final PsiReferenceProvider BOOLEAN_VALUE_REFERENCE_PROVIDER =
+      new StaticStringValuesReferenceProvider(false, "false", "true");
 
-  protected static final ActionReferenceProvider ACTION_REFERENCE_PROVIDER = new ActionReferenceProvider();
+  protected static final PsiReferenceProvider ACTION_REFERENCE_PROVIDER = new ActionReferenceProvider();
+
+  protected static final PsiReferenceProvider ACTION_PROPERTY_REFERENCE_PROVIDER =
+      new ActionPropertyReferenceProvider(false);
+  protected static final PsiReferenceProvider ACTION_READONLY_PROPERTY_REFERENCE_PROVIDER =
+      new ActionPropertyReferenceProvider(true);
 
   protected static final PsiReferenceProvider RELATIVE_PATH_PROVIDER = new PsiReferenceProvider() {
     @NotNull
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                  @NotNull final ProcessingContext context) {
       final String pathValue = ((XmlAttributeValue) element).getValue();
-      return PathReferenceManager.getInstance().createReferences(element, TaglibUtil.isDynamicExpression(pathValue), false, true);
+      return PathReferenceManager.getInstance()
+                                 .createReferences(element, TaglibUtil.isDynamicExpression(pathValue), false, true);
     }
   };
 
@@ -64,7 +71,8 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
   protected static final PsiReferenceProvider HTML_ID_REFERENCE_PROVIDER = new PsiReferenceProvider() {
     @NotNull
     @Override
-    public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+    public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
+                                                 @NotNull final ProcessingContext context) {
       return new PsiReference[]{new IdRefReference(element)};
     }
   };
@@ -88,7 +96,8 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
 
     @NotNull
     @Override
-    public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+    public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
+                                                 @NotNull final ProcessingContext context) {
       return new PsiReference[]{new IdRefReference(element) {
         @Override
         public PsiElement resolve() {
@@ -97,7 +106,8 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
             return resolve;
           }
 
-          return Arrays.binarySearch(additionalVariants, ((XmlAttributeValue) myElement).getValue()) > -1 ? myElement : null;
+          return Arrays.binarySearch(additionalVariants,
+                                     ((XmlAttributeValue) myElement).getValue()) > -1 ? myElement : null;
         }
 
         @NotNull
@@ -113,10 +123,10 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
    * Element pattern for accessing taglib in JSPs.
    */
   private final XmlAttributeValuePattern jspElementPattern =
-    xmlAttributeValue()
-      .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
-                        virtualFile().ofType(StdFileTypes.JSPX)))
-      .withSuperParent(2, xmlTag().withNamespace(getNamespace()));
+      xmlAttributeValue()
+          .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
+                            virtualFile().ofType(StdFileTypes.JSPX)))
+          .withSuperParent(2, xmlTag().withNamespace(getNamespace()));
 
   /**
    * Returns the taglib's namespace.
@@ -140,13 +150,13 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
                               final PsiReferenceRegistrar registrar,
                               @NonNls final String... tagNames) {
     registrar.registerReferenceProvider(
-      and(
-        xmlAttributeValue()
-          .withLocalName(attributeName)
-          .withSuperParent(2, xmlTag().withLocalName(string().oneOf(tagNames))),
-        jspElementPattern
-      ),
-      provider);
+        and(
+            xmlAttributeValue()
+                .withLocalName(attributeName)
+                .withSuperParent(2, xmlTag().withLocalName(string().oneOf(tagNames))),
+            jspElementPattern
+           ),
+        provider);
   }
 
   /**

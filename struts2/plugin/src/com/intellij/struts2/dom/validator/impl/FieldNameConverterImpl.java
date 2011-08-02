@@ -65,7 +65,7 @@ public class FieldNameConverterImpl extends FieldNameConverter {
                                          final PsiElement psiElement,
                                          final ConvertContext convertContext) {
     final PsiClass actionClass = findBeanPropertyClass(convertContext.getInvocationElement());
-    return new BeanPropertyPathReferenceSet(psiElement, actionClass).getPsiReferences();
+    return new BeanPropertyPathReferenceSet(psiElement, actionClass, false).getPsiReferences();
   }
 
 }

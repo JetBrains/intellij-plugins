@@ -48,9 +48,30 @@ public class ActionPropertyReferenceProviderTest extends BasicHighlightingTestCa
     return true;
   }
 
-  public void testActionHighlighting() throws Throwable {
+  public void testActionPropertyParamHighlighting() throws Throwable {
+    myFixture.copyFileToProject("src/MyAction.java"); // WTF?
     createStrutsFileSet("struts-actionproperty.xml");
-    myFixture.testHighlighting(true, false, false, "/jsp/actionproperty-highlighting.jsp");
+    myFixture.testHighlighting(true, false, false, "/jsp/actionproperty-param-highlighting.jsp");
+  }
+
+  public void testActionPropertyFormInputHighlighting() throws Throwable {
+    myFixture.copyFileToProject("src/MyAction.java"); // WTF?
+    createStrutsFileSet("struts-actionproperty.xml");
+    myFixture.testHighlighting(true, false, false, "/jsp/actionproperty-forminput-highlighting.jsp");
+  }
+
+  public void testActionPropertyFormInputCompletionVariants() {
+    myFixture.copyFileToProject("src/MyAction.java"); // WTF?
+    createStrutsFileSet("struts-actionproperty.xml");
+    myFixture.testCompletionVariants("/jsp/actionproperty-forminput-completionvariants.jsp",
+                                     "myField", "myBooleanField");
+  }
+
+  public void testActionPropertyFormInputReadOnlyCompletionVariants() {
+    myFixture.copyFileToProject("src/MyAction.java"); // WTF?
+    createStrutsFileSet("struts-actionproperty.xml");
+    myFixture.testCompletionVariants("/jsp/actionproperty-forminput-readonly-completionvariants.jsp",
+                                     "myField", "myBooleanField", "readonlyList");
   }
 
 }
