@@ -23,7 +23,7 @@ import mx.utils.NameUtil;
 use namespace mx_internal;
 
 public class StyleProtoChain {
-  public static const STYLE_UNINITIALIZED:Object = {};
+  public static const STYLE_UNINITIALIZED:Object = FtyleProtoChain.STYLE_UNINITIALIZED;
 
   public static function getClassStyleDeclarations(object:IStyleClient):Array {
     var styleManager:IStyleManager2 = getStyleManager(object);

@@ -1,8 +1,7 @@
 <VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
   <Button label="before invalid control"/>
   <TrackBase/>
-  <Button label="after invalid control"/>
-  <!-- IDEA-72611 -->
+   <!-- IDEA-72611 -->
   <DataGrid id="dg" horizontalCenter="0" verticalCenter="0">
     <columns>
       <ArrayList>

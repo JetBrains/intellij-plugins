@@ -126,7 +126,7 @@ public class MxmlTest extends BaseTestCase {
   }
 
   public function RuntimeError():void {
-    app.validateNow(); // force update for predictable asserts (updateDisplayList with expected error logs before our tests passed result)
+    validateUI(); // force update for predictable asserts (updateDisplayList with expected error logs before our tests passed result)
     assertThat(app, [{text: 1}, {} , {text: 2}]);
   }
 
@@ -142,7 +142,8 @@ public class MxmlTest extends BaseTestCase {
   }
 
   public function AbstractClass():void {
-    assertThat(app, [{label: "before invalid control"}, {label: "after invalid control"}]);
+    validateUI();
+    assertThat(app, [{label: "before invalid control"}, {columns: {source: [{dataField: "foo"}, {dataField: "bar"}]}}]);
   }
 
   public function MouseSelectionTest():void {

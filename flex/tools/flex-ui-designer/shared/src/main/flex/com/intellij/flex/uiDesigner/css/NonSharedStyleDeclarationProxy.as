@@ -23,6 +23,11 @@ public dynamic final class NonSharedStyleDeclarationProxy extends StyleDeclarati
     return _parent;
   }
 
+  //noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
+  public function get effects():Object {
+    return null;
+  }
+
   override flash_proxy function getProperty(name:*):* {
     var v:* = userMap == null ? undefined : userMap[name];
     if (v !== undefined) {

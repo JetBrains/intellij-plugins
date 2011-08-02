@@ -3,6 +3,8 @@ import mx.core.IInvalidating;
 import mx.core.IUITextField;
 
 public class FtyleProtoChain {
+  public static const STYLE_UNINITIALIZED:Object = {};
+
   public static function getClassStyleDeclarations(object:IStyleClient):Array {
     return null;
   }

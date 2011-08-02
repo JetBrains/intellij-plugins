@@ -9,6 +9,7 @@ import flash.display.Sprite;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.events.EventPhase;
+import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.geom.Transform;
@@ -638,38 +639,49 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
 
   override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0,
                                             useWeakReference:Boolean = false):void {
-    if (type in skippedEvents) {
-      return;
-    }
+    if (type == MouseEvent.CLICK || type == MouseEvent.MOUSE_DOWN || type == MouseEvent.MOUSE_UP || type == MouseEvent.MOUSE_MOVE ||
+        type == MouseEvent.MOUSE_OVER || type == MouseEvent.MOUSE_OUT || type == MouseEvent.ROLL_OUT || type == MouseEvent.ROLL_OVER ||
+        type == MouseEvent.MIDDLE_CLICK || type == MouseEvent.MOUSE_WHEEL ||
+        type == FlexEvent.RENDER || type == FlexEvent.ENTER_FRAME) {
 
-    var map:Dictionary;
-    if (useCapture) {
-      if (proxiedListenersInCapture == null) {
-        proxiedListenersInCapture = new Dictionary();
+      var map:Dictionary;
+      if (useCapture) {
+        if (proxiedListenersInCapture == null) {
+          proxiedListenersInCapture = new Dictionary();
+        }
+        map = proxiedListenersInCapture;
       }
-      map = proxiedListenersInCapture;
-    }
-    else {
-      if (proxiedListeners == null) {
-        proxiedListeners = new Dictionary();
+      else {
+        if (proxiedListeners == null) {
+          proxiedListeners = new Dictionary();
+        }
+        map = proxiedListeners;
       }
-      map = proxiedListeners;
-    }
 
-    const rawType:String = getRawEventType(type);
-    var listeners:Vector.<Function> = map[rawType];
-    if (listeners == null) {
-      listeners = new Vector.<Function>();
-      map[rawType] = listeners;
-    }
+      const rawType:String = getRawEventType(type);
 
-    if (listeners.length == 0) {
-      stage.addEventListener(rawType, proxyEventHandler, useCapture);
-    }
+      var listeners:Vector.<Function> = map[rawType];
+      if (listeners == null) {
+        listeners = new Vector.<Function>();
+        map[rawType] = listeners;
+      }
 
-    if (listeners.indexOf(listener) == -1) {
-      //trace("ADDED", type, useCapture);
-      listeners.push(listener);
+      if (listeners.length == 0) {
+        if (useCapture) {
+          stage.addEventListener(rawType, proxyEventHandler, true);
+        }
+        else {
+          stage.addEventListener(rawType, proxyEventHandler);
+        }
+      }
+
+      if (listeners.indexOf(listener) == -1) {
+        //trace("ADDED", type,  useCapture);
+        listeners.push(listener);
+      }
+    }
+    else if (!(type in skippedEvents)) {
+      super.addEventListener(type, listener, useCapture, priority, useWeakReference);
     }
   }
 
