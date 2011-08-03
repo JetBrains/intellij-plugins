@@ -13,7 +13,7 @@
     </itemRenderer>
   </List>
 
-  <List itemRenderer="ProjectMxmlItemRenderer">
+  <List itemRenderer="AuxProjectMxmlItemRenderer">
     <ArrayCollection>
       <fx:String>MPS</fx:String>
       <fx:String>dotTrace</fx:String>

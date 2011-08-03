@@ -253,34 +253,11 @@ public class PrimitiveAmfOutputStream extends OutputStream {
     bytes[count] = (byte)(v);
   }
 
-  @SuppressWarnings({"UnusedDeclaration"})
-  public final void writeFloat(float v) {
-    writeInt(Float.floatToIntBits(v));
-  }
-
   public final void writeDouble(double v) {
     writeLong(Double.doubleToLongBits(v));
   }
 
-  public final void writeDouble(String v) {
-    writeLong(Double.doubleToLongBits(Double.parseDouble(v)));
-  }
-
   public final int size() {
     return out.size();
-  }
-
-  public final void writeNotEmptyString(String s) {
-    if (s == null) {
-      write(0);
-    }
-    else {
-      writeAmfUtf(s, false);
-    }
-  }
-
-  @SuppressWarnings({"UnusedDeclaration"})
-  public void moveTo(int dataPosition, PrimitiveAmfOutputStream destination) {
-    out.moveTo(dataPosition, destination);
   }
 }

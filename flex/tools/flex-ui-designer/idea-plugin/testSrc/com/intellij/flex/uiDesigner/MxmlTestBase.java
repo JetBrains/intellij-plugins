@@ -132,7 +132,7 @@ abstract class MxmlTestBase extends AppTestBase {
     VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles).getChildren();
     for (int childrenLength = testVFiles.length, i = childrenLength - auxiliaryBorder; i < childrenLength; i++) {
       final VirtualFile file = testVFiles[i];
-      if (!file.getName().endsWith(".mxml") || file.getName().equals("ProjectMxmlItemRenderer.mxml")) {
+      if (!file.getName().endsWith(".mxml") || file.getName().startsWith("Aux")) {
         continue;
       }
       

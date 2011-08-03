@@ -1,7 +1,7 @@
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
 	<compiler>
 		<accessible>false</accessible>
-		<debug>false</debug>
+		<debug>true</debug>
 		<external-library-path>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/2.6/airglobal.swc</path-element>
 		</external-library-path>

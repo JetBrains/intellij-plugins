@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
+import com.intellij.flex.uiDesigner.InjectionUtil;
+import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
@@ -17,11 +19,7 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.*;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
@@ -157,7 +155,7 @@ public class MxmlWriter {
   }
 
   private void processElements(final XmlTag parent, final @Nullable Context parentContext, final boolean allowIncludeInExludeFrom,
-                               final int dataPosition, final int referencePosition) {
+                               int dataPosition, final int referencePosition) {
     boolean cssDeclarationSourceDefined = false;
 
     Context context = null;
@@ -185,6 +183,8 @@ public class MxmlWriter {
               if (context == null) {
                 context = writer.createDynamicObjectStateContext();
               }
+
+              //out.getBlockOut().moveBack(dataPosition, 1);
 
               // must be before stateWriter.includeIn — start object data range before state data range
               dataRange = out.getBlockOut().startRange(dataPosition, dataRangeIndex);
@@ -278,8 +278,7 @@ public class MxmlWriter {
             }
           }
 
-          writer.write(JSCommonTypeNames.STRING_CLASS_NAME);
-          out.writeAmfUtf(((XmlText)child).getValue(), false);
+          writer.writeString(((XmlText)child).getValue());
         }
       }
       else if (child instanceof XmlTag) {
@@ -362,27 +361,36 @@ public class MxmlWriter {
 
   private void processClassBackedSubTag(XmlTag tag, ClassBackedElementDescriptor descriptor, @Nullable Context parentContext,
                                         boolean isArray) {
-    if (!writeIfPrimitive(tag, descriptor, isArray)) {
-      if (isProjectComponent(descriptor)) {
-        addProblem(tag, "error.custom.component.are.not.supported", tag.getLocalName());
+    if (!writeIfPrimitive(tag, descriptor)) {
+      final int projectComponentFactoryId;
+      try {
+        projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(descriptor.getQualifiedName(), descriptor.getDeclaration(),
+                                                                               propertyProcessor.getUnregisteredDocumentFactories());
+      }
+      catch (InvalidPropertyException e) {
+        problemsHolder.add(e);
         return;
       }
 
-      int childDataPosition = out.size();
-      writer.write(descriptor.getQualifiedName());
-      processElements(tag, parentContext, hasStates && isArray && parentContext != null, childDataPosition, 
-      out.getByteOut().allocate(2));
-    }
-  }
+      final int childDataPosition = out.size();
+      if (projectComponentFactoryId != -1) {
+        if (!isArray) {
+          // replace Amf3Types.OBJECT to AmfExtendedTypes.DOCUMENT_REFERENCE
+          writer.getBlockOut().setPosition(writer.getBlockOut().size() - 1);
+        }
+        
+        out.write(AmfExtendedTypes.DOCUMENT_REFERENCE);
+        out.writeUInt29(projectComponentFactoryId);
+      }
+      else {
+        if (isArray) {
+          out.write(Amf3Types.OBJECT);
+        }
+        writer.write(descriptor.getQualifiedName());
+      }
 
-  private static boolean isProjectComponent(ClassBackedElementDescriptor descriptor) {
-    final JSClass jsClass = (JSClass)descriptor.getDeclaration();
-    assert jsClass != null;
-    PsiFile psiFile = jsClass.getContainingFile();
-    VirtualFile virtualFile = psiFile.getVirtualFile();
-    assert virtualFile != null;
-    final Module module = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex().getModuleForFile(virtualFile);
-    return module != null;
+      processElements(tag, parentContext, hasStates && isArray && parentContext != null, childDataPosition, out.getByteOut().allocate(2));
+    }
   }
 
   void processPropertyTagValue(XmlTag parent, @Nullable Context parentContext, boolean isArray) {
@@ -514,37 +522,16 @@ public class MxmlWriter {
     }
   }
 
-  private boolean writeIfPrimitive(XmlTag tag, ClassBackedElementDescriptor descriptor, boolean isArray) {
+  private boolean writeIfPrimitive(XmlTag tag, ClassBackedElementDescriptor descriptor) {
     final String fqn = descriptor.getQualifiedName();
-    // for Array we need write primitive object class name
     if (fqn.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
-      CharSequence v = XmlTagValueProvider.getDisplay(tag);
-      if (isArray) {
-        writer.write(JSCommonTypeNames.STRING_CLASS_NAME);
-        out.writeAmfUtf(v, false);
-      }
-      else {
-        writeSubstitutedString(v);
-      }
+      writeSubstitutedString(XmlTagValueProvider.getDisplay(tag));
     }
     else if (fqn.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
-      if (isArray) {
-        writer.write(fqn);
-      }
-      else {
-        out.write(Amf3Types.DOUBLE);
-      }
-      out.writeDouble(tag.getValue().getTrimmedText());
+      out.writeAmfDouble(tag.getValue().getTrimmedText());
     }
     else if (fqn.equals(JSCommonTypeNames.BOOLEAN_CLASS_NAME)) {
-      boolean v = tag.getValue().getTrimmedText().charAt(0) == 't';
-      if (isArray) {
-        writer.write(fqn);
-        out.write(v);
-      }
-      else {
-        out.write(v ? Amf3Types.TRUE : Amf3Types.FALSE);
-      }
+      out.write(tag.getValue().getTrimmedText().charAt(0) == 't' ? Amf3Types.TRUE : Amf3Types.FALSE);
     }
     else {
       return false;

@@ -1,7 +1,7 @@
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
 	<compiler>
 		<accessible>false</accessible>
-		<debug>false</debug>
+		<debug>true</debug>
 		<external-library-path>
 			<path-element>@@repo@@/org/flyti/cocoa/acocoa/1.4-SNAPSHOT/acocoa-1.4-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.0.20968/airframework-4.5.0.20968.swc</path-element>

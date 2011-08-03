@@ -1,7 +1,7 @@
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
 	<compiler>
 		<accessible>false</accessible>
-		<debug>false</debug>
+		<debug>true</debug>
 		<external-library-path>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.0.20968/framework-4.5.0.20968.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.0.20968/spark-4.5.0.20968.swc</path-element>

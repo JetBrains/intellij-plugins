@@ -1,7 +1,7 @@
 <flex-config xmlns="http://www.adobe.com/2006/flex-config">
 	<compiler>
 		<accessible>false</accessible>
-		<debug>false</debug>
+		<debug>true</debug>
 		<external-library-path>
 			<path-element>@@repo@@/org/flyti/cocoa/aquaLaF/1.4-SNAPSHOT/aquaLaF-1.4-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/org/flyti/cocoa/cocoa/1.4-SNAPSHOT/cocoa-1.4-SNAPSHOT.swc</path-element>

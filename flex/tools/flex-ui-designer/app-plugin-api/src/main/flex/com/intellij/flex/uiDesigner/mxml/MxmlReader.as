@@ -40,6 +40,7 @@ public final class MxmlReader implements DocumentReader {
   private var swfDataManager:EmbedSwfManager;
 
   private const stateReader:StateReader = new StateReader();
+  //noinspection JSFieldCanBeLocal
   private const injectedASReader:InjectedASReader = new InjectedASReader();
 
   private var moduleContext:ModuleContext;
@@ -80,19 +81,21 @@ public final class MxmlReader implements DocumentReader {
     
     var objectTableSize:int = readObjectTableSize();
 
-    this.moduleContext = factoryContext.readerContext.moduleContext;
-    this.context = factoryContext.readerContext;
-    var object:Object = readObject(stringRegistry.read(input));
+    context = factoryContext.readerContext;
+    moduleContext = context.moduleContext;
+    assert(input.readByte() == Amf3Types.OBJECT);
+    var object:Object = readObjectFromClass(stringRegistry.read(input));
     assert(this.factoryContext == null && objectTableSize == (objectTable == null ? 0 : objectTable.length));
 
-    this.moduleContext = null;
-    this.context = null;
+    context = null;
+    moduleContext = null;
     this.input = null;
     
     if (input is ByteArray) {
       assert(input.bytesAvailable == 0);
       ByteArray(input).position = 0;
     }
+
     return object;
   }
 
@@ -122,19 +125,21 @@ public final class MxmlReader implements DocumentReader {
     return objectTableSize;
   }
 
-  public function read(input:IDataInput, documentReaderContext:DocumentReaderContext):Object {
+  public function read(input:IDataInput, documentReaderContext:DocumentReaderContext, restorePrevContextAfterRead:Boolean = false):Object {
+    const oldInput:IDataInput = this.input;
     this.input = input;
     
     const objectTableSize:int = readObjectTableSize();
 
-    this.moduleContext = documentReaderContext.moduleContext;
-    this.context = documentReaderContext;
-    var object:Object = readObject(stringRegistry.read(input), true);
+    const oldContext:DocumentReaderContext = this.context;
+    context = documentReaderContext;
+    moduleContext = context.moduleContext;
+    var object:Object = readObjectFromClass(stringRegistry.read(input), true);
     stateReader.read(this, input, object);
     injectedASReader.read(input, this);
 
-    this.moduleContext = null;
-    this.context = null;
+    context = oldContext;
+    moduleContext = oldContext == null ? null : oldContext.moduleContext;
 
     if (objectTableSize != 0) {
       objectTable.fixed = false;
@@ -149,7 +154,7 @@ public final class MxmlReader implements DocumentReader {
       assert(input.bytesAvailable == 0);
       ByteArray(input).position = 0;
     }
-    this.input = null;
+    this.input = oldInput;
     return object;
   }
   
@@ -184,7 +189,7 @@ public final class MxmlReader implements DocumentReader {
     }
   }
 
-  internal function readObject(className:String, setDocument:Boolean = false):Object {
+  internal function readObjectFromClass(className:String, setDocument:Boolean = false):Object {
     var clazz:Class = Class(moduleContext.applicationDomain.getDefinition(className));
     var reference:int = input.readUnsignedShort();
     var propertyName:String = stringRegistry.read(input);
@@ -207,6 +212,23 @@ public final class MxmlReader implements DocumentReader {
       }
     }
 
+    return initObject(object, reference, propertyName, objectDeclarationTextOffset);
+  }
+
+  private function readObjectFromFactory(object:Object):Object {
+    var reference:int = input.readUnsignedShort();
+    var propertyName:String = stringRegistry.read(input);
+    var objectDeclarationTextOffset:int;
+    if (propertyName == "$fud_position") {
+      objectDeclarationTextOffset = AmfUtil.readUInt29(input);
+      context.registerObjectDeclarationPosition(object, objectDeclarationTextOffset);
+      propertyName = stringRegistry.read(input);
+    }
+
+    return initObject(object, reference, propertyName, objectDeclarationTextOffset);
+  }
+
+  private function initObject(object:Object, reference:int, propertyName:String, objectDeclarationTextOffset:int):Object {
     if (reference != 0) {
       if (objectTable[reference - 1] != null) {
         throw new ArgumentError("must be null");
@@ -226,7 +248,7 @@ public final class MxmlReader implements DocumentReader {
     var propertyHolder:Object = object;
     var cssPropertyDescriptor:CssDeclarationImpl;
     var o:Object;
-    for (; propertyName != null; propertyName = stringRegistry.read(input)) {      
+    for (; propertyName != null; propertyName = stringRegistry.read(input)) {
       switch (input.readByte()) {
         case PropertyClassifier.PROPERTY:
           break;
@@ -316,7 +338,7 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case Amf3Types.OBJECT:
-          propertyHolder[propertyName] = readObject(stringRegistry.read(input));
+          propertyHolder[propertyName] = readObjectFromClass(stringRegistry.read(input));
           if (cssPropertyDescriptor != null) {
             cssPropertyDescriptor.type = CssPropertyType.EFFECT;
           }
@@ -350,7 +372,11 @@ public final class MxmlReader implements DocumentReader {
         case AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE:
           propertyHolder[propertyName] = readDocumentFactory();
           break;
-        
+
+        case AmfExtendedTypes.DOCUMENT_REFERENCE:
+          propertyHolder[propertyName] = readObjectFromFactory(readDocumentFactory().newInstance());
+          break;
+
         case Amf3Types.BITMAP:
           propertyHolder[propertyName] = readBitmapData();
           break;
@@ -478,7 +504,8 @@ public final class MxmlReader implements DocumentReader {
     createMxContainerChildren(container, new QName(mxNs, "createdComponents"), new QName(mxNs, "numChildrenCreated"), Class(sm.getDefinitionByName(FLEX_EVENT_CLASS_NAME)));
   }
 
-  private static function createMxContainerChildren(container:DisplayObjectContainer, createdComponentsQName:QName, numChildrenCreatedQName:QName, flexEventClass:Class):void {
+  private static function createMxContainerChildren(container:DisplayObjectContainer, createdComponentsQName:QName,
+                                                    numChildrenCreatedQName:QName, flexEventClass:Class):void {
     var chidlren:Array = container[createdComponentsQName];
     for each (var child:DisplayObject in chidlren) {
       container.addChild(child);
@@ -492,28 +519,41 @@ public final class MxmlReader implements DocumentReader {
   internal function readArray(array:Array):Array {
     var count:int = 0;
     while (true) {
-      var className:String = stringRegistry.read(input);
-      if (className == null) {
-        return array;
-      }
-      else {
-        switch (className) {
-          case "String":
-            array[count++] = AmfUtil.readUtf(input);
-            break;
+      const amfType:int = input.readByte();
+      switch (amfType) {
+        case Amf3Types.OBJECT:
+          array[count++] = readObjectFromClass(stringRegistry.read(input));
+          break;
 
-          case "Number":
-            array[count++] = input.readDouble();
-            break;
+        case 0:
+          return array;
 
-          case "Boolean":
-            array[count++] = input.readBoolean();
-            break;
+        case Amf3Types.STRING:
+          array[count++] = AmfUtil.readUtf(input);
+          break;
 
-          default:
-            array[count++] = readObject(className);
-            break;
-        }
+        case AmfExtendedTypes.STRING_REFERENCE:
+          array[count++] = stringRegistry.read(input);
+          break;
+
+        case Amf3Types.DOUBLE:
+          array[count++] = input.readDouble();
+          break;
+
+        case Amf3Types.FALSE:
+          array[count++] = false;
+          break;
+
+        case Amf3Types.TRUE:
+          array[count++] = true;
+          break;
+
+        case AmfExtendedTypes.DOCUMENT_REFERENCE:
+          array[count++] = readObjectFromFactory(readDocumentFactory().newInstance());
+          break;
+
+        default:
+          throw new ArgumentError("unknown property type " + amfType);
       }
     }
 
@@ -526,7 +566,7 @@ public final class MxmlReader implements DocumentReader {
     var n:int = input.readUnsignedByte();
     var array:Array = new Array(n);
     for (var i:int = 0; i < n; i++) {
-      array[i] = readObject(stringRegistry.read(input));
+      array[i] = readObjectFromClass(stringRegistry.read(input));
     }
 
     return array;

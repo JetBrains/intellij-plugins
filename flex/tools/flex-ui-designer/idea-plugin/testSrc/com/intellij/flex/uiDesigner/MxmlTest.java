@@ -25,13 +25,15 @@ public class MxmlTest extends MxmlTestBase {
     String testFile = System.getProperty("testFile");
     String[] files = testFile == null ? getTestFiles() : new String[]{getTestPath() + "/" + testFile + ".mxml"};
 
-    final VirtualFile[] vFiles = new VirtualFile[files.length + 2];
+    final VirtualFile[] vFiles = new VirtualFile[files.length + 4];
     for (int i = 0; i < files.length; i++) {
       vFiles[i] = getVFile(files[i]);
     }
     
     vFiles[files.length] = getVFile(getTestPath() + "/anim.swf");
-    vFiles[files.length + 1] = getVFile(getTestPath() + "/MyButtonCustomComponent.as");
+    vFiles[files.length + 1] = getVFile(getTestPath() + "/MyButtonActionScriptCustomComponent.as");
+    vFiles[files.length + 2] = getVFile(getTestPath() + "/AuxCustomMxmlComponent.mxml");
+    vFiles[files.length + 3] = getVFile(getTestPath() + "/AuxProjectMxmlItemRenderer.mxml");
 
     testFiles(vFiles);
     
@@ -45,7 +47,7 @@ public class MxmlTest extends MxmlTestBase {
         m("Unresolved variable unresolvedData"),
         m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
         m("Invalid color name invalidcolorname (line: 2)"),
-        m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-71298\">Project components are not supported</a>, skip MyButtonCustomComponent (line: 2)"),
+        m("Support only MXML-based component MyButtonActionScriptCustomComponent"),
         m("Default property not found for Rect (line: 2)"),
         m("spark.components.supportClasses.TrackBase is abstract class (line: 3)"));
     }
@@ -85,7 +87,7 @@ public class MxmlTest extends MxmlTestBase {
       if (name.charAt(0) == '.') {
         // skip
       }
-      else if (name.endsWith(".mxml") && !name.startsWith("T.") && !name.startsWith("TestApp.") && !name.startsWith("Constructor.")) {
+      else if (name.endsWith(".mxml") && !name.startsWith("T.") && !name.startsWith("Aux") && !name.startsWith("TestApp.") && !name.startsWith("Constructor.")) {
         files.add(parent.getPath() + "/" + name);
       }
       File file = new File(parent, name);

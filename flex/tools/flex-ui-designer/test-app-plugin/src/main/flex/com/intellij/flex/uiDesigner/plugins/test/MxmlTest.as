@@ -36,6 +36,7 @@ public class MxmlTest extends BaseTestCase {
       ColorEquals0();
       ChildrenTypeCheck();
       CustomComponent();
+      CustomMxmlComponentAsChild();
     }
   }
   
@@ -79,7 +80,7 @@ public class MxmlTest extends BaseTestCase {
   public function ItemRendererAndMixDefaultExplicitContent():void {
     var buttonBarButtonClass:Class = documentManager.document.module.context.getClass("spark.components.ButtonBarButton");
     var m:Object = {itemRenderer: {generator: buttonBarButtonClass}};
-    assertThat(app, [{}, {itemRenderer: {className: "ProjectMxmlItemRenderer"}}, m, m]);
+    assertThat(app, [{}, {itemRenderer: {className: "AuxProjectMxmlItemRenderer"}}, m, m]);
   }
 
   public function WindowedApplication():void {
@@ -159,6 +160,10 @@ public class MxmlTest extends BaseTestCase {
 
   public function CustomComponent():void {
     assertThat(app, []);
+  }
+
+  public function CustomMxmlComponentAsChild():void {
+    assertThat(app, [[{text: "Label in child custom mxml component"}]]);
   }
 }
 }

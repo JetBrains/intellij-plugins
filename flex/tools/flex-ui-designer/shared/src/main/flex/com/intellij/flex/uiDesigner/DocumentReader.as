@@ -5,7 +5,8 @@ import flash.system.ApplicationDomain;
 import flash.utils.IDataInput;
 
 public interface DocumentReader {
-  function read(input:IDataInput, documentReaderContext:DocumentReaderContext):Object;
+  function read(input:IDataInput, documentReaderContext:DocumentReaderContext,
+                restorePrevContextAfterRead:Boolean = false):Object;
   
   function read2(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object;
 

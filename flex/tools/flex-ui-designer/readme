@@ -13,6 +13,7 @@ ln -sf $DEV_IDEA_HOME/flex/tools/flex-ui-designer/app-loader/target/app-loader-1
 
 mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.3.3:generate -o
 mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.3.3:generate -DgenerateNonShareable=false -DgenerateShareable -Prelease -o
+mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.3.3:generate -DgenerateNonShareable=false -DgenerateShareable -PreleaseForTesters -o
 
 mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.3.3:generate -o -s build/maven-settings.xml
 

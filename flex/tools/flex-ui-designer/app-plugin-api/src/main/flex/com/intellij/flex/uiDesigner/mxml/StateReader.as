@@ -17,7 +17,7 @@ internal final class StateReader {
    
     var states:Array = new Array(size);
     for (var i:int = 0; i < size; i++) {
-      var state:Object = reader.readObject("com.intellij.flex.uiDesigner.flex.states.State");
+      var state:Object = reader.readObjectFromClass("com.intellij.flex.uiDesigner.flex.states.State");
       state.context = reader.factoryContext;
       states[i] = state;
     }

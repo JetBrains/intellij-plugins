@@ -9,7 +9,6 @@ import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -43,10 +42,6 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
   }
 
   public void setAppDir(@NotNull File appDir) {
-    if (this.appDir != null && !ApplicationManager.getApplication().isUnitTestMode() /* in unit tests we set it for each app test */) {
-      throw new IllegalStateException("appDir must be set only once");
-    }
-    
     this.appDir = appDir;
   }
 

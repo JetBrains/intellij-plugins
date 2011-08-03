@@ -199,13 +199,6 @@ public final class BaseWriter {
     writeObjectReference(propertyName, getObjectId(context));
   }
 
-  @SuppressWarnings({"UnusedDeclaration"})
-  public void writeArrayHeader(int propertyName) {
-    out.writeUInt29(propertyName);
-    out.write(PropertyClassifier.PROPERTY);
-    out.write(Amf3Types.ARRAY);
-  }
-
   public void writeFixedArrayHeader(int propertyName, int size) {
     out.writeUInt29(propertyName);
     out.write(PropertyClassifier.FIXED_ARRAY);

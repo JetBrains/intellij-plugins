@@ -17,7 +17,8 @@ public final class FlexDocumentFactory implements IFactory, ClassReference {
   }
 
   public function newInstance():* {
-    return context.reader.read(source.data, context.readerContext);
+    // why restore oldInput/oldContext? See CustomMxmlComponentAsChild — we read child document factory before finish read initial document
+    return context.reader.read(source.data, context.readerContext, true);
   }
 }
 }
