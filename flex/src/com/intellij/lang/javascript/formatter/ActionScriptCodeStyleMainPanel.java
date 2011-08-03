@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class ActionScriptCodeStyleMainPanel extends MultiTabCodeStyleAbstractPanel {
 
-  protected ActionScriptCodeStyleMainPanel(CodeStyleSettings settings) {
-    super(settings);
+  protected ActionScriptCodeStyleMainPanel(CodeStyleSettings currentSettings, CodeStyleSettings settings) {
+    super(currentSettings, settings);
   }
 
 
