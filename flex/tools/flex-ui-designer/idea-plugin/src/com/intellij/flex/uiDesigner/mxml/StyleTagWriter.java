@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
 import com.intellij.flex.uiDesigner.InjectionUtil;
+import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.css.CssWriter;
 import com.intellij.flex.uiDesigner.css.LocalCssWriter;
@@ -24,28 +24,25 @@ import java.util.List;
 
 public class StyleTagWriter {
   private final CssWriter cssWriter;
-  private final ProblemsHolder problemsHolder;
 
   public StyleTagWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder,
-      List<XmlFile> unregisteredDocumentReferences) {
-    this.problemsHolder = problemsHolder;
-    cssWriter = new LocalCssWriter(stringWriter, unregisteredDocumentReferences);
+                        List<XmlFile> unregisteredDocumentReferences) {
+    cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences);
   }
 
-  public byte[] write(XmlTag tag, Module module) {
+  public byte[] write(XmlTag tag, Module module) throws InvalidPropertyException {
     CssFile cssFile = null;
     XmlAttribute source = tag.getAttribute("source");
     if (source != null) {
       XmlAttributeValue valueElement = source.getValueElement();
       if (valueElement != null) {
-        final PsiFileSystemItem psiFile = InjectionUtil.getReferencedPsiFile(valueElement, problemsHolder, true);
-        if (psiFile != null) {
-          if (psiFile instanceof CssFile) {
-            cssFile = (CssFile)psiFile;
-          }
-          else {
-            problemsHolder.add(FlexUIDesignerBundle.message("error.embed.source.is.not.css.file", psiFile.getName()));
-          }
+        final PsiFileSystemItem psiFile;
+        psiFile = InjectionUtil.getReferencedPsiFile(valueElement, true);
+        if (psiFile instanceof CssFile) {
+          cssFile = (CssFile)psiFile;
+        }
+        else {
+          throw new InvalidPropertyException(valueElement, "error.embed.source.is.not.css.file", psiFile.getName());
         }
       }
     }
@@ -58,7 +55,7 @@ public class StyleTagWriter {
       }
     }
 
-    return cssFile == null ? null : cssWriter.write(cssFile, module, problemsHolder);
+    return cssFile == null ? null : cssWriter.write(cssFile, module);
   }
 
   private static class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor {

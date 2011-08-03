@@ -8,7 +8,8 @@ import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSet;
 import com.intellij.flex.uiDesigner.abc.AbcNameFilterByNameSetAndStartsWith;
 import com.intellij.flex.uiDesigner.abc.FlexSdkAbcInjector;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -129,12 +130,13 @@ public class SwcDependenciesSorter {
       analyzeDefinitions();
     }
     else {
-      ApplicationManager.getApplication().runReadAction(new Runnable() {
-        @Override
-        public void run() {
-          analyzeDefinitions();
-        }
-      });
+      AccessToken token = ReadAction.start();
+      try {
+        analyzeDefinitions();
+      }
+      finally {
+        token.finish();
+      }
     }
 
     definitionMap = null;

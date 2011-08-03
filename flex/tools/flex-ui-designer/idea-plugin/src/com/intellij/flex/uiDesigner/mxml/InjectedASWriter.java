@@ -1,9 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
-import com.intellij.flex.uiDesigner.InjectionUtil;
-import com.intellij.flex.uiDesigner.InvalidPropertyException;
-import com.intellij.flex.uiDesigner.ProblemsHolder;
+import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.lang.javascript.JSTokenTypes;
@@ -34,7 +31,7 @@ class InjectedASWriter {
   private final BaseWriter writer;
   private ObjectReference lastObjectReference;
 
-  private final ProblemsHolder problemsHolder;
+  private ProblemsHolder problemsHolder;
 
   private ByteRange declarationsRange;
 
@@ -45,8 +42,11 @@ class InjectedASWriter {
     }
   };
 
-  public InjectedASWriter(BaseWriter writer, ProblemsHolder problemsHolder) {
+  public InjectedASWriter(BaseWriter writer) {
     this.writer = writer;
+  }
+
+  void setProblemsHolder(@Nullable ProblemsHolder problemsHolder) {
     this.problemsHolder = problemsHolder;
   }
 
@@ -337,7 +337,11 @@ class InjectedASWriter {
         for (JSAttributeNameValuePair p : attribute.getValues()) {
           final String name = p.getName();
           if (name == null || name.equals("source")) {
-            if ((source = InjectionUtil.getReferencedFile(p, problemsHolder, true)) == null) {
+            try {
+              source = InjectionUtil.getReferencedFile(p, true);
+            }
+            catch (InvalidPropertyException e) {
+              problemsHolder.add(e);
               return IGNORE;
             }
           }
@@ -350,7 +354,7 @@ class InjectedASWriter {
         }
 
         if (source == null) {
-          problemsHolder.add(FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
+          problemsHolder.add(host, FlexUIDesignerBundle.message("error.embed.source.not.specified", host.getText()));
           return IGNORE;
         }
 
@@ -359,7 +363,7 @@ class InjectedASWriter {
         }
         else {
           if (symbol != null) {
-            problemsHolder.add(FlexUIDesignerBundle.message("error.embed.symbol.unneeded", host.getText()));
+            problemsHolder.add(host, FlexUIDesignerBundle.message("error.embed.symbol.unneeded", host.getText()));
           }
 
           return new BitmapValueWriter(source, mimeType);
@@ -374,7 +378,7 @@ class InjectedASWriter {
         return false;
       }
       else {
-        problemsHolder.add("Expected " + expectedType + ", but got " + host.getText());
+        problemsHolder.add(host, "Expected " + expectedType + ", but got " + host.getText());
         unsupported = true;
         return true;
       }

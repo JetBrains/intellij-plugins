@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.xml.util.ColorSampleLookupValue;
 import org.jetbrains.annotations.Nullable;
 
@@ -105,6 +106,7 @@ public final class BaseWriter {
     startPosition = out.size();
   }
 
+  @SuppressWarnings("MethodMayBeStatic")
   public int getObjectId(Context context) {
     if (context.getId() == -1) {
       context.setId(context.getParentScope().referenceCounter++);
@@ -241,7 +243,7 @@ public final class BaseWriter {
     write(className);
   }
 
-  public void writeColor(String value, boolean isPrimitiveStyle) throws InvalidPropertyException {
+  public void writeColor(XmlElement element, String value, boolean isPrimitiveStyle) throws InvalidPropertyException {
     out.write(AmfExtendedTypes.COLOR_STYLE_MARKER);
     if (value.charAt(0) == '#') {
       if (isPrimitiveStyle) {
@@ -268,7 +270,7 @@ public final class BaseWriter {
           return;
         }
         catch (NumberFormatException e) {
-          throw new InvalidPropertyException("error.invalid.color.name", colorName);
+          throw new InvalidPropertyException(element, "error.invalid.color.name", colorName);
         }
       }
       

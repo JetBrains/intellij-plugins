@@ -1,6 +1,12 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,14 +14,27 @@ import java.util.List;
 public class ProblemsHolder {
   private static final Logger LOG = Logger.getInstance(ProblemsHolder.class.getName());
 
-  private final List<String> problems = new ArrayList<String>();
+  private final List<ProblemDescriptor> problems = new ArrayList<ProblemDescriptor>();
 
-  public void add(String message) {
-    problems.add(message);
+  private VirtualFile currentFile;
+
+  private static Document getDocument(@NotNull PsiElement element) {
+    VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
+    assert virtualFile != null;
+    return FileDocumentManager.getInstance().getDocument(virtualFile);
   }
 
-  public String[] getResultList() {
-    return problems.toArray(new String[problems.size()]);
+  private static int getLineNumber(PsiElement element) {
+    return getDocument(element).getLineNumber(element.getTextOffset()) + 1;
+  }
+
+  public void setCurrentFile(@Nullable VirtualFile currentFile) {
+    this.currentFile = currentFile;
+  }
+
+  public ProblemDescriptor[] getResultList() {
+    LOG.assertTrue(currentFile == null);
+    return problems.toArray(new ProblemDescriptor[problems.size()]);
   }
 
   public void clear() {
@@ -23,13 +42,13 @@ public class ProblemsHolder {
   }
 
   public void add(InvalidPropertyException e) {
-    problems.add(e.getMessage());
+    problems.add(new ProblemDescriptor(e.getMessage(), currentFile, e.getPsiElement() == null ? -1 : getLineNumber(e.getPsiElement())));
     if (e.getCause() != null) {
       LOG.error(e.getCause());
     }
   }
 
-  public void add(RuntimeException e, String propertyName) {
+  public void add(PsiElement element, RuntimeException e, String propertyName) {
     String error;
     if (e instanceof NumberFormatException) {
       error = e.getMessage();
@@ -44,18 +63,19 @@ public class ProblemsHolder {
     }
 
     LOG.error(e);
-
-    problems.add(error);
+    problems.add(new ProblemDescriptor(error, currentFile, getLineNumber(element)));
   }
 
   public boolean isEmpty() {
     return problems.isEmpty();
   }
 
+  @SuppressWarnings("MethodMayBeStatic")
   public void add(RuntimeException e) {
     LOG.error(e);
   }
 
+  @SuppressWarnings("MethodMayBeStatic")
   public void add(AssertionError e) {
     LOG.error(e);
   }
@@ -70,5 +90,17 @@ public class ProblemsHolder {
     else {
       add(((AssertionError)e));
     }
+  }
+
+  public void add(PsiElement element, String message) {
+      problems.add(new ProblemDescriptor(message, currentFile, getLineNumber(element)));
+    }
+
+  public void add(String message, int lineNumber) {
+    problems.add(new ProblemDescriptor(message, currentFile, lineNumber));
+  }
+
+  public void add(String message) {
+    problems.add(new ProblemDescriptor(message, null, -1));
   }
 }

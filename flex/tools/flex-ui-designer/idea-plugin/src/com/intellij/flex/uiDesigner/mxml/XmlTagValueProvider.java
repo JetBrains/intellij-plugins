@@ -10,6 +10,7 @@ import com.intellij.psi.xml.XmlTagChild;
 import com.intellij.psi.xml.XmlText;
 import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.xml.XmlElementDescriptor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 // isCollapseWhiteSpace — only for tag: https://bugs.adobe.com/jira/browse/SDK-3983
@@ -55,6 +56,12 @@ class XmlTagValueProvider implements XmlElementValueProvider {
   @Nullable
   public JSClass getJsClass() {
     return InjectionUtil.getJsClassFromPackageAndLocalClassNameReferences(tag);
+  }
+
+  @NotNull
+  @Override
+  public XmlElement getElement() {
+    return tag;
   }
 
   static CharSequence getDisplay(XmlTag tag) {

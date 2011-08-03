@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.mxml;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlText;
+import org.jetbrains.annotations.NotNull;
 
 class XmlTextValueProvider implements XmlElementValueProvider {
   private XmlText xmlText;
@@ -30,5 +31,11 @@ class XmlTextValueProvider implements XmlElementValueProvider {
   @Override
   public JSClass getJsClass() {
     throw new UnsupportedOperationException();
+  }
+
+  @NotNull
+  @Override
+  public XmlElement getElement() {
+    return xmlText;
   }
 }

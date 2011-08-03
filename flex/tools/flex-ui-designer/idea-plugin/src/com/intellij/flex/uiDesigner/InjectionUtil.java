@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlFile;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -66,14 +66,16 @@ public final class InjectionUtil {
     return null;
   }
 
-  @Nullable
-  public static VirtualFile getReferencedFile(PsiElement element, ProblemsHolder problemsHolder, boolean resolveToFirstIfMulti) {
-    final PsiFileSystemItem psiFile = getReferencedPsiFile(element, problemsHolder, resolveToFirstIfMulti);
-    return psiFile == null ? null : psiFile.getVirtualFile();
+  @NotNull
+  public static VirtualFile getReferencedFile(PsiElement element, boolean resolveToFirstIfMulti)
+      throws InvalidPropertyException {
+    //noinspection ConstantConditions
+    return getReferencedPsiFile(element, resolveToFirstIfMulti).getVirtualFile();
   }
 
-  @Nullable
-  public static PsiFileSystemItem getReferencedPsiFile(PsiElement element, ProblemsHolder problemsHolder, boolean resolveToFirstIfMulti) {
+  @NotNull
+  public static PsiFileSystemItem getReferencedPsiFile(PsiElement element, boolean resolveToFirstIfMulti)
+      throws InvalidPropertyException {
     final PsiReference[] references = element.getReferences();
     final JSFileReference fileReference;
     int i = references.length - 1;
@@ -84,8 +86,7 @@ public final class InjectionUtil {
         break;
       }
       else if (--i < 0) {
-        problemsHolder.add("TODO text about error");
-        return null;
+        throw new InvalidPropertyException(element, "cannot.find.file.reference");
       }
     }
 
@@ -102,16 +103,14 @@ public final class InjectionUtil {
     }
 
     if (psiFile == null) {
-      problemsHolder.add(fileReference.getUnresolvedMessagePattern());
+      throw new InvalidPropertyException(fileReference.getUnresolvedMessagePattern(), element);
     }
     else if (psiFile.isDirectory()) {
-      problemsHolder.add(FlexUIDesignerBundle.message("error.embed.source.is.directory", fileReference.getText()));
+      throw new InvalidPropertyException(element, "error.embed.source.is.directory", fileReference.getText());
     }
     else {
       return psiFile;
     }
-
-    return null;
   }
 
   private static PsiFileSystemItem resolveResult(PsiElement element, ResolveResult[] resolveResults) {

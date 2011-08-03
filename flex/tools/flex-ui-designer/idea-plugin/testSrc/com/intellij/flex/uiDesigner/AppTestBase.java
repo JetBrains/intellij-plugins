@@ -4,7 +4,8 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
@@ -66,31 +67,32 @@ abstract class AppTestBase extends FlexUIDesignerBaseTestCase {
   }
   
   private void doSetupFlexSdk(final Module module, final String flexSdkRootPath, final boolean air, final String sdkVersion) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        final String sdkName = generateSdkName(sdkVersion, air);
-        sdk = ProjectJdkTable.getInstance().findJdk(sdkName);
-        if (sdk == null) {
-          //noinspection RedundantCast
-          sdk = FlexSdkUtils.createOrGetSdk(air ? (SdkType)AirSdkType.getInstance() : (SdkType)FlexSdkType.getInstance(),
-                                            flexSdkRootPath);
-          assert sdk != null;
-        }
-
-        final SdkModificator modificator = sdk.getSdkModificator();
-        modificator.setName(sdkName);
-        modificator.setVersionString(sdkVersion);
-        modifySdk(sdk, modificator);
-        modificator.commitChanges();
-
-        final ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
-        rootModel.setSdk(sdk);
-        rootModel.commit();
+    AccessToken token = WriteAction.start();
+    try {
+      final String sdkName = generateSdkName(sdkVersion, air);
+      sdk = ProjectJdkTable.getInstance().findJdk(sdkName);
+      if (sdk == null) {
+        //noinspection RedundantCast
+        sdk = FlexSdkUtils.createOrGetSdk(air ? (SdkType)AirSdkType.getInstance() : (SdkType)FlexSdkType.getInstance(),
+                                          flexSdkRootPath);
+        assert sdk != null;
       }
-    });
+
+      final SdkModificator modificator = sdk.getSdkModificator();
+      modificator.setName(sdkName);
+      modificator.setVersionString(sdkVersion);
+      modifySdk(sdk, modificator);
+      modificator.commitChanges();
+
+      final ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+      rootModel.setSdk(sdk);
+      rootModel.commit();
+    }
+    finally {
+      token.finish();
+    }
   }
-  
+
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

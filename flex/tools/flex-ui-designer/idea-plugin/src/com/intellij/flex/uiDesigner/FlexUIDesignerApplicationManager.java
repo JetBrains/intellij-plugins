@@ -160,11 +160,11 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           try {
             if (!client.isModuleRegistered(module)) {
               try {
-                LibraryManager.getInstance().initLibrarySets(module, APP_DIR);
+                LibraryManager.getInstance().initLibrarySets(module);
               }
               catch (InitException e) {
                 LOG.error(e.getCause());
-                DocumentProblemManager.getInstance().report(module.getProject(), e.getMessage());
+                notifyUser(debug, e.getMessage(), module);
               }
             }
 
@@ -343,6 +343,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
     private final Semaphore semaphore = new Semaphore();
     private ProgressIndicator indicator;
+    
+    public XmlFile[] unregisteredDocumentReferences;
 
     public FirstOpenDocumentTask(@NotNull final XmlFile psiFile, final @NotNull Module module, final boolean debug) {
       super(module.getProject(), getOpenActionTitle(debug));
@@ -370,6 +372,11 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       try {
         client.flush();
 
+        final ProblemsHolder problemsHolder = new ProblemsHolder();
+        if (unregisteredDocumentReferences != null) {
+          client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder);
+        }
+
         final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(appParentDisposable);
         connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentOpenedListener() {
           @Override
@@ -379,10 +386,14 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
         });
 
-        client.openDocument(module, psiFile, true);
+        client.openDocument(module, psiFile, true, problemsHolder);
         client.flush();
 
         indicator.setText(FlexUIDesignerBundle.message("load.libraries"));
+
+        if (!problemsHolder.isEmpty()) {
+          DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
+        }
       }
       catch (IOException e) {
         LOG.error(e);
@@ -504,11 +515,13 @@ public class FlexUIDesignerApplicationManager implements Disposable {
     }
 
     private void runInitializeLibrariesAndModuleThread() {
+      LibraryManager.getInstance().setAppDir(APP_DIR);
+
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
         @Override
         public void run() {
           indicator.setText(FlexUIDesignerBundle.message("delete.old.libraries"));
-          LibraryManager.getInstance().garbageCollection(APP_DIR);
+          LibraryManager.getInstance().garbageCollection();
           checkCanceled();
 
           try {
@@ -516,7 +529,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
               Client.getInstance().initStringRegistry();
             }
             indicator.setText(FlexUIDesignerBundle.message("collect.libraries"));
-            LibraryManager.getInstance().initLibrarySets(module, APP_DIR);
+            unregisteredDocumentReferences = LibraryManager.getInstance().initLibrarySets(module);
           }
           catch (IOException e) {
             LOG.error(e);

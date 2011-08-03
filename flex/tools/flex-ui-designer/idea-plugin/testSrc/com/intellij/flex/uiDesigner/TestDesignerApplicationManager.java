@@ -9,6 +9,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.ShutDownTracker;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import gnu.trove.THashMap;
 import org.picocontainer.MutablePicoContainer;
@@ -30,6 +31,8 @@ class TestDesignerApplicationManager {
   public final TestSocketInputHandler socketInputHandler;
 
   private TestDesignerApplicationManager() throws IOException {
+    LibraryManager.getInstance().setAppDir(FlexUIDesignerApplicationManager.APP_DIR);
+
     DesignerApplicationUtil.AdlRunConfiguration adlRunConfiguration = DesignerApplicationUtil.createTestAdlRunConfiguration();
 
     adlRunConfiguration.arguments = new ArrayList<String>();
@@ -99,12 +102,16 @@ class TestDesignerApplicationManager {
     serviceImplementationChanged = true;
   }
 
-  public void initLibrarySets(Module module, boolean requireLocalStyleHolder, String sdkName) throws IOException, InitException {
+  public XmlFile[] initLibrarySets(Module module, boolean requireLocalStyleHolder, String sdkName) throws IOException, InitException {
     LibrarySet sdkLibrarySet = sdkLibrarySetCache.get(sdkName);
-    LibraryManager.getInstance().initLibrarySets(module, FlexUIDesignerApplicationManager.APP_DIR, requireLocalStyleHolder, sdkLibrarySet);
+    final ProblemsHolder problemsHolder = new ProblemsHolder();
+    XmlFile[] unregistedDocumentReferences = LibraryManager.getInstance().initLibrarySets(module, requireLocalStyleHolder, problemsHolder, sdkLibrarySet);
+    assert problemsHolder.isEmpty();
     if (sdkLibrarySet == null) {
       sdkLibrarySetCache.put(sdkName, Client.getInstance().getRegisteredProjects().getInfo(module.getProject()).getSdkLibrarySet());
     }
+
+    return unregistedDocumentReferences;
   }
 
   public static TestDesignerApplicationManager getInstance() throws IOException {

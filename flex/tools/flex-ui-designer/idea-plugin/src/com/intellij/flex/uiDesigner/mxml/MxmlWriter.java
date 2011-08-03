@@ -14,7 +14,8 @@ import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -32,7 +33,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.intellij.flex.uiDesigner.mxml.MxmlUtil.getLineNumber;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.IGNORE;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PRIMITIVE;
 
@@ -43,7 +43,6 @@ public class MxmlWriter {
 
   private final PrimitiveAmfOutputStream out;
 
-  private final ProblemsHolder problemsHolder = new ProblemsHolder();
   private final BaseWriter writer;
   private StateWriter stateWriter;
   private final InjectedASWriter injectedASWriter;
@@ -56,32 +55,35 @@ public class MxmlWriter {
   private final PropertyProcessor propertyProcessor;
   private boolean requireCallResetAfterMessage;
 
+  private ProblemsHolder problemsHolder;
+
   public MxmlWriter(PrimitiveAmfOutputStream out) {
     this.out = out;
     writer = new BaseWriter(out);
-    injectedASWriter = new InjectedASWriter(writer, problemsHolder);
+    injectedASWriter = new InjectedASWriter(writer);
     propertyProcessor = new PropertyProcessor(injectedASWriter, writer);
   }
 
-  public Result write(@NotNull final XmlFile psiFile) throws IOException {
+  public XmlFile[] write(@NotNull final XmlFile psiFile, @NotNull final ProblemsHolder problemsHolder) throws IOException {
     try {
+      this.problemsHolder = problemsHolder;
+      problemsHolder.setCurrentFile(psiFile.getVirtualFile());
+      injectedASWriter.setProblemsHolder(problemsHolder);
       requireCallResetAfterMessage = true;
       writer.beginMessage();
 
-      ApplicationManager.getApplication().runReadAction(new Runnable() {
-        @Override
-        public void run() {
-          XmlTag rootTag = psiFile.getRootTag();
-          assert rootTag != null;
-          ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor)rootTag.getDescriptor();
-          assert rootTagDescriptor != null;
-          final String fqn = rootTagDescriptor.getQualifiedName();
-          //String replacementFqn = appClassMap.get(fqn);
-          //writer.writeObjectHeader(replacementFqn == null ? fqn : replacementFqn);
-          writer.writeObjectHeader(fqn);
-          processElements(rootTag, null, false, -1, out.size() - 2);
-        }
-      });
+      AccessToken token = ReadAction.start();
+      try {
+        XmlTag rootTag = psiFile.getRootTag();
+        assert rootTag != null;
+        ClassBackedElementDescriptor rootTagDescriptor = (ClassBackedElementDescriptor)rootTag.getDescriptor();
+        assert rootTagDescriptor != null;
+        writer.writeObjectHeader(rootTagDescriptor.getQualifiedName());
+        processElements(rootTag, null, false, -1, out.size() - 2);
+      }
+      finally {
+        token.finish();
+      }
 
       out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
 
@@ -95,21 +97,17 @@ public class MxmlWriter {
 
       injectedASWriter.write();
       writer.endMessage();
-      return new Result(propertyProcessor.getUnregisteredDocumentFactories(), problemsHolder);
+      List<XmlFile> unregisteredDocumentReferences = propertyProcessor.getUnregisteredDocumentFactories();
+      return unregisteredDocumentReferences.isEmpty()
+             ? null
+             : unregisteredDocumentReferences.toArray(new XmlFile[unregisteredDocumentReferences.size()]);
     }
     finally {
+      problemsHolder.setCurrentFile(null);
+      this.problemsHolder = null;
+      injectedASWriter.setProblemsHolder(null);
       requireCallResetAfterMessage = false;
       resetAfterMessage();
-    }
-  }
-
-  public static class Result {
-    public final XmlFile[] subDocuments;
-    public final String[] problems;
-
-    public Result(List<XmlFile> subDocuments, ProblemsHolder problems) {
-      this.subDocuments = subDocuments.isEmpty() ? null : subDocuments.toArray(new XmlFile[subDocuments.size()]);
-      this.problems = problems.isEmpty() ? null : problems.getResultList();
     }
   }
 
@@ -127,8 +125,6 @@ public class MxmlWriter {
   }
 
   private void resetAfterMessage() {
-    problemsHolder.clear();
-
     xmlAttributeValueProvider.setAttribute(null);
     xmlTextValueProvider = null;
     xmlTagValueProvider = null;
@@ -235,7 +231,7 @@ public class MxmlWriter {
             }
             if (type < PRIMITIVE) {
               writer.getBlockOut().setPosition(beforePosition);
-              addProblem("error.unknown.attribute.value.type", descriptor.getType());
+              addProblem(attribute, "error.unknown.attribute.value.type", descriptor.getType());
             }
           }
         }
@@ -300,7 +296,7 @@ public class MxmlWriter {
             continue;
           }
           else if (isAbstract(classBackedDescriptor)) {
-            addProblem("error.abstract.class", classBackedDescriptor.getQualifiedName());
+            addProblem(child, "error.abstract.class", classBackedDescriptor.getQualifiedName());
             continue;
           }
 
@@ -368,7 +364,7 @@ public class MxmlWriter {
                                         boolean isArray) {
     if (!writeIfPrimitive(tag, descriptor, isArray)) {
       if (isProjectComponent(descriptor)) {
-        addProblem("error.custom.component.are.not.supported", tag.getLocalName(), getLineNumber(tag));
+        addProblem(tag, "error.custom.component.are.not.supported", tag.getLocalName());
         return;
       }
 
@@ -426,8 +422,8 @@ public class MxmlWriter {
            JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.VIEW_STACK);
   }
 
-  private void addProblem(@PropertyKey(resourceBundle = FlexUIDesignerBundle.BUNDLE) String key, Object... params) {
-    problemsHolder.add(FlexUIDesignerBundle.message(key, params));
+  private void addProblem(XmlElement xmlElement, @PropertyKey(resourceBundle = FlexUIDesignerBundle.BUNDLE) String key, Object... params) {
+    problemsHolder.add(xmlElement, FlexUIDesignerBundle.message(key, params));
   }
 
   // childDescriptor will be null if child is XmlText
@@ -441,13 +437,13 @@ public class MxmlWriter {
       final boolean isDirectContainerImpl = className.equals(FlexCommonTypeNames.ICONTAINER);
       if (isDirectContainerImpl || JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.ICONTAINER)) {
         if (childDescriptor == null) {
-          addProblem("error.initializer.cannot.be.represented.in.text", tag.getLocalName(), getLineNumber(tag));
+          addProblem(tag, "error.initializer.cannot.be.represented.in.text", tag.getLocalName());
           return -1;
         }
 
         if (!isDirectContainerImpl && isHaloNavigator(className, jsClass) &&
             !JSInheritanceUtil.isParentClass((JSClass)childDescriptor.getDeclaration(), FlexCommonTypeNames.INAVIGATOR_CONTENT)) {
-          addProblem("error.children.must.be", tag.getLocalName(), FlexCommonTypeNames.INAVIGATOR_CONTENT, getLineNumber(tag));
+          addProblem(tag, "error.children.must.be", tag.getLocalName(), FlexCommonTypeNames.INAVIGATOR_CONTENT);
           return -1;
         }
 
@@ -457,7 +453,7 @@ public class MxmlWriter {
       }
       else {
         // http://youtrack.jetbrains.net/issue/IDEA-66565
-        addProblem("error.default.property.not.found", tag.getLocalName(), getLineNumber(tag));
+        addProblem(tag, "error.default.property.not.found", tag.getLocalName());
       }
     }
     else {
@@ -466,13 +462,13 @@ public class MxmlWriter {
         final boolean isString = elementType.equals(JSCommonTypeNames.STRING_CLASS_NAME);
         if (isString) {
           if (childDescriptor != null && !childDescriptor.getQualifiedName().equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
-            addProblem("error.children.must.be", tag.getLocalName(), elementType, getLineNumber(tag));
+            addProblem(tag, "error.children.must.be", tag.getLocalName(), elementType);
             return -1;
           }
         }
         else {
           if (childDescriptor == null) {
-            addProblem("error.initializer.cannot.be.represented.in.text", tag.getLocalName(), getLineNumber(tag));
+            addProblem(tag, "error.initializer.cannot.be.represented.in.text", tag.getLocalName());
             return -1;
           }
         }
@@ -587,7 +583,7 @@ public class MxmlWriter {
       return valueWriter.write(out, writer, propertyProcessor.isStyle());
     }
     catch (RuntimeException e) {
-      problemsHolder.add(e, descriptor.getName());
+      problemsHolder.add(element, e, descriptor.getName());
     }
     catch (Throwable e) {
       problemsHolder.add(e);

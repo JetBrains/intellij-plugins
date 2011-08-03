@@ -8,7 +8,9 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
@@ -34,8 +36,18 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
   private static final String ABC_FILTER_VERSION = "5";
   private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
 
+  private File appDir;
+
   public static LibraryManager getInstance() {
     return ServiceManager.getService(LibraryManager.class);
+  }
+
+  public void setAppDir(@NotNull File appDir) {
+    if (this.appDir != null && !ApplicationManager.getApplication().isUnitTestMode() /* in unit tests we set it for each app test */) {
+      throw new IllegalStateException("appDir must be set only once");
+    }
+    
+    this.appDir = appDir;
   }
 
   public boolean isRegistered(@NotNull Library library) {
@@ -51,7 +63,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     return info != null && info.getSdk() == sdk;
   }
 
-  public void garbageCollection(@NotNull final File appDir) {
+  public void garbageCollection() {
     PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
     if (ABC_FILTER_VERSION.equals(propertiesComponent.getValue(ABC_FILTER_VERSION_VALUE_NAME))) {
       return;
@@ -67,14 +79,24 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     propertiesComponent.setValue(ABC_FILTER_VERSION_VALUE_NAME, ABC_FILTER_VERSION);
   }
 
-  public void initLibrarySets(@NotNull final Module module, @NotNull final File appDir) throws IOException, InitException {
-    initLibrarySets(module, appDir, true, null);
+  public XmlFile[] initLibrarySets(@NotNull final Module module) throws IOException, InitException {
+    final ProblemsHolder problemsHolder = new ProblemsHolder();
+    XmlFile[] unregisteredDocumentReferences = initLibrarySets(module, true, problemsHolder, null);
+    if (!problemsHolder.isEmpty()) {
+      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
+    }
+
+    return unregisteredDocumentReferences;
+  }
+
+  public XmlFile[] initLibrarySets(@NotNull final Module module, @NotNull ProblemsHolder problemsHolder) throws IOException, InitException {
+    return initLibrarySets(module, true, problemsHolder, null);
   }
 
   // librarySet for test only
-  public void initLibrarySets(@NotNull final Module module, @NotNull final File appDir, boolean collectLocalStyleHolders, @Nullable LibrarySet librarySet)
-    throws InitException, IOException {
-    final ProblemsHolder problemsHolder = new ProblemsHolder();
+  public XmlFile[] initLibrarySets(@NotNull final Module module, boolean collectLocalStyleHolders, ProblemsHolder problemsHolder,
+                                   @Nullable LibrarySet librarySet)
+      throws InitException, IOException {
     final Project project = module.getProject();
     final LibraryCollector libraryCollector = new LibraryCollector(this);
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);
@@ -82,12 +104,13 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
 
     final Client client;
     try {
-      ApplicationManager.getApplication().runReadAction(new Runnable() {
-        @Override
-        public void run() {
-          libraryCollector.collect(module, new LibraryStyleInfoCollector(project, module, stringWriter, problemsHolder));
-        }
-      });
+      AccessToken token = ReadAction.start();
+      try {
+        libraryCollector.collect(module, new LibraryStyleInfoCollector(project, module, stringWriter, problemsHolder));
+      }
+      finally {
+        token.finish();
+      }
 
       client = Client.getInstance();
       if (stringWriter.hasChanges()) {
@@ -109,7 +132,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     if (isNewProject) {
       if (librarySet == null) {
         librarySet = createLibrarySet(projectLocationHash + "_fdk", null, libraryCollector.sdkLibraries,
-                                         libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
+                                      libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
         client.registerLibrarySet(librarySet);
       }
 
@@ -121,7 +144,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
       // different flex sdk version for module
       if (libraryCollector.sdkLibraries != null) {
         librarySet = createLibrarySet(Integer.toHexString(module.getName().hashCode()) + "_fdk", null, libraryCollector.sdkLibraries,
-                                         libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
+                                      libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
         client.registerLibrarySet(librarySet);
       }
     }
@@ -159,10 +182,6 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
 
     client.registerModule(project, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
 
-    if (!problemsHolder.isEmpty()) {
-      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
-    }
-
     module.getMessageBus().connect(moduleInfo).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
       public void beforeRootsChange(ModuleRootEvent event) {
@@ -175,6 +194,8 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
             NotificationType.WARNING).notify(project);
       }
     });
+
+    return unregisteredDocumentReferences.isEmpty() ? null : unregisteredDocumentReferences.toArray(new XmlFile[unregisteredDocumentReferences.size()]);
   }
 
   @NotNull

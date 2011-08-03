@@ -270,17 +270,25 @@ public class Client implements Closable {
   }
 
   public void openDocument(Module module, XmlFile psiFile, boolean notifyOpened) throws IOException {
-    DocumentFactoryManager documentFileManager = DocumentFactoryManager.getInstance(module.getProject());
+    final ProblemsHolder problemsHolder = new ProblemsHolder();
+    openDocument(module, psiFile, notifyOpened, problemsHolder);
+    if (!problemsHolder.isEmpty()) {
+      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
+    }
+  }
+
+  public void openDocument(Module module, XmlFile psiFile, boolean notifyOpened, ProblemsHolder problemsHolder) throws IOException {
+    DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
     VirtualFile virtualFile = psiFile.getVirtualFile();
     FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
     assert virtualFile != null;
-    if (documentFileManager.isRegistered(virtualFile) && ArrayUtil.indexOf(fileDocumentManager.getUnsavedDocuments(),
+    if (documentFactoryManager.isRegistered(virtualFile) && ArrayUtil.indexOf(fileDocumentManager.getUnsavedDocuments(),
       fileDocumentManager.getDocument(virtualFile)) != -1) {
-      updateDocumentFactory(documentFileManager.getId(virtualFile), module, psiFile);
+      updateDocumentFactory(documentFactoryManager.getId(virtualFile), module, psiFile);
       return;
     }
 
-    int factoryId = registerDocumentFactoryIfNeed(module, psiFile, documentFileManager, false);
+    int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder);
     beginMessage(ClientMethod.openDocument);
     writeId(module);
     out.writeShort(factoryId);
@@ -291,19 +299,22 @@ public class Client implements Closable {
     beginMessage(ClientMethod.updateDocumentFactory);
     writeId(module);
     out.writeShort(factoryId);
-    writeDocumentFactory(module, psiFile, psiFile.getVirtualFile(), DocumentFactoryManager.getInstance(module.getProject()));
+    ProblemsHolder problemsHolder = new ProblemsHolder();
+    writeDocumentFactory(module, psiFile, problemsHolder);
+    if (!problemsHolder.isEmpty()) {
+      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
+    }
 
     beginMessage(ClientMethod.updateDocuments);
     writeId(module);
     out.writeShort(factoryId);
   }
 
-  private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, DocumentFactoryManager documentFileManager, boolean force)
-    throws IOException {
-    VirtualFile virtualFile = psiFile.getVirtualFile();
-    assert virtualFile != null;
-    final boolean registered = !force && documentFileManager.isRegistered(virtualFile);
-    final int id = documentFileManager.getId(virtualFile);
+  private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, VirtualFile virtualFile,
+                                            boolean force, ProblemsHolder problemsHolder) throws IOException {
+    final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
+    final boolean registered = !force && documentFactoryManager.isRegistered(virtualFile);
+    final int id = documentFactoryManager.getId(virtualFile);
     if (!registered) {
       beginMessage(ClientMethod.registerDocumentFactory);
       writeId(module);
@@ -314,29 +325,38 @@ public class Client implements Closable {
       assert jsClass != null;
       out.writeAmfUtf(jsClass.getQualifiedName());
 
-      writeDocumentFactory(module, psiFile, virtualFile, documentFileManager);
+      writeDocumentFactory(module, psiFile, problemsHolder);
     }
 
     return id;
   }
-  
-  private void writeDocumentFactory(Module module, XmlFile psiFile, VirtualFile virtualFile, DocumentFactoryManager documentFileManager)
-    throws IOException {
-    MxmlWriter.Result result = mxmlWriter.write(psiFile);
-    if (result.problems != null) {
-      DocumentProblemManager.getInstance().report(module.getProject(), result.problems);
+
+  private void writeDocumentFactory(final @NotNull Module module, final @NotNull XmlFile psiFile, ProblemsHolder problemsHolder)
+      throws IOException {
+    XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder);
+    if (unregisteredDocumentReferences != null) {
+      registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder);
     }
+  }
 
-    if (result.subDocuments != null) {
-      for (XmlFile subDocument : result.subDocuments) {
-        Module moduleForFile = ModuleUtil.findModuleForFile(virtualFile, psiFile.getProject());
-        if (module != moduleForFile) {
-          FlexUIDesignerApplicationManager.LOG.error("Currently, support subdocument only from current module");
+  public void registerDocumentReferences(XmlFile[] files, Module module, ProblemsHolder problemsHolder) throws IOException {
+    for (XmlFile file : files) {
+      VirtualFile virtualFile = file.getVirtualFile();
+      assert virtualFile != null;
+      Module documentModule = ModuleUtil.findModuleForFile(virtualFile, file.getProject());
+      if (module != documentModule && !isModuleRegistered(module)) {
+        try {
+          LibraryManager.getInstance().initLibrarySets(module, problemsHolder);
         }
-
-        // force register, subDocuments from unregisteredDocumentFactories, so, it is registered (id allocated) only on server side
-        registerDocumentFactoryIfNeed(module, subDocument, documentFileManager, true);
+        catch (InitException e) {
+          FlexUIDesignerApplicationManager.LOG.error(e.getCause());
+          // todo unclear error message (module will not be specified in this error message (but must be))
+          problemsHolder.add(e.getMessage());
+        }
       }
+
+      // force register, it is registered (id allocated) only on server side
+      registerDocumentFactoryIfNeed(module, file, virtualFile, true, problemsHolder);
     }
   }
 

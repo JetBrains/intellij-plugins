@@ -202,7 +202,7 @@ class PropertyProcessor {
       else if (type.equals(JSCommonTypeNames.INT_TYPE_NAME) || type.equals(JSCommonTypeNames.UINT_TYPE_NAME)) {
         String format = descriptor.getFormat();
         if (format != null && format.equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
-          writer.writeColor(valueProvider.getTrimmed(), isStyle);
+          writer.writeColor(valueProvider.getElement(), valueProvider.getTrimmed(), isStyle);
         }
         else {
           out.writeAmfInt(valueProvider.getTrimmed());
@@ -279,7 +279,7 @@ class PropertyProcessor {
         XmlTag tag = ((XmlTagValueProvider)valueProvider).getTag();
         XmlTag[] subTags = tag.getSubTags();
         if (subTags.length > 0) {
-          throw new InvalidPropertyException("error.inline.component.are.not.supported", MxmlUtil.getLineNumber(tag));
+          throw new InvalidPropertyException(tag, "error.inline.component.are.not.supported");
         }
       }
 
@@ -292,7 +292,7 @@ class PropertyProcessor {
 
       JSClass jsClass = valueProvider.getJsClass();
       if (jsClass == null) {
-        throw new InvalidPropertyException("error.unresolved.class", valueProvider.getTrimmed());
+        throw new InvalidPropertyException(valueProvider.getElement(), "error.unresolved.class", valueProvider.getTrimmed());
       }
 
       final int projectComponentFactoryId = getProjectComponentFactoryId(jsClass);

@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 class XmlAttributeValueProvider implements XmlElementValueProvider {
@@ -33,5 +34,11 @@ class XmlAttributeValueProvider implements XmlElementValueProvider {
   public JSClass getJsClass() {
     //noinspection ConstantConditions
     return InjectionUtil.getJsClassFromPackageAndLocalClassNameReferences(attribute.getValueElement());
+  }
+
+  @NotNull
+  @Override
+  public XmlElement getElement() {
+    return attribute;
   }
 }

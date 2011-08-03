@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,15 +22,16 @@ abstract class MxmlTestBase extends AppTestBase {
   private int passedCounter;
   protected File appDir;
   
-  protected String getRawProjectRoot() {
+  protected String getRawProjectRoot() throws NoSuchMethodException {
     return useRawProjectRoot() ? getTestPath() : null;
   }
   
-  protected boolean useRawProjectRoot() {
-    return false;
+  private boolean useRawProjectRoot() throws NoSuchMethodException {
+    Flex annotation = getClass().getMethod(getName()).getAnnotation(Flex.class);
+    return annotation != null && annotation.rawProjectRoot();
   }
 
-  protected String[] getLastProblems() {
+  protected static String[] getLastProblems() {
     return TestDesignerApplicationManager.getLastProblems();
   }
 
@@ -39,12 +42,10 @@ abstract class MxmlTestBase extends AppTestBase {
     socketInputHandler = testApplicationManager.socketInputHandler;
     client = (TestClient)Client.getInstance();
 
-    testApplicationManager.initLibrarySets(myModule, isRequireLocalStyleHolder(), sdk.getName());
-    assertAfterInitLibrarySets();
+    assertAfterInitLibrarySets(testApplicationManager.initLibrarySets(myModule, isRequireLocalStyleHolder(), sdk.getName()));
   }
 
-  protected void assertAfterInitLibrarySets() {
-    assertEmpty(getLastProblems());
+  protected void assertAfterInitLibrarySets(XmlFile[] unregisteredDocumentReferences) throws IOException {
   }
 
   protected void modifyModule(ModifiableRootModel model, VirtualFile rootDir) {
@@ -62,35 +63,35 @@ abstract class MxmlTestBase extends AppTestBase {
     final File toDirIO = createTempDirectory();
     final VirtualFile toDir = getVirtualFile(toDirIO);
 
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        try {
-          final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
-          final ModifiableRootModel rootModel = rootManager.getModifiableModel();
-          
-          boolean rootSpecified = rawProjectRoot != null;
-          int rawRootPathLength = rootSpecified ? rawProjectRoot.getPath().length() : -1;
-          // auxiliary files should be copied first
-          for (int i = vFiles.length - 1; i >= 0; i--) {
-            VirtualFile vFile = vFiles[i];
-            if (rootSpecified) {
-              copyFilesFillingEditorInfos(rawProjectRoot, toDir, vFile.getPath().substring(rawRootPathLength));
-            }
-            else {
-              copyFilesFillingEditorInfos(vFile.getParent(), toDir, vFile.getName());
-            }
-          }
+    AccessToken token = WriteAction.start();
+    try {
+      final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
+      final ModifiableRootModel rootModel = rootManager.getModifiableModel();
 
-          rootModel.addContentEntry(toDir).addSourceFolder(toDir, false);
-          modifyModule(rootModel, toDir);
-          doCommitModel(rootModel);
-          sourceRootAdded(toDir);
+      boolean rootSpecified = rawProjectRoot != null;
+      int rawRootPathLength = rootSpecified ? rawProjectRoot.getPath().length() : -1;
+      // auxiliary files should be copied first
+      for (int i = vFiles.length - 1; i >= 0; i--) {
+        VirtualFile vFile = vFiles[i];
+        if (rootSpecified) {
+          copyFilesFillingEditorInfos(rawProjectRoot, toDir, vFile.getPath().substring(rawRootPathLength));
         }
-        catch (IOException e) {
-          LOG.error(e);
+        else {
+          copyFilesFillingEditorInfos(vFile.getParent(), toDir, vFile.getName());
         }
       }
-    });
+
+      rootModel.addContentEntry(toDir).addSourceFolder(toDir, false);
+      modifyModule(rootModel, toDir);
+      doCommitModel(rootModel);
+      sourceRootAdded(toDir);
+    }
+    catch (IOException e) {
+      LOG.error(e);
+    }
+    finally {
+      token.finish();
+    }
 
     runAdl();
     return toDir;

@@ -38,12 +38,16 @@ public class DocumentProblemManager {
     report(project, problems.getResultList());
   }
 
-  public void report(Project project, String[] problems) {
+  public void report(Project project, ProblemDescriptor[] problems) {
     StringBuilder builder = StringBuilderSpinAllocator.alloc();
     try {
       appendTitle(builder).append("<ul>");
-      for (String problem : problems) {
-        builder.append("<li>").append(problem).append("</li>");
+      for (ProblemDescriptor problemDescriptor : problems) {
+        builder.append("<li>").append(problemDescriptor.getMessage());
+        if (problemDescriptor.hasLineNumber()) {
+          builder.append(" (line: ").append(problemDescriptor.getLineNumber()).append(')');
+        }
+        builder.append("</li>");
       }
       builder.append("</ul>");
       report(project, builder.toString(), MessageType.ERROR);

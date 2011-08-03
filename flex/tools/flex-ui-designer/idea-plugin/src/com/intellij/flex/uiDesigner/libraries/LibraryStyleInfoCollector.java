@@ -25,14 +25,12 @@ public class LibraryStyleInfoCollector implements Consumer<Library> {
   private final PrimitiveAmfOutputStream bytes = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(128));
   private final CssWriter cssWriter;
   private final StringRegistry.StringWriter stringWriter;
-  private final ProblemsHolder problemsHolder;
 
   public LibraryStyleInfoCollector(Project project, Module module, StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder) {
     this.project = project;
     this.module = module;
     this.stringWriter = stringWriter;
-    this.problemsHolder = problemsHolder;
-    cssWriter = new CssWriter(this.stringWriter);
+    cssWriter = new CssWriter(this.stringWriter, problemsHolder);
   }
 
   private byte[] collectInherited(final VirtualFile jarFile) {
@@ -86,7 +84,7 @@ public class LibraryStyleInfoCollector implements Consumer<Library> {
 
     VirtualFile defaultsCssVirtualFile = library.getDefaultsCssFile();
     if (defaultsCssVirtualFile != null) {
-      library.defaultsStyle = cssWriter.write(defaultsCssVirtualFile, module, problemsHolder);
+      library.defaultsStyle = cssWriter.write(defaultsCssVirtualFile, module);
       library.requiredAssetsInfo = cssWriter.getRequiredAssetsInfo();
     }
   }

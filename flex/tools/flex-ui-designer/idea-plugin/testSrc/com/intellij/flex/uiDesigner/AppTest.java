@@ -2,7 +2,9 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
+import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -84,13 +86,14 @@ public class AppTest extends AppTestBase {
     
     VirtualFile virtualFile = newParent.getChildren()[0];
     final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        assert document != null;
-        document.insertString(254, "A");
-      }
-    });
+    AccessToken token = WriteAction.start();
+    try {
+      assert document != null;
+      document.insertString(254, "A");
+    }
+    finally {
+      token.finish();
+    }
 
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
 

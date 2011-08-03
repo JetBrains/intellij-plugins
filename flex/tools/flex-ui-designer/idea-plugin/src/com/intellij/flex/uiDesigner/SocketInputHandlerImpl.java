@@ -329,7 +329,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
     AccessToken token = ReadAction.start();
     try {
-
       PropertiesFile resourceBundleFile;
       if (projectInfo == null) {
         // project may be closed, but client is not closed yet (AppTest#testCloseAndOpenProject)

@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface Flex {
   String version() default "";
   boolean requireLocalStyleHolder() default false;
+  boolean rawProjectRoot() default false;
 }

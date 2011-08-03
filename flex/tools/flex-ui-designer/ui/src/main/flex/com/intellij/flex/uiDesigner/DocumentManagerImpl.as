@@ -195,7 +195,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       }
     }
 
-    cssReader.read(suitableLocalStyleHolder.getStylesheet(ModuleManager(module.project.getComponent(ModuleManager))).rulesets, suitableLocalStyleHolder.file);
+    cssReader.read(suitableLocalStyleHolder.getStylesheet(module.project).rulesets, suitableLocalStyleHolder.file);
     cssReader.finalizeRead();
   }
 

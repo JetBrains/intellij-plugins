@@ -7,4 +7,5 @@
     <State name="normal"/>
     <State name="disabled"/>
   </states>
+  <Label text="I am custom skin"/>
 </Skin>

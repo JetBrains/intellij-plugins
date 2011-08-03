@@ -44,28 +44,40 @@ public class CssWriter {
 
   private RequiredAssetsInfo requiredAssetsInfo;
 
-  public CssWriter(StringRegistry.StringWriter stringWriter) {
+  public CssWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder) {
     this.stringWriter = stringWriter;
+    this.problemsHolder = problemsHolder;
   }
 
   public RequiredAssetsInfo getRequiredAssetsInfo() {
     return requiredAssetsInfo;
   }
 
-  public byte[] write(VirtualFile file, Module module, ProblemsHolder problemsHolder) {
+  public byte[] write(VirtualFile file, Module module) {
     Document document = FileDocumentManager.getInstance().getDocument(file);
     assert document != null;
     CssFile cssFile = (CssFile)PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document);
-    return write(cssFile, document, module, problemsHolder);
+    problemsHolder.setCurrentFile(file);
+    try {
+      return write(cssFile, document, module);
+    }
+    finally {
+      problemsHolder.setCurrentFile(null);
+    }
   }
 
-  public byte[] write(CssFile cssFile, Module module, ProblemsHolder problemsHolder) {
-    return write(cssFile, PsiDocumentManager.getInstance(module.getProject()).getDocument(cssFile), module, problemsHolder);
+  public byte[] write(CssFile cssFile, Module module) {
+    problemsHolder.setCurrentFile(cssFile.getVirtualFile());
+    try {
+      return write(cssFile, PsiDocumentManager.getInstance(module.getProject()).getDocument(cssFile), module);
+    }
+    finally {
+      problemsHolder.setCurrentFile(null);
+    }
   }
 
-  public byte[] write(CssFile cssFile, Document document, Module module, ProblemsHolder problemsHolder) {
+  private byte[] write(CssFile cssFile, Document document, Module module) {
     requiredAssetsInfo = null;
-    this.problemsHolder = problemsHolder;
 
     rulesetVectorWriter.prepareIteration();
 
@@ -109,7 +121,7 @@ public class CssWriter {
           continue;
         }
         catch (RuntimeException e) {
-          problemsHolder.add(e, declaration.getPropertyName());
+          problemsHolder.add(declaration, e, declaration.getPropertyName());
         }
         catch (Throwable e) {
           problemsHolder.add(e);
@@ -483,14 +495,14 @@ public class CssWriter {
       JSClass jsClass = InjectionUtil.getJsClassFromPackageAndLocalClassNameReferences(cssString);
       if (jsClass == null) {
         final CharSequence chars = valueNode.getFirstChildNode().getChars();
-        throw new InvalidPropertyException("error.unresolved.class", chars.subSequence(1, chars.length() - 1));
+        throw new InvalidPropertyException(cssString, "error.unresolved.class", chars.subSequence(1, chars.length() - 1));
       }
 
-      writeClassReference(jsClass, info);
+      writeClassReference(jsClass, info, cssString);
     }
   }
 
-  protected void writeClassReference(JSClass jsClass, FlexStyleIndexInfo info) throws InvalidPropertyException {
+  protected void writeClassReference(JSClass jsClass, FlexStyleIndexInfo info, CssString cssString) throws InvalidPropertyException {
     propertyOut.write(AmfExtendedTypes.CLASS_REFERENCE);
     stringWriter.write(jsClass.getQualifiedName(), propertyOut);
   }
@@ -509,12 +521,12 @@ public class CssWriter {
       }
       else {
         if (firstChild instanceof CssString) {
-          source = InjectionUtil.getReferencedFile(firstChild, problemsHolder, false);
+          source = InjectionUtil.getReferencedFile(firstChild, false);
         }
         else if (firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == CssElementTypes.CSS_IDENT) {
           String name = firstChild.getText();
           if (name.equals("source")) {
-            source = InjectionUtil.getReferencedFile(terms[++i].getFirstChild(), problemsHolder, false);
+            source = InjectionUtil.getReferencedFile(terms[++i].getFirstChild(), false);
           }
           else if (name.equals("symbol")) {
             //noinspection ConstantConditions
@@ -529,8 +541,7 @@ public class CssWriter {
     }
 
     if (source == null) {
-      problemsHolder.add(FlexUIDesignerBundle.message("error.embed.source.not.specified", cssFunction.getText()));
-      throw new IllegalArgumentException("todo");
+      throw new InvalidPropertyException(cssFunction, FlexUIDesignerBundle.message("error.embed.source.not.specified", cssFunction.getText()));
     }
 
     if (requiredAssetsInfo == null) {

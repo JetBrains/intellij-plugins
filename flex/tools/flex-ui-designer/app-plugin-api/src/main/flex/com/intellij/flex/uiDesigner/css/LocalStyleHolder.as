@@ -1,5 +1,5 @@
 package com.intellij.flex.uiDesigner.css {
-import com.intellij.flex.uiDesigner.ModuleManager;
+import com.intellij.flex.uiDesigner.Project;
 import com.intellij.flex.uiDesigner.VirtualFile;
 import com.intellij.flex.uiDesigner.VirtualFileImpl;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
@@ -18,10 +18,10 @@ public class LocalStyleHolder implements IExternalizable {
   }
 
   private var _stylesheet:Stylesheet;
-  public function getStylesheet(moduleManager:ModuleManager):Stylesheet {
+  public function getStylesheet(project:Project):Stylesheet {
     if (_stylesheet == null) {
       _stylesheet = new Stylesheet();
-      _stylesheet.readExternal(data, moduleManager);
+      _stylesheet.read(data, project);
       _file.stylesheet = _stylesheet;
       data = null;
     }

@@ -1,14 +1,13 @@
 package com.intellij.flex.uiDesigner.css;
 
-import com.intellij.flex.uiDesigner.Client;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
+import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.mxml.AmfExtendedTypes;
 import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.psi.css.CssString;
 import com.intellij.psi.xml.XmlFile;
 
 import java.util.List;
@@ -16,34 +15,31 @@ import java.util.List;
 public class LocalCssWriter extends CssWriter {
   private final List<XmlFile> unregisteredDocumentReferences;
 
-  public LocalCssWriter(StringRegistry.StringWriter stringWriter, List<XmlFile> unregisteredDocumentReferences) {
-    super(stringWriter);
+  public LocalCssWriter(StringRegistry.StringWriter stringWriter, ProblemsHolder problemsHolder,
+                        List<XmlFile> unregisteredDocumentReferences) {
+    super(stringWriter, problemsHolder);
     this.unregisteredDocumentReferences = unregisteredDocumentReferences;
   }
 
   @Override
-  protected void writeClassReference(JSClass jsClass, FlexStyleIndexInfo info) throws InvalidPropertyException {
+  protected void writeClassReference(JSClass jsClass, FlexStyleIndexInfo info, CssString cssString) throws InvalidPropertyException {
     final int projectComponentFactoryId;
     if (info != null && info.getAttributeName().equals("skinClass")) {
       projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(jsClass, unregisteredDocumentReferences);
     }
     else if (InjectionUtil.isProjectComponent(jsClass)) {
-      throw new InvalidPropertyException("class.reference.in.css.support.only.skin.class", jsClass.getQualifiedName());
+      throw new InvalidPropertyException(cssString, "class.reference.in.css.support.only.skin.class", jsClass.getQualifiedName());
     }
     else {
       projectComponentFactoryId = -1;
     }
 
     if (projectComponentFactoryId == -1) {
-      super.writeClassReference(jsClass, info);
+      super.writeClassReference(jsClass, info, cssString);
     }
     else {
       propertyOut.write(AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE);
       propertyOut.writeUInt29(projectComponentFactoryId);
-
-      @SuppressWarnings("ConstantConditions")
-      Module moduleForFile = ModuleUtil.findModuleForFile(jsClass.getContainingFile().getVirtualFile(), jsClass.getProject());
-      Client.getInstance().writeId(moduleForFile, propertyOut);
     }
   }
 }

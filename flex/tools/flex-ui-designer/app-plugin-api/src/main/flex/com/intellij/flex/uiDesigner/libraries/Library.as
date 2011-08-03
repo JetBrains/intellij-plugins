@@ -44,7 +44,7 @@ public class Library {
 
     if (input.readBoolean()) {
       _defaultsStyle = new Stylesheet();
-      _defaultsStyle.readExternal(input, null);
+      _defaultsStyle.read(input, null);
     }
   }
 }

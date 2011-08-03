@@ -7,8 +7,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.xml.*;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,10 +15,6 @@ final class MxmlUtil {
     VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
     assert virtualFile != null;
     return FileDocumentManager.getInstance().getDocument(virtualFile);
-  }
-
-  static int getLineNumber(XmlTag tag) {
-    return getDocument(tag).getLineNumber(tag.getTextOffset()) + 1;
   }
 
   // about id http://opensource.adobe.com/wiki/display/flexsdk/id+property+in+MXML+2009

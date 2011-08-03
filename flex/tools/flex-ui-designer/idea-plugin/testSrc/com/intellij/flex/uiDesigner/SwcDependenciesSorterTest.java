@@ -3,13 +3,16 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibrarySetItem;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.psi.xml.XmlFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Flex(version="4.5")
@@ -40,20 +43,21 @@ public class SwcDependenciesSorterTest extends MxmlTestBase {
     Disposer.register(myModule, new Disposable() {
       @Override
       public void dispose() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          @Override
-          public void run() {
-            final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
-            projectJdkTable.removeJdk(sdk);
-          }
-        });
+        AccessToken token = WriteAction.start();
+        try {
+          final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
+          projectJdkTable.removeJdk(sdk);
+        }
+        finally {
+          token.finish();
+        }
       }
     });
   }
 
   @Override
-  protected void assertAfterInitLibrarySets() {
-    super.assertAfterInitLibrarySets();
+  protected void assertAfterInitLibrarySets(XmlFile[] unregisteredDocumentReferences) throws IOException {
+    super.assertAfterInitLibrarySets(unregisteredDocumentReferences);
 
     if (getName().equals("testDeleteIfAllDefitionsHaveUnresolvedDependencies")) {
       for (LibrarySetItem item : myLibraries()) {

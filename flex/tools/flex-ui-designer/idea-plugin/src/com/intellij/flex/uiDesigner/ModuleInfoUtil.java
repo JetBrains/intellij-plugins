@@ -67,7 +67,7 @@ public class ModuleInfoUtil {
 
     if (defaultsCss != null) {
       moduleInfo.addLocalStyleHolder(
-          new LocalStyleHolder(defaultsCss, new LocalCssWriter(stringWriter, unregisteredDocumentReferences).write(defaultsCss, module, problemsHolder)));
+          new LocalStyleHolder(defaultsCss, new LocalCssWriter(stringWriter, problemsHolder, unregisteredDocumentReferences).write(defaultsCss, module)));
     }
   }
 
@@ -103,15 +103,26 @@ public class ModuleInfoUtil {
         if (containingFile instanceof XmlFile) {
           XmlTag rootTag = ((XmlFile)containingFile).getRootTag();
           if (rootTag != null) {
-            for (final XmlTag subTag : rootTag.getSubTags()) {
-              if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
-                  subTag.getLocalName().equals(FlexPredefinedTagNames.STYLE)) {
-                byte[] data = localStyleWriter.write(subTag, moduleInfo.getModule());
-                if (data != null) {
-                  moduleInfo.addLocalStyleHolder(new LocalStyleHolder(containingFile.getVirtualFile(), data));
+            problemsHolder.setCurrentFile(containingFile.getVirtualFile());
+            try {
+              for (final XmlTag subTag : rootTag.getSubTags()) {
+                if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
+                    subTag.getLocalName().equals(FlexPredefinedTagNames.STYLE)) {
+                  try {
+                    byte[] data = localStyleWriter.write(subTag, moduleInfo.getModule());
+                    if (data != null) {
+                      moduleInfo.addLocalStyleHolder(new LocalStyleHolder(containingFile.getVirtualFile(), data));
+                    }
+                  }
+                  catch (InvalidPropertyException e) {
+                    problemsHolder.add(e);
+                  }
+                  break;
                 }
-                break;
               }
+            }
+            finally {
+              problemsHolder.setCurrentFile(null);
             }
           }
         }
