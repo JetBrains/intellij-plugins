@@ -144,6 +144,12 @@ public final class MxmlReader implements DocumentReader {
   public function read(input:IDataInput, documentReaderContext:DocumentReaderContext, restorePrevContextAfterRead:Boolean = false):Object {
     const oldInput:IDataInput = this.input;
     this.input = input;
+
+    var oldObjectTable:Vector.<Object>;
+    if (restorePrevContextAfterRead) {
+      oldObjectTable = objectTable;
+      objectTable = null;
+    }
     
     const objectTableSize:int = readObjectTableSize();
 
@@ -157,7 +163,10 @@ public final class MxmlReader implements DocumentReader {
     context = oldContext;
     moduleContext = oldContext == null ? null : oldContext.moduleContext;
 
-    if (objectTableSize != 0) {
+    if (restorePrevContextAfterRead) {
+      objectTable = oldObjectTable;
+    }
+    else if (objectTableSize != 0) {
       objectTable.fixed = false;
       objectTable.length = 0;
     }
@@ -171,6 +180,7 @@ public final class MxmlReader implements DocumentReader {
       ByteArray(input).position = 0;
     }
     this.input = oldInput;
+
     return object;
   }
   

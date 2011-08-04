@@ -8,13 +8,11 @@ class TestClient extends Client {
   private static final int INJECTED_AS_TEST_CLASS_ID = 2;
   private static final int STYLE_TEST_CLASS_ID = 4;
 
+  // MxmlTest on idea side splitted as MxmlTest, StatesTest and InjectedAsTest on client side.
   public void test(String filename, String parentFilename) throws IOException {
     char c = parentFilename.charAt(0);
-    int testClassId = c == 's' ? STATES_TEST_CLASS_ID : c == 'i' ? INJECTED_AS_TEST_CLASS_ID : (c == 'c' ? STYLE_TEST_CLASS_ID : MXML_TEST_CLASS_ID);
-    if (testClassId == MXML_TEST_CLASS_ID && filename.contains("State")) {
-      testClassId = STATES_TEST_CLASS_ID;
-    }
-    test(filename, testClassId);
+    test(filename,
+         c == 's' ? STATES_TEST_CLASS_ID : c == 'i' ? INJECTED_AS_TEST_CLASS_ID : (c == 'c' ? STYLE_TEST_CLASS_ID : MXML_TEST_CLASS_ID));
   }
   
   public void test(String filename, int c) throws IOException {

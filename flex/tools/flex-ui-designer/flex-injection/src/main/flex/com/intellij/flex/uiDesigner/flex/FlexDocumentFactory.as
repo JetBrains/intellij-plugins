@@ -3,7 +3,7 @@ import com.intellij.flex.uiDesigner.SerializedDocumentDataProvider;
 
 import mx.core.IFactory;
 
-public final class FlexDocumentFactory implements IFactory, ClassReference {
+  public final class FlexDocumentFactory implements IFactory, ClassReference {
   private var source:SerializedDocumentDataProvider;
   private var context:DeferredInstanceFromBytesContext;
   
