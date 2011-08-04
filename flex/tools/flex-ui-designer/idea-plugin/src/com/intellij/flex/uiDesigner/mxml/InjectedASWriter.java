@@ -58,18 +58,7 @@ class InjectedASWriter {
     }
 
     if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type)) {
-      ValueWriter valueWriter = checkArray(host, name, isStyle, context);
-      if (valueWriter != null) {
-        return valueWriter;
-      }
-      else if (valueProvider instanceof XmlAttributeValueProvider) {
-        // http://youtrack.jetbrains.net/issue/IDEA-64721
-        LOG.warn("unsupported injected AS: " + host.getText());
-        return IGNORE;
-      }
-      else {
-        return null;
-      }
+      return checkArray(host, name, isStyle, context);
     }
     else {
       return checkObject(host, name, isStyle, context, type);

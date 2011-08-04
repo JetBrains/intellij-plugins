@@ -25,7 +25,7 @@ public class DocumentProblemManager {
   }
 
   public void report(final Project project, String message) {
-    StringBuilder builder = StringBuilderSpinAllocator.alloc();
+    final StringBuilder builder = StringBuilderSpinAllocator.alloc();
     try {
       report(project, appendTitle(builder).append("<p>").append(message).append("</p>").toString(), MessageType.ERROR);
     }

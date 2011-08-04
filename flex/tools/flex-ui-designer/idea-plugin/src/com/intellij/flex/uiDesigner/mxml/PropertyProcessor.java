@@ -14,6 +14,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -209,8 +210,15 @@ class PropertyProcessor {
         }
       }
       else if (type.equals(JSCommonTypeNames.ARRAY_CLASS_NAME)) {
-        out.write(Amf3Types.ARRAY);
-        return ARRAY;
+
+        if (!descriptor.isRichTextContent() && valueProvider instanceof XmlAttributeValueProvider &&
+            isInlineArray(valueProvider.getTrimmed())) {
+          writeInlineArray(valueProvider);
+        }
+        else {
+          out.write(Amf3Types.ARRAY);
+          return ARRAY;
+        }
       }
       else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
         writeUntypedPropertyValue(valueProvider, descriptor);
@@ -226,6 +234,11 @@ class PropertyProcessor {
       return isStyle ? PRIMITIVE_STYLE : PRIMITIVE;
     }
 
+    // IDEA-64721, IDEA-72814, see flex2.compiler.mxml.lang.TextParser
+    private boolean isInlineArray(String text) {
+      return text.length() >= 2 && text.charAt(0) == '[' && text.charAt(text.length() - 1) == ']';
+    }
+    
     private void writeString(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
       if (descriptor.isEnumerated()) {
         writer.writeStringReference(valueProvider.getTrimmed());
@@ -249,9 +262,84 @@ class PropertyProcessor {
       }
     }
 
+    private void writeInlineArray(XmlElementValueProvider valueProvider) {
+      writer.getOut().write(Amf3Types.ARRAY);
+
+      final StringBuilder builder = StringBuilderSpinAllocator.alloc();
+      final String value = valueProvider.getTrimmed();
+      try {
+        char quoteChar = '\'';
+        boolean inQuotes = false;
+        for (int index = 1, length = value.length(); index < length; index++) {
+          char c = value.charAt(index);
+          switch (c) {
+            case '[':
+              if (inQuotes) {
+                builder.append(c);
+              }
+              break;
+            case '"':
+            case '\'':
+              if (inQuotes) {
+                if (quoteChar == c) {
+                  inQuotes = false;
+                }
+                else {
+                  builder.append(c);
+                }
+              }
+              else {
+                inQuotes = true;
+                quoteChar = c;
+              }
+              break;
+            case ',':
+            case ']':
+              if (inQuotes) {
+                builder.append(c);
+              }
+              else {
+                int beginIndex = 0;
+                int endIndex = builder.length();
+                while (beginIndex < endIndex && builder.charAt(beginIndex) <= ' ') {
+                  beginIndex++;
+                }
+                while (beginIndex < endIndex && builder.charAt(endIndex - 1) <= ' ') {
+                  endIndex--;
+                }
+                
+                if (endIndex == 0) {
+                  writer.writeStringReference(XmlElementValueProvider.EMPTY);
+                }
+                else {
+                  writer.getOut().write(Amf3Types.STRING);
+                  writer.getOut().writeAmfUtf(builder, false, beginIndex, endIndex);
+                }
+
+                builder.setLength(0);
+              }
+              break;
+            default:
+              builder.append(c);
+          }
+        }
+      }
+      finally {
+        StringBuilderSpinAllocator.dispose(builder);
+      }
+
+      writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
+    }
+
     private void writeUntypedPropertyValue(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
       if (descriptor.isRichTextContent()) {
         writeString(valueProvider, descriptor);
+        return;
+      }
+
+      // todo support not only attribute, but tag too
+      if (valueProvider instanceof XmlAttributeValueProvider && isInlineArray(valueProvider.getTrimmed())) {
+        writeInlineArray(valueProvider);
         return;
       }
 

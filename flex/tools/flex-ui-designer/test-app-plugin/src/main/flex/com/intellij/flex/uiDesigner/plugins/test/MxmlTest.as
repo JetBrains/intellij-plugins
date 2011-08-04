@@ -119,7 +119,10 @@ public class MxmlTest extends BaseTestCase {
   }
   
   public function InlineArrayAsAttributeValue():void {
-   // http://youtrack.jetbrains.net/issue/IDEA-64721 
+    assertThat(app, [
+      {dataProvider: {source: ['Appetizers', 'Entrees', 'Desserts']}},
+      {dataProvider: ['one', 'two']}
+    ]);
   }
   
   public function InvalidColorName():void {
