@@ -1,21 +1,16 @@
 package com.intellij.lang.javascript.formatter;
 
-import com.intellij.application.options.CodeStyleAbstractPanel;
-import com.intellij.application.options.MultiTabCodeStyleAbstractPanel;
-import com.intellij.lang.Language;
+import com.intellij.application.options.MultiTabLanguageCodeStylePanel;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Rustam Vishnyakov
  */
-public class ActionScriptCodeStyleMainPanel extends MultiTabCodeStyleAbstractPanel {
+public class ActionScriptCodeStyleMainPanel extends MultiTabLanguageCodeStylePanel {
 
   protected ActionScriptCodeStyleMainPanel(CodeStyleSettings currentSettings, CodeStyleSettings settings) {
-    super(currentSettings, settings);
+    super(JavaScriptSupportLoader.ECMA_SCRIPT_L4, currentSettings, settings);
   }
 
 
@@ -25,8 +20,4 @@ public class ActionScriptCodeStyleMainPanel extends MultiTabCodeStyleAbstractPan
     addTab(new ActionScriptCodeStylePanel(settings));
   }
 
-  @Override
-  public Language getDefaultLanguage() {
-    return JavaScriptSupportLoader.ECMA_SCRIPT_L4;
-  }
 }
