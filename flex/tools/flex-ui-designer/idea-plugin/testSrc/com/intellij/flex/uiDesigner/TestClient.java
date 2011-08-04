@@ -3,9 +3,18 @@ package com.intellij.flex.uiDesigner;
 import java.io.IOException;
 
 class TestClient extends Client {
+  private static final int MXML_TEST_CLASS_ID = 0;
+  private static final int STATES_TEST_CLASS_ID = 1;
+  private static final int INJECTED_AS_TEST_CLASS_ID = 2;
+  private static final int STYLE_TEST_CLASS_ID = 4;
+
   public void test(String filename, String parentFilename) throws IOException {
     char c = parentFilename.charAt(0);
-    test(filename, c == 's' ? 1 : c == 'i' ? 2 : (c == 'c' ? 4 : 0));
+    int testClassId = c == 's' ? STATES_TEST_CLASS_ID : c == 'i' ? INJECTED_AS_TEST_CLASS_ID : (c == 'c' ? STYLE_TEST_CLASS_ID : MXML_TEST_CLASS_ID);
+    if (testClassId == MXML_TEST_CLASS_ID && filename.contains("State")) {
+      testClassId = STATES_TEST_CLASS_ID;
+    }
+    test(filename, testClassId);
   }
   
   public void test(String filename, int c) throws IOException {

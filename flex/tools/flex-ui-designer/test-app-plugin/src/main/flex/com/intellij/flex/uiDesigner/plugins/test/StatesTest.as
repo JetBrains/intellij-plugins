@@ -55,6 +55,7 @@ public class StatesTest extends BaseTestCase {
       IncludeInAfterStateSpecificProperty();
       IDEA_72004();
       ExcludeFrom();
+      ProjectMxmlComponentAsStateSpecificChild();
     }
   }
 
@@ -179,7 +180,7 @@ public class StatesTest extends BaseTestCase {
     assertThat(assertVGroup(appContainer), [matcher2]);
   }
   
-  private function assertLoginForm(form:Object):Object {
+  private static function assertLoginForm(form:Object):Object {
     assertThat(form.numChildren, equalTo(2));
     assertThat(form.getChildAt(0), {id: "username", label: "Username:"});
     
@@ -188,7 +189,7 @@ public class StatesTest extends BaseTestCase {
     return passwordFormItem;
   }
   
-  private function assertVGroup(appContainer:Object):Object {
+  private static function assertVGroup(appContainer:Object):Object {
     assertThat(appContainer.numChildren, equalTo(2));
     return appContainer.getElementAt(1);
   }
@@ -229,11 +230,11 @@ public class StatesTest extends BaseTestCase {
     assertThat(container, [matcher, allOf(m3, [allOf({id: "backSibling", toolTip: "d", layout: {gap: 1}}), {text: "i"}]), allOf(m2, [ls(4)])]);
   }
   
-  private function l(i:int):Object {
+  private static function l(i:int):Object {
     return new HasPropertiesMatcher({text: i.toString()});
   }
   
-  private function ls(size:int):Matcher {
+  private static function ls(size:int):Matcher {
     var matchers:Array = new Array(size);
     for (var i:int = 0; i < size; i++) {
       matchers[i] = l(i);
@@ -341,15 +342,21 @@ public class StatesTest extends BaseTestCase {
   }
 
   public function IDEA_72004():void {
-    app.validateNow();
+    validateUI();
     assertThat(app, [{width: 40}]);
   }
 
   public function ExcludeFrom():void {
-    app.validateNow();
+    validateUI();
     assertThat(app, [{text: "U"}]);
     setState(A);
     assertThat(app, []);
+  }
+
+  public function ProjectMxmlComponentAsStateSpecificChild():void {
+    assertThat(app, []);
+    setState(A);
+    assertThat(app, [[{text: "Label in child custom mxml component"}]]);
   }
 }
 }

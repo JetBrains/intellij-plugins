@@ -79,8 +79,21 @@ public final class MxmlReader implements DocumentReader {
 
     context = factoryContext.readerContext;
     moduleContext = context.moduleContext;
-    assert(input.readByte() == Amf3Types.OBJECT);
-    var object:Object = readObjectFromClass(stringRegistry.read(input));
+
+    var object:Object;
+    switch (input.readByte()) {
+      case Amf3Types.OBJECT:
+        object = readObjectFromClass(stringRegistry.read(input));
+        break;
+
+      case AmfExtendedTypes.DOCUMENT_REFERENCE:
+        object = readObjectFromFactory(readDocumentFactory().newInstance());
+        break;
+
+      default:
+        throw new ArgumentError("unknown property type");
+    }
+
     assert(this.factoryContext == null && objectTableSize == (objectTable == null ? 0 : objectTable.length));
 
     context = null;
@@ -102,8 +115,6 @@ public final class MxmlReader implements DocumentReader {
   // <VGroup includeIn="A, B">
   //   <Label text.A="A" text.B="B"/>
   // </VGroup>
-  //
-  //
   public function getObjectTableForDeferredInstanceFromBytes():Vector.<Object> {
     if (objectTable != null && objectTable.length != 0) {
       var o:Vector.<Object> = objectTable;
