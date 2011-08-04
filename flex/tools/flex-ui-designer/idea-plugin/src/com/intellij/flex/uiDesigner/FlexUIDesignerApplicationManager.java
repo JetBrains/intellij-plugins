@@ -406,6 +406,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       this.indicator = indicator;
       AdlRunConfiguration adlRunConfiguration;
       try {
+        indicator.setText(FlexUIDesignerBundle.message("copy.app.files"));
+        copyAppFiles();
+
         adlRunConfiguration = findSuitableFlexSdk(CHECK_DESCRIPTOR_PATH);
         if (adlRunConfiguration == null) {
           String message = FlexUIDesignerBundle.message(
@@ -451,15 +454,12 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         @Override
         public void run() {
           checkCanceled();
-          indicator.setText(FlexUIDesignerBundle.message("copy.app.files"));
+
+          if (projectManagerListener == null) {
+            attachApplicationLevelListeners();
+          }
+          
           try {
-            copyAppFiles();
-            checkCanceled();
-
-            if (projectManagerListener == null) {
-              attachApplicationLevelListeners();
-            }
-
             adlProcessHandler = runAdl(runConfiguration, APP_DIR.getPath() + "/" + DESCRIPTOR_XML,
                 new Consumer<Integer>() {
                   @Override
@@ -572,6 +572,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
     @Override
     public void onCancel() {
+      semaphore.up();
+
       try {
         Disposer.dispose(FlexUIDesignerApplicationManager.this);
       }

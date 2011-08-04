@@ -54,8 +54,9 @@ final class DesignerApplicationUtil {
   public static AdlRunConfiguration createTestAdlRunConfiguration() throws IOException {
     return new AdlRunConfiguration(DebugPathManager.ADL_EXECUTABLE, DebugPathManager.ADL_RUNTIME);
   }
-  
-  public static @Nullable AdlRunConfiguration findSuitableFlexSdk(String checkDescriptorPath) throws IOException {
+
+  @Nullable
+  public static AdlRunConfiguration findSuitableFlexSdk(String checkDescriptorPath) throws IOException {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       return createTestAdlRunConfiguration();
     }
