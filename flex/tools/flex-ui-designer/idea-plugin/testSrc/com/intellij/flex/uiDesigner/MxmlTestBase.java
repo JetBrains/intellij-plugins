@@ -96,9 +96,9 @@ abstract class MxmlTestBase extends AppTestBase {
     runAdl();
     return toDir;
   }
-  
-  protected void testFiles(final VirtualFile... originalVFiles) throws Exception {
-    testFiles(new MyTester(), originalVFiles.length, originalVFiles);
+
+  protected void testFiles(final int auxiliaryBorder, final VirtualFile[] originalVFiles) throws Exception {
+    testFiles(new MyTester(), auxiliaryBorder, originalVFiles);
   }
   
   protected void testFiles(String[] files, String... auxiliaryFiles) throws Exception {
@@ -132,7 +132,7 @@ abstract class MxmlTestBase extends AppTestBase {
     VirtualFile[] testVFiles = configureByFiles(useRawProjectRoot() ? getVFile(getRawProjectRoot()) : null, originalVFiles).getChildren();
     for (int childrenLength = testVFiles.length, i = childrenLength - auxiliaryBorder; i < childrenLength; i++) {
       final VirtualFile file = testVFiles[i];
-      if (!file.getName().endsWith(".mxml") || file.getName().startsWith("Aux")) {
+      if (!file.getName().endsWith(".mxml")) {
         continue;
       }
       

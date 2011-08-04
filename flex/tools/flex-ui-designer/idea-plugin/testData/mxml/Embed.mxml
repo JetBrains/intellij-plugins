@@ -7,5 +7,5 @@
   <BitmapImage source="@Embed(source='/background.p-n-g', mimeType='image/png')"/>
   <BitmapImage source="@Embed(source='/adventchildren_logo_notext_png.png')"/>
 
-  <mx:SWFLoader source="@Embed('anim.swf', symbol='myMC')"/>
+  <mx:SWFLoader source="@Embed('AuxAnim.swf', symbol='myMC')"/>
 </VGroup>

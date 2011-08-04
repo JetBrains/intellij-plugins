@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.File;
@@ -23,19 +24,31 @@ public class MxmlTest extends MxmlTestBase {
 
   public void test45() throws Exception {
     String testFile = System.getProperty("testFile");
-    String[] files = testFile == null ? getTestFiles() : new String[]{getTestPath() + "/" + testFile + ".mxml"};
+    final String[] files;
+    final String[] auxFiles;
+    if (testFile == null) {
+      Pair<String[], String[]> pair = getTestFiles();
+      files = pair.getFirst();
+      auxFiles = pair.getSecond();
+    }
+    else {
+      files = new String[]{getTestPath() + "/" + testFile + ".mxml"};
+      auxFiles = null;
+    }
 
-    final VirtualFile[] vFiles = new VirtualFile[files.length + 4];
+    final int auxFilesCount = auxFiles == null ? 0 : auxFiles.length;
+    final VirtualFile[] vFiles = new VirtualFile[files.length + auxFilesCount];
     for (int i = 0; i < files.length; i++) {
       vFiles[i] = getVFile(files[i]);
     }
-    
-    vFiles[files.length] = getVFile(getTestPath() + "/anim.swf");
-    vFiles[files.length + 1] = getVFile(getTestPath() + "/MyButtonActionScriptCustomComponent.as");
-    vFiles[files.length + 2] = getVFile(getTestPath() + "/AuxCustomMxmlComponent.mxml");
-    vFiles[files.length + 3] = getVFile(getTestPath() + "/AuxProjectMxmlItemRenderer.mxml");
 
-    testFiles(vFiles);
+    if (auxFiles != null) {
+      for (int i = files.length, j = 0; j < auxFiles.length;) {
+        vFiles[i++] = getVFile(auxFiles[j++]);
+      }
+    }
+
+    testFiles(vFiles.length - auxFilesCount, vFiles);
     
     String[] problems = getLastProblems();
     if (testFile != null) {
@@ -45,7 +58,7 @@ public class MxmlTest extends MxmlTestBase {
       assertThat(problems,
         "<b>Flex UI Designer</b><ul><li>Initializer for Group cannot be represented in text (line: 2)</li><li>Initializer for Container cannot be represented in text (line: 5)</li><li>Children of Accordion must be mx.core.INavigatorContent (line: 8)</li></ul>",
         m("Unresolved variable unresolvedData"),
-        m("Support only MXML-based component MyButtonActionScriptCustomComponent"),
+        m("Support only MXML-based component AuxActionScriptProjectComponent"),
         m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
         m("Invalid color name invalidcolorname (line: 2)"),
         m("Default property not found for Rect (line: 2)"),
@@ -74,25 +87,36 @@ public class MxmlTest extends MxmlTestBase {
     return null;
   }
 
-  private String[] getTestFiles() {
-    ArrayList<String> files = new ArrayList<String>(20);
-    collectMxmlFiles(files, new File(getTestPath()));
+  private Pair<String[],String[]> getTestFiles() {
+    ArrayList<String> files = new ArrayList<String>(64);
+    ArrayList<String> auxFiles = new ArrayList<String>(8);
+    
+    collectMxmlFiles(files, auxFiles, new File(getTestPath()));
+    
     String[] list = files.toArray(new String[files.size()]);
+    String[] auxList = auxFiles.toArray(new String[auxFiles.size()]);
+    
     Arrays.sort(list);
-    return list;
+    Arrays.sort(auxList);
+    
+    return new Pair<String[], String[]>(list, auxList);
   }
 
-  private static void collectMxmlFiles(ArrayList<String> files, File parent) {
+  private static void collectMxmlFiles(ArrayList<String> files, ArrayList<String> auxFiles, File parent) {
     for (String name : parent.list()) {
       if (name.charAt(0) == '.') {
         // skip
       }
-      else if (name.endsWith(".mxml") && !name.startsWith("T.") && !name.startsWith("Aux") && !name.startsWith("TestApp.") && !name.startsWith("Constructor.")) {
+      else if (name.startsWith("Aux")) {
+        auxFiles.add(parent.getPath() + "/" + name);
+      }
+      else if (name.endsWith(".mxml") && !name.startsWith("T.") && !name.startsWith("TestApp.") && !name.startsWith("Constructor.")) {
         files.add(parent.getPath() + "/" + name);
       }
+
       File file = new File(parent, name);
       if (file.isDirectory() && !name.equals("mobile")) {
-        collectMxmlFiles(files, file);
+        collectMxmlFiles(files, auxFiles, file);
       }
     }
   }
