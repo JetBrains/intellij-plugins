@@ -8,7 +8,8 @@ import flash.utils.IDataInput;
 
 internal final class StateReader {
   private var deferredInstancesForImmediateCreation:Vector.<DeferredInstanceFromBytesBase>;
-  
+
+  //noinspection JSMethodCanBeStatic
   public function read(reader:MxmlReader, data:IDataInput, object:Object):void {
     const size:int = data.readByte();
     if (size == 0) {
@@ -21,6 +22,7 @@ internal final class StateReader {
       state.context = reader.factoryContext;
       states[i] = state;
     }
+
     object.currentState = states[0].name; // as mxml compiler does
     object.states = states;
   }

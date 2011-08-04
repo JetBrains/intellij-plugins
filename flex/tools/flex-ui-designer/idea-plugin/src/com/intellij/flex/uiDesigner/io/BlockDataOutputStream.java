@@ -290,11 +290,6 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     count = position;
   }
 
-  public void moveBack(int dataPosition, int step) {
-    System.arraycopy(buffer, dataPosition + step, buffer, dataPosition, count - dataPosition - step);
-    count -= step;
-  }
-
   private static class DebugOutput extends AuditorOutput {
     private final FileOutputStream fileOut;
 

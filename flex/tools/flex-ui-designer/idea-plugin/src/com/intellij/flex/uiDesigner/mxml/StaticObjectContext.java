@@ -41,7 +41,7 @@ class StaticObjectContext extends Context {
 
   public StaticObjectContext reinitialize(int referencePosition, int id) {
     this.referencePosition = referencePosition;
-    deferredInstanceFromObjectReference = null;
+    staticInstanceReferenceInDeferredParentInstance = null;
     this.id = id;
     if (id != -1) {
       referenceInitialized();

@@ -45,9 +45,9 @@ public class MxmlTest extends MxmlTestBase {
       assertThat(problems,
         "<b>Flex UI Designer</b><ul><li>Initializer for Group cannot be represented in text (line: 2)</li><li>Initializer for Container cannot be represented in text (line: 5)</li><li>Children of Accordion must be mx.core.INavigatorContent (line: 8)</li></ul>",
         m("Unresolved variable unresolvedData"),
+        m("Support only MXML-based component MyButtonActionScriptCustomComponent"),
         m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
         m("Invalid color name invalidcolorname (line: 2)"),
-        m("Support only MXML-based component MyButtonActionScriptCustomComponent"),
         m("Default property not found for Rect (line: 2)"),
         m("spark.components.supportClasses.TrackBase is abstract class (line: 3)"));
     }

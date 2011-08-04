@@ -17,8 +17,8 @@ public class DeferredInstanceFromBytesBase {
 
   public function create(context:DeferredInstanceFromBytesContext):Object {
     if (instance == null) {
-      instance = context.reader.read2(bytes, context);
-      objectTable = context.reader.getLocalObjectTable();
+      instance = context.reader.readDeferredInstanceFromBytes(bytes, context);
+      objectTable = context.reader.getObjectTableForDeferredInstanceFromBytes();
     }
 
     return instance;

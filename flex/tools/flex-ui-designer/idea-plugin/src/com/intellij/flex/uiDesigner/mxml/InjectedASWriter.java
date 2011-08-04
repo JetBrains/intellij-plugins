@@ -157,16 +157,16 @@ class InjectedASWriter {
       throw new InvalidPropertyException("error.unresolved.variable", id);
     }
     
-    DeferredInstanceFromObjectReference deferredReference = reference.deferredReference;
-    if (deferredReference == null || deferredReference.isWritten()) {
+    StaticInstanceReferenceInDeferredParentInstance staticReferenceInDeferredParentInstance = reference.staticReferenceInDeferredParentInstance;
+    if (staticReferenceInDeferredParentInstance == null || staticReferenceInDeferredParentInstance.isWritten()) {
       out.writeUInt29(reference.id << 1);
     }
     else {
-      out.writeUInt29((deferredReference.getObjectInstance() << 1) | 1);
-      out.writeUInt29(deferredReference.getDeferredParentInstance());
+      out.writeUInt29((staticReferenceInDeferredParentInstance.getObjectInstance() << 1) | 1);
+      out.writeUInt29(staticReferenceInDeferredParentInstance.getDeferredParentInstance());
       out.writeUInt29(reference.id);
 
-      deferredReference.markAsWritten();
+      staticReferenceInDeferredParentInstance.markAsWritten();
     }
   }
 
@@ -181,9 +181,9 @@ class InjectedASWriter {
     idReferenceMap.put(explicitId, lastObjectReference);
   }
 
-  void setDeferredReferenceForObjectWithExplicitId(DeferredInstanceFromObjectReference deferredReference, int referenceInstance) {
+  void setDeferredReferenceForObjectWithExplicitId(StaticInstanceReferenceInDeferredParentInstance staticReferenceInDeferredParentInstance, int referenceInstance) {
     assert lastObjectReference.id == referenceInstance;
-    lastObjectReference.deferredReference = deferredReference;
+    lastObjectReference.staticReferenceInDeferredParentInstance = staticReferenceInDeferredParentInstance;
   }
 
   private static class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor {
@@ -396,7 +396,7 @@ class InjectedASWriter {
 
   private static class ObjectReference {
     private final int id;
-    DeferredInstanceFromObjectReference deferredReference;
+    StaticInstanceReferenceInDeferredParentInstance staticReferenceInDeferredParentInstance;
 
     public ObjectReference(int id) {
       this.id = id;

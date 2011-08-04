@@ -37,7 +37,7 @@ class StateWriter {
   int NAME;
   int TARGET;
 
-  private int DEFERRED_INSTANCE_FROM_OBJECT_REFERENCE;
+  private int STATIC_INSTANCE_REFERENCE_IN_DEFERRED_PARENT_INSTANCE;
   private int ADD_ITEMS;
 
   private final ArrayList<State> states = new ArrayList<State>();
@@ -73,8 +73,8 @@ class StateWriter {
       VALUE = writer.getNameReference("value");
       OVERRIDES = writer.getNameReference("overrides");
 
-      DEFERRED_INSTANCE_FROM_OBJECT_REFERENCE =
-        writer.getNameReference("com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromObjectReference");
+      STATIC_INSTANCE_REFERENCE_IN_DEFERRED_PARENT_INSTANCE = writer.getNameReference(
+          "com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstance");
       ADD_ITEMS = writer.getNameReference("com.intellij.flex.uiDesigner.flex.states.AddItems");
 
       namesInitialized = true;
@@ -197,9 +197,8 @@ class StateWriter {
     return override;
   }
 
-  public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter, PropertyProcessor propertyProcessor,
-                                                 XmlElement element, XmlElementValueProvider valueProvider,
-                                                 AnnotationBackedDescriptor descriptor,
+  public boolean checkStateSpecificPropertyValue(MxmlWriter mxmlWriter, PropertyProcessor propertyProcessor, XmlElement element,
+                                                 XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
                                                  @Nullable Context context, @Nullable Context parentContext) {
     PsiReference[] references = element.getReferences();
     if (references.length < 2) {
@@ -272,8 +271,7 @@ class StateWriter {
   }
 
   public Context createContextForStaticBackSiblingAndFinalizeStateSpecificAttributes(boolean allowIncludeInExludeFrom,
-                                                                                     int referencePosition,
-                                                                                     @Nullable Context parentContext,
+                                                                                     int referencePosition, @Nullable Context parentContext,
                                                                                      InjectedASWriter injectedASWriter) {
     assert referencePosition != -1;
 
@@ -301,8 +299,7 @@ class StateWriter {
     return context;
   }
 
-  private void finalizeStateSpecificAttributes(@NotNull StaticObjectContext context,
-                                               @Nullable Context parentContext,
+  private void finalizeStateSpecificAttributes(@NotNull StaticObjectContext context, @Nullable Context parentContext,
                                                InjectedASWriter injectedASWriter) {
     // 1
     if (!writer.isIdPreallocated()) {
@@ -331,11 +328,11 @@ class StateWriter {
     }
     else {
       // 3
-      DeferredInstanceFromObjectReference deferredInstanceFromObjectReference =
-        new DeferredInstanceFromObjectReference(objectInstance, deferredParentInstance);
-      injectedASWriter.setDeferredReferenceForObjectWithExplicitId(deferredInstanceFromObjectReference, referenceInstance);
+      StaticInstanceReferenceInDeferredParentInstance staticInstanceReferenceInDeferredParentInstance =
+        new StaticInstanceReferenceInDeferredParentInstance(objectInstance, deferredParentInstance);
+      injectedASWriter.setDeferredReferenceForObjectWithExplicitId(staticInstanceReferenceInDeferredParentInstance, referenceInstance);
 
-      context.setDeferredInstanceFromObjectReference(deferredInstanceFromObjectReference);
+      context.setStaticInstanceReferenceInDeferredParentInstance(staticInstanceReferenceInDeferredParentInstance);
     }
 
     context.setId(objectInstance);
@@ -343,7 +340,7 @@ class StateWriter {
     context.setId(referenceInstance);
   }
 
-  private void resetActiveAddItems(AddItems[] activeAddItems) {
+  private static void resetActiveAddItems(AddItems[] activeAddItems) {
     if (activeAddItems != null) {
       for (int i = 0; i < activeAddItems.length; i++) {
         activeAddItems[i] = null;
@@ -364,24 +361,23 @@ class StateWriter {
                                                writer.getObjectId(parentContext.getScope().getOwner()), referenceInstanceReference);
     }
     else {
-      DeferredInstanceFromObjectReference reference = context.getDeferredInstanceFromObjectReference();
-      if (reference == null) {
+      StaticInstanceReferenceInDeferredParentInstance referenceInDeferredParentInstance = context.getStaticInstanceReferenceInDeferredParentInstance();
+      if (referenceInDeferredParentInstance == null) {
         writer.writeObjectReference(propertyName, referenceInstanceReference);
       }
       else {
-        writeDeferredInstanceFromObjectReference(propertyName, reference.getObjectInstance(), reference.getDeferredParentInstance(),
+        writeDeferredInstanceFromObjectReference(propertyName, referenceInDeferredParentInstance.getObjectInstance(), referenceInDeferredParentInstance
+            .getDeferredParentInstance(),
                                                  referenceInstanceReference);
-        reference.markAsWritten();
-        context.setDeferredInstanceFromObjectReference(null);
+        referenceInDeferredParentInstance.markAsWritten();
+        context.setStaticInstanceReferenceInDeferredParentInstance(null);
       }
     }
   }
 
-  private void writeDeferredInstanceFromObjectReference(int propertyName,
-                                                        int objectInstanceReference,
-                                                        int deferredParentInstance,
+  private void writeDeferredInstanceFromObjectReference(int propertyName, int objectInstanceReference, int deferredParentInstance,
                                                         int referenceInstanceReference) {
-    writer.writeObjectHeader(propertyName, DEFERRED_INSTANCE_FROM_OBJECT_REFERENCE);
+    writer.writeObjectHeader(propertyName, STATIC_INSTANCE_REFERENCE_IN_DEFERRED_PARENT_INSTANCE);
     StaticObjectContext.initializeReference(referenceInstanceReference, writer.getOut(), writer.getOut().size() - 2);
 
     writer.writeProperty("reference", objectInstanceReference);

@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-public final class PropertyClassifier {
+final class PropertyClassifier {
   final static int PROPERTY = 0;
   final static int STYLE = 1;
 

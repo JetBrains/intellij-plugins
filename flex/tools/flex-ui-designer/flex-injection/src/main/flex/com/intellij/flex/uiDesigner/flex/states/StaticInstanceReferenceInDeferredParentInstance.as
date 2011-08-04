@@ -3,10 +3,10 @@ import flash.errors.IllegalOperationError;
 
 import mx.core.ITransientDeferredInstance;
 
-public class DeferredInstanceFromObjectReference implements ITransientDeferredInstance {
+public class StaticInstanceReferenceInDeferredParentInstance implements ITransientDeferredInstance {
   public var reference:int;
   public var deferredParentInstance:DeferredInstanceFromBytes;
-  
+
   public function getInstance():Object {
     return deferredParentInstance.getReferredChild(reference);
   }

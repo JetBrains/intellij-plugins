@@ -15,7 +15,8 @@ public class InjectedASReader {
     readDeclarations(reader);
     readBinding(data, reader);
   }
-  
+
+  //noinspection JSMethodCanBeStatic
   private function readDeclarations(reader:MxmlReader):void {
     reader.readArray([]); // result array is ignored
   }
@@ -66,7 +67,7 @@ public class InjectedASReader {
   private function readObjectReference(data:IDataInput, reader:MxmlReader):Object {
     var id:int = AmfUtil.readUInt29(data);
     var o:Object;
-    // is object reference or DeferredInstanceFromObjectReference data
+    // is object reference or StaticInstanceReferenceInDeferredParentInstance data
     if ((id & 1) == 0) {
       o = reader.objectTable[id >> 1];
       // todo deferred instance from bytes
@@ -76,7 +77,7 @@ public class InjectedASReader {
     }
     else {
       if (deferredReferenceClass == null) {
-        deferredReferenceClass = Class(reader.getClass("com.intellij.flex.uiDesigner.mxml.DeferredInstanceFromObjectReference"));
+        deferredReferenceClass = reader.context.moduleContext.getClass("com.intellij.flex.uiDesigner.mxml.StaticInstanceReferenceInDeferredParentInstance");
       }
       o = new deferredReferenceClass();
       o.reference = id >> 1;

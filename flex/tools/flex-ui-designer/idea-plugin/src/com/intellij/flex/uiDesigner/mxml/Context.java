@@ -6,7 +6,7 @@ abstract class Context {
   protected StaticObjectContext backSibling;
   protected Scope parentScope;
 
-  protected DeferredInstanceFromObjectReference deferredInstanceFromObjectReference;
+  protected StaticInstanceReferenceInDeferredParentInstance staticInstanceReferenceInDeferredParentInstance;
 
   protected int id = -1;
 
@@ -31,13 +31,14 @@ abstract class Context {
     id = value;
   }
 
-  public DeferredInstanceFromObjectReference getDeferredInstanceFromObjectReference() {
-    return deferredInstanceFromObjectReference;
+  public StaticInstanceReferenceInDeferredParentInstance getStaticInstanceReferenceInDeferredParentInstance() {
+    return staticInstanceReferenceInDeferredParentInstance;
   }
 
-  public void setDeferredInstanceFromObjectReference(@Nullable DeferredInstanceFromObjectReference value) {
-    assert deferredInstanceFromObjectReference == null || value == null;
-    deferredInstanceFromObjectReference = value;
+  public void setStaticInstanceReferenceInDeferredParentInstance(
+      @Nullable StaticInstanceReferenceInDeferredParentInstance value) {
+    assert staticInstanceReferenceInDeferredParentInstance == null || value == null;
+    staticInstanceReferenceInDeferredParentInstance = value;
   }
 
   public StaticObjectContext getBackSibling() {

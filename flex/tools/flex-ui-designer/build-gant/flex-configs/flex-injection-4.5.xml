@@ -112,7 +112,7 @@
 		<symbol>com.intellij.flex.uiDesigner.flex.states.SetStyle</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.states.State</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytes</symbol>
-		<symbol>com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromObjectReference</symbol>
+		<symbol>com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstance</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.states.TransientArrayOfDeferredInstanceFromBytes</symbol>
 		<symbol>com.intellij.flex.uiDesigner.css.ChildStyleManager</symbol>

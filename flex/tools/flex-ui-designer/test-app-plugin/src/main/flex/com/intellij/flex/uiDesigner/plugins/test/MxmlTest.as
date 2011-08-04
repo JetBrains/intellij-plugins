@@ -35,8 +35,8 @@ public class MxmlTest extends BaseTestCase {
       MouseSelectionTest();
       ColorEquals0();
       ChildrenTypeCheck();
-      CustomComponent();
-      CustomMxmlComponentAsChild();
+      ProjectActionScriptComponentAsChild();
+      ProjectMxmlComponentAsChild();
     }
   }
   
@@ -158,11 +158,11 @@ public class MxmlTest extends BaseTestCase {
     assertThat(app, [[], [], []]);
   }
 
-  public function CustomComponent():void {
+  public function ProjectActionScriptComponentAsChild():void {
     assertThat(app, []);
   }
 
-  public function CustomMxmlComponentAsChild():void {
+  public function ProjectMxmlComponentAsChild():void {
     assertThat(app, [[{text: "Label in child custom mxml component"}]]);
   }
 }

@@ -8,10 +8,10 @@ public interface DocumentReader {
   function read(input:IDataInput, documentReaderContext:DocumentReaderContext,
                 restorePrevContextAfterRead:Boolean = false):Object;
   
-  function read2(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object;
+  function readDeferredInstanceFromBytes(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object;
 
   function createDeferredMxContainersChildren(applicationDomain:ApplicationDomain):void;
 
-  function getLocalObjectTable():Vector.<Object>;
+  function getObjectTableForDeferredInstanceFromBytes():Vector.<Object>;
 }
 }

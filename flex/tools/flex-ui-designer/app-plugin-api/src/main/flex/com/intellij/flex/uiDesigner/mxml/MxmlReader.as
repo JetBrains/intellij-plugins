@@ -72,11 +72,7 @@ public final class MxmlReader implements DocumentReader {
     return deferredSetStyleProxy;
   }
 
-  internal function getClass(name:String):Class {
-    return Class(moduleContext.applicationDomain.getDefinition(name));
-  }
-
-  public function read2(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object {
+  public function readDeferredInstanceFromBytes(input:IDataInput, factoryContext:DeferredInstanceFromBytesContext):Object {
     this.input = input;
     
     var objectTableSize:int = readObjectTableSize();
@@ -99,7 +95,16 @@ public final class MxmlReader implements DocumentReader {
     return object;
   }
 
-  public function getLocalObjectTable():Vector.<Object> {
+  // must be call after readDeferredInstanceFromBytes(). read() — for not DeferredInstanceFromBytes document factory — objectTable will be cleared after read automatically,
+  // readDeferredInstanceFromBytes() — for DeferredInstanceFromBytes — if we have static objects in our deferred parent,
+  // we may need refer to it — as example, DESTINATION for other dynamic (i. e., included/excluded from some state) parent child (AFTER, as example)
+  // or state-specific properties:
+  // <VGroup includeIn="A, B">
+  //   <Label text.A="A" text.B="B"/>
+  // </VGroup>
+  //
+  //
+  public function getObjectTableForDeferredInstanceFromBytes():Vector.<Object> {
     if (objectTable != null && objectTable.length != 0) {
       var o:Vector.<Object> = objectTable;
       objectTable = null;
@@ -190,7 +195,7 @@ public final class MxmlReader implements DocumentReader {
   }
 
   internal function readObjectFromClass(className:String, setDocument:Boolean = false):Object {
-    var clazz:Class = Class(moduleContext.applicationDomain.getDefinition(className));
+    var clazz:Class = moduleContext.getClass(className);
     var reference:int = input.readUnsignedShort();
     var propertyName:String = stringRegistry.read(input);
     var object:Object;

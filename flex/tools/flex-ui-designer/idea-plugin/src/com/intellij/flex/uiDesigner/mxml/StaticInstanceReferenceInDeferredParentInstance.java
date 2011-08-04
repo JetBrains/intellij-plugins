@@ -1,10 +1,10 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-class DeferredInstanceFromObjectReference {
+class StaticInstanceReferenceInDeferredParentInstance {
   private int objectInstance;
   private final int deferredParentInstance;
 
-  public DeferredInstanceFromObjectReference(int objectInstance, int deferredParentInstance) {
+  public StaticInstanceReferenceInDeferredParentInstance(int objectInstance, int deferredParentInstance) {
     this.objectInstance = objectInstance;
     this.deferredParentInstance = deferredParentInstance;
   }

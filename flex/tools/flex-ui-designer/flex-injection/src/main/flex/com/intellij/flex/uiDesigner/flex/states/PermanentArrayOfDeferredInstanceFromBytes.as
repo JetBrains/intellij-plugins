@@ -30,6 +30,7 @@ public final class PermanentArrayOfDeferredInstanceFromBytes implements ITransie
     throw new IllegalOperationError();
   }
 
+  [TestOnly]
   public function get __array():Array {
     return array;
   }
