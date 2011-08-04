@@ -45,7 +45,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   protected Reader reader;
 
-  private File resultReadyFile;
   private File resultFile;
   private File appDir;
 
@@ -55,13 +54,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     reader = new Reader(new BufferedInputStream(inputStream));
   }
 
-  public void init(@NotNull InputStream inputStream, @NotNull File appDir) {
-    resultReadyFile = new File(appDir, "d");
-    if (resultReadyFile.exists()) {
-      //noinspection ResultOfMethodCallIgnored
-      resultReadyFile.delete();
-    }
-    
+  public void init(@NotNull InputStream inputStream, @NotNull File appDir) {    
     createReader(inputStream);
     this.appDir = appDir;
   }
@@ -96,6 +89,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   private boolean safeProcessCommand(int command) throws IOException {
+    final String resultReadyFilename = isFileBased(command) ? reader.readUTF() : null;
     try {
       return processCommand(command);
     }
@@ -106,9 +100,9 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       LOG.error(e);
     }
     finally {
-      if (isFileBased(command)) {
+      if (resultReadyFilename != null) {
         //noinspection ResultOfMethodCallIgnored
-        resultReadyFile.createNewFile();
+        new File(appDir, resultReadyFilename).createNewFile();
       }
     }
 
@@ -320,7 +314,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
   private void getResourceBundle() throws IOException {
     initResultFile();
-
+    
     final int projectId = readEntityId();
     final String locale = reader.readUTF();
     final String bundleName = reader.readUTF();

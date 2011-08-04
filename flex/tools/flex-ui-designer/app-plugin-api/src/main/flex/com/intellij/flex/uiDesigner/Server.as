@@ -10,6 +10,7 @@ import flash.net.Socket;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 import flash.utils.getQualifiedClassName;
+import flash.utils.getTimer;
 
 import org.flyti.plexus.PlexusManager;
 
@@ -103,18 +104,20 @@ public class Server implements ResourceBundleProvider {
   }
 
   // http://exaflood.de/syrotech/air-securityerror-filewriteresource/
-  private const resultReadyFile:File = new File(File.applicationDirectory.nativePath + "/d");
   private const resultFile:File = new File(File.applicationDirectory.nativePath + "/r");
 
   private static var flashWorkaroundByteArray:ByteArray;
 
   public function getBitmapData(id:int):BitmapData {
-    preCheckSyncMessaging();
+    var resultReadyFile:File;
     try {
+      const resultReadyFilename:String = generateResultReadyFilename();
       socket.writeByte(ServerMethod.GET_BITMAP_DATA);
+      socket.writeUTF(resultReadyFilename);
       socket.writeShort(id);
       socket.flush();
 
+      resultReadyFile = new File(File.applicationDirectory.nativePath + "/" + resultReadyFilename);
       while (!resultReadyFile.exists) {
       }
 
@@ -127,18 +130,20 @@ public class Server implements ResourceBundleProvider {
         }
         fileStream.readBytes(flashWorkaroundByteArray);
         bitmapData.setPixels(bitmapData.rect, flashWorkaroundByteArray);
-        flashWorkaroundByteArray.clear();
         return bitmapData;
       }
       finally {
         fileStream.close();
+        if (flashWorkaroundByteArray != null) {
+          flashWorkaroundByteArray.clear();
+        }
       }
     }
     catch (e:Error) {
       UncaughtErrorManager.instance.handleError(e);
     }
     finally {
-      postCheckSyncMessaging();
+      postCheckSyncMessaging(resultReadyFile);
     }
 
     //noinspection UnreachableCodeJS
@@ -146,14 +151,17 @@ public class Server implements ResourceBundleProvider {
   }
 
   public function getResourceBundle(project:Object, locale:String, bundleName:String):Dictionary {
-    preCheckSyncMessaging();
+    var resultReadyFile:File;
     try {
+      const resultReadyFilename:String = generateResultReadyFilename();
       socket.writeByte(ServerMethod.GET_RESOURCE_BUNDLE);
+      socket.writeUTF(resultReadyFilename);
       writeProjectId(Project(project));
       socket.writeUTF(locale);
       socket.writeUTF(bundleName);
       socket.flush();
 
+      resultReadyFile = new File(File.applicationDirectory.nativePath + "/" + resultReadyFilename);
       // fileStream.bytesAvailable is not update, i.e. we cannot while (fileStream.bytesAvailable == 0), so, we delete file after read
       while (!resultReadyFile.exists) {
       }
@@ -171,28 +179,24 @@ public class Server implements ResourceBundleProvider {
       UncaughtErrorManager.instance.handleError(e);
     }
     finally {
-      postCheckSyncMessaging();
+      postCheckSyncMessaging(resultReadyFile);
     }
 
     return null;
   }
 
-  private function preCheckSyncMessaging():void {
-    // windows only issue
-    // http://youtrack.jetbrains.net/issue/IDEA-71568
-    if (resultReadyFile.exists) {
-      resultReadyFile.deleteFile();
-    }
+  private static function generateResultReadyFilename():String {
+    return (getTimer() + Math.random()).toString();
   }
 
-  private function postCheckSyncMessaging():void {
-    if (resultReadyFile.exists) {
-      try {
-        resultReadyFile.deleteFile();
+  private static function postCheckSyncMessaging(resultReadyFile:File):void {
+    try {
+      if (resultReadyFile != null && resultReadyFile.exists) {
+        resultReadyFile.deleteFileAsync();
       }
-      catch (e:Error) {
-        UncaughtErrorManager.instance.handleError(e);
-      }
+    }
+    catch (e:Error) {
+      UncaughtErrorManager.instance.handleError(e);
     }
   }
 
