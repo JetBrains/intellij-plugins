@@ -7,7 +7,18 @@ import org.flyti.plexus.Injectable;
 
 public class StatesBarManager extends AbstractCollectionViewDataSource implements Injectable, ListViewDataSource {
   private const source:Vector.<String> = new Vector.<String>();
-  
+
+  public function StatesBarManager(documentManager:DocumentManager) {
+    documentManager.documentUpdated.add(documentUpdated);
+  }
+
+  private function documentUpdated():void {
+    if (_presentation != null) {
+      adjust();
+    }
+  }
+
+  [TestOnly]
   public function get states():Array {
     return _document.uiComponent.states;
   }
@@ -31,7 +42,11 @@ public class StatesBarManager extends AbstractCollectionViewDataSource implement
       _presentation.hidden = true;
       return;
     }
-    
+
+    adjust();
+  }
+
+  private function adjust():void {
     var documentStates:Array = states;
     _presentation.hidden = documentStates.length < 2;
     if (!_presentation.hidden) {

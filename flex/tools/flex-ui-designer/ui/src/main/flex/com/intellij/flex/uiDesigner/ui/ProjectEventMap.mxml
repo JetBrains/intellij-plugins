@@ -33,7 +33,9 @@
       <Requirement role="{Server}"/>
     </Component>
     <Component role="{ElementToolManager}"/>
-    <Component role="{StatesBarManager}"/>
+    <Component role="{StatesBarManager}">
+      <Requirement role="{DocumentManager}"/>
+    </Component>
     <Component role="{Interactor}">
       <Requirement role="{ElementManager}"/>
       <Requirement role="{Server}"/>

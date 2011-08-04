@@ -23,6 +23,8 @@ import flash.events.EventDispatcher;
 import flash.utils.Dictionary;
 
 import org.jetbrains.ApplicationManager;
+import org.osflash.signals.ISignal;
+import org.osflash.signals.Signal;
 
 public class DocumentManagerImpl extends EventDispatcher implements DocumentManager {
   private var libraryManager:LibraryManager;
@@ -34,6 +36,14 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     this.libraryManager = libraryManager;
     this.documentReader = documentReader;
     this.server = server;
+  }
+
+  private var _documentUpdated:ISignal;
+  public function get documentUpdated():ISignal {
+    if (_documentUpdated == null) {
+      _documentUpdated = new Signal();
+    }
+    return _documentUpdated;
   }
 
   private var _document:Document;
@@ -68,7 +78,12 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       }
     }
     else if (doOpen(documentFactory, documentFactory.document)) {
-      adjustElementSelection();
+      if (documentFactory.document == document) {
+        adjustElementSelection();
+        if (_documentUpdated != null) {
+          _documentUpdated.dispatch();
+        }
+      }
       document.container.invalidateDisplayList();
     }
   }
