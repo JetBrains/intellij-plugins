@@ -87,17 +87,15 @@
             <rowspec value="center:max(d;4px):noGrow"/>
             <colspec value="fill:p:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:max(p;160px):noGrow"/>
+            <colspec value="fill:max(d;160px):grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="right:m:noGrow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="right:m:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:p:noGrow"/>
-            <colspec value="left:4dlu:noGrow"/>
-            <colspec value="left:max(m;80px):noGrow"/>
-            <colspec value="left:4dlu:noGrow"/>
-            <colspec value="fill:p:noGrow"/>
-            <colspec value="left:max(p;4px):noGrow"/>
-            <colspec value="left:4dlu:noGrow"/>
-            <colspec value="left:max(m;80px):noGrow"/>
-            <colspec value="left:4dlu:grow"/>
+            <colspec value="right:max(m;4px):noGrow"/>
+            <colspec value="right:m:noGrow"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <forms/>
@@ -116,8 +114,8 @@
               </component>
               <component id="d7375" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms/>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties>
                   <text value="Framework Start Level"/>
@@ -141,8 +139,8 @@
               </component>
               <component id="b7deb" class="javax.swing.JLabel">
                 <constraints>
-                  <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                  <forms/>
+                  <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms defaultalign-horz="false"/>
                 </constraints>
                 <properties>
                   <text value="Default Start Level:"/>
@@ -150,7 +148,7 @@
               </component>
               <component id="fe15a" class="javax.swing.JSpinner" binding="myDefaultStartLevel">
                 <constraints>
-                  <grid row="0" column="11" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                   <forms defaultalign-horz="false"/>

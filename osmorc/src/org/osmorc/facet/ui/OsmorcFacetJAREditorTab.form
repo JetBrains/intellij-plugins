@@ -63,7 +63,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="File Ignore Pattern (regex)"/>
+          <text value="File Ignore Pattern (regex):"/>
         </properties>
       </component>
       <component id="78a8a" class="javax.swing.JLabel">
@@ -72,7 +72,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Jar filename"/>
+          <text value="Jar filename:"/>
         </properties>
       </component>
       <component id="d6235" class="javax.swing.JCheckBox" binding="myAlwaysRebuildBundleJARCheckBox" default-binding="true">
@@ -108,7 +108,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Jar output path"/>
+          <text value="Jar output path:"/>
         </properties>
       </component>
       <component id="ad914" class="javax.swing.JRadioButton" binding="myPlaceInCompilerOutputPathRadioButton" default-binding="true">
@@ -171,7 +171,7 @@
         </constraints>
         <properties/>
         <clientProperties>
-          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactoryBoldWithIndent"/>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactorySimpleWithoutIndent"/>
         </clientProperties>
         <border type="etched" title="Additional JAR Contents"/>
         <children>

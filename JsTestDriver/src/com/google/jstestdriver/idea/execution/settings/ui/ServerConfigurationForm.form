@@ -2,11 +2,11 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.google.jstestdriver.idea.execution.settings.ui.ServerConfigurationForm">
   <grid id="27dc6" binding="myRootComponent" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="20" width="494" height="100"/>
+      <xy x="20" y="20" width="494" height="113"/>
     </constraints>
     <properties/>
     <clientProperties>
-      <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactoryBoldWithIndent"/>
+      <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactorySimpleWithIndent"/>
     </clientProperties>
     <border type="none" title="Server"/>
     <children>
