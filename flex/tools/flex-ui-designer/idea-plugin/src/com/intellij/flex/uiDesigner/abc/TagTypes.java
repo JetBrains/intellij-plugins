@@ -17,4 +17,18 @@ interface TagTypes {
   int ScriptLimits = 65;
   int Metadata = 77;
   int ShowFrame = 1;
+
+  int DefineShape = 2;
+  int DefineShape2 = 22;
+  int DefineShape3 = 32;
+  int DefineShape4 = 83;
+
+  int DefineSprite = 39;
+
+  int PlaceObject = 4;
+  int PlaceObject2 = 26;
+  int PlaceObject3 = 70;
+
+  int DoAction = 12;
+  int DoInitAction = 59;
 }

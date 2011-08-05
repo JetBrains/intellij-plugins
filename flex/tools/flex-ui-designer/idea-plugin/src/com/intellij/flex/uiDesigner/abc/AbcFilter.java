@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.abc;
 
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntObjectHashMap;
@@ -9,98 +8,56 @@ import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
-import java.util.zip.ZipException;
 
 /**
  * Filter SWF for unresolved definitions. Support only SWF from SWC, i.e. DoABC2 for each script (<DoABC2 
  name='org/flyti/plexus/events/DispatcherEvent'>)
  * Optimized SWF (merged DoABC2) is not supported.
  */
-public class AbcFilter extends AbcEncoder {
+public class AbcFilter extends SwfTranscoder {
   public static final TObjectHashingStrategy<CharSequence> HASHING_STRATEGY = new HashingStrategy();
-  private static final int PARTIAL_HEADER_LENGTH = 8;
 
+  private FileChannel channel;
   protected final TransientString transientNameString = new TransientString();
-  private final byte[] partialHeader = new byte[PARTIAL_HEADER_LENGTH];
-
-  protected int lastWrittenPosition;
-  protected FileChannel channel;
   
   protected final ArrayList<Decoder> decoders = new ArrayList<Decoder>(256);
 
-  private TIntObjectHashMap<ExportAsset> exportAssets;
-
   private boolean useFlexEncoder;
   private String inputFileParentName;
+
+  private TIntObjectHashMap<TagPositionInfo> exportAssets;
+  private int sL = -1;
+  private int sA;
+  private int sB;
 
   public AbcFilter(boolean useFlexEncoder) {
     this.useFlexEncoder = useFlexEncoder;
   }
 
-  public void filter(File inputFile, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
-    inputFileParentName = inputFile.getParentFile().getName();
+  public void filter(File in, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
+    inputFileParentName = in.getParentFile().getName();
     int index = inputFileParentName.lastIndexOf('.');
     if (index > 0) {
       inputFileParentName = inputFileParentName.substring(0, index);
     }
 
-    filter(new FileInputStream(inputFile), inputFile.length(), out, abcNameFilter);
+    filter(new FileInputStream(in), in.length(), out, abcNameFilter);
   }
 
-  public void filter(VirtualFile inputFile, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
-    inputFileParentName = inputFile.getParent().getNameWithoutExtension();
-    filter(inputFile.getInputStream(), inputFile.getLength(), out, abcNameFilter);
+  public void filter(VirtualFile in, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
+    inputFileParentName = in.getParent().getNameWithoutExtension();
+    filter(in.getInputStream(), in.getLength(), out, abcNameFilter);
   }
 
-  private void filter(InputStream inputStream, long inputLength, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
-    final int uncompressedBodyLength;
-    final boolean compressed;
-    byte[] data;
-    try {
-      int n = inputStream.read(partialHeader);
-      assert n == PARTIAL_HEADER_LENGTH;
-      uncompressedBodyLength = (partialHeader[4] & 0xFF | (partialHeader[5] & 0xFF) << 8 |
-                                (partialHeader[6] & 0xFF) << 16 | partialHeader[7] << 24) - PARTIAL_HEADER_LENGTH;
-      compressed = partialHeader[0] == 0x43;
-      data = FileUtil.loadBytes(inputStream, compressed ? ((int)inputLength - PARTIAL_HEADER_LENGTH) : uncompressedBodyLength);
-    }
-    finally {
-      inputStream.close();
-    }
-
-    if (compressed) {
-      Inflater inflater = new Inflater();
-      inflater.setInput(data);
-      byte[] uncomressedData = new byte[uncompressedBodyLength];
-      try {
-        inflater.inflate(uncomressedData);
-      }
-      catch (DataFormatException e) {
-        String s = e.getMessage();
-        throw new ZipException(s != null ? s : "Invalid ZLIB data format");
-      }
-      data = uncomressedData;
-    }
-
-    buffer = ByteBuffer.wrap(data);
-    buffer.order(ByteOrder.LITTLE_ENDIAN);
-
-    // skip rect, FrameRate, FrameCount
-    buffer.position((int)Math.ceil((float)(5 + ((data[0] & 0xFF) >> -(5 - 8)) * 4) / 8) + 2 + 2);
-
-    FileOutputStream outputStream = new FileOutputStream(out);
+  private void filter(InputStream inputStream, long inputLength, File outFile, @Nullable AbcNameFilter abcNameFilter) throws IOException {
+    final boolean onlyABC = outFile.getPath().endsWith(".abc");
+    final FileOutputStream outputStream = transcode(inputStream, inputLength, outFile);
     channel = outputStream.getChannel();
-    final boolean onlyABC = out.getPath().endsWith(".abc");
     if (!onlyABC) {
       channel.position(PARTIAL_HEADER_LENGTH);
     }
-
     try {
       if (!onlyABC) {
         filterTags(abcNameFilter);
@@ -110,9 +67,6 @@ public class AbcFilter extends AbcEncoder {
         filterAbcTags(abcNameFilter);
       }
     }
-    catch (DecoderException e) {
-      throw new IOException(e);
-    }
     finally {
       channel = null;
       outputStream.flush();
@@ -121,14 +75,10 @@ public class AbcFilter extends AbcEncoder {
   }
 
   private void writeHeader() throws IOException {
-    int length = (int)channel.position();
+    final int length = (int)channel.position();
     channel.position(0);
     buffer.clear();
-    partialHeader[0] = 0x46; // write as uncompressed
-    //partialHeader[3] = 10; // write as uncompressed
-    buffer.put(partialHeader, 0, 4);
-    buffer.putInt(length);
-
+    writePartialHeader(length);
     buffer.flip();
     channel.write(buffer);
   }
@@ -204,28 +154,18 @@ public class AbcFilter extends AbcEncoder {
     }
   }
 
-  private static class ExportAsset {
-    public final int start;
-    public final int end;
-
-    private ExportAsset(int start, int end) {
-      this.start = start;
-      this.end = end;
-    }
-  }
-
   private void processExportAssets(int length) throws IOException {
     final int tagStartPosition = buffer.position();
     writeDataBeforeTag(length);
     buffer.position(tagStartPosition);
 
-    numSymbols = buffer.getShort();
+    final int numSymbols = buffer.getShort();
     if (numSymbols == 0) {
       return;
     }
 
     if (exportAssets == null) {
-      exportAssets = new TIntObjectHashMap<ExportAsset>(numSymbols);
+      exportAssets = new TIntObjectHashMap<TagPositionInfo>(numSymbols);
     }
     else {
       exportAssets.ensureCapacity(numSymbols);
@@ -236,17 +176,17 @@ public class AbcFilter extends AbcEncoder {
       int start = buffer.position();
       int end = start + skipAbcName(start) + 1;
       if (id != 0) {
-        exportAssets.put(id, new ExportAsset(start - 2, end));
+        exportAssets.put(id, new TagPositionInfo(start - 2, end));
       }
       buffer.position(end);
     }
   }
-
+  
   private void processSymbolClass(int length) throws IOException {
     final int tagStartPosition = buffer.position();
     writeDataBeforeTag(length);
     buffer.position(tagStartPosition);
-    analyzeClassAssociatedWithMainTimeline(length);
+    int numSymbols = analyzeClassAssociatedWithMainTimeline(length);
     final boolean hasClassAssociatedWithMainTimeLine = sL != -1;
     mergeDoAbc(true, hasClassAssociatedWithMainTimeLine);
 
@@ -271,10 +211,10 @@ public class AbcFilter extends AbcEncoder {
         buffer.limit(buffer.capacity());
 
         if (exportAssets != null) {
-          final TIntObjectIterator<ExportAsset> iterator = exportAssets.iterator();
+          final TIntObjectIterator<TagPositionInfo> iterator = exportAssets.iterator();
           for (int i = exportAssets.size(); i-- > 0; ) {
             iterator.advance();
-            ExportAsset exportAsset = iterator.value();
+            TagPositionInfo exportAsset = iterator.value();
             buffer.position(exportAsset.start);
             buffer.limit(exportAsset.end);
             channel.write(buffer);
@@ -446,13 +386,8 @@ public class AbcFilter extends AbcEncoder {
     }
   }
 
-  private int sL = -1;
-  private int sA;
-  private int sB;
-  private int numSymbols;
-
-  private void analyzeClassAssociatedWithMainTimeline(int tagLength) throws IOException {
-    numSymbols = buffer.getShort();
+  private int analyzeClassAssociatedWithMainTimeline(int tagLength) throws IOException {
+    int numSymbols = buffer.getShort();
     for (int i = 0; i < numSymbols; i++) {
       int id = buffer.getShort();
       final int position = buffer.position();
@@ -462,7 +397,7 @@ public class AbcFilter extends AbcEncoder {
         sL = tagLength - (transientNameString.length() + 1 + 2);
         sA = position - 2;
         sB = position + transientNameString.length() + 1;
-        return;
+        return numSymbols;
       }
       else {
         if (exportAssets != null && !exportAssets.isEmpty()) {
@@ -471,6 +406,8 @@ public class AbcFilter extends AbcEncoder {
         buffer.position(position + skipAbcName(position) + 1);
       }
     }
+    
+    return numSymbols;
   }
   
   private void readAbcName(final int start) {
@@ -500,15 +437,6 @@ public class AbcFilter extends AbcEncoder {
 
     transientNameString.hash = 0;
     transientNameString.length = index;
-  }
-
-  private int skipAbcName(final int start) {
-    int end = start;
-    byte[] array = buffer.array();
-    while (array[++end] != 0) {
-    }
-
-    return end - start;
   }
 
   protected static final class TransientString implements CharSequence {

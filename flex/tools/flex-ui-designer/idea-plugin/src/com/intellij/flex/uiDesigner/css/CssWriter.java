@@ -281,16 +281,6 @@ public class CssWriter {
       LOG.warn("unknown type: " + type + " " + info.getAttributeName());
       writeUndefinedPropertyValue(value);
     }
-
-//    switch (type.charAt(0)) {
-//
-//      default:
-////        throw new IllegalArgumentException("unknown property type: " + info.getType() + " and format: " + info.getFormat());
-//        // todo support custom type: mx.graphics.IFill, fill: #000000
-//        propertyOut.write(CssPropertyType.NUMBER);
-//        propertyOut.writeAmfInt(0);
-//        break;
-//    }
   }
 
   private void writeBooleanValue(ASTNode node) {
@@ -549,7 +539,7 @@ public class CssWriter {
     }
 
     final boolean isSwf = InjectionUtil.isSwf(source, mimeType);
-    BinaryFileManager binaryFileManager = BinaryFileManager.getInstance();
+    final BinaryFileManager binaryFileManager = BinaryFileManager.getInstance();
     final int fileId;
     if (binaryFileManager.isRegistered(source)) {
       fileId = binaryFileManager.getId(source);
