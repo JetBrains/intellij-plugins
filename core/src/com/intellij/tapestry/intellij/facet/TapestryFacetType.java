@@ -1,27 +1,25 @@
 package com.intellij.tapestry.intellij.facet;
 
 import com.intellij.facet.Facet;
-import com.intellij.facet.FacetModel;
 import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
-import com.intellij.facet.autodetecting.FacetDetector;
-import com.intellij.facet.autodetecting.FacetDetectorRegistry;
+import com.intellij.framework.detection.FacetBasedFrameworkDetector;
+import com.intellij.framework.detection.FileContentPattern;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileFilter;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.util.TapestryIcons;
-import com.intellij.tapestry.lang.TmlFileType;
+import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -57,27 +55,26 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
     return TapestryIcons.TAPESTRY_LOGO_SMALL;
   }
 
-  @Override
-  public void registerDetectors(final FacetDetectorRegistry<TapestryFacetConfiguration> registry) {
-    registry.registerUniversalDetector(TmlFileType.INSTANCE, VirtualFileFilter.ALL, new TapestryFacetDetector());
-  }
-
-  private static class TapestryFacetDetector extends FacetDetector<VirtualFile, TapestryFacetConfiguration> {
-    public TapestryFacetDetector() {
-      super("tapestry-detector");
-    }
-
-    public TapestryFacetConfiguration detectFacet(final VirtualFile source,
-                                                  final Collection<TapestryFacetConfiguration> existentFacetConfigurations) {
-      VirtualFile sourceParent = source.getParent();
-      if (sourceParent == null || existentFacetConfigurations.size() > 0) return null;
-      return new TapestryFacetConfiguration();
+  public static class TapestryFrameworkDetector extends FacetBasedFrameworkDetector<TapestryFacet, TapestryFacetConfiguration> {
+    public TapestryFrameworkDetector() {
+      super("tapestry");
     }
 
     @Override
-    public void beforeFacetAdded(@NotNull Facet facet, FacetModel facetModel, @NotNull ModifiableRootModel modifiableRootModel) {
-      final TapestryFacetConfiguration configuration = (TapestryFacetConfiguration)facet.getConfiguration();
-      for (VirtualFile root : modifiableRootModel.getSourceRoots()) {
+    public FacetType<TapestryFacet, TapestryFacetConfiguration> getFacetType() {
+      return TapestryFacetType.getInstance();
+    }
+
+    @NotNull
+    @Override
+    public ElementPattern<FileContent> createSuitableFilePattern() {
+      return FileContentPattern.fileContent();
+    }
+
+    @Override
+    public void setupFacet(@NotNull TapestryFacet facet, ModifiableRootModel model) {
+      final TapestryFacetConfiguration configuration = facet.getConfiguration();
+      for (VirtualFile root : model.getSourceRoots()) {
         VirtualFile dir = findDirectoryByName(root, new HashSet<String>(Arrays.asList(TapestryConstants.ELEMENT_PACKAGES)), 2);
         if (dir != null) {
           String relativePath = VfsUtil.getRelativePath(dir.getParent(), root, '.');
@@ -89,7 +86,8 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
                                                           TapestryVersion.TAPESTRY_5_1_0_5);
     }
 
-    private VirtualFile findDirectoryByName(VirtualFile file, Set<String> names, int level) {
+    @Nullable
+    private static VirtualFile findDirectoryByName(VirtualFile file, Set<String> names, int level) {
       for (VirtualFile child : file.getChildren()) {
         if (child.isDirectory()) {
           if (names.contains(child.getName())) {
@@ -102,14 +100,6 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
         }
       }
       return null;
-    }
-
-    private static int indexOf(String relativePath, String packageName) {
-      if(relativePath.startsWith(packageName + ".")) return 0;
-      int start = relativePath.indexOf("." + packageName);
-      final int end = start + packageName.length() + 1;
-      if (start > 0 && (end == relativePath.length() || relativePath.charAt(end) == '.')) return start;
-      return -1;
     }
   }
 }
