@@ -158,6 +158,7 @@
 
         <inspectionToolProvider implementation="org.osmorc.inspection.OsmorcInspectionToolProvider"/>
         <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
+        <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>
         <fileTypeFactory implementation="org.osmorc.manifest.ManifestFileTypeFactory"/>
         <compiler implementation="org.osmorc.make.BundleCompiler"/>
         <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>

@@ -25,33 +25,23 @@
 package org.osmorc.facet;
 
 import com.intellij.facet.Facet;
-import com.intellij.facet.FacetModel;
 import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
-import com.intellij.facet.autodetecting.FacetDetector;
-import com.intellij.facet.autodetecting.FacetDetectorRegistry;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.CompilerModuleExtension;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileFilter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osgi.framework.Constants;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.manifest.ManifestFileTypeFactory;
 import org.osmorc.settings.ProjectSettings;
 
 import javax.swing.*;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
 
 /**
  * The facet type of Osmorc.
@@ -61,7 +51,6 @@ import java.util.*;
  */
 public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfiguration> {
   public static final FacetTypeId<OsmorcFacet> ID = new FacetTypeId<OsmorcFacet>("Osmorc");
-  private final Logger logger = Logger.getInstance("#org.osmorc.facet.OsmorcFacetType");
 
   public static OsmorcFacetType getInstance() {
     return findInstance(OsmorcFacetType.class);
@@ -124,101 +113,4 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
   public Icon getIcon() {
     return OsmorcBundle.getSmallIcon();
   }
-
-  public void registerDetectors(
-    FacetDetectorRegistry<OsmorcFacetConfiguration> osmorcFacetConfigurationFacetDetectorRegistry) {
-
-    VirtualFileFilter virtualFileFilter = new VirtualFileFilter() {
-      public boolean accept(VirtualFile file) {
-        List<String> headersToDetect = new ArrayList<String>(Arrays.asList(DETECTION_HEADERS));
-
-        if (file != null && file.exists() && !file.isDirectory()) {
-          BufferedReader bufferedReader = null;
-          try {
-            InputStream inputStream = file.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            bufferedReader = new BufferedReader(inputStreamReader);
-
-            String line;
-            while ((line = bufferedReader.readLine()) != null && headersToDetect.size() > 0) {
-              for (Iterator<String> headersToDetectIterator = headersToDetect.iterator();
-                   headersToDetectIterator.hasNext();) {
-                String headerToDetect = headersToDetectIterator.next();
-                if (line.startsWith(headerToDetect)) {
-                  headersToDetectIterator.remove();
-                  break;
-                }
-              }
-            }
-          }
-          catch (IOException e) {
-            // this should fix   IDEA-17977 (EA reported exception).
-            logger.warn("There was an unexpected exception when accessing " + file.getName() + " (" + e.getMessage() + ")");
-            return false;
-          }
-          finally {
-            if (bufferedReader != null) {
-              try {
-                bufferedReader.close();
-              }
-              catch (IOException e) {
-                logger.warn("There was an unexpected exception when closing stream to " + file.getName() + " (" + e.getMessage() + ")");
-                return false;
-              }
-            }
-          }
-        }
-
-        return headersToDetect.size() == 0;
-      }
-    };
-    FacetDetector<VirtualFile, OsmorcFacetConfiguration> detector =
-      new FacetDetector<VirtualFile, OsmorcFacetConfiguration>("Osmorc") {
-        public OsmorcFacetConfiguration detectFacet(VirtualFile source,
-                                                    Collection<OsmorcFacetConfiguration> existentFacetConfigurations) {
-          if (!existentFacetConfigurations.isEmpty()) {
-            return existentFacetConfigurations.iterator().next();
-          }
-          OsmorcFacetConfiguration osmorcFacetConfiguration = createDefaultConfiguration();
-          osmorcFacetConfiguration.setOsmorcControlsManifest(false);
-          osmorcFacetConfiguration.setManifestLocation(source.getPath());
-          osmorcFacetConfiguration.setUseProjectDefaultManifestFileLocation(false);
-          return osmorcFacetConfiguration;
-        }
-
-        @Override
-        public void beforeFacetAdded(@NotNull Facet facet, FacetModel facetModel, @NotNull ModifiableRootModel modifiableRootModel) {
-          super.beforeFacetAdded(facet, facetModel, modifiableRootModel);
-          VirtualFile[] contentRoots = modifiableRootModel.getContentRoots();
-          OsmorcFacet osmorcFacet = (OsmorcFacet)facet;
-          OsmorcFacetConfiguration osmorcFacetConfiguration = osmorcFacet.getConfiguration();
-          VirtualFile manifestFile = LocalFileSystem.getInstance().findFileByPath(osmorcFacetConfiguration.getManifestLocation());
-          if (manifestFile != null) {
-            for (VirtualFile contentRoot : contentRoots) {
-              if (VfsUtil.isAncestor(contentRoot, manifestFile, false)) {
-                // IDEADEV-40357
-                osmorcFacetConfiguration.setManifestLocation(VfsUtil.getRelativePath(manifestFile, contentRoot, '/'));
-                break;
-              }
-            }
-          }
-          else {
-            osmorcFacetConfiguration.setManifestLocation("");
-            osmorcFacetConfiguration.setUseProjectDefaultManifestFileLocation(true);
-          }
-          String manifestFileName = osmorcFacetConfiguration.getManifestLocation();
-          if (manifestFileName.endsWith("template.mf")) { // this is a bundlor manifest template, so make the facet do bundlor
-            osmorcFacetConfiguration.setManifestLocation("");
-            osmorcFacetConfiguration.setBundlorFileLocation(manifestFileName);
-            osmorcFacetConfiguration.setUseBundlorFile(true);
-          }
-        }
-      };
-
-
-    osmorcFacetConfigurationFacetDetectorRegistry.registerUniversalDetector(ManifestFileTypeFactory.MANIFEST,
-                                                                            virtualFileFilter, detector);
-  }
-
-  private final String[] DETECTION_HEADERS = {Constants.BUNDLE_SYMBOLICNAME};
 }

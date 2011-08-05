@@ -58,6 +58,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <facetType implementation="com.intellij.struts2.facet.StrutsFacetType"/>
+    <framework.detector implementation="com.intellij.struts2.facet.StrutsFacetType$StrutsFrameworkDetector"/>
 
     <psi.referenceContributor language="XML"
                               implementation="com.intellij.struts2.reference.StrutsReferenceContributor"/>
