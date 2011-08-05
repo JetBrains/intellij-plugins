@@ -25,9 +25,6 @@
 
 package org.osmorc.facet;
 
-import com.intellij.facet.FacetManager;
-import com.intellij.facet.autodetecting.FacetDetector;
-import com.intellij.facet.autodetecting.FacetDetectorRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -36,25 +33,21 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileFilter;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
-import com.intellij.util.containers.ContainerUtil;
-import org.easymock.IAnswer;
+import com.intellij.util.indexing.FileContent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osmorc.SwingRunner;
 import org.osmorc.TestUtil;
-import org.osmorc.manifest.ManifestFileTypeFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
+import java.util.Collections;
 
-import static org.easymock.EasyMock.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -96,30 +89,19 @@ public class FacetDetectionTest {
 
     @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Test
-    public void testDetectFacet() {
+    public void testDetectFacet() throws IOException {
         ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
-        final List<Object> arguments = new ArrayList<Object>();
         Module t0 = moduleManager.findModuleByName("t0");
-        FacetDetectorRegistry registry = createMock(FacetDetectorRegistry.class);
-        registry.registerUniversalDetector(same(ManifestFileTypeFactory.MANIFEST), (VirtualFileFilter) anyObject(), (FacetDetector) anyObject());
-        expectLastCall().andAnswer(new IAnswer<Object>() {
-            public Object answer() throws Throwable {
-              ContainerUtil.addAll(arguments, getCurrentArguments());
-              return null;
-            }
-        });
 
-        replay(registry);
+        OsmorcFrameworkDetector detector = new OsmorcFrameworkDetector();
 
-        OsmorcFacetType.getInstance().registerDetectors(registry);
-        VirtualFileFilter filter = (VirtualFileFilter) arguments.get(1);
-        FacetDetector<VirtualFile, OsmorcFacetConfiguration> detector = (FacetDetector<VirtualFile, OsmorcFacetConfiguration>) arguments.get(2);
+        ElementPattern<FileContent> filter = detector.createSuitableFilePattern();
 
         VirtualFile manifestFile = myTempDirFixture.getFile("t0/src/META-INF/MANIFEST.MF");
 
-        assertThat(filter.accept(manifestFile), equalTo(true));
+        assertThat(filter.accepts(new FileContent(manifestFile, manifestFile.contentsToByteArray())), equalTo(true));
 
-        OsmorcFacetConfiguration osmorcFacetConfiguration = detector.detectFacet(manifestFile, new ArrayList<OsmorcFacetConfiguration>());
+        OsmorcFacetConfiguration osmorcFacetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
         assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
         assertThat(osmorcFacetConfiguration.isUseProjectDefaultManifestFileLocation(), equalTo(false));
 
@@ -127,43 +109,29 @@ public class FacetDetectionTest {
 
         ModifiableRootModel model = ModuleRootManager.getInstance(t0).getModifiableModel();
         try {
-            detector.beforeFacetAdded(osmorcFacet, FacetManager.getInstance(t0), model);
+            detector.setupFacet(osmorcFacet, model);
 
             assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo("src/META-INF/MANIFEST.MF"));
         }
         finally {
             model.dispose();
         }
-
-        verify(registry);
     }
 
      @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Test
-    public void testDetectBundlorFacet() {
+    public void testDetectBundlorFacet() throws IOException {
         ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
-        final List<Object> arguments = new ArrayList<Object>();
         Module t2 = moduleManager.findModuleByName("t2");
-        FacetDetectorRegistry registry = createMock(FacetDetectorRegistry.class);
-        registry.registerUniversalDetector(same(ManifestFileTypeFactory.MANIFEST), (VirtualFileFilter) anyObject(), (FacetDetector) anyObject());
-        expectLastCall().andAnswer(new IAnswer<Object>() {
-            public Object answer() throws Throwable {
-                arguments.addAll(Arrays.asList(getCurrentArguments()));
-                return null;
-            }
-        });
+        final OsmorcFrameworkDetector detector = new OsmorcFrameworkDetector();
 
-        replay(registry);
-
-        OsmorcFacetType.getInstance().registerDetectors(registry);
-        VirtualFileFilter filter = (VirtualFileFilter) arguments.get(1);
-        FacetDetector<VirtualFile, OsmorcFacetConfiguration> detector = (FacetDetector<VirtualFile, OsmorcFacetConfiguration>) arguments.get(2);
+        ElementPattern<FileContent> filter = detector.createSuitableFilePattern();
 
         VirtualFile manifestFile = myTempDirFixture.getFile("t2/src/META-INF/template.mf");
 
-        assertThat(filter.accept(manifestFile), equalTo(true));
+        assertThat(filter.accepts(new FileContent(manifestFile, manifestFile.contentsToByteArray())), equalTo(true));
 
-        OsmorcFacetConfiguration osmorcFacetConfiguration = detector.detectFacet(manifestFile, new ArrayList<OsmorcFacetConfiguration>());
+        OsmorcFacetConfiguration osmorcFacetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
         assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
         assertThat(osmorcFacetConfiguration.isUseProjectDefaultManifestFileLocation(), equalTo(false));
 
@@ -171,7 +139,7 @@ public class FacetDetectionTest {
 
         ModifiableRootModel model = ModuleRootManager.getInstance(t2).getModifiableModel();
         try {
-            detector.beforeFacetAdded(osmorcFacet, FacetManager.getInstance(t2), model);
+            detector.setupFacet(osmorcFacet, model);
 
             assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(""));
             assertThat(osmorcFacetConfiguration.getBundlorFileLocation(), equalTo("src/META-INF/template.mf"));
@@ -181,29 +149,13 @@ public class FacetDetectionTest {
         finally {
             model.dispose();
         }
-
-        verify(registry);
     }
     @SuppressWarnings({"unchecked"})
     @Test
-    public void testDetectNoFacet() {
-        final List<Object> arguments = new ArrayList<Object>();
-        FacetDetectorRegistry registry = createMock(FacetDetectorRegistry.class);
-        registry.registerUniversalDetector(same(ManifestFileTypeFactory.MANIFEST), (VirtualFileFilter) anyObject(), (FacetDetector) anyObject());
-        expectLastCall().andAnswer(new IAnswer<Object>() {
-            public Object answer() throws Throwable {
-              ContainerUtil.addAll(arguments, getCurrentArguments());
-              return null;
-            }
-        });
-
-        replay(registry);
-
-        OsmorcFacetType.getInstance().registerDetectors(registry);
-        VirtualFileFilter filter = (VirtualFileFilter) arguments.get(1);
+    public void testDetectNoFacet() throws IOException {
+        ElementPattern<FileContent> filter = new OsmorcFrameworkDetector().createSuitableFilePattern();
         VirtualFile manifestFile = myTempDirFixture.getFile("t1/src/META-INF/MANIFEST.MF");
 
-        assertThat(filter.accept(manifestFile), equalTo(false));
-        verify(registry);
+        assertThat(filter.accepts(new FileContent(manifestFile, manifestFile.contentsToByteArray())), equalTo(false));
     }
 }
