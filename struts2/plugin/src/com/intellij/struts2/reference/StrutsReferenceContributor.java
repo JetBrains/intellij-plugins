@@ -17,21 +17,19 @@ package com.intellij.struts2.reference;
 
 import com.intellij.javaee.model.xml.ParamValue;
 import com.intellij.javaee.model.xml.web.Filter;
-import com.intellij.openapi.fileTypes.StdFileTypes;
-import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.XmlElementPattern;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.PsiReferenceRegistrar;
-import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.struts2.StrutsConstants;
+import com.intellij.struts2.dom.struts.action.Result;
+import com.intellij.struts2.dom.validator.Message;
 import com.intellij.struts2.reference.web.WebXmlStrutsConstantNameReferenceProvider;
 import com.intellij.struts2.reference.web.WebXmlStrutsConstantValueReferenceProvider;
 
 import static com.intellij.patterns.DomPatterns.*;
-import static com.intellij.patterns.PlatformPatterns.virtualFile;
 import static com.intellij.patterns.PsiJavaPatterns.psiClass;
-import static com.intellij.patterns.StandardPatterns.*;
+import static com.intellij.patterns.StandardPatterns.or;
 import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
 import static com.intellij.patterns.XmlPatterns.xmlTag;
 
@@ -41,19 +39,6 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  * @author Yann C&eacute;bron
  */
 public class StrutsReferenceContributor extends PsiReferenceContributor {
-
-  /**
-   * struts.xml pattern.
-   */
-  private static final ElementPattern<XmlAttributeValue> STRUTS_XML =
-      xmlAttributeValue()
-          .inVirtualFile(virtualFile().ofType(StdFileTypes.XML))
-          .withSuperParent(2, xmlTag().withNamespace(string().oneOf(StrutsConstants.STRUTS_DTDS)));
-
-  private static final ElementPattern<XmlAttributeValue> VALIDATION_XML =
-      xmlAttributeValue()
-          .inVirtualFile(virtualFile().ofType(StdFileTypes.XML))
-          .withSuperParent(2, xmlTag().withNamespace(string().oneOf(StrutsConstants.VALIDATOR_DTDS)));
 
   /**
    * web.xml: match inside {@code <filter>}-element with S2-Filter.
@@ -97,12 +82,8 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
 
     // <result> "name" common values
     registrar.registerReferenceProvider(
-        and(
-            xmlAttributeValue()
-                .withLocalName("name")
-                .withSuperParent(2, xmlTag().withLocalName("result")),
-            STRUTS_XML
-           ),
+        xmlAttributeValue().withLocalName("name").
+            withSuperParent(2, withDom(domElement(Result.class))),
         new StaticStringValuesReferenceProvider("error", "input", "login", "success"));
   }
 
@@ -110,12 +91,8 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
 
     // <message> "key"
     registrar.registerReferenceProvider(
-        and(
-            xmlAttributeValue()
-                .withLocalName("key")
-                .withSuperParent(2, xmlTag().withLocalName("message")),
-            VALIDATION_XML
-           ),
+        xmlAttributeValue().withLocalName("key").
+            withSuperParent(2, withDom(domElement(Message.class))),
         new WrappedPropertiesReferenceProvider());
   }
 
