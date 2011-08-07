@@ -50,4 +50,8 @@ public class UITagsAttributesReferenceProviderTest extends BasicHighlightingTest
     myFixture.testHighlighting(true, false, false, "/jsp/common.jsp");
   }
 
+  public void testSpecificAttributes() throws Throwable {
+    myFixture.testHighlighting(true, false, false, "/jsp/specific.jsp");
+  }
+
 }
