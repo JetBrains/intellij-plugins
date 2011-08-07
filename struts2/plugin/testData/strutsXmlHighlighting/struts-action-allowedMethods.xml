@@ -2,9 +2,9 @@
 
 <!DOCTYPE struts PUBLIC
     "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
-    "<error>http://struts.apache.org/dtds/struts-2.3.dtd</error>">
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
 
-<!-- TODO 2.3-DTD not resolved in tests??! -->
+<!-- TODO 2.3-DTD not resolved in tests on my machine??! -->
 
 <!-- Struts 2.3:
      - <package> "strict-method-invocation"
