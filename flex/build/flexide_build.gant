@@ -563,9 +563,13 @@ def layoutMac(Map args, String target) {
     dir("bin") {
       fileset(dir: "$home/bin", includes: "*.jnilib")
 
+      fileset(dir: "$home/community/bin") {
+        include(name: "log.xml")
+      }
+
       fileset(dir: "$home/flex/build") {
-          include(name: "idea.properties")
-        }
+        include(name: "idea.properties")
+      }
     }
     dir("help") {
       fileset(dir: "$home/flex/keymap") {
