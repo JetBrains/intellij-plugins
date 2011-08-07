@@ -49,6 +49,7 @@ public interface StrutsPackage extends CommonDomModelElement {
   @Required(value = false, nonEmpty = true)
   GenericAttributeValue<String> getNamespace();
 
+  GenericAttributeValue<Boolean> getStrictMethodInvocation();
 
   /**
    * Gets the defined namespace or {@link #DEFAULT_NAMESPACE} if none defined.
