@@ -74,6 +74,11 @@ public interface Action extends ParamsElement {
   @NotNull
   List<ExceptionMapping> getExceptionMappings();
 
+  @SubTag(value = "allowed-methods")
+  @Convert(AllowedMethodsConverter.class)
+  @Nullable
+  GenericDomValue<String> getAllowedMethods();
+
   // additional methods -----------------------------------
 
   /**

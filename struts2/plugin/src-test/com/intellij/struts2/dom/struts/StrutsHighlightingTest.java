@@ -64,6 +64,10 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     performHighlightingTest("struts-unknownhandlerstack.xml");
   }
 
+  public void testActionAllowedMethods() throws Throwable {
+    performHighlightingTest("struts-action-allowedMethods.xml");
+  }
+
   public void testStrutsWithErrorsNotInFilesetNoHighlighting() throws Throwable {
     createStrutsFileSet("struts-default.xml");
     myFixture.testHighlighting(false, false, false, "struts-errors.xml");
