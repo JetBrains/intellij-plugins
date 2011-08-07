@@ -53,6 +53,7 @@ public class TaglibJavaScriptInjector implements MultiHostInjector {
                                                      StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI))
           .withLocalName(
               StandardPatterns.and(
+                  string().longerThan(5), // shortest "onXXX" attribute name: 6 characters
                   or(string().startsWith("on"),
                      string().startsWith("doubleOn")),  // **TransferSelect-tags
                   not(string().endsWith("Topics"))))    // exclude jQuery-plugin "onXXXTopics"
