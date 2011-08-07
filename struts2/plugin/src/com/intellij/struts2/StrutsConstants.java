@@ -79,7 +79,7 @@ public final class StrutsConstants {
    * struts.xml 2.1.7 ID.
    */
   @NonNls
-  public static final String STRUTS_2_1_7_DTD_ID = "Apache Software Foundation//DTD Struts Configuration 2.1.7//EN";
+  public static final String STRUTS_2_1_7_DTD_ID = "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN";
 
   /**
    * struts.xml 2.3 URI.
