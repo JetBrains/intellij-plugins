@@ -203,10 +203,10 @@
 
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibCssInlineStyleInjector"/>
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibJavaScriptInjector"/>
+    <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibOgnlInjector"/>
 
 
     <!-- OGNL Language -->
-    <fileTypeFactory implementation="com.intellij.lang.ognl.OgnlFileTypeFactory"/>
     <lang.parserDefinition language="OGNL"
                            implementationClass="com.intellij.lang.ognl.OgnlParserDefinition"/>
     <lang.braceMatcher language="OGNL"

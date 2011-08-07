@@ -15,6 +15,7 @@
 
 package com.intellij.lang.ognl;
 
+import com.intellij.lang.InjectableLanguage;
 import com.intellij.lang.Language;
 import com.intellij.lang.ognl.highlight.OgnlHighlighter;
 import com.intellij.openapi.fileTypes.LanguageFileType;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlLanguage extends Language {
+public class OgnlLanguage extends Language implements InjectableLanguage {
 
   public static final OgnlLanguage INSTANCE = new OgnlLanguage();
 

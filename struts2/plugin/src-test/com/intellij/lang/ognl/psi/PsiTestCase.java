@@ -20,7 +20,7 @@ import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.parsing.OgnlElementType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
-import com.intellij.testFramework.LightIdeaTestCase;
+import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.util.IncorrectOperationException;
 
 /**
@@ -28,7 +28,7 @@ import com.intellij.util.IncorrectOperationException;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class PsiTestCase extends LightIdeaTestCase {
+public abstract class PsiTestCase extends LightPlatformTestCase {
 
   protected OgnlElement parseSingleExpression(final String text) {
     final PsiElement[] expressions = parseExpressions(text);
@@ -54,7 +54,8 @@ public abstract class PsiTestCase extends LightIdeaTestCase {
   }
 
   private OgnlFile createFile(final String text) throws IncorrectOperationException {
-    return (OgnlFile) PsiFileFactory.getInstance(getProject()).createFileFromText("test.ognl", text);
+    return (OgnlFile) PsiFileFactory.getInstance(getProject())
+                                    .createFileFromText("test.ognl", OgnlLanguage.INSTANCE, text);
   }
 
 }
