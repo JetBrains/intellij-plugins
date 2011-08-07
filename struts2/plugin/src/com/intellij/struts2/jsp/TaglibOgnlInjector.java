@@ -46,12 +46,12 @@ public class TaglibOgnlInjector implements MultiHostInjector {
   // OGNL expression patterns
   private static final ElementPattern<XmlAttributeValue> OGNL_ELEMENT_PATTERN =
       xmlAttributeValue()
-          .withValue(string().startsWith("%{"))
-              // TODO "{ a, b, c}" - expressions
           .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
                             virtualFile().ofType(StdFileTypes.JSPX)))
           .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
-                                                     StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI));
+                                                     StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI))
+          .withValue(string().startsWith("%{"));
+  // TODO "{ a, b, c}" - expressions
 
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar,

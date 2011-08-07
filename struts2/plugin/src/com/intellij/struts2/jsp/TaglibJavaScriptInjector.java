@@ -46,36 +46,37 @@ public class TaglibJavaScriptInjector implements MultiHostInjector {
 
   // everything with "onXXX"
   private static final ElementPattern<XmlAttributeValue> JS_ELEMENT_PATTERN =
-    xmlAttributeValue()
-      .withLocalName(
-        StandardPatterns.and(
-          or(string().startsWith("on"),
-             string().startsWith("doubleOn")),  // **TransferSelect-tags
-          not(string().endsWith("Topics"))))    // exclude jQuery-plugin "onXXXTopics"
-      .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
-                        virtualFile().ofType(StdFileTypes.JSPX)))
-      .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI));
+      xmlAttributeValue()
+          .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
+                            virtualFile().ofType(StdFileTypes.JSPX)))
+          .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
+                                                     StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI))
+          .withLocalName(
+              StandardPatterns.and(
+                  or(string().startsWith("on"),
+                     string().startsWith("doubleOn")),  // **TransferSelect-tags
+                  not(string().endsWith("Topics"))))    // exclude jQuery-plugin "onXXXTopics"
+      ;
 
   // struts2-jQuery taglib "pseudo" JS-highlighting
   private static final ElementPattern<XmlAttributeValue> JS_JQUERY_PATTERN =
-    xmlAttributeValue()
-      .withLocalName("effectOptions",
-                     // dialog
-                     "buttons",    
-                     // datepicker
-                     "showOptions",
-                     // grid
-                     "filterOptions", "navigatorAddOptions", "navigatorDeleteOptions",
-                     "navigatorEditOptions", "navigatorSearchOptions", "navigatorViewOptions",
-                     // gridColumn
-                     "editoptions", "editrules", "searchoptions",
-                     // tabbedPanel
-                     "disabledTabs")
-      .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
-                        virtualFile().ofType(StdFileTypes.JSPX)))
-      .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI));
+      xmlAttributeValue()
+          .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
+                            virtualFile().ofType(StdFileTypes.JSPX)))
+          .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
+                                                     StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI))
+          .withLocalName("effectOptions",
+                         // dialog
+                         "buttons",
+                         // datepicker
+                         "showOptions",
+                         // grid
+                         "filterOptions", "navigatorAddOptions", "navigatorDeleteOptions",
+                         "navigatorEditOptions", "navigatorSearchOptions", "navigatorViewOptions",
+                         // gridColumn
+                         "editoptions", "editrules", "searchoptions",
+                         // tabbedPanel
+                         "disabledTabs");
 
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement host) {
     if (JS_ELEMENT_PATTERN.accepts(host)) {
@@ -86,9 +87,9 @@ public class TaglibJavaScriptInjector implements MultiHostInjector {
     // "pseudo" JS
     if (JS_JQUERY_PATTERN.accepts(host)) {
       registrar.startInjecting(JavaScriptSupportLoader.JAVASCRIPT.getLanguage())
-        .addPlace("(", ")", (PsiLanguageInjectionHost) host,
-                  TextRange.from(1, host.getTextLength() - 2))
-        .doneInjecting();
+               .addPlace("(", ")", (PsiLanguageInjectionHost) host,
+                         TextRange.from(1, host.getTextLength() - 2))
+               .doneInjecting();
     }
   }
 

@@ -44,19 +44,19 @@ public class TaglibCssInlineStyleInjector implements MultiHostInjector {
 
   private static final ElementPattern<XmlAttributeValue> CSS_ELEMENT_PATTERN =
       xmlAttributeValue()
-          .withLocalName(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES)
           .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
                             virtualFile().ofType(StdFileTypes.JSPX)))
           .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
                                                      StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
-                                                     StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI));
+                                                     StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI))
+          .withLocalName(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES);
 
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement context) {
     if (CSS_ELEMENT_PATTERN.accepts(context)) {
       final TextRange range = new TextRange(1, context.getTextLength() - 1);
       registrar.startInjecting(CssFileType.INSTANCE.getLanguage())
-          .addPlace("inline.style {", "}", (PsiLanguageInjectionHost) context, range)
-          .doneInjecting();
+               .addPlace("inline.style {", "}", (PsiLanguageInjectionHost) context, range)
+               .doneInjecting();
     }
   }
 
