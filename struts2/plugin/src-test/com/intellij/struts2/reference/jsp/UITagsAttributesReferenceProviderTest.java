@@ -45,5 +45,9 @@ public class UITagsAttributesReferenceProviderTest extends BasicHighlightingTest
   public void testPathAttributes() throws Throwable {
     myFixture.testHighlighting(true, false, false, "/jsp/paths.jsp");
   }
-  
+
+  public void testCommonAttributes() throws Throwable {
+    myFixture.testHighlighting(true, false, false, "/jsp/common.jsp");
+  }
+
 }
