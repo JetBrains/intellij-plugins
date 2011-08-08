@@ -39,7 +39,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
   // classes Boolean, Date, Number, String and XML are final in playerglobal.swc, but not final in our predefined files.
   // if changed to final there then we can remove these classes from this list.
   private static final String[] ILLEGAL_LANGUAGE_ROOT_TAGS =
-    {"Array", "Boolean", "Component", "Class", "Date", "DesignLayer", "Function", "Number", "String", "XML"};
+    {"Array", "Boolean", "Component", "Class", "Date", "DesignLayer", "Function", "Number", "String", "XML", "int", "uint"};
 
   @Nullable
   public XmlElementDescriptor getElementDescriptor(@NotNull final XmlTag tag) {
@@ -128,7 +128,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
       }
 
       String name = elementDescriptor.getName();
-      if (name.length() > 0 && Character.isUpperCase(name.charAt(0))) results.add(elementDescriptor);
+      if (name.length() > 0 /*&& Character.isUpperCase(name.charAt(0))*/) results.add(elementDescriptor);
     }
     return results.toArray(new XmlElementDescriptor[results.size()]);
   }
