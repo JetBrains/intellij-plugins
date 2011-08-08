@@ -12,7 +12,9 @@
   <Component role="{ApplicationManager}"/>
   <Component role="{LibraryManager}"/>
   <Component role="{BitmapDataManager}"/>
-  <Component role="{EmbedSwfManager}"/>
+  <Component role="{EmbedSwfManager}">
+    <Requirement role="{Server}"/>
+  </Component>
   <Component role="{EmbedImageManager}">
     <Requirement role="{Server}"/>
   </Component>

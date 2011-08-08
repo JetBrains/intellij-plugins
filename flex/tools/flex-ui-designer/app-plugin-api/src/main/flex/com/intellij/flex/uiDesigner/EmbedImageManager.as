@@ -1,6 +1,4 @@
 package com.intellij.flex.uiDesigner {
-import cocoa.util.StringUtil;
-
 import flash.display.LoaderInfo;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
@@ -9,14 +7,8 @@ import flash.system.LoaderContext;
 import flash.utils.ByteArray;
 
 public class EmbedImageManager extends AbstractEmbedAssetManager implements EmbedAssetManager {
-  private var classes:Vector.<Class>;
-
-  private var lastAllocatedClassIndex:int;
-
-  private var server:Server;
-
   public function EmbedImageManager(server:Server) {
-    this.server = server;
+    super(server);
   }
 
   public function load(id:int, bytes:ByteArray):void {
@@ -29,30 +21,12 @@ public class EmbedImageManager extends AbstractEmbedAssetManager implements Embe
   }
 
   public function get(id:int, applicationDomain:ApplicationDomain):Class {
-    var result:Class;
-    if (classes == null) {
-      classes = new Vector.<Class>(id + 16);
-    }
-    else if (id >= classes.length) {
-      classes.length = Math.max(classes.length, id) + 16;
-    }
-    else {
-      result = classes[id];
-      if (result != null) {
-        return result;
-      }
+    var result:Class = getCachedClass(id);
+    if (result != null) {
+      return result;
     }
 
-    var classIndex:String = lastAllocatedClassIndex.toString(16);
-    var className:String = "_b";
-    var padding:int = 3 - classIndex.length;
-    if (padding > 0) {
-      className += StringUtil.repeat("0", padding);
-    }
-    className += classIndex;
-
-    lastAllocatedClassIndex++;
-    var clazz:Class = Class(applicationDomain.getDefinition(className));
+    var clazz:Class = getClass("_b", applicationDomain);
     clazz["data"] = server.getBitmapData(id);
     classes[id] = clazz;
 

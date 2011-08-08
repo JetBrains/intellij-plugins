@@ -1,19 +1,35 @@
 package com.intellij.flex.uiDesigner {
+import cocoa.util.StringUtil;
+
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
+import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.utils.ByteArray;
 
 public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedAssetManager {
   private var data:Vector.<SwfCache>;
 
-  public function get(id:int, symbol:String):Object {
-    return get2(data[id], symbol);
+  public function EmbedSwfManager(server:Server) {
+    super(server);
   }
 
-  private static function get2(swfCache:SwfCache, symbol:String):Object {
+  public function get(id:int, symbol:String, applicationDomain:ApplicationDomain):Class {
+    var result:Class = getCachedClass(id);
+    if (result != null) {
+      return result;
+    }
+
+    var clazz:Class = getClass("_s", applicationDomain);
+    clazz["data"] = server.getBitmapData(id);
+    classes[id] = clazz;
+
+    return clazz;
+  }
+
+  private static function get2(swfCache:SwfCache, symbol:String, id:int):Object {
     return symbol == null ? swfCache.rootClass : Class(swfCache.applicationDomain.getDefinition(symbol));
   }
   
@@ -32,7 +48,7 @@ public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedA
       }
     }
     else {
-      propertyHolder[propertyName] = get2(data[id], symbol);
+      propertyHolder[propertyName] = get2(data[id], symbol, id);
     }
   }
   
