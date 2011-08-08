@@ -4,10 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
@@ -17,6 +14,16 @@ public final class IOUtil {
 
   public static void saveStream(File source, File target) throws IOException {
     saveStream(source.toURI().toURL(), target);
+  }
+
+  public static byte[] getResourceBytes(String name) throws IOException {
+    InputStream classDefinition = IOUtil.class.getClassLoader().getResourceAsStream(name);
+    try {
+      return FileUtil.loadBytes(classDefinition);
+    }
+    finally {
+      classDefinition.close();
+    }
   }
 
   public static void saveStream(URL source, File target) throws IOException {

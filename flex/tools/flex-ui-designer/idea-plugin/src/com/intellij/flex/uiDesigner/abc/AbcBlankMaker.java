@@ -10,7 +10,8 @@ import java.io.IOException;
 
 final class AbcBlankMaker {
   public static void main(String[] args) throws IOException {
-    //new AbcFilter().filter(new File("abc-blank-maker/src/b/library.swf"), new File("idea-plugin/resources/B.abc"), new AbcNameFilterByEquals("_b000"));
+    //new AbcFilter(false).filter(new File("abc-blank-maker/src/o/library.swf"), new File("idea-plugin/resources/BitmapAsset.abc"), new AbcNameFilterByEquals("_b000"));
+
     //d();
 
     //u();
@@ -22,6 +23,13 @@ final class AbcBlankMaker {
     //new AbcFilter().filter(new File("/Users/develar/output.swf"), new File("/Users/develar/ot.swf"), null);
 
     new MovieTranscoder().extract(new File("/Developer/SDKs/flex_4.5.1/frameworks/projects/framework/assets/Assets.swf"), new File("/Users/develar/r.swf"), "mx.containers.FormItem.Required".getBytes());
+  }
+
+  private static void makeBlanks() throws IOException {
+    final AbcFilter abcTagExtractor = new AbcFilter(false, true);
+    final File in = new File("abc-blank-maker/src/o/library.swf");
+    abcTagExtractor.filter(in, new File("idea-plugin/resources/BitmapAsset.abc"), new AbcNameFilterByEquals("_b000"));
+    abcTagExtractor.filter(in, new File("idea-plugin/resources/SymbolOwnClass.abc"), new AbcNameFilterByEquals("SymbolOwnClass"));
   }
 
   private static void d() throws IOException {

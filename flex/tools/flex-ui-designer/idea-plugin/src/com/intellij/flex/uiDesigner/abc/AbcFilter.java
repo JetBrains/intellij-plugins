@@ -24,7 +24,8 @@ public class AbcFilter extends SwfTranscoder {
   
   protected final ArrayList<Decoder> decoders = new ArrayList<Decoder>(256);
 
-  private boolean useFlexEncoder;
+  private final boolean useFlexEncoder;
+  private final boolean onlyAbcAsTag;
   private String inputFileParentName;
 
   private TIntObjectHashMap<TagPositionInfo> exportAssets;
@@ -33,7 +34,12 @@ public class AbcFilter extends SwfTranscoder {
   private int sB;
 
   public AbcFilter(boolean useFlexEncoder) {
+    this(useFlexEncoder, false);
+  }
+
+  public AbcFilter(boolean useFlexEncoder, boolean onlyAbcAsTag) {
     this.useFlexEncoder = useFlexEncoder;
+    this.onlyAbcAsTag = onlyAbcAsTag;
   }
 
   public void filter(File in, File out, @Nullable AbcNameFilter abcNameFilter) throws IOException {
@@ -366,7 +372,7 @@ public class AbcFilter extends SwfTranscoder {
 
       switch (type) {
         case TagTypes.End:
-          mergeDoAbc(false, false);
+          mergeDoAbc(onlyAbcAsTag, false);
           return;
 
         case TagTypes.DoABC2:

@@ -12,7 +12,7 @@ final class ImageClassPoolGenerator extends AbcEncoder {
 
   private static void initAbcBlank() throws IOException {
     if (B_ABC == null) {
-      InputStream classDefinition = ImageClassPoolGenerator.class.getClassLoader().getResourceAsStream("B.abc");
+      InputStream classDefinition = ImageClassPoolGenerator.class.getClassLoader().getResourceAsStream("BitmapAsset.abc");
       try {
         B_ABC = FileUtil.loadBytes(classDefinition);
       }

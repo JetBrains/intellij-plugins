@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.flex.uiDesigner.io.IOUtil;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntObjectHashMap;
 
@@ -13,11 +14,12 @@ import java.util.List;
 import static com.intellij.flex.uiDesigner.abc.MovieTranscoder.PlaceObjectFlags.*;
 
 public class MovieTranscoder extends SwfTranscoder {
+  private static byte[] SYMBOL_OWN_CLASS_ABC;
+
   private byte[] symbolName;
 
   private int bitPos;
   private int bitBuf;
-
 
   private TIntObjectHashMap<PlacedObject> placedObjects;
   // we cannot mark placedObject as used and iterate exisiting map (placedObjects) — order of items in map is not predictable,
@@ -27,12 +29,20 @@ public class MovieTranscoder extends SwfTranscoder {
   private Rectangle bounds;
   private int fileLength;
 
-  //private static final byte[] bytes = "flash.display.Sprite".getBytes();
-  private static final byte[] bytes = "com.S".getBytes();
-  private static final int symbolClassLength = 2 + 2 + bytes.length + 1;
+  private static final byte[] ROOT_SWF_CLASS_NAME = "flash.display.Sprite".getBytes();
+  private static final byte[] SYMBOL_OWN_CLASS_NAME = "SymbolOwnClass".getBytes();
+  private static final int SYMBOL_CLASS_TAG_LENGTH = 2 + 2 + ROOT_SWF_CLASS_NAME.length + 1 + 2 + SYMBOL_OWN_CLASS_NAME.length + 1;
+
+  private static void initAbcBlank() throws IOException {
+    if (SYMBOL_OWN_CLASS_ABC == null) {
+      SYMBOL_OWN_CLASS_ABC = IOUtil.getResourceBytes("SymbolOwnClass.abc");
+    }
+  }
 
   // symbolName — utf8 bytes
   public void extract(File in, File out, byte[] symbolName) throws IOException {
+    initAbcBlank();
+    
     this.symbolName = symbolName;
     extract(new FileInputStream(in), in.length(), out);
   }
@@ -40,15 +50,14 @@ public class MovieTranscoder extends SwfTranscoder {
   private void extract(FileInputStream inputStream, long inputLength, File outFile) throws IOException {
     final FileOutputStream out = transcode(inputStream, inputLength, outFile);
     try {
-      fileLength = 2 + symbolClassLength + SwfUtil.getWrapLength();
+      fileLength = 2 + SYMBOL_OWN_CLASS_ABC.length + SYMBOL_CLASS_TAG_LENGTH + SwfUtil.getWrapLength();
 
       final PlacedObject exportedSymbol = extract();
-      buffer.position(0);
-
       SwfUtil.header(fileLength, out, buffer);
 
+      out.write(SYMBOL_OWN_CLASS_ABC);
+
       writeUsedPlacedObjects(out);
-      out.flush();
       writeExportedSymbol(out, exportedSymbol);
 
       SwfUtil.footer(out);
@@ -255,8 +264,7 @@ public class MovieTranscoder extends SwfTranscoder {
     final byte[] data = buffer.array();
     buffer.position(0);
     encodeTagHeader(object.tagType, object.actualLength == -1 ? object.length : object.actualLength);
-    // change Sprite ID — set as 0
-    buffer.putShort((short)0);
+    buffer.putShort((short)1);
     out.write(data, 0, buffer.position());
     if (positions == null) {
       out.write(data, object.start + 2, object.length - 2);
@@ -267,10 +275,15 @@ public class MovieTranscoder extends SwfTranscoder {
 
     // generate SymbolClass
     buffer.position(0);
-    encodeTagHeader(TagTypes.SymbolClass, symbolClassLength);
-    buffer.putShort((short)1);
+    encodeTagHeader(TagTypes.SymbolClass, SYMBOL_CLASS_TAG_LENGTH);
+    buffer.putShort((short)2);
+
     buffer.putShort((short)0);
-    buffer.put(bytes);
+    buffer.put(ROOT_SWF_CLASS_NAME);
+    buffer.put((byte)0);
+
+    buffer.putShort((short)1);
+    buffer.put(SYMBOL_OWN_CLASS_NAME);
     buffer.put((byte)0);
 
     out.write(data, 0, buffer.position());
