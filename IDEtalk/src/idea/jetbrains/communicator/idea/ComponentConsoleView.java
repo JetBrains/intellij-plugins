@@ -29,6 +29,7 @@ import jetbrains.communicator.core.users.User;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -145,6 +146,11 @@ class ComponentConsoleView implements ConsoleView {
 
   public JComponent getComponent() {
     return myPanel;
+  }
+
+  @Override
+  public void setBorder(Border border) {
+    myPanel.setBorder(border);
   }
 
   public JComponent getPreferredFocusableComponent() {
