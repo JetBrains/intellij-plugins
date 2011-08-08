@@ -5,6 +5,7 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
 import com.intellij.framework.detection.FacetBasedFrameworkDetector;
 import com.intellij.framework.detection.FileContentPattern;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -14,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.util.TapestryIcons;
+import com.intellij.tapestry.lang.TmlFileType;
 import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,6 +65,12 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
     @Override
     public FacetType<TapestryFacet, TapestryFacetConfiguration> getFacetType() {
       return TapestryFacetType.getInstance();
+    }
+
+    @NotNull
+    @Override
+    public FileType getFileType() {
+      return TmlFileType.INSTANCE;
     }
 
     @NotNull
