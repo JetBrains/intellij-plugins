@@ -26,7 +26,10 @@ public class MovieTranscoder extends SwfTranscoder {
 
   private Rectangle bounds;
   private int fileLength;
-  private int fileAttributesEndPosition;
+
+  //private static final byte[] bytes = "flash.display.Sprite".getBytes();
+  private static final byte[] bytes = "com.S".getBytes();
+  private static final int symbolClassLength = 2 + 2 + bytes.length + 1;
 
   // symbolName — utf8 bytes
   public void extract(File in, File out, byte[] symbolName) throws IOException {
@@ -37,11 +40,18 @@ public class MovieTranscoder extends SwfTranscoder {
   private void extract(FileInputStream inputStream, long inputLength, File outFile) throws IOException {
     final FileOutputStream out = transcode(inputStream, inputLength, outFile);
     try {
-      extract();
+      fileLength = 2 + symbolClassLength + SwfUtil.getWrapLength();
+
+      final PlacedObject exportedSymbol = extract();
       buffer.position(0);
-      writePartialHeader(fileLength);
-      out.write(buffer.array(), 0, fileAttributesEndPosition);
+
+      SwfUtil.header(fileLength, out, buffer);
+
       writeUsedPlacedObjects(out);
+      out.flush();
+      writeExportedSymbol(out, exportedSymbol);
+
+      SwfUtil.footer(out);
     }
     finally {
       out.flush();
@@ -49,40 +59,15 @@ public class MovieTranscoder extends SwfTranscoder {
     }
   }
 
-  private void writeUsedPlacedObjects(final FileOutputStream out) throws IOException {
-    final byte[] data = buffer.array();
-    for (PlacedObject object : usedPlacedObjects) {
-      final TIntArrayList positions = object.positions;
-      if (positions == null) {
-        out.write(data, object.start - 2 - (object.length < 63 ? 2 : 6), object.length);
-      }
-      else {
-        buffer.position(0);
-        encodeTagHeader(object.tagType, object.actualLength);
-        out.write(data, 0, buffer.position());
-        out.write(data, object.start - 2, positions.getQuick(0));
-        final int maxI = positions.size() - 1;
-        // todo continue impl
-        for (int i = 1;;) {
-          if (i == maxI) {
-            final int offset = positions.getQuick(i);
-            out.write(data, offset, offset - object.length);
-            break;
-          }
-          out.write(data, positions.getQuick(i++), positions.getQuick(i++));
-        }
-      }
-    }
-  }
-
-  private void extract() throws IOException {
+  private PlacedObject extract() throws IOException {
     lastWrittenPosition = 0;
 
     placedObjects = new TIntObjectHashMap<PlacedObject>();
 
     int spriteId = -1;
 
-    analyze: while (buffer.position() < buffer.limit()) {
+    int tagStart;
+    analyze: while ((tagStart = buffer.position()) < buffer.limit()) {
       final int tagCodeAndLength = buffer.getShort();
       final int type = tagCodeAndLength >> 6;
       int length = tagCodeAndLength & 0x3F;
@@ -100,7 +85,7 @@ public class MovieTranscoder extends SwfTranscoder {
         case TagTypes.DefineShape3:
         case TagTypes.DefineShape4:
         case TagTypes.DefineSprite:
-          placedObjects.put(buffer.getShort(), new PlacedObject(position + 2, length, type));
+          placedObjects.put(buffer.getShort(), new PlacedObject(position, length, type, tagStart));
           break;
 
         case TagTypes.ExportAssets:
@@ -112,12 +97,6 @@ public class MovieTranscoder extends SwfTranscoder {
           else {
             break analyze;
           }
-
-        case TagTypes.FileAttributes:
-          buffer.put(buffer.position(), (byte)104); // HasMetadata = false
-          fileAttributesEndPosition = position + length;
-          fileLength = fileAttributesEndPosition;
-          break;
       }
 
       buffer.position(position + length);
@@ -129,23 +108,21 @@ public class MovieTranscoder extends SwfTranscoder {
 
     usedPlacedObjects = new ArrayList<PlacedObject>(placedObjects.size());
     bounds = null;
-    processDefineSprite(placedObjects.get(spriteId));
-    usedPlacedObjects = null;
+    final PlacedObject exportedSymbol = placedObjects.get(spriteId);
+    exportedSymbol.used = true;
+    processDefineSprite(exportedSymbol);
 
-    // must be written in the same order as it was read
-    Collections.sort(usedPlacedObjects, new Comparator<PlacedObject>() {
-      @Override
-      public int compare(PlacedObject o1, PlacedObject o2) {
-        return o1.start < o2.start ? -1 : 1;
-      }
-    });
+    // we encode length not as provided, according to rules about long or short tag header
+    fileLength += computeFullLength(exportedSymbol.positions == null ? exportedSymbol.length : exportedSymbol.actualLength);
+
+    return exportedSymbol;
   }
 
   private void processDefineSprite(PlacedObject placedObject) throws IOException {
-    buffer.position(placedObject.start);
-    final int endPosition = (placedObject.start - 2) + placedObject.length;
+    buffer.position(placedObject.start + 4);
+    final int endPosition = placedObject.start + placedObject.length;
     while (true) {
-      final int tagOffset = buffer.position();
+      final int tagStart = buffer.position();
       final int tagCodeAndLength = buffer.getShort();
       final int type = tagCodeAndLength >> 6;
       int length = tagCodeAndLength & 0x3F;
@@ -153,7 +130,7 @@ public class MovieTranscoder extends SwfTranscoder {
         length = buffer.getInt();
       }
 
-      final int position = buffer.position();
+      final int start = buffer.position();
       switch (type) {
         case TagTypes.DoAction:
         case TagTypes.DoInitAction:
@@ -162,9 +139,9 @@ public class MovieTranscoder extends SwfTranscoder {
             placedObject.positions = new TIntArrayList();
             placedObject.actualLength = placedObject.length;
           }
-          placedObject.positions.add(tagOffset);
-          final int fullLength = computeFullLength(length);
-          placedObject.positions.add(tagOffset + fullLength);
+          placedObject.positions.add(tagStart);
+          final int fullLength = length + (start - tagStart);
+          placedObject.positions.add(tagStart + fullLength);
           placedObject.actualLength -= fullLength;
           continue;
 
@@ -173,11 +150,11 @@ public class MovieTranscoder extends SwfTranscoder {
           throw new IOException("PlaceObject and PlaceObject3 are not supported");
 
         case TagTypes.PlaceObject2:
-          processPlaceObject2(placedObject, length, position);
+          processPlaceObject2(placedObject, length, start);
           break;
       }
 
-      final int newPosition = position + length;
+      final int newPosition = start + length;
       if (newPosition < endPosition) {
         buffer.position(newPosition);
       }
@@ -185,8 +162,6 @@ public class MovieTranscoder extends SwfTranscoder {
         break;
       }
     }
-
-    fileLength += computeFullLength(placedObject.length) + placedObject.actualLength;
   }
 
   private static int computeFullLength(int length) {
@@ -254,17 +229,94 @@ public class MovieTranscoder extends SwfTranscoder {
       referredObject.used = true;
       if (referredObject.tagType == TagTypes.DefineSprite) {
         processDefineSprite(referredObject);
+        if (referredObject.positions == null) {
+          // we encode length as provided, just copy bytes
+          fileLength += referredObject.computeFullLengthAsProvided();
+        }
+        else {
+          // we encode length according to rules about long or short tag header
+          fileLength += computeFullLength(referredObject.actualLength);
+        }
       }
       else if (bounds == null) {
         findBounds(referredObject);
-        fileLength += computeFullLength(referredObject.length) + referredObject.actualLength;
+        fileLength += referredObject.computeFullLengthAsProvided();
       }
     }
   }
 
   private void findBounds(PlacedObject placedObject) throws IOException {
-    buffer.position(placedObject.start);
+    buffer.position(placedObject.start + 2);
     decodeRect();
+  }
+
+  private void writeExportedSymbol(FileOutputStream out, PlacedObject object) throws IOException {
+    final TIntArrayList positions = object.positions;
+    final byte[] data = buffer.array();
+    buffer.position(0);
+    encodeTagHeader(object.tagType, object.actualLength == -1 ? object.length : object.actualLength);
+    // change Sprite ID — set as 0
+    buffer.putShort((short)0);
+    out.write(data, 0, buffer.position());
+    if (positions == null) {
+      out.write(data, object.start + 2, object.length - 2);
+    }
+    else {
+      writeFilteredPlacedObject(out, data, object, positions, object.start + 2);
+    }
+
+    // generate SymbolClass
+    buffer.position(0);
+    encodeTagHeader(TagTypes.SymbolClass, symbolClassLength);
+    buffer.putShort((short)1);
+    buffer.putShort((short)0);
+    buffer.put(bytes);
+    buffer.put((byte)0);
+
+    out.write(data, 0, buffer.position());
+  }
+
+  private void writeUsedPlacedObjects(final FileOutputStream out) throws IOException {
+    // must be written in the same order as it was read
+    Collections.sort(usedPlacedObjects, new Comparator<PlacedObject>() {
+      @Override
+      public int compare(PlacedObject o1, PlacedObject o2) {
+        return o1.start < o2.start ? -1 : 1;
+      }
+    });
+
+    final byte[] data = buffer.array();
+    for (PlacedObject object : usedPlacedObjects) {
+      final TIntArrayList positions = object.positions;
+      if (positions == null) {
+        out.write(data, object.tagStart, (object.start - object.tagStart) + object.length);
+      }
+      else {
+        writeFilteredPlacedObject(out, data, object, positions, object.start);
+      }
+    }
+
+    usedPlacedObjects = null;
+  }
+
+  private void writeFilteredPlacedObject(FileOutputStream out, byte[] data, PlacedObject object, TIntArrayList positions, int start)
+      throws IOException {
+    buffer.position(0);
+    encodeTagHeader(object.tagType, object.actualLength);
+    out.write(data, 0, buffer.position());
+    int prevOffset = positions.getQuick(0);
+    out.write(data, start, prevOffset);
+    final int maxI = positions.size() - 1;
+    for (int i = 0; ; ) {
+      if (i >= maxI) {
+        out.write(data, prevOffset, (object.start + object.length) - prevOffset);
+        break;
+      }
+      else {
+        out.write(data, prevOffset, positions.getQuick(i++) - prevOffset);
+        prevOffset = positions.getQuick(i++);
+      }
+    }
   }
 
   private void decodeColorTransform() throws IOException {
@@ -421,14 +473,16 @@ public class MovieTranscoder extends SwfTranscoder {
   }
 
   private static class PlacedObject {
-    public boolean used;
+    private boolean used;
 
-    public final int start;
-    public final int length;
-    public final int tagType;
-    
-    public int actualLength = -1;
-    public TIntArrayList positions;
+    // we cannot calculate tagStart by length and start — length may be less than 63, but encoded as long tag header
+    private final int tagStart;
+    private final int start;
+    private final int length;
+    private final int tagType;
+
+    private int actualLength = -1;
+    private TIntArrayList positions;
 
     public void prepareSparseWrite() {
       if (positions == null) {
@@ -437,10 +491,15 @@ public class MovieTranscoder extends SwfTranscoder {
       }
     }
 
-    private PlacedObject(int start, int length, int tagType) {
+    private PlacedObject(int start, int length, int tagType, int tagStart) {
       this.start = start;
       this.length = length;
       this.tagType = tagType;
+      this.tagStart = tagStart;
+    }
+    
+    public int computeFullLengthAsProvided() {
+      return length + (start - tagStart);
     }
   }
 }

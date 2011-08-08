@@ -19,14 +19,7 @@ public class ImageWrapper extends AbcEncoder {
     }
   };
 
-  // FWS, Version 10
-  private static final byte[] SWF_HEADER_P1 = {0x46, 0x57, 0x53, 0x0a};
-  private static final byte[] SWF_HEADER_P2 = {0x78, 0x00, 0x03, (byte)0xe8, 0x00, 0x00, 0x0b, (byte)0xb8, 0x00, // size [Rect 0 0 8000 6000]
-			0x00, 0x0c, 0x01, 0x00, // 16bit le frame rate 12, 16bit be frame count 1
-			0x44, 0x11, // Tag type=69 (FileAttributes), length=4
-			0x08, 0x00, 0x00, 0x00};
 
-  private static final byte[] SWF_FOOTER = {0x40, 0x00, 0x00, 0x00};
   private static final int SYMBOL_CLASS_TAG_LENGTH = 2 + 2 + 1 + 1;
 
   private final int dataLength;
@@ -35,8 +28,7 @@ public class ImageWrapper extends AbcEncoder {
   public ImageWrapper(int dataLength) throws IOException {
     this.dataLength = dataLength;
     initAbcBlank();
-    totalLength = SWF_HEADER_P1.length + 4 + SWF_HEADER_P2.length + B_ABC.length + 6 + 2 + dataLength +
-                  2 + SYMBOL_CLASS_TAG_LENGTH + SWF_FOOTER.length;
+    totalLength = SwfUtil.getWrapLength() + B_ABC.length + 6 + 2 + dataLength + 2 + SYMBOL_CLASS_TAG_LENGTH;
     buffer = BUFFER.get();
   }
 
@@ -57,11 +49,7 @@ public class ImageWrapper extends AbcEncoder {
   }
 
   public void wrap(InputStream in, OutputStream out) throws IOException {
-    out.write(SWF_HEADER_P1);
-    // write length
-    buffer.putInt(totalLength);
-    write(out);
-    out.write(SWF_HEADER_P2);
+    SwfUtil.header(totalLength, out, buffer);
     // class for defineBits
     out.write(B_ABC);
 
@@ -78,7 +66,7 @@ public class ImageWrapper extends AbcEncoder {
     writeSwfString('B');
     write(out);
 
-    out.write(SWF_FOOTER);
+    SwfUtil.footer(out);
   }
 
   private void write(OutputStream out) throws IOException {
