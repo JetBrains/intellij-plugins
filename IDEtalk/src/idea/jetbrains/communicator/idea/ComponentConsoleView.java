@@ -72,6 +72,10 @@ class ComponentConsoleView implements ConsoleView {
     myPanel.removeAll();
   }
 
+  @Override
+  public void allowHeavyFilters() {
+  }
+
   public int getContentSize() {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }
