@@ -29,10 +29,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OgnlLanguage extends Language implements InjectableLanguage {
 
+  public static final String ID = "OGNL";
+
   public static final OgnlLanguage INSTANCE = new OgnlLanguage();
 
   private OgnlLanguage() {
-    super("OGNL");
+    super(ID);
 
     SyntaxHighlighterFactory.LANGUAGE_FACTORY
         .addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
