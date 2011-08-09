@@ -15,7 +15,9 @@
 
 package com.intellij.lang.ognl.psi;
 
+import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.parsing.OgnlElementTypes;
+import org.intellij.lang.annotations.Language;
 
 /**
  * {@link OgnlConditionalExpression}.
@@ -66,7 +68,9 @@ public class ConditionalExpressionPsiTest extends PsiTestCase {
   }
 
 
-  private OgnlConditionalExpression parse(final String expression) {
+  private OgnlConditionalExpression parse(@Language(value = OgnlLanguage.ID,
+                                                    prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                                    suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
     return (OgnlConditionalExpression) parseSingleExpression(expression);
   }
 

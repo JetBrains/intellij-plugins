@@ -15,7 +15,9 @@
 
 package com.intellij.lang.ognl.psi;
 
+import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.psi.PsiReference;
+import org.intellij.lang.annotations.Language;
 
 /**
  * {@link OgnlVariableExpression}.
@@ -44,7 +46,9 @@ public class VariableExpressionPsiTest extends PsiTestCase {
     assertEquals(expression.getNavigationElement(), reference.resolve());
   }
 
-  private OgnlVariableExpression parse(final String expression) {
+  private OgnlVariableExpression parse(@Language(value = OgnlLanguage.ID,
+                                                 prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                                 suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
     return (OgnlVariableExpression) parseSingleExpression(expression);
   }
 

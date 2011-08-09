@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.util.IncorrectOperationException;
+import org.intellij.lang.annotations.Language;
 
 /**
  * Basic PSI-building "happy-path" test case.
@@ -30,14 +31,18 @@ import com.intellij.util.IncorrectOperationException;
  */
 public abstract class PsiTestCase extends LightPlatformTestCase {
 
-  protected OgnlElement parseSingleExpression(final String text) {
+  protected OgnlElement parseSingleExpression(@Language(value = OgnlLanguage.ID,
+                                                        prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                                        suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String text) {
     final PsiElement[] expressions = parseExpressions(text);
     assertSize(1, expressions);
 
     return (OgnlElement) expressions[0];
   }
 
-  protected PsiElement[] parseExpressions(final String text) {
+  protected PsiElement[] parseExpressions(@Language(value = OgnlLanguage.ID,
+                                                    prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                                    suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String text) {
     final OgnlFile ognlFile = createFile(OgnlLanguage.EXPRESSION_PREFIX + text + OgnlLanguage.EXPRESSION_SUFFIX);
     assertNotNull(ognlFile);
 

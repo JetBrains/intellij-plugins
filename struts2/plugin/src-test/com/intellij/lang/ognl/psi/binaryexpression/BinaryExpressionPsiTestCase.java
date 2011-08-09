@@ -15,18 +15,24 @@
 
 package com.intellij.lang.ognl.psi.binaryexpression;
 
+import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.psi.OgnlBinaryExpression;
 import com.intellij.lang.ognl.psi.OgnlExpression;
 import com.intellij.lang.ognl.psi.OgnlTokenType;
 import com.intellij.lang.ognl.psi.PsiTestCase;
+import org.intellij.lang.annotations.Language;
 
 abstract class BinaryExpressionPsiTestCase extends PsiTestCase {
 
-  protected OgnlBinaryExpression parse(final String expression) {
+  protected OgnlBinaryExpression parse(@Language(value = OgnlLanguage.ID,
+                                                 prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                                 suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
     return (OgnlBinaryExpression) parseSingleExpression(expression);
   }
 
-  protected void assertConstantBinaryExpression(final String expression,
+  protected void assertConstantBinaryExpression(@Language(value = OgnlLanguage.ID,
+                                                          prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                                          suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression,
                                                 final Object leftConstantValue,
                                                 final OgnlTokenType operationSign,
                                                 final Object rightConstantValue) {

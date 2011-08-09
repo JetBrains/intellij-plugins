@@ -15,8 +15,10 @@
 
 package com.intellij.lang.ognl.psi;
 
+import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.parsing.OgnlElementTypes;
 import com.intellij.psi.PsiType;
+import org.intellij.lang.annotations.Language;
 
 /**
  * {@link OgnlUnaryExpression}.
@@ -48,7 +50,9 @@ public class UnaryExpressionPsiTest extends PsiTestCase {
   }
 
 
-  private void assertConstantUnaryExpression(final String expression,
+  private void assertConstantUnaryExpression(@Language(value = OgnlLanguage.ID,
+                                                       prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                                       suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression,
                                              final OgnlTokenType operationSign,
                                              final Object constantValue) {
     final OgnlUnaryExpression unaryExpression = parse(expression);
@@ -61,7 +65,9 @@ public class UnaryExpressionPsiTest extends PsiTestCase {
     assertEquals(constantValue, operand.getConstantValue());
   }
 
-  private OgnlUnaryExpression parse(final String expression) {
+  private OgnlUnaryExpression parse(@Language(value = OgnlLanguage.ID,
+                                              prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                              suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
     return (OgnlUnaryExpression) parseSingleExpression(expression);
   }
 

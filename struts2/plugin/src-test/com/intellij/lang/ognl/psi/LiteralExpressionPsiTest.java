@@ -15,8 +15,10 @@
 
 package com.intellij.lang.ognl.psi;
 
+import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.parsing.OgnlElementTypes;
 import com.intellij.psi.PsiType;
+import org.intellij.lang.annotations.Language;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -29,13 +31,13 @@ import java.math.BigInteger;
 public class LiteralExpressionPsiTest extends PsiTestCase {
 
   public void testStringLiteral() {
-    final OgnlExpressionBase expression = parse("\"stringValue\"");
+    final OgnlExpression expression = parse("\"stringValue\"");
     assertInstanceOf(expression, OgnlStringLiteral.class);
     assertEquals("stringValue", expression.getConstantValue());
   }
 
   public void testStringLiteralSingleQuotes() {
-    final OgnlExpressionBase expression = parse("'stringValue'");
+    final OgnlExpression expression = parse("'stringValue'");
     assertInstanceOf(expression, OgnlStringLiteral.class);
     assertEquals("stringValue", expression.getConstantValue());
 
@@ -45,20 +47,20 @@ public class LiteralExpressionPsiTest extends PsiTestCase {
   }
 
   public void testNullLiteral() {
-    final OgnlExpressionBase expression = parse("null");
+    final OgnlExpression expression = parse("null");
     assertElementType(OgnlElementTypes.NULL_LITERAL, expression);
     assertEquals(PsiType.NULL, expression.getType());
   }
 
   public void testBooleanLiteral() {
-    final OgnlExpressionBase expression = parse("true");
+    final OgnlExpression expression = parse("true");
     assertElementType(OgnlElementTypes.BOOLEAN_LITERAL, expression);
     assertEquals(PsiType.BOOLEAN, expression.getType());
     assertEquals(true, expression.getConstantValue());
   }
 
   public void testIntegerLiteral() {
-    final OgnlExpressionBase expression = parse("123");
+    final OgnlExpression expression = parse("123");
     assertElementType(OgnlElementTypes.INTEGER_LITERAL, expression);
     assertEquals(PsiType.INT, expression.getType());
     assertEquals(123, expression.getConstantValue());
@@ -73,8 +75,10 @@ public class LiteralExpressionPsiTest extends PsiTestCase {
     runBigIntegerLiteral("123456789H");
   }
 
-  private void runBigIntegerLiteral(final String bigIntegerExpression) {
-    final OgnlExpressionBase expression = parse(bigIntegerExpression);
+  private void runBigIntegerLiteral(@Language(value = OgnlLanguage.ID,
+                                              prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                              suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String bigIntegerExpression) {
+    final OgnlExpression expression = parse(bigIntegerExpression);
     assertElementType(OgnlElementTypes.BIG_INTEGER_LITERAL, expression);
 
     final PsiType type = expression.getType();
@@ -97,8 +101,10 @@ public class LiteralExpressionPsiTest extends PsiTestCase {
     runDoubleLiteral("123.456E2");
   }
 
-  private void runDoubleLiteral(final String doubleExpression) {
-    final OgnlExpressionBase expression = parse(doubleExpression);
+  private void runDoubleLiteral(@Language(value = OgnlLanguage.ID,
+                                          prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                          suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String doubleExpression) {
+    final OgnlExpression expression = parse(doubleExpression);
     assertElementType(OgnlElementTypes.DOUBLE_LITERAL, expression);
     assertEquals(PsiType.DOUBLE, expression.getType());
     assertEquals(Double.parseDouble(doubleExpression), expression.getConstantValue());
@@ -113,8 +119,10 @@ public class LiteralExpressionPsiTest extends PsiTestCase {
     runBigDecimalLiteral("1234567.89B");
   }
 
-  private void runBigDecimalLiteral(final String bigDecimalExpression) {
-    final OgnlExpressionBase expression = parse(bigDecimalExpression);
+  private void runBigDecimalLiteral(@Language(value = OgnlLanguage.ID,
+                                              prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                              suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String bigDecimalExpression) {
+    final OgnlExpression expression = parse(bigDecimalExpression);
     assertElementType(OgnlElementTypes.BIG_DECIMAL_LITERAL, expression);
 
     final PsiType type = expression.getType();
@@ -125,8 +133,10 @@ public class LiteralExpressionPsiTest extends PsiTestCase {
 
   }
 
-  private OgnlExpressionBase parse(final String expression) {
-    return (OgnlExpressionBase) parseSingleExpression(expression);
+  private OgnlExpression parse(@Language(value = OgnlLanguage.ID,
+                                         prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                         suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
+    return (OgnlExpression) parseSingleExpression(expression);
   }
 
 }

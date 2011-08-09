@@ -15,7 +15,9 @@
 
 package com.intellij.lang.ognl.psi;
 
+import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.parsing.OgnlElementTypes;
+import org.intellij.lang.annotations.Language;
 
 /**
  * {@link OgnlSequenceExpression}.
@@ -41,11 +43,13 @@ public class SequenceExpressionPsiTest extends PsiTestCase {
   public void testNestedSimpleIntegerLiteralSequence() {
     final OgnlConditionalExpression expression =
         (OgnlConditionalExpression) parseSingleExpression("a == true ? { 1,2 } : { 2,3 }");
-    assertElementType(OgnlElementTypes.SEQUENCE_EXPRESSION, (OgnlExpression) expression.getThen());
-    assertElementType(OgnlElementTypes.SEQUENCE_EXPRESSION, (OgnlExpression) expression.getThen());
+    assertElementType(OgnlElementTypes.SEQUENCE_EXPRESSION, expression.getThen());
+    assertElementType(OgnlElementTypes.SEQUENCE_EXPRESSION, expression.getThen());
   }
 
-  private OgnlSequenceExpression parse(final String expression) {
+  private OgnlSequenceExpression parse(@Language(value = OgnlLanguage.ID,
+                                                 prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                                 suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
     return (OgnlSequenceExpression) parseSingleExpression(expression);
   }
 
