@@ -45,12 +45,10 @@ import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
-import com.intellij.util.ProcessingContext;
-import com.intellij.util.SmartList;
+import com.intellij.util.*;
 import com.intellij.util.text.StringTokenizer;
 import com.intellij.xml.XmlAttributeDescriptor;
+import com.intellij.xml.util.XmlTagUtil;
 import com.intellij.xml.util.XmlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -463,6 +461,42 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       }
     });
 
+    XmlUtil.registerXmlTagReferenceProvider(registrar, null, new ElementFilterBase<XmlTag>(XmlTag.class) {
+                                              protected boolean isElementAcceptable(final XmlTag element, final PsiElement context) {
+                                                return element.getName().indexOf('.') != -1 &&
+                                                       JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile());
+                                              }
+                                            }, false, new PsiReferenceProvider() {
+      @NotNull
+      public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
+        final String name = ((XmlTag)element).getName();
+        int dotIndex = name.indexOf('.');
+        if (dotIndex == -1) return PsiReference.EMPTY_ARRAY;
+
+        final int tagOffset = element.getTextRange().getStartOffset();
+        final XmlToken startTagElement = XmlTagUtil.getStartTagNameElement((XmlTag)element);
+        final XmlToken endTagElement = XmlTagUtil.getEndTagNameElement((XmlTag)element);
+        if (startTagElement != null) {
+          if (endTagElement != null && endTagElement.getText().equals(startTagElement.getText())) {
+            final int start1 = startTagElement.getTextRange().getStartOffset() - tagOffset;
+            final int start2 = endTagElement.getTextRange().getStartOffset() - tagOffset;
+            return new PsiReference[]{
+              new StateReference(element, new TextRange(start1 + dotIndex + 1, startTagElement.getTextRange().getEndOffset() - tagOffset)),
+              new StateReference(element, new TextRange(start2 + dotIndex + 1, endTagElement.getTextRange().getEndOffset() - tagOffset)),
+            };
+          }
+          else {
+            final int start = startTagElement.getTextRange().getStartOffset() - tagOffset;
+            return new PsiReference[]{
+              new StateReference(element, new TextRange(start + dotIndex + 1, startTagElement.getTextRange().getEndOffset() - tagOffset))};
+          }
+        }
+
+        return PsiReference.EMPTY_ARRAY;
+      }
+    }
+    );
+
     XmlUtil
       .registerXmlAttributeValueReferenceProvider(registrar, new String[]{"basedOn", "fromState", "toState", FlexStateElementNames.NAME, FlexStateElementNames.STATE_GROUPS},
                                                   new ScopeFilter(new ParentElementFilter(new AndFilter(XmlTagFilter.INSTANCE,
@@ -773,7 +807,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
         }
       });
 
-      list.add("*");
+      //list.add("*");
       return ArrayUtil.toObjectArray(list);
     }
 
@@ -808,6 +842,24 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
 
     public String getUnresolvedMessagePattern() {
       return FlexBundle.message("cannot.resolve.state");
+    }
+
+    public PsiElement handleElementRename(final String newElementName) throws IncorrectOperationException {
+      if (myElement instanceof XmlTag) {
+        final XmlToken startTagNameElement = XmlTagUtil.getStartTagNameElement((XmlTag)myElement);
+        if (startTagNameElement != null) {
+          final TextRange rangeInTagNameElement = myRange.shiftRight(-(startTagNameElement.getTextOffset() - myElement.getTextOffset()));
+          final TextRange startTagNameElementRange = startTagNameElement.getTextRange().shiftRight(-myElement.getTextRange().getStartOffset());
+          if (startTagNameElementRange.contains(rangeInTagNameElement)) {
+            final StringBuilder newName = new StringBuilder(startTagNameElement.getText());
+            newName.replace(rangeInTagNameElement.getStartOffset(), rangeInTagNameElement.getEndOffset(), newElementName);
+            ((XmlTag)myElement).setName(newName.toString());
+          }
+        }
+        return myElement;
+      }
+
+      return super.handleElementRename(newElementName);
     }
   }
 }
