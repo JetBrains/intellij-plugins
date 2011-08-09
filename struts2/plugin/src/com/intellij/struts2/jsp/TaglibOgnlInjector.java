@@ -21,6 +21,7 @@ import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.ElementPattern;
+import com.intellij.patterns.XmlAttributeValuePattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -43,15 +44,23 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  */
 public class TaglibOgnlInjector implements MultiHostInjector {
 
+  private static final XmlAttributeValuePattern STRUTS_TAG_ATTRIBUTE = xmlAttributeValue()
+      .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
+                        virtualFile().ofType(StdFileTypes.JSPX)))
+      .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI));
+
   // OGNL expression patterns
   private static final ElementPattern<XmlAttributeValue> OGNL_ELEMENT_PATTERN =
-      xmlAttributeValue()
-          .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
-                            virtualFile().ofType(StdFileTypes.JSPX)))
-          .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
-                                                     StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI))
+      STRUTS_TAG_ATTRIBUTE
+          .withTextLengthLongerThan(4)
           .withValue(string().startsWith("%{"));
-  // TODO "{ a, b, c}" - expressions
+
+  // OGNL list expression pattern
+  private static final ElementPattern<XmlAttributeValue> OGNL_LIST_ELEMENT_PATTERN =
+      STRUTS_TAG_ATTRIBUTE
+          .withTextLengthLongerThan(4)
+          .withValue(string().startsWith("{"));
 
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar,
@@ -60,6 +69,15 @@ public class TaglibOgnlInjector implements MultiHostInjector {
       final TextRange range = new TextRange(1, psiElement.getTextLength() - 1);
       multiHostRegistrar.startInjecting(OgnlLanguage.INSTANCE)
                         .addPlace(null, null, (PsiLanguageInjectionHost) psiElement, range)
+                        .doneInjecting();
+      return;
+    }
+
+    if (OGNL_LIST_ELEMENT_PATTERN.accepts(psiElement)) {
+      final int textLength = psiElement.getTextLength();
+      final TextRange range = new TextRange(1, textLength - 1);
+      multiHostRegistrar.startInjecting(OgnlLanguage.INSTANCE)
+                        .addPlace("%{", "}", (PsiLanguageInjectionHost) psiElement, range)
                         .doneInjecting();
     }
   }
