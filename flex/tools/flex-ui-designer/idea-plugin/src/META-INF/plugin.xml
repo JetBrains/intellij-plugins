@@ -15,7 +15,8 @@
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.SocketInputHandler" serviceImplementation="com.intellij.flex.uiDesigner.SocketInputHandlerImpl"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.io.StringRegistry" serviceImplementation="com.intellij.flex.uiDesigner.io.StringRegistry"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentFactoryManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentFactoryManager"/>
-    <applicationService serviceInterface="com.intellij.flex.uiDesigner.BinaryFileManager" serviceImplementation="com.intellij.flex.uiDesigner.BinaryFileManager"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.EmbedImageManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedImageManager"/>
+    <applicationService serviceInterface="com.intellij.flex.uiDesigner.EmbedSwfManager" serviceImplementation="com.intellij.flex.uiDesigner.EmbedSwfManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.DocumentProblemManager" serviceImplementation="com.intellij.flex.uiDesigner.DocumentProblemManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.libraries.LibraryManager" serviceImplementation="com.intellij.flex.uiDesigner.libraries.LibraryManager"/>
     <applicationService serviceInterface="com.intellij.flex.uiDesigner.Client" serviceImplementation="com.intellij.flex.uiDesigner.Client"/>

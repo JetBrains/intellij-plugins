@@ -103,6 +103,7 @@
 	<includes>
 		<symbol>com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.FlexDocumentFactory</symbol>
+		<symbol>com.intellij.flex.uiDesigner.flex.SpriteLoaderAsset</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.FlexModuleFactory</symbol>
 		<symbol>com.intellij.flex.uiDesigner.css.CssReaderImpl</symbol>
 		<symbol>com.intellij.flex.uiDesigner.flex.ModuleManager</symbol>

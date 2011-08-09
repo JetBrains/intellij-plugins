@@ -8,6 +8,6 @@ public final class AmfExtendedTypes {
   public static final int DOCUMENT_FACTORY_REFERENCE = 46;
   public static final int DOCUMENT_REFERENCE = 49;
 
-  static final int BITMAP = 47;
-  static final int SWF = 48;
+  public static final int IMAGE = 47;
+  public static final int SWF = 48;
 }

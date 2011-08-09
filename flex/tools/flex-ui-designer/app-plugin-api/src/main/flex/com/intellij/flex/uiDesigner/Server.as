@@ -150,6 +150,43 @@ public class Server implements ResourceBundleProvider {
     throw new Error("Burn in hell, Adobe.");
   }
 
+  public function getSwfData(id:int):Vector.<Object> {
+    var resultReadyFile:File;
+    try {
+      const resultReadyFilename:String = generateResultReadyFilename();
+      socket.writeByte(ServerMethod.GET_SWF_DATA);
+      socket.writeUTF(resultReadyFilename);
+      socket.writeShort(id);
+      socket.flush();
+
+      resultReadyFile = new File(File.applicationDirectory.nativePath + "/" + resultReadyFilename);
+      while (!resultReadyFile.exists) {
+      }
+
+      var fileStream:FileStream = new FileStream();
+      fileStream.open(resultFile, FileMode.READ);
+      try {
+        var bounds:Rectangle = new Rectangle(fileStream.readUnsignedShort() / 20, fileStream.readUnsignedShort() / 20,
+            fileStream.readUnsignedShort() / 20, fileStream.readUnsignedShort() / 20);
+        var bytes:ByteArray = new ByteArray();
+        fileStream.readBytes(bytes);
+        return new <Object>[bounds, bytes];
+      }
+      finally {
+        fileStream.close();
+      }
+    }
+    catch (e:Error) {
+      UncaughtErrorManager.instance.handleError(e);
+    }
+    finally {
+      postCheckSyncMessaging(resultReadyFile);
+    }
+
+    //noinspection UnreachableCodeJS
+    throw new Error("Burn in hell, Adobe.");
+  }
+
   public function getResourceBundle(project:Object, locale:String, bundleName:String):Dictionary {
     var resultReadyFile:File;
     try {

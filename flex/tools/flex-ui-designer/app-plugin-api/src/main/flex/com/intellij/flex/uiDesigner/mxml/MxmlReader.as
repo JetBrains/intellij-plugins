@@ -1,9 +1,9 @@
 package com.intellij.flex.uiDesigner.mxml {
-import com.intellij.flex.uiDesigner.BitmapDataManager;
 import com.intellij.flex.uiDesigner.DocumentFactory;
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
+import com.intellij.flex.uiDesigner.EmbedImageManager;
 import com.intellij.flex.uiDesigner.EmbedSwfManager;
 import com.intellij.flex.uiDesigner.ModuleContext;
 import com.intellij.flex.uiDesigner.ModuleContextEx;
@@ -20,7 +20,6 @@ import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
-import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.events.Event;
@@ -36,8 +35,8 @@ public final class MxmlReader implements DocumentReader {
   private var input:IDataInput;
   
   private var stringRegistry:StringRegistry;
-  private var bitmapDataManager:BitmapDataManager;
-  private var swfDataManager:EmbedSwfManager;
+  private var embedImageManager:EmbedImageManager;
+  private var embedSwfManager:EmbedSwfManager;
 
   private const stateReader:StateReader = new StateReader();
   //noinspection JSFieldCanBeLocal
@@ -51,10 +50,10 @@ public final class MxmlReader implements DocumentReader {
   
   internal var factoryContext:DeferredInstanceFromBytesContext;
 
-  public function MxmlReader(stringRegistry:StringRegistry, bitmapDataManager:BitmapDataManager, swfDataManager:EmbedSwfManager) {
+  public function MxmlReader(stringRegistry:StringRegistry, embedImageManager:EmbedImageManager, embedSwfManager:EmbedSwfManager) {
     this.stringRegistry = stringRegistry;
-    this.bitmapDataManager = bitmapDataManager;
-    this.swfDataManager = swfDataManager;
+    this.embedImageManager = embedImageManager;
+    this.embedSwfManager = embedSwfManager;
   }
 
   private const deferredSetStyleProxyPool:Vector.<DeferredSetStyleProxy> = new Vector.<DeferredSetStyleProxy>();
@@ -403,12 +402,12 @@ public final class MxmlReader implements DocumentReader {
           propertyHolder[propertyName] = readObjectFromFactory(readDocumentFactory().newInstance());
           break;
 
-        case Amf3Types.BITMAP:
-          propertyHolder[propertyName] = readBitmapData();
+        case AmfExtendedTypes.IMAGE:
+          propertyHolder[propertyName] = embedImageManager.get(AmfUtil.readUInt29(input), moduleContext.applicationDomain);
           break;
         
-        case Amf3Types.SWF:
-          readSwfData(propertyHolder, propertyName);
+        case AmfExtendedTypes.SWF:
+          propertyHolder[propertyName] = embedSwfManager.get(AmfUtil.readUInt29(input), moduleContext.applicationDomain);
           break;
         
         case AmfExtendedTypes.STRING_REFERENCE:
@@ -457,16 +456,6 @@ public final class MxmlReader implements DocumentReader {
     }
     
     return factory;
-  }
-  
-  private function readBitmapData():BitmapData {
-    return bitmapDataManager.get(AmfUtil.readUInt29(input));
-  }
-
-  private function readSwfData(propertyHolder:Object, propertyName:String):void {
-    const symbolLength:int = AmfUtil.readUInt29(input);
-    var symbol:String = symbolLength == 0 ? null : input.readUTFBytes(symbolLength);
-    swfDataManager.assign(AmfUtil.readUInt29(input), symbol, propertyHolder, propertyName);
   }
 
   private function getOrCreateFactoryContext():DeferredInstanceFromBytesContext {

@@ -17,11 +17,12 @@ public class ComplementSwfBuilder {
     final Collection<CharSequence> commonDefinitions = new ArrayList<CharSequence>(1);
     commonDefinitions.add("com.intellij.flex.uiDesigner:SpecialClassForAdobeEngineers");
 
+    // SpriteLoaderAsset must be loaded with framework.swc, because _s000 located in framework.swc
     AbcNameFilterByNameSetAndStartsWith filter =
       new AbcNameFilterByNameSetAndStartsWith(commonDefinitions, new String[]{"mx.", "spark."}) {
         @Override
         public boolean accept(CharSequence name) {
-          return StringUtil.startsWith(name, FlexSdkAbcInjector.STYLE_PROTO_CHAIN) || StringUtil.startsWith(name, "mx.styles:StyleManager") ||
+          return StringUtil.startsWith(name, "com.intellij.flex.uiDesigner.flex:SpriteLoaderAsset") || StringUtil.startsWith(name, FlexSdkAbcInjector.STYLE_PROTO_CHAIN) || StringUtil.startsWith(name, "mx.styles:StyleManager") ||
                  StringUtil.startsWith(name, FlexSdkAbcInjector.LAYOUT_MANAGER) || StringUtil.startsWith(name, FlexSdkAbcInjector.RESOURCE_MANAGER) ||
                  (super.accept(name) && !sparkInclusionNameFilter.accept(name) && !airsparkDefinitions.contains(name));
         }

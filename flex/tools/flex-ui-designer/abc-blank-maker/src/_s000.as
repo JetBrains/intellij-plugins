@@ -1,13 +1,18 @@
 package {
-import flash.display.BitmapData;
+import com.intellij.flex.uiDesigner.flex.SpriteLoaderAsset;
 
-import mx.core.SpriteAsset;
+import flash.geom.Rectangle;
 
-public class _s000 extends SpriteAsset {
-  public static var data:BitmapData;
+public final class _s000 extends SpriteLoaderAsset {
+  public static var bounds:Rectangle;
+  public static var _swfClass:Class;
 
   public function _s000() {
-    super();
+    super(_s000, bounds);
+  }
+
+  override protected function get swfClass():Class {
+    return _swfClass;
   }
 }
 }

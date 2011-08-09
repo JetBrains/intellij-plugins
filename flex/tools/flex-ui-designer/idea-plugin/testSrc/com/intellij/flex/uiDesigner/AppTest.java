@@ -114,7 +114,6 @@ public class AppTest extends AppTestBase {
 
       StringRegistry.getInstance().reset();
 
-      BinaryFileManager.getInstance().reset();
       LibraryManager.getInstance().reset();
 
       if (connection != null) {

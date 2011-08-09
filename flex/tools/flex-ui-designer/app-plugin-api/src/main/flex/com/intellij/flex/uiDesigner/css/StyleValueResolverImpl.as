@@ -37,12 +37,10 @@ public class StyleValueResolverImpl implements StyleValueResolver {
       return applicationDomain.getDefinition(ClassReference(propertyDescriptor.value).className);
     }
     else if (propertyDescriptor is CssEmbedSwfDeclaration) {
-      var embedSwf:CssEmbedSwfDeclaration = CssEmbedSwfDeclaration(propertyDescriptor);
-      return embedSwfManager.get(embedSwf.id, embedSwf.symbol, applicationDomain);
+      return embedSwfManager.get(CssEmbedSwfDeclaration(propertyDescriptor).id, applicationDomain);
     }
     else if (propertyDescriptor is CssEmbedImageDeclaration) {
-      var embedImage:CssEmbedImageDeclaration = CssEmbedImageDeclaration(propertyDescriptor);
-      return embedImageManager.get(embedImage.id, applicationDomain);
+      return embedImageManager.get(CssEmbedImageDeclaration(propertyDescriptor).id, applicationDomain);
     }
     else {
       return propertyDescriptor.value;

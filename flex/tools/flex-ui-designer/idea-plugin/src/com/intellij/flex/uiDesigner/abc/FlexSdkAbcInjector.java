@@ -24,7 +24,7 @@ public class FlexSdkAbcInjector extends AbcFilter {
 
   public FlexSdkAbcInjector(String flexSdkVersion, URLConnection injectionUrlConnection, RequiredAssetsInfo requiredAssetsInfo) {
     super(true);
-    
+
     this.flexSdkVersion = flexSdkVersion;
     this.injectionUrlConnection = injectionUrlConnection;
     this.requiredAssetsInfo = requiredAssetsInfo;
@@ -70,8 +70,11 @@ public class FlexSdkAbcInjector extends AbcFilter {
         }
       }
 
-      if (requiredAssetsInfo.bitmapCount != 0) {
-        ImageClassPoolGenerator.generate(decoders, requiredAssetsInfo.bitmapCount);
+      if (requiredAssetsInfo.imageCount != 0) {
+        BitmapAssetClassPoolGenerator.generate(decoders, requiredAssetsInfo.imageCount);
+      }
+      if (requiredAssetsInfo.swfCount != 0) {
+        SpriteAssetClassPoolGenerator.generate(decoders, requiredAssetsInfo.swfCount);
       }
     }
   }

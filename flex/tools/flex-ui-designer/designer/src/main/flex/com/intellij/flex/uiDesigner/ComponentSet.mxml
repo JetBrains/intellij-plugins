@@ -27,7 +27,7 @@
   <Component role="{StringRegistry}"/>
   <Component role="{DocumentReader}" implementation="{MxmlReader}">
     <Requirement role="{StringRegistry}"/>
-    <Requirement role="{BitmapDataManager}"/>
+    <Requirement role="{EmbedImageManager}"/>
     <Requirement role="{EmbedSwfManager}"/>
   </Component>
 	<Component role="{SocketManager}" implementation="{SocketManagerImpl}"/>

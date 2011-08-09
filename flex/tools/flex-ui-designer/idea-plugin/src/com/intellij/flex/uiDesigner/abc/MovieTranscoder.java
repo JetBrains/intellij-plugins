@@ -1,11 +1,14 @@
 package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.io.IOUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntObjectHashMap;
+import org.jetbrains.annotations.TestOnly;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,19 +43,40 @@ public class MovieTranscoder extends SwfTranscoder {
   }
 
   // symbolName — utf8 bytes
+  @SuppressWarnings("UnusedDeclaration")
+  @TestOnly
   public void extract(File in, File out, byte[] symbolName) throws IOException {
     initAbcBlank();
     
     this.symbolName = symbolName;
-    extract(new FileInputStream(in), in.length(), out);
+    extract(new FileInputStream(in), in.length(), out, false);
   }
 
-  private void extract(FileInputStream inputStream, long inputLength, File outFile) throws IOException {
+  public void extract(VirtualFile in, File out, String symbolName) throws IOException {
+    initAbcBlank();
+
+    this.symbolName = symbolName.getBytes();
+    extract(in.getInputStream(), in.getLength(), out, true);
+  }
+
+  private void extract(InputStream inputStream, long inputLength, File outFile, boolean writeBounds) throws IOException {
     final FileOutputStream out = transcode(inputStream, inputLength, outFile);
     try {
       fileLength = 2 + SYMBOL_OWN_CLASS_ABC.length + SYMBOL_CLASS_TAG_LENGTH + SwfUtil.getWrapLength();
 
       final PlacedObject exportedSymbol = extract();
+
+      if (writeBounds) {
+        buffer.order(ByteOrder.BIG_ENDIAN);
+        buffer.position(0);
+        buffer.putShort((short)bounds.x);
+        buffer.putShort((short)bounds.y);
+        buffer.putShort((short)bounds.width);
+        buffer.putShort((short)bounds.height);
+        out.write(buffer.array(), 0, buffer.position());
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+      }
+
       SwfUtil.header(fileLength, out, buffer);
 
       out.write(SYMBOL_OWN_CLASS_ABC);

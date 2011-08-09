@@ -48,11 +48,6 @@ public class AbstractEmbedAssetManager {
     return className;
   }
 
-  protected function configureLoaderContext(loaderContext:LoaderContext):void {
-    loaderContext.allowCodeImport = true;
-    LoaderContentParentAdobePleaseDoNextStep.configureContext(loaderContext);
-  }
-
   protected function loadErrorHandler(event:IOErrorEvent):void {
     var loaderInfo:LoaderInfo = LoaderInfo(event.currentTarget);
 		removeLoaderListeners(loaderInfo);

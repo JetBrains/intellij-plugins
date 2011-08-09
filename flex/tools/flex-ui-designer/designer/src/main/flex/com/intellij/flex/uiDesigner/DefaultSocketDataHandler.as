@@ -8,14 +8,11 @@ import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.flex.uiDesigner.ui.ProjectEventMap;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
 
-import flash.display.BitmapData;
 import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
-
-import org.flyti.plexus.PlexusManager;
 
 registerClassAlias("lsh", LocalStyleHolder);
 
@@ -24,32 +21,12 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   private var libraryManager:LibraryManager;
   private var moduleManager:ModuleManager;
   private var stringRegistry:StringRegistry;
-  
-  private var bitmapDataManager:BitmapDataManager;
 
   public function DefaultSocketDataHandler(libraryManager:LibraryManager, projectManager:ProjectManager, moduleManager:ModuleManager, stringRegistry:StringRegistry) {
     this.libraryManager = libraryManager;
     this.projectManager = projectManager;
     this.moduleManager = moduleManager;
     this.stringRegistry = stringRegistry;
-  }
-
-  private var _embedSwfManager:EmbedSwfManager;
-  private function get embedSwfManager():EmbedSwfManager {
-    if (_embedSwfManager == null) {
-      _embedSwfManager = EmbedSwfManager(PlexusManager.instance.container.lookup(EmbedSwfManager));
-    }
-
-    return _embedSwfManager;
-  }
-
-  private var _embedImageManager:EmbedImageManager;
-  private function get embedImageManager():EmbedImageManager {
-    if (_embedImageManager == null) {
-      _embedImageManager = EmbedImageManager(PlexusManager.instance.container.lookup(EmbedImageManager));
-    }
-
-    return _embedImageManager;
   }
 
   public function set socket(value:Socket):void {
@@ -89,14 +66,6 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
         updateDocuments(input);
         break;
       
-      case ClientMethod.registerBitmap:
-        registerBitmap(input);
-        break;
-      
-      case ClientMethod.registerBinaryFile:
-        registerBinaryFile(input);
-        break;
-      
       case ClientMethod.initStringRegistry:
         stringRegistry.initStringTable(input);
         break;
@@ -120,8 +89,6 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     stringRegistry.readStringTable(input);
     moduleManager.register(new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()), libraryManager.idsToInstancesAndMarkAsUsed(input.readObject()), input.readObject()));
   }
-  
-  private var flashWorkaroundByteArray:ByteArray;
   
   private function registerDocumentFactory(input:IDataInput, messageSize:int):void {
     const prevBytesAvailable:int = input.bytesAvailable;
@@ -147,39 +114,6 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     bytes.position = 0;
     bytes.length = length;
     input.readBytes(bytes, 0, length);
-  }
-
-  private function registerBitmap(input:IDataInput):void {
-    var id:int = input.readShort();
-    var bitmapData:BitmapData = new BitmapData(input.readUnsignedShort(), input.readUnsignedShort(), input.readBoolean(), 0);
-    // we cannot change BitmapData API
-    if (flashWorkaroundByteArray == null) {
-      flashWorkaroundByteArray = new ByteArray();
-    }
-    input.readBytes(flashWorkaroundByteArray, 0, bitmapData.width * bitmapData.height * 4);
-    bitmapData.setPixels(bitmapData.rect, flashWorkaroundByteArray);
-    flashWorkaroundByteArray.clear();
-
-    if (bitmapDataManager == null) {
-      bitmapDataManager = BitmapDataManager(PlexusManager.instance.container.lookup(BitmapDataManager));
-    }
-
-    bitmapDataManager.register(id, bitmapData);
-  }
-  
-  private function registerBinaryFile(input:IDataInput):void {
-    var type:int = input.readByte();
-    var id:int = input.readUnsignedShort();
-    // we cannot change Loader API
-    if (flashWorkaroundByteArray == null) {
-      flashWorkaroundByteArray = new ByteArray();
-    }
-
-    var length:int = input.readInt();
-    input.readBytes(flashWorkaroundByteArray, 0, length);
-
-    (type == 1 ? embedSwfManager : embedImageManager).load(id, flashWorkaroundByteArray);
-    flashWorkaroundByteArray.clear();
   }
   
   private static function getDocumentFactoryManager(module:Module):DocumentFactoryManager {
@@ -253,7 +187,4 @@ final class ClientMethod {
   public static const qualifyExternalInlineStyleSource:int = 8;
   public static const initStringRegistry:int = 9;
   public static const updateStringRegistry:int = 10;
-
-  public static const registerBitmap:int = 11;
-  public static const registerBinaryFile:int = 12;
 }

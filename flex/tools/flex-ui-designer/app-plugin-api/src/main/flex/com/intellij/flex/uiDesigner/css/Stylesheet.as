@@ -77,12 +77,12 @@ public final class Stylesheet {
             declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, null);
             break;
 
-          case 5:
+          case AmfExtendedTypes.SWF:
             const symbolLength:int = AmfUtil.readUInt29(input);
             CssEmbedSwfDeclaration(declarations[i] = CssEmbedSwfDeclaration.create(name, textOffset, symbolLength == 0 ? null : input.readUTFBytes(symbolLength), AmfUtil.readUInt29(input)));
             break;
 
-          case 10:
+          case AmfExtendedTypes.IMAGE:
             CssEmbedImageDeclaration(declarations[i] = CssEmbedImageDeclaration.create(name, textOffset, AmfUtil.readUInt29(input)));
             break;
 

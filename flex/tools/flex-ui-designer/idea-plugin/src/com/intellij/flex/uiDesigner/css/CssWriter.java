@@ -538,23 +538,16 @@ public class CssWriter {
       requiredAssetsInfo = new RequiredAssetsInfo();
     }
 
-    final boolean isSwf = InjectionUtil.isSwf(source, mimeType);
-    final BinaryFileManager binaryFileManager = BinaryFileManager.getInstance();
     final int fileId;
-    if (binaryFileManager.isRegistered(source)) {
-      fileId = binaryFileManager.getId(source);
+    final boolean isSwf = InjectionUtil.isSwf(source, mimeType);
+    if (isSwf) {
+      fileId = EmbedSwfManager.getInstance().add(source, symbol, requiredAssetsInfo);
     }
     else {
-      fileId = binaryFileManager.add(source, mimeType);
-      if (isSwf) {
-        requiredAssetsInfo.swfCount++;
-      }
-      else {
-        requiredAssetsInfo.bitmapCount++;
-      }
+      fileId = EmbedImageManager.getInstance().add(source, mimeType, requiredAssetsInfo);
     }
 
-    propertyOut.write(isSwf ? CssPropertyType.EMBED_SWF : CssPropertyType.EMBED_IMAGE);
+    propertyOut.write(isSwf ? AmfExtendedTypes.SWF : AmfExtendedTypes.IMAGE);
     if (isSwf) {
       if (symbol == null) {
         propertyOut.write(0);

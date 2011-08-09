@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TIntObjectIterator;
 import gnu.trove.TObjectHashingStrategy;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
@@ -22,7 +23,12 @@ public class AbcFilter extends SwfTranscoder {
   private FileChannel channel;
   protected final TransientString transientNameString = new TransientString();
   
-  protected final ArrayList<Decoder> decoders = new ArrayList<Decoder>(256);
+  protected final ArrayList<Decoder> decoders = new ArrayList<Decoder>() {
+    @Override
+    public boolean add(@NotNull Decoder decoder) {
+      return super.add(decoder);
+    }
+  };
 
   private final boolean useFlexEncoder;
   private final boolean onlyAbcAsTag;
@@ -77,6 +83,8 @@ public class AbcFilter extends SwfTranscoder {
       channel = null;
       outputStream.flush();
       outputStream.close();
+
+      decoders.clear();
     }
   }
 

@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.*;
@@ -24,9 +25,18 @@ public final class BaseWriter {
   private final Scope rootScope = new Scope();
   private int preallocatedId = -1;
 
+  private RequiredAssetsInfo requiredAssetsInfo;
+
   public BaseWriter(PrimitiveAmfOutputStream out) {
     this.out = out;
     blockOut = out.getBlockOut();
+  }
+
+  public RequiredAssetsInfo getRequiredAssetsInfo() {
+    if (requiredAssetsInfo == null) {
+      requiredAssetsInfo = new RequiredAssetsInfo();
+    }
+    return requiredAssetsInfo;
   }
 
   public Scope getRootScope() {

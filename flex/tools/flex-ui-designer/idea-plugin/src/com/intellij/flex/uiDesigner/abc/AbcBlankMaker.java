@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.abc;
 
-import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
 import com.intellij.openapi.util.text.StringUtil;
 
 import java.io.File;
@@ -22,14 +21,17 @@ final class AbcBlankMaker {
     //new FlexSdkAbcInjector("4.5", null, new RequiredAssetsInfo()).filter(new File("/Users/develar/workspace/idea/flex/tools/flex-ui-designer/idea-plugin/testData/sdk/4.5/mobilecomponents/library.swf"), new File("/Users/develar/ot.swf"), null);
     //new AbcFilter().filter(new File("/Users/develar/output.swf"), new File("/Users/develar/ot.swf"), null);
 
-    new MovieTranscoder().extract(new File("/Developer/SDKs/flex_4.5.1/frameworks/projects/framework/assets/Assets.swf"), new File("/Users/develar/r.swf"), "mx.containers.FormItem.Required".getBytes());
+    makeBlanks();
+    //new MovieTranscoder().extract(new File("/Developer/SDKs/flex_4.5.1/frameworks/projects/framework/assets/Assets.swf"), new File("/Users/develar/r.swf"), "mx.containers.FormItem.Required".getBytes());
   }
 
   private static void makeBlanks() throws IOException {
-    final AbcFilter abcTagExtractor = new AbcFilter(false, true);
+    final AbcFilter abcTagExtractor = new AbcFilter(false, false);
     final File in = new File("abc-blank-maker/src/o/library.swf");
     abcTagExtractor.filter(in, new File("idea-plugin/resources/BitmapAsset.abc"), new AbcNameFilterByEquals("_b000"));
-    abcTagExtractor.filter(in, new File("idea-plugin/resources/SymbolOwnClass.abc"), new AbcNameFilterByEquals("SymbolOwnClass"));
+    abcTagExtractor.filter(in, new File("idea-plugin/resources/SpriteAsset.abc"), new AbcNameFilterByEquals("_s000"));
+    // must be encoded as tag
+    new AbcFilter(false, true).filter(in, new File("idea-plugin/resources/SymbolOwnClass.abc"), new AbcNameFilterByEquals("SymbolOwnClass"));
   }
 
   private static void d() throws IOException {
@@ -46,11 +48,5 @@ final class AbcBlankMaker {
         return !StringUtil.startsWith(name, "_");
       }
     });
-  }
-
-  private static void u() throws IOException {
-    File file = new File("/Users/develar/Desktop/Untitled.jpg");
-    ImageWrapper imageWrapper = new ImageWrapper((int)file.length());
-    imageWrapper.wrap(new FileInputStream(file), new FileOutputStream(new File("/Users/develar/Desktop/u.swf")));
   }
 }

@@ -355,7 +355,7 @@ class InjectedASWriter {
             problemsHolder.add(host, FlexUIDesignerBundle.message("error.embed.symbol.unneeded", host.getText()));
           }
 
-          return new BitmapValueWriter(source, mimeType);
+          return new ImageValueWriter(source, mimeType);
         }
       }
 

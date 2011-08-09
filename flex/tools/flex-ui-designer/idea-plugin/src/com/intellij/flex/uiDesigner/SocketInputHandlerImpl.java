@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.uiDesigner.abc.MovieTranscoder;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
@@ -85,7 +86,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   protected static boolean isFileBased(int command) {
-    return command == ServerMethod.GET_RESOURCE_BUNDLE || command == ServerMethod.GET_BITMAP_DATA;
+    return command == ServerMethod.GET_RESOURCE_BUNDLE || command == ServerMethod.GET_BITMAP_DATA || command == ServerMethod.GET_SWF_DATA;
   }
 
   private boolean safeProcessCommand(int command) throws IOException {
@@ -121,6 +122,10 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
       case ServerMethod.GET_BITMAP_DATA:
         getBitmapData();
+        break;
+
+      case ServerMethod.GET_SWF_DATA:
+        getSwfData();
         break;
 
       case ServerMethod.OPEN_FILE:
@@ -393,15 +398,22 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private void getBitmapData() throws IOException {
     initResultFile();
 
-    AssetInfo assetInfo = BinaryFileManager.getInstance().getInfo(reader.readUnsignedShort());
-    BufferedImage image = ImageUtil.getImage(assetInfo.getElement(), assetInfo.mimeType);
+    ImageAssetInfo assetInfo = EmbedImageManager.getInstance().getInfo(reader.readUnsignedShort());
+    BufferedImage image = ImageUtil.getImage(assetInfo.file, assetInfo.mimeType);
     FileOutputStream fileOut = new FileOutputStream(resultFile);
     try {
-      ImageUtil.write(image, fileOut, assetInfo.mimeType, assetInfo.getElement());
+      ImageUtil.write(image, fileOut, assetInfo.mimeType, assetInfo.file);
     }
     finally {
       fileOut.close();
     }
+  }
+
+  private void getSwfData() throws IOException {
+    initResultFile();
+
+    SwfAssetInfo assetInfo = EmbedSwfManager.getInstance().getInfo(reader.readUnsignedShort());
+    new MovieTranscoder().extract(assetInfo.file, resultFile, assetInfo.symbolName);
   }
 
   private void goToClass() throws IOException {

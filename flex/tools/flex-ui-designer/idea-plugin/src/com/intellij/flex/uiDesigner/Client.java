@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.abc.ImageWrapper;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
@@ -11,7 +10,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ArrayUtil;
@@ -19,7 +17,6 @@ import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -76,7 +73,6 @@ public class Client implements Closable {
 
     mxmlWriter.reset();
 
-    BinaryFileManager.getInstance().reset();
     LibraryManager.getInstance().reset();
 
     out.closeWithoutFlush();
@@ -364,41 +360,6 @@ public class Client implements Closable {
     beginMessage(ClientMethod.qualifyExternalInlineStyleSource);
   }
 
-  public void registerBinaryFile(int id, final @NotNull VirtualFile file, final BinaryFileType type) throws IOException {
-    int length = (int)file.getLength();
-    ImageWrapper imageWrapper = null;
-    if (type == BinaryFileType.IMAGE) {
-      imageWrapper = new ImageWrapper(length);
-      length = imageWrapper.getLength();
-    }
-
-    OutputStream directOut = blockOut.writeUnbufferedHeader(2 + 1 + 2 + 4 + length);
-    directOut.write(ClientMethod.METHOD_CLASS);
-    directOut.write(ClientMethod.registerBinaryFile.ordinal());
-    directOut.write(type.ordinal());
-
-    directOut.write((id >>> 8) & 0xFF);
-    directOut.write(id & 0xFF);
-
-    directOut.write((length >>> 24) & 0xFF);
-    directOut.write((length >>> 16) & 0xFF);
-    directOut.write((length >>> 8) & 0xFF);
-    directOut.write(length & 0xFF);
-
-    final InputStream inputStream = file.getInputStream();
-    try {
-      if (type == BinaryFileType.IMAGE) {
-        imageWrapper.wrap(inputStream, directOut);
-      }
-      else {
-        FileUtil.copy(inputStream, directOut);
-      }
-    }
-    finally {
-      inputStream.close();
-    }
-  }
-
   public static void writeVirtualFile(VirtualFile file, AmfOutputStream out) {
     out.writeAmfUtf(file.getUrl());
     out.writeAmfUtf(file.getPresentableUrl());
@@ -430,8 +391,7 @@ public class Client implements Closable {
 
   public static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, openDocument, updateDocuments,
-    qualifyExternalInlineStyleSource, initStringRegistry, updateStringRegistry,
-    registerBitmap, registerBinaryFile;
+    qualifyExternalInlineStyleSource, initStringRegistry, updateStringRegistry;
     
     public static final int METHOD_CLASS = 0;
   }
