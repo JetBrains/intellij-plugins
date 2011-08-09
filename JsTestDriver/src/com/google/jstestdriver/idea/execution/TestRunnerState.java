@@ -148,6 +148,7 @@ class TestRunnerState extends CommandLineState {
     return new RemoteTestListener(navigationRegistryMap, context, virtualFile);
   }
 
+  @NotNull
   @Override
   protected ProcessHandler startProcess() throws ExecutionException {
     GeneralCommandLine commandLine = JstdClientCommandLineBuilder.INSTANCE.buildCommandLine(

@@ -247,6 +247,7 @@ public class OsgiRunState extends JavaCommandLineState  {
     return _selectedBundles;
   }
 
+  @NotNull
   protected OSProcessHandler startProcess() throws ExecutionException {
     // run any final configuration steps
     SelectedBundle[] bundles = getSelectedBundles();
