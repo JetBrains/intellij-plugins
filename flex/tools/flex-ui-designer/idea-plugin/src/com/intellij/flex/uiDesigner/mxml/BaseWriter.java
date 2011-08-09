@@ -262,7 +262,7 @@ public final class BaseWriter {
     }
     else {
       final String colorName = value.toLowerCase();
-      final String hexCodeForColorName = ColorSampleLookupValue.getHexCodeForColorName(colorName);
+      String hexCodeForColorName = ColorSampleLookupValue.getHexCodeForColorName(colorName);
       if (hexCodeForColorName == null) {
         try {
           long v = Long.parseLong(colorName);
@@ -273,7 +273,24 @@ public final class BaseWriter {
           return;
         }
         catch (NumberFormatException e) {
-          throw new InvalidPropertyException(element, "error.invalid.color.name", colorName);
+          // Why themeColor for theme halo valid for any other theme? But it is compiler behavior, see
+          // example http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/spark/components/Form.html
+          // or our test EmbedSwfAndImageFromCss
+          if (colorName.equalsIgnoreCase("halogreen")) {
+            hexCodeForColorName = "#80FF4D";
+          }
+          else if (colorName.equalsIgnoreCase("haloblue")) {
+            hexCodeForColorName = "#009DFF";
+          }
+          else if (colorName.equalsIgnoreCase("haloorange")) {
+            hexCodeForColorName = "#FFB600";
+          }
+          else if (colorName.equalsIgnoreCase("halosilver")) {
+            hexCodeForColorName = "#AECAD9";
+          }
+          else {
+            throw new InvalidPropertyException(element, "error.invalid.color.name", colorName);
+          }
         }
       }
       
