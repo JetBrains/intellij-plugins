@@ -76,7 +76,9 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
     return "reference.settings.project.structure.facets.struts2.facet";
   }
 
-  public static class StrutsFrameworkDetector extends FacetBasedFrameworkDetector<StrutsFacet, StrutsFacetConfiguration> {
+
+  public static class StrutsFrameworkDetector
+      extends FacetBasedFrameworkDetector<StrutsFacet, StrutsFacetConfiguration> {
     public StrutsFrameworkDetector() {
       super("struts2");
     }
@@ -89,13 +91,15 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
     @NotNull
     @Override
     public ElementPattern<FileContent> createSuitableFilePattern() {
-      return FileContentPattern.fileContent().withName(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME).xmlWithRootTag(StrutsRoot.TAG_NAME);
+      return FileContentPattern.fileContent()
+                               .withName(StrutsConstants.STRUTS_XML_DEFAULT_FILENAME)
+                               .xmlWithRootTag(StrutsRoot.TAG_NAME);
     }
 
     @Override
-    public boolean isSuitableUnderlyingFacetConfiguration(FacetConfiguration underlying,
-                                                          StrutsFacetConfiguration configuration,
-                                                          Set<VirtualFile> files) {
+    public boolean isSuitableUnderlyingFacetConfiguration(final FacetConfiguration underlying,
+                                                          final StrutsFacetConfiguration configuration,
+                                                          final Set<VirtualFile> files) {
       return WebUtilImpl.isWebFacetConfigurationContainingFiles(underlying, files);
     }
   }
