@@ -42,6 +42,14 @@ public class OgnlElementTypes {
     }
   };
 
+  // { X, Y [, Z, ...]}
+  public static final OgnlElementType SEQUENCE_EXPRESSION = new OgnlElementType("SequenceExpression") {
+    @Override
+    public PsiElement createPsiElement(final ASTNode node) {
+      return new OgnlSequenceExpression(node);
+    }
+  };
+
   public static final OgnlElementType CONDITIONAL_EXPRESSION = new OgnlElementType("ConditionalExpression") {
     @Override
     public PsiElement createPsiElement(final ASTNode node) {

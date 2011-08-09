@@ -123,6 +123,9 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
 
     keys1.put(OgnlTokenTypes.LPARENTH, PARENTHS);
     keys1.put(OgnlTokenTypes.RPARENTH, PARENTHS);
+
+    keys1.put(OgnlTokenTypes.LBRACE, PARENTHS);
+    keys1.put(OgnlTokenTypes.RBRACE, PARENTHS);
   }
 
 }

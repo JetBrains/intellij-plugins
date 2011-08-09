@@ -254,6 +254,23 @@ public class OgnlParser extends PrattParser {
       }
     });
 
+    // { a,b,c } list expression
+    registerParser(LBRACE, EXPR_LEVEL + 1, path().up(), new ReducingParser() {
+      @Override
+      public IElementType parseFurther(final PrattBuilder builder) {
+        parseExpression(builder);
+
+        if (builder.assertToken(COMMA, "sequence expected")) {
+
+          do {
+            parseExpression(builder);
+          } while (builder.checkToken(COMMA));
+
+        }
+        builder.assertToken(RBRACE, "'}' expected");
+        return OgnlElementTypes.SEQUENCE_EXPRESSION;
+      }
+    });
 
     // special stuff ============================
 

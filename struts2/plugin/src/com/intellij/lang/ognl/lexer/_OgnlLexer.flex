@@ -45,89 +45,92 @@ STRING_LITERAL=\"([^\\\"\r\n]|{ESCAPE_SEQUENCE})*(\"|\\)?
 
 ESCAPE_SEQUENCE=\\[^\r\n]
 
+%state SEQUENCE_EXPRESSION
+
 %%
-<YYINITIAL> "%{"                  { return OgnlTokenTypes.EXPRESSION_START; }
-<YYINITIAL> "}"                   { return OgnlTokenTypes.EXPRESSION_END; }
+<YYINITIAL> "%{"      { return OgnlTokenTypes.EXPRESSION_START; }
+<YYINITIAL> "}"       { return OgnlTokenTypes.EXPRESSION_END; }
 
-<YYINITIAL> {WHITE_SPACE_CHAR}+   { return OgnlTokenTypes.WHITE_SPACE; }
+{WHITE_SPACE_CHAR}+   { return OgnlTokenTypes.WHITE_SPACE; }
 
-<YYINITIAL> {INTEGER_LITERAL}     { return OgnlTokenTypes.INTEGER_LITERAL; }
-<YYINITIAL> {BIG_INTEGER_LITERAL} { return OgnlTokenTypes.BIG_INTEGER_LITERAL; }
-<YYINITIAL> {DOUBLE_LITERAL}      { return OgnlTokenTypes.DOUBLE_LITERAL; }
-<YYINITIAL> {BIG_DECIMAL_LITERAL} { return OgnlTokenTypes.BIG_DECIMAL_LITERAL; }
+"{"                   { yybegin(SEQUENCE_EXPRESSION); return OgnlTokenTypes.LBRACE; }
+<SEQUENCE_EXPRESSION> "}"   { yybegin(YYINITIAL); return OgnlTokenTypes.RBRACE; }
 
-<YYINITIAL> {CHARACTER_LITERAL}   { return OgnlTokenTypes.CHARACTER_LITERAL; }
-<YYINITIAL> {STRING_LITERAL}      { return OgnlTokenTypes.STRING_LITERAL; }
+{INTEGER_LITERAL}     { return OgnlTokenTypes.INTEGER_LITERAL; }
+{BIG_INTEGER_LITERAL} { return OgnlTokenTypes.BIG_INTEGER_LITERAL; }
+{DOUBLE_LITERAL}      { return OgnlTokenTypes.DOUBLE_LITERAL; }
+{BIG_DECIMAL_LITERAL} { return OgnlTokenTypes.BIG_DECIMAL_LITERAL; }
 
-<YYINITIAL> "shl"    { return OgnlTokenTypes.SHIFT_LEFT_KEYWORD; }
-<YYINITIAL> "shr"    { return OgnlTokenTypes.SHIFT_RIGHT_KEYWORD; }
-<YYINITIAL> "ushr"   { return OgnlTokenTypes.SHIFT_RIGHT_LOGICAL_KEYWORD; }
+{CHARACTER_LITERAL}   { return OgnlTokenTypes.CHARACTER_LITERAL; }
+{STRING_LITERAL}      { return OgnlTokenTypes.STRING_LITERAL; }
 
-<YYINITIAL> "and"    { return OgnlTokenTypes.AND_KEYWORD; }
-<YYINITIAL> "band"   { return OgnlTokenTypes.BAND_KEYWORD; }
-<YYINITIAL> "or"     { return OgnlTokenTypes.OR_KEYWORD; }
-<YYINITIAL> "bor"    { return OgnlTokenTypes.BOR_KEYWORD; }
-<YYINITIAL> "xor"    { return OgnlTokenTypes.XOR_KEYWORD; }
-<YYINITIAL> "eq"     { return OgnlTokenTypes.EQ_KEYWORD; }
-<YYINITIAL> "neq"    { return OgnlTokenTypes.NEQ_KEYWORD; }
-<YYINITIAL> "lt"     { return OgnlTokenTypes.LT_KEYWORD; }
-<YYINITIAL> "lte"    { return OgnlTokenTypes.LT_EQ_KEYWORD; }
-<YYINITIAL> "gt"     { return OgnlTokenTypes.GT_KEYWORD; }
-<YYINITIAL> "gte"    { return OgnlTokenTypes.GT_EQ_KEYWORD; }
-<YYINITIAL> "not in" { return OgnlTokenTypes.NOT_IN_KEYWORD; }
-<YYINITIAL> "not"    { return OgnlTokenTypes.NOT_KEYWORD; }
-<YYINITIAL> "in"     { return OgnlTokenTypes.IN_KEYWORD; }
-<YYINITIAL> "new"    { return OgnlTokenTypes.NEW_KEYWORD; }
+"shl"    { return OgnlTokenTypes.SHIFT_LEFT_KEYWORD; }
+"shr"    { return OgnlTokenTypes.SHIFT_RIGHT_KEYWORD; }
+"ushr"   { return OgnlTokenTypes.SHIFT_RIGHT_LOGICAL_KEYWORD; }
 
-<YYINITIAL> "true"   { return OgnlTokenTypes.TRUE_KEYWORD; }
-<YYINITIAL> "false"  { return OgnlTokenTypes.FALSE_KEYWORD; }
-<YYINITIAL> "null"   { return OgnlTokenTypes.NULL_KEYWORD; }
-<YYINITIAL> "instanceof" { return OgnlTokenTypes.INSTANCEOF_KEYWORD; }
+"and"    { return OgnlTokenTypes.AND_KEYWORD; }
+"band"   { return OgnlTokenTypes.BAND_KEYWORD; }
+"or"     { return OgnlTokenTypes.OR_KEYWORD; }
+"bor"    { return OgnlTokenTypes.BOR_KEYWORD; }
+"xor"    { return OgnlTokenTypes.XOR_KEYWORD; }
+"eq"     { return OgnlTokenTypes.EQ_KEYWORD; }
+"neq"    { return OgnlTokenTypes.NEQ_KEYWORD; }
+"lt"     { return OgnlTokenTypes.LT_KEYWORD; }
+"lte"    { return OgnlTokenTypes.LT_EQ_KEYWORD; }
+"gt"     { return OgnlTokenTypes.GT_KEYWORD; }
+"gte"    { return OgnlTokenTypes.GT_EQ_KEYWORD; }
+"not in" { return OgnlTokenTypes.NOT_IN_KEYWORD; }
+"not"    { return OgnlTokenTypes.NOT_KEYWORD; }
+"in"     { return OgnlTokenTypes.IN_KEYWORD; }
+"new"    { return OgnlTokenTypes.NEW_KEYWORD; }
 
-<YYINITIAL> {IDENTIFIER} { return OgnlTokenTypes.IDENTIFIER; }
+"true"   { return OgnlTokenTypes.TRUE_KEYWORD; }
+"false"  { return OgnlTokenTypes.FALSE_KEYWORD; }
+"null"   { return OgnlTokenTypes.NULL_KEYWORD; }
+"instanceof" { return OgnlTokenTypes.INSTANCEOF_KEYWORD; }
 
-<YYINITIAL> "("   { return OgnlTokenTypes.LPARENTH; }
-<YYINITIAL> ")"   { return OgnlTokenTypes.RPARENTH; }
-<YYINITIAL> "{"   { return OgnlTokenTypes.LBRACE; }
-<YYINITIAL> "}"   { return OgnlTokenTypes.RBRACE; }
-<YYINITIAL> "["   { return OgnlTokenTypes.LBRACKET; }
-<YYINITIAL> "]"   { return OgnlTokenTypes.RBRACKET; }
+{IDENTIFIER} { return OgnlTokenTypes.IDENTIFIER; }
 
-<YYINITIAL> "!="  { return OgnlTokenTypes.NOT_EQUAL; }
-<YYINITIAL> "!"   { return OgnlTokenTypes.NEGATE; }
-<YYINITIAL> "=="  { return OgnlTokenTypes.EQUAL; }
+"("   { return OgnlTokenTypes.LPARENTH; }
+")"   { return OgnlTokenTypes.RPARENTH; }
+"["   { return OgnlTokenTypes.LBRACKET; }
+"]"   { return OgnlTokenTypes.RBRACKET; }
 
-<YYINITIAL> "<<"  { return OgnlTokenTypes.SHIFT_LEFT; }
-<YYINITIAL> ">>>" { return OgnlTokenTypes.SHIFT_RIGHT_LOGICAL; }
-<YYINITIAL> ">>"  { return OgnlTokenTypes.SHIFT_RIGHT; }
+"!="  { return OgnlTokenTypes.NOT_EQUAL; }
+"!"   { return OgnlTokenTypes.NEGATE; }
+"=="  { return OgnlTokenTypes.EQUAL; }
 
-<YYINITIAL> "<="  { return OgnlTokenTypes.LESS_EQUAL; }
-<YYINITIAL> ">="  { return OgnlTokenTypes.GREATER_EQUAL; }
-<YYINITIAL> "<"   { return OgnlTokenTypes.LESS; }
-<YYINITIAL> ">"   { return OgnlTokenTypes.GREATER; }
+"<<"  { return OgnlTokenTypes.SHIFT_LEFT; }
+">>>" { return OgnlTokenTypes.SHIFT_RIGHT_LOGICAL; }
+">>"  { return OgnlTokenTypes.SHIFT_RIGHT; }
+
+"<="  { return OgnlTokenTypes.LESS_EQUAL; }
+">="  { return OgnlTokenTypes.GREATER_EQUAL; }
+"<"   { return OgnlTokenTypes.LESS; }
+">"   { return OgnlTokenTypes.GREATER; }
 
 
-<YYINITIAL> "."  { return OgnlTokenTypes.DOT; }
-<YYINITIAL> ","  { return OgnlTokenTypes.COMMA; }
-<YYINITIAL> "?"  { return OgnlTokenTypes.QUESTION; }
-<YYINITIAL> ":"  { return OgnlTokenTypes.COLON; }
-<YYINITIAL> "#"  { return OgnlTokenTypes.HASH; }
-<YYINITIAL> "@"  { return OgnlTokenTypes.AT; }
-<YYINITIAL> "$"  { return OgnlTokenTypes.DOLLAR; }
-<YYINITIAL> "="  { return OgnlTokenTypes.EQ; }
+"."  { return OgnlTokenTypes.DOT; }
+","  { return OgnlTokenTypes.COMMA; }
+"?"  { return OgnlTokenTypes.QUESTION; }
+":"  { return OgnlTokenTypes.COLON; }
+"#"  { return OgnlTokenTypes.HASH; }
+"@"  { return OgnlTokenTypes.AT; }
+"$"  { return OgnlTokenTypes.DOLLAR; }
+"="  { return OgnlTokenTypes.EQ; }
 
-<YYINITIAL> "/"  { return OgnlTokenTypes.DIVISION; }
-<YYINITIAL> "*"  { return OgnlTokenTypes.MULTIPLY; }
-<YYINITIAL> "-"  { return OgnlTokenTypes.MINUS; }
-<YYINITIAL> "+"  { return OgnlTokenTypes.PLUS; }
-<YYINITIAL> "%"  { return OgnlTokenTypes.MODULO; }
+"/"  { return OgnlTokenTypes.DIVISION; }
+"*"  { return OgnlTokenTypes.MULTIPLY; }
+"-"  { return OgnlTokenTypes.MINUS; }
+"+"  { return OgnlTokenTypes.PLUS; }
+"%"  { return OgnlTokenTypes.MODULO; }
 
-<YYINITIAL> "&&" { return OgnlTokenTypes.AND_AND; }
-<YYINITIAL> "||" { return OgnlTokenTypes.OR_OR; }
+"&&" { return OgnlTokenTypes.AND_AND; }
+"||" { return OgnlTokenTypes.OR_OR; }
 
-<YYINITIAL> "|"  { return OgnlTokenTypes.OR; }
-<YYINITIAL> "^"  { return OgnlTokenTypes.XOR; }
-<YYINITIAL> "&"  { return OgnlTokenTypes.AND; }
-<YYINITIAL> "~"  { return OgnlTokenTypes.NOT; }
+"|"  { return OgnlTokenTypes.OR; }
+"^"  { return OgnlTokenTypes.XOR; }
+"&"  { return OgnlTokenTypes.AND; }
+"~"  { return OgnlTokenTypes.NOT; }
 
 [^] { return OgnlTokenTypes.BAD_CHARACTER; }
