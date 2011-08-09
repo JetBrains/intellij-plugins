@@ -54,7 +54,7 @@ public class TaglibOgnlInjector implements MultiHostInjector {
   private static final ElementPattern<XmlAttributeValue> OGNL_ELEMENT_PATTERN =
       STRUTS_TAG_ATTRIBUTE
           .withTextLengthLongerThan(4)
-          .withValue(string().startsWith("%{"));
+          .withValue(string().startsWith(OgnlLanguage.EXPRESSION_PREFIX));
 
   // OGNL list expression pattern
   private static final ElementPattern<XmlAttributeValue> OGNL_LIST_ELEMENT_PATTERN =

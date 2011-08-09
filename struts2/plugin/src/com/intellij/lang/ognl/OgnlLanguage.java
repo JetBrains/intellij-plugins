@@ -22,6 +22,7 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,7 +30,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OgnlLanguage extends Language implements InjectableLanguage {
 
+  @NonNls
   public static final String ID = "OGNL";
+
+  @NonNls
+  public static final String EXPRESSION_PREFIX = "%{";
+  @NonNls
+  public static final String EXPRESSION_SUFFIX = "}";
 
   public static final OgnlLanguage INSTANCE = new OgnlLanguage();
 

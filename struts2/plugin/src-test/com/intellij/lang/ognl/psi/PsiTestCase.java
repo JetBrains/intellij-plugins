@@ -38,7 +38,7 @@ public abstract class PsiTestCase extends LightPlatformTestCase {
   }
 
   protected PsiElement[] parseExpressions(final String text) {
-    final OgnlFile ognlFile = createFile("%{" + text + "}");
+    final OgnlFile ognlFile = createFile(OgnlLanguage.EXPRESSION_PREFIX + text + OgnlLanguage.EXPRESSION_SUFFIX);
     assertNotNull(ognlFile);
 
     final PsiElement firstChild = ognlFile.getFirstChild();

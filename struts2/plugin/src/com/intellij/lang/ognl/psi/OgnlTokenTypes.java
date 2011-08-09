@@ -15,6 +15,7 @@
 
 package com.intellij.lang.ognl.psi;
 
+import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.TokenSet;
 
@@ -24,8 +25,8 @@ import com.intellij.psi.tree.TokenSet;
 public class OgnlTokenTypes implements TokenType {
 
   // expression boundaries
-  public static final OgnlTokenType EXPRESSION_START = new OgnlTokenType("%{");
-  public static final OgnlTokenType EXPRESSION_END = new OgnlTokenType("}");
+  public static final OgnlTokenType EXPRESSION_START = new OgnlTokenType(OgnlLanguage.EXPRESSION_PREFIX);
+  public static final OgnlTokenType EXPRESSION_END = new OgnlTokenType(OgnlLanguage.EXPRESSION_SUFFIX);
 
   // names
   public static final OgnlTokenType IDENTIFIER = new OgnlTokenType("IDENTIFIER");

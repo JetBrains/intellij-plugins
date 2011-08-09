@@ -14,6 +14,7 @@
  */
 package com.intellij.struts2.reference;
 
+import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +42,8 @@ public final class TaglibUtil {
    * @return true if yes, false otherwise.
    */
   public static boolean isDynamicExpression(@NotNull @NonNls final String attributeValue) {
-    return StringUtil.startsWith(attributeValue, "%{") || StringUtil.containsChar(attributeValue, '{');
+    return StringUtil.startsWith(attributeValue, OgnlLanguage.EXPRESSION_PREFIX) ||
+        StringUtil.containsChar(attributeValue, '{');
   }
 
   /**
