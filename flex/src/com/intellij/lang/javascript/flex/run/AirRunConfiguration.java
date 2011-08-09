@@ -222,6 +222,7 @@ public class AirRunConfiguration extends FlexRunConfiguration {
       return commandLine;
     }
 
+    @NotNull
     protected OSProcessHandler startProcess() throws ExecutionException {
       final OSProcessHandler processHandler = JavaCommandLineStateUtil.startProcess(createCommandLine());
       processHandler.addProcessListener(new ProcessAdapter() {
