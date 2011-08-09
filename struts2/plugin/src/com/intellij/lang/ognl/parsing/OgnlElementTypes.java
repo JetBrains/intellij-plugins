@@ -32,7 +32,18 @@ public class OgnlElementTypes {
   // %{ ... }
   public static final OgnlElementType EXPRESSION_HOLDER = new OgnlElementType("EXPRESSION_HOLDER");
 
-  public static final OgnlElementType PARENTHESIZED_EXPRESSION = new OgnlElementType("ParenthesizedExpression");
+  public static final OgnlElementType PARENTHESIZED_EXPRESSION = new OgnlElementType("ParenthesizedExpression") {
+    @Override
+    public PsiElement createPsiElement(final ASTNode node) {
+      return new OgnlExpressionBase(node) {
+        @Override
+        public PsiType getType() {
+          return null;
+        }
+      };
+    }
+  };
+
   public static final OgnlElementType INDEXED_EXPRESSION = new OgnlElementType("IndexedExpression");
 
   public static final OgnlElementType BINARY_EXPRESSION = new OgnlElementType("BinaryExpression") {

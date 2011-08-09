@@ -31,11 +31,11 @@ public class ConditionalExpressionPsiTest extends PsiTestCase {
     assertEquals("true", condition.getText());
     assertElementType(OgnlElementTypes.BOOLEAN_LITERAL, condition);
 
-    final OgnlExpression thenExpression = (OgnlExpression) expression.getThen();
+    final OgnlExpression thenExpression = expression.getThen();
     assertEquals(0, thenExpression.getConstantValue());
     assertElementType(OgnlElementTypes.INTEGER_LITERAL, thenExpression);
 
-    final OgnlExpression elseExpression = (OgnlExpression) expression.getElse();
+    final OgnlExpression elseExpression = expression.getElse();
     assertEquals(1, elseExpression.getConstantValue());
     assertElementType(OgnlElementTypes.INTEGER_LITERAL, elseExpression);
   }
@@ -47,22 +47,22 @@ public class ConditionalExpressionPsiTest extends PsiTestCase {
   public void testVariableExpressionInThen() {
     final OgnlConditionalExpression expression = parse("true ? #this : 1");
 
-    final OgnlExpression thenExpression = (OgnlExpression) expression.getThen();
+    final OgnlExpression thenExpression = expression.getThen();
     assertElementType(OgnlElementTypes.VARIABLE_EXPRESSION, thenExpression);
   }
 
   public void testBinaryExpressionInThen() {
     final OgnlConditionalExpression expression = parse("true ? 1 + 2 : 1");
 
-    final OgnlExpression thenExpression = (OgnlExpression) expression.getThen();
+    final OgnlExpression thenExpression = expression.getThen();
     assertElementType(OgnlElementTypes.BINARY_EXPRESSION, thenExpression);
   }
 
   public void testParenthesizedExpressionInThen() {
     final OgnlConditionalExpression expression = parse("true ? (1 + 2) : 1");
 
-    final OgnlElement thenExpression = expression.getThen();
-    assertEquals(OgnlElementTypes.PARENTHESIZED_EXPRESSION, thenExpression.getNode().getElementType());
+    final OgnlExpression thenExpression = expression.getThen();
+    assertElementType(OgnlElementTypes.PARENTHESIZED_EXPRESSION, thenExpression);
   }
 
 

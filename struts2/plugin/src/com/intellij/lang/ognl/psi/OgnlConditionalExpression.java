@@ -36,25 +36,19 @@ public class OgnlConditionalExpression extends OgnlElement {
     return expression[index];
   }
 
-  private OgnlElement findElement(final int index) {
-    final OgnlElement[] elements = findChildrenByClass(OgnlElement.class);
-    assert index <= elements.length : "no element at " + index + " '" + getText() + "'";
-    return elements[index];
-  }
-
   @NotNull
   public OgnlExpression getCondition() {
     return findExpression(0);
   }
 
   @NotNull
-  public OgnlElement getThen() {
-    return findElement(1);
+  public OgnlExpression getThen() {
+    return findExpression(1);
   }
 
   @NotNull
-  public OgnlElement getElse() {
-    return findElement(2);
+  public OgnlExpression getElse() {
+    return findExpression(2);
   }
 
 }
