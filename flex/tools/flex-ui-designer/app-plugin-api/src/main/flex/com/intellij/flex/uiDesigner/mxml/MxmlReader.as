@@ -563,6 +563,10 @@ public final class MxmlReader implements DocumentReader {
           array[count++] = true;
           break;
 
+        case Amf3Types.ARRAY:
+          array[count++] = readArray([]);
+          break;
+
         case AmfExtendedTypes.DOCUMENT_REFERENCE:
           array[count++] = readObjectFromFactory(readDocumentFactory().newInstance());
           break;

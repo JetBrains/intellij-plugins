@@ -361,36 +361,44 @@ public class MxmlWriter {
 
   private void processClassBackedSubTag(XmlTag tag, ClassBackedElementDescriptor descriptor, @Nullable Context parentContext,
                                         boolean isArray) {
-    if (!writeIfPrimitive(tag, descriptor)) {
-      final int projectComponentFactoryId;
-      try {
-        projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(descriptor.getQualifiedName(), descriptor.getDeclaration(),
-                                                                               propertyProcessor.getUnregisteredDocumentFactories());
-      }
-      catch (InvalidPropertyException e) {
-        problemsHolder.add(e);
-        return;
-      }
-
-      final int childDataPosition = out.size();
-      if (projectComponentFactoryId != -1) {
-        if (!isArray) {
-          // replace Amf3Types.OBJECT to AmfExtendedTypes.DOCUMENT_REFERENCE
-          writer.getBlockOut().setPosition(writer.getBlockOut().size() - 1);
-        }
-        
-        out.write(AmfExtendedTypes.DOCUMENT_REFERENCE);
-        out.writeUInt29(projectComponentFactoryId);
-      }
-      else {
-        if (isArray) {
-          out.write(Amf3Types.OBJECT);
-        }
-        writer.write(descriptor.getQualifiedName());
-      }
-
-      processElements(tag, parentContext, hasStates && isArray && parentContext != null, childDataPosition, out.getByteOut().allocate(2));
+    if (writeIfPrimitive(tag, descriptor)) {
+      return;
     }
+
+    if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(descriptor.getQualifiedName())) {
+      processSubTags(tag, parentContext, null, false);
+      return;
+    }
+
+    final int projectComponentFactoryId;
+    try {
+      projectComponentFactoryId = InjectionUtil.getProjectComponentFactoryId(descriptor.getQualifiedName(), descriptor.getDeclaration(),
+                                                                             propertyProcessor.getUnregisteredDocumentFactories());
+    }
+    catch (InvalidPropertyException e) {
+      problemsHolder.add(e);
+      return;
+    }
+
+    final int childDataPosition = out.size();
+    if (projectComponentFactoryId != -1) {
+      if (!isArray) {
+        // replace Amf3Types.OBJECT to AmfExtendedTypes.DOCUMENT_REFERENCE
+        writer.getBlockOut().setPosition(writer.getBlockOut().size() - 1);
+      }
+
+      out.write(AmfExtendedTypes.DOCUMENT_REFERENCE);
+      out.writeUInt29(projectComponentFactoryId);
+    }
+    else {
+      if (isArray) {
+        out.write(Amf3Types.OBJECT);
+      }
+
+      writer.write(descriptor.getQualifiedName());
+    }
+
+    processElements(tag, parentContext, hasStates && isArray && parentContext != null, childDataPosition, out.getByteOut().allocate(2));
   }
 
   void processPropertyTagValue(XmlTag parent, @Nullable Context parentContext, boolean isArray) {
@@ -422,7 +430,6 @@ public class MxmlWriter {
     out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
   }
 
-
   private static boolean isHaloNavigator(String className, JSClass jsClass) {
     return className.equals(FlexCommonTypeNames.ACCORDION) ||
            className.equals(FlexCommonTypeNames.VIEW_STACK) ||
@@ -438,6 +445,12 @@ public class MxmlWriter {
   private int processDefaultProperty(XmlTag tag, XmlElementValueProvider valueProvider, @Nullable ClassBackedElementDescriptor childDescriptor) {
     ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)tag.getDescriptor();
     assert descriptor != null;
+
+    if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(descriptor.getQualifiedName())) {
+      out.write(Amf3Types.ARRAY);
+      return 1;
+    }
+
     AnnotationBackedDescriptor defaultDescriptor = descriptor.getDefaultPropertyDescriptor();
     if (defaultDescriptor == null) {
       final JSClass jsClass = (JSClass)descriptor.getDeclaration();
