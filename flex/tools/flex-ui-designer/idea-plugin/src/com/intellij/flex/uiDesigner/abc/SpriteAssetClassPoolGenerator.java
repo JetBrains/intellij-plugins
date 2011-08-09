@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 class SpriteAssetClassPoolGenerator extends AbcEncoder {
   private static byte[] SPRITE_ASSET_ABC;
-  private static final int NAME_POS = 18;
+  private static final int NAME_POS = 23;
 
   private static void initAbcBlank() throws IOException {
     if (SPRITE_ASSET_ABC == null) {

@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.flex {
 import com.intellij.flex.uiDesigner.SpriteAssetInitializer;
 
 import flash.display.Sprite;
+import flash.errors.IllegalOperationError;
 import flash.geom.Rectangle;
 
 import mx.core.SpriteAsset;
@@ -29,9 +30,11 @@ public class SpriteLoaderAsset extends SpriteAsset {
     createContent();
   }
 
-  private function createContent():void {
-    var s:Sprite = new swfClass();
-    addChild(s);
+  protected function createContent():void {
+    //var c:Class = swfClass;
+    //var s:Sprite = new c();
+    //addChild(s);
+    throw new IllegalOperationError("abstract");
   }
 }
 }

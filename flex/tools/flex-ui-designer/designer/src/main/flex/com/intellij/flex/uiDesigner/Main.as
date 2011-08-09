@@ -141,7 +141,7 @@ public class Main extends MainWindowedApplication {
     socketManager.addSocketDataHandler(0, SocketDataHandler(container.lookup(DefaultSocketDataHandler)));
     socketManager.connect("localhost", port, errorPort);
     
-    UncaughtErrorManager.instance.listen(this);
+    UncaughtErrorManager.instance.listen(parent.loaderInfo);
     loaderInfo.uncaughtErrorEvents.removeEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);
   }
 

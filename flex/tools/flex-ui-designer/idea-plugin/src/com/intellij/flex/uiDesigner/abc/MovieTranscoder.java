@@ -35,11 +35,16 @@ public class MovieTranscoder extends SwfTranscoder {
   private static final byte[] ROOT_SWF_CLASS_NAME = "flash.display.Sprite".getBytes();
   private static final byte[] SYMBOL_OWN_CLASS_NAME = "SymbolOwnClass".getBytes();
   private static final int SYMBOL_CLASS_TAG_LENGTH = 2 + 2 + ROOT_SWF_CLASS_NAME.length + 1 + 2 + SYMBOL_OWN_CLASS_NAME.length + 1;
+  private int spriteId;
 
   private static void initAbcBlank() throws IOException {
     if (SYMBOL_OWN_CLASS_ABC == null) {
       SYMBOL_OWN_CLASS_ABC = IOUtil.getResourceBytes("SymbolOwnClass.abc");
     }
+  }
+  
+  public static void main(String[] args) throws IOException {
+    new MovieTranscoder().extract(new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"), new File("/Users/develar/a.swf"), "myMC".getBytes());
   }
 
   // symbolName — utf8 bytes
@@ -97,7 +102,7 @@ public class MovieTranscoder extends SwfTranscoder {
 
     placedObjects = new TIntObjectHashMap<PlacedObject>();
 
-    int spriteId = -1;
+    spriteId = -1;
 
     int tagStart;
     analyze: while ((tagStart = buffer.position()) < buffer.limit()) {
@@ -284,18 +289,8 @@ public class MovieTranscoder extends SwfTranscoder {
   }
 
   private void writeExportedSymbol(FileOutputStream out, PlacedObject object) throws IOException {
-    final TIntArrayList positions = object.positions;
     final byte[] data = buffer.array();
-    buffer.position(0);
-    encodeTagHeader(object.tagType, object.actualLength == -1 ? object.length : object.actualLength);
-    buffer.putShort((short)1);
-    out.write(data, 0, buffer.position());
-    if (positions == null) {
-      out.write(data, object.start + 2, object.length - 2);
-    }
-    else {
-      writeFilteredPlacedObject(out, data, object, positions, object.start + 2);
-    }
+    writePlacedObject(out, data, object);
 
     // generate SymbolClass
     buffer.position(0);
@@ -306,7 +301,7 @@ public class MovieTranscoder extends SwfTranscoder {
     buffer.put(ROOT_SWF_CLASS_NAME);
     buffer.put((byte)0);
 
-    buffer.putShort((short)1);
+    buffer.putShort((short)spriteId);
     buffer.put(SYMBOL_OWN_CLASS_NAME);
     buffer.put((byte)0);
 
@@ -324,34 +319,33 @@ public class MovieTranscoder extends SwfTranscoder {
 
     final byte[] data = buffer.array();
     for (PlacedObject object : usedPlacedObjects) {
-      final TIntArrayList positions = object.positions;
-      if (positions == null) {
-        out.write(data, object.tagStart, (object.start - object.tagStart) + object.length);
-      }
-      else {
-        writeFilteredPlacedObject(out, data, object, positions, object.start);
-      }
+      writePlacedObject(out, data, object);
     }
 
     usedPlacedObjects = null;
   }
 
-  private void writeFilteredPlacedObject(FileOutputStream out, byte[] data, PlacedObject object, TIntArrayList positions, int start)
-      throws IOException {
-    buffer.position(0);
-    encodeTagHeader(object.tagType, object.actualLength);
-    out.write(data, 0, buffer.position());
-    int prevOffset = positions.getQuick(0);
-    out.write(data, start, prevOffset);
-    final int maxI = positions.size() - 1;
-    for (int i = 0; ; ) {
-      if (i >= maxI) {
-        out.write(data, prevOffset, (object.start + object.length) - prevOffset);
-        break;
-      }
-      else {
-        out.write(data, prevOffset, positions.getQuick(i++) - prevOffset);
-        prevOffset = positions.getQuick(i++);
+  private void writePlacedObject(FileOutputStream out, byte[] data, PlacedObject object) throws IOException {
+    final TIntArrayList positions = object.positions;
+    if (positions == null) {
+      out.write(data, object.tagStart, (object.start - object.tagStart) + object.length);
+    }
+    else {
+      buffer.position(0);
+      encodeTagHeader(object.tagType, object.actualLength);
+      out.write(data, 0, buffer.position());
+      int prevOffset = positions.getQuick(0);
+      out.write(data, object.start, prevOffset);
+      final int maxI = positions.size() - 1;
+      for (int i = 0; ; ) {
+        if (i >= maxI) {
+          out.write(data, prevOffset, (object.start + object.length) - prevOffset);
+          break;
+        }
+        else {
+          out.write(data, prevOffset, positions.getQuick(i++) - prevOffset);
+          prevOffset = positions.getQuick(i++);
+        }
       }
     }
   }

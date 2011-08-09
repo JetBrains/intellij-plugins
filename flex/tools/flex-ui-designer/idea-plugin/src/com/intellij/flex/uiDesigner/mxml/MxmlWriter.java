@@ -446,6 +446,7 @@ public class MxmlWriter {
     ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)tag.getDescriptor();
     assert descriptor != null;
 
+    // see valArr in EmbedSwfAndImageFromCss
     if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(descriptor.getQualifiedName())) {
       out.write(Amf3Types.ARRAY);
       return 1;

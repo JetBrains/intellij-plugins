@@ -28,10 +28,10 @@ final class AbcBlankMaker {
   private static void makeBlanks() throws IOException {
     final AbcFilter abcTagExtractor = new AbcFilter(false, false);
     final File in = new File("abc-blank-maker/src/o/library.swf");
-    abcTagExtractor.filter(in, new File("idea-plugin/resources/BitmapAsset.abc"), new AbcNameFilterByEquals("_b000"));
+    //abcTagExtractor.filter(in, new File("idea-plugin/resources/BitmapAsset.abc"), new AbcNameFilterByEquals("_b000"));
     abcTagExtractor.filter(in, new File("idea-plugin/resources/SpriteAsset.abc"), new AbcNameFilterByEquals("_s000"));
     // must be encoded as tag
-    new AbcFilter(false, true).filter(in, new File("idea-plugin/resources/SymbolOwnClass.abc"), new AbcNameFilterByEquals("SymbolOwnClass"));
+    //new AbcFilter(false, true).filter(in, new File("idea-plugin/resources/SymbolOwnClass.abc"), new AbcNameFilterByEquals("SymbolOwnClass"));
   }
 
   private static void d() throws IOException {

@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.util.StringUtil;
 
-import flash.display.Sprite;
+import flash.display.LoaderInfo;
 import flash.events.ErrorEvent;
 import flash.events.UncaughtErrorEvent;
 import flash.net.Socket;
@@ -21,8 +21,8 @@ public class UncaughtErrorManager implements UiErrorHandler {
     return UncaughtErrorManager(PlexusManager.instance.container.lookup(UncaughtErrorManager));
   }
 
-  public function listen(dispatcher:Sprite):void {
-    dispatcher.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);
+  public function listen(loaderInfo:LoaderInfo):void {
+    loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, uncaughtErrorHandler);
   }
 
   private function uncaughtErrorHandler(event:UncaughtErrorEvent):void {

@@ -37,6 +37,7 @@ public class MxmlTest extends BaseTestCase {
       ChildrenTypeCheck();
       ProjectActionScriptComponentAsChild();
       ProjectMxmlComponentAsChild();
+      EmbedSwfAndImageFromCss();
     }
   }
   
@@ -64,9 +65,9 @@ public class MxmlTest extends BaseTestCase {
   }
 
   public function Embed():void {
-    var bitmapData:BitmapData = app.getElementAt(0).getElementAt(0).source;
+    var bitmapData:BitmapData = app.getElementAt(0).getElementAt(0).source.data;
     var m:Matcher = allOf(equalTo(bitmapData), {transparent: false, width: 240, height: 180});
-    assertThat(app, [[{source: m}, {source: m}], {source: {transparent: true, width: 240, height: 180}}, {source: {transparent: true, width: 500, height: 367}}, {}]);
+    assertThat(app, [[{source: {data: m}}, {source: {data: m}}], {source: {data: {transparent: true, width: 240, height: 180}}}, {source: {data: {transparent: true, width: 500, height: 367}}}, {}]);
   }
   
   public function UntypedProperty():void {
@@ -167,6 +168,9 @@ public class MxmlTest extends BaseTestCase {
 
   public function ProjectMxmlComponentAsChild():void {
     assertThat(app, [[{text: "Label in child custom mxml component"}]]);
+  }
+
+  public function EmbedSwfAndImageFromCss():void {
   }
 }
 }

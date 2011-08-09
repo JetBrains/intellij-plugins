@@ -43,6 +43,7 @@ public class MainLoader extends Sprite {
     loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
     var loaderContext:LoaderContext = new LoaderContext();
     loaderContext.allowCodeImport = true;
+    loaderContext.requestedContentParent = this;
     loader.loadBytes(new appClass(), loaderContext);
     appClass = null;
 
@@ -52,10 +53,9 @@ public class MainLoader extends Sprite {
   private static function loadErrorHandler(event:IOErrorEvent):void {
     trace(event);
   }
-;
-  private function loadCompleteHandler(event:Event):void {
+
+  private static function loadCompleteHandler(event:Event):void {
     var loader:Loader = LoaderInfo(event.currentTarget).loader;
-    addChild(loader.getChildAt(0));
     loader.contentLoaderInfo.applicationDomain.getDefinition("com.intellij.flex.uiDesigner.libraries.QueueLoader")["rootDomain"] = ApplicationDomain.currentDomain;
   }
 

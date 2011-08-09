@@ -8,6 +8,9 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <content url="file://$MODULE_DIR$/../../assets">
+      <sourceFolder url="file://$MODULE_DIR$/../../assets" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$/../../css">
       <sourceFolder url="file://$MODULE_DIR$/../../css" isTestSource="false" />
     </content>
