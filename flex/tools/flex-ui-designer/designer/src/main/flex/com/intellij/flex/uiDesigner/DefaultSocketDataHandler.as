@@ -14,6 +14,8 @@ import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 
+import org.flyti.plexus.PlexusManager;
+
 registerClassAlias("lsh", LocalStyleHolder);
 
 public class DefaultSocketDataHandler implements SocketDataHandler {
@@ -73,7 +75,15 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
       case ClientMethod.updateStringRegistry:
         stringRegistry.readStringTable(input);
         break;
+
+      case ClientMethod.fillImageClassPool:
+        fillImageClassPool(input);
+        break;
     }
+  }
+
+  private function fillImageClassPool(input:IDataInput):void {
+    EmbedImageManager(PlexusManager.instance.container.lookup(EmbedImageManager)).fillClassPool();
   }
 
   private function openProject(input:IDataInput):void {
@@ -187,4 +197,5 @@ final class ClientMethod {
   public static const qualifyExternalInlineStyleSource:int = 8;
   public static const initStringRegistry:int = 9;
   public static const updateStringRegistry:int = 10;
+  public static const fillImageClassPool:int = 11;
 }

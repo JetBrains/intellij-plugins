@@ -4,10 +4,11 @@ import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
+public class BlockDataOutputStream extends AbstractByteArrayOutputStream implements WritableByteChannel {
   private static final int SERVICE_DATA_SIZE = 8;
 
   private int lastBlockBegin;
@@ -244,6 +245,11 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream {
     }
 
     out.flush();
+  }
+
+  @Override
+  public boolean isOpen() {
+    return out != null;
   }
 
   @Override

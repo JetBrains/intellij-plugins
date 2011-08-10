@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 
 import java.io.File;
@@ -21,8 +23,16 @@ final class AbcBlankMaker {
     //new FlexSdkAbcInjector("4.5", null, new RequiredAssetsInfo()).filter(new File("/Users/develar/workspace/idea/flex/tools/flex-ui-designer/idea-plugin/testData/sdk/4.5/mobilecomponents/library.swf"), new File("/Users/develar/ot.swf"), null);
     //new AbcFilter().filter(new File("/Users/develar/output.swf"), new File("/Users/develar/ot.swf"), null);
 
-    makeBlanks();
+    //makeBlanks();
+
+    //fillAssetClassPoolGenerator();
     //new MovieTranscoder().extract(new File("/Developer/SDKs/flex_4.5.1/frameworks/projects/framework/assets/Assets.swf"), new File("/Users/develar/r.swf"), "mx.containers.FormItem.Required".getBytes());
+  }
+
+  private static void fillAssetClassPoolGenerator() throws IOException {
+    ByteArrayOutputStreamEx out = new ByteArrayOutputStreamEx(1024);
+    AssetClassPoolGenerator.generateBitmap(3, out);
+    FileUtil.writeToFile(new File("/Users/develar/b.swf"), out.toByteArray());
   }
 
   private static void makeBlanks() throws IOException {

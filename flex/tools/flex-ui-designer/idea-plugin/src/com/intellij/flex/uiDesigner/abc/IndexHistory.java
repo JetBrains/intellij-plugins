@@ -5,7 +5,7 @@ import gnu.trove.TIntObjectHashMap;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.FileChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.List;
 
 import static com.intellij.flex.uiDesigner.abc.ActionBlockConstants.*;
@@ -145,7 +145,7 @@ final class IndexHistory {
     return buffer;
   }
 
-  public void writeTo(FileChannel channel, ByteBuffer buffer) throws IOException {
+  public void writeTo(WritableByteChannel channel, ByteBuffer buffer) throws IOException {
     for (PoolPart poolPart : poolParts) {
       if (poolPart == null) {
         PoolPart.writeU32(buffer, 0);

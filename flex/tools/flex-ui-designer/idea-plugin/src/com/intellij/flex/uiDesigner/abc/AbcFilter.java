@@ -247,95 +247,9 @@ public class AbcFilter extends SwfTranscoder {
   }
 
   private void mergeDoAbc(boolean asTag, boolean hasClassAssociatedWithMainTimeLine) throws IOException {
-    final int abcSize = decoders.size();
-    final Encoder encoder = useFlexEncoder ? new FlexEncoder(inputFileParentName) : new Encoder();
-    encoder.enablePeepHole();
+    final Encoder encoder = new Encoder();
     encoder.configure(decoders, hasClassAssociatedWithMainTimeLine ? transientNameString : null);
-
-    Decoder decoder;
-    // decode methodInfo...
-    for (int i = 0; i < abcSize; i++) {
-      decoder = decoders.get(i);
-      if (decoder == null) {
-        continue;
-      }
-
-      encoder.useConstantPool(i);
-      Decoder.MethodInfo methodInfo = decoder.methodInfo;
-      for (int j = 0, infoSize = methodInfo.size(); j < infoSize; j++) {
-        methodInfo.decode(j, encoder);
-      }
-    }
-
-    // decode metadataInfo...
-    for (int j = 0; j < abcSize; j++) {
-      decoder = decoders.get(j);
-      if (decoder == null) {
-        continue;
-      }
-
-      encoder.useConstantPool(j);
-      Decoder.MetaDataInfo metadataInfo = decoder.metadataInfo;
-      for (int k = 0, infoSize = metadataInfo.size(); k < infoSize; k++) {
-        metadataInfo.decode(k, encoder);
-      }
-    }
-
-    // decode classInfo...
-    for (int j = 0; j < abcSize; j++) {
-      decoder = decoders.get(j);
-      if (decoder == null) {
-        continue;
-      }
-
-      encoder.useConstantPool(j);
-      Decoder.ClassInfo classInfo = decoder.classInfo;
-      for (int k = 0, infoSize = classInfo.size(); k < infoSize; k++) {
-        classInfo.decodeInstance(k, encoder);
-      }
-    }
-
-    for (int j = 0; j < abcSize; j++) {
-      decoder = decoders.get(j);
-      if (decoder == null) {
-        continue;
-      }
-
-      encoder.useConstantPool(j);
-      Decoder.ClassInfo classInfo = decoder.classInfo;
-      for (int k = 0, infoSize = classInfo.size(); k < infoSize; k++) {
-        classInfo.decodeClass(k, encoder);
-      }
-    }
-
-    // decode scripts...
-    for (int j = 0; j < abcSize; j++) {
-      decoder = decoders.get(j);
-      if (decoder == null) {
-        continue;
-      }
-
-      encoder.useConstantPool(j);
-      Decoder.ScriptInfo scriptInfo = decoder.scriptInfo;
-      for (int k = 0, scriptSize = scriptInfo.size(); k < scriptSize; k++) {
-        scriptInfo.decode(k, encoder);
-      }
-    }
-
-    // decode method bodies...
-    for (int j = 0; j < abcSize; j++) {
-      decoder = decoders.get(j);
-      if (decoder == null) {
-        continue;
-      }
-
-      encoder.useConstantPool(j);
-      Decoder.MethodBodies methodBodies = decoder.methodBodies;
-      for (int k = 0, bodySize = methodBodies.size(); k < bodySize; k++) {
-        methodBodies.decode(k, 2, encoder);
-      }
-    }
-
+    SwfUtil.mergeDoAbc(decoders, useFlexEncoder ? new FlexEncoder(inputFileParentName) : encoder);
     encoder.writeDoAbc(channel, asTag);
   }
 

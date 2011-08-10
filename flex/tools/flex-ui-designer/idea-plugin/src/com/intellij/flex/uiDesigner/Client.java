@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.uiDesigner.abc.AssetClassPoolGenerator;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
@@ -262,18 +263,14 @@ public class Client implements Closable {
   }
 
   public void openDocument(Module module, XmlFile psiFile) throws IOException {
-    openDocument(module, psiFile, false);
+    openDocument(module, psiFile, false, new ProblemsHolder(), new RequiredAssetsInfo());
   }
 
-  public void openDocument(Module module, XmlFile psiFile, boolean notifyOpened) throws IOException {
-    final ProblemsHolder problemsHolder = new ProblemsHolder();
-    openDocument(module, psiFile, notifyOpened, problemsHolder);
-    if (!problemsHolder.isEmpty()) {
-      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
-    }
-  }
-
-  public void openDocument(Module module, XmlFile psiFile, boolean notifyOpened, ProblemsHolder problemsHolder) throws IOException {
+  /**
+   * final, full open document — responsible for handle problemsHolder and requiredAssetsInfo — you must not do it
+   */
+  public void openDocument(Module module, XmlFile psiFile, boolean notifyOpened, ProblemsHolder problemsHolder,
+                           RequiredAssetsInfo requiredAssetsInfo) throws IOException {
     DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
     VirtualFile virtualFile = psiFile.getVirtualFile();
     FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
@@ -284,7 +281,38 @@ public class Client implements Closable {
       return;
     }
 
-    int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder);
+    int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder, requiredAssetsInfo);
+
+    if (!problemsHolder.isEmpty()) {
+      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
+    }
+
+    if (requiredAssetsInfo.imageCount > 0) {
+      boolean hasError = true;
+      try {
+        beginMessage(ClientMethod.fillImageClassPool);
+        AssetClassPoolGenerator.generateBitmap(requiredAssetsInfo.imageCount, blockOut);
+        hasError = false;
+      }
+      catch (Throwable e) {
+        problemsHolder.add(e);
+      }
+      finally {
+        if (hasError) {
+          blockOut.rollback();
+        }
+        else {
+          blockOut.end();
+        }
+
+        out.resetAfterMessage();
+      }
+    }
+
+    if (!problemsHolder.isEmpty()) {
+      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
+    }
+
     beginMessage(ClientMethod.openDocument);
     writeId(module);
     out.writeShort(factoryId);
@@ -296,7 +324,8 @@ public class Client implements Closable {
     writeId(module);
     out.writeShort(factoryId);
     ProblemsHolder problemsHolder = new ProblemsHolder();
-    writeDocumentFactory(module, psiFile, problemsHolder);
+    RequiredAssetsInfo requiredAssetsInfo = new RequiredAssetsInfo();
+    writeDocumentFactory(module, psiFile, problemsHolder, requiredAssetsInfo);
     if (!problemsHolder.isEmpty()) {
       DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
     }
@@ -306,8 +335,8 @@ public class Client implements Closable {
     out.writeShort(factoryId);
   }
 
-  private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, VirtualFile virtualFile,
-                                            boolean force, ProblemsHolder problemsHolder) throws IOException {
+  private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, VirtualFile virtualFile, boolean force,
+                                            ProblemsHolder problemsHolder, RequiredAssetsInfo requiredAssetsInfo) throws IOException {
     final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
     final boolean registered = !force && documentFactoryManager.isRegistered(virtualFile);
     final int id = documentFactoryManager.getId(virtualFile);
@@ -321,21 +350,22 @@ public class Client implements Closable {
       assert jsClass != null;
       out.writeAmfUtf(jsClass.getQualifiedName());
 
-      writeDocumentFactory(module, psiFile, problemsHolder);
+      writeDocumentFactory(module, psiFile, problemsHolder, requiredAssetsInfo);
     }
 
     return id;
   }
 
-  private void writeDocumentFactory(final @NotNull Module module, final @NotNull XmlFile psiFile, ProblemsHolder problemsHolder)
+  private void writeDocumentFactory(Module module, XmlFile psiFile, ProblemsHolder problemsHolder, RequiredAssetsInfo requiredAssetsInfo)
       throws IOException {
-    XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder);
+    XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder, requiredAssetsInfo);
     if (unregisteredDocumentReferences != null) {
-      registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder);
+      registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder, requiredAssetsInfo);
     }
   }
 
-  public void registerDocumentReferences(XmlFile[] files, Module module, ProblemsHolder problemsHolder) throws IOException {
+  public void registerDocumentReferences(XmlFile[] files, Module module, ProblemsHolder problemsHolder,
+                                         RequiredAssetsInfo requiredAssetsInfo) throws IOException {
     for (XmlFile file : files) {
       VirtualFile virtualFile = file.getVirtualFile();
       assert virtualFile != null;
@@ -352,7 +382,7 @@ public class Client implements Closable {
       }
 
       // force register, it is registered (id allocated) only on server side
-      registerDocumentFactoryIfNeed(module, file, virtualFile, true, problemsHolder);
+      registerDocumentFactoryIfNeed(module, file, virtualFile, true, problemsHolder, requiredAssetsInfo);
     }
   }
 
@@ -391,7 +421,7 @@ public class Client implements Closable {
 
   public static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, openDocument, updateDocuments,
-    qualifyExternalInlineStyleSource, initStringRegistry, updateStringRegistry;
+    qualifyExternalInlineStyleSource, initStringRegistry, updateStringRegistry, fillImageClassPool;
     
     public static final int METHOD_CLASS = 0;
   }

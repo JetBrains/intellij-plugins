@@ -1,9 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
-import com.intellij.flex.uiDesigner.InjectionUtil;
-import com.intellij.flex.uiDesigner.InvalidPropertyException;
-import com.intellij.flex.uiDesigner.ProblemsHolder;
+import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
@@ -62,12 +59,15 @@ public class MxmlWriter {
     propertyProcessor = new PropertyProcessor(injectedASWriter, writer);
   }
 
-  public XmlFile[] write(@NotNull final XmlFile psiFile, @NotNull final ProblemsHolder problemsHolder) throws IOException {
+  public XmlFile[] write(@NotNull final XmlFile psiFile, @NotNull final ProblemsHolder problemsHolder,
+                         @NotNull final RequiredAssetsInfo requiredAssetsInfo) throws IOException {
     try {
       this.problemsHolder = problemsHolder;
       problemsHolder.setCurrentFile(psiFile.getVirtualFile());
       injectedASWriter.setProblemsHolder(problemsHolder);
+      writer.requiredAssetsInfo = requiredAssetsInfo;
       requireCallResetAfterMessage = true;
+
       writer.beginMessage();
 
       AccessToken token = ReadAction.start();
@@ -103,6 +103,7 @@ public class MxmlWriter {
     finally {
       problemsHolder.setCurrentFile(null);
       this.problemsHolder = null;
+      writer.requiredAssetsInfo = null;
       injectedASWriter.setProblemsHolder(null);
       requireCallResetAfterMessage = false;
       resetAfterMessage();

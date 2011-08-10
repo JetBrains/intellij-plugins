@@ -28,4 +28,9 @@ public final class ByteArrayOutputStreamEx extends AbstractByteArrayOutputStream
   public byte[] toByteArray() {
     return Arrays.copyOf(buffer, count);
   }
+
+  @Override
+  public boolean isOpen() {
+    return true;
+  }
 }

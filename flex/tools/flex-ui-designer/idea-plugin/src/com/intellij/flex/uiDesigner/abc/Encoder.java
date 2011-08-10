@@ -1,7 +1,9 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.flex.uiDesigner.io.AbstractByteArrayOutputStream;
 import com.intellij.flex.uiDesigner.io.IntIntHashMap;
 import gnu.trove.TIntArrayList;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -56,7 +58,7 @@ class Encoder {
     history.disableDebugging();
   }
 
-  public void configure(List<Decoder> decoders, AbcFilter.TransientString excludedName) {
+  public void configure(List<Decoder> decoders, @Nullable AbcFilter.TransientString excludedName) {
     int estimatedSize = 0, total = 0;
     int[] sizes = new int[decoders.size()];
     for (int i = 0, size = sizes.length; i < size; i++) {
@@ -147,6 +149,42 @@ class Encoder {
 
   public void useConstantPool(int index) {
     poolIndex = index;
+  }
+
+  public ByteBuffer writeDoAbc(final AbstractByteArrayOutputStream channel) throws IOException {
+    final ByteBuffer buffer = history.createBuffer(metadataInfo);
+    final int filePositionBefore = channel.size();
+    buffer.putShort((short)((TagTypes.DoABC2 << 6) | 63));
+    buffer.position(6);
+    buffer.putInt(1);
+    buffer.put((byte)'_');
+    buffer.put((byte)0);
+
+    buffer.putShort((short)minorVersion);
+    buffer.putShort((short)majorVersion);
+
+    buffer.flip();
+    channel.write(buffer);
+    buffer.clear();
+
+    history.writeTo(channel, buffer);
+    methodInfo.writeTo(channel);
+
+    metadataInfo.writeTo(buffer);
+    buffer.flip();
+    channel.write(buffer);
+    buffer.clear();
+
+    classInfo.writeTo(channel);
+    scriptInfo.writeTo(channel);
+    methodBodies.writeTo(channel);
+
+    final int size = channel.size() - filePositionBefore - 6;
+    buffer.putInt(size);
+    buffer.flip();
+    channel.write(buffer, filePositionBefore + 2);
+
+    return buffer;
   }
 
   public void writeDoAbc(final FileChannel channel, final boolean asTag) throws IOException {
@@ -536,7 +574,7 @@ class Encoder {
     encodeMetaData(new_metadata);
   }
 
-  public void classTrait(int kind, int name, int slotId, int classInfoIndex, int[] metadata, DataBuffer in) {
+  public void classTrait(int kind, int name, int slotId, int classInfoIndex, int[] metadata) {
     currentBuffer.writeU32(history.getIndex(poolIndex, IndexHistory.MULTINAME, name));
     TIntArrayList newMetadata = trimMetadata(metadata);
     if (((kind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {

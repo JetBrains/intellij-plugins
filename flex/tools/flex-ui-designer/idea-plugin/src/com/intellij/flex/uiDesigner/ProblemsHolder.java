@@ -17,6 +17,7 @@ public class ProblemsHolder {
   private final List<ProblemDescriptor> problems = new ArrayList<ProblemDescriptor>();
 
   private VirtualFile currentFile;
+  private boolean handled;
 
   private static Document getDocument(@NotNull PsiElement element) {
     VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
@@ -34,6 +35,8 @@ public class ProblemsHolder {
 
   public ProblemDescriptor[] getResultList() {
     LOG.assertTrue(currentFile == null);
+    LOG.assertTrue(!handled);
+    handled = true;
     return problems.toArray(new ProblemDescriptor[problems.size()]);
   }
 

@@ -1,11 +1,13 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.flex.uiDesigner.io.AbstractByteArrayOutputStream;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-class AssetClassPoolGenerator extends AbcEncoder {
+public final class AssetClassPoolGenerator extends AbcEncoder {
   private static byte[] BITMAP_ASSET_ABC;
   private static byte[] SPRITE_ASSET_ABC;
 
@@ -32,7 +34,6 @@ class AssetClassPoolGenerator extends AbcEncoder {
       throw new IllegalArgumentException("size must be >= 0 <= 4095");
     }
 
-    decoders.ensureCapacity(decoders.size() + size);
     decoders.add(new Decoder(new DataBuffer(abc0)));
 
     for (int i = 1, n = size - 1; i < n; i++) {
@@ -49,5 +50,17 @@ class AssetClassPoolGenerator extends AbcEncoder {
 
       decoders.add(new Decoder(new DataBuffer(abcN)));
     }
+  }
+
+  public static void generateBitmap(int size, AbstractByteArrayOutputStream out) throws IOException {
+    final int start = out.size();
+    out.getBuffer(SwfUtil.getWrapHeaderLength());
+
+    ArrayList<Decoder> decoders = new ArrayList<Decoder>(size);
+    generateBitmap(decoders, size);
+    final ByteBuffer buffer = SwfUtil.mergeDoAbc(decoders).writeDoAbc(out);
+
+    SwfUtil.header(SwfUtil.getWrapLength() + (out.size() - start), out, buffer, start);
+    SwfUtil.footer(out);
   }
 }

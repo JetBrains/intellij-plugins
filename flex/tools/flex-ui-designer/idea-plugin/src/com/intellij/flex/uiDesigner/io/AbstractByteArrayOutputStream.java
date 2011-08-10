@@ -1,9 +1,12 @@
 package com.intellij.flex.uiDesigner.io;
 
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 
-public abstract class AbstractByteArrayOutputStream extends OutputStream {
+public abstract class AbstractByteArrayOutputStream extends OutputStream implements WritableByteChannel {
   protected int count;
   protected byte buffer[];
 
@@ -17,6 +20,20 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream {
 
   public void reset() {
     count = 0;
+  }
+
+  @Override
+  public int write(ByteBuffer byteBuffer) throws IOException {
+    final int length = byteBuffer.remaining();
+    final int offset = count;
+    byteBuffer.get(getBuffer(length), offset, length);
+    return length;
+  }
+
+  public int write(ByteBuffer byteBuffer, int position) throws IOException {
+    final int length = byteBuffer.remaining();
+    byteBuffer.get(buffer, position, length);
+    return length;
   }
 
   public void setPosition(int newPosition) {
@@ -64,10 +81,5 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream {
     }
     count = newCount;
     return buffer;
-  }
-
-  public void moveTo(int position, PrimitiveAmfOutputStream out) {
-    out.write(buffer, position, count - position);
-    count = position;
   }
 }

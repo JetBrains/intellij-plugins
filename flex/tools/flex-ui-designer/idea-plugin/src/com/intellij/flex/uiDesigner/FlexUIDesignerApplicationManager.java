@@ -373,8 +373,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         client.flush();
 
         final ProblemsHolder problemsHolder = new ProblemsHolder();
+        final RequiredAssetsInfo requiredAssetsInfo = new RequiredAssetsInfo();
         if (unregisteredDocumentReferences != null) {
-          client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder);
+          client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder, requiredAssetsInfo);
         }
 
         final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(appParentDisposable);
@@ -386,14 +387,10 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
         });
 
-        client.openDocument(module, psiFile, true, problemsHolder);
+        client.openDocument(module, psiFile, true, problemsHolder, requiredAssetsInfo);
         client.flush();
 
         indicator.setText(FlexUIDesignerBundle.message("load.libraries"));
-
-        if (!problemsHolder.isEmpty()) {
-          DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
-        }
       }
       catch (IOException e) {
         LOG.error(e);

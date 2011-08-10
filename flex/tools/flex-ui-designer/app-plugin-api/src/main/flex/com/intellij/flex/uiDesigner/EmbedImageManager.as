@@ -18,5 +18,9 @@ public class EmbedImageManager extends AbstractEmbedAssetManager implements Embe
 
     return clazz;
   }
+
+  public function fillClassPool():void {
+
+  }
 }
 }

@@ -7,7 +7,7 @@
 
   <transitions>
     <!-- A transition for changing from any state to any state. -->
-    <Transition id="myTransition" fromState="*" toState="*">
+    <Transition id="myTransition" fromState="*" toState="e">
       <!-- Define a Parallel effect as the top-level effect.-->
       <Parallel id="t1" targets="{[p1,p2,p3]}">
         <!-- Define a Move and Resize effect.-->

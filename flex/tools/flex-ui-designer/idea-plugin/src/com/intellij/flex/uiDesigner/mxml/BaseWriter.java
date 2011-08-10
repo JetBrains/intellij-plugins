@@ -25,7 +25,7 @@ public final class BaseWriter {
   private final Scope rootScope = new Scope();
   private int preallocatedId = -1;
 
-  private RequiredAssetsInfo requiredAssetsInfo;
+  RequiredAssetsInfo requiredAssetsInfo;
 
   public BaseWriter(PrimitiveAmfOutputStream out) {
     this.out = out;
@@ -33,9 +33,6 @@ public final class BaseWriter {
   }
 
   public RequiredAssetsInfo getRequiredAssetsInfo() {
-    if (requiredAssetsInfo == null) {
-      requiredAssetsInfo = new RequiredAssetsInfo();
-    }
     return requiredAssetsInfo;
   }
 

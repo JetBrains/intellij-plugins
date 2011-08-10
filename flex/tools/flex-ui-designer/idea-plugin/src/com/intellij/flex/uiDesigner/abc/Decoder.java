@@ -290,7 +290,7 @@ final class Decoder {
             visitor.methodTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind), in);
             break;
           case TRAIT_Class:
-            visitor.classTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind), in);
+            visitor.classTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind));
             break;
           case TRAIT_Function:
             visitor.functionTrait(kind, name, in.readU32(), in.readU32(), decodeMetaData(kind));
