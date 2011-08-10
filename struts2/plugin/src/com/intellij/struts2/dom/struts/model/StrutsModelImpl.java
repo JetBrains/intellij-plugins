@@ -117,6 +117,11 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
   @NotNull
   public List<Action> findActionsByClass(@NotNull final PsiClass clazz) {
+    return findActionsByClassInner(clazz, false);
+  }
+
+  private List<Action> findActionsByClassInner(final PsiClass clazz,
+                                               final boolean skipOnFirst) {
     final List<Action> actionResultList = new SmartList<Action>();
 
     for (final StrutsPackage strutsPackage : getStrutsPackages()) {
@@ -124,6 +129,9 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
         final PsiClass actionClassValue = action.searchActionClass();
         if (Comparing.equal(clazz, actionClassValue)) {
           actionResultList.add(action);
+          if (skipOnFirst) {
+            return actionResultList;
+          }
         }
       }
     }
@@ -131,11 +139,16 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
     return actionResultList;
   }
 
+  @Override
+  public boolean isActionClass(@NotNull final PsiClass clazz) {
+    return !findActionsByClassInner(clazz, true).isEmpty();
+  }
+
   public List<Action> getActionsForNamespace(@Nullable @NonNls final String namespace) {
     CachedValue<Map<String, List<Action>>> packageToActionMap = myMergedModel.getUserData(ACTIONS_FOR_NAMESPACE);
     if (packageToActionMap == null) {
       packageToActionMap = CachedValuesManager.getManager(myMergedModel.getManager().getProject())
-          .createCachedValue(actionsCachedValueProvider, false);
+                                              .createCachedValue(actionsCachedValueProvider, false);
 
       myMergedModel.putUserData(ACTIONS_FOR_NAMESPACE, packageToActionMap);
     }
