@@ -180,7 +180,7 @@ public class FilesToPackageForm {
   }
 
   public void setPanelTitle(final String title) {
-    myMainPanel.setBorder(IdeBorderFactory.createTitledBorderSimpleWithIndent(title));
+    myMainPanel.setBorder(IdeBorderFactory.createTitledBorder(title, false, true));
   }
 
   public void stopEditing() {
