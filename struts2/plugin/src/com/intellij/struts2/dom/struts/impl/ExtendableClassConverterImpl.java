@@ -117,7 +117,9 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
         final PsiReference[] additionalReferences = contributor.getReferencesByElement(element,
                                                                                        new ProcessingContext());
         javaClassReferences = ArrayUtil.mergeArrays(javaClassReferences, additionalReferences, PsiReference.class);
-        referenceTypes = ArrayUtil.append(referenceTypes, contributor.getContributorType());
+        referenceTypes = ArrayUtil.append(referenceTypes,
+                                          contributor.getContributorType(),
+                                          ArrayUtil.STRING_ARRAY_FACTORY);
       }
     }
 
