@@ -65,7 +65,7 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
 
   public ProjectSettingsEditorComponent(Project project) {
     myProject = project;
-    frameworkInstance.setRenderer(new FrameworkInstanceCellRenderer() {
+    frameworkInstance.setRenderer(new FrameworkInstanceCellRenderer(frameworkInstance.getRenderer()) {
       @Override
       protected boolean isInstanceDefined(FrameworkInstanceDefinition instance) {
         List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getFrameworkInstanceDefinitions();

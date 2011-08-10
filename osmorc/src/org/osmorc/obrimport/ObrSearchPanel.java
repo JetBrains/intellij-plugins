@@ -25,6 +25,7 @@
 
 package org.osmorc.obrimport;
 
+import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.ui.Messages;
@@ -34,7 +35,6 @@ import com.intellij.util.net.HTTPProxySettingsDialog;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -64,12 +64,10 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
       }
     });
 
-    _obrBox.setRenderer(new DefaultListCellRenderer() {
+    _obrBox.setRenderer(new ListCellRendererWrapper<Obr>(_obrBox.getRenderer()) {
       @Override
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        JLabel result = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        result.setText(((Obr)value).getDisplayName());
-        return result;
+      public void customize(JList list, Obr value, int index, boolean selected, boolean hasFocus) {
+        setText(value.getDisplayName());
       }
 
     });

@@ -1,25 +1,30 @@
 package org.osmorc.settings;
 
-import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ide.ui.ListCellRendererWrapper;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
  */
-public abstract class FrameworkInstanceCellRenderer extends ColoredListCellRenderer {
+public abstract class FrameworkInstanceCellRenderer extends ListCellRendererWrapper {
+  public FrameworkInstanceCellRenderer(ListCellRenderer renderer) {
+    super(renderer);
+  }
+
   @Override
-  protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
+  public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
     final String str = value != null ? value.toString() : null;
     if (str != null) {
       if (!isInstanceDefined(((FrameworkInstanceDefinition)value))) {
-        append(str + " [invalid]", SimpleTextAttributes.ERROR_ATTRIBUTES);
+        setText(str + " [invalid]");
+        setForeground(Color.RED);
       }
       else {
-        append(str, selected ? SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES : SimpleTextAttributes.SIMPLE_CELL_ATTRIBUTES);
+        setText(str);
       }
     }
   }
