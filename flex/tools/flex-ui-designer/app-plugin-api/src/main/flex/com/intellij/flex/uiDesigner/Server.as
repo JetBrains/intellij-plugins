@@ -15,6 +15,12 @@ import flash.utils.getTimer;
 import org.flyti.plexus.PlexusManager;
 
 public class Server implements ResourceBundleProvider {
+  // we cannot use File.applicationDirectory.nativePath directly  http://juick.com/develar/1485063
+  private static const APP_DIR_PATH:String = File.applicationDirectory.nativePath;
+
+  // http://exaflood.de/syrotech/air-securityerror-filewriteresource/
+  private const resultFile:File = new File(APP_DIR_PATH + "/r");
+
   private var socket:Socket;
 
   public function Server(socketManager:SocketManager) {
@@ -103,9 +109,6 @@ public class Server implements ResourceBundleProvider {
     socket.writeShort(project.id);
   }
 
-  // http://exaflood.de/syrotech/air-securityerror-filewriteresource/
-  private const resultFile:File = new File(File.applicationDirectory.nativePath + "/r");
-
   private static var flashWorkaroundByteArray:ByteArray;
 
   public function getBitmapData(id:int):BitmapData {
@@ -117,7 +120,7 @@ public class Server implements ResourceBundleProvider {
       socket.writeShort(id);
       socket.flush();
 
-      resultReadyFile = new File(File.applicationDirectory.nativePath + "/" + resultReadyFilename);
+      resultReadyFile = new File(APP_DIR_PATH + "/" + resultReadyFilename);
       while (!resultReadyFile.exists) {
       }
 
@@ -159,7 +162,7 @@ public class Server implements ResourceBundleProvider {
       socket.writeShort(id);
       socket.flush();
 
-      resultReadyFile = new File(File.applicationDirectory.nativePath + "/" + resultReadyFilename);
+      resultReadyFile = new File(APP_DIR_PATH + "/" + resultReadyFilename);
       while (!resultReadyFile.exists) {
       }
 
@@ -198,7 +201,7 @@ public class Server implements ResourceBundleProvider {
       socket.writeUTF(bundleName);
       socket.flush();
 
-      resultReadyFile = new File(File.applicationDirectory.nativePath + "/" + resultReadyFilename);
+      resultReadyFile = new File(APP_DIR_PATH + "/" + resultReadyFilename);
       // fileStream.bytesAvailable is not update, i.e. we cannot while (fileStream.bytesAvailable == 0), so, we delete file after read
       while (!resultReadyFile.exists) {
       }
