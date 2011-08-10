@@ -69,6 +69,7 @@ import static com.intellij.patterns.XmlPatterns.*;
 public class FlexReferenceContributor extends PsiReferenceContributor {
   private static final @NonNls String BINDING_TAG_NAME = "Binding";
   @NonNls private static final String CLASS_TAG_NAME = "class";
+  @NonNls private static final String TRANSITION_TAG_NAME = "Transition";
   @NonNls public static final String SOURCE_ATTR_NAME = "source";
   @NonNls public static final String FORMAT_ATTR_NAME = "format";
   @NonNls public static final String FILE_ATTR_VALUE = "File";
@@ -532,7 +533,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
               }
             }
 
-            if ("Transition".equals(tagName)) {
+            if (TRANSITION_TAG_NAME.equals(tagName)) {
               if ((element.textContains('*') && 
                    "*".equals(StringUtil.stripQuotesAroundValue(element.getText()))) ||
                   element.getTextLength() == 2 // empty value for attr, current state
@@ -807,7 +808,13 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
         }
       });
 
-      //list.add("*");
+      final PsiElement parent = myElement instanceof XmlAttributeValue ? myElement.getParent() : null;
+      final PsiElement tag = parent instanceof XmlAttribute ? parent.getParent() : null;
+
+      if (tag instanceof XmlTag && TRANSITION_TAG_NAME.equals(((XmlTag)tag).getLocalName())) {
+        list.add("*");
+      }
+
       return ArrayUtil.toObjectArray(list);
     }
 
