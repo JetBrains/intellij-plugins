@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * {@code package}
+ * {@code <package>}
  *
  * @author Yann C&eacute;bron
  */
@@ -51,6 +51,8 @@ public interface StrutsPackage extends CommonDomModelElement {
 
   GenericAttributeValue<Boolean> getStrictMethodInvocation();
 
+  // externalReferenceResolver - deprecated
+
   /**
    * Gets the defined namespace or {@link #DEFAULT_NAMESPACE} if none defined.
    *
@@ -58,8 +60,6 @@ public interface StrutsPackage extends CommonDomModelElement {
    */
   @NotNull
   String searchNamespace();
-
-  // TODO externalReferenceResolver ?!
 
   // default-XXX tags ------------
 
