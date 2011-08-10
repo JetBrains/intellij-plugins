@@ -62,7 +62,7 @@ public class Struts2IconProvider extends IconProvider implements DumbAware {
     final Module module = ModuleUtil.findModuleForPsiElement(psiClass);
     final StrutsModel strutsModel = StrutsManager.getInstance(psiClass.getProject()).getCombinedModel(module);
     if (strutsModel == null ||
-        strutsModel.findActionsByClass(psiClass).isEmpty()) {
+        !strutsModel.isActionClass(psiClass)) {
       return null;
     }
 

@@ -77,7 +77,15 @@ public interface StrutsModel extends DomModel<StrutsRoot> {
    * @return List of all Actions.
    */
   @NotNull
-  List<Action> findActionsByClass(final PsiClass clazz);
+  List<Action> findActionsByClass(@NotNull final PsiClass clazz);
+
+  /**
+   * Returns whether the given class is used as Action class.
+   *
+   * @param clazz Class to search for.
+   * @return {@code true} if used as Action class.
+   */
+  boolean isActionClass(@NotNull final PsiClass clazz);
 
   /**
    * Gets all available actions for the given namespace.

@@ -117,6 +117,11 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
   @NotNull
   public List<Action> findActionsByClass(@NotNull final PsiClass clazz) {
+    return findActionsByClassInner(clazz, false);
+  }
+
+  private List<Action> findActionsByClassInner(final PsiClass clazz,
+                                               final boolean skipOnFirst) {
     final List<Action> actionResultList = new SmartList<Action>();
 
     for (final StrutsPackage strutsPackage : getStrutsPackages()) {
@@ -125,11 +130,19 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
         if (actionClassValue != null &&
             clazz.equals(actionClassValue)) {
           actionResultList.add(action);
+          if (skipOnFirst) {
+            return actionResultList;
+          }
         }
       }
     }
 
     return actionResultList;
+  }
+
+  @Override
+  public boolean isActionClass(@NotNull final PsiClass clazz) {
+    return !findActionsByClassInner(clazz, true).isEmpty();
   }
 
   public List<Action> getActionsForNamespace(@Nullable @NonNls final String namespace) {
