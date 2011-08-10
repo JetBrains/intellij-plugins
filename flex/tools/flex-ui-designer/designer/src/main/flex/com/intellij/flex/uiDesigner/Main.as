@@ -10,7 +10,6 @@ import cocoa.util.FileUtil;
 
 import com.intellij.flex.uiDesigner.css.Stylesheet;
 import com.intellij.flex.uiDesigner.libraries.Library;
-
 import com.intellij.flex.uiDesigner.libraries.QueueLoader;
 import com.intellij.flex.uiDesigner.plaf.EditorTabBarRendererManager;
 import com.intellij.flex.uiDesigner.plaf.ProjectViewSkin;
@@ -23,7 +22,6 @@ import flash.display.LoaderInfo;
 import flash.events.Event;
 import flash.events.InvokeEvent;
 import flash.events.UncaughtErrorEvent;
-import flash.system.LoaderContext;
 
 import org.flyti.plexus.PlexusContainer;
 import org.flyti.plexus.PlexusManager;
@@ -131,8 +129,6 @@ public class Main extends MainWindowedApplication {
 
   private function connect():void {
     var container:PlexusContainer = PlexusManager.instance.container;
-
-    //throw new Error("AAAAAAAAAA!!!!!!!!!!1111111");
     
     // cache StringRegistry instance
     StringRegistry(container.lookup(StringRegistry));
@@ -148,14 +144,14 @@ public class Main extends MainWindowedApplication {
   private function loadPlugin(path:String):void {
     loadedPluginCounter++;
     var loader:Loader = new Loader();
-    var loaderContext:LoaderContext = new LoaderContext();
-    loaderContext.allowCodeImport = true;
-    loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadCompleteHandler);
-    loader.loadBytes(FileUtil.readBytes(path), loaderContext);
+    loader.contentLoaderInfo.addEventListener(Event.INIT, loadInitHandler);
+    loader.loadBytes(FileUtil.readBytes(path), LoaderContentParentAdobePleaseDoNextStep.create());
   }
 
-  private function loadCompleteHandler(event:Event):void {
-    LoaderInfo(event.currentTarget).removeEventListener(event.type, loadCompleteHandler);
+  private function loadInitHandler(event:Event):void {
+    var loaderInfo:LoaderInfo = LoaderInfo(event.currentTarget);
+    loaderInfo.removeEventListener(event.type, loadInitHandler);
+    loaderInfo.loader.unload();
     
     loadedPluginCounter--;
     if (loadedPluginCounter == 0) {

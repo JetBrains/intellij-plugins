@@ -187,6 +187,11 @@ public class QueueLoader {
       // reset load state (original library shared between library sets)
       l.loadState = LoadState.UNINITIALIZED;
     }
+
+    for each (var loader:MyLoader in freeLoaders) {
+      loader.unload();
+      loader.library = null;
+    }
   }
 
   public function stop(librarySet:LibrarySet):void {

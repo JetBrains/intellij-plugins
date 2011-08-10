@@ -17,7 +17,8 @@ import java.util.List;
 import static com.intellij.flex.uiDesigner.abc.MovieTranscoder.PlaceObjectFlags.*;
 
 public class MovieTranscoder extends SwfTranscoder {
-  private static byte[] SYMBOL_OWN_CLASS_ABC;
+  private static byte[] SPRITE_SYMBOL_OWN_CLASS_ABC;
+  private static byte[] MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC;
 
   private byte[] symbolName;
 
@@ -33,16 +34,11 @@ public class MovieTranscoder extends SwfTranscoder {
   private int fileLength;
 
   private static final byte[] ROOT_SWF_CLASS_NAME = "flash.display.Sprite".getBytes();
-  private static final byte[] SYMBOL_OWN_CLASS_NAME = "SymbolOwnClass".getBytes();
+  private static final byte[] SYMBOL_OWN_CLASS_NAME = "_SymbolOwnClass".getBytes();
   private static final int SYMBOL_CLASS_TAG_LENGTH = 2 + 2 + ROOT_SWF_CLASS_NAME.length + 1 + 2 + SYMBOL_OWN_CLASS_NAME.length + 1;
+
   private int spriteId;
 
-  private static void initAbcBlank() throws IOException {
-    if (SYMBOL_OWN_CLASS_ABC == null) {
-      SYMBOL_OWN_CLASS_ABC = IOUtil.getResourceBytes("SymbolOwnClass.abc");
-    }
-  }
-  
   public static void main(String[] args) throws IOException {
     new MovieTranscoder().extract(new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"), new File("/Users/develar/a.swf"), "myMC".getBytes());
   }
@@ -51,15 +47,11 @@ public class MovieTranscoder extends SwfTranscoder {
   @SuppressWarnings("UnusedDeclaration")
   @TestOnly
   public void extract(File in, File out, byte[] symbolName) throws IOException {
-    initAbcBlank();
-    
     this.symbolName = symbolName;
     extract(new FileInputStream(in), in.length(), out, false);
   }
 
   public void extract(VirtualFile in, File out, String symbolName) throws IOException {
-    initAbcBlank();
-
     this.symbolName = symbolName.getBytes();
     extract(in.getInputStream(), in.getLength(), out, true);
   }
@@ -67,9 +59,28 @@ public class MovieTranscoder extends SwfTranscoder {
   private void extract(InputStream inputStream, long inputLength, File outFile, boolean writeBounds) throws IOException {
     final FileOutputStream out = transcode(inputStream, inputLength, outFile);
     try {
-      fileLength = 2 + SYMBOL_OWN_CLASS_ABC.length + SYMBOL_CLASS_TAG_LENGTH + SwfUtil.getWrapLength();
+      fileLength = 2 + SYMBOL_CLASS_TAG_LENGTH + SwfUtil.getWrapLength();
 
       final PlacedObject exportedSymbol = extract();
+
+      final byte[] symbolOwnClassAbc;
+      buffer.position(exportedSymbol.start + 2);
+      if (buffer.getShort() > 1) {
+        if (MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC == null) {
+          MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC = IOUtil.getResourceBytes("MSymbolOwnClass.abc");
+          MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC[22] = '_'; // replace M => _
+        }
+        symbolOwnClassAbc = MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC;
+      }
+      else {
+        if (SPRITE_SYMBOL_OWN_CLASS_ABC == null) {
+          SPRITE_SYMBOL_OWN_CLASS_ABC = IOUtil.getResourceBytes("SSymbolOwnClass.abc");
+          SPRITE_SYMBOL_OWN_CLASS_ABC[22] = '_'; // replace S => _
+        }
+        symbolOwnClassAbc = SPRITE_SYMBOL_OWN_CLASS_ABC;
+      }
+
+      fileLength += symbolOwnClassAbc.length;
 
       if (writeBounds) {
         buffer.order(ByteOrder.BIG_ENDIAN);
@@ -84,7 +95,7 @@ public class MovieTranscoder extends SwfTranscoder {
 
       SwfUtil.header(fileLength, out, buffer);
 
-      out.write(SYMBOL_OWN_CLASS_ABC);
+      out.write(symbolOwnClassAbc);
 
       writeUsedPlacedObjects(out);
       writeExportedSymbol(out, exportedSymbol);
@@ -152,7 +163,6 @@ public class MovieTranscoder extends SwfTranscoder {
 
     // we encode length not as provided, according to rules about long or short tag header
     fileLength += computeFullLength(exportedSymbol.positions == null ? exportedSymbol.length : exportedSymbol.actualLength);
-
     return exportedSymbol;
   }
 

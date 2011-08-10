@@ -71,10 +71,10 @@ public class FlexSdkAbcInjector extends AbcFilter {
       }
 
       if (requiredAssetsInfo.imageCount != 0) {
-        BitmapAssetClassPoolGenerator.generate(decoders, requiredAssetsInfo.imageCount);
+        AssetClassPoolGenerator.generateBitmap(decoders, requiredAssetsInfo.imageCount);
       }
       if (requiredAssetsInfo.swfCount != 0) {
-        SpriteAssetClassPoolGenerator.generate(decoders, requiredAssetsInfo.swfCount);
+        AssetClassPoolGenerator.generateSprite(decoders, requiredAssetsInfo.swfCount);
       }
     }
   }
