@@ -241,6 +241,9 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
 
   public void setManifestLocation(String manifestLocation) {
     this.myManifestLocation = manifestLocation;
+    if ( myManifestLocation != null ) {
+      myManifestLocation = myManifestLocation.replace("\\", "/");
+    }
   }
 
   /**
@@ -339,6 +342,9 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
    */
   public void setJarFileLocation(String jarFileLocation, OutputPathType outputPathType) {
     myJarFileLocation = jarFileLocation;
+    if (myJarFileLocation != null ) {
+      myJarFileLocation = myJarFileLocation.replace("\\", "/");
+    }
     myOutputPathType = outputPathType;
   }
 
@@ -470,6 +476,9 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
   }
 
   public void setBndFileLocation(String bndFileLocation) {
+    if ( bndFileLocation != null ) {
+      bndFileLocation = bndFileLocation.replace("\\", "/");
+    }
     myBndFileLocation = bndFileLocation;
   }
 
@@ -487,8 +496,11 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     return myBundlorFileLocation != null ? myBundlorFileLocation : "";
   }
 
-  public void setBundlorFileLocation(String _bundlorFileLocation) {
-    this.myBundlorFileLocation = _bundlorFileLocation;
+  public void setBundlorFileLocation(String bundlorFileLocation) {
+    if (bundlorFileLocation != null ) {
+      bundlorFileLocation = bundlorFileLocation.replace("\\", "/");
+    }
+    this.myBundlorFileLocation = bundlorFileLocation;
   }
 
   @NotNull

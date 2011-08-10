@@ -60,6 +60,9 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
 
   public void setBundlesOutputPath(@Nullable String _bundlesOutputPath) {
     this._bundlesOutputPath = _bundlesOutputPath;
+    if (this._bundlesOutputPath != null ) {
+      this._bundlesOutputPath = this._bundlesOutputPath.replace("\\", "/");
+    }
   }
 
   @NotNull
@@ -109,6 +112,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
 
   public void setDefaultManifestFileLocation(@NotNull String defaultManifestFileLocation) {
     _defaultManifestFileLocation = defaultManifestFileLocation;
+    _defaultManifestFileLocation = _defaultManifestFileLocation.replace("\\", "/");
     if (_defaultManifestFileLocation.equals("META-INF")) {
       // we specify full names, so to work with older projects, we have to convert this
       _defaultManifestFileLocation = "META-INF/MANIFEST.MF";
