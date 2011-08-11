@@ -38,6 +38,7 @@ import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
 import com.intellij.util.indexing.FileContent;
+import com.intellij.util.indexing.FileContentImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,7 +100,7 @@ public class FacetDetectionTest {
 
         VirtualFile manifestFile = myTempDirFixture.getFile("t0/src/META-INF/MANIFEST.MF");
 
-        assertThat(filter.accepts(new FileContent(manifestFile, manifestFile.contentsToByteArray())), equalTo(true));
+        assertThat(filter.accepts(new FileContentImpl(manifestFile, manifestFile.contentsToByteArray())), equalTo(true));
 
         OsmorcFacetConfiguration osmorcFacetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
         assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
@@ -129,7 +130,7 @@ public class FacetDetectionTest {
 
         VirtualFile manifestFile = myTempDirFixture.getFile("t2/src/META-INF/template.mf");
 
-        assertThat(filter.accepts(new FileContent(manifestFile, manifestFile.contentsToByteArray())), equalTo(true));
+        assertThat(filter.accepts(new FileContentImpl(manifestFile, manifestFile.contentsToByteArray())), equalTo(true));
 
         OsmorcFacetConfiguration osmorcFacetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
         assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
@@ -156,6 +157,6 @@ public class FacetDetectionTest {
         ElementPattern<FileContent> filter = new OsmorcFrameworkDetector().createSuitableFilePattern();
         VirtualFile manifestFile = myTempDirFixture.getFile("t1/src/META-INF/MANIFEST.MF");
 
-        assertThat(filter.accepts(new FileContent(manifestFile, manifestFile.contentsToByteArray())), equalTo(false));
+        assertThat(filter.accepts(new FileContentImpl(manifestFile, manifestFile.contentsToByteArray())), equalTo(false));
     }
 }
