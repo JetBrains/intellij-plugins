@@ -46,7 +46,6 @@ import org.junit.runner.RunWith;
 import org.osmorc.SwingRunner;
 import org.osmorc.TestUtil;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -90,7 +89,7 @@ public class FacetDetectionTest {
 
     @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Test
-    public void testDetectFacet() throws IOException {
+    public void testDetectFacet() {
         ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
         Module t0 = moduleManager.findModuleByName("t0");
 
@@ -100,7 +99,7 @@ public class FacetDetectionTest {
 
         VirtualFile manifestFile = myTempDirFixture.getFile("t0/src/META-INF/MANIFEST.MF");
 
-        assertThat(filter.accepts(new FileContentImpl(manifestFile, manifestFile.contentsToByteArray())), equalTo(true));
+        assertThat(filter.accepts(FileContentImpl.createByFile(manifestFile)), equalTo(true));
 
         OsmorcFacetConfiguration osmorcFacetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
         assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
@@ -121,7 +120,7 @@ public class FacetDetectionTest {
 
      @SuppressWarnings({"unchecked", "ConstantConditions"})
     @Test
-    public void testDetectBundlorFacet() throws IOException {
+    public void testDetectBundlorFacet() {
         ModuleManager moduleManager = ModuleManager.getInstance(fixture.getProject());
         Module t2 = moduleManager.findModuleByName("t2");
         final OsmorcFrameworkDetector detector = new OsmorcFrameworkDetector();
@@ -130,7 +129,7 @@ public class FacetDetectionTest {
 
         VirtualFile manifestFile = myTempDirFixture.getFile("t2/src/META-INF/template.mf");
 
-        assertThat(filter.accepts(new FileContentImpl(manifestFile, manifestFile.contentsToByteArray())), equalTo(true));
+        assertThat(filter.accepts(FileContentImpl.createByFile(manifestFile)), equalTo(true));
 
         OsmorcFacetConfiguration osmorcFacetConfiguration = detector.createConfiguration(Collections.singletonList(manifestFile));
         assertThat(osmorcFacetConfiguration.getManifestLocation(), equalTo(manifestFile.getPath()));
@@ -153,10 +152,10 @@ public class FacetDetectionTest {
     }
     @SuppressWarnings({"unchecked"})
     @Test
-    public void testDetectNoFacet() throws IOException {
+    public void testDetectNoFacet() {
         ElementPattern<FileContent> filter = new OsmorcFrameworkDetector().createSuitableFilePattern();
         VirtualFile manifestFile = myTempDirFixture.getFile("t1/src/META-INF/MANIFEST.MF");
 
-        assertThat(filter.accepts(new FileContentImpl(manifestFile, manifestFile.contentsToByteArray())), equalTo(false));
+        assertThat(filter.accepts(FileContentImpl.createByFile(manifestFile)), equalTo(false));
     }
 }
