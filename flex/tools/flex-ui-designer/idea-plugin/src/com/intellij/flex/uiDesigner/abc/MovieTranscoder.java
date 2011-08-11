@@ -85,10 +85,10 @@ public class MovieTranscoder extends SwfTranscoder {
       if (writeBounds) {
         buffer.order(ByteOrder.BIG_ENDIAN);
         buffer.position(0);
-        buffer.putShort((short)bounds.x);
-        buffer.putShort((short)bounds.y);
-        buffer.putShort((short)bounds.width);
-        buffer.putShort((short)bounds.height);
+        buffer.putInt(bounds.x);
+        buffer.putInt(bounds.y);
+        buffer.putInt(bounds.width);
+        buffer.putInt(bounds.height);
         out.write(buffer.array(), 0, buffer.position());
         buffer.order(ByteOrder.LITTLE_ENDIAN);
       }

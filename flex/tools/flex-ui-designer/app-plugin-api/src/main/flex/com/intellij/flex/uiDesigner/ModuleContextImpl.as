@@ -8,10 +8,26 @@ public final class ModuleContextImpl implements ModuleContextEx {
   private static const VIEW_NAVIGATOR_APPLICATION_BASE_FQN:String = "spark.components.supportClasses.ViewNavigatorApplicationBase";
 
   private var documentFactories:Vector.<Object>/* FlexDocumentFactory */;
-  
+
   public function ModuleContextImpl(librarySets:Vector.<LibrarySet>, project:Project) {
     _librarySets = librarySets;
     _project = project;
+  }
+
+  private var _swfAssetContainerClassPool:AssetContainerClassPool;
+  public function get swfAssetContainerClassPool():AssetContainerClassPool {
+    if (_swfAssetContainerClassPool == null) {
+      _swfAssetContainerClassPool = new AssetContainerClassPool("_s", _librarySets[0]);
+    }
+    return _swfAssetContainerClassPool;
+  }
+
+  private var _imageAssetContainerClassPool:AssetContainerClassPool;
+  public function get imageAssetContainerClassPool():AssetContainerClassPool {
+    if (_imageAssetContainerClassPool == null) {
+      _imageAssetContainerClassPool = new AssetContainerClassPool("_b", _librarySets[0]);
+    }
+    return _imageAssetContainerClassPool;
   }
 
   private var _librariesResolved:Boolean;

@@ -63,6 +63,7 @@ public class Main extends MainWindowedApplication {
     DefaultSocketDataHandler;
     Stylesheet;
     Library;
+    AssetContainerClassPool;
     // Burn in hell, Adobe
     // Burn in hell, Adobe
     // Burn in hell, Adobe

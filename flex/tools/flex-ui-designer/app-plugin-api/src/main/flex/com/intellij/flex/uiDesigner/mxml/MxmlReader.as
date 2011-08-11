@@ -403,11 +403,11 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case AmfExtendedTypes.IMAGE:
-          propertyHolder[propertyName] = embedImageManager.get(AmfUtil.readUInt29(input), moduleContext.applicationDomain);
+          propertyHolder[propertyName] = embedImageManager.get(AmfUtil.readUInt29(input), ModuleContextEx(moduleContext).imageAssetContainerClassPool);
           break;
         
         case AmfExtendedTypes.SWF:
-          propertyHolder[propertyName] = embedSwfManager.get(AmfUtil.readUInt29(input), moduleContext.applicationDomain);
+          propertyHolder[propertyName] = embedSwfManager.get(AmfUtil.readUInt29(input), ModuleContextEx(moduleContext).swfAssetContainerClassPool);
           break;
         
         case AmfExtendedTypes.STRING_REFERENCE:

@@ -38,6 +38,7 @@ public class MxmlTest extends BaseTestCase {
       ProjectActionScriptComponentAsChild();
       ProjectMxmlComponentAsChild();
       EmbedSwfAndImageFromCss();
+      EmbedImageAsClass();
     }
   }
   
@@ -171,6 +172,10 @@ public class MxmlTest extends BaseTestCase {
   }
 
   public function EmbedSwfAndImageFromCss():void {
+  }
+
+  public function EmbedImageAsClass():void {
+    // todo test over
   }
 }
 }

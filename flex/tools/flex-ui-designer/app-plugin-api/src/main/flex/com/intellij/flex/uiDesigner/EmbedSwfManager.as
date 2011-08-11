@@ -1,25 +1,42 @@
 package com.intellij.flex.uiDesigner {
-import flash.geom.Rectangle;
-import flash.system.ApplicationDomain;
-import flash.utils.ByteArray;
+import flash.utils.Dictionary;
 
 public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedAssetManager {
+  private const symbolClasses:Dictionary = new Dictionary();
+
   public function EmbedSwfManager(server:Server) {
     super(server);
+
+    SpriteAssetInitializer.embedSwfManager = this;
   }
 
-  public function get(id:int, applicationDomain:ApplicationDomain):Class {
-    var result:Class = getCachedClass(id);
+  public function get(id:int, pool:AssetContainerClassPool):Class {
+    var result:Class = pool.getCachedClass(id);
     if (result != null) {
       return result;
     }
 
-    var clazz:Class = getClass("_s", applicationDomain);
-    var swfInfo:Vector.<Object> = server.getSwfData(id);
-    SpriteAssetInitializer.init(clazz, Rectangle(swfInfo[0]), ByteArray(swfInfo[1]));
-    classes[id] = clazz;
+    var containerClass:Class = pool.getClass(id);
+    var cacheItem:SwfAssetCacheItem = symbolClasses[id];
+    if (cacheItem == null) {
+      cacheItem = new SwfAssetCacheItem(id);
+      symbolClasses[id] = cacheItem;
+      SpriteAssetInitializer.init(containerClass, cacheItem, server.getSwfData(id, cacheItem));
+    }
+    else {
+      containerClass["bounds"] = cacheItem.bounds;
+      if (cacheItem.symbolClass != null) {
+        containerClass["symbolClass"] = cacheItem.symbolClass;
+      }
+    }
 
-    return clazz;
+    return containerClass;
+  }
+
+  //noinspection JSUnusedGlobalSymbols
+  public function loadErrorHandler(cacheItem:SwfAssetCacheItem):void {
+    // todo what about returned container classes? draw error skin or anything else?
+    delete symbolClasses[cacheItem.id];
   }
 }
 }

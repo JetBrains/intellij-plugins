@@ -291,6 +291,8 @@ public class Client implements Closable {
       boolean hasError = true;
       try {
         beginMessage(ClientMethod.fillImageClassPool);
+        writeId(module);
+        out.writeShort(requiredAssetsInfo.imageCount);
         AssetClassPoolGenerator.generateBitmap(requiredAssetsInfo.imageCount, blockOut);
         hasError = false;
       }

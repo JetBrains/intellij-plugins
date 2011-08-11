@@ -14,8 +14,8 @@ public final class LoaderContentParentAdobePleaseDoNextStep extends Sprite {
     return context;
   }
 
-  public static function create():LoaderContext {
-    var context:LoaderContext = new LoaderContext();
+  public static function create(applicationDomain:ApplicationDomain = null):LoaderContext {
+    var context:LoaderContext = new LoaderContext(false, applicationDomain);
     configureContext(context);
     context.allowCodeImport = true;
     return context;

@@ -68,8 +68,21 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   public function open(documentFactory:DocumentFactory, documentOpened:Function = null):void {
+    var context:ModuleContextEx = documentFactory.module.context;
+    if (context.imageAssetContainerClassPool.filling) {
+      context.imageAssetContainerClassPool.filled.addOnce(function():void {
+        open(documentFactory, documentOpened);
+      });
+      return;
+    }
+    if (context.swfAssetContainerClassPool.filling) {
+      context.swfAssetContainerClassPool.filled.addOnce(function():void {
+        open(documentFactory, documentOpened);
+      });
+      return;
+    }
+
     if (documentFactory.document == null) {
-      var context:ModuleContextEx = documentFactory.module.context;
       if (context.librariesResolved) {
         createAndOpen(documentFactory);
       }
@@ -164,7 +177,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   private static function createStyleManagerForContext(context:ModuleContextEx):void {
     var inheritingStyleMapList:Vector.<Dictionary> = new Vector.<Dictionary>();
     var styleManagerClass:Class = context.getClass("com.intellij.flex.uiDesigner.css.RootStyleManager");
-    context.styleManager = new styleManagerClass(inheritingStyleMapList, new StyleValueResolverImpl(context.applicationDomain));
+    context.styleManager = new styleManagerClass(inheritingStyleMapList, new StyleValueResolverImpl(context));
     var cssReaderClass:Class = context.getClass("com.intellij.flex.uiDesigner.css.CssReaderImpl");
     var cssReader:CssReader = new cssReaderClass();
     cssReader.styleManager = context.styleManager; 

@@ -153,7 +153,7 @@ public class Server implements ResourceBundleProvider {
     throw new Error("Burn in hell, Adobe.");
   }
 
-  public function getSwfData(id:int):Vector.<Object> {
+  public function getSwfData(id:int, cacheItem:SwfAssetCacheItem):ByteArray {
     var resultReadyFile:File;
     try {
       const resultReadyFilename:String = generateResultReadyFilename();
@@ -169,11 +169,11 @@ public class Server implements ResourceBundleProvider {
       var fileStream:FileStream = new FileStream();
       fileStream.open(resultFile, FileMode.READ);
       try {
-        var bounds:Rectangle = new Rectangle(fileStream.readUnsignedShort() / 20, fileStream.readUnsignedShort() / 20,
-            fileStream.readUnsignedShort() / 20, fileStream.readUnsignedShort() / 20);
+        cacheItem.bounds = new Rectangle(fileStream.readInt() / 20, fileStream.readInt() / 20, fileStream.readInt() / 20,
+                                         fileStream.readInt() / 20);
         var bytes:ByteArray = new ByteArray();
         fileStream.readBytes(bytes);
-        return new <Object>[bounds, bytes];
+        return bytes;
       }
       finally {
         fileStream.close();

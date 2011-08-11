@@ -7,12 +7,13 @@ import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
-import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
 public final class SpriteAssetInitializer {
   private static var pendingClients:Dictionary;
+
+  public static var embedSwfManager:Object;
 
   public static function addPendingClient(clazz:Class, instance:Object):void {
     var loader:MyLoader = MyLoader(pendingClients[clazz]);
@@ -23,15 +24,15 @@ public final class SpriteAssetInitializer {
     loader.pendingClients.push(instance);
   }
 
-  public static function init(spriteAssetClass:Class, bounds:Rectangle, data:ByteArray):void {
+  public static function init(containerClass:Class, cacheItem:SwfAssetCacheItem, data:ByteArray):void {
     if (pendingClients == null) {
       pendingClients = new Dictionary();
     }
 
-    spriteAssetClass["bounds"] = bounds;
+    containerClass["bounds"] = cacheItem.bounds;
 
-    var loader:Loader = new MyLoader(spriteAssetClass);
-    pendingClients[spriteAssetClass] = loader;
+    var loader:Loader = new MyLoader(containerClass, cacheItem);
+    pendingClients[containerClass] = loader;
     loader.contentLoaderInfo.addEventListener(Event.INIT, loadInitHandler);
     loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
     loader.contentLoaderInfo.addEventListener(AsyncErrorEvent.ASYNC_ERROR, loadErrorHandler);
@@ -43,23 +44,27 @@ public final class SpriteAssetInitializer {
     var loaderInfo:LoaderInfo = LoaderInfo(event.currentTarget);
     var loader:MyLoader = MyLoader(loaderInfo.loader);
     var symbolClass:Class = Class(loaderInfo.applicationDomain.getDefinition("_SymbolOwnClass"));
-    loader.assetClass["symbolClass"] = symbolClass;
+    loader.cacheItem.symbolClass = symbolClass;
+    loader.containerClass["symbolClass"] = symbolClass;
     if (loader.pendingClients != null) {
       for each (var client:Object in loader.pendingClients) {
         client.symbolClassAvailable(symbolClass);
       }
     }
 
-    removeLoaderListeners(loaderInfo, loader.assetClass);
-    loader.pendingClients.length = 0;
-    loader.assetClass = null;
+    removeLoaderListeners(loaderInfo, loader.containerClass);
+    loader.cacheItem = null;
+    loader.pendingClients = null;
+    loader.containerClass = null;
     loader.unload();
   }
 
   private static function loadErrorHandler(event:ErrorEvent):void {
     var loaderInfo:LoaderInfo = LoaderInfo(event.currentTarget);
     var loader:MyLoader = MyLoader(loaderInfo.loader);
-    removeLoaderListeners(loaderInfo, loader.assetClass);
+    removeLoaderListeners(loaderInfo, loader.containerClass);
+
+    embedSwfManager.loadErrorHandler(loader.cacheItem);
 
     throw new IOError(event.text);
   }
@@ -75,13 +80,17 @@ public final class SpriteAssetInitializer {
 }
 }
 
+import com.intellij.flex.uiDesigner.SwfAssetCacheItem;
+
 import flash.display.Loader;
 
 final class MyLoader extends Loader {
-  public var assetClass:Class;
+  public var containerClass:Class;
   public var pendingClients:Vector.<Object>;
+  public var cacheItem:SwfAssetCacheItem;
 
-  public function MyLoader(assetClass:Class) {
-    this.assetClass = assetClass;
+  public function MyLoader(containerClass:Class, cacheItem:SwfAssetCacheItem) {
+    this.containerClass = containerClass;
+    this.cacheItem = cacheItem;
   }
 }

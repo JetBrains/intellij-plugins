@@ -14,8 +14,6 @@ import flash.net.registerClassAlias;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 
-import org.flyti.plexus.PlexusManager;
-
 registerClassAlias("lsh", LocalStyleHolder);
 
 public class DefaultSocketDataHandler implements SocketDataHandler {
@@ -77,13 +75,19 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
         break;
 
       case ClientMethod.fillImageClassPool:
-        fillImageClassPool(input);
+        fillImageClassPool(input, messageSize);
         break;
     }
   }
 
-  private function fillImageClassPool(input:IDataInput):void {
-    EmbedImageManager(PlexusManager.instance.container.lookup(EmbedImageManager)).fillClassPool();
+  private function fillImageClassPool(input:IDataInput, messageSize:int):void {
+    const prevBytesAvailable:int = input.bytesAvailable;
+    var context:ModuleContextEx = moduleManager.getById(input.readUnsignedShort()).context;
+    const classCount:int = input.readUnsignedShort();
+    var swfData:ByteArray = new ByteArray();
+    input.readBytes(swfData, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
+    
+    context.imageAssetContainerClassPool.fill(classCount, swfData, context, libraryManager);
   }
 
   private function openProject(input:IDataInput):void {
