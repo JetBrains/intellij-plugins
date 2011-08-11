@@ -43,11 +43,11 @@ import java.util.List;
 public class NamespaceReferenceProvider extends PsiReferenceProvider {
 
   @NotNull
-  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement, @NotNull final ProcessingContext context) {
+  public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
+                                               @NotNull final ProcessingContext context) {
 
     final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
     final StrutsModel strutsModel = strutsManager.getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
-
     if (strutsModel == null) {
       return PsiReference.EMPTY_ARRAY;
     }
@@ -56,7 +56,19 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
     };
   }
 
-  private static class NamespaceReference extends PsiReferenceBase.Poly<XmlAttributeValue> implements EmptyResolveMessageProvider {
+
+  private static class NamespaceReference extends PsiReferenceBase.Poly<XmlAttributeValue>
+      implements EmptyResolveMessageProvider {
+
+    private static final Function<StrutsPackage, LookupElement> STRUTS_PACKAGE_LOOKUP_ELEMENT_FUNCTION =
+        new Function<StrutsPackage, LookupElement>() {
+          public LookupElement fun(final StrutsPackage strutsPackage) {
+            return LookupElementBuilder.create(strutsPackage.getXmlTag(),
+                                               strutsPackage.searchNamespace())
+                                       .setTypeText(strutsPackage.getName().getStringValue());
+          }
+        };
+
     private final StrutsModel strutsModel;
 
     private NamespaceReference(final XmlAttributeValue psiElement, final StrutsModel strutsModel) {
@@ -81,12 +93,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
     @NotNull
     public Object[] getVariants() {
       return ContainerUtil.map2Array(strutsModel.getStrutsPackages(), LookupElement.class,
-          new Function<StrutsPackage, LookupElement>() {
-            public LookupElement fun(final StrutsPackage strutsPackage) {
-              return LookupElementBuilder.create(strutsPackage.getXmlTag(), strutsPackage.searchNamespace())
-                  .setTypeText(strutsPackage.getName().getStringValue());
-            }
-          });
+                                     STRUTS_PACKAGE_LOOKUP_ELEMENT_FUNCTION);
     }
 
     public String getUnresolvedMessagePattern() {
