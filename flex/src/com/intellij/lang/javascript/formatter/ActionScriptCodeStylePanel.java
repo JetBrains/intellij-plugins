@@ -1,6 +1,10 @@
 package com.intellij.lang.javascript.formatter;
 
+import com.intellij.lang.javascript.ActionScriptFileType;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeEditorHighlighterProviders;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +23,19 @@ public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
     myNamingConventionsPane.setVisible(true);
     myFormattingOptionsPane.setVisible(true);
     myIndentPackageChildren.setVisible(true);
+  }
+
+
+  @NotNull
+  @Override
+  protected FileType getFileType() {
+    return ActionScriptFileType.INSTANCE;
+  }
+
+  @Override
+  protected EditorHighlighter createHighlighter(final EditorColorsScheme scheme) {
+    return FileTypeEditorHighlighterProviders.INSTANCE.forFileType(getFileType())
+      .getEditorHighlighter(getCurrentProject(), getFileType(), null, scheme);
   }
 
   @Override

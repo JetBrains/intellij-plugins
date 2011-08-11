@@ -1,5 +1,7 @@
 package com.intellij.lang.javascript.formatter;
 
+import com.intellij.application.options.IndentOptionsEditor;
+import com.intellij.application.options.SmartIndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -24,6 +26,11 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
   }
 
   @Override
+  public IndentOptionsEditor getIndentOptionsEditor() {
+    return new SmartIndentOptionsEditor();
+  }
+
+  @Override
   public String getCodeSample(@NotNull SettingsType settingsType) {
     switch (settingsType) {
       case WRAPPING_AND_BRACES_SETTINGS:
@@ -34,6 +41,8 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
         return GENERAL_CODE_SAMPLE;
       case LANGUAGE_SPECIFIC:
         return GENERAL_CODE_SAMPLE;
+      case INDENT_SETTINGS:
+        return INDENT_CODE_SAMPLE;
     }
     return GENERAL_CODE_SAMPLE;
   }
@@ -93,6 +102,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
   public CommonCodeStyleSettings getDefaultCommonSettings() {
     CommonCodeStyleSettings commonSettings = new CommonCodeStyleSettings(getLanguage());
     commonSettings.BLANK_LINES_AFTER_PACKAGE = 0;
+    commonSettings.initIndentOptions();
     return commonSettings;
   }
 
@@ -192,5 +202,15 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
     "    }\n" +
     "}\n" +
     "\n" +
+    "}";
+  
+  public final static String INDENT_CODE_SAMPLE =
+    "package {\n" +
+    "class Foo {\n" +
+    "    public function foo(x:int, z) {\n" +
+    "        var y = x * z;\n\n\n" +
+    "        return y;\n" +
+    "    }\n" +
+    "}\n" +
     "}";
 }
