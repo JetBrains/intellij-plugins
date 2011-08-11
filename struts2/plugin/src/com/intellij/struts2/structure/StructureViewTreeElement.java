@@ -20,6 +20,7 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ConstantFunction;
 import com.intellij.util.SmartList;
 import com.intellij.util.xml.*;
@@ -89,7 +90,7 @@ class StructureViewTreeElement extends DomStructureTreeElement {
       }
     });
 
-    return result.toArray(new TreeElement[result.size()]);
+    return ArrayUtil.toObjectArray(result,TreeElement.class);
   }
 
   /**
