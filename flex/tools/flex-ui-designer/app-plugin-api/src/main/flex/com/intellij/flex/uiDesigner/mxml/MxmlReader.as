@@ -598,6 +598,7 @@ public final class MxmlReader implements DocumentReader {
 }
 
 import com.intellij.flex.uiDesigner.VirtualFile;
+import com.intellij.flex.uiDesigner.css.CssDeclaration;
 import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
@@ -636,5 +637,9 @@ final class DeferredSetStyleProxy extends Proxy {
     var cssDeclaration:CssDeclarationImpl = CssDeclarationImpl.create(name, CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT);
     cssDeclaration.value = value;
     inlineCssDeclarationSource.declarations.push(cssDeclaration);
+  }
+
+  override flash_proxy function getProperty(name:*):* {
+    return inlineCssDeclarationSource == null ? undefined : CssDeclaration(inlineCssDeclarationSource.declarationMap[name]).value;
   }
 }

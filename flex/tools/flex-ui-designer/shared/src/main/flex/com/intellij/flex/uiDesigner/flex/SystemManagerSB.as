@@ -36,5 +36,7 @@ public interface SystemManagerSB {
                       uiErrorHandler:UiErrorHandler):void;
 
   function get elementUtil():ElementUtil;
+
+  function setStyleManagerForTalentAdobeEngineers(value:Boolean):void;
 }
 }

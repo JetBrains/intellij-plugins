@@ -156,9 +156,17 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
   private function doOpen(documentFactory:DocumentFactory, document:Document):Boolean {
     try {
-      var object:Object = documentReader.read(documentFactory.data, documentFactory);
-      document.uiComponent = object;
-      document.systemManager.setUserDocument(DisplayObject(object));
+      try {
+        // IDEA-72499
+        document.systemManager.setStyleManagerForTalentAdobeEngineers(true);
+        var object:Object = documentReader.read(documentFactory.data, documentFactory);
+        document.uiComponent = object;
+        document.systemManager.setUserDocument(DisplayObject(object));
+      }
+      finally {
+        document.systemManager.setStyleManagerForTalentAdobeEngineers(false);
+      }
+      
       documentReader.createDeferredMxContainersChildren(documentFactory.module.context.applicationDomain);
       var viewNavigatorApplicationBaseClass:Class = documentFactory.module.context.viewNavigatorApplicationBaseClass;
       if (viewNavigatorApplicationBaseClass != null && object is viewNavigatorApplicationBaseClass) {

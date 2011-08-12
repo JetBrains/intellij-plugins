@@ -18,7 +18,6 @@ import flash.text.TextFormat;
 import flash.utils.Dictionary;
 
 import mx.core.EmbeddedFontRegistry;
-
 import mx.core.FlexGlobals;
 import mx.core.IChildList;
 import mx.core.IFlexDisplayObject;
@@ -394,6 +393,10 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     return super.getChildAt(index);
   }
 
+  public function setStyleManagerForTalentAdobeEngineers(value:Boolean):void {
+    StyleManager.tempStyleManagerForTalentAdobeEngineers = value ? flexModuleFactory.styleManager : null;
+  }
+
   public function setUserDocument(object:DisplayObject):void {
     removeEventHandlers();
     
@@ -415,14 +418,8 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
       _explicitDocumentSize.width = documentUI.explicitWidth;
       _explicitDocumentSize.height = documentUI.explicitHeight;
     }
-    
-    try {
-      StyleManager.tempStyleManagerForTalentAdobeEngineers = flexModuleFactory.styleManager;
-      addRawChildAt(object, 0);
-    }
-    finally {
-      StyleManager.tempStyleManagerForTalentAdobeEngineers = null;
-    }
+
+    addRawChildAt(object, 0);
   }
 
   public function added():void {
