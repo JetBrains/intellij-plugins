@@ -249,7 +249,6 @@ class StateWriter {
       throw new UnsupportedOperationException("");
     }
     if (type < PropertyProcessor.PRIMITIVE) {
-      assert context != null;
       mxmlWriter.processPropertyTagValue((XmlTag)element, context, type == PropertyProcessor.ARRAY);
     }
 

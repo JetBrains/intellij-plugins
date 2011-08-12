@@ -68,8 +68,8 @@ abstract class MxmlTestBase extends AppTestBase {
       final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
       final ModifiableRootModel rootModel = rootManager.getModifiableModel();
 
-      boolean rootSpecified = rawProjectRoot != null;
-      int rawRootPathLength = rootSpecified ? rawProjectRoot.getPath().length() : -1;
+      final boolean rootSpecified = rawProjectRoot != null;
+      final int rawRootPathLength = rootSpecified ? rawProjectRoot.getPath().length() : -1;
       // auxiliary files should be copied first
       for (int i = vFiles.length - 1; i >= 0; i--) {
         VirtualFile vFile = vFiles[i];

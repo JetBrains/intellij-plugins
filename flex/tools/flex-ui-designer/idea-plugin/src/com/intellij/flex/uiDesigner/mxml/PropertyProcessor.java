@@ -84,6 +84,7 @@ class PropertyProcessor {
     name = descriptor.getName();
 
     isStyle = descriptor.isStyle();
+    isEffect = false;
     final @Nullable String type = descriptor.getType();
     final String typeName = descriptor.getTypeName();
     if (type == null) {
@@ -189,6 +190,10 @@ class PropertyProcessor {
         else {
           out.write(flags);
         }
+      }
+      else if (isEffect()) {
+        out.write(Amf3Types.OBJECT);
+        return COMPLEX;
       }
 
       if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {

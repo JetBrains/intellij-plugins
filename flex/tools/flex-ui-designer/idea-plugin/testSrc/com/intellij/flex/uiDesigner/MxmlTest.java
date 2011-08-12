@@ -23,19 +23,17 @@ public class MxmlTest extends MxmlTestBase {
   }
 
   public void test45() throws Exception {
-    String testFile = System.getProperty("testFile");
+    final String testFile = System.getProperty("testFile");
+    final Pair<String[], String[]> pair = getTestFiles();
     final String[] files;
-    final String[] auxFiles;
     if (testFile == null) {
-      Pair<String[], String[]> pair = getTestFiles();
       files = pair.getFirst();
-      auxFiles = pair.getSecond();
     }
     else {
       files = new String[]{getTestPath() + "/" + testFile + ".mxml"};
-      auxFiles = null;
     }
 
+    final String[] auxFiles = pair.getSecond();
     final int auxFilesCount = auxFiles == null ? 0 : auxFiles.length;
     final VirtualFile[] vFiles = new VirtualFile[files.length + auxFilesCount];
     for (int i = 0; i < files.length; i++) {

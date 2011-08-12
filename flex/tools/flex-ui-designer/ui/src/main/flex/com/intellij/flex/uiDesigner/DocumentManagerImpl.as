@@ -46,6 +46,14 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     return _documentUpdated;
   }
 
+  private var _documentChanged:ISignal;
+  public function get documentChanged():ISignal {
+    if (_documentChanged == null) {
+      _documentChanged = new Signal();
+    }
+    return _documentChanged;
+  }
+
   private var _document:Document;
   [Bindable(event="documentChanged")]
   public function get document():Document {
@@ -56,6 +64,9 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     if (value != document) {
       _document = value;
       dispatchEvent(new Event("documentChanged"));
+      if (_documentChanged != null) {
+        _documentChanged.dispatch();
+      }
       if (_document != null) {
         adjustElementSelection();
       }

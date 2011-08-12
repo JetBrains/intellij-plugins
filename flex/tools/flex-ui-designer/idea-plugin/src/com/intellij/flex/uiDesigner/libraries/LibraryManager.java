@@ -32,7 +32,7 @@ import java.util.List;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LibraryManager extends EntityListManager<VirtualFile, Library> {
-  private static final String ABC_FILTER_VERSION = "5";
+  private static final String ABC_FILTER_VERSION = "6";
   private static final String ABC_FILTER_VERSION_VALUE_NAME = "fud_abcFilterVersion";
 
   private File appDir;
@@ -124,10 +124,15 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     final String projectLocationHash = project.getLocationHash();
     ProjectInfo info = registeredProjects.getNullableInfo(project);
     final boolean isNewProject = info == null;
+
+    RequiredAssetsInfo requiredAssetsInfo = null;
+
     if (isNewProject) {
       if (librarySet == null) {
+        final SwcDependenciesSorter swcDependenciesSorter = new SwcDependenciesSorter(appDir, module);
         librarySet = createLibrarySet(projectLocationHash + "_fdk", null, libraryCollector.sdkLibraries,
-                                      libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
+                                      libraryCollector.getFlexSdkVersion(), swcDependenciesSorter, true);
+        requiredAssetsInfo = swcDependenciesSorter.getRequiredAssetsInfo();
         client.registerLibrarySet(librarySet);
       }
 
@@ -138,8 +143,10 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     else {
       // different flex sdk version for module
       if (libraryCollector.sdkLibraries != null) {
+        final SwcDependenciesSorter swcDependenciesSorter = new SwcDependenciesSorter(appDir, module);
         librarySet = createLibrarySet(Integer.toHexString(module.getName().hashCode()) + "_fdk", null, libraryCollector.sdkLibraries,
-                                      libraryCollector.getFlexSdkVersion(), new SwcDependenciesSorter(appDir, module), true);
+                                      libraryCollector.getFlexSdkVersion(), swcDependenciesSorter, true);
+        requiredAssetsInfo = swcDependenciesSorter.getRequiredAssetsInfo();
         client.registerLibrarySet(librarySet);
       }
     }
@@ -175,7 +182,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
       }
     }
 
-    client.registerModule(project, moduleInfo, new String[]{librarySet.getId()}, stringWriter);
+    client.registerModule(project, moduleInfo, new String[]{librarySet.getId()}, stringWriter, requiredAssetsInfo);
 
     module.getMessageBus().connect(moduleInfo).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
@@ -234,7 +241,7 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
         }
       }
 
-      for (LibrarySetItem item : librarySet.getResourceBundleOnlyitems()) {
+      for (LibrarySetItem item : librarySet.getResourceBundleOnlyItems()) {
         if ((propertiesFile = getResourceBundleFile(locale, bundleName, item.library, projectInfo)) != null) {
           return propertiesFile;
         }

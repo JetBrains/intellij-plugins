@@ -10,5 +10,7 @@ public interface DocumentManager {
   function open(documentFactory:DocumentFactory, documentOpened:Function = null):void;
 
   function get documentUpdated():ISignal;
+
+  function get documentChanged():ISignal;
 }
 }

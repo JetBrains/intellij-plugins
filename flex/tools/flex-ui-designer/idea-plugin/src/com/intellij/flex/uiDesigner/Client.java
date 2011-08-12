@@ -156,12 +156,7 @@ public class Client implements Closable {
       hasError = false;
     }
     finally {
-      if (hasError) {
-        blockOut.rollback();
-      }
-      else {
-        blockOut.end();
-      }
+      finalizeMessage(hasError);
     }
   }
 
@@ -236,11 +231,21 @@ public class Client implements Closable {
     }
   }
 
-  public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter)
-    throws IOException {
+  public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter,
+                             RequiredAssetsInfo requiredAssetsInfo) throws IOException {
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.registerModule);
+
+      if (requiredAssetsInfo == null) {
+        out.writeShort(0);
+        out.writeShort(0);
+      }
+      else {
+        out.writeShort(requiredAssetsInfo.imageCount);
+        out.writeShort(requiredAssetsInfo.swfCount);
+        registeredProjects.getInfo(project).totalDefinedAssetContainerClassInfo = requiredAssetsInfo;
+      }
 
       stringWriter.writeToIfStarted(out);
 
@@ -251,14 +256,7 @@ public class Client implements Closable {
       hasError = false;
     }
     finally {
-      if (hasError) {
-        blockOut.rollback();
-      }
-      else {
-        blockOut.end();
-      }
-
-      out.resetAfterMessage();
+      finalizeMessage(hasError);
     }
   }
 
@@ -271,9 +269,9 @@ public class Client implements Closable {
    */
   public void openDocument(Module module, XmlFile psiFile, boolean notifyOpened, ProblemsHolder problemsHolder,
                            RequiredAssetsInfo requiredAssetsInfo) throws IOException {
-    DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
-    VirtualFile virtualFile = psiFile.getVirtualFile();
-    FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
+    final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
+    final VirtualFile virtualFile = psiFile.getVirtualFile();
+    final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
     assert virtualFile != null;
     if (documentFactoryManager.isRegistered(virtualFile) && ArrayUtil.indexOf(fileDocumentManager.getUnsavedDocuments(),
       fileDocumentManager.getDocument(virtualFile)) != -1) {
@@ -281,34 +279,13 @@ public class Client implements Closable {
       return;
     }
 
-    int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder, requiredAssetsInfo);
-
-    if (!problemsHolder.isEmpty()) {
-      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
-    }
+    final int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder, requiredAssetsInfo);
 
     if (requiredAssetsInfo.imageCount > 0) {
-      boolean hasError = true;
-      try {
-        beginMessage(ClientMethod.fillImageClassPool);
-        writeId(module);
-        out.writeShort(requiredAssetsInfo.imageCount);
-        AssetClassPoolGenerator.generateBitmap(requiredAssetsInfo.imageCount, blockOut);
-        hasError = false;
-      }
-      catch (Throwable e) {
-        problemsHolder.add(e);
-      }
-      finally {
-        if (hasError) {
-          blockOut.rollback();
-        }
-        else {
-          blockOut.end();
-        }
-
-        out.resetAfterMessage();
-      }
+      fillAssetClassPool(module, problemsHolder, requiredAssetsInfo.imageCount, ClientMethod.fillImageClassPool);
+    }
+    if (requiredAssetsInfo.swfCount > 0) {
+      fillAssetClassPool(module, problemsHolder, requiredAssetsInfo.swfCount, ClientMethod.fillSwfClassPool);
     }
 
     if (!problemsHolder.isEmpty()) {
@@ -319,6 +296,37 @@ public class Client implements Closable {
     writeId(module);
     out.writeShort(factoryId);
     out.write(notifyOpened);
+  }
+
+  private void fillAssetClassPool(Module module, ProblemsHolder problemsHolder, int classCount, ClientMethod method)
+      throws IOException {
+    boolean hasError = true;
+    try {
+      beginMessage(method);
+      writeId(module);
+      out.writeShort(classCount);
+      final RequiredAssetsInfo totalDefinedAssetContainerClassInfo = registeredProjects
+          .getInfo(module.getProject()).totalDefinedAssetContainerClassInfo;
+      AssetClassPoolGenerator.generate(method, classCount, totalDefinedAssetContainerClassInfo, blockOut);
+      hasError = false;
+    }
+    catch (Throwable e) {
+      problemsHolder.add(e);
+    }
+    finally {
+      finalizeMessage(hasError);
+    }
+  }
+
+  private void finalizeMessage(boolean hasError) throws IOException {
+    if (hasError) {
+      blockOut.rollback();
+    }
+    else {
+      blockOut.end();
+    }
+
+    out.resetAfterMessage();
   }
   
   public void updateDocumentFactory(int factoryId, Module module, XmlFile psiFile) throws IOException {
@@ -423,7 +431,7 @@ public class Client implements Closable {
 
   public static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, registerDocumentFactory, updateDocumentFactory, openDocument, updateDocuments,
-    qualifyExternalInlineStyleSource, initStringRegistry, updateStringRegistry, fillImageClassPool;
+    qualifyExternalInlineStyleSource, initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool;
     
     public static final int METHOD_CLASS = 0;
   }

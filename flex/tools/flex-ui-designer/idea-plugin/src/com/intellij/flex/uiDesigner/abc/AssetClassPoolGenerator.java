@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.flex.uiDesigner.Client;
+import com.intellij.flex.uiDesigner.RequiredAssetsInfo;
 import com.intellij.flex.uiDesigner.io.AbstractByteArrayOutputStream;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 
@@ -14,33 +16,49 @@ public final class AssetClassPoolGenerator extends AbcEncoder {
   private static final int NAME_POS = 12;
 
   public static void generateSprite(ArrayList<Decoder> decoders, int size) throws IOException {
-    if (SPRITE_ASSET_ABC == null) {
-      SPRITE_ASSET_ABC = IOUtil.getResourceBytes("SpriteAsset.abc");
-    }
-
-    generate(SPRITE_ASSET_ABC, decoders, size);
+    generate(true, decoders, size, -1);
   }
 
   public static void generateBitmap(ArrayList<Decoder> decoders, int size) throws IOException {
-    if (BITMAP_ASSET_ABC == null) {
-      BITMAP_ASSET_ABC = IOUtil.getResourceBytes("BitmapAsset.abc");
-    }
-
-    generate(BITMAP_ASSET_ABC, decoders, size);
+    generate(false, decoders, size, -1);
   }
 
-  private static void generate(byte[] abc0, ArrayList<Decoder> decoders, int size) throws DecoderException {
+  private static void generate(final boolean isSwf, final ArrayList<Decoder> decoders, int size, int counter)
+      throws IOException {
+    final byte[] abc;
+    if (isSwf) {
+      if (SPRITE_ASSET_ABC == null) {
+        SPRITE_ASSET_ABC = IOUtil.getResourceBytes("SpriteAsset.abc");
+      }
+      abc = SPRITE_ASSET_ABC;
+    }
+    else {
+      if (BITMAP_ASSET_ABC == null) {
+        BITMAP_ASSET_ABC = IOUtil.getResourceBytes("BitmapAsset.abc");
+      }
+      abc = BITMAP_ASSET_ABC;
+    }
+
     if (size < 0 || size > 4095) {
       throw new IllegalArgumentException("size must be >= 0 <= 4095");
     }
 
-    decoders.add(new Decoder(new DataBuffer(abc0)));
+    if (counter == -1) {
+      decoders.ensureCapacity(decoders.size() + size);
+      decoders.add(new Decoder(new DataBuffer(abc)));
+      counter = 1;
+      size--;
+    }
 
-    for (int i = 1, n = size - 1; i < n; i++) {
-      final byte[] abcN = new byte[abc0.length];
-      System.arraycopy(abc0, 0, abcN, 0, abcN.length);
+    doGenerate(abc, decoders, size, counter);
+  }
 
-      final String index = Integer.toHexString(i);
+  private static void doGenerate(final byte[] abc, ArrayList<Decoder> decoders, int size, int counter) throws DecoderException {
+    for (int i = 0; i < size; i++, counter++) {
+      final byte[] abcN = new byte[abc.length];
+      System.arraycopy(abc, 0, abcN, 0, abcN.length);
+
+      final String index = Integer.toHexString(counter);
       int j = 0;
       final int relativeOffset = 3 - index.length();
       final int offset = NAME_POS + relativeOffset;
@@ -52,14 +70,26 @@ public final class AssetClassPoolGenerator extends AbcEncoder {
     }
   }
 
-  public static void generateBitmap(int size, AbstractByteArrayOutputStream out) throws IOException {
+  public static void generate(Client.ClientMethod method, int size, RequiredAssetsInfo initialNumber, AbstractByteArrayOutputStream out) throws IOException {
     final int start = out.size();
     out.getBuffer(SwfUtil.getWrapHeaderLength());
 
     ArrayList<Decoder> decoders = new ArrayList<Decoder>(size);
-    generateBitmap(decoders, size);
-    final ByteBuffer buffer = SwfUtil.mergeDoAbc(decoders).writeDoAbc(out);
+    switch (method) {
+      case fillImageClassPool:
+        generate(false, decoders, size, initialNumber.imageCount);
+        initialNumber.imageCount += size;
+        break;
+      case fillSwfClassPool:
+        generate(true, decoders, size, initialNumber.swfCount);
+        initialNumber.swfCount += size;
+        break;
 
+      default:
+        throw new IllegalArgumentException("unknown method");
+    }
+
+    final ByteBuffer buffer = SwfUtil.mergeDoAbc(decoders).writeDoAbc(out);
     SwfUtil.header(SwfUtil.getWrapLength() + (out.size() - start), out, buffer, start);
     SwfUtil.footer(out);
   }

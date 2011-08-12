@@ -19,6 +19,7 @@ import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import gnu.trove.TLinkedList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.File;
@@ -78,6 +79,12 @@ public class SwcDependenciesSorter {
     this.module = module;
   }
 
+  private RequiredAssetsInfo requiredAssetsInfo;
+  @Nullable
+  public RequiredAssetsInfo getRequiredAssetsInfo() {
+    return requiredAssetsInfo;
+  }
+
   public List<LibrarySetItem> getItems() {
     return items;
   }
@@ -108,6 +115,7 @@ public class SwcDependenciesSorter {
   }
 
   public void sort(final List<Library> libraries, final String postfix, final String flexSdkVersion, final boolean isFromSdk) throws IOException {
+    requiredAssetsInfo = null;
     useIndexForFindDefinitions = !isFromSdk;
 
     List<LibrarySetItem> unsortedItems = new ArrayList<LibrarySetItem>(libraries.size());
@@ -279,6 +287,14 @@ public class SwcDependenciesSorter {
       injectionLastModified = injectionUrlConnection.getLastModified();
     }
 
+    // must be calculated even if library is not outdated
+    requiredAssetsInfo = new RequiredAssetsInfo();
+    for (Library originalLibrary : libraries) {
+      if (originalLibrary.requiredAssetsInfo != null) {
+        requiredAssetsInfo.append(originalLibrary.requiredAssetsInfo);
+      }
+    }
+
     if (library.hasUnresolvedDefinitions() ||
         timeStamp > modifiedSwf.lastModified() ||
         injectionLastModified > modifiedSwf.lastModified()) {
@@ -293,12 +309,7 @@ public class SwcDependenciesSorter {
       definitions.add(FlexSdkAbcInjector.RESOURCE_MANAGER + "Impl");
       definitions.add("mx.styles:StyleManagerImpl");
 
-      RequiredAssetsInfo requiredAssetsInfo = new RequiredAssetsInfo();
-      for (Library originalLibrary : libraries) {
-        if (originalLibrary.requiredAssetsInfo != null) {
-          requiredAssetsInfo.append(originalLibrary.requiredAssetsInfo);
-        }
-      }
+
 
       new FlexSdkAbcInjector(flexSdkVersion, injectionUrlConnection, requiredAssetsInfo).filter(swfFile, modifiedSwf,
                              new AbcNameFilterByNameSetAndStartsWith(definitions, new String[]{"mx.managers.marshalClasses:"}));

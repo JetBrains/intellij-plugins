@@ -76,9 +76,7 @@ public class TestSocketDataHandler implements SocketDataHandler {
 
   public function handleSockedData(messageSize:int, methodNameSize:int, data:IDataInput):void {
     var method:String = data.readUTFBytes(methodNameSize);
-
     var clazz:Class = c[data.readByte()];
-
     var methodInfo:Dictionary = describeCache[clazz];
     if (methodInfo == null) {
       methodInfo = collectTestAnnotation(clazz);
@@ -86,10 +84,10 @@ public class TestSocketDataHandler implements SocketDataHandler {
     }
     var testAnnotation:TestAnnotation = methodInfo[method] || TestAnnotation.DEFAULT;
     var documentManager:DocumentManager = projectManager.project == null ? null : DocumentManager(projectManager.project.getComponent(DocumentManager));
-    if (!testAnnotation.nullableDocument && documentManager != null && documentManager.document == null) {
+    if (!testAnnotation.nullableDocument && documentManager != null &&
+        (documentManager.document == null || documentManager.document.documentFactory.file.name != (method + ".mxml"))) {
       trace("wait document");
-      IEventDispatcher(documentManager).addEventListener("documentChanged", function(event:Event):void {
-        IEventDispatcher(event.currentTarget).removeEventListener(event.type, arguments.callee);
+      documentManager.documentChanged.addOnce(function():void {
         testOnSystemManagerReady(documentManager, clazz, method, testAnnotation);
       });
     }

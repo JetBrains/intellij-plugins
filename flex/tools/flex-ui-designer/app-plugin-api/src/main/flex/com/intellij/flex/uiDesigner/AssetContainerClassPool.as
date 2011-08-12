@@ -98,29 +98,32 @@ public class AssetContainerClassPool {
     removeLoaderListeners(loaderInfo);
     loader.unload();
 
+    adjustCache(loader.classCount);
+    if (_filling == 0) {
+      if (_filled != null) {
+        _filled.dispatch();
+      }
+    }
+  }
+
+  private function adjustCache(classCount:int):void {
     var i:int;
     var j:int;
     if (names == null) {
-      totalClassCount = loader.classCount;
-      names = new Vector.<int>(loader.classCount);
+      totalClassCount = classCount;
+      names = new Vector.<int>(classCount);
       i = 0;
       j = 0;
     }
     else {
       i = names.length;
-      names.length = i + loader.classCount;
+      names.length = i + classCount;
       j = totalClassCount;
-      totalClassCount += loader.classCount;
+      totalClassCount += classCount;
     }
 
     while (j < totalClassCount) {
       names[i++] = j++;
-    }
-
-    if (_filling == 0) {
-      if (_filled != null) {
-        _filled.dispatch();
-      }
     }
   }
 
@@ -137,6 +140,11 @@ public class AssetContainerClassPool {
     loaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
     loaderInfo.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, loadErrorHandler);
     loaderInfo.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, loadErrorHandler);
+  }
+
+  public function fillFromLibraries(classCount:int):void {
+    assert(names == null);
+    adjustCache(classCount);
   }
 }
 }

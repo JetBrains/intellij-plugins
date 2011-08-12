@@ -11,6 +11,8 @@ public class ProjectInfo extends Info<Project> {
   private LibrarySet librarySet;
 
   private final Sdk sdk;
+  
+  public RequiredAssetsInfo totalDefinedAssetContainerClassInfo;
 
   public ProjectInfo(Project project, LibrarySet sdkLibrarySet, Sdk sdk) {
     super(project);

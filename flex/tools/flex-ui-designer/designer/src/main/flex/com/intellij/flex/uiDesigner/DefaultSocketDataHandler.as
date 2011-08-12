@@ -75,19 +75,22 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
         break;
 
       case ClientMethod.fillImageClassPool:
-        fillImageClassPool(input, messageSize);
+        fillAssetCClassPool(input, messageSize, false);
+        break;
+
+      case ClientMethod.fillSwfClassPool:
+        fillAssetCClassPool(input, messageSize, true);
         break;
     }
   }
 
-  private function fillImageClassPool(input:IDataInput, messageSize:int):void {
+  private function fillAssetCClassPool(input:IDataInput, messageSize:int, isSwf:Boolean):void {
     const prevBytesAvailable:int = input.bytesAvailable;
     var context:ModuleContextEx = moduleManager.getById(input.readUnsignedShort()).context;
     const classCount:int = input.readUnsignedShort();
     var swfData:ByteArray = new ByteArray();
     input.readBytes(swfData, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
-    
-    context.imageAssetContainerClassPool.fill(classCount, swfData, context, libraryManager);
+    (isSwf ? context.swfAssetContainerClassPool : context.imageAssetContainerClassPool).fill(classCount, swfData, context, libraryManager);
   }
 
   private function openProject(input:IDataInput):void {
@@ -100,8 +103,19 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private function registerModule(input:IDataInput):void {
+    const imageCount:int = input.readUnsignedShort();
+    const swfCount:int = input.readUnsignedShort();
     stringRegistry.readStringTable(input);
-    moduleManager.register(new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()), libraryManager.idsToInstancesAndMarkAsUsed(input.readObject()), input.readObject()));
+    var module:Module = new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()),
+                                   libraryManager.idsToInstancesAndMarkAsUsed(input.readObject()), input.readObject());
+    moduleManager.register(module);
+
+    if (imageCount != 0) {
+      module.context.imageAssetContainerClassPool.fillFromLibraries(imageCount);
+    }
+    if (swfCount != 0) {
+      module.context.swfAssetContainerClassPool.fillFromLibraries(swfCount);
+    }
   }
   
   private function registerDocumentFactory(input:IDataInput, messageSize:int):void {
@@ -202,4 +216,5 @@ final class ClientMethod {
   public static const initStringRegistry:int = 9;
   public static const updateStringRegistry:int = 10;
   public static const fillImageClassPool:int = 11;
+  public static const fillSwfClassPool:int = 12;
 }

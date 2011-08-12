@@ -11,16 +11,16 @@ public class LibrarySet {
   private final ApplicationDomainCreationPolicy applicationDomainCreationPolicy;
 
   private final List<LibrarySetItem> items;
-  private final List<LibrarySetItem> resourceBundleOnlyitems;
+  private final List<LibrarySetItem> resourceBundleOnlyItems;
   private final List<LibrarySetEmbedItem> embedItems;
 
-  public LibrarySet(String id, @Nullable LibrarySet parent, ApplicationDomainCreationPolicy applicationDomainCreationPolicy, List<LibrarySetItem> items, List<LibrarySetItem> resourceBundleOnlyitems, List<LibrarySetEmbedItem> embedItems) {
+  public LibrarySet(String id, @Nullable LibrarySet parent, ApplicationDomainCreationPolicy applicationDomainCreationPolicy, List<LibrarySetItem> items, List<LibrarySetItem> resourceBundleOnlyItems, List<LibrarySetEmbedItem> embedItems) {
     this.id = id;
     this.parent = parent;
 
     this.applicationDomainCreationPolicy = applicationDomainCreationPolicy;
     this.items = items;
-    this.resourceBundleOnlyitems = resourceBundleOnlyitems == null ? Collections.<LibrarySetItem>emptyList() : resourceBundleOnlyitems;
+    this.resourceBundleOnlyItems = resourceBundleOnlyItems == null ? Collections.<LibrarySetItem>emptyList() : resourceBundleOnlyItems;
     this.embedItems = embedItems == null ? Collections.<LibrarySetEmbedItem>emptyList() : embedItems;
   }
 
@@ -37,8 +37,8 @@ public class LibrarySet {
     return items;
   }
 
-  public List<LibrarySetItem> getResourceBundleOnlyitems() {
-    return resourceBundleOnlyitems;
+  public List<LibrarySetItem> getResourceBundleOnlyItems() {
+    return resourceBundleOnlyItems;
   }
 
   public List<LibrarySetEmbedItem> getEmbedItems() {

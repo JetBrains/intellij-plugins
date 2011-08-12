@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import com.intellij.flex.uiDesigner.Client;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -31,7 +32,7 @@ final class AbcBlankMaker {
 
   private static void fillAssetClassPoolGenerator() throws IOException {
     ByteArrayOutputStreamEx out = new ByteArrayOutputStreamEx(1024);
-    AssetClassPoolGenerator.generateBitmap(3, out);
+    AssetClassPoolGenerator.generate(Client.ClientMethod.fillImageClassPool, 3, null, out);
     FileUtil.writeToFile(new File("/Users/develar/b.swf"), out.toByteArray());
   }
 

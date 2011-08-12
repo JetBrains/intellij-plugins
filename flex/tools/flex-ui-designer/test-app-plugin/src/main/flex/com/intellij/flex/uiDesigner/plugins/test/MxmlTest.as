@@ -172,6 +172,7 @@ public class MxmlTest extends BaseTestCase {
   }
 
   public function EmbedSwfAndImageFromCss():void {
+    validateUI();
   }
 
   public function EmbedImageAsClass():void {
