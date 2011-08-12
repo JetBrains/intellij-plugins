@@ -26,6 +26,7 @@ import flash.events.Event;
 import flash.system.ApplicationDomain;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
+import flash.utils.Proxy;
 
 public final class MxmlReader implements DocumentReader {
   private static const FLEX_EVENT_CLASS_NAME:String = "mx.events.FlexEvent";
@@ -261,7 +262,7 @@ public final class MxmlReader implements DocumentReader {
       objectTable[reference - 1] = object;
     }
 
-    const hasDeferredSetStyles:Boolean = "deferredSetStyles" in object;
+    const hasDeferredSetStyles:Boolean = !(object is Proxy) && "deferredSetStyles" in object;
     var deferredSetStyleProxy:DeferredSetStyleProxy;
     var explicitInlineCssDeclarationSourceCreated:Boolean;
     if (hasDeferredSetStyles) {
