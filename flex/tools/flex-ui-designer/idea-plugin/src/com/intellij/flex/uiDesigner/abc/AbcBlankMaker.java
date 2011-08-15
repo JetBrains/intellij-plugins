@@ -27,7 +27,7 @@ final class AbcBlankMaker {
     //makeBlanks();
 
     //fillAssetClassPoolGenerator();
-    //new MovieTranscoder().extract(new File("/Developer/SDKs/flex_4.5.1/frameworks/projects/framework/assets/Assets.swf"), new File("/Users/develar/r.swf"), "mx.containers.FormItem.Required".getBytes());
+    //new MovieSymbolTranscoder().extract(new File("/Developer/SDKs/flex_4.5.1/frameworks/projects/framework/assets/Assets.swf"), new File("/Users/develar/r.swf"), "mx.containers.FormItem.Required".getBytes());
   }
 
   private static void fillAssetClassPoolGenerator() throws IOException {

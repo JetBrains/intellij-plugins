@@ -14,9 +14,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.intellij.flex.uiDesigner.abc.MovieTranscoder.PlaceObjectFlags.*;
+import static com.intellij.flex.uiDesigner.abc.MovieSymbolTranscoder.PlaceObjectFlags.*;
 
-public class MovieTranscoder extends SwfTranscoder {
+public class MovieSymbolTranscoder extends SwfTranscoder {
   private static byte[] SPRITE_SYMBOL_OWN_CLASS_ABC;
   private static byte[] MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC;
 
@@ -40,11 +40,10 @@ public class MovieTranscoder extends SwfTranscoder {
   private int spriteId;
 
   public static void main(String[] args) throws IOException {
-    new MovieTranscoder().extract(new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"), new File("/Users/develar/a.swf"), "myMC".getBytes());
+    new MovieSymbolTranscoder().extract(new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"), new File("/Users/develar/a.swf"), "myMC".getBytes());
   }
 
   // symbolName — utf8 bytes
-  @SuppressWarnings("UnusedDeclaration")
   @TestOnly
   public void extract(File in, File out, byte[] symbolName) throws IOException {
     this.symbolName = symbolName;

@@ -1,8 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.diagnostic.LogMessageEx;
-import com.intellij.diagnostic.errordialog.Attachment;
-import com.intellij.flex.uiDesigner.abc.MovieTranscoder;
+import com.intellij.flex.uiDesigner.abc.MovieSymbolTranscoder;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
@@ -420,7 +418,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     initResultFile();
 
     SwfAssetInfo assetInfo = EmbedSwfManager.getInstance().getInfo(reader.readUnsignedShort());
-    new MovieTranscoder().extract(assetInfo.file, resultFile, assetInfo.symbolName);
+    new MovieSymbolTranscoder().extract(assetInfo.file, resultFile, assetInfo.symbolName);
   }
 
   private void goToClass() throws IOException {
