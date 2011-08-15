@@ -1,4 +1,5 @@
 package com.intellij.flex.uiDesigner.plugins.test {
+import com.intellij.flex.uiDesigner.Project;
 import com.intellij.flex.uiDesigner.ServerMethod;
 import com.intellij.flex.uiDesigner.SocketManager;
 import com.intellij.flex.uiDesigner.UncaughtErrorManager;
@@ -29,10 +30,14 @@ public class TestUncaughtErrorManager extends UncaughtErrorManager {
     }
   }
 
-  override protected function sendMessage(message:String, uiMessage:String = null):void {
+  override protected function sendMessage(message:String, userMessage:String = null, project:Project = null):void {
     socket.writeByte(ServerMethod.SHOW_ERROR);
     socket.writeUTF(message);
     socket.flush();
+  }
+
+  override protected function sendMessage2(message:String, userMessage:String, projectId:int, documentFactoryId:int):void {
+    sendMessage(message, userMessage);
   }
 }
 }

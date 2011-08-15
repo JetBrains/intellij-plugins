@@ -7,10 +7,10 @@ import com.intellij.flex.uiDesigner.flex.ClassReference;
 import org.flyti.plexus.PlexusManager;
 
 public class StyleValueResolverImpl implements StyleValueResolver {
-  private var moduleContenxt:ModuleContextEx;
+  private var moduleContext:ModuleContextEx;
 
   public function StyleValueResolverImpl(moduleContenxt:ModuleContextEx) {
-    this.moduleContenxt = moduleContenxt;
+    this.moduleContext = moduleContenxt;
   }
 
   private var _embedSwfManager:EmbedSwfManager;
@@ -33,13 +33,15 @@ public class StyleValueResolverImpl implements StyleValueResolver {
 
   public function resolve(propertyDescriptor:CssDeclaration):* {
     if (propertyDescriptor.value is ClassReferenceImpl) {
-      return moduleContenxt.getDefinition(ClassReference(propertyDescriptor.value).className);
+      return moduleContext.getDefinition(ClassReference(propertyDescriptor.value).className);
     }
     else if (propertyDescriptor is CssEmbedSwfDeclaration) {
-      return embedSwfManager.get(CssEmbedSwfDeclaration(propertyDescriptor).id, moduleContenxt.swfAssetContainerClassPool);
+      return embedSwfManager.get(CssEmbedSwfDeclaration(propertyDescriptor).id, moduleContext.swfAssetContainerClassPool,
+                                 moduleContext.project);
     }
     else if (propertyDescriptor is CssEmbedImageDeclaration) {
-      return embedImageManager.get(CssEmbedImageDeclaration(propertyDescriptor).id, moduleContenxt.imageAssetContainerClassPool);
+      return embedImageManager.get(CssEmbedImageDeclaration(propertyDescriptor).id, moduleContext.imageAssetContainerClassPool,
+                                   moduleContext.project);
     }
     else {
       return propertyDescriptor.value;

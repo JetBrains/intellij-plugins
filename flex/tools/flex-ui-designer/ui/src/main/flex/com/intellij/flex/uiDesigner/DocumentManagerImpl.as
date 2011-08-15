@@ -95,13 +95,13 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
 
     if (documentFactory.document == null) {
       if (context.librariesResolved) {
-        createAndOpen(documentFactory);
+        createAndOpen(documentFactory, documentOpened);
       }
       else {
         libraryManager.resolve(documentFactory.module.librarySets, doOpenAfterResolveLibraries, documentFactory, documentOpened);
       }
     }
-    else if (doOpen(documentFactory, documentFactory.document)) {
+    else if (doOpen(documentFactory, documentFactory.document, documentOpened)) {
       if (documentFactory.document == document) {
         adjustElementSelection();
         if (_documentUpdated != null) {
@@ -115,12 +115,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   private function doOpenAfterResolveLibraries(documentFactory:DocumentFactory, documentOpened:Function):void {
     var module:Module = documentFactory.module;
     module.context.librariesResolved = true;
-
-    if (documentOpened != null) {
-      documentOpened();
-    }
-    
-    if (createAndOpen(documentFactory) && !ApplicationManager.instance.unitTestMode) {
+    if (createAndOpen(documentFactory, documentOpened) && !ApplicationManager.instance.unitTestMode) {
       var w:DocumentWindow = module.project.window;
       if (NativeWindow.supportsNotification) {
         w.notifyUser(NotificationType.INFORMATIONAL);
@@ -134,13 +129,13 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  private function createAndOpen(documentFactory:DocumentFactory):Boolean {
+  private function createAndOpen(documentFactory:DocumentFactory, documentOpened:Function):Boolean {
     var document:Document = new Document(documentFactory);
     var module:Module = documentFactory.module;
     createStyleManager(module, documentFactory);
     createSystemManager(document, module);
 
-    if (doOpen(documentFactory, document)) {
+    if (doOpen(documentFactory, document, documentOpened)) {
       documentFactory.document = document;
       var w:DocumentWindow = module.project.window;
       var projectView:ProjectView = ProjectView(w.contentView);
@@ -154,7 +149,16 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
   }
 
-  private function doOpen(documentFactory:DocumentFactory, document:Document):Boolean {
+  private function doOpen(documentFactory:DocumentFactory, document:Document, documentOpened:Function):Boolean {
+    if (documentOpened != null) {
+      try {
+        documentOpened();
+      }
+      catch (e:Error) {
+        UncaughtErrorManager.instance.handleError(e, documentFactory.module.project);
+      }
+    }
+
     try {
       try {
         // IDEA-72499
@@ -177,7 +181,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       }
     }
     catch (e:Error) {
-      UncaughtErrorManager.instance.readDocumentErrorHandler(e);
+      UncaughtErrorManager.instance.readDocumentErrorHandler(e, documentFactory);
       return false;
     }
 

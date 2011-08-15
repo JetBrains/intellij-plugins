@@ -34,6 +34,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.AppIcon;
 import com.intellij.util.StringBuilderSpinAllocator;
+import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -50,6 +51,12 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private File appDir;
 
   private DataOutputStream errorOut;
+
+  private final MessageBus messageBus;
+
+  public SocketInputHandlerImpl() {
+    messageBus = ApplicationManager.getApplication().getMessageBus();
+  }
 
   protected void createReader(InputStream inputStream) {
     reader = new Reader(new BufferedInputStream(inputStream));
@@ -165,10 +172,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         break;
 
       case ServerMethod.DOCUMENT_OPENED:
-        Application application = ApplicationManager.getApplication();
-        if (!application.isDisposed()) {
-          application.getMessageBus().syncPublisher(MESSAGE_TOPIC).documentOpened();
-        }
+        messageBus.syncPublisher(MESSAGE_TOPIC).documentOpened();
         break;
 
       default:
@@ -431,6 +435,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   private void showError() throws IOException {
+    messageBus.syncPublisher(MESSAGE_TOPIC).errorOccured();
+
     final String userMessage = reader.readUTF();
     final String message = reader.readUTF();
     final String logMessage;

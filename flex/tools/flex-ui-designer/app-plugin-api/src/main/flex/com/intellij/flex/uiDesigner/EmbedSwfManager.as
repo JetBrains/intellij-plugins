@@ -10,7 +10,7 @@ public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedA
     SpriteAssetInitializer.embedSwfManager = this;
   }
 
-  public function get(id:int, pool:AssetContainerClassPool):Class {
+  public function get(id:int, pool:AssetContainerClassPool, project:Project):Class {
     var result:Class = pool.getCachedClass(id);
     if (result != null) {
       return result;
@@ -21,7 +21,7 @@ public class EmbedSwfManager extends AbstractEmbedAssetManager implements EmbedA
     if (cacheItem == null) {
       cacheItem = new SwfAssetCacheItem(id);
       symbolClasses[id] = cacheItem;
-      SpriteAssetInitializer.init(containerClass, cacheItem, server.getSwfData(id, cacheItem));
+      SpriteAssetInitializer.init(containerClass, cacheItem, server.getSwfData(id, cacheItem, project));
     }
     else {
       containerClass["bounds"] = cacheItem.bounds;

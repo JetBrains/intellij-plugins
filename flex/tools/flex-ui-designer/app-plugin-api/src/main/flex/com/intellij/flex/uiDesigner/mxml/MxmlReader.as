@@ -5,7 +5,6 @@ import com.intellij.flex.uiDesigner.DocumentReader;
 import com.intellij.flex.uiDesigner.DocumentReaderContext;
 import com.intellij.flex.uiDesigner.EmbedImageManager;
 import com.intellij.flex.uiDesigner.EmbedSwfManager;
-import com.intellij.flex.uiDesigner.ModuleContext;
 import com.intellij.flex.uiDesigner.ModuleContextEx;
 import com.intellij.flex.uiDesigner.StringRegistry;
 import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
@@ -43,7 +42,7 @@ public final class MxmlReader implements DocumentReader {
   //noinspection JSFieldCanBeLocal
   private const injectedASReader:InjectedASReader = new InjectedASReader();
 
-  private var moduleContext:ModuleContext;
+  private var moduleContext:ModuleContextEx;
   internal var context:DocumentReaderContext;
 
   private var deferredMxContainers:Vector.<DisplayObjectContainer>;
@@ -78,7 +77,7 @@ public final class MxmlReader implements DocumentReader {
     var objectTableSize:int = readObjectTableSize();
 
     context = factoryContext.readerContext;
-    moduleContext = context.moduleContext;
+    moduleContext = ModuleContextEx(context.moduleContext);
 
     var object:Object;
     switch (input.readByte()) {
@@ -155,13 +154,13 @@ public final class MxmlReader implements DocumentReader {
 
     const oldContext:DocumentReaderContext = this.context;
     context = documentReaderContext;
-    moduleContext = context.moduleContext;
+    moduleContext = ModuleContextEx(context.moduleContext);
     var object:Object = readObjectFromClass(stringRegistry.read(input), true);
     stateReader.read(this, input, object);
     injectedASReader.read(input, this);
 
     context = oldContext;
-    moduleContext = oldContext == null ? null : oldContext.moduleContext;
+    moduleContext = oldContext == null ? null : ModuleContextEx(oldContext.moduleContext);
 
     if (restorePrevContextAfterRead) {
       objectTable = oldObjectTable;
@@ -404,11 +403,12 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case AmfExtendedTypes.IMAGE:
-          propertyHolder[propertyName] = embedImageManager.get(AmfUtil.readUInt29(input), ModuleContextEx(moduleContext).imageAssetContainerClassPool);
+          propertyHolder[propertyName] = embedImageManager.get(AmfUtil.readUInt29(input), moduleContext.imageAssetContainerClassPool,
+                                                               moduleContext.project);
           break;
         
         case AmfExtendedTypes.SWF:
-          propertyHolder[propertyName] = embedSwfManager.get(AmfUtil.readUInt29(input), ModuleContextEx(moduleContext).swfAssetContainerClassPool);
+          propertyHolder[propertyName] = embedSwfManager.get(AmfUtil.readUInt29(input), moduleContext.swfAssetContainerClassPool, moduleContext.project);
           break;
         
         case AmfExtendedTypes.STRING_REFERENCE:
@@ -451,7 +451,7 @@ public final class MxmlReader implements DocumentReader {
     var id:int = AmfUtil.readUInt29(input);
     var factory:Object = moduleContext.getDocumentFactory(id);
     if (factory == null) {
-      var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance(ModuleContextEx(moduleContext).project).get2(id, DocumentFactory(context));
+      var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance(moduleContext.project).get2(id, DocumentFactory(context));
       factory = new moduleContext.documentFactoryClass(documentFactory, new DeferredInstanceFromBytesContext(documentFactory, this));
       moduleContext.putDocumentFactory(id, factory);
     }

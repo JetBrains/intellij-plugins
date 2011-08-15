@@ -39,7 +39,8 @@ public class AppTest extends BaseTestCase {
   
   public function wait():void {
   }
-  
+
+  [Test(document="SetProperty")]
   public function UpdateDocumentOnIdeaAutoSave():void {
     assertThat(app.getElementAt(0), {text: "mmA"});
   }

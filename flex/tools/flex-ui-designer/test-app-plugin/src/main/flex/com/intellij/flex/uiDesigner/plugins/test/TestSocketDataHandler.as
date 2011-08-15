@@ -77,6 +77,12 @@ public class TestSocketDataHandler implements SocketDataHandler {
   public function handleSockedData(messageSize:int, methodNameSize:int, data:IDataInput):void {
     var method:String = data.readUTFBytes(methodNameSize);
     var clazz:Class = c[data.readByte()];
+
+    if (clazz == UITest && method == "getStageOffset") {
+      getStageOffset(projectManager);
+      return;
+    }
+
     var methodInfo:Dictionary = describeCache[clazz];
     if (methodInfo == null) {
       methodInfo = collectTestAnnotation(clazz);
@@ -84,8 +90,9 @@ public class TestSocketDataHandler implements SocketDataHandler {
     }
     var testAnnotation:TestAnnotation = methodInfo[method] || TestAnnotation.DEFAULT;
     var documentManager:DocumentManager = projectManager.project == null ? null : DocumentManager(projectManager.project.getComponent(DocumentManager));
+    const testDocumentFilename:String = (testAnnotation.document == null ? method : testAnnotation.document) + ".mxml";
     if (!testAnnotation.nullableDocument && documentManager != null &&
-        (documentManager.document == null || documentManager.document.documentFactory.file.name != (method + ".mxml"))) {
+        (documentManager.document == null || documentManager.document.documentFactory.file.name != testDocumentFilename)) {
       trace("wait document");
       documentManager.documentChanged.addOnce(function():void {
         testOnSystemManagerReady(documentManager, clazz, method, testAnnotation);
@@ -114,10 +121,7 @@ public class TestSocketDataHandler implements SocketDataHandler {
   private function test(clazz:Class, method:String, testAnnotation:TestAnnotation):void {
     trace("execute test " + method);
 
-    if (clazz == UITest && method == "getStageOffset") {
-      getStageOffset(projectManager);
-      return;
-    }
+
     
     var test:TestCase = new clazz();
     test.init(projectManager, _socket);
@@ -180,6 +184,7 @@ class TestAnnotation {
 
   public var async:Boolean;
   public var nullableDocument:Boolean;
+  public var document:String;
 }
 
 final class TestServerMethod {

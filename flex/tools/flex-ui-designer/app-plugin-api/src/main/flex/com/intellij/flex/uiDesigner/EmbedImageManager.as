@@ -9,7 +9,7 @@ public class EmbedImageManager extends AbstractEmbedAssetManager implements Embe
     super(server);
   }
 
-  public function get(id:int, pool:AssetContainerClassPool):Class {
+  public function get(id:int, pool:AssetContainerClassPool, project:Project):Class {
     var result:Class = pool.getCachedClass(id);
     if (result != null) {
       return result;
@@ -18,7 +18,7 @@ public class EmbedImageManager extends AbstractEmbedAssetManager implements Embe
     var containerClass:Class = pool.getClass(id);
     var bitmapData:BitmapData = bitmapsData[id];
     if (bitmapData == null) {
-      bitmapData = server.getBitmapData(id);
+      bitmapData = server.getBitmapData(id, project);
       bitmapsData[id] = bitmapData;
     }
     containerClass["data"] = bitmapData;

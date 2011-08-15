@@ -58,7 +58,7 @@ public class AppTest extends AppTestBase {
   }
   
   private void await() throws InterruptedException {
-    //assertTrue(info.semaphore.waitFor(7000));
+    //assertTrue(info.semaphore.waitForUnsafe());
     info.semaphore.waitForUnsafe();
   }
   
@@ -101,7 +101,6 @@ public class AppTest extends AppTestBase {
     designerApplicationManager.openDocument(myModule, (XmlFile)myFile, false);
     while (designerApplicationManager.isDocumentOpening()) {
       Thread.sleep(8); // todo event about document opened
-      // ?
     }
     
     callClientAssert(getTestName(false));

@@ -111,7 +111,7 @@ public class Server implements ResourceBundleProvider {
 
   private static var flashWorkaroundByteArray:ByteArray;
 
-  public function getBitmapData(id:int):BitmapData {
+  public function getBitmapData(id:int, project:Project):BitmapData {
     var resultReadyFile:File;
     try {
       const resultReadyFilename:String = generateResultReadyFilename();
@@ -143,17 +143,17 @@ public class Server implements ResourceBundleProvider {
       }
     }
     catch (e:Error) {
-      UncaughtErrorManager.instance.handleError(e);
+      UncaughtErrorManager.instance.handleError(e, project);
     }
     finally {
-      postCheckSyncMessaging(resultReadyFile);
+      postCheckSyncMessaging(resultReadyFile, project);
     }
 
     //noinspection UnreachableCodeJS
     throw new Error("Burn in hell, Adobe.");
   }
 
-  public function getSwfData(id:int, cacheItem:SwfAssetCacheItem):ByteArray {
+  public function getSwfData(id:int, cacheItem:SwfAssetCacheItem, project:Project):ByteArray {
     var resultReadyFile:File;
     try {
       const resultReadyFilename:String = generateResultReadyFilename();
@@ -180,10 +180,10 @@ public class Server implements ResourceBundleProvider {
       }
     }
     catch (e:Error) {
-      UncaughtErrorManager.instance.handleError(e);
+      UncaughtErrorManager.instance.handleError(e, project);
     }
     finally {
-      postCheckSyncMessaging(resultReadyFile);
+      postCheckSyncMessaging(resultReadyFile, project);
     }
 
     //noinspection UnreachableCodeJS
@@ -216,10 +216,10 @@ public class Server implements ResourceBundleProvider {
       }
     }
     catch (e:Error) {
-      UncaughtErrorManager.instance.handleError(e);
+      UncaughtErrorManager.instance.handleError(e, Project(project));
     }
     finally {
-      postCheckSyncMessaging(resultReadyFile);
+      postCheckSyncMessaging(resultReadyFile, project);
     }
 
     return null;
@@ -229,14 +229,14 @@ public class Server implements ResourceBundleProvider {
     return (getTimer() + Math.random()).toString();
   }
 
-  private static function postCheckSyncMessaging(resultReadyFile:File):void {
+  private static function postCheckSyncMessaging(resultReadyFile:File, project:Object):void {
     try {
       if (resultReadyFile != null && resultReadyFile.exists) {
         resultReadyFile.deleteFileAsync();
       }
     }
     catch (e:Error) {
-      UncaughtErrorManager.instance.handleError(e);
+      UncaughtErrorManager.instance.handleError(e, Project(project));
     }
   }
 

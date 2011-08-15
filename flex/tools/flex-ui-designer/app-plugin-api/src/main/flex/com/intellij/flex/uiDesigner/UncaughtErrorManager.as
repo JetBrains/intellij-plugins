@@ -52,23 +52,26 @@ public class UncaughtErrorManager implements UiErrorHandler {
     }
   }
 
-  public function handleError(error:Error):void {
-    sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : error.message);
+  public function handleError(error:Error, project:Project = null):void {
+    sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : error.message, null, project);
   }
 
   public function handleUiError(error:Error, object:Object, userMessage:String):void {
     sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : Error(error).message, userMessage);
   }
 
-  public function readDocumentErrorHandler(error:Error):void {
-    sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : error.message);
+  public function readDocumentErrorHandler(error:Error, documentFactory:DocumentFactory):void {
+    sendMessage2(Capabilities.isDebugger ? buildErrorMessage(error) : error.message, null, documentFactory.module.project.id,
+                 documentFactory.id);
   }
 
-  protected function sendMessage(message:String, userMessage:String = null):void {
-    var projectId:int = -1;
+  protected function sendMessage(message:String, userMessage:String = null, project:Project = null):void {
     var documentFactoryId:int = -1;
+    var projectId:int = -1;
     try {
-      var project:Project = ProjectUtil.getProjectForActiveWindow();
+      if (project == null) {
+        project = ProjectUtil.getProjectForActiveWindow();
+      }
       if (project != null) {
         var document:Document = DocumentManager(project.getComponent(DocumentManager)).document;
         if (document != null) {
@@ -80,6 +83,10 @@ public class UncaughtErrorManager implements UiErrorHandler {
     catch (ignored:Error) {
     }
 
+    sendMessage2(message, userMessage, projectId, documentFactoryId);
+  }
+
+  protected function sendMessage2(message:String, userMessage:String, projectId:int, documentFactoryId:int):void {
     socket.writeByte(ServerMethod.SHOW_ERROR);
 
     socket.writeUTF(userMessage == null ? "" : userMessage);

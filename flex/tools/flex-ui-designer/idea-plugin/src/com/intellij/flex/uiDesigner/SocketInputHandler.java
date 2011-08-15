@@ -23,5 +23,6 @@ public abstract class SocketInputHandler implements Closable {
 
   public interface DocumentOpenedListener {
     void documentOpened();
+    void errorOccured();
   }
 }

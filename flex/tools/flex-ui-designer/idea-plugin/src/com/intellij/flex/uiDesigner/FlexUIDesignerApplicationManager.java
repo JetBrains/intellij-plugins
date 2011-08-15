@@ -382,6 +382,15 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentOpenedListener() {
           @Override
           public void documentOpened() {
+            semaphoreUp();
+          }
+
+          @Override
+          public void errorOccured() {
+            semaphoreUp();
+          }
+
+          private void semaphoreUp() {
             connection.disconnect();
             semaphore.up();
           }
