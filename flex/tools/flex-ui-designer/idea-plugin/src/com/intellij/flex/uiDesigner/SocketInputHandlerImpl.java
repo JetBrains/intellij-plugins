@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.diagnostic.LogMessageEx;
+import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.abc.MovieTranscoder;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfOutputStream;
@@ -21,6 +23,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.FocusCommand;
@@ -434,44 +437,27 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     });
   }
 
-  private void showError() throws IOException {
-    messageBus.syncPublisher(MESSAGE_TOPIC).errorOccured();
-
-    final String userMessage = reader.readUTF();
-    final String message = reader.readUTF();
-    final String logMessage;
-    Project project = null;
+   private void showError() throws IOException {
+    String userMessage = reader.readUTF();
+    final String technicalMessage = reader.readUTF();
+    final String title;
+    final Attachment attachment;
     if (reader.readBoolean()) {
-      StringBuilder builder = StringBuilderSpinAllocator.alloc();
-      try {
-        project = readProject();
-        final VirtualFile file = DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort());
-        builder.append(message);
-        builder.append("\nFile: ").append(file.getPath()).append("\nFile content: \n").append(LoadTextUtil.loadText(file));
-        logMessage = builder.toString();
-      }
-      finally {
-        StringBuilderSpinAllocator.dispose(builder);
-      }
+      Project project = readProject();
+      final VirtualFile file = DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort());
+      attachment = new Attachment(file.getPresentableUrl()  , LoadTextUtil.loadText(file).toString());
+      title = FlexUIDesignerBundle.message("problem.opening.mxml.document.0", file.getName());
     }
     else {
-      logMessage = message;
+      title = FlexUIDesignerBundle.message("problem.opening.mxml.document");
+      attachment = null;
     }
 
-    LOG.error(logMessage, new Throwable() {
-      @Override
-      public void printStackTrace(PrintStream s) {
-      }
-
-      @Override
-      public Throwable fillInStackTrace() {
-        return this;
-      }
-    });
-
-    if (!userMessage.isEmpty()) {
-      DocumentProblemManager.getInstance().report(project, userMessage + "<br><br>" + message);
+    if (StringUtil.isEmpty(userMessage)) {
+      userMessage = technicalMessage;
     }
+    LOG.error(LogMessageEx.createEvent(userMessage, technicalMessage, title,
+                                       FlexUIDesignerBundle.message("problem.opening.mxml.document.balloon.text"), attachment));
   }
 
   private Module readModule() throws IOException {
