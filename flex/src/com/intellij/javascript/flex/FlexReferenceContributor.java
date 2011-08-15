@@ -30,8 +30,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.patterns.PatternCondition;
-import com.intellij.patterns.PlatformPatterns;
+import com.intellij.patterns.*;
 import com.intellij.psi.*;
 import com.intellij.psi.css.*;
 import com.intellij.psi.filters.*;
@@ -76,7 +75,8 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
   @NonNls public static final String DESTINATION_ATTR_NAME = "destination";
   @NonNls public static final String SET_STYLE_METHOD_NAME = "setStyle";
   private static final String DELIMS = ", ";
-  public static final String[] STYLE_NAME_ATTRIBUTES = new String[]{"styleName", "headerStyleName", "statusStyleName"};
+  private static final String STYLE_NAME_ATTR_SUFFIX = "StyleName";
+  private static final String STYLE_NAME_ATTR = "styleName";
   private static final String SKIN_CLASS_ATTR_NAME = "skinClass";
   private static final String UI_COMPONENT_FQN = "mx.core.UIComponent";
 
@@ -224,17 +224,21 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
 
     final PsiReferenceProvider cssReferenceProvider = CssConstants.CSS_CLASS_OR_ID_KEY_PROVIDER.getProvider();
 
-    XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, STYLE_NAME_ATTRIBUTES, new ElementFilter() {
-      public boolean isAcceptable(final Object element, final PsiElement context) {
-        PsiElement psiElement = (PsiElement)element;
-        final PsiFile containingFile = psiElement.getContainingFile();
-        return JavaScriptSupportLoader.isFlexMxmFile(containingFile) && !psiElement.textContains('{');
-      }
+    registrar.registerReferenceProvider(
+      XmlPatterns.xmlAttributeValue().withLocalName(StandardPatterns.or(StandardPatterns.string().endsWith(STYLE_NAME_ATTR_SUFFIX),
+                                                                        StandardPatterns.string().equalTo(STYLE_NAME_ATTR)))
+        .and(new FilterPattern(new ElementFilter() {
+          public boolean isAcceptable(final Object element, final PsiElement context) {
+            PsiElement psiElement = (PsiElement)element;
+            final PsiFile containingFile = psiElement.getContainingFile();
+            return JavaScriptSupportLoader.isFlexMxmFile(containingFile) && !psiElement.textContains('{');
+          }
 
-      public boolean isClassAcceptable(final Class hintClass) {
-        return true;
-      }
-    }, true, cssReferenceProvider);
+          public boolean isClassAcceptable(final Class hintClass) {
+            return true;
+          }
+        })),
+      cssReferenceProvider, PsiReferenceRegistrar.DEFAULT_PRIORITY);
 
     XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, null, new ElementFilter() {
       @Override
