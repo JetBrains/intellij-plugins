@@ -174,9 +174,11 @@
   <project-components>
     <component>
       <implementation-class>com.intellij.lang.javascript.flex.build.FlexCompilerHandler</implementation-class>
+      <skipForDefaultProject/>
     </component>
     <component>
       <implementation-class>com.intellij.javascript.flex.mxml.schema.CodeContextHolder</implementation-class>
+      <skipForDefaultProject/>
     </component>
     <component>
       <implementation-class>com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory</implementation-class>
