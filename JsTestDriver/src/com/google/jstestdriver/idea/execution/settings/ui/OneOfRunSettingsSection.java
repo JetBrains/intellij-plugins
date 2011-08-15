@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 
 /**
- * All operation should be executed on EDT Thread.
+ * All methods should be executed on EDT.
  */
 class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider> extends AbstractRunSettingsSection {
 

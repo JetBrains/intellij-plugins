@@ -15,20 +15,22 @@
  */
 package com.google.jstestdriver.idea.javascript.navigation;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.google.common.collect.Maps;
 import com.intellij.execution.Location;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Describe test structure for given JavaScript file.
+ */
 public class NavigationRegistry {
 
   private final Map<String, TestCase> myTestCaseMap;

@@ -17,8 +17,12 @@ abstract class LocationProvider {
   };
 
   public static LocationProvider createConstantProvider(final Location location) {
+    if (location == null) {
+      return EMPTY;
+    }
     return new LocationProvider() {
       @Override
+      @Nullable
       Location provideLocation(Project project) {
         return location;
       }

@@ -5,7 +5,7 @@ import javax.swing.JComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * All methods should be called on AWT Thread.
+ * All methods should be called on EDT.
  */
 abstract class AbstractRunSettingsSection implements RunSettingsSection {
 
