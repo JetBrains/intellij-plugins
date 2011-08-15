@@ -13,32 +13,42 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Map;
 
-public class JstdConfigFileNode extends Node {
+class JstdConfigFileNode extends Node {
 
-  private final Map<String, TestCaseNode> myTestCaseMap = Maps.newHashMap();
-  private TestResult.Result worstResult = TestResult.Result.passed;
-  private final String myAbsoluteFilePath;
+  private final BrowserNode myBrowserNode;
   private final VirtualFile myVirtualFile;
+  private final String myAbsoluteFilePath;
+  private final Map<String, TestCaseNode> myTestCaseMap = Maps.newHashMap();
+  private boolean myFake;
 
-  public JstdConfigFileNode(VirtualFile directory, @NotNull String absoluteFilePath) {
+  public JstdConfigFileNode(@NotNull BrowserNode browserNode, @Nullable VirtualFile directory, @NotNull String absoluteFilePath, boolean fake) {
+    super(createTestProxy(directory, absoluteFilePath));
+    myBrowserNode = browserNode;
     myVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(new File(absoluteFilePath));
-    String displayPath = calcDisplayPath(directory, myVirtualFile, absoluteFilePath);
-    setTestProxy(new SMTestProxyWithPrinterAndLocation(displayPath, true, new LocationProvider() {
+    myAbsoluteFilePath = absoluteFilePath;
+    myFake = fake;
+    browserNode.registerJstdConfigFileNode(this);
+  }
+
+  public static SMTestProxyWithPrinterAndLocation createTestProxy(@Nullable VirtualFile directory, @NotNull String absoluteFilePath) {
+    final VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(new File(absoluteFilePath));
+    String displayPath = calcDisplayPath(directory, virtualFile, absoluteFilePath);
+    return new SMTestProxyWithPrinterAndLocation(displayPath, true, new LocationProvider() {
       @Override
       public Location provideLocation(Project project) {
-        if (myVirtualFile == null) {
+        if (virtualFile == null) {
           return null;
         }
-        PsiFile psiFile = PsiManager.getInstance(project).findFile(myVirtualFile);
+        PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
         if (psiFile == null) {
           return null;
         }
         return PsiLocation.fromPsiElement(psiFile);
       }
-    }));
-    this.myAbsoluteFilePath = absoluteFilePath;
+    });
   }
 
   private static String calcDisplayPath(VirtualFile directory, VirtualFile virtualFile, String absoluteFilePath) {
@@ -52,6 +62,10 @@ public class JstdConfigFileNode extends Node {
     return absoluteFilePath;
   }
 
+  public BrowserNode getBrowserNode() {
+    return myBrowserNode;
+  }
+
   @Nullable
   public VirtualFile getVirtualFile() {
     return myVirtualFile;
@@ -62,6 +76,12 @@ public class JstdConfigFileNode extends Node {
     return myAbsoluteFilePath;
   }
 
+  @NotNull
+  public File getConfigFile() {
+    return new File(myAbsoluteFilePath);
+  }
+
+/*
   public boolean allTestCasesComplete() {
     for (TestCaseNode testCaseNode : myTestCaseMap.values()) {
       if (!testCaseNode.allTestsComplete()) {
@@ -70,7 +90,9 @@ public class JstdConfigFileNode extends Node {
     }
     return true;
   }
+*/
 
+/*
   public void setTestFailed(TestResult.Result result) {
     if (result == TestResult.Result.error && worstResult != TestResult.Result.error) {
       getTestProxy().setTestFailed("", "", true);
@@ -78,6 +100,7 @@ public class JstdConfigFileNode extends Node {
       getTestProxy().setTestFailed("", "", false);
     }
   }
+*/
 
   public TestCaseNode getTestCaseNode(String testCase) {
     return myTestCaseMap.get(testCase);
@@ -87,4 +110,15 @@ public class JstdConfigFileNode extends Node {
     myTestCaseMap.put(testCaseNode.getName(), testCaseNode);
   }
 
+  @Override
+  public Collection<? extends Node> getChildren() {
+    return myTestCaseMap.values();
+  }
+
+  @Override
+  public void setTestFailed(TestResult.Result result) {
+    if (!myFake) {
+      super.setTestFailed(result);
+    }
+  }
 }

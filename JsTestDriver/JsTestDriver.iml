@@ -15,6 +15,7 @@
     <orderEntry type="module" module-name="xdebugger-api" />
     <orderEntry type="module" module-name="smRunner" />
     <orderEntry type="module" module-name="webide-api" />
+    <orderEntry type="library" name="jcip" level="project" />
   </component>
 </module>
 

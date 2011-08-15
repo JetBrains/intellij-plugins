@@ -14,12 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
 -->
-<idea-plugin url="http://www.jetbrains.com/idea">
-  <project-components>
-    <component>
-      <implementation-class>com.google.jstestdriver.idea.javascript.JSUnitTestingSupport</implementation-class>
-    </component>
-  </project-components>
+<idea-plugin>
 
   <actions>
     <group id="JstdGenerateCodeInsideGroup">
@@ -30,9 +25,15 @@
     </group>
   </actions>
 
-  <!--
+  <project-components>
+    <component>
+      <implementation-class>com.google.jstestdriver.idea.javascript.JSUnitTestingSupport</implementation-class>
+    </component>
+  </project-components>
+
   <extensions defaultExtensionNs="com.intellij">
     <annotator language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdAssertFrameworkAnnotator"/>
+    <inspectionToolProvider implementation="com.google.jstestdriver.idea.assertFramework.support.JstdInspectionToolProvider"/>
   </extensions>
-  -->
+
 </idea-plugin>

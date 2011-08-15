@@ -1,8 +1,8 @@
 package com.google.jstestdriver.idea.execution.tree;
 
 import com.google.common.collect.Maps;
-import com.google.jstestdriver.TestResult.Result;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -13,7 +13,7 @@ import java.util.Map;
 public class BrowserNode extends Node {
 
   private final Map<String, JstdConfigFileNode> myJstdConfigFileMap = Maps.newHashMap();
-  private Result worstResult = Result.passed;
+//  private Result worstResult = Result.passed;
 
   public BrowserNode(String browserName) {
     super(new SMTestProxyWithPrinterAndLocation(browserName, true, LocationProvider.EMPTY));
@@ -23,6 +23,7 @@ public class BrowserNode extends Node {
     return myJstdConfigFileMap.get(absoluteFilePath);
   }
 
+/*
   public boolean allJstdConfigFilesComplete() {
     for (JstdConfigFileNode jstdConfigFileNode : myJstdConfigFileMap.values()) {
       if (!jstdConfigFileNode.allTestCasesComplete()) {
@@ -31,7 +32,9 @@ public class BrowserNode extends Node {
     }
     return true;
   }
+*/
 
+/*
   public void setTestFailed(Result result) {
     if (result == Result.error && worstResult != Result.error) {
       getTestProxy().setTestFailed("", "", true);
@@ -39,9 +42,14 @@ public class BrowserNode extends Node {
       getTestProxy().setTestFailed("", "", false);
     }
   }
+*/
 
   public void registerJstdConfigFileNode(JstdConfigFileNode jstdConfigFileNode) {
     myJstdConfigFileMap.put(jstdConfigFileNode.getAbsoluteFilePath(), jstdConfigFileNode);
   }
 
+  @Override
+  public Collection<? extends Node> getChildren() {
+    return myJstdConfigFileMap.values();
+  }
 }

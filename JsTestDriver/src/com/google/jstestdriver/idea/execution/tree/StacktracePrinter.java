@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StacktracePrinter extends TestsOutputConsolePrinter {
+class StacktracePrinter extends TestsOutputConsolePrinter {
 
   private static final String DEFAULT_PATH_PREFIX = "/test/";
 

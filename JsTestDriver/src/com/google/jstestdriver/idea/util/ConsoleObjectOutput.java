@@ -1,16 +1,39 @@
 package com.google.jstestdriver.idea.util;
 
+import com.google.jstestdriver.idea.execution.tree.JstdTestRunnerFailure;
+import com.google.jstestdriver.idea.execution.tree.TestResultProtocolMessage;
+
 import java.io.IOException;
 import java.io.ObjectOutput;
 
-import com.google.jstestdriver.idea.execution.tree.TestResultProtocolMessage;
-
 public class ConsoleObjectOutput implements ObjectOutput {
+
+  public static String messageToString(TestResultProtocolMessage message) {
+    Object[][] args = {
+        {"phase", message.phase},
+        {"result", message.result},
+        {"message", message.message},
+        {"isDryRun()", message.isDryRun()},
+        {"stack", message.stack},
+        {"duration", message.duration},
+        {"log", message.log},
+        {"testCase", message.testCase},
+        {"testName", message.testName},
+    };
+    String s = "";
+    for (Object[] a : args) {
+      s += a[0] + ": " + (a[1] == null ? a[1] : a[1].toString()) + ",\t";
+    }
+    return s;
+  }
   @Override
   public void writeObject(Object obj) throws IOException {
     if (obj instanceof TestResultProtocolMessage) {
       TestResultProtocolMessage message = (TestResultProtocolMessage) obj;
-      System.out.println(message.phase + " " + message.result + " " + message.message);
+      System.out.println(messageToString(message));
+    } else if (obj instanceof JstdTestRunnerFailure) {
+      JstdTestRunnerFailure failure = (JstdTestRunnerFailure) obj;
+      System.out.println("JstdTestRunnerFailure: " + failure.getFailureType() + ", " + failure.getMessage());
     }
   }
 

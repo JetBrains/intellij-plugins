@@ -187,7 +187,7 @@ public class GeneratedConfigTypeComponent extends JPanel {
       }
 
       final JstdConfigStructure configStructure = configStructureResult.getResult();
-      final String content = configStructure.asFileContent(outputDir);
+      final String content = configStructure.asFileContent();
       final VirtualFile outputDirVirtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(outputDir);
       if (outputDirVirtualFile == null) {
         throw new RuntimeException("Can't find VirtualFile for outputDir!");

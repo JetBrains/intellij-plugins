@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
 -->
-<idea-plugin url="http://www.jetbrains.com/idea">
+<idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="com.google.jstestdriver.idea.config.JstdConfigFileLoader"/>
     <completion.contributor language="yaml" implementationClass="com.google.jstestdriver.idea.config.JstdConfigFileCompletionContributor"/>

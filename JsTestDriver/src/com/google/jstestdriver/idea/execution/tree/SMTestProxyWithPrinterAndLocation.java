@@ -6,7 +6,7 @@ import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class SMTestProxyWithPrinterAndLocation extends SMTestProxy {
+class SMTestProxyWithPrinterAndLocation extends SMTestProxy {
 
   private final LocationProvider myLocationProvider;
   private Printer myWiredPrinter;

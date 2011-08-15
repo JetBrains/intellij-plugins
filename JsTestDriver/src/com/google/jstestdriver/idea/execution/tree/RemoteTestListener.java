@@ -19,9 +19,6 @@ import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.config.ConfigStructure;
 import com.google.jstestdriver.idea.execution.TestListenerContext;
 import com.google.jstestdriver.idea.javascript.navigation.NavigationRegistry;
-import com.google.jstestdriver.idea.javascript.navigation.Test;
-import com.google.jstestdriver.idea.javascript.navigation.TestCase;
-import com.intellij.execution.Location;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
 import com.intellij.openapi.util.Key;
@@ -37,6 +34,7 @@ import static com.google.jstestdriver.TestResult.Result;
 /**
  * Updates the Test Result UI panel in the IDE with Test Results. The results are streaming from the JSTD runner, so
  * we update the UI as each event arrives, to give better user feedback.
+ *
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class RemoteTestListener {
@@ -45,7 +43,7 @@ public class RemoteTestListener {
   private final Map<VirtualFile, NavigationRegistry> myNavigationRegistryMap;
   private final VirtualFile myDirectory;
   private final StringBuilder myRootNodeLog = new StringBuilder();
-  private SMTestProxy myConfigLastTestProxy;
+  private Node myLastTestCaseParentNode;
   private File myLastConfigFile;
 
   public RemoteTestListener(@NotNull Map<VirtualFile, NavigationRegistry> navigationRegistryMap,
@@ -58,69 +56,98 @@ public class RemoteTestListener {
 
   // This method must only be called on the AWT event thread, as it updates the UI.
   public void onTestStarted(TestResultProtocolMessage message) {
+    createTestNode(message);
+  }
+
+  private SMTestRunnerResultsForm getSMTestRunnerResultsForm() {
+    return myContext.resultsForm();
+  }
+
+  private SMTestProxy.SMRootTestProxy getTestsRootNode() {
+    return myContext.resultsForm().getTestsRootNode();
+  }
+
+  @NotNull
+  private TestNode createTestNode(TestResultProtocolMessage message) {
     BrowserNode browserNode = browserMap.get(message.browser);
     if (browserNode == null) {
       browserNode = new BrowserNode(message.browser);
       browserMap.put(message.browser, browserNode);
-      onSuiteStarted(myContext.resultsForm().getTestsRootNode(), browserNode.getTestProxy());
+      onSuiteStarted(getTestsRootNode(), browserNode.getTestProxy());
     }
 
     JstdConfigFileNode jstdConfigFileNode = browserNode.getJstdConfigFileNodeByPath(message.jstdConfigFilePath);
-    if (jstdConfigFileNode == null) {
-      jstdConfigFileNode = new JstdConfigFileNode(myDirectory, message.jstdConfigFilePath);
-      browserNode.registerJstdConfigFileNode(jstdConfigFileNode);
-      final Node jstdConfigNode;
-      if (myDirectory != null) {
-        jstdConfigNode = jstdConfigFileNode;
+    boolean fakeJstdConfigFileNode = myDirectory == null;
+    boolean jstdConfigFileNodeAlreadyExists = jstdConfigFileNode != null;
+    if (!jstdConfigFileNodeAlreadyExists) {
+      jstdConfigFileNode = new JstdConfigFileNode(browserNode, myDirectory, message.jstdConfigFilePath, fakeJstdConfigFileNode);
+      if (!fakeJstdConfigFileNode) {
         onSuiteStarted(browserNode.getTestProxy(), jstdConfigFileNode.getTestProxy());
-      } else {
-        jstdConfigNode = browserNode;
       }
-      File jstdConfigFile = new File(jstdConfigFileNode.getAbsoluteFilePath());
-      ConfigStructure configStructure = ConfigStructure.newConfigStructure(jstdConfigFile);
+    }
+
+    Node testCaseParentNode = fakeJstdConfigFileNode ? browserNode : jstdConfigFileNode;
+    if (!jstdConfigFileNodeAlreadyExists) {
+      ConfigStructure configStructure = ConfigStructure.newConfigStructure(jstdConfigFileNode.getConfigFile());
       StacktracePrinter stacktracePrinter = new StacktracePrinter(myContext.consoleView(), configStructure, message.browser);
-      jstdConfigNode.wirePrinter(stacktracePrinter);
+      testCaseParentNode.wirePrinter(stacktracePrinter);
     }
-    NavigationRegistry navigationRegistry = myNavigationRegistryMap.get(jstdConfigFileNode.getVirtualFile());
 
-    TestCase testCaseLocation = navigationRegistry == null ? null : navigationRegistry.getTestCaseByName(message.testCase);
+    myLastTestCaseParentNode = testCaseParentNode;
+
     TestCaseNode testCaseNode = jstdConfigFileNode.getTestCaseNode(message.testCase);
-    myConfigLastTestProxy = (myDirectory != null ? jstdConfigFileNode : browserNode).getTestProxy();
-    myLastConfigFile = new File(jstdConfigFileNode.getAbsoluteFilePath());
+    myLastConfigFile = jstdConfigFileNode.getConfigFile();
     if (testCaseNode == null) {
-      testCaseNode = new TestCaseNode(message.testCase, testCaseLocation);
-      jstdConfigFileNode.registerTestCaseNode(testCaseNode);
-      onSuiteStarted(myDirectory != null ? jstdConfigFileNode.getTestProxy() : browserNode.getTestProxy(), testCaseNode.getTestProxy());
+      NavigationRegistry navigationRegistry = myNavigationRegistryMap.get(jstdConfigFileNode.getVirtualFile());
+      testCaseNode = new TestCaseNode(jstdConfigFileNode, message.testCase, navigationRegistry);
+      onSuiteStarted(testCaseParentNode.getTestProxy(), testCaseNode.getTestProxy());
     }
 
-    Test testLocation = testCaseLocation != null ? testCaseLocation.getTestByName(message.testName) : null;
-    Location testLoc = testLocation == null ? null :testLocation.getLocation();
-    SMTestProxy testNode = testCaseNode.getTestByName(message.testName);
+    TestNode testNode = testCaseNode.getTestByName(message.testName);
     if (testNode == null) {
-      testNode = new SMTestProxyWithPrinterAndLocation(message.testName, false, LocationProvider.createConstantProvider(testLoc));
-      testCaseNode.registerTestProxy(testNode);
-      onSuiteStarted(testCaseNode.getTestProxy(), testNode);
+      testNode = new TestNode(testCaseNode, message.testName);
+      onTestStarted(testCaseNode.getTestProxy(), testNode.getTestProxy());
     }
+    return testNode;
+  }
+
+  @Nullable
+  private TestNode findTestNode(TestResultProtocolMessage message) {
+    BrowserNode browserNode = browserMap.get(message.browser);
+    if (browserNode == null) {
+      return null;
+    }
+    JstdConfigFileNode jstdConfigFileNode = browserNode.getJstdConfigFileNodeByPath(message.jstdConfigFilePath);
+    if (jstdConfigFileNode == null) {
+      return null;
+    }
+    TestCaseNode testCaseNode = jstdConfigFileNode.getTestCaseNode(message.testCase);
+    if (testCaseNode == null) {
+      return null;
+    }
+    return testCaseNode.getTestByName(message.testName);
   }
 
   // This method must only be called on the AWT event thread, as it updates the UI.
   public void onTestFinished(TestResultProtocolMessage message) {
-    BrowserNode browserNode = browserMap.get(message.browser);
-    JstdConfigFileNode jstdConfigFileNode = browserNode.getJstdConfigFileNodeByPath(message.jstdConfigFilePath);
-    TestCaseNode testCaseNode = jstdConfigFileNode.getTestCaseNode(message.testCase);
-    if (testCaseNode.isTestDone(message.testName)) {
-      return;
+    TestNode testNode = findTestNode(message);
+    if (testNode == null) {
+      // jasmine adapter hack
+      testNode = createTestNode(message);
     }
-    testCaseNode.testDone(message.testName);
-    SMTestProxy testNode = testCaseNode.getTestByName(message.testName);
-    testNode.addStdOutput(message.log, Key.create("result"));
-    testNode.setDuration(Math.round(message.duration));
+    testNode.done();
+
+    TestCaseNode testCaseNode = testNode.getTestCaseNode();
+    JstdConfigFileNode jstdConfigFileNode = testCaseNode.getJstdConfigFileNode();
+    BrowserNode browserNode = jstdConfigFileNode.getBrowserNode();
+
+    SMTestProxy testProxy = testNode.getTestProxy();
+    testProxy.addStdOutput(message.log, Key.create("result"));
+    testProxy.setDuration(Math.round(message.duration));
     Result result = Result.valueOf(message.result);
     if (result == Result.passed) {
-      testNode.setFinished();
-      myContext.resultsForm().onTestFinished(testNode);
+      onTestFinished(testProxy);
     } else {
-      boolean isError = result == Result.error;
       final String stackStr;
       if (message.stack.startsWith(message.message)) {
         String s = message.stack.substring(message.message.length());
@@ -128,52 +155,54 @@ public class RemoteTestListener {
       } else {
         stackStr = message.stack;
       }
-      testNode.setTestFailed(message.message, stackStr, isError);
-      myContext.resultsForm().onTestFailed(testNode);
+
+      testProxy.setTestFailed(message.message, stackStr, result == Result.error);
+      getSMTestRunnerResultsForm().onTestFailed(testProxy);
       testCaseNode.setTestFailed(result);
       jstdConfigFileNode.setTestFailed(result);
       browserNode.setTestFailed(result);
     }
-    if (testCaseNode.allTestsComplete()) {
+    if (testCaseNode.isComplete()) {
       onSuiteFinished(testCaseNode.getTestProxy());
     }
-    if (jstdConfigFileNode.allTestCasesComplete()) {
+    if (jstdConfigFileNode.isComplete()) {
       onSuiteFinished(jstdConfigFileNode.getTestProxy());
     }
-
-    if (browserNode.allJstdConfigFilesComplete()) {
+    if (browserNode.isComplete()) {
       onSuiteFinished(browserNode.getTestProxy());
     }
   }
 
-  // This method must only be called on the AWT event thread, as it updates the UI.
-  public void onSuiteFinished(SMTestProxy node) {
-    node.setFinished();
-    SMTestRunnerResultsForm form = myContext.resultsForm();
-    form.onTestFinished(node);
+  private void onSuiteStarted(SMTestProxy parent, SMTestProxy child) {
+    parent.addChild(child);
   }
 
-  // This method must only be called on the AWT event thread, as it updates the UI.
-  public void onSuiteStarted(SMTestProxy parent, SMTestProxy node) {
-    parent.addChild(node);
-    SMTestRunnerResultsForm form = myContext.resultsForm();
-    form.onTestStarted(node);
+  public void onTestStarted(SMTestProxy parent, SMTestProxy child) {
+    parent.addChild(child);
+    getSMTestRunnerResultsForm().onTestStarted(child);
+  }
+
+  public void onSuiteFinished(SMTestProxy node) {
+    node.setFinished();
+  }
+
+  public void onTestFinished(SMTestProxy node) {
+    node.setFinished();
+    getSMTestRunnerResultsForm().onTestFinished(node);
   }
 
   public void onTestRunnerFailed(JstdTestRunnerFailure testRunnerFailure) {
     if (testRunnerFailure.getFailureType() == JstdTestRunnerFailure.FailureType.SINGLE_JSTD_CONFIG) {
       if (myLastConfigFile != null && myLastConfigFile.equals(new File(testRunnerFailure.getJstdConfigPath()))) {
-        myConfigLastTestProxy.setTestFailed(testRunnerFailure.getMessage(), null, false);
+        myLastTestCaseParentNode.getTestProxy().setTestFailed(testRunnerFailure.getMessage(), null, true);
       } else {
-        SMTestProxy configNode = new JstdConfigFileNode(myDirectory, testRunnerFailure.getJstdConfigPath()).getTestProxy();
-        myContext.resultsForm().getTestsRootNode().addChild(configNode);
-        configNode.setTestFailed(testRunnerFailure.getMessage(), null, false);
+        SMTestProxy configNode = JstdConfigFileNode.createTestProxy(myDirectory, testRunnerFailure.getJstdConfigPath());
+        getTestsRootNode().addChild(configNode);
+        configNode.setTestFailed(testRunnerFailure.getMessage(), null, true);
       }
     } else {
       myRootNodeLog.append(testRunnerFailure.getMessage()).append("\n");
-      SMTestProxy.SMRootTestProxy rootNode = myContext.resultsForm().getTestsRootNode();
-      rootNode.setTestFailed(myRootNodeLog.toString(), null, false);
-      System.out.println("Setting root error to " + myRootNodeLog);
+      getTestsRootNode().setTestFailed(myRootNodeLog.toString(), null, true);
     }
   }
 

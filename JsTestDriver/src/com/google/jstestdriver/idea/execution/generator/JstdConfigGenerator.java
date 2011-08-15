@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -41,6 +42,20 @@ public class JstdConfigGenerator {
     Set<VirtualFile> added = Sets.newHashSet();
     addAllDependenciesInOrder(added, configStructure, jsVirtualFile, dependencyContainer);
     return configStructure;
+  }
+
+  @NotNull
+  private JstdConfigStructure generateJstdConfigStructure(@NotNull Project project, @NotNull File jsIoFile) {
+    VirtualFile jsVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(jsIoFile);
+    if (jsVirtualFile == null) {
+      throw new RuntimeException("Could not find virtual file by io file " + jsIoFile.getAbsolutePath());
+    }
+    PsiFile psiFile = PsiManager.getInstance(project).findFile(jsVirtualFile);
+    JSFile jsPsiFile = CastUtils.tryCast(psiFile, JSFile.class);
+    if (jsPsiFile == null) {
+      throw new RuntimeException("Could not process " + jsVirtualFile.getPath() + " as JavaScript file.");
+    }
+    return generateJstdConfigStructure(jsPsiFile);
   }
 
   private void addAllDependenciesInOrder(Set<VirtualFile> added, JstdConfigStructure configStructure, VirtualFile jsVirtualFile, DependencyContainer dependencyContainer) {
@@ -123,6 +138,7 @@ public class JstdConfigGenerator {
       System.err.println("text offset is negative: " + textOffset);
       textOffset = 0;
     }
+    assert document != null;
     int lineNo = document.getLineNumber(textOffset);
     int columnNo = psiElement.getTextOffset() - document.getLineStartOffset(lineNo);
     String text = psiElement.getText();
@@ -130,26 +146,14 @@ public class JstdConfigGenerator {
   }
 
   public File generateTempConfig(Project project, File jsIoFile) throws IOException {
-    VirtualFile jsVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(jsIoFile);
-    if (jsVirtualFile == null) {
-      throw new RuntimeException("Could not find virtual file by io file " + jsIoFile.getAbsolutePath());
-    }
-    PsiFile psiFile = PsiManager.getInstance(project).findFile(jsVirtualFile);
-    JSFile jsPsiFile = CastUtils.tryCast(psiFile, JSFile.class);
-    if (jsPsiFile == null) {
-      throw new RuntimeException("Could not process " + jsVirtualFile.getPath() + " as JavaScript file.");
-    }
-    JstdConfigStructure configStructure = JstdConfigGenerator.INSTANCE.generateJstdConfigStructure(jsPsiFile);
+    JstdConfigStructure configStructure = generateJstdConfigStructure(project, jsIoFile);
     String lastName = jsIoFile.getName().replace('.', '-');
-    File tempConfigFile = File.createTempFile("generated-" + lastName, ".jstd");
-    PrintWriter writer = null;
+    File tempConfigFile = FileUtil.createTempFile("generated-" + lastName, ".jstd");
+    PrintWriter writer = new PrintWriter(tempConfigFile);
     try {
-      writer = new PrintWriter(tempConfigFile);
-      writer.print(configStructure.asFileContent(tempConfigFile.getParentFile()));
+      writer.print(configStructure.asFileContent());
     } finally {
-      if (writer != null) {
-        writer.close();
-      }
+      writer.close();
     }
     return tempConfigFile;
   }
