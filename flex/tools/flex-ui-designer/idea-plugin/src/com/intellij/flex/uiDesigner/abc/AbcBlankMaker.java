@@ -6,10 +6,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
+@SuppressWarnings("UnusedDeclaration")
 final class AbcBlankMaker {
   public static void main(String[] args) throws IOException {
     //new AbcFilter(false).filter(new File("abc-blank-maker/src/o/library.swf"), new File("idea-plugin/resources/BitmapAsset.abc"), new AbcNameFilterByEquals("_b000"));
@@ -28,6 +27,12 @@ final class AbcBlankMaker {
 
     //fillAssetClassPoolGenerator();
     //new MovieSymbolTranscoder().extract(new File("/Developer/SDKs/flex_4.5.1/frameworks/projects/framework/assets/Assets.swf"), new File("/Users/develar/r.swf"), "mx.containers.FormItem.Required".getBytes());
+  }
+
+  private static void movieSymbolTranscoder() throws IOException {
+    new MovieSymbolTranscoder().transcode(
+        new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"),
+        new File("/Users/develar/a.swf"), "myMC".getBytes());
   }
 
   private static void fillAssetClassPoolGenerator() throws IOException {

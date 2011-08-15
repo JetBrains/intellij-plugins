@@ -39,28 +39,24 @@ public class MovieSymbolTranscoder extends SwfTranscoder {
 
   private int spriteId;
 
-  public static void main(String[] args) throws IOException {
-    new MovieSymbolTranscoder().extract(new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"), new File("/Users/develar/a.swf"), "myMC".getBytes());
-  }
-
   // symbolName — utf8 bytes
   @TestOnly
-  public void extract(File in, File out, byte[] symbolName) throws IOException {
+  public void transcode(File in, File out, byte[] symbolName) throws IOException {
     this.symbolName = symbolName;
-    extract(new FileInputStream(in), in.length(), out, false);
+    transcode(new FileInputStream(in), in.length(), out, false);
   }
 
-  public void extract(VirtualFile in, File out, String symbolName) throws IOException {
+  public void transcode(VirtualFile in, File out, String symbolName) throws IOException {
     this.symbolName = symbolName.getBytes();
-    extract(in.getInputStream(), in.getLength(), out, true);
+    transcode(in.getInputStream(), in.getLength(), out, true);
   }
 
-  private void extract(InputStream inputStream, long inputLength, File outFile, boolean writeBounds) throws IOException {
+  private void transcode(InputStream inputStream, long inputLength, File outFile, boolean writeBounds) throws IOException {
     final FileOutputStream out = transcode(inputStream, inputLength, outFile);
     try {
       fileLength = 2 + SYMBOL_CLASS_TAG_LENGTH + SwfUtil.getWrapLength();
 
-      final PlacedObject exportedSymbol = extract();
+      final PlacedObject exportedSymbol = transcode();
 
       final byte[] symbolOwnClassAbc;
       buffer.position(exportedSymbol.start + 2);
@@ -107,7 +103,7 @@ public class MovieSymbolTranscoder extends SwfTranscoder {
     }
   }
 
-  private PlacedObject extract() throws IOException {
+  private PlacedObject transcode() throws IOException {
     lastWrittenPosition = 0;
 
     placedObjects = new TIntObjectHashMap<PlacedObject>();

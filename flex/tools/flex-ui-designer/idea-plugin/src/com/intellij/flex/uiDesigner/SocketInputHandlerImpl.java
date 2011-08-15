@@ -418,7 +418,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     initResultFile();
 
     SwfAssetInfo assetInfo = EmbedSwfManager.getInstance().getInfo(reader.readUnsignedShort());
-    new MovieSymbolTranscoder().extract(assetInfo.file, resultFile, assetInfo.symbolName);
+    new MovieSymbolTranscoder().transcode(assetInfo.file, resultFile, assetInfo.symbolName);
   }
 
   private void goToClass() throws IOException {
