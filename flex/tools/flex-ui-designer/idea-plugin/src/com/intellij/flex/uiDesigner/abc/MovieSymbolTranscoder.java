@@ -6,7 +6,6 @@ import gnu.trove.TIntArrayList;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.TestOnly;
 
-import java.awt.*;
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -16,22 +15,17 @@ import java.util.List;
 
 import static com.intellij.flex.uiDesigner.abc.MovieSymbolTranscoder.PlaceObjectFlags.*;
 
-public class MovieSymbolTranscoder extends SwfTranscoder {
+public class MovieSymbolTranscoder extends MovieTranscoder {
   private static byte[] SPRITE_SYMBOL_OWN_CLASS_ABC;
   private static byte[] MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC;
 
+  private int fileLength;
   private byte[] symbolName;
-
-  private int bitPos;
-  private int bitBuf;
 
   private TIntObjectHashMap<PlacedObject> placedObjects;
   // we cannot mark placedObject as used and iterate exisiting map (placedObjects) — order of items in map is not predictable,
   // but we must write placed object in the same order as it was read
   private List<PlacedObject> usedPlacedObjects;
-
-  private Rectangle bounds;
-  private int fileLength;
 
   private static final byte[] ROOT_SWF_CLASS_NAME = "flash.display.Sprite".getBytes();
   private static final byte[] SYMBOL_OWN_CLASS_NAME = "_SymbolOwnClass".getBytes();
@@ -374,17 +368,6 @@ public class MovieSymbolTranscoder extends SwfTranscoder {
     }
   }
 
-  private void decodeRect() throws IOException {
-    syncBits();
-
-    bounds = new Rectangle();
-    int nBits = readUBits(5);
-    bounds.x = readSBits(nBits);
-    bounds.width = readSBits(nBits) - bounds.x;
-    bounds.y = readSBits(nBits);
-    bounds.height = readSBits(nBits) - bounds.y;
-  }
-
   @SuppressWarnings("UnusedDeclaration")
   private void decodeMatrix() throws IOException {
     syncBits();
@@ -407,58 +390,8 @@ public class MovieSymbolTranscoder extends SwfTranscoder {
     int translateY = readSBits(nTranslateBits);
   }
 
-  private void syncBits() {
-    bitPos = 0;
-  }
-
-  private int readSBits(int numBits) throws IOException {
-    if (numBits > 32) {
-      throw new IOException("Number of bits > 32");
-    }
-
-    int num = readUBits(numBits);
-    int shift = 32 - numBits;
-    // sign extension
-    return (num << shift) >> shift;
-  }
-
   private boolean readBit() throws IOException {
     return readUBits(1) != 0;
-  }
-  
-  private int readUBits(int numBits) throws IOException {
-    if (numBits == 0) {
-      return 0;
-    }
-
-    int bitsLeft = numBits;
-    int result = 0;
-
-    //no value in the buffer - read a byte
-    if (bitPos == 0) {
-      bitBuf = buffer.get();
-      bitPos = 8;
-    }
-
-    while (true) {
-      int shift = bitsLeft - bitPos;
-      if (shift > 0) {
-        // Consume the entire buffer
-        result |= bitBuf << shift;
-        bitsLeft -= bitPos;
-
-        // Get the next byte from the input stream
-        bitBuf = buffer.get();
-        bitPos = 8;
-      }
-      else {
-        // Consume a portion of the buffer
-        result |= bitBuf >> -shift;
-        bitPos -= bitsLeft;
-        bitBuf &= 0xff >> (8 - bitPos); // mask off the consumed bits
-        return result;
-      }
-    }
   }
 
   private int processExportAssetsOrSymbolClass() {

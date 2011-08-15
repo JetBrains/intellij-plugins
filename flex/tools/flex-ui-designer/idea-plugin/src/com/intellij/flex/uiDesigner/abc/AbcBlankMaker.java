@@ -11,6 +11,7 @@ import java.io.IOException;
 @SuppressWarnings("UnusedDeclaration")
 final class AbcBlankMaker {
   public static void main(String[] args) throws IOException {
+    movieSymbolTranscoder();
     //new AbcFilter(false).filter(new File("abc-blank-maker/src/o/library.swf"), new File("idea-plugin/resources/BitmapAsset.abc"), new AbcNameFilterByEquals("_b000"));
 
     //d();
@@ -30,9 +31,9 @@ final class AbcBlankMaker {
   }
 
   private static void movieSymbolTranscoder() throws IOException {
-    new MovieSymbolTranscoder().transcode(
-        new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"),
-        new File("/Users/develar/a.swf"), "myMC".getBytes());
+    //new MovieSymbolTranscoder().transcode(new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"), new File("/Users/develar/a.swf"), "myMC".getBytes());
+
+    new EntireMovieTranscoder().transcode(new File("/Users/develar/Documents/idea/flex/tools/flex-ui-designer/idea-plugin/testData/mxml/AuxAnim.swf"), new File("/Users/develar/a.swf"));
   }
 
   private static void fillAssetClassPoolGenerator() throws IOException {

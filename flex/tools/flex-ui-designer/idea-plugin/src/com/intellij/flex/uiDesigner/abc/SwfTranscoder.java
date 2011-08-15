@@ -63,16 +63,31 @@ abstract class SwfTranscoder extends AbcEncoder {
     buffer = ByteBuffer.wrap(data);
     buffer.order(ByteOrder.LITTLE_ENDIAN);
 
-    // skip FrameSize, FrameRate, FrameCount
-    buffer.position((int)Math.ceil((float)(5 + ((data[0] & 0xFF) >> -(5 - 8)) * 4) / 8) + 2 + 2);
-
+    readFrameSizeFrameRateAndFrameCount(data[0]);
     return new FileOutputStream(outFile);
+  }
+
+  protected void readFrameSizeFrameRateAndFrameCount(byte b) throws IOException {
+    // skip FrameSize, FrameRate, FrameCount
+    buffer.position((int)Math.ceil((float)(5 + ((b & 0xFF) >> -(5 - 8)) * 4) / 8) + 2 + 2);
   }
 
   protected void writePartialHeader(int fileLength) {
     partialHeader[0] = 0x46; // write as uncompressed
     buffer.put(partialHeader, 0, 4);
     buffer.putInt(fileLength);
+  }
+
+  protected void writePartialHeader(FileOutputStream out, int fileLength) throws IOException {
+    partialHeader[0] = 0x46; // write as uncompressed
+
+    // fileLength int as little endian
+    partialHeader[4] = (byte)(0xff & fileLength);
+    partialHeader[5] = (byte)(0xff & (fileLength >> 8));
+    partialHeader[6] = (byte)(0xff & (fileLength >> 16));
+    partialHeader[7] = (byte)(0xff & (fileLength >> 24));
+
+    out.write(partialHeader);
   }
 
   protected static class TagPositionInfo {
