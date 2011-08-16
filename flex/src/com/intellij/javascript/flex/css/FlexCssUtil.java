@@ -23,6 +23,10 @@ public class FlexCssUtil {
     return toClassicForm(propertyName).endsWith(STYLE_NAME_SUFFIX);
   }
 
+  public static boolean isStyleNameMethod(@NotNull String methodName) {
+    return "getStyleDeclaration".equals(methodName);
+  }
+
   public static String toClassicForm(String propertyName) {
     StringBuilder result = new StringBuilder();
     for (int i = 0; i < propertyName.length(); i++) {

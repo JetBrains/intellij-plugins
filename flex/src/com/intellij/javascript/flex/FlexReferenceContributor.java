@@ -222,6 +222,43 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       }
     });
 
+    registrar.registerReferenceProvider(PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
+      public boolean isAcceptable(Object element, PsiElement context) {
+        PsiElement parent = ((JSLiteralExpression)element).getParent();
+        if (parent instanceof JSArgumentList) {
+          final JSExpression[] arguments = ((JSArgumentList)parent).getArguments();
+          if (arguments != null && arguments.length > 0 && arguments[0] == element) {
+            parent = parent.getParent();
+            if (parent instanceof JSCallExpression) {
+              final JSExpression invokedMethod = ((JSCallExpression)parent).getMethodExpression();
+              if (invokedMethod instanceof JSReferenceExpression) {
+                final String methodName = ((JSReferenceExpression)invokedMethod).getReferencedName();
+                if (methodName != null && FlexCssUtil.isStyleNameMethod(methodName)) {
+                  Module module = ModuleUtil.findModuleForPsiElement(parent);
+                  return module != null && FlexUtils.isFlexModuleOrContainsFlexFacet(module);
+                }
+              }
+            }
+          }
+        }
+        return false;
+      }
+
+      public boolean isClassAcceptable(Class hintClass) {
+        return true;
+      }
+    })), new PsiReferenceProvider() {
+      @NotNull
+      @Override
+      public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+        String value = element.getText();
+        if (FlexCssUtil.inQuotes(value)) {
+          return new PsiReference[]{new CssClassValueReference(element)};
+        }
+        return PsiReference.EMPTY_ARRAY;
+      }
+    });
+
     final PsiReferenceProvider cssReferenceProvider = CssConstants.CSS_CLASS_OR_ID_KEY_PROVIDER.getProvider();
 
     registrar.registerReferenceProvider(

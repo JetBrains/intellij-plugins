@@ -35,7 +35,8 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
       myEnd = 0;
     }
     else if (element instanceof CssString || FlexCssUtil.inQuotes(myElement.getText())) {
-      myStart = 1;
+      final String text = myElement.getText();
+      myStart = text.length() >= 2 && text.charAt(1) == '.' ? 2 : 1;
       myEnd = length + 1;
     }
     else {
@@ -50,7 +51,12 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
     }
     else {
       String text = element.getText();
-      return FlexCssUtil.inQuotes(text) ? text.substring(1, text.length() - 1) : text;
+      if (FlexCssUtil.inQuotes(text)) {
+        return text.substring(text.length() >= 2 && text.charAt(1) == '.' ? 2 : 1, text.length() - 1);
+      }
+      else {
+        return text;
+      }
     }
   }
 
