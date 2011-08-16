@@ -1,9 +1,9 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.lang.javascript.JSTestOption;
+import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashMap;
-import js.JSTestOption;
-import js.JSTestOptions;
 
 import java.util.Map;
 

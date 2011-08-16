@@ -1,8 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.codeInspection.LocalInspectionTool;
-import js.JSDaemonAnalyzerTestCase;
-import js.JSTestUtils;
+import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
+import com.intellij.lang.javascript.JSTestUtils;
 
 abstract class FlexUIDesignerBaseTestCase extends JSDaemonAnalyzerTestCase {
   private static String testDataPath;
