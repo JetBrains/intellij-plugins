@@ -17,7 +17,7 @@ public class ProblemDescriptor {
   }
 
   @Nullable
-  public VirtualFile getVirtualFile() {
+  public VirtualFile getFile() {
     return virtualFile;
   }
 

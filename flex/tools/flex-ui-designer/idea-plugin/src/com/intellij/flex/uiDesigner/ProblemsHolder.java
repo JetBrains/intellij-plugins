@@ -1,10 +1,12 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,13 +47,15 @@ public class ProblemsHolder {
   }
 
   public void add(InvalidPropertyException e) {
-    problems.add(new ProblemDescriptor(e.getMessage(), currentFile, e.getPsiElement() == null ? -1 : getLineNumber(e.getPsiElement())));
+    final ProblemDescriptor problemDescriptor = new ProblemDescriptor(e.getMessage(), currentFile,
+                                                                      e.getPsiElement() == null ? -1 : getLineNumber(e.getPsiElement()));
+    problems.add(problemDescriptor);
     if (e.getCause() != null) {
-      LOG.error(e.getCause());
+      LogMessageUtil.createEvent(e.getMessage(), e.getCause(), problemDescriptor);
     }
   }
 
-  public void add(PsiElement element, RuntimeException e, String propertyName) {
+  public void add(final PsiElement element, final RuntimeException e, final String propertyName) {
     String error;
     if (e instanceof NumberFormatException) {
       error = e.getMessage();
@@ -65,33 +69,22 @@ public class ProblemsHolder {
       error = FlexUIDesignerBundle.message("error.write.property", propertyName);
     }
 
-    LOG.error(e);
-    problems.add(new ProblemDescriptor(error, currentFile, getLineNumber(element)));
+    final ProblemDescriptor problemDescriptor = new ProblemDescriptor(error, currentFile, getLineNumber(element));
+    LogMessageUtil.createEvent(error, e, problemDescriptor);
+    problems.add(problemDescriptor);
   }
 
   public boolean isEmpty() {
     return problems.isEmpty();
   }
 
-  @SuppressWarnings("MethodMayBeStatic")
-  public void add(RuntimeException e) {
-    LOG.error(e);
-  }
-
-  @SuppressWarnings("MethodMayBeStatic")
-  public void add(AssertionError e) {
-    LOG.error(e);
-  }
-
   public void add(Throwable e) {
     if (e instanceof InvalidPropertyException) {
       add(((InvalidPropertyException)e));
     }
-    else if (e instanceof RuntimeException) {
-      add(((RuntimeException)e));
-    }
     else {
-      add(((AssertionError)e));
+      LogMessageEx.createEvent(e.getMessage(), ExceptionUtil.getThrowableText(e), LogMessageUtil.createTitle(currentFile), null,
+                               LogMessageUtil.createAttachment(currentFile));
     }
   }
 

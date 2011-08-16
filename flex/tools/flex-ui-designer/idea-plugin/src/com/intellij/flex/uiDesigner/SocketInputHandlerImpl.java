@@ -22,7 +22,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
@@ -445,27 +444,24 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     });
   }
 
-   private void showError() throws IOException {
+  private void showError() throws IOException {
     String userMessage = reader.readUTF();
     final String technicalMessage = reader.readUTF();
-    final String title;
-    final Attachment attachment;
+    final VirtualFile file;
     if (reader.readBoolean()) {
       Project project = readProject();
-      final VirtualFile file = DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort());
-      attachment = new Attachment(file.getPresentableUrl(), LoadTextUtil.loadText(file).toString());
-      title = FlexUIDesignerBundle.message("problem.opening.mxml.document.0", file.getName());
+      file = DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort());
     }
     else {
-      title = FlexUIDesignerBundle.message("problem.opening.mxml.document");
-      attachment = null;
+      file = null;
     }
 
     if (StringUtil.isEmpty(userMessage)) {
       userMessage = technicalMessage;
     }
-    LOG.error(LogMessageEx.createEvent(userMessage, technicalMessage, title,
-                                       FlexUIDesignerBundle.message("problem.opening.mxml.document.balloon.text"), attachment));
+    LOG.error(LogMessageEx.createEvent(userMessage, technicalMessage, LogMessageUtil.createTitle(file),
+                                       FlexUIDesignerBundle.message("problem.opening.mxml.document.balloon.text"),
+                                       LogMessageUtil.createAttachment(file)));
   }
 
   private Module readModule() throws IOException {

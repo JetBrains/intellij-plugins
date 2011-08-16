@@ -24,16 +24,6 @@ public class DocumentProblemManager {
     return builder.append("<b>").append(FlexUIDesignerBundle.message("plugin.name")).append("</b>");
   }
 
-  public void report(final Project project, String message) {
-    final StringBuilder builder = StringBuilderSpinAllocator.alloc();
-    try {
-      report(project, appendTitle(builder).append("<p>").append(message).append("</p>").toString(), MessageType.ERROR);
-    }
-    finally {
-      StringBuilderSpinAllocator.dispose(builder);
-    }
-  }
-
   public void report(Project project, ProblemsHolder problems) {
     report(project, problems.getResultList());
   }
@@ -45,7 +35,7 @@ public class DocumentProblemManager {
       for (ProblemDescriptor problemDescriptor : problems) {
         builder.append("<li>").append(problemDescriptor.getMessage());
         if (problemDescriptor.hasLineNumber()) {
-          builder.append(" (line: ").append(problemDescriptor.getLineNumber()).append(')');
+          LogMessageUtil.appendLineNumber(builder, problemDescriptor);
         }
         builder.append("</li>");
       }
