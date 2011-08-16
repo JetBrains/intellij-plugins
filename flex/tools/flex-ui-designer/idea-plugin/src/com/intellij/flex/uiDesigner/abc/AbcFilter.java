@@ -21,6 +21,7 @@ public class AbcFilter extends SwfTranscoder {
 
   private FileChannel channel;
   protected final TransientString transientNameString = new TransientString();
+  private int lastWrittenPosition;
   
   protected final ArrayList<Decoder> decoders = new ArrayList<Decoder>();
 

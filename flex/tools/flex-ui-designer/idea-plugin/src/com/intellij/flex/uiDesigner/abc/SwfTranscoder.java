@@ -2,10 +2,7 @@ package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.openapi.util.io.FileUtil;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.zip.DataFormatException;
@@ -23,8 +20,6 @@ abstract class SwfTranscoder extends AbcEncoder {
   protected static final int PARTIAL_HEADER_LENGTH = 8;
 
   private final byte[] partialHeader = new byte[PARTIAL_HEADER_LENGTH];
-
-  protected int lastWrittenPosition;
 
   protected FileOutputStream transcode(InputStream inputStream, long inputLength, File outFile) throws IOException {
     final int uncompressedBodyLength;
@@ -78,7 +73,7 @@ abstract class SwfTranscoder extends AbcEncoder {
     buffer.putInt(fileLength);
   }
 
-  protected void writePartialHeader(FileOutputStream out, int fileLength) throws IOException {
+  protected void writePartialHeader(OutputStream out, int fileLength) throws IOException {
     partialHeader[0] = 0x46; // write as uncompressed
 
     // fileLength int as little endian

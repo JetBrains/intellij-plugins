@@ -24,7 +24,7 @@ abstract class AbcEncoder {
     }
   }
 
-  protected int readUnsignedByte() {
+  protected int readUI8() {
     return buffer.get() & 0xFF;
   }
 
@@ -57,14 +57,14 @@ abstract class AbcEncoder {
   }
 
   protected int readU32() {
-    int result = readUnsignedByte();
+    int result = readUI8();
     if ((result & 0x80) == 0) return result;
-    result = result & 0x7F | readUnsignedByte() << 7;
+    result = result & 0x7F | readUI8() << 7;
     if ((result & 0x4000) == 0) return result;
-    result = result & 0x3FFF | readUnsignedByte() << 14;
+    result = result & 0x3FFF | readUI8() << 14;
     if ((result & 0x200000) == 0) return result;
-    result = result & 0x1FFFFF | readUnsignedByte() << 21;
+    result = result & 0x1FFFFF | readUI8() << 21;
     if ((result & 0x10000000) == 0) return result;
-    return result & 0xFFFFFFF | readUnsignedByte() << 28;
+    return result & 0xFFFFFFF | readUI8() << 28;
   }
 }

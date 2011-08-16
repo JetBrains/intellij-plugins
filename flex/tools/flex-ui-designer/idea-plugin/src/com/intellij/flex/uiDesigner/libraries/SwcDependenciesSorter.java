@@ -295,6 +295,11 @@ public class SwcDependenciesSorter {
       }
     }
 
+    // todo requiredAssetsInfo is not collected for local style holders — it is bug
+    // in any case, we preallocate addtional classes to avoid allocate on document opening
+    requiredAssetsInfo.imageCount *= 2;
+    requiredAssetsInfo.swfCount *= 2;
+
     if (library.hasUnresolvedDefinitions() ||
         timeStamp > modifiedSwf.lastModified() ||
         injectionLastModified > modifiedSwf.lastModified()) {
@@ -308,8 +313,6 @@ public class SwcDependenciesSorter {
       definitions.add(FlexSdkAbcInjector.RESOURCE_MANAGER);
       definitions.add(FlexSdkAbcInjector.RESOURCE_MANAGER + "Impl");
       definitions.add("mx.styles:StyleManagerImpl");
-
-
 
       new FlexSdkAbcInjector(flexSdkVersion, injectionUrlConnection, requiredAssetsInfo).filter(swfFile, modifiedSwf,
                              new AbcNameFilterByNameSetAndStartsWith(definitions, new String[]{"mx.managers.marshalClasses:"}));

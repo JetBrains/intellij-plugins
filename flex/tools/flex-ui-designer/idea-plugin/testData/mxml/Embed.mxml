@@ -4,8 +4,13 @@
     <Image source="@Embed(source='/background.jpg')"/>
   </HGroup>
 
-  <BitmapImage source="@Embed(source='/background.p-n-g', mimeType='image/png')"/>
-  <BitmapImage source="@Embed(source='/adventchildren_logo_notext_png.png')"/>
+  <HGroup>
+    <BitmapImage source="@Embed(source='/background.p-n-g', mimeType='image/png')"/>
+    <BitmapImage source="@Embed(source='/adventchildren_logo_notext_png.png')"/>
+  </HGroup>
 
-  <mx:SWFLoader source="@Embed('AuxAnim.swf', symbol='myMC')"/>
+  <HGroup>
+    <mx:SWFLoader source="@Embed('AuxAnim.swf', symbol='myMC')"/>
+    <mx:SWFLoader source="@Embed('AuxAnim.swf')"/>
+  </HGroup>
 </VGroup>

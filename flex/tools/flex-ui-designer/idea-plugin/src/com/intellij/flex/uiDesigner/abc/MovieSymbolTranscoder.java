@@ -1,13 +1,12 @@
 package com.intellij.flex.uiDesigner.abc;
 
-import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntObjectHashMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.*;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,9 +15,6 @@ import java.util.List;
 import static com.intellij.flex.uiDesigner.abc.MovieSymbolTranscoder.PlaceObjectFlags.*;
 
 public class MovieSymbolTranscoder extends MovieTranscoder {
-  private static byte[] SPRITE_SYMBOL_OWN_CLASS_ABC;
-  private static byte[] MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC;
-
   private int fileLength;
   private byte[] symbolName;
 
@@ -27,79 +23,45 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
   // but we must write placed object in the same order as it was read
   private List<PlacedObject> usedPlacedObjects;
 
-  private static final byte[] ROOT_SWF_CLASS_NAME = "flash.display.Sprite".getBytes();
-  private static final byte[] SYMBOL_OWN_CLASS_NAME = "_SymbolOwnClass".getBytes();
-  private static final int SYMBOL_CLASS_TAG_LENGTH = 2 + 2 + ROOT_SWF_CLASS_NAME.length + 1 + 2 + SYMBOL_OWN_CLASS_NAME.length + 1;
-
   private int spriteId;
 
   // symbolName — utf8 bytes
+  @SuppressWarnings("UnusedDeclaration")
   @TestOnly
   public void transcode(File in, File out, byte[] symbolName) throws IOException {
     this.symbolName = symbolName;
     transcode(new FileInputStream(in), in.length(), out, false);
   }
 
-  public void transcode(VirtualFile in, File out, String symbolName) throws IOException {
+  public void transcode(@NotNull VirtualFile in, @NotNull File out, @NotNull String symbolName) throws IOException {
     this.symbolName = symbolName.getBytes();
     transcode(in.getInputStream(), in.getLength(), out, true);
   }
 
-  private void transcode(InputStream inputStream, long inputLength, File outFile, boolean writeBounds) throws IOException {
-    final FileOutputStream out = transcode(inputStream, inputLength, outFile);
-    try {
-      fileLength = 2 + SYMBOL_CLASS_TAG_LENGTH + SwfUtil.getWrapLength();
+  @Override
+  protected void transcode(boolean writeBounds) throws IOException {
+    fileLength = SYMBOL_CLASS_TAG_FULL_LENGTH + SwfUtil.getWrapLength();
 
-      final PlacedObject exportedSymbol = transcode();
+    final PlacedObject exportedSymbol = transcode();
+    buffer.position(exportedSymbol.start + 2);
+    final byte[] symbolOwnClassAbc = getSymbolOwnClassAbc(buffer.getShort());
+    fileLength += symbolOwnClassAbc.length;
 
-      final byte[] symbolOwnClassAbc;
-      buffer.position(exportedSymbol.start + 2);
-      if (buffer.getShort() > 1) {
-        if (MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC == null) {
-          MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC = IOUtil.getResourceBytes("MSymbolOwnClass.abc");
-          MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC[22] = '_'; // replace M => _
-        }
-        symbolOwnClassAbc = MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC;
-      }
-      else {
-        if (SPRITE_SYMBOL_OWN_CLASS_ABC == null) {
-          SPRITE_SYMBOL_OWN_CLASS_ABC = IOUtil.getResourceBytes("SSymbolOwnClass.abc");
-          SPRITE_SYMBOL_OWN_CLASS_ABC[22] = '_'; // replace S => _
-        }
-        symbolOwnClassAbc = SPRITE_SYMBOL_OWN_CLASS_ABC;
-      }
-
-      fileLength += symbolOwnClassAbc.length;
-
-      if (writeBounds) {
-        buffer.order(ByteOrder.BIG_ENDIAN);
-        buffer.position(0);
-        buffer.putInt(bounds.x);
-        buffer.putInt(bounds.y);
-        buffer.putInt(bounds.width);
-        buffer.putInt(bounds.height);
-        out.write(buffer.array(), 0, buffer.position());
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-      }
-
-      SwfUtil.header(fileLength, out, buffer);
-
-      out.write(symbolOwnClassAbc);
-
-      writeUsedPlacedObjects(out);
-      writeExportedSymbol(out, exportedSymbol);
-
-      SwfUtil.footer(out);
+    if (writeBounds) {
+      writeMovieBounds();
     }
-    finally {
-      out.flush();
-      out.close();
-    }
+
+    SwfUtil.header(fileLength, out, buffer);
+
+    out.write(symbolOwnClassAbc);
+
+    writeUsedPlacedObjects();
+    writeExportedSymbol(exportedSymbol);
+
+    SwfUtil.footer(out);
   }
 
   private PlacedObject transcode() throws IOException {
-    lastWrittenPosition = 0;
-
     placedObjects = new TIntObjectHashMap<PlacedObject>();
 
     spriteId = -1;
@@ -202,7 +164,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
   }
 
   private static int computeFullLength(int length) {
-    return (length < 63 ? 2 : 6) + length;
+    return recordHeaderLength(length) + length;
   }
 
   private void processPlaceObject2(final PlacedObject placedObject, final int length, final int position) throws IOException {
@@ -287,27 +249,12 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
     decodeRect();
   }
 
-  private void writeExportedSymbol(FileOutputStream out, PlacedObject object) throws IOException {
-    final byte[] data = buffer.array();
-    writePlacedObject(out, data, object);
-
-    // generate SymbolClass
-    buffer.position(0);
-    encodeTagHeader(TagTypes.SymbolClass, SYMBOL_CLASS_TAG_LENGTH);
-    buffer.putShort((short)2);
-
-    buffer.putShort((short)0);
-    buffer.put(ROOT_SWF_CLASS_NAME);
-    buffer.put((byte)0);
-
-    buffer.putShort((short)spriteId);
-    buffer.put(SYMBOL_OWN_CLASS_NAME);
-    buffer.put((byte)0);
-
-    out.write(data, 0, buffer.position());
+  private void writeExportedSymbol(PlacedObject object) throws IOException {
+    writePlacedObject(object);
+    writeSymbolClass(spriteId);
   }
 
-  private void writeUsedPlacedObjects(final FileOutputStream out) throws IOException {
+  private void writeUsedPlacedObjects() throws IOException {
     // must be written in the same order as it was read
     Collections.sort(usedPlacedObjects, new Comparator<PlacedObject>() {
       @Override
@@ -316,15 +263,14 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
       }
     });
 
-    final byte[] data = buffer.array();
     for (PlacedObject object : usedPlacedObjects) {
-      writePlacedObject(out, data, object);
+      writePlacedObject(object);
     }
 
     usedPlacedObjects = null;
   }
 
-  private void writePlacedObject(FileOutputStream out, byte[] data, PlacedObject object) throws IOException {
+  private void writePlacedObject(PlacedObject object) throws IOException {
     final TIntArrayList positions = object.positions;
     if (positions == null) {
       out.write(data, object.tagStart, (object.start - object.tagStart) + object.length);
@@ -333,19 +279,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
       buffer.position(0);
       encodeTagHeader(object.tagType, object.actualLength);
       out.write(data, 0, buffer.position());
-      int prevOffset = positions.getQuick(0);
-      out.write(data, object.start, prevOffset);
-      final int maxI = positions.size() - 1;
-      for (int i = 0; ; ) {
-        if (i >= maxI) {
-          out.write(data, prevOffset, (object.start + object.length) - prevOffset);
-          break;
-        }
-        else {
-          out.write(data, prevOffset, positions.getQuick(i++) - prevOffset);
-          prevOffset = positions.getQuick(i++);
-        }
-      }
+      writeSparceBytes(positions, object.start, object.start + object.length);
     }
   }
 

@@ -1,5 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.diagnostic.LogMessageEx;
+import com.intellij.diagnostic.errordialog.Attachment;
+import com.intellij.flex.uiDesigner.abc.EntireMovieTranscoder;
 import com.intellij.flex.uiDesigner.abc.MovieSymbolTranscoder;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.AmfOutputStream;
@@ -11,7 +14,10 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.psi.PropertiesFile;
-import com.intellij.openapi.application.*;
+import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -34,7 +40,6 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.AppIcon;
-import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 
@@ -417,8 +422,13 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private void getSwfData() throws IOException {
     initResultFile();
 
-    SwfAssetInfo assetInfo = EmbedSwfManager.getInstance().getInfo(reader.readUnsignedShort());
-    new MovieSymbolTranscoder().transcode(assetInfo.file, resultFile, assetInfo.symbolName);
+    final SwfAssetInfo assetInfo = EmbedSwfManager.getInstance().getInfo(reader.readUnsignedShort());
+    if (assetInfo.symbolName == null) {
+      new EntireMovieTranscoder().transcode(assetInfo.file, resultFile);
+    }
+    else {
+      new MovieSymbolTranscoder().transcode(assetInfo.file, resultFile, assetInfo.symbolName);
+    }
   }
 
   private void goToClass() throws IOException {
@@ -443,7 +453,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     if (reader.readBoolean()) {
       Project project = readProject();
       final VirtualFile file = DocumentFactoryManager.getInstance(project).getFile(reader.readUnsignedShort());
-      attachment = new Attachment(file.getPresentableUrl()  , LoadTextUtil.loadText(file).toString());
+      attachment = new Attachment(file.getPresentableUrl(), LoadTextUtil.loadText(file).toString());
       title = FlexUIDesignerBundle.message("problem.opening.mxml.document.0", file.getName());
     }
     else {

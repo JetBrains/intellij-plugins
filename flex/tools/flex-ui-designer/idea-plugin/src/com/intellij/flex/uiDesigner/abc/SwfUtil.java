@@ -22,6 +22,10 @@ final class SwfUtil {
     return getWrapHeaderLength() + SWF_FOOTER.length;
   }
 
+  public static int getWrapFooterLength() {
+    return SWF_FOOTER.length;
+  }
+
   public static int getWrapHeaderLength() {
     return SWF_HEADER_P1.length + 4 + SWF_HEADER_P2.length;
   }

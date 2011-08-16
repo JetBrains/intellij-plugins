@@ -7,6 +7,11 @@ import org.jetbrains.annotations.TestOnly;
 import java.io.*;
 
 public class EntireMovieTranscoder extends MovieTranscoder {
+  // Sprite ID and FrameCount
+  private static final int SPRITE_TAG_LENGTH_EXCEPT_CONTROL_TAGS = 4;
+  // we hope, this id is not used in transcoded swf
+  private static final int DOCUMENT_SPRITE_ID = 65532;
+
   private short frameCount;
   private int swfHeaderEnd;
 
@@ -27,29 +32,22 @@ public class EntireMovieTranscoder extends MovieTranscoder {
     swfHeaderEnd = buffer.position();
   }
 
-  private void transcode(InputStream inputStream, long inputLength, File outFile, boolean writeBounds) throws IOException {
-    final FileOutputStream out = transcode(inputStream, inputLength, outFile);
-    try {
-      transcode(out);
+  @Override
+  protected void transcode(boolean writeBounds) throws IOException {
+    if (writeBounds) {
+      writeMovieBounds();
     }
-    finally {
-      out.flush();
-      out.close();
-    }
-  }
 
-  private void transcode(FileOutputStream out) throws IOException {
     TIntArrayList ignoredBytesPositions = null;
-
     // write movie as 1-frame, frameCount = 1
     buffer.putShort(swfHeaderEnd - 2, (short)1);
 
     int initialStartPosition = swfHeaderEnd;
     int fileAttributesFullLength = 0;
     int tagStart;
-    int f = 0;
     int fileLength = buffer.capacity();
-    analyze: while ((tagStart = buffer.position()) < buffer.limit()) {
+    analyze:
+    while ((tagStart = buffer.position()) < buffer.limit()) {
       final int tagCodeAndLength = buffer.getShort();
       final int type = tagCodeAndLength >> 6;
       int length = tagCodeAndLength & 0x3F;
@@ -57,11 +55,8 @@ public class EntireMovieTranscoder extends MovieTranscoder {
         length = buffer.getInt();
       }
 
-
-
       switch (type) {
         case TagTypes.End:
-          f += length + (buffer.position() - tagStart);
           break analyze;
 
         case TagTypes.FileAttributes:
@@ -85,50 +80,34 @@ public class EntireMovieTranscoder extends MovieTranscoder {
           ignoredBytesPositions.add(tagStart + fullLength);
           fileLength -= fullLength;
           break;
-
-        default:
-          f += length + (buffer.position() - tagStart);
       }
 
       buffer.position(buffer.position() + length);
     }
 
-    final int spriteTagLength = (fileLength - initialStartPosition) + 4;
-    fileLength += PARTIAL_HEADER_LENGTH + (spriteTagLength >= 63 ? 6 : 2) + 4 + 4 /* swf end */;
+    final int spriteTagLength = (fileLength - initialStartPosition) + SPRITE_TAG_LENGTH_EXCEPT_CONTROL_TAGS;
+    final byte[] symbolOwnClassAbc = getSymbolOwnClassAbc(frameCount);
+    fileLength += PARTIAL_HEADER_LENGTH + symbolOwnClassAbc.length + recordHeaderLength(spriteTagLength) +
+                  SPRITE_TAG_LENGTH_EXCEPT_CONTROL_TAGS + SwfUtil.getWrapFooterLength() + SYMBOL_CLASS_TAG_FULL_LENGTH;
 
     writePartialHeader(out, fileLength);
-
-    final byte[] data = buffer.array();
     out.write(data, 0, initialStartPosition);
 
     buffer.position(0);
-
-    encodeLongTagHeader(TagTypes.DefineSprite, spriteTagLength /* Sprite ID and FrameCount */);
-    buffer.putShort((short)65532);
+    encodeTagHeader(TagTypes.DefineSprite, spriteTagLength);
+    buffer.putShort((short)DOCUMENT_SPRITE_ID);
     buffer.putShort(frameCount);
     out.write(data, 0, buffer.position());
 
-    out.flush();
-
     if (ignoredBytesPositions == null) {
-      throw new IllegalStateException();
+      out.write(data, initialStartPosition, data.length - initialStartPosition);
     }
     else {
-      final int maxI = ignoredBytesPositions.size() - 1;
-      int prevOffset = initialStartPosition;
-      int i = 0;
-      while (true) {
-        if (i >= maxI) {
-          out.write(data, prevOffset, data.length - prevOffset);
-          break;
-        }
-        else {
-          out.write(data, prevOffset, ignoredBytesPositions.getQuick(i++) - prevOffset);
-          prevOffset = ignoredBytesPositions.getQuick(i++);
-        }
-      }
+      writeSparceBytes(ignoredBytesPositions, initialStartPosition, data.length);
     }
 
+    out.write(symbolOwnClassAbc);
+    writeSymbolClass(DOCUMENT_SPRITE_ID);
     SwfUtil.footer(out);
   }
 }

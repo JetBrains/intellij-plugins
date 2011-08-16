@@ -66,9 +66,24 @@ public class MxmlTest extends BaseTestCase {
   }
 
   public function Embed():void {
+    validateUI(); // force swf get
     var bitmapData:BitmapData = app.getElementAt(0).getElementAt(0).source.data;
     var m:Matcher = allOf(equalTo(bitmapData), {transparent: false, width: 240, height: 180});
-    assertThat(app, [[{source: {data: m}}, {source: {data: m}}], {source: {data: {transparent: true, width: 240, height: 180}}}, {source: {data: {transparent: true, width: 500, height: 367}}}, {}]);
+    assertThat(app,
+               [
+                 [
+                   {source: {data:m}},
+                   {source: {data:m}}
+                 ],
+                 [
+                   {source: {data:{transparent: true, width: 240, height: 180}}},
+                   {source: {data:{transparent: true, width: 500, height: 367}}}
+                 ],
+                 [
+                   {},
+                   {}
+                 ]
+               ]);
   }
   
   public function UntypedProperty():void {

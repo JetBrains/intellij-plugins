@@ -25,6 +25,7 @@ public class EmbedSwfManager extends EmbedAssetManager<SwfAssetInfo> {
 }
 
 class SwfAssetInfo extends EmbedAssetInfo {
+  @Nullable
   public final String symbolName;
 
   public SwfAssetInfo(VirtualFile file, @Nullable String symbolName, int id) {
