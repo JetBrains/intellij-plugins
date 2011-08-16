@@ -191,4 +191,20 @@ public class JsPsiUtils {
     jsElements.add(jsElement);
   }
 
+  public static boolean isStringElement(JSExpression jsExpression) {
+    return extractStringValue(jsExpression) != null;
+  }
+
+  public static boolean isObjectElement(JSExpression jsExpression) {
+    return extractObjectLiteralExpression(jsExpression) != null;
+  }
+
+  public static boolean isFunctionExpressionElement(JSExpression jsExpression) {
+    return extractFunctionExpression(jsExpression) != null;
+  }
+
+  public static boolean isNumberElement(JSExpression jsExpression) {
+    return extractNumberLiteral(jsExpression) != null;
+  }
+
 }
