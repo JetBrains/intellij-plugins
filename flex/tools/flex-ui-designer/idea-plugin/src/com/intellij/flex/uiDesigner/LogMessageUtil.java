@@ -40,7 +40,7 @@ public final class LogMessageUtil {
         return Base64Converter.encode(file.contentsToByteArray());
       }
       catch (IOException e) {
-        return "Can't load binary file content";
+        return "Cannot load binary file content";
       }
     }
     else {

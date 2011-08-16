@@ -6,10 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
-import java.awt.image.WritableRaster;
+import java.awt.image.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -79,20 +76,21 @@ public final class ImageUtil {
 
     WritableRaster raster = image.getRaster();
     final int nbands = raster.getNumBands();
-    if (!(nbands == 3 || nbands == 4)) {
-      throw new IOException();
-    }
-
     final int unflushedBufferLength;
-    if (raster.getDataBuffer().getNumBanks() != 1) {
-      throw new IOException();
-    }
-
-    if (raster.getDataBuffer() instanceof DataBufferByte) {
-      unflushedBufferLength = writeDataByte(image, out, byteBuffer, nbands);
+    if (image.getType() == BufferedImage.TYPE_BYTE_INDEXED) {
+      unflushedBufferLength = writeDataByte(image, out, byteBuffer);
     }
     else {
-      unflushedBufferLength = writeDataInt(image, out, byteBuffer, nbands);
+      if (raster.getDataBuffer().getNumBanks() != 1) {
+        throw new IOException();
+      }
+
+      if (raster.getDataBuffer() instanceof DataBufferByte) {
+        unflushedBufferLength = writeDataByte(image, out, byteBuffer, nbands);
+      }
+      else {
+        unflushedBufferLength = writeDataInt(image, out, byteBuffer, nbands);
+      }
     }
 
     if (unflushedBufferLength > 0) {
@@ -180,6 +178,27 @@ public final class ImageUtil {
           out.write(byteBuffer, 0, bufferLength);
           bufferLength = 0;
         }
+      }
+    }
+
+    return bufferLength;
+  }
+
+  private static int writeDataByte(BufferedImage image, OutputStream out, byte[] byteBuffer) throws IOException {
+    int bufferLength = 0;
+    final DataBufferByte dataBuffer = (DataBufferByte)image.getRaster().getDataBuffer();
+    final ColorModel colorModel = image.getColorModel();
+    final byte[] data = dataBuffer.getData();
+    for (int i = 0, n = data.length; i < n; i++) {
+      final byte pixel = data[i];
+      byteBuffer[bufferLength++] = (byte)colorModel.getAlpha(pixel);
+      byteBuffer[bufferLength++] = (byte)colorModel.getRed(pixel);
+      byteBuffer[bufferLength++] = (byte)colorModel.getGreen(pixel);
+      byteBuffer[bufferLength++] = (byte)colorModel.getBlue(pixel);
+
+      if (bufferLength == MAX_BUFFER_LENGTH) {
+        out.write(byteBuffer, 0, bufferLength);
+        bufferLength = 0;
       }
     }
 
