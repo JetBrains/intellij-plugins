@@ -45,6 +45,7 @@
     <orderEntry type="module" module-name="git4idea" />
     <orderEntry type="module" module-name="ant" />
     <orderEntry type="module" module-name="github" />
+    <orderEntry type="module" module-name="relaxng" />
   </component>
 </module>
 
