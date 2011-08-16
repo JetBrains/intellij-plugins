@@ -1,3 +1,5 @@
-<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
   <Label text="uuuuu" width="50%" color="invalidColorName"/>
-</Group>
+  <Label text="2" color=""/>
+  <Label text="2" depth=""/>
+</VGroup>

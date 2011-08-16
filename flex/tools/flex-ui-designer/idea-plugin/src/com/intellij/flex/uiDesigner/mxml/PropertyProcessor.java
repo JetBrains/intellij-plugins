@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -200,18 +201,27 @@ class PropertyProcessor {
         writeString(valueProvider, descriptor);
       }
       else if (type.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
-        out.writeAmfDouble(valueProvider.getTrimmed());
+        final String trimmed = valueProvider.getTrimmed();
+        if (StringUtil.isEmpty(trimmed)) {
+          throw new InvalidPropertyException(valueProvider.getElement(), "invalid.number.value");
+        }
+        out.writeAmfDouble(trimmed);
       }
       else if (type.equals(JSCommonTypeNames.BOOLEAN_CLASS_NAME)) {
         out.writeAmfBoolean(valueProvider.getTrimmed());
       }
       else if (type.equals(JSCommonTypeNames.INT_TYPE_NAME) || type.equals(JSCommonTypeNames.UINT_TYPE_NAME)) {
+        final String trimmed = valueProvider.getTrimmed();
+        if (StringUtil.isEmpty(trimmed)) {
+          throw new InvalidPropertyException(valueProvider.getElement(), "invalid.integer.value");
+        }
+
         String format = descriptor.getFormat();
-        if (format != null && format.equals(FlexCssPropertyDescriptor.COLOR_FORMAT)) {
-          writer.writeColor(valueProvider.getElement(), valueProvider.getTrimmed(), isStyle);
+        if (FlexCssPropertyDescriptor.COLOR_FORMAT.equals(format)) {
+          writer.writeColor(valueProvider.getElement(), trimmed, isStyle);
         }
         else {
-          out.writeAmfInt(valueProvider.getTrimmed());
+          out.writeAmfInt(trimmed);
         }
       }
       else if (type.equals(JSCommonTypeNames.ARRAY_CLASS_NAME)) {

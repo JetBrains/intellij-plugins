@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.StringBuilderSpinAllocator;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,13 +55,28 @@ public class MxmlTest extends MxmlTestBase {
     }
     else {
       assertThat(problems,
-        "<b>Flex UI Designer</b><ul><li>Initializer for Group cannot be represented in text (line: 2)</li><li>Initializer for Container cannot be represented in text (line: 5)</li><li>Children of Accordion must be mx.core.INavigatorContent (line: 8)</li></ul>",
-        m("Unresolved variable unresolvedData"),
-        m("Support only MXML-based component AuxActionScriptProjectComponent"),
-        m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
-        m("Invalid color name invalidcolorname (line: 2)"),
-        m("Default property not found for Rect (line: 2)"),
-        m("spark.components.supportClasses.TrackBase is abstract class (line: 3)"));
+                 m("Initializer for Group cannot be represented in text (line: 2)", "Initializer for Container cannot be represented in text (line: 5)", "Children of Accordion must be mx.core.INavigatorContent (line: 8)"),
+                 m("Unresolved variable unresolvedData"),
+                 m("Support only MXML-based component AuxActionScriptProjectComponent"),
+                 m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
+                 m("Invalid color name invalidcolorname (line: 2)", "Invalid integer value (line: 3)", "Invalid number value (line: 4)"),
+                 m("Default property not found for Rect (line: 2)"),
+                 m("spark.components.supportClasses.TrackBase is abstract class (line: 3)"));
+    }
+  }
+
+  private static String m(String... messages) {
+    StringBuilder builder = StringBuilderSpinAllocator.alloc();
+    try {
+      builder.append("<b>Flex UI Designer</b><ul>");
+      for (String message : messages) {
+        builder.append("<li>").append(message).append("</li>");
+      }
+      builder.append("</ul>");
+      return builder.toString();
+    }
+    finally {
+      StringBuilderSpinAllocator.dispose(builder);
     }
   }
 

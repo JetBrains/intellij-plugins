@@ -143,7 +143,7 @@ public class MxmlTest extends BaseTestCase {
   }
   
   public function InvalidColorName():void {
-    assertThat(app, [{color: 0}]);
+    assertThat(app, [{color: 0}, {color: 0}, {depth: 0}]);
   }
 
   public function RuntimeError():void {
