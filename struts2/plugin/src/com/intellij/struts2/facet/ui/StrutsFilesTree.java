@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.facet.ui;
 
+import com.intellij.ide.presentation.VirtualFilePresentation;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -85,7 +86,7 @@ public class StrutsFilesTree extends CheckboxTreeBase {
           }
         } else if (object instanceof VirtualFile) {
           final VirtualFile file = (VirtualFile) object;
-          renderer.setIcon(file.getIcon());
+          renderer.setIcon(VirtualFilePresentation.getIcon(file));
           renderer.append(file.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
           String path = file.getPath();
           final int i = path.indexOf(JarFileSystem.JAR_SEPARATOR);

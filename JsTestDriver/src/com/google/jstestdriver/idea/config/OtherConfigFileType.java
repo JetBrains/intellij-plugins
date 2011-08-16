@@ -36,25 +36,49 @@ public class OtherConfigFileType extends LanguageFileType implements FileTypeIde
 
   public static final OtherConfigFileType INSTANCE = new OtherConfigFileType();
 
+  private static final String REQUIRED_FILE_EXTENSION = "conf";
+  private static final String[] SUITABLE_FILE_NAMES = new String[]{"JsTestDriver", "js-test-driver"};
+
   protected OtherConfigFileType() {
     super(YAMLLanguage.INSTANCE);
   }
 
   @Override
   public boolean isMyFileType(VirtualFile file) {
+    if (REQUIRED_FILE_EXTENSION.equals(file.getExtension())) {
+      if (isSuitableFileName(file.getNameWithoutExtension())) {
+        return true;
+      }
+      if (isReferencedByJstdRunConfiguration(file)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean isReferencedByJstdRunConfiguration(VirtualFile file) {
     Project[] projects = ProjectManager.getInstance().getOpenProjects();
     for (Project project : projects) {
       RunManager runManager = RunManager.getInstance(project);
       RunConfiguration[] runConfigurations = runManager.getConfigurations(JstdConfigurationType.getInstance());
       for (RunConfiguration runConfiguration : runConfigurations) {
         if (runConfiguration instanceof JstdRunConfiguration) {
-          JstdRunConfiguration jstdConfiguration = (JstdRunConfiguration) runConfiguration;
+          JstdRunConfiguration jstdConfiguration = (JstdRunConfiguration)runConfiguration;
           File targetIOFile = new File(jstdConfiguration.getRunSettings().getConfigFile());
           VirtualFile vf = LocalFileSystem.getInstance().findFileByIoFile(targetIOFile);
           if (vf == file) {
             return true;
           }
         }
+      }
+    }
+    return false;
+  }
+
+  private static boolean isSuitableFileName(String fileNameWithoutExtension) {
+    for (String name : SUITABLE_FILE_NAMES) {
+      if (name.equalsIgnoreCase(fileNameWithoutExtension)) {
+        return true;
       }
     }
     return false;
@@ -69,7 +93,7 @@ public class OtherConfigFileType extends LanguageFileType implements FileTypeIde
   @NotNull
   @Override
   public String getDescription() {
-    return "JsTestDriver config file referred by JSTestDriver Run Configuration";
+    return "JsTestDriver configuration file referred by JsTestDriver Run Configuration";
   }
 
   @NotNull
@@ -82,5 +106,4 @@ public class OtherConfigFileType extends LanguageFileType implements FileTypeIde
   public Icon getIcon() {
     return JstdConfigFileType.INSTANCE.getIcon();
   }
-
 }
