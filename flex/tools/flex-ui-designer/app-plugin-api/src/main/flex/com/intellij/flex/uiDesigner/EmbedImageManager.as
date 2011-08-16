@@ -19,6 +19,10 @@ public class EmbedImageManager extends AbstractEmbedAssetManager implements Embe
     var bitmapData:BitmapData = bitmapsData[id];
     if (bitmapData == null) {
       bitmapData = server.getBitmapData(id, project);
+      if (bitmapData == null) {
+        // todo more bitmap data with error text
+        bitmapData = new BitmapData(100, 100, false, 0xff0000);
+      }
       bitmapsData[id] = bitmapData;
     }
     containerClass["data"] = bitmapData;

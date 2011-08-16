@@ -51,7 +51,7 @@ public class ProblemsHolder {
                                                                       e.getPsiElement() == null ? -1 : getLineNumber(e.getPsiElement()));
     problems.add(problemDescriptor);
     if (e.getCause() != null) {
-      LogMessageUtil.createEvent(e.getMessage(), e.getCause(), problemDescriptor);
+      LOG.error(LogMessageUtil.createEvent(e.getMessage(), e.getCause(), problemDescriptor));
     }
   }
 
@@ -70,7 +70,7 @@ public class ProblemsHolder {
     }
 
     final ProblemDescriptor problemDescriptor = new ProblemDescriptor(error, currentFile, getLineNumber(element));
-    LogMessageUtil.createEvent(error, e, problemDescriptor);
+    LOG.error(LogMessageUtil.createEvent(error, e, problemDescriptor));
     problems.add(problemDescriptor);
   }
 
@@ -83,8 +83,8 @@ public class ProblemsHolder {
       add(((InvalidPropertyException)e));
     }
     else {
-      LogMessageEx.createEvent(e.getMessage(), ExceptionUtil.getThrowableText(e), LogMessageUtil.createTitle(currentFile), null,
-                               LogMessageUtil.createAttachment(currentFile));
+      LOG.error(LogMessageEx.createEvent(e.getMessage(), ExceptionUtil.getThrowableText(e), LogMessageUtil.createMxmlTitle(currentFile), null,
+                                         LogMessageUtil.createAttachment(currentFile)));
     }
   }
 

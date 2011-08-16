@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.diagnostic.LogMessageEx;
-import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.abc.EntireMovieTranscoder;
 import com.intellij.flex.uiDesigner.abc.MovieSymbolTranscoder;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
@@ -39,12 +38,14 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.AppIcon;
+import com.intellij.util.ExceptionUtil;
 import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.List;
 
 public class SocketInputHandlerImpl extends SocketInputHandler {
@@ -413,6 +414,11 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     try {
       ImageUtil.write(image, fileOut, assetInfo.mimeType, assetInfo.file);
     }
+    catch (IOException e) {
+      final String userMessage = FlexUIDesignerBundle.message("problem.opening.0", assetInfo.file.getName());
+      LOG.error(LogMessageUtil.createEvent(userMessage, ExceptionUtil.getThrowableText(e), assetInfo.file));
+      fileOut.getChannel().truncate(0);
+    }
     finally {
       fileOut.close();
     }
@@ -459,9 +465,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     if (StringUtil.isEmpty(userMessage)) {
       userMessage = technicalMessage;
     }
-    LOG.error(LogMessageEx.createEvent(userMessage, technicalMessage, LogMessageUtil.createTitle(file),
-                                       FlexUIDesignerBundle.message("problem.opening.mxml.document.balloon.text"),
-                                       LogMessageUtil.createAttachment(file)));
+    LOG.error(LogMessageUtil.createEvent(userMessage, technicalMessage, file));
   }
 
   private Module readModule() throws IOException {

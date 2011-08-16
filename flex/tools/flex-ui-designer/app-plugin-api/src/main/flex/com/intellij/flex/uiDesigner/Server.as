@@ -127,6 +127,10 @@ public class Server implements ResourceBundleProvider {
       var fileStream:FileStream = new FileStream();
       fileStream.open(resultFile, FileMode.READ);
       try {
+        if (fileStream.bytesAvailable == 0) {
+          return null;
+        }
+        
         var bitmapData:BitmapData = new BitmapData(fileStream.readUnsignedShort(), fileStream.readUnsignedShort(), fileStream.readBoolean(), 0);
         if (flashWorkaroundByteArray == null) {
           flashWorkaroundByteArray = new ByteArray();
@@ -149,8 +153,7 @@ public class Server implements ResourceBundleProvider {
       postCheckSyncMessaging(resultReadyFile, project);
     }
 
-    //noinspection UnreachableCodeJS
-    throw new Error("Burn in hell, Adobe.");
+    return null;
   }
 
   public function getSwfData(id:int, cacheItem:SwfAssetCacheItem, project:Project):ByteArray {

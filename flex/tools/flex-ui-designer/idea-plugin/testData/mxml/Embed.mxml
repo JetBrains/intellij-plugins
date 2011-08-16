@@ -2,6 +2,7 @@
   <HGroup>
     <Image source="@Embed('/background.jpg')"/>
     <Image source="@Embed(source='/background.jpg')"/>
+    <Image source="@Embed(source='/logo_bw.gif')"/>
   </HGroup>
 
   <HGroup>
