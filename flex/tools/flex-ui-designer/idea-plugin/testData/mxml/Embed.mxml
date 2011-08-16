@@ -3,6 +3,7 @@
     <Image source="@Embed('/background.jpg')"/>
     <Image source="@Embed(source='/background.jpg')"/>
     <Image source="@Embed(source='/logo_bw.gif')"/>
+    <Image source="@Embed(source='/bubble_animation.gif')"/>
   </HGroup>
 
   <HGroup>
