@@ -5,11 +5,9 @@ import flash.text.engine.FontDescription;
 import flash.text.engine.FontWeight;
 
 // todo grab from server
-public class CssElementFormat {
+public final class CssElementFormat {
   public static const MONOSPACED_FONT_DESCRIPTION:FontDescription = new FontDescription("Menlo, Monaco, Consolas, Inconsolata, Bitstream Vera Sans Mono, Courier, monospace");
 
-//  private static const FONT_BOLD_ESCRIPTION:FontDescription = new FontDescription("Monaco, Consolas", FontWeight.BOLD);
-  
   private static const LUCIDA_FONT_BOLD_ESCRIPTION:FontDescription = new FontDescription("Lucida Grande, Segoe UI, Sans", FontWeight.BOLD);
 
   public static const fileLinkHover:ElementFormat = new ElementFormat(LUCIDA_FONT_BOLD_ESCRIPTION, 11, 0x0000ff);

@@ -400,7 +400,7 @@ public class Client implements Closable {
     beginMessage(ClientMethod.qualifyExternalInlineStyleSource);
   }
 
-  public static void writeVirtualFile(VirtualFile file, AmfOutputStream out) {
+  public static void writeVirtualFile(VirtualFile file, PrimitiveAmfOutputStream out) {
     out.writeAmfUtf(file.getUrl());
     out.writeAmfUtf(file.getPresentableUrl());
   }

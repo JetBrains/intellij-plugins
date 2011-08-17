@@ -16,8 +16,15 @@ class ImageValueWriter extends BinaryValueWriter {
   }
 
   @Override
-  protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) throws InvalidPropertyException {
-    out.write(AmfExtendedTypes.IMAGE);
+  protected int getStyleFlags() {
+    return StyleFlags.EMBED_IMAGE;
+  }
+
+  @Override
+  protected void doWrite(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
+    if (!isStyle) {
+      out.write(AmfExtendedTypes.IMAGE);
+    }
     out.writeUInt29(EmbedImageManager.getInstance().add(virtualFile, mimeType, writer.getRequiredAssetsInfo()));
   }
 }

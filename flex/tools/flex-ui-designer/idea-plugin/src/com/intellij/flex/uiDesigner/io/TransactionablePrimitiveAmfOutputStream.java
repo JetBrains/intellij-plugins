@@ -1,9 +1,7 @@
 package com.intellij.flex.uiDesigner.io;
 
-import java.io.OutputStream;
-
 class TransactionablePrimitiveAmfOutputStream extends PrimitiveAmfOutputStream {
-  TransactionablePrimitiveAmfOutputStream(OutputStream out) {
+  TransactionablePrimitiveAmfOutputStream(AbstractByteArrayOutputStream out) {
     super(out);
   }
 

@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
+import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.display.BitmapData;
 import flash.filesystem.File;
@@ -16,10 +17,10 @@ import org.flyti.plexus.PlexusManager;
 
 public class Server implements ResourceBundleProvider {
   // we cannot use File.applicationDirectory.nativePath directly  http://juick.com/develar/1485063
-  private static const APP_DIR_PATH:String = File.applicationDirectory.nativePath;
+  private static const APP_DIR_PATH:String = File.applicationDirectory.nativePath + "/";
 
   // http://exaflood.de/syrotech/air-securityerror-filewriteresource/
-  private const resultFile:File = new File(APP_DIR_PATH + "/r");
+  private const resultFile:File = new File(APP_DIR_PATH + "r");
 
   private var socket:Socket;
 
@@ -114,13 +115,7 @@ public class Server implements ResourceBundleProvider {
   public function getBitmapData(id:int, project:Project):BitmapData {
     var resultReadyFile:File;
     try {
-      const resultReadyFilename:String = generateResultReadyFilename();
-      socket.writeByte(ServerMethod.GET_BITMAP_DATA);
-      socket.writeUTF(resultReadyFilename);
-      socket.writeShort(id);
-      socket.flush();
-
-      resultReadyFile = new File(APP_DIR_PATH + "/" + resultReadyFilename);
+      resultReadyFile = sendSyncAssetMessage(ServerMethod.GET_BITMAP_DATA, id);
       while (!resultReadyFile.exists) {
       }
 
@@ -156,16 +151,50 @@ public class Server implements ResourceBundleProvider {
     return null;
   }
 
+  private function sendSyncAssetMessage(method:int, id:int):File {
+    const resultReadyFilename:String = generateResultReadyFilename();
+    socket.writeByte(method);
+    socket.writeUTF(resultReadyFilename);
+    socket.writeShort(id);
+    socket.flush();
+    return new File(APP_DIR_PATH + resultReadyFilename);
+  }
+
+  public function getAssetInfo(id:int, project:Project, isSwf:Boolean):AssetInfo {
+    var resultReadyFile:File;
+    try {
+      resultReadyFile = sendSyncAssetMessage(isSwf ? ServerMethod.GET_EMBED_SWF_ASSET_INFO : ServerMethod.GET_EMBED_IMAGE_ASSET_INFO, id);
+      while (!resultReadyFile.exists) {
+      }
+
+      var fileStream:FileStream = new FileStream();
+      fileStream.open(resultFile, FileMode.READ);
+      try {
+        if (fileStream.bytesAvailable == 0) {
+          return null;
+        }
+        else {
+          return new AssetInfo(VirtualFileImpl.create(fileStream), AmfUtil.readNullableString(fileStream));
+        }
+      }
+      finally {
+        fileStream.close();
+      }
+    }
+    catch (e:Error) {
+      UncaughtErrorManager.instance.handleError(e, project);
+    }
+    finally {
+      postCheckSyncMessaging(resultReadyFile, project);
+    }
+
+    return null;
+  }
+
   public function getSwfData(id:int, cacheItem:SwfAssetCacheItem, project:Project):ByteArray {
     var resultReadyFile:File;
     try {
-      const resultReadyFilename:String = generateResultReadyFilename();
-      socket.writeByte(ServerMethod.GET_SWF_DATA);
-      socket.writeUTF(resultReadyFilename);
-      socket.writeShort(id);
-      socket.flush();
-
-      resultReadyFile = new File(APP_DIR_PATH + "/" + resultReadyFilename);
+      resultReadyFile = sendSyncAssetMessage(ServerMethod.GET_SWF_DATA, id);
       while (!resultReadyFile.exists) {
       }
 
@@ -204,7 +233,7 @@ public class Server implements ResourceBundleProvider {
       socket.writeUTF(bundleName);
       socket.flush();
 
-      resultReadyFile = new File(APP_DIR_PATH + "/" + resultReadyFilename);
+      resultReadyFile = new File(APP_DIR_PATH + resultReadyFilename);
       // fileStream.bytesAvailable is not update, i.e. we cannot while (fileStream.bytesAvailable == 0), so, we delete file after read
       while (!resultReadyFile.exists) {
       }

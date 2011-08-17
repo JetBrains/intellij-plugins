@@ -5,24 +5,26 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 import flash.filesystem.File;
 import flash.utils.Dictionary;
 import flash.utils.IDataInput;
-import flash.utils.IDataOutput;
-import flash.utils.IExternalizable;
 
-public final class VirtualFileImpl implements IExternalizable, VirtualFile {
+public final class VirtualFileImpl implements VirtualFile {
   private static const map:Dictionary = new Dictionary();
+
+  public var stylesheet:Stylesheet;
+
+  public function VirtualFileImpl(url:String, presentableUrl:String) {
+    _url = url;
+    _presentableUrl = presentableUrl;
+  }
   
   private var _url:String;
-  private var _presentableUrl:String;
-
   public function get url():String {
     return _url;
   }
 
+  private var _presentableUrl:String;
   public function get presentableUrl():String {
     return _presentableUrl;
   }
-
-  public var stylesheet:Stylesheet;
   
   private var _name:String;
   public function get name():String {
@@ -40,43 +42,24 @@ public final class VirtualFileImpl implements IExternalizable, VirtualFile {
   }
 
   public function createChild(name:String):VirtualFile {
-    var newUrl:String = url.charCodeAt(url.length - 1) == 47 ? (url + name) : (url + "/" + name);
+    const newUrl:String = url.charCodeAt(url.length - 1) == 47 ? (url + name) : (url + "/" + name);
     var file:VirtualFileImpl = map[newUrl];
-    if (file == null) {
-      return createNew(newUrl, presentableUrl + File.separator + name);
-    }
-    else {
-      return file;
-    }
+    return file == null ? createNew(newUrl, presentableUrl + File.separator + name) : file;
   }
 
   public static function create(input:IDataInput):VirtualFile {
-    return create2(AmfUtil.readUtf(input), AmfUtil.readUtf(input));
+    return create2(AmfUtil.readString(input), AmfUtil.readString(input));
   }
   
   private static function create2(url:String, presentableUrl:String):VirtualFile {
     var file:VirtualFileImpl = map[url];
-    if (file == null) {
-      return createNew(url, presentableUrl);
-    }
-    
-    return file;
+    return file == null ? createNew(url, presentableUrl) : file;
   }
 
   private static function createNew(url:String, presentableUrl:String):VirtualFileImpl {
-    var file:VirtualFileImpl = new VirtualFileImpl();
-    file._url = url;
-    file._presentableUrl = presentableUrl;
+    var file:VirtualFileImpl = new VirtualFileImpl(url, presentableUrl);
     map[url] = file;
     return file;
-  }
-
-  public function writeExternal(output:IDataOutput):void {
-  }
-
-  public function readExternal(input:IDataInput):void {
-    _url = AmfUtil.readUtf(input);
-    _presentableUrl = AmfUtil.readUtf(input);
   }
 }
 }

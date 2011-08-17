@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.io;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Collection;
 
 public class AmfOutputStream extends PrimitiveAmfOutputStream {
@@ -10,7 +9,7 @@ public class AmfOutputStream extends PrimitiveAmfOutputStream {
   TransactionableStringIntHashMap stringTable;
   TransactionableStringIntHashMap traitsTable;
 
-  public AmfOutputStream(OutputStream out) {
+  public AmfOutputStream(AbstractByteArrayOutputStream out) {
     super(out);
   }
 

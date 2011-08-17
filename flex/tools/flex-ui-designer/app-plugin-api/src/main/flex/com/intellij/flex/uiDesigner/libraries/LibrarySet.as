@@ -1,12 +1,8 @@
 package com.intellij.flex.uiDesigner.libraries {
-import com.intellij.flex.uiDesigner.VirtualFileImpl;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
-import flash.net.registerClassAlias;
 import flash.system.ApplicationDomain;
 import flash.utils.IDataInput;
-
-registerClassAlias("f", VirtualFileImpl);
 
 public final class LibrarySet {
   /**
@@ -82,7 +78,7 @@ public final class LibrarySet {
     n = input.readUnsignedByte();
     _loadSize += n;
     while (n-- > 0) {
-      new LibrarySetEmbedItem(_items[input.readUnsignedByte()], AmfUtil.readUtf(input));
+      new LibrarySetEmbedItem(_items[input.readUnsignedByte()], AmfUtil.readString(input));
     }
   }
 

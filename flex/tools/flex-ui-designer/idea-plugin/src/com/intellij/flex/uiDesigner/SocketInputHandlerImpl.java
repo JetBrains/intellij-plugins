@@ -1,12 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.flex.uiDesigner.abc.EntireMovieTranscoder;
 import com.intellij.flex.uiDesigner.abc.MovieSymbolTranscoder;
-import com.intellij.flex.uiDesigner.io.Amf3Types;
-import com.intellij.flex.uiDesigner.io.AmfOutputStream;
-import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
-import com.intellij.flex.uiDesigner.io.ImageUtil;
+import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -43,9 +39,7 @@ import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.channels.FileChannel;
 import java.util.List;
 
 public class SocketInputHandlerImpl extends SocketInputHandler {
@@ -99,7 +93,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   protected static boolean isFileBased(int command) {
-    return command == ServerMethod.GET_RESOURCE_BUNDLE || command == ServerMethod.GET_BITMAP_DATA || command == ServerMethod.GET_SWF_DATA;
+    return command >= ServerMethod.GET_RESOURCE_BUNDLE;
   }
 
   private boolean safeProcessCommand(int command) throws IOException {
@@ -139,6 +133,11 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
 
       case ServerMethod.GET_SWF_DATA:
         getSwfData();
+        break;
+
+      case ServerMethod.GET_EMBED_SWF_ASSET_INFO:
+      case ServerMethod.GET_EMBED_IMAGE_ASSET_INFO:
+        getAssetInfo(command == ServerMethod.GET_EMBED_SWF_ASSET_INFO);
         break;
 
       case ServerMethod.OPEN_FILE:
@@ -432,6 +431,33 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     }
     else {
       new MovieSymbolTranscoder().transcode(assetInfo.file, resultFile, assetInfo.symbolName);
+    }
+  }
+
+  private void getAssetInfo(final boolean isSwf) throws IOException {
+    initResultFile();
+
+    final int assetId = reader.readUnsignedShort();
+    final EmbedAssetInfo assetInfo = isSwf
+                                     ? EmbedSwfManager.getInstance().getInfo(assetId)
+                                     : EmbedImageManager.getInstance().getInfo(assetId);
+    final ByteArrayOutputStreamEx byteOut = new ByteArrayOutputStreamEx(1024);
+    final PrimitiveAmfOutputStream out = new PrimitiveAmfOutputStream(byteOut);
+    Client.writeVirtualFile(assetInfo.file, out);
+    out.writeNullableString(assetInfo instanceof SwfAssetInfo ? ((SwfAssetInfo)assetInfo).symbolName : null);
+
+    final FileOutputStream fileOut = new FileOutputStream(resultFile);
+    try {
+      byteOut.writeTo(fileOut);
+    }
+    catch (IOException e) {
+      final String userMessage = FlexUIDesignerBundle.message("problem.opening.0", assetInfo.file.getName());
+      LOG.error(LogMessageUtil.createEvent(userMessage, ExceptionUtil.getThrowableText(e), assetInfo.file));
+      fileOut.getChannel().truncate(0);
+    }
+    finally {
+      out.close();
+      fileOut.close();
     }
   }
 

@@ -14,10 +14,9 @@ abstract class AbstractPrimitiveValueWriter implements ValueWriter {
       out.write(getStyleFlags());
     }
 
-    write(out, writer);
-
+    doWrite(out, writer, isStyle);
     return isStyle ? PropertyProcessor.PRIMITIVE_STYLE : PropertyProcessor.PRIMITIVE;
   }
 
-  protected abstract void write(PrimitiveAmfOutputStream out, BaseWriter writer) throws InvalidPropertyException;
+  protected abstract void doWrite(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidPropertyException;
 }

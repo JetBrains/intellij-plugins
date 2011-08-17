@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.css {
 [Abstract]
-internal class CssEmbedAssetDeclaration extends AbstractCssDeclaration {
+public class CssEmbedAssetDeclaration extends AbstractCssDeclaration {
   public var id:int;
 
   protected var _name:String;

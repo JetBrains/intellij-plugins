@@ -2,10 +2,14 @@ package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import cocoa.text.TextLineUtil;
 import cocoa.util.StringUtil;
 
+import com.intellij.flex.uiDesigner.AssetInfo;
 import com.intellij.flex.uiDesigner.Module;
+import com.intellij.flex.uiDesigner.Server;
 import com.intellij.flex.uiDesigner.css.CssCondition;
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
 import com.intellij.flex.uiDesigner.css.CssDeclarationImpl;
+import com.intellij.flex.uiDesigner.css.CssEmbedAssetDeclaration;
+import com.intellij.flex.uiDesigner.css.CssEmbedSwfDeclaration;
 import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.css.CssSelector;
@@ -295,8 +299,8 @@ public class CssRulesetPrinter {
         break;
 
       case CssPropertyType.EMBED:
-        content = new Vector.<ContentElement>(4, true);
-        content[contentIndex++] = new TextElement('"UNSUPPORTED"', CssElementFormat.string);
+        content = printEmbed(contentIndex, CssEmbedAssetDeclaration(descriptor));
+        contentIndex = -1;
         break;
       
       case CssPropertyType.EFFECT:
@@ -346,6 +350,38 @@ public class CssRulesetPrinter {
     content[contentIndex++] = textElement;
 
     content[contentIndex++] = new TextElement('"', CssElementFormat.string);
+    content[contentIndex] = new TextElement(");", CssElementFormat.defaultText);
+
+    return content;
+  }
+
+  private function printEmbed(contentIndex:int, embedAsset:CssEmbedAssetDeclaration):Vector.<ContentElement> {
+    var server:Object = Server(_module.project.getComponent(Server));
+    var assetInfo:AssetInfo = server.getAssetInfo(embedAsset.id, _module.project, embedAsset is CssEmbedSwfDeclaration);
+
+    const symbol:String = assetInfo.symbol;
+    var content:Vector.<ContentElement> = new Vector.<ContentElement>(contentIndex + (symbol == null ? 6 : 12), true);
+    content[contentIndex++] = new TextElement("Embed", CssElementFormat.func);
+    content[contentIndex++] = new TextElement("(", CssElementFormat.defaultText);
+
+    if (symbol != null) {
+      content[contentIndex++] = new TextElement('source', CssElementFormat.func);
+      content[contentIndex++] = new TextElement("=", CssElementFormat.defaultText);
+    }
+
+    content[contentIndex++] = new TextElement('"', CssElementFormat.string);
+    var textElement:TextElement = new TextElement(assetInfo.file.presentableUrl, CssElementFormat.string);
+    textElement.userData = assetInfo.file;
+    content[contentIndex++] = textElement;
+    content[contentIndex++] = new TextElement('"', CssElementFormat.string);
+
+    if (symbol != null) {
+      content[contentIndex++] = new TextElement(", ", CssElementFormat.defaultText);
+      content[contentIndex++] = new TextElement('symbol', CssElementFormat.func);
+      content[contentIndex++] = new TextElement("=", CssElementFormat.defaultText);
+      content[contentIndex++] = new TextElement('"' + symbol + '"', CssElementFormat.string);
+    }
+
     content[contentIndex] = new TextElement(");", CssElementFormat.defaultText);
 
     return content;

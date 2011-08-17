@@ -50,7 +50,7 @@ public class NamespaceUnificator {
     }
   }
 
-  private function generatePrefixForEmptyPrefix(uri:String):String {
+  private static function generatePrefixForEmptyPrefix(uri:String):String {
     var si:int = uri.lastIndexOf("/");
     if (si == -1) {
       return uri;

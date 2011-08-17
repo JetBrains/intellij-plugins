@@ -15,7 +15,7 @@ class SkinProjectClassValueWriter extends AbstractPrimitiveValueWriter {
   }
 
   @Override
-  protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) {
+  protected void doWrite(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
     out.writeUInt29(reference); // MxmlReader knows about AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE
   }
 }

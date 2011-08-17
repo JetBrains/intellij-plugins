@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.ui.inspectors.styleInspector {
 import com.intellij.flex.uiDesigner.ElementManager;
 import com.intellij.flex.uiDesigner.Module;
 import com.intellij.flex.uiDesigner.Server;
+import com.intellij.flex.uiDesigner.VirtualFile;
 import com.intellij.flex.uiDesigner.css.CssDeclaration;
 import com.intellij.flex.uiDesigner.css.CssRuleset;
 import com.intellij.flex.uiDesigner.ui.CssElementFormat;
@@ -143,6 +144,9 @@ public class Interactor {
     if (element.userData is String) {
       server.goToClass(_module, element.userData);
     }
+    else if (element.userData is VirtualFile) {
+      embedAssetFileSourceClickHandler(element.userData);
+    }
     else if (LayoutProperties(element.textBlock.userData).constraint == null) {
       propertyReferenceClickHandler(element.userData);
     }
@@ -163,6 +167,10 @@ public class Interactor {
   
   private function fileSourceClickHandler(ruleset:CssRuleset):void {
     server.openFile(_module, ruleset.file.url, ruleset.textOffset);
+  }
+
+  private function embedAssetFileSourceClickHandler(file:VirtualFile):void {
+    server.openFile(_module, file.url, -1);
   }
   
   private function propertyReferenceClickHandler(ruleset:CssRuleset):void {

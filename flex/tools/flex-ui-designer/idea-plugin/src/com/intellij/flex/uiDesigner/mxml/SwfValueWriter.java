@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
 class SwfValueWriter extends BinaryValueWriter {
-  private final String symbol;
+  private @Nullable final String symbol;
 
   public SwfValueWriter(VirtualFile virtualFile, @Nullable String symbol) {
     super(virtualFile);
@@ -15,8 +15,15 @@ class SwfValueWriter extends BinaryValueWriter {
   }
 
   @Override
-  protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) throws InvalidPropertyException {
-    out.write(AmfExtendedTypes.SWF);
+  protected int getStyleFlags() {
+    return StyleFlags.EMBED_SWF;
+  }
+
+  @Override
+  protected void doWrite(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
+    if (!isStyle) {
+      out.write(AmfExtendedTypes.SWF);
+    }
     out.writeUInt29(EmbedSwfManager.getInstance().add(virtualFile, symbol, writer.getRequiredAssetsInfo()));
   }
 }

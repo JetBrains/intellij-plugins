@@ -62,7 +62,7 @@ public final class Stylesheet {
         var type:int = input.readByte();
         switch (type) {
           case CssPropertyType.STRING:
-            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, AmfUtil.readUtf(input));
+            declarations[i] = CssDeclarationImpl.create2(type, name, textOffset, null, AmfUtil.readString(input));
             break;
 
           case AmfExtendedTypes.STRING_REFERENCE:
@@ -78,8 +78,7 @@ public final class Stylesheet {
             break;
 
           case AmfExtendedTypes.SWF:
-            const symbolLength:int = AmfUtil.readUInt29(input);
-            CssEmbedSwfDeclaration(declarations[i] = CssEmbedSwfDeclaration.create(name, textOffset, symbolLength == 0 ? null : input.readUTFBytes(symbolLength), AmfUtil.readUInt29(input)));
+            CssEmbedSwfDeclaration(declarations[i] = CssEmbedSwfDeclaration.create2(name, textOffset, input));
             break;
 
           case AmfExtendedTypes.IMAGE:

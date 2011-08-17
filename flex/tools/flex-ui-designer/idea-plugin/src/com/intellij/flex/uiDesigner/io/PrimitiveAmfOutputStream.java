@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.io;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,8 +13,8 @@ public class PrimitiveAmfOutputStream extends OutputStream {
 
   protected AbstractByteArrayOutputStream out;
 
-  public PrimitiveAmfOutputStream(@NotNull OutputStream out) {
-    this.out = (AbstractByteArrayOutputStream)out;
+  public PrimitiveAmfOutputStream(@NotNull AbstractByteArrayOutputStream out) {
+    this.out = out;
   }
 
   public void close() throws IOException {
@@ -82,6 +83,15 @@ public class PrimitiveAmfOutputStream extends OutputStream {
     }
     else {
       throw new IllegalArgumentException("Integer out of range: " + v);
+    }
+  }
+
+  public void writeNullableString(@Nullable final CharSequence s) {
+    if (s == null) {
+      write(0);
+    }
+    else {
+      writeAmfUtf(s, false);
     }
   }
 

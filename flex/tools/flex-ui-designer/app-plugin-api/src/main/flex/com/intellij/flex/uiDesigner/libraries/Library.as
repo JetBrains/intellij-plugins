@@ -30,7 +30,7 @@ public class Library {
   }
 
   public function readExternal(input:IDataInput):void {
-    _path = AmfUtil.readUtf(input);
+    _path = AmfUtil.readString(input);
     _file = VirtualFileImpl.create(input);
 
     var n:int = input.readUnsignedShort();

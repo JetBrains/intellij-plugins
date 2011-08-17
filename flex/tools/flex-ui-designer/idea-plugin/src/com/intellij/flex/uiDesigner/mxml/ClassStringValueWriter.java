@@ -10,7 +10,7 @@ class ClassStringValueWriter extends AbstractPrimitiveValueWriter {
   }
 
   @Override
-  protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) {
+  protected void doWrite(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
     writer.writeClass(className);
   }
 }

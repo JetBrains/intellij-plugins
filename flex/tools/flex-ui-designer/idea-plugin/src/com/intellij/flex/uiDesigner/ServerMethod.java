@@ -1,24 +1,26 @@
 package com.intellij.flex.uiDesigner;
 
-final class ServerMethod {
-  public static final int OPEN_FILE = 1;
-  public static final int OPEN_FILE_AND_FIND_XML_ATTRIBUTE_OR_TAG = 14;
-  public static final int GO_TO_CLASS = 10;
-  public static final int OPEN_DOCUMENT = 11;
-  public static final int RESOLVE_EXTERNAL_INLINE_STYLE_DECLARATION_SOURCE = 2;
+interface ServerMethod {
+  int OPEN_FILE = 1;
+  int OPEN_FILE_AND_FIND_XML_ATTRIBUTE_OR_TAG = 8;
+  int GO_TO_CLASS = 7;
+  int OPEN_DOCUMENT = 9;
+  int RESOLVE_EXTERNAL_INLINE_STYLE_DECLARATION_SOURCE = 2;
 
-  public static final int SHOW_ERROR = 3;
+  int SHOW_ERROR = 3;
 
-  public static final int UNREGISTER_DOCUMENT_FACTORIES = 4;
+  int UNREGISTER_DOCUMENT_FACTORIES = 4;
 
-  public static final int CLOSE_PROJECT = 5;
-  public static final int SAVE_PROJECT_WINDOW_BOUNDS = 6;
+  int CLOSE_PROJECT = 5;
+  int SAVE_PROJECT_WINDOW_BOUNDS = 6;
 
-  public static final int GET_RESOURCE_BUNDLE = 7;
-  public static final int GET_BITMAP_DATA = 8;
-  public static final int GET_SWF_DATA = 9;
+  int GET_RESOURCE_BUNDLE = 50;
+  int GET_BITMAP_DATA = 51;
+  int GET_SWF_DATA = 52;
+  int GET_EMBED_IMAGE_ASSET_INFO = 53;
+  int GET_EMBED_SWF_ASSET_INFO = 54;
 
-  public static final int SET_PROPERTY = 12;
+  int SET_PROPERTY = 12;
 
-  public static final int DOCUMENT_OPENED = 13;
+  int DOCUMENT_OPENED = 13;
 }

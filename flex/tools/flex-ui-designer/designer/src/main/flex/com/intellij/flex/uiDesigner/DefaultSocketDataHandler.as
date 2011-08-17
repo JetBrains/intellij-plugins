@@ -94,7 +94,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private function openProject(input:IDataInput):void {
-    var project:Project = new Project(input.readUnsignedShort(), AmfUtil.readUtf(input), new ProjectEventMap());
+    var project:Project = new Project(input.readUnsignedShort(), AmfUtil.readString(input), new ProjectEventMap());
     var projectWindowBounds:Rectangle;
     if (input.readBoolean()) {
       projectWindowBounds = new Rectangle(input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort(), input.readUnsignedShort());
@@ -122,7 +122,7 @@ public class DefaultSocketDataHandler implements SocketDataHandler {
     const prevBytesAvailable:int = input.bytesAvailable;
     var module:Module = moduleManager.getById(input.readUnsignedShort());
     var bytes:ByteArray = new ByteArray();
-    var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input), AmfUtil.readUtf(input), module);
+    var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input), AmfUtil.readString(input), module);
     getDocumentFactoryManager(module).register(documentFactory);
     
     stringRegistry.readStringTable(input);

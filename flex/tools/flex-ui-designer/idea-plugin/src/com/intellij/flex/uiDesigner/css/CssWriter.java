@@ -548,14 +548,6 @@ public class CssWriter {
     }
 
     propertyOut.write(isSwf ? AmfExtendedTypes.SWF : AmfExtendedTypes.IMAGE);
-    if (isSwf) {
-      if (symbol == null) {
-        propertyOut.write(0);
-      }
-      else {
-        propertyOut.writeAmfUtf(symbol);
-      }
-    }
     propertyOut.writeUInt29(fileId);
   }
 

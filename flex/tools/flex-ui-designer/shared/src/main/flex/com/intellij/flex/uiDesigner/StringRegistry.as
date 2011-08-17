@@ -51,7 +51,7 @@ public final class StringRegistry {
       //  throw new IllegalOperationError(s + " already registered");
       //}
       //table[i++] = s;
-      table[i++] = AmfUtil.readUtf(input);
+      table[i++] = AmfUtil.readString(input);
     }
   }
   

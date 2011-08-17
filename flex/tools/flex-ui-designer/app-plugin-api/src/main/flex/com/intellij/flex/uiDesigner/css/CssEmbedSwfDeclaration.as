@@ -1,14 +1,17 @@
 package com.intellij.flex.uiDesigner.css {
-public class CssEmbedSwfDeclaration extends CssEmbedAssetDeclaration implements CssDeclaration {
-  public var symbol:String;
+import com.intellij.flex.uiDesigner.io.AmfUtil;
 
-  public static function create(name:String, textOffset:int, symbol:String, id:int):CssEmbedSwfDeclaration {
-    var declaration:CssEmbedSwfDeclaration = new CssEmbedSwfDeclaration();
-    declaration._name = name;
-    declaration._textOffset = textOffset;
-    declaration.id = id;
-    declaration.symbol = symbol;
-    return declaration;
+import flash.utils.IDataInput;
+
+public class CssEmbedSwfDeclaration extends CssEmbedAssetDeclaration implements CssDeclaration {
+  public static function create2(name:String, textOffset:int, input:IDataInput):CssEmbedSwfDeclaration {
+    return new CssEmbedSwfDeclaration(name, textOffset, AmfUtil.readUInt29(input));
+  }
+
+  public function CssEmbedSwfDeclaration(name:String, textOffset:int, id:int) {
+    _name = name;
+    _textOffset = textOffset;
+    this.id = id;
   }
 }
 }

@@ -14,7 +14,7 @@ class InjectedArrayOfPrimitivesWriter extends AbstractPrimitiveValueWriter {
   }
 
   @Override
-  protected void write(PrimitiveAmfOutputStream out, BaseWriter writer) {
+  protected void doWrite(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
     out.write(Amf3Types.ARRAY);
     for (int i = 0, expressionsLength = expressions.length; i < expressionsLength; i++) {
       JSLiteralExpression expression = (JSLiteralExpression)expressions[i];
