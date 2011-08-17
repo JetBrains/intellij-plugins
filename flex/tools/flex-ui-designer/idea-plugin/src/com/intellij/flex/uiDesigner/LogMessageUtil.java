@@ -28,24 +28,9 @@ public final class LogMessageUtil {
            : FlexUIDesignerBundle.message("problem.opening.balloon.text", file.getName());
   }
 
+  @Nullable
   public static Attachment createAttachment(@Nullable VirtualFile file) {
-    return file == null
-           ? null
-           : new Attachment(file.getPresentableUrl(), loadText(file));
-  }
-
-  private static String loadText(VirtualFile file) {
-    if (file.getFileType().isBinary()) {
-      try {
-        return Base64Converter.encode(file.contentsToByteArray());
-      }
-      catch (IOException e) {
-        return "Cannot load binary file content";
-      }
-    }
-    else {
-      return LoadTextUtil.loadText(file).toString();
-    }
+    return file == null ? null : new Attachment(file);
   }
 
   public static IdeaLoggingEvent createEvent(String userMessage, Throwable e, ProblemDescriptor problemDescriptor) {
