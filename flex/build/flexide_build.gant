@@ -45,6 +45,7 @@ setProperty("pluginFilter", [
 
 private List platformImplementationModules() {
   return [
+          "core-impl",
           "RegExpSupport",
           "license_common",
           "platform-ultimate",
@@ -79,7 +80,7 @@ private List platformImplementationModules() {
 }
 
 private List<String> platformApiModules() {
-  return ["platform-api", "lvcs-api", "lang-api", "vcs-api", "usageView", "xdebugger-api", "xml-openapi", "dom-openapi", "webide-api",
+  return ["core-api", "platform-api", "lvcs-api", "lang-api", "vcs-api", "usageView", "xdebugger-api", "xml-openapi", "dom-openapi", "webide-api",
           "openapi", "testFramework-java", "debugger-openapi", "compiler-openapi", "execution-openapi", "jsp-openapi", "jsp-base-openapi"]
 }
 
