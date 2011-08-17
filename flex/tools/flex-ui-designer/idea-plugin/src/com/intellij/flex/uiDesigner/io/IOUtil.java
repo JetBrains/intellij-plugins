@@ -85,6 +85,11 @@ public final class IOUtil {
     out.write(v & 0xff);
   }
 
+  public static void writeShort(final int v, final OutputStream out) throws IOException {
+    out.write((v >>> 8) & 0xff);
+    out.write(v & 0xff);
+  }
+
   public static void close(Closable closable) {
     if (closable != null) {
       try {

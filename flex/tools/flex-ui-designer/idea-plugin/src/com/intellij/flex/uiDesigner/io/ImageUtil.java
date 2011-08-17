@@ -1,16 +1,12 @@
 package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.Nullable;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.image.*;
+import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.awt.image.PixelGrabber;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Iterator;
 
 public final class ImageUtil {
   private static final int MAX_BUFFER_LENGTH = 12288;
@@ -21,180 +17,33 @@ public final class ImageUtil {
     }
   };
 
-  // ImageIO doesn't support TIFF, but Flex compiler too, so, we don't need JAI
-  public static BufferedImage getImage(final VirtualFile virtualFile, final @Nullable String mimeType) throws IOException {
-    final InputStream inputStream = virtualFile.getInputStream();
-    final BufferedImage image;
-    final Iterator<ImageReader> readers;
-    if (mimeType == null) {
-      readers = ImageIO.getImageReadersBySuffix(virtualFile.getExtension());
-    }
-    else {
-     readers = ImageIO.getImageReadersByMIMEType(mimeType);
-    }
-
+  public static void write(VirtualFile file, String mimeType, FileOutputStream out) throws IOException {
+    Image image = Toolkit.getDefaultToolkit().createImage(file.contentsToByteArray());
+    PixelGrabber pixelGrabber = new PixelGrabber(image, 0, 0, -1, -1, true);
     try {
-      ImageReader reader = readers.next();
-      // skip sanselan, we don't want it (prefer to standard sun impl)
-      if (reader.getFormatName().equals("UNKNOWN")) {
-        reader = readers.next();
-      }
-
-      ImageInputStream imageInputStream = ImageIO.createImageInputStream(inputStream);
-      reader.setInput(imageInputStream, true, true);
-      try {
-        image = reader.read(0, reader.getDefaultReadParam());
-      }
-      finally {
-        reader.dispose();
-        imageInputStream.close();
-      }
+      pixelGrabber.grabPixels();
     }
-    finally {
-      inputStream.close();
+    catch (InterruptedException e) {
+      throw new IOException("Failed to grab pixels for image " + file.getPresentableUrl());
     }
 
-    return image;
-  }
-
-  // http://juick.com/develar/1274330 flex compiler determine BitmapData.transparent by file type,
-  // but not actual pixels (i.e. BufferedImage.getTransparency()), so, for png always true, false for others (gif and jpg)
-  public static void write(final BufferedImage image, final OutputStream out, final String mimeType, final VirtualFile virtualFile) throws IOException {
-    write(image, out, mimeType == null ? virtualFile.getName().endsWith(".png") : mimeType.equals("image/png"));
-  }
-
-  public static void write(final BufferedImage image, final OutputStream out, final boolean transparent) throws IOException {
-    final int width = image.getWidth();
-    final int height = image.getHeight();
+    if (((pixelGrabber.getStatus() & ImageObserver.WIDTH) == 0) ||
+        ((pixelGrabber.getStatus() & ImageObserver.HEIGHT) == 0)) {
+      throw new IOException("Failed to grab pixels for image " + file.getPresentableUrl());
+    }
 
     final byte[] byteBuffer = BUFFER.get();
-
-    IOUtil.writeShort(width, byteBuffer, 0);
-    IOUtil.writeShort(height, byteBuffer, 2);
-    byteBuffer[4] = (byte)(transparent ? 1 : 0);
+    IOUtil.writeShort(pixelGrabber.getWidth(), byteBuffer, 0);
+    IOUtil.writeShort(pixelGrabber.getHeight(), byteBuffer, 2);
+    byteBuffer[4] = (byte)((mimeType == null ? file.getName().endsWith(".jpg") : mimeType.equals("image/jpeg")) ? 0 : 1);
     out.write(byteBuffer, 0, 5);
 
-    WritableRaster raster = image.getRaster();
-    final int nbands = raster.getNumBands();
-    final int unflushedBufferLength;
-    if (image.getType() == BufferedImage.TYPE_BYTE_INDEXED) {
-      unflushedBufferLength = writeDataByte(image, out, byteBuffer);
-    }
-    else {
-      if (raster.getDataBuffer().getNumBanks() != 1) {
-        throw new IOException();
-      }
-
-      if (raster.getDataBuffer() instanceof DataBufferByte) {
-        unflushedBufferLength = writeDataByte(image, out, byteBuffer, nbands);
-      }
-      else {
-        unflushedBufferLength = writeDataInt(image, out, byteBuffer, nbands);
-      }
-    }
-
-    if (unflushedBufferLength > 0) {
-      out.write(byteBuffer, 0, unflushedBufferLength);
-    }
-  }
-
-  private static int writeDataInt(BufferedImage image, OutputStream out, byte[] byteBuffer, int nbands) throws IOException {
     int bufferLength = 0;
-    final DataBufferInt dataBuffer = (DataBufferInt)image.getRaster().getDataBuffer();
-    int[] data = dataBuffer.getData();
-    if (nbands == 3) {
-      if (image.getType() != BufferedImage.TYPE_INT_RGB) {
-        throw new IOException();
-      }
-
-      for (int i = 0, n = data.length; i < n; i += 1) {
-        int pixel = data[i];
-        byteBuffer[bufferLength++] = (byte)255;
-        byteBuffer[bufferLength++] = (byte)((pixel >> 16) & 0xff);
-        byteBuffer[bufferLength++] = (byte)((pixel >> 8) & 0xff);
-        byteBuffer[bufferLength++] = (byte)(pixel & 0xff);
-
-        if (bufferLength == MAX_BUFFER_LENGTH) {
-          out.write(byteBuffer, 0, bufferLength);
-          bufferLength = 0;
-        }
-      }
-    }
-    else {
-      if (image.getType() != BufferedImage.TYPE_INT_ARGB) {
-        throw new IOException();
-      }
-
-      for (int i = 0, n = data.length; i < n; i += 1) {
-        int pixel = data[i];
-        byteBuffer[bufferLength++] = (byte)((pixel >> 24) & 0xff);
-        byteBuffer[bufferLength++] = (byte)((pixel >> 16) & 0xff);
-        byteBuffer[bufferLength++] = (byte)((pixel >> 8) & 0xff);
-        byteBuffer[bufferLength++] = (byte)(pixel & 0xff);
-
-        if (bufferLength == MAX_BUFFER_LENGTH) {
-          out.write(byteBuffer, 0, bufferLength);
-          bufferLength = 0;
-        }
-      }
-    }
-
-    return bufferLength;
-  }
-
-  private static int writeDataByte(BufferedImage image, OutputStream out, byte[] byteBuffer, int nbands) throws IOException {
-    int bufferLength = 0;
-    final DataBufferByte dataBuffer = (DataBufferByte)image.getRaster().getDataBuffer();
-    byte[] data = dataBuffer.getData();
-    if (nbands == 3) {
-      if (image.getType() != BufferedImage.TYPE_3BYTE_BGR) {
-        throw new IOException();
-      }
-
-      for (int i = 0, n = data.length; i < n; i += 3) {
-        byteBuffer[bufferLength++] = (byte)255;
-        byteBuffer[bufferLength++] = (byte)(data[i + 2] & 0xff);
-        byteBuffer[bufferLength++] = (byte)(data[i + 1] & 0xff);
-        byteBuffer[bufferLength++] = (byte)(data[i] & 0xff);
-
-        if (bufferLength == MAX_BUFFER_LENGTH) {
-          out.write(byteBuffer, 0, bufferLength);
-          bufferLength = 0;
-        }
-      }
-    }
-    else {
-      if (image.getType() != BufferedImage.TYPE_4BYTE_ABGR) {
-        throw new IOException();
-      }
-
-      for (int i = 0, n = data.length; i < n; i += 4) {
-        byteBuffer[bufferLength++] = (byte)(data[i] & 0xff);
-        byteBuffer[bufferLength++] = (byte)(data[i + 3] & 0xff);
-        byteBuffer[bufferLength++] = (byte)(data[i + 2] & 0xff);
-        byteBuffer[bufferLength++] = (byte)(data[i + 1] & 0xff);
-
-        if (bufferLength == MAX_BUFFER_LENGTH) {
-          out.write(byteBuffer, 0, bufferLength);
-          bufferLength = 0;
-        }
-      }
-    }
-
-    return bufferLength;
-  }
-
-  private static int writeDataByte(BufferedImage image, OutputStream out, byte[] byteBuffer) throws IOException {
-    int bufferLength = 0;
-    final DataBufferByte dataBuffer = (DataBufferByte)image.getRaster().getDataBuffer();
-    final ColorModel colorModel = image.getColorModel();
-    final byte[] data = dataBuffer.getData();
-    for (int i = 0, n = data.length; i < n; i++) {
-      final byte pixel = data[i];
-      byteBuffer[bufferLength++] = (byte)colorModel.getAlpha(pixel);
-      byteBuffer[bufferLength++] = (byte)colorModel.getRed(pixel);
-      byteBuffer[bufferLength++] = (byte)colorModel.getGreen(pixel);
-      byteBuffer[bufferLength++] = (byte)colorModel.getBlue(pixel);
+    for (int pixel : (int[])pixelGrabber.getPixels()) {
+      byteBuffer[bufferLength++] = (byte)((pixel >> 24) & 0xff);
+      byteBuffer[bufferLength++] = (byte)((pixel >> 16) & 0xff);
+      byteBuffer[bufferLength++] = (byte)((pixel >> 8) & 0xff);
+      byteBuffer[bufferLength++] = (byte)(pixel & 0xff);
 
       if (bufferLength == MAX_BUFFER_LENGTH) {
         out.write(byteBuffer, 0, bufferLength);
@@ -202,6 +51,8 @@ public final class ImageUtil {
       }
     }
 
-    return bufferLength;
+    if (bufferLength > 0) {
+      out.write(byteBuffer, 0, bufferLength);
+    }
   }
 }

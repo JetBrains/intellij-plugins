@@ -408,11 +408,10 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private void getBitmapData() throws IOException {
     initResultFile();
 
-    ImageAssetInfo assetInfo = EmbedImageManager.getInstance().getInfo(reader.readUnsignedShort());
-    BufferedImage image = ImageUtil.getImage(assetInfo.file, assetInfo.mimeType);
-    FileOutputStream fileOut = new FileOutputStream(resultFile);
+    final ImageAssetInfo assetInfo = EmbedImageManager.getInstance().getInfo(reader.readUnsignedShort());
+    final FileOutputStream fileOut = new FileOutputStream(resultFile);
     try {
-      ImageUtil.write(image, fileOut, assetInfo.mimeType, assetInfo.file);
+      ImageUtil.write(assetInfo.file, assetInfo.mimeType, fileOut);
     }
     catch (IOException e) {
       final String userMessage = FlexUIDesignerBundle.message("problem.opening.0", assetInfo.file.getName());

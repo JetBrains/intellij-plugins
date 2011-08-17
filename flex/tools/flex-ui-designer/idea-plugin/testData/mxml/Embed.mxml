@@ -6,6 +6,8 @@
     <Image source="@Embed(source='/bubble_animation.gif')"/>
   </HGroup>
 
+  <Image source="@Embed(source='/transparentGif.gif')"/>
+
   <HGroup>
     <BitmapImage source="@Embed(source='/background.p-n-g', mimeType='image/png')"/>
     <BitmapImage source="@Embed(source='/adventchildren_logo_notext_png.png')"/>

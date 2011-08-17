@@ -72,12 +72,15 @@ public class MxmlTest extends BaseTestCase {
     assertThat(app,
                [
                  [
-                   {source: {data:m}},
-                   {source: {data:m}}
+                   {source: {data: m}},
+                   {source: {data: m}},
+                   {source: {data: {transparent: false, width: 124, height: 44}}},
+                   {source: {data: {transparent: true, width: 225, height: 225}}}
                  ],
+                 {source: {data: {transparent: true, width: 80, height: 80}}},
                  [
-                   {source: {data:{transparent: true, width: 240, height: 180}}},
-                   {source: {data:{transparent: true, width: 500, height: 367}}}
+                   {source: {data: {transparent: true, width: 240, height: 180}}},
+                   {source: {data: {transparent: true, width: 500, height: 367}}}
                  ],
                  [
                    {},
