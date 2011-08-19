@@ -20,23 +20,25 @@ import java.util.*;
 public class IdeaConfigurator {
   protected static final String PATH_ELEMENT = "path-element";
   protected static final String FILE_SPECS = "file-specs";
+  public static final String SOURCE_PATH = "source-path";
 
   protected OutputStreamWriter out;
+  protected Build build;
 
-  private static final Map<String, String> childTagNameMap = new HashMap<String, String>(12);
+  private static final Map<String, String> CHILD_TAG_NAME_MAP = new HashMap<String, String>(12);
 
   static {
-    childTagNameMap.put("keep-as3-metadata", "name");
-    childTagNameMap.put("include-namespaces", "uri");
-    childTagNameMap.put("include-classes", "class");
-    childTagNameMap.put("include-libraries", "library");
-    childTagNameMap.put("locale", "locale-element");
-    childTagNameMap.put("managers", "manager-class");
-    childTagNameMap.put("externs", "symbol");
-    childTagNameMap.put("includes", "symbol");
-    childTagNameMap.put("extensions", "extension");
-    childTagNameMap.put("include-resource-bundles", "bundle");
-    childTagNameMap.put("theme", "filename");
+    CHILD_TAG_NAME_MAP.put("keep-as3-metadata", "name");
+    CHILD_TAG_NAME_MAP.put("include-namespaces", "uri");
+    CHILD_TAG_NAME_MAP.put("include-classes", "class");
+    CHILD_TAG_NAME_MAP.put("include-libraries", "library");
+    CHILD_TAG_NAME_MAP.put("locale", "locale-element");
+    CHILD_TAG_NAME_MAP.put("managers", "manager-class");
+    CHILD_TAG_NAME_MAP.put("externs", "symbol");
+    CHILD_TAG_NAME_MAP.put("includes", "symbol");
+    CHILD_TAG_NAME_MAP.put("extensions", "extension");
+    CHILD_TAG_NAME_MAP.put("include-resource-bundles", "bundle");
+    CHILD_TAG_NAME_MAP.put("theme", "filename");
   }
 
   public void buildConfiguration(Mojo configuration, File sourceFile, Class configurationClass) throws Exception {
@@ -56,7 +58,6 @@ public class IdeaConfigurator {
   }
 
   protected String getConfigFilePath(MavenProject project, String classifier) {
-    Build build = project.getBuild();
     StringBuilder pathBuilder = new StringBuilder(build.getDirectory()).append(File.separatorChar).append(build.getFinalName());
     if (classifier != null) {
       pathBuilder.append('-').append(classifier);
@@ -66,6 +67,7 @@ public class IdeaConfigurator {
   }
 
   public void init(MavenSession session, MavenProject project, String classifier) throws IOException {
+    build = project.getBuild();
     File configFile = new File(getConfigFilePath(project, classifier));
     //noinspection ResultOfMethodCallIgnored
     configFile.getParentFile().mkdirs();
@@ -91,12 +93,12 @@ public class IdeaConfigurator {
         continue;
       }
 
-      String methodName = method.getName();
+      final String methodName = method.getName();
       if (methodName.equals("getLoadConfig") || methodName.equals("getDumpConfig") || ("metadata".equals(configurationName) && methodName.equals("getDate"))) {
         continue;
       }
 
-      Object value = method.invoke(configuration);
+      final Object value = method.invoke(configuration);
       if (value == null) {
         continue;
       }
@@ -110,8 +112,8 @@ public class IdeaConfigurator {
         out.append(indent, 0, indent.length() - 1).append('<').append(configurationName).append('>');
       }
 
-      Class<?> returnType = method.getReturnType();
-      String name = parseName(methodName);
+      final Class<?> returnType = method.getReturnType();
+      final String name = parseName(methodName);
 
       if (value instanceof IFlexConfiguration) {
         build(value, returnType, indent + "\t", name.substring(0, name.length() - 14));
@@ -216,7 +218,7 @@ public class IdeaConfigurator {
         else {
           out.append('>');
 
-          String childTagName = childTagNameMap.get(name);
+          String childTagName = CHILD_TAG_NAME_MAP.get(name);
           if (childTagName == null) {
             childTagName = PATH_ELEMENT;
           }
@@ -224,6 +226,11 @@ public class IdeaConfigurator {
           for (Object v : values) {
             writeTag(indent, childTagName, v.toString(), name);
           }
+
+          if (name.equals(SOURCE_PATH) && "compiler".equals(configurationName)) {
+            addGeneratedSources((File[])values, indent);
+          }
+
           out.append(indent).append("</").append(name).append('>');
         }
       }
@@ -236,6 +243,20 @@ public class IdeaConfigurator {
 
     if (parentTagWritten && configurationName != null) {
       out.append(indent, 0, indent.length() - 1).append("</").append(configurationName).append('>');
+    }
+  }
+
+  private void addGeneratedSources(File[] existing, String indent) throws IOException {
+    File generatedSources = new File(build.getDirectory(), "/generated-sources");
+    if (!generatedSources.isDirectory()) {
+      return;
+    }
+
+    final List<File> existingList = Arrays.asList(existing);
+    for (File file : generatedSources.listFiles()) {
+      if (file.isDirectory() && !file.isHidden() && existingList.indexOf(file) == -1) {
+        writeTag(indent, PATH_ELEMENT, file.getAbsolutePath(), SOURCE_PATH);
+      }
     }
   }
 

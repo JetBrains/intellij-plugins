@@ -13,10 +13,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-flex-compiler:4.0-beta-7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-threadlocaltoolkit-wrapper:4.0-beta-7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-generator-internal-compiler-iface:4.0-beta-7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-generator-api:4.0-beta-7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-flex-compiler:4.0-RC1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-threadlocaltoolkit-wrapper:4.0-RC1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-generator-internal-compiler-iface:4.0-RC1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-generator-api:4.0-RC1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-shim:2.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-component-annotations:1.5.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.inject:javax.inject:1" level="project" />
@@ -36,33 +36,66 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-binders:2.1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.sisu.inject:guice-plexus-scanners:2.1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.ws.jaxme:jaxmejs:0.5.2" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:asc:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:asdoc:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:batik-all-flex:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:commons-collections:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:commons-discovery:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:commons-logging:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:compc:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:digest:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:fcsh:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:fdb:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:flex-compiler-oem:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:flex-messaging-common:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:fxgutils:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:optimizer:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:saxon9:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:swfutils:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:velocity-dep-1.4-flex:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xalan:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesImpl:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesPatch:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xmlParserAPIs:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:afe:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:aglj40:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:flex-fontkit:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:rideau:4.5.0.19786" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:swcdepends:4.5.0.19786" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:adt:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:afe:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:aglj40:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:asc:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:asdoc:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:baksmali:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:batik-all-flex:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:batik_de:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:batik_fr:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:batik_ja:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:batik_ko:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:batik_ru:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:batik_zh_CN:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:commons-collections:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:commons-discovery:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:commons-logging:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:compc:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:copylocale:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:digest:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:fcsh:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:fdb:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:flex-compiler-oem:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:flex-fontkit:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:flex-messaging-common:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:fxgutils:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:license:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_da:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_de:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_es:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_fi:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_fr:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_it:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_ja:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_ko:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_nb:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_nl:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_pt:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_ru:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_sv:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_zh_CN:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:mxmlc_zh_TW:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:optimizer:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:rideau:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:saxon9:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:smali:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:swcdepends:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:swfdump:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:swfutils:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:velocity-dep-1.4-flex:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xalan:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesImpl:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesImpl_de:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesImpl_fr:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesImpl_ja:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesImpl_ko:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesImpl_ru:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesImpl_zh_CN:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xercesPatch:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xmlParserAPIs:4.5.1.21328" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-library:1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-core:3.0.3" level="project" />

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../simple-generation/flex/generation.iml" filepath="$PROJECT_DIR$/../simple-generation/flex/generation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../simple-generation/generationAggregator.iml" filepath="$PROJECT_DIR$/../simple-generation/generationAggregator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../simple-generation/java/generator-jar.iml" filepath="$PROJECT_DIR$/../simple-generation/java/generator-jar.iml" />
+    </modules>
+  </component>
+</project>
+
