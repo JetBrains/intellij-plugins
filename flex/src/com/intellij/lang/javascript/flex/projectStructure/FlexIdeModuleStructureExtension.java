@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -34,7 +35,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
   public boolean addModuleNodeChildren(final Module module,
                                        final MasterDetailsComponent.MyNode moduleNode,
                                        final Runnable treeNodeNameUpdater) {
-    if (!(module.getModuleType() instanceof FlexModuleType)) {
+    if (!(ModuleType.get(module) instanceof FlexModuleType)) {
       return false;
     }
 
@@ -123,7 +124,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
         final Object selectedObject = selectedObjectRetriever.compute();
         e.getPresentation().setVisible(selectedObject instanceof FlexIdeBuildConfiguration ||
                                        (selectedObject instanceof Module &&
-                                        ((Module)selectedObject).getModuleType() instanceof FlexModuleType));
+                                        ModuleType.get((Module)selectedObject) instanceof FlexModuleType));
       }
 
       public void actionPerformed(final AnActionEvent e) {
