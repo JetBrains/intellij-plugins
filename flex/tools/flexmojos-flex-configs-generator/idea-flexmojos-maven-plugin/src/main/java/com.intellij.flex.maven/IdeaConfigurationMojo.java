@@ -15,6 +15,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @goal generate
@@ -48,11 +50,18 @@ public class IdeaConfigurationMojo extends AbstractMojo {
   private LifecycleExecutionPlanCalculator lifeCycleExecutionPlanCalculator;
 
   /**
-   * @parameter expression="${generateAlsoShareable}"
+   * @parameter expression="${generateShareable}"
    * @readonly
    */
   @SuppressWarnings({"UnusedDeclaration"})
-  private boolean generateAlsoShareable;
+  private boolean generateShareable;
+
+  /**
+   * @parameter expression="${generateNonShareable}" default-value="true"
+   * @readonly
+   */
+  @SuppressWarnings({"UnusedDeclaration"})
+  private boolean generateNonShareable;
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
@@ -96,15 +105,26 @@ public class IdeaConfigurationMojo extends AbstractMojo {
       mavenPluginManager.releaseMojo(mojo, mojoExecution);
     }
 
-    IdeaConfigurator configurator = generateAlsoShareable ? new ShareableFlexConfigGenerator() : new IdeaConfigurator();
+    MethodComparator.class.getName(); // link dep
     try {
-      modifyOurClassRealm(flexmojosPluginRealm);
-      configurator.init(session, project, getClassifier(mojo, flexmojosPluginRealm));
-      if ("swc".equals(packaging)) {
-        configurator.buildConfiguration(mojo, flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICompcConfiguration"));
+      List<IdeaConfigurator> configurators = new ArrayList<IdeaConfigurator>(2);
+      if (generateNonShareable) {
+        configurators.add(new IdeaConfigurator());
       }
-      else {
-        configurator.buildConfiguration(mojo, getSourceFileForSwf(mojo, flexmojosPluginRealm), flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICommandLineConfiguration"));
+      if (generateShareable) {
+        configurators.add(new ShareableFlexConfigGenerator());
+      }
+
+      modifyOurClassRealm(flexmojosPluginRealm);
+      
+      for (IdeaConfigurator configurator : configurators) {
+        configurator.init(session, project, getClassifier(mojo, flexmojosPluginRealm));
+        if ("swc".equals(packaging)) {
+          configurator.buildConfiguration(mojo, flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICompcConfiguration"));
+        }
+        else {
+          configurator.buildConfiguration(mojo, getSourceFileForSwf(mojo, flexmojosPluginRealm), flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICommandLineConfiguration"));
+        }
       }
     }
     catch (Exception e) {

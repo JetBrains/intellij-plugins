@@ -39,7 +39,15 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
             isFirst = false;
           }
 
-          s.append("\n\t\tnew SwfDescriptor(\"").append(p.getArtifactId()).append(".xml\", \"").append(p.getBasedir().getPath().substring(absPathPrefixLength + 1)).append("\", ").append(p.getPackaging().equals("swc") ? "true" : "false").append(')');
+          s.append("\n\t\tnew SwfDescriptor(\"").append(p.getArtifactId()).append(".xml\", \"");
+          final String pBaseDir = p.getBasedir().getPath();
+          if (session.getTopLevelProject() != p) {
+            s.append(pBaseDir.substring(absPathPrefixLength + 1));
+          }
+          else {
+            s.append(pBaseDir);
+          }
+          s.append("\", ").append(p.getPackaging().equals("swc") ? "true" : "false").append(')');
         }
       }
 

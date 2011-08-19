@@ -82,14 +82,17 @@ public class IdeaConfigurator {
   private <E> void build(E configuration, Class configClass, String indent, String configurationName) throws Exception {
     boolean parentTagWritten = configurationName == null;
 
-    for (Method method : configClass.getDeclaredMethods()) {
+    final Method[] methods = configClass.getDeclaredMethods();
+    Arrays.sort(methods, new MethodComparator());
+
+    for (Method method : methods) {
       method.setAccessible(true);
       if (!Modifier.isPublic(method.getModifiers()) || method.getParameterTypes().length != 0) {
         continue;
       }
 
       String methodName = method.getName();
-      if (methodName.equals("getLoadConfig") || methodName.equals("getDumpConfig")) {
+      if (methodName.equals("getLoadConfig") || methodName.equals("getDumpConfig") || ("metadata".equals(configurationName) && methodName.equals("getDate"))) {
         continue;
       }
 
@@ -98,7 +101,7 @@ public class IdeaConfigurator {
         continue;
       }
 
-      if (methodName.equals("getFixedLiteralVector") && !((Boolean)value)) {
+      if ((methodName.equals("getFixedLiteralVector") || methodName.equals("getHeadlessServer")) && !((Boolean)value)) {
         continue;
       }
 
