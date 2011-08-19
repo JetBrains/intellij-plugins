@@ -61,8 +61,8 @@ class DirectoryTypeManager {
   }
 
   private JPanel createDefaultDirectoryPanel() {
-    JPanel defaultDirectoryTypePanel = new JPanel();
-    defaultDirectoryTypePanel.add(new JLabel(myDefaultDir.getPath()));
+    JPanel defaultDirectoryTypePanel = new JPanel(new BorderLayout());
+    defaultDirectoryTypePanel.add(new JLabel(myDefaultDir.getPath()), BorderLayout.WEST);
     return defaultDirectoryTypePanel;
   }
 
@@ -160,6 +160,7 @@ class DirectoryTypeManager {
     return vfExtractDir;
   }
 
+  @SuppressWarnings({"NullableProblems"})
   @Nullable
   private List<VirtualFile> copyVirtualFilesToDir(List<VirtualFile> virtualFiles, @NotNull VirtualFile targetDir) {
     List<VirtualFile> copiedFiles = Lists.newArrayList();
@@ -198,7 +199,12 @@ class DirectoryTypeManager {
   }
 
   private static File getDefaultDir(String assertionFrameworkName) {
-    return new File(PathManager.getSystemPath(), "extLibs/" + assertionFrameworkName + "AdapterForJsTestDriver");
+    File file = new File(PathManager.getSystemPath(), "extLibs/" + assertionFrameworkName + "AdapterForJsTestDriver");
+    try {
+      return file.getCanonicalFile();
+    } catch (IOException e) {
+      return file;
+    }
   }
 
   private enum DirectoryType {

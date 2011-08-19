@@ -12,14 +12,13 @@ import java.util.List;
 import java.util.Map;
 
 @NotThreadSafe
-public class JsTestFileStructure {
+public class JsTestFileStructure extends AbstractTestFileStructure {
 
-  private final JSFile myJsFile;
   private final List<BaseTestCaseStructure> myTestCaseStructures;
   private final Map<String, BaseTestCaseStructure> myTestCaseStructureByNameMap;
 
   public JsTestFileStructure(@NotNull JSFile jsFile) {
-    myJsFile = jsFile;
+    super(jsFile);
     myTestCaseStructures = Lists.newArrayList();
     myTestCaseStructureByNameMap = Maps.newHashMap();
   }
@@ -45,11 +44,6 @@ public class JsTestFileStructure {
   public void addTestCaseStructure(BaseTestCaseStructure testCaseStructure) {
     myTestCaseStructures.add(testCaseStructure);
     myTestCaseStructureByNameMap.put(testCaseStructure.getTestCaseName(), testCaseStructure);
-  }
-
-  @NotNull
-  public JSFile getJsFile() {
-    return myJsFile;
   }
 
   public int getTestCaseCount() {

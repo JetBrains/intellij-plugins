@@ -1,15 +1,16 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.common.collect.Maps;
+import com.google.jstestdriver.idea.assertFramework.Annotation;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +29,7 @@ public class MarkedJstdTestStructureUtils {
     MarkedJsTestFileStructure markedJsTestFileStructure = new MarkedJsTestFileStructure();
     handleBeginOfMarkedTestCase(markedJsTestFileStructure, fileText);
     handleEndOfMarkedTestCase(markedJsTestFileStructure, fileText, jsFile);
-    validateMarkedTestCase(markedJsTestFileStructure);
+    validateMarkedTestCases(markedJsTestFileStructure.getMarkedTestCaseStructures());
 
     Collection<MarkedTestStructure> markedTestStructures = buildMarkedTestStructures(fileText, jsFile);
     assignTestsToTestCases(markedJsTestFileStructure, markedTestStructures);
@@ -63,8 +64,8 @@ public class MarkedJstdTestStructureUtils {
     }
   }
 
-  private static void validateMarkedTestCase(MarkedJsTestFileStructure markedJsTestFileStructure) {
-    for (MarkedTestCaseStructure markedTestCaseStructure : markedJsTestFileStructure.getMarkedTestCaseStructures()) {
+  private static void validateMarkedTestCases(List<MarkedTestCaseStructure> markedTestCaseStructures) {
+    for (MarkedTestCaseStructure markedTestCaseStructure : markedTestCaseStructures) {
       if (markedTestCaseStructure.getPsiElement() == null) {
         throw new RuntimeException("End was not found for " + markedTestCaseStructure);
       }
@@ -122,25 +123,6 @@ public class MarkedJstdTestStructureUtils {
       }
       markedTestStructure.handleEndAnnotation(annotation, jsFile);
     }
-  }
-
-  @NotNull
-  static PsiElement findExactPsiElement(JSFile jsFile, TextRange textRange) {
-    if (textRange.getLength() < 2) {
-      throw new RuntimeException("Too small text range to find exact PsiElement");
-    }
-    PsiElement psiElement = jsFile.findElementAt(textRange.getStartOffset() + 1);
-    while (psiElement != null && !psiElement.getTextRange().contains(textRange)) {
-      psiElement = psiElement.getParent();
-    }
-    if (psiElement != null && psiElement.getTextRange().equals(textRange)) {
-      PsiElement parent = psiElement.getParent();
-      if (parent != null && parent.getTextRange().equals(textRange)) {
-        throw new RuntimeException("Multiply matching PsiElements");
-      }
-      return psiElement;
-    }
-    throw new RuntimeException("Can't find exact PsiElement");
   }
 
 }

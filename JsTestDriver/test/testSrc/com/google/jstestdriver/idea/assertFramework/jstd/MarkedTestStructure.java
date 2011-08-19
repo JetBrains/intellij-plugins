@@ -1,6 +1,8 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.common.collect.Maps;
+import com.google.jstestdriver.idea.JsTestDriverTestUtils;
+import com.google.jstestdriver.idea.assertFramework.Annotation;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
@@ -15,9 +17,9 @@ import java.util.regex.Pattern;
 
 class MarkedTestStructure {
 
-  static final String KEY_ID = "id";
-  static final String KEY_NAME = "name";
-  static final String KEY_TYPE = "type";
+  private static final String KEY_ID = "id";
+  private static final String KEY_NAME = "name";
+  private static final String KEY_TYPE = "type";
 
   private final String myId;
   private final int myTestCaseId;
@@ -48,7 +50,7 @@ class MarkedTestStructure {
     if (myStartOffsetByComponentNameMap.containsKey(componentName)) {
       throw new RuntimeException("Start offset has been specified multiply times, myId: " + myId + ", component: " + componentName);
     }
-    myStartOffsetByComponentNameMap.put(componentName, annotation.myTextRange.getEndOffset());
+    myStartOffsetByComponentNameMap.put(componentName, annotation.getTextRange().getEndOffset());
   }
 
   void handleEndAnnotation(Annotation annotation, JSFile jsFile) {
@@ -57,8 +59,8 @@ class MarkedTestStructure {
     if (startOffset == null) {
       throw new RuntimeException("Start offset has not been specified for id:" + myId + ", component: " + componentName + ", " + annotation);
     }
-    TextRange textRange = TextRange.create(startOffset, annotation.myTextRange.getStartOffset());
-    PsiElement psiElement = MarkedJstdTestStructureUtils.findExactPsiElement(jsFile, textRange);
+    TextRange textRange = TextRange.create(startOffset, annotation.getTextRange().getStartOffset());
+    PsiElement psiElement = JsTestDriverTestUtils.findExactPsiElement(jsFile, textRange);
     if (myPsiElementByComponentNameMap.containsKey(componentName)) {
       throw new RuntimeException("Component is already there");
     }

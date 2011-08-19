@@ -2,6 +2,8 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.jstestdriver.idea.JsTestDriverTestUtils;
+import com.google.jstestdriver.idea.assertFramework.Annotation;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -18,14 +20,13 @@ class MarkedTestCaseStructure {
   private final int myStartPosition;
   private PsiElement myPsiElement;
   private final List<MarkedTestStructure> myMarkedTestStructureList = Lists.newArrayList();
-  private final Map<String, MarkedTestStructure> myMarkedTestStructureByIdMap = Maps.newHashMap();
 
   MarkedTestCaseStructure(Annotation startAnnotation) {
     String id = startAnnotation.getValue(KEY_ID);
     String name = startAnnotation.getValue(KEY_NAME);
     myId = Integer.parseInt(id);
     myName = name;
-    myStartPosition = startAnnotation.myTextRange.getEndOffset();
+    myStartPosition = startAnnotation.getTextRange().getEndOffset();
   }
 
   static int getIdAndValidate(Annotation annotation) {
@@ -42,12 +43,11 @@ class MarkedTestCaseStructure {
       throw new RuntimeException("End annotation is already encountered");
     }
     int endPosition = textRange.getStartOffset();
-    myPsiElement = MarkedJstdTestStructureUtils.findExactPsiElement(jsFile, TextRange.create(myStartPosition, endPosition));
+    myPsiElement = JsTestDriverTestUtils.findExactPsiElement(jsFile, TextRange.create(myStartPosition, endPosition));
   }
 
   public void addTestStructureInfo(MarkedTestStructure markedTestStructure) {
     myMarkedTestStructureList.add(markedTestStructure);
-    //myMarkedTestStructureByIdMap.put(markedTestStructure.myId);
   }
 
   public int getId() {

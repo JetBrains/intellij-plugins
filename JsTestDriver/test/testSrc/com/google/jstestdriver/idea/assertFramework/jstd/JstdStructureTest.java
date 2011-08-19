@@ -25,7 +25,6 @@ import java.util.List;
 
 public class JstdStructureTest extends PsiTestCase {
 
-
   @Test
   public void testEmptyAsyncTestCase() throws Exception {
     validateJsFile();
@@ -106,7 +105,7 @@ public class JstdStructureTest extends PsiTestCase {
 
   @NotNull
   private static JsTestFileStructure buildJsTestFileStructureByJsFile(@NotNull JSFile jsFile) throws Exception {
-    JsTestFileStructure jsTestFileStructure = JstdJsTestFileStructureBuilder.INSTANCE.buildJsTestFileStructure(jsFile);
+    JsTestFileStructure jsTestFileStructure = JstdTestFileStructureBuilder.INSTANCE.buildTestFileStructure(jsFile);
     Assert.assertTrue(jsTestFileStructure.getJsFile() == jsFile);
     return jsTestFileStructure;
   }
