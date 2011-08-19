@@ -10,7 +10,6 @@ import com.intellij.javascript.flex.css.FlexStyleIndexInfo;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.util.Consumer;
@@ -42,7 +41,7 @@ public class LibraryStyleInfoCollector implements Consumer<Library> {
     assert libraryFile != null;
 
     final FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
-    final GlobalSearchScope searchScope = GlobalSearchScopes.fileScope((PsiFile)libraryFile);
+    final GlobalSearchScope searchScope = GlobalSearchScopes.fileScope(project, libraryFile);
     final THashSet<String> uniqueGuard = new THashSet<String>();
     fileBasedIndex.processAllKeys(FlexStyleIndex.INDEX_ID, new Processor<String>() {
       @Override
