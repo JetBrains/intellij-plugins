@@ -1,13 +1,12 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
-import com.google.jstestdriver.idea.assertFramework.AbstractJsTestFileStructureBuilder;
+import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructureBuilder;
 import com.google.jstestdriver.idea.assertFramework.BaseTestCaseStructure;
 import com.google.jstestdriver.idea.assertFramework.BaseTestStructure;
 import com.google.jstestdriver.idea.assertFramework.JsTestFileStructure;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.ObjectUtils;
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.psi.PsiElement;
@@ -20,15 +19,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class JstdJsTestFileStructureBuilder extends AbstractJsTestFileStructureBuilder {
+public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuilder {
 
-  public static final JstdJsTestFileStructureBuilder INSTANCE = new JstdJsTestFileStructureBuilder();
+  public static final JstdTestFileStructureBuilder INSTANCE = new JstdTestFileStructureBuilder();
 
-  private JstdJsTestFileStructureBuilder() {}
+  private JstdTestFileStructureBuilder() {}
 
   @NotNull
   @Override
-  public JsTestFileStructure buildJsTestFileStructure(@NotNull JSFile jsFile) {
+  public JsTestFileStructure buildTestFileStructure(@NotNull JSFile jsFile) {
     JsTestFileStructure jsTestFileStructure = new JsTestFileStructure(jsFile);
     List<JSElement> jsElements = JsPsiUtils.listJsElementsInExecutionOrder(jsFile);
     for (JSElement jsElement : jsElements) {

@@ -1,7 +1,7 @@
-package com.google.jstestdriver.idea.assertFramework;
+package com.google.jstestdriver.idea.assertFramework.jstd;
 
-import com.google.common.collect.Lists;
-import com.google.jstestdriver.idea.javascript.predefined.Marker;
+import com.google.jstestdriver.idea.assertFramework.jstd.jsSrc.JstdDefaultAssertionFrameworkSrcMarker;
+import com.google.jstestdriver.idea.util.VfsUtils;
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class JsAssertFrameworkLibraryManager {
 
-  public static final String LIBRARY_NAME = "JsTestDriver Assert Framework Library";
+  public static final String LIBRARY_NAME = "JsTestDriver Assertion Framework";
 
   private JsAssertFrameworkLibraryManager() {}
 
@@ -61,32 +61,9 @@ public class JsAssertFrameworkLibraryManager {
 
   @NotNull
   public static List<VirtualFile> getAdditionalSourceFilesAsList() {
-    return ApplicationManager.getApplication().runReadAction(new Computable<List<VirtualFile>>() {
-      @Override
-      public List<VirtualFile> compute() {
-        return findVirtualFilesByResourceNames(Marker.class, new String[] {
+    return VfsUtils.findVirtualFilesByResourceNames(JstdDefaultAssertionFrameworkSrcMarker.class, new String[] {
           "Asserts.js", "TestCase.js"
         });
-      }
-    });
-  }
-
-  // Should be called in a read action.
-  public static List<VirtualFile> findVirtualFilesByResourceNames(Class<?> markerClass, String[] resourceNames) {
-    List<VirtualFile> virtualFiles = Lists.newArrayList();
-    for (String resourceName : resourceNames) {
-      VirtualFile virtualFile = findVirtualFile(markerClass, resourceName);
-      virtualFiles.add(virtualFile);
-    }
-    return virtualFiles;
-  }
-
-  private static VirtualFile findVirtualFile(Class<?> markerClazz, String resourceName) {
-    VirtualFile file = VfsUtil.findFileByURL(markerClazz.getResource(resourceName));
-    if (file == null) {
-      throw new RuntimeException("Can't find virtual file for '" + resourceName + "', class " + markerClazz);
-    }
-    return file;
   }
 
 }

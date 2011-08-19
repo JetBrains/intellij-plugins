@@ -32,7 +32,7 @@ public abstract class AbstractAdapterSupportProvider extends JSInspection {
   @NotNull
   @Override
   public String getShortName() {
-    return getAssertFrameworkName() + "AssertFrameworkAdapterSupportForJsTestDriver";
+    return getAssertFrameworkName() + "AssertionFrameworkAdapterSupportForJsTestDriver";
   }
 
   @NotNull
@@ -81,7 +81,7 @@ public abstract class AbstractAdapterSupportProvider extends JSInspection {
 
   @NotNull
   public HighlightDisplayLevel getDefaultLevel() {
-    return HighlightDisplayLevel.GENERIC_SERVER_ERROR_OR_WARNING;
+    return HighlightDisplayLevel.ERROR;
   }
 
 }
