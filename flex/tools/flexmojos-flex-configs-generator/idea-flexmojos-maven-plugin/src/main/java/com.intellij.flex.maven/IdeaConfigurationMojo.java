@@ -71,38 +71,40 @@ public class IdeaConfigurationMojo extends AbstractMojo {
       return;
     }
 
-    Plugin flexmojosPlugin = null;
+    MojoExecution flexmojosMojoExecution = null;
+    MojoExecution flexmojosGeneratorMojoExecution = null;
     for (Plugin plugin : project.getBuildPlugins()) {
-      if (plugin.getGroupId().equals("org.sonatype.flexmojos") && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
-        flexmojosPlugin = plugin;
+      if (plugin.getGroupId().equals("org.sonatype.flexmojos")) {
+        if (flexmojosMojoExecution == null && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
+          flexmojosMojoExecution = createMojoExecution(plugin, "compile-" + packaging, project);
+        }
+        else if (flexmojosGeneratorMojoExecution == null && plugin.getArtifactId().equals("flexmojos-generator-mojo")) {
+          flexmojosGeneratorMojoExecution = createMojoExecution(plugin, "generate", project);
+        }
+
+        if (flexmojosMojoExecution != null && flexmojosGeneratorMojoExecution != null) {
+          break;
+        }
       }
     }
 
-    if (flexmojosPlugin == null) {
+    if (flexmojosGeneratorMojoExecution == null) {
       return;
     }
 
     final ClassRealm flexmojosPluginRealm;
-    MojoExecution flexmojosMojoExecution;
-    try {
-      MojoDescriptor flexmojosMojoDescriptor = pluginManager.getMojoDescriptor(flexmojosPlugin, "compile-" + packaging, project.getRemotePluginRepositories(), session.getRepositorySession());
-      flexmojosMojoExecution = new MojoExecution(flexmojosMojoDescriptor, "default-cli", MojoExecution.Source.CLI);
-      flexmojosPluginRealm = pluginManager.getPluginRealm(session, flexmojosMojoDescriptor.getPluginDescriptor());
-      lifeCycleExecutionPlanCalculator.setupMojoExecution(session, project, flexmojosMojoExecution);
-    }
-    catch (Exception e) {
-      throw new MojoExecutionException("Cannot generate flex-config", e);
-    }
-
     Mojo mojo = null;
     try {
+      flexmojosPluginRealm = pluginManager.getPluginRealm(session, flexmojosMojoExecution.getMojoDescriptor().getPluginDescriptor());
       mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
     }
     catch (Exception e) {
-      throw new MojoExecutionException("Cannot generate flex-config", e);
+      throw new RuntimeException(e);
     }
     finally {
-      mavenPluginManager.releaseMojo(mojo, mojoExecution);
+      if (mojo != null) {
+        mavenPluginManager.releaseMojo(mojo, mojoExecution);
+      }
     }
 
     MethodComparator.class.getName(); // link dep
@@ -116,9 +118,9 @@ public class IdeaConfigurationMojo extends AbstractMojo {
       }
 
       modifyOurClassRealm(flexmojosPluginRealm);
-      
+
       for (IdeaConfigurator configurator : configurators) {
-        configurator.init(session, project, getClassifier(mojo, flexmojosPluginRealm));
+        configurator.init(session, project, getClassifier(mojo, flexmojosPluginRealm), flexmojosGeneratorMojoExecution);
         if ("swc".equals(packaging)) {
           configurator.buildConfiguration(mojo, flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICompcConfiguration"));
         }
@@ -130,6 +132,21 @@ public class IdeaConfigurationMojo extends AbstractMojo {
     catch (Exception e) {
       throw new MojoExecutionException("Failed to execute configurator: " + e.getMessage(), e);
     }
+  }
+
+  private MojoExecution createMojoExecution(Plugin plugin, String goal, MavenProject project) {
+    final MojoExecution mojoExecution;
+    try {
+      MojoDescriptor mojoDescriptor = pluginManager.getMojoDescriptor(plugin, goal, project.getRemotePluginRepositories(),
+                                                                      session.getRepositorySession());
+      mojoExecution = new MojoExecution(mojoDescriptor, "default-cli", MojoExecution.Source.CLI);
+      lifeCycleExecutionPlanCalculator.setupMojoExecution(session, project, mojoExecution);
+    }
+    catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+    return mojoExecution;
   }
 
   private void modifyOurClassRealm(ClassRealm flexmojosPluginRealm) throws NoSuchFieldException, IllegalAccessException {

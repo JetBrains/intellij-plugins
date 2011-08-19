@@ -1,6 +1,7 @@
 package com.intellij.flex.maven;
 
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
 
 import java.io.*;
@@ -16,8 +17,8 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
   private int localRepositoryBasedirLength;
 
   @Override
-  public void init(MavenSession session, MavenProject project, String classifier) throws IOException {
-    super.init(session, project, classifier);
+  public void init(MavenSession session, MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException {
+    super.init(session, project, classifier, flexmojosGeneratorMojoExecution);
 
     localRepositoryBasedir = session.getLocalRepository().getBasedir();
     localRepositoryBasedirLength = localRepositoryBasedir.length();
@@ -57,7 +58,7 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
   }
 
   @Override
-  protected String getConfigFilePath(MavenProject project, String classifier) {
+  protected String getConfigFilePath(MavenSession session, MavenProject project, String classifier) {
     return "build-gant/flex-configs/" + project.getArtifactId() + ".xml";
   }
 

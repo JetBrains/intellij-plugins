@@ -10,5 +10,6 @@
   <modules>
     <module>java</module>
     <module>flex</module>
+    <module>generationWithCustomOutput</module>
   </modules>
 </project>

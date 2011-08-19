@@ -3,12 +3,11 @@ package com.intellij.flex.maven;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.Mojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
-import org.sonatype.flexmojos.compiler.IASDocConfiguration;
-import org.sonatype.flexmojos.compiler.IFlexArgument;
-import org.sonatype.flexmojos.compiler.IFlexConfiguration;
-import org.sonatype.flexmojos.compiler.IMetadataConfiguration;
-import org.sonatype.flexmojos.compiler.IRuntimeSharedLibraryPath;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.sonatype.flexmojos.compiler.*;
 import org.sonatype.flexmojos.generator.iface.StringUtil;
 
 import java.io.*;
@@ -26,6 +25,7 @@ public class IdeaConfigurator {
   protected Build build;
 
   private static final Map<String, String> CHILD_TAG_NAME_MAP = new HashMap<String, String>(12);
+  private MojoExecution flexmojosGeneratorMojoExecution;
 
   static {
     CHILD_TAG_NAME_MAP.put("keep-as3-metadata", "name");
@@ -57,18 +57,20 @@ public class IdeaConfigurator {
     close();
   }
 
-  protected String getConfigFilePath(MavenProject project, String classifier) {
-    StringBuilder pathBuilder = new StringBuilder(build.getDirectory()).append(File.separatorChar).append(build.getFinalName());
+  protected String getConfigFilePath(MavenSession session, MavenProject project, String classifier) {
+    StringBuilder pathBuilder = new StringBuilder(".idea/flexmojos").append(File.separatorChar);
+    // artifact id is first in path — it is convenient for us
+    pathBuilder.append(project.getArtifactId()).append('-').append(project.getGroupId());
     if (classifier != null) {
       pathBuilder.append('-').append(classifier);
     }
-    //pathBuilder.append("-config-report.xml");
-    return pathBuilder.append("-configs.xml").toString();
+    return pathBuilder.append("-config.xml").toString();
   }
 
-  public void init(MavenSession session, MavenProject project, String classifier) throws IOException {
+  public void init(MavenSession session, MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException {
+    this.flexmojosGeneratorMojoExecution = flexmojosGeneratorMojoExecution;
     build = project.getBuild();
-    File configFile = new File(getConfigFilePath(project, classifier));
+    File configFile = new File(getConfigFilePath(session, project, classifier));
     //noinspection ResultOfMethodCallIgnored
     configFile.getParentFile().mkdirs();
     out = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(configFile)), "utf-8");
@@ -247,16 +249,40 @@ public class IdeaConfigurator {
   }
 
   private void addGeneratedSources(File[] existing, String indent) throws IOException {
+    final List<File> existingList;
+    if (flexmojosGeneratorMojoExecution == null) {
+      existingList = Arrays.asList(existing);
+    }
+    else {
+      existingList = new ArrayList<File>();
+      Collections.addAll(existingList, existing);
+
+      PlexusConfiguration configuration = new XmlPlexusConfiguration(flexmojosGeneratorMojoExecution.getConfiguration());
+      writeGeneratedSource(configuration, "baseOutputDirectory", existingList, indent);
+      writeGeneratedSource(configuration, "outputDirectory", existingList, indent);
+    }
+
     File generatedSources = new File(build.getDirectory(), "/generated-sources");
     if (!generatedSources.isDirectory()) {
       return;
     }
 
-    final List<File> existingList = Arrays.asList(existing);
     for (File file : generatedSources.listFiles()) {
-      if (file.isDirectory() && !file.isHidden() && existingList.indexOf(file) == -1) {
-        writeTag(indent, PATH_ELEMENT, file.getAbsolutePath(), SOURCE_PATH);
-      }
+      writeGeneratedSource(file, existingList, indent);
+    }
+  }
+
+  private void writeGeneratedSource(PlexusConfiguration configuration, String parameterName, List<File> existingList, String indent)
+    throws IOException {
+    String filepath = configuration.getChild(parameterName).getValue();
+    if (filepath != null) {
+      writeGeneratedSource(new File(filepath), existingList, indent);
+    }
+  }
+    
+  private void writeGeneratedSource(File file, List<File> existingList, String indent) throws IOException {
+    if (file.isDirectory() && !file.isHidden() && !existingList.contains(file)) {
+      writeTag(indent, PATH_ELEMENT, file.getAbsolutePath(), SOURCE_PATH);
     }
   }
 

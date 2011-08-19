@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   
   <groupId>com.intellij.flex.maven.test</groupId>
-  <artifactId>generation</artifactId>
+  <artifactId>generationWithCustomOutput</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <packaging>swc</packaging>
@@ -44,6 +44,10 @@
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-generator-mojo</artifactId>
         <version>4.0-RC1</version>
+        <configuration>
+          <baseOutputDirectory>${build.directory}/src/base</baseOutputDirectory>
+          <outputDirectory>${build.directory}/src/as3</outputDirectory>
+        </configuration>
         <executions>
           <execution>
             <goals>

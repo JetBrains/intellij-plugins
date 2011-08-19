@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="flex" name="Flex">
+      <configuration>
+        <option name="DO_BUILD" value="true" />
+        <option name="OUTPUT_TYPE" value="Library" />
+        <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />
+        <option name="USE_CUSTOM_CONFIG_FILE" value="true" />
+        <option name="CUSTOM_CONFIG_FILE" value="$MODULE_DIR$/target/generationWithCustomOutput-1.0-SNAPSHOT-configs.xml" />
+        <option name="USE_CUSTOM_CONFIG_FILE_FOR_TESTS" value="false" />
+        <option name="CUSTOM_CONFIG_FILE_FOR_TESTS" value="" />
+        <option name="APPLICATION_ENTRY_POINT" value="" />
+        <option name="MAIN_CLASS" value="" />
+        <option name="OUTPUT_FILE_NAME" value="generationWithCustomOutput-1.0-SNAPSHOT.swc" />
+        <option name="USE_FACET_COMPILE_OUTPUT_PATH" value="true" />
+        <option name="FACET_COMPILE_OUTPUT_PATH" value="$MODULE_DIR$/target" />
+        <option name="FACET_COMPILE_OUTPUT_PATH_FOR_TESTS" value="$MODULE_DIR$/target/test-classes" />
+        <option name="INCLUDE_RESOURCE_FILES_IN_SWC" value="false" />
+        <option name="TARGET_PLAYER_VERSION" value="" />
+        <option name="STATIC_LINK_RUNTIME_SHARED_LIBRARIES" value="false" />
+        <option name="USE_LOCALE_SETTINGS" value="true" />
+        <option name="LOCALE" value="" />
+        <option name="ADDITIONAL_COMPILER_OPTIONS" value="" />
+        <option name="PATH_TO_SERVICES_CONFIG_XML" value="" />
+        <option name="CONTEXT_ROOT" value="" />
+        <option name="VERSION" value="3" />
+        <NAMESPACE_AND_MANIFEST_FILE_INFO_LIST />
+        <CONDITIONAL_COMPILATION_DEFINITION_LIST />
+        <CSS_FILES_LIST />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/flex" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:advancedgrids:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:authoringsupport:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:charts:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:core:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:flash-integration:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:mx:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:osmf:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:rpc:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:sparkskins:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark_dmv:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:textLayout:swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:advancedgrids:rb.swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:charts:rb.swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:rb.swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:mx:rb.swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:osmf:rb.swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:rpc:rb.swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:textLayout:rb.swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:flash-integration:rb.swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:playerglobal:swc:10.2:4.5.1.21328" level="project" />
+    <orderEntry type="library" name="Maven: com.adobe.flex.framework:playerglobal:rb.swc:4.5.1.21328" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos.itest:generator-jar:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.persistence:persistence-api:1.0" level="project" />
+  </component>
+</module>
+
