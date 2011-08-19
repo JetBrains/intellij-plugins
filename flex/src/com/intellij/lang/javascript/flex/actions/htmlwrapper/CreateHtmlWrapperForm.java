@@ -129,7 +129,7 @@ public class CreateHtmlWrapperForm {
       myCurrentErrorMessage = "Specify HTML wrapper file name";
       return null;
     }
-    if (!VfsUtil.isValidName(htmlWrapperFileName)) {
+    if (VfsUtil.isBadName(htmlWrapperFileName)) {
       myCurrentErrorMessage = "Invalid HTML wrapper file name";
       return null;
     }

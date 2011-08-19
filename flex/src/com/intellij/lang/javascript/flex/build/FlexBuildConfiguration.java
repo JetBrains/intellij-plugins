@@ -8,6 +8,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ModuleRootEvent;
@@ -131,7 +132,7 @@ public class FlexBuildConfiguration implements ModuleComponent, PersistentStateC
   }
 
   public void initComponent() {
-    if (myModule.getModuleType() instanceof FlexModuleType) {
+    if (ModuleType.get(myModule) instanceof FlexModuleType) {
       myModule.getMessageBus().connect(myModule).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
         public void beforeRootsChange(final ModuleRootEvent event) {
         }
@@ -156,7 +157,7 @@ public class FlexBuildConfiguration implements ModuleComponent, PersistentStateC
 
   public FlexBuildConfiguration getState() {
     // avoid storing component for non-Flex modules
-    if (myModule != null && (myModule.getModuleType() instanceof FlexModuleType || isThisFlexFacetConfiguration)) {
+    if (myModule != null && (ModuleType.get(myModule) instanceof FlexModuleType || isThisFlexFacetConfiguration)) {
       VERSION = OUR_CURRENT_VERSION;
     }
     return this;
@@ -230,7 +231,7 @@ public class FlexBuildConfiguration implements ModuleComponent, PersistentStateC
 
   public static Collection<FlexBuildConfiguration> getConfigForFlexModuleOrItsFlexFacets(final Module module) {
     final Collection<FlexBuildConfiguration> configurations = new ArrayList<FlexBuildConfiguration>();
-    if (module.getModuleType() instanceof FlexModuleType) {
+    if (ModuleType.get(module) instanceof FlexModuleType) {
       configurations.add(getInstance(module));
     }
     else {

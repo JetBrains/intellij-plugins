@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.library;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.libraries.DummyLibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.LibraryType;
@@ -39,7 +40,7 @@ public class FlexLibraryType extends LibraryType<DummyLibraryProperties> {
 
   @Override
   public boolean isSuitableModule(@NotNull Module module, @NotNull FacetsProvider facetsProvider) {
-    return module.getModuleType().equals(FlexModuleType.getInstance()) || !facetsProvider.getFacetsByType(module, FlexFacet.ID).isEmpty();
+    return ModuleType.get(module).equals(FlexModuleType.getInstance()) || !facetsProvider.getFacetsByType(module, FlexFacet.ID).isEmpty();
   }
 
   public LibraryPropertiesEditor createPropertiesEditor(@NotNull final LibraryEditorComponent<DummyLibraryProperties> properties) {

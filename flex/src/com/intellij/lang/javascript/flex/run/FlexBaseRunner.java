@@ -37,6 +37,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -157,7 +158,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   private static void showIdeBuilderTurnedOffWarning(final Module module, final boolean isDebug) {
-    final FlexFacet facet = (module.getModuleType() instanceof FlexModuleType)
+    final FlexFacet facet = (ModuleType.get(module) instanceof FlexModuleType)
                             ? null : FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
     final HyperlinkListener listener = new HyperlinkAdapter() {
       protected void hyperlinkActivated(final HyperlinkEvent e) {

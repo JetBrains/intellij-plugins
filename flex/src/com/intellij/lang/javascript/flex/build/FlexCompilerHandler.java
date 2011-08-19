@@ -24,6 +24,7 @@ import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -205,7 +206,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     else {
       final boolean nothingChangedSincePreviousCompilation = myCompilerDependenciesCache.isNothingChangedSincePreviousCompilation(module);
 
-      if (module.getModuleType() instanceof FlexModuleType) {
+      if (ModuleType.get(module) instanceof FlexModuleType) {
         final Pair<Boolean, List<VirtualFile>> compilationResult =
           compileModuleOrFacet(module, null, context, FlexBuildConfiguration.getInstance(module), nothingChangedSincePreviousCompilation);
         if (compilationResult.first && !compilationResult.second.isEmpty()) {

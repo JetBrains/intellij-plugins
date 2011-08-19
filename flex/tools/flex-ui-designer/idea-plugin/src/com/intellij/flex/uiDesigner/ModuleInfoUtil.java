@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -33,7 +34,7 @@ public class ModuleInfoUtil {
       final StringRegistry.StringWriter stringWriter, final ProblemsHolder problemsHolder, List<XmlFile> unregisteredDocumentReferences) {
     final Module module = moduleInfo.getModule();
     final FlexBuildConfiguration flexBuildConfiguration;
-    if (module.getModuleType() instanceof FlexModuleType) {
+    if (ModuleType.get(module) instanceof FlexModuleType) {
       flexBuildConfiguration = FlexBuildConfiguration.getInstance(module);
     }
     else {

@@ -13,6 +13,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleConfigurationEditor;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
@@ -118,8 +119,8 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
     // initialize modude before createUIComponents() call
     myModule = module;
 
-    assert (module.getModuleType() instanceof FlexModuleType && flexFacet == null) ||
-           (!(module.getModuleType() instanceof FlexModuleType) && flexFacet != null) : "incorrect method usage";
+    assert (ModuleType.get(module) instanceof FlexModuleType && flexFacet == null) ||
+           (!(ModuleType.get(module) instanceof FlexModuleType) && flexFacet != null) : "incorrect method usage";
 
     myFlexFacet = flexFacet;
     myCompilerExtension = compilerExtension;

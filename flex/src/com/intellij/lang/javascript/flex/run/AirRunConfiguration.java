@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -158,7 +159,7 @@ public class AirRunConfiguration extends FlexRunConfiguration {
 
       final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module);
       if (sdk == null) {
-        final String s = (module.getModuleType() instanceof FlexModuleType ? "module " : "Flex facet(s) of module ") + module.getName();
+        final String s = (ModuleType.get(module) instanceof FlexModuleType ? "module " : "Flex facet(s) of module ") + module.getName();
         throw new ExecutionException(FlexBundle.message("flex.sdk.not.set.for", s));
       }
 

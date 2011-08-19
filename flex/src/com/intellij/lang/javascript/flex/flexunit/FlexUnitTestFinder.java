@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
@@ -98,7 +99,7 @@ public class FlexUnitTestFinder implements TestFinder {
     }
 
     final GlobalSearchScope scope =
-      GlobalSearchScope.moduleWithDependenciesScope(module).intersectWith(GlobalSearchScope.projectProductionScope(module.getProject()));
+      GlobalSearchScope.moduleWithDependenciesScope(module).intersectWith(GlobalSearchScopes.projectProductionScope(module.getProject()));
 
     final List<Pair<? extends PsiNamedElement, Integer>> classesWithWeights = new ArrayList<Pair<? extends PsiNamedElement, Integer>>();
     for (Pair<String, Integer> nameWithWeight : TestFinderHelper.collectPossibleClassNamesWithWeights(className)) {

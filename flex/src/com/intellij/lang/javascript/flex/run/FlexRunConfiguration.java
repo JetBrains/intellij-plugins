@@ -22,6 +22,7 @@ import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -293,7 +294,7 @@ public class FlexRunConfiguration extends RunConfigurationBase
     }
 
     if (FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(module) == null) {
-      final String s = (module.getModuleType() instanceof FlexModuleType ? "module " : "Flex facet(s) of module ") + module.getName();
+      final String s = (ModuleType.get(module) instanceof FlexModuleType ? "module " : "Flex facet(s) of module ") + module.getName();
       throw new RuntimeConfigurationError(FlexBundle.message("flex.sdk.not.set.for", s));
     }
     return module;

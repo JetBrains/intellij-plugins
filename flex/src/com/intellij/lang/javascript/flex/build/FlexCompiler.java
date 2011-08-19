@@ -16,6 +16,7 @@ import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.ui.Messages;
@@ -153,7 +154,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
               ? new BuiltInCompilationTask(module, null, overriddenConfig) : new MxmlcCompcCompilationTask(module, null, overriddenConfig));
           }
           else {
-            if (module.getModuleType() instanceof FlexModuleType) {
+            if (ModuleType.get(module) instanceof FlexModuleType) {
               final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(module);
               if (config.DO_BUILD) {
                 compilationTasks
@@ -209,7 +210,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
   private static void appendCssCompilationTasks(final Collection<FlexCompilationTask> compilationTasks,
                                                 final Module module,
                                                 final boolean builtInCompiler) {
-    if (module.getModuleType() instanceof FlexModuleType) {
+    if (ModuleType.get(module) instanceof FlexModuleType) {
       final FlexBuildConfiguration config = FlexBuildConfiguration.getInstance(module);
       if (config.DO_BUILD) {
         for (String cssFilePath : config.CSS_FILES_LIST) {
@@ -257,7 +258,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         continue;
       }
 
-      if (module.getModuleType() instanceof FlexModuleType) {
+      if (ModuleType.get(module) instanceof FlexModuleType) {
         final Pair<Boolean, String> validationResultWithMessage =
           validateConfiguration(FlexBuildConfiguration.getInstance(module), module, FlexUtils.getPresentableName(module, null), true);
         if (!validationResultWithMessage.first) {

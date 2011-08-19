@@ -1,12 +1,12 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -137,7 +137,7 @@ public class TargetPlayerUtils {
   }
 
   public static void changeFlexSdkIfNeeded(final Module module, final String targetPlayerVersion) {
-    if (!(module.getModuleType() instanceof FlexModuleType)) {
+    if (!(ModuleType.get(module) instanceof FlexModuleType)) {
       return;
     }
 

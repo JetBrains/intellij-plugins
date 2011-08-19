@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
@@ -105,7 +106,7 @@ public class ModulesComboboxWrapper {
       if (value instanceof Module) {
         final Module module = (Module)value;
         setText(module.getName());
-        setIcon(module.getModuleType().getNodeIcon(false));
+        setIcon(ModuleType.get(module).getNodeIcon(false));
       }
       else if (myShowErrorIcon) {
         setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);

@@ -19,7 +19,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.impl.source.xml.SchemaPrefix;
 import com.intellij.psi.impl.source.xml.SchemaPrefixReference;
 import com.intellij.psi.impl.source.xml.TagNameReference;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
@@ -94,7 +94,7 @@ public class MxmlTagNameReference extends TagNameReference {
     if (schemaPrefix == null) return;
 
     final Ref<Boolean> hasUsagesRef = new Ref<Boolean>(false);
-    ReferencesSearch.search(schemaPrefix, GlobalSearchScope.fileScope(schemaPrefix.getContainingFile()))
+    ReferencesSearch.search(schemaPrefix, GlobalSearchScopes.fileScope(schemaPrefix.getContainingFile()))
       .forEach(new Processor<PsiReference>() {
         public boolean process(final PsiReference reference) {
           final TextRange range = schemaPrefix.getTextRange();

@@ -17,6 +17,7 @@ import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
@@ -172,7 +173,7 @@ public class FlexUtils {
 
   @Nullable
   public static Sdk getFlexSdkForFlexModuleOrItsFlexFacets(final @NotNull Module module) {
-    if (module.getModuleType() instanceof FlexModuleType) {
+    if (ModuleType.get(module) instanceof FlexModuleType) {
       final Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
       if (sdk != null && sdk.getSdkType() instanceof IFlexSdkType) {
         return sdk;
@@ -460,7 +461,7 @@ public class FlexUtils {
   }
 
   public static boolean isFlexModuleOrContainsFlexFacet(final @NotNull Module module) {
-    return module.getModuleType() instanceof FlexModuleType || FacetManager.getInstance(module).getFacetByType(FlexFacet.ID) != null;
+    return ModuleType.get(module) instanceof FlexModuleType || FacetManager.getInstance(module).getFacetByType(FlexFacet.ID) != null;
   }
 
   public static String getFlexCompilerWorkDirPath(final Project project, final @Nullable Sdk flexSdk) {

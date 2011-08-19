@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -113,7 +114,7 @@ public class FlexFacet extends Facet<FlexFacetConfiguration> implements IFlexFac
     private void showWarning(Sdk newSdk) {
       Messages.showWarningDialog(myModule.getProject(),
                                  FlexBundle.message("flex.sdk.set.for.not.flex.module", newSdk.getSdkType().getPresentableName(),
-                                                    newSdk.getName(), myModule.getModuleType().getName(), myModule.getName()), "Warning");
+                                                    newSdk.getName(), ModuleType.get(myModule).getName(), myModule.getName()), "Warning");
     }
 
     private void suggestToSetSdkForFacets(final Collection<FlexFacet> flexFacets, final Sdk newSdk) {
@@ -125,7 +126,7 @@ public class FlexFacet extends Facet<FlexFacetConfiguration> implements IFlexFac
 
       final String message = FlexBundle
         .message("flex.sdk.set.for.not.flex.module.ask", newSdk.getSdkType().getPresentableName(), newSdk.getName(),
-                 myModule.getModuleType().getName(), myModule.getName(), facetsInfo);
+                 ModuleType.get(myModule).getName(), myModule.getName(), facetsInfo);
       int choice = Messages.showYesNoDialog(myModule.getProject(), message, "Flex SDK", Messages.getQuestionIcon());
       if (choice == 0) {
 

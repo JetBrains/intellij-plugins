@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
@@ -670,7 +671,7 @@ public class FlexSdkUtils {
     final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
     ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
       public void run() {
-        if (module.getModuleType() instanceof FlexModuleType) {
+        if (ModuleType.get(module) instanceof FlexModuleType) {
           projectStructureConfigurable.select(module.getName(), ProjectBundle.message("modules.classpath.title"), true);
         }
         else {
