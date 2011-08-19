@@ -1,4 +1,4 @@
-package com.google.jstestdriver.idea.assertFramework.jstd;
+package com.google.jstestdriver.idea.assertFramework;
 
 import com.google.jstestdriver.idea.JsTestDriverTestUtils;
 import com.intellij.openapi.util.TextRange;
@@ -6,23 +6,27 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-class Annotation {
-  final String myName;
-  final TextRange myTextRange;
-  final Map<String, String> myProperties;
+public class Annotation {
+  private final String myName;
+  private final TextRange myTextRange;
+  private final Map<String, String> myProperties;
 
-  Annotation(@Nullable String name, int startPosition, int endPosition, String propertiesStr) {
+  public Annotation(@Nullable String name, int startPosition, int endPosition, String propertiesStr) {
     myName = name;
     myTextRange = TextRange.create(startPosition, endPosition);
     myProperties = JsTestDriverTestUtils.parseProperties(propertiesStr);
   }
 
-  String getValue(String key) {
+  public String getValue(String key) {
     return myProperties.get(key);
   }
 
   public String getName() {
     return myName;
+  }
+
+  public TextRange getTextRange() {
+    return myTextRange;
   }
 
   @Override

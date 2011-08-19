@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.google.jstestdriver.idea.javascript.predefined;
+package com.google.jstestdriver.idea.assertFramework.jstd.jsSrc;
 
-public class Marker {
+public class JstdDefaultAssertionFrameworkSrcMarker {
 }
