@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.internal.Maps;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.sun.xml.internal.bind.v2.util.QNameMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
