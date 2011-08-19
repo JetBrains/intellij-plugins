@@ -8,6 +8,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
   }
 
   public static FlexIdeBuildConfigurationManager getInstance(final Module module) {
-    assert module.getModuleType() == FlexModuleType.getInstance();
+    assert ModuleType.get(module) == FlexModuleType.getInstance();
     return (FlexIdeBuildConfigurationManager)module.getPicoContainer()
       .getComponentInstance(FlexIdeBuildConfigurationManager.class.getName());
   }
