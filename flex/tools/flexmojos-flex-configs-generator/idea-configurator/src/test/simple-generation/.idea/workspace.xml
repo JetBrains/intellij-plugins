@@ -59,10 +59,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/generationWithCustomOutput/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="53" column="28" selection-start="1899" selection-end="1907" vertical-scroll-proportion="0.61675715">
+            <state line="53" column="28" selection-start="1899" selection-end="1907" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -71,7 +71,16 @@
       <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/flex/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="56" selection-start="1278" selection-end="1278" vertical-scroll-proportion="-21.6">
+            <state line="36" column="56" selection-start="1278" selection-end="1278" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="12" column="21" selection-start="488" selection-end="488" vertical-scroll-proportion="0.14240506">
               <folding />
             </state>
           </provider>
@@ -94,8 +103,8 @@
       <list>
         <option value="$PROJECT_DIR$/flex2/pom.xml" />
         <option value="$PROJECT_DIR$/flex/pom.xml" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/generationWithCustomOutput/pom.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
   </component>
@@ -397,7 +406,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="22" width="2560" height="1414" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -466,23 +475,23 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/generationWithCustomOutput/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="53" column="28" selection-start="1899" selection-end="1907" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/flex/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="56" selection-start="1278" selection-end="1278" vertical-scroll-proportion="-21.6">
+        <state line="36" column="56" selection-start="1278" selection-end="1278" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="38" selection-start="505" selection-end="505" vertical-scroll-proportion="0.13964313">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/generationWithCustomOutput/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="28" selection-start="1899" selection-end="1907" vertical-scroll-proportion="0.61675715">
+        <state line="12" column="21" selection-start="488" selection-end="488" vertical-scroll-proportion="0.14240506">
           <folding />
         </state>
       </provider>

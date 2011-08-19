@@ -110,7 +110,7 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
       out.append("</").append(name).append('>');
     }
     else {
-      if (name.equals("local-fonts-snapshot")) {
+      if (name.equals(LOCAL_FONTS_SNAPSHOT)) {
         value = "@@repo@@/fonts.ser";
       }
       super.writeTag(indent, name, value, parentName);

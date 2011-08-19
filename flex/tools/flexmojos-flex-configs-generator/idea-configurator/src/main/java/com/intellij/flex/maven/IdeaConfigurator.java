@@ -4,9 +4,13 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.codehaus.plexus.util.FileUtils;
 import org.sonatype.flexmojos.compiler.*;
 import org.sonatype.flexmojos.generator.iface.StringUtil;
 
@@ -19,13 +23,22 @@ import java.util.*;
 public class IdeaConfigurator {
   protected static final String PATH_ELEMENT = "path-element";
   protected static final String FILE_SPECS = "file-specs";
-  public static final String SOURCE_PATH = "source-path";
+  private static final String SOURCE_PATH = "source-path";
+  protected static final String LOCAL_FONTS_SNAPSHOT = "local-fonts-snapshot";
+  public static final String FONTS_SER = "fonts.ser";
 
   protected OutputStreamWriter out;
   protected Build build;
 
   private static final Map<String, String> CHILD_TAG_NAME_MAP = new HashMap<String, String>(12);
   private MojoExecution flexmojosGeneratorMojoExecution;
+  private ExpressionEvaluator flexmojosGeneratorExpressionEvaluator;
+  private final boolean useOldLocation;
+  private MavenSession session;
+
+  public IdeaConfigurator(boolean useOldLocation) {
+    this.useOldLocation = useOldLocation;
+  }
 
   static {
     CHILD_TAG_NAME_MAP.put("keep-as3-metadata", "name");
@@ -57,8 +70,15 @@ public class IdeaConfigurator {
     close();
   }
 
+  protected File configsDir;
+  protected File sharedFontsSer;
+
+  protected File getConfigsDir() {
+    return new File(".idea/flexmojos");
+  }
+
   protected String getConfigFilePath(MavenSession session, MavenProject project, String classifier) {
-    StringBuilder pathBuilder = new StringBuilder(".idea/flexmojos").append(File.separatorChar);
+    StringBuilder pathBuilder = new StringBuilder(useOldLocation ? build.getDirectory() : configsDir.getAbsolutePath()).append(File.separatorChar);
     // artifact id is first in path — it is convenient for us
     pathBuilder.append(project.getArtifactId()).append('-').append(project.getGroupId());
     if (classifier != null) {
@@ -68,6 +88,9 @@ public class IdeaConfigurator {
   }
 
   public void init(MavenSession session, MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException {
+    this.session = session;
+    configsDir = getConfigsDir();
+
     this.flexmojosGeneratorMojoExecution = flexmojosGeneratorMojoExecution;
     build = project.getBuild();
     File configFile = new File(getConfigFilePath(session, project, classifier));
@@ -272,11 +295,37 @@ public class IdeaConfigurator {
     }
   }
 
-  private void writeGeneratedSource(PlexusConfiguration configuration, String parameterName, List<File> existingList, String indent)
+  private void writeGeneratedSource(PlexusConfiguration parentConfiguration, String parameterName, List<File> existingList, String indent)
     throws IOException {
-    String filepath = configuration.getChild(parameterName).getValue();
+    final PlexusConfiguration configuration = parentConfiguration.getChild(parameterName);
+    if (configuration == null) {
+      return;
+    }
+    
+    String filepath = configuration.getValue();
+    if (filepath == null) {
+      final String defaultValue = configuration.getAttribute("default-value");
+      if (defaultValue == null) {
+        return;
+      }
+
+      if (flexmojosGeneratorExpressionEvaluator == null) {
+        flexmojosGeneratorExpressionEvaluator = new PluginParameterExpressionEvaluator(session, flexmojosGeneratorMojoExecution);
+      }
+      
+      try {
+        filepath = (String)flexmojosGeneratorExpressionEvaluator.evaluate(defaultValue);
+      }
+      catch (ExpressionEvaluationException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
     if (filepath != null) {
-      writeGeneratedSource(new File(filepath), existingList, indent);
+      File file = new File(filepath);
+      if (!existingList.contains(file)) {
+        writeTag(indent, PATH_ELEMENT, file.getAbsolutePath(), SOURCE_PATH);
+      }
     }
   }
     
@@ -287,6 +336,30 @@ public class IdeaConfigurator {
   }
 
   protected void processValue(String value, String name) throws IOException {
+    // http://juick.com/develar/1363289
+    if (!useOldLocation && name.equals(LOCAL_FONTS_SNAPSHOT)) {
+      final File fontsSer = new File( build.getOutputDirectory(), FONTS_SER);
+      String defaultPath;
+      // the same as flexmojos do
+      try {
+        defaultPath =  fontsSer.getCanonicalPath();
+      }
+      catch (IOException e) {
+        defaultPath =  fontsSer.getAbsolutePath();
+      }
+
+      if (value.equals(defaultPath)) {
+        if (sharedFontsSer == null) {
+          sharedFontsSer = new File(configsDir, FONTS_SER);
+          if (!sharedFontsSer.exists()) {
+            FileUtils.copyFile(fontsSer, sharedFontsSer);
+          }
+        }
+
+        value = sharedFontsSer.getAbsolutePath();
+      }
+    }
+
     out.append(value);
   }
 

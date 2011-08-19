@@ -57,6 +57,13 @@ public class IdeaConfigurationMojo extends AbstractMojo {
   private boolean generateShareable;
 
   /**
+   * @parameter expression="${useOldLocation}"
+   * @readonly
+   */
+  @SuppressWarnings({"UnusedDeclaration"})
+  private boolean useOldLocation;
+
+  /**
    * @parameter expression="${generateNonShareable}" default-value="true"
    * @readonly
    */
@@ -111,7 +118,7 @@ public class IdeaConfigurationMojo extends AbstractMojo {
     try {
       List<IdeaConfigurator> configurators = new ArrayList<IdeaConfigurator>(2);
       if (generateNonShareable) {
-        configurators.add(new IdeaConfigurator());
+        configurators.add(new IdeaConfigurator(useOldLocation));
       }
       if (generateShareable) {
         configurators.add(new ShareableFlexConfigGenerator());
