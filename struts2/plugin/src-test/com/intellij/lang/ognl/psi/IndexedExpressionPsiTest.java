@@ -15,7 +15,9 @@
 
 package com.intellij.lang.ognl.psi;
 
+import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.parsing.OgnlElementTypes;
+import org.intellij.lang.annotations.Language;
 
 /**
  * {@link OgnlElementTypes#INDEXED_EXPRESSION}.
@@ -25,23 +27,29 @@ import com.intellij.lang.ognl.parsing.OgnlElementTypes;
 public class IndexedExpressionPsiTest extends PsiTestCase {
 
   public void testIdentifierSimpleIntegerIndex() {
-    final OgnlElement element = parseSingleExpression("identifier[0]");
-    assertEquals(OgnlElementTypes.INDEXED_EXPRESSION, element.getNode().getElementType());
+    final OgnlExpression expression = parse("identifier[0]");
+    assertElementType(OgnlElementTypes.INDEXED_EXPRESSION, expression);
   }
 
   public void testIdentifierExpressionIntegerIndex() {
-    final OgnlElement element = parseSingleExpression("identifier[1+2]");
-    assertEquals(OgnlElementTypes.INDEXED_EXPRESSION, element.getNode().getElementType());
+    final OgnlExpression expression = parse("identifier[1+2]");
+    assertElementType(OgnlElementTypes.INDEXED_EXPRESSION, expression);
   }
 
   public void testVarSimpleIntegerIndex() {
-    final OgnlElement element = parseSingleExpression("#var[0]");
-    assertEquals(OgnlElementTypes.INDEXED_EXPRESSION, element.getNode().getElementType());
+    final OgnlExpression expression = parse("#var[0]");
+    assertElementType(OgnlElementTypes.INDEXED_EXPRESSION, expression);
   }
 
   public void testVarExpressionIntegerIndex() {
-    final OgnlElement element = parseSingleExpression("#var[1+2]");
-    assertEquals(OgnlElementTypes.INDEXED_EXPRESSION, element.getNode().getElementType());
+    final OgnlExpression expression = parse("#var[1+2]");
+    assertElementType(OgnlElementTypes.INDEXED_EXPRESSION, expression);
+  }
+
+  private OgnlExpression parse(@Language(value = OgnlLanguage.ID,
+                                         prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                         suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
+    return (OgnlExpression) parseSingleExpression(expression);
   }
 
 }
