@@ -18,6 +18,7 @@ package com.intellij.lang.ognl.highlight;
 import com.intellij.lang.ognl.psi.OgnlTokenTypes;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.HighlighterColors;
+import com.intellij.openapi.editor.JspHighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -47,8 +48,12 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
   @NotNull
   @Override
   public TextAttributesKey[] getTokenHighlights(final IElementType iElementType) {
-    return pack(keys1.get(iElementType));
+    return pack(BACKGROUND, keys1.get(iElementType));
   }
+
+  public static final TextAttributesKey BACKGROUND = TextAttributesKey.createTextAttributesKey(
+      "OGNL.BACKGROUND",
+      JspHighlighterColors.JSP_ACTION_AND_DIRECTIVE_BACKGROUND.getDefaultAttributes());
 
   public static final TextAttributesKey EXPRESSION = TextAttributesKey.createTextAttributesKey(
       "OGNL.EXPRESSION",

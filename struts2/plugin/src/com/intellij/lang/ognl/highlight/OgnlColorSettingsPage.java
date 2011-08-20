@@ -33,6 +33,7 @@ import java.util.Map;
 public class OgnlColorSettingsPage implements ColorSettingsPage {
 
   private static final AttributesDescriptor[] ATTRIBUTES_DESCRIPTORS = new AttributesDescriptor[]{
+      new AttributesDescriptor("Background", OgnlHighlighter.BACKGROUND),
       new AttributesDescriptor("Expression bounds", OgnlHighlighter.EXPRESSION),
       new AttributesDescriptor("Keyword", OgnlHighlighter.KEYWORDS),
       new AttributesDescriptor("Operations", OgnlHighlighter.OPERATIONS),
