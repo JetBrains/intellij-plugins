@@ -42,7 +42,6 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
       new AttributesDescriptor("Number", OgnlHighlighter.NUMBER),
       new AttributesDescriptor("Parentheses", OgnlHighlighter.PARENTHS),
       new AttributesDescriptor("Brackets", OgnlHighlighter.BRACKETS),
-      new AttributesDescriptor("Dot", OgnlHighlighter.DOT)
   };
 
   @NotNull

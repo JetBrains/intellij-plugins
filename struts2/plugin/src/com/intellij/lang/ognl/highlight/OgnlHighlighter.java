@@ -59,10 +59,6 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
       "OGNL.EXPRESSION",
       SyntaxHighlighterColors.KEYWORD.getDefaultAttributes());
 
-  public static final TextAttributesKey DOT = TextAttributesKey.createTextAttributesKey(
-      "OGNL.DOT",
-      SyntaxHighlighterColors.DOT.getDefaultAttributes());
-
   public static final TextAttributesKey BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(
       "OGNL.BAD_CHARACTER",
       HighlighterColors.BAD_CHARACTER.getDefaultAttributes());
@@ -100,7 +96,6 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
 
     // single characters
     keys1.put(OgnlTokenTypes.BAD_CHARACTER, BAD_CHARACTER);
-    keys1.put(OgnlTokenTypes.DOT, DOT);
 
     // EXPR_HOLDER
     keys1.put(OgnlTokenTypes.EXPRESSION_START, EXPRESSION);
