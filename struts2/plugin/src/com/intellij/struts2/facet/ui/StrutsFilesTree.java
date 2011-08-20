@@ -99,15 +99,15 @@ public class StrutsFilesTree extends CheckboxTreeBase {
       }
     }, null);
 
-     PeerFactory.getInstance().getUIHelper().installTreeSpeedSearch(this, new Convertor<TreePath, String>() {
+    PeerFactory.getInstance().getUIHelper().installTreeSpeedSearch(this, new Convertor<TreePath, String>() {
       public String convert(final TreePath treePath) {
-        final Object object = ((CheckedTreeNode)treePath.getLastPathComponent()).getUserObject();
+        final Object object = ((CheckedTreeNode) treePath.getLastPathComponent()).getUserObject();
         if (object instanceof Module) {
-          return ((Module)object).getName();
+          return ((Module) object).getName();
         } else if (object instanceof PsiFile) {
-          return ((PsiFile)object).getName();
+          return ((PsiFile) object).getName();
         } else if (object instanceof VirtualFile) {
-          return ((VirtualFile)object).getName();
+          return ((VirtualFile) object).getName();
         } else {
           return "";
         }
@@ -115,7 +115,7 @@ public class StrutsFilesTree extends CheckboxTreeBase {
     });
   }
 
-  public Set<PsiFile> buildModuleNodes(final MultiMap<Module,PsiFile> files,
+  public Set<PsiFile> buildModuleNodes(final MultiMap<Module, PsiFile> files,
                                        final MultiMap<VirtualFile, PsiFile> jars,
                                        final StrutsFileSet fileSet) {
 
@@ -128,14 +128,14 @@ public class StrutsFilesTree extends CheckboxTreeBase {
       }
     });
 
-    for (final Module module: modules) {
+    for (final Module module : modules) {
       final CheckedTreeNode moduleNode = new CheckedTreeNode(module);
       moduleNode.setChecked(false);
       root.add(moduleNode);
       if (files.containsKey(module)) {
         final List<PsiFile> moduleFiles = new ArrayList<PsiFile>(files.get(module));
         Collections.sort(moduleFiles, FILE_COMPARATOR);
-        for (final PsiFile file: moduleFiles) {
+        for (final PsiFile file : moduleFiles) {
           final CheckedTreeNode fileNode = createFileNode(file, fileSet);
           moduleNode.add(fileNode);
           psiFiles.add(file);
@@ -143,7 +143,7 @@ public class StrutsFilesTree extends CheckboxTreeBase {
       }
     }
 
-    for (final VirtualFile file: jars.keySet()) {
+    for (final VirtualFile file : jars.keySet()) {
       final List<PsiFile> list = new ArrayList<PsiFile>(jars.get(file));
       final PsiFile jar = list.get(0).getManager().findFile(file);
       if (jar != null) {
@@ -151,7 +151,7 @@ public class StrutsFilesTree extends CheckboxTreeBase {
         jarNode.setChecked(false);
         root.add(jarNode);
         Collections.sort(list, FILE_COMPARATOR);
-        for (final PsiFile psiFile: list) {
+        for (final PsiFile psiFile : list) {
           final CheckedTreeNode vfNode = createFileNode(psiFile, fileSet);
           jarNode.add(vfNode);
           psiFiles.add(psiFile);
@@ -189,7 +189,7 @@ public class StrutsFilesTree extends CheckboxTreeBase {
       }
     });
 
-    for (Iterator<VirtualFilePointer> i = fileSet.getFiles().iterator(); i.hasNext();) {
+    for (Iterator<VirtualFilePointer> i = fileSet.getFiles().iterator(); i.hasNext(); ) {
       final VirtualFilePointer pointer = i.next();
       final VirtualFile file = pointer.getFile();
       if (file == null || !configured.contains(file)) {
@@ -212,4 +212,5 @@ public class StrutsFilesTree extends CheckboxTreeBase {
     final DefaultTreeModel model = (DefaultTreeModel) getModel();
     model.nodeStructureChanged(root);
   }
+
 }
