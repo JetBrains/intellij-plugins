@@ -24,14 +24,23 @@ import com.intellij.lang.ognl.parsing.OgnlElementTypes;
  */
 public class IndexedExpressionPsiTest extends PsiTestCase {
 
-  public void testSimpleIntegerIndex() {
-    final OgnlElement element = parseSingleExpression("a[0]");
-
+  public void testIdentifierSimpleIntegerIndex() {
+    final OgnlElement element = parseSingleExpression("identifier[0]");
     assertEquals(OgnlElementTypes.INDEXED_EXPRESSION, element.getNode().getElementType());
   }
 
-  public void testExpressionIntegerIndex() {
-    final OgnlElement element = parseSingleExpression("a[1+2]");
+  public void testIdentifierExpressionIntegerIndex() {
+    final OgnlElement element = parseSingleExpression("identifier[1+2]");
+    assertEquals(OgnlElementTypes.INDEXED_EXPRESSION, element.getNode().getElementType());
+  }
+
+  public void testVarSimpleIntegerIndex() {
+    final OgnlElement element = parseSingleExpression("#var[0]");
+    assertEquals(OgnlElementTypes.INDEXED_EXPRESSION, element.getNode().getElementType());
+  }
+
+  public void testVarExpressionIntegerIndex() {
+    final OgnlElement element = parseSingleExpression("#var[1+2]");
     assertEquals(OgnlElementTypes.INDEXED_EXPRESSION, element.getNode().getElementType());
   }
 

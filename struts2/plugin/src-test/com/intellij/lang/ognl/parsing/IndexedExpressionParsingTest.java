@@ -28,4 +28,12 @@ public class IndexedExpressionParsingTest extends OgnlParsingTestCase {
     doTest(true);
   }
 
+  public void testAfterIdentifier() {
+    doTest(true);
+  }
+
+  public void testAfterVar() {
+    doTest(true);
+  }
+
 }

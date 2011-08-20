@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.lang.ognl.psi.OgnlTokenTypes.*;
 import static com.intellij.lang.pratt.PathPattern.path;
 import static com.intellij.lang.pratt.PrattRegistry.registerParser;
+import static com.intellij.patterns.PlatformPatterns.elementType;
 
 /**
  * @author Yann C&eacute;bron
@@ -244,15 +245,19 @@ public class OgnlParser extends PrattParser {
       }
     });
 
-    // [...]: index expression TODO only after identifier/expression
-    registerParser(LBRACKET, ATOM_LEVEL + 1, path().left(), new ReducingParser() {
-      @Override
-      public IElementType parseFurther(final PrattBuilder builder) {
-        parseExpression(builder);
-        builder.assertToken(RBRACKET, "']' expected");
-        return OgnlElementTypes.INDEXED_EXPRESSION;
-      }
-    });
+    // [...]: indexed expression, only after identifier/var
+    registerParser(LBRACKET,
+                   ATOM_LEVEL + 1,
+                   path().left(elementType().or(OgnlElementTypes.REFERENCE_EXPRESSION,
+                                                OgnlElementTypes.VARIABLE_EXPRESSION)).up(),
+                   new ReducingParser() {
+                     @Override
+                     public IElementType parseFurther(final PrattBuilder builder) {
+                       parseExpression(builder);
+                       builder.assertToken(RBRACKET, "']' expected");
+                       return OgnlElementTypes.INDEXED_EXPRESSION;
+                     }
+                   });
 
     // { a,b,c } list expression
     registerParser(LBRACE, EXPR_LEVEL + 1, path().up(), new ReducingParser() {
