@@ -74,7 +74,7 @@ public class MxmlTest extends BaseTestCase {
                  [
                    {source: {data: m}},
                    {source: {data: m}},
-                   {source: {data: {transparent: false, width: 124, height: 44}}},
+                   {source: {data: {transparent: true, width: 124, height: 44}}},
                    {source: {data: {transparent: true, width: 225, height: 225}}}
                  ],
                  {source: {data: {transparent: true, width: 80, height: 80}}},

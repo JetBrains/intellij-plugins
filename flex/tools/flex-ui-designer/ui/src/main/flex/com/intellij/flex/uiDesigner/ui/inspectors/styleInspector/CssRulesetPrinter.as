@@ -356,7 +356,7 @@ public class CssRulesetPrinter {
   }
 
   private function printEmbed(contentIndex:int, embedAsset:CssEmbedAssetDeclaration):Vector.<ContentElement> {
-    var server:Object = Server(_module.project.getComponent(Server));
+    var server:Server = Server(_module.project.getComponent(Server));
     var assetInfo:AssetInfo = server.getAssetInfo(embedAsset.id, _module.project, embedAsset is CssEmbedSwfDeclaration);
 
     const symbol:String = assetInfo.symbol;

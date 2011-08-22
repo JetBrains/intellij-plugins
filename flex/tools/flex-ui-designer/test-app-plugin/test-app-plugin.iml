@@ -7,7 +7,7 @@
         <option name="OUTPUT_TYPE" value="Application" />
         <option name="USE_DEFAULT_SDK_CONFIG_FILE" value="false" />
         <option name="USE_CUSTOM_CONFIG_FILE" value="true" />
-        <option name="CUSTOM_CONFIG_FILE" value="$MODULE_DIR$/target/test-1.0-SNAPSHOT-configs.xml" />
+        <option name="CUSTOM_CONFIG_FILE" value="$MODULE_DIR$/../.idea/flexmojos/test-com.intellij.flex.uiDesigner.plugins-config.xml" />
         <option name="USE_CUSTOM_CONFIG_FILE_FOR_TESTS" value="false" />
         <option name="CUSTOM_CONFIG_FILE_FOR_TESTS" value="" />
         <option name="APPLICATION_ENTRY_POINT" value="" />

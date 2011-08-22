@@ -93,7 +93,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   protected static boolean isFileBased(int command) {
-    return command >= ServerMethod.GET_RESOURCE_BUNDLE;
+    return command >= ServerMethod.GET_RESOURCE_BUNDLE && command < 100 /* test methods */;
   }
 
   private boolean safeProcessCommand(int command) throws IOException {
