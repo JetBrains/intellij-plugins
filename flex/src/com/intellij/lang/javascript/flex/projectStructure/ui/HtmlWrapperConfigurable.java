@@ -4,10 +4,10 @@ import com.intellij.lang.javascript.flex.projectStructure.options.HtmlWrapperOpt
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.wm.IdeFocusManager;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
@@ -37,10 +37,16 @@ public class HtmlWrapperConfigurable extends NamedConfigurable<HtmlWrapperOption
     };
 
     myWrapperFromSdkRadioButton.addActionListener(listener);
-    myWrapperFromFolderRadioButton.addActionListener(listener);
+    myWrapperFromFolderRadioButton.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        updateControls();
+        IdeFocusManager.getInstance(project).requestFocus(myTemplateFolderTextWithBrowse.getTextField(), true);
+      }
+    });
     myNoWrapperRadioButton.addActionListener(listener);
 
-    myTemplateFolderTextWithBrowse.addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor());
+    myTemplateFolderTextWithBrowse
+      .addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor());
   }
 
   @Nls
@@ -126,6 +132,4 @@ public class HtmlWrapperConfigurable extends NamedConfigurable<HtmlWrapperOption
 
   public void disposeUIResources() {
   }
-
-
 }
