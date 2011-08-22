@@ -56,7 +56,8 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
         @NotNull
         @Override
         public Collection<? extends PsiElement> fun(final PathReference pathReference) {
-          return ContainerUtil.createMaybeSingletonList(pathReference.resolve());
+          final PsiElement resolve = pathReference.resolve();
+          return resolve != null ? Collections.singleton(resolve) : Collections.<PsiElement>emptyList();
         }
       };
 
@@ -113,10 +114,11 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
     if (!actions.isEmpty()) {
       final NavigationGutterIconBuilder<DomElement> gutterIconBuilder =
           NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR,
-              NavigationGutterIconBuilder.DOM_GOTO_RELATED_ITEM_PROVIDER)
-              .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
-              .setTargets(actions).setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip"))
-              .setCellRenderer(getActionRenderer());
+                                             NavigationGutterIconBuilder.DOM_GOTO_RELATED_ITEM_PROVIDER)
+                                     .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
+                                     .setTargets(actions)
+                                     .setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip"))
+                                     .setCellRenderer(getActionRenderer());
 
       lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(element));
     }
@@ -137,7 +139,9 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
         ContainerUtil.addIfNotNull(pathReferences, pathReference);
       }
 
-      final Set<PathReference> toStore = ContainerUtil.getOrCreate(pathReferenceMap, method, new HashSet<PathReference>());
+      final Set<PathReference> toStore = ContainerUtil.getOrCreate(pathReferenceMap,
+                                                                   method,
+                                                                   new HashSet<PathReference>());
       toStore.addAll(pathReferences);
       pathReferenceMap.put(method, toStore);
     }
@@ -145,10 +149,10 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
     for (final Map.Entry<PsiMethod, Set<PathReference>> entries : pathReferenceMap.entrySet()) {
       final NavigationGutterIconBuilder<PathReference> gutterIconBuilder =
           NavigationGutterIconBuilder.create(StrutsIcons.RESULT, PATH_REFERENCE_CONVERTER,
-              PATH_REFERENCE_GOTO_RELATED_ITEM_PROVIDER)
-              .setPopupTitle(StrutsBundle.message("annotators.action.goto.result"))
-              .setTargets(entries.getValue())
-              .setTooltipTitle(StrutsBundle.message("annotators.action.goto.result.tooltip"));
+                                             PATH_REFERENCE_GOTO_RELATED_ITEM_PROVIDER)
+                                     .setPopupTitle(StrutsBundle.message("annotators.action.goto.result"))
+                                     .setTargets(entries.getValue())
+                                     .setTooltipTitle(StrutsBundle.message("annotators.action.goto.result.tooltip"));
 
       lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(entries.getKey()));
     }
