@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
@@ -672,7 +673,7 @@ public class FlexSdkUtils {
     ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
       public void run() {
         if (ModuleType.get(module) instanceof FlexModuleType) {
-          projectStructureConfigurable.select(module.getName(), ProjectBundle.message("modules.classpath.title"), true);
+          projectStructureConfigurable.select(module.getName(), ClasspathEditor.NAME, true);
         }
         else {
           final FlexFacet facet = FacetManager.getInstance(module).getFacetByType(FlexFacet.ID);
