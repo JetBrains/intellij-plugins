@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.*;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
@@ -170,8 +171,9 @@ public class MxmlWriter {
 
     for (final XmlAttribute attribute : parent.getAttributes()) {
       XmlAttributeDescriptor attributeDescriptor = attribute.getDescriptor();
+      final AnnotationBackedDescriptor descriptor;
       if (attributeDescriptor instanceof AnnotationBackedDescriptor) {
-        AnnotationBackedDescriptor descriptor = (AnnotationBackedDescriptor)attributeDescriptor;
+        descriptor = (AnnotationBackedDescriptor)attributeDescriptor;
         // id and includeIn/excludeFrom only as attribute, not as tag
         if (descriptor.isPredefined()) {
           if (descriptor.hasIdType()) {
@@ -224,17 +226,25 @@ public class MxmlWriter {
           // skip
         }
         else {
-          int beforePosition = out.size();
-          int type = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined, context);
-          if (type != IGNORE) {
-            if (propertyProcessor.isStyle()) {
-              cssDeclarationSourceDefined = true;
-            }
-            if (type < PRIMITIVE) {
-              writer.getBlockOut().setPosition(beforePosition);
-              addProblem(attribute, "error.unknown.attribute.value.type", descriptor.getType());
-            }
-          }
+
+        }
+      }
+      else if (attributeDescriptor instanceof AnyXmlAttributeDescriptor) {
+        descriptor = new AnyXmlAttributeDescriptorWrapper((AnyXmlAttributeDescriptor)attributeDescriptor);
+      }
+      else {
+        continue;
+      }
+
+      int beforePosition = out.size();
+      int type = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined, context);
+      if (type != IGNORE) {
+        if (propertyProcessor.isStyle()) {
+          cssDeclarationSourceDefined = true;
+        }
+        if (type < PRIMITIVE) {
+          writer.getBlockOut().setPosition(beforePosition);
+          addProblem(attribute, "error.unknown.attribute.value.type", descriptor.getType());
         }
       }
     }
