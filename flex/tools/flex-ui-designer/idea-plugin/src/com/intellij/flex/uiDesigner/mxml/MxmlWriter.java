@@ -520,6 +520,11 @@ public class MxmlWriter {
           out.write(Amf3Types.ARRAY);
           return 1;
         }
+        else if (defaultDescriptor.getArrayType() != null /* Vector */) {
+          out.write(Amf3Types.VECTOR_OBJECT);
+          writer.write(defaultDescriptor.getArrayType());
+          return 1;
+        }
         else if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
           writeSubstitutedString(valueProvider.getSubstituted());
         }

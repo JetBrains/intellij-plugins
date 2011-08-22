@@ -121,7 +121,7 @@ public final class ModuleContextImpl implements ModuleContextEx {
   private var _deferredInstanceFromBytesVectorClass:Class;
   public function get deferredInstanceFromBytesVectorClass():Class {
     if (_deferredInstanceFromBytesVectorClass == null) {
-      _deferredInstanceFromBytesVectorClass = getClass("__AS3__.vec::Vector.<com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytes>");
+      _deferredInstanceFromBytesVectorClass = getVectorClass("com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytes");
     }
 
     return _deferredInstanceFromBytesVectorClass;
@@ -142,6 +142,10 @@ public final class ModuleContextImpl implements ModuleContextEx {
 
   public function getClass(fqn:String):Class {
     return Class(applicationDomain.getDefinition(fqn));
+  }
+
+  public function getVectorClass(fqn:String):Class {
+    return Class(applicationDomain.getDefinition("__AS3__.vec::Vector.<" + fqn + ">"));
   }
 
   public function getDefinition(fqn:String):Object {

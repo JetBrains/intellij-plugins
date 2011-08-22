@@ -14,6 +14,7 @@ public interface ModuleContext {
   function set styleManager(value:StyleManagerEx):void;
 
   function getClass(fqn:String):Class;
+  function getVectorClass(fqn:String):Class;
 
   function getDefinition(name:String):Object;
 

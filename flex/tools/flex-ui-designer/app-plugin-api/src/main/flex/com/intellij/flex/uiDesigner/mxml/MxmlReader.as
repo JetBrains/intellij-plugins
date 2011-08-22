@@ -380,7 +380,7 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case Amf3Types.OBJECT:
-          propertyHolder[propertyName] = readObjectFromClass(stringRegistry.read(input));
+          propertyHolder[propertyName] = readObjectFromClass(stringRegistry.readNotNull(input));
           if (cssDeclaration != null) {
             cssDeclaration.type = CssPropertyType.EFFECT;
           }
@@ -388,6 +388,11 @@ public final class MxmlReader implements DocumentReader {
 
         case Amf3Types.ARRAY:
           propertyHolder[propertyName] = readArray([]);
+          break;
+
+        case Amf3Types.VECTOR_OBJECT:
+          var vectorClass:Class = moduleContext.getVectorClass(stringRegistry.readNotNull(input));
+          propertyHolder[propertyName] = readArray(new vectorClass());
           break;
 
         case COLOR_STYLE_MARKER:
@@ -553,13 +558,13 @@ public final class MxmlReader implements DocumentReader {
   }
 
   // support only object array without null
-  internal function readArray(array:Array):Array {
+  internal function readArray(array:Object):Object {
     var count:int = 0;
     while (true) {
       const amfType:int = input.readByte();
       switch (amfType) {
         case Amf3Types.OBJECT:
-          array[count++] = readObjectFromClass(stringRegistry.read(input));
+          array[count++] = readObjectFromClass(stringRegistry.readNotNull(input));
           break;
 
         case 0:
