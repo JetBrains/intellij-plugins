@@ -53,7 +53,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
     myDependenciesConfigurable = new DependenciesConfigurable(configuration.DEPENDENCIES);
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.COMPILER_OPTIONS);
-    myHtmlWrapperConfigurable = new HtmlWrapperConfigurable(configuration.HTML_WRAPPER_OPTIONS);
+    myHtmlWrapperConfigurable = new HtmlWrapperConfigurable(module.getProject(), configuration.HTML_WRAPPER_OPTIONS);
     myAirDescriptorConfigurable = new AirDescriptorConfigurable(configuration.AIR_DESCRIPTOR_OPTIONS);
     myAirDesktopPackagingConfigurable =
       new AirDesktopPackagingConfigurable(module.getProject(), configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
