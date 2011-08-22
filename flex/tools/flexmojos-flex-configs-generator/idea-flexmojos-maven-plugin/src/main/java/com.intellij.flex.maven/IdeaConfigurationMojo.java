@@ -95,7 +95,7 @@ public class IdeaConfigurationMojo extends AbstractMojo {
       }
     }
 
-    if (flexmojosGeneratorMojoExecution == null) {
+    if (flexmojosMojoExecution == null) {
       return;
     }
 

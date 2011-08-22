@@ -78,7 +78,18 @@ public class IdeaConfigurator {
   }
 
   protected String getConfigFilePath(MavenSession session, MavenProject project, String classifier) {
-    StringBuilder pathBuilder = new StringBuilder(useOldLocation ? build.getDirectory() : configsDir.getAbsolutePath()).append(File.separatorChar);
+    if (useOldLocation) {
+      StringBuilder pathBuilder = new StringBuilder(build.getDirectory()).append(File.separatorChar).append(build.getFinalName());
+      if (classifier != null) {
+        pathBuilder.append('-').append(classifier);
+      }
+      return pathBuilder.append("-configs.xml").toString();
+    }
+
+    //noinspection ResultOfMethodCallIgnored
+    configsDir.mkdirs();
+
+    StringBuilder pathBuilder = new StringBuilder(configsDir.getAbsolutePath()).append(File.separatorChar);
     // artifact id is first in path — it is convenient for us
     pathBuilder.append(project.getArtifactId()).append('-').append(project.getGroupId());
     if (classifier != null) {
@@ -338,14 +349,14 @@ public class IdeaConfigurator {
   protected void processValue(String value, String name) throws IOException {
     // http://juick.com/develar/1363289
     if (!useOldLocation && name.equals(LOCAL_FONTS_SNAPSHOT)) {
-      final File fontsSer = new File( build.getOutputDirectory(), FONTS_SER);
+      final File fontsSer = new File(build.getOutputDirectory(), FONTS_SER);
       String defaultPath;
       // the same as flexmojos do
       try {
-        defaultPath =  fontsSer.getCanonicalPath();
+        defaultPath = fontsSer.getCanonicalPath();
       }
       catch (IOException e) {
-        defaultPath =  fontsSer.getAbsolutePath();
+        defaultPath = fontsSer.getAbsolutePath();
       }
 
       if (value.equals(defaultPath)) {
