@@ -379,7 +379,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
 
     config.USE_DEFAULT_SDK_CONFIG_FILE = false;
     config.USE_CUSTOM_CONFIG_FILE = true;
-    config.CUSTOM_CONFIG_FILE = getTargetFilePath(project, suffix + getCompilerConfigXmlSuffix());
+    config.CUSTOM_CONFIG_FILE = getCompilerConfigFile(module, project, suffix);
 
     final String outputFilePath = getOutputFilePath(project);
     final int lastSlashIndex = outputFilePath.lastIndexOf("/");
@@ -396,6 +396,10 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     reimportCompileLocales(project, config);
     reimportRuntimeLocalesFacets(project, module, modelsProvider);
     reimportMxModuleFacets(project, module, modelsProvider);
+  }
+
+  protected String getCompilerConfigFile(Module module, MavenProject mavenProject, String suffix) {
+    return getTargetFilePath(mavenProject, suffix + getCompilerConfigXmlSuffix());
   }
 
   @Override
@@ -479,7 +483,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     }
   }
 
-  private String getRuntimeLocalesOutputPathPattern(MavenProject project, String runtimeLocaleOuputPathPattern, String extension) {
+  private static String getRuntimeLocalesOutputPathPattern(MavenProject project, String runtimeLocaleOuputPathPattern, String extension) {
     MavenId projectId = project.getMavenId();
     String result = runtimeLocaleOuputPathPattern;
 
@@ -495,7 +499,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     return result;
   }
 
-  private String getRuntimeLocaleOutputPath(String runtimeLocaleOuputPathPattern, String locale) {
+  private static String getRuntimeLocaleOutputPath(String runtimeLocaleOuputPathPattern, String locale) {
     return runtimeLocaleOuputPathPattern.replaceAll("\\{locale\\}", Matcher.quoteReplacement(locale));
   }
 
