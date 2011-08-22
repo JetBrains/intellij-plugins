@@ -64,6 +64,8 @@ public class GotoRelatedActionProvider extends GotoRelatedProvider {
       return Collections.emptyList();
     }
 
+    final List<PsiFile> allFiles = containingFile.getViewProvider().getAllFiles();
+
     final Set<Action> actions = new HashSet<Action>();
     final List<GotoRelatedItem> items = new ArrayList<GotoRelatedItem>();
     strutsModel.processActions(new Processor<Action>() {
@@ -82,7 +84,6 @@ public class GotoRelatedActionProvider extends GotoRelatedProvider {
           }
 
           final PsiElement resolve = pathReference.resolve();
-          final List<PsiFile> allFiles = containingFile.getViewProvider().getAllFiles();
           if (ContainerUtil.find(allFiles, resolve) == null) {
             continue;
           }
