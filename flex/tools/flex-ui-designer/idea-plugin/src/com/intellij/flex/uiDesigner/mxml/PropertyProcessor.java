@@ -225,7 +225,6 @@ class PropertyProcessor {
         }
       }
       else if (type.equals(JSCommonTypeNames.ARRAY_CLASS_NAME)) {
-
         if (!descriptor.isRichTextContent() && valueProvider instanceof XmlAttributeValueProvider &&
             isInlineArray(valueProvider.getTrimmed())) {
           writeInlineArray(valueProvider);
@@ -234,6 +233,11 @@ class PropertyProcessor {
           out.write(Amf3Types.ARRAY);
           return ARRAY;
         }
+      }
+      else if (descriptor.getArrayType() != null) {
+        out.write(Amf3Types.VECTOR_OBJECT);
+        writer.write(descriptor.getArrayType());
+        return ARRAY;
       }
       else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
         writeUntypedPropertyValue(valueProvider, descriptor);
