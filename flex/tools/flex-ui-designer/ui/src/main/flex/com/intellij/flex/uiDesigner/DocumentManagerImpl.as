@@ -261,7 +261,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       systemManager.initShared(window.stage, module.project, server, UncaughtErrorManager.instance);
     }
     systemManager.init(new flexModuleFactoryClass(module.styleManager, module.context.applicationDomain), UncaughtErrorManager.instance,
-                       MainFocusManagerSB(module.project.window.focusManager));
+                       MainFocusManagerSB(module.project.window.focusManager), document.documentFactory);
     document.container = new DocumentContainer(Sprite(systemManager));
   }
 }

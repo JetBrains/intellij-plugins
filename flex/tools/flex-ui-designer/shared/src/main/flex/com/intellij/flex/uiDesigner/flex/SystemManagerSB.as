@@ -20,7 +20,7 @@ public interface SystemManagerSB {
   function get stage():Stage;
 
   function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,
-                mainFocusManager:MainFocusManagerSB):void;
+                mainFocusManager:MainFocusManagerSB, documentFactory:Object):void;
 
   function removeEventHandlers():void;
 
@@ -38,5 +38,7 @@ public interface SystemManagerSB {
   function get elementUtil():ElementUtil;
 
   function setStyleManagerForTalentAdobeEngineers(value:Boolean):void;
+
+  function get documentFactory():Object;
 }
 }

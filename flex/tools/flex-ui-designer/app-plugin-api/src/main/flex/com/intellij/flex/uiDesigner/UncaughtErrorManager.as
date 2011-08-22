@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner {
 import cocoa.util.StringUtil;
 
+import com.intellij.flex.uiDesigner.flex.SystemManagerSB;
+
 import flash.display.LoaderInfo;
 import flash.events.ErrorEvent;
 import flash.events.UncaughtErrorEvent;
@@ -57,7 +59,31 @@ public class UncaughtErrorManager implements UiErrorHandler {
   }
 
   public function handleUiError(error:Error, object:Object, userMessage:String):void {
-    sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : Error(error).message, userMessage);
+    var documentFactory:DocumentFactory;
+    if (object != null) {
+      try {
+        while (true) {
+          if (object is SystemManagerSB) {
+            documentFactory = DocumentFactory(SystemManagerSB(object).documentFactory);
+            break;
+          }
+          else if ((object = object.parent) == null) {
+            break;
+          }
+        }
+      }
+      catch (e:Error) {
+        trace(e);
+      }
+    }
+
+    if (documentFactory != null) {
+      sendMessage2(Capabilities.isDebugger ? buildErrorMessage(error) : error.message, userMessage, documentFactory.module.project.id,
+                   documentFactory.id);
+    }
+    else {
+      sendMessage(Capabilities.isDebugger ? buildErrorMessage(error) : error.message, userMessage);
+    }
   }
 
   public function readDocumentErrorHandler(error:Error, documentFactory:DocumentFactory):void {

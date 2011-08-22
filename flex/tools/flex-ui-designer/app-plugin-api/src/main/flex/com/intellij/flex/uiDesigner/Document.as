@@ -9,8 +9,6 @@ public class Document {
   public var systemManager:SystemManagerSB;
   public var container:View;
   
-  public var tabIndex:int;
-
   public function Document(documentFactory:DocumentFactory) {
     this._documentFactory = documentFactory;
   }

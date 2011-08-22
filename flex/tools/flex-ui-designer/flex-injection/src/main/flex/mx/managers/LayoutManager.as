@@ -173,13 +173,13 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
       if (obj.nestLevel) {
         currentObject = obj;
         try {
-        obj.validateSize();
+          obj.validateSize();
 
-        if (!obj.updateCompletePendingFlag) {
-          updateCompleteQueue.addObject(obj, obj.nestLevel);
-          obj.updateCompletePendingFlag = true;
+          if (!obj.updateCompletePendingFlag) {
+            updateCompleteQueue.addObject(obj, obj.nestLevel);
+            obj.updateCompletePendingFlag = true;
+          }
         }
-      }
         catch (e:Error) {
           uiErrorHandler.handleUiError(e, currentObject, "Can't validate size " + obj);
           invalidateDisplayListQueue.removeChild(obj);

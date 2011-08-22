@@ -79,6 +79,12 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   private const implementations:Dictionary = new Dictionary();
   private var mainFocusManager:MainFocusManagerSB;
 
+  // requires only for error reporting
+  private var _documentFactory:Object;
+  public function get documentFactory():Object {
+    return _documentFactory;
+  }
+
   public function get elementUtil():ElementUtil {
     return ElementUtilImpl.instance;
   }
@@ -130,9 +136,11 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     EffectManager.registerEffectTrigger("showEffect", "show");
   }
 
-  public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler, mainFocusManager:MainFocusManagerSB):void {
+  public function init(moduleFactory:Object, uiErrorHandler:UiErrorHandler,
+                       mainFocusManager:MainFocusManagerSB, documentFactory:Object):void {
     this.mainFocusManager = mainFocusManager;
     this.uiErrorHandler = uiErrorHandler;
+    _documentFactory = documentFactory;
 
     LayoutManager(UIComponentGlobals.layoutManager).waitFrame();
 
