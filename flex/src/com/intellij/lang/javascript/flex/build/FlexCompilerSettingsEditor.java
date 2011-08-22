@@ -96,7 +96,7 @@ public class FlexCompilerSettingsEditor implements ModuleConfigurationEditor {
   private TextFieldWithBrowseButton.NoPathCompletion myConditionalCompilationDefinitionsTextWithBrowse;
   private MultiLineLabel myIdeBuilderOffLabel;
   private List<FlexBuildConfiguration.ConditionalCompilationDefinition> myConditionalCompilationDefinitionList;
-  private Module myModule;
+  private final Module myModule;
   private @Nullable FlexFacet myFlexFacet;
   private final FlexBuildConfiguration config;
   private CompilerModuleExtension myCompilerExtension;
