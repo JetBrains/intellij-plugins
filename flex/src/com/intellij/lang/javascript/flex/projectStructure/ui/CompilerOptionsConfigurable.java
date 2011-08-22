@@ -2,13 +2,14 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.options.CompilerOptions;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -42,6 +43,7 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -52,20 +54,38 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private JPanel myMainPanel;
   private TreeTable myTreeTable;
   private NonFocusableCheckBox myShowAllOptionsCheckBox;
+  private JLabel myInheritProjectDefaultsLegend;
+  private JLabel myInheritModuleDefaultsLegend;
   private JButton myProjectDefaultsButton;
   private JButton myModuleDefaultsButton;
 
+  private final Mode myMode;
   private final Module myModule;
+  private final Project myProject;
+  private final String myName;
   private final FlexIdeBuildConfigurationManager myBCManager;
-  private final FlexIdeProjectLevelCompilerOptions myProjectLevelOptions;
+  private final FlexIdeProjectLevelCompilerOptionsHolder myProjectLevelOptionsHolder;
   private final CompilerOptions myCompilerOptions;
   private final Map<String, String> myCurrentOptions;
   private boolean myModified;
 
+  private enum Mode {BC, Module, Project}
+
   public CompilerOptionsConfigurable(final Module module, final CompilerOptions compilerOptions) {
+    this(Mode.BC, module, module.getProject(), compilerOptions);
+  }
+
+  private CompilerOptionsConfigurable(final Mode mode, final Module module, final Project project, final CompilerOptions compilerOptions) {
+    myMode = mode;
     myModule = module;
-    myBCManager = FlexIdeBuildConfigurationManager.getInstance(module);
-    myProjectLevelOptions = FlexIdeProjectLevelCompilerOptions.getInstance(module.getProject());
+    myProject = project;
+    myName = myMode == Mode.BC
+             ? "Compiler Options"
+             : myMode == Mode.Module
+               ? MessageFormat.format("Default Compiler Options For Module ''{0}''", module.getName())
+               : MessageFormat.format("Default Compiler Options For Project ''{0}''", project.getName());
+    myBCManager = myMode == Mode.BC ? FlexIdeBuildConfigurationManager.getInstance(module) : null;
+    myProjectLevelOptionsHolder = FlexIdeProjectLevelCompilerOptionsHolder.getInstance(project);
     myCompilerOptions = compilerOptions;
     myCurrentOptions = new THashMap<String, String>();
 
@@ -75,35 +95,49 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       }
     });
 
+    myInheritModuleDefaultsLegend.setVisible(myMode == Mode.BC);
+    myInheritProjectDefaultsLegend.setVisible(myMode == Mode.BC || myMode == Mode.Module);
+
     initButtons();
   }
 
   private void initButtons() {
-    myProjectDefaultsButton.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        final CompilerOptions compilerOptions = myProjectLevelOptions.getProjectLevelCompilerOptions();
-        final boolean changed = ShowSettingsUtil.getInstance()
-          .editConfigurable(myModule.getProject(), new CompilerOptionsConfigurable(myModule, compilerOptions));
-        if (changed) {
-          updateTreeTable();
+    if (myMode == Mode.Project) {
+      myProjectDefaultsButton.setVisible(false);
+    }
+    else {
+      myProjectDefaultsButton.addActionListener(new ActionListener() {
+        public void actionPerformed(final ActionEvent e) {
+          final CompilerOptions compilerOptions = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions();
+          final boolean changed = ShowSettingsUtil.getInstance()
+            .editConfigurable(myProject, new CompilerOptionsConfigurable(Mode.Project, null, myProject, compilerOptions));
+          if (changed) {
+            updateTreeTable();
+          }
         }
-      }
-    });
-    myModuleDefaultsButton.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        final CompilerOptions compilerOptions = myBCManager.getModuleLevelCompilerOptions();
-        final boolean changed = ShowSettingsUtil.getInstance()
-          .editConfigurable(myModule.getProject(), new CompilerOptionsConfigurable(myModule, compilerOptions));
-        if (changed) {
-          updateTreeTable();
+      });
+    }
+
+    if (myMode == Mode.Project || myMode == Mode.Module) {
+      myModuleDefaultsButton.setVisible(false);
+    }
+    else {
+      myModuleDefaultsButton.addActionListener(new ActionListener() {
+        public void actionPerformed(final ActionEvent e) {
+          final CompilerOptions compilerOptions = myBCManager.getModuleLevelCompilerOptions();
+          final boolean changed = ShowSettingsUtil.getInstance()
+            .editConfigurable(myProject, new CompilerOptionsConfigurable(Mode.Module, myModule, myProject, compilerOptions));
+          if (changed) {
+            updateTreeTable();
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   @Nls
   public String getDisplayName() {
-    return "Compiler Options";
+    return myName;
   }
 
   public void setDisplayName(final String name) {
@@ -137,13 +171,15 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
   public void apply() throws ConfigurationException {
     applyTo(myCompilerOptions);
-    myModified = false;
   }
 
   public void applyTo(final CompilerOptions compilerOptions) {
     TableUtil.stopEditing(myTreeTable);
     compilerOptions.OPTIONS.clear();
     compilerOptions.OPTIONS.putAll(myCurrentOptions);
+    if (compilerOptions == myCompilerOptions) {
+      myModified = false;
+    }
   }
 
   public void reset() {
@@ -288,7 +324,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       private final JCheckBox myCheckBox = new JCheckBox();
 
       {
-        myTextWithBrowse.addBrowseFolderListener(null, null, myModule.getProject(), myFileChooserDescriptor);
+        myTextWithBrowse.addBrowseFolderListener(null, null, myProject, myFileChooserDescriptor);
         myCheckBox.addActionListener(new ActionListener() {
           public void actionPerformed(final ActionEvent e) {
             TableUtil.stopEditing(myTreeTable); // apply new check box state immediately
@@ -498,14 +534,18 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       return Pair.create(customValue, ValueSource.Custom);
     }
 
-    final String moduleDefaultValue = myBCManager.getModuleLevelCompilerOptions().OPTIONS.get(info.ID);
-    if (moduleDefaultValue != null) {
-      return Pair.create(moduleDefaultValue, ValueSource.ModuleDefault);
+    if (myMode == Mode.BC) {
+      final String moduleDefaultValue = myBCManager.getModuleLevelCompilerOptions().OPTIONS.get(info.ID);
+      if (moduleDefaultValue != null) {
+        return Pair.create(moduleDefaultValue, ValueSource.ModuleDefault);
+      }
     }
 
-    final String projectDefaultValue = myProjectLevelOptions.getProjectLevelCompilerOptions().OPTIONS.get(info.ID);
-    if (projectDefaultValue != null) {
-      return Pair.create(projectDefaultValue, ValueSource.ProjectDefault);
+    if (myMode == Mode.BC || myMode == Mode.Module) {
+      final String projectDefaultValue = myProjectLevelOptionsHolder.getProjectLevelCompilerOptions().OPTIONS.get(info.ID);
+      if (projectDefaultValue != null) {
+        return Pair.create(projectDefaultValue, ValueSource.ProjectDefault);
+      }
     }
 
     // todo pass version of currently selected sdk

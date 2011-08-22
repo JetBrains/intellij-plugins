@@ -152,6 +152,8 @@ public class FlexIdeBCConfigurator {
                                       configuration.PURE_ACTION_SCRIPT, configuration.OUTPUT_TYPE);
     dialog.show();
     if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+      myModified = true;
+
       configuration.NAME = dialog.getName();
       configuration.TARGET_PLATFORM = dialog.getTargetPlatform();
       configuration.PURE_ACTION_SCRIPT = dialog.isPureActionScript();

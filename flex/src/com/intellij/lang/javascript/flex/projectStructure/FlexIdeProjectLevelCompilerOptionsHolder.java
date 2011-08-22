@@ -5,26 +5,26 @@ import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 
 @State(
-  name = "FlexIdeProjectLevelCompilerOptions",
+  name = "FlexIdeProjectLevelCompilerOptionsHolder",
   storages = {
     @Storage(file = "$WORKSPACE_FILE$"),
     @Storage(file = "$PROJECT_CONFIG_DIR$/flexCompiler.xml", scheme = StorageScheme.DIRECTORY_BASED)
   }
 )
-public class FlexIdeProjectLevelCompilerOptions implements PersistentStateComponent<FlexIdeProjectLevelCompilerOptions> {
+public class FlexIdeProjectLevelCompilerOptionsHolder implements PersistentStateComponent<FlexIdeProjectLevelCompilerOptionsHolder> {
 
   public CompilerOptions myProjectLevelCompilerOptions = new CompilerOptions();
 
-  public FlexIdeProjectLevelCompilerOptions getState() {
+  public FlexIdeProjectLevelCompilerOptionsHolder getState() {
     return this;
   }
 
-  public void loadState(final FlexIdeProjectLevelCompilerOptions state) {
+  public void loadState(final FlexIdeProjectLevelCompilerOptionsHolder state) {
     myProjectLevelCompilerOptions = state.myProjectLevelCompilerOptions.clone();
   }
 
-  public static FlexIdeProjectLevelCompilerOptions getInstance(final Project project) {
-    return ServiceManager.getService(project, FlexIdeProjectLevelCompilerOptions.class);
+  public static FlexIdeProjectLevelCompilerOptionsHolder getInstance(final Project project) {
+    return ServiceManager.getService(project, FlexIdeProjectLevelCompilerOptionsHolder.class);
   }
 
   public CompilerOptions getProjectLevelCompilerOptions() {
