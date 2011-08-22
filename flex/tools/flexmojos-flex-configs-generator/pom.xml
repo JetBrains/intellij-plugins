@@ -9,7 +9,7 @@
 
   <groupId>com.intellij.flex.maven</groupId>
   <artifactId>idea-flexmojos-aggregator</artifactId>
-  <version>1.4.1</version>
+  <version>1.4.2</version>
   <packaging>pom</packaging>
 
   <properties>

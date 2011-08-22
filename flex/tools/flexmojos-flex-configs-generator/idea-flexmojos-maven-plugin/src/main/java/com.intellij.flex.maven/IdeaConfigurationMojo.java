@@ -1,5 +1,6 @@
 package com.intellij.flex.maven;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.internal.LifecycleExecutionPlanCalculator;
 import org.apache.maven.model.Plugin;
@@ -16,6 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -23,6 +25,7 @@ import java.util.List;
  * @requiresDependencyResolution compile
  * @threadSafe
  * @phase compile
+ * @aggregator
  */
 @Component(role=IdeaConfigurationMojo.class)
 public class IdeaConfigurationMojo extends AbstractMojo {
@@ -57,33 +60,77 @@ public class IdeaConfigurationMojo extends AbstractMojo {
   private boolean generateShareable;
 
   /**
-   * @parameter expression="${useOldLocation}"
-   * @readonly
-   */
-  @SuppressWarnings({"UnusedDeclaration"})
-  private boolean useOldLocation;
-
-  /**
    * @parameter expression="${generateNonShareable}" default-value="true"
    * @readonly
    */
   @SuppressWarnings({"UnusedDeclaration"})
   private boolean generateNonShareable;
 
+  static {
+    // link dep
+    MethodComparator.class.getName();
+  }
+
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
-    MavenProject project = session.getCurrentProject();
-    String packaging = project.getPackaging();
-    if (!Utils.isFlashProject(project)) {
-      return;
+    List<IdeaConfigurator> configurators = new ArrayList<IdeaConfigurator>(2);
+    if (generateNonShareable) {
+      configurators.add(new IdeaConfigurator(session));
+    }
+    if (generateShareable) {
+      configurators.add(new ShareableFlexConfigGenerator(session));
     }
 
+    // for some unknown reasons (WTF?), project artifact is not equals is not the same instance as in dependentProject.getArtifacts(),
+    // so, without this hack, we have two problems:
+    // 1) if artifact located in local repo, but not in project dir, output file will be from local repo (but must be from project dir)
+    // 2) if artifact located nor in local repo, nor in project dir, will be build failure due to "Unable to handle unresolved artifact"
+    final HashMap<Artifact, MavenProject> ourProjects = new HashMap<Artifact, MavenProject>(session.getProjects().size());
+    final String rootProjectDirPath = session.getTopLevelProject().getBasedir().getPath();
+    for (MavenProject project : session.getProjects()) {
+      if (!Utils.isFlashProject(project)) {
+        continue;
+      }
+
+      for (Artifact artifact : project.getArtifacts()) {
+        final MavenProject reactorProject = ourProjects.get(artifact);
+        if (reactorProject != null) {
+          // case 2, see comment above
+          if (!artifact.isResolved()) {
+            artifact.setResolved(true);
+          }
+          // case 1, see comment above
+          else if (artifact.getFile().getPath().startsWith(rootProjectDirPath)) {
+            continue;
+          }
+
+          artifact.setFile(reactorProject.getArtifact().getFile());
+        }
+      }
+
+      ourProjects.put(project.getArtifact(), project);
+
+      try {
+        // requires for flexmojos
+        session.setCurrentProject(project);
+        generateForProject(project, configurators);
+      }
+      catch (Exception e) {
+        throw new MojoExecutionException("Cannot generate flex config: " + e.getMessage(), e);
+      }
+      finally {
+        session.setCurrentProject(session.getTopLevelProject());
+      }
+    }
+  }
+
+  private void generateForProject(MavenProject project, List<IdeaConfigurator> configurators) throws Exception {
     MojoExecution flexmojosMojoExecution = null;
     MojoExecution flexmojosGeneratorMojoExecution = null;
     for (Plugin plugin : project.getBuildPlugins()) {
       if (plugin.getGroupId().equals("org.sonatype.flexmojos")) {
         if (flexmojosMojoExecution == null && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
-          flexmojosMojoExecution = createMojoExecution(plugin, "compile-" + packaging, project);
+          flexmojosMojoExecution = createMojoExecution(plugin, "compile-" + project.getPackaging(), project);
         }
         else if (flexmojosGeneratorMojoExecution == null && plugin.getArtifactId().equals("flexmojos-generator-mojo")) {
           flexmojosGeneratorMojoExecution = createMojoExecution(plugin, "generate", project);
@@ -99,60 +146,39 @@ public class IdeaConfigurationMojo extends AbstractMojo {
       return;
     }
 
-    final ClassRealm flexmojosPluginRealm;
+    ClassRealm flexmojosPluginRealm = pluginManager.getPluginRealm(session,
+                                                                   flexmojosMojoExecution.getMojoDescriptor().getPluginDescriptor());
     Mojo mojo = null;
     try {
-      flexmojosPluginRealm = pluginManager.getPluginRealm(session, flexmojosMojoExecution.getMojoDescriptor().getPluginDescriptor());
       mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
-    }
-    catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-    finally {
-      if (mojo != null) {
-        mavenPluginManager.releaseMojo(mojo, mojoExecution);
-      }
-    }
-
-    MethodComparator.class.getName(); // link dep
-    try {
-      List<IdeaConfigurator> configurators = new ArrayList<IdeaConfigurator>(2);
-      if (generateNonShareable) {
-        configurators.add(new IdeaConfigurator(useOldLocation));
-      }
-      if (generateShareable) {
-        configurators.add(new ShareableFlexConfigGenerator());
-      }
-
       modifyOurClassRealm(flexmojosPluginRealm);
 
       for (IdeaConfigurator configurator : configurators) {
-        configurator.init(session, project, getClassifier(mojo, flexmojosPluginRealm), flexmojosGeneratorMojoExecution);
-        if ("swc".equals(packaging)) {
-          configurator.buildConfiguration(mojo, flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICompcConfiguration"));
+        configurator.preGenerate(project, getClassifier(mojo, flexmojosPluginRealm), flexmojosGeneratorMojoExecution);
+        try {
+          if ("swc".equals(project.getPackaging())) {
+            configurator.generate(mojo, flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICompcConfiguration"));
+          }
+          else {
+            configurator.generate(mojo, getSourceFileForSwf(mojo, flexmojosPluginRealm), flexmojosPluginRealm.loadClass(
+              "org.sonatype.flexmojos.compiler.ICommandLineConfiguration"));
+          }
         }
-        else {
-          configurator.buildConfiguration(mojo, getSourceFileForSwf(mojo, flexmojosPluginRealm), flexmojosPluginRealm.loadClass("org.sonatype.flexmojos.compiler.ICommandLineConfiguration"));
+        finally {
+          configurator.postGenerate();
         }
       }
     }
-    catch (Exception e) {
-      throw new MojoExecutionException("Failed to execute configurator: " + e.getMessage(), e);
+    finally {
+      mavenPluginManager.releaseMojo(mojo, mojoExecution);
     }
   }
 
-  private MojoExecution createMojoExecution(Plugin plugin, String goal, MavenProject project) {
-    final MojoExecution mojoExecution;
-    try {
-      MojoDescriptor mojoDescriptor = pluginManager.getMojoDescriptor(plugin, goal, project.getRemotePluginRepositories(),
-                                                                      session.getRepositorySession());
-      mojoExecution = new MojoExecution(mojoDescriptor, "default-cli", MojoExecution.Source.CLI);
-      lifeCycleExecutionPlanCalculator.setupMojoExecution(session, project, mojoExecution);
-    }
-    catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-
+  private MojoExecution createMojoExecution(Plugin plugin, String goal, MavenProject project) throws Exception {
+    MojoDescriptor mojoDescriptor = pluginManager.getMojoDescriptor(plugin, goal, project.getRemotePluginRepositories(),
+                                                                    session.getRepositorySession());
+    MojoExecution mojoExecution = new MojoExecution(mojoDescriptor, "default-cli", MojoExecution.Source.CLI);
+    lifeCycleExecutionPlanCalculator.setupMojoExecution(session, project, mojoExecution);
     return mojoExecution;
   }
 

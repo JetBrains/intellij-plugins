@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.intellij.flex.maven</groupId>
     <artifactId>idea-flexmojos-aggregator</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
   </parent>
 
   <artifactId>idea-flexmojos-maven-plugin</artifactId>
@@ -15,7 +15,7 @@
     <dependency>
       <groupId>com.intellij.flex.maven</groupId>
       <artifactId>idea-configurator</artifactId>
-      <version>1.4.1</version>
+      <version>1.4.2</version>
     </dependency>
   </dependencies>
 

@@ -21,23 +21,31 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class IdeaConfigurator {
+  private static final Map<String, String> CHILD_TAG_NAME_MAP = new HashMap<String, String>(12);
+  
   protected static final String PATH_ELEMENT = "path-element";
   protected static final String FILE_SPECS = "file-specs";
   private static final String SOURCE_PATH = "source-path";
   protected static final String LOCAL_FONTS_SNAPSHOT = "local-fonts-snapshot";
-  public static final String FONTS_SER = "fonts.ser";
+  private static final String FONTS_SER = "fonts.ser";
+
+  protected final MavenSession session;
 
   protected OutputStreamWriter out;
-  protected Build build;
+  private Build build;
 
-  private static final Map<String, String> CHILD_TAG_NAME_MAP = new HashMap<String, String>(12);
   private MojoExecution flexmojosGeneratorMojoExecution;
   private ExpressionEvaluator flexmojosGeneratorExpressionEvaluator;
-  private final boolean useOldLocation;
-  private MavenSession session;
 
-  public IdeaConfigurator(boolean useOldLocation) {
-    this.useOldLocation = useOldLocation;
+  protected final File configsDir;
+  protected File sharedFontsSer;
+  protected String sharedFontsSerPath;
+
+  public IdeaConfigurator(MavenSession session) {
+    this.session = session;
+    configsDir = new File(session.getTopLevelProject().getBasedir(), ".idea/flexmojos");
+    //noinspection ResultOfMethodCallIgnored
+    configsDir.mkdirs();
   }
 
   static {
@@ -54,41 +62,50 @@ public class IdeaConfigurator {
     CHILD_TAG_NAME_MAP.put("theme", "filename");
   }
 
-  public void buildConfiguration(Mojo configuration, File sourceFile, Class configurationClass) throws Exception {
+  public void generate(Mojo configuration, File sourceFile, Class configurationClass) throws Exception {
     //noinspection NullableProblems
     build(configuration, configurationClass, "\n\t", null);
 
     out.append("\n\t<file-specs>\n");
     writeTag("\t\t", PATH_ELEMENT, sourceFile.getAbsolutePath(), FILE_SPECS);
     out.append("\n\t</file-specs>");
-    close();
   }
 
-  public void buildConfiguration(Mojo configuration, Class configurationClass) throws Exception {
-    //noinspection NullableProblems
-    build(configuration, configurationClass, "\n\t", null);
-    close();
+  public void preGenerate(MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException {
+    this.flexmojosGeneratorMojoExecution = flexmojosGeneratorMojoExecution;
+    build = project.getBuild();
+    File configFile = new File(getConfigFilePath(project, classifier));
+    //noinspection ResultOfMethodCallIgnored
+    configFile.getParentFile().mkdirs();
+    out = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(configFile)), "utf-8");
+    out.write("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
   }
 
-  protected File configsDir;
-  protected File sharedFontsSer;
+  public void postGenerate() {
+    build = null;
+    flexmojosGeneratorMojoExecution = null;
+    flexmojosGeneratorExpressionEvaluator = null;
 
-  protected File getConfigsDir() {
-    return new File(".idea/flexmojos");
-  }
-
-  protected String getConfigFilePath(MavenSession session, MavenProject project, String classifier) {
-    if (useOldLocation) {
-      StringBuilder pathBuilder = new StringBuilder(build.getDirectory()).append(File.separatorChar).append(build.getFinalName());
-      if (classifier != null) {
-        pathBuilder.append('-').append(classifier);
-      }
-      return pathBuilder.append("-configs.xml").toString();
+    if (out == null) {
+      return;
     }
 
-    //noinspection ResultOfMethodCallIgnored
-    configsDir.mkdirs();
+    try {
+      out.write("\n</flex-config>");
+      out.close();
+    }
+    catch (IOException ignored) {
+    }
 
+    out = null;
+  }
+
+  public void generate(Mojo configuration, Class configurationClass) throws Exception {
+    //noinspection NullableProblems
+    build(configuration, configurationClass, "\n\t", null);
+  }
+
+  protected String getConfigFilePath(MavenProject project, String classifier) {
     StringBuilder pathBuilder = new StringBuilder(configsDir.getAbsolutePath()).append(File.separatorChar);
     // artifact id is first in path — it is convenient for us
     pathBuilder.append(project.getArtifactId()).append('-').append(project.getGroupId());
@@ -96,24 +113,6 @@ public class IdeaConfigurator {
       pathBuilder.append('-').append(classifier);
     }
     return pathBuilder.append("-config.xml").toString();
-  }
-
-  public void init(MavenSession session, MavenProject project, String classifier, MojoExecution flexmojosGeneratorMojoExecution) throws IOException {
-    this.session = session;
-    configsDir = getConfigsDir();
-
-    this.flexmojosGeneratorMojoExecution = flexmojosGeneratorMojoExecution;
-    build = project.getBuild();
-    File configFile = new File(getConfigFilePath(session, project, classifier));
-    //noinspection ResultOfMethodCallIgnored
-    configFile.getParentFile().mkdirs();
-    out = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(configFile)), "utf-8");
-    out.write("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
-  }
-
-  private void close() throws IOException {
-    out.write("\n</flex-config>");
-    out.close();
   }
 
   @SuppressWarnings({"ConstantConditions"})
@@ -348,7 +347,7 @@ public class IdeaConfigurator {
 
   protected void processValue(String value, String name) throws IOException {
     // http://juick.com/develar/1363289
-    if (!useOldLocation && name.equals(LOCAL_FONTS_SNAPSHOT)) {
+    if (name.equals(LOCAL_FONTS_SNAPSHOT)) {
       final File fontsSer = new File(build.getOutputDirectory(), FONTS_SER);
       String defaultPath;
       // the same as flexmojos do
@@ -365,9 +364,11 @@ public class IdeaConfigurator {
           if (!sharedFontsSer.exists()) {
             FileUtils.copyFile(fontsSer, sharedFontsSer);
           }
+
+          sharedFontsSerPath = sharedFontsSer.getAbsolutePath();
         }
 
-        value = sharedFontsSer.getAbsolutePath();
+        value = sharedFontsSerPath;
       }
     }
 
