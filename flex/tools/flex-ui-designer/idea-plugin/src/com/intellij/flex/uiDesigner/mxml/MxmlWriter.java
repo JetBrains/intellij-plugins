@@ -226,26 +226,11 @@ public class MxmlWriter {
           // skip
         }
         else {
-
+          cssDeclarationSourceDefined = writeProperty(attribute, descriptor, context, cssDeclarationSourceDefined);
         }
       }
       else if (attributeDescriptor instanceof AnyXmlAttributeDescriptor) {
-        descriptor = new AnyXmlAttributeDescriptorWrapper((AnyXmlAttributeDescriptor)attributeDescriptor);
-      }
-      else {
-        continue;
-      }
-
-      int beforePosition = out.size();
-      int type = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined, context);
-      if (type != IGNORE) {
-        if (propertyProcessor.isStyle()) {
-          cssDeclarationSourceDefined = true;
-        }
-        if (type < PRIMITIVE) {
-          writer.getBlockOut().setPosition(beforePosition);
-          addProblem(attribute, "error.unknown.attribute.value.type", descriptor.getType());
-        }
+        writeProperty(attribute, new AnyXmlAttributeDescriptorWrapper((AnyXmlAttributeDescriptor)attributeDescriptor), context, false);
       }
     }
 
@@ -273,6 +258,22 @@ public class MxmlWriter {
         out.getBlockOut().endRange(dataRange);
       }
     }
+  }
+
+  private boolean writeProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor, Context context,
+                                boolean cssDeclarationSourceDefined) {
+    int beforePosition = out.size();
+    int type = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined, context);
+    if (type != IGNORE) {
+      if (propertyProcessor.isStyle()) {
+        cssDeclarationSourceDefined = true;
+      }
+      if (type < PRIMITIVE) {
+        writer.getBlockOut().setPosition(beforePosition);
+        addProblem(attribute, "error.unknown.attribute.value.type", descriptor.getType());
+      }
+    }
+    return cssDeclarationSourceDefined;
   }
 
   private void processSubTags(final XmlTag parent, final @Nullable Context context, final @Nullable Context parentContext,

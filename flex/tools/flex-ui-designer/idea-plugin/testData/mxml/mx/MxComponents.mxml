@@ -85,4 +85,12 @@
   </s:VGroup>
 
   <TextArea width="100" height="33"/>
+  <VideoDisplay id="myVid"
+                source="rtmp://fmsexamples.adobe.com/vod/mp4:_cs4promo_1000.f4v"
+                cuePointManagerClass="mx.controls.videoClasses.CuePointManager"
+                height="250" width="250">
+    <cuePoints>
+      <fx:Object name="first" time="5"/>
+    </cuePoints>
+  </VideoDisplay>
 </Application>
