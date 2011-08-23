@@ -384,11 +384,6 @@ public class PsiFileMock implements PsiFile {
     }
 
     @Override
-    public FileStatus getFileStatus() {
-        return null;
-    }
-
-    @Override
     public void navigate(boolean requestFocus) {
     }
 
