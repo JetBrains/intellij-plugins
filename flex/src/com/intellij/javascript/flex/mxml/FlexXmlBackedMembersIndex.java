@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.structureView.JSStructureItemPresentation;
 import com.intellij.lang.javascript.types.JSFileElementType;
+import com.intellij.navigation.PsiElementNavigationItem;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -17,15 +18,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vcs.FileStatus;
-import com.intellij.openapi.vcs.FileStatusManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.*;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.indexing.*;
@@ -179,7 +181,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
     }
   }
 
-  private static class TagNavigationItem extends FakePsiElement implements NavigationItem, ItemPresentation {
+  private static class TagNavigationItem extends FakePsiElement implements PsiElementNavigationItem, ItemPresentation {
     private final PsiElement myElement;
     private final String myName;
 
@@ -196,8 +198,9 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
       return this;
     }
 
-    public FileStatus getFileStatus() {
-      return FileStatusManager.getInstance(myElement.getProject()).getStatus(myElement.getContainingFile().getVirtualFile());
+    @Override
+    public PsiElement getTargetElement() {
+      return myElement;
     }
 
     public void navigate(boolean requestFocus) {
