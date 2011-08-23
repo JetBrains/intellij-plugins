@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -260,7 +259,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
       addGenerateFlexConfigTask(postTasks, facet, project, mavenTree);
     }
     else {
-      showFlexConfigWarningIfNeeded(module.getProject(), project, facet);
+      showFlexConfigWarningIfNeeded(module.getProject());
     }
 
     if (isGenerateFlexConfigFilesForMxModules()) {
@@ -302,16 +301,20 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     }
   }
 
-  public void showFlexConfigWarningIfNeeded(final Project project, final MavenProject mavenProject, final FlexFacet flexFacet) {
+  public void showFlexConfigWarningIfNeeded(final Project project) {
     if (myFlexConfigNotification != null) return; // already shown
     doShowFlexConfigWarning(project);
+  }
+  
+  protected String getFlexmojosWarningDetailed() {
+    return FlexBundle.message("flexmojos.warning.detailed");
   }
 
   private synchronized void doShowFlexConfigWarning(final Project project) {
     final NotificationListener listener = new NotificationListener() {
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         Messages
-          .showWarningDialog(project, FlexBundle.message("flexmojos.warning.detailed"), FlexBundle.message("flexmojos.project.import"));
+          .showWarningDialog(project, getFlexmojosWarningDetailed(), FlexBundle.message("flexmojos.project.import"));
         notification.expire();
       }
     };
@@ -319,7 +322,7 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
       new Notification("Maven", FlexBundle.message("flexmojos.project.import"), FlexBundle.message("flexmojos.warning.short"),
                        NotificationType.WARNING, listener);
 
-    Notifications.Bus.notify(myFlexConfigNotification, project);
+    myFlexConfigNotification.notify(project);
   }
 
   @NotNull

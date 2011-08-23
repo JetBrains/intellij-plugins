@@ -1,5 +1,8 @@
 package com.intellij.javascript.flex.maven;
 
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.configurations.CommandLineBuilder;
+import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
@@ -8,8 +11,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.IgnoredBeanFactory;
 import com.intellij.util.StringBuilderSpinAllocator;
+import com.intellij.util.io.ZipUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.idea.maven.execution.MavenExternalParameters;
+import org.jetbrains.idea.maven.execution.MavenRunnerParameters;
+import org.jetbrains.idea.maven.execution.MavenRunnerSettings;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.utils.MavenLog;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
@@ -18,7 +25,9 @@ import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collections;
 import java.util.List;
+import java.util.zip.ZipFile;
 
 public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
   @Override
@@ -29,6 +38,11 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
   @Override
   protected String getCompilerConfigXmlSuffix() {
     return "-configs.xml";
+  }
+
+  @Override
+  protected String getFlexmojosWarningDetailed() {
+    return FlexBundle.message("flexmojos4.warning.detailed");
   }
 
   protected @Nullable Element getLocalesElement(MavenProject mavenProject, boolean compiled) {
@@ -49,7 +63,7 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
 
       ChangeListManager.getInstance(project).addFilesToIgnore(IgnoredBeanFactory.ignoreUnderDirectory(getCompilerConfigsDir(project),
                                                                                                       project));
-      postTasks.add(new GenerateFlexConfigTask(mavenProject, mavenTree));
+      postTasks.add(new GenerateFlexConfigTask(mavenProject, mavenTree, this));
     }
   }
   
@@ -70,36 +84,82 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
   }
 
   private static class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
-    public GenerateFlexConfigTask(MavenProject mavenProject, MavenProjectsTree tree) {
+    private final FlexConfigInformer flexConfigInformer;
+
+    public GenerateFlexConfigTask(MavenProject mavenProject, MavenProjectsTree tree, FlexConfigInformer flexConfigInformer) {
       super(mavenProject, tree);
+      this.flexConfigInformer = flexConfigInformer;
     }
 
     @Override
     public void perform(Project project, MavenEmbeddersManager embeddersManager, MavenConsole console, MavenProgressIndicator indicator)
       throws MavenProcessCanceledException {
+
+      final File localRepo = new File(myMavenProject.getLocalRepository(), "com/intellij/flex/maven");
+      if (!new File(localRepo, "idea-configurator/1.4.2").exists()) {
+        ZipFile zipFile = null;
+        try {
+          //noinspection IOResourceOpenedButNotSafelyClosed
+          zipFile = new ZipFile(getClass().getResource("/flexmojos-configurator.zip").getFile());
+          ZipUtil.extract(zipFile, localRepo, null);
+        }
+        catch (IOException e) {
+          console.printException(e);
+          MavenLog.LOG.warn(e);
+        }
+        finally {
+          if (zipFile != null) {
+            try {
+              zipFile.close();
+            }
+            catch (IOException ignored) {
+            }
+          }
+        }
+      }
+
       final long start = System.currentTimeMillis();
       indicator.setText(FlexBundle.message("generating.flex.configs"));
-      
-      final ProcessBuilder processBuilder = new ProcessBuilder("mvn", "com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.4.2:generate", "-o");
-      //noinspection ConstantConditions
-      processBuilder.directory(new File(project.getBaseDir().getPath()));
+
+      final MavenProjectsManager mavenProjectsManager = MavenProjectsManager.getInstance(project);
+      MavenRunnerSettings mavenRunnerSettings = new MavenRunnerSettings();
+      @SuppressWarnings("ConstantConditions")
+      MavenRunnerParameters mavenRunnerParameters = new MavenRunnerParameters(false, project.getBaseDir().getPath(),
+                                                                              Collections.singletonList(
+                                                                                "com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.4.2:generate"),
+                                                                              mavenProjectsManager.getExplicitProfiles());
+      final ProcessBuilder processBuilder;
+      try {
+        JavaParameters javaParameters = MavenExternalParameters.createJavaParameters(project, mavenRunnerParameters,
+                                                                                     mavenProjectsManager.getGeneralSettings(),
+                                                                                     mavenRunnerSettings);
+        processBuilder = new ProcessBuilder(CommandLineBuilder.createFromJavaParameters(javaParameters).getCommands());
+      }
+      catch (ExecutionException e) {
+        console.printException(e);
+        MavenLog.LOG.warn(e);
+        return;
+      }
+
+      processBuilder.directory((new File(mavenRunnerParameters.getWorkingDirPath())));
       processBuilder.redirectErrorStream(true);
       final Process process;
       try {
         process = processBuilder.start();
       }
       catch (IOException e) {
+        console.printException(e);
         MavenLog.LOG.warn(e);
         return;
       }
 
-      final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
+      final StringBuilder processOutputString = StringBuilderSpinAllocator.alloc();
       final InputStreamReader reader = new InputStreamReader(process.getInputStream());
       try {
         char[] buf = new char[1024];
         int read;
         while ((read = reader.read(buf, 0, buf.length)) >= 0) {
-          stringBuilder.append(buf, 0, read);
+          processOutputString.append(buf, 0, read);
         }
 
         try {
@@ -110,15 +170,19 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
 
         int exitCode = process.exitValue();
         if (exitCode != 0) {
-          MavenLog.LOG.warn("idea flexmojos generator exited with exit code " + exitCode + ", out:\n" + stringBuilder.toString());
+          MavenLog.LOG.warn("idea flexmojos generator exited with exit code " + exitCode);
+          flexConfigInformer.showFlexConfigWarningIfNeeded(project);
         }
+
+        MavenLog.LOG.info("idea flexmojos generator out:\n" + processOutputString.toString());
       }
       catch (IOException e) {
         process.destroy();
-        MavenLog.LOG.warn(stringBuilder.toString(), e);
+        console.printException(e);
+        MavenLog.LOG.warn(processOutputString.toString(), e);
       }
       finally {
-        StringBuilderSpinAllocator.dispose(stringBuilder);
+        StringBuilderSpinAllocator.dispose(processOutputString);
         try {
           reader.close();
         }

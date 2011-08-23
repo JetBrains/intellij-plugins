@@ -70,7 +70,7 @@ public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
           MavenServerExecutionResult result = embedder
             .execute(myMavenProject.getFile(), myMavenProject.getActivatedProfilesIds(), Collections.singletonList(generateConfigGoal));
           if (result.projectData == null) {
-            myFlexConfigInformer.showFlexConfigWarningIfNeeded(project, myMavenProject, myFlexFacet);
+            myFlexConfigInformer.showFlexConfigWarningIfNeeded(project);
           }
 
           MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
@@ -88,7 +88,7 @@ public class GenerateFlexConfigTask extends MavenProjectsProcessorBasicTask {
           throw e;
         }
         catch (Exception e) {
-          myFlexConfigInformer.showFlexConfigWarningIfNeeded(project, myMavenProject, myFlexFacet);
+          myFlexConfigInformer.showFlexConfigWarningIfNeeded(project);
           console.printException(e);
           MavenLog.LOG.warn(e);
         }
