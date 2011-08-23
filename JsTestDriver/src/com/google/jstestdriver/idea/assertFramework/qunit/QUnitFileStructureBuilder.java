@@ -59,9 +59,18 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder 
         if (arguments.length >= 1) {
           String name = JsPsiUtils.extractStringValue(arguments[0]);
           if (name != null) {
-            if ("module".equals(methodName) && arguments.length == 1) {
-              myCurrentModuleStructure = QUnitModuleStructure.newRegularModule(name, callExpression);
-              myFileStructure.addModuleStructure(myCurrentModuleStructure);
+            if ("module".equals(methodName)) {
+              boolean ok = arguments.length == 1;
+              if (arguments.length == 2) {
+                boolean isObject = JsPsiUtils.isObjectElement(arguments[1]);
+                if (isObject) {
+                  ok = true;
+                }
+              }
+              if (ok) {
+                myCurrentModuleStructure = QUnitModuleStructure.newRegularModule(name, callExpression);
+                myFileStructure.addModuleStructure(myCurrentModuleStructure);
+              }
             } else if ("test".equals(methodName) && arguments.length == 2) {
               JSFunctionExpression body = JsPsiUtils.extractFunctionExpression(arguments[1]);
               if (body != null) {

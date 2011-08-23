@@ -66,13 +66,13 @@ public class MarkedQUnitModuleStructure {
     return myName;
   }
 
-  static int getIdAndValidate(Annotation annotation) {
-    String id = annotation.getValue(KEY_ID);
-    String name = annotation.getValue(KEY_NAME);
-    if (id == null || name == null) {
-      throw new RuntimeException(KEY_ID + " and " + KEY_NAME + " should be specified, " + annotation);
+  static int getId(Annotation annotation) {
+    String idStr = MarkedQUnitStructureUtils.getRequiredAttributeValue(KEY_ID, annotation);
+    int id = Integer.parseInt(idStr);
+    if (id <= 0) {
+      throw new RuntimeException("marked module id should be greater than 0");
     }
-    return Integer.parseInt(id);
+    return id;
   }
 
   public PsiElement getPsiElement() {
@@ -93,8 +93,9 @@ public class MarkedQUnitModuleStructure {
   }
 
   public static MarkedQUnitModuleStructure newRegularModule(@NotNull Annotation startAnnotation) {
-    int id = getIdAndValidate(startAnnotation);
-    return new MarkedQUnitModuleStructure(false, id, startAnnotation.getValue(KEY_NAME), startAnnotation);
+    int id = getId(startAnnotation);
+    String name = MarkedQUnitStructureUtils.getRequiredAttributeValue(KEY_NAME, startAnnotation);
+    return new MarkedQUnitModuleStructure(false, id, name, startAnnotation);
   }
 
 }
