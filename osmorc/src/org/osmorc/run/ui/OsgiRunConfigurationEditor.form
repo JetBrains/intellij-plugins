@@ -169,7 +169,7 @@
         <rowspec value="center:max(d;4px):noGrow"/>
         <rowspec value="top:4dlu:noGrow"/>
         <rowspec value="center:max(d;4px):noGrow"/>
-        <colspec value="left:144px:noGrow"/>
+        <colspec value="left:153px:noGrow"/>
         <colspec value="left:5dlu:noGrow"/>
         <colspec value="fill:max(d;4px):grow"/>
         <constraints>
@@ -248,7 +248,9 @@
               <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <forms/>
             </constraints>
-            <properties/>
+            <properties>
+              <checkBoxPreferredSize width="153" height="23"/>
+            </properties>
           </component>
           <component id="d9d6d" class="com.intellij.ui.RawCommandLineEditor" binding="programParameters">
             <constraints>
