@@ -19,6 +19,8 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyKey;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
@@ -35,7 +37,7 @@ import java.util.List;
 public abstract class ValidatorManager {
 
   private static final NotNullLazyKey<ValidatorManager, Project> INSTANCE_KEY =
-    ServiceManager.createLazyKey(ValidatorManager.class);
+      ServiceManager.createLazyKey(ValidatorManager.class);
 
   public static ValidatorManager getInstance(@NotNull final Project project) {
     return INSTANCE_KEY.getValue(project);
@@ -45,7 +47,6 @@ public abstract class ValidatorManager {
    * Checks whether the given file is a valid <code>validation.xml</code> file.
    *
    * @param xmlFile File to check.
-   *
    * @return <code>true</code> if yes, <code>false</code> otherwise.
    */
   public abstract boolean isValidatorsFile(@NotNull XmlFile xmlFile);
@@ -54,7 +55,6 @@ public abstract class ValidatorManager {
    * Gets the available validators from {@code validators.xml}.
    *
    * @param module Current module to search within.
-   *
    * @return All available validators.
    */
   public abstract List<ValidatorConfig> getValidators(@NotNull final Module module);
@@ -69,7 +69,6 @@ public abstract class ValidatorManager {
    * </ol>
    *
    * @param module Module to search within
-   *
    * @return configuration file or {@code null} if none was found.
    */
   @Nullable
@@ -79,9 +78,17 @@ public abstract class ValidatorManager {
    * Checks whether the given file is a custom validators.xml.
    *
    * @param psiFile from {@link #getValidatorConfigFile(com.intellij.openapi.module.Module)}.
-   *
    * @return true if not default.
    */
   public abstract boolean isCustomValidatorConfigFile(@NotNull PsiFile psiFile);
+
+  /**
+   * Finds all corresponding {@code ActionClass-[MethodName-]validation.xml} files.
+   *
+   * @param clazz Class.
+   * @return Empty list if none found.
+   */
+  @NotNull
+  public abstract List<PsiElement> findValidationFilesFor(@NotNull final PsiClass clazz);
 
 }

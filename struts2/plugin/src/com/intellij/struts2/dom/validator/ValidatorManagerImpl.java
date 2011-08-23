@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2011 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,21 +19,23 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ResourceFileUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.PackageScope;
 import com.intellij.psi.util.PsiUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.validator.config.ValidatorConfig;
 import com.intellij.struts2.dom.validator.config.ValidatorsConfig;
 import com.intellij.struts2.facet.ui.StrutsVersionDetector;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
+import com.intellij.util.xml.DomService;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,6 +123,41 @@ public class ValidatorManagerImpl extends ValidatorManager {
     }
 
     return findDefaultValidatorsFile(module);
+  }
+
+  @NotNull
+  @Override
+  public List<PsiElement> findValidationFilesFor(@NotNull final PsiClass clazz) {
+    final PsiFile psiFile = clazz.getContainingFile().getOriginalFile();
+    final PsiDirectory containingDirectory = psiFile.getContainingDirectory();
+    if (containingDirectory == null) {
+      return Collections.emptyList();
+    }
+
+    final PsiPackage containingPackage = JavaDirectoryService.getInstance().getPackage(containingDirectory);
+    if (containingPackage == null) {
+      return Collections.emptyList();
+    }
+
+    final PackageScope searchScope = new PackageScope(containingPackage, false, true);
+    final List<DomFileElement<Validators>> validationRoots =
+        DomService.getInstance().getFileElements(Validators.class, clazz.getProject(), searchScope);
+
+    final List<DomFileElement<Validators>> filtered =
+        ContainerUtil.filter(validationRoots, new Condition<DomFileElement<Validators>>() {
+          @Override
+          public boolean value(final DomFileElement<Validators> validatorDomFileElement) {
+            final String fileName = validatorDomFileElement.getFile().getName();
+            return StringUtil.startsWith(fileName, clazz.getName());
+          }
+        });
+
+    return ContainerUtil.map(filtered, new Function<DomFileElement<Validators>, PsiElement>() {
+      @Override
+      public PsiElement fun(final DomFileElement<Validators> validatorsDomFileElement) {
+        return validatorsDomFileElement.getFile();
+      }
+    });
   }
 
   /**

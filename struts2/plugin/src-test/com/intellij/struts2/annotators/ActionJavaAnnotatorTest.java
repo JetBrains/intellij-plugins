@@ -17,6 +17,7 @@ package com.intellij.struts2.annotators;
 
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.util.Function;
@@ -30,6 +31,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
 
+  private final Function<PsiElement, String> ACTION_NAME_RESOLVE = new Function<PsiElement, String>() {
+    @Override
+    public String fun(final PsiElement psiElement) {
+      return ((XmlTag) psiElement).getAttributeValue("name");
+    }
+  };
+
   @Override
   @NotNull
   protected String getTestDataLocation() {
@@ -42,34 +50,42 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase {
   }
 
   /**
-   * Checks whether the gutter target elements in the given class resolve to the given Action names.
+   * Checks whether the gutter target elements in the given class resolve to the given names.
    *
    * @param javaFile            Path to class.
-   * @param expectedActionNames Names of the actions.
+   * @param nameResolveFunction Naming function
+   * @param expectedNames       Expected names.
    */
-  private void checkGutterActionTargetElements(@NonNls final String javaFile,
-                                               @NonNls final String... expectedActionNames) {
+  private void checkGutterTargetElements(@NonNls final String javaFile,
+                                         final Function<PsiElement, String> nameResolveFunction,
+                                         @NonNls final String... expectedNames) {
     final GutterIconRenderer renderer = myFixture.findGutter(javaFile);
     assertNotNull(renderer);
 
-    AnnotatorTestUtils.checkGutterTargets(renderer, new Function<PsiElement, String>() {
+    AnnotatorTestUtils.checkGutterTargets(renderer, nameResolveFunction, expectedNames);
+  }
+
+  public void testGutterMyAction() {
+    createStrutsFileSet("struts-actionClass.xml");
+    checkGutterTargetElements("/src/MyAction.java", ACTION_NAME_RESOLVE, "myActionPath");
+  }
+
+  public void testGutterMyActionMultipleMappings() {
+    createStrutsFileSet("struts-actionClass-multiple_mappings.xml");
+    checkGutterTargetElements("/src/MyAction.java", ACTION_NAME_RESOLVE,
+                              "myActionPath1", "myActionPath2", "myActionPath3");
+  }
+
+  public void testGutterValidationXml() {
+    createStrutsFileSet("struts-validation.xml");
+    myFixture.copyFileToProject("/src/com/MyValidationAction-validation.xml");
+
+    checkGutterTargetElements("/src/com/MyValidationAction.java", new Function<PsiElement, String>() {
       @Override
       public String fun(final PsiElement psiElement) {
-        return ((XmlTag) psiElement).getAttributeValue("name");
+        return ((PsiFile) psiElement).getName();
       }
-    }, expectedActionNames);
-  }
-
-  public void testGutterMyAction() throws Throwable {
-    createStrutsFileSet("struts-actionClass.xml");
-    checkGutterActionTargetElements("/src/MyAction.java", "myActionPath");
-  }
-
-
-  public void testGutterMyActionMultipleMappings() throws Throwable {
-    createStrutsFileSet("struts-actionClass-multiple_mappings.xml");
-    checkGutterActionTargetElements("/src/MyAction.java",
-                                    "myActionPath1", "myActionPath2", "myActionPath3");
+    }, "MyValidationAction-validation.xml");
   }
 
 }

@@ -30,6 +30,7 @@ import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
+import com.intellij.struts2.dom.validator.ValidatorManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.containers.ContainerUtil;
@@ -42,8 +43,8 @@ import java.util.*;
 
 /**
  * Base class for annotating Action-Classes.
- * Provides gutter icon/Go To Related File-navigation to &lt;action&gt; declaration(s) in struts.xml and
- * navigation to result(s) from action methods.
+ * Provides gutter icon/Go To Related File-navigation to &lt;action&gt; declaration(s) in struts.xml,
+ * corresponding {@code validation.xml}-files and navigation to result(s) from action methods.
  *
  * @author Yann C&eacute;bron
  */
@@ -110,21 +111,47 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
       return;
     }
 
-    final List<Action> actions = strutsModel.findActionsByClass(clazz);
-    if (!actions.isEmpty()) {
-      final NavigationGutterIconBuilder<DomElement> gutterIconBuilder =
-          NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR,
-                                             NavigationGutterIconBuilder.DOM_GOTO_RELATED_ITEM_PROVIDER)
-                                     .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
-                                     .setTargets(actions)
-                                     .setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip"))
-                                     .setCellRenderer(getActionRenderer());
+    installValidationTargets(element, lineMarkerInfos, clazz);
 
-      lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(element));
+    final List<Action> actions = strutsModel.findActionsByClass(clazz);
+    if (actions.isEmpty()) {
+      return;
     }
 
+    installActionTargets(element, lineMarkerInfos, actions);
+    installActionMethods(lineMarkerInfos, clazz, actions);
+  }
 
-    // annotate action-methods of *this* class with result(s)
+  /**
+   * Annotate action class to {@code <action>}-declarations.
+   *
+   * @param element         Class element to annotate.
+   * @param lineMarkerInfos Current line markers.
+   * @param actions         Corresponding Actions.
+   */
+  private void installActionTargets(final PsiElement element,
+                                    final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
+                                    final List<Action> actions) {
+    final NavigationGutterIconBuilder<DomElement> gutterIconBuilder =
+        NavigationGutterIconBuilder.create(StrutsIcons.ACTION, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR,
+                                           NavigationGutterIconBuilder.DOM_GOTO_RELATED_ITEM_PROVIDER)
+                                   .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
+                                   .setTargets(actions)
+                                   .setTooltipTitle(StrutsBundle.message("annotators.action.goto.tooltip"))
+                                   .setCellRenderer(getActionRenderer());
+    lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(element));
+  }
+
+  /**
+   * Annotate action-methods of this class with result(s).
+   *
+   * @param lineMarkerInfos Current line markers.
+   * @param clazz           Class to annotate.
+   * @param actions         Corresponding Actions.
+   */
+  private void installActionMethods(final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
+                                    final PsiClass clazz,
+                                    final List<Action> actions) {
     final Map<PsiMethod, Set<PathReference>> pathReferenceMap = new HashMap<PsiMethod, Set<PathReference>>();
     for (final Action action : actions) {
       final PsiMethod method = action.searchActionMethod();
@@ -156,7 +183,29 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
       lineMarkerInfos.add(gutterIconBuilder.createLineMarkerInfo(entries.getKey()));
     }
+  }
 
+  /**
+   * Related {@code validation.xml} files.
+   *
+   * @param element         Class element to annotate.
+   * @param lineMarkerInfos Current line markers.
+   * @param clazz           Class to find validation files for.
+   */
+  private void installValidationTargets(final PsiElement element,
+                                        final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
+                                        final PsiClass clazz) {
+    final List<PsiElement> files = ValidatorManager.getInstance(element.getProject()).findValidationFilesFor(clazz);
+    if (files.isEmpty()) {
+      return;
+    }
+
+    final NavigationGutterIconBuilder<PsiElement> validatorBuilder =
+        NavigationGutterIconBuilder.create(StrutsIcons.VALIDATION_CONFIG_FILE)
+                                   .setTargets(files)
+                                   .setPopupTitle(StrutsBundle.message("annotators.action.goto.validation"))
+                                   .setTooltipTitle(StrutsBundle.message("annotators.action.goto.validation.tooltip"));
+    lineMarkerInfos.add(validatorBuilder.createLineMarkerInfo(element));
   }
 
   private static synchronized PsiElementListCellRenderer getActionRenderer() {
