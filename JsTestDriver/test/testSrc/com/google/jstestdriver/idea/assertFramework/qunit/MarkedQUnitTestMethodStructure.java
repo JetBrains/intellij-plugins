@@ -24,14 +24,14 @@ public class MarkedQUnitTestMethodStructure {
   private PsiElement myPsiElement;
 
   public MarkedQUnitTestMethodStructure(Annotation startAnnotation) {
-    String id = getIdAndValidate(startAnnotation);
+    String id = getId(startAnnotation);
     String[] idComponents = id.split(Pattern.quote("_"));
     if (idComponents.length != 2) {
       throw new RuntimeException("Malformed test id: " + id);
     }
     myId = id;
     myTestCaseId = Integer.parseInt(idComponents[0]);
-    myName = startAnnotation.getValue(KEY_NAME);
+    myName = MarkedQUnitStructureUtils.getRequiredAttributeValue(KEY_NAME, startAnnotation);
     myStartPosition = startAnnotation.getTextRange().getEndOffset();
   }
 
@@ -58,7 +58,7 @@ public class MarkedQUnitTestMethodStructure {
   public void validateBuiltStructure() {
     JSCallExpression jsCallExpression = CastUtils.tryCast(myPsiElement, JSCallExpression.class);
     if (jsCallExpression == null) {
-      Assert.fail("Unable to find underlying " + JSCallExpression.class + " for " + this);
+      Assert.fail("Unable to find underlying " + JSCallExpression.class + " for " + this + ", found: " + myPsiElement);
     }
   }
 
@@ -67,13 +67,8 @@ public class MarkedQUnitTestMethodStructure {
   }
 
   @NotNull
-  public static String getIdAndValidate(Annotation annotation) {
-    String id = annotation.getValue(KEY_ID);
-    String name = annotation.getValue(KEY_NAME);
-    if (id == null || name == null) {
-      throw new RuntimeException(KEY_ID + " and " + KEY_NAME + " should be specified, " + annotation);
-    }
-    return id;
+  public static String getId(Annotation annotation) {
+    return MarkedQUnitStructureUtils.getRequiredAttributeValue(KEY_ID, annotation);
   }
 
 }

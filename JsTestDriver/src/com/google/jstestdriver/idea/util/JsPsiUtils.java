@@ -18,7 +18,10 @@ public class JsPsiUtils {
   private JsPsiUtils() {}
 
   @Nullable
-  public static String extractStringValue(JSExpression jsExpression) {
+  public static String extractStringValue(@Nullable JSExpression jsExpression) {
+    if (jsExpression == null) {
+      return null;
+    }
     {
       JSLiteralExpression jsLiteralExpression = CastUtils.tryCast(jsExpression, JSLiteralExpression.class);
       if (jsLiteralExpression != null && jsLiteralExpression.isQuotedLiteral()) {
@@ -53,11 +56,18 @@ public class JsPsiUtils {
   @Nullable
   private static JSExpression extractInitExpression(@NotNull JSReferenceExpression jsReferenceExpression) {
     PsiElement resolved = resolveUniquely(jsReferenceExpression);
+    if (resolved == null) {
+      return null;
+    }
     JSVariable jsVariable = CastUtils.tryCast(resolved, JSVariable.class);
     if (jsVariable != null) {
-      JSExpression initializer = jsVariable.getInitializer();
-      if (initializer != null) {
-        return initializer;
+      return jsVariable.getInitializer();
+    }
+    JSDefinitionExpression jsDefinitionExpression = CastUtils.tryCast(resolved, JSDefinitionExpression.class);
+    if (jsDefinitionExpression != null) {
+      JSAssignmentExpression jsAssignmentExpression = CastUtils.tryCast(resolved.getParent(), JSAssignmentExpression.class);
+      if (jsAssignmentExpression != null) {
+        return jsAssignmentExpression.getROperand();
       }
     }
     return null;
@@ -80,7 +90,10 @@ public class JsPsiUtils {
   }
 
   @Nullable
-  public static JSObjectLiteralExpression extractObjectLiteralExpression(JSExpression expression) {
+  public static JSObjectLiteralExpression extractObjectLiteralExpression(@Nullable JSExpression expression) {
+    if (expression == null) {
+      return null;
+    }
     {
       JSObjectLiteralExpression jsObjectLiteralExpression = CastUtils.tryCast(expression, JSObjectLiteralExpression.class);
       if (jsObjectLiteralExpression != null) {
@@ -100,7 +113,10 @@ public class JsPsiUtils {
   }
 
   @Nullable
-  public static String extractNumberLiteral(JSExpression jsExpression) {
+  public static String extractNumberLiteral(@Nullable JSExpression jsExpression) {
+    if (jsExpression == null) {
+      return null;
+    }
     {
       JSLiteralExpression jsLiteralExpression = CastUtils.tryCast(jsExpression, JSLiteralExpression.class);
       if (jsLiteralExpression != null && jsLiteralExpression.isNumericLiteral()) {
@@ -120,7 +136,10 @@ public class JsPsiUtils {
   }
 
   @Nullable
-  public static JSFunctionExpression extractFunctionExpression(JSExpression expression) {
+  public static JSFunctionExpression extractFunctionExpression(@Nullable JSExpression expression) {
+    if (expression == null) {
+      return null;
+    }
     {
       JSFunctionExpression jsFunctionExpression = CastUtils.tryCast(expression, JSFunctionExpression.class);
       if (jsFunctionExpression != null) {
@@ -140,7 +159,7 @@ public class JsPsiUtils {
   }
 
   @NotNull
-  public static List<JSElement> listJsElementsInExecutionOrder(JSFile jsFile) {
+  public static List<JSElement> listJsElementsInExecutionOrder(@NotNull JSFile jsFile) {
     List<JSElement> jsElements = Lists.newArrayList();
     for (PsiElement psiElement : jsFile.getChildren()) {
       JSElement jsElement = CastUtils.tryCast(psiElement, JSElement.class);
@@ -151,7 +170,7 @@ public class JsPsiUtils {
     return jsElements;
   }
 
-  private static void collectJsElementsInExecutionOrder(JSElement jsElement, List<JSElement> jsElements) {
+  private static void collectJsElementsInExecutionOrder(@NotNull JSElement jsElement, @NotNull List<JSElement> jsElements) {
     JSExpressionStatement jsExpressionStatement = CastUtils.tryCast(jsElement, JSExpressionStatement.class);
     if (jsExpressionStatement != null) {
       JSFunctionExpression jsFunctionExpression = null;
@@ -191,19 +210,19 @@ public class JsPsiUtils {
     jsElements.add(jsElement);
   }
 
-  public static boolean isStringElement(JSExpression jsExpression) {
+  public static boolean isStringElement(@Nullable JSExpression jsExpression) {
     return extractStringValue(jsExpression) != null;
   }
 
-  public static boolean isObjectElement(JSExpression jsExpression) {
+  public static boolean isObjectElement(@Nullable JSExpression jsExpression) {
     return extractObjectLiteralExpression(jsExpression) != null;
   }
 
-  public static boolean isFunctionExpressionElement(JSExpression jsExpression) {
+  public static boolean isFunctionExpressionElement(@Nullable JSExpression jsExpression) {
     return extractFunctionExpression(jsExpression) != null;
   }
 
-  public static boolean isNumberElement(JSExpression jsExpression) {
+  public static boolean isNumberElement(@Nullable JSExpression jsExpression) {
     return extractNumberLiteral(jsExpression) != null;
   }
 

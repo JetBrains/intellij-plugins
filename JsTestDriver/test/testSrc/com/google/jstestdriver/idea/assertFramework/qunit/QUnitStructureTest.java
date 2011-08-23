@@ -18,7 +18,27 @@ import java.io.File;
 public class QUnitStructureTest extends PsiTestCase {
 
   @Test
+  public void testBasicUsage() throws Exception {
+    validateJsFile();
+  }
+
+  @Test
   public void testEmptyModule() throws Exception {
+    validateJsFile();
+  }
+
+  @Test
+  public void testMiscModules() throws Exception {
+    validateJsFile();
+  }
+
+  @Test
+  public void testModuleWithLifecycle() throws Exception {
+    validateJsFile();
+  }
+
+  @Test
+  public void testSingleTestOnDefaultModule() throws Exception {
     validateJsFile();
   }
 
