@@ -5,7 +5,7 @@
 
     <projectService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptions"/>
     <moduleService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager"/>
-    <!--<configuration.ModuleStructureExtension implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension"/>-->
+    <configuration.ModuleStructureExtension implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension"/>
   </extensions>
 
   <actions>

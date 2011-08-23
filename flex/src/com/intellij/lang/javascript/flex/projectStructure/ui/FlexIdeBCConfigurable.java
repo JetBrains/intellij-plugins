@@ -4,11 +4,15 @@ import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.text.MessageFormat;
 
 import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.*;
@@ -45,6 +49,8 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private final AirDesktopPackagingConfigurable myAirDesktopPackagingConfigurable;
   private final AndroidPackagingConfigurable myAndroidPackagingConfigurable;
   private final IOSPackagingConfigurable myIOSPackagingConfigurable;
+  private final FlexModuleEditor myModuleEditor;
+  private final ChangeListener myListener;
 
   public FlexIdeBCConfigurable(final Module module, final FlexIdeBuildConfiguration configuration, final Runnable treeNodeNameUpdater) {
     super(true, treeNodeNameUpdater);
@@ -59,7 +65,15 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       new AirDesktopPackagingConfigurable(module.getProject(), configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
     myAndroidPackagingConfigurable = new AndroidPackagingConfigurable(module.getProject(), configuration.ANDROID_PACKAGING_OPTIONS);
     myIOSPackagingConfigurable = new IOSPackagingConfigurable(module.getProject(), configuration.IOS_PACKAGING_OPTIONS);
+    myModuleEditor = FlexModuleEditor.getInstance(module);
 
+    myListener = new ChangeListener() {
+      @Override
+      public void stateChanged(ChangeEvent e) {
+        // TODO
+      }
+    };
+    myModuleEditor.addListener(myListener);
     initCombos();
   }
 
@@ -168,7 +182,9 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     }
   }
 
-  private static String[] getAvailablePlayersFromSdk() {
+  private String[] getAvailablePlayersFromSdk() {
+    String sdkPath = myModuleEditor.getSdkPath();
+    String sdkVersion = myModuleEditor.getSdkVersion();
     return new String[]{"10.1", "10.2"}; // TODO implement
   }
 
@@ -291,6 +307,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myAirDesktopPackagingConfigurable.disposeUIResources();
     myAndroidPackagingConfigurable.disposeUIResources();
     myIOSPackagingConfigurable.disposeUIResources();
+    myModuleEditor.removeListener(myListener);
   }
 
   public DependenciesConfigurable getDependenciesConfigurable() {

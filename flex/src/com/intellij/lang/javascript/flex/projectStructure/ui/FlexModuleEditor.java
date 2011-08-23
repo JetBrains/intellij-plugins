@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleConfigurationEditor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -13,14 +14,17 @@ import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.ui.configuration.CommonContentEntriesEditor;
 import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationState;
+import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.JdkListConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.util.EventDispatcher;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +38,8 @@ import java.awt.*;
  * @author ksafonov
  */
 public class FlexModuleEditor implements ModuleConfigurationEditor {
+  private static final String DISPLAY_NAME = "Flex";
+
   private JPanel myContentPane;
   private SdkPathCombo mySdkPathCombo;
   private JLabel mySdkLabel;
@@ -45,9 +51,12 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
   private final ProjectSdksModel mySdksModel;
   private String myInitialSdkHome;
   private final CommonContentEntriesEditor myEntriesEditor;
+  private final EventDispatcher<ChangeListener> myEventDispatcher;
+  private @Nullable String mySdkVersion;
 
   public FlexModuleEditor(ModuleConfigurationState state) {
     myState = state;
+    myEventDispatcher = EventDispatcher.create(ChangeListener.class);
     mySdksModel = ProjectStructureConfigurable.getInstance(myState.getProject()).getProjectJdksModel();
     mySdkLabel.setLabelFor(mySdkPathCombo.getChildComponent());
     myEntriesEditor = new CommonContentEntriesEditor(state.getRootModel().getModule().getName(), state, true, true);
@@ -61,7 +70,7 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
 
       @Override
       public void beforeSdkRemove(Sdk sdk) {
-        if (!isModified() && findExistingSdk(mySdkPathCombo.getText(), FlexIdeUtils.getSdkType()) == null) {
+        if (!isModified() && findExistingSdk(getSdkPath(), FlexIdeUtils.getSdkType()) == null) {
           mySdkPathCombo.setText("");
           myInitialSdkHome = "";
         }
@@ -79,23 +88,27 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
     mySdkPathCombo.addListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
-        updateInfoLabel();
+        analyzeSdk();
+        myEventDispatcher.getMulticaster().stateChanged(new ChangeEvent(FlexModuleEditor.this));
       }
     });
   }
 
-  private void updateInfoLabel() {
-    final String sdkPath = mySdkPathCombo.getText();
+  private void analyzeSdk() {
+    String sdkPath = getSdkPath();
     if (StringUtil.isEmpty(sdkPath)) {
+      mySdkVersion = null;
       myInfoLabel.setText("");
     }
     else {
       if (!FlexIdeUtils.getSdkType().isValidSdkHome(sdkPath)) {
+        mySdkVersion = null;
         myInfoLabel.setText("SDK not found");
       }
       else {
-        String flexVersion = FlexSdkUtils.readFlexSdkVersion(LocalFileSystem.getInstance().findFileByPath(sdkPath));
-        myInfoLabel.setText("Flex SDK version: " + flexVersion);
+        String sdkVersion = FlexSdkUtils.readFlexSdkVersion(LocalFileSystem.getInstance().findFileByPath(sdkPath));
+        mySdkVersion = sdkVersion;
+        myInfoLabel.setText("Flex SDK version: " + sdkVersion);
         // TODO AIR version
       }
     }
@@ -104,7 +117,7 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
   @Nls
   @Override
   public String getDisplayName() {
-    return "Flex";
+    return DISPLAY_NAME;
   }
 
   @Override
@@ -124,7 +137,32 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
 
   @Override
   public boolean isModified() {
-    return !pathsEqual(myInitialSdkHome, mySdkPathCombo.getText()) || myEntriesEditor.isModified();
+    return !pathsEqual(myInitialSdkHome, getSdkPath()) || myEntriesEditor.isModified();
+  }
+
+  @Nullable
+  public String getSdkPath() {
+    return mySdkPathCombo.getText();
+  }
+
+  @Nullable
+  public String getSdkVersion() {
+    return mySdkVersion;
+  }
+
+  public static FlexModuleEditor getInstance(Module module) {
+    ModuleEditor e =
+      ModuleStructureConfigurable.getInstance(module.getProject()).getContext().getModulesConfigurator().getModuleEditor(module);
+    e.getPanel(); // create editors
+    return (FlexModuleEditor)e.getEditor(DISPLAY_NAME);
+  }
+
+  public void addListener(ChangeListener listener) {
+    myEventDispatcher.addListener(listener);
+  }
+
+  public void removeListener(ChangeListener listener) {
+    myEventDispatcher.removeListener(listener);
   }
 
   private static boolean pathsEqual(@Nullable String path1, @Nullable String path2) {
@@ -139,7 +177,7 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
     String sdkHome = sdk != null ? FileUtil.toSystemDependentName(StringUtil.notNullize(sdk.getHomePath())) : "";
     mySdkPathCombo.setText(sdkHome);
     myInitialSdkHome = sdkHome;
-    updateInfoLabel();
+    analyzeSdk();
     myEntriesEditor.reset();
   }
 
@@ -154,14 +192,14 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
 
   @Override
   public void apply() throws ConfigurationException {
-    if (!pathsEqual(myInitialSdkHome, mySdkPathCombo.getText())) {
-      String newSdkHome = FileUtil.toSystemIndependentName(mySdkPathCombo.getText());
-      newSdkHome = StringUtil.trimEnd(newSdkHome, "/");
+    if (!pathsEqual(myInitialSdkHome, getSdkPath())) {
+      String newSdkHome = getSdkPath();
       final SdkType sdkType = FlexIdeUtils.getSdkType();
       if (StringUtil.isEmpty(newSdkHome) || !sdkType.isValidSdkHome(newSdkHome)) {
         myState.getRootModel().setSdk(null);
       }
       else {
+        newSdkHome = StringUtil.trimEnd(FileUtil.toSystemIndependentName(newSdkHome), "/");
         Sdk existingSdk = findExistingSdk(newSdkHome, sdkType);
 
         if (existingSdk == null) {
