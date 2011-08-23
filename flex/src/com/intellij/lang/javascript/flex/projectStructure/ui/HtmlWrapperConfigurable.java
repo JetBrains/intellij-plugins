@@ -15,9 +15,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class HtmlWrapperConfigurable extends NamedConfigurable<HtmlWrapperOptions> {
+
   private JPanel myMainPanel;
+
   private JRadioButton myWrapperFromSdkRadioButton;
   private JCheckBox myEnableHistoryCheckBox;
+  private JCheckBox myCheckPlayerVersionCheckBox;
   private JCheckBox myExpressInstallCheckBox;
 
   private JRadioButton myWrapperFromFolderRadioButton;
@@ -29,7 +32,10 @@ public class HtmlWrapperConfigurable extends NamedConfigurable<HtmlWrapperOption
 
   public HtmlWrapperConfigurable(final Project project, final HtmlWrapperOptions htmlWrapperOptions) {
     myHtmlWrapperOptions = htmlWrapperOptions;
+    initListeners(project);
+  }
 
+  private void initListeners(final Project project) {
     final ActionListener listener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
@@ -37,16 +43,20 @@ public class HtmlWrapperConfigurable extends NamedConfigurable<HtmlWrapperOption
     };
 
     myWrapperFromSdkRadioButton.addActionListener(listener);
+    myCheckPlayerVersionCheckBox.addActionListener(listener);
+
     myWrapperFromFolderRadioButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
         IdeFocusManager.getInstance(project).requestFocus(myTemplateFolderTextWithBrowse.getTextField(), true);
       }
     });
-    myNoWrapperRadioButton.addActionListener(listener);
 
     myTemplateFolderTextWithBrowse
       .addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor());
+
+    myNoWrapperRadioButton.addActionListener(listener);
+
   }
 
   @Nls
@@ -82,6 +92,7 @@ public class HtmlWrapperConfigurable extends NamedConfigurable<HtmlWrapperOption
     final HtmlWrapperOptions.WrapperType type = getWrapperType();
     if (type != myHtmlWrapperOptions.WRAPPER_TYPE) return true;
     if (myEnableHistoryCheckBox.isSelected() != myHtmlWrapperOptions.ENABLE_HISTORY) return true;
+    if (myCheckPlayerVersionCheckBox.isSelected() != myHtmlWrapperOptions.CHECK_PLAYER) return true;
     if (myExpressInstallCheckBox.isSelected() != myHtmlWrapperOptions.EXPRESS_INSTALL) return true;
     if (!getTemplateFolderPath().equals(myHtmlWrapperOptions.TEMPLATE_FOLDER_PATH)) return true;
 
@@ -107,6 +118,7 @@ public class HtmlWrapperConfigurable extends NamedConfigurable<HtmlWrapperOption
   public void applyTo(final HtmlWrapperOptions htmlWrapperOptions) {
     htmlWrapperOptions.WRAPPER_TYPE = getWrapperType();
     htmlWrapperOptions.ENABLE_HISTORY = myEnableHistoryCheckBox.isSelected();
+    htmlWrapperOptions.CHECK_PLAYER = myCheckPlayerVersionCheckBox.isSelected();
     htmlWrapperOptions.EXPRESS_INSTALL = myExpressInstallCheckBox.isSelected();
     htmlWrapperOptions.TEMPLATE_FOLDER_PATH = getTemplateFolderPath();
   }
@@ -114,6 +126,7 @@ public class HtmlWrapperConfigurable extends NamedConfigurable<HtmlWrapperOption
   public void reset() {
     myWrapperFromSdkRadioButton.setSelected(myHtmlWrapperOptions.WRAPPER_TYPE == HtmlWrapperOptions.WrapperType.FromSdk);
     myEnableHistoryCheckBox.setSelected(myHtmlWrapperOptions.ENABLE_HISTORY);
+    myCheckPlayerVersionCheckBox.setSelected(myHtmlWrapperOptions.CHECK_PLAYER);
     myExpressInstallCheckBox.setSelected(myHtmlWrapperOptions.EXPRESS_INSTALL);
 
     myWrapperFromFolderRadioButton.setSelected(myHtmlWrapperOptions.WRAPPER_TYPE == HtmlWrapperOptions.WrapperType.FromFolder);
@@ -126,7 +139,8 @@ public class HtmlWrapperConfigurable extends NamedConfigurable<HtmlWrapperOption
 
   private void updateControls() {
     myEnableHistoryCheckBox.setEnabled(myWrapperFromSdkRadioButton.isSelected());
-    myExpressInstallCheckBox.setEnabled(myWrapperFromSdkRadioButton.isSelected());
+    myCheckPlayerVersionCheckBox.setEnabled(myWrapperFromSdkRadioButton.isSelected());
+    myExpressInstallCheckBox.setEnabled(myWrapperFromSdkRadioButton.isSelected() && myCheckPlayerVersionCheckBox.isSelected());
     myTemplateFolderTextWithBrowse.setEnabled(myWrapperFromFolderRadioButton.isSelected());
   }
 
