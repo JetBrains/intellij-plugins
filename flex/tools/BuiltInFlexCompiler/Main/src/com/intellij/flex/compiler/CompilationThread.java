@@ -16,8 +16,6 @@ public class CompilationThread extends Thread {
   private static int traceCompilationsCount = 0;
   private static final Object lock = new Object();
 
-  private static final String ERROR_MARKER = "Error: ";
-
   private final SdkSpecificHandler mySdkSpecificHandler;
   private final String[] myParams;
   private final OutputLogger myLogger;
@@ -81,9 +79,9 @@ public class CompilationThread extends Thread {
           writer.close();
         }
       }
-      //else {
-      //  myLogger.log(ERROR_MARKER + "Compilation failed");
-      //}
+      else if (!myLogger.wereErrorsReported()) {
+        myLogger.log(OutputLogger.ERROR_MARKER + "Flex compiler failed to create output file");
+      }
     }
     catch (final Exception e) {
       logError(e);
@@ -130,7 +128,7 @@ public class CompilationThread extends Thread {
       myLogger.log((ILocalizableMessage)e);
     }
     else {
-      myLogger.log(ERROR_MARKER + e.toString());
+      myLogger.log(OutputLogger.ERROR_MARKER + e.toString());
       for (final StackTraceElement stackTraceElement : e.getStackTrace()) {
         myLogger.log("\tat " + stackTraceElement.toString());
       }

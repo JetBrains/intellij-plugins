@@ -1069,6 +1069,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     return libFile;
   }
 
+  //keep in sync with OutputLogger.ERROR_PATTERN from BuiltInFlexCompiler project !!!
   static final Pattern errorPattern = Pattern.compile("(.*?)(\\(\\D.*\\))?(?:\\((-?\\d+)\\))?: ?(?:col: (-?\\d+))? (Warning|Error): (.*)");
 
   private Result sendCommand(@NonNls final String command, final CompilerMessagesBuffer messagesBuffer) throws IOException {

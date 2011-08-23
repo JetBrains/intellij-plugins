@@ -3,13 +3,18 @@ package com.intellij.flex.compiler;
 import flex2.tools.oem.Logger;
 import flex2.tools.oem.Message;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class OutputLogger extends LoggerAdapter implements Logger {
-  private final MessageSender myMessageSender;
-  private final String myLogMessagePrefix;
 
+  public static final String ERROR_MARKER = "Error: ";
+
+  //keep in sync with FlexCompilerHandler.errorPattern !!!
+  private static final Pattern ERROR_PATTERN =
+    Pattern.compile("(.*?)(\\(\\D.*\\))?(?:\\((-?\\d+)\\))?: ?(?:col: (-?\\d+))? (Warning|Error): (.*)");
+
+  /*
   // see SDKFilesResolver
   private static final String IGNORED_MESSAGE_START;
   private static final String IGNORED_MESSAGE_END = ".xml";
@@ -19,10 +24,15 @@ public class OutputLogger extends LoggerAdapter implements Logger {
     try {
       tmp = new File(System.getProperty("java.io.tmpdir") + File.separator + "fake-config").getCanonicalPath();
     }
-    catch (IOException ignored) {/**/}
+    catch (IOException ignored) {}
 
     IGNORED_MESSAGE_START = "Loading configuration file " + tmp ;
   }
+  */
+
+  private final MessageSender myMessageSender;
+  private final String myLogMessagePrefix;
+  private boolean myErrorsReported = false;
 
   public OutputLogger(final MessageSender messageSender, final String logMessagePrefix) {
     myMessageSender = messageSender;
@@ -37,6 +47,23 @@ public class OutputLogger extends LoggerAdapter implements Logger {
     }
     */
 
+    if (!myErrorsReported) {
+      if (message.startsWith("Error: ") || message.startsWith("Exception in thread \"main\" ")) {
+        myErrorsReported = true;
+      }
+      else {
+        final Matcher matcher = ERROR_PATTERN.matcher(message);
+
+        if (matcher.matches()) {
+          final String type = matcher.group(5);
+
+          if ("Error".equals(type)) {
+            myErrorsReported = true;
+          }
+        }
+      }
+    }
+
     myMessageSender.sendMessage(myLogMessagePrefix + message);
   }
 
@@ -45,7 +72,7 @@ public class OutputLogger extends LoggerAdapter implements Logger {
   }
 
   //                                        path         line                    col          level       message
-  //Pattern errorPattern = Pattern.compile("(.*?)(?:\\((-?\\d+)\\))?: ?(?:col: (-?\\d+))? (Warning|Error): (.*)");
+  //Pattern ERROR_PATTERN = Pattern.compile("(.*?)(?:\\((-?\\d+)\\))?: ?(?:col: (-?\\d+))? (Warning|Error): (.*)");
   public void log(final String level, final String path, final int line, final int column, final String message) {
     final StringBuilder builder = new StringBuilder();
     if (isNotEmpty(path)) builder.append(path);
@@ -66,5 +93,9 @@ public class OutputLogger extends LoggerAdapter implements Logger {
 
   private static boolean isNotEmpty(final String s) {
     return s != null && s.trim().length() >= 0;
+  }
+
+  public boolean wereErrorsReported() {
+    return myErrorsReported;
   }
 }
