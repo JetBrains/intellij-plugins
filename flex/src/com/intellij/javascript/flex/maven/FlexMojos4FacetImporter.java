@@ -6,6 +6,8 @@ import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
@@ -136,6 +138,8 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
         processBuilder = new ProcessBuilder(CommandLineBuilder.createFromJavaParameters(javaParameters).getCommands());
       }
       catch (ExecutionException e) {
+        // resolve maven home
+        new Notification("Maven", FlexBundle.message("flexmojos.project.import"), e.getMessage(), NotificationType.ERROR).notify(project);
         console.printException(e);
         MavenLog.LOG.warn(e);
         return;
@@ -150,6 +154,7 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
       catch (IOException e) {
         console.printException(e);
         MavenLog.LOG.warn(e);
+        flexConfigInformer.showFlexConfigWarningIfNeeded(project);
         return;
       }
 
