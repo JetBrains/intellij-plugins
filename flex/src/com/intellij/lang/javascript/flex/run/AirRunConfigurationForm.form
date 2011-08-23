@@ -26,7 +26,7 @@
             <properties>
               <componentClass value="com.intellij.ui.ComboboxWithBrowseButton"/>
               <labelLocation value="West"/>
-              <labelPreferredSize width="183" height="16"/>
+              <labelPreferredSize width="185" height="16"/>
               <text value="AIR application &amp;descriptor"/>
             </properties>
           </component>
@@ -37,7 +37,7 @@
             <properties>
               <componentClass value="com.intellij.openapi.ui.TextFieldWithBrowseButton"/>
               <labelLocation value="West"/>
-              <labelPreferredSize width="183" height="16"/>
+              <labelPreferredSize width="185" height="16"/>
               <text value="&amp;Root directory"/>
             </properties>
           </component>
@@ -48,7 +48,7 @@
             <properties>
               <componentClass value="com.intellij.ui.RawCommandLineEditor"/>
               <labelLocation value="West"/>
-              <labelPreferredSize width="183" height="16"/>
+              <labelPreferredSize width="185" height="16"/>
               <text value="&amp;Program parameters"/>
             </properties>
           </component>
@@ -58,7 +58,7 @@
             </constraints>
             <properties>
               <labelLocation value="West"/>
-              <labelPreferredSize width="183" height="16"/>
+              <labelPreferredSize width="185" height="16"/>
               <text value="Mai&amp;n class"/>
             </properties>
           </component>
@@ -101,6 +101,7 @@
             <properties>
               <componentClass value="com.intellij.ui.RawCommandLineEditor"/>
               <labelLocation value="West"/>
+              <labelPreferredSize width="185" height="16"/>
               <text value="AIR Debug Launcher &amp;options"/>
             </properties>
           </component>
@@ -120,7 +121,6 @@
             </constraints>
             <properties>
               <labelFor value="90e30"/>
-              <text resource-bundle="com/intellij/lang/javascript/flex/FlexBundle" key="flex.run.config.use.module"/>
             </properties>
           </component>
           <component id="90e30" class="javax.swing.JComboBox" binding="myModuleComboBox">
@@ -155,7 +155,7 @@
           <component id="8345b" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="183" height="-1"/>
+                <preferred-size width="185" height="-1"/>
               </grid>
             </constraints>
             <properties>
