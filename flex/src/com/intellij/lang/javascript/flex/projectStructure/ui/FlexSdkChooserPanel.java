@@ -82,12 +82,12 @@ public class FlexSdkChooserPanel {
   };
 
   public FlexSdkChooserPanel(Project project, ModifiableRootModel rootModel) {
-    if (!PlatformUtils.isFlexIde()) {
-      throw new UnsupportedOperationException("Should not be visible in IDEA");
-    }
     myProject = project;
     myRootModel = rootModel;
     myEventDispatcher = EventDispatcher.create(ChangeListener.class);
+    if (!PlatformUtils.isFlexIde()) {
+      throw new UnsupportedOperationException("Should not be visible in IDEA");
+    }
     mySdksModel = ProjectStructureConfigurable.getInstance(myProject).getProjectJdksModel();
     mySdkLabel.setLabelFor(mySdkPathCombo.getChildComponent());
 
