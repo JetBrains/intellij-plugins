@@ -231,11 +231,6 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
     public Icon getIcon(boolean open) {
       return JSStructureItemPresentation.getIcon(PsiTreeUtil.getParentOfType(myElement, XmlTag.class));
     }
-
-    public TextAttributesKey getTextAttributesKey() {
-      return null;
-    }
-
     public PsiElement getParent() {
       return myElement.getParent();
     }
