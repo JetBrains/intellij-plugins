@@ -7,6 +7,7 @@ import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
@@ -37,7 +38,9 @@ class InjectedASWriter {
 
   final static ValueWriter IGNORE = new ValueWriter() {
     @Override
-    public PropertyProcessor.PropertyKind write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
+    public PropertyProcessor.PropertyKind write(AnnotationBackedDescriptor descriptor, XmlElementValueProvider valueProvider,
+                                                PrimitiveAmfOutputStream out, BaseWriter writer,
+                                                boolean isStyle) {
       throw new UnsupportedOperationException();
     }
   };

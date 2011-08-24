@@ -243,7 +243,7 @@ class StateWriter {
 
     PropertyKind propertyKind;
     try {
-      propertyKind = valueWriter.write(writer.getOut(), writer, false);
+      propertyKind = valueWriter.write(descriptor, valueProvider, writer.getOut(), writer, false);
     }
     catch (InvalidPropertyException invalidProperty) {
       // todo handle invalidProperty for state

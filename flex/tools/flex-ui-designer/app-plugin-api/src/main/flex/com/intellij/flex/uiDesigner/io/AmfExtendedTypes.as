@@ -6,5 +6,9 @@ public final class AmfExtendedTypes {
   public static const CLASS_REFERENCE:int = 43;
   public static const IMAGE:int = 47;
   public static const SWF:int = 48;
+
+  // http://opensource.adobe.com/wiki/display/flexsdk/MXML+Vector+Support, additional info — fixed and object reference
+  public static const MXML_ARRAY:int = 50;
+  public static const MXML_VECTOR:int = 51;
 }
 }

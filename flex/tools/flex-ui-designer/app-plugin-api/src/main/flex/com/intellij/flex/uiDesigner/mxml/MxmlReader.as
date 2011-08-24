@@ -244,7 +244,7 @@ public final class MxmlReader implements DocumentReader {
   }
 
   private function readObjectFromFactory(object:Object):Object {
-    var reference:int = input.readUnsignedShort();
+    const reference:int = input.readUnsignedShort();
     var propertyName:String = stringRegistry.read(input);
     var objectDeclarationTextOffset:int;
     if (propertyName == "$fud_position") {
@@ -257,13 +257,7 @@ public final class MxmlReader implements DocumentReader {
   }
 
   private function initObject(object:Object, reference:int, propertyName:String, objectDeclarationTextOffset:int):Object {
-    if (reference != 0) {
-      if (objectTable[reference - 1] != null) {
-        throw new ArgumentError("must be null");
-      }
-      objectTable[reference - 1] = object;
-    }
-
+    processReference(reference, object);
     const hasDeferredSetStyles:Boolean = !(object is Proxy) && "deferredSetStyles" in object;
     var deferredSetStyleProxy:DeferredSetStyleProxy;
     var explicitInlineCssRulesetCreated:Boolean;
@@ -343,7 +337,8 @@ public final class MxmlReader implements DocumentReader {
           throw new ArgumentError("unknown property classifier");
       }
 
-      switch (input.readByte()) {
+      const amfType:int = input.readByte();
+      switch (amfType) {
         case Amf3Types.STRING:
           propertyHolder[propertyName] = AmfUtil.readString(input);
           if (cssDeclaration != null) {
@@ -392,6 +387,14 @@ public final class MxmlReader implements DocumentReader {
 
         case Amf3Types.VECTOR_OBJECT:
           propertyHolder[propertyName] = readVector();
+          break;
+
+        case AmfExtendedTypes.MXML_ARRAY:
+          propertyHolder[propertyName] = readMxmlArray();
+          break;
+
+        case AmfExtendedTypes.MXML_VECTOR:
+          propertyHolder[propertyName] = readMxmlVector();
           break;
 
         case COLOR_STYLE_MARKER:
@@ -445,7 +448,7 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         default:
-          throw new ArgumentError("unknown property type");
+          throw new ArgumentError("unknown property type " + amfType);
       }
 
       if (cssDeclaration != null) {
@@ -470,6 +473,15 @@ public final class MxmlReader implements DocumentReader {
     }
     
     return object;
+  }
+
+  private function processReference(reference:int, object:Object):void {
+    if (reference != 0) {
+      if (objectTable[reference - 1] != null) {
+        throw new ArgumentError("must be null");
+      }
+      objectTable[reference - 1] = object;
+    }
   }
 
   private function readDocumentFactory():Object {
@@ -562,11 +574,29 @@ public final class MxmlReader implements DocumentReader {
     return readArrayOrVector(new Array(length), length);
   }
 
+  internal function readMxmlArray():Object {
+    const reference:int = input.readUnsignedShort();
+    const length:int = input.readUnsignedShort();
+    var o:Object = readArrayOrVector(new Array(length), length);
+    processReference(reference, o);
+    return o;
+  }
+
+
   private function readVector():Object {
     var vectorClass:Class = moduleContext.getVectorClass(stringRegistry.readNotNull(input));
-    const fixed:Boolean = input.readBoolean();
     const length:int = input.readUnsignedShort();
-    return readArrayOrVector(new vectorClass(length, fixed), length);
+    return readArrayOrVector(new vectorClass(length), length);
+  }
+
+  private function readMxmlVector():Object {
+    var vectorClass:Class = moduleContext.getVectorClass(stringRegistry.readNotNull(input));
+    const fixed:Boolean = input.readBoolean();
+    const reference:int = input.readUnsignedShort();
+    const length:int = input.readUnsignedShort();
+    var o:Object = readArrayOrVector(new vectorClass(length, fixed), length);
+    processReference(reference, o);
+    return o;
   }
 
   // support only object array without null
@@ -587,6 +617,10 @@ public final class MxmlReader implements DocumentReader {
           array[i++] = stringRegistry.read(input);
           break;
 
+        case Amf3Types.INTEGER:
+          array[i++] = (AmfUtil.readUInt29(input) << 3) >> 3;
+          break;
+
         case Amf3Types.DOUBLE:
           array[i++] = input.readDouble();
           break;
@@ -601,6 +635,14 @@ public final class MxmlReader implements DocumentReader {
 
         case Amf3Types.ARRAY:
           array[i++] = readArray();
+          break;
+
+        case AmfExtendedTypes.MXML_ARRAY:
+          array[i++] = readMxmlArray();
+          break;
+
+        case AmfExtendedTypes.MXML_VECTOR:
+          array[i++] = readMxmlVector();
           break;
 
         case AmfExtendedTypes.DOCUMENT_REFERENCE:

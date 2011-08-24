@@ -150,13 +150,8 @@ final class BaseWriter {
   }
 
   public void writeVectorHeader(String elementType) {
-    writeVectorHeader(elementType, false);
-  }
-
-  public void writeVectorHeader(String elementType, boolean fixed) {
     out.write(Amf3Types.VECTOR_OBJECT);
     stringWriter.write(elementType, out);
-    out.write(fixed);
   }
 
   public void writeProperty(int propertyNameReference, String value) {

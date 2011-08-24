@@ -199,7 +199,12 @@ public class MxmlTest extends BaseTestCase {
   }
 
   public function Vector():void {
-    assertThat(app, {layout: {constraintColumns: {length: 1, fixed: false}}});
+    validateUI(); // force list selectedIndices commit
+    assertThat(app, [{layout: {constraintColumns: {length: 1, fixed: false}}},
+      {selectedIndices: allOf([0, 2], {fixed: false})},
+      {selectedIndices: allOf([1, 3], {fixed: false})},
+      {selectedIndices: allOf([1, 2], {fixed: false /* false, because our vector copied in spark List*/})}
+    ]);
   }
 }
 }

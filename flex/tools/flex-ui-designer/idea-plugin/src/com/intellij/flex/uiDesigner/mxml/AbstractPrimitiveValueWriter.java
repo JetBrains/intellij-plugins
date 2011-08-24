@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
 
@@ -11,7 +12,8 @@ abstract class AbstractPrimitiveValueWriter implements ValueWriter {
   }
 
   @Override
-  public PropertyKind write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
+  public PropertyKind write(AnnotationBackedDescriptor descriptor, XmlElementValueProvider valueProvider, PrimitiveAmfOutputStream out,
+                            BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
     if (isStyle) {
       out.write(getStyleFlags());
     }

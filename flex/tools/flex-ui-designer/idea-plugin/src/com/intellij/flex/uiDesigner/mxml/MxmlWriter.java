@@ -18,6 +18,7 @@ import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.*;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -55,7 +56,7 @@ public class MxmlWriter {
     this.out = out;
     writer = new BaseWriter(out);
     injectedASWriter = new InjectedASWriter(writer);
-    propertyProcessor = new PropertyProcessor(injectedASWriter, writer);
+    propertyProcessor = new PropertyProcessor(injectedASWriter, writer, this);
   }
 
   public XmlFile[] write(@NotNull final XmlFile psiFile, @NotNull final ProblemsHolder problemsHolder,
@@ -262,7 +263,7 @@ public class MxmlWriter {
   private boolean writeProperty(XmlAttribute attribute, AnnotationBackedDescriptor descriptor, Context context,
                                 boolean cssDeclarationSourceDefined) {
     int beforePosition = out.size();
-    PropertyKind propertyKind = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined, context);
+    final PropertyKind propertyKind = writeProperty(attribute, createValueProvider(attribute), descriptor, cssDeclarationSourceDefined, context);
     if (propertyKind != PropertyKind.IGNORE) {
       if (propertyProcessor.isStyle()) {
         cssDeclarationSourceDefined = true;
@@ -280,17 +281,18 @@ public class MxmlWriter {
     int lengthPosition = listKind == null ? 0 : out.getByteOut().allocate(2);
     int explicitContentOccured = -1;
     int validAndStaticChildrenCount = 0;
-    for (XmlTagChild child : parent.getValue().getChildren()) {
+    final XmlTagChild[] children = parent.getValue().getChildren();
+    for (XmlTagChild child : children) {
       if (child instanceof XmlTag) {
-        if (explicitContentOccured == 1) {
-          LOG.warn("Default content already processed, skip " + child);
-          continue;
-        }
-
         XmlTag tag = (XmlTag)child;
         XmlElementDescriptor descriptor = tag.getDescriptor();
         assert descriptor != null;
         if (descriptor instanceof ClassBackedElementDescriptor) {
+          if (explicitContentOccured == 1) {
+            LOG.warn("Default content already processed, skip " + child);
+            continue;
+          }
+
           ClassBackedElementDescriptor classBackedDescriptor = (ClassBackedElementDescriptor)descriptor;
           if (classBackedDescriptor.isPredefined()) {
             if (descriptor.getQualifiedName().equals(FlexPredefinedTagNames.DECLARATIONS)) {
@@ -306,17 +308,17 @@ public class MxmlWriter {
 
           if (propertiesExpected && explicitContentOccured == -1) {
             explicitContentOccured = 0;
-            final PropertyKind defaultPropertyKind = processDefaultProperty(parent, createValueProvider(tag), classBackedDescriptor);
-            if (defaultPropertyKind == PropertyKind.PRIMITIVE) {
-              validAndStaticChildrenCount++;
-              continue;
-            }
-            else if (defaultPropertyKind == null) {
+            final PropertyKind defaultPropertyKind = processDefaultProperty(parent, createValueProvider(tag), classBackedDescriptor, children.length);
+            if (defaultPropertyKind == null) {
               continue;
             }
             else if (defaultPropertyKind.isList()) {
               lengthPosition = out.getByteOut().allocate(2);
               listKind = defaultPropertyKind;
+            }
+            else if (defaultPropertyKind == PropertyKind.PRIMITIVE) {
+              validAndStaticChildrenCount++;
+              continue;
             }
           }
 
@@ -348,43 +350,53 @@ public class MxmlWriter {
             // skip
           }
           else {
-            PropertyKind type = writeProperty(tag, createValueProvider(tag), annotationBackedDescriptor, cssDeclarationSourceDefined,
+            final PropertyKind propertyKind = writeProperty(tag, createValueProvider(tag), annotationBackedDescriptor, cssDeclarationSourceDefined,
                                               context);
-            if (type != PropertyKind.IGNORE) {
+            if (propertyKind != PropertyKind.IGNORE) {
               if (propertyProcessor.isStyle()) {
                 cssDeclarationSourceDefined = true;
               }
 
-              if (type.isComplex()) {
+              if (propertyKind.isComplex()) {
                 assert context != null;
-                processPropertyTagValue(tag, context, type);
+                processPropertyTagValue(tag, context, propertyKind);
               }
             }
           }
         }
-        else if (explicitContentOccured == 1 && child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child)) {
-          if (listKind == null && explicitContentOccured == -1) {
-            final PropertyKind defaultPropertyKind = processDefaultProperty(parent, createValueProvider((XmlText)child), null);
-            if (defaultPropertyKind == PropertyKind.VECTOR /* IDEA-73478 */ || defaultPropertyKind == null) {
-              if (defaultPropertyKind == PropertyKind.VECTOR) {
-                LOG.warn("skip " + child + " due to IDEA-73478");
-              }
-              continue;
-            }
-            else if (defaultPropertyKind == PropertyKind.PRIMITIVE) {
-              validAndStaticChildrenCount++;
-              continue;
-            }
-          }
-          else if (listKind == PropertyKind.VECTOR) {
-            LOG.warn("skip " + child + " due to IDEA-73478");
-            // IDEA-73478, XmlText allowed only for fx:Array, but not for fx:Vector (even with type String)
-            break;
-          }
+      }
+      else if (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child)) {
+        if (explicitContentOccured == 1) {
+          LOG.warn("Default content already processed, skip " + child);
+          continue;
+        }
 
-          writer.writeString(((XmlText)child).getValue());
-          validAndStaticChildrenCount++;
+        if (propertiesExpected && explicitContentOccured == -1) {
+          explicitContentOccured = 0;
+          final PropertyKind defaultPropertyKind = processDefaultProperty(parent, createValueProvider((XmlText)child), null, children.length);
+          if (defaultPropertyKind == null) {
+            continue;
+          }
+          else if (defaultPropertyKind.isList()) {
+            lengthPosition = out.getByteOut().allocate(2);
+            listKind = defaultPropertyKind;
+          }
+          else if (defaultPropertyKind == PropertyKind.PRIMITIVE) {
+            validAndStaticChildrenCount++;
+            continue;
+          }
+          else {
+            throw new IllegalArgumentException("unexpected default property kind " + defaultPropertyKind);
+          }
         }
+        else if (listKind == PropertyKind.VECTOR) {
+          LOG.warn("skip " + child + " due to IDEA-73478");
+          // IDEA-73478, XmlText allowed only for fx:Array, but not for fx:Vector (even with type String)
+          break;
+        }
+
+        writer.writeString(((XmlText)child).getValue());
+        validAndStaticChildrenCount++;
       }
     }
 
@@ -405,27 +417,25 @@ public class MxmlWriter {
 
   private boolean processClassBackedSubTag(XmlTag tag, ClassBackedElementDescriptor descriptor, @Nullable Context parentContext,
                                         boolean isListItem) {
-    if (writeIfPrimitive(tag, descriptor)) {
-      return true;
+    try {
+      if (propertyProcessor.writeIfPrimitive(createValueProvider(tag), descriptor.getQualifiedName(), out, writer, null)) {
+        return true;
+      }
+    }
+    catch (InvalidPropertyException e) {
+      problemsHolder.add(e);
+      return false;
     }
 
     if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(descriptor.getQualifiedName())) {
       // see valArr in EmbedSwfAndImageFromCss
-      out.write(Amf3Types.ARRAY);
-      processTagChildren(tag, parentContext, null, false, PropertyKind.ARRAY, false);
+      out.write(AmfExtendedTypes.MXML_ARRAY);
+      processIdAttributeOfArrayOrVectorDeclaredAsTag(tag, parentContext);
+      processTagChildren(tag, null, parentContext, false, PropertyKind.ARRAY, false);
       return true;
     }
     else if (CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME.equals(descriptor.getQualifiedName())) {
-      final XmlAttribute type = tag.getAttribute("type");
-      if (type == null) {
-        // skip invalid
-        return false;
-      }
-
-      final XmlAttribute fixed = tag.getAttribute("fixed");
-      writer.writeVectorHeader(type.getDisplayValue(), fixed != null && fixed.getDisplayValue().charAt(0) == 't');
-      processTagChildren(tag, parentContext, null, false, PropertyKind.VECTOR, false);
-      return true;
+      return processMxmlVector(tag, parentContext);
     }
 
     final int projectComponentFactoryId;
@@ -457,6 +467,42 @@ public class MxmlWriter {
     }
 
     return processElements(tag, parentContext, hasStates && isListItem && parentContext != null, childDataPosition, out.getByteOut().allocate(2));
+  }
+
+  boolean processMxmlVector(XmlTag tag, @Nullable Context parentContext) {
+    final XmlAttribute typeAttribute = tag.getAttribute("type");
+    final String type;
+    if (typeAttribute == null || StringUtil.isEmpty((type = typeAttribute.getDisplayValue()))) {
+      LOG.warn("Skip " + tag + ", attribute type must be specified");
+      return false;
+    }
+
+    final XmlAttribute fixedAttribute = tag.getAttribute("fixed");
+    out.write(AmfExtendedTypes.MXML_VECTOR);
+    writer.write(type);
+    out.write(fixedAttribute != null && fixedAttribute.getDisplayValue().charAt(0) == 't');
+    processIdAttributeOfArrayOrVectorDeclaredAsTag(tag, parentContext);
+    processTagChildren(tag, null, parentContext, false, PropertyKind.VECTOR, false);
+    return true;
+  }
+
+  private void processIdAttributeOfArrayOrVectorDeclaredAsTag(XmlTag tag, Context parentContext) {
+    final XmlAttribute idAttribute = tag.getAttribute("id");
+    if (idAttribute != null) {
+      final String id = idAttribute.getDisplayValue();
+      if (StringUtil.isEmpty(id)) {
+        LOG.warn("Skip process id attribute of " + tag + ", id is empty");
+      }
+      else {
+        // IDEA-73516
+        injectedASWriter.processObjectWithExplicitId(id, parentContext);
+        out.writeShort(writer.getPreallocatedId() + 1);
+        writer.resetPreallocatedId();
+        return;
+      }
+    }
+
+    out.writeShort(0);
   }
 
   void processDeclarations(XmlTag parent) {
@@ -494,17 +540,20 @@ public class MxmlWriter {
   }
 
   // childDescriptor will be null if child is XmlText
-  private PropertyKind processDefaultProperty(XmlTag tag, XmlElementValueProvider valueProvider, @Nullable ClassBackedElementDescriptor childDescriptor) {
+  @Nullable
+  private PropertyKind processDefaultProperty(XmlTag tag, XmlElementValueProvider valueProvider,
+                                              @Nullable ClassBackedElementDescriptor childDescriptor, int childrenLength) {
     ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)tag.getDescriptor();
     assert descriptor != null;
 
     AnnotationBackedDescriptor defaultDescriptor = descriptor.getDefaultPropertyDescriptor();
+    final boolean isXmlText = childDescriptor == null;
     if (defaultDescriptor == null) {
       final JSClass jsClass = (JSClass)descriptor.getDeclaration();
       final String className = descriptor.getQualifiedName();
       final boolean isDirectContainerImpl = className.equals(FlexCommonTypeNames.ICONTAINER);
       if (isDirectContainerImpl || JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.ICONTAINER)) {
-        if (childDescriptor == null) {
+        if (isXmlText) {
           addProblem(tag, "error.initializer.cannot.be.represented.in.text", tag.getLocalName());
           return null;
         }
@@ -535,7 +584,7 @@ public class MxmlWriter {
           }
         }
         else {
-          if (childDescriptor == null) {
+          if (isXmlText) {
             addProblem(tag, "error.initializer.cannot.be.represented.in.text", tag.getLocalName());
             return null;
           }
@@ -550,16 +599,23 @@ public class MxmlWriter {
       }
       else {
         final String type = defaultDescriptor.getType();
-        if (defaultDescriptor.contentIsArrayable()) {
+        if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME) || (isXmlText && childrenLength == 1 &&
+                                                                 (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) ||
+                                                                  type.equals(JSCommonTypeNames.ANY_TYPE)))) {
+          writeSubstitutedString(valueProvider.getSubstituted());
+        }
+        else if (defaultDescriptor.contentIsArrayable()) {
           out.write(Amf3Types.ARRAY);
           return PropertyKind.ARRAY;
         }
         else if (defaultDescriptor.getArrayType() != null /* Vector */) {
+          if (isXmlText) {
+            LOG.warn("skip " + valueProvider.getElement() + " due to IDEA-73478");
+            return null;
+          }
+
           writer.writeVectorHeader(defaultDescriptor.getArrayType());
           return PropertyKind.VECTOR;
-        }
-        else if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
-          writeSubstitutedString(valueProvider.getSubstituted());
         }
         else if (type.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
           out.writeAmfDouble(valueProvider.getTrimmed());
@@ -584,24 +640,6 @@ public class MxmlWriter {
     else {
       writer.writeString(value);
     }
-  }
-
-  private boolean writeIfPrimitive(XmlTag tag, ClassBackedElementDescriptor descriptor) {
-    final String fqn = descriptor.getQualifiedName();
-    if (fqn.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
-      writeSubstitutedString(XmlTagValueProvider.getDisplay(tag));
-    }
-    else if (fqn.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
-      out.writeAmfDouble(tag.getValue().getTrimmedText());
-    }
-    else if (fqn.equals(JSCommonTypeNames.BOOLEAN_CLASS_NAME)) {
-      out.write(tag.getValue().getTrimmedText().charAt(0) == 't' ? Amf3Types.TRUE : Amf3Types.FALSE);
-    }
-    else {
-      return false;
-    }
-
-    return true;
   }
 
   private void defineInlineCssRuleset(@NotNull PsiElement element) {
@@ -631,7 +669,7 @@ public class MxmlWriter {
         out.write(PropertyClassifier.PROPERTY);
       }
 
-      return valueWriter.write(out, writer, propertyProcessor.isStyle());
+      return valueWriter.write(descriptor, valueProvider, out, writer, propertyProcessor.isStyle());
     }
     catch (RuntimeException e) {
       problemsHolder.add(element, e, descriptor.getName());

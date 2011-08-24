@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
 
@@ -12,7 +13,9 @@ class PercentableValueWriter implements ValueWriter {
   }
 
   @Override
-  public PropertyProcessor.PropertyKind write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
+  public PropertyProcessor.PropertyKind write(AnnotationBackedDescriptor descriptor, XmlElementValueProvider valueProvider,
+                                              PrimitiveAmfOutputStream out, BaseWriter writer,
+                                              boolean isStyle) {
     out.writeAmfDouble(value);
     return PropertyKind.PRIMITIVE;
   }
