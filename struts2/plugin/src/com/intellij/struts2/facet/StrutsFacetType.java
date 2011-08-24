@@ -22,6 +22,8 @@ import com.intellij.framework.detection.FacetBasedFrameworkDetector;
 import com.intellij.framework.detection.FileContentPattern;
 import com.intellij.j2ee.web.WebUtilImpl;
 import com.intellij.javaee.web.facet.WebFacet;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -86,6 +88,12 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
     @Override
     public FacetType<StrutsFacet, StrutsFacetConfiguration> getFacetType() {
       return StrutsFacetType.getInstance();
+    }
+
+    @NotNull
+    @Override
+    public FileType getFileType() {
+      return StdFileTypes.XML;
     }
 
     @NotNull
