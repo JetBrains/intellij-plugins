@@ -32,8 +32,6 @@ public class BaseTestCase {
             _emptyFixture.setUp();
         }
 
-        Util.registerApplicationComponent();
-
         return new Object[][]{{_emptyFixture}};
     }
 
@@ -52,8 +50,6 @@ public class BaseTestCase {
             _javaModuleFixture.setUp();
         }
 
-        Util.registerApplicationComponent();
-
         return new Object[][]{{_javaModuleFixture}};
     }
 
@@ -62,8 +58,6 @@ public class BaseTestCase {
         if (_webModuleFixture == null) {
           _webModuleFixture = Util.getWebModuleFixture();
         }
-
-        Util.registerApplicationComponent();
 
         return new Object[][]{{_webModuleFixture}};
     }
