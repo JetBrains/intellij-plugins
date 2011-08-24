@@ -17,8 +17,6 @@ public class FlexIdeBuildConfiguration implements Cloneable {
   public OutputType OUTPUT_TYPE = OutputType.Application;
   public String OPTIMIZE_FOR = "";
   public String TARGET_PLAYER = "";
-  public ComponentSet COMPONENT_SET = ComponentSet.SparkAndMx;
-  public FrameworkLinkage FRAMEWORK_LINKAGE = FrameworkLinkage.Default;
   public String MAIN_CLASS = "";
   public String OUTPUT_FILE_NAME = "";
   public String OUTPUT_FOLDER = "";

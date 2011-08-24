@@ -29,9 +29,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private JComboBox myOptimizeForCombo;
   private JLabel myTargetPlayerLabel;
   private JComboBox myTargetPlayerCombo;
-  private JLabel myComponentSetLabel;
-  private JComboBox myComponentSetCombo;
-  private JComboBox myFrameworkLinkageCombo;
 
   private JLabel myMainClassLabel;
   private JTextField myMainClassTextField;
@@ -60,7 +57,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myModifiableRootModel = modifiableRootModel;
     myName = configuration.NAME;
 
-    myDependenciesConfigurable = new DependenciesConfigurable(configuration.DEPENDENCIES, module.getProject(), modifiableRootModel);
+    myDependenciesConfigurable = new DependenciesConfigurable(configuration, module.getProject(), modifiableRootModel);
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.COMPILER_OPTIONS);
     myHtmlWrapperConfigurable = new HtmlWrapperConfigurable(module.getProject(), configuration.HTML_WRAPPER_OPTIONS);
     myAirDescriptorConfigurable = new AirDescriptorConfigurable(configuration.AIR_DESCRIPTOR_OPTIONS);
@@ -124,32 +121,11 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     });
 
     //myTargetPlayerCombo.setModel(); set in updateControls()
-
-    myComponentSetCombo.setModel(new DefaultComboBoxModel(ComponentSet.values()));
-    myComponentSetCombo.setRenderer(new ListCellRendererWrapper<ComponentSet>(myComponentSetCombo.getRenderer()) {
-      public void customize(JList list, ComponentSet value, int index, boolean selected, boolean hasFocus) {
-        setText(value.PRESENTABLE_TEXT);
-      }
-    });
-
-    //myFrameworkLinkageCombo.setModel(new DefaultComboBoxModel(TargetPlatform.values())); // set in updateControls()
-    myFrameworkLinkageCombo.setRenderer(new ListCellRendererWrapper<FrameworkLinkage>(myFrameworkLinkageCombo.getRenderer()) {
-      public void customize(JList list, FrameworkLinkage value, int index, boolean selected, boolean hasFocus) {
-        final TargetPlatform targetPlatform = (TargetPlatform)myTargetPlatformCombo.getSelectedItem();
-        final boolean isPureAS = myPureActionScriptCheckBox.isSelected();
-        final OutputType outputType = (OutputType)myOutputTypeCombo.getSelectedItem();
-        setText(value == FrameworkLinkage.Default
-                ? MessageFormat.format(DEFAULT_PATTERN, getDefaultFrameworkLinkage(targetPlatform, isPureAS, outputType).PRESENTABLE_TEXT)
-                : value.PRESENTABLE_TEXT);
-      }
-    });
   }
 
   private void updateControls() {
     final TargetPlatform targetPlatform = (TargetPlatform)myTargetPlatformCombo.getSelectedItem();
-    final boolean mobilePlatform = targetPlatform == TargetPlatform.Mobile;
     final boolean webPlatform = targetPlatform == TargetPlatform.Web;
-    final boolean isPureAS = myPureActionScriptCheckBox.isSelected();
     final OutputType outputType = (OutputType)myOutputTypeCombo.getSelectedItem();
 
     //myOutputTypeCombo.setModel(getSuitableOutputTypes(targetPlatform)); todo implement
@@ -164,13 +140,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       myTargetPlayerCombo.setModel(new DefaultComboBoxModel(getAvailablePlayersFromSdk()));
       myTargetPlayerCombo.setSelectedItem(selectedPlayer);
     }
-
-    myComponentSetLabel.setVisible(!mobilePlatform && !isPureAS);
-    myComponentSetCombo.setVisible(!mobilePlatform && !isPureAS);
-
-    final Object selectedLinkage = myFrameworkLinkageCombo.getSelectedItem();
-    myFrameworkLinkageCombo.setModel(new DefaultComboBoxModel(getSuitableFrameworkLinkages(targetPlatform, isPureAS, outputType)));
-    myFrameworkLinkageCombo.setSelectedItem(selectedLinkage);
 
     final boolean showMainClass = outputType == OutputType.Application || outputType == OutputType.RuntimeLoadedModule;
     myMainClassLabel.setVisible(showMainClass);
@@ -218,23 +187,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     }
   }
 
-  private static FrameworkLinkage[] getSuitableFrameworkLinkages(final TargetPlatform targetPlatform,
-                                                                 final boolean isPureAS,
-                                                                 final OutputType outputType) {
-    // todo implement
-    final boolean isLib = outputType == OutputType.Library;
-    switch (targetPlatform) {
-      case Web:
-        break;
-      case Desktop:
-        break;
-      case Mobile:
-        break;
-    }
-
-    return FrameworkLinkage.values();
-  }
-
   public boolean isModified() {
     if (!myConfiguration.NAME.equals(myName)) return true;
     if (myConfiguration.TARGET_PLATFORM != myTargetPlatformCombo.getSelectedItem()) return true;
@@ -242,8 +194,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     if (myConfiguration.OUTPUT_TYPE != myOutputTypeCombo.getSelectedItem()) return true;
     if (!myConfiguration.OPTIMIZE_FOR.equals(myOptimizeForCombo.getSelectedItem())) return true;
     if (!myConfiguration.TARGET_PLAYER.equals(myTargetPlayerCombo.getSelectedItem())) return true;
-    if (myConfiguration.COMPONENT_SET != myComponentSetCombo.getSelectedItem()) return true;
-    if (myConfiguration.FRAMEWORK_LINKAGE != myFrameworkLinkageCombo.getSelectedItem()) return true;
     if (!myConfiguration.MAIN_CLASS.equals(myMainClassTextField.getText().trim())) return true;
     if (!myConfiguration.OUTPUT_FILE_NAME.equals(myOutputFileNameTextField.getText().trim())) return true;
     if (!myConfiguration.OUTPUT_FOLDER.equals(myOutputFolderField.getText().trim())) return true;
@@ -290,8 +240,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     configuration.OUTPUT_TYPE = (OutputType)myOutputTypeCombo.getSelectedItem();
     configuration.OPTIMIZE_FOR = (String)myOptimizeForCombo.getSelectedItem(); // todo myOptimizeForCombo should contain live information
     configuration.TARGET_PLAYER = (String)myTargetPlayerCombo.getSelectedItem();
-    configuration.COMPONENT_SET = (ComponentSet)myComponentSetCombo.getSelectedItem();
-    configuration.FRAMEWORK_LINKAGE = (FrameworkLinkage)myFrameworkLinkageCombo.getSelectedItem();
     configuration.MAIN_CLASS = myMainClassTextField.getText().trim();
     configuration.OUTPUT_FILE_NAME = myOutputFileNameTextField.getText().trim();
     configuration.OUTPUT_FOLDER = myOutputFolderField.getText().trim();
@@ -305,8 +253,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myOptimizeForCombo.setSelectedItem(myConfiguration.OPTIMIZE_FOR);
 
     myTargetPlayerCombo.setSelectedItem(myConfiguration.TARGET_PLAYER);
-    myComponentSetCombo.setSelectedItem(myConfiguration.COMPONENT_SET);
-    myFrameworkLinkageCombo.setSelectedItem(myConfiguration.FRAMEWORK_LINKAGE);
     myMainClassTextField.setText(myConfiguration.MAIN_CLASS);
     myOutputFileNameTextField.setText(myConfiguration.OUTPUT_FILE_NAME);
     myOutputFolderField.setText(myConfiguration.OUTPUT_FOLDER);
