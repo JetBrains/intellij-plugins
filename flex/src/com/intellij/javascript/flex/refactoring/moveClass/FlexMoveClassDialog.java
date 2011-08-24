@@ -21,11 +21,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDirectoryContainer;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.MoveCallback;
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil;
 import com.intellij.refactoring.ui.RefactoringDialog;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.DocumentAdapter;
@@ -218,10 +218,9 @@ public class FlexMoveClassDialog extends RefactoringDialog {
 
     // file-local case already checked by JSRefactoringUtil.chooseOrCreateDirectoryForClass (see nameToCheck)
     if (!myFileLocal) {
-      PsiManager manager = PsiManager.getInstance(myProject);
       try {
         for (PsiElement element : myElements) {
-          manager.checkMove(element.getContainingFile(), targetDirectory);
+          MoveFilesOrDirectoriesUtil.checkMove(element.getContainingFile(), targetDirectory);
         }
       }
       catch (IncorrectOperationException e) {
