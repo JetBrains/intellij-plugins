@@ -1,6 +1,9 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.*;
+import com.intellij.flex.uiDesigner.FlexUIDesignerBundle;
+import com.intellij.flex.uiDesigner.InjectionUtil;
+import com.intellij.flex.uiDesigner.InvalidPropertyException;
+import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.lang.javascript.JSTokenTypes;
@@ -8,7 +11,6 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -24,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 class InjectedASWriter {
-  private static final Logger LOG = Logger.getInstance(InjectedASWriter.class.getName());
-
   private final THashMap<String, ObjectReference> idReferenceMap = new THashMap<String, ObjectReference>();
   private final List<Binding> bindingItems = new ArrayList<Binding>();
   private final BaseWriter writer;
@@ -37,7 +37,7 @@ class InjectedASWriter {
 
   final static ValueWriter IGNORE = new ValueWriter() {
     @Override
-    public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
+    public PropertyProcessor.PropertyKind write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
       throw new UnsupportedOperationException();
     }
   };
@@ -106,7 +106,7 @@ class InjectedASWriter {
 
   private void writeDeclarations() {
     if (declarationsRange == null) {
-      writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
+      writer.getOut().writeShort(0);
     }
     else {
       writer.addMarker(declarationsRange);
@@ -311,8 +311,8 @@ class InjectedASWriter {
 
     private void warnUnsupported(JSCallExpression expression, JSExpression itemExpression) {
       unsupported = true;
-      LOG.warn("unsupported injected AS: " + itemExpression.getText() + " in outer expression " + expression.getText() +
-               " (mxml: " + host.getText() + ")");
+      MxmlWriter.LOG.warn("unsupported injected AS: " + itemExpression.getText() + " in outer expression " + expression.getText() +
+                          " (mxml: " + host.getText() + ")");
     }
 
     private ValueWriter checkEmbed(JSFile jsFile) {
@@ -378,7 +378,7 @@ class InjectedASWriter {
     }
 
     private void logUnsupported() {
-      LOG.warn("unsupported injected AS: " + host.getText());
+      MxmlWriter.LOG.warn("unsupported injected AS: " + host.getText());
       unsupported = true;
     }
   }

@@ -10,7 +10,6 @@ import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
@@ -21,15 +20,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-class PropertyProcessor {
-  private static final Logger LOG = Logger.getInstance(PropertyProcessor.class.getName());
+import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind.*;
 
-  static final int ARRAY = -1;
-  private static final int COMPLEX = 0;
-  private static final int COMPLEX_STYLE = 1;
-  static final int PRIMITIVE = 2;
-  static final int PRIMITIVE_STYLE = 3;
-  static final int IGNORE = 4;
+class PropertyProcessor {
+  enum PropertyKind {
+    ARRAY, VECTOR, COMPLEX, COMPLEX_STYLE, PRIMITIVE, PRIMITIVE_STYLE, IGNORE;
+
+    boolean isComplex() {
+      return ordinal() < PRIMITIVE.ordinal();
+    }
+
+    boolean isList() {
+      return ordinal() < COMPLEX.ordinal();
+    }
+  }
 
   private final InjectedASWriter injectedASWriter;
   private final BaseWriter writer;
@@ -78,7 +82,7 @@ class PropertyProcessor {
   public ValueWriter process(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor, 
                              Context context) throws InvalidPropertyException {
     if (descriptor.isPredefined()) {
-      LOG.error("unknown language element " + descriptor.getName());
+      MxmlWriter.LOG.error("unknown language element " + descriptor.getName());
       return null;
     }
 
@@ -95,7 +99,7 @@ class PropertyProcessor {
       }
       else {
         if (!typeName.equals(FlexAnnotationNames.BINDABLE)) { // skip binding
-          LOG.error("unsupported element: " + element.getText());
+          MxmlWriter.LOG.error("unsupported element: " + element.getText());
         }
         return null;
       }
@@ -178,7 +182,7 @@ class PropertyProcessor {
     }
 
     @Override
-    public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
+    public PropertyKind write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) throws InvalidPropertyException {
       final String type = descriptor.getType();
       if (isStyle) {
         int flags = 0;
@@ -235,9 +239,8 @@ class PropertyProcessor {
         }
       }
       else if (descriptor.getArrayType() != null) {
-        out.write(Amf3Types.VECTOR_OBJECT);
-        writer.write(descriptor.getArrayType());
-        return ARRAY;
+        writer.writeVectorHeader(descriptor.getArrayType());
+        return VECTOR;
       }
       else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(JSCommonTypeNames.ANY_TYPE)) {
         writeUntypedPropertyValue(valueProvider, descriptor);
@@ -282,8 +285,10 @@ class PropertyProcessor {
     }
 
     private void writeInlineArray(XmlElementValueProvider valueProvider) {
-      writer.getOut().write(Amf3Types.ARRAY);
-
+      final PrimitiveAmfOutputStream out = writer.getOut();
+      out.write(Amf3Types.ARRAY);
+      final int lengthPosition = writer.getBlockOut().allocate(2);
+      int validChildrenCount = 0;
       final StringBuilder builder = StringBuilderSpinAllocator.alloc();
       final String value = valueProvider.getTrimmed();
       try {
@@ -331,10 +336,11 @@ class PropertyProcessor {
                   writer.writeStringReference(XmlElementValueProvider.EMPTY);
                 }
                 else {
-                  writer.getOut().write(Amf3Types.STRING);
-                  writer.getOut().writeAmfUtf(builder, false, beginIndex, endIndex);
+                  out.write(Amf3Types.STRING);
+                  out.writeAmfUtf(builder, false, beginIndex, endIndex);
                 }
 
+                validChildrenCount++;
                 builder.setLength(0);
               }
               break;
@@ -347,7 +353,7 @@ class PropertyProcessor {
         StringBuilderSpinAllocator.dispose(builder);
       }
 
-      writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
+      out.putShort(validChildrenCount, lengthPosition);
     }
 
     private void writeUntypedPropertyValue(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {

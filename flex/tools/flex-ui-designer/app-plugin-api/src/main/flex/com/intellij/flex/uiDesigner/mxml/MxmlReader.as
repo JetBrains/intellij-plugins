@@ -210,7 +210,7 @@ public final class MxmlReader implements DocumentReader {
         return new objectClass(readBytes(), getOrCreateFactoryContext());
       
       case Amf3Types.ARRAY:
-        return new objectClass(readArray([]));
+        return new objectClass(readArray());
 
       default:
         throw new ArgumentError("unknown property classifier");
@@ -387,12 +387,11 @@ public final class MxmlReader implements DocumentReader {
           break;
 
         case Amf3Types.ARRAY:
-          propertyHolder[propertyName] = readArray([]);
+          propertyHolder[propertyName] = readArray();
           break;
 
         case Amf3Types.VECTOR_OBJECT:
-          var vectorClass:Class = moduleContext.getVectorClass(stringRegistry.readNotNull(input));
-          propertyHolder[propertyName] = readArray(new vectorClass());
+          propertyHolder[propertyName] = readVector();
           break;
 
         case COLOR_STYLE_MARKER:
@@ -504,7 +503,8 @@ public final class MxmlReader implements DocumentReader {
   }
 
   private function readChildrenMxContainer(container:DisplayObjectContainer):void {
-    var array:Array = [];
+    const length:int = input.readUnsignedShort();
+    var array:Array = new Array(length);
     var mxNs:Namespace = getMxNs();
     container[new QName(mxNs, "setActualCreationPolicies")]("none");
     container[new QName(mxNs, "createdComponents")] = array;
@@ -513,7 +513,7 @@ public final class MxmlReader implements DocumentReader {
     }
     deferredMxContainers.push(container);
 
-    readArray(array);
+    readArrayOrVector(array, length);
   }
 
   public function createDeferredMxContainersChildren(applicationDomain:ApplicationDomain):void {
@@ -557,45 +557,54 @@ public final class MxmlReader implements DocumentReader {
     container.dispatchEvent(new flexEventClass("contentCreationComplete"));
   }
 
+  internal function readArray():Object {
+    const length:int = input.readUnsignedShort();
+    return readArrayOrVector(new Array(length), length);
+  }
+
+  private function readVector():Object {
+    var vectorClass:Class = moduleContext.getVectorClass(stringRegistry.readNotNull(input));
+    const fixed:Boolean = input.readBoolean();
+    const length:int = input.readUnsignedShort();
+    return readArrayOrVector(new vectorClass(length, fixed), length);
+  }
+
   // support only object array without null
-  internal function readArray(array:Object):Object {
-    var count:int = 0;
-    while (true) {
+  internal function readArrayOrVector(array:Object, length:int):Object {
+    var i:int = 0;
+    while (i < length) {
       const amfType:int = input.readByte();
       switch (amfType) {
         case Amf3Types.OBJECT:
-          array[count++] = readObjectFromClass(stringRegistry.readNotNull(input));
+          array[i++] = readObjectFromClass(stringRegistry.readNotNull(input));
           break;
 
-        case 0:
-          return array;
-
         case Amf3Types.STRING:
-          array[count++] = AmfUtil.readString(input);
+          array[i++] = AmfUtil.readString(input);
           break;
 
         case AmfExtendedTypes.STRING_REFERENCE:
-          array[count++] = stringRegistry.read(input);
+          array[i++] = stringRegistry.read(input);
           break;
 
         case Amf3Types.DOUBLE:
-          array[count++] = input.readDouble();
+          array[i++] = input.readDouble();
           break;
 
         case Amf3Types.FALSE:
-          array[count++] = false;
+          array[i++] = false;
           break;
 
         case Amf3Types.TRUE:
-          array[count++] = true;
+          array[i++] = true;
           break;
 
         case Amf3Types.ARRAY:
-          array[count++] = readArray([]);
+          array[i++] = readArray();
           break;
 
         case AmfExtendedTypes.DOCUMENT_REFERENCE:
-          array[count++] = readObjectFromFactory(readDocumentFactory().newInstance());
+          array[i++] = readObjectFromFactory(readDocumentFactory().newInstance());
           break;
 
         default:
@@ -603,9 +612,7 @@ public final class MxmlReader implements DocumentReader {
       }
     }
 
-    // *** Adobe
-    //noinspection UnreachableCodeJS
-    throw new ArgumentError();
+    return array;
   }
 
   private function readFixedArray():Array {

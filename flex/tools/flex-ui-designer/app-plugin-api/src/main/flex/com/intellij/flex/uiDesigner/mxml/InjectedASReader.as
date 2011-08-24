@@ -11,14 +11,20 @@ public class InjectedASReader {
   
   private var deferredReferenceClass:Class;
   
-  public function read(data:IDataInput, reader:MxmlReader):void {
-    readDeclarations(reader);
-    readBinding(data, reader);
+  public function read(input:IDataInput, reader:MxmlReader):void {
+    readDeclarations(input, reader);
+    readBinding(input, reader);
   }
 
   //noinspection JSMethodCanBeStatic
-  private function readDeclarations(reader:MxmlReader):void {
-    reader.readArray([]); // result array is ignored
+  private function readDeclarations(input:IDataInput, reader:MxmlReader):void {
+    const length:int = input.readUnsignedShort();
+    if (length == 0) {
+      return;
+    }
+    
+    var vector:Vector.<Object> = new Vector.<Object>(length, true);
+    reader.readArrayOrVector(vector, length); // result vector is ignored
   }
   
   private function readBinding(data:IDataInput, reader:MxmlReader):void {

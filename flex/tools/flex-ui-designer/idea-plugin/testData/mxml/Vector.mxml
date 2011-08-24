@@ -1,0 +1,10 @@
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <!-- vector as explicit property -->
+  <layout>
+    <FormItemLayout>
+      <constraintColumns>
+        <ConstraintColumn id="row1"/>
+      </constraintColumns>
+    </FormItemLayout>
+  </layout>
+</Group>

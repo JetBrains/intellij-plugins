@@ -11,7 +11,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public final class BaseWriter {
+final class BaseWriter {
+  private static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
+  
   int ARRAY = -1;
   int P_FUD_POSITION = -1;
 
@@ -103,6 +105,10 @@ public final class BaseWriter {
     blockOut.addMarker(new ByteRangeMarker(blockOut.size(), dataRange));
   }
 
+  public void endObject() {
+    out.write(EMPTY_CLASS_OR_PROPERTY_NAME);
+  }
+
   public void beginMessage() {
     stringWriter.startChange();
     if (ARRAY == -1) {
@@ -141,6 +147,16 @@ public final class BaseWriter {
 
   public void write(String classOrPropertyName) {
     stringWriter.write(classOrPropertyName, out);
+  }
+
+  public void writeVectorHeader(String elementType) {
+    writeVectorHeader(elementType, false);
+  }
+
+  public void writeVectorHeader(String elementType, boolean fixed) {
+    out.write(Amf3Types.VECTOR_OBJECT);
+    stringWriter.write(elementType, out);
+    out.write(fixed);
   }
 
   public void writeProperty(int propertyNameReference, String value) {

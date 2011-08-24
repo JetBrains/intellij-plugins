@@ -8,16 +8,7 @@
     </DynamicStreamingVideoSource>
   </VideoPlayer>
 
-  <!-- vector as explicit property -->
-  <Group y="200" x="30">
-    <layout>
-      <FormItemLayout>
-        <constraintColumns>
-          <ConstraintColumn id="row1"/>
-        </constraintColumns>
-      </FormItemLayout>
-    </layout>
-  </Group>
+
   <!-- vector as explicit property -->
   <Label id="lbl" text="test" fontSize="332" creationComplete="fader.play();">
     <!-- mouseUpEffect is not working -->

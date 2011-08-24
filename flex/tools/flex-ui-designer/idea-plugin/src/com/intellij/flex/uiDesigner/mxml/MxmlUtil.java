@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -10,7 +11,11 @@ import com.intellij.psi.xml.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.regex.Pattern;
+
 final class MxmlUtil {
+  private static final Pattern FLEX_SDK_ABSTRACT_CLASSES = Pattern.compile("^(mx|spark)\\.(.*)?Base$");
+
   static Document getDocument(@NotNull PsiElement element) {
     VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
     assert virtualFile != null;
@@ -46,5 +51,9 @@ final class MxmlUtil {
     }
 
     return null;
+  }
+
+  public static boolean isAbstract(ClassBackedElementDescriptor classBackedDescriptor) {
+    return FLEX_SDK_ABSTRACT_CLASSES.matcher(classBackedDescriptor.getQualifiedName()).matches();
   }
 }

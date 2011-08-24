@@ -2,6 +2,8 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 
+import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
+
 class PercentableValueWriter implements ValueWriter {
   private final String value;
 
@@ -10,8 +12,8 @@ class PercentableValueWriter implements ValueWriter {
   }
 
   @Override
-  public int write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
+  public PropertyProcessor.PropertyKind write(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
     out.writeAmfDouble(value);
-    return PropertyProcessor.PRIMITIVE;
+    return PropertyKind.PRIMITIVE;
   }
 }

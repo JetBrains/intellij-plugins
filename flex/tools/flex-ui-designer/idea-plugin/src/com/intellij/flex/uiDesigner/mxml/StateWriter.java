@@ -4,6 +4,7 @@ import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.ByteRangeMarker;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
 import com.intellij.javascript.flex.FlexReferenceContributor.StateReference;
 import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
@@ -240,16 +241,17 @@ class StateWriter {
     writer.getOut().writeUInt29(VALUE);
     writer.getOut().write(PropertyClassifier.PROPERTY);
 
-    int type;
+    PropertyKind propertyKind;
     try {
-      type = valueWriter.write(writer.getOut(), writer, false);
+      propertyKind = valueWriter.write(writer.getOut(), writer, false);
     }
     catch (InvalidPropertyException invalidProperty) {
       // todo handle invalidProperty for state
       throw new UnsupportedOperationException("");
     }
-    if (type < PropertyProcessor.PRIMITIVE) {
-      mxmlWriter.processPropertyTagValue((XmlTag)element, context, type == PropertyProcessor.ARRAY);
+
+    if (propertyKind.isComplex()) {
+      mxmlWriter.processPropertyTagValue((XmlTag)element, context, propertyKind);
     }
 
     override.targetId = writer.getObjectOrFactoryId(context);
@@ -381,7 +383,7 @@ class StateWriter {
 
     writer.writeProperty("reference", objectInstanceReference);
     writer.writeObjectReference("deferredParentInstance", deferredParentInstance);
-    writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
+    writer.endObject();
   }
 
   void writeDeferredInstance(DynamicObjectContext instance) {
@@ -435,13 +437,13 @@ class StateWriter {
         do {
           override.write(writer, this);
           // object Override footer
-          writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
+          writer.endObject();
         }
         while ((override = override.next) != null);
       }
 
       // object State footer
-      writer.getOut().write(MxmlWriter.EMPTY_CLASS_OR_PROPERTY_NAME);
+      writer.endObject();
     }
 
     reset();

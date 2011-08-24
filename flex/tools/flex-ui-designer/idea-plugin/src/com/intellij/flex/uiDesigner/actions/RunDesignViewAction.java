@@ -40,6 +40,7 @@ public class RunDesignViewAction extends DumbAwareAction {
     final Module module = ModuleUtil.findModuleForFile(file, project);
     assert module != null;
 
+    FileDocumentManager.getInstance().saveAllDocuments();
     FlexUIDesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug());
   }
 

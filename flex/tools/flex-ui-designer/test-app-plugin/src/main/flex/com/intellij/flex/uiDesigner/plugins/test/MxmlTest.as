@@ -39,6 +39,7 @@ public class MxmlTest extends BaseTestCase {
       ProjectMxmlComponentAsChild();
       EmbedSwfAndImageFromCss();
       EmbedImageAsClass();
+      Vector();
     }
   }
   
@@ -195,6 +196,10 @@ public class MxmlTest extends BaseTestCase {
 
   public function EmbedImageAsClass():void {
     // todo test over
+  }
+
+  public function Vector():void {
+    assertThat(app, {layout: {constraintColumns: {length: 1, fixed: false}}});
   }
 }
 }
