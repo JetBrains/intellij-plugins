@@ -17,6 +17,7 @@ package com.intellij.struts2.structure;
 
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.xml.XmlTag;
@@ -38,7 +39,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-class StructureViewTreeElement extends DomStructureTreeElement {
+class StructureViewTreeElement extends DomStructureTreeElement implements ColoredItemPresentation {
 
   StructureViewTreeElement(@NotNull final DomElement domElement) {
     super(domElement,
@@ -53,6 +54,7 @@ class StructureViewTreeElement extends DomStructureTreeElement {
    * @return null if no errors.
    */
   @Nullable
+  @Override
   public TextAttributesKey getTextAttributesKey() {
     final DomElement element = getElement();
     if (!element.isValid()) {
