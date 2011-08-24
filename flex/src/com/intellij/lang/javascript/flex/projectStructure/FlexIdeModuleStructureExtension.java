@@ -11,7 +11,10 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureExtension;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.Computable;
@@ -34,12 +37,14 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
 
   public boolean addModuleNodeChildren(final Module module,
                                        final MasterDetailsComponent.MyNode moduleNode,
+                                       ModifiableRootModel modifiableRootModel,
                                        final Runnable treeNodeNameUpdater) {
     if (!(ModuleType.get(module) instanceof FlexModuleType)) {
       return false;
     }
 
-    final List<FlexIdeBCConfigurable> configurables = myConfigurator.getOrCreateConfigurables(module, treeNodeNameUpdater);
+    final List<FlexIdeBCConfigurable> configurables =
+      myConfigurator.getOrCreateConfigurables(module, treeNodeNameUpdater, modifiableRootModel);
 
     for (final FlexIdeBCConfigurable configurable : configurables) {
       if (MasterDetailsComponent.findNodeByObject(moduleNode, configurable.getEditableObject()) == null) {
@@ -84,6 +89,11 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
     return myConfigurator.isModified();
   }
 
+  @Override
+  public boolean isModulesConfiguratorModified() {
+    return myConfigurator.isModulesConfiguratorModified();
+  }
+
   public void apply() throws ConfigurationException {
     myConfigurator.apply();
   }
@@ -115,10 +125,11 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
     }
   }
 
-  public Collection<AnAction> createAddActions(final Computable<Object> selectedObjectRetriever, final Runnable treeNodeNameUpdater) {
+  public Collection<AnAction> createAddActions(final Computable<Object> selectedObjectRetriever,
+                                               final Runnable treeNodeNameUpdater,
+                                               final ModulesConfigurator modulesConfigurator) {
     final Collection<AnAction> actions = new ArrayList<AnAction>(2);
     actions.add(new Separator());
-
     actions.add(new DumbAwareAction("Build Configuration") {
       public void update(final AnActionEvent e) {
         final Object selectedObject = selectedObjectRetriever.compute();
@@ -128,7 +139,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
       }
 
       public void actionPerformed(final AnActionEvent e) {
-        myConfigurator.addConfiguration(selectedObjectRetriever.compute(), treeNodeNameUpdater);
+        myConfigurator.addConfiguration(selectedObjectRetriever.compute(), treeNodeNameUpdater, modulesConfigurator);
       }
     });
     return actions;

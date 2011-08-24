@@ -4,8 +4,7 @@ import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import org.jetbrains.annotations.Nls;
@@ -40,6 +39,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private TextFieldWithBrowseButton myOutputFolderField;
 
   private final FlexIdeBuildConfiguration myConfiguration;
+  private final ModifiableRootModel myModifiableRootModel;
   private String myName;
 
   private final DependenciesConfigurable myDependenciesConfigurable;
@@ -49,15 +49,18 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private final AirDesktopPackagingConfigurable myAirDesktopPackagingConfigurable;
   private final AndroidPackagingConfigurable myAndroidPackagingConfigurable;
   private final IOSPackagingConfigurable myIOSPackagingConfigurable;
-  private final FlexModuleEditor myModuleEditor;
   private final ChangeListener myListener;
 
-  public FlexIdeBCConfigurable(final Module module, final FlexIdeBuildConfiguration configuration, final Runnable treeNodeNameUpdater) {
+  public FlexIdeBCConfigurable(final Module module,
+                               final FlexIdeBuildConfiguration configuration,
+                               final Runnable treeNodeNameUpdater,
+                               ModifiableRootModel modifiableRootModel) {
     super(true, treeNodeNameUpdater);
     myConfiguration = configuration;
+    myModifiableRootModel = modifiableRootModel;
     myName = configuration.NAME;
 
-    myDependenciesConfigurable = new DependenciesConfigurable(configuration.DEPENDENCIES);
+    myDependenciesConfigurable = new DependenciesConfigurable(configuration.DEPENDENCIES, module.getProject(), modifiableRootModel);
     myCompilerOptionsConfigurable = new CompilerOptionsConfigurable(module, configuration.COMPILER_OPTIONS);
     myHtmlWrapperConfigurable = new HtmlWrapperConfigurable(module.getProject(), configuration.HTML_WRAPPER_OPTIONS);
     myAirDescriptorConfigurable = new AirDescriptorConfigurable(configuration.AIR_DESCRIPTOR_OPTIONS);
@@ -65,7 +68,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
       new AirDesktopPackagingConfigurable(module.getProject(), configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
     myAndroidPackagingConfigurable = new AndroidPackagingConfigurable(module.getProject(), configuration.ANDROID_PACKAGING_OPTIONS);
     myIOSPackagingConfigurable = new IOSPackagingConfigurable(module.getProject(), configuration.IOS_PACKAGING_OPTIONS);
-    myModuleEditor = FlexModuleEditor.getInstance(module);
 
     myListener = new ChangeListener() {
       @Override
@@ -73,7 +75,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
         // TODO
       }
     };
-    myModuleEditor.addListener(myListener);
+    myDependenciesConfigurable.addFlexSdkListener(myListener);
     initCombos();
   }
 
@@ -183,9 +185,17 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   private String[] getAvailablePlayersFromSdk() {
-    String sdkPath = myModuleEditor.getSdkPath();
-    String sdkVersion = myModuleEditor.getSdkVersion();
+    String sdkPath = myDependenciesConfigurable.getSdkChooserPanel().getSdkPath();
+    String sdkVersion = myDependenciesConfigurable.getSdkChooserPanel().getSdkVersion();
     return new String[]{"10.1", "10.2"}; // TODO implement
+  }
+
+  public ModifiableRootModel getModifiableRootModel() {
+    return myModifiableRootModel;
+  }
+
+  public boolean isModuleConfiguratorModified() {
+    return myDependenciesConfigurable.getSdkChooserPanel().isModified();
   }
 
   private static FrameworkLinkage getDefaultFrameworkLinkage(final TargetPlatform targetPlatform,
@@ -250,10 +260,30 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   }
 
   public void apply() throws ConfigurationException {
-    applyTo(myConfiguration);
+    applyOwnTo(myConfiguration);
+
+    myDependenciesConfigurable.apply();
+    myCompilerOptionsConfigurable.apply();
+    myHtmlWrapperConfigurable.apply();
+    myAirDescriptorConfigurable.apply();
+    myAirDesktopPackagingConfigurable.apply();
+    myAndroidPackagingConfigurable.apply();
+    myIOSPackagingConfigurable.apply();
   }
 
   private void applyTo(final FlexIdeBuildConfiguration configuration) {
+    applyOwnTo(configuration);
+
+    myDependenciesConfigurable.applyTo(configuration.DEPENDENCIES);
+    myCompilerOptionsConfigurable.applyTo(configuration.COMPILER_OPTIONS);
+    myHtmlWrapperConfigurable.applyTo(configuration.HTML_WRAPPER_OPTIONS);
+    myAirDescriptorConfigurable.applyTo(configuration.AIR_DESCRIPTOR_OPTIONS);
+    myAirDesktopPackagingConfigurable.applyTo(configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
+    myAndroidPackagingConfigurable.applyTo(configuration.ANDROID_PACKAGING_OPTIONS);
+    myIOSPackagingConfigurable.applyTo(configuration.IOS_PACKAGING_OPTIONS);
+  }
+
+  private void applyOwnTo(FlexIdeBuildConfiguration configuration) {
     configuration.NAME = myName;
     configuration.TARGET_PLATFORM = (TargetPlatform)myTargetPlatformCombo.getSelectedItem();
     configuration.PURE_ACTION_SCRIPT = myPureActionScriptCheckBox.isSelected();
@@ -265,14 +295,6 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     configuration.MAIN_CLASS = myMainClassTextField.getText().trim();
     configuration.OUTPUT_FILE_NAME = myOutputFileNameTextField.getText().trim();
     configuration.OUTPUT_FOLDER = myOutputFolderField.getText().trim();
-
-    myDependenciesConfigurable.applyTo(configuration.DEPENDENCIES);
-    myCompilerOptionsConfigurable.applyTo(configuration.COMPILER_OPTIONS);
-    myHtmlWrapperConfigurable.applyTo(configuration.HTML_WRAPPER_OPTIONS);
-    myAirDescriptorConfigurable.applyTo(configuration.AIR_DESCRIPTOR_OPTIONS);
-    myAirDesktopPackagingConfigurable.applyTo(configuration.AIR_DESKTOP_PACKAGING_OPTIONS);
-    myAndroidPackagingConfigurable.applyTo(configuration.ANDROID_PACKAGING_OPTIONS);
-    myIOSPackagingConfigurable.applyTo(configuration.IOS_PACKAGING_OPTIONS);
   }
 
   public void reset() {
@@ -307,7 +329,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     myAirDesktopPackagingConfigurable.disposeUIResources();
     myAndroidPackagingConfigurable.disposeUIResources();
     myIOSPackagingConfigurable.disposeUIResources();
-    myModuleEditor.removeListener(myListener);
+    myDependenciesConfigurable.removeFlexSdkListener(myListener);
   }
 
   public DependenciesConfigurable getDependenciesConfigurable() {

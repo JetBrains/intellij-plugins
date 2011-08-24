@@ -7,6 +7,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -34,7 +36,9 @@ public class FlexIdeBCConfigurator {
     myModified = false;
   }
 
-  public List<FlexIdeBCConfigurable> getOrCreateConfigurables(final Module module, final Runnable treeNodeNameUpdater) {
+  public List<FlexIdeBCConfigurable> getOrCreateConfigurables(final Module module,
+                                                              final Runnable treeNodeNameUpdater,
+                                                              ModifiableRootModel modifiableRootModel) {
     List<FlexIdeBCConfigurable> configurables = myModuleToConfigurablesMap.get(module);
 
     if (configurables == null) {
@@ -43,7 +47,8 @@ public class FlexIdeBCConfigurator {
 
       for (final FlexIdeBuildConfiguration configuration : configurations) {
         final FlexIdeBuildConfiguration clonedConfiguration = configuration.clone();
-        final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, clonedConfiguration, treeNodeNameUpdater);
+        FlexIdeBCConfigurable configurable =
+          new FlexIdeBCConfigurable(module, clonedConfiguration, treeNodeNameUpdater, modifiableRootModel);
         configurables.add(configurable);
         myConfigurationsToModuleMap.put(clonedConfiguration, module);
       }
@@ -123,15 +128,16 @@ public class FlexIdeBCConfigurator {
     }
   }
 
-  public void addConfiguration(final Object selectedObject, final Runnable treeNodeNameUpdater) {
+  public void addConfiguration(final Object selectedObject, final Runnable treeNodeNameUpdater, ModulesConfigurator modulesConfigurator) {
     final Module module = selectedObject instanceof Module
                           ? (Module)selectedObject
                           : selectedObject instanceof FlexIdeBuildConfiguration
                             ? myConfigurationsToModuleMap.get(((FlexIdeBuildConfiguration)selectedObject))
                             : null;
     if (module != null) {
+      ModifiableRootModel modifiableRootModel = modulesConfigurator.getModuleEditor(module).getModifiableRootModel();
       final FlexIdeBuildConfiguration configuration = new FlexIdeBuildConfiguration();
-      addConfiguration(module, configuration, "Add Build Configuration", treeNodeNameUpdater);
+      addConfiguration(module, configuration, "Add Build Configuration", treeNodeNameUpdater, modifiableRootModel);
     }
   }
 
@@ -139,13 +145,13 @@ public class FlexIdeBCConfigurator {
     final FlexIdeBuildConfiguration configuration = configurable.getCurrentConfiguration();
     final FlexIdeBuildConfiguration newConfiguration = configuration.clone();
     final Module module = myConfigurationsToModuleMap.get(configurable.getEditableObject());
-    addConfiguration(module, newConfiguration, "Copy Build Configuration", treeNodeNameUpdater);
+    addConfiguration(module, newConfiguration, "Copy Build Configuration", treeNodeNameUpdater, configurable.getModifiableRootModel());
   }
 
   private void addConfiguration(final Module module,
                                 final FlexIdeBuildConfiguration configuration,
                                 final String dialogTitle,
-                                final Runnable treeNodeNameUpdater) {
+                                final Runnable treeNodeNameUpdater, ModifiableRootModel modifiableRootModel) {
     final Project project = module.getProject();
     final AddBuildConfigurationDialog dialog =
       new AddBuildConfigurationDialog(project, dialogTitle, getUsedNames(module), configuration.TARGET_PLATFORM,
@@ -159,7 +165,7 @@ public class FlexIdeBCConfigurator {
       configuration.PURE_ACTION_SCRIPT = dialog.isPureActionScript();
       configuration.OUTPUT_TYPE = dialog.getOutputType();
 
-      final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater);
+      final FlexIdeBCConfigurable configurable = new FlexIdeBCConfigurable(module, configuration, treeNodeNameUpdater, modifiableRootModel);
 
       final List<FlexIdeBCConfigurable> configurables = myModuleToConfigurablesMap.get(module);
       configurables.add(configurable);
@@ -183,5 +189,16 @@ public class FlexIdeBCConfigurator {
       result.add(configurable.getDisplayName());
     }
     return result;
+  }
+
+  public boolean isModulesConfiguratorModified() {
+    for (List<FlexIdeBCConfigurable> configurables : myModuleToConfigurablesMap.values()) {
+      for (FlexIdeBCConfigurable configurable : configurables) {
+        if (configurable.isModuleConfiguratorModified()) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

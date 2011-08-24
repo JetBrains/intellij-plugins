@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.RecentsManager;
@@ -110,10 +111,14 @@ public class SdkPathCombo extends ComboboxWithBrowseButton implements TextAccess
   }
 
   public void saveHistory() {
-    RecentsManager.getInstance(myProject).registerRecentEntry(myHistoryKey, getText());
+    String text = getText();
+    if (StringUtil.isNotEmpty(text)) {
+      RecentsManager.getInstance(myProject).registerRecentEntry(myHistoryKey, text);
+    }
   }
 
   private void prependHistoryItem(String item) {
+    if (StringUtil.isEmpty(item)) return;
     ArrayList<Object> objects = new ArrayList<Object>();
     objects.add(item);
     int count = getChildComponent().getItemCount();

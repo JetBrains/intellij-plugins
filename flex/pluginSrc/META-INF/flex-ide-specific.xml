@@ -3,7 +3,7 @@
     <renameHandler implementation="com.intellij.javascript.flex.refactoring.FlexDirectoryAsPackageRenameHandler"/>
     <elementDescriptionProvider implementation="com.intellij.javascript.flex.refactoring.FlexPackageImpl$DescriptionProvider"/>
 
-    <projectService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptions"/>
+    <projectService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptionsHolder"/>
     <moduleService serviceImplementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager"/>
     <configuration.ModuleStructureExtension implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension"/>
   </extensions>
