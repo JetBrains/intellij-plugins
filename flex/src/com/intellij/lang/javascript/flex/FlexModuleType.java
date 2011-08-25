@@ -8,6 +8,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
@@ -19,6 +20,8 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   public static final Icon ourFlexModuleType = IconLoader.getIcon("flex_24.png", FlexModuleType.class);
   @NonNls private static final String MODULE_TYPE_ID = "Flex";
   @NonNls static final String CREATE_MODULE_HELP_ID = "reference.dialogs.new.project.fromScratch.flex";
+  private static final Icon NODE_ICON_OPEN = IconLoader.getIcon("/nodes/ModuleOpen.png");
+  private static final Icon NODE_ICON_CLOSED = IconLoader.getIcon("/nodes/ModuleClosed.png");
 
   public FlexModuleType() {
     super(MODULE_TYPE_ID);
@@ -50,7 +53,7 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   }
 
   public Icon getNodeIcon(final boolean isOpened) {
-    return FlexFacetType.ourFlexIcon;
+    return !PlatformUtils.isFlexIde() ? FlexFacetType.ourFlexIcon : isOpened ? NODE_ICON_OPEN : NODE_ICON_CLOSED;
   }
 
   public static FlexModuleType getInstance() {
