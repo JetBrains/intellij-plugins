@@ -519,6 +519,8 @@ def layoutFull(String target, Set usedJars) {
         fileset(file: it)
       }
 
+      fileset(dir: "$home/community/xml/relaxng/lib", includes: "*.jar")
+
       fileset(dir: "$home/community/lib/src") {
         include(name: "trove4j_changes.txt")
         include(name: "trove4j_src.jar")
