@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nls;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.text.MessageFormat;
 
 import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration.*;
 
@@ -165,6 +164,36 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
 
   public boolean isModuleConfiguratorModified() {
     return myDependenciesConfigurable.getSdkChooserPanel().isModified();
+  }
+
+  public String getTreeNodeText() {
+    StringBuilder b = new StringBuilder();
+    if (myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Mobile) {
+      b.append("Mobile");
+    }
+    else if (myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Desktop) {
+      b.append("AIR");
+    }
+    else {
+      if (myPureActionScriptCheckBox.isSelected()) {
+        b.append("AS");
+      }
+      else {
+        b.append("Flex");
+      }
+    }
+    b.append(" ");
+    if (myOutputTypeCombo.getSelectedItem() == OutputType.Application) {
+      b.append("App");
+    }
+    else if (myOutputTypeCombo.getSelectedItem() == OutputType.RuntimeLoadedModule) {
+      b.append("Runtime module");
+    }
+    else {
+      b.append("Lib");
+    }
+    b.append(": ").append(myName);
+    return b.toString();
   }
 
   private static FrameworkLinkage getDefaultFrameworkLinkage(final TargetPlatform targetPlatform,

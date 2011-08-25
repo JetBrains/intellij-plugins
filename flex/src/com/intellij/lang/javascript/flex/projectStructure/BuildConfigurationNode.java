@@ -1,0 +1,22 @@
+package com.intellij.lang.javascript.flex.projectStructure;
+
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
+import com.intellij.openapi.ui.MasterDetailsComponent;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * @author ksafonov
+ */
+public class BuildConfigurationNode extends MasterDetailsComponent.MyNode {
+
+  public BuildConfigurationNode(FlexIdeBCConfigurable configurable) {
+    super(configurable);
+  }
+
+  @NotNull
+  @Override
+  public String getDisplayName() {
+    final FlexIdeBCConfigurable configurable = ((FlexIdeBCConfigurable)getUserObject());
+    return configurable.getTreeNodeText();
+  }
+}

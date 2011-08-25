@@ -171,7 +171,7 @@ public class FlexIdeBCConfigurator {
       configurables.add(configurable);
       myConfigurationsToModuleMap.put(configuration, module);
 
-      final MasterDetailsComponent.MyNode node = new MasterDetailsComponent.MyNode(configurable);
+      final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(configurable);
       FlexIdeModuleStructureExtension.addConfigurationChildNodes(project, configurable, node);
 
       final ModuleStructureConfigurable moduleStructureConfigurable = ModuleStructureConfigurable.getInstance(project);

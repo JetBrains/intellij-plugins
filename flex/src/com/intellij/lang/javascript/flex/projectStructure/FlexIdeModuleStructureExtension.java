@@ -14,10 +14,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureExtension;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.Computable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +48,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
 
     for (final FlexIdeBCConfigurable configurable : configurables) {
       if (MasterDetailsComponent.findNodeByObject(moduleNode, configurable.getEditableObject()) == null) {
-        final MasterDetailsComponent.MyNode configurationNode = new MasterDetailsComponent.MyNode(configurable);
+        final MasterDetailsComponent.MyNode configurationNode = new BuildConfigurationNode(configurable);
         addConfigurationChildNodes(module.getProject(), configurable, configurationNode);
         moduleNode.add(configurationNode);
       }
