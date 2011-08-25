@@ -11,28 +11,63 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class CompilerOptionInfo {
 
-  public enum OptionType {
-    Group, Boolean, String, Int, File, LocaleList, RuntimeLocaleList, NamespacesList, IncludedClasses,
-    ConditionalDefinitionList, FileList, StringList, FilesAndDirsList, ExtensionList, LanguageRangeList, TwoStringsList
+  public enum OptionType {Group, Boolean, String, Int, File, List, IncludeClasses, IncludeFiles}
+
+  public enum ListElementType {String, File, Locale}
+
+  public static class ListElement {
+    public final String NAME;
+    public final ListElementType LIST_ELEMENT_TYPE;
+
+    private ListElement(final String name, final ListElementType listElementType) {
+      this.NAME = name;
+      this.LIST_ELEMENT_TYPE = listElementType;
+    }
   }
+
+  public static final char LIST_ENTRIES_SEPARATOR = '\n';
+  public static final char LIST_ENTRY_PARTS_SEPARATOR = '\t'; // if list entry contains several values, e.g. uri and manifest
+  public static final String FLEX_SDK_MACRO_NAME = "FLEX_SDK";
+  private static final String SPECIAL_DEFAULT_VALUE = "SPECIAL";
 
   private static final Logger LOG = Logger.getInstance(CompilerOptionInfo.class.getName());
 
   private static volatile CompilerOptionInfo[] ourRootInfos;
   private static final Map<String, CompilerOptionInfo> ourIdToInfoMap = new THashMap<String, CompilerOptionInfo>(150);
-  private static final String SPECIAL_DEFAULT_VALUE = "SPECIAL";
+  private static final Collection<CompilerOptionInfo> ourOptionsWithSpecialValues = new LinkedList<CompilerOptionInfo>();
+
+  public static final CompilerOptionInfo EXTERNAL_LIBRARY_INFO =
+    new CompilerOptionInfo("compiler.external-library-path", "fake", OptionType.List, null,
+                           new ListElement[]{new ListElement("path-element", ListElementType.String)}, false, null, true, true, true, "");
+  public static final CompilerOptionInfo LIBRARY_PATH_INFO =
+    new CompilerOptionInfo("compiler.library-path", "fake", OptionType.List, null,
+                           new ListElement[]{new ListElement("path-element", ListElementType.String)}, false, null, true, true, true, "");
+  public static final CompilerOptionInfo INCLUDE_LIBRARY_INFO =
+    new CompilerOptionInfo("compiler.include-libraries", "fake", OptionType.List, null,
+                           new ListElement[]{new ListElement("library", ListElementType.String)}, false, null, true, true, true, "");
+  public static final CompilerOptionInfo SOURCE_PATH_INFO =
+    new CompilerOptionInfo("compiler.source-path", "fake", OptionType.List, null,
+                           new ListElement[]{new ListElement("path-element", ListElementType.String)}, false, null, true, true, true, "");
+  public static final CompilerOptionInfo MOBILE_INFO =
+    new CompilerOptionInfo("compiler.mobile", "fake", OptionType.Boolean, null, null, false, null, true, true, true, "");
+  public static final CompilerOptionInfo TARGET_PLAYER_INFO =
+    new CompilerOptionInfo("target-player", "fake", OptionType.String, null, null, false, null, true, true, true, "");
+  public static final CompilerOptionInfo MAIN_CLASS_INFO =
+    new CompilerOptionInfo("file-specs.path-element", "fake", OptionType.String, null, null, false, null, true, true, true, "");
+  public static final CompilerOptionInfo OUTPUT_PATH_INFO =
+    new CompilerOptionInfo("output", "fake", OptionType.String, null, null, false, null, true, true, true, "");
+
 
   public final String ID;
   public final String DISPLAY_NAME;
   public final OptionType TYPE;
   public final @Nullable String FILE_EXTENSION; // for options with TYPE=OptionType.File
+  public final ListElement[] LIST_ELEMENTS; // for options with TYPE=OptionType.List
   public final boolean ADVANCED;
   private final CompilerOptionInfo[] myChildOptionInfos;
   private final @Nullable String mySinceVersion;
@@ -45,6 +80,7 @@ public class CompilerOptionInfo {
                              final @NotNull String displayName,
                              final @NotNull OptionType optionType,
                              final @Nullable String fileExtension,
+                             final @Nullable ListElement[] listElements,
                              final boolean advanced,
                              final @Nullable String sinceVersion,
                              final boolean okForAir,
@@ -57,6 +93,7 @@ public class CompilerOptionInfo {
     DISPLAY_NAME = displayName;
     TYPE = optionType;
     FILE_EXTENSION = fileExtension;
+    LIST_ELEMENTS = listElements;
     ADVANCED = advanced;
 
     mySinceVersion = sinceVersion;
@@ -66,6 +103,10 @@ public class CompilerOptionInfo {
     myDefaultValue = defaultValue;
 
     myChildOptionInfos = null;
+
+    if (SPECIAL_DEFAULT_VALUE.equals(myDefaultValue)) {
+      ourOptionsWithSpecialValues.add(this);
+    }
 
     ourIdToInfoMap.put(ID, this);
   }
@@ -81,6 +122,7 @@ public class CompilerOptionInfo {
     DISPLAY_NAME = groupDisplayName;
     TYPE = OptionType.Group;
     FILE_EXTENSION = null;
+    LIST_ELEMENTS = null;
     ADVANCED = advanced;
 
     mySinceVersion = sinceVersion;
@@ -126,6 +168,13 @@ public class CompilerOptionInfo {
   public static CompilerOptionInfo[] getRootOptionInfos() {
     ensureLoaded();
     return ourRootInfos;
+  }
+
+  public static CompilerOptionInfo getOptionInfo(final String id) {
+    ensureLoaded();
+    final CompilerOptionInfo info = ourIdToInfoMap.get(id);
+    assert info != null : id;
+    return info;
   }
 
   private static void ensureLoaded() {
@@ -213,9 +262,10 @@ public class CompilerOptionInfo {
 
     final String typeValue = element.getAttributeValue("type");
     final OptionType type = OptionType.valueOf(typeValue);
-    assert type != null && type != OptionType.Group;
+    assert type != OptionType.Group;
 
     final String fileExtension = type == OptionType.File ? element.getAttributeValue("fileExtension") : null;
+    final ListElement[] listElements = type == OptionType.List ? readListElements(element) : null;
 
     final String advancedValue = element.getAttributeValue("advanced");
     final boolean advanced = advancedValue != null && "true".equals(advancedValue);
@@ -232,26 +282,61 @@ public class CompilerOptionInfo {
     final boolean okForSWF = okForSWFValue == null || "false".equals(okForSWFValue);
 
     final String defaultValue = StringUtil.notNullize(element.getAttributeValue("default"));
-    
-    return new CompilerOptionInfo(id, displayName, type, fileExtension, advanced, since, okForAir, okForPureAS, okForSWF, defaultValue);
+
+    return new CompilerOptionInfo(id, displayName, type, fileExtension, listElements, advanced, since, okForAir, okForPureAS, okForSWF,
+                                  defaultValue);
   }
 
-  public String getDefaultValue(final String sdkVersion) {
+  private static ListElement[] readListElements(final Element element) {
+    final List<ListElement> result = new LinkedList<ListElement>();
+
+    //noinspection unchecked
+    for (final Element childElement : (Iterable<Element>)element.getChildren("listElement")) {
+      final String name = childElement.getAttributeValue("name");
+      assert name != null : element.getName();
+      final ListElementType listElementType = ListElementType.valueOf(childElement.getAttributeValue("type"));
+      result.add(new ListElement(name, listElementType));
+    }
+
+    assert !result.isEmpty() : element.getName();
+    return result.toArray(new ListElement[result.size()]);
+  }
+
+  public String getDefaultValue(final String sdkVersion, final FlexIdeBuildConfiguration.TargetPlatform targetPlatform) {
     assert !isGroup() : DISPLAY_NAME;
 
     if (SPECIAL_DEFAULT_VALUE.equals(myDefaultValue)) {
-      if ("swf-version".equals(ID)) {
+      if ("compiler.accessible".equals(ID)) {
+        return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile
+               ? "false"
+               : StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 ? "true" : "false";
+      }
+      else if ("compiler.locale".equals(ID)) {
+        return "en_US";
+      }
+      else if ("compiler.preloader".equals(ID)) {
+        return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile ? "spark.preloaders.SplashScreen" : "";
+      }
+      else if ("compiler.theme".equals(ID)) {
+        if (targetPlatform != FlexIdeBuildConfiguration.TargetPlatform.Desktop && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0) {
+          return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile
+                 ? "${FLEX_SDK}/frameworks/themes/Mobile/mobile.swc"
+                 : "${FLEX_SDK}/frameworks/themes/Spark/spark.css";
+        }
+        return "";
+      }
+      else if ("swf-version".equals(ID)) {
         return "11";
       }
-      else if ("managers".equals(ID)) {
+      else if ("compiler.fonts.managers".equals(ID)) {
         return sdkVersion != null && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0
-               ? "flash.fonts.JREFontManager\n" +
-                 "flash.fonts.BatikFontManager\n" +
-                 "flash.fonts.AFEFontManager\n" +
+               ? "flash.fonts.JREFontManager" + LIST_ENTRIES_SEPARATOR +
+                 "flash.fonts.BatikFontManager" + LIST_ENTRIES_SEPARATOR +
+                 "flash.fonts.AFEFontManager" + LIST_ENTRIES_SEPARATOR +
                  "flash.fonts.CFFFontManager"
-               
-               : "flash.fonts.JREFontManager\n" +
-                 "flash.fonts.AFEFontManager\n" +
+
+               : "flash.fonts.JREFontManager" + LIST_ENTRIES_SEPARATOR +
+                 "flash.fonts.AFEFontManager" + LIST_ENTRIES_SEPARATOR +
                  "flash.fonts.BatikFontManager";
       }
       else if ("static-link-runtime-shared-libraries".equals(ID)) {
@@ -261,5 +346,9 @@ public class CompilerOptionInfo {
       assert false : ID;
     }
     return myDefaultValue;
+  }
+
+  public static Collection<CompilerOptionInfo> getOptionsWithSpecialValues() {
+    return ourOptionsWithSpecialValues;
   }
 }

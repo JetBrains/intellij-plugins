@@ -17,8 +17,6 @@ import static com.intellij.lang.javascript.flex.projectStructure.options.FlexIde
 
 public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable*/NamedConfigurable<FlexIdeBuildConfiguration> {
 
-  private static final String DEFAULT_PATTERN = "Default ({0})";
-
   private JPanel myMainPanel;
 
   private JComboBox myTargetPlatformCombo;
@@ -34,6 +32,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
   private JTextField myOutputFileNameTextField;
   private TextFieldWithBrowseButton myOutputFolderField;
 
+  private final Module myModule;
   private final FlexIdeBuildConfiguration myConfiguration;
   private final ModifiableRootModel myModifiableRootModel;
   private String myName;
@@ -52,6 +51,7 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
                                final Runnable treeNodeNameUpdater,
                                ModifiableRootModel modifiableRootModel) {
     super(true, treeNodeNameUpdater);
+    myModule = module;
     myConfiguration = configuration;
     myModifiableRootModel = modifiableRootModel;
     myName = configuration.NAME;

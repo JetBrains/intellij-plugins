@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCompilerOptionsHolder;
+import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
 import com.intellij.lang.javascript.flex.projectStructure.options.CompilerOptions;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -14,6 +15,7 @@ import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.NonFocusableCheckBox;
 import com.intellij.ui.PopupHandler;
@@ -254,9 +256,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   private static void renderAccordingToSource(final Component component, final ValueSource valueSource) {
-    final int boldOrPlain = valueSource == ValueSource.Custom || valueSource == ValueSource.ProjectDefault ? Font.BOLD : Font.PLAIN;
+    final int boldOrPlain = valueSource == ValueSource.BC || valueSource == ValueSource.ProjectDefault ? Font.BOLD : Font.PLAIN;
     component.setFont(component.getFont().deriveFont(boldOrPlain));
-    component.setEnabled(valueSource == ValueSource.Custom || valueSource == ValueSource.ModuleDefault);
+    component.setEnabled(valueSource == ValueSource.BC || valueSource == ValueSource.ModuleDefault);
   }
 
   private TableCellRenderer createValueRenderer() {
@@ -284,19 +286,11 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
             return myCheckBox;
           case String:
           case Int:
-          case LocaleList:
-          case RuntimeLocaleList:
-          case NamespacesList:
-          case IncludedClasses:
-          case ConditionalDefinitionList:
-          case FileList:
-          case StringList:
-          case FilesAndDirsList:
-          case ExtensionList:
-          case LanguageRangeList:
-          case TwoStringsList:
+          case List: 
+          case IncludeClasses:
+          case IncludeFiles:
             myLabel.setBackground(table.getBackground());
-            myLabel.setText(valueAndSource.first);
+            myLabel.setText(getPresentableSummary(valueAndSource.first, info.TYPE));
             renderAccordingToSource(myLabel, valueAndSource.second);
             return myLabel;
           case File:
@@ -312,6 +306,14 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         }
       }
     };
+  }
+
+  private static String getPresentableSummary(final String rawValue, final CompilerOptionInfo.OptionType type) {
+    if (type == CompilerOptionInfo.OptionType.List) {
+      final int listSize = StringUtil.countChars(rawValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR) + 1;
+      return listSize < 2 ? rawValue : MessageFormat.format("({0} entries)", listSize);
+    }
+    return rawValue;
   }
 
   private TableCellEditor createValueEditor() {
@@ -348,17 +350,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
             break;
           case String:
           case Int:   // todo dedicated renderers. Move them to CompilerOptionInfo class?
-          case LocaleList:
-          case RuntimeLocaleList:
-          case NamespacesList:
-          case IncludedClasses:
-          case ConditionalDefinitionList:
-          case FileList:
-          case StringList:
-          case FilesAndDirsList:
-          case ExtensionList:
-          case LanguageRangeList:
-          case TwoStringsList:
+          case List:
+          case IncludeClasses:
+          case IncludeFiles:
             myTextField.setText(optionValue);
             myCurrentEditor = myTextField;
             break;
@@ -429,14 +423,17 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       }
 
       public void setValue(Object node, Object value) {
-        myModified = true;
-
         final DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)node;
         final CompilerOptionInfo info = (CompilerOptionInfo)treeNode.getUserObject();
-        myCurrentOptions.put(info.ID, (String)value);
+        final Pair<String, ValueSource> valueAndSource = getValueAndSource(info);
 
-        // to render option name correctly, as it might have become bold/plain, etc.
-        ((DefaultTreeModel)myTreeTable.getTree().getModel()).reload(treeNode);
+        // don't apply if user just clicked through the table without typing anything
+        if (valueAndSource.second == ValueSource.BC || !value.equals(valueAndSource.first)) {
+          myModified = true;
+          myCurrentOptions.put(info.ID, (String)value);
+          // to render option name correctly, as it might have become bold/plain, etc.
+          ((DefaultTreeModel)myTreeTable.getTree().getModel()).reload(treeNode);
+        }
       }
     };
 
@@ -512,7 +509,6 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     return myCurrentOptions.get(info.ID) != null;
   }
 
-
   @NotNull
   private Pair<String, ValueSource> getValueAndSource(final CompilerOptionInfo info) {
     if (info.isGroup()) {
@@ -531,7 +527,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
     final String customValue = myCurrentOptions.get(info.ID);
     if (customValue != null) {
-      return Pair.create(customValue, ValueSource.Custom);
+      return Pair.create(customValue, ValueSource.BC);
     }
 
     if (myMode == Mode.BC) {
@@ -548,8 +544,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       }
     }
 
-    // todo pass version of currently selected sdk
-    return Pair.create(info.getDefaultValue("4.5"), ValueSource.GlobalDefault);
+    // todo pass live parameters
+    return Pair.create(info.getDefaultValue("4.5", TargetPlatform.Web), ValueSource.GlobalDefault);
   }
 
   private static class ExtensionAwareFileChooserDescriptor extends FileChooserDescriptor {
@@ -600,10 +596,6 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
              ? Pair.create(node, (CompilerOptionInfo)userObject)
              : Pair.<DefaultMutableTreeNode, CompilerOptionInfo>empty();
     }
-  }
-
-  private enum ValueSource {
-    GlobalDefault, ProjectDefault, ModuleDefault, Custom
   }
 }
 

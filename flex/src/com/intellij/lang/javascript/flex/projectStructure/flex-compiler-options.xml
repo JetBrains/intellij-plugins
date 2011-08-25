@@ -1,148 +1,194 @@
 <options>
   <!-- Basic (mostly) -->
-  <option id="debug" displayName="Debug" type="Boolean" default="true"/>
-  <option id="define" displayName="Conditional compiler definitions" type="ConditionalDefinitionList"/>
-  <option id="locale" displayName="Locales" type="LocaleList" default="en_US"/>
-  <option id="runtime-locale" displayName="Create runtime resource bundle for locales" type="RuntimeLocaleList" advanced="true"/>
-  <option id="namespaces" displayName="Namespaces and manifests" type="NamespacesList"/>
+  <option id="compiler.debug" displayName="Debug" type="Boolean" default="true"/>
+  <option id="compiler.define" displayName="Conditional compiler definitions" type="List">
+    <listElement name="name" type="String"/>
+    <listElement name="value" type="String"/>
+  </option>
+  <option id="compiler.locale" displayName="Locales" type="List" default="SPECIAL">
+    <listElement name="locale-element" type="Locale"/>
+  </option>
+<!--  <option id="runtime-locale" displayName="Create runtime resource bundle for locales" type="RuntimeLocaleList" advanced="true"/> -->
+  <option id="compiler.namespaces.namespace" displayName="Namespaces and manifests" type="List">
+    <listElement name="uri" type="String"/>
+    <listElement name="manifest" type="File" fileExtension="xml"/>
+  </option>
   <group displayName="Include">
-    <option id="include-classes" displayName="Include classes" type="IncludedClasses" fileExtension="xml" okForSWF="false" default="All"/>
-    <option id="include-file" displayName="Include files" type="FileList" okForSWF="false"/>
+    <option id="include-classes" displayName="Include classes" type="IncludeClasses" fileExtension="xml" okForSWF="false" default="All"/>
+    <option id="include-file" displayName="Include files" type="IncludeFiles" okForSWF="false"/>
     <option id="include-inheritance-dependencies-only" displayName="Include inheritance dependencies only" type="Boolean" advanced="true" default="false"/>
     <option id="include-lookup-only" displayName="Include 'lookupOnly' manifest entries" type="Boolean" okForSWF="false" advanced="true" default="false"/>
-    <option id="include-resource-bundles" displayName="Include resource bundles" type="StringList" advanced="true"/>
-    <option id="include-sources" displayName="Include sources" type="FilesAndDirsList" okForSWF="false" advanced="true"/>
-    <option id="include-stylesheet" displayName="Include stylesheet" type="FileList" okForSWF="false" advanced="true"/>
-    <option id="includes" displayName="Include symbols" type="StringList" okForSWF="false" advanced="true"/>
+    <option id="include-resource-bundles" displayName="Include resource bundles" type="List" advanced="true">
+      <listElement name="bundle" type="String"/>
+    </option>
+    <option id="include-stylesheet" displayName="Include stylesheet" type="List" okForSWF="false" advanced="true">
+      <listElement name="path-element" type="File"/>
+    </option>
+    <option id="includes" displayName="Include symbols" type="List" okForSWF="false" advanced="true">
+      <listElement name="symbol" type="String"/>
+    </option>
   </group>
   <group displayName="Server Technology">
-    <option id="services" displayName="Data Services config file" type="File" fileExtension="xml"/>
-    <option id="context-root" displayName="Context root" type="String"/>
+    <option id="compiler.services" displayName="Data Services config file" type="File" fileExtension="xml"/>
+    <option id="compiler.context-root" displayName="Context root" type="String"/>
   </group>
   <!-- Advanced -->
-  <option id="accessible" displayName="Accessible" type="Boolean" advanced="true" default="false"/>
-  <option id="actionscript-file-encoding" displayName="ActionScript file encoding" type="String" advanced="true"/>
-  <option id="as3" displayName="ActionScript 3 object model" type="Boolean" advanced="true" default="true"/>
-  <option id="compress" displayName="Compress" type="Boolean" advanced="true" since="4.5" default="true"/>
+  <option id="compiler.accessible" displayName="Accessible" type="Boolean" advanced="true" default="SPECIAL"/>
+  <option id="compiler.actionscript-file-encoding" displayName="ActionScript file encoding" type="String" advanced="true"/>
+  <option id="compiler.as3" displayName="ActionScript 3 object model" type="Boolean" advanced="true" default="true"/>
+  <option id="compiler.compress" displayName="Compress" type="Boolean" advanced="true" since="4.5" default="true"/>
   <group displayName="Default CSS">
-    <option id="defaults-css-files" displayName="Default CSS files" type="FileList" advanced="true" />
-    <option id="defaults-css-url" displayName="Default CSS URL" type="String" advanced="true"/>
+    <option id="compiler.defaults-css-files" displayName="Default CSS files" type="List" advanced="true">
+      <listElement name="filename" type="File" fileExtension="css"/>
+    </option>
+    <option id="compiler.defaults-css-url" displayName="Default CSS URL" type="String" advanced="true"/>
   </group>
-  <option id="enable-runtime-design-layers" displayName="Enable runtime design layers" type="Boolean" advanced="true" since="4.0" default="true"/>
-  <option id="es" displayName="ECMAScript object model" type="Boolean" advanced="true" default="false"/>
-  <option id="extensions" displayName="Extensions" type="ExtensionList" advanced="true" since="4.0"/>
+  <option id="compiler.enable-runtime-design-layers" displayName="Enable runtime design layers" type="Boolean" advanced="true" since="4.0" default="true"/>
+  <option id="compiler.es" displayName="ECMAScript object model" type="Boolean" advanced="true" default="false"/>
+  <option id="compiler.extensions.extension" displayName="Extensions" type="List" advanced="true" since="4.0">
+    <listElement name="extension" type="String"/>
+    <listElement name="parameters" type="String"/>
+  </option>
   <group displayName="Fonts">
-    <option id="advanced-anti-aliasing" displayName="Advanced anti-aliasing" type="Boolean" advanced="true" default="true"/>
-    <option id="flash-type" displayName="Flash type" type="Boolean" advanced="true"/>
-    <option id="language-range" displayName="Language range" type="LanguageRangeList" advanced="true"/>
-    <option id="local-font-paths" displayName="Local font paths" type="FileList" advanced="true" since="4.0"/>
-    <option id="local-fonts-snapshot" displayName="Local fonts snapshot" type="File" advanced="true"/>
-    <option id="managers" displayName="Font manager classes" type="StringList" advanced="true" default="SPECIAL"/>
-    <option id="max-cached-fonts" displayName="Maximum cached fonts" type="Int" advanced="true" default="30"/>
-    <option id="max-glyphs-per-face" displayName="Maximum glyphs per face" type="Int" advanced="true" default="1000"/>
+    <option id="compiler.fonts.advanced-anti-aliasing" displayName="Advanced anti-aliasing" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.fonts.flash-type" displayName="Flash type" type="Boolean" advanced="true"/>
+    <option id="compiler.fonts.language-range" displayName="Language range" type="List" advanced="true">
+      <listElement name="lang" type="String"/>
+      <listElement name="range" type="String"/>
+    </option>
+    <option id="compiler.fonts.local-font-paths" displayName="Local font paths" type="List" advanced="true" since="4.0">
+      <listElement name="path-element" type="File"/>
+    </option>
+    <option id="compiler.fonts.local-fonts-snapshot" displayName="Local fonts snapshot" type="File" advanced="true"/>
+    <option id="compiler.fonts.managers" displayName="Font manager classes" type="List" advanced="true" default="SPECIAL">
+      <listElement name="manager-class" type="String"/>
+    </option>
+    <option id="compiler.fonts.max-cached-fonts" displayName="Maximum cached fonts" type="Int" advanced="true" default="30"/>
+    <option id="compiler.fonts.max-glyphs-per-face" displayName="Maximum glyphs per face" type="Int" advanced="true" default="1000"/>
   </group>
-  <option id="headless-server" displayName="Headless server" type="Boolean" advanced="true" default="false"/>
-  <option id="isolate-styles" displayName="Isolate styles" type="Boolean" advanced="true" since="4.0" default="true"/>
-  <option id="keep-all-type-selectors" displayName="Keep all type selectors" type="Boolean" advanced="true" default="false"/>
-  <option id="keep-as3-metadata" displayName="Keep AS3 metadata" type="StringList" advanced="true"/>
-  <option id="keep-generated-actionscript" displayName="Keep generated ActionScript" type="Boolean" advanced="true" default="false"/>
-  <option id="minimum-supported-version" displayName="Minimum supported version" type="String" advanced="true" since="4.0"/>
+  <option id="compiler.headless-server" displayName="Headless server" type="Boolean" advanced="true" default="false"/>
+  <option id="compiler.isolate-styles" displayName="Isolate styles" type="Boolean" advanced="true" since="4.0" default="true"/>
+  <option id="compiler.keep-all-type-selectors" displayName="Keep all type selectors" type="Boolean" advanced="true" default="false"/>
+  <option id="compiler.keep-as3-metadata" displayName="Keep AS3 metadata" type="List" advanced="true">
+    <listElement name="name" type="String"/>
+  </option>
+  <option id="compiler.keep-generated-actionscript" displayName="Keep generated ActionScript" type="Boolean" advanced="true" default="false"/>
+  <option id="compiler.minimum-supported-version" displayName="Minimum supported version" type="String" advanced="true" since="4.0"/>
   <group displayName="MXML">
-    <option id="compatibility-version" displayName="Compatibility version" type="String" advanced="true"/>
-    <option id="minimum-supported-version" displayName="Minimum supported version" type="String" advanced="true" since="4.0"/>
-    <option id="qualified-type-selectors" displayName="Qualified type selectors" type="Boolean" advanced="true" since="4.0" default="true"/>
+    <option id="compiler.mxml.compatibility-version" displayName="Compatibility version" type="String" advanced="true"/>
+    <option id="compiler.mxml.minimum-supported-version" displayName="Minimum supported version" type="String" advanced="true" since="4.0"/>
+    <option id="compiler.mxml.qualified-type-selectors" displayName="Qualified type selectors" type="Boolean" advanced="true" since="4.0" default="true"/>
   </group>
-  <option id="omit-trace-statements" displayName="Omit trace statements" type="Boolean" advanced="true" since="4.0" default="true"/>
-  <option id="optimize" displayName="Optimize" type="Boolean" advanced="true" default="true"/>
-  <option id="preloader" displayName="Preloader" type="String" advanced="true" since="4.5"/>
-  <option id="theme" displayName="Theme" type="FileList" advanced="true" default="${FLEX_SDK}/frameworks/themes/Spark/spark.css"/>
-  <option id="use-resource-bundle-metadata" displayName="Use resource bundle metadata" type="Boolean" advanced="true" default="true"/>
-  <option id="verbose-stacktraces" displayName="Verbose stacktraces" type="Boolean" advanced="true" default="false"/>
+  <option id="compiler.omit-trace-statements" displayName="Omit trace statements" type="Boolean" advanced="true" since="4.0" default="true"/>
+  <option id="compiler.optimize" displayName="Optimize" type="Boolean" advanced="true" default="true"/>
+  <option id="compiler.preloader" displayName="Preloader" type="String" advanced="true" since="4.5" default="SPECIAL"/>
+  <option id="compiler.theme" displayName="Theme" type="List" advanced="true" default="SPECIAL">
+    <listElement name="filename" type="File"/>
+  </option>
+  <option id="compiler.use-resource-bundle-metadata" displayName="Use resource bundle metadata" type="Boolean" advanced="true" default="true"/>
+  <option id="compiler.verbose-stacktraces" displayName="Verbose stacktraces" type="Boolean" advanced="true" default="false"/>
   <group displayName="Warnings">
-    <option id="report-invalid-styles-as-warnings" displayName="Report invalid styles as warnings" type="Boolean" advanced="true" default="false"/>
-    <option id="report-missing-required-skin-parts-as-warnings" displayName="Report missing skin parts as warnings" type="Boolean" advanced="true" default="true"/>
-    <option id="show-actionscript-warnings" displayName="Show ActionScript warnings" type="Boolean" advanced="true" default="true"/>
-    <option id="show-binding-warnings" displayName="Show binding warnings" type="Boolean" advanced="true" default="true"/>
-    <option id="show-invalid-css-property-warnings" displayName="Show invalid CSS property warnings" type="Boolean" advanced="true" since="4.0" default="true"/>
-    <option id="show-shadowed-device-font-warnings" displayName="Show shadowed device font warnings" type="Boolean" advanced="true" default="true"/>
-    <option id="show-unused-type-selector-warnings" displayName="Show unused type selector warnings" type="Boolean" advanced="true" default="true"/>
-    <option id="strict" displayName="Strict error checking mode" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-array-tostring-changes" displayName="warn-array-tostring-changes" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-assignment-within-conditional" displayName="warn-assignment-within-conditional" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-bad-array-cast" displayName="warn-bad-array-cast" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-bad-bool-assignment" displayName="warn-bad-bool-assignment" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-bad-date-cast" displayName="warn-bad-date-cast" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-bad-es3-type-method" displayName="warn-bad-es3-type-method" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-bad-es3-type-prop" displayName="warn-bad-es3-type-prop" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-bad-nan-comparison" displayName="warn-bad-nan-comparison" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-bad-null-assignment" displayName="warn-bad-null-assignment" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-bad-null-comparison" displayName="warn-bad-null-comparison" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-bad-undefined-comparison" displayName="warn-bad-undefined-comparison" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-boolean-constructor-with-no-args" displayName="warn-boolean-constructor-with-no-args" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-changes-in-resolve" displayName="warn-changes-in-resolve" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-class-is-sealed" displayName="warn-class-is-sealed" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-const-not-initialized" displayName="warn-const-not-initialized" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-constructor-returns-value" displayName="warn-constructor-returns-value" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-deprecated-event-handler-error" displayName="warn-deprecated-event-handler-error" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-deprecated-function-error" displayName="warn-deprecated-function-error" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-deprecated-property-error" displayName="warn-deprecated-property-error" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-duplicate-argument-names" displayName="warn-duplicate-argument-names" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-duplicate-variable-def" displayName="warn-duplicate-variable-def" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-for-var-in-changes" displayName="warn-for-var-in-changes" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-import-hides-class" displayName="warn-import-hides-class" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-instance-of-changes" displayName="warn-instance-of-changes" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-internal-error" displayName="warn-internal-error" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-level-not-supported" displayName="warn-level-not-supported" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-missing-namespace-decl" displayName="warn-missing-namespace-decl" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-negative-uint-literal" displayName="warn-negative-uint-literal" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-no-constructor" displayName="warn-no-constructor" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-no-explicit-super-call-in-constructor" displayName="warn-no-explicit-super-call-in-constructor" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-no-type-decl" displayName="warn-no-type-decl" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-number-from-string-changes" displayName="warn-number-from-string-changes" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-scoping-change-in-this" displayName="warn-scoping-change-in-this" type="Boolean" advanced="true" default="false"/>
-    <option id="warn-slow-text-field-addition" displayName="warn-slow-text-field-addition" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-unlikely-function-value" displayName="warn-unlikely-function-value" type="Boolean" advanced="true" default="true"/>
-    <option id="warn-xml-class-has-changed" displayName="warn-xml-class-has-changed" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.report-invalid-styles-as-warnings" displayName="Report invalid styles as warnings" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.report-missing-required-skin-parts-as-warnings" displayName="Report missing skin parts as warnings" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.show-actionscript-warnings" displayName="Show ActionScript warnings" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.show-binding-warnings" displayName="Show binding warnings" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.show-invalid-css-property-warnings" displayName="Show invalid CSS property warnings" type="Boolean" advanced="true" since="4.0" default="true"/>
+    <option id="compiler.show-shadowed-device-font-warnings" displayName="Show shadowed device font warnings" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.show-unused-type-selector-warnings" displayName="Show unused type selector warnings" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.strict" displayName="Strict error checking mode" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-array-tostring-changes" displayName="warn-array-tostring-changes" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-assignment-within-conditional" displayName="warn-assignment-within-conditional" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-bad-array-cast" displayName="warn-bad-array-cast" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-bad-bool-assignment" displayName="warn-bad-bool-assignment" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-bad-date-cast" displayName="warn-bad-date-cast" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-bad-es3-type-method" displayName="warn-bad-es3-type-method" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-bad-es3-type-prop" displayName="warn-bad-es3-type-prop" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-bad-nan-comparison" displayName="warn-bad-nan-comparison" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-bad-null-assignment" displayName="warn-bad-null-assignment" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-bad-null-comparison" displayName="warn-bad-null-comparison" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-bad-undefined-comparison" displayName="warn-bad-undefined-comparison" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-boolean-constructor-with-no-args" displayName="warn-boolean-constructor-with-no-args" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-changes-in-resolve" displayName="warn-changes-in-resolve" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-class-is-sealed" displayName="warn-class-is-sealed" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-const-not-initialized" displayName="warn-const-not-initialized" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-constructor-returns-value" displayName="warn-constructor-returns-value" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-deprecated-event-handler-error" displayName="warn-deprecated-event-handler-error" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-deprecated-function-error" displayName="warn-deprecated-function-error" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-deprecated-property-error" displayName="warn-deprecated-property-error" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-duplicate-argument-names" displayName="warn-duplicate-argument-names" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-duplicate-variable-def" displayName="warn-duplicate-variable-def" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-for-var-in-changes" displayName="warn-for-var-in-changes" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-import-hides-class" displayName="warn-import-hides-class" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-instance-of-changes" displayName="warn-instance-of-changes" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-internal-error" displayName="warn-internal-error" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-level-not-supported" displayName="warn-level-not-supported" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-missing-namespace-decl" displayName="warn-missing-namespace-decl" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-negative-uint-literal" displayName="warn-negative-uint-literal" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-no-constructor" displayName="warn-no-constructor" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-no-explicit-super-call-in-constructor" displayName="warn-no-explicit-super-call-in-constructor" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-no-type-decl" displayName="warn-no-type-decl" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-number-from-string-changes" displayName="warn-number-from-string-changes" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-scoping-change-in-this" displayName="warn-scoping-change-in-this" type="Boolean" advanced="true" default="false"/>
+    <option id="compiler.warn-slow-text-field-addition" displayName="warn-slow-text-field-addition" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-unlikely-function-value" displayName="warn-unlikely-function-value" type="Boolean" advanced="true" default="true"/>
+    <option id="compiler.warn-xml-class-has-changed" displayName="warn-xml-class-has-changed" type="Boolean" advanced="true" default="false"/>
   </group>
   <option id="compute-digest" displayName="Compute digest" type="Boolean" advanced="true" okForSWF="false" default="true"/>
   <option id="debug-password" displayName="Debug password" type="String" advanced="true"/>
   <option id="default-background-color" displayName="Default background color" type="String" advanced="true" default="0xFFFFFF"/>
   <option id="default-frame-rate" displayName="Default frame rate" type="Int" advanced="true" default="24"/>
   <group displayName="Default script limits">
-    <option id="max-recursion-depth" displayName="Maximum recursion depth" type="Int" advanced="true" default="1000"/>
-    <option id="max-execution-time" displayName="Maximum execution time" type="Int" advanced="true" default="60"/>
+    <option id="default-script-limits.max-recursion-depth" displayName="Maximum recursion depth" type="Int" advanced="true" default="1000"/>
+    <option id="default-script-limits.max-execution-time" displayName="Maximum execution time" type="Int" advanced="true" default="60"/>
   </group>
   <group displayName="Default size">
-    <option id="width" displayName="Width" type="Int" advanced="true" default="500"/>
-    <option id="height" displayName="Height" type="Int" advanced="true" default="375"/>
+    <option id="default-size.width" displayName="Width" type="Int" advanced="true" default="500"/>
+    <option id="default-size.height" displayName="Height" type="Int" advanced="true" default="375"/>
   </group>
   <option id="directory" displayName="Output the library as an open directory" type="Boolean" advanced="true" okForSWF="false" default="false"/>
   <option id="dump-config" displayName="Save configuration dump to file" type="File" advanced="true"/>
-  <option id="externs" displayName="Externs" type="StringList" advanced="true"/>
-  <option id="frames" displayName="Frames" type="TwoStringsList" advanced="true"/>
+  <option id="externs" displayName="Externs" type="List" advanced="true">
+    <listElement name="symbol" type="String"/>
+  </option>
+  <option id="frames.frame" displayName="Frames" type="List" advanced="true">
+    <listElement name="label" type="String"/>
+    <listElement name="classname" type="String"/>
+  </option>
   <option id="framework" displayName="Framework" type="String" advanced="true" default="halo"/>
-  <option id="license" displayName="Licenses" type="TwoStringsList" advanced="true"/>
+  <option id="licenses.license" displayName="Licenses" type="List" advanced="true">
+    <listElement name="product" type="String"/>
+    <listElement name="serial-number" type="String"/>
+  </option>
   <option id="link-report" displayName="Save link report to file" type="File" advanced="true"/>
   <option id="load-config" displayName="Load configuration file" type="File" fileExtension="xml" advanced="true"/>
   <option id="load-externs" displayName="Load externs" type="File" advanced="true"/>
   <group displayName="Metadata">
-    <option id="contributor" displayName="Contributor" type="String" advanced="true"/>
-    <option id="creator" displayName="Creator" type="String" advanced="true"/>
-    <option id="date" displayName="Date" type="String" advanced="true"/>
-    <option id="description" displayName="Description" type="String" advanced="true"/>
-    <option id="language" displayName="Language" type="String" advanced="true"/>
-    <option id="localized-description" displayName="Localized description" type="TwoStringsList" advanced="true"/>
-    <option id="localized-title" displayName="Localized title" type="TwoStringsList" advanced="true"/>
-    <option id="publisher" displayName="Publisher" type="String" advanced="true"/>
-    <option id="title" displayName="Title" type="String" advanced="true"/>
-    <option id="raw-metadata" displayName="XML file with raw metadata" type="File" fileExtension="xml" advanced="true"/>
+    <option id="metadata.contributor" displayName="Contributor" type="String" advanced="true"/>
+    <option id="metadata.creator" displayName="Creator" type="String" advanced="true"/>
+    <option id="metadata.date" displayName="Date" type="String" advanced="true"/>
+    <option id="metadata.description" displayName="Description" type="String" advanced="true"/>
+    <option id="metadata.language" displayName="Language" type="String" advanced="true"/>
+    <option id="metadata.localized-description" displayName="Localized description" type="List" advanced="true">
+      <listElement name="text" type="String"/>
+      <listElement name="lang" type="String"/>
+    </option>
+    <option id="metadata.localized-title" displayName="Localized title" type="List" advanced="true">
+      <listElement name="text" type="String"/>
+      <listElement name="lang" type="String"/>
+    </option>
+    <option id="metadata.publisher" displayName="Publisher" type="String" advanced="true"/>
+    <option id="metadata.title" displayName="Title" type="String" advanced="true"/>
+    <option id="metadata.raw-metadata" displayName="XML file with raw metadata" type="File" fileExtension="xml" advanced="true"/>
   </group>
   <option id="remove-unused-rsls" displayName="Remove unused RSLs" type="Boolean" advanced="true" since="4.5" default="true"/>
   <option id="resource-bundle-list" displayName="Save resource bundle list to file" type="File" advanced="true"/>
+  <option id="runtime-shared-libraries" displayName="RSL URLs to load before start" type="List" advanced="true">
+    <listElement name="url" type="String"/>
+  </option>
   <option id="size-report" displayName="Save size report to file" type="File" fileExtension="xml" advanced="true" since="4.5"/>
   <option id="static-link-runtime-shared-libraries" displayName="Statically link RSLs" type="Boolean" advanced="true" default="SPECIAL"/>
   <option id="swf-version" displayName="SWF version" type="Int" advanced="true" since="4.5" default="SPECIAL"/>
-  <option id="target-player-revision" displayName="Target player revision" type="Int" advanced="true" okForAir="false" default="0"/>
+<!--  <option id="target-player-revision" displayName="Target player revision" type="Int" advanced="true" okForAir="false" default="0"/> -->
   <option id="use-direct-blit" displayName="Use direct blit" type="Boolean" advanced="true" since="4.5" default="false"/>
   <option id="use-gpu" displayName="Use GPU" type="Boolean" advanced="true" since="4.5" default="false"/>
   <option id="use-network" displayName="Use network" type="Boolean" advanced="true" default="true"/>

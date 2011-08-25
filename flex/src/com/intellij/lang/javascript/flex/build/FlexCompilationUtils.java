@@ -167,7 +167,7 @@ public class FlexCompilationUtils {
     if (!StringUtil.isEmpty(config.ADDITIONAL_COMPILER_OPTIONS)) {
       // TODO handle -option="path with spaces"
       for (final String s : StringUtil.split(config.ADDITIONAL_COMPILER_OPTIONS, " ")) {
-        command.add(FlexUtils.replacePathMacros(s, module));
+        command.add(FlexUtils.replacePathMacros(s, module, flexSdk.getHomePath()));
       }
     }
 

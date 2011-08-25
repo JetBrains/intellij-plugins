@@ -564,7 +564,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     s += configsParam;
 
     if(config.ADDITIONAL_COMPILER_OPTIONS != null && config.ADDITIONAL_COMPILER_OPTIONS.length() > 0) {
-      s+= " " + FlexUtils.replacePathMacros(config.ADDITIONAL_COMPILER_OPTIONS, config.getModule());
+      s += " " + FlexUtils.replacePathMacros(config.ADDITIONAL_COMPILER_OPTIONS, config.getModule(), flexSdk.getHomePath());
     }
 
     return s;

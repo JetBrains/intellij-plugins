@@ -6,6 +6,8 @@ import com.intellij.facet.FacetManager;
 import com.intellij.facet.FacetType;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
@@ -482,19 +484,24 @@ public class FlexUtils {
   public static String getPathToMainClassFile(final FlexBuildConfiguration config) {
     if (StringUtil.isEmpty(config.MAIN_CLASS)) return "";
 
-    final String s = config.MAIN_CLASS.replace('.', '/');
-    final String[] classFileRelPaths = {s + ".mxml", s + ".as"};
-
     if (config.getType() == FlexBuildConfiguration.Type.FlexUnit) {
       return getPathToFlexUnitTempDirectory() + "/" + config.MAIN_CLASS + ".mxml";
     }
-    else {
-      for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(config.getModule()).getSourceRoots()) {
-        for (final String classFileRelPath : classFileRelPaths) {
-          final VirtualFile mainClassFile = VfsUtil.findRelativeFile(classFileRelPath, sourceRoot);
-          if (mainClassFile != null) {
-            return mainClassFile.getPath();
-          }
+
+    return getPathToMainClassFile(config);
+  }
+
+  public static String getPathToMainClassFile(final String mainClassFqn, final Module module) {
+    if (StringUtil.isEmpty(mainClassFqn)) return "";
+
+    final String s = mainClassFqn.replace('.', '/');
+    final String[] classFileRelPaths = {s + ".mxml", s + ".as"};
+
+    for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
+      for (final String classFileRelPath : classFileRelPaths) {
+        final VirtualFile mainClassFile = VfsUtil.findRelativeFile(classFileRelPath, sourceRoot);
+        if (mainClassFile != null) {
+          return mainClassFile.getPath();
         }
       }
     }
@@ -577,7 +584,7 @@ public class FlexUtils {
     }
   }
 
-  public static String replacePathMacros(final @NotNull String text, final @NotNull Module module) {
+  public static String replacePathMacros(final @NotNull String text, final @NotNull Module module, final String sdkRootPath) {
     final StringBuilder builder = new StringBuilder(text);
     int startIndex;
     int endIndex = 0;
@@ -597,6 +604,9 @@ public class FlexUtils {
         }
         else if (PathMacrosImpl.USER_HOME_MACRO_NAME.equals(macroName)) {
           macroValue = StringUtil.trimEnd((StringUtil.trimEnd(SystemProperties.getUserHome(), "/")), "\\");
+        }
+        else if (CompilerOptionInfo.FLEX_SDK_MACRO_NAME.equals(macroName)) {
+          macroValue = sdkRootPath;
         }
         else {
           macroValue = PathMacros.getInstance().getValue(macroName);
