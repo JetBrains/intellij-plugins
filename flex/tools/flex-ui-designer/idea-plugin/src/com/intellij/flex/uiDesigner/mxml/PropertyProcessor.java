@@ -12,11 +12,13 @@ import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.xml.XmlTagChild;
 import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.Nullable;
@@ -85,6 +87,7 @@ class PropertyProcessor implements ValueWriter {
     return new PercentableValueWriter(value);
   }
 
+  @Nullable
   public ValueWriter process(XmlElement element, XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor,
                              Context context) throws InvalidPropertyException {
     if (descriptor.isPredefined()) {
@@ -139,18 +142,14 @@ class PropertyProcessor implements ValueWriter {
       }
     }
 
-    if (AsCommonTypeNames.CLASS.equals(type)) {
-      return new ClassStringValueWriter(valueProvider.getTrimmed());
-    }
-    else {
-      return this;
-    }
+    return this;
   }
 
   private boolean isSkinClass(AnnotationBackedDescriptor descriptor) {
     return isStyle && name.equals("skinClass") && AsCommonTypeNames.CLASS.equals(descriptor.getType());
   }
 
+  @Nullable
   private SkinProjectClassValueWriter getSkinProjectClassValueWriter(int skinProjectClassDocumentFactoryId) {
     if (skinProjectClassDocumentFactoryId != -1) {
       name = "skinFactory";
@@ -195,7 +194,7 @@ class PropertyProcessor implements ValueWriter {
     }
     else if (type.equals(JSCommonTypeNames.INT_TYPE_NAME) || type.equals(JSCommonTypeNames.UINT_TYPE_NAME)) {
       final String trimmed = valueProvider.getTrimmed();
-      if (StringUtil.isEmpty(trimmed)) {
+      if (trimmed.isEmpty()) {
         throw new InvalidPropertyException(valueProvider.getElement(), "invalid.integer.value");
       }
 
@@ -206,11 +205,49 @@ class PropertyProcessor implements ValueWriter {
         out.writeAmfInt(trimmed);
       }
     }
+    else if (type.equals(AsCommonTypeNames.CLASS)) {
+      processClass(valueProvider);
+    }
     else {
       return false;
     }
 
     return true;
+  }
+
+  // see ClassProperty test
+  private boolean processClass(XmlElementValueProvider valueProvider) throws InvalidPropertyException {
+    // IDEA-73537, cannot use valueProvider.getJsClass()
+    String trimmed = valueProvider.getTrimmed();
+    XmlElement exceptionElement = valueProvider.getElement();
+    if (trimmed.isEmpty() && valueProvider.getElement() instanceof XmlTag) {
+      // case 1, fx:Class
+      final XmlTag propertyTag = (XmlTag)valueProvider.getElement();
+      final XmlTag[] propertyTagSubTags = propertyTag.getSubTags();
+      if (propertyTagSubTags.length == 1) {
+        final XmlTag contentTag = propertyTagSubTags[0];
+        exceptionElement = contentTag;
+        final XmlElementDescriptor contentTagDescriptor = contentTag.getDescriptor();
+        if (contentTagDescriptor instanceof ClassBackedElementDescriptor &&
+            AsCommonTypeNames.CLASS.equals(contentTagDescriptor.getQualifiedName())) {
+          trimmed = contentTag.getValue().getTrimmedText();
+        }
+      }
+    }
+
+    if (trimmed.isEmpty()) {
+      throw new InvalidPropertyException(exceptionElement, "invalid.class.value");
+    }
+    else {
+      final Module module = ModuleUtil.findModuleForPsiElement(valueProvider.getElement());
+      if (module != null &&
+          JSResolveUtil.findClassByQName(trimmed, module.getModuleWithDependenciesAndLibrariesScope(false)) != null) {
+        writer.writeClass(trimmed);
+        return true;
+      }
+
+      throw new InvalidPropertyException(exceptionElement, "error.unresolved.class", trimmed);
+    }
   }
 
   @Override
@@ -320,6 +357,7 @@ class PropertyProcessor implements ValueWriter {
     }
   }
 
+  @Nullable
   private CharSequence writeIfEmpty(XmlElementValueProvider valueProvider) {
     CharSequence v = valueProvider.getSubstituted();
     if (v == XmlElementValueProvider.EMPTY) {

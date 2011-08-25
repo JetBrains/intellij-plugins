@@ -95,7 +95,13 @@ public class MxmlTest extends BaseTestCase {
   }
   
   public function ClassProperty():void {
-    assertThat(app, {skinClass: getClass("spark.skins.spark.ApplicationSkin")});
+    var skinnableContainerSkin:Class = getClass("spark.skins.spark.SkinnableContainerSkin");
+    assertThat(app, allOf({skinClass: getClass("spark.skins.spark.ApplicationSkin")}, [
+      {skinClass: skinnableContainerSkin},
+      {skinClass: skinnableContainerSkin},
+      {skinClass: getClass("spark.skins.spark.ButtonBarFirstButtonSkin")},
+      {skinClass: getClass("spark.skins.spark.ButtonBarLastButtonSkin")}
+    ]));
   }
   
   public function ItemRendererAndMixDefaultExplicitContent():void {

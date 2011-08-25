@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.ProjectTopics;
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.process.OSProcessManager;
 import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.io.ErrorSocketManager;
 import com.intellij.flex.uiDesigner.io.IOUtil;

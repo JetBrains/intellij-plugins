@@ -9,6 +9,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -67,10 +68,12 @@ public final class InjectionUtil {
     return isSupportedProjectComponentFile(virtualFile, psiFile, jsClass.getQualifiedName());
   }
 
+  @Nullable
   public static JSClass getJsClassFromPackageAndLocalClassNameReferences(PsiElement element) {
    return getJsClassFromPackageAndLocalClassNameReferences(element.getReferences());
   }
 
+  @Nullable
   public static JSClass getJsClassFromPackageAndLocalClassNameReferences(PsiReference[] references) {
     if (references.length > 0) {
       PsiElement element = references[references.length - 1].resolve();
@@ -129,6 +132,7 @@ public final class InjectionUtil {
     }
   }
 
+  @Nullable
   private static PsiFileSystemItem resolveResult(PsiElement element, ResolveResult[] resolveResults) {
     final PsiFile currentTopLevelFile = InjectedLanguageUtil.getTopLevelFile(element);
     for (ResolveResult resolveResult : resolveResults) {

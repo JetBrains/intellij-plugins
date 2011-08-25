@@ -41,7 +41,10 @@ public class RunDesignViewAction extends DumbAwareAction {
     assert module != null;
 
     FileDocumentManager.getInstance().saveAllDocuments();
-    FlexUIDesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug());
+    // saveAllDocuments may cause open this document
+    if (!FlexUIDesignerApplicationManager.getInstance().isDocumentOpening()) {
+      FlexUIDesignerApplicationManager.getInstance().openDocument(module, psiFile, isDebug());
+    }
   }
 
   protected boolean isDebug() {

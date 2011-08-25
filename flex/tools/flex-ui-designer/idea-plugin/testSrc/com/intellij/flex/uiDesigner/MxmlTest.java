@@ -60,6 +60,7 @@ public class MxmlTest extends MxmlTestBase {
                  m("Support only MXML-based component AuxActionScriptProjectComponent"),
                  m("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a> (line: 9)"),
                  m("Invalid color name invalidcolorname (line: 2)", "Invalid integer value (line: 3)", "Invalid number value (line: 4)"),
+                 m("Invalid class value (line: 6)", "Invalid class value (line: 11)"),
                  m("Default property not found for Rect (line: 2)"),
                  m("spark.components.supportClasses.TrackBase is abstract class (line: 3)"));
     }
