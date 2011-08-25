@@ -273,7 +273,6 @@ public class FlexSdkChooserPanel {
       Sdk existingSdk = findExistingSdk(getSdkPath(), FlexIdeUtils.getSdkType());
       if (existingSdk != null) {
         copy(myWorkingSdk, (ProjectJdkImpl)existingSdk);
-        myRootModel.setSdk(existingSdk);
         mySdksModel.apply(); // happens only in Flex IDE, in IDEA we should have jumped to SDKs list
       }
       else {
@@ -287,7 +286,6 @@ public class FlexSdkChooserPanel {
       String newSdkHome = getSdkPath();
       final SdkType sdkType = FlexIdeUtils.getSdkType();
       if (StringUtil.isEmpty(newSdkHome) || !sdkType.isValidSdkHome(newSdkHome)) {
-        myRootModel.setSdk(null);
       }
       else {
         Sdk sdk = findExistingSdk(newSdkHome, sdkType);
@@ -296,7 +294,6 @@ public class FlexSdkChooserPanel {
           JdkListConfigurable.getInstance(myProject).addJdkNode(sdk, false);
           mySdksModel.doAdd((ProjectJdkImpl)sdk, null);
         }
-        myRootModel.setSdk(sdk);
       }
     }
     mySdkPathCombo.saveHistory();
