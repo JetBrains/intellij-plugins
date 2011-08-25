@@ -192,7 +192,10 @@
     <!-- JAVA -->
     <codeInsight.lineMarkerProvider language="JAVA"
                                     implementationClass="com.intellij.struts2.annotators.ActionJavaAnnotator"/>
-
+    <intentionAction>
+      <className>com.intellij.struts2.intentions.code.CreateValidationXmlIntention</className>
+      <category>Struts 2</category>
+    </intentionAction>
 
     <!-- JSP -->
     <codeInsight.lineMarkerProvider language="JSP"
