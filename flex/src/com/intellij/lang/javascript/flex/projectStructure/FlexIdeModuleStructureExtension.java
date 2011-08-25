@@ -39,7 +39,7 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
                                        final MasterDetailsComponent.MyNode moduleNode,
                                        ModifiableRootModel modifiableRootModel,
                                        final Runnable treeNodeNameUpdater) {
-    if (!(ModuleType.get(module) instanceof FlexModuleType)) {
+    if (!(ModuleType.get(module) instanceof FlexModuleType) || !FlexIdeUtils.isNewUI()) {
       return false;
     }
 

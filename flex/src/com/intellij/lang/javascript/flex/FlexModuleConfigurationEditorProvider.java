@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.lang.javascript.flex.build.FlexCompilerSettingsEditor;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeUtils;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexModuleEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleConfigurationEditor;
@@ -24,7 +25,7 @@ public class FlexModuleConfigurationEditorProvider implements ModuleConfiguratio
     if (ModuleType.get(module) != FlexModuleType.getInstance()) return ModuleConfigurationEditor.EMPTY;
 
     List<ModuleConfigurationEditor> result = new ArrayList<ModuleConfigurationEditor>();
-    if (PlatformUtils.isFlexIde()) {
+    if (PlatformUtils.isFlexIde() && FlexIdeUtils.isNewUI()) {
       result.add(new FlexModuleEditor(state));
     }
     else {
