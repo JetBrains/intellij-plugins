@@ -3,13 +3,9 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
-import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Base64Converter;
 import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 
 public final class LogMessageUtil {
   public static StringBuilder appendLineNumber(StringBuilder builder, ProblemDescriptor problemDescriptor) {
@@ -41,5 +37,9 @@ public final class LogMessageUtil {
 
   public static IdeaLoggingEvent createEvent(String userMessage, String technicalMessage, @Nullable VirtualFile file) {
     return LogMessageEx.createEvent(userMessage, technicalMessage, createMxmlTitle(file), createBaloonText(file), createAttachment(file));
+  }
+
+  public static IdeaLoggingEvent createEvent(Throwable e, @Nullable VirtualFile file) {
+    return createEvent(e.getMessage(), ExceptionUtil.getThrowableText(e), file);
   }
 }

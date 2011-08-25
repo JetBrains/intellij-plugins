@@ -7,6 +7,8 @@ import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 
 public abstract class AbstractByteArrayOutputStream extends OutputStream implements WritableByteChannel {
+  private static final int MAX_BUFFER_SIZE = 2 * 1024 * 1024;
+  
   protected int count;
   protected byte buffer[];
 
@@ -54,7 +56,7 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream impleme
   public void write(int b) {
     int newCount = count + 1;
     if (newCount > buffer.length) {
-      buffer = Arrays.copyOf(buffer, buffer.length << 1);
+      enlargeBuffer(buffer.length << 1);
     }
     buffer[count] = (byte)b;
     count = newCount;
@@ -64,7 +66,7 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream impleme
   public void write(byte b[], int offset, int length) {
     int newCount = count + length;
     if (newCount > buffer.length) {
-      buffer = Arrays.copyOf(buffer, Math.max(buffer.length << 1, newCount));
+      enlargeBuffer(Math.max(buffer.length << 1, newCount));
     }
     System.arraycopy(b, offset, buffer, count, length);
     count = newCount;
@@ -77,9 +79,16 @@ public abstract class AbstractByteArrayOutputStream extends OutputStream impleme
   public byte[] getBuffer(int size) {
     int newCount = count + size;
     if (newCount > buffer.length) {
-      buffer = Arrays.copyOf(buffer, Math.max(buffer.length << 1, newCount));
+      enlargeBuffer(Math.max(buffer.length << 1, newCount));
     }
     count = newCount;
     return buffer;
+  }
+
+  private void enlargeBuffer(int newLength) {
+    if (buffer.length > MAX_BUFFER_SIZE) {
+      throw new IllegalStateException("Buffer is too big");
+    }
+    buffer = Arrays.copyOf(buffer, newLength);
   }
 }

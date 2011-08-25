@@ -16,6 +16,10 @@ public class ProblemDescriptor {
     this.lineNumber = line;
   }
 
+  public ProblemDescriptor(@NotNull String message, @NotNull VirtualFile mxmlFile) {
+    this(message, mxmlFile, -1);
+  }
+
   @Nullable
   public VirtualFile getFile() {
     return virtualFile;

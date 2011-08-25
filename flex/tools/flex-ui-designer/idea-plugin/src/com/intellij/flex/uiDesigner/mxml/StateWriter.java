@@ -114,7 +114,13 @@ class StateWriter {
       nameToState.put(name, states);
     }
     else {
-      states.add(state);
+      if (states.contains(state)) {
+        // IDEA-73547
+        MxmlWriter.LOG.warn("State " + state + " already added to list for " + name);
+      }
+      else {
+        states.add(state);
+      }
     }
   }
 

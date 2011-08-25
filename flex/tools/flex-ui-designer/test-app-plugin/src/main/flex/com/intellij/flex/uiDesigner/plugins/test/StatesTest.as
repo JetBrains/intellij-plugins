@@ -57,6 +57,7 @@ public class StatesTest extends BaseTestCase {
       ExcludeFrom();
       ProjectMxmlComponentAsStateSpecificChild();
       ProjectStatefulMxmlComponentAsChild();
+      IDEA_73547();
     }
   }
 
@@ -366,6 +367,9 @@ public class StatesTest extends BaseTestCase {
     setState(A);
     assertThat(app, [[[[[{text: "static"}, {text: "dynamic"}]]]]]);
     //assertThat(app, [[{text: "Label in child custom mxml component"}]]);
+  }
+
+  public function IDEA_73547():void {
   }
 }
 }

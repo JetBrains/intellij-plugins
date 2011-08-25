@@ -55,6 +55,12 @@ public class ProblemsHolder {
     }
   }
 
+  public void add(Throwable e, VirtualFile mxmlFile) {
+    final ProblemDescriptor problemDescriptor = new ProblemDescriptor(e.getMessage(), mxmlFile);
+    problems.add(problemDescriptor);
+    LOG.error(LogMessageUtil.createEvent(e, mxmlFile));
+  }
+
   public void add(final PsiElement element, final RuntimeException e, final String propertyName) {
     String error;
     if (e instanceof NumberFormatException) {

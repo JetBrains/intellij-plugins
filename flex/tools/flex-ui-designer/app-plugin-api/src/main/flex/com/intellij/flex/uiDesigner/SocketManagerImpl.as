@@ -1,4 +1,6 @@
 package com.intellij.flex.uiDesigner {
+import flash.desktop.NativeApplication;
+import flash.events.Event;
 import flash.events.ProgressEvent;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
@@ -52,11 +54,18 @@ public class SocketManagerImpl implements SocketManager {
 
     socket = new Socket();
     socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
+    socket.addEventListener(Event.CLOSE, socketCloseHandler);
     socket.connect(host, port);
     
     for each (var handler:SocketDataHandler in socketDataHandlers) {
       handler.socket = socket;
     }
+  }
+
+  private static function socketCloseHandler(event:Event):void {
+    trace("idea close connection, so, exit");
+    // IDEA-73550
+    NativeApplication.nativeApplication.exit(57323);
   }
 
   private function socketDataHandler(event:ProgressEvent):void {

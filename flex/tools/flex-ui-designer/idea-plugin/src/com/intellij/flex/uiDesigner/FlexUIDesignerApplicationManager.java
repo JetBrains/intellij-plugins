@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.ProjectTopics;
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.process.OSProcessManager;
 import com.intellij.facet.FacetManager;
 import com.intellij.flex.uiDesigner.io.ErrorSocketManager;
 import com.intellij.flex.uiDesigner.io.IOUtil;
@@ -360,7 +359,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       clientOpened = true;
       checkCanceled();
       if (libraryAndModuleInitialized) {
-        openDocument();
+        semaphore.up();
       }
     }
 
@@ -377,7 +376,9 @@ public class FlexUIDesignerApplicationManager implements Disposable {
         final ProblemsHolder problemsHolder = new ProblemsHolder();
         final RequiredAssetsInfo requiredAssetsInfo = new RequiredAssetsInfo();
         if (unregisteredDocumentReferences != null) {
-          client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder, requiredAssetsInfo);
+          if (!client.registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder, requiredAssetsInfo)) {
+            return;
+          }
         }
 
         final MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(appParentDisposable);
@@ -398,10 +399,16 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           }
         });
 
-        client.openDocument(module, psiFile, true, problemsHolder, requiredAssetsInfo);
-        client.flush();
-
-        indicator.setText(FlexUIDesignerBundle.message("load.libraries"));
+        semaphore.down();
+        if (client.openDocument(module, psiFile, true, problemsHolder, requiredAssetsInfo)) {
+          client.flush();
+          indicator.setText(FlexUIDesignerBundle.message("load.libraries"));
+          semaphore.waitFor();
+        }
+        else {
+          semaphore.up();
+          connection.disconnect();
+        }
       }
       catch (IOException e) {
         LOG.error(e);
@@ -511,6 +518,8 @@ public class FlexUIDesignerApplicationManager implements Disposable {
       semaphore.down();
       semaphore.waitFor();
 
+      openDocument();
+
       // Why in test mode ProgressManager.run() doesn't call onCancel/onSuccess?
       if (isHeadless()) {
         if (indicator.isCanceled()) {
@@ -553,7 +562,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
           libraryAndModuleInitialized = true;
           checkCanceled();
           if (clientOpened) {
-            openDocument();
+            semaphore.up();
           }
           else if (adlExitCode != -1) {
             cancel();

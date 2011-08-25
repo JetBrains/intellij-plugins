@@ -267,7 +267,7 @@ public class Client implements Closable {
   /**
    * final, full open document — responsible for handle problemsHolder and requiredAssetsInfo — you must not do it
    */
-  public void openDocument(Module module, XmlFile psiFile, boolean notifyOpened, ProblemsHolder problemsHolder,
+  public boolean openDocument(Module module, XmlFile psiFile, boolean notifyOpened, ProblemsHolder problemsHolder,
                            RequiredAssetsInfo requiredAssetsInfo) throws IOException {
     final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
     final VirtualFile virtualFile = psiFile.getVirtualFile();
@@ -276,10 +276,13 @@ public class Client implements Closable {
     if (documentFactoryManager.isRegistered(virtualFile) && ArrayUtil.indexOf(fileDocumentManager.getUnsavedDocuments(),
       fileDocumentManager.getDocument(virtualFile)) != -1) {
       updateDocumentFactory(documentFactoryManager.getId(virtualFile), module, psiFile);
-      return;
+      return true;
     }
 
     final int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder, requiredAssetsInfo);
+    if (factoryId == -1) {
+      return false;
+    }
 
     if (requiredAssetsInfo.imageCount > 0) {
       fillAssetClassPool(module, problemsHolder, requiredAssetsInfo.imageCount, ClientMethod.fillImageClassPool);
@@ -296,6 +299,8 @@ public class Client implements Closable {
     writeId(module);
     out.writeShort(factoryId);
     out.write(notifyOpened);
+
+    return true;
   }
 
   private void fillAssetClassPool(Module module, ProblemsHolder problemsHolder, int classCount, ClientMethod method)
@@ -330,19 +335,33 @@ public class Client implements Closable {
   }
   
   public void updateDocumentFactory(int factoryId, Module module, XmlFile psiFile) throws IOException {
-    beginMessage(ClientMethod.updateDocumentFactory);
-    writeId(module);
-    out.writeShort(factoryId);
-    ProblemsHolder problemsHolder = new ProblemsHolder();
-    RequiredAssetsInfo requiredAssetsInfo = new RequiredAssetsInfo();
-    writeDocumentFactory(module, psiFile, problemsHolder, requiredAssetsInfo);
+    boolean hasError = true;
+    final ProblemsHolder problemsHolder = new ProblemsHolder();
+    try {
+      beginMessage(ClientMethod.updateDocumentFactory);
+      writeId(module);
+      out.writeShort(factoryId);
+
+      RequiredAssetsInfo requiredAssetsInfo = new RequiredAssetsInfo();
+      writeDocumentFactory(module, psiFile, problemsHolder, requiredAssetsInfo);
+
+      beginMessage(ClientMethod.updateDocuments);
+      writeId(module);
+      out.writeShort(factoryId);
+      hasError = false;
+    }
+    catch (Throwable e) {
+      problemsHolder.add(e, psiFile.getVirtualFile());
+    }
+    finally {
+      if (hasError) {
+        blockOut.rollback();
+      }
+    }
+
     if (!problemsHolder.isEmpty()) {
       DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
     }
-
-    beginMessage(ClientMethod.updateDocuments);
-    writeId(module);
-    out.writeShort(factoryId);
   }
 
   private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, VirtualFile virtualFile, boolean force,
@@ -351,31 +370,43 @@ public class Client implements Closable {
     final boolean registered = !force && documentFactoryManager.isRegistered(virtualFile);
     final int id = documentFactoryManager.getId(virtualFile);
     if (!registered) {
-      beginMessage(ClientMethod.registerDocumentFactory);
-      writeId(module);
-      out.writeShort(id);
-      writeVirtualFile(virtualFile, out);
-      
-      JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
-      assert jsClass != null;
-      out.writeAmfUtf(jsClass.getQualifiedName());
+      boolean hasError = true;
+      try {
+        beginMessage(ClientMethod.registerDocumentFactory);
+        writeId(module);
+        out.writeShort(id);
+        writeVirtualFile(virtualFile, out);
 
-      writeDocumentFactory(module, psiFile, problemsHolder, requiredAssetsInfo);
+        JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
+        assert jsClass != null;
+        out.writeAmfUtf(jsClass.getQualifiedName());
+
+        hasError = !writeDocumentFactory(module, psiFile, problemsHolder, requiredAssetsInfo);
+      }
+      catch (Throwable e) {
+        problemsHolder.add(e, virtualFile);
+      }
+      finally {
+        if (hasError) {
+          blockOut.rollback();
+          //noinspection ReturnInsideFinallyBlock
+          return -1;
+        }
+      }
     }
 
     return id;
   }
 
-  private void writeDocumentFactory(Module module, XmlFile psiFile, ProblemsHolder problemsHolder, RequiredAssetsInfo requiredAssetsInfo)
-      throws IOException {
+  private boolean writeDocumentFactory(Module module, XmlFile psiFile, ProblemsHolder problemsHolder, RequiredAssetsInfo requiredAssetsInfo)
+    throws IOException {
     XmlFile[] unregisteredDocumentReferences = mxmlWriter.write(psiFile, problemsHolder, requiredAssetsInfo);
-    if (unregisteredDocumentReferences != null) {
-      registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder, requiredAssetsInfo);
-    }
+    return unregisteredDocumentReferences == null || registerDocumentReferences(unregisteredDocumentReferences, module, problemsHolder,
+                                                                                requiredAssetsInfo);
   }
 
-  public void registerDocumentReferences(XmlFile[] files, Module module, ProblemsHolder problemsHolder,
-                                         RequiredAssetsInfo requiredAssetsInfo) throws IOException {
+  public boolean registerDocumentReferences(XmlFile[] files, Module module, ProblemsHolder problemsHolder,
+                                            RequiredAssetsInfo requiredAssetsInfo) throws IOException {
     for (XmlFile file : files) {
       VirtualFile virtualFile = file.getVirtualFile();
       assert virtualFile != null;
@@ -392,8 +423,12 @@ public class Client implements Closable {
       }
 
       // force register, it is registered (id allocated) only on server side
-      registerDocumentFactoryIfNeed(module, file, virtualFile, true, problemsHolder, requiredAssetsInfo);
+      if (registerDocumentFactoryIfNeed(module, file, virtualFile, true, problemsHolder, requiredAssetsInfo) == -1) {
+        return false;
+      }
     }
+
+    return true;
   }
 
   public void qualifyExternalInlineStyleSource() {
