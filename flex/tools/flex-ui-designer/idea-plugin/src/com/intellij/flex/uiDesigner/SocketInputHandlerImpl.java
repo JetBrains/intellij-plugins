@@ -476,6 +476,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   private void showError() throws IOException {
+    messageBus.syncPublisher(MESSAGE_TOPIC).errorOccured();
+    
     String userMessage = reader.readUTF();
     final String technicalMessage = reader.readUTF();
     final VirtualFile file;

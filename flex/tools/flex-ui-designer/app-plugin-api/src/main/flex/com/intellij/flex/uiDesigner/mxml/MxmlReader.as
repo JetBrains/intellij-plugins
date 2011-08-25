@@ -329,10 +329,6 @@ public final class MxmlReader implements DocumentReader {
           readChildrenMxContainer(DisplayObjectContainer(propertyHolder));
           continue;
 
-        case PropertyClassifier.FIXED_ARRAY:
-          propertyHolder[propertyName] = readFixedArray();
-          continue;
-
         default:
           throw new ArgumentError("unknown property classifier");
       }
@@ -657,16 +653,6 @@ public final class MxmlReader implements DocumentReader {
     return array;
   }
 
-  private function readFixedArray():Array {
-    var n:int = input.readUnsignedByte();
-    var array:Array = new Array(n);
-    for (var i:int = 0; i < n; i++) {
-      array[i] = readObjectFromClass(stringRegistry.read(input));
-    }
-
-    return array;
-  }
-
   internal function readClassOrPropertyName():String {
     return stringRegistry.read(input);
   }
@@ -693,8 +679,6 @@ class PropertyClassifier {
 
   public static const ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:int = 6;
   public static const VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES:int = 7;
-
-  public static const FIXED_ARRAY:int = 8;
 }
 
 use namespace flash_proxy;

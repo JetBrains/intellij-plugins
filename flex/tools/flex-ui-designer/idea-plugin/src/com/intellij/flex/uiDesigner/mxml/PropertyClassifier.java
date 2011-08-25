@@ -10,6 +10,4 @@ final class PropertyClassifier {
 
   final static int ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES = 6;
   final static int VECTOR_OF_DEFERRED_INSTANCE_FROM_BYTES = 7;
-
-  final static int FIXED_ARRAY = 8;
 }

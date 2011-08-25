@@ -7,7 +7,7 @@
     <option name="PACKAGE_NAME" value="com.intellij.flex.uiDesigner" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.flex.uiDesigner.AppTest" />
     <option name="METHOD_NAME" value="testUpdateDocumentOnIdeaAutoSave" />
-    <option name="TEST_OBJECT" value="method" />
+    <option name="TEST_OBJECT" value="class" />
     <option name="VM_PARAMETERS" value="-Xms128m -Xmx768m -XX:MaxPermSize=512m -ea -Dfud.test.debug=true" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />

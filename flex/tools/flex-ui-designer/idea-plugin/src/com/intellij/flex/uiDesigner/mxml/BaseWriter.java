@@ -7,6 +7,7 @@ import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.xml.util.ColorSampleLookupValue;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ final class BaseWriter {
     return requiredAssetsInfo;
   }
 
+  @NotNull
   public Scope getRootScope() {
     return rootScope;
   }
@@ -120,7 +122,7 @@ final class BaseWriter {
   }
 
   @SuppressWarnings("MethodMayBeStatic")
-  public int getObjectId(Context context) {
+  public int allocateObjectId(Context context) {
     if (context.getId() == -1) {
       context.setId(context.getParentScope().referenceCounter++);
       context.referenceInitialized();
@@ -129,8 +131,12 @@ final class BaseWriter {
     return context.getId();
   }
 
+  public int allocateAbsoluteStaticObjectId() {
+    return rootScope.referenceCounter++;
+  }
+
   public int getObjectOrFactoryId(@Nullable Context context) {
-    return context == null ? preallocateIdIfNeed() : getObjectId(context);
+    return context == null ? preallocateIdIfNeed() : allocateObjectId(context);
   }
 
   public void endMessage() throws IOException {
@@ -214,13 +220,7 @@ final class BaseWriter {
   }
 
   public void writeObjectReference(int propertyName, Context context) {
-    writeObjectReference(propertyName, getObjectId(context));
-  }
-
-  public void writeFixedArrayHeader(int propertyName, int size) {
-    out.writeUInt29(propertyName);
-    out.write(PropertyClassifier.FIXED_ARRAY);
-    out.write(size);
+    writeObjectReference(propertyName, allocateObjectId(context));
   }
 
   public void writeObjectHeader(int propertyName, int className) {
