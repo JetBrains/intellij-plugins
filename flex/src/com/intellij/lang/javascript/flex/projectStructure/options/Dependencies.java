@@ -7,7 +7,10 @@ public class Dependencies implements Cloneable {
 
   protected Dependencies clone() {
     try {
-      return (Dependencies)super.clone();
+      Dependencies clone = (Dependencies)super.clone();
+      clone.COMPONENT_SET = COMPONENT_SET;
+      clone.FRAMEWORK_LINKAGE = FRAMEWORK_LINKAGE;
+      return clone;
     }
     catch (CloneNotSupportedException e) {
       assert false;
