@@ -37,28 +37,7 @@ public class SdkPathCombo extends ComboboxWithBrowseButton implements TextAccess
   public SdkPathCombo(Project project, final SdkType sdkType, String historyKey) {
     myProject = project;
     myHistoryKey = historyKey;
-    getChildComponent().setEditable(true);
     setText("");
-    getChildComponent().setEditor(new DelegatingComboBoxEditor(getChildComponent().getEditor()) {
-      JTextField field = null;
-
-      @Override
-      public Component getEditorComponent() {
-        final Component c = super.getEditorComponent();
-        if (c instanceof JTextField && field != c) {
-          field = (JTextField)c;
-          // TODO until kirillk fixes path completion in combobox
-          //FileChooserFactory.getInstance().installFileCompletion(field, sdkType.getHomeChooserDescriptor(), false, null);
-          field.getDocument().addDocumentListener(new DocumentAdapter() {
-            @Override
-            protected void textChanged(DocumentEvent e) {
-              myEventDispatcher.getMulticaster().stateChanged(new ChangeEvent(SdkPathCombo.this));
-            }
-          });
-        }
-        return c;
-      }
-    });
 
     getButton().addActionListener(new ActionListener() {
       @Override
