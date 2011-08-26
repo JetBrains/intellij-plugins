@@ -85,7 +85,7 @@ public class Client implements Closable {
     out.write(method);
   }
 
-  public void openProject(Project project) throws IOException {
+  public void openProject(Project project) {
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.openProject);
@@ -95,16 +95,11 @@ public class Client implements Closable {
       hasError = false;
     }
     finally {
-      if (hasError) {
-        blockOut.rollback();
-      }
-      else {
-        out.flush();
-      }
+      finalizeMessageAndFlush(hasError);
     }
   }
 
-  public void closeProject(final Project project) throws IOException {
+  public void closeProject(final Project project) {
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.closeProject);
@@ -113,12 +108,7 @@ public class Client implements Closable {
     }
     finally {
       try {
-        if (hasError) {
-          blockOut.rollback();
-        }
-        else {
-          out.flush();
-        }
+        finalizeMessageAndFlush(hasError);
       }
       finally {
         unregisterProject(project);
@@ -160,66 +150,72 @@ public class Client implements Closable {
     }
   }
 
-  public void registerLibrarySet(LibrarySet librarySet) throws IOException {
-    beginMessage(ClientMethod.registerLibrarySet);
-    out.writeAmfUtf(librarySet.getId());
-    
-    LibrarySet parent = librarySet.getParent();
-    if (parent == null) {
-      out.write(0);
-    }
-    else {
-      out.writeAmfUtf(parent.getId());
-    }
+  public void registerLibrarySet(LibrarySet librarySet) {
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.registerLibrarySet);
+      out.writeAmfUtf(librarySet.getId());
 
-    out.write(librarySet.getApplicationDomainCreationPolicy());
-    final List<LibrarySetItem> items = librarySet.getItems();
-    out.write(items.size());
-    final LibraryManager libraryManager = LibraryManager.getInstance();
-    for (LibrarySetItem item : items) {
-      final Library library = item.library;
-      final boolean registered = libraryManager.isRegistered(library);
-      int flags = item.filtered ? 1 : 0;
-      if (registered) {
-        flags |= 2;
-      }
-      out.write(flags);
-
-      if (registered) {
-        out.writeShort(library.getId());
+      LibrarySet parent = librarySet.getParent();
+      if (parent == null) {
+        out.write(0);
       }
       else {
-        out.writeShort(libraryManager.add(library));
-
-        out.writeAmfUtf(library.getPath());
-        writeVirtualFile(library.getFile(), out);
-
-        if (library.inheritingStyles == null) {
-          out.writeShort(0);
-        }
-        else {
-          out.write(library.inheritingStyles);
-        }
-
-        if (library.defaultsStyle == null) {
-          out.write(0);
-        }
-        else {
-          out.write(1);
-          out.write(library.defaultsStyle);
-        }
+        out.writeAmfUtf(parent.getId());
       }
 
-      writeParents(items, item);
-    }
+      out.write(librarySet.getApplicationDomainCreationPolicy());
+      final List<LibrarySetItem> items = librarySet.getItems();
+      out.write(items.size());
+      final LibraryManager libraryManager = LibraryManager.getInstance();
+      for (LibrarySetItem item : items) {
+        final Library library = item.library;
+        final boolean registered = libraryManager.isRegistered(library);
+        int flags = item.filtered ? 1 : 0;
+        if (registered) {
+          flags |= 2;
+        }
+        out.write(flags);
 
-    out.write(librarySet.getEmbedItems().size());
-    for (LibrarySetEmbedItem item : librarySet.getEmbedItems()) {
-      out.write(items.indexOf(item.parent));
-      out.writeAmfUtf(item.path);
-    }
+        if (registered) {
+          out.writeShort(library.getId());
+        }
+        else {
+          out.writeShort(libraryManager.add(library));
 
-    blockOut.end();
+          out.writeAmfUtf(library.getPath());
+          writeVirtualFile(library.getFile(), out);
+
+          if (library.inheritingStyles == null) {
+            out.writeShort(0);
+          }
+          else {
+            out.write(library.inheritingStyles);
+          }
+
+          if (library.defaultsStyle == null) {
+            out.write(0);
+          }
+          else {
+            out.write(1);
+            out.write(library.defaultsStyle);
+          }
+        }
+
+        writeParents(items, item);
+      }
+
+      out.write(librarySet.getEmbedItems().size());
+      for (LibrarySetEmbedItem item : librarySet.getEmbedItems()) {
+        out.write(items.indexOf(item.parent));
+        out.writeAmfUtf(item.path);
+      }
+
+      hasError = false;
+    }
+    finally {
+      finalizeMessage(hasError);
+    }
   }
 
   private void writeParents(List<LibrarySetItem> items, LibrarySetItem item) {
@@ -232,7 +228,7 @@ public class Client implements Closable {
   }
 
   public void registerModule(Project project, ModuleInfo moduleInfo, String[] librarySetIds, StringRegistry.StringWriter stringWriter,
-                             RequiredAssetsInfo requiredAssetsInfo) throws IOException {
+                             RequiredAssetsInfo requiredAssetsInfo) {
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.registerModule);
@@ -268,15 +264,14 @@ public class Client implements Closable {
    * final, full open document — responsible for handle problemsHolder and requiredAssetsInfo — you must not do it
    */
   public boolean openDocument(Module module, XmlFile psiFile, boolean notifyOpened, ProblemsHolder problemsHolder,
-                           RequiredAssetsInfo requiredAssetsInfo) throws IOException {
+                           RequiredAssetsInfo requiredAssetsInfo) {
     final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
     final VirtualFile virtualFile = psiFile.getVirtualFile();
     final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
     assert virtualFile != null;
     if (documentFactoryManager.isRegistered(virtualFile) && ArrayUtil.indexOf(fileDocumentManager.getUnsavedDocuments(),
       fileDocumentManager.getDocument(virtualFile)) != -1) {
-      updateDocumentFactory(documentFactoryManager.getId(virtualFile), module, psiFile);
-      return true;
+      return updateDocumentFactory(documentFactoryManager.getId(virtualFile), module, psiFile);
     }
 
     final int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder, requiredAssetsInfo);
@@ -285,10 +280,10 @@ public class Client implements Closable {
     }
 
     if (requiredAssetsInfo.imageCount > 0) {
-      fillAssetClassPool(module, problemsHolder, requiredAssetsInfo.imageCount, ClientMethod.fillImageClassPool);
+      fillAssetClassPool(module, requiredAssetsInfo.imageCount, ClientMethod.fillImageClassPool);
     }
     if (requiredAssetsInfo.swfCount > 0) {
-      fillAssetClassPool(module, problemsHolder, requiredAssetsInfo.swfCount, ClientMethod.fillSwfClassPool);
+      fillAssetClassPool(module, requiredAssetsInfo.swfCount, ClientMethod.fillSwfClassPool);
     }
 
     if (!problemsHolder.isEmpty()) {
@@ -303,8 +298,7 @@ public class Client implements Closable {
     return true;
   }
 
-  private void fillAssetClassPool(Module module, ProblemsHolder problemsHolder, int classCount, ClientMethod method)
-      throws IOException {
+  private void fillAssetClassPool(Module module, int classCount, ClientMethod method) {
     boolean hasError = true;
     try {
       beginMessage(method);
@@ -316,56 +310,71 @@ public class Client implements Closable {
       hasError = false;
     }
     catch (Throwable e) {
-      problemsHolder.add(e);
+      LogMessageUtil.processInternalError(e, null);
     }
     finally {
       finalizeMessage(hasError);
     }
   }
 
-  private void finalizeMessage(boolean hasError) throws IOException {
+  private void finalizeMessage(boolean hasError) {
     if (hasError) {
       blockOut.rollback();
     }
     else {
-      blockOut.end();
+      try {
+        blockOut.end();
+      }
+      catch (IOException e) {
+        LogMessageUtil.processInternalError(e);
+      }
     }
 
     out.resetAfterMessage();
   }
-  
-  public void updateDocumentFactory(int factoryId, Module module, XmlFile psiFile) throws IOException {
-    boolean hasError = true;
-    final ProblemsHolder problemsHolder = new ProblemsHolder();
+
+  private void finalizeMessageAndFlush(boolean hasError) {
+    if (hasError) {
+      blockOut.rollback();
+    }
+    else {
+      try {
+        out.flush();
+      }
+      catch (IOException e) {
+        LogMessageUtil.processInternalError(e);
+      }
+    }
+  }
+
+  public boolean updateDocumentFactory(int factoryId, Module module, XmlFile psiFile) {
     try {
       beginMessage(ClientMethod.updateDocumentFactory);
       writeId(module);
       out.writeShort(factoryId);
 
       RequiredAssetsInfo requiredAssetsInfo = new RequiredAssetsInfo();
+      ProblemsHolder problemsHolder = new ProblemsHolder();
       writeDocumentFactory(module, psiFile, problemsHolder, requiredAssetsInfo);
+      if (!problemsHolder.isEmpty()) {
+        DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
+      }
 
       beginMessage(ClientMethod.updateDocuments);
       writeId(module);
       out.writeShort(factoryId);
-      hasError = false;
+      return true;
     }
     catch (Throwable e) {
-      problemsHolder.add(e, psiFile.getVirtualFile());
-    }
-    finally {
-      if (hasError) {
-        blockOut.rollback();
-      }
+      LogMessageUtil.processInternalError(e, psiFile.getVirtualFile());
     }
 
-    if (!problemsHolder.isEmpty()) {
-      DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
-    }
+    blockOut.rollback();
+    return false;
   }
 
   private int registerDocumentFactoryIfNeed(Module module, XmlFile psiFile, VirtualFile virtualFile, boolean force,
-                                            ProblemsHolder problemsHolder, RequiredAssetsInfo requiredAssetsInfo) throws IOException {
+                                            ProblemsHolder problemsHolder, RequiredAssetsInfo requiredAssetsInfo) {
     final DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance(module.getProject());
     final boolean registered = !force && documentFactoryManager.isRegistered(virtualFile);
     final int id = documentFactoryManager.getId(virtualFile);
@@ -384,7 +393,7 @@ public class Client implements Closable {
         hasError = !writeDocumentFactory(module, psiFile, problemsHolder, requiredAssetsInfo);
       }
       catch (Throwable e) {
-        problemsHolder.add(e, virtualFile);
+        LogMessageUtil.processInternalError(e, virtualFile);
       }
       finally {
         if (hasError) {
@@ -406,7 +415,7 @@ public class Client implements Closable {
   }
 
   public boolean registerDocumentReferences(XmlFile[] files, Module module, ProblemsHolder problemsHolder,
-                                            RequiredAssetsInfo requiredAssetsInfo) throws IOException {
+                                            RequiredAssetsInfo requiredAssetsInfo) {
     for (XmlFile file : files) {
       VirtualFile virtualFile = file.getVirtualFile();
       assert virtualFile != null;

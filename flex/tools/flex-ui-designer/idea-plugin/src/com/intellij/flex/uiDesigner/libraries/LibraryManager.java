@@ -84,14 +84,14 @@ public class LibraryManager extends EntityListManager<VirtualFile, Library> {
     return unregisteredDocumentReferences;
   }
 
-  public XmlFile[] initLibrarySets(@NotNull final Module module, @NotNull ProblemsHolder problemsHolder) throws IOException, InitException {
+  public XmlFile[] initLibrarySets(@NotNull final Module module, @NotNull ProblemsHolder problemsHolder) throws InitException {
     return initLibrarySets(module, true, problemsHolder, null);
   }
 
   // librarySet for test only
   public XmlFile[] initLibrarySets(@NotNull final Module module, boolean collectLocalStyleHolders, ProblemsHolder problemsHolder,
                                    @Nullable LibrarySet librarySet)
-      throws InitException, IOException {
+      throws InitException {
     final Project project = module.getProject();
     final LibraryCollector libraryCollector = new LibraryCollector(this);
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter(16384);

@@ -129,4 +129,6 @@
       </Panel>
     </Panel>
   </Panel>
+
+  <!--<mx:Image id="flex" source="@Embed(source='assets/CalendarIcon.png')"/>-->
 </VGroup>

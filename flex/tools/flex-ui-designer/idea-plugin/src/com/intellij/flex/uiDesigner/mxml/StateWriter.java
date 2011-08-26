@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
-import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.ByteRangeMarker;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
@@ -176,7 +175,6 @@ class StateWriter {
 
   AddItems createAddItems(DynamicObjectContext context, Context parentContext, boolean autoDestruction) {
     AddItems override = new AddItems(writer.getBlockOut().startRange(), context, autoDestruction);
-    writer.getOut().write(Amf3Types.OBJECT);
     writer.writeObjectHeader(ADD_ITEMS);
 
     DynamicObjectContext parentScopeOwner = parentContext.getScope().getOwner();
@@ -201,9 +199,6 @@ class StateWriter {
       }
     }
     writer.writeStringReference(POSITION, position);
-
-    writer.endObject();
-
     writer.getBlockOut().endRange(override.dataRange);
     return override;
   }
@@ -245,7 +240,6 @@ class StateWriter {
     final PrimitiveAmfOutputStream out = writer.getOut();
 
     SetPropertyOrStyle override = new SetPropertyOrStyle(writer.getBlockOut().startRange());
-    out.write(Amf3Types.OBJECT);
     writer.writeObjectHeader(propertyProcessor.isStyle()
                              ? "com.intellij.flex.uiDesigner.flex.states.SetStyle"
                              : "com.intellij.flex.uiDesigner.flex.states.SetProperty");
@@ -276,10 +270,8 @@ class StateWriter {
       pendingFirstSetProperty = override;
     }
 
-    // object Override footer
-    writer.endObject();
-    
     writer.getBlockOut().endRange(override.dataRange);
+
     for (State state : states) {
       state.overrides.add(override);
     }
@@ -447,17 +439,15 @@ class StateWriter {
       writer.getBlockOut().allocate(2); // reference
       writer.writeProperty(NAME, state.name);
 
-      OverrideBase override = state.overrides.getFirst();
-      if (override != null) {
+      if (!state.overrides.isEmpty()) {
         out.writeUInt29(OVERRIDES);
         out.write(PropertyClassifier.PROPERTY);
         out.write(AmfExtendedTypes.MXML_ARRAY);
         out.writeShort(0);
         out.writeShort(state.overrides.size());
-        do {
+        for (OverrideBase override : state.overrides) {
           override.write(writer, this);
         }
-        while ((override = override.next) != null);
       }
 
       // object State footer

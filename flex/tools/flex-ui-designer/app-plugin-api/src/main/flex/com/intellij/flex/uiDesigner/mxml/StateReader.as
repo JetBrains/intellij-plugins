@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml {
 import com.intellij.flex.uiDesigner.flex.DeferredInstanceFromBytesContext;
 import com.intellij.flex.uiDesigner.flex.states.DeferredInstanceFromBytesBase;
-import com.intellij.flex.uiDesigner.io.Amf3Types;
+import com.intellij.flex.uiDesigner.io.AmfExtendedTypes;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
 
 import flash.utils.IDataInput;
@@ -55,7 +55,7 @@ internal final class StateReader {
     var kind:int = data.readByte();
     var immediateCreation:Boolean = (kind & 1) != 0;
     kind = kind >> 1;
-    if (kind == Amf3Types.OBJECT_REFERENCE) {
+    if (kind == AmfExtendedTypes.OBJECT_REFERENCE) {
       return DeferredInstanceFromBytesBase(reader.readObjectReference());
     }
     else {

@@ -42,4 +42,12 @@ public final class LogMessageUtil {
   public static IdeaLoggingEvent createEvent(Throwable e, @Nullable VirtualFile file) {
     return createEvent(e.getMessage(), ExceptionUtil.getThrowableText(e), file);
   }
+
+  public static void processInternalError(Throwable e, @Nullable VirtualFile mxmlFile) {
+    FlexUIDesignerApplicationManager.LOG.error(createEvent(e, mxmlFile));
+  }
+
+  public static void processInternalError(Throwable e) {
+    processInternalError(e, null);
+  }
 }

@@ -17,7 +17,6 @@ import mx.core.FlexSprite;
 import mx.core.IButton;
 import mx.core.IIMESupport;
 import mx.core.IRawChildrenContainer;
-import mx.core.ISWFLoader;
 import mx.core.IToggleButton;
 import mx.core.IUIComponent;
 import mx.core.IVisualElement;
@@ -178,7 +177,7 @@ public class DocumentFocusManager extends OnDemandEventDispatcher implements IFo
 
   public function findFocusManagerComponent(o:InteractiveObject):IFocusManagerComponent {
     while (o) {
-      if ((o is IFocusManagerComponent && IFocusManagerComponent(o).focusEnabled) || o is ISWFLoader) {
+      if ((o is IFocusManagerComponent && IFocusManagerComponent(o).focusEnabled)) {
         return IFocusManagerComponent(o);
       }
 
@@ -411,7 +410,7 @@ public class DocumentFocusManager extends OnDemandEventDispatcher implements IFo
     var fcc:int = 0;
     for (var i:int = 0; i < n; i++) {
       var c:IFocusManagerComponent = focusableObjects[i];
-      if (c.tabIndex > 0 || c is ISWFLoader) {
+      if (c.tabIndex > 0) {
         focusableCandidates[fcc++] = c;
       }
     }

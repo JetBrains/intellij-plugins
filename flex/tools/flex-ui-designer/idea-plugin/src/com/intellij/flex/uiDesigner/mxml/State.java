@@ -1,14 +1,14 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import gnu.trove.TLinkedList;
 import org.jetbrains.annotations.Nullable;
+
 
 class State {
   private final int index;
 
   String name;
 
-  final TLinkedList<OverrideBase> overrides = new TLinkedList<OverrideBase>();
+  final LinkedList<OverrideBase> overrides = new LinkedList<OverrideBase>();
   private final StateWriter stateWriter;
 
   State(StateWriter stateWriter, int index) {
@@ -65,7 +65,7 @@ class State {
     if (!override.isAutoDestruction() && override.getItemDeferredInstances().get(lastIndex) == context) {
       if (size == 1) {
         // test case: ItemDestructionPolicyMergeItems2, override == text="3", override.next == text="2"
-        AddItems next = (AddItems)override.getNext();
+        AddItems next = (AddItems)overrides.getNext(override);
         if (next != null && next.isAutoDestruction()) {
           next.getItemDeferredInstances().add(override.getItemDeferredInstances().get(0));
           writer.getBlockOut().removeLastMarkerAndAssert(override.dataRange);

@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 public class ProblemDescriptor {
   private final String message;
   private final int lineNumber;
-
   private final VirtualFile virtualFile;
 
   public ProblemDescriptor(@NotNull String message, @Nullable VirtualFile virtualFile, int line) {

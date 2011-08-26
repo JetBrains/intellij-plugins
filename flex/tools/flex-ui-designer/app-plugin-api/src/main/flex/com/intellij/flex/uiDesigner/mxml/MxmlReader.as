@@ -407,7 +407,7 @@ public final class MxmlReader implements DocumentReader {
           }
           break;
 
-        case Amf3Types.OBJECT_REFERENCE:
+        case AmfExtendedTypes.OBJECT_REFERENCE:
           if ((o = objectTable[AmfUtil.readUInt29(input)]) == null) {
             throw new ArgumentError("must be not null");
           }
@@ -643,6 +643,12 @@ public final class MxmlReader implements DocumentReader {
 
         case AmfExtendedTypes.DOCUMENT_REFERENCE:
           array[i++] = readObjectFromFactory(readDocumentFactory().newInstance());
+          break;
+
+        case AmfExtendedTypes.OBJECT_REFERENCE:
+          if ((array[i++] = objectTable[AmfUtil.readUInt29(input)]) == null) {
+            throw new ArgumentError("must be not null");
+          }
           break;
 
         default:

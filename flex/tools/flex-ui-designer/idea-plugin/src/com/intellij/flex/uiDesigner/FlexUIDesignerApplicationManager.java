@@ -626,12 +626,7 @@ public class FlexUIDesignerApplicationManager implements Disposable {
 
       Client client = Client.getInstance();
       if (client.getRegisteredProjects().contains(project)) {
-        try {
-          client.closeProject(project);
-        }
-        catch (IOException e) {
-          LOG.error(e);
-        }
+        client.closeProject(project);
       }
     }
 

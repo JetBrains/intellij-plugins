@@ -1,13 +1,13 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 
 class SetPropertyOrStyle extends OverrideBase {
-  int targetId;
+  int targetId = -1;
 
   private ByteRange targetRange;
-  // note: final id for write, already incremented by 1
-  private int reference = -1;
+  private int reference = -2;
 
   public void setTargetRange(ByteRange targetRange) {
     this.targetRange = targetRange;
@@ -19,29 +19,32 @@ class SetPropertyOrStyle extends OverrideBase {
 
   @Override
   void write(BaseWriter writer, StateWriter stateWriter) {
-    if (reference > -1) {
-      if (reference == 0) {
+    if (reference == -2) {
+      writer.getOut().write(Amf3Types.OBJECT);
+      writer.addMarker(dataRange);
+      reference = -1;
+
+      if (targetRange == null) {
+        writer.writeObjectReference(stateWriter.TARGET, targetId);
+      }
+      else {
+        writer.addMarker(targetRange);
+      }
+
+      writer.endObject();
+    }
+    else {
+      if (reference == -1) {
         // set object reference
         final byte[] data = writer.getBlockOut().getBuffer();
         // skip class name
         final int referencePosition = skipUInt29(dataRange.getStart(), data);
         assert data[referencePosition] == 0 && data[referencePosition + 1] == 0;
-        reference = writer.allocateAbsoluteStaticObjectId() + 1;
-        writer.getOut().putShort(reference, referencePosition);
+        reference = writer.allocateAbsoluteStaticObjectId();
+        writer.getOut().putShort(reference + 1, referencePosition);
       }
 
       writer.writeObjectReference(reference);
-    }
-    else {
-      writer.addMarker(dataRange);
-      reference = 0;
-    }
-
-    if (targetRange == null) {
-      writer.writeObjectReference(stateWriter.TARGET, targetId);
-    }
-    else {
-      writer.addMarker(targetRange);
     }
   }
 

@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.io;
 
 public class ByteRange implements Marker {
+  private boolean used;
+
   private final int start;
   private int end;
 
@@ -37,5 +39,14 @@ public class ByteRange implements Marker {
   public void setOwnLength(int ownLength) {
     assert this.ownLength == -1 && ownLength > 0;
     this.ownLength = ownLength;
+  }
+
+  public boolean isUsed() {
+    return used;
+  }
+
+  public void markAsUsed() {
+    assert !used;
+    used = true;
   }
 }

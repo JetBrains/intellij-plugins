@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ class AddItems extends OverrideBase {
 
   @Override
   void write(BaseWriter writer, StateWriter stateWriter) {
+    writer.getOut().write(Amf3Types.OBJECT);
     writer.addMarker(dataRange);
 
     if (autoDestruction) {
@@ -37,6 +39,8 @@ class AddItems extends OverrideBase {
     for (DynamicObjectContext itemDeferredInstance : itemDeferredInstances) {
       stateWriter.writeDeferredInstance(itemDeferredInstance);
     }
+
+    writer.endObject();
   }
 
   public List<DynamicObjectContext> getItemDeferredInstances() {

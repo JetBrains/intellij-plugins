@@ -1,12 +1,10 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +18,10 @@ public class ProblemsHolder {
 
   private VirtualFile currentFile;
   private boolean handled;
+
+  public boolean isEmpty() {
+    return problems.isEmpty();
+  }
 
   private static Document getDocument(@NotNull PsiElement element) {
     VirtualFile virtualFile = element.getContainingFile().getVirtualFile();
@@ -55,12 +57,6 @@ public class ProblemsHolder {
     }
   }
 
-  public void add(Throwable e, VirtualFile mxmlFile) {
-    final ProblemDescriptor problemDescriptor = new ProblemDescriptor(e.getMessage(), mxmlFile);
-    problems.add(problemDescriptor);
-    LOG.error(LogMessageUtil.createEvent(e, mxmlFile));
-  }
-
   public void add(final PsiElement element, final RuntimeException e, final String propertyName) {
     String error;
     if (e instanceof NumberFormatException) {
@@ -80,23 +76,18 @@ public class ProblemsHolder {
     problems.add(problemDescriptor);
   }
 
-  public boolean isEmpty() {
-    return problems.isEmpty();
-  }
-
   public void add(Throwable e) {
     if (e instanceof InvalidPropertyException) {
       add(((InvalidPropertyException)e));
     }
     else {
-      LOG.error(LogMessageEx.createEvent(e.getMessage(), ExceptionUtil.getThrowableText(e), LogMessageUtil.createMxmlTitle(currentFile), null,
-                                         LogMessageUtil.createAttachment(currentFile)));
+      LogMessageUtil.processInternalError(e, currentFile);
     }
   }
 
   public void add(PsiElement element, String message) {
-      problems.add(new ProblemDescriptor(message, currentFile, getLineNumber(element)));
-    }
+    add(message, getLineNumber(element));
+  }
 
   public void add(String message, int lineNumber) {
     problems.add(new ProblemDescriptor(message, currentFile, lineNumber));
