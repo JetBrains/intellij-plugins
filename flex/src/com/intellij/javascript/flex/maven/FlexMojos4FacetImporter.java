@@ -2,6 +2,7 @@ package com.intellij.javascript.flex.maven;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.CommandLineBuilder;
+import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexFacet;
@@ -116,12 +117,12 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
       MavenRunnerParameters runnerParameters = new MavenRunnerParameters(false, workingDirPath,
                                                                          Collections.singletonList(CONFIGURATOR_GOAL),
                                                                          mavenProjectsManager.getExplicitProfiles());
-      final ProcessBuilder processBuilder;
+      final GeneralCommandLine commandLine;
       try {
         JavaParameters javaParameters = MavenExternalParameters.createJavaParameters(project, runnerParameters,
                                                                                      mavenProjectsManager.getGeneralSettings(),
                                                                                      mavenRunnerSettings);
-        processBuilder = new ProcessBuilder(CommandLineBuilder.createFromJavaParameters(javaParameters).getCommands());
+        commandLine = CommandLineBuilder.createFromJavaParameters(javaParameters);
       }
       catch (ExecutionException e) {
         // resolve maven home
@@ -131,13 +132,13 @@ public class FlexMojos4FacetImporter extends FlexMojos3FacetImporter {
         return;
       }
 
-      processBuilder.directory((new File(workingDirPath)));
-      processBuilder.redirectErrorStream(true);
+      commandLine.setWorkDirectory(workingDirPath);
+      commandLine.setRedirectErrorStream(true);
       final Process process;
       try {
-        process = processBuilder.start();
+        process = commandLine.createProcess();
       }
-      catch (IOException e) {
+      catch (ExecutionException e) {
         console.printException(e);
         MavenLog.LOG.warn(e);
         showWarning("", project);
