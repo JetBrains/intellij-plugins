@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.options;
 import com.intellij.lang.javascript.flex.FlexFacetType;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
+import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 
@@ -65,6 +66,10 @@ public class FlexIdeBuildConfiguration implements Cloneable {
       assert false;
       return null;
     }
+  }
+
+  public void materialize(Project project) {
+    DEPENDENCIES.materialize(project);
   }
 
   public static enum TargetPlatform {

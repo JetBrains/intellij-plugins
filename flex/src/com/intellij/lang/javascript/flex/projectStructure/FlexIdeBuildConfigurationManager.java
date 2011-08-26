@@ -1,7 +1,10 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.ProjectTopics;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.CompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.options.DependencyEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -9,12 +12,11 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.project.ModuleAdapter;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 @State(name = "FlexIdeBuildConfigurationManager", storages = {@Storage(file = "$MODULE_FILE$")})
 public class FlexIdeBuildConfigurationManager implements PersistentStateComponent<FlexIdeBuildConfigurationManager.State> {
@@ -25,6 +27,24 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
 
   public FlexIdeBuildConfigurationManager(final Module module) {
     myModule = module;
+
+    myModule.getProject().getMessageBus().connect(myModule).subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
+      @Override
+      public void beforeModuleRemoved(Project project, Module module) {
+        removeDependenciesOn(module);
+      }
+    });
+  }
+
+  private void removeDependenciesOn(Module module) {
+    for (FlexIdeBuildConfiguration configuration : myConfigurations) {
+      for (Iterator<DependencyEntry> i = configuration.DEPENDENCIES.getEntries().iterator(); i.hasNext(); ) {
+        DependencyEntry entry = i.next();
+        if (entry instanceof BuildConfigurationEntry && ((BuildConfigurationEntry)entry).getModule() == module) {
+          i.remove();
+        }
+      }
+    }
   }
 
   public static FlexIdeBuildConfigurationManager getInstance(final Module module) {
@@ -60,8 +80,10 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     }
     else {
       myConfigurations = state.myConfigurations.toArray(new FlexIdeBuildConfiguration[state.myConfigurations.size()]);
+      for (FlexIdeBuildConfiguration configuration : myConfigurations) {
+        configuration.materialize(myModule.getProject());
+      }
     }
-
     myModuleLevelCompilerOptions = state.myModuleLevelCompilerOptions.clone();
   }
 
