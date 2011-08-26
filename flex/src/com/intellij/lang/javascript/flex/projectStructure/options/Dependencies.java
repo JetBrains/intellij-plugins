@@ -5,6 +5,7 @@ import com.intellij.openapi.module.ModulePointerManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Tag;
 
 import java.util.ArrayList;
@@ -17,24 +18,32 @@ public class Dependencies implements Cloneable {
   public FlexIdeBuildConfiguration.ComponentSet COMPONENT_SET = FlexIdeBuildConfiguration.ComponentSet.SparkAndMx;
   public FlexIdeBuildConfiguration.FrameworkLinkage FRAMEWORK_LINKAGE = FlexIdeBuildConfiguration.FrameworkLinkage.Default;
 
-  private EntryInfo[] myEntriesInfos;
-  private List<DependencyEntry> myEntries;
+  private static final EntryInfo[] EMPTY = new EntryInfo[0];
 
+  private EntryInfo[] myEntriesInfos = EMPTY;
+  private List<DependencyEntry> myEntries = new ArrayList<DependencyEntry>();
+
+  @Tag("entry")
   public static class EntryInfo {
+    @Tag("module")
     public String MODULE_NAME;
+    @Tag("buildConfiguration")
     public String BC_NAME;
   }
 
-  @Tag("ENTRIES")
+  @Tag("entries")
+  @AbstractCollection(surroundWithTag = false)
   public EntryInfo[] getSerializedEntries() {
+    if (myEntries.isEmpty()) {
+      return EMPTY;
+    }
     return ContainerUtil.mapNotNull(myEntries.toArray(new DependencyEntry[myEntries.size()]), new Function<DependencyEntry, EntryInfo>() {
       @Override
       public EntryInfo fun(DependencyEntry dependency) {
         BuildConfigurationEntry d = (BuildConfigurationEntry)dependency;
         FlexIdeBuildConfiguration buildConfiguration = d.getBuildConfiguration();
         if (buildConfiguration == null) {
-          LOG.error("module or BC is unexpectedly missing");
-          // TODO looks like our model is inconsistent, we missed module or BC deletion
+          LOG.error("module or BC is unexpectedly missing"); // looks like our model is inconsistent, we missed module or BC deletion
           return null;
         }
 
@@ -48,7 +57,6 @@ public class Dependencies implements Cloneable {
 
   @SuppressWarnings("UnusedDeclaration")
   public void setSerializedEntries(EntryInfo[] entries) {
-    LOG.assertTrue(myEntries == null, "already materialized");
     myEntriesInfos = entries;
   }
 
@@ -57,7 +65,7 @@ public class Dependencies implements Cloneable {
   }
 
   public void materialize(Project project) {
-    LOG.assertTrue(myEntries == null && myEntriesInfos != null, "already materialized");
+    LOG.assertTrue(myEntries.isEmpty(), "already materialized");
     ModulePointerManager pointerManager = ModulePointerManager.getInstance(project);
     myEntries = new ArrayList<DependencyEntry>(myEntriesInfos.length);
     for (EntryInfo info : myEntriesInfos) {

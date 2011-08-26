@@ -31,6 +31,14 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
     myConfigurator = new FlexIdeBCConfigurator();
   }
 
+  public static FlexIdeModuleStructureExtension getInstance() {
+    return ModuleStructureExtension.EP_NAME.findExtension(FlexIdeModuleStructureExtension.class);
+  }
+
+  public FlexIdeBCConfigurator getConfigurator() {
+    return myConfigurator;
+  }
+
   public void reset() {
     myConfigurator.reset();
   }

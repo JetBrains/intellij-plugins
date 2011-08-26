@@ -15,6 +15,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.ui.navigation.Place;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -110,7 +111,10 @@ public class FlexIdeBCConfigurator {
   }
 
   public int getBCCount(final FlexIdeBuildConfiguration configuration) {
-    final Module module = myConfigurationsToModuleMap.get(configuration);
+    return getBCCount(myConfigurationsToModuleMap.get(configuration));
+  }
+
+  public int getBCCount(Module module) {
     return myModuleToConfigurablesMap.get(module).size();
   }
 
@@ -200,5 +204,9 @@ public class FlexIdeBCConfigurator {
       }
     }
     return false;
+  }
+
+  public List<FlexIdeBCConfigurable> getBCConfigurables(@NotNull Module module) {
+    return myModuleToConfigurablesMap.get(module);
   }
 }

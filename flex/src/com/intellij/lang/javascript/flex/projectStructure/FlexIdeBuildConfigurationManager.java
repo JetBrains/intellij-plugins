@@ -31,13 +31,16 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     myModule.getProject().getMessageBus().connect(myModule).subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
       @Override
       public void beforeModuleRemoved(Project project, Module module) {
-        removeDependenciesOn(module);
+        if (module != myModule) {
+          removeDependenciesOn(module);
+        }
       }
     });
   }
 
   private void removeDependenciesOn(Module module) {
     for (FlexIdeBuildConfiguration configuration : myConfigurations) {
+      // TODO remove 'optimize for' links
       for (Iterator<DependencyEntry> i = configuration.DEPENDENCIES.getEntries().iterator(); i.hasNext(); ) {
         DependencyEntry entry = i.next();
         if (entry instanceof BuildConfigurationEntry && ((BuildConfigurationEntry)entry).getModule() == module) {

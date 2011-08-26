@@ -88,6 +88,10 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     return "Build Configuration '" + myConfiguration.NAME + "'";
   }
 
+  public String getModuleName() {
+    return myModifiableRootModel.getModule().getName();
+  }
+
   public Icon getIcon() {
     return myConfiguration.getIcon();
   }
