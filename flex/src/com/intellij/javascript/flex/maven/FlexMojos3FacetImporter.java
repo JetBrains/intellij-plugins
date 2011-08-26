@@ -305,16 +305,12 @@ public class FlexMojos3FacetImporter extends FlexFacetImporter implements FlexCo
     if (myFlexConfigNotification != null) return; // already shown
     doShowFlexConfigWarning(project);
   }
-  
-  protected String getFlexmojosWarningDetailed() {
-    return FlexBundle.message("flexmojos.warning.detailed");
-  }
 
   private synchronized void doShowFlexConfigWarning(final Project project) {
     final NotificationListener listener = new NotificationListener() {
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         Messages
-          .showWarningDialog(project, getFlexmojosWarningDetailed(), FlexBundle.message("flexmojos.project.import"));
+          .showWarningDialog(project, FlexBundle.message("flexmojos.warning.detailed"), FlexBundle.message("flexmojos.project.import"));
         notification.expire();
       }
     };
