@@ -431,13 +431,21 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         if (valueAndSource.second == ValueSource.BC || !value.equals(valueAndSource.first)) {
           myModified = true;
           myCurrentOptions.put(info.ID, (String)value);
-          // to render option name correctly, as it might have become bold/plain, etc.
-          ((DefaultTreeModel)myTreeTable.getTree().getModel()).reload(treeNode);
+          reloadNodeOrGroup(myTreeTable.getTree(), treeNode);
         }
       }
     };
 
     return new ColumnInfo[]{optionColumn, valueColumn};
+  }
+
+  private static void reloadNodeOrGroup(final JTree tree, final DefaultMutableTreeNode treeNode) {
+    DefaultMutableTreeNode nodeToRefresh = treeNode;
+    DefaultMutableTreeNode parent;
+    while ((parent = ((DefaultMutableTreeNode)nodeToRefresh.getParent())).getUserObject() instanceof CompilerOptionInfo) {
+      nodeToRefresh = parent;
+    }
+    ((DefaultTreeModel)tree.getModel()).reload(nodeToRefresh);
   }
 
   private void updateTreeTable() {
@@ -584,7 +592,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
       if (nodeAndInfo.second != null) {
         myModified = true;
         myCurrentOptions.remove(nodeAndInfo.second.ID);
-        ((DefaultTreeModel)myTree.getModel()).reload(nodeAndInfo.first);
+        reloadNodeOrGroup(myTree, nodeAndInfo.first);
       }
     }
 
