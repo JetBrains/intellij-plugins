@@ -371,5 +371,8 @@ public class StatesTest extends BaseTestCase {
 
   public function IDEA_73547():void {
   }
+
+  public function IDEA_73550():void {
+  }
 }
 }

@@ -790,5 +790,9 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
   public function get systemManager():ISystemManager {
     return this;
   }
+
+  public function get layoutManager():Object {
+    return UIComponentGlobals.layoutManager;
+  }
 }
 }

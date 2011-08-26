@@ -5,6 +5,7 @@ import com.intellij.flex.uiDesigner.Document;
 import com.intellij.flex.uiDesigner.flex.ElementUtil;
 
 import flash.events.Event;
+
 import flash.geom.Point;
 
 import mx.core.ILayoutElement;
@@ -22,9 +23,18 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
   }
 
   private var elementUtil:ElementUtil;
+  private var layoutManager:Object;
+
   //noinspection JSUnusedGlobalSymbols
   public function set elementDocument(value:Document):void {
-    elementUtil = value == null ? null : value.systemManager.elementUtil;
+    if (value == null) {
+      elementUtil = null;
+      layoutManager = null;
+    }
+    else {
+      elementUtil = value.systemManager.elementUtil;
+      layoutManager = value.systemManager.layoutManager;
+    }
   }
   
   private var _elementLayoutChangeListeners:Vector.<ElementLayoutChangeListener>;
@@ -32,12 +42,11 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
     _elementLayoutChangeListeners = value;
   }
 
-  //public function setOffset(insets:Insets):void {
-  //  this.insets = insets;
-  //}
-
   public function attach(untypedElement:Object):void {
     this.element = untypedElement;
+    // IDEA-72373
+    layoutManager.phasedInstantiationDone = renderHandler;
+    // if layoutManager will be not participated in element validation
     addEventListener(Event.RENDER, renderHandler);
 
     getPosition();
@@ -47,7 +56,7 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
     updateSize(sharedPoint.x, sharedPoint.y);
   }
 
-  private function renderHandler(event:Event):void {
+  private function renderHandler(event:Event = null):void {
     getPosition();
     if (x != sharedPoint.x) {
       x = sharedPoint.x;
@@ -63,6 +72,7 @@ public class ElementToolContainer extends LayoutlessContainer implements Injecta
   }
   
   public function detach():void {
+    layoutManager.phasedInstantiationDone = null;
     removeEventListener(Event.RENDER, renderHandler);
     element = null;
   }

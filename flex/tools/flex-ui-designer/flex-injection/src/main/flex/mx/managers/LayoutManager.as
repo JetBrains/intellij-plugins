@@ -14,6 +14,9 @@ import mx.managers.layoutClasses.PriorityQueue;
 use namespace mx_internal;
 
 public class LayoutManager extends EventDispatcher implements ILayoutManager {
+  // IDEA-72373
+  public var phasedInstantiationDone:Function;
+
   private var uiErrorHandler:UiErrorHandler;
   private var displayDispatcher:DisplayObject;
 
@@ -417,6 +420,10 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
 
       if (fteTextFieldClass != null) {
         fteTextFieldClass.staticRenderHandler(null);
+      }
+
+      if (phasedInstantiationDone != null) {
+        phasedInstantiationDone();
       }
     }
     catch (e:Error) {

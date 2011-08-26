@@ -15,6 +15,7 @@ import mx.core.mx_internal;
 import spark.components.Group;
 import spark.components.supportClasses.Skin;
 import spark.core.IGraphicElement;
+import spark.primitives.supportClasses.GraphicElement;
 
 use namespace mx_internal;
 
@@ -181,6 +182,10 @@ internal final class ElementUtilImpl implements ElementUtil {
 
     // IDEA-71787, mx Button in mx Panel — actual parent is not Panel, but FlexSprite
     return (element is UIComponent ? UIComponent(element).$parent : element.parent).localToGlobal(result);
+  }
+
+  public function getDisplayObject(o:Object):DisplayObject {
+    return o is DisplayObject ? DisplayObject(o) : GraphicElement(o).owner;
   }
 }
 }

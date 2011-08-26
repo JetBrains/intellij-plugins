@@ -16,7 +16,16 @@ public class ElementManager extends EventDispatcher implements Injectable {
 
   public function set element(value:Object):void {
     if (value != element) {
+      if (_element != null) {
+        _document.systemManager.elementUtil.getDisplayObject(_element).removeEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
+      }
+      
       _element = value;
+      
+      if (_element != null) {
+        _document.systemManager.elementUtil.getDisplayObject(_element).addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
+      }
+      
       dispatchEvent(new Event("elementChanged"));
     }
   }
@@ -62,6 +71,12 @@ public class ElementManager extends EventDispatcher implements Injectable {
 
   public function fillBreadcrumbs(element:Object, source:Vector.<String>):int {
     return _document.systemManager.elementUtil.fillBreadcrumbs(element, source);
+  }
+
+  private function removedFromStageHandler(event:Event):void {
+    if (_element == event.currentTarget) {
+      element = null;
+    }
   }
 }
 } 

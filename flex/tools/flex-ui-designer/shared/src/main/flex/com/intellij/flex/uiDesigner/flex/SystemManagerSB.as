@@ -40,5 +40,7 @@ public interface SystemManagerSB {
   function setStyleManagerForTalentAdobeEngineers(value:Boolean):void;
 
   function get documentFactory():Object;
+
+  function get layoutManager():Object;
 }
 }

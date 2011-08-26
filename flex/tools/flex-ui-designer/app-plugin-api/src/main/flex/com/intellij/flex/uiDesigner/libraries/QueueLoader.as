@@ -4,8 +4,11 @@ import cocoa.util.FileUtil;
 import com.intellij.flex.uiDesigner.LoaderContentParentAdobePleaseDoNextStep;
 
 import flash.display.LoaderInfo;
+import flash.events.AsyncErrorEvent;
+import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
+import flash.events.SecurityErrorEvent;
 import flash.filesystem.File;
 import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
@@ -72,6 +75,8 @@ public class QueueLoader {
       loader = new MyLoader();
       loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadCompleteHandler);
       loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, loadErrorHandler);
+      loader.contentLoaderInfo.addEventListener(AsyncErrorEvent.ASYNC_ERROR, loadErrorHandler);
+      loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, loadErrorHandler);
     }
     else {
       loader = freeLoaders.pop();
@@ -81,7 +86,7 @@ public class QueueLoader {
     return loader;
   }
 
-  private static function loadErrorHandler(event:IOErrorEvent):void {
+  private static function loadErrorHandler(event:ErrorEvent):void {
     var f:File = File.applicationDirectory;
     trace(event.text, f.nativePath);
   }
