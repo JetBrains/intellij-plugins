@@ -488,7 +488,7 @@ public class FlexUtils {
       return getPathToFlexUnitTempDirectory() + "/" + config.MAIN_CLASS + ".mxml";
     }
 
-    return getPathToMainClassFile(config);
+    return getPathToMainClassFile(config.MAIN_CLASS, config.getModule());
   }
 
   public static String getPathToMainClassFile(final String mainClassFqn, final Module module) {
