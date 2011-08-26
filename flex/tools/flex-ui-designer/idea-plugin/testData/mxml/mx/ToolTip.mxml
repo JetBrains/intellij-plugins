@@ -1,0 +1,8 @@
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns="library://ns.adobe.com/flex/spark">
+  <fx:Declarations>
+    <mx:DateValidator source="{datalInput}" property="text"/>
+  </fx:Declarations>
+  <TextInput id="datalInput"/>
+  <TextInput id="datalInput2"/>
+  <Label text="hooooooooover me" toolTip="AAAAAAAA!!!!!!111111"/>
+</VGroup>

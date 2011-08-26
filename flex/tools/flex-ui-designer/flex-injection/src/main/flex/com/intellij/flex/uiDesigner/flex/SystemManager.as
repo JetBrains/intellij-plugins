@@ -41,7 +41,6 @@ import mx.managers.ISystemManager;
 import mx.managers.LayoutManager;
 import mx.managers.PopUpManagerImpl;
 import mx.managers.SystemManagerGlobals;
-import mx.managers.ToolTipManagerImpl;
 import mx.modules.ModuleManagerGlobals;
 import mx.resources.ResourceManager;
 import mx.styles.ISimpleStyleClient;
@@ -108,7 +107,7 @@ public class SystemManager extends Sprite implements ISystemManager, SystemManag
     ModuleManagerGlobals.managerSingleton = new ModuleManager();
 
     Singleton.registerClass(POP_UP_MANAGER_FQN, PopUpManagerImpl);
-    Singleton.registerClass(TOOL_TIP_MANAGER_FQN, ToolTipManagerImpl);
+    Singleton.registerClass(TOOL_TIP_MANAGER_FQN, ToolTipManager);
     //Singleton.registerClass("mx.styles::IStyleManager2", RootStyleManager);
     Singleton.registerClass("mx.resources::IResourceManager", ResourceManager);
     Singleton.registerClass("mx.managers::IDragManager", DragManagerImpl);
