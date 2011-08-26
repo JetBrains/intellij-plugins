@@ -91,55 +91,59 @@ public class FlexCompilationUtils {
       final String cssFileName = cssFilePath == null ? null : cssFilePath.substring(cssFilePath.lastIndexOf('/') + 1);
       final String postfix = cssFileName == null ? null : FileUtil.getNameWithoutExtension(cssFileName);
 
-      final String name = FlexCompilerHandler.generateConfigFileName(module, flexFacet, config.getType().getConfigFilePrefix(), postfix);
+      final String facetName = flexFacet == null ? null : flexFacet.getName();
+      final String name = FlexCompilerHandler.generateConfigFileName(module, facetName, config.getType().getConfigFilePrefix(), postfix);
       final String configText = FlexCompilerHandler.generateConfigFileText(module, config, cssFilePath);
-      final VirtualFile existingConfigFile = VfsUtil.findRelativeFile(name, FlexUtils.getFlexCompilerWorkDir(module.getProject(), null));
-
-      if (existingConfigFile == null || !Arrays.equals(configText.getBytes(), existingConfigFile.contentsToByteArray())) {
-        final Ref<VirtualFile> fileRef = new Ref<VirtualFile>();
-        final Ref<IOException> error = new Ref<IOException>();
-        final Runnable runnable = new Runnable() {
-          public void run() {
-            fileRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
-              public VirtualFile compute() {
-                try {
-                  final String baseDirPath = FlexUtils.getTempFlexConfigsDirPath();
-                  final VirtualFile baseDir = VfsUtil.createDirectories(baseDirPath);
-
-                  VirtualFile configFile = baseDir.findChild(name);
-                  if (configFile == null) {
-                    configFile = baseDir.createChildData(this, name);
-                  }
-                  VfsUtil.saveText(configFile, configText);
-                  return configFile;
-                }
-                catch (IOException ex) {
-                  error.set(ex);
-                }
-                return null;
-              }
-            }));
-          }
-        };
-
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-          runnable.run();
-        }
-        else {
-          ApplicationManager.getApplication()
-            .invokeAndWait(runnable, ProgressManager.getInstance().getProgressIndicator().getModalityState());
-        }
-
-        if (!error.isNull()) {
-          throw error.get();
-        }
-        result.add(fileRef.get());
-      }
-      else {
-        result.add(existingConfigFile);
-      }
+      result.add(getOrCreateConfigFile(module.getProject(), name, configText));
     }
     return result;
+  }
+
+  static VirtualFile getOrCreateConfigFile(final Project project, final String name, final String text) throws IOException {
+    final VirtualFile existingConfigFile = VfsUtil.findRelativeFile(name, FlexUtils.getFlexCompilerWorkDir(project, null));
+
+    if (existingConfigFile != null && Arrays.equals(text.getBytes(), existingConfigFile.contentsToByteArray())) {
+      return existingConfigFile;
+    }
+
+    final Ref<VirtualFile> fileRef = new Ref<VirtualFile>();
+    final Ref<IOException> error = new Ref<IOException>();
+    final Runnable runnable = new Runnable() {
+      public void run() {
+        fileRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+          public VirtualFile compute() {
+            try {
+              final String baseDirPath = FlexUtils.getTempFlexConfigsDirPath();
+              final VirtualFile baseDir = VfsUtil.createDirectories(baseDirPath);
+
+              VirtualFile configFile = baseDir.findChild(name);
+              if (configFile == null) {
+                configFile = baseDir.createChildData(this, name);
+              }
+              VfsUtil.saveText(configFile, text);
+              return configFile;
+            }
+            catch (IOException ex) {
+              error.set(ex);
+            }
+            return null;
+          }
+        }));
+      }
+    };
+
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      runnable.run();
+    }
+    else {
+      ApplicationManager.getApplication()
+        .invokeAndWait(runnable, ProgressManager.getInstance().getProgressIndicator().getModalityState());
+    }
+
+    if (!error.isNull()) {
+      throw error.get();
+    }
+    return fileRef.get();
   }
 
   static List<String> buildCommand(final List<String> compilerCommand,
@@ -171,6 +175,14 @@ public class FlexCompilationUtils {
       }
     }
 
+    return command;
+  }
+
+  static List<String> buildCommand(final List<String> compilerCommand, final List<VirtualFile> configFiles) {
+    final List<String> command = new ArrayList<String>(compilerCommand);
+    for (VirtualFile configFile : configFiles) {
+      command.add("-load-config=" + configFile.getPath());
+    }
     return command;
   }
 

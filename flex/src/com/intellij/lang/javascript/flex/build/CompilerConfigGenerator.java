@@ -14,10 +14,12 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PlatformUtils;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jdom.Element;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +34,10 @@ public class CompilerConfigGenerator {
   private final CompilerOptions myModuleLevelCompilerOptions;
   private final CompilerOptions myProjectLevelCompilerOptions;
 
-  public CompilerConfigGenerator(final Module module,
-                                 final String sdkRootPath,
-                                 final String sdkVersion,
-                                 final FlexIdeBuildConfiguration config) {
+  private CompilerConfigGenerator(final Module module,
+                                  final String sdkRootPath,
+                                  final String sdkVersion,
+                                  final FlexIdeBuildConfiguration config) {
     this.myModule = module;
     this.mySdkRootPath = sdkRootPath;
     this.mySdkVersion = sdkVersion;
@@ -45,7 +47,16 @@ public class CompilerConfigGenerator {
       FlexIdeProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions();
   }
 
-  public String generateConfigFile() {
+  public static VirtualFile getOrCreateConfigFile(final Module module,
+                                                  final String sdkRootPath,
+                                                  final String sdkVersion,
+                                                  final FlexIdeBuildConfiguration config) throws IOException {
+    final String text = new CompilerConfigGenerator(module, sdkRootPath, sdkVersion, config).generateConfigFileText();
+    final String name = FlexCompilerHandler.generateConfigFileName(module, config.NAME, PlatformUtils.getPlatformPrefix(), null);
+    return FlexCompilationUtils.getOrCreateConfigFile(module.getProject(), name, text);
+  }
+
+  private String generateConfigFileText() {
     final Element rootElement =
       new Element(FlexCompilerConfigFileUtil.FLEX_CONFIG, FlexApplicationComponent.HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG);
 
@@ -146,20 +157,29 @@ public class CompilerConfigGenerator {
     addOption(rootElement, CompilerOptionInfo.EXTERNAL_LIBRARY_INFO, globalLib);
 
     final StringBuilder libBuilder = new StringBuilder();
-    libBuilder.append("${FLEX_SDK}/frameworks/libs");
-    libBuilder.append("${FLEX_SDK}/frameworks/locale/{locale}");
+    libBuilder
+      .append("${FLEX_SDK}/frameworks/libs")
+      .append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)
+      .append("${FLEX_SDK}/frameworks/locale/{locale}");
 
     if (myConfig.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Desktop) {
-      libBuilder.append("${FLEX_SDK}/frameworks/libs/air");
+      libBuilder
+        .append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)
+        .append("${FLEX_SDK}/frameworks/libs/air");
     }
 
     if (StringUtil.compareVersionNumbers(mySdkVersion, "4.5") >= 0) {
       if (myConfig.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile) {
-        libBuilder.append("${FLEX_SDK}/frameworks/libs/mobile");
-        libBuilder.append("${FLEX_SDK}/frameworks/libs/air/servicemonitor.swc");
+        libBuilder
+          .append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)
+          .append("${FLEX_SDK}/frameworks/libs/mobile")
+          .append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)
+          .append("${FLEX_SDK}/frameworks/libs/air/servicemonitor.swc");
       }
       else {
-        libBuilder.append("${FLEX_SDK}/frameworks/libs/mx");
+        libBuilder
+          .append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)
+          .append("${FLEX_SDK}/frameworks/libs/mx");
       }
     }
 
@@ -226,8 +246,7 @@ public class CompilerConfigGenerator {
       addOption(rootElement, CompilerOptionInfo.MAIN_CLASS_INFO, pathToMainClassFile);
     }
 
-    final String outputPath = myConfig.OUTPUT_FOLDER + "/" + myConfig.OUTPUT_FILE_NAME;
-    addOption(rootElement, CompilerOptionInfo.OUTPUT_PATH_INFO, outputPath);
+    addOption(rootElement, CompilerOptionInfo.OUTPUT_PATH_INFO, myConfig.getOutputFilePath());
   }
 
   private void addOption(final Element rootElement,

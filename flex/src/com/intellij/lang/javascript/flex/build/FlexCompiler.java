@@ -6,6 +6,8 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.facet.FacetManager;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunConfiguration;
 import com.intellij.lang.javascript.flex.run.RunMainClassPrecompileTask;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
@@ -26,6 +28,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.DataInput;
@@ -100,6 +103,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   public ProcessingItem[] process(final CompileContext context, final ProcessingItem[] items) {
+    // todo switch to mxmlc/compc processes if different SDKs used.
     final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(context.getProject());
     final FlexCompilerProjectConfiguration flexCompilerConfiguration = FlexCompilerProjectConfiguration.getInstance(context.getProject());
 
@@ -174,6 +178,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
             }
           }
           appendCssCompilationTasks(compilationTasks, module, builtIn);
+
+          if (PlatformUtils.isFlexIde()) {
+            // not enabled in IDEA yet
+            appendFlexIdeBCCompilations(compilationTasks, module, builtIn);
+          }
         }
       }
 
@@ -184,6 +193,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
         if (builtIn) {
           try {
+            // todo take correct SDK from myFlexIdeConfig.DEPENDENCIES...
             final Sdk someSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(compilationTasks.iterator().next().getModule());
             flexCompilerHandler.getBuiltInFlexCompilerHandler().startCompilerIfNeeded(someSdk, context);
           }
@@ -231,6 +241,18 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                  : new MxmlcCompcCompilationTask.MxmlcCompcCssCompilationTask(module, flexFacet, config, cssFilePath));
           }
         }
+      }
+    }
+  }
+
+  private static void appendFlexIdeBCCompilations(final Collection<FlexCompilationTask> compilationTasks,
+                                                  final Module module,
+                                                  final boolean builtInCompiler) {
+    if (ModuleType.get(module) instanceof FlexModuleType) {
+      for (final FlexIdeBuildConfiguration config : FlexIdeBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+        compilationTasks.add(builtInCompiler
+                             ? new BuiltInCompilationTask(module, config)
+                             : new MxmlcCompcCompilationTask(module, config));
       }
     }
   }

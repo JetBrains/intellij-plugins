@@ -455,7 +455,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     final DefaultTreeModel treeModel = (DefaultTreeModel)tree.getModel();
     final DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode)treeModel.getRoot();
 
-    final CompilerOptionInfo[] optionInfos = CompilerOptionInfo.getRootOptionInfos();
+    final CompilerOptionInfo[] optionInfos = CompilerOptionInfo.getRootInfos();
     final boolean showAll = myShowAllOptionsCheckBox.isSelected();
 
     updateChildNodes(rootNode, optionInfos, showAll);

@@ -2,12 +2,15 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -15,91 +18,44 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class MxmlcCompcCompilationTask implements FlexCompilationTask {
-
-  private final Module myModule;
-  @Nullable private final FlexFacet myFlexFacet;
-  private final FlexBuildConfiguration myConfig;
-  private final String myPresentableName;
+public class MxmlcCompcCompilationTask extends FlexCompilationTask {
 
   private Process myProcess;
-  private boolean myFinished;
-  private boolean myCompilationFailed;
 
-  private List<VirtualFile> myConfigFiles;
-
-  public MxmlcCompcCompilationTask(final Module module, final @Nullable FlexFacet flexFacet, final FlexBuildConfiguration config) {
-    myModule = module;
-    myFlexFacet = flexFacet;
-    myConfig = config;
-    myPresentableName = module.getName() + (flexFacet == null ? "" : " (" + flexFacet.getName() + ")");
-    myFinished = false;
-    myCompilationFailed = false;
+  public MxmlcCompcCompilationTask(final @NotNull Module module, final @Nullable FlexFacet flexFacet, final @NotNull FlexBuildConfiguration oldConfig) {
+    super(module.getName() + (flexFacet == null ? "" : " (" + flexFacet.getName() + ")"), module, flexFacet, oldConfig, null);
   }
 
-  public void start(final FlexCompilationManager compilationManager) {
-    try {
-      myConfigFiles = createConfigFiles();
-
-      if (!compilationManager.isMake()) {
-        final VirtualFile configFile = myConfigFiles.get(myConfigFiles.size() - 1);
-        final String outputFilePath = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><output>");
-        FlexCompilationUtils.deleteCacheForFile(outputFilePath);
-      }
-
-      final List<String> compilerCommand = FlexCompilationUtils
-        .getMxmlcCompcCommand(myModule.getProject(), FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule),
-                              myConfig.OUTPUT_TYPE.equals(FlexBuildConfiguration.APPLICATION));
-      final List<String> command = FlexCompilationUtils.buildCommand(compilerCommand, myConfigFiles, myModule, myConfig);
-      final ProcessBuilder processBuilder = new ProcessBuilder(command);
-      processBuilder.redirectErrorStream(true);
-      processBuilder.directory(new File(FlexUtils.getFlexCompilerWorkDirPath(myModule.getProject(), null)));
-
-      compilationManager.addMessage(this, CompilerMessageCategory.INFORMATION, StringUtil.join(command, " "), null, -1, -1);
-
-      myProcess = processBuilder.start();
-      readInputStream(compilationManager);
-    }
-    catch (IOException e) {
-      compilationManager.addMessage(this, CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
-      myCompilationFailed = true;
-      cancel();
-    }
+  public MxmlcCompcCompilationTask(final @NotNull Module module, final @NotNull FlexIdeBuildConfiguration flexIdeConfig) {
+    super(module.getName() + " (" + flexIdeConfig.NAME + ")", module, null, null, flexIdeConfig);
   }
 
-  protected List<VirtualFile> createConfigFiles() throws IOException {
-    return FlexCompilationUtils.getConfigFiles(myConfig, myModule, myFlexFacet, null);
+  protected void doStart(final FlexCompilationManager compilationManager) throws IOException {
+    final boolean swf = myOldConfig != null
+                        ? myOldConfig.OUTPUT_TYPE.equals(FlexBuildConfiguration.APPLICATION)
+                        : myFlexIdeConfig.OUTPUT_TYPE != FlexIdeBuildConfiguration.OutputType.Library;
+    // todo take correct SDK from myFlexIdeConfig.DEPENDENCIES...
+    final Sdk sdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(myModule);
+
+    final List<String> compilerCommand = FlexCompilationUtils.getMxmlcCompcCommand(myModule.getProject(), sdk, swf);
+
+    final List<String> command = myOldConfig != null
+                                 ? FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles(), myModule, myOldConfig)
+                                 : FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles());
+    final ProcessBuilder processBuilder = new ProcessBuilder(command);
+    processBuilder.redirectErrorStream(true);
+    processBuilder.directory(new File(FlexUtils.getFlexCompilerWorkDirPath(myModule.getProject(), null)));
+
+    compilationManager.addMessage(this, CompilerMessageCategory.INFORMATION, StringUtil.join(command, " "), null, -1, -1);
+
+    myProcess = processBuilder.start();
+    readInputStream(compilationManager);
   }
 
-  public void cancel() {
+  protected void doCancel() {
     if (myProcess != null) {
       myProcess.destroy();
     }
-    myFinished = true;
-  }
-
-  public boolean isFinished() {
-    return myFinished;
-  }
-
-  public boolean isCompilationFailed() {
-    return myCompilationFailed;
-  }
-
-  public String getPresentableName() {
-    return myPresentableName;
-  }
-
-  public FlexBuildConfiguration getConfig() {
-    return myConfig;
-  }
-
-  public Module getModule() {
-    return myModule;
-  }
-
-  public List<VirtualFile> getConfigFiles() {
-    return myConfigFiles;
   }
 
   private void readInputStream(final FlexCompilationManager compilationManager) {
@@ -145,7 +101,7 @@ public class MxmlcCompcCompilationTask implements FlexCompilationTask {
     }
 
     protected List<VirtualFile> createConfigFiles() throws IOException {
-      return FlexCompilationUtils.getConfigFiles(super.myConfig, super.myModule, super.myFlexFacet, myCssFilePath);
+      return FlexCompilationUtils.getConfigFiles(myOldConfig, myModule, myFlexFacet, myCssFilePath);
     }
   }
 }

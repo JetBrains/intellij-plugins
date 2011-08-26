@@ -165,7 +165,7 @@ public class CompilerOptionInfo {
     return myChildOptionInfos;
   }
 
-  public static CompilerOptionInfo[] getRootOptionInfos() {
+  public static CompilerOptionInfo[] getRootInfos() {
     ensureLoaded();
     return ourRootInfos;
   }
@@ -175,6 +175,57 @@ public class CompilerOptionInfo {
     final CompilerOptionInfo info = ourIdToInfoMap.get(id);
     assert info != null : id;
     return info;
+  }
+
+  public String getDefaultValue(final String sdkVersion, final FlexIdeBuildConfiguration.TargetPlatform targetPlatform) {
+    assert !isGroup() : DISPLAY_NAME;
+
+    if (SPECIAL_DEFAULT_VALUE.equals(myDefaultValue)) {
+      if ("compiler.accessible".equals(ID)) {
+        return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile
+               ? "false"
+               : StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 ? "true" : "false";
+      }
+      else if ("compiler.locale".equals(ID)) {
+        return "en_US";
+      }
+      else if ("compiler.preloader".equals(ID)) {
+        return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile ? "spark.preloaders.SplashScreen" : "";
+      }
+      else if ("compiler.theme".equals(ID)) {
+        if (targetPlatform != FlexIdeBuildConfiguration.TargetPlatform.Desktop && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0) {
+          return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile
+                 ? "${FLEX_SDK}/frameworks/themes/Mobile/mobile.swc"
+                 : "${FLEX_SDK}/frameworks/themes/Spark/spark.css";
+        }
+        return "";
+      }
+      else if ("swf-version".equals(ID)) {
+        return "11";
+      }
+      else if ("compiler.fonts.managers".equals(ID)) {
+        return sdkVersion != null && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0
+               ? "flash.fonts.JREFontManager" + LIST_ENTRIES_SEPARATOR +
+                 "flash.fonts.BatikFontManager" + LIST_ENTRIES_SEPARATOR +
+                 "flash.fonts.AFEFontManager" + LIST_ENTRIES_SEPARATOR +
+                 "flash.fonts.CFFFontManager"
+
+               : "flash.fonts.JREFontManager" + LIST_ENTRIES_SEPARATOR +
+                 "flash.fonts.AFEFontManager" + LIST_ENTRIES_SEPARATOR +
+                 "flash.fonts.BatikFontManager";
+      }
+      else if ("static-link-runtime-shared-libraries".equals(ID)) {
+        return "false";
+      }
+
+      assert false : ID;
+    }
+    return myDefaultValue;
+  }
+
+  public static Collection<CompilerOptionInfo> getOptionsWithSpecialValues() {
+    ensureLoaded();
+    return ourOptionsWithSpecialValues;
   }
 
   private static void ensureLoaded() {
@@ -300,55 +351,5 @@ public class CompilerOptionInfo {
 
     assert !result.isEmpty() : element.getName();
     return result.toArray(new ListElement[result.size()]);
-  }
-
-  public String getDefaultValue(final String sdkVersion, final FlexIdeBuildConfiguration.TargetPlatform targetPlatform) {
-    assert !isGroup() : DISPLAY_NAME;
-
-    if (SPECIAL_DEFAULT_VALUE.equals(myDefaultValue)) {
-      if ("compiler.accessible".equals(ID)) {
-        return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile
-               ? "false"
-               : StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 ? "true" : "false";
-      }
-      else if ("compiler.locale".equals(ID)) {
-        return "en_US";
-      }
-      else if ("compiler.preloader".equals(ID)) {
-        return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile ? "spark.preloaders.SplashScreen" : "";
-      }
-      else if ("compiler.theme".equals(ID)) {
-        if (targetPlatform != FlexIdeBuildConfiguration.TargetPlatform.Desktop && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0) {
-          return targetPlatform == FlexIdeBuildConfiguration.TargetPlatform.Mobile
-                 ? "${FLEX_SDK}/frameworks/themes/Mobile/mobile.swc"
-                 : "${FLEX_SDK}/frameworks/themes/Spark/spark.css";
-        }
-        return "";
-      }
-      else if ("swf-version".equals(ID)) {
-        return "11";
-      }
-      else if ("compiler.fonts.managers".equals(ID)) {
-        return sdkVersion != null && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0
-               ? "flash.fonts.JREFontManager" + LIST_ENTRIES_SEPARATOR +
-                 "flash.fonts.BatikFontManager" + LIST_ENTRIES_SEPARATOR +
-                 "flash.fonts.AFEFontManager" + LIST_ENTRIES_SEPARATOR +
-                 "flash.fonts.CFFFontManager"
-
-               : "flash.fonts.JREFontManager" + LIST_ENTRIES_SEPARATOR +
-                 "flash.fonts.AFEFontManager" + LIST_ENTRIES_SEPARATOR +
-                 "flash.fonts.BatikFontManager";
-      }
-      else if ("static-link-runtime-shared-libraries".equals(ID)) {
-        return "false";
-      }
-
-      assert false : ID;
-    }
-    return myDefaultValue;
-  }
-
-  public static Collection<CompilerOptionInfo> getOptionsWithSpecialValues() {
-    return ourOptionsWithSpecialValues;
   }
 }

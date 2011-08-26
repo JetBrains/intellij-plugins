@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.RunMainClassPrecompileTask;
 import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
 import com.intellij.lang.javascript.flex.sdk.AirSdkType;
@@ -263,12 +264,12 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
   }
 
   static String generateConfigFileName(final Module module,
-                                       final @Nullable FlexFacet flexFacet,
+                                       final @Nullable String configName,
                                        final String prefix,
                                        final @Nullable String postfix) {
     final String hash1 = Integer.toHexString((SystemProperties.getUserName() + module.getProject().getName()).hashCode()).toUpperCase();
-    final String hash2 = Integer.toHexString((module.getName() + (flexFacet == null ? "" : flexFacet.getName())).hashCode()).toUpperCase();
-    return prefix + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + postfix + ".xml"));
+    final String hash2 = Integer.toHexString((module.getName() + StringUtil.notNullize(configName)).hashCode()).toUpperCase();
+    return prefix + "-" + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + postfix + ".xml"));
   }
 
   private static void deleteTempFlexConfigFiles(final String projectName) {
@@ -642,7 +643,8 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         removeIncrementalCommandFor(generatedConfigFile);
       }
       if (generatedConfigFile == null || !generatedConfigFile.isValid() || regenerateTempConfig) {
-        @NonNls final String name = generateConfigFileName(module, flexFacet, config.getType().getConfigFilePrefix(), null);
+        final String facetName = flexFacet == null ? null : flexFacet.getName();
+        @NonNls final String name = generateConfigFileName(module, facetName, config.getType().getConfigFilePrefix(), null);
 
         final Ref<VirtualFile> fileRef = new Ref<VirtualFile>();
         final Ref<IOException> error = new Ref<IOException>();

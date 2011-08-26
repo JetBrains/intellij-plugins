@@ -112,11 +112,8 @@ public class FlexCompilationManager {
       myCompileContext.addMessage(category, prefix + message, url, lineNum, columnNum);
 
       if (message.contains(OUT_OF_MEMORY) || message.contains(JAVA_HEAP_SPACE)) {
-        final Sdk flexSdk = FlexUtils.getFlexSdkForFlexModuleOrItsFlexFacets(task.getModule());
-        if (flexSdk != null) {
-          myCompileContext
-            .addMessage(CompilerMessageCategory.ERROR, prefix + FlexBundle.message("increase.flex.compiler.heap"), null, -1, -1);
-        }
+        myCompileContext
+          .addMessage(CompilerMessageCategory.ERROR, prefix + FlexBundle.message("increase.flex.compiler.heap"), null, -1, -1);
       }
     }
   }
@@ -147,7 +144,7 @@ public class FlexCompilationManager {
           addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.successfull"), null, -1, -1);
         }
 
-        if (task.getConfig().getType() == FlexBuildConfiguration.Type.Default) {
+        if (task.useCache()) {
           final Module module = task.getModule();
           if (task.isCompilationFailed()) {
             myCompilerDependenciesCache.markModuleAndDependentModulesDirty(module);
@@ -257,20 +254,14 @@ public class FlexCompilationManager {
       if (taskToStart != null) {
         myNotStartedTasks.remove(taskToStart);
 
-        if (taskToStart.getConfig().getType() == FlexBuildConfiguration.Type.Default &&
-            isMake() &&
-            myCompilerDependenciesCache.isNothingChangedSincePreviousCompilation(taskToStart.getModule())) {
+        if (taskToStart.useCache() && isMake()
+            && myCompilerDependenciesCache.isNothingChangedSincePreviousCompilation(taskToStart.getModule())) {
           addMessage(taskToStart, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.skipped.because.nothing.changed"),
                      null, -1, -1);
           taskToStart.cancel();
           myFinishedTasks.add(taskToStart);
         }
         else {
-          final FlexBuildConfiguration config = taskToStart.getConfig();
-          if (!config.USE_CUSTOM_CONFIG_FILE) {
-            FlexCompilationUtils.ensureOutputFileWritable(myCompileContext.getProject(), config.getOutputFileFullPath());
-          }
-
           taskToStart.start(this);
           myInProgressTasks.add(taskToStart);
         }

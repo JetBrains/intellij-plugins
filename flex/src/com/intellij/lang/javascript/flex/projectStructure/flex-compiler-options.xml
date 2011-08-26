@@ -1,6 +1,6 @@
 <options>
   <!-- Basic (mostly) -->
-  <option id="compiler.debug" displayName="Debug" type="Boolean" default="true"/>
+  <!--<option id="compiler.debug" displayName="Debug" type="Boolean" default="true"/>-->
   <option id="compiler.define" displayName="Conditional compiler definitions" type="List">
     <listElement name="name" type="String"/>
     <listElement name="value" type="String"/>
@@ -14,8 +14,8 @@
     <listElement name="manifest" type="File" fileExtension="xml"/>
   </option>
   <group displayName="Include">
-    <option id="include-classes" displayName="Include classes" type="IncludeClasses" fileExtension="xml" okForSWF="false" default="All"/>
-    <option id="include-file" displayName="Include files" type="IncludeFiles" okForSWF="false"/>
+    <!--<option id="include-classes" displayName="Include classes" type="IncludeClasses" fileExtension="xml" okForSWF="false" default="All"/>-->
+    <!--<option id="include-file" displayName="Include files" type="IncludeFiles" okForSWF="false"/> -->
     <option id="include-inheritance-dependencies-only" displayName="Include inheritance dependencies only" type="Boolean" advanced="true" default="false"/>
     <option id="include-lookup-only" displayName="Include 'lookupOnly' manifest entries" type="Boolean" okForSWF="false" advanced="true" default="false"/>
     <option id="include-resource-bundles" displayName="Include resource bundles" type="List" advanced="true">

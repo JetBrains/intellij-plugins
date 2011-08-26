@@ -42,6 +42,10 @@ public class FlexIdeBuildConfiguration implements Cloneable {
         return FlexFacetType.ourFlexIcon;
     }
   }
+  
+  public String getOutputFilePath() {
+    return OUTPUT_FOLDER + (OUTPUT_FOLDER.isEmpty() ? "" : "/") + OUTPUT_FILE_NAME;
+  }
 
   public FlexIdeBuildConfiguration clone() {
     try {

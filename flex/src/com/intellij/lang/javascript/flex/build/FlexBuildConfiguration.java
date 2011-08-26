@@ -42,7 +42,7 @@ import java.util.List;
 public class FlexBuildConfiguration implements ModuleComponent, PersistentStateComponent<FlexBuildConfiguration>, Cloneable {
 
   public enum Type {
-    Default("idea-flex-"), FlexUnit("idea-flexunit-"), OverriddenMainClass("idea-flex-main-class-");
+    Default("idea-flex"), FlexUnit("idea-flexunit"), OverriddenMainClass("idea-flex-main-class");
 
     @NonNls private final String myConfigFilePrefix;
 
