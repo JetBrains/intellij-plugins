@@ -26,7 +26,7 @@ public class JstdConfigFileLoader extends FileTypeFactory {
     JstdConfigFileType jstdConfigFileType = JstdConfigFileType.INSTANCE;
     consumer.consume(jstdConfigFileType, jstdConfigFileType.getDefaultExtension());
 
-    OtherConfigFileType otherConfigFileType = OtherConfigFileType.INSTANCE;
-    consumer.consume(otherConfigFileType, "");
+    //OtherConfigFileType otherConfigFileType = OtherConfigFileType.INSTANCE;
+    //consumer.consume(otherConfigFileType, "");
   }
 }

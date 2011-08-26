@@ -15,18 +15,24 @@
  */
 package com.google.jstestdriver.idea.config;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.jstestdriver.idea.util.CastUtils;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.impl.source.tree.TreeElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.YAMLTokenTypes;
-import org.jetbrains.yaml.psi.YAMLDocument;
-import org.jetbrains.yaml.psi.YAMLFile;
-import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.*;
 
 import java.util.List;
 import java.util.Set;
@@ -41,12 +47,12 @@ public class JstdConfigFileAnnotator implements Annotator {
     }
   }
 
-  public void annotateFile(@NotNull YAMLFile yamlFile, @NotNull AnnotationHolder holder) {
+  public static void annotateFile(@NotNull YAMLFile yamlFile, @NotNull AnnotationHolder holder) {
     List<YAMLDocument> documents = yamlFile.getDocuments();
     boolean annotated = false;
     for (YAMLDocument document : documents) {
       if (annotated) {
-        holder.createErrorAnnotation(document, "JsTestDriver Configuration File must have one document");
+        holder.createErrorAnnotation(document, "JsTestDriver Configuration File must have only one document");
       } else {
         annotateDocument(document, holder);
       }
@@ -54,36 +60,127 @@ public class JstdConfigFileAnnotator implements Annotator {
     }
   }
 
-  private void annotateDocument(YAMLDocument document, final AnnotationHolder holder) {
+  private static void annotateDocument(YAMLDocument yamlDocument, final AnnotationHolder holder) {
+    final Document document = PsiDocumentManager.getInstance(yamlDocument.getProject()).getDocument(yamlDocument.getContainingFile());
+    if (document == null) {
+      return;
+    }
+    List<Group> groups = buildGroups(yamlDocument, document);
+    if (groups == null) {
+      return;
+    }
+
     final Set<String> visitedKeys = Sets.newHashSet();
-    document.acceptChildren(new PsiElementVisitor() {
-      @Override
-      public void visitElement(PsiElement childElement) {
-        YAMLKeyValue keyValue = CastUtils.tryCast(childElement, YAMLKeyValue.class);
-        if (keyValue != null) {
-          PsiElement keyElement = keyValue.getKey();
-          String keyStr = keyElement.getText();
-          if (keyStr.endsWith(":")) {
-            keyStr = keyStr.substring(0, keyStr.length() - 1);
-          }
-          if (!JstdConfigFileUtils.VALID_TOP_LEVEL_KEYS.contains(keyStr)) {
-            holder.createErrorAnnotation(keyElement, "Unexpected key '" + keyStr + "'");
-          }
-          if (!visitedKeys.add(keyStr)) {
-            holder.createErrorAnnotation(keyElement, "Duplicated '" + keyStr + "' key");
+    for (Group group : groups) {
+      YAMLKeyValue keyValue = group.getKeyValue();
+      if (keyValue != null) {
+        PsiElement keyElement = keyValue.getKey();
+        String keyStr = keyValue.getKeyText();
+        if (!JstdConfigFileUtils.VALID_TOP_LEVEL_KEYS.contains(keyStr)) {
+          holder.createErrorAnnotation(keyElement, "Unexpected key '" + keyStr + "'");
+        }
+        if (!visitedKeys.add(keyStr)) {
+          holder.createErrorAnnotation(keyElement, "Duplicated '" + keyStr + "' key");
+        }
+        if (JstdConfigFileUtils.KEYS_WITH_INNER_SEQUENCE.contains(keyStr)) {
+          annotateSequenceContent(keyValue, holder, document);
+        }
+      } else {
+        PsiElement element = group.getUnexpectedElement();
+        if (element instanceof ASTNode) {
+          ASTNode astNode = (ASTNode) element;
+          if (astNode.getElementType() != YAMLTokenTypes.EOL && astNode.getElementType() != YAMLTokenTypes.INDENT) {
+            holder.createErrorAnnotation(astNode, "Unexpected element '" + astNode.getText() + "'");
           }
         } else {
-          if (childElement instanceof TreeElement) {
-            TreeElement treeElement = (TreeElement) childElement;
-            if (treeElement.getElementType() != YAMLTokenTypes.EOL) {
-              holder.createErrorAnnotation(childElement, "Unexpected element");
-            }
-          } else {
-            holder.createErrorAnnotation(childElement, "Unexpected element");
+          holder.createErrorAnnotation(element, "Unexpected element '" + element.getText() + "'");
+        }
+      }
+    }
+  }
+
+  private static void annotateSequenceContent(YAMLKeyValue keyValue, final AnnotationHolder holder, @NotNull final Document document) {
+    YAMLCompoundValue compoundValue = CastUtils.tryCast(keyValue.getValue(), YAMLCompoundValue.class);
+    if (compoundValue == null) {
+      holder.createErrorAnnotation(keyValue, "YAML sequence is expected here");
+      return;
+    }
+    ASTNode firstIndent = CastUtils.tryCast(compoundValue.getPrevSibling(), ASTNode.class);
+    if (firstIndent == null || firstIndent.getElementType() != YAMLTokenTypes.INDENT) {
+      int offset = compoundValue.getTextRange().getStartOffset();
+      holder.createErrorAnnotation(TextRange.create(offset, offset), "Indent is expected here");
+      return;
+    }
+    final String indent = StringUtil.notNullize(firstIndent.getText());
+    compoundValue.acceptChildren(new PsiElementVisitor() {
+      @Override
+      public void visitElement(PsiElement element) {
+        YAMLSequence sequence = CastUtils.tryCast(element, YAMLSequence.class);
+        if (sequence != null) {
+          int startLine = document.getLineNumber(sequence.getTextRange().getStartOffset());
+          int endLine = document.getLineNumber(sequence.getTextRange().getEndOffset());
+          if (startLine < endLine - 1) {
+            holder.createErrorAnnotation(sequence, "Unexpected multiline path");
           }
+          return;
+        }
+        ASTNode astNode = CastUtils.tryCast(element, ASTNode.class);
+        boolean error = true;
+        if (astNode != null) {
+          IElementType type = astNode.getElementType();
+          if (type == YAMLTokenTypes.INDENT && !indent.equals(astNode.getText())) {
+            holder.createErrorAnnotation(astNode, "All indents should be equal-sized");
+          }
+          error = type != YAMLTokenTypes.INDENT && type != YAMLTokenTypes.EOL && type != YAMLTokenTypes.WHITESPACE;
+        }
+        if (error) {
+          holder.createErrorAnnotation(element, "YAML sequence is expected here");
         }
       }
     });
+  }
+
+  @Nullable
+  private static List<Group> buildGroups(@NotNull YAMLDocument yamlDocument,
+                                         @NotNull final Document document) {
+    final List<Group> groups = Lists.newArrayList();
+    final Ref<Integer> endLineOfPreviousKeyValueRef = Ref.create(-1);
+    yamlDocument.acceptChildren(new PsiElementVisitor() {
+      @Override
+      public void visitElement(PsiElement element) {
+        int line = document.getLineNumber(element.getTextRange().getStartOffset());
+        if (line == endLineOfPreviousKeyValueRef.get()) {
+          return;
+        }
+        if (element instanceof YAMLKeyValue) {
+          YAMLKeyValue yamlKeyValue = (YAMLKeyValue) element;
+          int endLine = document.getLineNumber(yamlKeyValue.getTextRange().getEndOffset());
+          endLineOfPreviousKeyValueRef.set(endLine);
+          groups.add(new Group(yamlKeyValue, null));
+        } else {
+          groups.add(new Group(null, element));
+        }
+      }
+    });
+    return groups;
+  }
+
+  private static class Group {
+    private final YAMLKeyValue myKeyValue;
+    private final PsiElement myUnexpectedElement;
+
+    private Group(YAMLKeyValue keyValue, PsiElement unexpectedElement) {
+      myKeyValue = keyValue;
+      myUnexpectedElement = unexpectedElement;
+    }
+
+    public YAMLKeyValue getKeyValue() {
+      return myKeyValue;
+    }
+
+    public PsiElement getUnexpectedElement() {
+      return myUnexpectedElement;
+    }
   }
 
 }

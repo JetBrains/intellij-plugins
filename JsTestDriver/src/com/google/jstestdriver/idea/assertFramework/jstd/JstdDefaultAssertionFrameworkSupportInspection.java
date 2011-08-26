@@ -7,6 +7,7 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.*;
 import com.intellij.lang.javascript.inspections.JSInspection;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
 import com.intellij.openapi.util.TextRange;
@@ -21,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 public class JstdDefaultAssertionFrameworkSupportInspection extends JSInspection {
+
+  private static final Logger LOG = Logger.getInstance(JstdDefaultAssertionFrameworkSupportInspection.class);
 
   private static final AddJstdLibraryLocalQuickFix ADD_JSTD_LIBRARY_LOCAL_QUICK_FIX = new AddJstdLibraryLocalQuickFix();
 

@@ -15,101 +15,212 @@
  */
 package com.google.jstestdriver.idea.config;
 
+import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.LookupItem;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.patterns.ElementPattern;
+import com.intellij.patterns.PlatformPatterns;
+import com.intellij.patterns.VirtualFilePattern;
+import com.intellij.psi.PsiElement;
+import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yaml.psi.YAMLCompoundValue;
 import org.jetbrains.yaml.psi.YAMLDocument;
 import org.jetbrains.yaml.psi.YAMLKeyValue;
 import org.jetbrains.yaml.psi.YAMLSequence;
 
-import com.intellij.codeInsight.completion.CompletionContributor;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionProvider;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.LookupItem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.patterns.PsiElementPattern;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.ProcessingContext;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class JstdConfigFileCompletionContributor extends CompletionContributor {
 
+  private static final char UNIX_PATH_SEPARATOR = '/';
+  private static final char WINDOWS_PATH_SEPARATOR = '\\';
+  private static final String IDENTIFIER_END_PATTERN = ".-:";
+
   public JstdConfigFileCompletionContributor() {
-    extend(CompletionType.BASIC, getElementPattern(), new CompletionProvider<CompletionParameters>() {
+    ElementPattern<PsiElement> place = PlatformPatterns.psiElement().inVirtualFile(
+        new VirtualFilePattern().ofType(JstdConfigFileType.INSTANCE)
+    );
+    extend(CompletionType.BASIC, place, new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
                                     ProcessingContext context,
                                     @NotNull CompletionResultSet result) {
         PsiElement element = parameters.getPosition();
-        String prefix = element.getText().substring(0, parameters.getOffset() - element.getTextRange().getStartOffset());
-        YAMLDocument document = JstdConfigFileUtils.getVerifiedHierarchyHead(
-            element.getParent(),
-            new Class[] {
-                YAMLSequence.class,
-                YAMLCompoundValue.class,
-                YAMLKeyValue.class
-            },
-            YAMLDocument.class
-        );
-        if (document != null) {
-          VirtualFile basePath = JstdConfigFileUtils.extractBasePath(document);
-          if (basePath != null) {
-            addPathCompletions(result, prefix, basePath);
-          }
-        }
-        document = JstdConfigFileUtils.getVerifiedHierarchyHead(
-            element.getParent(),
-            new Class[] {YAMLKeyValue.class},
-            YAMLDocument.class
-        );
-        if (document != null) {
-          addTopLevelKeysCompletions(result, prefix);
-        }
+        int prefixLength = parameters.getOffset() - element.getTextRange().getStartOffset();
+        BipartiteString caretBipartiteElementText = splitByPrefixLength(element.getText(), prefixLength);
+        addPathCompletionsIfNeeded(result, element, caretBipartiteElementText);
+        addTopLevelKeysCompletionIfNeeded(result, element, caretBipartiteElementText);
       }
     });
   }
 
-  private void addTopLevelKeysCompletions(CompletionResultSet result, String prefix) {
+  public void beforeCompletion(@NotNull CompletionInitializationContext context) {
+    final OffsetMap offsetMap = context.getOffsetMap();
+    int idEnd = offsetMap.getOffset(CompletionInitializationContext.IDENTIFIER_END_OFFSET);
+    final String text = context.getFile().getText();
+    boolean acceptedChar = true;
+    while (idEnd < text.length() && acceptedChar) {
+      final char ch = text.charAt(idEnd);
+      acceptedChar = Character.isJavaIdentifierPart(ch);
+      acceptedChar = acceptedChar || IDENTIFIER_END_PATTERN.indexOf(ch) >= 0;
+      boolean stop = ch == UNIX_PATH_SEPARATOR || ch == WINDOWS_PATH_SEPARATOR;
+      acceptedChar = acceptedChar || stop;
+      if (acceptedChar) {
+        idEnd++;
+      }
+      if (stop) {
+        break;
+      }
+    }
+    offsetMap.addOffset(CompletionInitializationContext.IDENTIFIER_END_OFFSET, idEnd);
+  }
+
+  private static void addTopLevelKeysCompletionIfNeeded(@NotNull CompletionResultSet result,
+                                                        @NotNull PsiElement element,
+                                                        @NotNull BipartiteString caretBipartiteElementText) {
+    YAMLDocument document = JstdConfigFileUtils.getVerifiedHierarchyHead(
+        element.getParent(),
+        new Class[]{YAMLKeyValue.class},
+        YAMLDocument.class
+    );
+    if (document == null) {
+      document = JstdConfigFileUtils.getVerifiedHierarchyHead(
+          element.getParent(),
+          new Class[]{},
+          YAMLDocument.class
+      );
+    }
+    if (document != null) {
+      addTopLevelKeysCompletions(result, caretBipartiteElementText.getPrefix());
+    }
+  }
+
+  private static void addPathCompletionsIfNeeded(@NotNull CompletionResultSet result,
+                                                 @NotNull PsiElement element,
+                                                 @NotNull BipartiteString caretBipartiteElementText) {
+    YAMLDocument document = JstdConfigFileUtils.getVerifiedHierarchyHead(
+        element.getParent(),
+        new Class[]{
+            YAMLSequence.class,
+            YAMLCompoundValue.class,
+            YAMLKeyValue.class
+        },
+        YAMLDocument.class
+    );
+    if (document != null) {
+      VirtualFile basePath = JstdConfigFileUtils.extractBasePath(document);
+      if (basePath != null) {
+        addPathCompletions(result, caretBipartiteElementText, basePath);
+      }
+    }
+  }
+
+  private static void addPathCompletions(CompletionResultSet result,
+                                         @NotNull BipartiteString caretBipartiteElementText,
+                                         @NotNull VirtualFile basePath) {
+    BipartiteString[] allSplits = new BipartiteString[]{
+        splitByLastIndexOfSeparatorOccurrence(caretBipartiteElementText.getPrefix(), UNIX_PATH_SEPARATOR),
+        splitByLastIndexOfSeparatorOccurrence(caretBipartiteElementText.getPrefix(), WINDOWS_PATH_SEPARATOR)
+    };
+    Arrays.sort(allSplits, new Comparator<BipartiteString>() {
+      @Override
+      public int compare(BipartiteString o1, BipartiteString o2) {
+        return o1.getSuffix().length() - o2.getSuffix().length();
+      }
+    });
+    BipartiteString firstValid = null;
+    VirtualFile parentFile = null;
+    for (BipartiteString bipartite : allSplits) {
+      parentFile = basePath.findFileByRelativePath(FileUtil.toSystemIndependentName(bipartite.getPrefix()));
+      if (parentFile != null) {
+        firstValid = bipartite;
+        break;
+      }
+    }
+    if (firstValid != null) {
+      result = result.withPrefixMatcher(firstValid.getSuffix());
+      VirtualFile[] children = parentFile.getChildren();
+      char dirSeparatorSuffix = extractDirectoryTrailingFileSeparator(caretBipartiteElementText);
+      for (VirtualFile child : children) {
+        String name = child.getName();
+        if (child.isDirectory()) {
+          name += dirSeparatorSuffix;
+        }
+        result.addElement(LookupItem.fromString(name));
+      }
+    }
+  }
+
+  private static Character extractPrevalentSeparator(String str) {
+    boolean unix = str.indexOf(UNIX_PATH_SEPARATOR) >= 0;
+    boolean windows = str.indexOf(WINDOWS_PATH_SEPARATOR) >= 0;
+    if (unix && !windows) {
+      return UNIX_PATH_SEPARATOR;
+    }
+    if (!unix && windows) {
+      return WINDOWS_PATH_SEPARATOR;
+    }
+    return null;
+  }
+
+  private static char extractDirectoryTrailingFileSeparator(BipartiteString caretBipartiteElementText) {
+    Character prefixPrevalentSeparator = extractPrevalentSeparator(caretBipartiteElementText.getPrefix());
+    if (prefixPrevalentSeparator != null) {
+      return prefixPrevalentSeparator;
+    }
+    Character suffixPrevalentSeparator = extractPrevalentSeparator(caretBipartiteElementText.getSuffix());
+    if (suffixPrevalentSeparator != null) {
+      return suffixPrevalentSeparator;
+    }
+    return File.separatorChar;
+  }
+
+  private static void addTopLevelKeysCompletions(CompletionResultSet result, String prefix) {
     for (String key : JstdConfigFileUtils.VALID_TOP_LEVEL_KEYS) {
       if (key.startsWith(prefix)) {
         result = result.withPrefixMatcher(prefix);
-        result.addElement(LookupItem.fromString(key));
+        result.addElement(LookupItem.fromString(key + ":"));
       }
     }
   }
 
-  private void addPathCompletions(CompletionResultSet result, @NotNull String pathPrefix, @NotNull VirtualFile basePath) {
-    char separator = '/';
-    String fakePathPrefix = separator + pathPrefix;
-    int lastSlashInd = fakePathPrefix.lastIndexOf(separator);
-    String lastPathComponent = fakePathPrefix.substring(lastSlashInd + 1, fakePathPrefix.length());
-    String pathComponentsExceptLast = fakePathPrefix.substring(Math.min(1, lastSlashInd), lastSlashInd);
-
-    VirtualFile parentFile = basePath.findFileByRelativePath(pathComponentsExceptLast);
-    if (parentFile != null) {
-      VirtualFile[] children = parentFile.getChildren();
-      for (VirtualFile child : children) {
-        if (child.getName().startsWith(lastPathComponent)) {
-          result = result.withPrefixMatcher(lastPathComponent);
-          result.addElement(LookupItem.fromString(child.getName()));
-        }
-      }
+  @NotNull
+  private static BipartiteString splitByLastIndexOfSeparatorOccurrence(@NotNull String str, char separator) {
+    int index = str.lastIndexOf(separator);
+    if (index > 0) {
+      return new BipartiteString(str.substring(0, index), str.substring(index + 1));
     }
+    return new BipartiteString("", str);
   }
 
-  private static class Holder<T extends PsiElement> extends PsiElementPattern<T, Holder<T>> {
-
-    protected Holder(Class<T> tClass) {
-      super(tClass);
-    }
-
-    private static <K extends PsiElement> Holder<K> newCapture(Class<K> tClass) {
-      return new Holder<K>(tClass);
-    }
+  @NotNull
+  private static BipartiteString splitByPrefixLength(@NotNull String str, int prefixLength) {
+    assert prefixLength <= str.length();
+    return new BipartiteString(str.substring(0, prefixLength), str.substring(prefixLength));
   }
 
-  private static Holder<PsiElement> getElementPattern() {
-    return Holder.newCapture(PsiElement.class);
-  }
 
+  private static class BipartiteString {
+    private final String myPrefix;
+    private final String mySuffix;
+
+    private BipartiteString(String prefix, String suffix) {
+      myPrefix = prefix;
+      mySuffix = suffix;
+    }
+
+    @NotNull
+    public String getPrefix() {
+      return myPrefix;
+    }
+
+    @NotNull
+    public String getSuffix() {
+      return mySuffix;
+    }
+  }
 }
