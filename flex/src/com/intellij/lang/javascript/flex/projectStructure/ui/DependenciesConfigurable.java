@@ -31,10 +31,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
@@ -129,6 +127,24 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         addItem(button);
       }
     });
+    d.setRemoveAction(new AnActionButtonRunnable() {
+      @Override
+      public void run(AnActionButton anActionButton) {
+        removeSelection();
+      }
+    });
+    d.setUpAction(new AnActionButtonRunnable() {
+      @Override
+      public void run(AnActionButton anActionButton) {
+        moveSelection(-1);
+      }
+    });
+    d.setDownAction(new AnActionButtonRunnable() {
+      @Override
+      public void run(AnActionButton anActionButton) {
+        moveSelection(1);
+      }
+    });
     myTablePanel.add(d.createPanel(), BorderLayout.CENTER);
   }
 
@@ -167,6 +183,49 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       });
     popup.show(button.getPreferredPopupPoint());
+  }
+
+  private void removeSelection() {
+    int[] selectedRows = myTable.getSelectedRows();
+    Arrays.sort(selectedRows);
+    for (int i = 0; i < selectedRows.length; i++) {
+      DefaultMutableTreeNode root = myTable.getRoot();
+      root.remove(selectedRows[i] - i);
+    }
+    myTable.refresh();
+    if (myTable.getRowCount() > 0) {
+      int toSelect = Math.min(myTable.getRowCount() - 1, selectedRows[0]);
+      myTable.clearSelection();
+      myTable.getSelectionModel().addSelectionInterval(toSelect, toSelect);
+    }
+  }
+
+  private void moveSelection(int delta) {
+    int[] selectedRows = myTable.getSelectedRows();
+    Arrays.sort(selectedRows);
+    DefaultMutableTreeNode root = myTable.getRoot();
+
+    if (delta < 0) {
+      for (int i = 0; i < selectedRows.length; i++) {
+        int row = selectedRows[i];
+        DefaultMutableTreeNode child = (DefaultMutableTreeNode)root.getChildAt(row);
+        root.remove(row);
+        root.insert(child, row + delta);
+      }
+    }
+    else {
+      for (int i = selectedRows.length - 1; i >= 0; i--) {
+        int row = selectedRows[i];
+        DefaultMutableTreeNode child = (DefaultMutableTreeNode)root.getChildAt(row);
+        root.remove(row);
+        root.insert(child, row + delta);
+      }
+    }
+    myTable.refresh();
+    myTable.clearSelection();
+    for (int selectedRow : selectedRows) {
+      myTable.getSelectionModel().addSelectionInterval(selectedRow + delta, selectedRow + delta);
+    }
   }
 
   @Nls
@@ -252,7 +311,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         // broken project file?
         LOG.error("configurable not found for " + bcEntry.getBcName());
       }
-      root.add(new DefaultMutableTreeNode(new BCItem(configurable), false));
+      else {
+        root.add(new DefaultMutableTreeNode(new BCItem(configurable), false));
+      }
     }
     myTable.refresh();
   }
@@ -308,7 +369,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   private class AddBuildConfigurationDependencyAction extends AddItemPopupAction {
     public AddBuildConfigurationDependencyAction(int index) {
-      super(index, "Build Configuration", null);
+      super(index, "Build Configuration...", null);
     }
 
     @Override
@@ -352,6 +413,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         root.add(new DefaultMutableTreeNode(new BCItem(configurable), false));
       }
       myTable.refresh();
+      myTable.getSelectionModel().clearSelection();
+      int rowCount = myTable.getRowCount();
+      myTable.getSelectionModel().addSelectionInterval(rowCount - configurables.length, rowCount - 1);
     }
   }
 }
