@@ -79,6 +79,8 @@ public class Dependencies implements Cloneable {
       Dependencies clone = (Dependencies)super.clone();
       clone.COMPONENT_SET = COMPONENT_SET;
       clone.FRAMEWORK_LINKAGE = FRAMEWORK_LINKAGE;
+      clone.myEntriesInfos = myEntriesInfos;
+      clone.myEntries = new ArrayList<DependencyEntry>(myEntries);
       return clone;
     }
     catch (CloneNotSupportedException e) {

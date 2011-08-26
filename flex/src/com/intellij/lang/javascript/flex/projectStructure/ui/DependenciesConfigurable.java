@@ -217,19 +217,18 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   public void apply() throws ConfigurationException {
     applyTo(myDependencies);
     mySdkPanel.apply();
-
-    myDependencies.getEntries().clear();
-    List<MyTableItem> items = myTable.getItems();
-    for (MyTableItem item : items) {
-      FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
-      myDependencies.getEntries()
-        .add(new BuildConfigurationEntry(configurable.getModifiableRootModel().getModule(), configurable.getDisplayName()));
-    }
   }
 
   public void applyTo(final Dependencies dependencies) {
     dependencies.COMPONENT_SET = (FlexIdeBuildConfiguration.ComponentSet)myComponentSetCombo.getSelectedItem();
     dependencies.FRAMEWORK_LINKAGE = (FlexIdeBuildConfiguration.FrameworkLinkage)myFrameworkLinkageCombo.getSelectedItem();
+    dependencies.getEntries().clear();
+    List<MyTableItem> items = myTable.getItems();
+    for (MyTableItem item : items) {
+      FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
+      dependencies.getEntries()
+        .add(new BuildConfigurationEntry(configurable.getModifiableRootModel().getModule(), configurable.getDisplayName()));
+    }
   }
 
   public void reset() {
