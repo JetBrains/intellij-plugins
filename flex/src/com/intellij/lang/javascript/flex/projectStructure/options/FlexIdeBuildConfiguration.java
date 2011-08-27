@@ -68,8 +68,8 @@ public class FlexIdeBuildConfiguration implements Cloneable {
     }
   }
 
-  public void materialize(Project project) {
-    DEPENDENCIES.materialize(project);
+  public void initialize(Project project) {
+    DEPENDENCIES.initialize(project);
   }
 
   public static enum TargetPlatform {

@@ -86,8 +86,8 @@ public class Dependencies implements Cloneable {
     return myEntries;
   }
 
-  public void materialize(Project project) {
-    LOG.assertTrue(myEntries.isEmpty(), "already materialized");
+  public void initialize(Project project) {
+    LOG.assertTrue(myEntries.isEmpty(), "already initialized");
     ModulePointerManager pointerManager = ModulePointerManager.getInstance(project);
     myEntries = new ArrayList<DependencyEntry>(myEntriesInfos.length);
     for (EntryInfo info : myEntriesInfos) {

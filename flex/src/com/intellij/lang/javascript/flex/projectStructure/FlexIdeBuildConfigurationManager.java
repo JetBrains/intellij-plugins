@@ -84,7 +84,7 @@ public class FlexIdeBuildConfigurationManager implements PersistentStateComponen
     else {
       myConfigurations = state.myConfigurations.toArray(new FlexIdeBuildConfiguration[state.myConfigurations.size()]);
       for (FlexIdeBuildConfiguration configuration : myConfigurations) {
-        configuration.materialize(myModule.getProject());
+        configuration.initialize(myModule.getProject());
       }
     }
     myModuleLevelCompilerOptions = state.myModuleLevelCompilerOptions.clone();
