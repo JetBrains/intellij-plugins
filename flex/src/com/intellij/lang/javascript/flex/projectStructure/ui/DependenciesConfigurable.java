@@ -4,6 +4,7 @@ import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -17,6 +18,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.SimpleColoredComponent;
@@ -51,6 +53,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private final ModifiableRootModel myRootModel;
   private AddItemPopupAction[] myPopupActions;
 
+  private final Disposable myDisposable;
+
   private abstract static class MyTableItem {
     public abstract String getText();
 
@@ -79,6 +83,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     myDependencies = bc.DEPENDENCIES;
     myProject = project;
     myRootModel = rootModel;
+
+    myDisposable = new Disposable() {
+      @Override
+      public void dispose() {
+      }
+    };
+    Disposer.register(myDisposable, mySdkPanel);
 
     final boolean mobilePlatform = bc.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile;
 
@@ -146,6 +157,44 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     });
     myTablePanel.add(d.createPanel(), BorderLayout.CENTER);
+
+    FlexIdeModuleStructureExtension.getInstance().getConfigurator().addListener(new FlexIdeBCConfigurator.Listener() {
+      @Override
+      public void moduleRemoved(Module module) {
+        List<Integer> rowsToRemove = new ArrayList<Integer>();
+        for (int row = 0; row < myTable.getRowCount(); row++) {
+          MyTableItem item = myTable.getItemAt(row);
+          if (((BCItem)item).configurable.getModifiableRootModel().getModule() == module) {
+            rowsToRemove.add(row);
+          }
+        }
+
+        if (!rowsToRemove.isEmpty()) {
+          DefaultMutableTreeNode root = myTable.getRoot();
+          for (int i = 0; i < rowsToRemove.size(); i++) {
+            root.remove(rowsToRemove.get(i) - i);
+          }
+          myTable.refresh();
+        }
+      }
+
+      @Override
+      public void buildConfigurationRemoved(FlexIdeBCConfigurable configurable) {
+        if (configurable.getDependenciesConfigurable() == DependenciesConfigurable.this) {
+          return;
+        }
+
+        for (int row = 0; row < myTable.getRowCount(); ) {
+          MyTableItem item = myTable.getItemAt(row);
+          if (((BCItem)item).configurable == configurable) {
+            myTable.getRoot().remove(row);
+            myTable.refresh();
+            // there may be only one dependency on a BC
+            break;
+          }
+        }
+      }
+    }, myDisposable);
   }
 
   private void addItem(AnActionButton button) {
@@ -188,8 +237,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private void removeSelection() {
     int[] selectedRows = myTable.getSelectedRows();
     Arrays.sort(selectedRows);
+    DefaultMutableTreeNode root = myTable.getRoot();
     for (int i = 0; i < selectedRows.length; i++) {
-      DefaultMutableTreeNode root = myTable.getRoot();
       root.remove(selectedRows[i] - i);
     }
     myTable.refresh();
@@ -319,6 +368,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   }
 
   public void disposeUIResources() {
+    Disposer.dispose(myDisposable);
   }
 
   private void createUIComponents() {

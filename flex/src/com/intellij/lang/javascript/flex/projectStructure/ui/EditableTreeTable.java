@@ -77,9 +77,13 @@ abstract class EditableTreeTable<T> extends TreeTable {
     int rows = getRowCount();
     List<T> result = new ArrayList<T>(rows);
     for (int row = 0; row < rows; row++) {
-      result.add((T)getValueAt(row, 0));
+      result.add(getItemAt(row));
     }
     return result;
+  }
+
+  public T getItemAt(int row) {
+    return (T)getValueAt(row, 0);
   }
 
   public DefaultMutableTreeNode getRoot() {

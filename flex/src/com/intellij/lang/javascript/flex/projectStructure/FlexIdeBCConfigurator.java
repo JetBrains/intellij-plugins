@@ -1,10 +1,13 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.ui.AddBuildConfigurationDialog;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -14,6 +17,7 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureCo
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.ui.navigation.Place;
+import com.intellij.util.EventDispatcher;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,10 +25,21 @@ import java.util.*;
 
 public class FlexIdeBCConfigurator {
 
+  public interface Listener extends EventListener {
+    void moduleRemoved(Module module);
+    void buildConfigurationRemoved(FlexIdeBCConfigurable configurable);
+  }
+
   // keep these maps in sync!
   private Map<Module, List<FlexIdeBCConfigurable>> myModuleToConfigurablesMap = new THashMap<Module, List<FlexIdeBCConfigurable>>();
   private Map<FlexIdeBuildConfiguration, Module> myConfigurationsToModuleMap = new THashMap<FlexIdeBuildConfiguration, Module>();
   private boolean myModified;
+
+  private final EventDispatcher<Listener> myEventDispatcher = EventDispatcher.create(Listener.class);
+
+  public void addListener(Listener listener, Disposable parentDisposable) {
+    myEventDispatcher.addListener(listener, parentDisposable);
+  }
 
   public void reset() {
     for (final Map.Entry<Module, List<FlexIdeBCConfigurable>> entry : myModuleToConfigurablesMap.entrySet()) {
@@ -61,11 +76,16 @@ public class FlexIdeBCConfigurator {
   }
 
   public void moduleRemoved(final Module module) {
+    if (ModuleType.get(module) != FlexModuleType.getInstance()) {
+      return;
+    }
+
     for (final FlexIdeBCConfigurable configurable : myModuleToConfigurablesMap.get(module)) {
       myConfigurationsToModuleMap.remove(configurable.getEditableObject());
     }
 
     myModuleToConfigurablesMap.remove(module);
+    myEventDispatcher.getMulticaster().moduleRemoved(module);
   }
 
   public boolean isModified() {
@@ -127,6 +147,7 @@ public class FlexIdeBCConfigurator {
       final FlexIdeBCConfigurable configurable = configurablesIterator.next();
       if (configuration == configurable.getEditableObject()) {
         configurablesIterator.remove();
+        myEventDispatcher.getMulticaster().buildConfigurationRemoved(configurable);
         break;
       }
     }
