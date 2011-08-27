@@ -68,10 +68,10 @@ abstract class EditableTreeTable<T> extends TreeTable {
 
   protected abstract void render(SimpleColoredComponent coloredTreeCellRenderer, T userObject);
 
-  @Override
-  protected TreeTableModelAdapter adapt(TreeTableModel treeTableModel) {
-    return new EditableModelAdapter(treeTableModel, getTree(), this);
-  }
+  //@Override
+  //protected TreeTableModelAdapter adapt(TreeTableModel treeTableModel) {
+  //  return new EditableModelAdapter(treeTableModel, getTree(), this);
+  //}
 
   public List<T> getItems() {
     int rows = getRowCount();
