@@ -155,12 +155,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     });
 
-    final FlexIdeBuildConfiguration.FrameworkLinkage defaultLinkage =
-      BCUtils.getDefaultFrameworkLinkage(bc.TARGET_PLATFORM, bc.PURE_ACTION_SCRIPT, bc.OUTPUT_TYPE);
+    final LinkageType defaultLinkage = BCUtils.getDefaultFrameworkLinkage(bc.TARGET_PLATFORM, bc.PURE_ACTION_SCRIPT, bc.OUTPUT_TYPE);
     myFrameworkLinkageCombo
-      .setRenderer(new ListCellRendererWrapper<FlexIdeBuildConfiguration.FrameworkLinkage>(myFrameworkLinkageCombo.getRenderer()) {
-        public void customize(JList list, FlexIdeBuildConfiguration.FrameworkLinkage value, int index, boolean selected, boolean hasFocus) {
-          if (value == FlexIdeBuildConfiguration.FrameworkLinkage.Default) {
+      .setRenderer(new ListCellRendererWrapper<LinkageType>(myFrameworkLinkageCombo.getRenderer()) {
+        public void customize(JList list, LinkageType value, int index, boolean selected, boolean hasFocus) {
+          if (value == LinkageType.Default) {
             setText(MessageFormat.format("Default ({0})", defaultLinkage.PRESENTABLE_TEXT));
           }
           else {
@@ -460,7 +459,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   public void applyTo(final Dependencies dependencies) {
     dependencies.COMPONENT_SET = (FlexIdeBuildConfiguration.ComponentSet)myComponentSetCombo.getSelectedItem();
-    dependencies.FRAMEWORK_LINKAGE = (FlexIdeBuildConfiguration.FrameworkLinkage)myFrameworkLinkageCombo.getSelectedItem();
+    dependencies.FRAMEWORK_LINKAGE = (LinkageType)myFrameworkLinkageCombo.getSelectedItem();
     dependencies.getEntries().clear();
     List<MyTableItem> items = myTable.getItems();
     for (MyTableItem item : items) {

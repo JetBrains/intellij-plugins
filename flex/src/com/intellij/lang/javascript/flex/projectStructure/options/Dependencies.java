@@ -19,7 +19,7 @@ public class Dependencies implements Cloneable {
   private static final Logger LOG = Logger.getInstance(Dependencies.class.getName());
 
   public FlexIdeBuildConfiguration.ComponentSet COMPONENT_SET = FlexIdeBuildConfiguration.ComponentSet.SparkAndMx;
-  public FlexIdeBuildConfiguration.FrameworkLinkage FRAMEWORK_LINKAGE = FlexIdeBuildConfiguration.FrameworkLinkage.Default;
+  public LinkageType FRAMEWORK_LINKAGE = LinkageType.Default;
 
   private static final EntryInfo[] EMPTY = new EntryInfo[0];
 

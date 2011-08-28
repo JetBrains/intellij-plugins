@@ -5,27 +5,27 @@ package com.intellij.lang.javascript.flex.projectStructure.options;
  */
 public class BCUtils {
 
-  public static FlexIdeBuildConfiguration.FrameworkLinkage getDefaultFrameworkLinkage(final FlexIdeBuildConfiguration.TargetPlatform targetPlatform,
+  public static LinkageType getDefaultFrameworkLinkage(final FlexIdeBuildConfiguration.TargetPlatform targetPlatform,
                                                                                       final boolean pureAS,
                                                                                       final FlexIdeBuildConfiguration.OutputType outputType) {
     // todo check
     if (outputType == FlexIdeBuildConfiguration.OutputType.Library) {
-      return FlexIdeBuildConfiguration.FrameworkLinkage.External;
+      return LinkageType.External;
     }
 
     switch (targetPlatform) {
       case Web:
-        return FlexIdeBuildConfiguration.FrameworkLinkage.RSL;
+        return LinkageType.RSL;
       case Desktop:
       case Mobile:
-        return FlexIdeBuildConfiguration.FrameworkLinkage.Merged;
+        return LinkageType.Merged;
       default:
         assert false;
         return null;
     }
   }
 
-  public static FlexIdeBuildConfiguration.FrameworkLinkage[] getSuitableFrameworkLinkages(final FlexIdeBuildConfiguration.TargetPlatform targetPlatform,
+  public static LinkageType[] getSuitableFrameworkLinkages(final FlexIdeBuildConfiguration.TargetPlatform targetPlatform,
                                                                                           final boolean isPureAS,
                                                                                           final FlexIdeBuildConfiguration.OutputType outputType) {
     // todo implement
@@ -39,6 +39,6 @@ public class BCUtils {
         break;
     }
 
-    return FlexIdeBuildConfiguration.FrameworkLinkage.values();
+    return LinkageType.frameworkLinkageValues();
   }
 }

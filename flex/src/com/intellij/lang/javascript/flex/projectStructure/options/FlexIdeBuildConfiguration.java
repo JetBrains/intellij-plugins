@@ -107,17 +107,4 @@ public class FlexIdeBuildConfiguration implements Cloneable {
       PRESENTABLE_TEXT = presentableText;
     }
   }
-
-  public static enum FrameworkLinkage {
-    Default("Default"),
-    Merged("Merged into code"),
-    RSL("Runtime shared library"),
-    External("External");
-
-    public final String PRESENTABLE_TEXT;
-
-    FrameworkLinkage(final String presentableText) {
-      PRESENTABLE_TEXT = presentableText;
-    }
-  }
 }

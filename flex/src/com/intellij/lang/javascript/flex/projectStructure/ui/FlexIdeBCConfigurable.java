@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.LinkageType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -200,20 +201,20 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     return b.toString();
   }
 
-  private static FrameworkLinkage getDefaultFrameworkLinkage(final TargetPlatform targetPlatform,
+  private static LinkageType getDefaultFrameworkLinkage(final TargetPlatform targetPlatform,
                                                              final boolean pureAS,
                                                              final OutputType outputType) {
     // todo check
     if (outputType == OutputType.Library) {
-      return FrameworkLinkage.External;
+      return LinkageType.External;
     }
 
     switch (targetPlatform) {
       case Web:
-        return FrameworkLinkage.RSL;
+        return LinkageType.RSL;
       case Desktop:
       case Mobile:
-        return FrameworkLinkage.Merged;
+        return LinkageType.Merged;
       default:
         assert false;
         return null;
