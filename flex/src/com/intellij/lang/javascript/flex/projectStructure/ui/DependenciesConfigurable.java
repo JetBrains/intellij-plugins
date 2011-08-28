@@ -85,7 +85,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private final AnActionButton myEditAction;
 
   private abstract static class MyTableItem {
-    public final DependencyType myDependencyType = new DependencyType();
+    public final DependencyType dependencyType = new DependencyType();
 
     public abstract String getText();
 
@@ -97,6 +97,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     public BCItem(FlexIdeBCConfigurable configurable) {
       this.configurable = configurable;
+      if (configurable.getOutputType() == FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule) {
+        dependencyType.setLinkageType(LinkageType.LoadInRuntime);
+      }
     }
 
     @Override
@@ -188,12 +191,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public LinkageType valueOf(MyTableItem item) {
-      return item.myDependencyType.getLinkageType();
+      return item.dependencyType.getLinkageType();
     }
 
     @Override
     public void setValue(MyTableItem item, LinkageType linkageType) {
-      item.myDependencyType.setLinkageType(linkageType);
+      item.dependencyType.setLinkageType(linkageType);
     }
 
     @Override
@@ -207,8 +210,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
 
     @Override
-    public boolean isCellEditable(MyTableItem myTableItem) {
-      return true;
+    public boolean isCellEditable(MyTableItem item) {
+      return !(item instanceof BCItem) ||
+             ((BCItem)item).configurable.getOutputType() != FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule;
     }
 
     @Override
@@ -533,7 +537,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           return true;
         }
       }
-      if (!item.myDependencyType.isEqual(entry.getDependencyType())) return true;
+      if (!item.dependencyType.isEqual(entry.getDependencyType())) return true;
     }
     return false;
   }
@@ -562,7 +566,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       else {
         throw new IllegalArgumentException("unexpected item type: " + item);
       }
-      item.myDependencyType.applyTo(entry.getDependencyType());
+      item.dependencyType.applyTo(entry.getDependencyType());
       dependencies.getEntries().add(entry);
     }
   }
@@ -598,7 +602,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         item = new ModuleLibraryItem(((ModuleLibraryEntry)entry).getCopy());
       }
       if (item != null) {
-        entry.getDependencyType().applyTo(item.myDependencyType);
+        entry.getDependencyType().applyTo(item.dependencyType);
         root.add(new DefaultMutableTreeNode(item, false));
       }
     }
@@ -661,6 +665,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           if (dependencies.contains(configurable) || configurable.getDependenciesConfigurable() == DependenciesConfigurable.this) {
             continue;
           }
+          FlexIdeBuildConfiguration.OutputType outputType = configurable.getOutputType();
+          if (outputType != FlexIdeBuildConfiguration.OutputType.Library &&
+              outputType != FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule) {
+            continue;
+          }
+
           List<FlexIdeBCConfigurable> list = treeItems.get(module);
           if (list == null) {
             list = new ArrayList<FlexIdeBCConfigurable>();
