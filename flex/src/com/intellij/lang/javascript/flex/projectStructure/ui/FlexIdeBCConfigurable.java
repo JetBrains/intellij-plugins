@@ -201,24 +201,9 @@ public class FlexIdeBCConfigurable extends /*ProjectStructureElementConfigurable
     return b.toString();
   }
 
-  private static LinkageType getDefaultFrameworkLinkage(final TargetPlatform targetPlatform,
-                                                             final boolean pureAS,
-                                                             final OutputType outputType) {
-    // todo check
-    if (outputType == OutputType.Library) {
-      return LinkageType.External;
-    }
-
-    switch (targetPlatform) {
-      case Web:
-        return LinkageType.RSL;
-      case Desktop:
-      case Mobile:
-        return LinkageType.Merged;
-      default:
-        assert false;
-        return null;
-    }
+  public OutputType getOutputType() {
+    // immutable field
+    return myConfiguration.OUTPUT_TYPE;
   }
 
   public boolean isModified() {

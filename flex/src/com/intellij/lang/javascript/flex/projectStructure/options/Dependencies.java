@@ -20,6 +20,7 @@ public class Dependencies implements Cloneable {
 
   public FlexIdeBuildConfiguration.ComponentSet COMPONENT_SET = FlexIdeBuildConfiguration.ComponentSet.SparkAndMx;
   public LinkageType FRAMEWORK_LINKAGE = LinkageType.Default;
+  private static final String DEPENDENCY_TYPE_ELEMENT_NAME = "type";
 
   private static final EntryInfo[] EMPTY = new EntryInfo[0];
 
@@ -34,6 +35,8 @@ public class Dependencies implements Cloneable {
     public String BC_NAME;
     @Tag("library")
     public Element LIBRARY_ELEMENT;
+    @Tag("type")
+    public Element DEPENDENCY_TYPE_ELEMENT;
   }
 
   @Tag("entries")
@@ -45,6 +48,10 @@ public class Dependencies implements Cloneable {
     return ContainerUtil.mapNotNull(myEntries.toArray(new DependencyEntry[myEntries.size()]), new Function<DependencyEntry, EntryInfo>() {
       @Override
       public EntryInfo fun(DependencyEntry entry) {
+        EntryInfo entryInfo = new EntryInfo();
+        entryInfo.DEPENDENCY_TYPE_ELEMENT = new Element(DEPENDENCY_TYPE_ELEMENT_NAME);
+        entry.myDependencyType.writeExternal(entryInfo.DEPENDENCY_TYPE_ELEMENT);
+
         if (entry instanceof BuildConfigurationEntry) {
           BuildConfigurationEntry buildConfigurationEntry = (BuildConfigurationEntry)entry;
           FlexIdeBuildConfiguration buildConfiguration = buildConfigurationEntry.getBuildConfiguration();
@@ -53,13 +60,11 @@ public class Dependencies implements Cloneable {
             return null;
           }
 
-          EntryInfo entryInfo = new EntryInfo();
           entryInfo.MODULE_NAME = buildConfigurationEntry.getModuleName();
           entryInfo.BC_NAME = buildConfiguration.NAME;
           return entryInfo;
         }
         else if (entry instanceof ModuleLibraryEntry) {
-          EntryInfo entryInfo = new EntryInfo();
           entryInfo.LIBRARY_ELEMENT = new Element("library");
           try {
             ((ModuleLibraryEntry)entry).writeExternal(entryInfo.LIBRARY_ELEMENT);
@@ -91,21 +96,33 @@ public class Dependencies implements Cloneable {
     ModulePointerManager pointerManager = ModulePointerManager.getInstance(project);
     myEntries = new ArrayList<DependencyEntry>(myEntriesInfos.length);
     for (EntryInfo info : myEntriesInfos) {
+      DependencyEntry entry = null;
       if (info.LIBRARY_ELEMENT != null) {
         ModuleLibraryEntry libraryEntry = new ModuleLibraryEntry();
         try {
           libraryEntry.readExternal(info.LIBRARY_ELEMENT);
-          myEntries.add(libraryEntry);
+          entry = libraryEntry;
         }
         catch (InvalidDataException e) {
           LOG.error(e);
         }
       }
       else if (info.BC_NAME != null) {
-        myEntries.add(new BuildConfigurationEntry(pointerManager.create(info.MODULE_NAME), info.BC_NAME));
+        entry = new BuildConfigurationEntry(pointerManager.create(info.MODULE_NAME), info.BC_NAME);
       }
       else {
         LOG.error("unknown entry");
+      }
+
+      //noinspection ConstantConditions
+      if (entry != null) {
+        if (info.DEPENDENCY_TYPE_ELEMENT != null) {
+          entry.myDependencyType.readExternal(info.DEPENDENCY_TYPE_ELEMENT);
+        }
+        else {
+          LOG.error("dependency type element is missing");
+        }
+        myEntries.add(entry);
       }
     }
     myEntriesInfos = null;

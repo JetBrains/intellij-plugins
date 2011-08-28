@@ -25,6 +25,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
@@ -36,16 +37,15 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
-import com.intellij.ui.SimpleColoredComponent;
-import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.*;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.IconUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
+import com.intellij.util.ui.AbstractTableCellEditor;
+import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,6 +53,9 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -82,6 +85,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private final AnActionButton myEditAction;
 
   private abstract static class MyTableItem {
+    public final DependencyType myDependencyType = new DependencyType();
+
     public abstract String getText();
 
     public abstract Icon getIcon();
@@ -131,6 +136,87 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   }
 
+  private static final DefaultTableCellRenderer LINKAGE_TYPE_RENDERER = new DefaultTableCellRenderer() {
+    @Override
+    public Component getTableCellRendererComponent(JTable table,
+                                                   Object value,
+                                                   boolean isSelected,
+                                                   boolean hasFocus,
+                                                   int row,
+                                                   int column) {
+      Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      ((JLabel)component).setText(((LinkageType)value).getShortText());
+      return component;
+    }
+  };
+
+  private static class LinkageTypeEditor extends AbstractTableCellEditor {
+    private ComboBox myCombo;
+    private final MyTableItem myItem;
+
+    public LinkageTypeEditor(MyTableItem tableItem) {
+      myItem = tableItem;
+    }
+
+    public Object getCellEditorValue() {
+      return myCombo.getSelectedItem();
+    }
+
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+      LinkageType[] linkageTypes;
+      if (myItem instanceof BCItem &&
+          ((BCItem)myItem).configurable.getOutputType() == FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule) {
+        linkageTypes = new LinkageType[]{LinkageType.LoadInRuntime};
+      }
+      else {
+        linkageTypes = LinkageType.getSwcLinkageValues();
+      }
+      ComboBoxModel model = new CollectionComboBoxModel(Arrays.asList(linkageTypes), value);
+      model.setSelectedItem(value);
+      myCombo = new ComboBox(model, table.getColumnModel().getColumn(1).getWidth());
+      myCombo.setRenderer(new ListCellRendererWrapper(myCombo.getRenderer()) {
+        @Override
+        public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
+          setText(((LinkageType)value).getShortText());
+        }
+      });
+      return myCombo;
+    }
+  }
+
+  private static ColumnInfo<MyTableItem, LinkageType> DEPENDENCY_TYPE_COLUMN = new ColumnInfo<MyTableItem, LinkageType>("Type") {
+
+    @Override
+    public LinkageType valueOf(MyTableItem item) {
+      return item.myDependencyType.getLinkageType();
+    }
+
+    @Override
+    public void setValue(MyTableItem item, LinkageType linkageType) {
+      item.myDependencyType.setLinkageType(linkageType);
+    }
+
+    @Override
+    public TableCellRenderer getRenderer(MyTableItem myTableItem) {
+      return LINKAGE_TYPE_RENDERER;
+    }
+
+    @Override
+    public TableCellEditor getEditor(MyTableItem item) {
+      return new LinkageTypeEditor(item);
+    }
+
+    @Override
+    public boolean isCellEditable(MyTableItem myTableItem) {
+      return true;
+    }
+
+    @Override
+    public int getWidth(JTable table) {
+      return 100;
+    }
+  };
+
   public DependenciesConfigurable(final FlexIdeBuildConfiguration bc, Project project, ModifiableRootModel rootModel) {
     myDependencies = bc.DEPENDENCIES;
     myProject = project;
@@ -142,7 +228,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       }
     };
     Disposer.register(myDisposable, mySdkPanel);
-
     final boolean mobilePlatform = bc.TARGET_PLATFORM == FlexIdeBuildConfiguration.TargetPlatform.Mobile;
 
     myComponentSetLabel.setVisible(!mobilePlatform && !bc.PURE_ACTION_SCRIPT);
@@ -160,17 +245,17 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       .setRenderer(new ListCellRendererWrapper<LinkageType>(myFrameworkLinkageCombo.getRenderer()) {
         public void customize(JList list, LinkageType value, int index, boolean selected, boolean hasFocus) {
           if (value == LinkageType.Default) {
-            setText(MessageFormat.format("Default ({0})", defaultLinkage.PRESENTABLE_TEXT));
+            setText(MessageFormat.format("Default ({0})", defaultLinkage.getLongText()));
           }
           else {
-            setText(value.PRESENTABLE_TEXT);
+            setText(value.getLongText());
           }
         }
       });
 
     myFrameworkLinkageCombo.setModel(new DefaultComboBoxModel(BCUtils.getSuitableFrameworkLinkages(bc.TARGET_PLATFORM,
                                                                                                    bc.PURE_ACTION_SCRIPT, bc.OUTPUT_TYPE)));
-    myTable = new EditableTreeTable<MyTableItem>("") {
+    myTable = new EditableTreeTable<MyTableItem>("", DEPENDENCY_TYPE_COLUMN) {
       @Override
       protected void render(SimpleColoredComponent c, MyTableItem item) {
         if (item != null) {
@@ -448,6 +533,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           return true;
         }
       }
+      if (!item.myDependencyType.isEqual(entry.getDependencyType())) return true;
     }
     return false;
   }
@@ -463,16 +549,21 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     dependencies.getEntries().clear();
     List<MyTableItem> items = myTable.getItems();
     for (MyTableItem item : items) {
+      DependencyEntry entry;
       if (item instanceof BCItem) {
         FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
-        dependencies.getEntries()
-          .add(new BuildConfigurationEntry(configurable.getModifiableRootModel().getModule(), configurable.getDisplayName()));
+        entry =
+          new BuildConfigurationEntry(configurable.getModifiableRootModel().getModule(), configurable.getDisplayName());
       }
       else if (item instanceof ModuleLibraryItem) {
-        ModuleLibraryEntry e = new ModuleLibraryEntry();
-        ((ModuleLibraryItem)item).libraryEntry.applyTo(e);
-        dependencies.getEntries().add(e);
+        entry = new ModuleLibraryEntry();
+        ((ModuleLibraryItem)item).libraryEntry.applyTo((ModuleLibraryEntry)entry);
       }
+      else {
+        throw new IllegalArgumentException("unexpected item type: " + item);
+      }
+      item.myDependencyType.applyTo(entry.getDependencyType());
+      dependencies.getEntries().add(entry);
     }
   }
 
@@ -485,6 +576,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     root.removeAllChildren();
     FlexIdeBCConfigurator configurator = FlexIdeModuleStructureExtension.getInstance().getConfigurator();
     for (DependencyEntry entry : myDependencies.getEntries()) {
+      MyTableItem item = null;
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
         FlexIdeBCConfigurable configurable =
@@ -499,11 +591,15 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           LOG.error("configurable not found for " + bcEntry.getBcName());
         }
         else {
-          root.add(new DefaultMutableTreeNode(new BCItem(configurable), false));
+          item = new BCItem(configurable);
         }
       }
       else if (entry instanceof ModuleLibraryEntry) {
-        root.add(new DefaultMutableTreeNode(new ModuleLibraryItem(((ModuleLibraryEntry)entry).getCopy()), false));
+        item = new ModuleLibraryItem(((ModuleLibraryEntry)entry).getCopy());
+      }
+      if (item != null) {
+        entry.getDependencyType().applyTo(item.myDependencyType);
+        root.add(new DefaultMutableTreeNode(item, false));
       }
     }
     myTable.refresh();

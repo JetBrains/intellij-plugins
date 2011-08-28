@@ -5,6 +5,10 @@ package com.intellij.lang.javascript.flex.projectStructure.options;
  */
 public abstract class DependencyEntry {
 
+  protected final DependencyType myDependencyType = new DependencyType();
 
+  public DependencyType getDependencyType() {
+    return myDependencyType;
+  }
 }
 
