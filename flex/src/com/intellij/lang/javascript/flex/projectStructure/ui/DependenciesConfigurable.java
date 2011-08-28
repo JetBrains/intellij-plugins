@@ -23,7 +23,9 @@ import com.intellij.openapi.projectRoots.ex.ProjectRoot;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibraryKind;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -38,6 +40,7 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.navigation.Place;
 import com.intellij.util.IconUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
@@ -228,7 +231,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         if (e.getClickCount() == 2) {
           if (myTable.getSelectedRowCount() == 1) {
             MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
-            if (item instanceof ModuleLibraryItem) {
+            if (item instanceof BCItem) {
+              Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(myProject))
+                .putPath(MasterDetailsComponent.TREE_OBJECT, ((BCItem)item).configurable.getEditableObject());
+              ProjectStructureConfigurable.getInstance(myProject).navigateTo(place, true);
+            }
+            else if (item instanceof ModuleLibraryItem) {
               editLibrary(((ModuleLibraryItem)item).libraryEntry);
             }
           }
