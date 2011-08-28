@@ -16,9 +16,10 @@ import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureExtension;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
-import com.intellij.openapi.util.Computable;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.util.NullableComputable;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -133,23 +134,34 @@ public class FlexIdeModuleStructureExtension extends ModuleStructureExtension {
     }
   }
 
-  public Collection<AnAction> createAddActions(final Computable<Object> selectedObjectRetriever,
+  public Collection<AnAction> createAddActions(final NullableComputable<MasterDetailsComponent.MyNode> selectedNodeRetriever,
                                                final Runnable treeNodeNameUpdater,
                                                final ModulesConfigurator modulesConfigurator) {
     final Collection<AnAction> actions = new ArrayList<AnAction>(2);
     actions.add(new Separator());
     actions.add(new DumbAwareAction("Build Configuration") {
       public void update(final AnActionEvent e) {
-        final Object selectedObject = selectedObjectRetriever.compute();
-        e.getPresentation().setVisible(selectedObject instanceof FlexIdeBuildConfiguration ||
-                                       (selectedObject instanceof Module &&
-                                        ModuleType.get((Module)selectedObject) instanceof FlexModuleType));
+        e.getPresentation().setVisible(getModuleForNode(selectedNodeRetriever.compute()) != null);
       }
 
       public void actionPerformed(final AnActionEvent e) {
-        myConfigurator.addConfiguration(selectedObjectRetriever.compute(), treeNodeNameUpdater, modulesConfigurator);
+        myConfigurator.addConfiguration(getModuleForNode(selectedNodeRetriever.compute()), treeNodeNameUpdater, modulesConfigurator);
       }
     });
     return actions;
+  }
+
+  @Nullable
+  private static Module getModuleForNode(@Nullable MasterDetailsComponent.MyNode node) {
+    while (node != null) {
+      final NamedConfigurable configurable = node.getConfigurable();
+      final Object editableObject = configurable == null ? null : configurable.getEditableObject();
+      if (editableObject instanceof Module) {
+        return (Module)editableObject;
+      }
+      final TreeNode parent = node.getParent();
+      node = parent instanceof MasterDetailsComponent.MyNode ? (MasterDetailsComponent.MyNode)parent : null;
+    }
+    return null;
   }
 }

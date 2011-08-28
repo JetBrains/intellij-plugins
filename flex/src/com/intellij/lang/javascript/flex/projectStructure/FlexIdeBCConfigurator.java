@@ -153,12 +153,7 @@ public class FlexIdeBCConfigurator {
     }
   }
 
-  public void addConfiguration(final Object selectedObject, final Runnable treeNodeNameUpdater, ModulesConfigurator modulesConfigurator) {
-    final Module module = selectedObject instanceof Module
-                          ? (Module)selectedObject
-                          : selectedObject instanceof FlexIdeBuildConfiguration
-                            ? myConfigurationsToModuleMap.get(((FlexIdeBuildConfiguration)selectedObject))
-                            : null;
+  public void addConfiguration(final Module module, final Runnable treeNodeNameUpdater, ModulesConfigurator modulesConfigurator) {
     if (module != null) {
       ModifiableRootModel modifiableRootModel = modulesConfigurator.getModuleEditor(module).getModifiableRootModel();
       final FlexIdeBuildConfiguration configuration = new FlexIdeBuildConfiguration();
