@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexIdeProjectLevelCom
 import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
 import com.intellij.lang.javascript.flex.projectStructure.options.CompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexIdeBuildConfiguration;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.JDOMUtil;
@@ -45,6 +46,24 @@ public class CompilerConfigGenerator {
     myModuleLevelCompilerOptions = FlexIdeBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions();
     myProjectLevelCompilerOptions =
       FlexIdeProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions();
+  }
+
+  /**
+   * called from tests via reflection
+   */
+  private CompilerConfigGenerator(final Module module,
+                                  final String sdkRootPath,
+                                  final String sdkVersion,
+                                  final FlexIdeBuildConfiguration config,
+                                  final CompilerOptions moduleLevelCompilerOptions,
+                                  final CompilerOptions projectLevelCompilerOptions) {
+    assert ApplicationManager.getApplication().isUnitTestMode();
+    myModule = module;
+    mySdkRootPath = sdkRootPath;
+    mySdkVersion = sdkVersion;
+    myConfig = config;
+    myModuleLevelCompilerOptions = moduleLevelCompilerOptions;
+    myProjectLevelCompilerOptions = projectLevelCompilerOptions;
   }
 
   public static VirtualFile getOrCreateConfigFile(final Module module,
