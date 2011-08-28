@@ -58,11 +58,11 @@ public class Dependencies implements Cloneable {
           entryInfo.BC_NAME = buildConfiguration.NAME;
           return entryInfo;
         }
-        else if (entry instanceof LibraryEntry) {
+        else if (entry instanceof ModuleLibraryEntry) {
           EntryInfo entryInfo = new EntryInfo();
           entryInfo.LIBRARY_ELEMENT = new Element("library");
           try {
-            ((LibraryEntry)entry).writeExternal(entryInfo.LIBRARY_ELEMENT);
+            ((ModuleLibraryEntry)entry).writeExternal(entryInfo.LIBRARY_ELEMENT);
           }
           catch (WriteExternalException e) {
             LOG.error(e);
@@ -92,7 +92,7 @@ public class Dependencies implements Cloneable {
     myEntries = new ArrayList<DependencyEntry>(myEntriesInfos.length);
     for (EntryInfo info : myEntriesInfos) {
       if (info.LIBRARY_ELEMENT != null) {
-        LibraryEntry libraryEntry = new LibraryEntry();
+        ModuleLibraryEntry libraryEntry = new ModuleLibraryEntry();
         try {
           libraryEntry.readExternal(info.LIBRARY_ELEMENT);
           myEntries.add(libraryEntry);

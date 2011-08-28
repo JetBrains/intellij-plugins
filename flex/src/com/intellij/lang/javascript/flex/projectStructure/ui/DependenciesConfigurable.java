@@ -1,11 +1,16 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.facet.impl.ui.libraries.EditLibraryDialog;
+import com.intellij.facet.impl.ui.libraries.LibraryCompositionSettings;
+import com.intellij.framework.library.FrameworkLibraryVersion;
 import com.intellij.ide.ui.ListCellRendererWrapper;
+import com.intellij.ide.util.frameworkSupport.CustomLibraryDescriptionBase;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructureExtension;
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -13,9 +18,11 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.ex.ProjectRoot;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
@@ -31,6 +38,7 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.ToolbarDecorator;
+import com.intellij.util.IconUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
@@ -40,8 +48,12 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
@@ -64,6 +76,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
   private AddItemPopupAction[] myPopupActions;
 
   private final Disposable myDisposable;
+  private final AnActionButton myEditAction;
 
   private abstract static class MyTableItem {
     public abstract String getText();
@@ -89,10 +102,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   }
 
-  private static class LibraryItem extends MyTableItem {
-    public final LibraryEntry libraryEntry;
+  private static class ModuleLibraryItem extends MyTableItem {
+    public final ModuleLibraryEntry libraryEntry;
 
-    public LibraryItem(LibraryEntry libraryEntry) {
+    public ModuleLibraryItem(ModuleLibraryEntry libraryEntry) {
       this.libraryEntry = libraryEntry;
     }
 
@@ -101,8 +114,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       ProjectRoot[] roots = libraryEntry.getRoots(OrderRootType.CLASSES);
       if (roots.length == 1) {
         VirtualFile firstFile = roots[0].getVirtualFiles()[0];
-        firstFile = PathUtil.getLocalFile(firstFile);
-        return MessageFormat.format("{0} ({1})", firstFile.getName(), firstFile.getParent().getPresentableUrl());
+        if (!firstFile.isDirectory()) {
+          firstFile = PathUtil.getLocalFile(firstFile);
+          return MessageFormat.format("{0} ({1})", firstFile.getName(), firstFile.getParent().getPresentableUrl());
+        }
       }
       return libraryEntry.getName();
     }
@@ -190,7 +205,36 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         moveSelection(1);
       }
     });
+    myEditAction = new AnActionButton(ProjectBundle.message("module.classpath.button.edit"), IconUtil.getEditIcon()) {
+      @Override
+      public void actionPerformed(AnActionEvent e) {
+        MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
+        editLibrary(((ModuleLibraryItem)item).libraryEntry);
+      }
+    };
+    d.addExtraAction(myEditAction);
     myTablePanel.add(d.createPanel(), BorderLayout.CENTER);
+
+    myTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        updateEditButton();
+      }
+    });
+
+    myTable.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+          if (myTable.getSelectedRowCount() == 1) {
+            MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
+            if (item instanceof ModuleLibraryItem) {
+              editLibrary(((ModuleLibraryItem)item).libraryEntry);
+            }
+          }
+        }
+      }
+    });
 
     FlexIdeModuleStructureExtension.getInstance().getConfigurator().addListener(new FlexIdeBCConfigurator.Listener() {
       @Override
@@ -229,6 +273,34 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
       }
     }, myDisposable);
+  }
+
+  private void updateEditButton() {
+    boolean librarySelected =
+      myTable.getSelectedRowCount() == 1 && myTable.getItemAt(myTable.getSelectedRow()) instanceof ModuleLibraryItem;
+    myEditAction.setEnabled(librarySelected);
+  }
+
+  private void editLibrary(ModuleLibraryEntry entry) {
+    ModuleLibraryEditor editor = new ModuleLibraryEditor(entry);
+    try {
+      LibraryCompositionSettings settings = new LibraryCompositionSettings(new CustomLibraryDescriptionBase("") {
+        @NotNull
+        @Override
+        public Set<? extends LibraryKind<?>> getSuitableLibraryKinds() {
+          return Collections.emptySet();
+        }
+      }, "", null, Collections.<FrameworkLibraryVersion>emptyList());
+
+      EditLibraryDialog d = new EditLibraryDialog(myMainPanel, settings, editor);
+      d.show();
+      if (d.isOK()) {
+        editor.applyTo(entry);
+      }
+    }
+    finally {
+      Disposer.dispose(editor);
+    }
   }
 
   private void addItem(AnActionButton button) {
@@ -359,12 +431,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         if (bcItem.configurable.getModifiableRootModel().getModule() != bcEntry.getModule()) return true;
         if (!bcItem.configurable.getDisplayName().equals(bcEntry.getBcName())) return true;
       }
-      else if (item instanceof LibraryItem) {
-        if (!(entry instanceof LibraryEntry)) {
+      else if (item instanceof ModuleLibraryItem) {
+        if (!(entry instanceof ModuleLibraryEntry)) {
           return true;
         }
-        LibraryItem libraryItem = (LibraryItem)item;
-        LibraryEntry libraryEntry = (LibraryEntry)entry;
+        ModuleLibraryItem libraryItem = (ModuleLibraryItem)item;
+        ModuleLibraryEntry libraryEntry = (ModuleLibraryEntry)entry;
         if (!libraryEntry.isEqual(libraryItem.libraryEntry)) {
           return true;
         }
@@ -389,9 +461,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         dependencies.getEntries()
           .add(new BuildConfigurationEntry(configurable.getModifiableRootModel().getModule(), configurable.getDisplayName()));
       }
-      else if (item instanceof LibraryItem) {
-        LibraryEntry e = new LibraryEntry();
-        ((LibraryItem)item).libraryEntry.applyTo(e);
+      else if (item instanceof ModuleLibraryItem) {
+        ModuleLibraryEntry e = new ModuleLibraryEntry();
+        ((ModuleLibraryItem)item).libraryEntry.applyTo(e);
         dependencies.getEntries().add(e);
       }
     }
@@ -423,11 +495,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           root.add(new DefaultMutableTreeNode(new BCItem(configurable), false));
         }
       }
-      else if (entry instanceof LibraryEntry) {
-        root.add(new DefaultMutableTreeNode(new LibraryItem(((LibraryEntry)entry).getCopy()), false));
+      else if (entry instanceof ModuleLibraryEntry) {
+        root.add(new DefaultMutableTreeNode(new ModuleLibraryItem(((ModuleLibraryEntry)entry).getCopy()), false));
       }
     }
     myTable.refresh();
+    updateEditButton();
   }
 
   public void disposeUIResources() {
@@ -539,10 +612,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       DefaultMutableTreeNode rootNode = myTable.getRoot();
       // TODO filter out roots that point into roots of another libraries
       for (VirtualFile file : files) {
-        LibraryEntry e = new LibraryEntry();
+        ModuleLibraryEntry e = new ModuleLibraryEntry();
         e.setName(file.getName());
-        e.addRoot(file, OrderRootType.CLASSES);
-        rootNode.add(new DefaultMutableTreeNode(new LibraryItem(e), false));
+        e.addRoot(OrderRootType.CLASSES, file);
+        rootNode.add(new DefaultMutableTreeNode(new ModuleLibraryItem(e), false));
       }
       myTable.refresh();
       myTable.getSelectionModel().clearSelection();
