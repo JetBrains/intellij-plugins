@@ -54,14 +54,8 @@ public class Dependencies implements Cloneable {
 
         if (entry instanceof BuildConfigurationEntry) {
           BuildConfigurationEntry buildConfigurationEntry = (BuildConfigurationEntry)entry;
-          FlexIdeBuildConfiguration buildConfiguration = buildConfigurationEntry.getBuildConfiguration();
-          if (buildConfiguration == null) {
-            LOG.error("module or BC is unexpectedly missing"); // looks like our model is inconsistent, we missed module or BC deletion
-            return null;
-          }
-
           entryInfo.MODULE_NAME = buildConfigurationEntry.getModuleName();
-          entryInfo.BC_NAME = buildConfiguration.NAME;
+          entryInfo.BC_NAME = buildConfigurationEntry.getBcName();
           return entryInfo;
         }
         else if (entry instanceof ModuleLibraryEntry) {

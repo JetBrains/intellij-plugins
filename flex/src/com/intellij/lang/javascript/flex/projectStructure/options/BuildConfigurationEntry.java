@@ -1,9 +1,9 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBuildConfigurationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModulePointer;
 import com.intellij.openapi.module.ModulePointerManager;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +17,10 @@ public class BuildConfigurationEntry extends DependencyEntry {
     this(ModulePointerManager.getInstance(module.getProject()).create(module), bcName);
   }
 
+  public BuildConfigurationEntry(Project project, String moduleName, @NotNull String bcName) {
+    this(ModulePointerManager.getInstance(project).create(moduleName), bcName);
+  }
+
   public BuildConfigurationEntry(ModulePointer modulePointer, @NotNull String bcName) {
     myModulePointer = modulePointer;
     myBcName = bcName;
@@ -26,6 +30,7 @@ public class BuildConfigurationEntry extends DependencyEntry {
     return myModulePointer.getModuleName();
   }
 
+  @Nullable
   public Module getModule() {
     return myModulePointer.getModule();
   }
@@ -34,17 +39,4 @@ public class BuildConfigurationEntry extends DependencyEntry {
     return myBcName;
   }
 
-  @Nullable
-  public FlexIdeBuildConfiguration getBuildConfiguration() {
-    Module module = myModulePointer.getModule();
-    if (module == null) {
-      return null;
-    }
-    for (FlexIdeBuildConfiguration configuration : FlexIdeBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
-      if (configuration.NAME.equals(myBcName)) {
-        return configuration;
-      }
-    }
-    return null;
-  }
 }

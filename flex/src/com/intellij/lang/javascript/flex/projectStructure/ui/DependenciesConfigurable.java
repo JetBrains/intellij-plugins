@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleStructure
 import com.intellij.lang.javascript.flex.projectStructure.options.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
@@ -66,7 +65,7 @@ import java.util.List;
 
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
-  private static final Logger LOG = Logger.getInstance(DependenciesConfigurable.class.getName());
+  private static final Icon MISSING_BC_ICON = null;
 
   private JPanel myMainPanel;
   private FlexSdkChooserPanel mySdkPanel;
@@ -94,8 +93,19 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
   private static class BCItem extends MyTableItem {
     public final FlexIdeBCConfigurable configurable;
+    public final String moduleName;
+    public final String bcName;
 
-    public BCItem(FlexIdeBCConfigurable configurable) {
+    public BCItem(@NotNull String moduleName,
+                  @NotNull String bcName) {
+      this.moduleName = moduleName;
+      this.bcName = bcName;
+      this.configurable = null;
+    }
+
+    public BCItem(@NotNull FlexIdeBCConfigurable configurable) {
+      this.moduleName = null;
+      this.bcName = null;
       this.configurable = configurable;
       if (configurable.getOutputType() == FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule) {
         dependencyType.setLinkageType(LinkageType.LoadInRuntime);
@@ -104,12 +114,17 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
 
     @Override
     public String getText() {
-      return MessageFormat.format("{0} ({1})", configurable.getTreeNodeText(), configurable.getModuleName());
+      if (configurable != null) {
+        return MessageFormat.format("{0} ({1})", configurable.getTreeNodeText(), configurable.getModuleName());
+      }
+      else {
+        return MessageFormat.format("{0} ({1})", bcName, moduleName);
+      }
     }
 
     @Override
     public Icon getIcon() {
-      return configurable.getIcon();
+      return configurable != null ? configurable.getIcon() : MISSING_BC_ICON;
     }
   }
 
@@ -153,13 +168,22 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
   };
 
-  private static class LinkageTypeEditor extends AbstractTableCellEditor {
-    private ComboBox myCombo;
-    private final MyTableItem myItem;
-
-    public LinkageTypeEditor(MyTableItem tableItem) {
-      myItem = tableItem;
+  private static final DefaultTableCellRenderer EMPTY_RENDERER = new DefaultTableCellRenderer() {
+    @Override
+    public Component getTableCellRendererComponent(JTable table,
+                                                   Object value,
+                                                   boolean isSelected,
+                                                   boolean hasFocus,
+                                                   int row,
+                                                   int column) {
+      Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      ((JLabel)component).setText("");
+      return component;
     }
+  };
+
+  private static final AbstractTableCellEditor LINKAGE_TYPE_EDITOR = new AbstractTableCellEditor() {
+    private ComboBox myCombo;
 
     public Object getCellEditorValue() {
       return myCombo.getSelectedItem();
@@ -177,7 +201,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       });
       return myCombo;
     }
-  }
+  };
 
   private static ColumnInfo<MyTableItem, LinkageType> DEPENDENCY_TYPE_COLUMN = new ColumnInfo<MyTableItem, LinkageType>("Type") {
 
@@ -192,19 +216,29 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
     }
 
     @Override
-    public TableCellRenderer getRenderer(MyTableItem myTableItem) {
-      return LINKAGE_TYPE_RENDERER;
+    public TableCellRenderer getRenderer(MyTableItem item) {
+      boolean invalid = item instanceof BCItem && ((BCItem)item).configurable == null;
+      return invalid ? EMPTY_RENDERER : LINKAGE_TYPE_RENDERER;
     }
 
     @Override
     public TableCellEditor getEditor(MyTableItem item) {
-      return new LinkageTypeEditor(item);
+      return LINKAGE_TYPE_EDITOR;
     }
 
     @Override
     public boolean isCellEditable(MyTableItem item) {
-      return !(item instanceof BCItem) ||
-             ((BCItem)item).configurable.getOutputType() != FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule;
+      if (item instanceof BCItem) {
+        if (((BCItem)item).configurable != null) {
+          return ((BCItem)item).configurable.getOutputType() != FlexIdeBuildConfiguration.OutputType.RuntimeLoadedModule;
+        }
+        else {
+          return false;
+        }
+      }
+      else {
+        return true;
+      }
     }
 
     @Override
@@ -255,7 +289,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       @Override
       protected void render(SimpleColoredComponent c, MyTableItem item) {
         if (item != null) {
-          c.append(item.getText());
+          boolean invalid = item instanceof BCItem && ((BCItem)item).configurable == null;
+          c.append(item.getText(), invalid ? SimpleTextAttributes.ERROR_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
           c.setIcon(item.getIcon());
         }
       }
@@ -312,9 +347,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
           if (myTable.getSelectedRowCount() == 1) {
             MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
             if (item instanceof BCItem) {
-              Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(myProject))
-                .putPath(MasterDetailsComponent.TREE_OBJECT, ((BCItem)item).configurable.getEditableObject());
-              ProjectStructureConfigurable.getInstance(myProject).navigateTo(place, true);
+              FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
+              if (configurable != null) {
+                Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(myProject))
+                  .putPath(MasterDetailsComponent.TREE_OBJECT, configurable.getEditableObject());
+                ProjectStructureConfigurable.getInstance(myProject).navigateTo(place, true);
+              }
             }
             else if (item instanceof ModuleLibraryItem) {
               editLibrary(((ModuleLibraryItem)item).libraryEntry);
@@ -330,8 +368,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         List<Integer> rowsToRemove = new ArrayList<Integer>();
         for (int row = 0; row < myTable.getRowCount(); row++) {
           MyTableItem item = myTable.getItemAt(row);
-          if (item instanceof BCItem && ((BCItem)item).configurable.getModifiableRootModel().getModule() == module) {
-            rowsToRemove.add(row);
+          if (item instanceof BCItem) {
+            FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
+            if (configurable != null && configurable.getModifiableRootModel().getModule() == module) {
+              rowsToRemove.add(row);
+            }
           }
         }
 
@@ -516,8 +557,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
         }
         BCItem bcItem = (BCItem)item;
         BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
-        if (bcItem.configurable.getModifiableRootModel().getModule() != bcEntry.getModule()) return true;
-        if (!bcItem.configurable.getDisplayName().equals(bcEntry.getBcName())) return true;
+        if (bcItem.configurable != null) {
+          if (bcItem.configurable.getModifiableRootModel().getModule() != bcEntry.getModule()) return true;
+          if (!bcItem.configurable.getDisplayName().equals(bcEntry.getBcName())) return true;
+        }
+        else {
+          if (bcItem.moduleName.equals(bcEntry.getModuleName())) return true;
+          if (bcItem.bcName.equals(bcEntry.getBcName())) return true;
+        }
       }
       else if (item instanceof ModuleLibraryItem) {
         if (!(entry instanceof ModuleLibraryEntry)) {
@@ -548,8 +595,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       DependencyEntry entry;
       if (item instanceof BCItem) {
         FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
-        entry =
-          new BuildConfigurationEntry(configurable.getModifiableRootModel().getModule(), configurable.getDisplayName());
+        if (configurable != null) {
+          entry = new BuildConfigurationEntry(configurable.getModifiableRootModel().getModule(), configurable.getDisplayName());
+        }
+        else {
+          entry = new BuildConfigurationEntry(myProject, ((BCItem)item).moduleName, ((BCItem)item).bcName);
+        }
       }
       else if (item instanceof ModuleLibraryItem) {
         entry = new ModuleLibraryEntry();
@@ -575,16 +626,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       MyTableItem item = null;
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
+        Module module = bcEntry.getModule();
         FlexIdeBCConfigurable configurable =
-          ContainerUtil.find(configurator.getBCConfigurables(bcEntry.getModule()), new Condition<FlexIdeBCConfigurable>() {
+          module != null ? ContainerUtil.find(configurator.getBCConfigurables(module), new Condition<FlexIdeBCConfigurable>() {
             @Override
             public boolean value(FlexIdeBCConfigurable configurable) {
               return configurable.getEditableObject().NAME.equals(bcEntry.getBcName());
             }
-          });
+          }) : null;
         if (configurable == null) {
-          // broken project file?
-          LOG.error("configurable not found for " + bcEntry.getBcName());
+          item = new BCItem(bcEntry.getModuleName(), bcEntry.getBcName());
         }
         else {
           item = new BCItem(configurable);
@@ -643,7 +694,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> {
       List<MyTableItem> items = myTable.getItems();
       for (MyTableItem item : items) {
         if (item instanceof BCItem) {
-          dependencies.add(((BCItem)item).configurable);
+          FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
+          if (configurable != null) {
+            dependencies.add(configurable);
+          }
         }
       }
 
